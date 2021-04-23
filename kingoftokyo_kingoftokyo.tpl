@@ -1,9 +1,9 @@
 {OVERALL_GAME_HEADER}
 
+<div id="rolled_dice"></div>
+
 <div id="board">
 </div>
-
-<div id="rolled_dice"></div>
 
 <script type="text/javascript">
 

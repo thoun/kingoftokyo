@@ -17,13 +17,13 @@
   */
 
 
-require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
+require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php');
+
+require_once('modules/dice.php');
 
 
-class KingOfTokyo extends Table
-{
-	function __construct( )
-	{
+class KingOfTokyo extends Table {
+	function __construct(){
 
 
         // Your global variables labels:
@@ -32,19 +32,19 @@ class KingOfTokyo extends Table
         //  If your game has options (variants), you also have to associate here a label to
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
-        parent::__construct();self::initGameStateLabels( array(
-            //    "my_first_global_variable" => 10,
+        parent::__construct();
+        self::initGameStateLabels([
+            "throwNumber" => 10,
             //    "my_second_global_variable" => 11,
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
             //      ...
-        ) );
+        ]);
 
 	}
 
-    protected function getGameName( )
-    {
+    protected function getGameName() {
         return "kingoftokyo";
     }
 
@@ -55,8 +55,7 @@ class KingOfTokyo extends Table
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
     */
-    protected function setupNewGame( $players, $options = array() )
-    {
+    protected function setupNewGame( $players, $options = []) {
 
         $sql = "DELETE FROM player WHERE 1 ";
         self::DbQuery( $sql );
@@ -71,8 +70,7 @@ class KingOfTokyo extends Table
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
         $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
         $values = array();
-        foreach( $players as $player_id => $player )
-        {
+        foreach( $players as $player_id => $player ) {
             $color = array_shift( $default_colors );
             $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
         }
@@ -81,13 +79,13 @@ class KingOfTokyo extends Table
         self::reloadPlayersBasicInfos();
 
         // Create dices
-        //self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
-        //self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true)");
+        self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
+        self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true)");
 
         /************ Start the game initialization *****/
 
         // Init global values with their initial values
-        // self::setGameStateInitialValue( 'rerolls_left', 3 );
+        self::setGameStateInitialValue('throwNumber', 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -151,17 +149,19 @@ class KingOfTokyo extends Table
         In this space, you can put any utility methods useful for your game logic
     */
 
-    function getDices() {
-        $sql = "SELECT `dice_id`, `dice_value`, `selected`, `extra` FROM dice";
+    function getDices(int $number) {
+        $sql = "SELECT `dice_id`, `dice_value`, `extra` FROM dice limit $number";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
-    function getPlayerName($playerId) {
+    function getPlayerName(int $playerId) {
         return self::getUniqueValueFromDb( "SELECT player_name FROM player WHERE player_id = $playerId" );
     }
 
-
+    function getDicesNumber(int $playerId) {
+        return 6; // TODO
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
@@ -171,6 +171,19 @@ class KingOfTokyo extends Table
         Each time a player is doing some game action, one of the methods below is called.
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
+  	
+    public function rethrowDices(string $dicesIds) {
+        self::DbQuery("UPDATE dice SET `dice_value` = 0 where `dice_id` IN ($dicesIds)");
+
+        $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
+        self::setGameStateValue('throwNumber', $throwNumber);
+
+        $this->gamestate->nextState('rethrow');
+    }
+
+    public function resolveDices() {
+        $this->gamestate->nextState('resolve');
+    }
 
     /*
 
@@ -210,17 +223,23 @@ class KingOfTokyo extends Table
     */
 
     function argThrowDices() {
-        $dices = [];/*$this->getDices();
+        $playerId = self::getActivePlayerId();
+        $dices = $this->getDices($this->getDicesNumber($playerId));
 
-        foreach ($dices as &$dice){
+        foreach ($dices as &$dice) {
             if ($dice->value == 0) {
-                $dice->value = bga_rand( 1, 6 );
+                $dice->value = bga_rand(1, 6);
                 self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
             }
-        }*/
+        }
+
+        $throwNumber = intval(self::getGameStateValue('throwNumber'));
+        $maxThrowNumber = 3;
     
         // return values:
         return [
+            'throwNumber' => $throwNumber,
+            'maxThrowNumber' => $maxThrowNumber,
             'dices' => $dices,
         ];
     }
@@ -235,10 +254,66 @@ class KingOfTokyo extends Table
     */
 
     function stStartTurn() {
-        // Do some stuff ...
+        self::setGameStateValue('throwNumber', 1);
 
-        // (very often) go to another gamestate
         $this->gamestate->nextState('throw');
+    }
+
+    function stResolveDices() {
+        $playerId = self::getActivePlayerId();
+        $dices = $this->getDices($this->getDicesNumber($playerId));
+
+        for ($i = 1; $i <= 6; $i++) {
+            $number = count(array_values(array_filter($dices, function($dice) use ($i) { return $dice->value == $i; })));
+
+            // number
+            if ($i <= 3 && $number >= 3) {
+                $points = $i + $number - 3;
+                self::DbQuery("UPDATE player SET `player_score` = `player_score` + $points where `player_id` = $playerId");
+
+                self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${points} with ${dice_value} dices'), [
+                    'playerId' => $playerId,
+                    'player_name' => self::getActivePlayerName(),
+                    'points' => $points,
+                    'diceValue' => $i,
+                ]);
+            }
+
+            // health
+            if ($i == 4 && $number > 0) {
+                $health = intval(self::getUniqueValueFromDB( "SELECT player_health FROM player where `player_id` = $playerId"));
+                $maxHealth = 10;
+                $newHealth = min($health + $number, $maxHealth);
+                $deltaHealth = $newHealth - $health;
+                if ($deltaHealth > 0) {
+                    self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+
+                    self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${health} health'), [
+                        'playerId' => $playerId,
+                        'player_name' => self::getActivePlayerName(),
+                        'health' => $deltaHealth,
+                    ]);
+                }
+            }
+
+            // energy
+            if ($i == 5 && $number > 0) {
+                self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $number where `player_id` = $playerId");
+
+                self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${number} energy cubes'), [
+                    'playerId' => $playerId,
+                    'player_name' => self::getActivePlayerName(),
+                    'number' => $number,
+                ]);
+            }
+
+            // smash
+            if ($i == 6 && $number > 0) {
+                // TODO
+            }
+        }
+
+        $this->gamestate->nextState('pickCard');
     }
 
 //////////////////////////////////////////////////////////////////////////////

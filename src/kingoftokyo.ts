@@ -7,6 +7,8 @@ declare const g_gamethemeurl;
 
 declare const board: HTMLDivElement;
 
+const ANIMATION_MS = 1500;
+
 const isDebug = window.location.host == 'studio.boardgamearena.com';
 const log = isDebug ? console.log.bind(window.console) : function () { };
 
@@ -75,12 +77,12 @@ class KingOfTokyo implements KingOfTokyo {
         log( 'Entering state: '+stateName , args.args );
 
         switch (stateName) {
-            /*case 'lordStackSelection':
-                const limitToHidden = (args.args as EnteringLordStackSelectionArgs).limitToHidden;
-                this.setGamestateDescription(limitToHidden ? `limitToHidden${limitToHidden}` : '');
-                this.onEnteringLordStackSelection(args.args);
+            case 'throwDices':
+                const tdArgs = args.args as EnteringThrowDicesArgs;
+                this.setGamestateDescription(tdArgs.throwNumber >= tdArgs.maxThrowNumber ? `last` : '');
+                this.onEnteringThrowDices(args.args);
                 break;
-            case 'lordSelection':
+            /*case 'lordSelection':
                 const multiple = (args.args as EnteringLordSelectionArgs).multiple;
                 const number = (args.args as EnteringLordSelectionArgs).lords?.length;
                 this.setGamestateDescription(multiple ? (number > 1 ? 'multiple' : 'last') : '');
@@ -106,21 +108,18 @@ class KingOfTokyo implements KingOfTokyo {
         }
     }
     
-    /*private setGamestateDescription(property: string = '') {
+    private setGamestateDescription(property: string = '') {
         const originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
         this.gamedatas.gamestate.description = `${originalState['description' + property]}`; 
         this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`; 
         (this as any).updatePageTitle();        
     }
 
-    onEnteringLordStackSelection(args: EnteringLordStackSelectionArgs) {
-        this.lordsStacks.setMax(args.max);
-        if ((this as any).isCurrentPlayerActive()) {
-            this.lordsStacks.setSelectable(true, args.limitToHidden);
-        }
+    onEnteringThrowDices(args: EnteringThrowDicesArgs) {
+        document.getElementById('rolled_dice').innerHTML = args.dices.map(dice => dice.value).join(',');
     }
 
-    onEnteringLordSelection(args: EnteringLordSelectionArgs) {
+    /*onEnteringLordSelection(args: EnteringLordSelectionArgs) {
         this.lordsStacks.setPick(true, (this as any).isCurrentPlayerActive(), args.lords);
     }
 
@@ -224,7 +223,7 @@ class KingOfTokyo implements KingOfTokyo {
 
     onLeavingLocationSelection() {
         this.locationsStacks.setSelectable(false);
-    }
+    }*/
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -232,13 +231,18 @@ class KingOfTokyo implements KingOfTokyo {
     public onUpdateActionButtons(stateName: string, args: any) {
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
-                case 'lordSwap':
-                (this as any).addActionButton( 'dontSwap_button', _("Don't swap"), 'onDontSwap' );
+                case 'throwDices':
+                const tdArgs = args as EnteringThrowDicesArgs;console.log(tdArgs);
+                if (tdArgs.throwNumber < tdArgs.maxThrowNumber) {
+                    (this as any).addActionButton('rethrow_button', _("Rethrow selected dices") + ` ${tdArgs.throwNumber}/${tdArgs.maxThrowNumber}`, 'onRethrow');
+                    dojo.addClass('rethrow_button', 'disabled');
+                }
+                (this as any).addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
                 break;
             }
 
         }
-    } */
+    } 
     
 
     ///////////////////////////////////////////////////
@@ -278,40 +282,32 @@ class KingOfTokyo implements KingOfTokyo {
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
     }
 
-    public lordPick(id: number) {
-        if(!(this as any).checkAction('addLord')) {
+    public onRethrow() {
+        // TODO
+    }
+
+    public rethrowDices(dicesIds: number[]) {
+        if(!(this as any).checkAction('rethrow')) {
             return;
         }
 
-        this.takeAction('pickLord', {
-            id
+        this.takeAction('rethrow', {
+            dicesIds: dicesIds.join(',')
         });
     }
 
-    public lordStockPick(guild: number) {
-        if(!(this as any).checkAction('chooseVisibleStack')) {
+    public resolveDices() {
+        if(!(this as any).checkAction('resolve')) {
             return;
         }
 
-        this.takeAction('chooseVisibleStack', {
-            guild
-        });
-    }
-
-    public locationPick(id: number) {
-        if(!(this as any).checkAction('addLocation')) {
-            return;
-        }
-
-        this.takeAction('pickLocation', {
-            id
-        });
+        this.takeAction('resolve');
     }
 
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
-        (this as any).ajaxcall(`/conspiracy/conspiracy/${action}.html`, data, this, () => {});
+        (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
     }
 
     /*placePearlMasterToken(playerId: number) {
@@ -428,11 +424,11 @@ class KingOfTokyo implements KingOfTokyo {
     setupNotifications() {
         //log( 'notifications subscriptions setup' );
 
-        const notifs = [/*
-            ['lordPlayed', ANIMATION_MS],
-            ['lordSwapped', ANIMATION_MS],
-            ['extraLordRevealed', ANIMATION_MS],
-            ['locationPlayed', ANIMATION_MS],
+        const notifs = [
+            ['resolveNumberDice', ANIMATION_MS],
+            ['resolveHealthDice', ANIMATION_MS],
+            ['resolveEnergyDice', ANIMATION_MS],
+            /*['locationPlayed', ANIMATION_MS],
             ['discardLords', ANIMATION_MS],
             ['discardLocations', ANIMATION_MS],
             ['newPearlMaster', 1],
@@ -452,24 +448,18 @@ class KingOfTokyo implements KingOfTokyo {
         });
     }
 
-    /*notif_lordPlayed(notif: Notif<NotifLordPlayedArgs>) {
-        const from = this.lordsStacks.getStockContaining(`${notif.args.lord.id}`);
-        
-        this.playersTables[notif.args.playerId].addLord(notif.args.spot, notif.args.lord, from);
-        this.minimaps[notif.args.playerId].addLord(notif.args.spot, notif.args.lord);
-        this.setNewScore(notif.args);
-        this.pearlCounters[notif.args.playerId].incValue(notif.args.pearls);
-        
-        if (notif.args.stackSelection || !notif.args.discardedLords.length) {
-            this.lordsStacks.discardPick(notif.args.discardedLords);
-            this.lordsStacks.setPick(false, false);
-        }
-
-        if (notif.args.lord.key) {
-            this.updateKeysForPlayer(notif.args.playerId);
-        }
+    notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
+        (this as any).scoreCtrl[notif.args.playerId]?.incValue(notif.args.points);
     }
 
+    notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
+        this.healthCounters[notif.args.playerId].incValue(notif.args.health);
+    }
+
+    notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
+        this.energyCounters[notif.args.playerId].incValue(notif.args.number);
+    }
+/*
     notif_lordSwapped(notif: Notif<NotifLordSwappedArgs>) {
         this.playersTables[notif.args.playerId].lordSwapped(notif.args);
         this.minimaps[notif.args.playerId].lordSwapped(notif.args);

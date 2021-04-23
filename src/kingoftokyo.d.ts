@@ -2,30 +2,18 @@
  * Your game interfaces
  */
 
-interface Card {
+interface Dice {
+    id: number;
+    value: number;
+    extra: boolean;
+}
+
+/*interface Card {
     id: number;
     type: number;
     pearls: number;
     points: number;
-}
-
-interface Lord extends Card {
-    guild: number;    
-    key: number; 
-    showExtraLord: boolean;
-    swap: boolean;
-}
-
-interface Location extends Card {
-    activePower?: number;
-    passivePower?: number;
-    passivePowerGuild?: number;
-}
-
-interface PlayerTableSpot {
-    lord?: Lord;
-    location?: Location;
-}
+}*/
 
 interface KingOfTokyoGamedatas {
     current_player_id: string;
@@ -40,105 +28,31 @@ interface KingOfTokyoGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
-    visibleLords: { [spot: number]: Lord[] };
-    pickLords: Lord[];
-    visibleLocations: Location[];
-    pickLocations: Location[];
-    pearlMasterPlayer: number;
-    playersTables: { [playerId: number]: PlayerTableSpot[] };
-    endTurn: boolean;
 }
 
 interface KingOfTokyo extends Game {
 }
 
-interface Score {
-    lords: number;
-    locations: number;
-    coalition: number;
-    pearlMaster: number;
-    total: number;
+interface EnteringThrowDicesArgs {
+    dices: Dice[];
+    throwNumber: number;
+    maxThrowNumber: number;
 }
 
-interface EnteringStackSelectionArgs {
-    max: number;
-}
-
-interface EnteringLordStackSelectionArgs extends EnteringStackSelectionArgs {
-    limitToHidden: number;
-}
-
-interface EnteringLordSelectionArgs {
-    lords: Lord[];
-    multiple: boolean;
-}
-
-interface EnteringLocationStackSelectionArgs extends EnteringStackSelectionArgs {
-    allHidden: boolean;
-}
-
-interface EnteringLocationSelectionArgs {
-    locations: Location[];
-}
-
-interface NotifDiscardLordPickArgs {
-    discardedLords: Lord[];
-}
-
-interface NotifDiscardLocationPickArgs {
-    discardedLocations: Location[];
-}
-
-interface NotifNewScoreArgs {
+interface NotifResolveArgs {
     playerId: number;
-    newScore: Score;
+    player_name: string;
 }
 
-interface NotifLordPlayedArgs extends NotifNewScoreArgs {
-    lord: Lord;
-    spot: number;
-    stackSelection: boolean;
-    discardedLords: Lord[];
-    pearls: number;
-}
-
-interface NotifLordSwappedArgs extends NotifNewScoreArgs {
-    spot1: number;
-    spot2: number;
-}
-
-interface NotifExtraLordRevealedArgs {
-    lord: Lord;
-}
-
-interface NotifLocationPlayedArgs extends NotifNewScoreArgs {
-    location: Location;
-    spot: number;
-    discardedLocations: Location[];
-    pearls: number;
-}
-
-interface NotifNewPearlMasterArgs {
-    playerId: number;
-    previousPlayerId: number;
-}
-
-interface NotifScorePointArgs {
-    playerId: number;
+interface NotifResolveNumberDiceArgs extends NotifResolveArgs {
     points: number;
+    diceValue: number;
 }
 
-interface Coalition {
-    spot: number;
-    size: number;
-    guild: number;
-    alreadyCounted: number[];
+interface NotifResolveHealthDiceArgs extends NotifResolveArgs {
+    health: number;
 }
 
-interface NotifScoreCoalitionArgs extends NotifScorePointArgs {
-    coalition: Coalition;
-}
-
-interface NotifScorePearlMasterArgs {
-    playerId: number;
+interface NotifResolveEnergyDiceArgs extends NotifResolveArgs {
+    number: number;
 }
