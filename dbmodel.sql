@@ -18,30 +18,28 @@
 -- Note: The database schema is created from this file when the game starts. If you modify this file,
 --       you have to restart a game to see your changes in database.
 
+-- dice_value : 1, 2, 3, 4 : health, 5: energy, 6: smash
 CREATE TABLE IF NOT EXISTS `dice` (
-  `dice_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `value` TINYINT(1) unsigned NOT NULL,
-  `selected` TINYINT(1) unsigned NOT NULL DEFAULT false,
-  `extra` TINYINT(1) unsigned NOT NULL DEFAULT false,
+  `dice_id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+  `dice_value` TINYINT unsigned NOT NULL DEFAULT 0,
+  `extra` TINYINT unsigned NOT NULL DEFAULT false,
   PRIMARY KEY (`dice_id`)
 ) ENGINE=InnoDB;
 
--- we use deck, as cards is similar to card
 -- card_type : 0 for discard power, 1 for keep power
 -- card_type_arg : power index
 -- card_location : deck / player / discard
 -- card_location_arg : player id
-
-CREATE TABLE IF NOT EXISTS `cards` (
+CREATE TABLE IF NOT EXISTS `card` (
   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `card_type` tinyint(1) unsigned NOT NULL,
-  `card_type_arg` tinyint(2) unsigned NOT NULL,
+  `card_type` tinyint unsigned NOT NULL,
+  `card_type_arg` tinyint unsigned NOT NULL,
   `card_location` varchar(16) NOT NULL,
   `card_location_arg` INT(10) unsigned NOT NULL,
   PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB;
 
--- Example 2: add a custom field to the standard "player" table
+-- player_location : 0 : outside tokyo, 1 : tokyo city, 2: tokyo bay
+ALTER TABLE `player` ADD `player_location` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_health` tinyint UNSIGNED NOT NULL DEFAULT 10;
 ALTER TABLE `player` ADD `player_energy` tinyint UNSIGNED NOT NULL DEFAULT 0;
-ALTER TABLE `player` ADD `player_location` tinyint UNSIGNED NOT NULL DEFAULT 0; -- 0 : outside tokyo, 1 : tokyo city, 2: tokyo bay

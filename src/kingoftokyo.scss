@@ -1,81 +1,10 @@
 @import url(../../../css/csslayer.css);
 
-@import 'stacks/stacks';
-@import 'players-tables/players-tables';
-@import 'tokens';
 @import 'playerboards';
-@import 'score';
-@import 'help';
-@import 'popin-playermat';
 
-html {
-    background: url('img/background.jpg') #0D111A;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-#last-round {
-    margin: 5px -5px -5px;
-    text-align: center;
-    background-color: #900;
-}
-
-#stacks, #score .score-number  {
-    font-family: 'MoolBoran';
-}
-
-.dijitTooltip {
-    font-family: 'MoolBoran';
-}
-
-.dijitTooltipContents {
-    font-size: 1rem;
-}
-
-.player_board_content {    
-  font-family: 'MoolBoran';
-  font-size: 120%;
-}
-
-.player-board .show-playermat-button {
-    position: absolute;
-    top: 0;
-    right: 36px;
-    height: 40px;
-    width: 25px;
-    cursor: pointer;
-
-    &:hover {
-        color: grey;
-    }
-}
-
-.pearlMasterWrapper {
-    display: inline-block;
+#board {
     position: relative;
-    width: 32px;
-}
-
-.log-guild-name {
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
-}
-
-.highlight {
-    animation: highlight-animation 0.75s alternate 2;
-}
-
-td.highlight {
-    animation: td-highlight-animation 0.75s alternate 2;
-}
-
-@keyframes highlight-animation {
-    100% { 
-        box-shadow: 0 0 30px 15px white;
-    }
-}
-
-@keyframes td-highlight-animation {
-    100% { 
-        background: white;
-    }
+    width: 400px;
+    height: 400px;
+    background: url('img/tokyo.jpg') no-repeat;
 }

@@ -49,12 +49,7 @@ interface KingOfTokyoGamedatas {
     endTurn: boolean;
 }
 
-interface ConspiracyGame extends Game {
-    takeAction: (action: string, data?: any) => void;
-    lordPick: (id: number) => void;
-    lordStockPick: (guild: number) => void;
-    setCanSwap(swapSpots: number[]);
-    locationPick: (id: number) => void;
+interface KingOfTokyo extends Game {
 }
 
 interface Score {

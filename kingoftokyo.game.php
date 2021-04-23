@@ -57,6 +57,7 @@ class KingOfTokyo extends Table
     */
     protected function setupNewGame( $players, $options = array() )
     {
+
         $sql = "DELETE FROM player WHERE 1 ";
         self::DbQuery( $sql );
 
@@ -79,8 +80,9 @@ class KingOfTokyo extends Table
         self::DbQuery( $sql );
         self::reloadPlayersBasicInfos();
 
-        // Create dice
-        self::DbQuery("INSERT INTO dice (die_value) VALUES ('1'), ('2'), ('3'), ('h'), ('e'), ('a')");
+        // Create dices
+        //self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
+        //self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true)");
 
         /************ Start the game initialization *****/
 
@@ -110,15 +112,14 @@ class KingOfTokyo extends Table
         _ when the game starts
         _ when a player refreshes the game page (F5)
     */
-    protected function getAllDatas()
-    {
-        $result = array( 'players' => array() );
+    protected function getAllDatas() {
+        $result = ['players' => []];
 
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health FROM player ";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location` FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
@@ -136,11 +137,9 @@ class KingOfTokyo extends Table
         This method is called each time we are in a game state with the "updateGameProgression" property set to true
         (see states.inc.php)
     */
-    function getGameProgression()
-    {
-        // TODO: compute and return the game progression
-
-        return 0;
+    function getGameProgression() {
+        $maxPoints = intval(self::getUniqueValueFromDB( "SELECT max(player_score) FROM player"));
+        return $maxPoints * 5;
     }
 
 
@@ -151,6 +150,16 @@ class KingOfTokyo extends Table
     /*
         In this space, you can put any utility methods useful for your game logic
     */
+
+    function getDices() {
+        $sql = "SELECT `dice_id`, `dice_value`, `selected`, `extra` FROM dice";
+        $dbDices = self::getCollectionFromDB($sql);
+        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
+    }
+
+    function getPlayerName($playerId) {
+        return self::getUniqueValueFromDb( "SELECT player_name FROM player WHERE player_id = $playerId" );
+    }
 
 
 
@@ -200,22 +209,21 @@ class KingOfTokyo extends Table
         game state.
     */
 
-    /*
+    function argThrowDices() {
+        $dices = [];/*$this->getDices();
 
-    Example for game state "MyGameState":
-
-    function argMyGameState()
-    {
-        // Get some values from the current game situation in database...
-
+        foreach ($dices as &$dice){
+            if ($dice->value == 0) {
+                $dice->value = bga_rand( 1, 6 );
+                self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
+            }
+        }*/
+    
         // return values:
-        return array(
-            'variable1' => $value1,
-            'variable2' => $value2,
-            ...
-        );
+        return [
+            'dices' => $dices,
+        ];
     }
-    */
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
@@ -226,18 +234,12 @@ class KingOfTokyo extends Table
         The action method of state X is called everytime the current game state is set to X.
     */
 
-    /*
-
-    Example for game state "MyGameState":
-
-    function stMyGameState()
-    {
+    function stStartTurn() {
         // Do some stuff ...
 
         // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+        $this->gamestate->nextState('throw');
     }
-    */
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie

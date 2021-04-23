@@ -49,6 +49,8 @@
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
+require_once("modules/constants.inc.php");
+
 $basicGameStates = [
 
     // The initial state. Please do not modify.
@@ -57,7 +59,7 @@ $basicGameStates = [
         "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => [ "" => ST_PLAYER_THROW_DICES ]
+        "transitions" => [ "" => ST_START ]
     ],
 
     ST_NEXT_PLAYER => [
@@ -67,7 +69,7 @@ $basicGameStates = [
         "action" => "stNextPlayer",
         "updateGameProgression" => true,
         "transitions" => [
-            "nextPlayer" => ST_PLAYER_THROW_DICES, 
+            "nextPlayer" => ST_START, 
             "endGame" => ST_END_GAME,
         ],
     ],
@@ -86,10 +88,10 @@ $basicGameStates = [
 $playerActionsGameStates = [
 
     ST_START => [
-        "name" => "start",
+        "name" => "startTurn",
         "description" => "",
         "type" => "game",
-        //"action" => "stResolveDices",
+        "action" => "stStartTurn",
         "transitions" => [ 
             "throw" => ST_PLAYER_THROW_DICES,
         ],
@@ -97,13 +99,13 @@ $playerActionsGameStates = [
 
     ST_PLAYER_THROW_DICES => [
         "name" => "throwDices",
-        "description" => clienttranslate('${actplayer} must choose lords from deck or from a discard pile'),
-        "descriptionmyturn" => clienttranslate('${you} must choose lords from deck or from a discard pile'),
+        "description" => clienttranslate('${actplayer} can rethrow dices or resolve dices'),
+        "descriptionmyturn" => clienttranslate('${you} can rethrow dices or resolve dices'),
         "type" => "activeplayer",
-        //"args" => "argLordStackSelection",
-        "possibleactions" => [ "relaunch", "end" ],
+        "args" => "argThrowDices",
+        "possibleactions" => [ "rethrow", "resolve" ],
         "transitions" => [
-            "relaunch" => ST_PLAYER_THROW_DICES,
+            "rethrow" => ST_PLAYER_THROW_DICES,
             "resolve" => ST_RESOLVE_DICES,
             "zombiePass" => ST_NEXT_PLAYER,
         ],
@@ -115,9 +117,8 @@ $playerActionsGameStates = [
         "type" => "game",
         //"action" => "stResolveDices",
         "transitions" => [ 
-            "swap" => ST_PLAYER_LORDS_SWAP,
-            "addLocation" => ST_PLAYER_LOCATION_STACK_SELECTION,
-            "next" => ST_END_LORD,
+            "pickCard" => ST_PLAYER_PICK_CARD,
+            // TODO leave tokyo
         ],
     ],
 
@@ -148,15 +149,27 @@ $playerActionsGameStates = [
 
     ST_PLAYER_PICK_CARD => [
         "name" => "pickCard",
-        "description" => clienttranslate('${actplayer} must select two lords to swap'),
-        "descriptionmyturn" => clienttranslate('${you} must select two lords to swap'),
+        "description" => clienttranslate('${actplayer} can pick a card'),
+        "descriptionmyturn" => clienttranslate('${you} can pick a card'),
         "type" => "activeplayer",
-        "possibleactions" => [ "next" ],
+        "possibleactions" => [ "pick", "dontPick", "renew" ],
         "transitions" => [
-            "next" => ST_NEXT_PLAYER,
+            "pick" => ST_PLAYER_PICK_CARD,
+            "dontPick" => ST_END,
+            "renew" => ST_PLAYER_PICK_CARD,
             "zombiePass" => ST_NEXT_PLAYER,
         ]
-    ]
+    ],
+
+    ST_END => [
+        "name" => "endTurn",
+        "description" => "",
+        "type" => "game",
+        "action" => "stEndTurn",
+        "transitions" => [ 
+            "throw" => ST_NEXT_PLAYER,
+        ],
+    ],
 ];
 
 $cardsGameStates = [

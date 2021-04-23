@@ -1,54 +1,36 @@
-/**
- *------
- * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * KingOfTokyo implementation : © <Your name here> <Your email address here>
- *
- * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
- * See http://en.boardgamearena.com/#!doc/Studio for more information.
- * -----
- *
- * kingoftokyo.css
- *
- * KingOfTokyo stylesheet
- *
- */
+@import url(../../../css/csslayer.css);
+.icon {
+  display: inline-block;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background-image: url("img/icons.png");
+  background-size: auto 100%;
+}
+.icon.points {
+  background-position: 0% 0%;
+}
+.icon.energy {
+  background-position: 50% 0%;
+}
+.icon.health {
+  background-position: 100% 0%;
+}
 
-/*
-    This is the CSS stylesheet of your game User Interface.
-
-    Styles defined on this file will be applied to the HTML elements you define in your
-    HTML template (kingoftokyo_kingoftokyo.tpl), and to HTML elements you create dynamically
-    (in kingoftokyo.js).
-
-    Usually, you are using CSS to:
-
-    1°) define the overall layout of your game
-        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
-
-    2°) create your CSS-sprites:
-        All images of your games should be gathered into a small number of image files. Then, using
-        background-image and background-position CSS properties, you create HTML blocks that can
-        display these images correctly (see example below).
-
-    3°) ... anything else:
-        It is really easy to add and remove CSS classes dynamically from your Javascript with
-        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
-        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
-        very often, using CSS classes for the logic of your user interface allow you to do complex
-        thing easily.
-
-
-     Note: on the production platform, this file will be compressed and comments will be removed.
-           Consequently, don't hesitate to put as many comments as necessary.
-*/
-
-@import url(../../../css/csslayer.css); /* Note: you must not use any @import directive other than this one */
-
-/********* You can start writing your CSS below this line: **********/
+.counters {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+.counters .health-counter, .counters .energy-counter {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
 
 #board {
   position: relative;
   width: 400px;
   height: 400px;
-  background: url('img/tokyo.jpg') no-repeat;
+  background: url("img/tokyo.jpg") no-repeat;
 }

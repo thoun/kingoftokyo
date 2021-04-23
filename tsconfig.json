@@ -14,13 +14,6 @@
         "src/kingoftokyo.d.ts",
         "src/slide-utils.ts",
         "src/stock-utils.ts",
-        "src/stacks/lord-stock.ts",
-        "src/stacks/abstract-stacks.ts",
-        "src/stacks/lords-stacks.ts",
-        "src/stacks/locations-stacks.ts",
-        "src/players-tables/spot.ts",
-        "src/players-tables/player-table.ts",
-        "src/minimap.ts",
         "src/kingoftokyo.ts",
         "src/define.ts"
     ]
