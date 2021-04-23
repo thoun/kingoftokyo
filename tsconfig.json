@@ -1,0 +1,27 @@
+{
+    "rootDir": ".", 
+    "compilerOptions": {
+      "target": "es5",
+      "module": "none",
+      "lib": ["dom", "esnext"],  
+      "sourceMap": false,
+      "outFile": "kingoftokyo.js",
+    },
+    "files": [
+        "src/framework.d.ts",
+        "src/counter.d.ts",
+        "src/stock.d.ts",
+        "src/kingoftokyo.d.ts",
+        "src/slide-utils.ts",
+        "src/stock-utils.ts",
+        "src/stacks/lord-stock.ts",
+        "src/stacks/abstract-stacks.ts",
+        "src/stacks/lords-stacks.ts",
+        "src/stacks/locations-stacks.ts",
+        "src/players-tables/spot.ts",
+        "src/players-tables/player-table.ts",
+        "src/minimap.ts",
+        "src/kingoftokyo.ts",
+        "src/define.ts"
+    ]
+}

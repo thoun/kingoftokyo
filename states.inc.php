@@ -49,67 +49,118 @@
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
-$machinestates = array(
+$basicGameStates = [
 
     // The initial state. Please do not modify.
-    1 => array(
+    ST_BGA_GAME_SETUP => [
         "name" => "gameSetup",
         "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array( "" => 2 )
-    ),
+        "transitions" => [ "" => ST_PLAYER_THROW_DICES ]
+    ],
 
-    // Note: ID=2 => your first state
-
-    2 => array(
-      "name" => "rollDice",
-      "description" => "",
-      "type" => "game",
-      "action" => "stRollDice",
-      "transitions" => array("chooseDice" => 10)
-    ),
-
-    10 => array(
-    		"name" => "playerTurn",
-    		"description" => clienttranslate('${actplayer} must choose dice to keep'),
-    		"descriptionmyturn" => clienttranslate('${you} must choose die/dice to keep'),
-    		"type" => "activeplayer",
-    		"possibleactions" => array( "chooseDie", "reroll" ),
-    		"transitions" => array( "playCard" => 2, "pass" => 2 )
-    ),
-
-/*
-    Examples:
-
-    2 => array(
+    ST_NEXT_PLAYER => [
         "name" => "nextPlayer",
-        "description" => '',
+        "description" => "",
         "type" => "game",
         "action" => "stNextPlayer",
         "updateGameProgression" => true,
-        "transitions" => array( "endGame" => 99, "nextPlayer" => 10 )
-    ),
-
-    10 => array(
-        "name" => "playerTurn",
-        "description" => clienttranslate('${actplayer} must play a card or pass'),
-        "descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-        "type" => "activeplayer",
-        "possibleactions" => array( "playCard", "pass" ),
-        "transitions" => array( "playCard" => 2, "pass" => 2 )
-    ),
-
-*/
-
+        "transitions" => [
+            "nextPlayer" => ST_PLAYER_THROW_DICES, 
+            "endGame" => ST_END_GAME,
+        ],
+    ],
+   
     // Final state.
     // Please do not modify.
-    99 => array(
+    ST_END_GAME => [
         "name" => "gameEnd",
         "description" => clienttranslate("End of game"),
         "type" => "manager",
         "action" => "stGameEnd",
-        "args" => "argGameEnd"
-    )
+        "args" => "argGameEnd",
+    ],
+];
 
-);
+$playerActionsGameStates = [
+
+    ST_START => [
+        "name" => "start",
+        "description" => "",
+        "type" => "game",
+        //"action" => "stResolveDices",
+        "transitions" => [ 
+            "throw" => ST_PLAYER_THROW_DICES,
+        ],
+    ],
+
+    ST_PLAYER_THROW_DICES => [
+        "name" => "throwDices",
+        "description" => clienttranslate('${actplayer} must choose lords from deck or from a discard pile'),
+        "descriptionmyturn" => clienttranslate('${you} must choose lords from deck or from a discard pile'),
+        "type" => "activeplayer",
+        //"args" => "argLordStackSelection",
+        "possibleactions" => [ "relaunch", "end" ],
+        "transitions" => [
+            "relaunch" => ST_PLAYER_THROW_DICES,
+            "resolve" => ST_RESOLVE_DICES,
+            "zombiePass" => ST_NEXT_PLAYER,
+        ],
+    ],  
+
+    ST_RESOLVE_DICES => [
+        "name" => "resolveDices",
+        "description" => "",
+        "type" => "game",
+        //"action" => "stResolveDices",
+        "transitions" => [ 
+            "swap" => ST_PLAYER_LORDS_SWAP,
+            "addLocation" => ST_PLAYER_LOCATION_STACK_SELECTION,
+            "next" => ST_END_LORD,
+        ],
+    ],
+
+    ST_PLAYER_LEAVE_TOKYO => [
+        "name" => "leaveTokyo",
+        "description" => clienttranslate('${actplayer} must choose the lord to recruit'),
+        "descriptionmyturn" => clienttranslate('${you} must choose the lord to recruit'),
+        "type" => "activeplayer",
+        "possibleactions" => [ "leave", "stay" ],
+        "transitions" => [
+            "leave" => ST_PLAYER_PICK_CARD,
+            "stay" => ST_PLAYER_PICK_CARD,
+            "zombiePass" => ST_PLAYER_PICK_CARD,
+        ],
+    ],
+
+    /*ST_ENTER_TOKYO => array(
+        "name" => "lordPlacement",
+        "description" => "",
+        "type" => "game",
+        "action" => "stPlayLord",
+        "transitions" => array( 
+            "swap" => ST_PLAYER_LORDS_SWAP,
+            "addLocation" => ST_PLAYER_LOCATION_STACK_SELECTION,
+            "next" => ST_END_LORD,
+        )
+    ),*/
+
+    ST_PLAYER_PICK_CARD => [
+        "name" => "pickCard",
+        "description" => clienttranslate('${actplayer} must select two lords to swap'),
+        "descriptionmyturn" => clienttranslate('${you} must select two lords to swap'),
+        "type" => "activeplayer",
+        "possibleactions" => [ "next" ],
+        "transitions" => [
+            "next" => ST_NEXT_PLAYER,
+            "zombiePass" => ST_NEXT_PLAYER,
+        ]
+    ]
+];
+
+$cardsGameStates = [
+    // TODO
+];
+ 
+$machinestates = $basicGameStates + $playerActionsGameStates + $cardsGameStates;

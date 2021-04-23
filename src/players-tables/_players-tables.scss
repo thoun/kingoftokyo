@@ -1,0 +1,85 @@
+$lord-width: 207.26px;
+$lord-height: 207px;
+$location-width: 186.24px;
+$location-height: 124px;
+$lord-margin: 15px;
+$top-margin: 5px;
+
+#players-tables {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.player-table-wrapper {
+    &.scaled-down {        
+        animation-duration: 1s;
+        animation: scale-down-wrapper 1s 1 forwards;
+
+        .player-table-mat {
+            animation: scale-down-mat 1s 1 forwards;
+        }
+    }
+
+    .player-name {
+        text-align: center;
+        min-width: 150px;
+        font-weight: bold;
+        
+        position: absolute;
+        left: calc(50% - 87px);
+        top: -35px;
+        text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
+        background: #040b11;
+        padding: 5px 10px;
+        border: 2px solid #040b11;
+        border-radius: 5px 5px 0 0;
+        border-bottom: 0px;
+
+        background-repeat: no-repeat;
+        background-position: center -110px;
+    }
+
+    .player-table-mat {
+        display: flex;
+        justify-content: center;
+        background-repeat: no-repeat;
+        background-position: center -140px;
+
+        box-shadow: 2px 2px 5px 5px black;
+        max-width: 99%;
+        width: 1388px;
+        min-width: 1096px;
+        margin-top: 40px;
+
+        .player-table {
+            position: relative;
+            width: $lord-width * 5 + $lord-margin * 4;
+            height: $lord-height * 5 + $lord-margin * 4 + 10px;
+            margin-top: $top-margin;
+        }
+    }
+
+    @for $i from 1 through 10 {
+        .mat#{$i} {
+            background-image: url('img/playmat_#{$i}.jpg');
+        }
+    }
+}
+
+@keyframes scale-down-wrapper {
+    100% {
+        margin-right: -50%;
+    }
+}
+
+@keyframes scale-down-mat {
+    100% {
+        transform: scale(0.5);
+        transform-origin: top left;
+        margin-bottom: -40%;
+        margin-right: -40%;
+    }
+}
+
+@import 'spot';

@@ -1,0 +1,91 @@
+.player-table-spot {
+    position: absolute;
+    display: inline-block;
+    width: $lord-width;
+    height: $lord-height;
+
+    @for $i from 1 through 5 {
+        &.spot#{$i} {
+            top: 0;
+            left: ($lord-width + $lord-margin) * ($i - 1);
+        }
+    }
+
+    @for $i from 6 through 9 {
+        &.spot#{$i} {
+            top: $lord-height + $lord-margin;
+            left: ($lord-width + $lord-margin) * ($i - 5.5);
+        }
+    }
+
+    @for $i from 10 through 12 {
+        &.spot#{$i} {
+            top: ($lord-height + $lord-margin) * 2;
+            left: ($lord-width + $lord-margin) * ($i - 9);
+        }
+    }
+
+    @for $i from 13 through 14 {
+        &.spot#{$i} {
+            top: ($lord-height + $lord-margin) * 3;
+            left: ($lord-width + $lord-margin) * ($i - 11.5);
+        }
+    }
+
+    &.spot15 {
+        top: ($lord-height + $lord-margin) * 4;
+        left: ($lord-width + $lord-margin) * 2;
+    }
+
+    
+    .stockitem {
+        box-shadow: 2px 2px 4px black;
+        
+        &.disabled {
+            cursor:not-allowed;
+            opacity:0.5 !important;
+
+            &:hover {
+                cursor:not-allowed;
+            }
+        }
+
+        &.selectable {
+            border: 3px dashed white;
+        }
+    }
+
+    .player-table-spot-location {
+        position: absolute;
+        top: $lord-height - $location-height;
+        left: $lord-width - $location-width;
+    }
+
+    .player-table-spot-token {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 48px;
+        height: 48px;
+
+        .token {
+            width: 48px;
+            height: 48px;
+            filter: drop-shadow(0 0 5px white);
+        }
+    }
+}
+
+
+
+@for $i from 1 through 5 {
+    .highlight-guild#{$i} {
+        animation: highlight-guild#{$i}-animation 0.75s alternate 2;
+    }
+}
+
+@keyframes highlight-guild1-animation { 100% { box-shadow: 0 0 30px 15px #c1950b; }}
+@keyframes highlight-guild2-animation { 100% { box-shadow: 0 0 30px 15px #770405; }}
+@keyframes highlight-guild3-animation { 100% { box-shadow: 0 0 30px 15px #097138; }}
+@keyframes highlight-guild4-animation { 100% { box-shadow: 0 0 30px 15px #011d4d; }}
+@keyframes highlight-guild5-animation { 100% { box-shadow: 0 0 30px 15px #522886; }}

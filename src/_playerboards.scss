@@ -1,0 +1,115 @@
+$minimap-lord-width: 7px;
+$minimap-lord-height: 7px;
+$minimap-lord-margin: 1px;
+
+.minimap {
+  position: relative;
+  width: ($minimap-lord-width + $minimap-lord-margin) * 5;
+  height: ($minimap-lord-height + $minimap-lord-margin) * 5;
+
+  .player-table-spot {
+    position: absolute;
+    display: inline-block;
+    width: $minimap-lord-width;
+    height: $minimap-lord-height;
+    background: #FFFFFF60;
+    border-radius: 2px;
+
+    @for $i from 1 through 5 {
+        &.spot#{$i} {
+            top: 0;
+            left: ($minimap-lord-width + $minimap-lord-margin) * ($i - 1);
+        }
+    }
+
+    @for $i from 6 through 9 {
+        &.spot#{$i} {
+            top: $minimap-lord-height + $minimap-lord-margin;
+            left: ($minimap-lord-width + $minimap-lord-margin) * ($i - 5.5);
+        }
+    }
+
+    @for $i from 10 through 12 {
+        &.spot#{$i} {
+            top: ($minimap-lord-height + $minimap-lord-margin) * 2;
+            left: ($minimap-lord-width + $minimap-lord-margin) * ($i - 9);
+        }
+    }
+
+    @for $i from 13 through 14 {
+        &.spot#{$i} {
+            top: ($minimap-lord-height + $minimap-lord-margin) * 3;
+            left: ($minimap-lord-width + $minimap-lord-margin) * ($i - 11.5);
+        }
+    }
+
+    &.spot15 {
+        top: ($minimap-lord-height + $minimap-lord-margin) * 4;
+        left: ($minimap-lord-width + $minimap-lord-margin) * 2;
+    }
+  }
+}
+
+.available {
+    .silver {
+      animation: available-silver-key-animation 1.5s 1 forwards;
+    }
+  
+    .gold {
+      animation: available-gold-key-animation 1.5s 1 forwards;
+    }
+
+    span {
+      font-weight: bold;
+    }
+    
+    &.silver-key-counter {
+      color: #4B587C;
+    }
+
+    &.gold-key-counter {
+      color: #734532;
+    }
+
+  }
+    
+@keyframes available-silver-key-animation {
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px gray);
+  }
+  100% { 
+    opacity: 1;
+    filter: drop-shadow(0 0 1px gray);
+  }
+}
+  
+@keyframes available-gold-key-animation {
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px gold);
+  }
+  100% { 
+    opacity: 1;
+    filter: drop-shadow(0 0 1px gold);
+  }
+}
+
+.counters {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+
+  .lord-counter, .pearl-counter, .key-counter {
+    flex: 1;
+    display: flex;
+    align-items: center;
+
+    span.left {
+      margin-left: 10px;
+    }
+    span.small {
+      font-size: 80%;
+    }
+  }
+}
