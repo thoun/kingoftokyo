@@ -136,8 +136,7 @@ class KingOfTokyo extends Table {
         (see states.inc.php)
     */
     function getGameProgression() {
-        $maxPoints = intval(self::getUniqueValueFromDB( "SELECT max(player_score) FROM player"));
-        return $maxPoints * 5;
+        return $this->getMaxPlayerScore() * 5;
     }
 
 
@@ -155,6 +154,10 @@ class KingOfTokyo extends Table {
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
+    function getMaxPlayerScore() {
+        return intval(self::getUniqueValueFromDB("SELECT max(player_score) FROM player"));
+    }
+
     function getPlayerName(int $playerId) {
         return self::getUniqueValueFromDb("SELECT player_name FROM player WHERE player_id = $playerId");
     }
@@ -167,6 +170,10 @@ class KingOfTokyo extends Table {
         return 6; // TODO
     }
 
+    function getPlayerMaxHealth(int $playerId) {
+        return 10; // TODO
+    }
+
     function inTokyo(int $playerId) {
         $location = intval(self::getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
         return $location > 0;
@@ -174,7 +181,7 @@ class KingOfTokyo extends Table {
 
     private function getPlayersIdsFromLocation(bool $inside) {
         $sign = $inside ? '>' : '=';
-        $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_elimination = 0 ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
     }
@@ -279,6 +286,7 @@ class KingOfTokyo extends Table {
 
     function stStartTurn() {
         self::setGameStateValue('throwNumber', 1);
+        self::DbQuery( "UPDATE dice SET `dice_value` = 0" );
 
         $this->gamestate->nextState('throw');
     }
@@ -295,7 +303,7 @@ class KingOfTokyo extends Table {
                 $points = $i + $number - 3;
                 self::DbQuery("UPDATE player SET `player_score` = `player_score` + $points where `player_id` = $playerId");
 
-                self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${points} with ${dice_value} dices'), [
+                self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${points} with ${diceValue} dices'), [
                     'playerId' => $playerId,
                     'player_name' => self::getActivePlayerName(),
                     'points' => $points,
@@ -312,7 +320,7 @@ class KingOfTokyo extends Table {
                     ]);
                 } else {
                     $health = $this->getPlayerHealth($playerId);
-                    $maxHealth = 10;
+                    $maxHealth = $this->getPlayerMaxHealth($playerId);
                     $newHealth = min($health + $number, $maxHealth);
                     $deltaHealth = $newHealth - $health;
                     if ($deltaHealth > 0) {
@@ -386,6 +394,22 @@ class KingOfTokyo extends Table {
 
     function stEndTurn() {
         $this->gamestate->nextState('nextPlayer');
+    }
+
+    function stNextPlayer() {        
+        $player_id = self::getActivePlayerId();
+
+        self::incStat(1, 'turns_number');
+        self::incStat(1, 'turns_number', $player_id);
+
+        $player_id = self::activeNextPlayer();
+        self::giveExtraTime($player_id);
+
+        if ($this->getMaxPlayerScore() >= MAX_POINT) {
+            $this->gamestate->nextState('endGame');
+        } else {
+            $this->gamestate->nextState('nextPlayer');
+        }
     }
 
 //////////////////////////////////////////////////////////////////////////////

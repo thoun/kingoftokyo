@@ -73,9 +73,8 @@ var KingOfTokyo = /** @class */ (function () {
             this.onEnteringShowScore(true);
         }
 
-        this.addHelp();
-
-        this.setupNotifications();*/
+        this.addHelp();*/
+        this.setupNotifications();
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////

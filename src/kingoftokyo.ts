@@ -60,9 +60,9 @@ class KingOfTokyo implements KingOfTokyo {
             this.onEnteringShowScore(true);
         }
 
-        this.addHelp();
+        this.addHelp();*/
 
-        this.setupNotifications();*/
+        this.setupNotifications();
 
         log( "Ending game setup" );
     }
