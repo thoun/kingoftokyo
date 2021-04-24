@@ -67,3 +67,10 @@ interface NotifPlayerEliminatedArgs {
     playerId: number;
     player_name: string;
 }
+
+interface NotifPlayerEntersTokyoArgs {
+    playerId: number;
+    player_name: string;
+    location: number;
+    locationName: string;
+}

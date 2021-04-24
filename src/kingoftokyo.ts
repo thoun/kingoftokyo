@@ -431,8 +431,8 @@ class KingOfTokyo implements KingOfTokyo {
             ['resolveEnergyDice', ANIMATION_MS],
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
-            /*['discardLords', ANIMATION_MS],
-            ['discardLocations', ANIMATION_MS],
+            ['playerEntersTokyo', ANIMATION_MS],
+            /*['discardLocations', ANIMATION_MS],
             ['newPearlMaster', 1],
             ['discardLordPick', 1],
             ['discardLocationPick', 1],
@@ -473,7 +473,7 @@ class KingOfTokyo implements KingOfTokyo {
             const health = this.healthCounters[playerId]?.getValue();
             if (health) {
                 const newHealth = Math.max(0, health - notif.args.number);
-                this.healthCounters[playerId].incValue(newHealth);
+                this.healthCounters[playerId].toValue(newHealth);
                 // TODO animation
             }
         });
@@ -482,6 +482,10 @@ class KingOfTokyo implements KingOfTokyo {
     notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {        
         (this as any).scoreCtrl[notif.args.playerId]?.toValue(0);
         // TODO animation? or strike player's name
+    }
+
+    notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
+        // TODO animation
     }
 /*
     notif_lordSwapped(notif: Notif<NotifLordSwappedArgs>) {

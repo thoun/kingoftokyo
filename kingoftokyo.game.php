@@ -174,6 +174,31 @@ class KingOfTokyo extends Table {
         return 10; // TODO
     }
 
+    function tokyoBayUsed() {
+        $activePlayers = intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0"));
+        return $activePlayers > 4;
+    }
+
+    function isTokyoEmpty(bool $bay) {
+        $location = $bay ? 2 : 1;
+        $players = intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_location = $location"));
+        return $players == 0;
+    }
+
+    function moveToTokyo(int $playerId, bool $bay) {
+        $location = $bay ? 2 : 1;
+        $incScore = 1;
+        self::DbQuery("UPDATE player SET player_score = player_score + $incScore, player_location = $location where `player_id` = $playerId");
+
+        $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
+        self::notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} !'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'location' => $location,
+            'locationName' => $locationName,
+        ]);
+    }
+
     function inTokyo(int $playerId) {
         $location = intval(self::getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
         return $location > 0;
@@ -193,6 +218,17 @@ class KingOfTokyo extends Table {
     function getPlayersIdsOutsideTokyo() {
         return $this->getPlayersIdsFromLocation(false);
     }*/
+
+    function eliminateAPlayer(int $playerId) {
+        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0 where `player_id` = $playerId");
+
+        self::notifyAllPlayers("playerEliminated", clienttranslate('${player_name} is eliminated !'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+        ]);
+
+        self::eliminatePlayer($playerId);
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
@@ -285,6 +321,18 @@ class KingOfTokyo extends Table {
     */
 
     function stStartTurn() {
+        $playerId = self::getActivePlayerId();
+
+        if ($this->inTokyo($playerId)) {
+            // start turn in tokyo
+            $incScore = 2;
+            self::DbQuery("UPDATE player SET player_score = player_score + $incScore where `player_id` = $playerId");
+        } else if ($this->isTokyoEmpty(false)) {
+            $this->moveToTokyo($playerId, false);
+        } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
+            $this->moveToTokyo($playerId, true);
+        }
+
         self::setGameStateValue('throwNumber', 1);
         self::DbQuery( "UPDATE dice SET `dice_value` = 0" );
 
@@ -355,31 +403,30 @@ class KingOfTokyo extends Table {
                     clienttranslate('${player_name} give ${number} smash(es) to players outside Tokyo');
                 $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
 
+                $eliminatedPlayersIds = [];
                 foreach($smashedPlayersIds as $smashedPlayerId) {
                     $health = $this->getPlayerHealth($smashedPlayerId);
                     $newHealth = max($health - $number, 0);
 
-                    if ($newHealth == 0) {
-                        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0 where `player_id` = $smashedPlayerId");
-                    } else {
+                    if ($newHealth > 0) {
                         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $smashedPlayerId");
                     }
 
-                    self::notifyAllPlayers("resolveSmashDice", $message, [
-                        'playerId' => $playerId,
-                        'player_name' => self::getActivePlayerName(),
-                        'number' => $number,
-                        'smashedPlayersIds' => $smashedPlayersIds,
-                    ]);
-
                     if ($newHealth == 0) {
-                        self::notifyAllPlayers("playerEliminated", clienttranslate('${player_name} is eliminated !'), [
-                            'playerId' => $smashedPlayerId,
-                            'player_name' => $this->getPlayerName($smashedPlayerId),
-                        ]);
-
-                        self::eliminatePlayer($smashedPlayerId);
+                        $eliminatedPlayersIds[] = $smashedPlayerId;
                     }
+                }
+
+                self::notifyAllPlayers("resolveSmashDice", $message, [
+                    'playerId' => $playerId,
+                    'player_name' => self::getActivePlayerName(),
+                    'number' => $number,
+                    'smashedPlayersIds' => $smashedPlayersIds,
+                ]);
+
+                $eliminatedPlayersIds = [];
+                foreach($eliminatedPlayersIds as $eliminatedPlayerId) {
+                    $this->eliminateAPlayer($eliminatedPlayerId);
                 }
             }
         }

@@ -409,8 +409,8 @@ var KingOfTokyo = /** @class */ (function () {
             ['resolveEnergyDice', ANIMATION_MS],
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
-            /*['discardLords', ANIMATION_MS],
-            ['discardLocations', ANIMATION_MS],
+            ['playerEntersTokyo', ANIMATION_MS],
+            /*['discardLocations', ANIMATION_MS],
             ['newPearlMaster', 1],
             ['discardLordPick', 1],
             ['discardLocationPick', 1],
@@ -449,7 +449,7 @@ var KingOfTokyo = /** @class */ (function () {
             var health = (_a = _this.healthCounters[playerId]) === null || _a === void 0 ? void 0 : _a.getValue();
             if (health) {
                 var newHealth = Math.max(0, health - notif.args.number);
-                _this.healthCounters[playerId].incValue(newHealth);
+                _this.healthCounters[playerId].toValue(newHealth);
                 // TODO animation
             }
         });
@@ -458,6 +458,9 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         (_a = this.scoreCtrl[notif.args.playerId]) === null || _a === void 0 ? void 0 : _a.toValue(0);
         // TODO animation? or strike player's name
+    };
+    KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
+        // TODO animation
     };
     return KingOfTokyo;
 }());
