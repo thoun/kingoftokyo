@@ -19,6 +19,22 @@ trait CardsTrait {
     }
 
     function renewCards() {
+        $playerId = self::getActivePlayerId();
+
+        if ($this->getPlayerEnergy($playerId) < 2) {
+            throw new Error('Not enough energy');
+        }
+
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - 2 where `player_id` = $playerId");
+
+        $this->cards->moveAllCardsInLocation('table', 'discard');
+        $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
+
+        self::notifyAllPlayers( "renewCards", clienttranslate('${player_name} renew visible cards'), [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'cards' => $cards,
+        ]);
 
         $this->gamestate->nextState('renew');
     }

@@ -293,6 +293,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         dojo.toggleClass(divId, 'selected', selected);
         dojo.toggleClass('rethrow_button', 'disabled', !this.selectedDicesIds.length);
+        dojo.toggleClass('resolve_button', 'disabled', !!this.selectedDicesIds.length);
     };
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications
@@ -316,8 +317,8 @@ var KingOfTokyo = /** @class */ (function () {
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
             ['playerEntersTokyo', ANIMATION_MS],
-            /*['discardLocations', ANIMATION_MS],
-            ['newPearlMaster', 1],
+            ['renewCards', ANIMATION_MS],
+            /*['newPearlMaster', 1],
             ['discardLordPick', 1],
             ['discardLocationPick', 1],
             ['lastTurn', 1],
@@ -367,6 +368,12 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         // TODO animation
+    };
+    KingOfTokyo.prototype.notif_renewCards = function (notif) {
+        var _this = this;
+        this.energyCounters[notif.args.playerId].incValue(-2);
+        this.visibleCards.removeAll();
+        notif.args.cards.forEach(function (card) { return _this.visibleCards.addToStockWithId(_this.getCardUniqueId(card), "" + card.id); });
     };
     return KingOfTokyo;
 }());

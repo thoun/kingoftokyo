@@ -348,6 +348,7 @@ class KingOfTokyo implements KingOfTokyo {
         dojo.toggleClass(divId, 'selected', selected);
 
         dojo.toggleClass('rethrow_button', 'disabled', !this.selectedDicesIds.length);
+        dojo.toggleClass('resolve_button', 'disabled', !!this.selectedDicesIds.length);
     }
 
     ///////////////////////////////////////////////////
@@ -373,8 +374,8 @@ class KingOfTokyo implements KingOfTokyo {
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
             ['playerEntersTokyo', ANIMATION_MS],
-            /*['discardLocations', ANIMATION_MS],
-            ['newPearlMaster', 1],
+            ['renewCards', ANIMATION_MS],
+            /*['newPearlMaster', 1],
             ['discardLordPick', 1],
             ['discardLocationPick', 1],
             ['lastTurn', 1],
@@ -428,112 +429,14 @@ class KingOfTokyo implements KingOfTokyo {
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         // TODO animation
     }
-/*
-    notif_lordSwapped(notif: Notif<NotifLordSwappedArgs>) {
-        this.playersTables[notif.args.playerId].lordSwapped(notif.args);
-        this.minimaps[notif.args.playerId].lordSwapped(notif.args);
-        this.setNewScore(notif.args);
-    }
 
-    notif_extraLordRevealed(notif: Notif<NotifExtraLordRevealedArgs>) {
-        this.lordsStacks.addLords([notif.args.lord]);
-    }
+    notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {
+        this.energyCounters[notif.args.playerId].incValue(-2);
 
-    notif_locationPlayed(notif: Notif<NotifLocationPlayedArgs>) {
-        const from = this.locationsStacks.getStockContaining(`${notif.args.location.id}`);
-
-        this.playersTables[notif.args.playerId].addLocation(notif.args.spot, notif.args.location, from);
-        this.setNewScore(notif.args);
-        this.pearlCounters[notif.args.playerId].incValue(notif.args.pearls);
-
-        if (notif.args.discardedLocations?.length) {
-            this.locationsStacks.discardPick(notif.args.discardedLocations);
-        }
-
-        this.locationsStacks.setPick(false, false);
-
-        this.updateKeysForPlayer(notif.args.playerId);
-    }
-
-    notif_discardLords() {
-        this.lordsStacks.discardVisible();
-    }
-
-    notif_discardLordPick(notif: Notif<NotifDiscardLordPickArgs>) {
-        // log('notif_discardLordPick', notif.args);
-        this.lordsStacks.discardPick(notif.args.discardedLords);
-        this.lordsStacks.setPick(false, false);
+        this.visibleCards.removeAll();
+        notif.args.cards.forEach(card => this.visibleCards.addToStockWithId(this.getCardUniqueId(card), `${card.id}`));
     }
     
-    notif_discardLocationPick(notif: Notif<NotifDiscardLocationPickArgs>) {
-        // log('notif_discardLordPick', notif.args);
-        this.locationsStacks.discardPick(notif.args.discardedLocations);
-        this.locationsStacks.setPick(false, false);
-    }
-
-    notif_discardLocations() {
-        this.locationsStacks.discardVisible();
-    }
-
-    notif_newPearlMaster(notif: Notif<NotifNewPearlMasterArgs>) {
-        this.placePearlMasterToken(notif.args.playerId);
-
-        (this as any).scoreCtrl[notif.args.playerId].incValue(5);
-        (this.gamedatas.players[notif.args.playerId] as any).newScore.pearlMaster = 5;
-        this.setNewScoreTooltip(notif.args.playerId);
-
-        
-        (this as any).scoreCtrl[notif.args.previousPlayerId]?.incValue(-5);
-        if (this.gamedatas.players[notif.args.previousPlayerId]) {
-            (this.gamedatas.players[notif.args.previousPlayerId] as any).newScore.pearlMaster = 0;
-            this.setNewScoreTooltip(notif.args.previousPlayerId);
-        }
-    }
-
-    notif_lastTurn() {
-        dojo.place(`<div id="last-round">
-            ${_("This is the last round of the game!")}
-        </div>`, 'page-title');
-    }
-
-    notif_scoreLords(notif: Notif<NotifScorePointArgs>) {
-        log('notif_scoreLords', notif.args);
-        this.setScore(notif.args.playerId, 1, notif.args.points);
-        (this as any).scoreCtrl[notif.args.playerId].incValue(notif.args.points);
-        this.playersTables[notif.args.playerId].highlightTopLords();
-    }
-
-    notif_scoreLocations(notif: Notif<NotifScorePointArgs>) {
-        log('notif_scoreLocations', notif.args);
-        this.setScore(notif.args.playerId, 2, notif.args.points);
-        (this as any).scoreCtrl[notif.args.playerId].incValue(notif.args.points);
-        this.playersTables[notif.args.playerId].highlightLocations();
-    }
-
-    notif_scoreCoalition(notif: Notif<NotifScoreCoalitionArgs>) {
-        log('notif_scoreCoalition', notif.args);
-        this.setScore(notif.args.playerId, 3, notif.args.points);
-        (this as any).scoreCtrl[notif.args.playerId].incValue(notif.args.points);
-        this.playersTables[notif.args.playerId].highlightCoalition(notif.args.coalition);
-    }
-
-    notif_scorePearlMaster(notif: Notif<NotifScorePearlMasterArgs>) {
-        log('notif_scorePearlMaster', notif.args);
-        Object.keys(this.gamedatas.players).forEach(playerId => {
-            const isPearlMaster = notif.args.playerId == Number(playerId);
-            this.setScore(playerId, 4, isPearlMaster ? 5 : 0);
-            if (isPearlMaster) {
-                (this as any).scoreCtrl[notif.args.playerId].incValue(5);
-            }
-        });
-
-        document.getElementById('pearlMasterToken').classList.add('highlight');
-    }
-
-    notif_scoreTotal(notif: Notif<NotifScorePointArgs>) {
-        log('notif_scoreTotal', notif.args);
-        this.setScore(notif.args.playerId, 5, notif.args.points);
-    }*/
 
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */

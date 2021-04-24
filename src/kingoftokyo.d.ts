@@ -74,3 +74,9 @@ interface NotifPlayerEntersTokyoArgs {
     location: number;
     locationName: string;
 }
+
+interface NotifRenewCardsArgs {
+    playerId: number;
+    player_name: string;
+    cards: Card[];
+}
