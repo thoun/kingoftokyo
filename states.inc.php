@@ -120,6 +120,7 @@ $playerActionsGameStates = [
         "action" => "stResolveDices",
         "transitions" => [ 
             "pickCard" => ST_PLAYER_PICK_CARD,
+            "endGame" => ST_END_GAME,
             // TODO leave tokyo
         ],
     ],

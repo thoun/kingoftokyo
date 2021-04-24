@@ -43,7 +43,7 @@ $size: 0.25rem;
 
   .die-list {
     pointer-events: none;
-    // TODO display: grid;
+    display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     height: 100%;
@@ -57,6 +57,8 @@ $size: 0.25rem;
     display: grid;
     height: 100%;
     width: 100%;
+    grid-column: 1;
+    grid-row: 1;
 
     border-radius: 20%;
     border-style: outset;

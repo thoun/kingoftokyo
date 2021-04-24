@@ -63,6 +63,7 @@
 }
 .die-list {
   pointer-events: none;
+  display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
   height: 100%;
@@ -76,6 +77,8 @@
   display: grid;
   height: 100%;
   width: 100%;
+  grid-column: 1;
+  grid-row: 1;
   border-radius: 20%;
   border-style: outset;
   border-width: 1px;

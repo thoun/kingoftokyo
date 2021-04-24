@@ -174,9 +174,12 @@ class KingOfTokyo extends Table {
         return 10; // TODO
     }
 
+    function getRemainingPlayers() {
+        return intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0"));
+    }
+
     function tokyoBayUsed() {
-        $activePlayers = intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0"));
-        return $activePlayers > 4;
+        return $this->getRemainingPlayers() > 4;
     }
 
     function isTokyoEmpty(bool $bay) {
@@ -211,7 +214,7 @@ class KingOfTokyo extends Table {
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
     }
 
-    /*function getPlayersIdsInsideTokyo() {
+    /*function getPlayersIdsInTokyo() {
         return $this->getPlayersIdsFromLocation(true);
     }
 
@@ -228,6 +231,12 @@ class KingOfTokyo extends Table {
         ]);
 
         self::eliminatePlayer($playerId);
+        
+        // TODO move from bay to tokyo if needed
+
+        if ($this->getRemainingPlayers() <= 1) {
+            $this->gamestate->nextState('endGame');
+        }
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -399,7 +408,7 @@ class KingOfTokyo extends Table {
                 $smashTokyo = !$this->inTokyo($playerId);
 
                 $message = $smashTokyo ? 
-                    clienttranslate('${player_name} give ${number} smash(es) to players inside Tokyo') :
+                    clienttranslate('${player_name} give ${number} smash(es) to players in Tokyo') :
                     clienttranslate('${player_name} give ${number} smash(es) to players outside Tokyo');
                 $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
 
