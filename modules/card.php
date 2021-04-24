@@ -1,4 +1,6 @@
 <?php
+namespace KOT;
+
 class Card {
     public $id;
     public $location;

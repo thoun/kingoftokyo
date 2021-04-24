@@ -1,4 +1,6 @@
 <?php
+namespace KOT;
+
 class Dice {
     public $id;
     public $value;
