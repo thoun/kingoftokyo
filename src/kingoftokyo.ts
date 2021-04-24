@@ -122,15 +122,17 @@ class KingOfTokyo implements KingOfTokyo {
         }
 
         const dices = args.dices;
+        const addedDicesIds = [];
         for (let i=1; i<=6; i++) {
             dices.filter(dice => dice.value == i && !document.getElementById(`dice${dice.id}`)).forEach(dice => {
+                addedDicesIds.push(`dice${dice.id}`);
                 dojo.place(this.createDiceHtml(dice), 'dices-selector');
             });
         }
 
         const selectable = (this as any).isCurrentPlayerActive() && args.throwNumber < args.maxThrowNumber;
 
-        Array.from($('dices-selector').getElementsByClassName('dice')).forEach((dice: HTMLDivElement) => {
+        addedDicesIds.map(id => document.getElementById(id)).forEach((dice: HTMLDivElement) => {
             dice.classList.add('rolled');
             setTimeout(() => {
                 dice.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll');

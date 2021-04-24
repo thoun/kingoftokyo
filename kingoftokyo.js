@@ -129,8 +129,10 @@ var KingOfTokyo = /** @class */ (function () {
             $('dices-selector').innerHTML = '';
         }
         var dices = args.dices;
+        var addedDicesIds = [];
         var _loop_1 = function (i) {
             dices.filter(function (dice) { return dice.value == i && !document.getElementById("dice" + dice.id); }).forEach(function (dice) {
+                addedDicesIds.push("dice" + dice.id);
                 dojo.place(_this.createDiceHtml(dice), 'dices-selector');
             });
         };
@@ -138,7 +140,7 @@ var KingOfTokyo = /** @class */ (function () {
             _loop_1(i);
         }
         var selectable = this.isCurrentPlayerActive() && args.throwNumber < args.maxThrowNumber;
-        Array.from($('dices-selector').getElementsByClassName('dice')).forEach(function (dice) {
+        addedDicesIds.map(function (id) { return document.getElementById(id); }).forEach(function (dice) {
             dice.classList.add('rolled');
             setTimeout(function () {
                 dice.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll');
