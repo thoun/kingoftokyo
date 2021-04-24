@@ -8,12 +8,11 @@ interface Dice {
     extra: boolean;
 }
 
-/*interface Card {
+interface Card {
     id: number;
     type: number;
-    pearls: number;
-    points: number;
-}*/
+    cost: number;
+}
 
 interface KingOfTokyoGamedatas {
     current_player_id: string;
@@ -28,6 +27,7 @@ interface KingOfTokyoGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
+    visibleCards: Card[];
 }
 
 interface KingOfTokyo extends Game {

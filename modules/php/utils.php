@@ -19,19 +19,19 @@ trait UtilTrait {
         $cards = [];
         
         for( $value=1; $value<=15; $value++ ) { // 1-15 green
-            $cards[] = ['type' => 0, 'type_arg' => $value, 'nbr' => 1, 'id' => $value];
+            $cards[] = ['type' => 0+$value, 'type_arg' => $value, 'nbr' => 1, 'id' => $value];
         }
         
         for( $value=2; $value<=14; $value++ ) { // 2-14 yellow
-            $cards[] = ['type' => 1, 'type_arg' => $value, 'nbr' => 1, 'id' => 100 + $value];
+            $cards[] = ['type' => 100+$value, 'type_arg' => $value, 'nbr' => 1, 'id' => 100 + $value];
         }
         
         for( $value=3; $value<=13; $value++ ) { // 3-13 orange
-            $cards[] = ['type' => 2, 'type_arg' => $value, 'nbr' => 1, 'id' => 200 + $value];
+            $cards[] = ['type' => 200+$value, 'type_arg' => $value, 'nbr' => 1, 'id' => 200 + $value];
         }
         
         for( $value=7; $value<=9; $value++ ) { // 7,8,9 red
-            $cards[] = ['type' => 3, 'type_arg' => $value, 'nbr' => 1, 'id' => 300 + $value];
+            $cards[] = ['type' => 300+$value, 'type_arg' => $value, 'nbr' => 1, 'id' => 300 + $value];
         }
             
         // $this->cards->createCards( array_slice($cards, count($cards) - 10, 10), 'deck' );

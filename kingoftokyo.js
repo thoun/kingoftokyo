@@ -31,6 +31,8 @@ function moveToAnotherStock(sourceStock, destinationStock, uniqueId, cardId) {
     }
 }
 var ANIMATION_MS = 1500;
+var CARD_WIDTH = 123;
+var CARD_HEIGHT = 185;
 var isDebug = window.location.host == 'studio.boardgamearena.com';
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var KingOfTokyo = /** @class */ (function () {
@@ -61,6 +63,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
         this.createPlayerPanels(gamedatas);
+        this.createVisibleCards(gamedatas.visibleCards);
         /*this.lordsStacks = new LordsStacks(this, gamedatas.visibleLords, gamedatas.pickLords);
         this.locationsStacks = new LocationsStacks(this, gamedatas.visibleLocations, gamedatas.pickLocations);
 
@@ -91,29 +94,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setGamestateDescription(tdArgs.throwNumber >= tdArgs.maxThrowNumber ? "last" : '');
                 this.onEnteringThrowDices(args.args);
                 break;
-            /*case 'lordSelection':
-                const multiple = (args.args as EnteringLordSelectionArgs).multiple;
-                const number = (args.args as EnteringLordSelectionArgs).lords?.length;
-                this.setGamestateDescription(multiple ? (number > 1 ? 'multiple' : 'last') : '');
-                this.onEnteringLordSelection(args.args);
+            case 'pickCard':
+                this.onEnteringPickCard();
                 break;
-            case 'lordSwap':
-                this.onEnteringLordSwap();
-                break;
-
-            case 'locationStackSelection':
-                const allHidden = (args.args as EnteringLocationStackSelectionArgs).allHidden;
-                this.setGamestateDescription(allHidden ? 'allHidden' : '');
-                this.onEnteringLocationStackSelection(args.args);
-                break;
-            case 'locationSelection':
-                this.onEnteringLocationSelection(args.args);
-                break;
-
-            case 'showScore':
-                Object.keys(this.gamedatas.players).forEach(playerId => (this as any).scoreCtrl[playerId].setValue(0));
-                this.onEnteringShowScore();
-                break;*/
         }
     };
     KingOfTokyo.prototype.setGamestateDescription = function (property) {
@@ -152,110 +135,9 @@ var KingOfTokyo = /** @class */ (function () {
         this.selectedDicesIds = [];
         dojo.toggleClass('dices-selector', 'selectable', selectable);
     };
-    /*onEnteringLordSelection(args: EnteringLordSelectionArgs) {
-        this.lordsStacks.setPick(true, (this as any).isCurrentPlayerActive(), args.lords);
-    }
-
-    onEnteringLordSwap() {
-        if ((this as any).isCurrentPlayerActive()) {
-            this.swapSpots = [];
-            this.playersTables[(this as any).player_id].setSelectableForSwap(true);
-        }
-    }
-
-    onEnteringLocationStackSelection(args: EnteringLocationStackSelectionArgs) {
-        this.locationsStacks.setMax(args.max);
-        if ((this as any).isCurrentPlayerActive()) {
-            this.locationsStacks.setSelectable(true, null, args.allHidden);
-        }
-    }
-
-    onEnteringLocationSelection(args: EnteringLocationSelectionArgs) {
-        this.locationsStacks.setPick(true, (this as any).isCurrentPlayerActive(), args.locations);
-    }
-
-    onEnteringShowScore(fromReload: boolean = false) {
-        this.closePopin();
-        const lastTurnBar = document.getElementById('last-round');
-        if (lastTurnBar) {
-            lastTurnBar.style.display = 'none';
-        }
-
-        document.getElementById('stacks').style.display = 'none';
-        document.getElementById('score').style.display = 'flex';
-
-        Object.values(this.gamedatas.players).forEach(player => {
-            //if we are a reload of end state, we display values, else we wait for notifications
-            const score: Score = fromReload ? (player as any).newScore : null;
-
-            dojo.place(`<tr id="score${player.id}">
-                <td class="player-name" style="color: #${player.color}">${player.name}</td>
-                <td id="lords-score${player.id}" class="score-number lords-score">${score?.lords !== undefined ? score.lords : ''}</td>
-                <td id="locations-score${player.id}" class="score-number locations-score">${score?.locations !== undefined ? score.locations : ''}</td>
-                <td id="coalition-score${player.id}" class="score-number coalition-score">${score?.coalition !== undefined ? score.coalition : ''}</td>
-                <td id="masterPearl-score${player.id}" class="score-number masterPearl-score">${score?.pearlMaster !== undefined ? score.pearlMaster : ''}</td>
-                <td class="score-number total">${score?.total !== undefined ? score.total : ''}</td>
-            </tr>`, 'score-table-body');
-        });
-
-        (this as any).addTooltipHtmlToClass('lords-score', _("The total of Influence Points from the Lords with the Coat of Arms tokens (the most influential Lord of each color in your Senate Chamber)."));
-        (this as any).addTooltipHtmlToClass('locations-score', _("The total of Influence Points from the Locations you control."));
-        (this as any).addTooltipHtmlToClass('coalition-score', _("The biggest area of adjacent Lords of the same color is identified and 3 points are scored for each Lord within it"));
-        (this as any).addTooltipHtmlToClass('masterPearl-score', _("The player who has the Pearl Master token gains a bonus of 5 Influence Points."));
-
-        if(!document.getElementById('page-content').style.zoom) {
-            // scale down
-            Array.from(document.getElementsByClassName('player-table-wrapper')).forEach(elem => elem.classList.add('scaled-down'));
-        }
-    }*/
-    // onLeavingState: this method is called each time we are leaving a game state.
-    //                 You can use this method to perform some user interface changes at this moment.
-    //
-    /*public onLeavingState(stateName: string) {
-        log( 'Leaving state: '+stateName );
-
-        switch (stateName) {
-            case 'lordStackSelection':
-                this.onLeavingLordStackSelection();
-                break;
-            case 'lordSelection':
-                this.onLeavingLordSelection();
-                break;
-            case 'lordSwap':
-                this.onLeavingLordSwap();
-                break;
-
-            case 'locationStackSelection':
-                this.onLeavingLocationStackSelection();
-                break;
-            case 'locationSelection':
-                this.onLeavingLocationSelection();
-                break;
-        }
-    }
-
-    onLeavingLordStackSelection() {
-        this.lordsStacks.setSelectable(false, null);
-    }
-
-    onLeavingLordSelection() {
-        this.lordsStacks.setPick(this.lordsStacks.hasPickCards(), false);
-    }
-
-    onLeavingLordSwap() {
-        if ((this as any).isCurrentPlayerActive()) {
-            this.playersTables[(this as any).player_id].setSelectableForSwap(false);
-        }
-        this.swapSpots = null;
-    }
-
-    onLeavingLocationStackSelection() {
-        this.locationsStacks.setSelectable(false);
-    }
-
-    onLeavingLocationSelection() {
-        this.locationsStacks.setSelectable(false);
-    }*/
+    KingOfTokyo.prototype.onEnteringPickCard = function () {
+        this.visibleCards.setSelectionMode(1);
+    };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
     //
@@ -269,6 +151,13 @@ var KingOfTokyo = /** @class */ (function () {
                         dojo.addClass('rethrow_button', 'disabled');
                     }
                     this.addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
+                    break;
+                case 'pickCard':
+                    this.addActionButton('renew_button', _("Renew cards") + " ( 2 <span class=\"small icon energy\"></span>)", 'onRenew');
+                    if (this.energyCounters[this.player_id].getValue() < 2) {
+                        dojo.addClass('renew_button', 'disabled');
+                    }
+                    this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
             }
         }
@@ -293,6 +182,53 @@ var KingOfTokyo = /** @class */ (function () {
         });
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
     };
+    KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
+        var _this = this;
+        this.visibleCards = new ebg.stock();
+        this.visibleCards.setSelectionAppearance('class');
+        this.visibleCards.selectionClass = 'no-visible-selection';
+        this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
+        this.visibleCards.setSelectionMode(0);
+        this.visibleCards.onItemCreate = dojo.hitch(this, 'setupNewCard');
+        this.visibleCards.image_items_per_row = 13;
+        dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
+        this.setupCards([this.visibleCards]);
+        visibleCards.forEach(function (card) { return _this.visibleCards.addToStockWithId(_this.getCardUniqueId(card), "" + card.id); });
+    };
+    KingOfTokyo.prototype.getCardUniqueId = function (card) {
+        return card.type;
+    };
+    KingOfTokyo.prototype.setupCards = function (stocks) {
+        var idsByType = [[], [], [], []];
+        // Create cards types:
+        for (var number = 1; number <= 15; number++) { // 1-15 green
+            idsByType[0].push(number * 100);
+        }
+        for (var number = 2; number <= 14; number++) { // 2-14 yellow
+            idsByType[1].push(number * 100);
+        }
+        for (var number = 3; number <= 13; number++) { // 3-13 orange
+            idsByType[2].push(number * 100);
+        }
+        for (var number = 7; number <= 9; number++) { // 7,8,9 red
+            idsByType[3].push(number * 100);
+        }
+        stocks.forEach(function (stock) {
+            idsByType.forEach(function (idByType, type) {
+                var cardsurl = g_gamethemeurl + "img/cards" + type + ".jpg";
+                idByType.forEach(function (cardId, id) {
+                    var uniqueId = type;
+                    stock.addItemType(uniqueId, uniqueId, cardsurl, id);
+                });
+            });
+        });
+    };
+    KingOfTokyo.prototype.setupNewCard = function (card_div, card_type_id, card_id) {
+        // TODO
+    };
+    KingOfTokyo.prototype.onVisibleCardClick = function (control_name, item_id) {
+        this.pickCard(item_id);
+    };
     KingOfTokyo.prototype.onRethrow = function () {
         this.rethrowDices(this.selectedDicesIds);
         this.selectedDicesIds.forEach(function (id) { return dojo.destroy("dice" + id); });
@@ -310,6 +246,26 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('resolve');
+    };
+    KingOfTokyo.prototype.pickCard = function (id) {
+        if (!this.checkAction('pick')) {
+            return;
+        }
+        this.takeAction('pick', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.onRenew = function () {
+        if (!this.checkAction('renew')) {
+            return;
+        }
+        this.takeAction('renew');
+    };
+    KingOfTokyo.prototype.onEndTurn = function () {
+        if (!this.checkAction('endTurn')) {
+            return;
+        }
+        this.takeAction('endTurn');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

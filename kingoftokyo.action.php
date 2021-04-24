@@ -54,6 +54,32 @@
 
         self::ajaxResponse();
     }
+  	
+    public function pick() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->pickCard($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function renew() {
+        self::setAjaxMode();
+
+        $this->game->renewCards();
+
+        self::ajaxResponse();
+    }
+  	
+    public function endTurn() {
+        self::setAjaxMode();
+
+        $this->game->endTurn();
+
+        self::ajaxResponse();
+    }
 
   }
   

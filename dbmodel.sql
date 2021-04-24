@@ -26,17 +26,16 @@ CREATE TABLE IF NOT EXISTS `dice` (
   PRIMARY KEY (`dice_id`)
 ) ENGINE=InnoDB;
 
--- card_type : 0 for discard power, 1 for keep power
--- card_type_arg : power index
+-- card_type : 0..100 for keep power, 100..200 for discard power
+-- card_type_arg : cost
 -- card_location : deck / player / discard
 -- card_location_arg : player id
 CREATE TABLE IF NOT EXISTS `card` (
   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `card_type` tinyint unsigned NOT NULL,
+  `card_type` smallint unsigned NOT NULL,
   `card_type_arg` tinyint unsigned NOT NULL,
   `card_location` varchar(16) NOT NULL,
   `card_location_arg` INT(10) unsigned NOT NULL,
-  -- TODO `card_price` INT(10) unsigned NOT NULL,
   PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB;
 

@@ -13,6 +13,10 @@ trait PlayerTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
+    function endTurn() {
+        $this->gamestate->nextState('endTurn');
+    }
+
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments

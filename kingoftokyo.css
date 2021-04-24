@@ -7,6 +7,10 @@
   background-image: url("img/icons.png");
   background-size: auto 100%;
 }
+.icon.small {
+  width: 16px;
+  height: 16px;
+}
 .icon.points {
   background-position: 0% 0%;
 }

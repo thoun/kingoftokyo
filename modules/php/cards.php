@@ -13,6 +13,15 @@ trait CardsTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
+    function pickCard(int $id) {
+
+        $this->gamestate->nextState('pick');
+    }
+
+    function renewCards() {
+
+        $this->gamestate->nextState('renew');
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
@@ -30,6 +39,6 @@ trait CardsTrait {
 
     function stPickCard() {
         // TODO remove
-        $this->gamestate->nextState('dontPick');
+        //$this->gamestate->nextState('dontPick');
     }
 }

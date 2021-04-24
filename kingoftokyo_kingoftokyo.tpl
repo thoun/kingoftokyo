@@ -4,6 +4,9 @@
     <div id="dices-selector"></div>
 </div>
 
+<div id="visible-cards" class="whiteblock">
+</div>
+
 <div id="board">
 </div>
 
