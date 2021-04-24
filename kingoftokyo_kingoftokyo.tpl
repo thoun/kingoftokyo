@@ -1,6 +1,8 @@
 {OVERALL_GAME_HEADER}
 
-<div id="rolled_dice"></div>
+<div id="rolled_dice">
+    <div id="dices-selector"></div>
+</div>
 
 <div id="board">
 </div>

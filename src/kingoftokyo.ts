@@ -16,6 +16,7 @@ class KingOfTokyo implements KingOfTokyo {
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
+    private selectedDicesIds: number[] = null;
 
     constructor() {     
     }
@@ -116,7 +117,29 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     onEnteringThrowDices(args: EnteringThrowDicesArgs) {
-        document.getElementById('rolled_dice').innerHTML = args.dices.map(dice => dice.value).join(',');
+        $('dices-selector').innerHTML = '';
+        const dices = args.dices;
+        for (let i=1; i<=6; i++) {
+            dices.filter(dice => dice.value == i).forEach(dice => {
+                dojo.place(this.createDiceHtml(dice), 'dices-selector');
+            });
+        }
+
+        const selectable = (this as any).isCurrentPlayerActive() && args.throwNumber < args.maxThrowNumber;
+
+        Array.from($('dices-selector').getElementsByClassName('dice')).forEach((dice: HTMLDivElement) => {
+            dice.classList.add('rolled');
+            setTimeout(() => {
+                dice.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll');
+            }, 100); 
+
+            if (selectable) {
+                dice.addEventListener('click', () => this.toggleDiceSelection(dice));
+            }
+        });
+
+        this.selectedDicesIds = [];
+        dojo.toggleClass('dices-selector', 'selectable', selectable);
     }
 
     /*onEnteringLordSelection(args: EnteringLordSelectionArgs) {
@@ -283,7 +306,7 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     public onRethrow() {
-        // TODO
+        this.rethrowDices(this.selectedDicesIds);
     }
 
     public rethrowDices(dicesIds: number[]) {
@@ -310,104 +333,31 @@ class KingOfTokyo implements KingOfTokyo {
         (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
     }
 
-    /*placePearlMasterToken(playerId: number) {
-        const pearlMasterToken = document.getElementById('pearlMasterToken');
-        if (pearlMasterToken) {
-            slideToObjectAndAttach(this, pearlMasterToken, `player_board_${playerId}_pearlMasterWrapper`);
+    private createDiceHtml(dice: Dice) {
+        let html = `<div id="${dice.id}" class="dice dice${dice.value}" data-dice-value="${dice.value}">
+        <ol class="die-list" data-roll="${dice.value}">`;
+        for (let die=1; die<=6; die++) {
+            html += `<li class="die-item ${dice.extra ? 'green' : 'black'} side${die}" data-side="${die}"></li>`;
+        }
+        html += `</ol></div>`;
+        return html;
+    }
+
+    private toggleDiceSelection(dice: HTMLDivElement) {
+        const selected = !dojo.hasClass(dice.id, 'selected');
+        dojo.toggleClass(dice.id, 'selected', selected);
+
+        const id = parseInt(dice.id);
+        if (selected) {
+            this.selectedDicesIds.push(id);
         } else {
-            dojo.place('<div id="pearlMasterToken" class="token"></div>', `player_board_${playerId}_pearlMasterWrapper`);
-
-            (this as any).addTooltipHtml('pearlMasterToken', _("Pearl Master token. At the end of the game, the player possessing the Pearl Master token gains a bonus of 5 Influence Points."));
-        }
-    }
-
-    public setCanSwap(swapSpots: number[]) {
-        if (this.swapSpots.length !== 2 && swapSpots.length === 2) {
-            (this as any).addActionButton( 'swap_button', _("Swap"), 'onSwap' );
-        } else if (this.swapSpots.length === 2 && swapSpots.length !== 2) {
-            dojo.destroy('swap_button');
-        }
-        this.swapSpots = swapSpots.slice();
-    }
-
-    public onSwap() {
-        if(!(this as any).checkAction('next')) {
-            return;
-        }
-     
-        this.takeAction('swap', { spots: this.swapSpots.join(',') });
-    }
-
-    public onDontSwap() {
-        /_*if(!(this as any).checkAction('next')) {
-            return;
-        }*_/
-     
-        this.takeAction('dontSwap');
-    }
-
-    private setScore(playerId: number | string, column: number, score: number) { // column 1 for lord ... 5 for pearl master
-        const cell = (document.getElementById(`score${playerId}`).getElementsByTagName('td')[column] as HTMLTableDataCellElement);
-        cell.innerHTML = `${score}`;
-        cell.classList.add('highlight');
-    }
-
-    private addHelp() {
-        dojo.place(`<button id="conspiracy-help-button">?</button>`, 'left-side');
-        dojo.connect( $('conspiracy-help-button'), 'onclick', this, () => this.showHelp());
-    }
-
-    private showHelp() {
-        if (!this.helpDialog) {
-            this.helpDialog = new ebg.popindialog();
-            this.helpDialog.create( 'conspiracyHelpDialog' );
-            this.helpDialog.setTitle( _("Cards help") );
-            
-            var html = `<div id="help-popin">
-                <h1>${_("Lords")}</h1>
-                <div id="help-lords" class="help-section">
-                    <table>`;
-                LORDS_IDS.forEach(number => html += `<tr><td><div id="lord${number}" class="lord"></div></td><td>${getLordTooltip(number * 10)}</td></tr>`);
-                html += `</table>
-                </div>
-                <h1>${_("Locations")}</h1>
-                <div id="help-locations" class="help-section">
-                    <table>`;
-                LOCATIONS_UNIQUE_IDS.forEach(number => html += `<tr><td><div id="location${number}" class="location"></div></td><td>${getLocationTooltip(number * 10)}</td></tr>`);
-                LOCATIONS_GUILDS_IDS.forEach(number => html += `<tr><td><div id="location${number}" class="location"></div></td><td>${getLocationTooltip(number * 10)}</td></tr>`);
-                html += `</table>
-                </div>
-            </div>`;
-            
-            // Show the dialog
-            this.helpDialog.setContent(html);
+            this.selectedDicesIds.splice(this.selectedDicesIds.indexOf(id), 1);
         }
 
-        this.helpDialog.show();
+        dojo.toggleClass(dice.id, 'selected', selected);
+
+        dojo.toggleClass('rethrow_button', 'disabled', !this.selectedDicesIds.length);
     }
-
-    private setNewScoreTooltip(playerId: number) {
-        const score: Score = (this.gamedatas.players[playerId] as any).newScore
-        const html = `
-            ${_("Lords points")} : <strong>${score.lords}</strong><br>
-            ${_("Locations points")} : <strong>${score.locations}</strong><br>
-            ${_("Coalition points")} : <strong>${score.coalition}</strong><br>
-            ${_("Pearl Master points")} : <strong>${score.pearlMaster}</strong><br>
-        `;
-
-        (this as any).addTooltipHtml(`player_score_${playerId}`, html);
-        (this as any).addTooltipHtml(`icon_point_${playerId}`, html);
-    }
-
-    private setNewScore(args: NotifNewScoreArgs) {
-        const score = args.newScore;
-        (this.gamedatas.players[args.playerId] as any).newScore = score;
-        if (!isNaN(score.total)) {
-            (this as any).scoreCtrl[args.playerId]?.toValue(score.total);
-        }
-        
-        this.setNewScoreTooltip(args.playerId);
-    }*/
 
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications

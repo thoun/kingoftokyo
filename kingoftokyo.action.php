@@ -40,7 +40,7 @@
     public function rethrow() {
         self::setAjaxMode();
 
-        $dicesIds = self::getArg("dicesIds", AT_string, true);
+        $dicesIds = self::getArg("dicesIds", AT_numberlist, true);
 
         $this->game->rethrowDices($dicesIds);
 
