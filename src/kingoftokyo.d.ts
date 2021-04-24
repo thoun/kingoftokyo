@@ -52,7 +52,13 @@ interface NotifResolveNumberDiceArgs extends NotifResolveArgs {
 interface NotifResolveHealthDiceArgs extends NotifResolveArgs {
     health: number;
 }
+interface NotifResolveHealthDiceInTokyoArgs extends NotifResolveArgs {}
 
 interface NotifResolveEnergyDiceArgs extends NotifResolveArgs {
     number: number;
+}
+
+interface NotifResolveSmashDiceArgs extends NotifResolveArgs {
+    number: number;
+    smashedPlayersIds: number[];
 }

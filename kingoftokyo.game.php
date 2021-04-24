@@ -156,12 +156,36 @@ class KingOfTokyo extends Table {
     }
 
     function getPlayerName(int $playerId) {
-        return self::getUniqueValueFromDb( "SELECT player_name FROM player WHERE player_id = $playerId" );
+        return self::getUniqueValueFromDb("SELECT player_name FROM player WHERE player_id = $playerId");
+    }
+
+    function getPlayerHealth(int $playerId) {
+        return intval(self::getUniqueValueFromDB("SELECT player_health FROM player where `player_id` = $playerId"));
     }
 
     function getDicesNumber(int $playerId) {
         return 6; // TODO
     }
+
+    function inTokyo(int $playerId) {
+        $location = intval(self::getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
+        return $location > 0;
+    }
+
+    private function getPlayersIdsFromLocation(bool $inside) {
+        $sign = $inside ? '>' : '=';
+        $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_elimination = 0 ORDER BY player_no";
+        $dbResults = self::getCollectionFromDB($sql);
+        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+    }
+
+    /*function getPlayersIdsInsideTokyo() {
+        return $this->getPlayersIdsFromLocation(true);
+    }
+
+    function getPlayersIdsOutsideTokyo() {
+        return $this->getPlayersIdsFromLocation(false);
+    }*/
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
@@ -281,18 +305,25 @@ class KingOfTokyo extends Table {
 
             // health
             if ($i == 4 && $number > 0) {
-                $health = intval(self::getUniqueValueFromDB( "SELECT player_health FROM player where `player_id` = $playerId"));
-                $maxHealth = 10;
-                $newHealth = min($health + $number, $maxHealth);
-                $deltaHealth = $newHealth - $health;
-                if ($deltaHealth > 0) {
-                    self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
-
-                    self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${health} health'), [
+                if ($this->inTokyo($playerId)) {
+                    self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} wins no health (player in Tokyo)'), [
                         'playerId' => $playerId,
                         'player_name' => self::getActivePlayerName(),
-                        'health' => $deltaHealth,
                     ]);
+                } else {
+                    $health = $this->getPlayerHealth($playerId);
+                    $maxHealth = 10;
+                    $newHealth = min($health + $number, $maxHealth);
+                    $deltaHealth = $newHealth - $health;
+                    if ($deltaHealth > 0) {
+                        self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+
+                        self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${health} health'), [
+                            'playerId' => $playerId,
+                            'player_name' => self::getActivePlayerName(),
+                            'health' => $deltaHealth,
+                        ]);
+                    }
                 }
             }
 
@@ -309,7 +340,31 @@ class KingOfTokyo extends Table {
 
             // smash
             if ($i == 6 && $number > 0) {
-                // TODO
+                $smashTokyo = !$this->inTokyo($playerId);
+
+                $message = $smashTokyo ? 
+                    clienttranslate('${player_name} give ${number} smash(es) to players inside Tokyo') :
+                    clienttranslate('${player_name} give ${number} smash(es) to players outside Tokyo');
+                $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
+
+                foreach($smashedPlayersIds as $smashedPlayerId) {
+                    $health = $this->getPlayerHealth($smashedPlayerId);
+                    $newHealth = max($health - $number, 0);
+
+                    if ($newHealth == 0) {
+                        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0 where `player_id` = $smashedPlayerId");
+                        self::eliminatePlayer($smashedPlayerId);
+                    } else {
+                        self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $smashedPlayerId");
+                    }
+
+                    self::notifyAllPlayers( "resolveSmashDice", $message, [
+                        'playerId' => $playerId,
+                        'player_name' => self::getActivePlayerName(),
+                        'number' => $number,
+                        'smashedPlayersIds' => $smashedPlayersIds,
+                    ]);
+                }
             }
         }
 

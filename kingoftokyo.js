@@ -406,7 +406,9 @@ var KingOfTokyo = /** @class */ (function () {
         var notifs = [
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
+            ['resolveHealthDiceInTokyo', ANIMATION_MS],
             ['resolveEnergyDice', ANIMATION_MS],
+            ['resolveSmashDice', ANIMATION_MS],
             /*['locationPlayed', ANIMATION_MS],
             ['discardLords', ANIMATION_MS],
             ['discardLocations', ANIMATION_MS],
@@ -428,12 +430,34 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_resolveNumberDice = function (notif) {
         var _a;
         (_a = this.scoreCtrl[notif.args.playerId]) === null || _a === void 0 ? void 0 : _a.incValue(notif.args.points);
+        // TODO animation
     };
     KingOfTokyo.prototype.notif_resolveHealthDice = function (notif) {
         this.healthCounters[notif.args.playerId].incValue(notif.args.health);
+        // TODO animation
+    };
+    KingOfTokyo.prototype.notif_resolveHealthDiceInTokyo = function (notif) {
+        // TODO animation
     };
     KingOfTokyo.prototype.notif_resolveEnergyDice = function (notif) {
         this.energyCounters[notif.args.playerId].incValue(notif.args.number);
+        // TODO animation
+    };
+    KingOfTokyo.prototype.notif_resolveSmashDice = function (notif) {
+        var _this = this;
+        notif.args.smashedPlayersIds.forEach(function (playerId) {
+            var _a, _b;
+            var health = (_a = _this.healthCounters[playerId]) === null || _a === void 0 ? void 0 : _a.getValue();
+            if (health) {
+                var newHealth = Math.max(0, health - notif.args.number);
+                _this.healthCounters[notif.args.playerId].incValue(newHealth);
+                // TODO animation
+                if (newHealth == 0) {
+                    (_b = _this.scoreCtrl[playerId]) === null || _b === void 0 ? void 0 : _b.toValue(0);
+                    // TODO animation
+                }
+            }
+        });
     };
     return KingOfTokyo;
 }());

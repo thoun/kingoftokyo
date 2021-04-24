@@ -427,7 +427,9 @@ class KingOfTokyo implements KingOfTokyo {
         const notifs = [
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
+            ['resolveHealthDiceInTokyo', ANIMATION_MS],
             ['resolveEnergyDice', ANIMATION_MS],
+            ['resolveSmashDice', ANIMATION_MS],
             /*['locationPlayed', ANIMATION_MS],
             ['discardLords', ANIMATION_MS],
             ['discardLocations', ANIMATION_MS],
@@ -450,14 +452,35 @@ class KingOfTokyo implements KingOfTokyo {
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
         (this as any).scoreCtrl[notif.args.playerId]?.incValue(notif.args.points);
+        // TODO animation
     }
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
         this.healthCounters[notif.args.playerId].incValue(notif.args.health);
+        // TODO animation
+    }
+    notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
+        // TODO animation
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
         this.energyCounters[notif.args.playerId].incValue(notif.args.number);
+        // TODO animation
+    }
+
+    notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
+        notif.args.smashedPlayersIds.forEach(playerId => {            
+            const health = this.healthCounters[playerId]?.getValue();
+            if (health) {
+                const newHealth = Math.max(0, health - notif.args.number);
+                this.healthCounters[notif.args.playerId].incValue(newHealth);
+                // TODO animation
+                if (newHealth == 0) {
+                    (this as any).scoreCtrl[playerId]?.toValue(0);
+                    // TODO animation
+                }
+            }
+        });
     }
 /*
     notif_lordSwapped(notif: Notif<NotifLordSwappedArgs>) {
