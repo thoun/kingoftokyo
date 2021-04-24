@@ -14,6 +14,27 @@ trait CardsTrait {
     */
 
     function pickCard(int $id) {
+        $playerId = self::getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($id));
+
+        if ($this->getPlayerEnergy($playerId) < $card->cost) {
+            throw new \Error('Not enough energy');
+        }
+
+        $cost = $card->cost;
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
+
+        $this->cards->moveCard($id, 'hand', $playerId);
+
+        $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
+
+        self::notifyAllPlayers("pickCard", clienttranslate('${player_name} pick card'), [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'card' => $card,
+            'newCard' => $newCard,
+        ]);
 
         $this->gamestate->nextState('pick');
     }
@@ -22,15 +43,16 @@ trait CardsTrait {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new Error('Not enough energy');
+            throw new \Error('Not enough energy');
         }
 
-        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - 2 where `player_id` = $playerId");
+        $cost = 2;
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->cards->moveAllCardsInLocation('table', 'discard');
         $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
 
-        self::notifyAllPlayers( "renewCards", clienttranslate('${player_name} renew visible cards'), [
+        self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renew visible cards'), [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'cards' => $cards,

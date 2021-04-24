@@ -375,6 +375,7 @@ class KingOfTokyo implements KingOfTokyo {
             ['playerEliminated', ANIMATION_MS],
             ['playerEntersTokyo', ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
+            ['pickCard', ANIMATION_MS],
             /*['newPearlMaster', 1],
             ['discardLordPick', 1],
             ['discardLocationPick', 1],
@@ -428,6 +429,15 @@ class KingOfTokyo implements KingOfTokyo {
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         // TODO animation
+    }
+
+    notif_pickCard(notif: Notif<NotifPickCardArgs>) {
+        const card = notif.args.card;
+        const newCard = notif.args.newCard;
+        this.energyCounters[notif.args.playerId].incValue(-card.cost);
+
+        this.visibleCards.removeFromStockById(`${card.id}`); // TODO remove to player hand
+        this.visibleCards.addToStockWithId(this.getCardUniqueId(newCard), `${newCard.id}`);
     }
 
     notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {

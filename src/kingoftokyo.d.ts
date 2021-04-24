@@ -75,6 +75,13 @@ interface NotifPlayerEntersTokyoArgs {
     locationName: string;
 }
 
+interface NotifPickCardArgs {
+    playerId: number;
+    player_name: string;
+    card: Card;
+    newCard: Card;
+}
+
 interface NotifRenewCardsArgs {
     playerId: number;
     player_name: string;

@@ -318,6 +318,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['playerEliminated', ANIMATION_MS],
             ['playerEntersTokyo', ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
+            ['pickCard', ANIMATION_MS],
             /*['newPearlMaster', 1],
             ['discardLordPick', 1],
             ['discardLocationPick', 1],
@@ -368,6 +369,13 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         // TODO animation
+    };
+    KingOfTokyo.prototype.notif_pickCard = function (notif) {
+        var card = notif.args.card;
+        var newCard = notif.args.newCard;
+        this.energyCounters[notif.args.playerId].incValue(-card.cost);
+        this.visibleCards.removeFromStockById("" + card.id); // TODO remove to player hand
+        this.visibleCards.addToStockWithId(this.getCardUniqueId(newCard), "" + newCard.id);
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
         var _this = this;
