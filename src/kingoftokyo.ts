@@ -117,10 +117,13 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     onEnteringThrowDices(args: EnteringThrowDicesArgs) {
-        $('dices-selector').innerHTML = '';
+        if (args.throwNumber === 1) {
+            $('dices-selector').innerHTML = '';
+        }
+
         const dices = args.dices;
         for (let i=1; i<=6; i++) {
-            dices.filter(dice => dice.value == i).forEach(dice => {
+            dices.filter(dice => dice.value == i && !document.getElementById(`dice${dice.id}`)).forEach(dice => {
                 dojo.place(this.createDiceHtml(dice), 'dices-selector');
             });
         }
@@ -197,12 +200,12 @@ class KingOfTokyo implements KingOfTokyo {
             // scale down 
             Array.from(document.getElementsByClassName('player-table-wrapper')).forEach(elem => elem.classList.add('scaled-down'));
         }
-    }
+    }*/
 
     // onLeavingState: this method is called each time we are leaving a game state.
     //                 You can use this method to perform some user interface changes at this moment.
     //
-    public onLeavingState(stateName: string) {
+    /*public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
@@ -225,7 +228,7 @@ class KingOfTokyo implements KingOfTokyo {
         }
     }
 
-    onLeavingLordStackSelection() {
+    onLeavingLordStackSelection() {        
         this.lordsStacks.setSelectable(false, null);
     }
 
@@ -255,7 +258,7 @@ class KingOfTokyo implements KingOfTokyo {
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'throwDices':
-                const tdArgs = args as EnteringThrowDicesArgs;console.log(tdArgs);
+                const tdArgs = args as EnteringThrowDicesArgs;
                 if (tdArgs.throwNumber < tdArgs.maxThrowNumber) {
                     (this as any).addActionButton('rethrow_button', _("Rethrow selected dices") + ` ${tdArgs.throwNumber}/${tdArgs.maxThrowNumber}`, 'onRethrow');
                     dojo.addClass('rethrow_button', 'disabled');
@@ -307,6 +310,8 @@ class KingOfTokyo implements KingOfTokyo {
 
     public onRethrow() {
         this.rethrowDices(this.selectedDicesIds);
+
+        this.selectedDicesIds.forEach(id => dojo.destroy(`dice${id}`));        
     }
 
     public rethrowDices(dicesIds: number[]) {
@@ -315,7 +320,7 @@ class KingOfTokyo implements KingOfTokyo {
         }
 
         this.takeAction('rethrow', {
-            dicesIds: dicesIds.join(',')
+            dicesIds
         });
     }
 
@@ -334,7 +339,7 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     private createDiceHtml(dice: Dice) {
-        let html = `<div id="${dice.id}" class="dice dice${dice.value}" data-dice-value="${dice.value}">
+        let html = `<div id="dice${dice.id}" class="dice dice${dice.value}" data-dice-id="${dice.id}" data-dice-value="${dice.value}">
         <ol class="die-list" data-roll="${dice.value}">`;
         for (let die=1; die<=6; die++) {
             html += `<li class="die-item ${dice.extra ? 'green' : 'black'} side${die}" data-side="${die}"></li>`;
@@ -344,17 +349,18 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     private toggleDiceSelection(dice: HTMLDivElement) {
-        const selected = !dojo.hasClass(dice.id, 'selected');
-        dojo.toggleClass(dice.id, 'selected', selected);
+        const divId = dice.id;
+        const selected = !dojo.hasClass(divId, 'selected');
+        dojo.toggleClass(divId, 'selected', selected);
 
-        const id = parseInt(dice.id);
+        const id = parseInt(dice.dataset.diceId);
         if (selected) {
             this.selectedDicesIds.push(id);
         } else {
             this.selectedDicesIds.splice(this.selectedDicesIds.indexOf(id), 1);
         }
 
-        dojo.toggleClass(dice.id, 'selected', selected);
+        dojo.toggleClass(divId, 'selected', selected);
 
         dojo.toggleClass('rethrow_button', 'disabled', !this.selectedDicesIds.length);
     }

@@ -125,10 +125,12 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringThrowDices = function (args) {
         var _this = this;
-        $('dices-selector').innerHTML = '';
+        if (args.throwNumber === 1) {
+            $('dices-selector').innerHTML = '';
+        }
         var dices = args.dices;
         var _loop_1 = function (i) {
-            dices.filter(function (dice) { return dice.value == i; }).forEach(function (dice) {
+            dices.filter(function (dice) { return dice.value == i && !document.getElementById("dice" + dice.id); }).forEach(function (dice) {
                 dojo.place(_this.createDiceHtml(dice), 'dices-selector');
             });
         };
@@ -203,12 +205,11 @@ var KingOfTokyo = /** @class */ (function () {
             // scale down
             Array.from(document.getElementsByClassName('player-table-wrapper')).forEach(elem => elem.classList.add('scaled-down'));
         }
-    }
-
+    }*/
     // onLeavingState: this method is called each time we are leaving a game state.
     //                 You can use this method to perform some user interface changes at this moment.
     //
-    public onLeavingState(stateName: string) {
+    /*public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
@@ -261,7 +262,6 @@ var KingOfTokyo = /** @class */ (function () {
             switch (stateName) {
                 case 'throwDices':
                     var tdArgs = args;
-                    console.log(tdArgs);
                     if (tdArgs.throwNumber < tdArgs.maxThrowNumber) {
                         this.addActionButton('rethrow_button', _("Rethrow selected dices") + (" " + tdArgs.throwNumber + "/" + tdArgs.maxThrowNumber), 'onRethrow');
                         dojo.addClass('rethrow_button', 'disabled');
@@ -293,13 +293,14 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onRethrow = function () {
         this.rethrowDices(this.selectedDicesIds);
+        this.selectedDicesIds.forEach(function (id) { return dojo.destroy("dice" + id); });
     };
     KingOfTokyo.prototype.rethrowDices = function (dicesIds) {
         if (!this.checkAction('rethrow')) {
             return;
         }
         this.takeAction('rethrow', {
-            dicesIds: dicesIds.join(',')
+            dicesIds: dicesIds
         });
     };
     KingOfTokyo.prototype.resolveDices = function () {
@@ -314,7 +315,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
     };
     KingOfTokyo.prototype.createDiceHtml = function (dice) {
-        var html = "<div id=\"" + dice.id + "\" class=\"dice dice" + dice.value + "\" data-dice-value=\"" + dice.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + dice.value + "\">";
+        var html = "<div id=\"dice" + dice.id + "\" class=\"dice dice" + dice.value + "\" data-dice-id=\"" + dice.id + "\" data-dice-value=\"" + dice.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + dice.value + "\">";
         for (var die = 1; die <= 6; die++) {
             html += "<li class=\"die-item " + (dice.extra ? 'green' : 'black') + " side" + die + "\" data-side=\"" + die + "\"></li>";
         }
@@ -322,16 +323,17 @@ var KingOfTokyo = /** @class */ (function () {
         return html;
     };
     KingOfTokyo.prototype.toggleDiceSelection = function (dice) {
-        var selected = !dojo.hasClass(dice.id, 'selected');
-        dojo.toggleClass(dice.id, 'selected', selected);
-        var id = parseInt(dice.id);
+        var divId = dice.id;
+        var selected = !dojo.hasClass(divId, 'selected');
+        dojo.toggleClass(divId, 'selected', selected);
+        var id = parseInt(dice.dataset.diceId);
         if (selected) {
             this.selectedDicesIds.push(id);
         }
         else {
             this.selectedDicesIds.splice(this.selectedDicesIds.indexOf(id), 1);
         }
-        dojo.toggleClass(dice.id, 'selected', selected);
+        dojo.toggleClass(divId, 'selected', selected);
         dojo.toggleClass('rethrow_button', 'disabled', !this.selectedDicesIds.length);
     };
     ///////////////////////////////////////////////////

@@ -20,6 +20,7 @@
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php');
 
 require_once('modules/dice.php');
+require_once('modules/card.php');
 
 
 class KingOfTokyo extends Table {
@@ -40,8 +41,11 @@ class KingOfTokyo extends Table {
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
             //      ...
-        ]);
-
+        ]);      
+		
+        $this->cards = self::getNew("module.common.deck");
+        $this->cards->init("card");
+        $this->cards->autoreshuffle = true;
 	}
 
     protected function getGameName() {
@@ -93,7 +97,8 @@ class KingOfTokyo extends Table {
         //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 
         // TODO: setup the initial game situation here
-
+        $this->initCards();
+        $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -121,6 +126,7 @@ class KingOfTokyo extends Table {
         $result['players'] = self::getCollectionFromDb( $sql );
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
+        $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
 
         return $result;
     }
@@ -147,6 +153,43 @@ class KingOfTokyo extends Table {
     /*
         In this space, you can put any utility methods useful for your game logic
     */
+
+    function initCards() {
+	    $cards = [];
+		
+		for( $value=1; $value<=15; $value++ ) { // 1-15 green
+			$cards[] = ['type' => 0, 'type_arg' => $value, 'nbr' => 1, 'id' => $value];
+		}
+		
+		for( $value=2; $value<=14; $value++ ) { // 2-14 yellow
+			$cards[] = ['type' => 1, 'type_arg' => $value, 'nbr' => 1, 'id' => 100 + $value];
+		}
+		
+		for( $value=3; $value<=13; $value++ ) { // 3-13 orange
+			$cards[] = ['type' => 2, 'type_arg' => $value, 'nbr' => 1, 'id' => 200 + $value];
+		}
+		
+		for( $value=7; $value<=9; $value++ ) { // 7,8,9 red
+			$cards[] = ['type' => 3, 'type_arg' => $value, 'nbr' => 1, 'id' => 300 + $value];
+		}
+               
+        // $this->cards->createCards( array_slice($cards, count($cards) - 10, 10), 'deck' );
+        $this->cards->createCards($cards, 'deck');
+    }
+
+    function getCardFromDb(array $dbCard) {
+        if (!$dbCard || !array_key_exists('id', $dbCard)) {
+            throw new Error('card doesn\'t exists '.json_encode($dbCard));
+        }
+        if (!$dbCard || !array_key_exists('location', $dbCard)) {
+            throw new Error('location doesn\'t exists '.json_encode($dbCard));
+        }
+        return new Card($dbCard);
+    }
+
+    function getCardsFromDb(array $dbCards) {
+        return array_map(function($dbCard) { return $this->getCardFromDb($dbCard); }, array_values($dbCards));
+    }
 
     function getDices(int $number) {
         $sql = "SELECT `dice_id`, `dice_value`, `extra` FROM dice limit $number";

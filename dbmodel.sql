@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `card` (
   `card_type_arg` tinyint unsigned NOT NULL,
   `card_location` varchar(16) NOT NULL,
   `card_location_arg` INT(10) unsigned NOT NULL,
+  -- TODO `card_price` INT(10) unsigned NOT NULL,
   PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB;
 
