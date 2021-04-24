@@ -369,7 +369,7 @@ class KingOfTokyo extends Table {
                             'playerId' => $smashedPlayerId,
                             'player_name' => $this->getPlayerName($smashedPlayerId),
                         ]);
-                        
+
                         self::eliminatePlayer($smashedPlayerId);
                     }
                 }
@@ -377,6 +377,15 @@ class KingOfTokyo extends Table {
         }
 
         $this->gamestate->nextState('pickCard');
+    }
+
+    function stPickCard() {
+        // TODO remove
+        $this->gamestate->nextState('dontPick');
+    }
+
+    function stEndTurn() {
+        $this->gamestate->nextState('nextPlayer');
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -391,8 +400,7 @@ class KingOfTokyo extends Table {
         (ex: pass).
     */
 
-    function zombieTurn( $state, $active_player )
-    {
+    function zombieTurn($state, $active_player) {
     	$statename = $state['name'];
 
         if ($state['type'] == "activeplayer") {
