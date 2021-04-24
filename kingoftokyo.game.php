@@ -353,17 +353,25 @@ class KingOfTokyo extends Table {
 
                     if ($newHealth == 0) {
                         self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0 where `player_id` = $smashedPlayerId");
-                        self::eliminatePlayer($smashedPlayerId);
                     } else {
                         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $smashedPlayerId");
                     }
 
-                    self::notifyAllPlayers( "resolveSmashDice", $message, [
+                    self::notifyAllPlayers("resolveSmashDice", $message, [
                         'playerId' => $playerId,
                         'player_name' => self::getActivePlayerName(),
                         'number' => $number,
                         'smashedPlayersIds' => $smashedPlayersIds,
                     ]);
+
+                    if ($newHealth == 0) {
+                        self::notifyAllPlayers("playerEliminated", clienttranslate('${player_name} is eliminated !'), [
+                            'playerId' => $smashedPlayerId,
+                            'player_name' => $this->getPlayerName($smashedPlayerId),
+                        ]);
+                        
+                        self::eliminatePlayer($smashedPlayerId);
+                    }
                 }
             }
         }

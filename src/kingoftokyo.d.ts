@@ -62,3 +62,8 @@ interface NotifResolveSmashDiceArgs extends NotifResolveArgs {
     number: number;
     smashedPlayersIds: number[];
 }
+
+interface NotifPlayerEliminatedArgs {
+    playerId: number;
+    player_name: string;
+}
