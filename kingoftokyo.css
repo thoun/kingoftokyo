@@ -281,6 +281,40 @@
   transform: rotate3d(1, 0, 0, 180deg) translateZ(1rem);
 }
 
+.stockitem {
+  border-radius: 10px;
+  margin: 5px;
+  border: 1px solid grey;
+  font-family: "goodgirl";
+  text-align: center;
+  display: grid;
+}
+.stockitem .name {
+  font-size: 24pt;
+  color: white;
+  -webkit-text-stroke: 1px lime;
+  transform: rotate(10deg);
+}
+.stockitem .type {
+  font-size: 20pt;
+  color: white;
+  transform: rotate(-10deg);
+}
+.stockitem .type.keep {
+  -webkit-text-stroke: 1px #00aeef;
+}
+.stockitem .type.discard {
+  -webkit-text-stroke: 1px #ef1923;
+}
+.stockitem .text {
+  color: black;
+  transform: rotate(-10deg);
+}
+.stockitem.disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed;
+}
+
 #board {
   position: relative;
   width: 400px;
@@ -294,8 +328,4 @@
   src: url("goodgirl-webfont.woff2") format("woff2"), url("goodgirl-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
-}
-.stockitem.disabled {
-  opacity: 0.5 !important;
-  cursor: not-allowed;
 }

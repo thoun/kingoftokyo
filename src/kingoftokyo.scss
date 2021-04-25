@@ -2,6 +2,7 @@
 
 @import 'playerboards';
 @import 'dices';
+@import 'cards';
 
 #board {
     position: relative;
@@ -17,11 +18,4 @@
          url('goodgirl-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-}
-
-.stockitem {
-    &.disabled {
-        opacity: 0.5 !important;
-        cursor: not-allowed;
-    }
 }

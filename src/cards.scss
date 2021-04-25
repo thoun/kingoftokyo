@@ -1,0 +1,42 @@
+.stockitem {
+    border-radius:10px;
+    margin:5px;
+    border:1px solid grey;
+    font-family: 'goodgirl';
+    text-align: center;
+    display: grid;
+
+    .name {
+        // TODO
+        font-size: 24pt;
+        color: white;
+        -webkit-text-stroke: 1px lime;
+        transform: rotate(10deg);
+    }
+
+    .type {
+        // TODO
+        font-size: 20pt;
+        color: white;
+        transform: rotate(-10deg);
+
+        &.keep { // blue
+            -webkit-text-stroke: 1px #00aeef;
+        }
+
+        &.discard { // red
+            -webkit-text-stroke: 1px #ef1923;
+        }
+    }
+
+    .text {
+        // TODO
+        color: black;
+        transform: rotate(-10deg);
+    }
+    
+    &.disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed;
+    }
+}

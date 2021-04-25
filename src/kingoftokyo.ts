@@ -232,6 +232,7 @@ class KingOfTokyo implements KingOfTokyo {
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = dojo.hitch(this, 'setupNewCard'); 
         this.visibleCards.image_items_per_row = 13;
+        this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
 
         this.setupCards([this.visibleCards]);
@@ -255,7 +256,9 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     private setupNewCard(card_div: HTMLDivElement, card_type_id: number, card_id: string) {
-        // TODO
+        card_div.innerHTML = `<div class="name">Name</div>
+        <div class="type ${ card_type_id < 100 ? 'keep' : 'discard'}">${ card_type_id < 100 ? _('Keep') : _('Discard')}</div>
+        <div class="text">Text</div>`;
     }
 
     private onVisibleCardClick(control_name: string, item_id: string) {

@@ -210,6 +210,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = dojo.hitch(this, 'setupNewCard');
         this.visibleCards.image_items_per_row = 13;
+        this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
         this.setupCards([this.visibleCards]);
         visibleCards.forEach(function (card) { return _this.visibleCards.addToStockWithId(card.type, "" + card.id); });
@@ -227,7 +228,7 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.setupNewCard = function (card_div, card_type_id, card_id) {
-        // TODO
+        card_div.innerHTML = "<div class=\"name\">Name</div>\n        <div class=\"type " + (card_type_id < 100 ? 'keep' : 'discard') + "\">" + (card_type_id < 100 ? _('Keep') : _('Discard')) + "</div>\n        <div class=\"text\">Text</div>";
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (control_name, item_id) {
         if (dojo.hasClass("visible-cards_item_" + item_id, 'disabled')) {
