@@ -71,6 +71,8 @@ trait DicesTrait {
         $playerId = self::getActivePlayerId();
         $dices = $this->getDices($this->getDicesNumber($playerId));
 
+        $smashTokyo = false;
+
         for ($i = 1; $i <= 6; $i++) {
             $number = count(array_values(array_filter($dices, function($dice) use ($i) { return $dice->value == $i; })));
 
@@ -159,6 +161,6 @@ trait DicesTrait {
             }
         }
 
-        $this->gamestate->nextState('pickCard');
+        $this->gamestate->nextState($smashTokyo ? 'smashes' : 'pickCard');
     }
 }

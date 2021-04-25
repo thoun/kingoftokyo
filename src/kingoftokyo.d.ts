@@ -68,6 +68,11 @@ interface NotifPlayerEliminatedArgs {
     player_name: string;
 }
 
+interface NotifPlayerLeavesTokyoArgs {
+    playerId: number;
+    player_name: string;
+}
+
 interface NotifPlayerEntersTokyoArgs {
     playerId: number;
     player_name: string;

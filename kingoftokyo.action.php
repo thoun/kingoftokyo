@@ -55,6 +55,22 @@
         self::ajaxResponse();
     }
   	
+    public function stay() {
+        self::setAjaxMode();
+
+        $this->game->stayInTokyo();
+
+        self::ajaxResponse();
+    }
+  	
+    public function leave() {
+        self::setAjaxMode();
+
+        $this->game->leaveTokyo();
+
+        self::ajaxResponse();
+    }
+  	
     public function pick() {
         self::setAjaxMode();
 

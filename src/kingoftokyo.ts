@@ -158,6 +158,11 @@ class KingOfTokyo implements KingOfTokyo {
                     }
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
+
+                case 'leaveTokyo':
+                    (this as any).addActionButton('stayInTokyo_button', _("Stay in Tokyo"), 'onStayInTokyo');
+                    (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
+                    break;
             }
 
         }
@@ -213,49 +218,21 @@ class KingOfTokyo implements KingOfTokyo {
 
         this.setupCards([this.visibleCards]);
 
-        visibleCards.forEach(card => this.visibleCards.addToStockWithId(this.getCardUniqueId(card), `${card.id}`));
-    }
-
-    private getCardUniqueId(card: Card): number {
-        return card.type;
-    }   
+        visibleCards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
+    } 
     
     private setupCards(stocks: Stock[]) {
-        const idsByType: number[][] = [[], [], [], []];
-        
-        // Create cards types:
-        for(let number=1; number<=15; number++) {  // 1-15 green
-            idsByType[0].push(number*100);
-        }
-        
-        for(let number=2; number<=14; number++) {  // 2-14 yellow
-            idsByType[1].push(number*100);
-        }
-        
-        for(let number=3; number<=13; number++) {  // 3-13 orange
-            idsByType[2].push(number*100);
-        }
-        
-        for(let number=7; number<=9; number++) {  // 7,8,9 red
-            idsByType[3].push(number*100);
-        }
 
         stocks.forEach(stock => {
+            const keepcardsurl = `${g_gamethemeurl}img/cards0.jpg`;
+            for(let id=1; id<=48; id++) {  // keep
+                stock.addItemType(id, id, keepcardsurl, id);
+            }
 
-            idsByType.forEach((idByType, type) => {
-                const cardsurl = `${g_gamethemeurl}img/cards${type}.jpg`;
-    
-                idByType.forEach((cardId, id) => {
-                    const uniqueId = type;
-                    stock.addItemType(
-                        uniqueId, 
-                        uniqueId, 
-                        cardsurl, 
-                        id
-                    );
-                });
-            });
-
+            const discardcardsurl = `${g_gamethemeurl}img/cards1.jpg`;
+            for(let id=101; id<=118; id++) {  // keep
+                stock.addItemType(id, id, discardcardsurl, id);
+            }
         });
     }
 
@@ -289,6 +266,21 @@ class KingOfTokyo implements KingOfTokyo {
         }
 
         this.takeAction('resolve');
+    }
+
+    public onStayInTokyo() {
+        if(!(this as any).checkAction('stay')) {
+            return;
+        }
+
+        this.takeAction('stay');
+    }
+    public onLeaveTokyo() {
+        if(!(this as any).checkAction('leave')) {
+            return;
+        }
+
+        this.takeAction('leave');
     }
 
     public pickCard(id: number | string) {
@@ -376,6 +368,7 @@ class KingOfTokyo implements KingOfTokyo {
             ['playerEntersTokyo', ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
             ['pickCard', ANIMATION_MS],
+            ['leaveTokyo', ANIMATION_MS],
             /*['newPearlMaster', 1],
             ['discardLordPick', 1],
             ['discardLocationPick', 1],
@@ -427,6 +420,10 @@ class KingOfTokyo implements KingOfTokyo {
         // TODO animation? or strike player's name
     }
 
+    notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
+// TODO animation
+    }
+
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         // TODO animation
     }
@@ -437,14 +434,14 @@ class KingOfTokyo implements KingOfTokyo {
         this.energyCounters[notif.args.playerId].incValue(-card.cost);
 
         this.visibleCards.removeFromStockById(`${card.id}`); // TODO remove to player hand
-        this.visibleCards.addToStockWithId(this.getCardUniqueId(newCard), `${newCard.id}`);
+        this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`);
     }
 
     notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {
         this.energyCounters[notif.args.playerId].incValue(-2);
 
         this.visibleCards.removeAll();
-        notif.args.cards.forEach(card => this.visibleCards.addToStockWithId(this.getCardUniqueId(card), `${card.id}`));
+        notif.args.cards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
     }
     
 

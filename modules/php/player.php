@@ -17,6 +17,32 @@ trait PlayerTrait {
         $this->gamestate->nextState('endTurn');
     }
 
+    function stayInTokyo() {
+        $playerId = self::getCurrentPlayerId();
+
+        self::notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+        ]);
+    
+        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
+        $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
+    }
+
+    function leaveTokyo() {
+        $playerId = self::getCurrentPlayerId();
+
+        self::DbQuery("UPDATE player SET player_location = 0 where `player_id` = $playerId");
+
+        self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} chooses to leave Tokyo'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+        ]);
+    
+        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
+        $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
+    }
+
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
@@ -49,6 +75,25 @@ trait PlayerTrait {
         self::DbQuery( "UPDATE dice SET `dice_value` = 0" );
 
         $this->gamestate->nextState('throw');
+    }
+
+    function stLeaveTokyo() {
+        $this->gamestate->setPlayersMultiactive($this->getPlayersIdsInTokyo(), 'resume');
+    }
+
+    function stEnterTokyo() {
+        $playerId = self::getActivePlayerId();
+        if ($this->isTokyoEmpty(false)) {
+            $this->moveToTokyo($playerId, false);
+        } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
+            $this->moveToTokyo($playerId, true);
+        }
+
+        if ($this->getMaxPlayerScore() >= MAX_POINT) {
+            $this->gamestate->nextState('endGame');
+        } else {
+            $this->gamestate->nextState('next');
+        }
     }
 
     function stEndTurn() {

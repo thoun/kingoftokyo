@@ -120,35 +120,35 @@ $playerActionsGameStates = [
         "action" => "stResolveDices",
         "transitions" => [ 
             "pickCard" => ST_PLAYER_PICK_CARD,
+            "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
             "endGame" => ST_END_GAME,
             // TODO leave tokyo
         ],
     ],
 
-    ST_PLAYER_LEAVE_TOKYO => [
+    ST_MULTIPLAYER_LEAVE_TOKYO => [
         "name" => "leaveTokyo",
-        "description" => clienttranslate('${actplayer} must choose the lord to recruit'),
-        "descriptionmyturn" => clienttranslate('${you} must choose the lord to recruit'),
-        "type" => "activeplayer",
-        "possibleactions" => [ "leave", "stay" ],
+        "description" => clienttranslate('Players in Tokyo must choose to stay or leave Tokyo'),
+        "descriptionmyturn" => clienttranslate('${you} must choose to stay or leave Tokyo'),
+        "type" => "multipleactiveplayer",
+        "action" => "stLeaveTokyo",
+        "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
-            "leave" => ST_PLAYER_PICK_CARD,
-            "stay" => ST_PLAYER_PICK_CARD,
+            "resume" => ST_ENTER_TOKYO,
             "zombiePass" => ST_PLAYER_PICK_CARD,
         ],
     ],
 
-    /*ST_ENTER_TOKYO => array(
-        "name" => "lordPlacement",
+    ST_ENTER_TOKYO => array(
+        "name" => "enterTokyo",
         "description" => "",
         "type" => "game",
-        "action" => "stPlayLord",
+        "action" => "stEnterTokyo",
         "transitions" => array( 
-            "swap" => ST_PLAYER_LORDS_SWAP,
-            "addLocation" => ST_PLAYER_LOCATION_STACK_SELECTION,
-            "next" => ST_END_LORD,
+            "next" => ST_PLAYER_PICK_CARD,
+            "endGame" => ST_END_GAME,
         )
-    ),*/
+    ),
 
     ST_PLAYER_PICK_CARD => [
         "name" => "pickCard",
