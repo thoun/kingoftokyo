@@ -228,7 +228,9 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.setupNewCard = function (card_div, card_type_id, card_id) {
-        card_div.innerHTML = "<div class=\"name\">Name</div>\n        <div class=\"type " + (card_type_id < 100 ? 'keep' : 'discard') + "\">" + (card_type_id < 100 ? _('Keep') : _('Discard')) + "</div>\n        <div class=\"text\">Text</div>";
+        var type = card_type_id < 100 ? _('Keep') : _('Discard');
+        var name = 'Name';
+        card_div.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        <div class=\"description-wrapper\">\n            description\n        </div>\n        ";
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (control_name, item_id) {
         if (dojo.hasClass("visible-cards_item_" + item_id, 'disabled')) {

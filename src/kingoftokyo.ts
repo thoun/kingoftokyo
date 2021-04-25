@@ -256,9 +256,21 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     private setupNewCard(card_div: HTMLDivElement, card_type_id: number, card_id: string) {
-        card_div.innerHTML = `<div class="name">Name</div>
-        <div class="type ${ card_type_id < 100 ? 'keep' : 'discard'}">${ card_type_id < 100 ? _('Keep') : _('Discard')}</div>
-        <div class="text">Text</div>`;
+        const type = card_type_id < 100 ? _('Keep') : _('Discard');
+        const name = 'Name';
+        card_div.innerHTML = `
+        <div class="name-wrapper">
+            <div class="outline">${name}</div>
+            <div class="text">${name}</div>
+        </div>
+        <div class="type-wrapper ${ card_type_id < 100 ? 'keep' : 'discard'}">
+            <div class="outline">${type}</div>
+            <div class="text">${type}</div>
+        </div>
+        <div class="description-wrapper">
+            description
+        </div>
+        `;
     }
 
     private onVisibleCardClick(control_name: string, item_id: string) {

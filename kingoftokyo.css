@@ -285,28 +285,61 @@
   border-radius: 10px;
   margin: 5px;
   border: 1px solid grey;
-  font-family: "goodgirl";
   text-align: center;
-  display: grid;
 }
-.stockitem .name {
-  font-size: 24pt;
+.stockitem .name-wrapper {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 16pt;
   color: white;
-  -webkit-text-stroke: 1px lime;
   transform: rotate(10deg);
+  font-family: "goodgirl";
 }
-.stockitem .type {
-  font-size: 20pt;
+.stockitem .name-wrapper .outline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-text-stroke: 8px #96c93c;
+  width: 120px;
+}
+.stockitem .name-wrapper .text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 120px;
+}
+.stockitem .type-wrapper {
+  position: absolute;
+  top: 100px;
+  left: 0px;
+  font-size: 14pt;
   color: white;
   transform: rotate(-10deg);
+  font-family: "goodgirl";
 }
-.stockitem .type.keep {
-  -webkit-text-stroke: 1px #00aeef;
+.stockitem .type-wrapper.keep .outline {
+  -webkit-text-stroke: 8px #00aeef;
 }
-.stockitem .type.discard {
-  -webkit-text-stroke: 1px #ef1923;
+.stockitem .type-wrapper.discard .outline {
+  -webkit-text-stroke: 8px #ef1923;
 }
-.stockitem .text {
+.stockitem .type-wrapper .outline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 120px;
+}
+.stockitem .type-wrapper .text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 120px;
+}
+.stockitem .description-wrapper {
+  position: absolute;
+  top: 140px;
+  left: 20px;
   color: black;
   transform: rotate(-10deg);
 }
@@ -325,7 +358,7 @@
 
 @font-face {
   font-family: "goodgirl";
-  src: url("goodgirl-webfont.woff2") format("woff2"), url("goodgirl-webfont.woff") format("woff");
+  src: url("font/goodgirl-webfont.woff2") format("woff2"), url("font/goodgirl-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }

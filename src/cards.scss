@@ -1,36 +1,81 @@
+$name-left: 15px;
+$name-top: 10px;
+$name-size: 16pt;
+
+$type-left: 0px;
+$type-top: 100px;
+$type-size: 14pt;
+
+$description-left: 20px;
+$description-top: 140px;
+
 .stockitem {
     border-radius:10px;
     margin:5px;
     border:1px solid grey;
-    font-family: 'goodgirl';
     text-align: center;
-    display: grid;
 
-    .name {
-        // TODO
-        font-size: 24pt;
+    .name-wrapper {
+        position: absolute;
+        top: $name-top;
+        left: $name-left;
+        font-size: $name-size;
         color: white;
-        -webkit-text-stroke: 1px lime;
         transform: rotate(10deg);
+        font-family: 'goodgirl';
+
+        .outline {
+            position: absolute;
+            left: 0;
+            top: 0;
+            -webkit-text-stroke: 8px $tokyoGreen;
+            width: 120px;
+        }
+
+        .text {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 120px;
+        }
     }
 
-    .type {
-        // TODO
-        font-size: 20pt;
+    .type-wrapper {
+        position: absolute;
+        top: $type-top;
+        left: $type-left;
+        font-size: $type-size;
         color: white;
         transform: rotate(-10deg);
+        font-family: 'goodgirl';
 
-        &.keep { // blue
-            -webkit-text-stroke: 1px #00aeef;
+        &.keep .outline { // blue
+            -webkit-text-stroke: 8px #00aeef;
         }
 
-        &.discard { // red
-            -webkit-text-stroke: 1px #ef1923;
+        &.discard .outline { // red
+            -webkit-text-stroke: 8px #ef1923;
+        }
+
+        .outline {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 120px;
+        }
+
+        .text {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 120px;
         }
     }
 
-    .text {
-        // TODO
+    .description-wrapper {
+        position: absolute;
+        top: $description-top;
+        left: $description-left;
         color: black;
         transform: rotate(-10deg);
     }
