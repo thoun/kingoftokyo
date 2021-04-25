@@ -286,4 +286,12 @@
   width: 400px;
   height: 400px;
   background: url("img/tokyo.jpg") no-repeat;
+  box-shadow: 2px 2px 5px 2px black;
+}
+
+@font-face {
+  font-family: "goodgirl";
+  src: url("goodgirl-webfont.woff2") format("woff2"), url("goodgirl-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
 }

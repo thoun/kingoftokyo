@@ -7,19 +7,19 @@ $gameinfos = array(
 'designer' => 'Richard Garfield',
 
 // Game artist (or game artists, separated by commas)
-'artist' => 'Jane Doe',
+'artist' => 'Gabriel Butik, Romain Gaschet, Jonathan Silvestre, Igor Polouchine, Benjamin Raynal, Jean-Baptiste Reynaud, Régis Torres, Anthony Wolff',
 
 // Year of FIRST publication of this game. Can be negative.
-'year' => 2000,
+'year' => 2011,
 
 // Game publisher
-'publisher' => 'My Publishing Company',
+'publisher' => 'IELLO',
 
 // Url of game publisher website
-'publisher_website' => 'http://www.mypublishingcompany.com/',
+'publisher_website' => 'https://www.iello.fr/co.uk',
 
 // Board Game Geek ID of the publisher
-'publisher_bgg_id' => 1234,
+'publisher_bgg_id' => 8923,
 
 // Board game geek if of the game
 'bgg_id' => 70323,
@@ -32,7 +32,7 @@ $gameinfos = array(
 'suggest_player_number' => null,
 
 // Discourage players to play with these numbers of players. Must be null if there is no such advice.
-'not_recommend_player_number' => null,
+'not_recommend_player_number' => array( 2 ),
 // 'not_recommend_player_number' => array( 2, 3 ),      // <= example: this is not recommended to play this game with 2 or 3 players
 
 
@@ -64,20 +64,20 @@ $gameinfos = array(
 
 
 // Complexity of the game, from 0 (extremely simple) to 5 (extremely complex)
-'complexity' => 3,
+'complexity' => 2,
 
 // Luck of the game, from 0 (absolutely no luck in this game) to 5 (totally luck driven)
 'luck' => 3,
 
 // Strategy of the game, from 0 (no strategy can be setup) to 5 (totally based on strategy)
-'strategy' => 3,
+'strategy' => 2,
 
 // Diplomacy of the game, from 0 (no interaction in this game) to 5 (totally based on interaction and discussion between players)
-'diplomacy' => 3,
+'diplomacy' => 0,
 
 
 // Games categories
 //  You can attribute any number of "tags" to your game.
 //  Each tag has a specific ID (ex: 22 for the category "Prototype", 101 for the tag "Science-fiction theme game")
-'tags' => array( 2 )
+'tags' => array( 2, 11, 101, 201 )
 );
