@@ -95,7 +95,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringThrowDices(args.args);
                 break;
             case 'pickCard':
-                this.onEnteringPickCard();
+                this.onEnteringPickCard(args.args);
                 break;
         }
     };
@@ -135,8 +135,23 @@ var KingOfTokyo = /** @class */ (function () {
         this.selectedDicesIds = [];
         dojo.toggleClass('dices-selector', 'selectable', selectable);
     };
-    KingOfTokyo.prototype.onEnteringPickCard = function () {
-        this.visibleCards.setSelectionMode(1);
+    KingOfTokyo.prototype.onEnteringPickCard = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.visibleCards.setSelectionMode(1);
+            args.disabledIds.forEach(function (id) { return dojo.query("#visible-cards_item_" + id).addClass('disabled'); });
+        }
+    };
+    KingOfTokyo.prototype.onLeavingState = function (stateName) {
+        log('Leaving state: ' + stateName);
+        switch (stateName) {
+            case 'pickCard':
+                this.onLeavingPickCard();
+                break;
+        }
+    };
+    KingOfTokyo.prototype.onLeavingPickCard = function () {
+        this.visibleCards.setSelectionMode(0);
+        dojo.query('#visible-cards .stockitem').removeClass('disabled');
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -215,6 +230,10 @@ var KingOfTokyo = /** @class */ (function () {
         // TODO
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (control_name, item_id) {
+        if (dojo.hasClass("visible-cards_item_" + item_id, 'disabled')) {
+            this.visibleCards.unselectItem(item_id);
+            return;
+        }
         this.pickCard(item_id);
     };
     KingOfTokyo.prototype.onRethrow = function () {

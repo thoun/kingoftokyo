@@ -89,7 +89,7 @@ class KingOfTokyo implements KingOfTokyo {
                 this.onEnteringThrowDices(args.args);
                 break;
             case 'pickCard':
-                this.onEnteringPickCard();
+                this.onEnteringPickCard(args.args);
                 break;
         }
     }
@@ -132,8 +132,26 @@ class KingOfTokyo implements KingOfTokyo {
         dojo.toggleClass('dices-selector', 'selectable', selectable);
     }
 
-    private onEnteringPickCard() {
-        this.visibleCards.setSelectionMode(1);
+    private onEnteringPickCard(args: EnteringPickCardArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.visibleCards.setSelectionMode(1);
+            args.disabledIds.forEach(id => dojo.query(`#visible-cards_item_${id}`).addClass('disabled'));
+        }
+    }
+
+    public onLeavingState(stateName: string) {
+        log( 'Leaving state: '+stateName );
+
+        switch (stateName) {
+            case 'pickCard':
+                this.onLeavingPickCard();
+                break;
+        }
+    }
+
+    private onLeavingPickCard() {
+        this.visibleCards.setSelectionMode(0);
+        dojo.query('#visible-cards .stockitem').removeClass('disabled');
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -241,6 +259,11 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     private onVisibleCardClick(control_name: string, item_id: string) {
+        if (dojo.hasClass(`visible-cards_item_${item_id}`, 'disabled')) {
+            this.visibleCards.unselectItem(item_id);
+            return;
+        }
+
         this.pickCard(item_id);
     }
 
@@ -421,7 +444,7 @@ class KingOfTokyo implements KingOfTokyo {
     }
 
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
-// TODO animation
+        // TODO animation
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {

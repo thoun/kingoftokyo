@@ -70,6 +70,20 @@ trait CardsTrait {
         These methods function is to return some additional information that is specific to the current
         game state.
     */
+    function argPickCard() {
+        $playerId = self::getActivePlayerId();
+        $playerEnergy = $this->getPlayerEnergy($playerId);
+
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        
+        $disabledCards = array_values(array_filter($cards, function ($card) use ($playerEnergy) { return $card->cost > $playerEnergy; }));
+        $disabledIds = array_map(function ($card) { return $card->id; }, $disabledCards);
+    
+        // return values:
+        return [
+            'disabledIds' => $disabledIds,
+        ];
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions

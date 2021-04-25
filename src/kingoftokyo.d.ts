@@ -39,6 +39,10 @@ interface EnteringThrowDicesArgs {
     maxThrowNumber: number;
 }
 
+interface EnteringPickCardArgs {
+    disabledIds: number[];
+}
+
 interface NotifResolveArgs {
     playerId: number;
     player_name: string;

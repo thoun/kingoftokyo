@@ -156,6 +156,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} can pick a card'),
         "type" => "activeplayer",
         "action" => "stPickCard",
+        "args" => "argPickCard",
         "possibleactions" => [ "pick", "endTurn", "renew" ],
         "transitions" => [
             "pick" => ST_PLAYER_PICK_CARD,
