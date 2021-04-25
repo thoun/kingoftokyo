@@ -65,10 +65,6 @@ trait PlayerTrait {
             // start turn in tokyo
             $incScore = 2;
             self::DbQuery("UPDATE player SET player_score = player_score + $incScore where `player_id` = $playerId");
-        } else if ($this->isTokyoEmpty(false)) {
-            $this->moveToTokyo($playerId, false);
-        } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
-            $this->moveToTokyo($playerId, true);
         }
 
         self::setGameStateValue('throwNumber', 1);

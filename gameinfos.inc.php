@@ -7,7 +7,7 @@ $gameinfos = array(
 'designer' => 'Richard Garfield',
 
 // Game artist (or game artists, separated by commas)
-'artist' => 'Gabriel Butik, Romain Gaschet, Jonathan Silvestre, Igor Polouchine, Benjamin Raynal, Jean-Baptiste Reynaud, Régis Torres, Anthony Wolff',
+'artist' => 'Igor Polouchine, Régis Torres',
 
 // Year of FIRST publication of this game. Can be negative.
 'year' => 2011,
@@ -79,5 +79,5 @@ $gameinfos = array(
 // Games categories
 //  You can attribute any number of "tags" to your game.
 //  Each tag has a specific ID (ex: 22 for the category "Prototype", 101 for the tag "Science-fiction theme game")
-'tags' => array( 2, 11, 101, 201 )
+'tags' => array( 2, 11, 20, 101, 201 )
 );

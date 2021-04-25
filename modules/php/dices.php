@@ -161,6 +161,6 @@ trait DicesTrait {
             }
         }
 
-        $this->gamestate->nextState($smashTokyo ? 'smashes' : 'pickCard');
+        $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
     }
 }
