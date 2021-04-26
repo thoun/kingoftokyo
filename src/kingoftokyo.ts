@@ -47,22 +47,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.createPlayerPanels(gamedatas);
         this.createVisibleCards(gamedatas.visibleCards);
-        this.createPlayerTables(gamedatas)
-
-        /*this.lordsStacks = new LordsStacks(this, gamedatas.visibleLords, gamedatas.pickLords);
-        this.locationsStacks = new LocationsStacks(this, gamedatas.visibleLocations, gamedatas.pickLocations);
-
         this.createPlayerTables(gamedatas);
 
-        if (gamedatas.endTurn) {
-            this.notif_lastTurn();
-        }
-
-        if (Number(gamedatas.gamestate.id) >= 80) { // score or end
-            this.onEnteringShowScore(true);
-        }
-
-        this.addHelp();*/
+        (this as any).onScreenWidthChange = (a, b, c, d) => console.log(a, b, c, d);
 
         this.setupNotifications();
 
