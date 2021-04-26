@@ -8,6 +8,8 @@
 </div>
 
 <div id="board">
+    <div id="tokyo-city"></div>
+    <div id="tokyo-bay"></div>
 </div>
 
 <div id="players-tables"></div>

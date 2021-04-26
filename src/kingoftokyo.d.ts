@@ -28,6 +28,7 @@ interface KingOfTokyoGamedatas {
 
     // Add here variables you set up in getAllDatas
     visibleCards: Card[];
+    playersCards: { [playerId: number]: Card[] };
 }
 
 interface KingOfTokyoGame extends Game {

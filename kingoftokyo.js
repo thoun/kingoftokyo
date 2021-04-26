@@ -30,16 +30,45 @@ function moveToAnotherStock(sourceStock, destinationStock, uniqueId, cardId) {
         destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
     }
 }
+function setupCards(stocks) {
+    stocks.forEach(function (stock) {
+        var keepcardsurl = g_gamethemeurl + "img/cards0.jpg";
+        for (var id = 1; id <= 48; id++) { // keep
+            stock.addItemType(id, id, keepcardsurl, id);
+        }
+        var discardcardsurl = g_gamethemeurl + "img/cards1.jpg";
+        for (var id = 101; id <= 118; id++) { // keep
+            stock.addItemType(id, id, discardcardsurl, id);
+        }
+    });
+}
+function setupNewCard(card_div, card_type_id, card_id) {
+    var type = card_type_id < 100 ? _('Keep') : _('Discard');
+    var name = 'Name';
+    card_div.innerHTML = "\n    <div class=\"name-wrapper\">\n        <div class=\"outline\">" + name + "</div>\n        <div class=\"text\">" + name + "</div>\n    </div>\n    <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n        <div class=\"outline\">" + type + "</div>\n        <div class=\"text\">" + type + "</div>\n    </div>\n    <div class=\"description-wrapper\">\n        description\n    </div>\n    ";
+}
 var CARD_WIDTH = 123;
 var CARD_HEIGHT = 185;
 var isDebug = window.location.host == 'studio.boardgamearena.com';
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(player, order) {
+    function PlayerTable(game, player, order, cards) {
+        var _this = this;
+        this.game = game;
         this.player = player;
         this.order = order;
         this.monster = Number(player.monster);
-        dojo.place("\n        <div class=\"player-table\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div class=\"monster-board monster" + this.monster + "\"></div>\n        </div>\n        ", 'players-tables');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n            </div>   \n            <div id=\"cards-" + player.id + "\"></div>      \n        </div>\n\n        ", 'players-tables');
+        this.cards = new ebg.stock();
+        this.cards.setSelectionAppearance('class');
+        this.cards.selectionClass = 'no-visible-selection';
+        this.cards.create(this.game, $("cards-" + this.player.id), CARD_WIDTH, CARD_HEIGHT);
+        this.cards.setSelectionMode(0);
+        this.cards.onItemCreate = function (card_div, card_type_id, card_id) { return setupNewCard(card_div, card_type_id, card_id); };
+        this.cards.image_items_per_row = 13;
+        this.cards.centerItems = true;
+        setupCards([this.cards]);
+        cards.forEach(function (card) { return _this.cards.addToStockWithId(card.type, "" + card.id); });
     }
     return PlayerTable;
 }());
@@ -216,7 +245,8 @@ var KingOfTokyo = /** @class */ (function () {
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
-        this.playerTables = this.getOrderedPlayers().map(function (player, index) { return new PlayerTable(player, index); });
+        var _this = this;
+        this.playerTables = this.getOrderedPlayers().map(function (player, index) { return new PlayerTable(_this, player, index, gamedatas.playersCards[Number(player.id)]); });
     };
     KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
         var _this = this;
@@ -225,29 +255,12 @@ var KingOfTokyo = /** @class */ (function () {
         this.visibleCards.selectionClass = 'no-visible-selection';
         this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
-        this.visibleCards.onItemCreate = dojo.hitch(this, 'setupNewCard');
+        this.visibleCards.onItemCreate = function (card_div, card_type_id, card_id) { return setupNewCard(card_div, card_type_id, card_id); };
         this.visibleCards.image_items_per_row = 13;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
-        this.setupCards([this.visibleCards]);
+        setupCards([this.visibleCards]);
         visibleCards.forEach(function (card) { return _this.visibleCards.addToStockWithId(card.type, "" + card.id); });
-    };
-    KingOfTokyo.prototype.setupCards = function (stocks) {
-        stocks.forEach(function (stock) {
-            var keepcardsurl = g_gamethemeurl + "img/cards0.jpg";
-            for (var id = 1; id <= 48; id++) { // keep
-                stock.addItemType(id, id, keepcardsurl, id);
-            }
-            var discardcardsurl = g_gamethemeurl + "img/cards1.jpg";
-            for (var id = 101; id <= 118; id++) { // keep
-                stock.addItemType(id, id, discardcardsurl, id);
-            }
-        });
-    };
-    KingOfTokyo.prototype.setupNewCard = function (card_div, card_type_id, card_id) {
-        var type = card_type_id < 100 ? _('Keep') : _('Discard');
-        var name = 'Name';
-        card_div.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        <div class=\"description-wrapper\">\n            description\n        </div>\n        ";
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (control_name, item_id) {
         if (dojo.hasClass("visible-cards_item_" + item_id, 'disabled')) {
@@ -408,10 +421,10 @@ var KingOfTokyo = /** @class */ (function () {
         // TODO animation? or strike player's name
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (notif) {
-        // TODO animation
+        this.slideToObject("monster-figure-" + notif.args.playerId, "monster-board-" + notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
-        // TODO animation
+        this.slideToObject("monster-figure-" + notif.args.playerId, "tokyo-" + (notif.args.location == 2 ? 'bay' : 'city'));
     };
     KingOfTokyo.prototype.notif_pickCard = function (notif) {
         var card = notif.args.card;

@@ -1,4 +1,5 @@
 .player-table {
+    width: 400px;
 
     .player-name {
         font-weight: bold;
@@ -9,6 +10,23 @@
         width: 218px;
         height: 175px;
         background-image: url('img/monsterboards.png');
+        background-size: auto 100%;
+
+        @for $i from 0 through 5 {
+            &.monster#{$i} {
+                background-position: ($i * 20%) 100%;
+            }
+        }
+
+        
+        
+    }
+
+    .monster-figure {
+        position: relative;
+        width: 238px * 0.8;
+        height: 245px * 0.8;
+        background-image: url('img/monsterfigures.png');
         background-size: auto 100%;
 
         @for $i from 0 through 5 {

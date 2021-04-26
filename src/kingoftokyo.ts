@@ -225,7 +225,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
-        this.playerTables = this.getOrderedPlayers().map((player, index) => new PlayerTable(player, index));
+        this.playerTables = this.getOrderedPlayers().map((player, index) => new PlayerTable(this, player, index, gamedatas.playersCards[Number(player.id)]));
     }
 
     private createVisibleCards(visibleCards: Card[]) {
@@ -234,47 +234,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.selectionClass = 'no-visible-selection';
         this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
-        this.visibleCards.onItemCreate = dojo.hitch(this, 'setupNewCard'); 
+        this.visibleCards.onItemCreate = (card_div, card_type_id, card_id) => setupNewCard(card_div, card_type_id, card_id); 
         this.visibleCards.image_items_per_row = 13;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
 
-        this.setupCards([this.visibleCards]);
+        setupCards([this.visibleCards]);
 
         visibleCards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
-    } 
-    
-    private setupCards(stocks: Stock[]) {
-
-        stocks.forEach(stock => {
-            const keepcardsurl = `${g_gamethemeurl}img/cards0.jpg`;
-            for(let id=1; id<=48; id++) {  // keep
-                stock.addItemType(id, id, keepcardsurl, id);
-            }
-
-            const discardcardsurl = `${g_gamethemeurl}img/cards1.jpg`;
-            for(let id=101; id<=118; id++) {  // keep
-                stock.addItemType(id, id, discardcardsurl, id);
-            }
-        });
-    }
-
-    private setupNewCard(card_div: HTMLDivElement, card_type_id: number, card_id: string) {
-        const type = card_type_id < 100 ? _('Keep') : _('Discard');
-        const name = 'Name';
-        card_div.innerHTML = `
-        <div class="name-wrapper">
-            <div class="outline">${name}</div>
-            <div class="text">${name}</div>
-        </div>
-        <div class="type-wrapper ${ card_type_id < 100 ? 'keep' : 'discard'}">
-            <div class="outline">${type}</div>
-            <div class="text">${type}</div>
-        </div>
-        <div class="description-wrapper">
-            description
-        </div>
-        `;
     }
 
     private onVisibleCardClick(control_name: string, item_id: string) {
@@ -463,11 +430,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
-        // TODO animation
+        (this as any).slideToObject(`monster-figure-${notif.args.playerId}`, `monster-board-${notif.args.playerId}`);
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
-        // TODO animation
+        (this as any).slideToObject(`monster-figure-${notif.args.playerId}`, `tokyo-${notif.args.location == 2 ? 'bay' : 'city'}`);
     }
 
     notif_pickCard(notif: Notif<NotifPickCardArgs>) {
