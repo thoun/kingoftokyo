@@ -352,7 +352,8 @@
   position: relative;
   width: 400px;
   height: 400px;
-  background: url("img/tokyo.jpg") no-repeat;
+  background: url("img/tokyo.jpg");
+  background-size: cover;
   box-shadow: 2px 2px 5px 2px black;
 }
 

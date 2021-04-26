@@ -80,11 +80,18 @@ class KingOfTokyo extends Table {
 
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
+        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_monster) VALUES ";
         $values = array();
+        $affectedMonsters = [];
         foreach( $players as $player_id => $player ) {
+            $playerMonster = bga_rand(0, 5);
+            while (array_search($playerMonster, $affectedMonsters) !== false) {
+                $playerMonster = bga_rand(0, 5);
+            }
+            $affectedMonsters[] = $playerMonster;
+
             $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
+            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $playerMonster)";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
@@ -130,7 +137,7 @@ class KingOfTokyo extends Table {
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location` FROM player ";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).

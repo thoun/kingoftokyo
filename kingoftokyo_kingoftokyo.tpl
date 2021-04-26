@@ -10,4 +10,6 @@
 <div id="board">
 </div>
 
+<div id="players-tables"></div>
+
 {OVERALL_GAME_FOOTER}

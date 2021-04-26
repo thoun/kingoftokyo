@@ -8,18 +8,14 @@ declare const g_gamethemeurl;
 declare const board: HTMLDivElement;
 
 const ANIMATION_MS = 1500;
-const CARD_WIDTH = 123;
-const CARD_HEIGHT = 185;
 
-const isDebug = window.location.host == 'studio.boardgamearena.com';
-const log = isDebug ? console.log.bind(window.console) : function () { };
-
-class KingOfTokyo implements KingOfTokyo {
+class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
     private selectedDicesIds: number[] = null;
     private visibleCards: Stock;
+    private playerTables: PlayerTable[];
 
     constructor() {     
     }
@@ -51,7 +47,7 @@ class KingOfTokyo implements KingOfTokyo {
 
         this.createPlayerPanels(gamedatas);
         this.createVisibleCards(gamedatas.visibleCards);
-
+        this.createPlayerTables(gamedatas)
 
         /*this.lordsStacks = new LordsStacks(this, gamedatas.visibleLords, gamedatas.pickLords);
         this.locationsStacks = new LocationsStacks(this, gamedatas.visibleLocations, gamedatas.pickLocations);
@@ -193,6 +189,10 @@ class KingOfTokyo implements KingOfTokyo {
 
     ///////////////////////////////////////////////////
 
+    private getOrderedPlayers(): Player[] {
+        return this.gamedatas.playerorder.map(id => this.gamedatas.players[Number(id)]);
+    }
+
     private createPlayerPanels(gamedatas: KingOfTokyoGamedatas) {
 
         Object.values(gamedatas.players).forEach(player => {
@@ -222,6 +222,10 @@ class KingOfTokyo implements KingOfTokyo {
         });
 
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
+    }
+    
+    private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
+        this.playerTables = this.getOrderedPlayers().map((player, index) => new PlayerTable(player, index));
     }
 
     private createVisibleCards(visibleCards: Card[]) {

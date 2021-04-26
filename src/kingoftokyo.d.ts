@@ -30,7 +30,7 @@ interface KingOfTokyoGamedatas {
     visibleCards: Card[];
 }
 
-interface KingOfTokyo extends Game {
+interface KingOfTokyoGame extends Game {
 }
 
 interface EnteringThrowDicesArgs {

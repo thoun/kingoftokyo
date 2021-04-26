@@ -30,11 +30,19 @@ function moveToAnotherStock(sourceStock, destinationStock, uniqueId, cardId) {
         destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
     }
 }
-var ANIMATION_MS = 1500;
 var CARD_WIDTH = 123;
 var CARD_HEIGHT = 185;
 var isDebug = window.location.host == 'studio.boardgamearena.com';
 var log = isDebug ? console.log.bind(window.console) : function () { };
+var PlayerTable = /** @class */ (function () {
+    function PlayerTable(player, order) {
+        this.player = player;
+        this.order = order;
+        dojo.place("<div>player " + player.name + ", monster " + player.monster + "</div>", 'players-tables');
+    }
+    return PlayerTable;
+}());
+var ANIMATION_MS = 1500;
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
@@ -64,6 +72,7 @@ var KingOfTokyo = /** @class */ (function () {
         log('gamedatas', gamedatas);
         this.createPlayerPanels(gamedatas);
         this.createVisibleCards(gamedatas.visibleCards);
+        this.createPlayerTables(gamedatas);
         /*this.lordsStacks = new LordsStacks(this, gamedatas.visibleLords, gamedatas.pickLords);
         this.locationsStacks = new LocationsStacks(this, gamedatas.visibleLocations, gamedatas.pickLocations);
 
@@ -184,6 +193,10 @@ var KingOfTokyo = /** @class */ (function () {
     ///////////////////////////////////////////////////
     //// Utility methods
     ///////////////////////////////////////////////////
+    KingOfTokyo.prototype.getOrderedPlayers = function () {
+        var _this = this;
+        return this.gamedatas.playerorder.map(function (id) { return _this.gamedatas.players[Number(id)]; });
+    };
     KingOfTokyo.prototype.createPlayerPanels = function (gamedatas) {
         var _this = this;
         Object.values(gamedatas.players).forEach(function (player) {
@@ -200,6 +213,9 @@ var KingOfTokyo = /** @class */ (function () {
             _this.energyCounters[playerId] = energyCounter;
         });
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
+    };
+    KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
+        this.playerTables = this.getOrderedPlayers().map(function (player, index) { return new PlayerTable(player, index); });
     };
     KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
         var _this = this;
