@@ -1,0 +1,21 @@
+.player-table {
+
+    .player-name {
+        font-weight: bold;
+        text-shadow: 1px 1px 1px black;
+    }
+
+    .monster-board {
+        width: 218px;
+        height: 175px;
+        background-image: url('img/monsterboards.png');
+        background-size: auto 100%;
+
+        @for $i from 0 through 5 {
+            &.monster#{$i} {
+                background-position: ($i * 20%) 100%;
+            }
+        }
+    }
+
+}

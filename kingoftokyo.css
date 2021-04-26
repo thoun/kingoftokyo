@@ -357,6 +357,35 @@
   box-shadow: 2px 2px 5px 2px black;
 }
 
+.player-table .player-name {
+  font-weight: bold;
+  text-shadow: 1px 1px 1px black;
+}
+.player-table .monster-board {
+  width: 218px;
+  height: 175px;
+  background-image: url("img/monsterboards.png");
+  background-size: auto 100%;
+}
+.player-table .monster-board.monster0 {
+  background-position: 0% 100%;
+}
+.player-table .monster-board.monster1 {
+  background-position: 20% 100%;
+}
+.player-table .monster-board.monster2 {
+  background-position: 40% 100%;
+}
+.player-table .monster-board.monster3 {
+  background-position: 60% 100%;
+}
+.player-table .monster-board.monster4 {
+  background-position: 80% 100%;
+}
+.player-table .monster-board.monster5 {
+  background-position: 100% 100%;
+}
+
 @font-face {
   font-family: "goodgirl";
   src: url("font/goodgirl-webfont.woff2") format("woff2"), url("font/goodgirl-webfont.woff") format("woff");

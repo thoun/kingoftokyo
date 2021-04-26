@@ -38,7 +38,8 @@ var PlayerTable = /** @class */ (function () {
     function PlayerTable(player, order) {
         this.player = player;
         this.order = order;
-        dojo.place("<div>player " + player.name + ", monster " + player.monster + "</div>", 'players-tables');
+        this.monster = Number(player.monster);
+        dojo.place("\n        <div class=\"player-table\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div class=\"monster-board monster" + this.monster + "\"></div>\n        </div>\n        ", 'players-tables');
     }
     return PlayerTable;
 }());
