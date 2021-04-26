@@ -15,7 +15,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private energyCounters: Counter[] = [];
     private selectedDicesIds: number[] = null;
     private visibleCards: Stock;
-    private playerTables: PlayerTable[];
+    private playerTables: PlayerTable[] = [];
 
     constructor() {     
     }
@@ -225,7 +225,9 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
-        this.playerTables = this.getOrderedPlayers().map((player, index) => new PlayerTable(this, player, index, gamedatas.playersCards[Number(player.id)]));
+        this.getOrderedPlayers().forEach((player, index) =>
+            this.playerTables[Number(player.id)] = new PlayerTable(this, player, index, gamedatas.playersCards[Number(player.id)])
+        );
     }
 
     private createVisibleCards(visibleCards: Card[]) {
@@ -442,7 +444,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         const newCard = notif.args.newCard;
         this.energyCounters[notif.args.playerId].incValue(-card.cost);
 
-        this.visibleCards.removeFromStockById(`${card.id}`); // TODO remove to player hand
+        moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
         this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`);
     }
 

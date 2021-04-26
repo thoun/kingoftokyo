@@ -78,6 +78,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.healthCounters = [];
         this.energyCounters = [];
         this.selectedDicesIds = null;
+        this.playerTables = [];
     }
     /*
         setup:
@@ -246,7 +247,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
-        this.playerTables = this.getOrderedPlayers().map(function (player, index) { return new PlayerTable(_this, player, index, gamedatas.playersCards[Number(player.id)]); });
+        this.getOrderedPlayers().forEach(function (player, index) {
+            return _this.playerTables[Number(player.id)] = new PlayerTable(_this, player, index, gamedatas.playersCards[Number(player.id)]);
+        });
     };
     KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
         var _this = this;
@@ -430,7 +433,7 @@ var KingOfTokyo = /** @class */ (function () {
         var card = notif.args.card;
         var newCard = notif.args.newCard;
         this.energyCounters[notif.args.playerId].incValue(-card.cost);
-        this.visibleCards.removeFromStockById("" + card.id); // TODO remove to player hand
+        moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
         this.visibleCards.addToStockWithId(newCard.type, "" + newCard.id);
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
