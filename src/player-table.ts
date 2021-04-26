@@ -5,11 +5,13 @@ const isDebug = window.location.host == 'studio.boardgamearena.com';
 const log = isDebug ? console.log.bind(window.console) : function () { };
 
 class PlayerTable {
+    private playerId : number;
     private monster: number;
 
     public cards: Stock;
 
     constructor(private game: Game, private player: Player, private order: number, cards: Card[]) {
+        this.playerId = Number((player as any).id);
         this.monster = Number((player as any).monster);
         dojo.place(`
         <div id="player-table-${player.id}" class="player-table">
@@ -33,5 +35,18 @@ class PlayerTable {
         setupCards([this.cards]);
 
         cards.forEach(card => this.cards.addToStockWithId(card.type, `${card.id}`));
+
+        const location = Number((player as any).location);
+        if (location > 0) {
+            this.enterTokyo(location);
+        }
+    }
+
+    public enterTokyo(location: number) {        
+        (this.game as any).slideToObject(`monster-figure-${this.playerId}`, `tokyo-${location == 2 ? 'bay' : 'city'}`).play();
+    }
+
+    public leaveTokyo() {        
+        (this.game as any).slideToObject(`monster-figure-${this.playerId}`, `monster-board-${this.playerId}`).play();
     }
 }

@@ -57,6 +57,7 @@ var PlayerTable = /** @class */ (function () {
         this.game = game;
         this.player = player;
         this.order = order;
+        this.playerId = Number(player.id);
         this.monster = Number(player.monster);
         dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n            </div>   \n            <div id=\"cards-" + player.id + "\"></div>      \n        </div>\n\n        ", 'players-tables');
         this.cards = new ebg.stock();
@@ -69,7 +70,17 @@ var PlayerTable = /** @class */ (function () {
         this.cards.centerItems = true;
         setupCards([this.cards]);
         cards.forEach(function (card) { return _this.cards.addToStockWithId(card.type, "" + card.id); });
+        var location = Number(player.location);
+        if (location > 0) {
+            this.enterTokyo(location);
+        }
     }
+    PlayerTable.prototype.enterTokyo = function (location) {
+        this.game.slideToObject("monster-figure-" + this.playerId, "tokyo-" + (location == 2 ? 'bay' : 'city')).play();
+    };
+    PlayerTable.prototype.leaveTokyo = function () {
+        this.game.slideToObject("monster-figure-" + this.playerId, "monster-board-" + this.playerId).play();
+    };
     return PlayerTable;
 }());
 var ANIMATION_MS = 1500;
@@ -424,10 +435,10 @@ var KingOfTokyo = /** @class */ (function () {
         // TODO animation? or strike player's name
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (notif) {
-        this.slideToObject("monster-figure-" + notif.args.playerId, "monster-board-" + notif.args.playerId);
+        this.playerTables[notif.args.playerId].leaveTokyo();
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
-        this.slideToObject("monster-figure-" + notif.args.playerId, "tokyo-" + (notif.args.location == 2 ? 'bay' : 'city'));
+        this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
     };
     KingOfTokyo.prototype.notif_pickCard = function (notif) {
         var card = notif.args.card;

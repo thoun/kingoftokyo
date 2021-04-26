@@ -1,13 +1,3 @@
-# TODO
-Hi Jurica,
-Can you ask art files for King of Tokyo ?
-
-As cards have translated text on them, it would be nice to have :
- - cards art without text (but cost can be on it), and text apart.
- - or complete cards in English, in a format were I can split text from art (for example PSD file).
-
-Other items I hope to find on art : monster boards, cardboard figures, tokyo board, tokens, dices & boards icons (ideally in vectorial/SVG format).
-
 # What is this project ? 
 This project is an adaptation for BoardGameArena of game King of Tokyo edited by Iello.
 You can play here : https://boardgamearena.com

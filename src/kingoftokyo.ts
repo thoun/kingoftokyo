@@ -432,11 +432,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
-        (this as any).slideToObject(`monster-figure-${notif.args.playerId}`, `monster-board-${notif.args.playerId}`);
+        this.playerTables[notif.args.playerId].leaveTokyo();
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
-        (this as any).slideToObject(`monster-figure-${notif.args.playerId}`, `tokyo-${notif.args.location == 2 ? 'bay' : 'city'}`);
+        this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
     }
 
     notif_pickCard(notif: Notif<NotifPickCardArgs>) {
