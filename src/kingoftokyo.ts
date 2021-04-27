@@ -16,6 +16,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private selectedDicesIds: number[] = null;
     private visibleCards: Stock;
     private playerTables: PlayerTable[] = [];
+    private tableManager: TableManager;
 
     constructor() {     
     }
@@ -48,8 +49,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.createPlayerPanels(gamedatas);
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
-
-        (this as any).onScreenWidthChange = (a, b, c, d) => console.log(a, b, c, d);
+        this.tableManager = new TableManager(this, this.playerTables);
 
         this.setupNotifications();
 

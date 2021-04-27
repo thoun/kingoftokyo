@@ -5,13 +5,15 @@ const isDebug = window.location.host == 'studio.boardgamearena.com';
 const log = isDebug ? console.log.bind(window.console) : function () { };
 
 class PlayerTable {
-    private playerId : number;
+    public playerId: number;
+    public playerNo: number;
     private monster: number;
 
     public cards: Stock;
 
     constructor(private game: Game, private player: Player, private order: number, cards: Card[]) {
-        this.playerId = Number((player as any).id);
+        this.playerId = Number(player.id);
+        this.playerNo = Number((player as any).player_no);
         this.monster = Number((player as any).monster);
         dojo.place(`
         <div id="player-table-${player.id}" class="player-table">
@@ -22,7 +24,7 @@ class PlayerTable {
             <div id="cards-${player.id}"></div>      
         </div>
 
-        `, 'players-tables');
+        `, 'table');
         this.cards = new ebg.stock() as Stock;
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';

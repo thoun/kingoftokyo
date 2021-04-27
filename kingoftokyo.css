@@ -348,7 +348,14 @@
   cursor: not-allowed;
 }
 
-#board {
+#table {
+  position: relative;
+}
+#table #table-center {
+  position: absolute;
+  width: 400px;
+}
+#table #table-center #board {
   position: relative;
   width: 400px;
   height: 400px;
@@ -356,75 +363,78 @@
   background-size: cover;
   box-shadow: 2px 2px 5px 2px black;
 }
-#board #tokyo-city {
+#table #table-center #board #tokyo-city {
   position: absolute;
   top: 80px;
   left: 0;
   width: 200px;
   height: 200px;
 }
-#board #tokyo-bay {
+#table #table-center #board #tokyo-bay {
   position: absolute;
   bottom: 0px;
   right: 0;
   width: 200px;
   height: 200px;
 }
-
-.player-table {
+#table .player-table {
   width: 400px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.player-table .player-name {
+#table .player-table .player-name {
   font-weight: bold;
   text-shadow: 1px 1px 1px black;
 }
-.player-table .monster-board {
+#table .player-table .monster-board {
   width: 218px;
   height: 175px;
   background-image: url("img/monsterboards.png");
   background-size: auto 100%;
 }
-.player-table .monster-board.monster0 {
+#table .player-table .monster-board.monster0 {
   background-position: 0% 100%;
 }
-.player-table .monster-board.monster1 {
+#table .player-table .monster-board.monster1 {
   background-position: 20% 100%;
 }
-.player-table .monster-board.monster2 {
+#table .player-table .monster-board.monster2 {
   background-position: 40% 100%;
 }
-.player-table .monster-board.monster3 {
+#table .player-table .monster-board.monster3 {
   background-position: 60% 100%;
 }
-.player-table .monster-board.monster4 {
+#table .player-table .monster-board.monster4 {
   background-position: 80% 100%;
 }
-.player-table .monster-board.monster5 {
+#table .player-table .monster-board.monster5 {
   background-position: 100% 100%;
 }
-.player-table .monster-figure {
+#table .player-table .monster-figure {
   position: relative;
   width: 190.4px;
   height: 196px;
   background-image: url("img/monsterfigures.png");
   background-size: auto 100%;
 }
-.player-table .monster-figure.monster0 {
+#table .player-table .monster-figure.monster0 {
   background-position: 0% 100%;
 }
-.player-table .monster-figure.monster1 {
+#table .player-table .monster-figure.monster1 {
   background-position: 20% 100%;
 }
-.player-table .monster-figure.monster2 {
+#table .player-table .monster-figure.monster2 {
   background-position: 40% 100%;
 }
-.player-table .monster-figure.monster3 {
+#table .player-table .monster-figure.monster3 {
   background-position: 60% 100%;
 }
-.player-table .monster-figure.monster4 {
+#table .player-table .monster-figure.monster4 {
   background-position: 80% 100%;
 }
-.player-table .monster-figure.monster5 {
+#table .player-table .monster-figure.monster5 {
   background-position: 100% 100%;
 }
 

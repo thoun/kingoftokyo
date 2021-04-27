@@ -58,8 +58,9 @@ var PlayerTable = /** @class */ (function () {
         this.player = player;
         this.order = order;
         this.playerId = Number(player.id);
+        this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n            </div>   \n            <div id=\"cards-" + player.id + "\"></div>      \n        </div>\n\n        ", 'players-tables');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n            </div>   \n            <div id=\"cards-" + player.id + "\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -82,6 +83,106 @@ var PlayerTable = /** @class */ (function () {
         this.game.slideToObject("monster-figure-" + this.playerId, "monster-board-" + this.playerId).play();
     };
     return PlayerTable;
+}());
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
+var PLAYER_TABLE_WIDTH = 400;
+var PLAYER_BOARD_HEIGHT = 193;
+var CARDS_PER_ROW = 3;
+var CENTER_TABLE_WIDTH = 400;
+var DISPOSITION_2_COLUMNS = [];
+var DISPOSITION_3_COLUMNS = [];
+DISPOSITION_2_COLUMNS[2] = [[0], [1]];
+DISPOSITION_2_COLUMNS[3] = [[0], [1, 2]];
+DISPOSITION_2_COLUMNS[4] = [[1, 0], [2, 3]];
+DISPOSITION_2_COLUMNS[5] = [[1, 0], [2, 3, 4]];
+DISPOSITION_2_COLUMNS[6] = [[1, 0], [2, 3, 4, 5]];
+DISPOSITION_3_COLUMNS[2] = [[], [0], [1]];
+DISPOSITION_3_COLUMNS[3] = [[1], [0], [2]];
+DISPOSITION_3_COLUMNS[4] = [[1], [2, 0], [3]];
+DISPOSITION_3_COLUMNS[5] = [[2, 1], [0], [3, 4]];
+DISPOSITION_3_COLUMNS[6] = [[2, 1], [5, 0], [3, 4]];
+var TableManager = /** @class */ (function () {
+    function TableManager(game, playerTables) {
+        var _this = this;
+        this.game = game;
+        var currentPlayerId = Number(this.game.player_id);
+        var playerTablesOrdered = playerTables.filter(function (playerTable) { return !!playerTable; }).sort(function (a, b) { return b.playerNo - a.playerNo; });
+        var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
+        if (playerIndex) { // not spectator (or 0)            
+            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
+        }
+        else { // spectator
+            this.playerTables = playerTablesOrdered.filter(function (playerTable) { return !!playerTable; });
+        }
+        this.game.onScreenWidthChange = function () { return _this.placePlayerTable(); };
+    }
+    TableManager.prototype.placePlayerTable = function () {
+        var _this = this;
+        var height = 0;
+        var players = this.playerTables.length;
+        var tableDiv = document.getElementById('table');
+        var tableWidth = tableDiv.clientWidth;
+        var columns = Math.min(3, Math.floor(tableWidth / 420));
+        var tableCenterDiv = document.getElementById('table-center');
+        tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH) / 2 + "px";
+        tableCenterDiv.style.top = "0px";
+        if (columns === 1) {
+            var top_1 = tableCenterDiv.clientHeight;
+            this.playerTables.forEach(function (playerTable) {
+                var playerTableDiv = document.getElementById("player-table-" + playerTable.playerId);
+                playerTableDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH) / 2 + "px";
+                playerTableDiv.style.top = top_1 + "px";
+                top_1 += _this.getPlayerTableHeight(playerTable);
+                height = Math.max(height, top_1);
+            });
+        }
+        else {
+            var dispositionModel = (columns === 3 ? DISPOSITION_3_COLUMNS : DISPOSITION_2_COLUMNS)[players];
+            var disposition_1 = dispositionModel.map(function (columnIndexes) { return columnIndexes.map(function (columnIndex) { return ({
+                id: _this.playerTables[columnIndex].playerId,
+                height: _this.getPlayerTableHeight(_this.playerTables[columnIndex]),
+            }); }); });
+            var columnCenters_1 = columns === 3 ? [tableWidth * 1 / 6, tableWidth * 3 / 6, tableWidth * 5 / 6] : [tableWidth * 1 / 4, tableWidth * 3 / 4];
+            var centerColumnIndex_1 = columns === 3 ? 1 : 0;
+            if (columns === 2) {
+                tableCenterDiv.style.left = columnCenters_1[0] - CENTER_TABLE_WIDTH / 2 + "px";
+            }
+            // we always compute "center" column first
+            (columns === 3 ? [1, 0, 2] : [0, 1]).forEach(function (columnIndex) {
+                var centerColumn = centerColumnIndex_1 === columnIndex;
+                var playerOverTable = centerColumn && disposition_1[columnIndex].length > 1;
+                var dispositionColumn = disposition_1[columnIndex];
+                var top;
+                if (centerColumn) {
+                    top = !playerOverTable ? tableCenterDiv.clientHeight + 20 : 0;
+                }
+                else {
+                    top = Math.max(0, (height - dispositionColumn.map(function (dc) { return dc.height; }).reduce(function (a, b) { return a + b; }, 0)) / 2);
+                }
+                dispositionColumn.forEach(function (playerInfos, index) {
+                    var playerTableDiv = document.getElementById("player-table-" + playerInfos.id);
+                    playerTableDiv.style.left = columnCenters_1[columnIndex] - PLAYER_TABLE_WIDTH / 2 + "px";
+                    playerTableDiv.style.top = top + "px";
+                    top += playerInfos.height;
+                    if (centerColumn && index == 0 && disposition_1[columnIndex].length > 1) {
+                        tableCenterDiv.style.top = playerInfos.height + "px";
+                        top += tableCenterDiv.clientHeight + 20;
+                    }
+                    height = Math.max(height, top);
+                });
+            });
+        }
+        tableDiv.style.height = height + "px";
+    };
+    TableManager.prototype.getPlayerTableHeight = function (playerTable) {
+        var cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
+        return PLAYER_BOARD_HEIGHT + CARD_HEIGHT * cardRows;
+    };
+    return TableManager;
 }());
 var ANIMATION_MS = 1500;
 var KingOfTokyo = /** @class */ (function () {
@@ -115,7 +216,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.createPlayerPanels(gamedatas);
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
-        this.onScreenWidthChange = function (a, b, c, d) { return console.log(a, b, c, d); };
+        this.tableManager = new TableManager(this, this.playerTables);
         this.setupNotifications();
         log("Ending game setup");
     };
