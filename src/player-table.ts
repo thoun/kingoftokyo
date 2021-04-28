@@ -8,6 +8,7 @@ class PlayerTable {
     public playerId: number;
     public playerNo: number;
     private monster: number;
+    private initialLocation: number;
 
     public cards: Stock;
 
@@ -31,16 +32,19 @@ class PlayerTable {
         this.cards.create(this.game, $(`cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
         this.cards.setSelectionMode(0);
         this.cards.onItemCreate = (card_div, card_type_id, card_id) => setupNewCard(card_div, card_type_id, card_id);
-        this.cards.image_items_per_row = 13;
+        //this.cards.image_items_per_row = 13;
         this.cards.centerItems = true;
 
         setupCards([this.cards]);
 
         cards.forEach(card => this.cards.addToStockWithId(card.type, `${card.id}`));
 
-        const location = Number((player as any).location);
-        if (location > 0) {
-            this.enterTokyo(location);
+        this.initialLocation = Number((player as any).location);
+    }
+
+    public initPlacement() {
+        if (this.initialLocation > 0) {
+            this.enterTokyo(this.initialLocation);
         }
     }
 

@@ -43,6 +43,12 @@
   display: flex;
   align-items: center;
 }
+#rolled-dices #locked-dices.hide-lock {
+  border-color: transparent;
+}
+#rolled-dices #locked-dices.hide-lock #lock-icon {
+  display: none;
+}
 #rolled-dices #dices-selector {
   border: 2px solid transparent;
   min-height: 40px;

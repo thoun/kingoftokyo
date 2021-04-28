@@ -51,6 +51,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
+        // placement of monster must be after TableManager first paint
+        setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
 
         this.setupNotifications();
 
@@ -72,6 +74,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setGamestateDescription(tdArgs.throwNumber >= tdArgs.maxThrowNumber ? `last` : '');
                 this.onEnteringThrowDices(args.args);
                 break;
+            case 'resolveDices': 
+                dojo.addClass('locked-dices', 'hide-lock');
+                break;
+            
             case 'pickCard':
                 this.onEnteringPickCard(args.args);
                 break;
@@ -86,6 +92,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringThrowDices(args: EnteringThrowDicesArgs) {
+        dojo.removeClass('locked-dices', 'hide-lock');
+
         const dices = args.dices;
 
         if (args.throwNumber === 1) {
@@ -99,6 +107,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             dices.filter(dice => dice.value == i && !document.getElementById(`dice${dice.id}`)).forEach(dice => {
                 addedDicesIds.push(`dice${dice.id}`);
                 dojo.place(this.createDiceHtml(dice), 'dices-selector');
+                // TODO if player is in tokyo, add symbol &#x1f6ab; on heart dices
             });
         }
 
@@ -119,11 +128,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         dojo.toggleClass('rolled-dices', 'selectable', selectable);
 
         if (lastTurn) {
-            setTimeout(() => this.freeDicesIds.forEach(id => {
-                const diceDiv = document.getElementById(`dice${id}`);
-                dojo.removeClass(diceDiv.id, 'rolled');
-                slideToObjectAndAttach(this, diceDiv, 'locked-dices');
-            }), 1000);
+            setTimeout(() => this.lockFreeDices(), 1000);
         }
     }
 
@@ -236,7 +241,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = (card_div, card_type_id, card_id) => setupNewCard(card_div, card_type_id, card_id); 
-        this.visibleCards.image_items_per_row = 13;
+        //this.visibleCards.image_items_per_row = 13;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
 
@@ -252,6 +257,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.pickCard(item_id);
+    }
+
+    private lockFreeDices() {
+        this.freeDicesIds.forEach(id => {
+            const diceDiv = document.getElementById(`dice${id}`);
+            dojo.removeClass(diceDiv.id, 'rolled');
+            slideToObjectAndAttach(this, diceDiv, 'locked-dices');
+        });
     }
 
     public onRethrow() {
@@ -273,6 +286,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         if(!(this as any).checkAction('resolve')) {
             return;
         }
+        this.lockFreeDices();
 
         this.takeAction('resolve');
     }

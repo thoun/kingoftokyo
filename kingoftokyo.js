@@ -67,15 +67,17 @@ var PlayerTable = /** @class */ (function () {
         this.cards.create(this.game, $("cards-" + this.player.id), CARD_WIDTH, CARD_HEIGHT);
         this.cards.setSelectionMode(0);
         this.cards.onItemCreate = function (card_div, card_type_id, card_id) { return setupNewCard(card_div, card_type_id, card_id); };
-        this.cards.image_items_per_row = 13;
+        //this.cards.image_items_per_row = 13;
         this.cards.centerItems = true;
         setupCards([this.cards]);
         cards.forEach(function (card) { return _this.cards.addToStockWithId(card.type, "" + card.id); });
-        var location = Number(player.location);
-        if (location > 0) {
-            this.enterTokyo(location);
-        }
+        this.initialLocation = Number(player.location);
     }
+    PlayerTable.prototype.initPlacement = function () {
+        if (this.initialLocation > 0) {
+            this.enterTokyo(this.initialLocation);
+        }
+    };
     PlayerTable.prototype.enterTokyo = function (location) {
         this.game.slideToObject("monster-figure-" + this.playerId, "tokyo-" + (location == 2 ? 'bay' : 'city')).play();
     };
@@ -206,6 +208,7 @@ var KingOfTokyo = /** @class */ (function () {
         "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
+        var _this = this;
         // ignore loading of some pictures
         /*(this as any).dontPreloadImage('eye-shadow.png');
         (this as any).dontPreloadImage('publisher.png');
@@ -218,6 +221,8 @@ var KingOfTokyo = /** @class */ (function () {
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
+        // placement of monster must be after TableManager first paint
+        setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setupNotifications();
         log("Ending game setup");
     };
@@ -234,6 +239,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setGamestateDescription(tdArgs.throwNumber >= tdArgs.maxThrowNumber ? "last" : '');
                 this.onEnteringThrowDices(args.args);
                 break;
+            case 'resolveDices':
+                dojo.addClass('locked-dices', 'hide-lock');
+                break;
             case 'pickCard':
                 this.onEnteringPickCard(args.args);
                 break;
@@ -248,6 +256,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringThrowDices = function (args) {
         var _this = this;
+        dojo.removeClass('locked-dices', 'hide-lock');
         var dices = args.dices;
         if (args.throwNumber === 1) {
             $('dices-selector').innerHTML = '';
@@ -259,6 +268,7 @@ var KingOfTokyo = /** @class */ (function () {
             dices.filter(function (dice) { return dice.value == i && !document.getElementById("dice" + dice.id); }).forEach(function (dice) {
                 addedDicesIds.push("dice" + dice.id);
                 dojo.place(_this.createDiceHtml(dice), 'dices-selector');
+                // TODO if player is in tokyo, add symbol &#x1f6ab; on heart dices
             });
         };
         for (var i = 1; i <= 6; i++) {
@@ -277,11 +287,7 @@ var KingOfTokyo = /** @class */ (function () {
         });
         dojo.toggleClass('rolled-dices', 'selectable', selectable);
         if (lastTurn) {
-            setTimeout(function () { return _this.freeDicesIds.forEach(function (id) {
-                var diceDiv = document.getElementById("dice" + id);
-                dojo.removeClass(diceDiv.id, 'rolled');
-                slideToObjectAndAttach(_this, diceDiv, 'locked-dices');
-            }); }, 1000);
+            setTimeout(function () { return _this.lockFreeDices(); }, 1000);
         }
     };
     KingOfTokyo.prototype.onEnteringPickCard = function (args) {
@@ -368,7 +374,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = function (card_div, card_type_id, card_id) { return setupNewCard(card_div, card_type_id, card_id); };
-        this.visibleCards.image_items_per_row = 13;
+        //this.visibleCards.image_items_per_row = 13;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
         setupCards([this.visibleCards]);
@@ -380,6 +386,14 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.pickCard(item_id);
+    };
+    KingOfTokyo.prototype.lockFreeDices = function () {
+        var _this = this;
+        this.freeDicesIds.forEach(function (id) {
+            var diceDiv = document.getElementById("dice" + id);
+            dojo.removeClass(diceDiv.id, 'rolled');
+            slideToObjectAndAttach(_this, diceDiv, 'locked-dices');
+        });
     };
     KingOfTokyo.prototype.onRethrow = function () {
         this.rethrowDices(this.freeDicesIds);
@@ -397,6 +411,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (!this.checkAction('resolve')) {
             return;
         }
+        this.lockFreeDices();
         this.takeAction('resolve');
     };
     KingOfTokyo.prototype.onStayInTokyo = function () {

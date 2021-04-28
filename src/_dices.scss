@@ -10,6 +10,14 @@ $tokyoGreen: #96c93c;
     margin-right: 20px;
     display: flex;
     align-items: center;
+
+    &.hide-lock {
+      border-color: transparent;
+
+      #lock-icon {
+        display: none;
+      }
+    }
   }
 
   #dices-selector {
