@@ -32,14 +32,24 @@
   align-items: center;
 }
 
-#dices-selector {
-  flex: 1;
-  text-align: center;
+#rolled-dices {
+  display: flex;
+  justify-content: center;
+}
+#rolled-dices #locked-dices {
+  border: 2px solid navy;
+  border-radius: 5px;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+}
+#rolled-dices #dices-selector {
+  border: 2px solid transparent;
   min-height: 40px;
   display: flex;
   justify-content: center;
 }
-#dices-selector.selectable .dice {
+#rolled-dices.selectable .dice {
   cursor: pointer;
 }
 
@@ -55,9 +65,6 @@
 .dice.rolled {
   animation: rolled-dices 1s forwards;
   transform: translateY(-40vh);
-}
-.dice.selected {
-  box-shadow: 0 0 6px 4px red;
 }
 
 @keyframes rolled-dices {

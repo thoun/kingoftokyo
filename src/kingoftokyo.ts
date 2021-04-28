@@ -13,7 +13,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
-    private selectedDicesIds: number[] = null;
+    private lockedDicesIds: number[] = null;
+    private freeDicesIds: number[] = null;
     private visibleCards: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
@@ -85,11 +86,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringThrowDices(args: EnteringThrowDicesArgs) {
+        const dices = args.dices;
+
         if (args.throwNumber === 1) {
             $('dices-selector').innerHTML = '';
+            this.lockedDicesIds = [];
+            this.freeDicesIds = dices.map(dice => dice.id);
         }
 
-        const dices = args.dices;
         const addedDicesIds = [];
         for (let i=1; i<=6; i++) {
             dices.filter(dice => dice.value == i && !document.getElementById(`dice${dice.id}`)).forEach(dice => {
@@ -98,7 +102,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             });
         }
 
-        const selectable = (this as any).isCurrentPlayerActive() && args.throwNumber < args.maxThrowNumber;
+        const lastTurn = args.throwNumber === args.maxThrowNumber;
+        const selectable = (this as any).isCurrentPlayerActive() && !lastTurn;
 
         addedDicesIds.map(id => document.getElementById(id)).forEach((dice: HTMLDivElement) => {
             dice.classList.add('rolled');
@@ -111,8 +116,15 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
         });
 
-        this.selectedDicesIds = [];
-        dojo.toggleClass('dices-selector', 'selectable', selectable);
+        dojo.toggleClass('rolled-dices', 'selectable', selectable);
+
+        if (lastTurn) {
+            setTimeout(() => this.freeDicesIds.forEach(id => {
+                const diceDiv = document.getElementById(`dice${id}`);
+                dojo.removeClass(diceDiv.id, 'rolled');
+                slideToObjectAndAttach(this, diceDiv, 'locked-dices');
+            }), 1000);
+        }
     }
 
     private onEnteringPickCard(args: EnteringPickCardArgs) {
@@ -146,7 +158,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'throwDices':
                     const tdArgs = args as EnteringThrowDicesArgs;
                     if (tdArgs.throwNumber < tdArgs.maxThrowNumber) {
-                        (this as any).addActionButton('rethrow_button', _("Rethrow selected dices") + ` ${tdArgs.throwNumber}/${tdArgs.maxThrowNumber}`, 'onRethrow');
+                        (this as any).addActionButton('rethrow_button', _("Rethrow dices") + ` ${tdArgs.throwNumber}/${tdArgs.maxThrowNumber}`, 'onRethrow');
                         dojo.addClass('rethrow_button', 'disabled');
                     }
                     (this as any).addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
@@ -243,9 +255,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public onRethrow() {
-        this.rethrowDices(this.selectedDicesIds);
-
-        this.selectedDicesIds.forEach(id => dojo.destroy(`dice${id}`));        
+        this.rethrowDices(this.freeDicesIds);
+        this.freeDicesIds.forEach(id => dojo.destroy(`dice${id}`));        
     }
 
     public rethrowDices(dicesIds: number[]) {
@@ -324,21 +335,21 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private toggleDiceSelection(dice: HTMLDivElement) {
-        const divId = dice.id;
-        const selected = !dojo.hasClass(divId, 'selected');
-        dojo.toggleClass(divId, 'selected', selected);
-
+        dojo.removeClass(dice.id, 'rolled');
         const id = parseInt(dice.dataset.diceId);
-        if (selected) {
-            this.selectedDicesIds.push(id);
+        const locked = this.freeDicesIds.some(freeId => freeId === id);
+
+        if (locked) {
+            this.lockedDicesIds.push(id);
+            this.freeDicesIds.splice(this.freeDicesIds.indexOf(id), 1);
         } else {
-            this.selectedDicesIds.splice(this.selectedDicesIds.indexOf(id), 1);
+            this.lockedDicesIds.splice(this.lockedDicesIds.indexOf(id), 1);
+            this.freeDicesIds.push(id);
         }
 
-        dojo.toggleClass(divId, 'selected', selected);
+        slideToObjectAndAttach(this, dice, locked ? 'locked-dices' : 'dices-selector');
 
-        dojo.toggleClass('rethrow_button', 'disabled', !this.selectedDicesIds.length);
-        dojo.toggleClass('resolve_button', 'disabled', !!this.selectedDicesIds.length);
+        dojo.toggleClass('rethrow_button', 'disabled', !this.freeDicesIds.length);
     }
 
     ///////////////////////////////////////////////////
