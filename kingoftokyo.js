@@ -216,6 +216,10 @@ var DiceManager = /** @class */ (function () {
         freeDices.forEach(function (dice) { return _this.removeDice(dice); });
         return freeDices.map(function (dice) { return dice.id; });
     };
+    DiceManager.prototype.removeAllDices = function () {
+        var _this = this;
+        this.dices.forEach(function (dice) { return _this.removeDice(dice); });
+    };
     DiceManager.prototype.lockFreeDices = function () {
         var _this = this;
         this.dices.filter(function (dice) { return !dice.locked; }).forEach(function (dice) { return _this.toggleLockDice(dice, true); });
@@ -235,38 +239,42 @@ var DiceManager = /** @class */ (function () {
         if (lastTurn) {
             setTimeout(function () { return _this.lockFreeDices(); }, 1000);
         }
+        this.activateRethrowButton();
     };
     DiceManager.prototype.resolveNumberDices = function (args) {
+        var _this = this;
         // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
-    };
-    DiceManager.prototype.resolveSmashDices = function (args) {
-        // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
-    };
-    DiceManager.prototype.resolveEnergyDices = function (args) {
-        // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
+        this.dices.filter(function (dice) { return dice.value === args.diceValue; }).forEach(function (dice) { return _this.removeDice(dice); });
     };
     DiceManager.prototype.resolveHealthDicesInTokyo = function (args) {
+        var _this = this;
         // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
+        this.dices.filter(function (dice) { return dice.value === 4; }).forEach(function (dice) { return _this.removeDice(dice); });
     };
     DiceManager.prototype.resolveHealthDices = function (args) {
+        var _this = this;
         // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
+        this.dices.filter(function (dice) { return dice.value === 4; }).forEach(function (dice) { return _this.removeDice(dice); });
+    };
+    DiceManager.prototype.resolveEnergyDices = function (args) {
+        var _this = this;
+        // TODO animation
+        this.dices.filter(function (dice) { return dice.value === 5; }).forEach(function (dice) { return _this.removeDice(dice); });
+    };
+    DiceManager.prototype.resolveSmashDices = function (args) {
+        var _this = this;
+        // TODO animation
+        this.dices.filter(function (dice) { return dice.value === 6; }).forEach(function (dice) { return _this.removeDice(dice); });
     };
     DiceManager.prototype.toggleLockDice = function (dice, forcedLockValue) {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
         dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
         var diceDiv = document.getElementById("dice" + dice.id);
         slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dices' : 'dices-selector');
-        if (forcedLockValue === null) {
+        this.activateRethrowButton();
+    };
+    DiceManager.prototype.activateRethrowButton = function () {
+        if (document.getElementById('rethrow_button')) {
             dojo.toggleClass('rethrow_button', 'disabled', !this.dices.filter(function (dice) { return !dice.locked; }).length);
         }
     };
@@ -379,6 +387,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         switch (stateName) {
+            case 'resolveDices':
+                this.diceManager.removeAllDices();
+                break;
             case 'pickCard':
                 this.onLeavingPickCard();
                 break;

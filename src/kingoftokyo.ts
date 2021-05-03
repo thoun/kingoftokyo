@@ -110,6 +110,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
+            case 'resolveDices':
+                this.diceManager.removeAllDices();
+                break;
             case 'pickCard':
                 this.onLeavingPickCard();
                 break;

@@ -18,6 +18,10 @@ class DiceManager {
         return freeDices.map(dice => dice.id);
     }
 
+    public removeAllDices() {
+        this.dices.forEach(dice => this.removeDice(dice));
+    }
+
     public lockFreeDices() {
         this.dices.filter(dice => !dice.locked).forEach(dice => this.toggleLockDice(dice, true));
     }
@@ -40,35 +44,33 @@ class DiceManager {
         if (lastTurn) {
             setTimeout(() => this.lockFreeDices(), 1000);
         }
+
+        this.activateRethrowButton();
     }
 
     public resolveNumberDices(args: NotifResolveNumberDiceArgs) {
         // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
-    }
-
-    public resolveSmashDices(args: NotifResolveSmashDiceArgs) {
-        // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
-    }
-
-    public resolveEnergyDices(args: NotifResolveEnergyDiceArgs) {
-        // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
+        this.dices.filter(dice => dice.value === args.diceValue).forEach(dice => this.removeDice(dice));
     }
 
     public resolveHealthDicesInTokyo(args: NotifResolveHealthDiceInTokyoArgs) {
         // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
+        this.dices.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice));
     }
-    resolveHealthDices(args: NotifResolveHealthDiceArgs) {
+
+    public resolveHealthDices(args: NotifResolveHealthDiceArgs) {
         // TODO animation
-        throw new Error("Method not implemented.");
-        // TODO remove dices
+        this.dices.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice));
+    }
+
+    public resolveEnergyDices(args: NotifResolveEnergyDiceArgs) {
+        // TODO animation
+        this.dices.filter(dice => dice.value === 5).forEach(dice => this.removeDice(dice));
+    }
+
+    public resolveSmashDices(args: NotifResolveSmashDiceArgs) {
+        // TODO animation
+        this.dices.filter(dice => dice.value === 6).forEach(dice => this.removeDice(dice));
     }
 
     private toggleLockDice(dice: Dice, forcedLockValue: boolean | null = null) {
@@ -77,7 +79,11 @@ class DiceManager {
 
         slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dices' : 'dices-selector');
 
-        if (forcedLockValue === null) {
+        this.activateRethrowButton();
+    }
+
+    private activateRethrowButton() {
+        if (document.getElementById('rethrow_button')) {
             dojo.toggleClass('rethrow_button', 'disabled', !this.dices.filter(dice => !dice.locked).length);
         }
     }
