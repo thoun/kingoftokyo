@@ -128,14 +128,12 @@ var TableManager = /** @class */ (function () {
         var players = this.playerTables.length;
         var tableDiv = document.getElementById('table');
         var tableWidth = tableDiv.clientWidth;
-        var columns = Math.min(3, Math.floor(tableWidth / 420));
-        if (players == 2 && columns > 2) {
-            columns = 2;
-        }
+        var availableColumns = Math.min(3, Math.floor(tableWidth / 420));
+        var idealColumns = players == 2 ? 2 : 3;
         var tableCenterDiv = document.getElementById('table-center');
         tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH) / 2 + "px";
         tableCenterDiv.style.top = "0px";
-        if (columns === 1) {
+        if (availableColumns === 1) {
             var top_1 = tableCenterDiv.clientHeight;
             this.playerTables.forEach(function (playerTable) {
                 var playerTableDiv = document.getElementById("player-table-" + playerTable.playerId);
@@ -146,19 +144,20 @@ var TableManager = /** @class */ (function () {
             });
         }
         else {
-            var dispositionModel = (columns === 3 ? DISPOSITION_3_COLUMNS : DISPOSITION_2_COLUMNS)[players];
+            var columns_1 = Math.min(availableColumns, idealColumns);
+            var dispositionModel = (columns_1 === 3 ? DISPOSITION_3_COLUMNS : DISPOSITION_2_COLUMNS)[players];
             var disposition_1 = dispositionModel.map(function (columnIndexes) { return columnIndexes.map(function (columnIndex) { return ({
                 id: _this.playerTables[columnIndex].playerId,
                 height: _this.getPlayerTableHeight(_this.playerTables[columnIndex]),
             }); }); });
-            var tableCenter_1 = columns === 3 ? tableWidth * 1 / 2 : tableWidth * 1 / 4;
-            var centerColumnIndex_1 = columns === 3 ? 1 : 0;
-            if (columns === 2) {
+            var tableCenter_1 = (columns_1 === 3 ? tableWidth : tableWidth - PLAYER_TABLE_WIDTH) / 2;
+            var centerColumnIndex_1 = columns_1 === 3 ? 1 : 0;
+            if (columns_1 === 2) {
                 tableCenterDiv.style.left = tableCenter_1 - CENTER_TABLE_WIDTH / 2 + "px";
             }
             // we always compute "center" column first
-            (columns === 3 ? [1, 0, 2] : [0, 1]).forEach(function (columnIndex) {
-                var leftColumn = columnIndex === 0 && columns === 3;
+            (columns_1 === 3 ? [1, 0, 2] : [0, 1]).forEach(function (columnIndex) {
+                var leftColumn = columnIndex === 0 && columns_1 === 3;
                 var centerColumn = centerColumnIndex_1 === columnIndex;
                 var rightColumn = columnIndex > centerColumnIndex_1;
                 var playerOverTable = centerColumn && disposition_1[columnIndex].length > 1;

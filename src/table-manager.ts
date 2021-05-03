@@ -38,16 +38,14 @@ class TableManager {
         const players = this.playerTables.length;
         const tableDiv = document.getElementById('table');
         const tableWidth = tableDiv.clientWidth;
-        let columns = Math.min(3, Math.floor(tableWidth / 420));
-        if (players == 2 && columns > 2) {
-            columns = 2;
-        }
+        const availableColumns = Math.min(3, Math.floor(tableWidth / 420));
+        const idealColumns = players == 2 ? 2 : 3;
 
         const tableCenterDiv = document.getElementById('table-center');
         tableCenterDiv.style.left = `${(tableWidth - CENTER_TABLE_WIDTH) / 2}px`;
         tableCenterDiv.style.top = `0px`;
 
-        if (columns === 1) {
+        if (availableColumns === 1) {
             let top = tableCenterDiv.clientHeight;
             this.playerTables.forEach(playerTable => {
                 const playerTableDiv = document.getElementById(`player-table-${playerTable.playerId}`);
@@ -57,13 +55,14 @@ class TableManager {
                 height = Math.max(height, top);
             });
         } else {
+            const columns = Math.min(availableColumns, idealColumns);
 
             const dispositionModel = (columns === 3 ? DISPOSITION_3_COLUMNS : DISPOSITION_2_COLUMNS)[players];
             const disposition = dispositionModel.map(columnIndexes => columnIndexes.map(columnIndex => ({ 
                 id: this.playerTables[columnIndex].playerId,
                 height: this.getPlayerTableHeight(this.playerTables[columnIndex]),
             })));
-            const tableCenter: number = columns === 3 ? tableWidth * 1/2 : tableWidth * 1/4;
+            const tableCenter: number = (columns === 3 ? tableWidth : tableWidth - PLAYER_TABLE_WIDTH) / 2;
             const centerColumnIndex = columns === 3 ? 1 : 0;
 
             if (columns === 2) {                
