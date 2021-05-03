@@ -753,7 +753,7 @@ var KingOfTokyo = /** @class */ (function () {
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
             if (player.eliminated) {
-                _this.eliminatePlayer(playerId);
+                setTimeout(function () { return _this.eliminatePlayer(playerId); }, 200);
             }
         });
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
@@ -943,7 +943,8 @@ var KingOfTokyo = /** @class */ (function () {
         this.energyCounters[playerId].toValue(energy);
     };
     KingOfTokyo.prototype.eliminatePlayer = function (playerId) {
-        document.getElementById("" + playerId).classList.add('eliminated-player');
+        document.getElementById("overall_player_board_" + playerId).classList.add('eliminated-player');
+        dojo.place("<div class=\"icon dead\"></div>", "player_board_" + playerId);
     };
     return KingOfTokyo;
 }());

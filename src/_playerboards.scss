@@ -30,10 +30,18 @@
   }
 
   &.energy {
-    background-position: 50% 0%;
+    background-position: 25% 0%;
   }
 
   &.health {
+    background-position: 50% 0%;
+  }
+
+  &.forbidden {
+    background-position: 75% 0%;
+  }
+
+  &.dead {
     background-position: 100% 0%;
   }
 }

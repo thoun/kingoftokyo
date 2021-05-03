@@ -208,7 +208,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.energyCounters[playerId] = energyCounter;
 
             if (player.eliminated) {
-                this.eliminatePlayer(playerId);
+                setTimeout(() => this.eliminatePlayer(playerId), 200);
             }
         });
 
@@ -432,7 +432,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private eliminatePlayer(playerId: number) {
-        document.getElementById(`${playerId}`).classList.add('eliminated-player');
+        document.getElementById(`overall_player_board_${playerId}`).classList.add('eliminated-player');
+        dojo.place(`<div class="icon dead"></div>`, `player_board_${playerId}`);
     }
 
     /* This enable to inject translatable styled things to logs or action bar */

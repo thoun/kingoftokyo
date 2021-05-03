@@ -25,9 +25,15 @@
   background-position: 0% 0%;
 }
 .icon.energy {
-  background-position: 50% 0%;
+  background-position: 25% 0%;
 }
 .icon.health {
+  background-position: 50% 0%;
+}
+.icon.forbidden {
+  background-position: 75% 0%;
+}
+.icon.dead {
   background-position: 100% 0%;
 }
 
