@@ -6,6 +6,7 @@ interface Dice {
     id: number;
     value: number;
     extra: boolean;
+    locked: boolean;
 }
 
 interface Card {
@@ -27,6 +28,7 @@ interface KingOfTokyoGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
+    dices: Dice[];
     visibleCards: Card[];
     playersCards: { [playerId: number]: Card[] };
 }

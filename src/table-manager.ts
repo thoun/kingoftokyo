@@ -38,7 +38,10 @@ class TableManager {
         const players = this.playerTables.length;
         const tableDiv = document.getElementById('table');
         const tableWidth = tableDiv.clientWidth;
-        const columns = Math.min(3, Math.floor(tableWidth / 420));
+        let columns = Math.min(3, Math.floor(tableWidth / 420));
+        if (players == 2 && columns > 2) {
+            columns = 2;
+        }
 
         const tableCenterDiv = document.getElementById('table-center');
         tableCenterDiv.style.left = `${(tableWidth - CENTER_TABLE_WIDTH) / 2}px`;
@@ -60,20 +63,22 @@ class TableManager {
                 id: this.playerTables[columnIndex].playerId,
                 height: this.getPlayerTableHeight(this.playerTables[columnIndex]),
             })));
-            const columnCenters = columns === 3 ? [tableWidth * 1/6, tableWidth * 3/6, tableWidth * 5/6] : [tableWidth * 1/4, tableWidth * 3/4];
+            const tableCenter: number = columns === 3 ? tableWidth * 1/2 : tableWidth * 1/4;
             const centerColumnIndex = columns === 3 ? 1 : 0;
 
             if (columns === 2) {                
-                tableCenterDiv.style.left = `${columnCenters[0] - CENTER_TABLE_WIDTH / 2}px`;
+                tableCenterDiv.style.left = `${tableCenter - CENTER_TABLE_WIDTH / 2}px`;
             }
 
             // we always compute "center" column first
             (columns === 3 ? [1, 0, 2] : [0, 1]).forEach(columnIndex => {
+                const leftColumn = columnIndex === 0 && columns === 3;
                 const centerColumn = centerColumnIndex === columnIndex;
+                const rightColumn = columnIndex > centerColumnIndex;
                 const playerOverTable = centerColumn && disposition[columnIndex].length > 1;
                 const dispositionColumn: { id: number, height: number }[] = disposition[columnIndex];
 
-                let top;
+                let top: number;
                 if (centerColumn) {
                     top = !playerOverTable ? tableCenterDiv.clientHeight + 20 : 0;
                 } else {
@@ -81,7 +86,13 @@ class TableManager {
                 }
                 dispositionColumn.forEach((playerInfos, index) => {
                     const playerTableDiv = document.getElementById(`player-table-${playerInfos.id}`);
-                    playerTableDiv.style.left = `${columnCenters[columnIndex] - PLAYER_TABLE_WIDTH / 2}px`;
+                    if (centerColumn) {
+                        playerTableDiv.style.left = `${tableCenter - PLAYER_TABLE_WIDTH / 2}px`;
+                    } else if (rightColumn) {
+                        playerTableDiv.style.left = `${tableCenter + PLAYER_TABLE_WIDTH / 2}px`;
+                    } else if (leftColumn) {
+                        playerTableDiv.style.left = `${(tableCenter - PLAYER_TABLE_WIDTH / 2) - PLAYER_TABLE_WIDTH}px`;
+                    }
                     playerTableDiv.style.top = `${top}px`;
                     top += playerInfos.height;
 

@@ -40,6 +40,7 @@ interface Dojo {
     trim: Function;
     stopEvent: (evt) => void;
     destroy: (nodeId: string) => void;
+    position: (obj: HTMLElement, includeScroll?: boolean) => { w: number; h: number; x: number; y: number; };
 }
 
 type Gamestate = any; // TODO

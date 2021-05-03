@@ -141,6 +141,10 @@ class KingOfTokyo extends Table {
         $result['players'] = self::getCollectionFromDb( $sql );
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
+
+        $activePlayerId = self::getActivePlayerId();
+        $result['dices'] = $activePlayerId ? $this->getDices($this->getDicesNumber($activePlayerId)) : [];
+
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
 
         $result['playersCards'] = [];

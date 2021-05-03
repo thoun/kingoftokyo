@@ -16,6 +16,7 @@
         "src/stock-utils.ts",
         "src/player-table.ts",
         "src/table-manager.ts",
+        "src/dice-manager.ts",
         "src/kingoftokyo.ts",
         "src/define.ts"
     ]

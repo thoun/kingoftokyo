@@ -45,12 +45,6 @@ trait UtilTrait {
         return array_map(function($dbCard) { return $this->getCardFromDb($dbCard); }, array_values($dbCards));
     }
 
-    function getDices(int $number) {
-        $sql = "SELECT `dice_id`, `dice_value`, `extra` FROM dice limit $number";
-        $dbDices = self::getCollectionFromDB($sql);
-        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
-    }
-
     function getMaxPlayerScore() {
         return intval(self::getUniqueValueFromDB("SELECT max(player_score) FROM player"));
     }

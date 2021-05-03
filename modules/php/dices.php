@@ -8,6 +8,27 @@ use KOT\Dice;
 
 trait DicesTrait {
 
+    //////////////////////////////////////////////////////////////////////////////
+    //////////// Utility functions
+    ////////////
+    
+    function getDices(int $number) {
+        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked` FROM dice ORDER BY dice_id limit $number";
+        $dbDices = self::getCollectionFromDB($sql);
+        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
+    }
+
+    public function throwDices($playerId) {
+        $dices = $this->getDices($this->getDicesNumber($playerId));
+
+        foreach ($dices as &$dice) {
+            if (!$dice->locked) {
+                $dice->value = bga_rand(1, 6);
+                self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
+            }
+        }
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -18,7 +39,9 @@ trait DicesTrait {
     */
   	
     public function rethrowDices(string $dicesIds) {
-        self::DbQuery("UPDATE dice SET `dice_value` = 0 where `dice_id` IN ($dicesIds)");
+        $playerId = self::getActivePlayerId();
+        self::DbQuery("UPDATE dice SET `locked` = false where `dice_id` IN ($dicesIds)");
+        $this->throwDices($playerId);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
         self::setGameStateValue('throwNumber', $throwNumber);
@@ -44,13 +67,6 @@ trait DicesTrait {
     function argThrowDices() {
         $playerId = self::getActivePlayerId();
         $dices = $this->getDices($this->getDicesNumber($playerId));
-
-        foreach ($dices as &$dice) {
-            if ($dice->value == 0) {
-                $dice->value = bga_rand(1, 6);
-                self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
-            }
-        }
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
         $maxThrowNumber = 3;

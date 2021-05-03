@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `dice` (
   `dice_id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `dice_value` TINYINT unsigned NOT NULL DEFAULT 0,
   `extra` TINYINT unsigned NOT NULL DEFAULT false,
+  `locked` TINYINT unsigned NOT NULL DEFAULT false,
   PRIMARY KEY (`dice_id`)
 ) ENGINE=InnoDB;
 

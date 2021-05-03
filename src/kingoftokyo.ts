@@ -13,13 +13,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
-    private lockedDicesIds: number[] = null;
-    private freeDicesIds: number[] = null;
+    private diceManager: DiceManager;
     private visibleCards: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
 
-    constructor() {     
+    constructor() {  
     }
     
     /*
@@ -47,7 +46,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         log('gamedatas', gamedatas);
 
-        this.createPlayerPanels(gamedatas);
+        this.createPlayerPanels(gamedatas); 
+        this.diceManager = new DiceManager(this, gamedatas.dices);  
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -75,7 +75,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringThrowDices(args.args);
                 break;
             case 'resolveDices': 
-                dojo.addClass('locked-dices', 'hide-lock');
+                this.diceManager.hideLock();
                 break;
             
             case 'pickCard':
@@ -92,44 +92,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringThrowDices(args: EnteringThrowDicesArgs) {
-        dojo.removeClass('locked-dices', 'hide-lock');
+        this.diceManager.showLock();
 
         const dices = args.dices;
 
-        if (args.throwNumber === 1) {
-            $('dices-selector').innerHTML = '';
-            this.lockedDicesIds = [];
-            this.freeDicesIds = dices.map(dice => dice.id);
-        }
-
-        const addedDicesIds = [];
-        for (let i=1; i<=6; i++) {
-            dices.filter(dice => dice.value == i && !document.getElementById(`dice${dice.id}`)).forEach(dice => {
-                addedDicesIds.push(`dice${dice.id}`);
-                dojo.place(this.createDiceHtml(dice), 'dices-selector');
-                // TODO if player is in tokyo, add symbol &#x1f6ab; on heart dices
-            });
-        }
-
-        const lastTurn = args.throwNumber === args.maxThrowNumber;
-        const selectable = (this as any).isCurrentPlayerActive() && !lastTurn;
-
-        addedDicesIds.map(id => document.getElementById(id)).forEach((dice: HTMLDivElement) => {
-            dice.classList.add('rolled');
-            setTimeout(() => {
-                dice.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll');
-            }, 100); 
-
-            if (selectable) {
-                dice.addEventListener('click', () => this.toggleDiceSelection(dice));
-            }
-        });
-
-        dojo.toggleClass('rolled-dices', 'selectable', selectable);
-
-        if (lastTurn) {
-            setTimeout(() => this.lockFreeDices(), 1000);
-        }
+        this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber);
     }
 
     private onEnteringPickCard(args: EnteringPickCardArgs) {
@@ -259,17 +226,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.pickCard(item_id);
     }
 
-    private lockFreeDices() {
-        this.freeDicesIds.forEach(id => {
-            const diceDiv = document.getElementById(`dice${id}`);
-            dojo.removeClass(diceDiv.id, 'rolled');
-            slideToObjectAndAttach(this, diceDiv, 'locked-dices');
-        });
-    }
-
     public onRethrow() {
-        this.rethrowDices(this.freeDicesIds);
-        this.freeDicesIds.forEach(id => dojo.destroy(`dice${id}`));        
+        this.rethrowDices(this.diceManager.destroyFreeDices());      
     }
 
     public rethrowDices(dicesIds: number[]) {
@@ -286,7 +244,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         if(!(this as any).checkAction('resolve')) {
             return;
         }
-        this.lockFreeDices();
+        this.diceManager.lockFreeDices();
 
         this.takeAction('resolve');
     }
@@ -338,34 +296,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
     }
 
-    private createDiceHtml(dice: Dice) {
-        let html = `<div id="dice${dice.id}" class="dice dice${dice.value}" data-dice-id="${dice.id}" data-dice-value="${dice.value}">
-        <ol class="die-list" data-roll="${dice.value}">`;
-        for (let die=1; die<=6; die++) {
-            html += `<li class="die-item ${dice.extra ? 'green' : 'black'} side${die}" data-side="${die}"></li>`;
-        }
-        html += `</ol></div>`;
-        return html;
-    }
-
-    private toggleDiceSelection(dice: HTMLDivElement) {
-        dojo.removeClass(dice.id, 'rolled');
-        const id = parseInt(dice.dataset.diceId);
-        const locked = this.freeDicesIds.some(freeId => freeId === id);
-
-        if (locked) {
-            this.lockedDicesIds.push(id);
-            this.freeDicesIds.splice(this.freeDicesIds.indexOf(id), 1);
-        } else {
-            this.lockedDicesIds.splice(this.lockedDicesIds.indexOf(id), 1);
-            this.freeDicesIds.push(id);
-        }
-
-        slideToObjectAndAttach(this, dice, locked ? 'locked-dices' : 'dices-selector');
-
-        dojo.toggleClass('rethrow_button', 'disabled', !this.freeDicesIds.length);
-    }
-
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications
 
@@ -411,20 +341,20 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
         (this as any).scoreCtrl[notif.args.playerId]?.incValue(notif.args.points);
-        // TODO animation
+        this.diceManager.resolveNumberDices(notif.args);
     }
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
         this.healthCounters[notif.args.playerId].incValue(notif.args.health);
-        // TODO animation
+        this.diceManager.resolveHealthDices(notif.args);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
-        // TODO animation
+        this.diceManager.resolveHealthDicesInTokyo(notif.args);
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
         this.energyCounters[notif.args.playerId].incValue(notif.args.number);
-        // TODO animation
+        this.diceManager.resolveEnergyDices(notif.args);
     }
 
     notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
@@ -433,8 +363,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (health) {
                 const newHealth = Math.max(0, health - notif.args.number);
                 this.healthCounters[playerId].toValue(newHealth);
-                // TODO animation
             }
+            this.diceManager.resolveSmashDices(notif.args);
         });
     }
 
