@@ -34,6 +34,7 @@ interface KingOfTokyoGamedatas {
 }
 
 interface KingOfTokyoGame extends Game {
+    cards: Cards;
 }
 
 interface EnteringThrowDicesArgs {

@@ -17,6 +17,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private visibleCards: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
+    private cards: Cards;
 
     constructor() {  
     }
@@ -48,6 +49,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.createPlayerPanels(gamedatas); 
         this.diceManager = new DiceManager(this, gamedatas.dices);  
+        this.cards = new Cards(this);
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -210,12 +212,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.selectionClass = 'no-visible-selection';
         this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
-        this.visibleCards.onItemCreate = (card_div, card_type_id, card_id) => setupNewCard(card_div, card_type_id, card_id); 
+        this.visibleCards.onItemCreate = (card_div, card_type_id) => this.cards.setupNewCard(card_div, card_type_id); 
         //this.visibleCards.image_items_per_row = 13;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
 
-        setupCards([this.visibleCards]);
+        this.cards.setupCards([this.visibleCards]);
 
         visibleCards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
     }
@@ -407,9 +409,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         try {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
-                if (args.guild !== undefined && args.guild_name !== undefined && args.guild_name[0] !== '<') {
-                    args.guild_name = `<span class='log-guild-name' style='color: ${LOG_GUILD_COLOR[args.guild]}'>${_(args.guild_name)}</span>`;
-                }
+                
+
             }
         } catch (e) {
             console.error(log,args,"Exception thrown", e.stack);

@@ -18,9 +18,9 @@ trait UtilTrait {
     function initCards() {
         $cards = [];
         
-        for( $value=1; $value<=48; $value++ ) { // keep
+        /*for( $value=1; $value<=48; $value++ ) { // keep
             $cards[] = ['type' => $value, 'type_arg' => bga_rand(2,8), 'nbr' => 1];
-        }
+        }*/
         
         for( $value=101; $value<=118; $value++ ) { // discard
             $cards[] = ['type' => $value, 'type_arg' => bga_rand(2,8), 'nbr' => 1];

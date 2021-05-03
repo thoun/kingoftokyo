@@ -12,7 +12,7 @@ class PlayerTable {
 
     public cards: Stock;
 
-    constructor(private game: Game, private player: Player, private order: number, cards: Card[]) {
+    constructor(private game: KingOfTokyoGame, private player: Player, private order: number, cards: Card[]) {
         this.playerId = Number(player.id);
         this.playerNo = Number((player as any).player_no);
         this.monster = Number((player as any).monster);
@@ -31,11 +31,11 @@ class PlayerTable {
         this.cards.selectionClass = 'no-visible-selection';
         this.cards.create(this.game, $(`cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
         this.cards.setSelectionMode(0);
-        this.cards.onItemCreate = (card_div, card_type_id, card_id) => setupNewCard(card_div, card_type_id, card_id);
+        this.cards.onItemCreate = (card_div, card_type_id, card_id) => this.game.cards.setupNewCard(card_div, card_type_id);
         //this.cards.image_items_per_row = 13;
         this.cards.centerItems = true;
 
-        setupCards([this.cards]);
+        this.game.cards.setupCards([this.cards]);
 
         cards.forEach(card => this.cards.addToStockWithId(card.type, `${card.id}`));
 

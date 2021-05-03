@@ -302,31 +302,33 @@
 }
 .stockitem .name-wrapper {
   position: absolute;
-  top: 10px;
-  left: 15px;
-  font-size: 16pt;
+  top: 14px;
+  left: 24px;
+  font-size: 10pt;
   color: white;
   transform: rotate(10deg);
   font-family: "goodgirl";
+  width: 100px;
+  text-align: center;
 }
 .stockitem .name-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   -webkit-text-stroke: 8px #96c93c;
-  width: 120px;
+  width: 100%;
 }
 .stockitem .name-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
-  width: 120px;
+  width: 100%;
 }
 .stockitem .type-wrapper {
   position: absolute;
-  top: 100px;
+  top: 120px;
   left: 0px;
-  font-size: 14pt;
+  font-size: 10pt;
   color: white;
   transform: rotate(-10deg);
   font-family: "goodgirl";
@@ -351,14 +353,31 @@
 }
 .stockitem .description-wrapper {
   position: absolute;
-  top: 140px;
-  left: 20px;
+  top: 129px;
+  left: 2px;
+  width: 117px;
+  height: 38px;
+  text-overflow: ellipsis;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: black;
   transform: rotate(-10deg);
+  font-size: 8pt;
+}
+.stockitem .description-wrapper .icon {
+  width: 12px;
+  height: 12px;
 }
 .stockitem.disabled {
   opacity: 0.5 !important;
   cursor: not-allowed;
+}
+
+.card-tooltip .icon {
+  width: 12px;
+  height: 12px;
 }
 
 #table {

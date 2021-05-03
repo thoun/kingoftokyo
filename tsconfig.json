@@ -14,6 +14,7 @@
         "src/kingoftokyo.d.ts",
         "src/slide-utils.ts",
         "src/stock-utils.ts",
+        "src/cards.ts",
         "src/player-table.ts",
         "src/table-manager.ts",
         "src/dice-manager.ts",

@@ -1,13 +1,17 @@
-$name-left: 15px;
-$name-top: 10px;
-$name-size: 16pt;
+$name-left: 24px;
+$name-top: 14px;
+$name-width: 100px;
+$name-size: 10pt;
 
 $type-left: 0px;
-$type-top: 100px;
-$type-size: 14pt;
+$type-top: 120px;
+$type-size: 10pt;
 
-$description-left: 20px;
-$description-top: 140px;
+$description-left: 2px;
+$description-top: 129px;
+$description-width: 117px;
+$description-height: 38px;
+$description-size: 8pt;
 
 .stockitem {
     border-radius:10px;
@@ -23,20 +27,22 @@ $description-top: 140px;
         color: white;
         transform: rotate(10deg);
         font-family: 'goodgirl';
+        width: $name-width;
+        text-align: center;
 
         .outline {
             position: absolute;
             left: 0;
             top: 0;
             -webkit-text-stroke: 8px $tokyoGreen;
-            width: 120px;
+            width: 100%;
         }
 
         .text {
             position: absolute;
             left: 0;
             top: 0;
-            width: 120px;
+            width: 100%;
         }
     }
 
@@ -76,12 +82,32 @@ $description-top: 140px;
         position: absolute;
         top: $description-top;
         left: $description-left;
+        width: $description-width;
+        height: $description-height;
+        text-overflow: ellipsis;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: black;
         transform: rotate(-10deg);
+        font-size: $description-size;
+
+        .icon {
+            width: 12px;
+            height: 12px;
+        }
     }
     
     &.disabled {
         opacity: 0.5 !important;
         cursor: not-allowed;
+    }
+}
+
+.card-tooltip {
+    .icon {
+        width: 12px;
+        height: 12px;
     }
 }
