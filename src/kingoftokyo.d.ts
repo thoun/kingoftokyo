@@ -41,6 +41,7 @@ interface EnteringThrowDicesArgs {
     dices: Dice[];
     throwNumber: number;
     maxThrowNumber: number;
+    inTokyo: boolean;
 }
 
 interface EnteringPickCardArgs {

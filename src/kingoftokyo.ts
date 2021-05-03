@@ -103,7 +103,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const dices = args.dices;
 
-        this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber);
+        this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
     }
 
     private onEnteringPickCard(args: EnteringPickCardArgs) {

@@ -519,7 +519,7 @@ var DiceManager = /** @class */ (function () {
         var _this = this;
         this.dices.filter(function (dice) { return !dice.locked; }).forEach(function (dice) { return _this.toggleLockDice(dice, true); });
     };
-    DiceManager.prototype.setDices = function (dices, firstThrow, lastTurn) {
+    DiceManager.prototype.setDices = function (dices, firstThrow, lastTurn, inTokyo) {
         var _a;
         var _this = this;
         if (firstThrow) {
@@ -529,7 +529,7 @@ var DiceManager = /** @class */ (function () {
         var newDices = dices.filter(function (newDice) { return !_this.dices.some(function (dice) { return dice.id === newDice.id; }); });
         (_a = this.dices).push.apply(_a, newDices);
         var selectable = this.game.isCurrentPlayerActive() && !lastTurn;
-        newDices.forEach(function (dice) { return _this.createDice(dice, true, selectable); });
+        newDices.forEach(function (dice) { return _this.createDice(dice, true, selectable, inTokyo); });
         dojo.toggleClass('rolled-dices', 'selectable', selectable);
         if (lastTurn) {
             setTimeout(function () { return _this.lockFreeDices(); }, 1000);
@@ -573,18 +573,21 @@ var DiceManager = /** @class */ (function () {
             dojo.toggleClass('rethrow_button', 'disabled', !this.dices.filter(function (dice) { return !dice.locked; }).length);
         }
     };
-    DiceManager.prototype.createDiceHtml = function (dice) {
+    DiceManager.prototype.createDiceHtml = function (dice, inTokyo) {
         var html = "<div id=\"dice" + dice.id + "\" class=\"dice dice" + dice.value + "\" data-dice-id=\"" + dice.id + "\" data-dice-value=\"" + dice.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + dice.value + "\">";
         for (var die = 1; die <= 6; die++) {
             html += "<li class=\"die-item " + (dice.extra ? 'green' : 'black') + " side" + die + "\" data-side=\"" + die + "\"></li>";
         }
-        html += "</ol></div>";
+        html += "</ol>";
+        if (dice.value === 4 && inTokyo) {
+            html += "<div class=\"icon forbidden\"></div>";
+        }
+        html += "</div>";
         return html;
     };
-    DiceManager.prototype.createDice = function (dice, animated, selectable) {
+    DiceManager.prototype.createDice = function (dice, animated, selectable, inTokyo) {
         var _this = this;
-        dojo.place(this.createDiceHtml(dice), dice.locked ? 'locked-dices' : 'dices-selector');
-        // TODO if player is in tokyo, add symbol &#x1f6ab; on heart dices
+        dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dices' : 'dices-selector');
         var diceDiv = document.getElementById("dice" + dice.id);
         if (!dice.locked && animated) {
             diceDiv.classList.add('rolled');
@@ -675,7 +678,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringThrowDices = function (args) {
         this.diceManager.showLock();
         var dices = args.dices;
-        this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber);
+        this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
     };
     KingOfTokyo.prototype.onEnteringPickCard = function (args) {
         if (this.isCurrentPlayerActive()) {

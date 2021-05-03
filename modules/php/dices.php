@@ -76,6 +76,7 @@ trait DicesTrait {
             'throwNumber' => $throwNumber,
             'maxThrowNumber' => $maxThrowNumber,
             'dices' => $dices,
+            'inTokyo' => $this->inTokyo($playerId),
         ];
     }
 

@@ -26,7 +26,7 @@ class DiceManager {
         this.dices.filter(dice => !dice.locked).forEach(dice => this.toggleLockDice(dice, true));
     }
 
-    public setDices(dices: Dice[], firstThrow: boolean, lastTurn: boolean) { 
+    public setDices(dices: Dice[], firstThrow: boolean, lastTurn: boolean, inTokyo: boolean) { 
         if (firstThrow) {
             $('dices-selector').innerHTML = '';
             this.dices = [];
@@ -37,7 +37,7 @@ class DiceManager {
 
         const selectable = (this.game as any).isCurrentPlayerActive() && !lastTurn;
 
-        newDices.forEach(dice => this.createDice(dice, true, selectable));
+        newDices.forEach(dice => this.createDice(dice, true, selectable, inTokyo));
 
         dojo.toggleClass('rolled-dices', 'selectable', selectable);
 
@@ -88,19 +88,22 @@ class DiceManager {
         }
     }
 
-    private createDiceHtml(dice: Dice) {
+    private createDiceHtml(dice: Dice, inTokyo: boolean) {
         let html = `<div id="dice${dice.id}" class="dice dice${dice.value}" data-dice-id="${dice.id}" data-dice-value="${dice.value}">
         <ol class="die-list" data-roll="${dice.value}">`;
         for (let die=1; die<=6; die++) {
             html += `<li class="die-item ${dice.extra ? 'green' : 'black'} side${die}" data-side="${die}"></li>`;
         }
-        html += `</ol></div>`;
+        html += `</ol>`;
+        if (dice.value === 4 && inTokyo) {            
+            html += `<div class="icon forbidden"></div>`;
+        }
+        html += `</div>`;
         return html;
     }
 
-    private createDice(dice: Dice, animated: boolean, selectable: boolean) {
-        dojo.place(this.createDiceHtml(dice), dice.locked ? 'locked-dices' : 'dices-selector');
-        // TODO if player is in tokyo, add symbol &#x1f6ab; on heart dices
+    private createDice(dice: Dice, animated: boolean, selectable: boolean, inTokyo: boolean) {
+        dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dices' : 'dices-selector');
 
         const diceDiv = document.getElementById(`dice${dice.id}`);
 

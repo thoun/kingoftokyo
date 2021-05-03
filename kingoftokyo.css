@@ -74,6 +74,11 @@
 #rolled-dices.selectable .dice {
   cursor: pointer;
 }
+#rolled-dices .icon.forbidden {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+}
 
 .dice {
   display: inline-block;
