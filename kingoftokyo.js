@@ -752,6 +752,9 @@ var KingOfTokyo = /** @class */ (function () {
             energyCounter.create("energy-counter-" + player.id);
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
+            if (player.eliminated) {
+                _this.eliminatePlayer(playerId);
+            }
         });
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
     };
@@ -906,7 +909,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_playerEliminated = function (notif) {
         this.setPoints(notif.args.playerId, 0);
-        // TODO animation? or strike player's name
+        this.eliminatePlayer(notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (notif) {
         this.playerTables[notif.args.playerId].leaveTokyo();
@@ -935,6 +938,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setHealth = function (playerId, health) {
         this.healthCounters[playerId].toValue(health);
         this.playerTables[playerId].setHealth(health);
+    };
+    KingOfTokyo.prototype.eliminatePlayer = function (playerId) {
+        document.getElementById("" + playerId).classList.add('eliminated-player');
     };
     return KingOfTokyo;
 }());

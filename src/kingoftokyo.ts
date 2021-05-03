@@ -206,6 +206,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             energyCounter.create(`energy-counter-${player.id}`);
             energyCounter.setValue((player as any).energy);
             this.energyCounters[playerId] = energyCounter;
+
+            if (player.eliminated) {
+                this.eliminatePlayer(playerId);
+            }
         });
 
         // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
@@ -386,7 +390,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {
         this.setPoints(notif.args.playerId, 0);
-        // TODO animation? or strike player's name
+        this.eliminatePlayer(notif.args.playerId);
     }
 
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
@@ -421,6 +425,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setHealth(playerId: number, health: number) {
         this.healthCounters[playerId].toValue(health);
         this.playerTables[playerId].setHealth(health);
+    }
+
+    private eliminatePlayer(playerId: number) {
+        document.getElementById(`${playerId}`).classList.add('eliminated-player');
     }
 
     /* This enable to inject translatable styled things to logs or action bar */

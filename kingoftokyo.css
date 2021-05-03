@@ -1,4 +1,14 @@
 @import url(../../../css/csslayer.css);
+.player-board.eliminated-player {
+  background-color: #b9b9b9;
+}
+.player-board.eliminated-player .player-name a {
+  text-decoration: line-through;
+}
+.player-board.eliminated-player .counters {
+  display: none;
+}
+
 .icon {
   display: inline-block;
   position: relative;
@@ -488,6 +498,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
+  filter: drop-shadow(6px 6px 4px black);
 }
 #table .player-table .monster-figure.monster0 {
   background-image: url("img/monster-figure-1.png");
