@@ -17,7 +17,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private visibleCards: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
-    private cards: Cards;
+    public cards: Cards;
 
     constructor() {  
     }
@@ -37,10 +37,11 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public setup(gamedatas: KingOfTokyoGamedatas) {
         // ignore loading of some pictures
-        /*(this as any).dontPreloadImage('eye-shadow.png');
-        (this as any).dontPreloadImage('publisher.png');
-        [1,2,3,4,5,6,7,8,9,10].filter(i => !Object.values(gamedatas.players).some(player => Number((player as any).mat) === i)).forEach(i => (this as any).dontPreloadImage(`playmat_${i}.jpg`));
-*/
+        [1,2,3,4,5,6].filter(i => !Object.values(gamedatas.players).some(player => Number((player as any).mmonster) === i)).forEach(i => {
+            (this as any).dontPreloadImage(`monster-board-${i + 1}.png`);
+            (this as any).dontPreloadImage(`monster-figure-${i + 1}.png`);
+        });
+
         log( "Starting game setup" );
         
         this.gamedatas = gamedatas;
@@ -83,6 +84,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'pickCard':
                 this.onEnteringPickCard(args.args);
                 break;
+
+            case 'endTurn':
+                this.onEnteringEndTurn();
+                break;
         }
     }
     
@@ -105,6 +110,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         if ((this as any).isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
             args.disabledIds.forEach(id => dojo.query(`#visible-cards_item_${id}`).addClass('disabled'));
+        }
+    }
+
+    private onEnteringEndTurn() {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.playerTables[(this as any).player_id].removeDiscardCards();
         }
     }
 
@@ -345,12 +356,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
-        (this as any).scoreCtrl[notif.args.playerId]?.incValue(notif.args.points);
+        this.setPoints(notif.args.playerId, notif.args.points);
         this.diceManager.resolveNumberDices(notif.args);
     }
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
-        this.healthCounters[notif.args.playerId].incValue(notif.args.health);
+        this.setHealth(notif.args.playerId, notif.args.health);
         this.diceManager.resolveHealthDices(notif.args);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
@@ -367,14 +378,14 @@ class KingOfTokyo implements KingOfTokyoGame {
             const health = this.healthCounters[playerId]?.getValue();
             if (health) {
                 const newHealth = Math.max(0, health - notif.args.number);
-                this.healthCounters[playerId].toValue(newHealth);
+                this.setHealth(notif.args.playerId, newHealth);
             }
             this.diceManager.resolveSmashDices(notif.args);
         });
     }
 
-    notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {        
-        (this as any).scoreCtrl[notif.args.playerId]?.toValue(0);
+    notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {
+        this.setPoints(notif.args.playerId, 0);
         // TODO animation? or strike player's name
     }
 
@@ -402,6 +413,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         notif.args.cards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
     }
     
+    private setPoints(playerId: number, points: number) {
+        (this as any).scoreCtrl[playerId]?.toValue(points);
+        this.playerTables[playerId].setPoints(points);
+    }
+    
+    private setHealth(playerId: number, health: number) {
+        this.healthCounters[playerId].toValue(health);
+        this.playerTables[playerId].setHealth(health);
+    }
 
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */

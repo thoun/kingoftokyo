@@ -85,14 +85,15 @@ $size: 0.25rem;
     &.black {
         background-color: black;
         border-color: black;
+        background-image: url('img/black_dice.png');
     }
 
     &.green {
         background-color: $tokyoGreen;
-        border-color: $tokyoGreen;        
+        border-color: $tokyoGreen;
+      background-image: url('img/green_dice.png');  
     }
 
-    background-image: url('img/dice.jpg');
     background-size: auto 100%;
 
     @for $i from 1 through 6 {

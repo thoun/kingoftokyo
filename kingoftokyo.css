@@ -100,16 +100,17 @@
   border-style: outset;
   border-width: 1px;
   box-sizing: border-box;
-  background-image: url("img/dice.jpg");
   background-size: auto 100%;
 }
 .die-item.black {
   background-color: black;
   border-color: black;
+  background-image: url("img/black_dice.png");
 }
 .die-item.green {
   background-color: #96c93c;
   border-color: #96c93c;
+  background-image: url("img/green_dice.png");
 }
 .die-item.side1 {
   background-position: 0% 100%;
@@ -379,6 +380,9 @@
   width: 12px;
   height: 12px;
 }
+.card-tooltip .cost {
+  color: #96c93c;
+}
 
 #table {
   position: relative;
@@ -397,17 +401,17 @@
 }
 #table #table-center #board #tokyo-city {
   position: absolute;
-  top: 80px;
-  left: 0;
-  width: 200px;
-  height: 200px;
+  top: 72px;
+  left: 11px;
+  width: 150px;
+  height: 150px;
 }
 #table #table-center #board #tokyo-bay {
   position: absolute;
-  bottom: 0px;
-  right: 0;
-  width: 200px;
-  height: 200px;
+  bottom: 11px;
+  right: 23px;
+  width: 150px;
+  height: 150px;
 }
 #table .player-table {
   width: 400px;
@@ -419,55 +423,89 @@
 #table .player-table .player-name {
   font-weight: bold;
   text-shadow: 1px 1px 1px black;
+  padding: 5px;
 }
-#table .player-table .monster-board {
-  width: 218px;
-  height: 175px;
-  background-image: url("img/monsterboards.png");
-  background-size: auto 100%;
+#table .player-table .monster-board-wrapper {
+  position: relative;
 }
-#table .player-table .monster-board.monster0 {
-  background-position: 0% 100%;
+#table .player-table .monster-board-wrapper .wheel {
+  position: absolute;
+  z-index: 1;
+  transition: transform 1s;
 }
-#table .player-table .monster-board.monster1 {
-  background-position: 20% 100%;
+#table .player-table .monster-board-wrapper .wheel.blue {
+  background-image: url("img/blue-wheel.png");
+  width: 165px;
+  height: 165px;
+  top: 7px;
+  left: -5px;
+  transform: rotate(25deg);
 }
-#table .player-table .monster-board.monster2 {
-  background-position: 40% 100%;
+#table .player-table .monster-board-wrapper .wheel.red {
+  background-image: url("img/red-wheel.png");
+  width: 122px;
+  height: 122px;
+  right: -5px;
+  bottom: 5px;
+  transform: rotate(98deg);
 }
-#table .player-table .monster-board.monster3 {
-  background-position: 60% 100%;
+#table .player-table .monster-board-wrapper .monster-board {
+  width: 280px;
+  height: 219px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  box-shadow: 2px 2px 5px 2px black;
+  border-radius: 12px;
+  position: relative;
+  z-index: 2;
 }
-#table .player-table .monster-board.monster4 {
-  background-position: 80% 100%;
+#table .player-table .monster-board-wrapper .monster-board.monster0 {
+  background-image: url("img/monster-board-1.png");
 }
-#table .player-table .monster-board.monster5 {
-  background-position: 100% 100%;
+#table .player-table .monster-board-wrapper .monster-board.monster1 {
+  background-image: url("img/monster-board-2.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster2 {
+  background-image: url("img/monster-board-3.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster3 {
+  background-image: url("img/monster-board-4.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster4 {
+  background-image: url("img/monster-board-5.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster5 {
+  background-image: url("img/monster-board-6.png");
 }
 #table .player-table .monster-figure {
   position: relative;
-  width: 190.4px;
-  height: 196px;
-  background-image: url("img/monsterfigures.png");
-  background-size: auto 100%;
+  width: 150px;
+  height: 150px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 #table .player-table .monster-figure.monster0 {
-  background-position: 0% 100%;
+  background-image: url("img/monster-figure-1.png");
 }
 #table .player-table .monster-figure.monster1 {
-  background-position: 20% 100%;
+  background-image: url("img/monster-figure-2.png");
 }
 #table .player-table .monster-figure.monster2 {
-  background-position: 40% 100%;
+  background-image: url("img/monster-figure-3.png");
 }
 #table .player-table .monster-figure.monster3 {
-  background-position: 60% 100%;
+  background-image: url("img/monster-figure-4.png");
 }
 #table .player-table .monster-figure.monster4 {
-  background-position: 80% 100%;
+  background-image: url("img/monster-figure-5.png");
 }
 #table .player-table .monster-figure.monster5 {
-  background-position: 100% 100%;
+  background-image: url("img/monster-figure-6.png");
 }
 
 @font-face {

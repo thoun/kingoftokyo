@@ -8,34 +8,69 @@
     .player-name {
         font-weight: bold;
         text-shadow: 1px 1px 1px black;
+        padding: 5px;
     }
 
-    .monster-board {
-        width: 218px;
-        height: 175px;
-        background-image: url('img/monsterboards.png');
-        background-size: auto 100%;
+    .monster-board-wrapper {
+        position: relative;
 
-        @for $i from 0 through 5 {
-            &.monster#{$i} {
-                background-position: ($i * 20%) 100%;
+        .wheel {
+            position: absolute;
+            z-index: 1;
+            transition: transform 1s;
+
+            &.blue {
+                background-image: url('img/blue-wheel.png');
+                width: 165px;
+                height: 165px;
+                top: 7px;
+                left: -5px;
+                transform: rotate(25deg);
+            }
+
+            &.red {
+                background-image: url('img/red-wheel.png');
+                width: 122px;
+                height: 122px;    
+                right: -5px;
+                bottom: 5px;
+                transform: rotate(98deg);
             }
         }
 
-        
-        
+        .monster-board {
+            width: 280px;
+            height: 219px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            box-shadow: 2px 2px 5px 2px black;
+            border-radius: 12px;
+            position: relative;
+            z-index: 2;
+
+            @for $i from 0 through 5 {
+                &.monster#{$i} {
+                    background-image: url('img/monster-board-#{$i + 1}.png');
+                }
+            }
+        }
     }
 
     .monster-figure {
         position: relative;
-        width: 238px * 0.8;
-        height: 245px * 0.8;
-        background-image: url('img/monsterfigures.png');
-        background-size: auto 100%;
+        width: 150px;
+        height: 150px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: contain;
 
         @for $i from 0 through 5 {
             &.monster#{$i} {
-                background-position: ($i * 20%) 100%;
+                background-image: url('img/monster-figure-#{$i + 1}.png');
             }
         }
     }

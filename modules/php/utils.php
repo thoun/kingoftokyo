@@ -18,12 +18,12 @@ trait UtilTrait {
     function initCards() {
         $cards = [];
         
-        /*for( $value=1; $value<=48; $value++ ) { // keep
-            $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts($value), 'nbr' => 1];
-        }*/
+        for( $value=1; $value<=48; $value++ ) { // keep
+            $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
+        }
         
         for( $value=101; $value<=120; $value++ ) { // discard
-            $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts($value), 'nbr' => 1];
+            $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
         }
             
         // $this->cards->createCards( array_slice($cards, count($cards) - 10, 10), 'deck' );

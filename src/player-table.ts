@@ -19,9 +19,13 @@ class PlayerTable {
         dojo.place(`
         <div id="player-table-${player.id}" class="player-table">
             <div class="player-name" style="color: #${player.color}">${player.name}</div> 
-            <div id="monster-board-${player.id}" class="monster-board monster${this.monster}">
-                <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>
-            </div>   
+            <div class="monster-board-wrapper">
+                <div class="blue wheel" id="blue-wheel-${player.id}"></div>
+                <div class="red wheel" id="red-wheel-${player.id}"></div>
+                <div id="monster-board-${player.id}" class="monster-board monster${this.monster}">
+                    <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>
+                </div>  
+            </div> 
             <div id="cards-${player.id}"></div>      
         </div>
 
@@ -40,6 +44,9 @@ class PlayerTable {
         cards.forEach(card => this.cards.addToStockWithId(card.type, `${card.id}`));
 
         this.initialLocation = Number((player as any).location);
+
+        this.setPoints(Number(player.score));
+        this.setHealth(Number((player as any).health));
     }
 
     public initPlacement() {
@@ -54,5 +61,20 @@ class PlayerTable {
 
     public leaveTokyo() {        
         (this.game as any).slideToObject(`monster-figure-${this.playerId}`, `monster-board-${this.playerId}`).play();
+    }
+    
+    public removeDiscardCards() {
+        const discardCardsIds = this.cards.getAllItems().filter(item => item.type >= 100).map(item => Number(item.id));
+        discardCardsIds.forEach(id => this.cards.removeFromStockById(''+id));
+    }
+
+    public setPoints(points: number) {
+        const deg = 25 + 335 * points / 20;
+        document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${deg}deg)`;
+    }
+
+    public setHealth(health: number) {
+        const deg = 360 - 262 * health / 10;
+        document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${deg}deg)`;
     }
 }
