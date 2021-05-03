@@ -892,7 +892,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.resolveHealthDicesInTokyo(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveEnergyDice = function (notif) {
-        this.energyCounters[notif.args.playerId].incValue(notif.args.number);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
         this.diceManager.resolveEnergyDices(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveSmashDice = function (notif) {
@@ -920,13 +920,13 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_pickCard = function (notif) {
         var card = notif.args.card;
         var newCard = notif.args.newCard;
-        this.energyCounters[notif.args.playerId].incValue(-card.cost);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
         moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
         this.visibleCards.addToStockWithId(newCard.type, "" + newCard.id);
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
         var _this = this;
-        this.energyCounters[notif.args.playerId].incValue(-2);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
         this.visibleCards.removeAll();
         notif.args.cards.forEach(function (card) { return _this.visibleCards.addToStockWithId(card.type, "" + card.id); });
     };
@@ -938,6 +938,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setHealth = function (playerId, health) {
         this.healthCounters[playerId].toValue(health);
         this.playerTables[playerId].setHealth(health);
+    };
+    KingOfTokyo.prototype.setEnergy = function (playerId, energy) {
+        this.energyCounters[playerId].toValue(energy);
     };
     KingOfTokyo.prototype.eliminatePlayer = function (playerId) {
         document.getElementById("" + playerId).classList.add('eliminated-player');

@@ -4,6 +4,22 @@ namespace KOT\States;
 
 trait CardsTrait {
 
+    //////////////////////////////////////////////////////////////////////////////
+    //////////// Utility functions
+    ////////////
+
+    function applyEffects($card, $playerId) {
+        $id = $card->id;
+    }
+
+    function applyGetPoints($playerId, $points) {
+        // TODO
+    }
+
+    function applyGetHelath($playerId, $health) {
+        // TODO
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -34,7 +50,10 @@ trait CardsTrait {
             'player_name' => self::getActivePlayerName(),
             'card' => $card,
             'newCard' => $newCard,
+            'energy' => $this->getPlayerEnergy($playerId),
         ]);
+
+        $this->applyEffects($card, $playerId);
 
         $this->gamestate->nextState('pick');
     }
@@ -56,6 +75,7 @@ trait CardsTrait {
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'cards' => $cards,
+            'energy' => $this->getPlayerEnergy($playerId),
         ]);
 
         $this->gamestate->nextState('renew');

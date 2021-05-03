@@ -54,16 +54,19 @@ interface NotifResolveArgs {
 
 interface NotifResolveNumberDiceArgs extends NotifResolveArgs {
     points: number;
+    deltaPoints: number;
     diceValue: number;
 }
 
 interface NotifResolveHealthDiceArgs extends NotifResolveArgs {
     health: number;
+    deltaHealth: number;
 }
 interface NotifResolveHealthDiceInTokyoArgs extends NotifResolveArgs {}
 
 interface NotifResolveEnergyDiceArgs extends NotifResolveArgs {
-    number: number;
+    energy: number;
+    deltaEnergy: number;
 }
 
 interface NotifResolveSmashDiceArgs extends NotifResolveArgs {
@@ -93,10 +96,12 @@ interface NotifPickCardArgs {
     player_name: string;
     card: Card;
     newCard: Card;
+    energy: number;
 }
 
 interface NotifRenewCardsArgs {
     playerId: number;
     player_name: string;
     cards: Card[];
+    energy: number;
 }

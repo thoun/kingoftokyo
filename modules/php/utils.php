@@ -18,13 +18,13 @@ trait UtilTrait {
     function initCards() {
         $cards = [];
         
-        for( $value=1; $value<=48; $value++ ) { // keep
+        /*for( $value=1; $value<=48; $value++ ) { // keep
             $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
         }
         
         for( $value=101; $value<=120; $value++ ) { // discard
             $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
-        }
+        }*/
             
         // $this->cards->createCards( array_slice($cards, count($cards) - 10, 10), 'deck' );
         $this->cards->createCards($cards, 'deck');
@@ -51,6 +51,10 @@ trait UtilTrait {
 
     function getPlayerName(int $playerId) {
         return self::getUniqueValueFromDb("SELECT player_name FROM player WHERE player_id = $playerId");
+    }
+
+    function getPlayerScore(int $playerId) {
+        return intval(self::getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
     }
 
     function getPlayerHealth(int $playerId) {

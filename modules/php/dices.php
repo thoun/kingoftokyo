@@ -97,10 +97,11 @@ trait DicesTrait {
                 $points = $i + $number - 3;
                 self::DbQuery("UPDATE player SET `player_score` = `player_score` + $points where `player_id` = $playerId");
 
-                self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${points} with ${diceValue} dices'), [
+                self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${diceValue} dices'), [
                     'playerId' => $playerId,
                     'player_name' => self::getActivePlayerName(),
-                    'points' => $points,
+                    'deltaPoints' => $points,
+                    'points' => $this->getPlayerScore($playerId),
                     'diceValue' => $i,
                 ]);
             }
@@ -117,13 +118,14 @@ trait DicesTrait {
                     $maxHealth = $this->getPlayerMaxHealth($playerId);
                     $newHealth = min($health + $number, $maxHealth);
                     $deltaHealth = $newHealth - $health;
-                    if ($deltaHealth > 0) {
+                    if ($deltaHealth != 0) {
                         self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
 
-                        self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${health} health'), [
+                        self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} health'), [
                             'playerId' => $playerId,
                             'player_name' => self::getActivePlayerName(),
-                            'health' => $deltaHealth,
+                            'health' => $newHealth,
+                            'deltaHealth' => $deltaHealth,
                         ]);
                     }
                 }
@@ -133,10 +135,11 @@ trait DicesTrait {
             if ($i == 5 && $number > 0) {
                 self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $number where `player_id` = $playerId");
 
-                self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${number} energy cubes'), [
+                self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cubes'), [
                     'playerId' => $playerId,
                     'player_name' => self::getActivePlayerName(),
-                    'number' => $number,
+                    'deltaEnergy' => $number,
+                    'energy' => $this->getPlayerEnergy($playerId),
                 ]);
             }
 

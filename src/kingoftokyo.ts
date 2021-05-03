@@ -373,7 +373,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
-        this.energyCounters[notif.args.playerId].incValue(notif.args.number);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
         this.diceManager.resolveEnergyDices(notif.args);
     }
 
@@ -404,14 +404,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_pickCard(notif: Notif<NotifPickCardArgs>) {
         const card = notif.args.card;
         const newCard = notif.args.newCard;
-        this.energyCounters[notif.args.playerId].incValue(-card.cost);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
 
         moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
         this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`);
     }
 
     notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {
-        this.energyCounters[notif.args.playerId].incValue(-2);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
 
         this.visibleCards.removeAll();
         notif.args.cards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
@@ -425,6 +425,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setHealth(playerId: number, health: number) {
         this.healthCounters[playerId].toValue(health);
         this.playerTables[playerId].setHealth(health);
+    }
+    
+    private setEnergy(playerId: number, energy: number) {
+        this.energyCounters[playerId].toValue(energy);
     }
 
     private eliminatePlayer(playerId: number) {
