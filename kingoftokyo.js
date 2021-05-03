@@ -689,6 +689,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
         if (this.isCurrentPlayerActive()) {
             this.playerTables[this.player_id].removeDiscardCards();
+            this.tableManager.placePlayerTable(); // adapt to removed card
         }
     };
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
@@ -926,6 +927,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.setEnergy(notif.args.playerId, notif.args.energy);
         moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
         this.visibleCards.addToStockWithId(newCard.type, "" + newCard.id);
+        this.tableManager.placePlayerTable(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
         var _this = this;
