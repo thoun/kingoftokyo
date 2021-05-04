@@ -344,15 +344,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['renewCards', ANIMATION_MS],
             ['pickCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
-            /*['newPearlMaster', 1],
-            ['discardLordPick', 1],
-            ['discardLocationPick', 1],
-            ['lastTurn', 1],
-            ['scoreLords', SCORE_MS],
-            ['scoreLocations', SCORE_MS],
-            ['scoreCoalition', SCORE_MS],
-            ['scorePearlMaster', SCORE_MS],
-            ['scoreTotal', SCORE_MS],*/
+            ['points', 1],
+            ['health', 1],
+            ['energy', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -419,6 +413,20 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.visibleCards.removeAll();
         notif.args.cards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
+    }
+
+    
+
+    notif_points(notif: Notif<NotifPointsArgs>) {
+        this.setPoints(notif.args.playerId, notif.args.points);
+    }
+
+    notif_health(notif: Notif<NotifHealthArgs>) {
+        this.setHealth(notif.args.playerId, notif.args.health);
+    }
+
+    notif_energy(notif: Notif<NotifEnergyArgs>) {
+        this.setEnergy(notif.args.playerId, notif.args.energy);
     }
     
     private setPoints(playerId: number, points: number) {

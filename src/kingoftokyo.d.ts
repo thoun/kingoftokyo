@@ -106,3 +106,16 @@ interface NotifRenewCardsArgs {
     cards: Card[];
     energy: number;
 }
+
+
+interface NotifPointsArgs extends NotifResolveArgs {
+    points: number;
+}
+
+interface NotifHealthArgs extends NotifResolveArgs {
+    health: number;
+}
+
+interface NotifEnergyArgs extends NotifResolveArgs {
+    energy: number;
+}

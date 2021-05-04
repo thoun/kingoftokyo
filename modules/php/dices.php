@@ -96,7 +96,7 @@ trait DicesTrait {
             // number
             if ($i <= 3 && $number >= 3) {
                 $points = $i + $number - 3;
-                self::DbQuery("UPDATE player SET `player_score` = `player_score` + $points where `player_id` = $playerId");
+                $this->applyGetPoints($playerId, $points, true);
 
                 self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${diceValue} dices'), [
                     'playerId' => $playerId,
@@ -117,16 +117,15 @@ trait DicesTrait {
                 } else {
                     $health = $this->getPlayerHealth($playerId);
                     $maxHealth = $this->getPlayerMaxHealth($playerId);
-                    $newHealth = min($health + $number, $maxHealth);
-                    $deltaHealth = $newHealth - $health;
-                    if ($deltaHealth != 0) {
-                        self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+                    if ($health < $maxHealth) {
+                        $this->applyGetHealth($playerId, $number, true);
+                        $newHealth = $this->getPlayerHealth($playerId);
 
                         self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} health'), [
                             'playerId' => $playerId,
                             'player_name' => self::getActivePlayerName(),
                             'health' => $newHealth,
-                            'deltaHealth' => $deltaHealth,
+                            'deltaHealth' => $newHealth - $health,
                         ]);
                     }
                 }
@@ -134,7 +133,7 @@ trait DicesTrait {
 
             // energy
             if ($i == 5 && $number > 0) {
-                self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $number where `player_id` = $playerId");
+                $this->applyGetEnergy($playerId, $number, true);
 
                 self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cubes'), [
                     'playerId' => $playerId,
@@ -155,16 +154,11 @@ trait DicesTrait {
 
                 $eliminatedPlayersIds = [];
                 foreach($smashedPlayersIds as $smashedPlayerId) {
-                    $health = $this->getPlayerHealth($smashedPlayerId);
-                    $newHealth = max($health - $number, 0);
+                    $this->applyDamage($smashedPlayerId, $number);
 
-                    if ($newHealth > 0) {
-                        self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $smashedPlayerId");
-                    }
-
-                    if ($newHealth == 0) {
+                    /*if ($newHealth == 0) {
                         $eliminatedPlayersIds[] = $smashedPlayerId;
-                    }
+                    }*/
                 }
 
                 self::notifyAllPlayers("resolveSmashDice", $message, [
@@ -174,10 +168,9 @@ trait DicesTrait {
                     'smashedPlayersIds' => $smashedPlayersIds,
                 ]);
 
-                $eliminatedPlayersIds = [];
-                foreach($eliminatedPlayersIds as $eliminatedPlayerId) {
+                /* TODO foreach($eliminatedPlayersIds as $eliminatedPlayerId) {
                     $this->eliminateAPlayer($eliminatedPlayerId);
-                }
+                }*/
             }
         }
 

@@ -149,4 +149,78 @@ trait UtilTrait {
             $this->gamestate->nextState('endGame');
         }
     }
+
+    function applyGetPoints($playerId, $points, $silent = false) {
+        $maxPoints = 20;
+        self::DbQuery("UPDATE player SET `player_score` = LEAST(`player_score` + $points, $maxPoints) where `player_id` = $playerId");
+
+        if (!$silent) {
+            self::notifyAllPlayers('points','', [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'points' => $this->getPlayerScore($playerId),
+            ]);
+        }
+    }
+
+    function applyLosePoints($playerId, $points, $silent = false) {
+        self::DbQuery("UPDATE player SET `player_score` = GREATEST(`player_score` - $points, 0) where `player_id` = $playerId");
+
+        if (!$silent) {
+            self::notifyAllPlayers('points','', [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'points' => $this->getPlayerScore($playerId),
+            ]);
+        }
+    }
+
+    function applyGetHealth($playerId, $health, $silent = false) {
+        $maxHealth = $this->getPlayerMaxHealth($playerId);
+        self::DbQuery("UPDATE player SET `player_health` = LEAST(`player_health` + $health, $maxHealth) where `player_id` = $playerId");
+
+        if (!$silent) {
+            self::notifyAllPlayers('health','', [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'health' => $this->getPlayerHealth($playerId),
+            ]);
+        }
+    }
+
+    function applyDamage($playerId, $health, $silent = false) {
+        self::DbQuery("UPDATE player SET `player_health` = GREATEST(`player_health` - $health, 0) where `player_id` = $playerId");
+
+        if (!$silent) {
+            self::notifyAllPlayers('health','', [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'health' => $this->getPlayerHealth($playerId),
+            ]);
+        }
+    }
+
+    function applyGetEnergy($playerId, $energy, $silent = false) {
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
+
+        if (!$silent) {
+            self::notifyAllPlayers('energy','', [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'energy' => $this->getPlayerEnergy($playerId),
+            ]);
+        }
+    }
+
+    function applyLoseEnergy($playerId, $energy, $silent = false) {
+        self::DbQuery("UPDATE player SET `player_energy` = GREATEST(`player_energy` - $energy, 0) where `player_id` = $playerId");
+
+        if (!$silent) {
+            self::notifyAllPlayers('energy','', [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'energy' => $this->getPlayerEnergy($playerId),
+            ]);
+        }
+    }
 }

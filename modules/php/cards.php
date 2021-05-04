@@ -158,30 +158,6 @@ trait CardsTrait {
         }
     }
 
-    function applyGetPoints($playerId, $points) {
-        // TODO
-    }
-
-    function applyLosePoints($playerId, $points) {
-        // TODO
-    }
-
-    function applyGetHealth($playerId, $health) {
-        // TODO
-    }
-
-    function applyDamage($playerId, $health) {
-        // TODO
-    }
-
-    function applyGetEnergy($playerId, $energy) {
-        // TODO
-    }
-
-    function applyLoseEnergy($playerId, $energy) {
-        // TODO
-    }
-
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////

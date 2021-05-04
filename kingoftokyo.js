@@ -901,15 +901,9 @@ var KingOfTokyo = /** @class */ (function () {
             ['renewCards', ANIMATION_MS],
             ['pickCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
-            /*['newPearlMaster', 1],
-            ['discardLordPick', 1],
-            ['discardLocationPick', 1],
-            ['lastTurn', 1],
-            ['scoreLords', SCORE_MS],
-            ['scoreLocations', SCORE_MS],
-            ['scoreCoalition', SCORE_MS],
-            ['scorePearlMaster', SCORE_MS],
-            ['scoreTotal', SCORE_MS],*/
+            ['points', 1],
+            ['health', 1],
+            ['energy', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -966,6 +960,15 @@ var KingOfTokyo = /** @class */ (function () {
         this.setEnergy(notif.args.playerId, notif.args.energy);
         this.visibleCards.removeAll();
         notif.args.cards.forEach(function (card) { return _this.visibleCards.addToStockWithId(card.type, "" + card.id); });
+    };
+    KingOfTokyo.prototype.notif_points = function (notif) {
+        this.setPoints(notif.args.playerId, notif.args.points);
+    };
+    KingOfTokyo.prototype.notif_health = function (notif) {
+        this.setHealth(notif.args.playerId, notif.args.health);
+    };
+    KingOfTokyo.prototype.notif_energy = function (notif) {
+        this.setEnergy(notif.args.playerId, notif.args.energy);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points) {
         var _a;
