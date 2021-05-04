@@ -82,15 +82,15 @@ class Cards {
             case 46: return 4;
             case 47: return 3;
             case 48: return 6;
-            case 49: return 5;
-            case 50: return 3;
-            case 51: return 4;
-            case 52: return 6;
-            case 53: return 3;
-            case 54: return 4;
-            case 55: return 4;
-            case 56: return 3;
-            case 57: return 3;
+            //case 49: return 5;
+            //case 50: return 3;
+            //case 51: return 4;
+            //case 52: return 6;
+            //case 53: return 3;
+            //case 54: return 4;
+            //case 55: return 4;
+            //case 56: return 3;
+            //case 57: return 3;
             
             // DISCARD
             case 101: return 5;
@@ -121,14 +121,14 @@ class Cards {
         switch( cardTypeId ) {
             // KEEP
             case 1: return _("Acid Attack");
-            case 2: return _("Alien Metabolism");
+            case 2: return _("Alien Origin");
             case 3: return _("Alpha Monster");
             case 4: return _("Armor Plating");
             case 5: return _("Background Dweller");
             case 6: return _("Burrowing");
             case 7: return _("Camouflage");
             case 8: return _("Complete Destruction");
-            case 9: return _("Dedicated News Team");
+            case 9: return _("Media Friendly");
             case 10: return _("Eater of the Dead");
             case 11: return _("Energy Hoarder");
             case 12: return _("Even Bigger");
@@ -146,9 +146,9 @@ class Cards {
             case 25: return _("Made in a Lab");
             case 26: return _("Metamorph");
             case 27: return _("Mimic");
-            case 28: return _("Monster Batteries");
+            case 28: return _("Battery Monster");
             case 29: return _("Nova Breath");
-            case 30: return _("Omnivore");
+            case 30: return _("Detritivore");
             case 31: return _("Opportunist");
             case 32: return _("Parasitic Tentacles");
             case 33: return _("Plot Twist");
@@ -163,19 +163,19 @@ class Cards {
             case 42: return _("Solar Powered");
             case 43: return _("Spiked Tail");
             case 44: return _("Stretchy");
-            case 45: return _("Telepath");
+            case 45: return _("Energy Drink");
             case 46: return _("Urbavore");
             case 47: return _("We're Only Making It Stronger");
             case 48: return _("Wings");
-            case 49: return _("Cannibalistic");
-            case 50: return _("Intimidating Roar");
-            case 51: return _("Monster Sidekick");
-            case 52: return _("Reflective Hide");
-            case 53: return _("Sleep Walker");
-            case 54: return _("Super Jump");
-            case 55: return _("Throw a Tanker");
-            case 56: return _("Thunder Stomp");
-            case 57: return _("Unstable DNA");
+            //case 49: return _("Cannibalistic");
+            //case 50: return _("Intimidating Roar");
+            //case 51: return _("Monster Sidekick");
+            //case 52: return _("Reflective Hide");
+            //case 53: return _("Sleep Walker");
+            //case 54: return _("Super Jump");
+            //case 55: return _("Throw a Tanker");
+            //case 56: return _("Thunder Stomp");
+            //case 57: return _("Unstable DNA");
             // DISCARD
             case 101: return _("Apartment Building");
             case 102: return _("Commuter Train");
@@ -250,15 +250,16 @@ class Cards {
             case 46: return _("Gain 1 extra [Star] when beginning the turn in Tokyo. Deal 1 extra damage when dealing any damage from Tokyo.");
             case 47: return _("When you lose 2[Heart] or more gain 1[Energy].");
             case 48: return _("Spend 2[Energy] to negate damage to you for a turn.");
-            case 49: return _("When you do damage gain 1[Heart].");
-            case 50: return _("The monsters in Tokyo must yield if you damage them.");
-            case 51: return _("If someone kills you, Go back to 10[Heart] and lose all your [Star]. If either of you or your killer win, or all other players are eliminated then you both win. If your killer is eliminated then you are also. If you are eliminated a second time this card has no effect.");
-            case 52: return _("If you suffer damage the monster that inflicted the damage suffers 1 as well.");
-            case 53: return _("Spend 3[Energy] to gain 1[Star].");
-            case 54: return _("Once each turn you may spend 1[Energy] to negate 1 damage you are receiving.");
-            case 55: return _("On a turn you deal 3 or more damage gain 2[Star].");
-            case 56: return _("If you score 4[Star] in a turn, all players roll one less die until your next turn.");
-            case 57: return _("If you yield Tokyo you can take any card the recipient has and give him this card.");
+            //case 49: return _("When you do damage gain 1[Heart].");
+            //case 50: return _("The monsters in Tokyo must yield if you damage them.");
+            //case 51: return _("If someone kills you, Go back to 10[Heart] and lose all your [Star]. If either of you or your killer win, or all other players are eliminated then you both win. If your killer is eliminated then you are also. If you are eliminated a second time this card has no effect.");
+            //case 52: return _("If you suffer damage the monster that inflicted the damage suffers 1 as well.");
+            //case 53: return _("Spend 3[Energy] to gain 1[Star].");
+            //case 54: return _("Once each turn you may spend 1[Energy] to negate 1 damage you are receiving.");
+            //case 55: return _("On a turn you deal 3 or more damage gain 2[Star].");
+            //case 56: return _("If you score 4[Star] in a turn, all players roll one less die until your next turn.");
+            //case 57: return _("If you yield Tokyo you can take any card the recipient has and give him this card.");
+
             // DISCARD
             case 101: return _("<strong>+ 3[Star].</strong>");
             case 102: return _("<strong>+ 2[Star].</strong>");
