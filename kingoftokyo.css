@@ -364,12 +364,12 @@
 .stockitem .name-wrapper {
   position: absolute;
   top: 14px;
-  left: 24px;
+  left: 34px;
   font-size: 10pt;
   color: white;
   transform: rotate(10deg);
   font-family: "goodgirl";
-  width: 100px;
+  width: 980px;
   text-align: center;
 }
 .stockitem .name-wrapper .outline {

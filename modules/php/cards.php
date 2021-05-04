@@ -9,9 +9,7 @@ trait CardsTrait {
     ////////////
 
     function applyEffects($card, $playerId) {
-        $id = $card->id;
-
-        switch($id) {
+        switch($type) {
             // KEEP
             case 1: return _("Deal 1 extra damage each turn (even when you don't otherwise attack).");
             case 2: return _("Buying cards costs you 1 less [Energy].");
