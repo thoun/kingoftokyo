@@ -121,6 +121,18 @@ trait UtilTrait {
         return $this->getPlayersIdsFromLocation(false);
     }*/
 
+    function getPlayersIds() {
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 ORDER BY player_no";
+        $dbResults = self::getCollectionFromDB($sql);
+        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+    }
+
+    function getOtherPlayersIds(int $playerId) {
+        $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 ORDER BY player_no";
+        $dbResults = self::getCollectionFromDB($sql);
+        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+    }
+
     function eliminateAPlayer(int $playerId) {
         self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0 where `player_id` = $playerId");
 

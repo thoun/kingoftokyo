@@ -1,6 +1,3 @@
-const CARD_WIDTH = 123;
-const CARD_HEIGHT = 185;
-
 const isDebug = window.location.host == 'studio.boardgamearena.com';
 const log = isDebug ? console.log.bind(window.console) : function () { };
 
@@ -35,8 +32,8 @@ class PlayerTable {
         this.cards.selectionClass = 'no-visible-selection';
         this.cards.create(this.game, $(`cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
         this.cards.setSelectionMode(0);
-        this.cards.onItemCreate = (card_div, card_type_id, card_id) => this.game.cards.setupNewCard(card_div, card_type_id);
-        //this.cards.image_items_per_row = 13;
+        this.cards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
+        this.cards.image_items_per_row = 10;
         this.cards.centerItems = true;
 
         this.game.cards.setupCards([this.cards]);

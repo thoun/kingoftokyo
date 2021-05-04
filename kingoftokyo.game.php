@@ -44,7 +44,7 @@ class KingOfTokyo extends Table {
         parent::__construct();
         self::initGameStateLabels([
             "throwNumber" => 10,
-            //    "my_second_global_variable" => 11,
+            "playAgainAfterTurn" => 11,
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
@@ -105,6 +105,7 @@ class KingOfTokyo extends Table {
 
         // Init global values with their initial values
         self::setGameStateInitialValue('throwNumber', 0);
+        self::setGameStateInitialValue('playAgainAfterTurn', 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

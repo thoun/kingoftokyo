@@ -1,3 +1,6 @@
+const CARD_WIDTH = 132;
+const CARD_HEIGHT = 185;
+
 class Cards {
     constructor (private game: KingOfTokyoGame) {}
     
@@ -9,9 +12,9 @@ class Cards {
                 stock.addItemType(id, id, keepcardsurl, id);
             }
 
-            const discardcardsurl = `${g_gamethemeurl}img/cards1.jpg`;
+            const discardcardsurl = `${g_gamethemeurl}img/discard-cards.jpg`;
             for(let id=101; id<=120; id++) {  // discard
-                stock.addItemType(id, id, discardcardsurl, id);
+                stock.addItemType(id, id, discardcardsurl, id - 101);
             }
         });
     }
@@ -177,10 +180,10 @@ class Cards {
             case 101: return _("Apartment Building");
             case 102: return _("Commuter Train");
             case 103: return _("Corner Store");
-            case 104: return _("Drop From High Altitude");
+            case 104: return _("Death From Above");
             case 105: return _("Energize");
             case 106: case 107: return _("Evacuation Orders");
-            case 108: return _("Fire Blast");
+            case 108: return _("Flame Thrower");
             case 109: return _("Frenzy");
             case 110: return _("Gas Refinery");
             case 111: return _("Heal");

@@ -30,6 +30,8 @@ function moveToAnotherStock(sourceStock, destinationStock, uniqueId, cardId) {
         destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
     }
 }
+var CARD_WIDTH = 132;
+var CARD_HEIGHT = 185;
 var Cards = /** @class */ (function () {
     function Cards(game) {
         this.game = game;
@@ -40,9 +42,9 @@ var Cards = /** @class */ (function () {
             for (var id = 1; id <= 57; id++) { // keep
                 stock.addItemType(id, id, keepcardsurl, id);
             }
-            var discardcardsurl = g_gamethemeurl + "img/cards1.jpg";
+            var discardcardsurl = g_gamethemeurl + "img/discard-cards.jpg";
             for (var id = 101; id <= 120; id++) { // discard
-                stock.addItemType(id, id, discardcardsurl, id);
+                stock.addItemType(id, id, discardcardsurl, id - 101);
             }
         });
     };
@@ -204,11 +206,11 @@ var Cards = /** @class */ (function () {
             case 101: return _("Apartment Building");
             case 102: return _("Commuter Train");
             case 103: return _("Corner Store");
-            case 104: return _("Drop From High Altitude");
+            case 104: return _("Death From Above");
             case 105: return _("Energize");
             case 106:
             case 107: return _("Evacuation Orders");
-            case 108: return _("Fire Blast");
+            case 108: return _("Flame Thrower");
             case 109: return _("Frenzy");
             case 110: return _("Gas Refinery");
             case 111: return _("Heal");
@@ -327,8 +329,6 @@ var Cards = /** @class */ (function () {
     };
     return Cards;
 }());
-var CARD_WIDTH = 123;
-var CARD_HEIGHT = 185;
 var isDebug = window.location.host == 'studio.boardgamearena.com';
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var PlayerTable = /** @class */ (function () {
@@ -346,8 +346,8 @@ var PlayerTable = /** @class */ (function () {
         this.cards.selectionClass = 'no-visible-selection';
         this.cards.create(this.game, $("cards-" + this.player.id), CARD_WIDTH, CARD_HEIGHT);
         this.cards.setSelectionMode(0);
-        this.cards.onItemCreate = function (card_div, card_type_id, card_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
-        //this.cards.image_items_per_row = 13;
+        this.cards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
+        this.cards.image_items_per_row = 10;
         this.cards.centerItems = true;
         this.game.cards.setupCards([this.cards]);
         cards.forEach(function (card) { return _this.cards.addToStockWithId(card.type, "" + card.id); });
@@ -807,7 +807,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = function (card_div, card_type_id) { return _this.cards.setupNewCard(card_div, card_type_id); };
-        //this.visibleCards.image_items_per_row = 13;
+        this.visibleCards.image_items_per_row = 10;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
         this.cards.setupCards([this.visibleCards]);

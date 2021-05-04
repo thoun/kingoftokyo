@@ -230,7 +230,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = (card_div, card_type_id) => this.cards.setupNewCard(card_div, card_type_id); 
-        //this.visibleCards.image_items_per_row = 13;
+        this.visibleCards.image_items_per_row = 10;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
 

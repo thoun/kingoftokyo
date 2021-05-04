@@ -111,7 +111,11 @@ trait PlayerTrait {
         self::incStat(1, 'turns_number');
         self::incStat(1, 'turns_number', $player_id);
 
-        $player_id = self::activeNextPlayer();
+        if (intval($this->getGameStateValue('playAgainAfterTurn')) == 1) { // extra turn for current player              
+            $this->setGameStateValue('playAgainAfterTurn', 0);
+        } else {
+            $player_id = self::activeNextPlayer();
+        }
         self::giveExtraTime($player_id);
 
         if ($this->getMaxPlayerScore() >= MAX_POINT) {
