@@ -110,7 +110,7 @@ class TableManager {
             });
         }
         
-        tableDiv.style.height = `${height}px`;
+        tableDiv.style.height = `${height + 50}px`;
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {

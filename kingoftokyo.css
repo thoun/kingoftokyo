@@ -8,6 +8,12 @@
 .player-board.eliminated-player .counters {
   display: none;
 }
+.player-board .monster-figure {
+  background-repeat: no-repeat;
+  background-position: top center;
+  margin-bottom: -5px;
+  height: 45px;
+}
 
 .icon {
   display: inline-block;
@@ -539,6 +545,9 @@
 #table .player-table .monster-board-wrapper .monster-board.monster5 {
   background-image: url("img/monster-board-6.png");
 }
+#table .player-table .player-cards {
+  width: 100%;
+}
 #table .monster-figure {
   position: relative;
   width: 150px;
@@ -572,4 +581,27 @@
   src: url("font/goodgirl-webfont.woff2") format("woff2"), url("font/goodgirl-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
+}
+.monster0 {
+  background-image: url("img/monster-figure-1.png");
+}
+
+.monster1 {
+  background-image: url("img/monster-figure-2.png");
+}
+
+.monster2 {
+  background-image: url("img/monster-figure-3.png");
+}
+
+.monster3 {
+  background-image: url("img/monster-figure-4.png");
+}
+
+.monster4 {
+  background-image: url("img/monster-figure-5.png");
+}
+
+.monster5 {
+  background-image: url("img/monster-figure-6.png");
 }

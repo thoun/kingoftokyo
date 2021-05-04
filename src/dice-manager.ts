@@ -19,6 +19,7 @@ class DiceManager {
     }
 
     public removeAllDices() {
+        console.log('removeAllDices', this.dices);
         this.dices.forEach(dice => this.removeDice(dice));
     }
 
