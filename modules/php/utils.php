@@ -22,7 +22,7 @@ trait UtilTrait {
             $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
         }*/
         
-        for( $value=101; $value<=120; $value++ ) { // discard
+        for( $value=101; $value<=118; $value++ ) { // discard
             $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
         }
             

@@ -43,7 +43,7 @@ var Cards = /** @class */ (function () {
                 stock.addItemType(id, id, keepcardsurl, id);
             }
             var discardcardsurl = g_gamethemeurl + "img/discard-cards.jpg";
-            for (var id = 101; id <= 120; id++) { // discard
+            for (var id = 101; id <= 118; id++) { // discard
                 stock.addItemType(id, id, discardcardsurl, id - 101);
             }
         });
@@ -137,8 +137,8 @@ var Cards = /** @class */ (function () {
             case 116: return 6;
             case 117: return 4;
             case 118: return 6;
-            case 119: return 6;
-            case 120: return 2;
+            //case 119: return 6;
+            //case 120: return 2;
         }
         return null;
     };
@@ -219,10 +219,10 @@ var Cards = /** @class */ (function () {
             case 114: return _("National Guard");
             case 115: return _("Nuclear Power Plant");
             case 116: return _("Skyscraper");
-            case 117: return _("Tanks");
+            case 117: return _("Tank");
             case 118: return _("Vast Storm");
-            case 119: return _("Amusement Park");
-            case 120: return _("Army");
+            //case 119: return _("Amusement Park");
+            //case 120: return _("Army");
         }
         return null;
     };
@@ -287,34 +287,35 @@ var Cards = /** @class */ (function () {
             case 56: return _("If you score 4[Star] in a turn, all players roll one less die until your next turn.");
             case 57: return _("If you yield Tokyo you can take any card the recipient has and give him this card.");
             // DISCARD
-            case 101: return _("+ 3[Star]");
-            case 102: return _("+ 2[Star]");
-            case 103: return _("+ 1[Star]");
-            case 104: return _("+ 2[Star] and take control of Tokyo if you don't already control it.");
-            case 105: return _("+ 9[Energy]");
+            case 101: return _("<strong>+ 3[Star].</strong>");
+            case 102: return _("<strong>+ 2[Star].</strong>");
+            case 103: return _("<strong>+ 1[Star].</strong>");
+            case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it.");
+            case 105: return _("<strong>+ 9[Energy].</strong>");
             case 106:
-            case 107: return _("All other monsters lose 5[Star].");
-            case 108: return _("Deal 2 damage to all other monsters.");
-            case 109: return _("When you purchase this card Take another turn immediately after this one."); // TODO check spelling
-            case 110: return _("+ 2[Star] and deal 3 damage to all other monsters.");
-            case 111: return _("Heal 2 damage.");
-            case 112: return _("All monsters (including you) take 3 damage.");
-            case 113: return _("+ 5[Star] and take 4 damage");
-            case 114: return _("+ 2[Star] and take 2 damage.");
-            case 115: return _("+ 2[Star] and heal 3 damage.");
-            case 116: return _("+ 4[Star]");
-            case 117: return _("+ 4[Star] and take 3 damage.");
-            case 118: return _("+ 2[Star]. All other monsters lose 1[Energy] for every 2[Energy] they have.");
-            case 119: return _("+ 4[Star]");
-            case 120: return _("(+ 1[Star] and suffer one damage) for each card you have."); // TODO check spelling
+            case 107: return _("<strong>All other Monsters lose 5[Star].</strong>");
+            case 108: return _("<strong>All other Monsters lose 2[Heart].</strong>");
+            case 109: return _("<strong>Take another turn</strong> after this one");
+            case 110: return _("<strong>+ 2[Star] and deal all other monsters lose 3[Heart].</strong>");
+            case 111: return _("<strong>+ 2[Heart]</strong>");
+            case 112: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Heart].</strong>");
+            case 113: return _("<strong>+ 5[Star] -4[Heart].</strong>");
+            case 114: return _("<strong>+ 2[Star] -2[Heart].</strong>");
+            case 115: return _("<strong>+ 2[Star] +3[Heart].</strong>");
+            case 116: return _("<strong>+ 4[Star].");
+            case 117: return _("<strong>+ 4[Star] +3[Heart].</strong>");
+            case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
+            //case 119: return _("<strong>+ 4[Star].");
+            //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have."); // TODO check spelling
         }
         return null;
     };
     Cards.prototype.formatDescription = function (rawDescription) {
         return rawDescription
-            .replace(/\[Star\]/ig, '<span class="icon health"></span>')
+            .replace(/\[Star\]/ig, '<span class="icon points"></span>')
+            .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
             .replace(/\[Energy\]/ig, '<span class="icon energy"></span>');
-        // TODO [1][2][3][Heart][Attack]
+        // TODO [1][2][3][H][E][S]
     };
     Cards.prototype.getTooltip = function (cardTypeId) {
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': this.getCardCost(cardTypeId) }) + " <span class=\"icon energy\"></span></p>\n            <p>" + this.formatDescription(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
