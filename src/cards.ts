@@ -278,7 +278,7 @@ class Cards {
             case 117: return _("<strong>+ 4[Star] +3[Heart].</strong>");
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
             //case 119: return _("<strong>+ 4[Star].");
-            //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have."); // TODO check spelling
+            //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
         }
         return null;
     }

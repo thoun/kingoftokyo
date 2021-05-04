@@ -112,7 +112,7 @@ class KingOfTokyo extends Table {
         //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
         //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 
-        // TODO: setup the initial game situation here
+        // setup the initial game situation here
         $this->initCards();
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
@@ -141,7 +141,7 @@ class KingOfTokyo extends Table {
         $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
 
-        // TODO: Gather all information about current game situation (visible by player $current_player_id).
+        // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
         $result['dices'] = $activePlayerId ? $this->getDices($this->getDicesNumber($activePlayerId)) : [];

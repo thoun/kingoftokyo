@@ -29,15 +29,10 @@ trait PlayerTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
     }
 
-    function leaveTokyo() {
+    function actionLeaveTokyo() {
         $playerId = self::getCurrentPlayerId();
 
-        self::DbQuery("UPDATE player SET player_location = 0 where `player_id` = $playerId");
-
-        self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} chooses to leave Tokyo'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-        ]);
+        $this->leaveTokyo($playerId);
     
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");

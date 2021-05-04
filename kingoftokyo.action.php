@@ -66,7 +66,7 @@
     public function leave() {
         self::setAjaxMode();
 
-        $this->game->leaveTokyo();
+        $this->game->actionLeaveTokyo();
 
         self::ajaxResponse();
     }

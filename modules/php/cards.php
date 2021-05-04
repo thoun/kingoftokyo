@@ -83,7 +83,16 @@ trait CardsTrait {
             case 104: 
                 $this->applyGetPoints($playerId, 2);
                 if (!$this->inTokyo($playerId)) {
-                    // TODO take control of Tokyo
+                    // take control of Tokyo
+                    if ($this->isTokyoEmpty(false)) {
+                        $this->moveToTokyo($playerId, false);
+                    } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
+                        $this->moveToTokyo($playerId, true);
+                    } else {
+                        // we force Tokyo city player out
+                        $this->leaveTokyo($this->getPlayerIdInTokyoCity());
+                        $this->moveToTokyo($playerId, false);
+                    }
                 }
                 break;
             case 105:
@@ -247,8 +256,4 @@ trait CardsTrait {
 //////////// Game state actions
 ////////////
 
-    function stPickCard() {
-        // TODO remove
-        //$this->gamestate->nextState('dontPick');
-    }
 }

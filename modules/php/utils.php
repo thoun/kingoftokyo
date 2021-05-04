@@ -101,6 +101,16 @@ trait UtilTrait {
         ]);
     }
 
+    function leaveTokyo($playerId) {
+
+        self::DbQuery("UPDATE player SET player_location = 0 where `player_id` = $playerId");
+
+        self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} chooses to leave Tokyo'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+        ]);
+    }
+
     function inTokyo(int $playerId) {
         $location = intval(self::getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
         return $location > 0;
@@ -111,6 +121,11 @@ trait UtilTrait {
         $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+    }
+
+    function getPlayerIdInTokyoCity() {
+        $sql = "SELECT player_id FROM player WHERE player_location = 1 AND player_eliminated = 0 ORDER BY player_no";
+        return intval(self::getUniqueValueFromDB($sql));
     }
 
     function getPlayersIdsInTokyo() {
