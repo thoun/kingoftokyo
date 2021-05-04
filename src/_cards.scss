@@ -4,20 +4,31 @@ $name-width: 100px;
 $name-size: 10pt;
 
 $type-left: 0px;
-$type-top: 120px;
+$type-top: 140px;
 $type-size: 10pt;
 
-$description-left: 2px;
-$description-top: 129px;
-$description-width: 117px;
+$description-left: 4px;
+$description-top: 144px;
+$description-width: 112px;
 $description-height: 38px;
-$description-size: 8pt;
+$description-size: 7pt;
 
 .stockitem {
     border-radius:10px;
     margin:5px;
     border:1px solid grey;
     text-align: center;
+
+    .bottom {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+        height: 100%;
+        background: url('img/card-bottom.png');
+        background-repeat: no-repeat;
+        background-size: 120% auto;
+        background-position: bottom;
+    }
 
     .name-wrapper {
         position: absolute;
@@ -90,7 +101,7 @@ $description-size: 8pt;
         align-items: center;
         justify-content: center;
         color: black;
-        transform: rotate(-10deg);
+        transform: rotate(-6deg);
         font-size: $description-size;
 
         .icon {

@@ -324,7 +324,7 @@ var Cards = /** @class */ (function () {
         var type = card_type_id < 100 ? _('Keep') : _('Discard');
         var name = this.getCardName(card_type_id);
         var description = this.formatDescription(this.getCardDescription(card_type_id));
-        card_div.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        <div class=\"description-wrapper\"><div>" + description + "</div></div>\n        ";
+        card_div.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\"><div>" + description + "</div></div>\n        ";
         this.game.addTooltipHtml(card_div.id, this.getTooltip(card_type_id));
     };
     return Cards;
