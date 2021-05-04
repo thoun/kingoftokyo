@@ -343,6 +343,7 @@
   margin: 5px;
   border: 1px solid grey;
   text-align: center;
+  overflow: hidden;
 }
 .stockitem .bottom {
   position: absolute;
@@ -442,9 +443,13 @@
 }
 #table #table-center {
   position: absolute;
-  width: 400px;
+  width: 420px;
+}
+#table #table-center #visible-cards {
+  margin-bottom: 10px;
 }
 #table #table-center #board {
+  margin-left: 10px;
   position: relative;
   width: 400px;
   height: 400px;
@@ -467,7 +472,7 @@
   height: 150px;
 }
 #table .player-table {
-  width: 400px;
+  width: 420px;
   position: absolute;
   display: flex;
   flex-direction: column;

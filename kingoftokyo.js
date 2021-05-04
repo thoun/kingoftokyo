@@ -387,10 +387,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
         to[j] = from[i];
     return to;
 };
-var PLAYER_TABLE_WIDTH = 400;
+var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 193;
 var CARDS_PER_ROW = 3;
-var CENTER_TABLE_WIDTH = 400;
+var CENTER_TABLE_WIDTH = 420;
 var DISPOSITION_2_COLUMNS = [];
 var DISPOSITION_3_COLUMNS = [];
 DISPOSITION_2_COLUMNS[2] = [[0], [1]];
