@@ -9,6 +9,8 @@ trait CardsTrait {
     ////////////
 
     function applyEffects($card, $playerId) {
+        $type = $card->type;
+
         switch($type) {
             // KEEP
             case 1: return _("Deal 1 extra damage each turn (even when you don't otherwise attack).");

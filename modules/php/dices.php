@@ -27,6 +27,14 @@ trait DicesTrait {
                 self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
             }
         }
+        
+        $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
+        $maxThrowNumber = $this->getThrowNumber($playerId);
+
+        // force lock on last throw
+        if ($throwNumber == $maxThrowNumber) {
+            self::DbQuery( "UPDATE dice SET `locked` = true" );
+        }
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,6 +48,8 @@ trait DicesTrait {
   	
     public function rethrowDices(string $dicesIds) {
         $playerId = self::getActivePlayerId();
+        self::DbQuery("UPDATE dice SET `locked` = true");
+        self::debug('dicesIds='.$dicesIds.'!');
         self::DbQuery("UPDATE dice SET `locked` = false where `dice_id` IN ($dicesIds)");
         $this->throwDices($playerId);
 
@@ -69,7 +79,7 @@ trait DicesTrait {
         $dices = $this->getDices($this->getDicesNumber($playerId));
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
-        $maxThrowNumber = 3;
+        $maxThrowNumber = $this->getThrowNumber($playerId);
     
         // return values:
         return [

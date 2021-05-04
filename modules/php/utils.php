@@ -69,6 +69,10 @@ trait UtilTrait {
         return 6; // TODO
     }
 
+    function getThrowNumber(int $playerId) {
+        return 3; // TODO
+    }
+
     function getPlayerMaxHealth(int $playerId) {
         return 10; // TODO
     }

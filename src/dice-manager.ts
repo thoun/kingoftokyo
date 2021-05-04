@@ -2,7 +2,7 @@ class DiceManager {
     private dices: Dice[] = [];
 
     constructor(private game: KingOfTokyoGame, setupDices: Dice[]) {
-        // TODO use setupDices
+        // TODO use setupDices ?
     }
 
     public hideLock() {
@@ -21,30 +21,45 @@ class DiceManager {
     public removeAllDices() {
         console.log('removeAllDices', this.dices);
         this.dices.forEach(dice => this.removeDice(dice));
-    }
-
-    public lockFreeDices() {
-        this.dices.filter(dice => !dice.locked).forEach(dice => this.toggleLockDice(dice, true));
+        $('locked-dices').innerHTML = '';
+        $('dices-selector').innerHTML = '';
+        this.dices = [];
     }
 
     public setDices(dices: Dice[], firstThrow: boolean, lastTurn: boolean, inTokyo: boolean) { 
+        const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
+
         if (firstThrow) {
+            $('dices-selector').innerHTML = '';
+            this.dices = [];
+        } else {
+            this.dices.forEach(dice => this.removeDice(dice));
+            $('locked-dices').innerHTML = '';
             $('dices-selector').innerHTML = '';
             this.dices = [];
         }
 
         const newDices = dices.filter(newDice => !this.dices.some(dice => dice.id === newDice.id));
+        //const oldDices = this.dices.filter(oldDice => !newDices.some(dice => dice.id === oldDice.id));
         this.dices.push(...newDices);
 
-        const selectable = (this.game as any).isCurrentPlayerActive() && !lastTurn;
+        /*oldDices.forEach(dice => {
+            const newDice = dices.find(nd => nd.id === dice.id);
+            if (newDice) {
+                dice.value = newDice.value;
+                dice.locked = newDice.locked;
+                const div = document.getElementById(`dice${dice.id}`);
+                div.dataset.diceValue = ''+dice.value;
+            }
+        });*/
+
+        const selectable = currentPlayerActive && !lastTurn;
 
         newDices.forEach(dice => this.createDice(dice, true, selectable, inTokyo));
 
         dojo.toggleClass('rolled-dices', 'selectable', selectable);
 
-        if (lastTurn) {
-            setTimeout(() => this.lockFreeDices(), 1000);
-        }
+        //this.dices.forEach(dice => this.toggleLockDice(dice, dice.locked));
 
         this.activateRethrowButton();
     }
@@ -101,6 +116,7 @@ class DiceManager {
     private toggleLockDice(dice: Dice, forcedLockValue: boolean | null = null) {
         dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
         const diceDiv = document.getElementById(`dice${dice.id}`);
+        console.log('toggleLockDice', `dice${dice.id}`, dice.locked);
 
         slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dices' : 'dices-selector');
 
@@ -140,6 +156,8 @@ class DiceManager {
             diceDiv.classList.add('rolled');
             setTimeout(() => diceDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 100); 
             setTimeout(() => diceDiv.classList.remove('rolled'), 1200); 
+        } else {
+            setTimeout(() => diceDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'), 100); 
         }
 
         if (selectable) {

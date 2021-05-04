@@ -504,7 +504,7 @@ var DiceManager = /** @class */ (function () {
     function DiceManager(game, setupDices) {
         this.game = game;
         this.dices = [];
-        // TODO use setupDices
+        // TODO use setupDices ?
     }
     DiceManager.prototype.hideLock = function () {
         dojo.addClass('locked-dices', 'hide-lock');
@@ -522,26 +522,40 @@ var DiceManager = /** @class */ (function () {
         var _this = this;
         console.log('removeAllDices', this.dices);
         this.dices.forEach(function (dice) { return _this.removeDice(dice); });
-    };
-    DiceManager.prototype.lockFreeDices = function () {
-        var _this = this;
-        this.dices.filter(function (dice) { return !dice.locked; }).forEach(function (dice) { return _this.toggleLockDice(dice, true); });
+        $('locked-dices').innerHTML = '';
+        $('dices-selector').innerHTML = '';
+        this.dices = [];
     };
     DiceManager.prototype.setDices = function (dices, firstThrow, lastTurn, inTokyo) {
         var _a;
         var _this = this;
+        var currentPlayerActive = this.game.isCurrentPlayerActive();
         if (firstThrow) {
             $('dices-selector').innerHTML = '';
             this.dices = [];
         }
+        else {
+            this.dices.forEach(function (dice) { return _this.removeDice(dice); });
+            $('locked-dices').innerHTML = '';
+            $('dices-selector').innerHTML = '';
+            this.dices = [];
+        }
         var newDices = dices.filter(function (newDice) { return !_this.dices.some(function (dice) { return dice.id === newDice.id; }); });
+        //const oldDices = this.dices.filter(oldDice => !newDices.some(dice => dice.id === oldDice.id));
         (_a = this.dices).push.apply(_a, newDices);
-        var selectable = this.game.isCurrentPlayerActive() && !lastTurn;
+        /*oldDices.forEach(dice => {
+            const newDice = dices.find(nd => nd.id === dice.id);
+            if (newDice) {
+                dice.value = newDice.value;
+                dice.locked = newDice.locked;
+                const div = document.getElementById(`dice${dice.id}`);
+                div.dataset.diceValue = ''+dice.value;
+            }
+        });*/
+        var selectable = currentPlayerActive && !lastTurn;
         newDices.forEach(function (dice) { return _this.createDice(dice, true, selectable, inTokyo); });
         dojo.toggleClass('rolled-dices', 'selectable', selectable);
-        if (lastTurn) {
-            setTimeout(function () { return _this.lockFreeDices(); }, 1000);
-        }
+        //this.dices.forEach(dice => this.toggleLockDice(dice, dice.locked));
         this.activateRethrowButton();
     };
     DiceManager.prototype.resolveNumberDices = function (args) {
@@ -592,6 +606,7 @@ var DiceManager = /** @class */ (function () {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
         dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
         var diceDiv = document.getElementById("dice" + dice.id);
+        console.log('toggleLockDice', "dice" + dice.id, dice.locked);
         slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dices' : 'dices-selector');
         this.activateRethrowButton();
     };
@@ -623,6 +638,9 @@ var DiceManager = /** @class */ (function () {
             diceDiv.classList.add('rolled');
             setTimeout(function () { return diceDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 100);
             setTimeout(function () { return diceDiv.classList.remove('rolled'); }, 1200);
+        }
+        else {
+            setTimeout(function () { return diceDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
         }
         if (selectable) {
             diceDiv.addEventListener('click', function () { return _this.toggleLockDice(dice); });
@@ -834,14 +852,13 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('rethrow', {
-            dicesIds: dicesIds
+            dicesIds: dicesIds.join(',')
         });
     };
     KingOfTokyo.prototype.resolveDices = function () {
         if (!this.checkAction('resolve')) {
             return;
         }
-        this.diceManager.lockFreeDices();
         this.takeAction('resolve');
     };
     KingOfTokyo.prototype.onStayInTokyo = function () {

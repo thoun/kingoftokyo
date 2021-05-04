@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url(../../../css/csslayer.css);
 .player-board.eliminated-player {
   background-color: #b9b9b9;
@@ -65,11 +66,14 @@
   display: flex;
   align-items: center;
 }
+#rolled-dices #locked-dices:before {
+  content: "🔒";
+}
 #rolled-dices #locked-dices.hide-lock {
   border-color: transparent;
 }
-#rolled-dices #locked-dices.hide-lock #lock-icon {
-  display: none;
+#rolled-dices #locked-dices.hide-lock:before {
+  content: "";
 }
 #rolled-dices #dices-selector {
   border: 2px solid transparent;
@@ -250,6 +254,10 @@
   transition: transform 1.1s ease-out;
 }
 
+.no-roll {
+  transition: transform 0;
+}
+
 .even-roll[data-roll="1"] {
   transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
 }
@@ -296,6 +304,30 @@
 
 .odd-roll[data-roll="6"] {
   transform: rotateX(-360deg) rotateY(-900deg) rotateZ(-360deg);
+}
+
+.no-roll[data-roll="1"] {
+  transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
+}
+
+.no-roll[data-roll="2"] {
+  transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
+}
+
+.no-roll[data-roll="3"] {
+  transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
+}
+
+.no-roll[data-roll="4"] {
+  transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
+}
+
+.no-roll[data-roll="5"] {
+  transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
+}
+
+.no-roll[data-roll="6"] {
+  transform: rotateX(360deg) rotateY(900deg) rotateZ(360deg);
 }
 
 [data-side="1"] {

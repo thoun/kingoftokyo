@@ -260,7 +260,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('rethrow', {
-            dicesIds
+            dicesIds: dicesIds.join(',')
         });
     }
 
@@ -268,7 +268,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         if(!(this as any).checkAction('resolve')) {
             return;
         }
-        this.diceManager.lockFreeDices();
 
         this.takeAction('resolve');
     }

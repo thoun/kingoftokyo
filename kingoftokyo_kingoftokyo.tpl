@@ -2,7 +2,6 @@
 
 <div id="rolled-dices" class="whiteblock">
     <div id="locked-dices" class="hide-lock">
-        <span id="lock-icon">&#128274;</span>
     </div>
     <div id="dices-selector"></div>
 </div>
