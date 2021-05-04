@@ -318,6 +318,7 @@
 
 .animation {
   position: absolute;
+  z-index: 10;
   width: 220px;
   height: 220px;
   background-image: url("img/animations.png");
@@ -327,13 +328,13 @@
   transform: scale(0.15);
   transition: transform 1s;
 }
-.animation.health {
+.animation.animation4 {
   background-position: 0% 0%;
 }
-.animation.energy {
+.animation.animation5 {
   background-position: 50% 0%;
 }
-.animation.smash {
+.animation.animation6 {
   background-position: 100% 0%;
 }
 
@@ -523,7 +524,7 @@
 #table .player-table .monster-board-wrapper .monster-board.monster5 {
   background-image: url("img/monster-board-6.png");
 }
-#table .player-table .monster-figure {
+#table .monster-figure {
   position: relative;
   width: 150px;
   height: 150px;
@@ -532,22 +533,22 @@
   background-size: contain;
   filter: drop-shadow(6px 6px 4px black);
 }
-#table .player-table .monster-figure.monster0 {
+#table .monster-figure.monster0 {
   background-image: url("img/monster-figure-1.png");
 }
-#table .player-table .monster-figure.monster1 {
+#table .monster-figure.monster1 {
   background-image: url("img/monster-figure-2.png");
 }
-#table .player-table .monster-figure.monster2 {
+#table .monster-figure.monster2 {
   background-image: url("img/monster-figure-3.png");
 }
-#table .player-table .monster-figure.monster3 {
+#table .monster-figure.monster3 {
   background-image: url("img/monster-figure-4.png");
 }
-#table .player-table .monster-figure.monster4 {
+#table .monster-figure.monster4 {
   background-image: url("img/monster-figure-5.png");
 }
-#table .player-table .monster-figure.monster5 {
+#table .monster-figure.monster5 {
   background-image: url("img/monster-figure-6.png");
 }
 

@@ -1,5 +1,5 @@
 {OVERALL_GAME_HEADER}
-<button id="test">TEST</button>
+
 <div id="rolled-dices" class="whiteblock">
     <div id="locked-dices" class="hide-lock">
         <span id="lock-icon">&#128274;</span>

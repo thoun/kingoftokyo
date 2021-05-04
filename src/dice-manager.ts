@@ -49,40 +49,52 @@ class DiceManager {
     }
 
     public resolveNumberDices(args: NotifResolveNumberDiceArgs) {
-        // TODO animation
-        this.dices.filter(dice => dice.value === args.diceValue).forEach(dice => this.removeDice(dice));
+        const dices = this.dices.filter(dice => dice.value === args.diceValue);
+        (this.game as any).displayScoring( `dice${(dices[1] || dices[0]).id}`, '96c93c', args.deltaPoints, 1500);
+        this.dices.filter(dice => dice.value === args.diceValue).forEach(dice => this.removeDice(dice, 1000, 1500));
     }
 
-    public resolveHealthDicesInTokyo(args: NotifResolveHealthDiceInTokyoArgs) {
-        // TODO animation
-        this.dices.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice));
+    public resolveHealthDicesInTokyo() {
+        this.dices.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice, 1000));
     }
 
-    public resolveHealthDices(args: NotifResolveHealthDiceArgs) {
-        const healthDices = this.dices.filter(dice => dice.value === 4);
-        healthDices.forEach(dice => {
-            const animationId = `dice${dice.id}-animation`;
-            dojo.place(`<div id="${animationId}" class="animation health"></div>`, `dice${dice.id}`);
-            setTimeout(() => {
-                document.getElementById(animationId).style.transform = 'translate(-200px, 100px) scale(1)';
-            }, 50);
+    private addDiceAnimation(diceValue: number, playerIds: number[]) {
+        const dices = this.dices.filter(dice => dice.value === diceValue);
+        playerIds.forEach((playerId, playerIndex) => {
+            const destination = document.getElementById(`monster-figure-${playerId}`).getBoundingClientRect();
+            dices.forEach((dice, diceIndex) => {
+                const origin = document.getElementById(`dice${dice.id}`).getBoundingClientRect();
+                const animationId = `dice${dice.id}-player${playerId}-animation`;
+                dojo.place(`<div id="${animationId}" class="animation animation${diceValue}"></div>`, `dice${dice.id}`);
+                setTimeout(() => {
+                    const middleIndex = dices.length - 1;
+                    const deltaX = (diceIndex - middleIndex) * 220;
+                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, 100px) scale(1)`;
+                }, 50);
 
-            setTimeout(() => {
-                document.getElementById(animationId).style.transform = 'translate(200px, 400px) scale(0.15)';
-            }, 1500);
+                setTimeout(() => {
+                    const deltaX = destination.left - origin.left + 59;
+                    const deltaY = destination.top - origin.top + 59;
+                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.30)`;
+                }, 1500);
 
-            setTimeout(() => this.removeDice(dice), 2500);
+                if (playerIndex === playerIds.length - 1) {
+                    setTimeout(() => this.removeDice(dice), 2500);
+                }
+            });
         });
     }
 
+    public resolveHealthDices(args: NotifResolveHealthDiceArgs) {
+        this.addDiceAnimation(4, [args.playerId]);
+    }
+
     public resolveEnergyDices(args: NotifResolveEnergyDiceArgs) {
-        // TODO animation
-        this.dices.filter(dice => dice.value === 5).forEach(dice => this.removeDice(dice));
+        this.addDiceAnimation(5, [args.playerId]);
     }
 
     public resolveSmashDices(args: NotifResolveSmashDiceArgs) {
-        // TODO animation
-        this.dices.filter(dice => dice.value === 6).forEach(dice => this.removeDice(dice));
+        this.addDiceAnimation(6, args.smashedPlayersIds);
     }
 
     private toggleLockDice(dice: Dice, forcedLockValue: boolean | null = null) {
@@ -135,8 +147,12 @@ class DiceManager {
 
     }
 
-    private removeDice(dice: Dice) {
-        dojo.destroy(`dice${dice.id}`);
+    private removeDice(dice: Dice, duration?: number, delay?: number) {
+        if (duration) {
+            (this.game as any).fadeOutAndDestroy(`dice${dice.id}`, duration, delay);
+        } else {
+            dojo.destroy(`dice${dice.id}`);
+        }
         this.dices.splice(this.dices.indexOf(dice), 1);
     }
 

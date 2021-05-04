@@ -238,6 +238,7 @@ $size: 0.25rem;
 
   .animation {
     position: absolute;
+    z-index: 10;
     width: 220px;
     height: 220px;
     background-image: url('img/animations.png');
@@ -247,15 +248,15 @@ $size: 0.25rem;
     transform: scale(0.15);
     transition: transform 1s;
   
-    &.health {
+    &.animation4 {
       background-position: 0% 0%;
     }
   
-    &.energy {
+    &.animation5 {
       background-position: 50% 0%;
     }
   
-    &.smash {
+    &.animation6 {
       background-position: 100% 0%;
     }
   }

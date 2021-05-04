@@ -56,11 +56,11 @@ class PlayerTable {
     }
 
     public enterTokyo(location: number) {        
-        (this.game as any).slideToObject(`monster-figure-${this.playerId}`, `tokyo-${location == 2 ? 'bay' : 'city'}`).play();
+        slideToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `tokyo-${location == 2 ? 'bay' : 'city'}`);
     }
 
-    public leaveTokyo() {        
-        (this.game as any).slideToObject(`monster-figure-${this.playerId}`, `monster-board-${this.playerId}`).play();
+    public leaveTokyo() {  
+        slideToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}`);
     }
     
     public removeDiscardCards() {

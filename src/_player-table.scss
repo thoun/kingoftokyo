@@ -60,20 +60,20 @@
         }
     }
 
-    .monster-figure {
-        position: relative;
-        width: 150px;
-        height: 150px;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        filter: drop-shadow(6px 6px 4px black); // TODO add it to pictures
+}
 
-        @for $i from 0 through 5 {
-            &.monster#{$i} {
-                background-image: url('img/monster-figure-#{$i + 1}.png');
-            }
+.monster-figure {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    filter: drop-shadow(6px 6px 4px black); // TODO add it to pictures
+
+    @for $i from 0 through 5 {
+        &.monster#{$i} {
+            background-image: url('img/monster-figure-#{$i + 1}.png');
         }
     }
-
 }

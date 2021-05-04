@@ -7,7 +7,8 @@ declare const g_gamethemeurl;
 
 declare const board: HTMLDivElement;
 
-const ANIMATION_MS = 2500;
+const ANIMATION_MS = 1500;
+const LONG_ANIMATION_MS = 2500;
 
 class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
@@ -58,10 +59,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
 
         this.setupNotifications();
-
-        $('test').addEventListener('click', () => this.diceManager.resolveHealthDices({
-            playerId: 2343493,
-        } as any));
 
         log( "Ending game setup" );
     }
@@ -338,12 +335,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const notifs = [
             ['resolveNumberDice', ANIMATION_MS],
-            ['resolveHealthDice', ANIMATION_MS],
+            ['resolveHealthDice', LONG_ANIMATION_MS],
             ['resolveHealthDiceInTokyo', ANIMATION_MS],
-            ['resolveEnergyDice', ANIMATION_MS],
-            ['resolveSmashDice', ANIMATION_MS],
-            ['playerEliminated', ANIMATION_MS],
-            ['playerEntersTokyo', ANIMATION_MS],
+            ['resolveEnergyDice', LONG_ANIMATION_MS],
+            ['resolveSmashDice', LONG_ANIMATION_MS],
+            ['playerEliminated', LONG_ANIMATION_MS],
+            ['playerEntersTokyo', LONG_ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
             ['pickCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
@@ -374,7 +371,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.diceManager.resolveHealthDices(notif.args);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
-        this.diceManager.resolveHealthDicesInTokyo(notif.args);
+        this.diceManager.resolveHealthDicesInTokyo();
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {

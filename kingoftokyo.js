@@ -361,10 +361,10 @@ var PlayerTable = /** @class */ (function () {
         }
     };
     PlayerTable.prototype.enterTokyo = function (location) {
-        this.game.slideToObject("monster-figure-" + this.playerId, "tokyo-" + (location == 2 ? 'bay' : 'city')).play();
+        slideToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "tokyo-" + (location == 2 ? 'bay' : 'city'));
     };
     PlayerTable.prototype.leaveTokyo = function () {
-        this.game.slideToObject("monster-figure-" + this.playerId, "monster-board-" + this.playerId).play();
+        slideToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId);
     };
     PlayerTable.prototype.removeDiscardCards = function () {
         var _this = this;
@@ -541,38 +541,47 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.resolveNumberDices = function (args) {
         var _this = this;
-        // TODO animation
-        this.dices.filter(function (dice) { return dice.value === args.diceValue; }).forEach(function (dice) { return _this.removeDice(dice); });
+        var dices = this.dices.filter(function (dice) { return dice.value === args.diceValue; });
+        this.game.displayScoring("dice" + (dices[1] || dices[0]).id, '96c93c', args.deltaPoints, 1500);
+        this.dices.filter(function (dice) { return dice.value === args.diceValue; }).forEach(function (dice) { return _this.removeDice(dice, 1000, 1500); });
     };
-    DiceManager.prototype.resolveHealthDicesInTokyo = function (args) {
+    DiceManager.prototype.resolveHealthDicesInTokyo = function () {
         var _this = this;
-        // TODO animation
-        this.dices.filter(function (dice) { return dice.value === 4; }).forEach(function (dice) { return _this.removeDice(dice); });
+        this.dices.filter(function (dice) { return dice.value === 4; }).forEach(function (dice) { return _this.removeDice(dice, 1000); });
     };
-    DiceManager.prototype.resolveHealthDices = function (args) {
+    DiceManager.prototype.addDiceAnimation = function (diceValue, playerIds) {
         var _this = this;
-        var healthDices = this.dices.filter(function (dice) { return dice.value === 4; });
-        healthDices.forEach(function (dice) {
-            var animationId = "dice" + dice.id + "-animation";
-            dojo.place("<div id=\"" + animationId + "\" class=\"animation health\"></div>", "dice" + dice.id);
-            setTimeout(function () {
-                document.getElementById(animationId).style.transform = 'translate(-200px, 100px) scale(1)';
-            }, 50);
-            setTimeout(function () {
-                document.getElementById(animationId).style.transform = 'translate(200px, 400px) scale(0.15)';
-            }, 1500);
-            setTimeout(function () { return _this.removeDice(dice); }, 2500);
+        var dices = this.dices.filter(function (dice) { return dice.value === diceValue; });
+        playerIds.forEach(function (playerId, playerIndex) {
+            var destination = document.getElementById("monster-figure-" + playerId).getBoundingClientRect();
+            dices.forEach(function (dice, diceIndex) {
+                var origin = document.getElementById("dice" + dice.id).getBoundingClientRect();
+                var animationId = "dice" + dice.id + "-player" + playerId + "-animation";
+                dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\"></div>", "dice" + dice.id);
+                setTimeout(function () {
+                    var middleIndex = dices.length - 1;
+                    var deltaX = (diceIndex - middleIndex) * 220;
+                    document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
+                }, 50);
+                setTimeout(function () {
+                    var deltaX = destination.left - origin.left + 59;
+                    var deltaY = destination.top - origin.top + 59;
+                    document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(0.30)";
+                }, 1500);
+                if (playerIndex === playerIds.length - 1) {
+                    setTimeout(function () { return _this.removeDice(dice); }, 2500);
+                }
+            });
         });
     };
+    DiceManager.prototype.resolveHealthDices = function (args) {
+        this.addDiceAnimation(4, [args.playerId]);
+    };
     DiceManager.prototype.resolveEnergyDices = function (args) {
-        var _this = this;
-        // TODO animation
-        this.dices.filter(function (dice) { return dice.value === 5; }).forEach(function (dice) { return _this.removeDice(dice); });
+        this.addDiceAnimation(5, [args.playerId]);
     };
     DiceManager.prototype.resolveSmashDices = function (args) {
-        var _this = this;
-        // TODO animation
-        this.dices.filter(function (dice) { return dice.value === 6; }).forEach(function (dice) { return _this.removeDice(dice); });
+        this.addDiceAnimation(6, args.smashedPlayersIds);
     };
     DiceManager.prototype.toggleLockDice = function (dice, forcedLockValue) {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
@@ -614,13 +623,19 @@ var DiceManager = /** @class */ (function () {
             diceDiv.addEventListener('click', function () { return _this.toggleLockDice(dice); });
         }
     };
-    DiceManager.prototype.removeDice = function (dice) {
-        dojo.destroy("dice" + dice.id);
+    DiceManager.prototype.removeDice = function (dice, duration, delay) {
+        if (duration) {
+            this.game.fadeOutAndDestroy("dice" + dice.id, duration, delay);
+        }
+        else {
+            dojo.destroy("dice" + dice.id);
+        }
         this.dices.splice(this.dices.indexOf(dice), 1);
     };
     return DiceManager;
 }());
-var ANIMATION_MS = 2500;
+var ANIMATION_MS = 1500;
+var LONG_ANIMATION_MS = 2500;
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
@@ -658,9 +673,6 @@ var KingOfTokyo = /** @class */ (function () {
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setupNotifications();
-        $('test').addEventListener('click', function () { return _this.diceManager.resolveHealthDices({
-            playerId: 2343493,
-        }); });
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
@@ -879,12 +891,12 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var notifs = [
             ['resolveNumberDice', ANIMATION_MS],
-            ['resolveHealthDice', ANIMATION_MS],
+            ['resolveHealthDice', LONG_ANIMATION_MS],
             ['resolveHealthDiceInTokyo', ANIMATION_MS],
-            ['resolveEnergyDice', ANIMATION_MS],
-            ['resolveSmashDice', ANIMATION_MS],
-            ['playerEliminated', ANIMATION_MS],
-            ['playerEntersTokyo', ANIMATION_MS],
+            ['resolveEnergyDice', LONG_ANIMATION_MS],
+            ['resolveSmashDice', LONG_ANIMATION_MS],
+            ['playerEliminated', LONG_ANIMATION_MS],
+            ['playerEntersTokyo', LONG_ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
             ['pickCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
@@ -912,7 +924,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.resolveHealthDices(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveHealthDiceInTokyo = function (notif) {
-        this.diceManager.resolveHealthDicesInTokyo(notif.args);
+        this.diceManager.resolveHealthDicesInTokyo();
     };
     KingOfTokyo.prototype.notif_resolveEnergyDice = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy);
