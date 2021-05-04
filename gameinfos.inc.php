@@ -35,7 +35,6 @@ $gameinfos = [
 
     // Discourage players to play with these numbers of players. Must be null if there is no such advice.
     'not_recommend_player_number' => array( 2 ),
-    // 'not_recommend_player_number' => array( 2, 3 ),      // <= example: this is not recommended to play this game with 2 or 3 players
 
 
     // Estimated game duration, in minutes (used only for the launch, afterward the real duration is computed)
@@ -121,12 +120,12 @@ $gameinfos = [
     // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
     // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
     
-    // this presentation has been taken from website : https://studiobombyx.com/en/jeu/conspiracy-abyss-universe/
+    // this presentation has been taken from website : https://iello.fr/co.uk/game/king-of-tokyo
     'presentation' => [
-        totranslate("Plots and corruption abound in the perpetual darkness of the Abyss kingdom’s deep waters. At the Oceanic Senate Assembly, you are at the very heart of this permanent battle for power. Your opponents conspire tirelessly to gain influence. In order to organize your Senatorial Chamber, you must rally the most powerful Lords before your opponents turn them away."),
-        totranslate("Can you elude the plots of your rivals to establish your empire and reign supreme over the Oceanic Senate Assembly?"),
+        totranslate("Play mutant monsters, gigantic robots and other monstrous creatures, rampaging the city and vying for position as the one and only King of Tokyo!"),
+        totranslate("Combine your dice to gather energy, heal your monster or just slap the other monsters down! Spend your energy to trigger permanent or one-shot special powers: a second head, body armor, nova death ray..."),
+        totranslate("Stop at nothing to become the King of Tokyo... but that's when the real trouble begins for you!"),
     ],
-
 
     // Games categories
     //  You can attribute any number of "tags" to your game.

@@ -9,7 +9,7 @@
 
 <div id="table">
     <div id="table-center">
-        <div id="visible-cards" class="whiteblock">
+        <div id="visible-cards">
         </div>
 
         <div id="board">
