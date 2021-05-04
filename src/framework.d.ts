@@ -34,7 +34,16 @@ interface Dojo {
     query: Function;
     subscribe: Function;
     string: any;
-    fx: any;
+    fx: {
+        slideTo: (params: {
+            node: HTMLElement;
+            top: number;
+            left: number;
+            delay: number;
+            duration: number;
+            unit: string;
+        }) => any;
+    };
     marginBox: Function;
     fadeIn: Function;
     trim: Function;

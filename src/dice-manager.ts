@@ -59,8 +59,20 @@ class DiceManager {
     }
 
     public resolveHealthDices(args: NotifResolveHealthDiceArgs) {
-        // TODO animation
-        this.dices.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice));
+        const healthDices = this.dices.filter(dice => dice.value === 4);
+        healthDices.forEach(dice => {
+            const animationId = `dice${dice.id}-animation`;
+            dojo.place(`<div id="${animationId}" class="animation health"></div>`, `dice${dice.id}`);
+            setTimeout(() => {
+                document.getElementById(animationId).style.transform = 'translate(-200px, 100px) scale(1)';
+            }, 50);
+
+            setTimeout(() => {
+                document.getElementById(animationId).style.transform = 'translate(200px, 400px) scale(0.15)';
+            }, 1500);
+
+            setTimeout(() => this.removeDice(dice), 2500);
+        });
     }
 
     public resolveEnergyDices(args: NotifResolveEnergyDiceArgs) {
@@ -102,10 +114,14 @@ class DiceManager {
         return html;
     }
 
+    private getDiceDiv(dice: Dice) {
+        return document.getElementById(`dice${dice.id}`);
+    }
+
     private createDice(dice: Dice, animated: boolean, selectable: boolean, inTokyo: boolean) {
         dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dices' : 'dices-selector');
 
-        const diceDiv = document.getElementById(`dice${dice.id}`);
+        const diceDiv = this.getDiceDiv(dice);
 
         if (!dice.locked && animated) {
             diceDiv.classList.add('rolled');

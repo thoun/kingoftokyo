@@ -235,3 +235,27 @@ $size: 0.25rem;
   [data-side="6"] {
     transform: rotate3d(1, 0, 0, 180deg) translateZ(4*$size);
   }
+
+  .animation {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    background-image: url('img/animations.png');
+    background-size: auto 100%;
+    top: -94px;
+    left: -94px;
+    transform: scale(0.15);
+    transition: transform 1s;
+  
+    &.health {
+      background-position: 0% 0%;
+    }
+  
+    &.energy {
+      background-position: 50% 0%;
+    }
+  
+    &.smash {
+      background-position: 100% 0%;
+    }
+  }

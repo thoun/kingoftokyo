@@ -406,6 +406,10 @@ var TableManager = /** @class */ (function () {
     function TableManager(game, playerTables) {
         var _this = this;
         this.game = game;
+        this.setPlayerTables(playerTables);
+        this.game.onScreenWidthChange = function () { return _this.placePlayerTable(); };
+    }
+    TableManager.prototype.setPlayerTables = function (playerTables) {
         var currentPlayerId = Number(this.game.player_id);
         var playerTablesOrdered = playerTables.filter(function (playerTable) { return !!playerTable; }).sort(function (a, b) { return b.playerNo - a.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
@@ -415,8 +419,7 @@ var TableManager = /** @class */ (function () {
         else { // spectator
             this.playerTables = playerTablesOrdered.filter(function (playerTable) { return !!playerTable; });
         }
-        this.game.onScreenWidthChange = function () { return _this.placePlayerTable(); };
-    }
+    };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
         var height = 0;
@@ -548,8 +551,18 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.resolveHealthDices = function (args) {
         var _this = this;
-        // TODO animation
-        this.dices.filter(function (dice) { return dice.value === 4; }).forEach(function (dice) { return _this.removeDice(dice); });
+        var healthDices = this.dices.filter(function (dice) { return dice.value === 4; });
+        healthDices.forEach(function (dice) {
+            var animationId = "dice" + dice.id + "-animation";
+            dojo.place("<div id=\"" + animationId + "\" class=\"animation health\"></div>", "dice" + dice.id);
+            setTimeout(function () {
+                document.getElementById(animationId).style.transform = 'translate(-200px, 100px) scale(1)';
+            }, 50);
+            setTimeout(function () {
+                document.getElementById(animationId).style.transform = 'translate(200px, 400px) scale(0.15)';
+            }, 1500);
+            setTimeout(function () { return _this.removeDice(dice); }, 2500);
+        });
     };
     DiceManager.prototype.resolveEnergyDices = function (args) {
         var _this = this;
@@ -585,10 +598,13 @@ var DiceManager = /** @class */ (function () {
         html += "</div>";
         return html;
     };
+    DiceManager.prototype.getDiceDiv = function (dice) {
+        return document.getElementById("dice" + dice.id);
+    };
     DiceManager.prototype.createDice = function (dice, animated, selectable, inTokyo) {
         var _this = this;
         dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dices' : 'dices-selector');
-        var diceDiv = document.getElementById("dice" + dice.id);
+        var diceDiv = this.getDiceDiv(dice);
         if (!dice.locked && animated) {
             diceDiv.classList.add('rolled');
             setTimeout(function () { return diceDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 100);
@@ -604,7 +620,7 @@ var DiceManager = /** @class */ (function () {
     };
     return DiceManager;
 }());
-var ANIMATION_MS = 1500;
+var ANIMATION_MS = 2500;
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
@@ -642,6 +658,9 @@ var KingOfTokyo = /** @class */ (function () {
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setupNotifications();
+        $('test').addEventListener('click', function () { return _this.diceManager.resolveHealthDices({
+            playerId: 2343493,
+        }); });
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
@@ -948,8 +967,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.energyCounters[playerId].toValue(energy);
     };
     KingOfTokyo.prototype.eliminatePlayer = function (playerId) {
+        this.gamedatas.players[playerId].eliminated = 1;
         document.getElementById("overall_player_board_" + playerId).classList.add('eliminated-player');
         dojo.place("<div class=\"icon dead\"></div>", "player_board_" + playerId);
+        this.tableManager.placePlayerTable(); // adapt to new player number
     };
     return KingOfTokyo;
 }());

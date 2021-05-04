@@ -21,6 +21,12 @@ class TableManager {
     private playerTables: PlayerTable[]; // players in order, but starting with player_id
 
     constructor(private game: KingOfTokyoGame, playerTables: PlayerTable[]) {
+        this.setPlayerTables(playerTables);
+
+        (this.game as any).onScreenWidthChange = () => this.placePlayerTable();
+    }
+
+    private setPlayerTables(playerTables: PlayerTable[]) {
         const currentPlayerId = Number((this.game as any).player_id);
         const playerTablesOrdered = playerTables.filter(playerTable => !!playerTable).sort((a, b) => b.playerNo - a.playerNo);
         const playerIndex = playerTablesOrdered.findIndex(playerTable => playerTable.playerId === currentPlayerId);
@@ -30,7 +36,6 @@ class TableManager {
             this.playerTables = playerTablesOrdered.filter(playerTable => !!playerTable);
         }
 
-        (this.game as any).onScreenWidthChange = () => this.placePlayerTable();
     }
 
     public placePlayerTable() {

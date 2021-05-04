@@ -316,6 +316,27 @@
   transform: rotate3d(1, 0, 0, 180deg) translateZ(1rem);
 }
 
+.animation {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  background-image: url("img/animations.png");
+  background-size: auto 100%;
+  top: -94px;
+  left: -94px;
+  transform: scale(0.15);
+  transition: transform 1s;
+}
+.animation.health {
+  background-position: 0% 0%;
+}
+.animation.energy {
+  background-position: 50% 0%;
+}
+.animation.smash {
+  background-position: 100% 0%;
+}
+
 .stockitem {
   border-radius: 10px;
   margin: 5px;

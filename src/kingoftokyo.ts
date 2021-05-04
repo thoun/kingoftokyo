@@ -7,7 +7,7 @@ declare const g_gamethemeurl;
 
 declare const board: HTMLDivElement;
 
-const ANIMATION_MS = 1500;
+const ANIMATION_MS = 2500;
 
 class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
@@ -58,6 +58,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
 
         this.setupNotifications();
+
+        $('test').addEventListener('click', () => this.diceManager.resolveHealthDices({
+            playerId: 2343493,
+        } as any));
 
         log( "Ending game setup" );
     }
@@ -435,8 +439,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private eliminatePlayer(playerId: number) {
+        this.gamedatas.players[playerId].eliminated = 1;
         document.getElementById(`overall_player_board_${playerId}`).classList.add('eliminated-player');
         dojo.place(`<div class="icon dead"></div>`, `player_board_${playerId}`);
+
+        this.tableManager.placePlayerTable(); // adapt to new player number
     }
 
     /* This enable to inject translatable styled things to logs or action bar */
