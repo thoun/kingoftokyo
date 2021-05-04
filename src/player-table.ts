@@ -1,6 +1,9 @@
 const isDebug = window.location.host == 'studio.boardgamearena.com';
 const log = isDebug ? console.log.bind(window.console) : function () { };
 
+const POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
+const HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
+
 class PlayerTable {
     public playerId: number;
     public playerNo: number;
@@ -70,12 +73,10 @@ class PlayerTable {
     }
 
     public setPoints(points: number) {
-        const deg = 25 + 335 * points / 20;
-        document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${deg}deg)`;
+        document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[points]}deg)`;
     }
 
     public setHealth(health: number) {
-        const deg = 360 - 262 * health / 10;
-        document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${deg}deg)`;
+        document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${HEALTH_DEG[health]}deg)`;
     }
 }

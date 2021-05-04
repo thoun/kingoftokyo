@@ -332,6 +332,8 @@ var Cards = /** @class */ (function () {
 }());
 var isDebug = window.location.host == 'studio.boardgamearena.com';
 var log = isDebug ? console.log.bind(window.console) : function () { };
+var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
+var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, order, cards) {
         var _this = this;
@@ -376,12 +378,10 @@ var PlayerTable = /** @class */ (function () {
         this.cards.removeAll();
     };
     PlayerTable.prototype.setPoints = function (points) {
-        var deg = 25 + 335 * points / 20;
-        document.getElementById("blue-wheel-" + this.playerId).style.transform = "rotate(" + deg + "deg)";
+        document.getElementById("blue-wheel-" + this.playerId).style.transform = "rotate(" + POINTS_DEG[points] + "deg)";
     };
     PlayerTable.prototype.setHealth = function (health) {
-        var deg = 360 - 262 * health / 10;
-        document.getElementById("red-wheel-" + this.playerId).style.transform = "rotate(" + deg + "deg)";
+        document.getElementById("red-wheel-" + this.playerId).style.transform = "rotate(" + HEALTH_DEG[health] + "deg)";
     };
     return PlayerTable;
 }());
