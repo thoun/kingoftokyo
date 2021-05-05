@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/../card.php');
+
+use KOT\Card;
+
 trait CardsTrait {
 
     //////////////////////////////////////////////////////////////////////////////
