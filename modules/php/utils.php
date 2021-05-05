@@ -18,9 +18,9 @@ trait UtilTrait {
     function initCards() {
         $cards = [];
         
-        /*for( $value=1; $value<=48; $value++ ) { // keep
+        for( $value=1; $value<=48; $value++ ) { // keep
             $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
-        }*/
+        }
         
         for( $value=101; $value<=118; $value++ ) { // discard
             $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
@@ -70,7 +70,8 @@ trait UtilTrait {
     }
 
     function getPlayerMaxHealth(int $playerId) {
-        return $this->hasEvenBigger($playerId) ? 12 : 10;
+        // even bigger set to 12
+        return $this->hasCardByType($playerId, 12) ? 12 : 10;
     }
 
     function getRemainingPlayers() {
@@ -190,7 +191,10 @@ trait UtilTrait {
         }
     }
 
-    function applyGetHealth($playerId, $health, $silent = false) {
+    function applyGetHealth($playerId, $phealth, $silent = false) {
+        // regeneration
+        $health = $this->hasCardByType($playerId, 38) ? $phealth + 1 : $phealth;
+
         $maxHealth = $this->getPlayerMaxHealth($playerId);
         self::DbQuery("UPDATE player SET `player_health` = LEAST(`player_health` + $health, $maxHealth) where `player_id` = $playerId");
 
@@ -213,9 +217,17 @@ trait UtilTrait {
                 'health' => $this->getPlayerHealth($playerId),
             ]);
         }
+
+        if ($health >= 2 && $this->hasCardByType($playerId, 47)) {
+            // we're only making it stronger
+            $this->applyGetEnergy($playerId, 1, $silent);
+        }
     }
 
-    function applyGetEnergy($playerId, $energy, $silent = false) {
+    function applyGetEnergy($playerId, $pEnergy, $silent = false) {
+        // friend of children
+        $energy = $this->hasCardByType($playerId, 17) ? $pEnergy + 1 : $pEnergy;
+
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
         if (!$silent) {

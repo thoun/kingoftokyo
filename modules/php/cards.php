@@ -14,7 +14,6 @@ trait CardsTrait {
         switch($type) {
             // KEEP
             case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
-            case 2: return _("<strong>Buying cards costs you 1 less [Energy].</strong>");
             case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least one [diceSmash].");
             case 4: return _("<strong>Do not lose [heart] when you lose exactly 1[heart].</strong>");
             case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
@@ -27,7 +26,6 @@ trait CardsTrait {
             case 12: $this->applyGetHealth($playerId, 2);
             case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
             case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
-            case 17: return _("When you gain any [Energy] <strong>gain 1 extra [Energy].</strong>");
             case 18: return _("<strong>You have one extra die Roll</strong> each turn.");
             case 19: return _("When you roll [dice1][dice1][dice1] or more <strong>gain 2 extra [Star].</strong>");
             case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
@@ -48,7 +46,6 @@ trait CardsTrait {
             case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the reroll [diceHeart], discard this card.");
             case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong>");
-            case 38: return _("When gain [Heart], <strong>gain 1 extra [Heart].</strong>");
             case 39: return _("At the end of a turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
             case 40: return _("Give 1 <i>Shrink Ray</i> to each Monster you Smash with your [diceSmash]. <strong>At the beginning of their turn, Monster roll 1 less dice for each <i>Shrink Ray</i> token they have on them</strong>. A <i>Shrink Ray</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 41: return _("Place 3 <i>Smoke</i> counters on this card. <strong>Spend 1 <i>Smoke</i> counter for an extra Roll.</strong> Discard this card when all <i>Smoke</i> counters are spent.");
@@ -57,7 +54,6 @@ trait CardsTrait {
             case 44: return _("Before resolving your dice, you can spend 2[Energy] to <strong>change one of your dice to any result.</strong>");
             case 45: return _("Spend 1[Energy] to <strong>get 1 extra die Roll.</strong>");
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
-            case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to lose [Heart]<strong> this turn.");
             
             // DISCARD
@@ -157,21 +153,21 @@ trait CardsTrait {
         }
     }
 
-    function hasCardByType($playerId, $cardType) {
+    function hasCardByType($playerId, $cardType, $includeMimick = true) {
         return $this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId);
+        // TODO mimick
     }
 
     function countExtraHead($playerId) {
         $extraHead = 0;
         if ($this->hasCardByType($playerId, 13)) { $extraHead++; };
         if ($this->hasCardByType($playerId, 14)) { $extraHead++; };
-        // TODO mimick
         return $extraHead;
     }
 
-    function hasEvenBigger($playerId) {
-        return $this->hasCardByType($playerId, 12);
-        // TODO mimick
+    function canBuyCard($playerId, $cardCost) {
+        // alien origin make cost - 1
+        return $this->hasCardByType($playerId, 2) ? $cardCost - 1 : $cardCost;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -188,7 +184,7 @@ trait CardsTrait {
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
-        if ($this->getPlayerEnergy($playerId) < $card->cost) {
+        if ($this->canBuyCard($playerId, $card->cost)) {
             throw new \Error('Not enough energy');
         }
 
@@ -250,7 +246,7 @@ trait CardsTrait {
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         
-        $disabledCards = array_values(array_filter($cards, function ($card) use ($playerEnergy) { return $card->cost > $playerEnergy; }));
+        $disabledCards = array_values(array_filter($cards, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $card->cost); }));
         $disabledIds = array_map(function ($card) { return $card->id; }, $disabledCards);
     
         // return values:
