@@ -24,7 +24,7 @@ trait CardsTrait {
             case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
             case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
             case 11: return _("<strong>You gain 1[Star]</strong> for every 6[Energy] you have at the end of your turn.");
-            case 12: return _("<strong>+2[Heart] when you buy this card.</strong> Your maximum [Heart] is increased to 12[Heart] as long as you own this card.");
+            case 12: $this->applyGetHealth($playerId, 2);
             case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
             case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
             case 17: return _("When you gain any [Energy] <strong>gain 1 extra [Energy].</strong>");
@@ -157,8 +157,21 @@ trait CardsTrait {
         }
     }
 
+    function hasCardByType($playerId, $cardType) {
+        return $this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId);
+    }
+
     function countExtraHead($playerId) {
-        return $this->cards->countCardInLocation('hand', $playerId);
+        $extraHead = 0;
+        if ($this->hasCardByType($playerId, 13)) { $extraHead++; };
+        if ($this->hasCardByType($playerId, 14)) { $extraHead++; };
+        // TODO mimick
+        return $extraHead;
+    }
+
+    function hasEvenBigger($playerId) {
+        return $this->hasCardByType($playerId, 12);
+        // TODO mimick
     }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -70,7 +70,7 @@ trait UtilTrait {
     }
 
     function getPlayerMaxHealth(int $playerId) {
-        return 10; // TODO
+        return $this->hasEvenBigger($playerId) ? 12 : 10;
     }
 
     function getRemainingPlayers() {
