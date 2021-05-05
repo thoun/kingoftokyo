@@ -304,7 +304,13 @@ class Cards {
         const type = card_type_id < 100 ? _('Keep') : _('Discard');
         const name = this.getCardName(card_type_id);
         const description = this.formatDescription(this.getCardDescription(card_type_id));
-        card_div.innerHTML = `<div class="bottom"></div>
+        const cost = this.getCardCost(card_type_id);
+        card_div.innerHTML = `<div class="top">
+            <div class="cost">${cost}</div>
+            <div class="energy"></div>
+        </div>
+        
+        <div class="bottom"></div>
         <div class="name-wrapper">
             <div class="outline">${name}</div>
             <div class="text">${name}</div>

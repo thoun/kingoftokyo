@@ -383,6 +383,32 @@
   text-align: center;
   overflow: hidden;
 }
+.stockitem .top {
+  position: absolute;
+  top: 0px;
+  width: 50px;
+  height: 50px;
+  background: url("img/card-top.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.stockitem .top .cost {
+  position: absolute;
+  font-family: "goodgirl";
+  color: #231f20;
+  width: 20px;
+  top: 5px;
+}
+.stockitem .top .energy {
+  position: absolute;
+  top: 0px;
+  left: 20px;
+  width: 20px;
+  height: 50px;
+  background: url("img/card-top.png");
+  background-position: 100% 0%;
+  background-size: auto 100%;
+}
 .stockitem .bottom {
   position: absolute;
   bottom: 0px;
@@ -401,7 +427,7 @@
   color: white;
   transform: rotate(10deg);
   font-family: "goodgirl";
-  width: 980px;
+  width: 98px;
   text-align: center;
 }
 .stockitem .name-wrapper .outline {
@@ -455,7 +481,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: black;
+  color: #231f20;
   transform: rotate(-6deg);
   font-size: 7pt;
 }
