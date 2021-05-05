@@ -70,6 +70,12 @@ trait PlayerTrait {
         $this->gamestate->nextState('throw');
     }
 
+    /*function stCheckEliminationsAfterDices() {
+        $playerId = self::getActivePlayerId();
+        $endGame = $this->eliminatePlayers($playerId);
+        // TODO
+    }*/
+
     function stLeaveTokyo() {
         $this->gamestate->setPlayersMultiactive($this->getPlayersIdsInTokyo(), 'resume');
     }
@@ -88,6 +94,12 @@ trait PlayerTrait {
             $this->gamestate->nextState('next');
         }
     }
+
+    /*function stCheckEliminationsAfterCard() {
+        $playerId = self::getActivePlayerId();
+        $endGame = $this->eliminatePlayers($playerId);
+        // TODO
+    }*/
 
     function stEndTurn() {
         $playerId = self::getActivePlayerId();

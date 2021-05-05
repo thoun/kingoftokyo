@@ -4,9 +4,11 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../dice.php');
 require_once(__DIR__.'/../card.php');
+require_once(__DIR__.'/../player.php');
 
 use KOT\Card;
 use KOT\Dice;
+use KOT\Player;
 
 trait UtilTrait {
 
@@ -117,6 +119,8 @@ trait UtilTrait {
         return $location > 0;
     }
 
+    // get players ids
+
     private function getPlayersIdsFromLocation(bool $inside) {
         $sign = $inside ? '>' : '=';
         $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 ORDER BY player_no";
@@ -149,21 +153,66 @@ trait UtilTrait {
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
     }
 
-    function eliminateAPlayer(int $playerId) {
-        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0 where `player_id` = $playerId");
+    // get players    
+    function getPlayers(bool $includeEliminated = false) {
+        $sql = "SELECT * FROM player";
+        if (!$includeEliminated) {
+            $sql .= " WHERE player_eliminated = 0";
+        }
+        $sql .= " ORDER BY player_no";
+        $dbResults = self::getCollectionFromDB($sql);
+        return array_map(function($dbResult) { return new Player($dbResult); }, array_values($dbResults));
+    }
+    
+    function eliminatePlayers(int $currentTurnPlayerId) {
+        $players = $this->getPlayers(true);
+        // TODO UnitTests
+
+        $playerIndex = 0; 
+        foreach($players as $player) {
+            if ($player->id == $currentTurnPlayerId) {
+                break;
+            }
+            $playerIndex++;
+        }
+
+        $orderedPlayers = $players;
+        if ($playerIndex > 0) { // we start from $currentTurnPlayerId and then follow order
+            $orderedPlayers = array_merge(array_slice($players, $playerIndex), array_slice($players, 0, $playerIndex));
+        }
+
+        $endGame = false;
+
+        foreach($orderedPlayers as $player) {
+            if ($player->health == 0 && !$player->eliminated) {
+                $endGame = $this->eliminateAPlayer($player);
+            }
+        }
+
+        return $endGame;
+    }
+
+    function eliminateAPlayer(object $player) { // return $endGame
+        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0 where `player_id` = $player->id");
 
         self::notifyAllPlayers("playerEliminated", clienttranslate('${player_name} is eliminated !'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'playerId' => $player->id,
+            'player_name' => $player->name,
         ]);
 
-        self::eliminatePlayer($playerId);
-        
-        // TODO move from bay to tokyo if needed
+        $playersBeforeElimination = $this->getRemainingPlayers();
 
-        if ($this->getRemainingPlayers() <= 1) {
-            $this->gamestate->nextState('endGame');
+        self::eliminatePlayer($playerId);
+
+        if ($this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true)) {
+            // TODO move from bay to tokyo
         }
+
+        if (!$this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true) && $playersBeforeElimination == 5) {
+            // TODO move from bay to outside
+        }
+
+        return $this->getRemainingPlayers() <= 1;
     }
 
     function applyGetPoints($playerId, $points, $silent = false) {

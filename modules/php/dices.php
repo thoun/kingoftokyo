@@ -169,10 +169,6 @@ trait DicesTrait {
                 $eliminatedPlayersIds = [];
                 foreach($smashedPlayersIds as $smashedPlayerId) {
                     $this->applyDamage($smashedPlayerId, $number);
-
-                    /*if ($newHealth == 0) {
-                        $eliminatedPlayersIds[] = $smashedPlayerId;
-                    }*/
                 }
 
                 self::notifyAllPlayers("resolveSmashDice", $message, [
@@ -181,13 +177,16 @@ trait DicesTrait {
                     'number' => $number,
                     'smashedPlayersIds' => $smashedPlayersIds,
                 ]);
-
-                /* TODO foreach($eliminatedPlayersIds as $eliminatedPlayerId) {
-                    $this->eliminateAPlayer($eliminatedPlayerId);
-                }*/
             }
         }
 
-        $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
+        // dice resolve may eliminate players
+        $endGame = $this->eliminatePlayers($playerId);
+
+        if ($endGame) {
+            $this->gamestate->nextState('endGame');
+        } else {
+            $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
+        }
     }
 }

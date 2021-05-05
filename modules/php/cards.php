@@ -205,7 +205,14 @@ trait CardsTrait {
 
         $this->applyEffects($card, $playerId);
 
-        $this->gamestate->nextState('pick');
+        // cards effects may eliminate players
+        $endGame = $this->eliminatePlayers($playerId);
+
+        if ($endGame) {
+            $this->gamestate->nextState('endGame');
+        } else {
+            $this->gamestate->nextState('pick');
+        }
     }
 
     function renewCards() {
