@@ -70,11 +70,13 @@ trait PlayerTrait {
         if ($this->inTokyo($playerId)) {
             // start turn in tokyo
             $incScore = 2;
+
+            // urbavore
             if ($this->hasCardByType($playerId, 46)) {
                 $incScore++;
             }
+
             $this->applyGetPointsIgnoreCards($playerId, $incScore, true);
-            self::DbQuery("UPDATE player SET player_score = player_score + $incScore where `player_id` = $playerId");
             self::notifyAllPlayers('points', _('${player_name} starts turn in Tokyo and wins ${deltaPoints} points'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -124,16 +126,19 @@ trait PlayerTrait {
             $this->applyGetPoints($playerId, 1);
         }
 
+        // energy hoarder
         if ($this->hasCardByType($playerId, 11)) {
             $playerEnergy = $this->getPlayerEnergy($playerId);
             $points = floor($playerEnergy / 6);
             $this->applyGetPoints($playerId, $points);
         }
 
+        // herbivore
         if ($this->hasCardByType($playerId, 21) && intval(self::getGameStateValue('damageDoneByActivePlayer')) == 0) {
             $this->applyGetPoints($playerId, 1);
         }
 
+        // solar powered
         if ($this->hasCardByType($playerId, 42) && $this->getPlayerEnergy($playerId) == 0) {
             $this->applyGetEnergy($playerId, 1);
         }

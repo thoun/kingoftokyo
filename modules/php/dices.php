@@ -46,6 +46,7 @@ trait DicesTrait {
         if ($diceCount >= 3) {
             $points = $number + $diceCount - 3;
 
+            // gourmet
             if ($number == 1 && $this->hasCardByType($playerId, 19)) {
                 $points += 2;
             }

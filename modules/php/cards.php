@@ -8,6 +8,39 @@ trait CardsTrait {
     //////////// Utility functions
     ////////////
 
+
+    function initCards() {
+        $cards = [];
+        
+        for( $value=1; $value<=48; $value++ ) { // keep
+            if (in_array($value, $this->TEMP_DONE_KEEP_CARDS)) { // TODO remove filter       
+                $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
+            }
+        }
+        
+        for( $value=101; $value<=118; $value++ ) { // discard
+            $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
+        }
+            
+        // $this->cards->createCards( array_slice($cards, count($cards) - 10, 10), 'deck' );
+        $this->cards->createCards($cards, 'deck');
+        $this->cards->shuffle('deck'); 
+    }
+
+    function getCardFromDb(array $dbCard) {
+        if (!$dbCard || !array_key_exists('id', $dbCard)) {
+            throw new Error('card doesn\'t exists '.json_encode($dbCard));
+        }
+        if (!$dbCard || !array_key_exists('location', $dbCard)) {
+            throw new Error('location doesn\'t exists '.json_encode($dbCard));
+        }
+        return new Card($dbCard);
+    }
+
+    function getCardsFromDb(array $dbCards) {
+        return array_map(function($dbCard) { return $this->getCardFromDb($dbCard); }, array_values($dbCards));
+    }
+
     function applyEffects($card, $playerId) {
         $type = $card->type;
 
@@ -157,7 +190,7 @@ trait CardsTrait {
     }
 
     function canBuyCard($playerId, $cardCost) {
-        // alien origin make cost - 1
+        // alien origin
         return $this->hasCardByType($playerId, 2) ? $cardCost - 1 : $cardCost;
     }
 
@@ -228,6 +261,7 @@ trait CardsTrait {
         $cost = $card->cost;
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
+        // media friendly
         if ($this->hasCardByType($playerId, 9)) {
             // TOCHECK can it apply on itself ? considered No
             $this->applyGetPoints($playerId, 1);
