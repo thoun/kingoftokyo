@@ -101,6 +101,7 @@ trait UtilTrait {
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
             'locationName' => $locationName,
+            'points' => $this->getPlayerPoints($playerId),
         ]);
     }
 
@@ -256,7 +257,7 @@ trait UtilTrait {
         }
     }
 
-    function applyDamage($playerId, $health, $silent = false) {
+    function applyDamage(int $playerId, int $health, int $damageDealerId, bool $silent = false) {
         // Armor plating
         if ($this->hasCardByType($playerId, 4) && $points == 1) {
             return;
@@ -275,6 +276,15 @@ trait UtilTrait {
         if ($health >= 2 && $this->hasCardByType($playerId, 47)) {
             // we're only making it stronger
             $this->applyGetEnergy($playerId, 1, $silent);
+        }
+
+        if ($damageDealerId == self::getActivePlayerId()) {
+            self::setGameStateValue('damageDoneByActivePlayer', 1);
+        }
+
+        if ($this->hasCardByType($playerId, 23) && $this->getPlayerHealth($playerId) == 0) {
+            // it has a child
+            $this->applyItHasAChild($playerId);
         }
     }
 
@@ -303,5 +313,10 @@ trait UtilTrait {
                 'energy' => $this->getPlayerEnergy($playerId),
             ]);
         }
+    }
+
+    function isFewestStars(int $playerId) {
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`)";
+        return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 }

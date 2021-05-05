@@ -348,6 +348,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['points', 1],
             ['health', 1],
             ['energy', 1],
+            ['removeCards', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -396,6 +397,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
+        this.setPoints(notif.args.playerId, notif.args.points);
     }
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
@@ -407,6 +409,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`);
 
         this.tableManager.placePlayerTable(); // adapt to new card
+    }
+
+    notif_removeCards(notif: Notif<NotifRemoveCardsArgs>) {
+        this.playerTables[notif.args.playerId].removeCards(notif.args.cards);
+        this.tableManager.placePlayerTable(); // adapt after removed cards
     }
 
     notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {

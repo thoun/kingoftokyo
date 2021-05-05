@@ -378,6 +378,11 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.removeAllCards = function () {
         this.cards.removeAll();
     };
+    PlayerTable.prototype.removeCards = function (cards) {
+        var _this = this;
+        var cardsIds = cards.map(function (card) { return card.id; });
+        cardsIds.forEach(function (id) { return _this.cards.removeFromStockById('' + id); });
+    };
     PlayerTable.prototype.setPoints = function (points) {
         document.getElementById("blue-wheel-" + this.playerId).style.transform = "rotate(" + POINTS_DEG[points] + "deg)";
     };
@@ -927,6 +932,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['points', 1],
             ['health', 1],
             ['energy', 1],
+            ['removeCards', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -969,6 +975,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
+        this.setPoints(notif.args.playerId, notif.args.points);
     };
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var card = notif.args.card;
@@ -977,6 +984,10 @@ var KingOfTokyo = /** @class */ (function () {
         moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
         this.visibleCards.addToStockWithId(newCard.type, "" + newCard.id);
         this.tableManager.placePlayerTable(); // adapt to new card
+    };
+    KingOfTokyo.prototype.notif_removeCards = function (notif) {
+        this.playerTables[notif.args.playerId].removeCards(notif.args.cards);
+        this.tableManager.placePlayerTable(); // adapt after removed cards
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
         var _this = this;

@@ -56,11 +56,32 @@ trait PlayerTrait {
     function stStartTurn() {
         $playerId = self::getActivePlayerId();
 
+        self::setGameStateValue('damageDoneByActivePlayer', 0);
+
+        // apply monster effects
+
+        // battery monster
+        if ($this->hasCardByType($playerId, 28)) {
+            $this->applyBatteryMonster($playerId);
+        }
+
+        // apply in tokyo at start
+
         if ($this->inTokyo($playerId)) {
             // start turn in tokyo
             $incScore = 2;
+            if ($this->hasCardByType($playerId, 46)) {
+                $incScore++;
+            }
             self::DbQuery("UPDATE player SET player_score = player_score + $incScore where `player_id` = $playerId");
+            self::notifyAllPlayers('points','', [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'points' => $this->getPlayerScore($playerId),
+            ]);
         }
+
+        // throw dices
 
         self::setGameStateValue('throwNumber', 1);
         self::DbQuery( "UPDATE dice SET `dice_value` = 0, `locked` = false" );
@@ -69,12 +90,6 @@ trait PlayerTrait {
 
         $this->gamestate->nextState('throw');
     }
-
-    /*function stCheckEliminationsAfterDices() {
-        $playerId = self::getActivePlayerId();
-        $endGame = $this->eliminatePlayers($playerId);
-        // TODO
-    }*/
 
     function stLeaveTokyo() {
         $this->gamestate->setPlayersMultiactive($this->getPlayersIdsInTokyo(), 'resume');
@@ -95,14 +110,33 @@ trait PlayerTrait {
         }
     }
 
-    /*function stCheckEliminationsAfterCard() {
-        $playerId = self::getActivePlayerId();
-        $endGame = $this->eliminatePlayers($playerId);
-        // TODO
-    }*/
-
     function stEndTurn() {
         $playerId = self::getActivePlayerId();
+
+        // apply end of turn effects
+
+        // rooting for the underdog
+        // TOCHECK is it applied before other end of turn monsters (it may change the fewest Stars) ? considered Yes
+        // TOCHECK is it applied if equality in fewest Star ? considered Yes
+        if ($this->hasCardByType($playerId, 39) && $this->isFewestStars($playerId)) {
+            $this->applyGetPoints($playerId, 1);
+        }
+
+        if ($this->hasCardByType($playerId, 11)) {
+            $playerEnergy = $this->getPlayerEnergy($playerId);
+            $points = floor($playerEnergy / 6);
+            $this->applyGetPoints($playerId, $points);
+        }
+
+        if ($this->hasCardByType($playerId, 21) && intval(self::getGameStateValue('damageDoneByActivePlayer')) == 0) {
+            $this->applyGetPoints($playerId, 1);
+        }
+
+        if ($this->hasCardByType($playerId, 42) && $this->getPlayerEnergy($playerId) == 0) {
+            $this->applyGetEnergy($playerId, 1);
+        }
+
+        // remove discard cards
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $discardCards = array_filter($cards, function($card) { return $card->type >= 100; });

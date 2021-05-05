@@ -45,6 +45,8 @@ class KingOfTokyo extends Table {
         self::initGameStateLabels([
             "throwNumber" => 10,
             "playAgainAfterTurn" => 11,
+            "damageDoneByActivePlayer" => 12,
+            "energyOnBatteryMonster" => 13,
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
@@ -106,6 +108,8 @@ class KingOfTokyo extends Table {
         // Init global values with their initial values
         self::setGameStateInitialValue('throwNumber', 0);
         self::setGameStateInitialValue('playAgainAfterTurn', 0);
+        self::setGameStateInitialValue('damageDoneByActivePlayer', 0);
+        self::setGameStateInitialValue('energyOnBatteryMonster', 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

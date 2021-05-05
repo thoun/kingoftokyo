@@ -72,6 +72,11 @@ class PlayerTable {
         this.cards.removeAll();
     }
 
+    public removeCards(cards: Card[]) {
+        const cardsIds = cards.map(card => card.id);
+        cardsIds.forEach(id => this.cards.removeFromStockById(''+id));
+    }
+
     public setPoints(points: number) {
         document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[points]}deg)`;
     }

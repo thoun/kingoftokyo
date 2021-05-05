@@ -19,38 +19,32 @@ trait CardsTrait {
             case 8: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy] <strong>gain 9[Star]</strong> in addition to the regular effects.");
             case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
             case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
-            case 11: return _("<strong>You gain 1[Star]</strong> for every 6[Energy] you have at the end of your turn.");
-            case 12: $this->applyGetHealth($playerId, 2);
+            case 12: 
+                $this->applyGetHealth($playerId, 2); 
+                break;
             case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
             case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
             case 18: return _("<strong>You have one extra die Roll</strong> each turn.");
-            case 19: return _("When you roll [dice1][dice1][dice1] or more <strong>gain 2 extra [Star].</strong>");
             case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
-            case 21: return _("<strong>Gain 1[Star]</strong> at the end of your turn if you don't make anyone lose [Heart].");
             case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
-            case 23: return _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continueplaying outside Tokyo.</strong>");
             case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
             case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
             case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
             case 27: return _("<strong>Choose a [keep] card any monster has in play</strong> and put a Mimic token on it. <strong>This card counts as a duplicate of that card as if you had just bought it.</strong> Spend 1[Energy] at the start of your turn to move the Mimic token and change the card you are mimicking.");
-            case 28: return _("When you buy <i>card_name</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card.");
+            case 28: 
+                self::setGameStateValue('energyOnBatteryMonster', 6);
+                break;
             case 29: return _("<strong>Your [diceSmash] damage all other Monsters.</strong>");
-            case 30: return _("<strong>When you roll at least [dice1][dice2][dice3] gain 2[Star].</strong> You can also use these dice in other combinations.");
             case 31: return _("<strong>Whenever a Power card is revealed you have the option of buying it</strong> immediately.");
             case 32: return _("<strong>You can buy Power cards from other monsters.</strong> Pay them the [Energy] cost.");
             case 33: return _("Before resolving your dice, you may <strong>change one die to any result</strong>. Discard when used.");
-            case 34: return _("When you score [dice2][dice2][dice2] or more, <strong>add [diceSmash][diceSmash] to your Roll</strong>.");
             case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the reroll [diceHeart], discard this card.");
             case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong>");
-            case 39: return _("At the end of a turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
             case 40: return _("Give 1 <i>Shrink Ray</i> to each Monster you Smash with your [diceSmash]. <strong>At the beginning of their turn, Monster roll 1 less dice for each <i>Shrink Ray</i> token they have on them</strong>. A <i>Shrink Ray</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 41: return _("Place 3 <i>Smoke</i> counters on this card. <strong>Spend 1 <i>Smoke</i> counter for an extra Roll.</strong> Discard this card when all <i>Smoke</i> counters are spent.");
-            case 42: return _("At the end of your turn <strong>gain 1[Energy] if you have no [Energy].</strong>");
-            case 43: return _("<strong>If you roll at least one [diceSmash], add [diceSmash]</strong> to your Roll.");
             case 44: return _("Before resolving your dice, you can spend 2[Energy] to <strong>change one of your dice to any result.</strong>");
             case 45: return _("Spend 1[Energy] to <strong>get 1 extra die Roll.</strong>");
-            case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 48: return _("<strong>Spend 2[Energy] to lose [Heart]<strong> this turn.");
             
             // DISCARD
@@ -90,7 +84,7 @@ trait CardsTrait {
             case 108: 
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyDamage($otherPlayerId, 2);
+                    $this->applyDamage($otherPlayerId, 2, $playerId);
                 }
                 break;
             case 109: 
@@ -100,7 +94,7 @@ trait CardsTrait {
                 $this->applyGetPoints($playerId, 2);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyDamage($otherPlayerId, 3);
+                    $this->applyDamage($otherPlayerId, 3, $playerId);
                 }
                 break;
             case 111:
@@ -109,16 +103,16 @@ trait CardsTrait {
             case 112: 
                 $playersIds = $this->getPlayersIds();
                 foreach ($playersIds as $pId) {
-                    $this->applyDamage($pId, 3);
+                    $this->applyDamage($pId, 3, $playerId);
                 }
                 break;
             case 113: 
                 $this->applyGetPoints($playerId, 5);
-                $this->applyDamage($playerId, 4);
+                $this->applyDamage($playerId, 4, $playerId);
                 break;
             case 114:
                 $this->applyGetPoints($playerId, 2);
-                $this->applyDamage($playerId, 2);
+                $this->applyDamage($playerId, 2, $playerId);
                 break;
             case 115:
                 $this->applyGetPoints($playerId, 2);
@@ -129,7 +123,7 @@ trait CardsTrait {
                 break;
             case 117:
                 $this->applyGetPoints($playerId, 4);
-                $this->applyDamage($playerId, 3);
+                $this->applyDamage($playerId, 3, $playerId);
                 break;
             case 118: 
                 $this->applyGetPoints($playerId, 2);
@@ -143,7 +137,7 @@ trait CardsTrait {
             case 119:
                 $count = $this->cards->countCardInLocation('hand', $player_id);
                 $this->applyGetPoints($playerId, $count);
-                $this->applyDamage($playerId, $count);
+                $this->applyDamage($playerId, $count, $playerId);
                 
                 break;
             case 120:
@@ -165,6 +159,57 @@ trait CardsTrait {
     function canBuyCard($playerId, $cardCost) {
         // alien origin make cost - 1
         return $this->hasCardByType($playerId, 2) ? $cardCost - 1 : $cardCost;
+    }
+
+    function applyItHasAChild($playerId) {
+        // discard all cards
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $this->cards->moveAllCardsInLocation('hand', 'discard', $playerId);        
+        self::notifyAllPlayers("removeCards", '', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'cards' => $cards,
+        ]);
+
+        // lose all stars
+        $points = 0;
+        self::DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+        self::notifyAllPlayers('points','', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'points' => $points,
+        ]);
+
+        // get back to 10 heart
+        $health = 10;
+        self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+        self::notifyAllPlayers('health', '', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'health' => $health,
+        ]);
+    }
+
+    function applyBatteryMonster(int $playerId) {
+        $energyOnBatteryMonster = intval(self::getGameStateValue('energyOnBatteryMonster')) - 2;
+        self::setGameStateValue('energyOnBatteryMonster', $energyOnBatteryMonster);
+
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + 2 where `player_id` = $playerId");
+        self::notifyAllPlayers('energy','', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'energy' => $this->getPlayerEnergy($playerId),
+        ]);
+
+        if ($energyOnBatteryMonster <= 0) {
+            $card = $this->getCardFromDb($this->cards->getCardsOfType(28)[0]);
+            $this->cards->moveCard($card->id, 'discard');        
+            self::notifyAllPlayers("removeCards", '', [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'cards' => [$card],
+            ]);
+        }
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,7 +234,7 @@ trait CardsTrait {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         if ($this->hasCardByType($playerId, 9)) {
-            // TODO can it apply on itself ? considered No
+            // TOCHECK can it apply on itself ? considered No
             $this->applyGetPoints($playerId, 1);
         }
 

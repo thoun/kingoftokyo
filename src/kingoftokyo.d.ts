@@ -90,6 +90,7 @@ interface NotifPlayerEntersTokyoArgs {
     player_name: string;
     location: number;
     locationName: string;
+    points: number;
 }
 
 interface NotifBuyCardArgs {
@@ -107,6 +108,11 @@ interface NotifRenewCardsArgs {
     energy: number;
 }
 
+interface NotifRemoveCardsArgs {
+    playerId: number;
+    player_name: string;
+    cards: Card[];
+}
 
 interface NotifPointsArgs extends NotifResolveArgs {
     points: number;
