@@ -13,9 +13,6 @@ trait CardsTrait {
 
         switch($type) {
             // KEEP
-            case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
-            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least one [diceSmash].");
-            case 4: return _("<strong>Do not lose [heart] when you lose exactly 1[heart].</strong>");
             case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
             case 6: return _("<strong>Add [diceSmash] to your Roll while you are in Tokyo. When you Yield Tokyo, the monster taking it loses 1[heart].</strong>");
             case 7: return _("If you lose [heart], roll a die for each [heart] you lost. <strong>Each [diceHeart] reduces the loss by 1[heart].</strong>");
@@ -179,7 +176,7 @@ trait CardsTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function pickCard(int $id) {
+    function buyCard(int $id) {
         $playerId = self::getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
@@ -191,11 +188,16 @@ trait CardsTrait {
         $cost = $card->cost;
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
+        if ($this->hasCardByType($playerId, 9)) {
+            // TODO can it apply on itself ? considered No
+            $this->applyGetPoints($playerId, 1);
+        }
+
         $this->cards->moveCard($id, 'hand', $playerId);
 
         $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
 
-        self::notifyAllPlayers("pickCard", clienttranslate('${player_name} pick card'), [
+        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} pick card'), [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'card' => $card,
@@ -247,7 +249,7 @@ trait CardsTrait {
         These methods function is to return some additional information that is specific to the current
         game state.
     */
-    function argPickCard() {
+    function argBuyCard() {
         $playerId = self::getActivePlayerId();
         $playerEnergy = $this->getPlayerEnergy($playerId);
 

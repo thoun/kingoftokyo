@@ -134,7 +134,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
             "resume" => ST_ENTER_TOKYO,
-            "zombiePass" => ST_PLAYER_PICK_CARD,
+            "zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -144,22 +144,22 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stEnterTokyo",
         "transitions" => array( 
-            "next" => ST_PLAYER_PICK_CARD,
+            "next" => ST_PLAYER_BUY_CARD,
             "endGame" => ST_END_GAME,
         )
     ),
 
-    ST_PLAYER_PICK_CARD => [
-        "name" => "pickCard",
-        "description" => clienttranslate('${actplayer} can pick a card'),
-        "descriptionmyturn" => clienttranslate('${you} can pick a card'),
+    ST_PLAYER_BUY_CARD => [
+        "name" => "buyCard",
+        "description" => clienttranslate('${actplayer} can buy a card'),
+        "descriptionmyturn" => clienttranslate('${you} can buy a card'),
         "type" => "activeplayer",
-        "args" => "argPickCard",
-        "possibleactions" => [ "pick", "endTurn", "renew" ],
+        "args" => "argBuyCard",
+        "possibleactions" => [ "buyCard", "endTurn", "renew" ],
         "transitions" => [
-            "pick" => ST_PLAYER_PICK_CARD,
+            "buyCard" => ST_PLAYER_BUY_CARD,
             "endTurn" => ST_END,
-            "renew" => ST_PLAYER_PICK_CARD,
+            "renew" => ST_PLAYER_BUY_CARD,
             "zombiePass" => ST_NEXT_PLAYER,
         ]
     ],

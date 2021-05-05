@@ -41,6 +41,84 @@ trait DicesTrait {
         return 6 + $this->countExtraHead($playerId);
     }
 
+    function resolveNumberDices(int $playerId, int $number, int $diceCount) {
+        // number
+        if ($diceCount >= 3) {
+            $points = $number + $diceCount - 3;
+            $this->applyGetPoints($playerId, $points, true);
+
+            self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${diceValue} dices'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'deltaPoints' => $points,
+                'points' => $this->getPlayerScore($playerId),
+                'diceValue' => $number,
+            ]);
+        }
+    }
+
+    function resolveHealthDices(int $playerId, int $diceCount) {
+        if ($this->inTokyo($playerId)) {
+            self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} wins no health (player in Tokyo)'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+            ]);
+        } else {
+            $health = $this->getPlayerHealth($playerId);
+            $maxHealth = $this->getPlayerMaxHealth($playerId);
+            if ($health < $maxHealth) {
+                $this->applyGetHealth($playerId, $diceCount, true);
+                $newHealth = $this->getPlayerHealth($playerId);
+
+                self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} health'), [
+                    'playerId' => $playerId,
+                    'player_name' => self::getActivePlayerName(),
+                    'health' => $newHealth,
+                    'deltaHealth' => $newHealth - $health,
+                ]);
+            }
+        }
+    }
+
+    function resolveEnergyDices(int $playerId, int $diceCount) {
+        $this->applyGetEnergy($playerId, $diceCount, true);
+
+        self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cubes'), [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'deltaEnergy' => $diceCount,
+            'energy' => $this->getPlayerEnergy($playerId),
+        ]);
+    }
+
+    
+    function resolveSmashDices(int $playerId, int $diceCount) {
+        $smashTokyo = !$this->inTokyo($playerId);
+
+        $message = $smashTokyo ? 
+            clienttranslate('${player_name} give ${number} smash(es) to players in Tokyo') :
+            clienttranslate('${player_name} give ${number} smash(es) to players outside Tokyo');
+        $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
+
+        $eliminatedPlayersIds = [];
+        foreach($smashedPlayersIds as $smashedPlayerId) {
+            $this->applyDamage($smashedPlayerId, $diceCount);
+        }
+
+        self::notifyAllPlayers("resolveSmashDice", $message, [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'number' => $diceCount,
+            'smashedPlayersIds' => $smashedPlayersIds,
+        ]);
+
+        // Alpha Monster
+        if ($this->hasCardByType($playerId, 3)) {
+            // TODO does Alpha Monster applies after other cards adding Smashes ? considered Yes
+            $this->applyGetPoints($playerId, 1);
+        }
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -104,79 +182,34 @@ trait DicesTrait {
 
         $smashTokyo = false;
 
-        for ($i = 1; $i <= 6; $i++) {
-            $number = count(array_values(array_filter($dices, function($dice) use ($i) { return $dice->value == $i; })));
+        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+            $diceCount = count(array_values(array_filter($dices, function($dice) use ($diceFace) { return $dice->value == $diceFace; })));
+
+            if ($diceFace == 6) {
+                // acid attack
+                if ($this->hasCardByType($playerId, 1)) {
+                    $diceCount++;
+                }
+            }
 
             // number
-            if ($i <= 3 && $number >= 3) {
-                $points = $i + $number - 3;
-                $this->applyGetPoints($playerId, $points, true);
-
-                self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${diceValue} dices'), [
-                    'playerId' => $playerId,
-                    'player_name' => self::getActivePlayerName(),
-                    'deltaPoints' => $points,
-                    'points' => $this->getPlayerScore($playerId),
-                    'diceValue' => $i,
-                ]);
+            if ($diceFace <= 3) { 
+                $this->resolveNumberDices($playerId, $diceFace, $diceCount);
             }
 
             // health
-            if ($i == 4 && $number > 0) {
-                if ($this->inTokyo($playerId)) {
-                    self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} wins no health (player in Tokyo)'), [
-                        'playerId' => $playerId,
-                        'player_name' => self::getActivePlayerName(),
-                    ]);
-                } else {
-                    $health = $this->getPlayerHealth($playerId);
-                    $maxHealth = $this->getPlayerMaxHealth($playerId);
-                    if ($health < $maxHealth) {
-                        $this->applyGetHealth($playerId, $number, true);
-                        $newHealth = $this->getPlayerHealth($playerId);
-
-                        self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} health'), [
-                            'playerId' => $playerId,
-                            'player_name' => self::getActivePlayerName(),
-                            'health' => $newHealth,
-                            'deltaHealth' => $newHealth - $health,
-                        ]);
-                    }
-                }
+            if ($diceFace == 4 && $diceCount > 0) {
+                $this->resolveHealthDices($playerId, $diceCount);
             }
 
             // energy
-            if ($i == 5 && $number > 0) {
-                $this->applyGetEnergy($playerId, $number, true);
-
-                self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cubes'), [
-                    'playerId' => $playerId,
-                    'player_name' => self::getActivePlayerName(),
-                    'deltaEnergy' => $number,
-                    'energy' => $this->getPlayerEnergy($playerId),
-                ]);
+            if ($diceFace == 5 && $diceCount > 0) {
+                $this->resolveEnergyDices($playerId, $diceCount);
             }
 
             // smash
-            if ($i == 6 && $number > 0) {
-                $smashTokyo = !$this->inTokyo($playerId);
-
-                $message = $smashTokyo ? 
-                    clienttranslate('${player_name} give ${number} smash(es) to players in Tokyo') :
-                    clienttranslate('${player_name} give ${number} smash(es) to players outside Tokyo');
-                $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
-
-                $eliminatedPlayersIds = [];
-                foreach($smashedPlayersIds as $smashedPlayerId) {
-                    $this->applyDamage($smashedPlayerId, $number);
-                }
-
-                self::notifyAllPlayers("resolveSmashDice", $message, [
-                    'playerId' => $playerId,
-                    'player_name' => self::getActivePlayerName(),
-                    'number' => $number,
-                    'smashedPlayersIds' => $smashedPlayersIds,
-                ]);
+            if ($diceFace == 6 && $diceCount > 0) {
+                $this->resolveSmashDices($playerId, $diceCount);
             }
         }
 

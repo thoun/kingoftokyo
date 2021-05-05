@@ -15,7 +15,7 @@ define('ST_RESOLVE_DICES', 25);
 define('ST_MULTIPLAYER_LEAVE_TOKYO', 30);
 define('ST_ENTER_TOKYO', 31);
 
-define('ST_PLAYER_PICK_CARD', 40);
+define('ST_PLAYER_BUY_CARD', 40);
 
 define('ST_END', 90);
 define('ST_NEXT_PLAYER', 91);

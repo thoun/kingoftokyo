@@ -71,12 +71,12 @@
         self::ajaxResponse();
     }
   	
-    public function pick() {
+    public function buyCard() {
         self::setAjaxMode();
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->pickCard($id);
+        $this->game->buyCard($id);
 
         self::ajaxResponse();
     }

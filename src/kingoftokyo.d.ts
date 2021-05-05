@@ -44,7 +44,7 @@ interface EnteringThrowDicesArgs {
     inTokyo: boolean;
 }
 
-interface EnteringPickCardArgs {
+interface EnteringBuyCardArgs {
     disabledIds: number[];
 }
 
@@ -92,7 +92,7 @@ interface NotifPlayerEntersTokyoArgs {
     locationName: string;
 }
 
-interface NotifPickCardArgs {
+interface NotifBuyCardArgs {
     playerId: number;
     player_name: string;
     card: Card;

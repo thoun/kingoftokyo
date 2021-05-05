@@ -82,8 +82,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.diceManager.hideLock();
                 break;
             
-            case 'pickCard':
-                this.onEnteringPickCard(args.args);
+            case 'buyCard':
+                this.onEnteringBuyCard(args.args);
                 break;
 
             case 'endTurn':
@@ -107,7 +107,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
     }
 
-    private onEnteringPickCard(args: EnteringPickCardArgs) {
+    private onEnteringBuyCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
             args.disabledIds.forEach(id => dojo.query(`#visible-cards_item_${id}`).addClass('disabled'));
@@ -128,13 +128,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'resolveDices':
                 this.diceManager.removeAllDices();
                 break;
-            case 'pickCard':
-                this.onLeavingPickCard();
+            case 'buyCard':
+                this.onLeavingBuyCard();
                 break;
         }
     }
 
-    private onLeavingPickCard() {
+    private onLeavingBuyCard() {
         this.visibleCards.setSelectionMode(0);
         dojo.query('#visible-cards .stockitem').removeClass('disabled');
     }
@@ -154,7 +154,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
                     break;
                 
-                case 'pickCard':
+                case 'buyCard':
                     (this as any).addActionButton('renew_button', _("Renew cards") + ` ( 2 <span class="small icon energy"></span>)`, 'onRenew');
                     if (this.energyCounters[(this as any).player_id].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
@@ -247,7 +247,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             return;
         }
 
-        this.pickCard(item_id);
+        this.buyCard(item_id);
     }
 
     public onRethrow() {
@@ -287,12 +287,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('leave');
     }
 
-    public pickCard(id: number | string) {
-        if(!(this as any).checkAction('pick')) {
+    public buyCard(id: number | string) {
+        if(!(this as any).checkAction('buyCard')) {
             return;
         }
 
-        this.takeAction('pick', {
+        this.takeAction('buyCard', {
             id
         });
     }
@@ -343,7 +343,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['playerEliminated', LONG_ANIMATION_MS],
             ['playerEntersTokyo', LONG_ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
-            ['pickCard', ANIMATION_MS],
+            ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
             ['points', 1],
             ['health', 1],
@@ -398,7 +398,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
     }
 
-    notif_pickCard(notif: Notif<NotifPickCardArgs>) {
+    notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
         const card = notif.args.card;
         const newCard = notif.args.newCard;
         this.setEnergy(notif.args.playerId, notif.args.energy);

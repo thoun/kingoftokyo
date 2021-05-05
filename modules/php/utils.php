@@ -257,6 +257,11 @@ trait UtilTrait {
     }
 
     function applyDamage($playerId, $health, $silent = false) {
+        // Armor plating
+        if ($this->hasCardByType($playerId, 4) && $points == 1) {
+            return;
+        }
+
         self::DbQuery("UPDATE player SET `player_health` = GREATEST(`player_health` - $health, 0) where `player_id` = $playerId");
 
         if (!$silent) {

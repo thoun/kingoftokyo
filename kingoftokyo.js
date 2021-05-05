@@ -715,8 +715,8 @@ var KingOfTokyo = /** @class */ (function () {
             case 'resolveDices':
                 this.diceManager.hideLock();
                 break;
-            case 'pickCard':
-                this.onEnteringPickCard(args.args);
+            case 'buyCard':
+                this.onEnteringBuyCard(args.args);
                 break;
             case 'endTurn':
                 this.onEnteringEndTurn();
@@ -735,7 +735,7 @@ var KingOfTokyo = /** @class */ (function () {
         var dices = args.dices;
         this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
     };
-    KingOfTokyo.prototype.onEnteringPickCard = function (args) {
+    KingOfTokyo.prototype.onEnteringBuyCard = function (args) {
         if (this.isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
             args.disabledIds.forEach(function (id) { return dojo.query("#visible-cards_item_" + id).addClass('disabled'); });
@@ -753,12 +753,12 @@ var KingOfTokyo = /** @class */ (function () {
             case 'resolveDices':
                 this.diceManager.removeAllDices();
                 break;
-            case 'pickCard':
-                this.onLeavingPickCard();
+            case 'buyCard':
+                this.onLeavingBuyCard();
                 break;
         }
     };
-    KingOfTokyo.prototype.onLeavingPickCard = function () {
+    KingOfTokyo.prototype.onLeavingBuyCard = function () {
         this.visibleCards.setSelectionMode(0);
         dojo.query('#visible-cards .stockitem').removeClass('disabled');
     };
@@ -776,7 +776,7 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     this.addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
                     break;
-                case 'pickCard':
+                case 'buyCard':
                     this.addActionButton('renew_button', _("Renew cards") + " ( 2 <span class=\"small icon energy\"></span>)", 'onRenew');
                     if (this.energyCounters[this.player_id].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
@@ -843,7 +843,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.visibleCards.unselectItem(item_id);
             return;
         }
-        this.pickCard(item_id);
+        this.buyCard(item_id);
     };
     KingOfTokyo.prototype.onRethrow = function () {
         this.rethrowDices(this.diceManager.destroyFreeDices());
@@ -874,11 +874,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('leave');
     };
-    KingOfTokyo.prototype.pickCard = function (id) {
-        if (!this.checkAction('pick')) {
+    KingOfTokyo.prototype.buyCard = function (id) {
+        if (!this.checkAction('buyCard')) {
             return;
         }
-        this.takeAction('pick', {
+        this.takeAction('buyCard', {
             id: id
         });
     };
@@ -922,7 +922,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['playerEliminated', LONG_ANIMATION_MS],
             ['playerEntersTokyo', LONG_ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
-            ['pickCard', ANIMATION_MS],
+            ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
             ['points', 1],
             ['health', 1],
@@ -970,7 +970,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
     };
-    KingOfTokyo.prototype.notif_pickCard = function (notif) {
+    KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var card = notif.args.card;
         var newCard = notif.args.newCard;
         this.setEnergy(notif.args.playerId, notif.args.energy);
