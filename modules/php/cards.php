@@ -13,62 +13,52 @@ trait CardsTrait {
 
         switch($type) {
             // KEEP
-            case 1: return _("Deal 1 extra damage each turn (even when you don't otherwise attack).");
-            case 2: return _("Buying cards costs you 1 less [Energy].");
-            case 3: return _("Gain 1[Star] when you attack.");
-            case 4: return _("Ignore damage of 1.");
-            case 5: return _("You can always reroll any [3] you have.");
-            case 6: return _("Deal 1 extra damage on Tokyo. Deal 1 damage when yielding Tokyo to the monster taking it.");
-            case 7: return _("If you take damage roll a die for each damage point. On a [Heart] you do not take that damage point.");
-            case 8: return _("If you roll [1][2][3][Heart][Attack][Energy] gain 9[Star] in addition to the regular results.");
-            case 9: return _("Gain 1[Star] whenever you buy a card.");
-            case 10: return _("Gain 3[Star] every time a monster's [Heart] goes to 0.");
-            case 11: return _("You gain 1[Star] for every 6[Energy] you have at the end of your turn.");
-            case 12: return _("Your maximum [Heart] is increased by 2. Gain 2[Heart] when you get this card.");
-            case 13: case 14: return _("You get 1 extra die.");
-            case 15: return _("Your neighbors take 1 extra damage when you deal damage");
-            case 16: return _("On a turn where you score [1][1][1], you can take another turn with one less die.");
-            case 17: return _("When you gain any [Energy] gain 1 extra [Energy].");
-            case 18: return _("You have one extra reroll each turn.");
-            case 19: return _("When scoring [1][1][1] gain 2 extra [Star].");
-            case 20: return _("You can heal other monsters with your [Heart] results. They must pay you 2[Energy] for each damage you heal (or their remaining [Energy] if they haven't got enough.");
-            case 21: return _("Gain 1[Star] on your turn if you don't damage anyone.");
-            case 22: return _("You can change one of your dice to a [1] each turn.");
-            case 23: return _("If you are eliminated discard all your cards and lose all your [Star], Heal to 20[Heart] and start again.");
-            case 24: return _("You suffer no damage when yielding Tokyo.");
-            case 25: return _("When purchasing cards you can peek at and purchase the top card of the deck.");
-            case 26: return _("At the end of your turn you can discard any keep cards you have to receive the [Energy] they were purchased for.");
-            case 27: return _("Choose a card any monster has in play and put a mimic counter on it. This card counts as a duplicate of that card as if it just had been bought. Spend 1[Energy] at the start of your turn to change the power you are mimicking.");
-            case 28: return _("When you purchase this put as many [Energy] as you want on it from your reserve. Match this from the bank. At the start of each turn take 2[Energy] off and add them to your reserve. When there are no [Energy] left discard this card.");
-            case 29: return _("Your attacks damage all other monsters.");
-            case 30: return _("Once each turn you can score [1][2][3] for 2[Star]. You can use these dice in other combinations.");
-            case 31: return _("Whenever a new card is revealed you have the option of purchasing it as soon as it is revealed.");
-            case 32: return _("You can purchase cards from other monsters. Pay them the [Energy] cost.");
-            case 33: return _("Change one die to any result. Discard when used.");
-            case 34: return _("When you score [2][2][2] also deal 2 damage.");
-            case 35: return _("When you deal damage to monsters give them a poison counter. Monsters take 1 damage for each poison counter they have at the end of their turn. You can get rid of a poison counter with a [Heart] (that [Heart] doesn't heal a damage also).");
-            case 36: return _("You can reroll a die of each other monster once each turn. If the reroll is [Heart] discard this card.");
-            case 37: return _("Spend 2[Energy] at any time to heal 1 damage.");
-            case 38: return _("When you heal, heal 1 extra damage.");
-            case 39: return _("At the end of a turn when you have the fewest [Star] gain 1 [Star].");
-            case 40: return _("When you deal damage to monsters give them a shrink counter. A monster rolls one less die for each shrink counter. You can get rid of a shrink counter with a [Heart] (that [Heart] doesn't heal a damage also).");
-            case 41: return _("This card starts with 3 charges. Spend a charge for an extra reroll. Discard this card when all charges are spent.");
-            case 42: return _("At the end of your turn gain 1[Energy] if you have no [Energy].");
-            case 43: return _("When you attack deal 1 extra damage.");
-            case 44: return _("You can spend 2[Energy] to change one of your dice to any result.");
-            case 45: return _("Spend 1[Energy] to get 1 extra reroll.");
-            case 46: return _("Gain 1 extra [Star] when beginning the turn in Tokyo. Deal 1 extra damage when dealing any damage from Tokyo.");
-            case 47: return _("When you lose 2[Heart] or more gain 1[Energy].");
-            case 48: return _("Spend 2[Energy] to negate damage to you for a turn.");
-            case 49: return _("When you do damage gain 1[Heart].");
-            case 50: return _("The monsters in Tokyo must yield if you damage them.");
-            case 51: return _("If someone kills you, Go back to 10[Heart] and lose all your [Star]. If either of you or your killer win, or all other players are eliminated then you both win. If your killer is eliminated then you are also. If you are eliminated a second time this card has no effect.");
-            case 52: return _("If you suffer damage the monster that inflicted the damage suffers 1 as well.");
-            case 53: return _("Spend 3[Energy] to gain 1[Star].");
-            case 54: return _("Once each turn you may spend 1[Energy] to negate 1 damage you are receiving.");
-            case 55: return _("On a turn you deal 3 or more damage gain 2[Star].");
-            case 56: return _("If you score 4[Star] in a turn, all players roll one less die until your next turn.");
-            case 57: return _("If you yield Tokyo you can take any card the recipient has and give him this card.");
+            case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
+            case 2: return _("<strong>Buying cards costs you 1 less [Energy].</strong>");
+            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least one [diceSmash].");
+            case 4: return _("<strong>Do not lose [heart] when you lose exactly 1[heart].</strong>");
+            case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
+            case 6: return _("<strong>Add [diceSmash] to your Roll while you are in Tokyo. When you Yield Tokyo, the monster taking it loses 1[heart].</strong>");
+            case 7: return _("If you lose [heart], roll a die for each [heart] you lost. <strong>Each [diceHeart] reduces the loss by 1[heart].</strong>");
+            case 8: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy] <strong>gain 9[Star]</strong> in addition to the regular effects.");
+            case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
+            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
+            case 11: return _("<strong>You gain 1[Star]</strong> for every 6[Energy] you have at the end of your turn.");
+            case 12: return _("<strong>+2[Heart] when you buy this card.</strong> Your maximum [Heart] is increased to 12[Heart] as long as you own this card.");
+            case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
+            case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
+            case 17: return _("When you gain any [Energy] <strong>gain 1 extra [Energy].</strong>");
+            case 18: return _("<strong>You have one extra die Roll</strong> each turn.");
+            case 19: return _("When you roll [dice1][dice1][dice1] or more <strong>gain 2 extra [Star].</strong>");
+            case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
+            case 21: return _("<strong>Gain 1[Star]</strong> at the end of your turn if you don't make anyone lose [Heart].");
+            case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
+            case 23: return _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continueplaying outside Tokyo.</strong>");
+            case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
+            case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
+            case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
+            case 27: return _("<strong>Choose a [keep] card any monster has in play</strong> and put a Mimic token on it. <strong>This card counts as a duplicate of that card as if you had just bought it.</strong> Spend 1[Energy] at the start of your turn to move the Mimic token and change the card you are mimicking.");
+            case 28: return _("When you buy <i>card_name</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card.");
+            case 29: return _("<strong>Your [diceSmash] damage all other Monsters.</strong>");
+            case 30: return _("<strong>When you roll at least [dice1][dice2][dice3] gain 2[Star].</strong> You can also use these dice in other combinations.");
+            case 31: return _("<strong>Whenever a Power card is revealed you have the option of buying it</strong> immediately.");
+            case 32: return _("<strong>You can buy Power cards from other monsters.</strong> Pay them the [Energy] cost.");
+            case 33: return _("Before resolving your dice, you may <strong>change one die to any result</strong>. Discard when used.");
+            case 34: return _("When you score [dice2][dice2][dice2] or more, <strong>add [diceSmash][diceSmash] to your Roll</strong>.");
+            case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
+            case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the reroll [diceHeart], discard this card.");
+            case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong>");
+            case 38: return _("When gain [Heart], <strong>gain 1 extra [Heart].</strong>");
+            case 39: return _("At the end of a turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
+            case 40: return _("Give 1 <i>Shrink Ray</i> to each Monster you Smash with your [diceSmash]. <strong>At the beginning of their turn, Monster roll 1 less dice for each <i>Shrink Ray</i> token they have on them</strong>. A <i>Shrink Ray</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
+            case 41: return _("Place 3 <i>Smoke</i> counters on this card. <strong>Spend 1 <i>Smoke</i> counter for an extra Roll.</strong> Discard this card when all <i>Smoke</i> counters are spent.");
+            case 42: return _("At the end of your turn <strong>gain 1[Energy] if you have no [Energy].</strong>");
+            case 43: return _("<strong>If you roll at least one [diceSmash], add [diceSmash]</strong> to your Roll.");
+            case 44: return _("Before resolving your dice, you can spend 2[Energy] to <strong>change one of your dice to any result.</strong>");
+            case 45: return _("Spend 1[Energy] to <strong>get 1 extra die Roll.</strong>");
+            case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
+            case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
+            case 48: return _("<strong>Spend 2[Energy] to lose [Heart]<strong> this turn.");
             
             // DISCARD
             case 101: 
@@ -165,6 +155,10 @@ trait CardsTrait {
                 break;
             case 120:
         }
+    }
+
+    function countExtraHead($playerId) {
+        return $this->cards->countCardInLocation('hand', $playerId);
     }
 
 //////////////////////////////////////////////////////////////////////////////

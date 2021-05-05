@@ -37,6 +37,10 @@ trait DicesTrait {
         }
     }
 
+    function getDicesNumber(int $playerId) {
+        return 6 + $this->countExtraHead($playerId);
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////

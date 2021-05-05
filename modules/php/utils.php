@@ -65,10 +65,6 @@ trait UtilTrait {
         return intval(self::getUniqueValueFromDB("SELECT player_energy FROM player where `player_id` = $playerId"));
     }
 
-    function getDicesNumber(int $playerId) {
-        return 6; // TODO
-    }
-
     function getThrowNumber(int $playerId) {
         return 3; // TODO
     }
