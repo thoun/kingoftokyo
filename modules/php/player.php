@@ -73,11 +73,13 @@ trait PlayerTrait {
             if ($this->hasCardByType($playerId, 46)) {
                 $incScore++;
             }
+            $this->applyGetPointsIgnoreCards($playerId, $incScore, true);
             self::DbQuery("UPDATE player SET player_score = player_score + $incScore where `player_id` = $playerId");
-            self::notifyAllPlayers('points','', [
+            self::notifyAllPlayers('points', _('${player_name} starts turn in Tokyo and wins ${deltaPoints} points'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'points' => $this->getPlayerScore($playerId),
+                'deltaPoints' => $incScore,
             ]);
         }
 

@@ -194,12 +194,7 @@ trait CardsTrait {
         $energyOnBatteryMonster = intval(self::getGameStateValue('energyOnBatteryMonster')) - 2;
         self::setGameStateValue('energyOnBatteryMonster', $energyOnBatteryMonster);
 
-        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + 2 where `player_id` = $playerId");
-        self::notifyAllPlayers('energy','', [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'energy' => $this->getPlayerEnergy($playerId),
-        ]);
+        $this->applyGetEnergyIgnoreCards($playerId, 2);
 
         if ($energyOnBatteryMonster <= 0) {
             $card = $this->getCardFromDb($this->cards->getCardsOfType(28)[0]);

@@ -217,6 +217,10 @@ trait UtilTrait {
     }
 
     function applyGetPoints($playerId, $points, $silent = false) {
+        $this->applyGetPointsIgnoreCards($playerId, $points, $silent);
+    }
+
+    function applyGetPointsIgnoreCards($playerId, $points, $silent = false) {
         $maxPoints = 20;
         self::DbQuery("UPDATE player SET `player_score` = LEAST(`player_score` + $points, $maxPoints) where `player_id` = $playerId");
 
@@ -292,6 +296,10 @@ trait UtilTrait {
         // friend of children
         $energy = $this->hasCardByType($playerId, 17) ? $pEnergy + 1 : $pEnergy;
 
+        $this->applyGetEnergyIgnoreCards($playerId, $energy, $silent);
+    }
+
+    function applyGetEnergyIgnoreCards($playerId, $pEnergy, $silent = false) {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
         if (!$silent) {
