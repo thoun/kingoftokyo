@@ -70,7 +70,7 @@ trait UtilTrait {
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
             'locationName' => $locationName,
-            'points' => $this->getPlayerPoints($playerId),
+            'points' => $this->getPlayerScore($playerId),
         ]);
     }
 
@@ -268,7 +268,7 @@ trait UtilTrait {
         $this->applyGetEnergyIgnoreCards($playerId, $energy, $silent);
     }
 
-    function applyGetEnergyIgnoreCards($playerId, $pEnergy, $silent = false) {
+    function applyGetEnergyIgnoreCards($playerId, $energy, $silent = false) {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
         if (!$silent) {

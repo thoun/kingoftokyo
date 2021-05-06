@@ -195,7 +195,8 @@ trait CardsTrait {
 
     function canBuyCard($playerId, $cardCost) {
         // alien origin
-        return $this->hasCardByType($playerId, 2) ? $cardCost - 1 : $cardCost;
+        $effectiveCost = $this->hasCardByType($playerId, 2) ? $cardCost - 1 : $cardCost;
+        return $effectiveCost <= $this->getPlayerEnergy($playerId);
     }
 
     function applyItHasAChild($playerId) {
@@ -258,7 +259,7 @@ trait CardsTrait {
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
-        if ($this->canBuyCard($playerId, $card->cost)) {
+        if (!$this->canBuyCard($playerId, $card->cost)) {
             throw new \Error('Not enough energy');
         }
 
@@ -291,7 +292,7 @@ trait CardsTrait {
         if ($endGame) {
             $this->gamestate->nextState('endGame');
         } else {
-            $this->gamestate->nextState('pick');
+            $this->gamestate->nextState('buyCard');
         }
     }
 

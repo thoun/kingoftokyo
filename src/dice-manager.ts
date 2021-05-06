@@ -116,7 +116,6 @@ class DiceManager {
     private toggleLockDice(dice: Dice, forcedLockValue: boolean | null = null) {
         dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
         const diceDiv = document.getElementById(`dice${dice.id}`);
-        console.log('toggleLockDice', `dice${dice.id}`, dice.locked);
 
         slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dices' : 'dices-selector');
 

@@ -8,8 +8,8 @@ class Cards {
 
         stocks.forEach(stock => {
             const keepcardsurl = `${g_gamethemeurl}img/keep-cards.jpg`;
-            for(let id=1; id<=57; id++) {  // keep
-                stock.addItemType(id, id, keepcardsurl, id);
+            for(let id=1; id<=48; id++) {  // keep
+                stock.addItemType(id, id, keepcardsurl, id - 1);
             }
 
             const discardcardsurl = `${g_gamethemeurl}img/discard-cards.jpg`;
@@ -222,7 +222,7 @@ class Cards {
             case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
             case 21: return _("<strong>Gain 1[Star]</strong> at the end of your turn if you don't make anyone lose [Heart].");
             case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
-            case 23: return _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continueplaying outside Tokyo.</strong>");
+            case 23: return _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
             case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
             case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
             case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");

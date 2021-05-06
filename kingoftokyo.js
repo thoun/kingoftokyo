@@ -39,8 +39,8 @@ var Cards = /** @class */ (function () {
     Cards.prototype.setupCards = function (stocks) {
         stocks.forEach(function (stock) {
             var keepcardsurl = g_gamethemeurl + "img/keep-cards.jpg";
-            for (var id = 1; id <= 57; id++) { // keep
-                stock.addItemType(id, id, keepcardsurl, id);
+            for (var id = 1; id <= 48; id++) { // keep
+                stock.addItemType(id, id, keepcardsurl, id - 1);
             }
             var discardcardsurl = g_gamethemeurl + "img/discard-cards.jpg";
             for (var id = 101; id <= 118; id++) { // discard
@@ -251,7 +251,7 @@ var Cards = /** @class */ (function () {
             case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
             case 21: return _("<strong>Gain 1[Star]</strong> at the end of your turn if you don't make anyone lose [Heart].");
             case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
-            case 23: return _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continueplaying outside Tokyo.</strong>");
+            case 23: return _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
             case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
             case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
             case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
@@ -617,7 +617,6 @@ var DiceManager = /** @class */ (function () {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
         dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
         var diceDiv = document.getElementById("dice" + dice.id);
-        console.log('toggleLockDice', "dice" + dice.id, dice.locked);
         slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dices' : 'dices-selector');
         this.activateRethrowButton();
     };
