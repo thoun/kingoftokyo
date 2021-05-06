@@ -17,39 +17,10 @@
     margin-bottom: -5px;
     height: 45px;
   }
-}
 
-.icon {
-  display: inline-block;
-  position: relative;
-  width: 32px;
-  height: 32px;
-  background-image: url('img/icons.png');
-  background-size: auto 100%;
-
-  &.small {
-    width: 16px;
-    height: 16px;
-  }
-
-  &.points {
-    background-position: 0% 0%;
-  }
-
-  &.energy {
-    background-position: 25% 0%;
-  }
-
-  &.health {
-    background-position: 50% 0%;
-  }
-
-  &.forbidden {
-    background-position: 75% 0%;
-  }
-
-  &.dead {
-    background-position: 100% 0%;
+  .player_score, .fa-star {
+    font-weight: bold;
+    color: #6787c3;
   }
 }
 

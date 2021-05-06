@@ -127,3 +127,44 @@ $description-size: 7pt;
         color: $tokyoGreen;
     }
 }
+
+.dice-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 20%;
+    background-color: black;
+    background-image: url('img/black_dice.png');
+    background-size: auto 100%;
+    display: inline-block;
+    margin-bottom: -4px;
+
+    @for $i from 1 through 6 {
+        &.dice#{$i} {
+            background-position: (($i - 1) * 20%) 100%;
+        }
+    }
+}
+
+.card-keep-text {
+    position: relative;
+    color: white;
+    font-family: 'goodgirl';
+    font-size: 5pt;
+    width: 80px;
+    text-align: center;
+
+    .outline {
+        -webkit-text-stroke: 8px #00aeef;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .text {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
