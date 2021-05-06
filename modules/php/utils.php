@@ -208,41 +208,50 @@ trait UtilTrait {
         return $this->getRemainingPlayers() <= 1;
     }
 
-    function applyGetPoints(int $playerId, int $points, bool $silent = false) {
-        $this->applyGetPointsIgnoreCards($playerId, $points, $silent);
+    // $cardType = 0 => notification with no message
+    // $cardType = -1 => no notification
+
+    function applyGetPoints(int $playerId, int $points, int $cardType) {
+        $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
     }
 
-    function applyGetPointsIgnoreCards(int $playerId, int $points, bool $silent = false) {
+    function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
         $maxPoints = 20;
 
         $actualScore = $this->getPlayerScore($playerId);
         $newScore = min($actualScore + $points, $maxPoints);
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
-        if (!$silent) {
-            self::notifyAllPlayers('points','', [
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_points} point with card ${card_name}');
+            self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'points' => $newScore,
+                'delta_points' => $points,
+                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
             ]);
         }
     }
 
-    function applyLosePoints(int $playerId, int $points, bool $silent = false) {
+    function applyLosePoints(int $playerId, int $points, int $cardType) {
         $actualScore = $this->getPlayerScore($playerId);
         $newScore = max($actualScore - $points, 0);
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
-        if (!$silent) {
-            self::notifyAllPlayers('points','', [
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_points} point with card ${card_name}');
+            self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'points' => $newScore,
+                'delta_points' => $points,
+                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
             ]);
         }
     }
 
-    function applyGetHealth(int $playerId, int $phealth, bool $silent = false) {
+    function applyGetHealth(int $playerId, int $phealth, int $cardType) {
         // regeneration
         $health = $this->hasCardByType($playerId, 38) ? $phealth + 1 : $phealth;
 
@@ -252,16 +261,19 @@ trait UtilTrait {
         $newHealth = min($actualHealth + $health, $maxHealth);
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
-        if (!$silent) {
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_health} health with card ${card_name}');
             self::notifyAllPlayers('health','', [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'health' => $newHealth,
+                'delta_health' => $health,
+                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
             ]);
         }
     }
 
-    function applyDamage(int $playerId, int $health, int $damageDealerId, bool $silent = false) {
+    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType) {
         // Armor plating
         if ($this->hasCardByType($playerId, 4) && $points == 1) {
             return;
@@ -272,17 +284,20 @@ trait UtilTrait {
 
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
-        if (!$silent) {
-            self::notifyAllPlayers('health','', [
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_health} health with card ${card_name}');
+            self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'health' => $newHealth,
+                'delta_health' => $health,
+                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
             ]);
         }
 
         if ($health >= 2 && $this->hasCardByType($playerId, 47)) {
             // we're only making it stronger
-            $this->applyGetEnergy($playerId, 1, $silent);
+            $this->applyGetEnergy($playerId, 1, 47);
         }
 
         if ($damageDealerId == self::getActivePlayerId()) {
@@ -295,35 +310,41 @@ trait UtilTrait {
         }
     }
 
-    function applyGetEnergy(int $playerId, int $pEnergy, bool $silent = false) {
+    function applyGetEnergy(int $playerId, int $pEnergy, int $cardType) {
         // friend of children
         $energy = $this->hasCardByType($playerId, 17) ? $pEnergy + 1 : $pEnergy;
 
         $this->applyGetEnergyIgnoreCards($playerId, $energy, $silent);
     }
 
-    function applyGetEnergyIgnoreCards(int $playerId, int $energy, $silent = false) {
+    function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
-        if (!$silent) {
-            self::notifyAllPlayers('energy','', [
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_energy} energy with card ${card_name}');
+            self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'energy' => $this->getPlayerEnergy($playerId),
+                'delta_energy' => $energy,
+                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
             ]);
         }
     }
 
-    function applyLoseEnergy(int $playerId, int $energy, bool $silent = false) {
+    function applyLoseEnergy(int $playerId, int $energy, int $cardType) {
         $actualEnergy = $this->getPlayerEnergy($playerId);
         $newEnergy = max($actualEnergy - $energy, 0);
         self::DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
 
-        if (!$silent) {
-            self::notifyAllPlayers('energy','', [
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_energy} energy with card ${card_name}');
+            self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'energy' => $newEnergy,
+                'delta_energy' => $energy,
+                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
             ]);
         }
     }

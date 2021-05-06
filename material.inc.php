@@ -19,7 +19,7 @@
  *
  */
 
-$this->cardsCosts = [
+$this->CARD_COST = [
 // KEEP
 1 => 6,
 2 => 3,

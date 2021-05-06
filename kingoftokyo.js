@@ -303,7 +303,7 @@ var Cards = /** @class */ (function () {
             case 114: return _("<strong>+ 2[Star] -2[Heart].</strong>");
             case 115: return _("<strong>+ 2[Star] +3[Heart].</strong>");
             case 116: return _("<strong>+ 4[Star].");
-            case 117: return _("<strong>+ 4[Star] +3[Heart].</strong>");
+            case 117: return _("<strong>+ 4[Star] -3[Heart].</strong>");
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
             //case 119: return _("<strong>+ 4[Star].");
             //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
@@ -388,7 +388,7 @@ var PlayerTable = /** @class */ (function () {
         document.getElementById("blue-wheel-" + this.playerId).style.transform = "rotate(" + POINTS_DEG[points] + "deg)";
     };
     PlayerTable.prototype.setHealth = function (health) {
-        document.getElementById("red-wheel-" + this.playerId).style.transform = "rotate(" + HEALTH_DEG[health] + "deg)";
+        document.getElementById("red-wheel-" + this.playerId).style.transform = "rotate(" + (health > 12 ? 22 : HEALTH_DEG[health]) + "deg)";
     };
     PlayerTable.prototype.eliminatePlayer = function () {
         this.cards.removeAll();
@@ -752,8 +752,8 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
+        this.playerTables[this.player_id].removeDiscardCards();
         if (this.isCurrentPlayerActive()) {
-            this.playerTables[this.player_id].removeDiscardCards();
             this.tableManager.placePlayerTable(); // adapt to removed card
         }
     };

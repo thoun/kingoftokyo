@@ -78,7 +78,7 @@ class PlayerTable {
     }
 
     public setHealth(health: number) {
-        document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${HEALTH_DEG[health]}deg)`;
+        document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${health > 12 ? 22 : HEALTH_DEG[health]}deg)`;
     }
 
     public eliminatePlayer() {

@@ -12,21 +12,104 @@ trait CardsTrait {
     //////////// Utility functions
     ////////////
 
+    
+
+    function getCardName(int $cardTypeId) {
+        switch($cardTypeId) {
+            // KEEP
+            case 1: return _("Acid Attack");
+            case 2: return _("Alien Origin");
+            case 3: return _("Alpha Monster");
+            case 4: return _("Armor Plating");
+            case 5: return _("Background Dweller");
+            case 6: return _("Burrowing");
+            case 7: return _("Camouflage");
+            case 8: return _("Complete Destruction");
+            case 9: return _("Media Friendly");
+            case 10: return _("Eater of the Dead");
+            case 11: return _("Energy Hoarder");
+            case 12: return _("Even Bigger");
+            case 13: case 14: return _("Extra Head");
+            case 15: return _("Fire Breathing");
+            case 16: return _("Freeze Time");
+            case 17: return _("Friend of Children");
+            case 18: return _("Giant Brain");
+            case 19: return _("Gourmet");
+            case 20: return _("Healing Ray");
+            case 21: return _("Herbivore");
+            case 22: return _("Herd Culler");
+            case 23: return _("It Has a Child");
+            case 24: return _("Jets");
+            case 25: return _("Made in a Lab");
+            case 26: return _("Metamorph");
+            case 27: return _("Mimic");
+            case 28: return _("Battery Monster");
+            case 29: return _("Nova Breath");
+            case 30: return _("Detritivore");
+            case 31: return _("Opportunist");
+            case 32: return _("Parasitic Tentacles");
+            case 33: return _("Plot Twist");
+            case 34: return _("Poison Quills");
+            case 35: return _("Poison Spit");
+            case 36: return _("Psychic Probe");
+            case 37: return _("Rapid Healing");
+            case 38: return _("Regeneration");
+            case 39: return _("Rooting for the Underdog");
+            case 40: return _("Shrink Ray");
+            case 41: return _("Smoke Cloud");
+            case 42: return _("Solar Powered");
+            case 43: return _("Spiked Tail");
+            case 44: return _("Stretchy");
+            case 45: return _("Energy Drink");
+            case 46: return _("Urbavore");
+            case 47: return _("We're Only Making It Stronger");
+            case 48: return _("Wings");
+            //case 49: return _("Cannibalistic");
+            //case 50: return _("Intimidating Roar");
+            //case 51: return _("Monster Sidekick");
+            //case 52: return _("Reflective Hide");
+            //case 53: return _("Sleep Walker");
+            //case 54: return _("Super Jump");
+            //case 55: return _("Throw a Tanker");
+            //case 56: return _("Thunder Stomp");
+            //case 57: return _("Unstable DNA");
+            // DISCARD
+            case 101: return _("Apartment Building");
+            case 102: return _("Commuter Train");
+            case 103: return _("Corner Store");
+            case 104: return _("Death From Above");
+            case 105: return _("Energize");
+            case 106: case 107: return _("Evacuation Orders");
+            case 108: return _("Flame Thrower");
+            case 109: return _("Frenzy");
+            case 110: return _("Gas Refinery");
+            case 111: return _("Heal");
+            case 112: return _("High Altitude Bombing");
+            case 113: return _("Jet Fighters");
+            case 114: return _("National Guard");
+            case 115: return _("Nuclear Power Plant");
+            case 116: return _("Skyscraper");
+            case 117: return _("Tank");
+            case 118: return _("Vast Storm");
+            //case 119: return _("Amusement Park");
+            //case 120: return _("Army");
+        }
+        return null;
+    }
 
     function initCards() {
         $cards = [];
         
-        for( $value=1; $value<=48; $value++ ) { // keep
+        for($value=1; $value<=48; $value++) { // keep
             if (in_array($value, $this->TEMP_DONE_KEEP_CARDS)) { // TODO remove filter       
-                // TODO TEMP TO TEST DISCARDS $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
+                $cards[] = ['type' => $value, 'type_arg' => $this->CARD_COST[$value], 'nbr' => 1];
             }
         }
         
-        for( $value=101; $value<=118; $value++ ) { // discard
-            $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
+        for($value=101; $value<=118; $value++) { // discard
+            $cards[] = ['type' => $value, 'type_arg' => $this->CARD_COST[$value], 'nbr' => 1];
         }
-            
-        // $this->cards->createCards( array_slice($cards, count($cards) - 10, 10), 'deck' );
+
         $this->cards->createCards($cards, 'deck');
         $this->cards->shuffle('deck'); 
     }
@@ -38,7 +121,7 @@ trait CardsTrait {
         if (!$dbCard || !array_key_exists('location', $dbCard)) {
             throw new Error('location doesn\'t exists '.json_encode($dbCard));
         }
-        return new Card($dbCard);
+        return new Card($dbCard, $this->CARD_COST);
     }
 
     function getCardsFromDb(array $dbCards) {
@@ -57,7 +140,7 @@ trait CardsTrait {
             case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
             case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
             case 12: 
-                $this->applyGetHealth($playerId, 2); 
+                $this->applyGetHealth($playerId, 2, $type); 
                 break;
             case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
             case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
@@ -86,16 +169,16 @@ trait CardsTrait {
             
             // DISCARD
             case 101: 
-                $this->applyGetPoints($playerId, 3);
+                $this->applyGetPoints($playerId, 3, $type);
                 break;
             case 102:
-                $this->applyGetPoints($playerId, 2);
+                $this->applyGetPoints($playerId, 2, $type);
                 break;
             case 103:
-                $this->applyGetPoints($playerId, 1);
+                $this->applyGetPoints($playerId, 1, $type);
                 break;
             case 104: 
-                $this->applyGetPoints($playerId, 2);
+                $this->applyGetPoints($playerId, 2, $type);
                 if (!$this->inTokyo($playerId)) {
                     // take control of Tokyo
                     if ($this->isTokyoEmpty(false)) {
@@ -110,71 +193,71 @@ trait CardsTrait {
                 }
                 break;
             case 105:
-                $this->applyGetEnergy($playerId, 9);
+                $this->applyGetEnergy($playerId, 9, $type);
                 break;
             case 106: case 107:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyLosePoints($otherPlayerId, 5);
+                    $this->applyLosePoints($otherPlayerId, 5, $type);
                 }
                 break;
             case 108: 
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyDamage($otherPlayerId, 2, $playerId);
+                    $this->applyDamage($otherPlayerId, 2, $playerId, $type);
                 }
                 break;
             case 109: 
                 $this->setGameStateValue('playAgainAfterTurn', 1);
                 break;
             case 110: 
-                $this->applyGetPoints($playerId, 2);
+                $this->applyGetPoints($playerId, 2, $type);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyDamage($otherPlayerId, 3, $playerId);
+                    $this->applyDamage($otherPlayerId, 3, $playerId, $type);
                 }
                 break;
             case 111:
-                $this->applyGetHealth($playerId, 2);
+                $this->applyGetHealth($playerId, 2, $type);
                 break;
             case 112: 
                 $playersIds = $this->getPlayersIds();
                 foreach ($playersIds as $pId) {
-                    $this->applyDamage($pId, 3, $playerId);
+                    $this->applyDamage($pId, 3, $playerId, $type);
                 }
                 break;
             case 113: 
-                $this->applyGetPoints($playerId, 5);
-                $this->applyDamage($playerId, 4, $playerId);
+                $this->applyGetPoints($playerId, 5, $type);
+                $this->applyDamage($playerId, 4, $playerId, $type);
                 break;
             case 114:
-                $this->applyGetPoints($playerId, 2);
-                $this->applyDamage($playerId, 2, $playerId);
+                $this->applyGetPoints($playerId, 2, $type);
+                $this->applyDamage($playerId, 2, $playerId, $type);
                 break;
             case 115:
-                $this->applyGetPoints($playerId, 2);
-                $this->applyGetHealth($playerId, 3);
+                $this->applyGetPoints($playerId, 2, $type);
+                $this->applyGetHealth($playerId, 3, $type);
                 break;
             case 116:
-                $this->applyGetPoints($playerId, 4);
+                $this->applyGetPoints($playerId, 4, $type);
                 break;
             case 117:
-                $this->applyGetPoints($playerId, 4);
-                $this->applyDamage($playerId, 3, $playerId);
+                $this->applyGetPoints($playerId, 4, $type);
+                $this->applyDamage($playerId, 3, $playerId, $type);
                 break;
             case 118: 
-                $this->applyGetPoints($playerId, 2);
+                $this->applyGetPoints($playerId, 2, $type);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
                     $energy = $this->getPlayerEnergy($otherPlayerId);
                     $lostEnergy = floor($energy / 2);
-                    $this->applyLoseEnergy($otherPlayerId, $lostEnergy);
+                    $this->applyLoseEnergy($otherPlayerId, $lostEnergy, $type);
                 }
                 break;
             case 119:
                 $count = $this->cards->countCardInLocation('hand', $player_id);
-                $this->applyGetPoints($playerId, $count);
-                $this->applyDamage($playerId, $count, $playerId);
+                $this->applyGetPoints($playerId, $count, $type);
+                $this->applyDamage($playerId, $count, $playerId, $type);
                 
                 break;
             case 120:
@@ -232,7 +315,7 @@ trait CardsTrait {
         $energyOnBatteryMonster = intval(self::getGameStateValue('energyOnBatteryMonster')) - 2;
         self::setGameStateValue('energyOnBatteryMonster', $energyOnBatteryMonster);
 
-        $this->applyGetEnergyIgnoreCards($playerId, 2);
+        $this->applyGetEnergyIgnoreCards($playerId, 2, 28);
 
         if ($energyOnBatteryMonster <= 0) {
             $card = $this->getCardFromDb($this->cards->getCardsOfType(28)[0]);
@@ -269,7 +352,7 @@ trait CardsTrait {
         // media friendly
         if ($this->hasCardByType($playerId, 9)) {
             // TOCHECK can it apply on itself ? considered No
-            $this->applyGetPoints($playerId, 1);
+            $this->applyGetPoints($playerId, 1, 9);
         }
 
         $this->cards->moveCard($id, 'hand', $playerId);

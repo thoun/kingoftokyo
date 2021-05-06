@@ -51,7 +51,7 @@ trait DicesTrait {
                 $points += 2;
             }
 
-            $this->applyGetPoints($playerId, $points, true);
+            $this->applyGetPoints($playerId, $points, -1);
 
             self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${diceValue} dices'), [
                 'playerId' => $playerId,
@@ -73,7 +73,7 @@ trait DicesTrait {
             $health = $this->getPlayerHealth($playerId);
             $maxHealth = $this->getPlayerMaxHealth($playerId);
             if ($health < $maxHealth) {
-                $this->applyGetHealth($playerId, $diceCount, true);
+                $this->applyGetHealth($playerId, $diceCount, -1);
                 $newHealth = $this->getPlayerHealth($playerId);
 
                 self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} health'), [
@@ -87,7 +87,7 @@ trait DicesTrait {
     }
 
     function resolveEnergyDices(int $playerId, int $diceCount) {
-        $this->applyGetEnergy($playerId, $diceCount, true);
+        $this->applyGetEnergy($playerId, $diceCount, -1);
 
         self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cubes'), [
             'playerId' => $playerId,
@@ -121,7 +121,7 @@ trait DicesTrait {
         // Alpha Monster
         if ($this->hasCardByType($playerId, 3)) {
             // TOCHECK does Alpha Monster applies after other cards adding Smashes ? considered Yes
-            $this->applyGetPoints($playerId, 1);
+            $this->applyGetPoints($playerId, 1, 3);
         }
     }
 
@@ -217,7 +217,7 @@ trait DicesTrait {
 
         // detritivore
         if ($this->hasCardByType($playerId, 30) && $diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1) {
-            $this->applyGetPoints($playerId, 2);
+            $this->applyGetPoints($playerId, 2, 30);
         }
 
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {

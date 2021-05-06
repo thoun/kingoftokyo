@@ -76,7 +76,7 @@ trait PlayerTrait {
                 $incScore++;
             }
 
-            $this->applyGetPointsIgnoreCards($playerId, $incScore, true);
+            $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
             self::notifyAllPlayers('points', _('${player_name} starts turn in Tokyo and wins ${deltaPoints} points'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -123,24 +123,24 @@ trait PlayerTrait {
         // TOCHECK is it applied before other end of turn monsters (it may change the fewest Stars) ? considered Yes
         // TOCHECK is it applied if equality in fewest Star ? considered Yes
         if ($this->hasCardByType($playerId, 39) && $this->isFewestStars($playerId)) {
-            $this->applyGetPoints($playerId, 1);
+            $this->applyGetPoints($playerId, 1, 39);
         }
 
         // energy hoarder
         if ($this->hasCardByType($playerId, 11)) {
             $playerEnergy = $this->getPlayerEnergy($playerId);
             $points = floor($playerEnergy / 6);
-            $this->applyGetPoints($playerId, $points);
+            $this->applyGetPoints($playerId, $points, 11);
         }
 
         // herbivore
         if ($this->hasCardByType($playerId, 21) && intval(self::getGameStateValue('damageDoneByActivePlayer')) == 0) {
-            $this->applyGetPoints($playerId, 1);
+            $this->applyGetPoints($playerId, 1, 21);
         }
 
         // solar powered
         if ($this->hasCardByType($playerId, 42) && $this->getPlayerEnergy($playerId) == 0) {
-            $this->applyGetEnergy($playerId, 1);
+            $this->applyGetEnergy($playerId, 1, 42);
         }
 
         // remove discard cards
