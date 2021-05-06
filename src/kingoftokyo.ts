@@ -115,10 +115,9 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringEndTurn() {
-        this.playerTables[(this as any).player_id].removeDiscardCards();
-        if ((this as any).isCurrentPlayerActive()) {
-            this.tableManager.placePlayerTable(); // adapt to removed card
-        }
+        // clean discard cards
+        this.playerTables.forEach(playerTable => playerTable.removeDiscardCards());
+        this.tableManager.placePlayerTable(); // adapt to removed card
     }
 
     public onLeavingState(stateName: string) {
@@ -469,16 +468,18 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
-    /*public format_string_recursive(log: string, args: any) {
+    public format_string_recursive(log: string, args: any) {
         try {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
                 
-
+                if (args.card_name && args.card_name[0] != '<') {
+                    args.card_name = `<strong>${args.card_name}</strong>`;
+                }
             }
         } catch (e) {
             console.error(log,args,"Exception thrown", e.stack);
         }
         return (this as any).inherited(arguments);
-    }*/
+    }
 }

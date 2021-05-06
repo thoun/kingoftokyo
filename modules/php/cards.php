@@ -102,12 +102,12 @@ trait CardsTrait {
         
         for($value=1; $value<=48; $value++) { // keep
             if (in_array($value, $this->TEMP_DONE_KEEP_CARDS)) { // TODO remove filter       
-                $cards[] = ['type' => $value, 'type_arg' => $this->CARD_COST[$value], 'nbr' => 1];
+                $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
             }
         }
         
         for($value=101; $value<=118; $value++) { // discard
-            $cards[] = ['type' => $value, 'type_arg' => $this->CARD_COST[$value], 'nbr' => 1];
+            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
         }
 
         $this->cards->createCards($cards, 'deck');
@@ -121,7 +121,7 @@ trait CardsTrait {
         if (!$dbCard || !array_key_exists('location', $dbCard)) {
             throw new Error('location doesn\'t exists '.json_encode($dbCard));
         }
-        return new Card($dbCard, $this->CARD_COST);
+        return new Card($dbCard);
     }
 
     function getCardsFromDb(array $dbCards) {
@@ -276,10 +276,16 @@ trait CardsTrait {
         return $extraHead;
     }
 
-    function canBuyCard($playerId, $cardCost) {
+    function getCardCost($playerId, $cardType) {
+        $cardCost = $this->CARD_COST[$cardType];
+
         // alien origin
         $effectiveCost = $this->hasCardByType($playerId, 2) ? $cardCost - 1 : $cardCost;
-        return $effectiveCost <= $this->getPlayerEnergy($playerId);
+        return $effectiveCost;
+    }
+
+    function canBuyCard($playerId, $cost) {
+        return $cost <= $this->getPlayerEnergy($playerId);
     }
 
     function applyItHasAChild($playerId) {
@@ -342,11 +348,11 @@ trait CardsTrait {
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
-        if (!$this->canBuyCard($playerId, $card->cost)) {
+        $cost = $this->getCardCost($playerId, $card->type);
+        if (!$this->canBuyCard($playerId, $cost)) {
             throw new \Error('Not enough energy');
         }
 
-        $cost = $card->cost;
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         // media friendly
@@ -417,7 +423,7 @@ trait CardsTrait {
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         
-        $disabledCards = array_values(array_filter($cards, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $card->cost); }));
+        $disabledCards = array_values(array_filter($cards, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
         $disabledIds = array_map(function ($card) { return $card->id; }, $disabledCards);
     
         // return values:

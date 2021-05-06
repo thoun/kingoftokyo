@@ -223,7 +223,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_points} point with card ${card_name}');
+            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_points} point with ${card_name}');
             self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -240,7 +240,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_points} point with card ${card_name}');
+            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_points} point with ${card_name}');
             self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -262,7 +262,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_health} health with card ${card_name}');
+            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_health} health with ${card_name}');
             self::notifyAllPlayers('health','', [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -275,7 +275,7 @@ trait UtilTrait {
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType) {
         // Armor plating
-        if ($this->hasCardByType($playerId, 4) && $points == 1) {
+        if ($this->hasCardByType($playerId, 4) && $health == 1) {
             return;
         }
 
@@ -285,7 +285,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_health} health with card ${card_name}');
+            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_health} health with ${card_name}');
             self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -314,14 +314,14 @@ trait UtilTrait {
         // friend of children
         $energy = $this->hasCardByType($playerId, 17) ? $pEnergy + 1 : $pEnergy;
 
-        $this->applyGetEnergyIgnoreCards($playerId, $energy, $silent);
+        $this->applyGetEnergyIgnoreCards($playerId, $energy, $cardType);
     }
 
     function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_energy} energy with card ${card_name}');
+            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_energy} energy with ${card_name}');
             self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -338,7 +338,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_energy} energy with card ${card_name}');
+            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_energy} energy with ${card_name}');
             self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),

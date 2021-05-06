@@ -89,7 +89,7 @@ trait DicesTrait {
     function resolveEnergyDices(int $playerId, int $diceCount) {
         $this->applyGetEnergy($playerId, $diceCount, -1);
 
-        self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cubes'), [
+        self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cube'), [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'deltaEnergy' => $diceCount,
@@ -108,7 +108,7 @@ trait DicesTrait {
 
         $eliminatedPlayersIds = [];
         foreach($smashedPlayersIds as $smashedPlayerId) {
-            $this->applyDamage($smashedPlayerId, $diceCount, $playerId);
+            $this->applyDamage($smashedPlayerId, $diceCount, $playerId, 0);
         }
 
         self::notifyAllPlayers("resolveSmashDice", $message, [

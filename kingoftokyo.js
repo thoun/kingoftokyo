@@ -752,10 +752,9 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
-        this.playerTables[this.player_id].removeDiscardCards();
-        if (this.isCurrentPlayerActive()) {
-            this.tableManager.placePlayerTable(); // adapt to removed card
-        }
+        // clean discard cards
+        this.playerTables.forEach(function (playerTable) { return playerTable.removeDiscardCards(); });
+        this.tableManager.placePlayerTable(); // adapt to removed card
     };
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
@@ -1033,6 +1032,22 @@ var KingOfTokyo = /** @class */ (function () {
         dojo.place("<div class=\"icon dead\"></div>", "player_board_" + playerId);
         this.playerTables[playerId].eliminatePlayer();
         this.tableManager.placePlayerTable(); // because all player's card were removed
+    };
+    /* This enable to inject translatable styled things to logs or action bar */
+    /* @Override */
+    KingOfTokyo.prototype.format_string_recursive = function (log, args) {
+        try {
+            if (log && args && !args.processed) {
+                // Representation of the color of a card
+                if (args.card_name && args.card_name[0] != '<') {
+                    args.card_name = "<strong>" + args.card_name + "</strong>";
+                }
+            }
+        }
+        catch (e) {
+            console.error(log, args, "Exception thrown", e.stack);
+        }
+        return this.inherited(arguments);
     };
     return KingOfTokyo;
 }());
