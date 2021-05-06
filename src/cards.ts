@@ -7,7 +7,7 @@ class Cards {
     public setupCards(stocks: Stock[]) {
 
         stocks.forEach(stock => {
-            const keepcardsurl = `${g_gamethemeurl}img/cards0.jpg`;
+            const keepcardsurl = `${g_gamethemeurl}img/keep-cards.jpg`;
             for(let id=1; id<=57; id++) {  // keep
                 stock.addItemType(id, id, keepcardsurl, id);
             }

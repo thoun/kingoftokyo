@@ -401,7 +401,7 @@
   color: white;
   transform: rotate(10deg);
   font-family: "goodgirl";
-  width: 980px;
+  width: 98px;
   text-align: center;
 }
 .stockitem .name-wrapper .outline {
@@ -419,9 +419,9 @@
 }
 .stockitem .type-wrapper {
   position: absolute;
-  top: 140px;
+  top: 142px;
   left: 0px;
-  font-size: 10pt;
+  font-size: 9pt;
   color: white;
   transform: rotate(-10deg);
   font-family: "goodgirl";

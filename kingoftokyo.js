@@ -38,7 +38,7 @@ var Cards = /** @class */ (function () {
     }
     Cards.prototype.setupCards = function (stocks) {
         stocks.forEach(function (stock) {
-            var keepcardsurl = g_gamethemeurl + "img/cards0.jpg";
+            var keepcardsurl = g_gamethemeurl + "img/keep-cards.jpg";
             for (var id = 1; id <= 57; id++) { // keep
                 stock.addItemType(id, id, keepcardsurl, id);
             }
