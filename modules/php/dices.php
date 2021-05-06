@@ -249,6 +249,7 @@ trait DicesTrait {
         if ($endGame) {
             $this->gamestate->nextState('endGame');
         } else {
+            $smashTokyo = $diceCounts[6] >= 1 && !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
             $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
         }
     }

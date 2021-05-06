@@ -211,6 +211,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${(player as any).monster}"></div>`, `player_board_${player.id}`);
 
+            if ((player as any).location > 0) {
+                dojo.addClass(`overall_player_board_${playerId}`, 'intokyo');
+            }
             if (player.eliminated) {
                 setTimeout(() => this.eliminatePlayer(playerId), 200);
             }
@@ -220,8 +223,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
-        this.getOrderedPlayers().forEach((player, index) =>
-            this.playerTables[Number(player.id)] = new PlayerTable(this, player, index, gamedatas.playersCards[Number(player.id)])
+        this.getOrderedPlayers().forEach(player =>
+            this.playerTables[Number(player.id)] = new PlayerTable(this, player, gamedatas.playersCards[Number(player.id)])
         );
     }
 
@@ -387,17 +390,20 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {
-        this.setPoints(notif.args.playerId, 0);
-        this.eliminatePlayer(notif.args.playerId);
+        const playerId = Number(notif.args.who_quits);
+        this.setPoints(playerId, 0);
+        this.eliminatePlayer(playerId);
     }
 
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
         this.playerTables[notif.args.playerId].leaveTokyo();
+        dojo.removeClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
+        dojo.addClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
     }
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
@@ -456,10 +462,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         document.getElementById(`overall_player_board_${playerId}`).classList.add('eliminated-player');
         dojo.place(`<div class="icon dead"></div>`, `player_board_${playerId}`);
 
-        this.playerTables[playerId].removeAllCards();
-        this.tableManager.placePlayerTable();
+        this.playerTables[playerId].eliminatePlayer();
+        this.tableManager.placePlayerTable(); // because all player's card were removed
 
-        (this as any).fadeOutAndDestroy(`player-board-monster-figure-${playerId}`);
     }
 
     /* This enable to inject translatable styled things to logs or action bar */

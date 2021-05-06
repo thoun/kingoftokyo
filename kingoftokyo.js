@@ -341,15 +341,14 @@ var log = isDebug ? console.log.bind(window.console) : function () { };
 var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, order, cards) {
+    function PlayerTable(game, player, cards) {
         var _this = this;
         this.game = game;
         this.player = player;
-        this.order = order;
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div class=\"player-name\" style=\"color: #" + player.color + "\">" + player.name + "</div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -380,9 +379,6 @@ var PlayerTable = /** @class */ (function () {
         var discardCardsIds = this.cards.getAllItems().filter(function (item) { return item.type >= 100; }).map(function (item) { return Number(item.id); });
         discardCardsIds.forEach(function (id) { return _this.cards.removeFromStockById('' + id); });
     };
-    PlayerTable.prototype.removeAllCards = function () {
-        this.cards.removeAll();
-    };
     PlayerTable.prototype.removeCards = function (cards) {
         var _this = this;
         var cardsIds = cards.map(function (card) { return card.id; });
@@ -393,6 +389,11 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setHealth = function (health) {
         document.getElementById("red-wheel-" + this.playerId).style.transform = "rotate(" + HEALTH_DEG[health] + "deg)";
+    };
+    PlayerTable.prototype.eliminatePlayer = function () {
+        this.cards.removeAll();
+        this.game.fadeOutAndDestroy("player-board-monster-figure-" + this.playerId);
+        dojo.addClass("player-table-" + this.playerId, 'eliminated');
     };
     return PlayerTable;
 }());
@@ -821,6 +822,9 @@ var KingOfTokyo = /** @class */ (function () {
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
             dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"></div>", "player_board_" + player.id);
+            if (player.location > 0) {
+                dojo.addClass("overall_player_board_" + playerId, 'intokyo');
+            }
             if (player.eliminated) {
                 setTimeout(function () { return _this.eliminatePlayer(playerId); }, 200);
             }
@@ -829,8 +833,8 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
-        this.getOrderedPlayers().forEach(function (player, index) {
-            return _this.playerTables[Number(player.id)] = new PlayerTable(_this, player, index, gamedatas.playersCards[Number(player.id)]);
+        this.getOrderedPlayers().forEach(function (player) {
+            return _this.playerTables[Number(player.id)] = new PlayerTable(_this, player, gamedatas.playersCards[Number(player.id)]);
         });
     };
     KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
@@ -971,15 +975,18 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.notif_playerEliminated = function (notif) {
-        this.setPoints(notif.args.playerId, 0);
-        this.eliminatePlayer(notif.args.playerId);
+        var playerId = Number(notif.args.who_quits);
+        this.setPoints(playerId, 0);
+        this.eliminatePlayer(playerId);
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (notif) {
         this.playerTables[notif.args.playerId].leaveTokyo();
+        dojo.removeClass("overall_player_board_" + notif.args.playerId, 'intokyo');
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
+        dojo.addClass("overall_player_board_" + notif.args.playerId, 'intokyo');
     };
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var card = notif.args.card;
@@ -1024,9 +1031,8 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.players[playerId].eliminated = 1;
         document.getElementById("overall_player_board_" + playerId).classList.add('eliminated-player');
         dojo.place("<div class=\"icon dead\"></div>", "player_board_" + playerId);
-        this.playerTables[playerId].removeAllCards();
-        this.tableManager.placePlayerTable();
-        this.fadeOutAndDestroy("player-board-monster-figure-" + playerId);
+        this.playerTables[playerId].eliminatePlayer();
+        this.tableManager.placePlayerTable(); // because all player's card were removed
     };
     return KingOfTokyo;
 }());

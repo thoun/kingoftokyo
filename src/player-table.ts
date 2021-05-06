@@ -12,12 +12,12 @@ class PlayerTable {
 
     public cards: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: Player, private order: number, cards: Card[]) {
+    constructor(private game: KingOfTokyoGame, private player: Player, cards: Card[]) {
         this.playerId = Number(player.id);
         this.playerNo = Number((player as any).player_no);
         this.monster = Number((player as any).monster);
         dojo.place(`
-        <div id="player-table-${player.id}" class="player-table">
+        <div id="player-table-${player.id}" class="player-table ${Number(player.eliminated) > 0 ? 'eliminated' : ''}">
             <div class="player-name" style="color: #${player.color}">${player.name}</div> 
             <div class="monster-board-wrapper">
                 <div class="blue wheel" id="blue-wheel-${player.id}"></div>
@@ -68,10 +68,6 @@ class PlayerTable {
         discardCardsIds.forEach(id => this.cards.removeFromStockById(''+id));
     }
 
-    public removeAllCards() {
-        this.cards.removeAll();
-    }
-
     public removeCards(cards: Card[]) {
         const cardsIds = cards.map(card => card.id);
         cardsIds.forEach(id => this.cards.removeFromStockById(''+id));
@@ -83,5 +79,11 @@ class PlayerTable {
 
     public setHealth(health: number) {
         document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${HEALTH_DEG[health]}deg)`;
+    }
+
+    public eliminatePlayer() {
+        this.cards.removeAll();
+        (this.game as any).fadeOutAndDestroy(`player-board-monster-figure-${this.playerId}`);
+        dojo.addClass(`player-table-${this.playerId}`, 'eliminated');
     }
 }

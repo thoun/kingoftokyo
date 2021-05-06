@@ -18,7 +18,7 @@ trait CardsTrait {
         
         for( $value=1; $value<=48; $value++ ) { // keep
             if (in_array($value, $this->TEMP_DONE_KEEP_CARDS)) { // TODO remove filter       
-                $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
+                // TODO TEMP TO TEST DISCARDS $cards[] = ['type' => $value, 'type_arg' => $this->cardsCosts[$value], 'nbr' => 1];
             }
         }
         

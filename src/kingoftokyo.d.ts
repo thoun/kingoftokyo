@@ -76,7 +76,7 @@ interface NotifResolveSmashDiceArgs extends NotifResolveArgs {
 }
 
 interface NotifPlayerEliminatedArgs {
-    playerId: number;
+    who_quits: number;
     player_name: string;
 }
 

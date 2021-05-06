@@ -1,4 +1,8 @@
 .player-board {
+  &.intokyo {
+    box-shadow: 0 0 3px 3px #ffea0a;
+  }
+  
   &.eliminated-player {
     background-color: #b9b9b9;
 

@@ -84,6 +84,21 @@ trait UtilTrait {
         ]);
     }
 
+    function moveFromTokyoBayToCity($playerId) {
+        $location = 1;
+
+        self::DbQuery("UPDATE player SET player_location =  $location where `player_id` = $playerId");
+
+        $locationName = _('Tokyo City');
+        self::notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} !'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'location' => $location,
+            'locationName' => $locationName,
+            'points' => $this->getPlayerScore($playerId),
+        ]);
+    }
+
     function inTokyo(int $playerId) {
         $location = intval(self::getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
         return $location > 0;
@@ -100,6 +115,11 @@ trait UtilTrait {
 
     function getPlayerIdInTokyoCity() {
         $sql = "SELECT player_id FROM player WHERE player_location = 1 AND player_eliminated = 0 ORDER BY player_no";
+        return intval(self::getUniqueValueFromDB($sql));
+    }
+
+    function getPlayerIdInTokyoBay() {
+        $sql = "SELECT player_id FROM player WHERE player_location = 2 AND player_eliminated = 0 ORDER BY player_no";
         return intval(self::getUniqueValueFromDB($sql));
     }
 
@@ -165,67 +185,78 @@ trait UtilTrait {
     function eliminateAPlayer(object $player) { // return $endGame
         self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0 where `player_id` = $player->id");
 
+        /* no need for notif, framework does it
         self::notifyAllPlayers("playerEliminated", clienttranslate('${player_name} is eliminated !'), [
             'playerId' => $player->id,
             'player_name' => $player->name,
-        ]);
+        ]);*/
 
         $playersBeforeElimination = $this->getRemainingPlayers();
 
-        self::eliminatePlayer($playerId);
+        self::eliminatePlayer($player->id);
 
-        if ($this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true)) {
-            // TODO move from bay to tokyo
-        }
+        if ($playersBeforeElimination == 5) { // 5 players to 4, clear Tokyo Bay
+            if ($this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true)) {
+                $this->moveFromTokyoBayToCity($this->getPlayerIdInTokyoBay());
+            }
 
-        if (!$this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true) && $playersBeforeElimination == 5) {
-            // TODO move from bay to outside
+            if (!$this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true) && $playersBeforeElimination == 5) {
+                $this->leaveTokyo($this->getPlayerIdInTokyoBay());
+            }
         }
 
         return $this->getRemainingPlayers() <= 1;
     }
 
-    function applyGetPoints($playerId, $points, $silent = false) {
+    function applyGetPoints(int $playerId, int $points, bool $silent = false) {
         $this->applyGetPointsIgnoreCards($playerId, $points, $silent);
     }
 
-    function applyGetPointsIgnoreCards($playerId, $points, $silent = false) {
+    function applyGetPointsIgnoreCards(int $playerId, int $points, bool $silent = false) {
         $maxPoints = 20;
-        self::DbQuery("UPDATE player SET `player_score` = LEAST(`player_score` + $points, $maxPoints) where `player_id` = $playerId");
+
+        $actualScore = $this->getPlayerScore($playerId);
+        $newScore = min($actualScore + $points, $maxPoints);
+        self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if (!$silent) {
             self::notifyAllPlayers('points','', [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
-                'points' => $this->getPlayerScore($playerId),
+                'points' => $newScore,
             ]);
         }
     }
 
-    function applyLosePoints($playerId, $points, $silent = false) {
-        self::DbQuery("UPDATE player SET `player_score` = GREATEST(`player_score` - $points, 0) where `player_id` = $playerId");
+    function applyLosePoints(int $playerId, int $points, bool $silent = false) {
+        $actualScore = $this->getPlayerScore($playerId);
+        $newScore = max($actualScore - $points, 0);
+        self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if (!$silent) {
             self::notifyAllPlayers('points','', [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
-                'points' => $this->getPlayerScore($playerId),
+                'points' => $newScore,
             ]);
         }
     }
 
-    function applyGetHealth($playerId, $phealth, $silent = false) {
+    function applyGetHealth(int $playerId, int $phealth, bool $silent = false) {
         // regeneration
         $health = $this->hasCardByType($playerId, 38) ? $phealth + 1 : $phealth;
 
         $maxHealth = $this->getPlayerMaxHealth($playerId);
-        self::DbQuery("UPDATE player SET `player_health` = LEAST(`player_health` + $health, $maxHealth) where `player_id` = $playerId");
+
+        $actualHealth = $this->getPlayerHealth($playerId);
+        $newHealth = min($actualHealth + $health, $maxHealth);
+        self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if (!$silent) {
             self::notifyAllPlayers('health','', [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
-                'health' => $this->getPlayerHealth($playerId),
+                'health' => $newHealth,
             ]);
         }
     }
@@ -236,13 +267,16 @@ trait UtilTrait {
             return;
         }
 
-        self::DbQuery("UPDATE player SET `player_health` = GREATEST(`player_health` - $health, 0) where `player_id` = $playerId");
+        $actualHealth = $this->getPlayerHealth($playerId);
+        $newHealth = max($actualHealth - $health, 0);
+
+        self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if (!$silent) {
             self::notifyAllPlayers('health','', [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
-                'health' => $this->getPlayerHealth($playerId),
+                'health' => $newHealth,
             ]);
         }
 
@@ -261,14 +295,14 @@ trait UtilTrait {
         }
     }
 
-    function applyGetEnergy($playerId, $pEnergy, $silent = false) {
+    function applyGetEnergy(int $playerId, int $pEnergy, bool $silent = false) {
         // friend of children
         $energy = $this->hasCardByType($playerId, 17) ? $pEnergy + 1 : $pEnergy;
 
         $this->applyGetEnergyIgnoreCards($playerId, $energy, $silent);
     }
 
-    function applyGetEnergyIgnoreCards($playerId, $energy, $silent = false) {
+    function applyGetEnergyIgnoreCards(int $playerId, int $energy, $silent = false) {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
         if (!$silent) {
@@ -280,14 +314,16 @@ trait UtilTrait {
         }
     }
 
-    function applyLoseEnergy($playerId, $energy, $silent = false) {
-        self::DbQuery("UPDATE player SET `player_energy` = GREATEST(`player_energy` - $energy, 0) where `player_id` = $playerId");
+    function applyLoseEnergy(int $playerId, int $energy, bool $silent = false) {
+        $actualEnergy = $this->getPlayerEnergy($playerId);
+        $newEnergy = max($actualEnergy - $energy, 0);
+        self::DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
 
         if (!$silent) {
             self::notifyAllPlayers('energy','', [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
-                'energy' => $this->getPlayerEnergy($playerId),
+                'energy' => $newEnergy,
             ]);
         }
     }
