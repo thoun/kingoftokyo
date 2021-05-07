@@ -100,7 +100,7 @@ trait CardsTrait {
     function initCards() {
         $cards = [];
         
-        for($value=1; $value<=48 && $value<13; $value++) { // keep
+        for($value=1; $value<=48; $value++) { // keep
             if (in_array($value, $this->TEMP_DONE_KEEP_CARDS)) { // TODO remove filter       
                 $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
             }

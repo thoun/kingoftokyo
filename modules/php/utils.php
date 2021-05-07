@@ -338,12 +338,14 @@ trait UtilTrait {
         return $newHealth;
     }
 
-    function applyGetEnergy(int $playerId, int $pEnergy, int $cardType) {
+    function applyGetEnergy(int $playerId, int $energy, int $cardType) {
+        $this->applyGetEnergyIgnoreCards($playerId, $energy, $cardType);
+
         // friend of children
         $countFriendOfChildren = $this->countCardOfType($playerId, 17);
-        $energy = $pEnergy + $countFriendOfChildren;
-
-        $this->applyGetEnergyIgnoreCards($playerId, $energy, $cardType);
+        if ($countFriendOfChildren > 0) {
+            $this->applyGetEnergyIgnoreCards($playerId, $countFriendOfChildren, 17);
+        }
     }
 
     function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
