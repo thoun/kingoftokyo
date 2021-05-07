@@ -962,16 +962,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.resolveEnergyDices(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveSmashDice = function (notif) {
-        var _this = this;
-        notif.args.smashedPlayersIds.forEach(function (playerId) {
-            var _a;
-            var health = (_a = _this.healthCounters[playerId]) === null || _a === void 0 ? void 0 : _a.getValue();
-            if (health) {
-                var newHealth = Math.max(0, health - notif.args.number);
-                _this.setHealth(notif.args.playerId, newHealth);
-            }
-            _this.diceManager.resolveSmashDices(notif.args);
-        });
+        this.diceManager.resolveSmashDices(notif.args);
     };
     KingOfTokyo.prototype.notif_playerEliminated = function (notif) {
         var playerId = Number(notif.args.who_quits);

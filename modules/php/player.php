@@ -61,7 +61,7 @@ trait PlayerTrait {
         // apply monster effects
 
         // battery monster
-        if ($this->hasCardByType($playerId, 28)) {
+        if ($this->countCardOfType($playerId, 28) > 0) { // TODO what if mimick
             $this->applyBatteryMonster($playerId);
         }
 
@@ -72,8 +72,9 @@ trait PlayerTrait {
             $incScore = 2;
 
             // urbavore
-            if ($this->hasCardByType($playerId, 46)) {
-                $incScore++;
+            $countUrbavore = $this->countCardOfType($playerId, 46);
+            if ($countUrbavore > 0) {
+                $incScore += $countUrbavore;
             }
 
             $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
@@ -121,26 +122,30 @@ trait PlayerTrait {
 
         // rooting for the underdog
         // TOCHECK is it applied before other end of turn monsters (it may change the fewest Stars) ? considered Yes
-        // TOCHECK is it applied if equality in fewest Star ? considered Yes
-        if ($this->hasCardByType($playerId, 39) && $this->isFewestStars($playerId)) {
-            $this->applyGetPoints($playerId, 1, 39);
+        // TOCHECK is it applied if equality in fewest Star ? considered Yes -> TODO change to No
+        $countRootingForTheUnderdog = $this->countCardOfType($playerId, 39);
+        if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
+            $this->applyGetPoints($playerId, $countRootingForTheUnderdog, 39);
         }
 
         // energy hoarder
-        if ($this->hasCardByType($playerId, 11)) {
+        $countEnergyHoarder = $this->countCardOfType($playerId, 11);
+        if ($countEnergyHoarder > 0) {
             $playerEnergy = $this->getPlayerEnergy($playerId);
             $points = floor($playerEnergy / 6);
-            $this->applyGetPoints($playerId, $points, 11);
+            $this->applyGetPoints($playerId, $points * $countEnergyHoarder, 11);
         }
 
         // herbivore
-        if ($this->hasCardByType($playerId, 21) && intval(self::getGameStateValue('damageDoneByActivePlayer')) == 0) {
-            $this->applyGetPoints($playerId, 1, 21);
+        $countHerbivore = $this->countCardOfType($playerId, 21);
+        if ($countHerbivore > 0 && intval(self::getGameStateValue('damageDoneByActivePlayer')) == 0) {
+            $this->applyGetPoints($playerId, $countHerbivore, 21);
         }
 
         // solar powered
-        if ($this->hasCardByType($playerId, 42) && $this->getPlayerEnergy($playerId) == 0) {
-            $this->applyGetEnergy($playerId, 1, 42);
+        $countSolarPowered = $this->countCardOfType($playerId, 42);
+        if ($countSolarPowered > 0 && $this->getPlayerEnergy($playerId) == 0) {
+            $this->applyGetEnergy($playerId, $countSolarPowered, 42);
         }
 
         // remove discard cards

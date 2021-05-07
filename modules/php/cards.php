@@ -100,14 +100,14 @@ trait CardsTrait {
     function initCards() {
         $cards = [];
         
-        for($value=1; $value<=48; $value++) { // keep
+        for($value=1; $value<=48 && $value<13; $value++) { // keep
             if (in_array($value, $this->TEMP_DONE_KEEP_CARDS)) { // TODO remove filter       
                 $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
             }
         }
         
         for($value=101; $value<=118; $value++) { // discard
-            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+            //$cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
         }
 
         $this->cards->createCards($cards, 'deck');
@@ -264,24 +264,22 @@ trait CardsTrait {
         }
     }
 
-    function hasCardByType($playerId, $cardType, $includeMimick = true) {
-        return $this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId);
+    function countCardOfType($playerId, $cardType, $includeMimick = true) {
+        return count($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
         // TODO mimick
     }
 
     function countExtraHead($playerId) {
-        $extraHead = 0;
-        if ($this->hasCardByType($playerId, 13)) { $extraHead++; };
-        if ($this->hasCardByType($playerId, 14)) { $extraHead++; };
-        return $extraHead;
+        return $this->countCardOfType($playerId, 13) + $this->countCardOfType($playerId, 14);
     }
 
     function getCardCost($playerId, $cardType) {
         $cardCost = $this->CARD_COST[$cardType];
 
         // alien origin
-        $effectiveCost = $this->hasCardByType($playerId, 2) ? $cardCost - 1 : $cardCost;
-        return $effectiveCost;
+        $countAlienOrigin = $this->countCardOfType($playerId, 2);
+
+        return min($cardCost - $countAlienOrigin, 0);
     }
 
     function canBuyCard($playerId, $cost) {
@@ -356,9 +354,9 @@ trait CardsTrait {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         // media friendly
-        if ($this->hasCardByType($playerId, 9)) {
-            // TOCHECK can it apply on itself ? considered No
-            $this->applyGetPoints($playerId, 1, 9);
+        $countMediaFriendly = $this->countCardOfType($playerId, 9);
+        if ($countMediaFriendly > 0) {
+            $this->applyGetPoints($playerId, $countMediaFriendly, 9);
         }
 
         $this->cards->moveCard($id, 'hand', $playerId);

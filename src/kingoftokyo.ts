@@ -378,14 +378,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
-        notif.args.smashedPlayersIds.forEach(playerId => {            
-            const health = this.healthCounters[playerId]?.getValue();
-            if (health) {
-                const newHealth = Math.max(0, health - notif.args.number);
-                this.setHealth(notif.args.playerId, newHealth);
-            }
-            this.diceManager.resolveSmashDices(notif.args);
-        });
+        this.diceManager.resolveSmashDices(notif.args);
     }
 
     notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {

@@ -101,7 +101,7 @@ class KingOfTokyo extends Table {
 
         // Create dices
         self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
-        self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true)");
+        self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true), (0, true)");
 
         /************ Start the game initialization *****/
 

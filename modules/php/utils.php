@@ -42,7 +42,8 @@ trait UtilTrait {
 
     function getPlayerMaxHealth(int $playerId) {
         // even bigger
-        return $this->hasCardByType($playerId, 12) ? 12 : 10;
+        $countEvenBigger = $this->countCardOfType($playerId, 12);
+        return 10 + (2 * $countEvenBigger);
     }
 
     function getRemainingPlayers() {
@@ -253,8 +254,13 @@ trait UtilTrait {
 
     function applyGetHealth(int $playerId, int $phealth, int $cardType) {
         // regeneration
-        $health = $this->hasCardByType($playerId, 38) ? $phealth + 1 : $phealth;
+        $countRegeneration = $this->countCardOfType($playerId, 38);
+        $health = $phealth + $countRegeneration;
 
+        $this->applyGetHealthIgnoreCards($playerId, $health, $cardType);
+    }
+
+    function applyGetHealthIgnoreCards(int $playerId, int $health, int $cardType) {
         $maxHealth = $this->getPlayerMaxHealth($playerId);
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -275,9 +281,39 @@ trait UtilTrait {
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType) {
         // Armor plating
-        if ($this->hasCardByType($playerId, 4) && $health == 1) {
+        $countArmorPlating = $this->countCardOfType($playerId, 4);
+        if ($countArmorPlating > 0 && $health == 1) {
             return;
         }
+
+        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType);
+
+        if ($newHealth == 0) {
+            // eater of the dead 
+            $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+            foreach($otherPlayersIds as $otherPlayerId) {
+                $countEaterOfTheDead = $this->countCardOfType($otherPlayerId, 10);
+                if ($countEaterOfTheDead > 0) {
+                    $this->applyGetPoints($otherPlayerId, 3 * $countEaterOfTheDead, 10);
+                }
+            }
+        }
+
+        if ($health >= 2) {
+            // we're only making it stronger          
+            $countWereOnlyMakingItStronger = $this->countCardOfType($playerId, 47);
+            if ($countWereOnlyMakingItStronger > 0) {
+                $this->applyGetEnergy($playerId, $countWereOnlyMakingItStronger, 47);
+            }
+        }
+
+        if ($this->countCardOfType($playerId, 23) > 0 && $this->getPlayerHealth($playerId) == 0) {
+            // it has a child
+            $this->applyItHasAChild($playerId);
+        }
+    }
+
+    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType) {
 
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = max($actualHealth - $health, 0);
@@ -295,24 +331,17 @@ trait UtilTrait {
             ]);
         }
 
-        if ($health >= 2 && $this->hasCardByType($playerId, 47)) {
-            // we're only making it stronger
-            $this->applyGetEnergy($playerId, 1, 47);
-        }
-
         if ($damageDealerId == self::getActivePlayerId()) {
             self::setGameStateValue('damageDoneByActivePlayer', 1);
         }
 
-        if ($this->hasCardByType($playerId, 23) && $this->getPlayerHealth($playerId) == 0) {
-            // it has a child
-            $this->applyItHasAChild($playerId);
-        }
+        return $newHealth;
     }
 
     function applyGetEnergy(int $playerId, int $pEnergy, int $cardType) {
         // friend of children
-        $energy = $this->hasCardByType($playerId, 17) ? $pEnergy + 1 : $pEnergy;
+        $countFriendOfChildren = $this->countCardOfType($playerId, 17);
+        $energy = $pEnergy + $countFriendOfChildren;
 
         $this->applyGetEnergyIgnoreCards($playerId, $energy, $cardType);
     }
@@ -350,7 +379,7 @@ trait UtilTrait {
     }
 
     function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`)";
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`)"; // TODO exclude equalitites
         return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 }

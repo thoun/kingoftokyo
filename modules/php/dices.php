@@ -46,9 +46,12 @@ trait DicesTrait {
         if ($diceCount >= 3) {
             $points = $number + $diceCount - 3;
 
-            // gourmet
-            if ($number == 1 && $this->hasCardByType($playerId, 19)) {
-                $points += 2;
+            if ($number == 1) {
+                // gourmet
+                $countGourmet = $this->countCardOfType($playerId, 19);
+                if ($countGourmet > 0) {
+                    $points += 2 * $countGourmet;
+                }
             }
 
             $this->applyGetPoints($playerId, $points, -1);
@@ -119,9 +122,10 @@ trait DicesTrait {
         ]);
 
         // Alpha Monster
-        if ($this->hasCardByType($playerId, 3)) {
+        $countAlphaMonster = $this->countCardOfType($playerId, 3);
+        if ($countAlphaMonster > 0) {
             // TOCHECK does Alpha Monster applies after other cards adding Smashes ? considered Yes
-            $this->applyGetPoints($playerId, 1, 3);
+            $this->applyGetPoints($playerId, $countAlphaMonster, 3);
         }
     }
 
@@ -137,7 +141,6 @@ trait DicesTrait {
     public function rethrowDices(string $dicesIds) {
         $playerId = self::getActivePlayerId();
         self::DbQuery("UPDATE dice SET `locked` = true");
-        self::debug('dicesIds='.$dicesIds.'!');
         self::DbQuery("UPDATE dice SET `locked` = false where `dice_id` IN ($dicesIds)");
         $this->throwDices($playerId);
 
@@ -194,30 +197,43 @@ trait DicesTrait {
         }
 
         // acid attack
-        if ($this->hasCardByType($playerId, 1)) {
-            $diceCounts[6]++;
+        $countAcidAttack = $this->countCardOfType($playerId, 1);
+        if ($countAcidAttack > 0) {
+            $diceCounts[6] += $countAcidAttack;
         }
 
         // poison quills
-        if ($this->hasCardByType($playerId, 34) && $diceCounts[2] >= 3) {
-            $diceCounts[6] += 2;
+        if ($diceCounts[2] >= 3) {
+            $countPoisonQuills = $this->countCardOfType($playerId, 34);
+            if ($countPoisonQuills > 0) {
+                $diceCounts[6] += 2 * $countPoisonQuills;
+            }
         }
 
-        // spiked tail
-        // TOCHECK can it be chained with Acid attack ? Considered yes
-        if ($this->hasCardByType($playerId, 43) && $diceCounts[6] >= 1) {
-            $diceCounts[6]++;
-        }
+        if ($diceCounts[6] >= 1) {
+            // spiked tail
+            // TOCHECK can it be chained with Acid attack ? Considered yes
+            $countSpikedTail = $this->countCardOfType($playerId, 43);
+            if ($countSpikedTail > 0) {
+                $diceCounts[6] += $countSpikedTail;
+            }
 
-        // urbavore
-        // TOCHECK can it be chained with Acid attack ? Considered yes
-        if ($this->hasCardByType($playerId, 46) && $diceCounts[6] >= 1 && $this->inTokyo($playerId)) {
-            $diceCounts[6]++;
+            // urbavore
+            // TOCHECK can it be chained with Acid attack ? Considered yes
+            if ($this->inTokyo($playerId)) {
+                $countUrbavore = $this->countCardOfType($playerId, 46);
+                if ($countUrbavore > 0) {
+                    $diceCounts[6] += $countUrbavore;
+                }
+            }
         }
 
         // detritivore
-        if ($this->hasCardByType($playerId, 30) && $diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1) {
-            $this->applyGetPoints($playerId, 2, 30);
+        if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1) {
+            $countDetritivore = $this->countCardOfType($playerId, 30);
+            if ($countDetritivore > 0) {
+                $this->applyGetPoints($playerId, 2 * $countDetritivore, 30);
+            }
         }
 
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
