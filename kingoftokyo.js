@@ -1033,6 +1033,9 @@ var KingOfTokyo = /** @class */ (function () {
                 if (args.card_name && args.card_name[0] != '<') {
                     args.card_name = "<strong>" + args.card_name + "</strong>";
                 }
+                if (args.dice_value && args.dice_value.indexOf(']') > 0) {
+                    args.dice_value = formatTextIcons(args.dice_value);
+                }
                 log = formatTextIcons(log);
             }
         }

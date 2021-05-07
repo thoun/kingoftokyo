@@ -48,12 +48,13 @@ trait DicesTrait {
 
             $this->applyGetPoints($playerId, $points, -1);
 
-            self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${diceValue} dices'), [
+            self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${dice_value} dices'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'deltaPoints' => $points,
                 'points' => $this->getPlayerScore($playerId),
-                'diceValue' => "[dice$number]",
+                'diceValue' => $number,
+                'dice_value' => "[dice$number]",
             ]);
 
             if ($number == 1) {
