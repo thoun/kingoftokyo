@@ -78,7 +78,7 @@ trait PlayerTrait {
             }
 
             $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
-            self::notifyAllPlayers('points', _('${player_name} starts turn in Tokyo and wins ${deltaPoints} point'), [
+            self::notifyAllPlayers('points', _('${player_name} starts turn in Tokyo and wins ${deltaPoints} [Star]'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'points' => $this->getPlayerScore($playerId),

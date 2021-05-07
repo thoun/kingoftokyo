@@ -469,6 +469,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (args.card_name && args.card_name[0] != '<') {
                     args.card_name = `<strong>${args.card_name}</strong>`;
                 }
+
+                log = formatTextIcons(log);
             }
         } catch (e) {
             console.error(log,args,"Exception thrown", e.stack);

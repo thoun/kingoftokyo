@@ -30,6 +30,19 @@ function moveToAnotherStock(sourceStock, destinationStock, uniqueId, cardId) {
         destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
     }
 }
+function formatTextIcons(rawText) {
+    return rawText
+        .replace(/\[Star\]/ig, '<span class="icon points"></span>')
+        .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
+        .replace(/\[Energy\]/ig, '<span class="icon energy"></span>')
+        .replace(/\[dice1\]/ig, '<span class="dice-icon dice1"></span>')
+        .replace(/\[dice2\]/ig, '<span class="dice-icon dice2"></span>')
+        .replace(/\[dice3\]/ig, '<span class="dice-icon dice3"></span>')
+        .replace(/\[diceHeart\]/ig, '<span class="dice-icon dice4"></span>')
+        .replace(/\[diceEnergy\]/ig, '<span class="dice-icon dice5"></span>')
+        .replace(/\[diceSmash\]/ig, '<span class="dice-icon dice6"></span>')
+        .replace(/\[keep\]/ig, '<span class="card-keep-text"><span class="outline">Keep</span><span class="text">Keep</span></span>');
+}
 var CARD_WIDTH = 132;
 var CARD_HEIGHT = 185;
 var Cards = /** @class */ (function () {
@@ -310,27 +323,14 @@ var Cards = /** @class */ (function () {
         }
         return null;
     };
-    Cards.prototype.formatDescription = function (rawDescription) {
-        return rawDescription
-            .replace(/\[Star\]/ig, '<span class="icon points"></span>')
-            .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
-            .replace(/\[Energy\]/ig, '<span class="icon energy"></span>')
-            .replace(/\[dice1\]/ig, '<span class="dice-icon dice1"></span>')
-            .replace(/\[dice2\]/ig, '<span class="dice-icon dice2"></span>')
-            .replace(/\[dice3\]/ig, '<span class="dice-icon dice3"></span>')
-            .replace(/\[diceHeart\]/ig, '<span class="dice-icon dice4"></span>')
-            .replace(/\[diceEnergy\]/ig, '<span class="dice-icon dice5"></span>')
-            .replace(/\[diceSmash\]/ig, '<span class="dice-icon dice6"></span>')
-            .replace(/\[keep\]/ig, '<span class="card-keep-text"><span class="outline">Keep</span><span class="text">Keep</span></span>');
-    };
     Cards.prototype.getTooltip = function (cardTypeId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': this.getCardCost(cardTypeId) }) + " <span class=\"icon energy\"></span></p>\n            <p>" + this.formatDescription(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': this.getCardCost(cardTypeId) }) + " <span class=\"icon energy\"></span></p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     Cards.prototype.setupNewCard = function (card_div, card_type_id) {
         var type = card_type_id < 100 ? _('Keep') : _('Discard');
         var name = this.getCardName(card_type_id);
-        var description = this.formatDescription(this.getCardDescription(card_type_id));
+        var description = formatTextIcons(this.getCardDescription(card_type_id));
         card_div.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\"><div>" + description + "</div></div>\n        ";
         this.game.addTooltipHtml(card_div.id, this.getTooltip(card_type_id));
     };
@@ -1033,6 +1033,7 @@ var KingOfTokyo = /** @class */ (function () {
                 if (args.card_name && args.card_name[0] != '<') {
                     args.card_name = "<strong>" + args.card_name + "</strong>";
                 }
+                log = formatTextIcons(log);
             }
         }
         catch (e) {

@@ -282,25 +282,11 @@ class Cards {
         return null;
     }
 
-    private formatDescription(rawDescription: string) {
-        return rawDescription
-            .replace(/\[Star\]/ig, '<span class="icon points"></span>')
-            .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
-            .replace(/\[Energy\]/ig, '<span class="icon energy"></span>')
-            .replace(/\[dice1\]/ig, '<span class="dice-icon dice1"></span>')
-            .replace(/\[dice2\]/ig, '<span class="dice-icon dice2"></span>')
-            .replace(/\[dice3\]/ig, '<span class="dice-icon dice3"></span>')
-            .replace(/\[diceHeart\]/ig, '<span class="dice-icon dice4"></span>')
-            .replace(/\[diceEnergy\]/ig, '<span class="dice-icon dice5"></span>')
-            .replace(/\[diceSmash\]/ig, '<span class="dice-icon dice6"></span>')
-            .replace(/\[keep\]/ig, '<span class="card-keep-text"><span class="outline">Keep</span><span class="text">Keep</span></span>');
-    }
-
     private getTooltip(cardTypeId: number) {
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId)}</strong></p>
             <p class="cost">${ dojo.string.substitute(_("Cost : ${cost}"), {'cost': this.getCardCost(cardTypeId)}) } <span class="icon energy"></span></p>
-            <p>${this.formatDescription(this.getCardDescription(cardTypeId))}</p>
+            <p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
         </div>`;
         return tooltip;
     }
@@ -308,7 +294,7 @@ class Cards {
     public setupNewCard(card_div: HTMLDivElement, card_type_id: number) {
         const type = card_type_id < 100 ? _('Keep') : _('Discard');
         const name = this.getCardName(card_type_id);
-        const description = this.formatDescription(this.getCardDescription(card_type_id));
+        const description = formatTextIcons(this.getCardDescription(card_type_id));
         card_div.innerHTML = `<div class="bottom"></div>
         <div class="name-wrapper">
             <div class="outline">${name}</div>

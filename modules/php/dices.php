@@ -46,14 +46,6 @@ trait DicesTrait {
         if ($diceCount >= 3) {
             $points = $number + $diceCount - 3;
 
-            if ($number == 1) {
-                // gourmet
-                $countGourmet = $this->countCardOfType($playerId, 19);
-                if ($countGourmet > 0) {
-                    $points += 2 * $countGourmet;
-                }
-            }
-
             $this->applyGetPoints($playerId, $points, -1);
 
             self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${diceValue} dices'), [
@@ -61,14 +53,22 @@ trait DicesTrait {
                 'player_name' => self::getActivePlayerName(),
                 'deltaPoints' => $points,
                 'points' => $this->getPlayerScore($playerId),
-                'diceValue' => $number,
+                'diceValue' => "[dice$number]",
             ]);
+
+            if ($number == 1) {
+                // gourmet
+                $countGourmet = $this->countCardOfType($playerId, 19);
+                if ($countGourmet > 0) {
+                    $this->applyGetPoints($playerId, 2 * $countGourmet, 19);
+                }
+            }
         }
     }
 
     function resolveHealthDices(int $playerId, int $diceCount) {
         if ($this->inTokyo($playerId)) {
-            self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} wins no health (player in Tokyo)'), [
+            self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} wins no [Heart] (player in Tokyo)'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
             ]);
@@ -79,7 +79,7 @@ trait DicesTrait {
                 $this->applyGetHealth($playerId, $diceCount, -1);
                 $newHealth = $this->getPlayerHealth($playerId);
 
-                self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} health'), [
+                self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} [Heart]'), [
                     'playerId' => $playerId,
                     'player_name' => self::getActivePlayerName(),
                     'health' => $newHealth,
@@ -92,7 +92,7 @@ trait DicesTrait {
     function resolveEnergyDices(int $playerId, int $diceCount) {
         $this->applyGetEnergy($playerId, $diceCount, -1);
 
-        self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} energy cube'), [
+        self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} [Energy]'), [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'deltaEnergy' => $diceCount,
@@ -105,8 +105,8 @@ trait DicesTrait {
         $smashTokyo = !$this->inTokyo($playerId);
 
         $message = $smashTokyo ? 
-            clienttranslate('${player_name} give ${number} smash(es) to players in Tokyo') :
-            clienttranslate('${player_name} give ${number} smash(es) to players outside Tokyo');
+            clienttranslate('${player_name} give ${number} [diceSmash] to players in Tokyo') :
+            clienttranslate('${player_name} give ${number} [diceSmash] to players outside Tokyo');
         $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
 
         $eliminatedPlayersIds = [];

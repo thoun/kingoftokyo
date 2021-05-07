@@ -313,6 +313,13 @@ trait CardsTrait {
             'player_name' => $this->getPlayerName($playerId),
             'health' => $health,
         ]);
+
+        self::notifyAllPlayers('applyItHasAChild', clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'health' => $health,
+            'card_name' => $cardType == 0 ? null : $this->getCardName(23),
+        ]);
     }
 
     function applyBatteryMonster(int $playerId) {
