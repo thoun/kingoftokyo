@@ -37,7 +37,9 @@ trait UtilTrait {
     }
 
     function getThrowNumber(int $playerId) {
-        return 3; // TODO
+        // giant brain
+        $countGiantBrain = $this->countCardOfType($playerId, 18);
+        return 3 + $countGiantBrain;
     }
 
     function getPlayerMaxHealth(int $playerId) {

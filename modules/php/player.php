@@ -71,12 +71,6 @@ trait PlayerTrait {
             // start turn in tokyo
             $incScore = 2;
 
-            // urbavore
-            $countUrbavore = $this->countCardOfType($playerId, 46);
-            if ($countUrbavore > 0) {
-                $incScore += $countUrbavore;
-            }
-
             $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
             self::notifyAllPlayers('points', _('${player_name} starts turn in Tokyo and wins ${deltaPoints} [Star]'), [
                 'playerId' => $playerId,
@@ -84,6 +78,12 @@ trait PlayerTrait {
                 'points' => $this->getPlayerScore($playerId),
                 'deltaPoints' => $incScore,
             ]);
+
+            // urbavore
+            $countUrbavore = $this->countCardOfType($playerId, 46);
+            if ($countUrbavore > 0) {
+                $this->applyGetPoints($playerId, $countUrbavore, 46);
+            }
         }
 
         // throw dices

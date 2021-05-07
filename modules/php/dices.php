@@ -235,6 +235,14 @@ trait DicesTrait {
             if ($countDetritivore > 0) {
                 $this->applyGetPoints($playerId, 2 * $countDetritivore, 30);
             }
+
+            // complete destruction
+            if ($diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dices 1-2-3 check with previous if
+                $countCompleteDestruction = $this->countCardOfType($playerId, 8);
+                if ($countCompleteDestruction > 0) {
+                    $this->applyGetPoints($playerId, 9 * $countCompleteDestruction, 8);
+                }
+            }
         }
 
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {

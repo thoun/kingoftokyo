@@ -35,3 +35,4 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 # TODO
 check all TOCHECK with editor
 Stack notifications for dices + card effects to make them the right order
+Make animations from cards when cards add smashes/energy/health during dice count ?
