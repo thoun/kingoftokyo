@@ -310,6 +310,7 @@ trait UtilTrait {
         if ($this->countCardOfType($playerId, 23) > 0 && $this->getPlayerHealth($playerId) == 0) {
             // it has a child
             $this->applyItHasAChild($playerId);
+            // TODO make notifs for this happen after dice notifs
         }
     }
 

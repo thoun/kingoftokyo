@@ -287,12 +287,13 @@ trait CardsTrait {
     }
 
     function applyItHasAChild($playerId) {
+        $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $this->cards->moveAllCardsInLocation('hand', 'discard', $playerId);        
         self::notifyAllPlayers("removeCards", '', [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $playerName,
             'cards' => $cards,
         ]);
 
@@ -301,7 +302,7 @@ trait CardsTrait {
         self::DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
         self::notifyAllPlayers('points','', [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $playerName,
             'points' => $points,
         ]);
 
@@ -310,16 +311,20 @@ trait CardsTrait {
         self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
         self::notifyAllPlayers('health', '', [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $playerName,
             'health' => $health,
         ]);
 
         self::notifyAllPlayers('applyItHasAChild', clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $playerName,
             'health' => $health,
-            'card_name' => $cardType == 0 ? null : $this->getCardName(23),
+            'card_name' => $this->getCardName(23),
         ]);
+
+        if ($this->inTokyo($playerId)) {
+            $this->leaveTokyo($playerId);
+        }
     }
 
     function applyBatteryMonster(int $playerId) {
