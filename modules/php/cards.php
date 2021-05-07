@@ -279,7 +279,7 @@ trait CardsTrait {
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, 2);
 
-        return min($cardCost - $countAlienOrigin, 0);
+        return max($cardCost - $countAlienOrigin, 0);
     }
 
     function canBuyCard($playerId, $cost) {
