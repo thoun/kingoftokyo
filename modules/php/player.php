@@ -122,7 +122,6 @@ trait PlayerTrait {
 
         // rooting for the underdog
         // TOCHECK is it applied before other end of turn monsters (it may change the fewest Stars) ? considered Yes
-        // TOCHECK is it applied if equality in fewest Star ? considered Yes -> TODO change to No
         $countRootingForTheUnderdog = $this->countCardOfType($playerId, 39);
         if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
             $this->applyGetPoints($playerId, $countRootingForTheUnderdog, 39);

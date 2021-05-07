@@ -252,12 +252,18 @@ trait UtilTrait {
         }
     }
 
-    function applyGetHealth(int $playerId, int $phealth, int $cardType) {
-        // regeneration
-        $countRegeneration = $this->countCardOfType($playerId, 38);
-        $health = $phealth + $countRegeneration;
+    function applyGetHealth(int $playerId, int $health, int $cardType) {
 
         $this->applyGetHealthIgnoreCards($playerId, $health, $cardType);
+        self::debug('[GBA] player wins hearts='.$health.' ==');
+
+        // regeneration
+        $countRegeneration = $this->countCardOfType($playerId, 38);
+        self::debug('[GBA]countRegeneration='.$countRegeneration.', health='.$health.' ==');
+        if ($countRegeneration > 0) {
+            $this->applyGetHealthIgnoreCards($playerId, $countRegeneration, 38);
+            self::debug('[GBA] player wins bonus hearts='.$countRegeneration.' ==');
+        }
     }
 
     function applyGetHealthIgnoreCards(int $playerId, int $health, int $cardType) {
@@ -268,8 +274,9 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if ($cardType >= 0) {
+            self::debug('[GBA] applyGetHealthIgnoreCards cardType='.$cardType.' ==');
             $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_health} [Heart] with ${card_name}');
-            self::notifyAllPlayers('health','', [
+            self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'health' => $newHealth,
@@ -382,7 +389,7 @@ trait UtilTrait {
     }
 
     function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`)"; // TODO exclude equalitites
+        $sql = "SELECT count(*) FROM `player` where `player_id` = 2343492 AND `player_score` = (select min(`player_score`) from `player`) AND (SELECT count(*) FROM `player` where `player_score` = (select min(`player_score`) from `player`)) = 1";
         return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 }

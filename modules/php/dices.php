@@ -84,7 +84,7 @@ trait DicesTrait {
                     'playerId' => $playerId,
                     'player_name' => self::getActivePlayerName(),
                     'health' => $newHealth,
-                    'deltaHealth' => $newHealth - $health,
+                    'deltaHealth' => $diceCount,
                 ]);
             }
         }
