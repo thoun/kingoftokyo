@@ -47,6 +47,14 @@
         self::ajaxResponse();
     }
   	
+    public function buyEnergyDrink() {
+        self::setAjaxMode();
+
+        $this->game->buyEnergyDrink();
+
+        self::ajaxResponse();
+    }
+  	
     public function resolve() {
         self::setAjaxMode();
 

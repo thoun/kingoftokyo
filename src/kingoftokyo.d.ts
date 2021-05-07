@@ -42,6 +42,8 @@ interface EnteringThrowDicesArgs {
     throwNumber: number;
     maxThrowNumber: number;
     inTokyo: boolean;
+    haveEnergyDrink: boolean;
+    playerEnergy: number;
 }
 
 interface EnteringBuyCardArgs {

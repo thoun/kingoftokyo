@@ -109,6 +109,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "rethrow" => ST_PLAYER_THROW_DICES,
             "resolve" => ST_RESOLVE_DICES,
+            "buyEnergyDrink" => ST_PLAYER_THROW_DICES,
             "zombiePass" => ST_NEXT_PLAYER,
         ],
     ],  

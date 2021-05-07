@@ -103,14 +103,23 @@ trait DicesTrait {
 
     
     function resolveSmashDices(int $playerId, int $diceCount) {
-        $smashTokyo = !$this->inTokyo($playerId);
+        // Nova breath
+        $countNovaBreath = $this->countCardOfType($playerId, 29);
 
-        $message = $smashTokyo ? 
-            clienttranslate('${player_name} give ${number} [diceSmash] to players in Tokyo') :
-            clienttranslate('${player_name} give ${number} [diceSmash] to players outside Tokyo');
-        $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
+        $message = null;
+        $smashedPlayersIds = null;
 
-        $eliminatedPlayersIds = [];
+        if ($countNovaBreath) {
+            $message = clienttranslate('${player_name} give ${number} [diceSmash] to all other Monsters');
+            $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
+        } else {
+            $smashTokyo = !$this->inTokyo($playerId);
+            $message = $smashTokyo ? 
+                clienttranslate('${player_name} give ${number} [diceSmash] to Monsters in Tokyo') :
+                clienttranslate('${player_name} give ${number} [diceSmash] to Monsters outside Tokyo');
+            $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
+        }
+
         foreach($smashedPlayersIds as $smashedPlayerId) {
             $this->applyDamage($smashedPlayerId, $diceCount, $playerId, 0);
         }
@@ -179,6 +188,8 @@ trait DicesTrait {
             'maxThrowNumber' => $maxThrowNumber,
             'dices' => $dices,
             'inTokyo' => $this->inTokyo($playerId),
+            'haveEnergyDrink' => $this->countCardOfType($playerId, 45) > 0,
+            'playerEnergy' => $this->getPlayerEnergy($playerId),
         ];
     }
 
@@ -188,6 +199,7 @@ trait DicesTrait {
 
     function stResolveDices() {
         $playerId = self::getActivePlayerId();
+        $playerInTokyo = $this->inTokyo($playerId);
         $dices = $this->getDices($this->getDicesNumber($playerId));
 
         $smashTokyo = false;
@@ -201,6 +213,14 @@ trait DicesTrait {
         $countAcidAttack = $this->countCardOfType($playerId, 1);
         if ($countAcidAttack > 0) {
             $diceCounts[6] += $countAcidAttack;
+        }
+
+        // burrowing
+        if ($playerInTokyo) {
+            $countBurrowing = $this->countCardOfType($playerId, 6);
+            if ($countBurrowing > 0) {
+                $diceCounts[6] += $countBurrowing;
+            }
         }
 
         // poison quills
@@ -221,7 +241,7 @@ trait DicesTrait {
 
             // urbavore
             // TOCHECK can it be chained with Acid attack ? Considered yes
-            if ($this->inTokyo($playerId)) {
+            if ($playerInTokyo) {
                 $countUrbavore = $this->countCardOfType($playerId, 46);
                 if ($countUrbavore > 0) {
                     $diceCounts[6] += $countUrbavore;
@@ -274,7 +294,7 @@ trait DicesTrait {
         if ($endGame) {
             $this->gamestate->nextState('endGame');
         } else {
-            $smashTokyo = $diceCounts[6] >= 1 && !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
+            $smashTokyo = $diceCounts[6] >= 1 && !$playerInTokyo && count($this->getPlayersIdsInTokyo()) > 0;
             $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
         }
     }

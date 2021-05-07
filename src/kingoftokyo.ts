@@ -150,6 +150,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                         (this as any).addActionButton('rethrow_button', _("Rethrow dices") + ` ${tdArgs.throwNumber}/${tdArgs.maxThrowNumber}`, 'onRethrow');
                         dojo.addClass('rethrow_button', 'disabled');
                     }
+                    if (tdArgs.haveEnergyDrink && tdArgs.throwNumber === tdArgs.maxThrowNumber) {
+                        (this as any).addActionButton('buy_energy_drink_button', _("Get extra die Roll") + " ( 1 <span class=\"small icon energy\"></span>)", 'buyEnergyDrink');
+                        this.checkBuyEnergyDrinkState(tdArgs.playerEnergy);
+                    }
                     (this as any).addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
                     break;
                 
@@ -264,6 +268,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('rethrow', {
             dicesIds: dicesIds.join(',')
         });
+    }
+
+    public buyEnergyDrink() {
+        this.takeAction('buyEnergyDrink');
     }
 
     public resolveDices() {
@@ -447,6 +455,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     
     private setEnergy(playerId: number, energy: number) {
         this.energyCounters[playerId].toValue(energy);
+        this.checkBuyEnergyDrinkState(this.energyCounters[(this as any).player_id].getValue()); // disable button if energy gets down to 0
+    }
+
+    private checkBuyEnergyDrinkState(energy: number) {
+        if (document.getElementById('buy_energy_drink_button')) {
+            dojo.toggleClass('buy_energy_drink_button', 'disabled', energy < 1);
+        }
     }
 
     private eliminatePlayer(playerId: number) {

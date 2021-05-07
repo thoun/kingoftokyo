@@ -33,6 +33,12 @@ trait PlayerTrait {
         $playerId = self::getCurrentPlayerId();
 
         $this->leaveTokyo($playerId);
+        
+        // burrowing
+        $countBurrowing = $this->countCardOfType($playerId, 6);
+        if ($countBurrowing > 0) {
+            self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
+        }
     
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
@@ -57,6 +63,7 @@ trait PlayerTrait {
         $playerId = self::getActivePlayerId();
 
         self::setGameStateValue('damageDoneByActivePlayer', 0);
+        self::setGameStateValue('energyDrinks', 0);
 
         // apply monster effects
 
@@ -102,13 +109,23 @@ trait PlayerTrait {
 
     function stEnterTokyo() {
         $playerId = self::getActivePlayerId();
-        if ($this->isTokyoEmpty(false)) {
-            $this->moveToTokyo($playerId, false);
-        } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
-            $this->moveToTokyo($playerId, true);
+
+        // burrowing
+        $loseHeartForBurrowing = intval(self::getGameStateValue('loseHeartEnteringTokyo'));
+        if ($loseHeartForBurrowing > 0) {
+            $this->applyDamage($playerId, $loseHeartForBurrowing, null, 6);
+            self::setGameStateValue('loseHeartEnteringTokyo', 0);
+        }            
+
+        if ($this->getPlayerHealth($playerId) > 0) { // enter only if burrowing doesn't kill player
+            if ($this->isTokyoEmpty(false)) {
+                $this->moveToTokyo($playerId, false);
+            } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
+                $this->moveToTokyo($playerId, true);
+            }
         }
 
-        if ($this->getMaxPlayerScore() >= MAX_POINT) {
+        if ($this->getMaxPlayerScore() >= MAX_POINT || $this->getRemainingPlayers() <= 1) { // in case burrowing let only 1 player alive
             $this->gamestate->nextState('endGame');
         } else {
             $this->gamestate->nextState('next');

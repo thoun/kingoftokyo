@@ -101,7 +101,7 @@ trait CardsTrait {
         $cards = [];
         
         for($value=1; $value<=48; $value++) { // keep
-            if (in_array($value, $this->TEMP_DONE_KEEP_CARDS)) { // TODO remove filter       
+            if (!in_array($value, $this->KEEP_CARDS_TODO)) { // TODO remove filter       
                 $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
             }
         }
@@ -334,7 +334,7 @@ trait CardsTrait {
         $this->applyGetEnergyIgnoreCards($playerId, 2, 28);
 
         if ($energyOnBatteryMonster <= 0) {
-            $card = $this->getCardFromDb($this->cards->getCardsOfType(28)[0]);
+            $card = $this->getCardFromDb(array_value($this->cards->getCardsOfType(28))[0]);
             $this->cards->moveCard($card->id, 'discard');        
             self::notifyAllPlayers("removeCards", '', [
                 'playerId' => $playerId,
@@ -342,6 +342,21 @@ trait CardsTrait {
                 'cards' => [$card],
             ]);
         }
+    }
+
+    function buyEnergyDrink() {
+        $playerId = self::getActivePlayerId();
+
+        if ($this->getPlayerEnergy($playerId) < 1) {
+            throw new \Error('Not enough energy');
+        }
+
+        $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
+        
+        $energyDrinks = intval(self::getGameStateValue('energyDrinks')) + 1;
+        self::setGameStateValue('energyDrinks', $energyDrinks);
+
+        $this->gamestate->nextState('buyEnergyDrink');        
     }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -39,7 +39,9 @@ trait UtilTrait {
     function getThrowNumber(int $playerId) {
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, 18);
-        return 3 + $countGiantBrain;
+        // energy drink
+        $energyDrinks = intval(self::getGameStateValue('energyDrinks'));
+        return 3 + $countGiantBrain + $energyDrinks;
     }
 
     function getPlayerMaxHealth(int $playerId) {
@@ -196,6 +198,7 @@ trait UtilTrait {
 
         $playersBeforeElimination = $this->getRemainingPlayers();
 
+        $this->cards->moveAllCardsInLocation('hand', 'discard', $player->id);
         self::eliminatePlayer($player->id);
 
         if ($playersBeforeElimination == 5) { // 5 players to 4, clear Tokyo Bay
@@ -374,6 +377,10 @@ trait UtilTrait {
     }
 
     function applyLoseEnergy(int $playerId, int $energy, int $cardType) {
+        $this->applyLoseEnergyIgnoreCards($playerId, $energy, $cardType);
+    }
+
+    function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
         $actualEnergy = $this->getPlayerEnergy($playerId);
         $newEnergy = max($actualEnergy - $energy, 0);
         self::DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");

@@ -18,9 +18,9 @@
  * are available everywhere in your game logic code.
  *
  */
-
-// TODO remove       
-$this->TEMP_DONE_KEEP_CARDS = [1,2,3,4,8,9,10,11,12,13,14,17,18,19,21,23,28,30,34,38,39,42,43,46,47];
+    
+$this->KEEP_CARDS_TODO = [5,6,7,15,16,20,22,24,25,26,27,31,32,33,35,36,37,40,41,44,48];
+//TODO test 6 do 15 16
 
 $this->CARD_COST = [
 // KEEP
