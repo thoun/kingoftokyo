@@ -232,7 +232,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_points} [Star] with ${card_name}');
             self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'points' => $newScore,
                 'delta_points' => $points,
                 'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
@@ -249,7 +249,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_points} [Star] with ${card_name}');
             self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'points' => $newScore,
                 'delta_points' => $points,
                 'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
@@ -260,14 +260,11 @@ trait UtilTrait {
     function applyGetHealth(int $playerId, int $health, int $cardType) {
 
         $this->applyGetHealthIgnoreCards($playerId, $health, $cardType);
-        self::debug('[GBA] player wins hearts='.$health.' ==');
-
+        
         // regeneration
         $countRegeneration = $this->countCardOfType($playerId, 38);
-        self::debug('[GBA]countRegeneration='.$countRegeneration.', health='.$health.' ==');
         if ($countRegeneration > 0) {
             $this->applyGetHealthIgnoreCards($playerId, $countRegeneration, 38);
-            self::debug('[GBA] player wins bonus hearts='.$countRegeneration.' ==');
         }
     }
 
@@ -279,11 +276,10 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            self::debug('[GBA] applyGetHealthIgnoreCards cardType='.$cardType.' ==');
             $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_health} [Heart] with ${card_name}');
             self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'health' => $newHealth,
                 'delta_health' => $health,
                 'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
@@ -337,7 +333,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_health} [Heart] with ${card_name}');
             self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'health' => $newHealth,
                 'delta_health' => $health,
                 'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
@@ -368,7 +364,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_energy} [Energy] with ${card_name}');
             self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'energy' => $this->getPlayerEnergy($playerId),
                 'delta_energy' => $energy,
                 'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
@@ -389,7 +385,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_energy} [Energy] with ${card_name}');
             self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'energy' => $newEnergy,
                 'delta_energy' => $energy,
                 'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),

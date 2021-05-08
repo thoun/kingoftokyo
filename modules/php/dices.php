@@ -265,6 +265,25 @@ trait DicesTrait {
             }
         }
 
+        // fire breathing
+        if ($diceCounts[6] >= 1) {
+            $countFireBreathing = $this->countCardOfType($playerId, 15);
+            if ($countFireBreathing > 0) {
+                $playersIds = $this->getPlayersIds();
+                $playerIndex = array_search($playerId, $playersIds);
+                $playerCount = count($playersIds);
+                $leftPlayerId = $playersIds[($playerIndex + 1) % $playerCount];
+                $rightPlayerId = $playersIds[($playerIndex + $playerCount - 1) % $playerCount];
+                
+                if ($leftPlayerId != $playerId) {
+                    $this->applyDamage($leftPlayerId, $countFireBreathing, $playerId, 15);
+                }
+                if ($rightPlayerId != $playerId && $rightPlayerId != $leftPlayerId) {
+                    $this->applyDamage($rightPlayerId, $countFireBreathing, $playerId, 15);
+                }
+            }
+        }
+
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
             $diceCount = $diceCounts[$diceFace];
             // number
