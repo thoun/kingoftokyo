@@ -137,6 +137,9 @@ trait PlayerTrait {
     function stEndTurn() {
         $playerId = self::getActivePlayerId();
 
+        // clean game state values
+        $this->setGameStateValue('oneLessDieForNextTurn', 0);
+
         // apply end of turn effects
 
         // rooting for the underdog
@@ -177,17 +180,34 @@ trait PlayerTrait {
     }
 
     function stNextPlayer() {        
-        $player_id = self::getActivePlayerId();
+        $playerId = self::getActivePlayerId();
 
         self::incStat(1, 'turns_number');
-        self::incStat(1, 'turns_number', $player_id);
+        self::incStat(1, 'turns_number', $playerId);
 
-        if (intval($this->getGameStateValue('playAgainAfterTurn')) == 1) { // extra turn for current player              
+        if (intval($this->getGameStateValue('playAgainAfterTurnOneLessDie')) == 1) { // extra turn for current player with one less die
+            $this->setGameStateValue('playAgainAfterTurnOneLessDie', 0);
+            $this->setGameStateValue('oneLessDieForNextTurn', 1);
+
+            self::notifyAllPlayers('playAgain', _('${player_name} take another turn with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'card_name' => $this->getCardName(16),
+            ]);
+            
+            // TOCHECK can Freeze Time be added to Frenzy ? Considered Yes and Freeze Time before Frenzy
+        } else if (intval($this->getGameStateValue('playAgainAfterTurn')) == 1) { // extra turn for current player
             $this->setGameStateValue('playAgainAfterTurn', 0);
+
+            self::notifyAllPlayers('playAgain', _('${player_name} take another turn with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'card_name' => $this->getCardName(109),
+            ]);
         } else {
-            $player_id = self::activeNextPlayer();
+            $playerId = self::activeNextPlayer();
         }
-        self::giveExtraTime($player_id);
+        self::giveExtraTime($playerId);
 
         if ($this->getMaxPlayerScore() >= MAX_POINT) {
             $this->gamestate->nextState('endGame');

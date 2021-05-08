@@ -36,3 +36,6 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 check all TOCHECK with editor
 Stack notifications for dices + card effects to make them the right order
 Make animations from cards when cards add smashes/energy/health during dice count ?
+roll wheels after or during animation
+Fix dices position when clicking them
+Add option to leave tokyo as soon as possible

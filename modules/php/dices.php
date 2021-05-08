@@ -38,7 +38,9 @@ trait DicesTrait {
     }
 
     function getDicesNumber(int $playerId) {
-        return 6 + $this->countExtraHead($playerId);
+        $remove = intval($this->getGameStateValue('oneLessDieForNextTurn'));
+
+        return 6 + $this->countExtraHead($playerId) - $remove;
     }
 
     function resolveNumberDices(int $playerId, int $number, int $diceCount) {
@@ -63,6 +65,14 @@ trait DicesTrait {
                 if ($countGourmet > 0) {
                     $this->applyGetPoints($playerId, 2 * $countGourmet, 19);
                 }
+
+                // Freeze Time
+                $countFreezeTime = $this->countCardOfType($playerId, 16);
+                if ($countFreezeTime > 0) {
+                    // TOCHECK Can Freeze Time be cloned and win 2 new turn ? If yes, 1 or 2 less die next turn ? Considered No
+                    $this->setGameStateValue('playAgainAfterTurnOneLessDie', 1);
+                }
+                
             }
         }
     }
