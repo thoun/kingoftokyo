@@ -138,7 +138,7 @@ trait PlayerTrait {
         $playerId = self::getActivePlayerId();
 
         // clean game state values
-        $this->setGameStateValue('oneLessDieForNextTurn', 0);
+        $this->setGameStateValue('lessDiesForNextTurn', 0);
 
         // apply end of turn effects
 
@@ -185,28 +185,34 @@ trait PlayerTrait {
         self::incStat(1, 'turns_number');
         self::incStat(1, 'turns_number', $playerId);
 
+        $anotherTimeWithCard = 0;
+
         if (intval($this->getGameStateValue('playAgainAfterTurnOneLessDie')) == 1) { // extra turn for current player with one less die
+            $anotherTimeWithCard = 16;
             $this->setGameStateValue('playAgainAfterTurnOneLessDie', 0);
-            $this->setGameStateValue('oneLessDieForNextTurn', 1);
-
-            self::notifyAllPlayers('playAgain', _('${player_name} take another turn with ${card_name}'), [
-                'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
-                'card_name' => $this->getCardName(16),
-            ]);
+            $this->setGameStateValue('lessDiesForNextTurn', intval($this->getGameStateValue('lessDiesForNextTurn')) + 1);
             
+            // TOCHECK if we chain Freeze Time, is it always just one less dice or are they added ? Considered Juste one less
             // TOCHECK can Freeze Time be added to Frenzy ? Considered Yes and Freeze Time before Frenzy
-        } else if (intval($this->getGameStateValue('playAgainAfterTurn')) == 1) { // extra turn for current player
-            $this->setGameStateValue('playAgainAfterTurn', 0);
+        } else {
+            $this->setGameStateValue('lessDiesForNextTurn', 0);
+        }
 
+        if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue('playAgainAfterTurn')) == 1) { // extra turn for current player
+            $anotherTimeWithCard = 109;
+            $this->setGameStateValue('playAgainAfterTurn', 0);            
+        }
+        
+        if ($anotherTimeWithCard > 0) {
             self::notifyAllPlayers('playAgain', _('${player_name} take another turn with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
-                'card_name' => $this->getCardName(109),
+                'card_name' => $this->getCardName($anotherTimeWithCard),
             ]);
         } else {
             $playerId = self::activeNextPlayer();
         }
+
         self::giveExtraTime($playerId);
 
         if ($this->getMaxPlayerScore() >= MAX_POINT) {
