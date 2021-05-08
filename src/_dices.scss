@@ -1,10 +1,10 @@
 $tokyoGreen: #96c93c;
 
-#rolled-dices {
+#rolled-dice {
   display: flex;
   justify-content: center;
 
-  #locked-dices {
+  #locked-dice {
     border: 2px solid #a6c136;
     border-radius: 5px;
     margin-right: 20px;
@@ -25,7 +25,7 @@ $tokyoGreen: #96c93c;
     }
   }
 
-  #dices-selector {
+  #dice-selector {
     border: 2px solid transparent;
     min-height: 40px;
 
@@ -65,12 +65,12 @@ $size: 0.25rem;
     box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.5);
 
     &.rolled {
-        animation: rolled-dices 1s forwards;
+        animation: rolled-dice 1s forwards;
         transform: translateY(-40vh);
     }
 }
 
-@keyframes rolled-dices {
+@keyframes rolled-dice {
     100% { transform: initial; }
 }
 

@@ -50,7 +50,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         log('gamedatas', gamedatas);
 
         this.createPlayerPanels(gamedatas); 
-        this.diceManager = new DiceManager(this, gamedatas.dices);  
+        this.diceManager = new DiceManager(this, gamedatas.dice);  
         this.cards = new Cards(this);
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
@@ -73,10 +73,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         log( 'Entering state: '+stateName , args.args );
 
         switch (stateName) {
-            case 'throwDices':
-                this.onEnteringThrowDices(args.args);
+            case 'throwDice':
+                this.onEnteringThrowDice(args.args);
                 break;
-            case 'resolveDices': 
+            case 'resolveDice': 
                 this.diceManager.hideLock();
                 break;
             
@@ -97,18 +97,18 @@ class KingOfTokyo implements KingOfTokyoGame {
         (this as any).updatePageTitle();        
     }
 
-    private onEnteringThrowDices(args: EnteringThrowDicesArgs) {
+    private onEnteringThrowDice(args: EnteringThrowDiceArgs) {
         this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? `last` : '');
 
         this.diceManager.showLock();
 
-        const dices = args.dices;
+        const dice = args.dice;
 
-        this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
+        this.diceManager.setDice(dice, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
         
         if ((this as any).isCurrentPlayerActive()) {
             if (args.throwNumber < args.maxThrowNumber) {
-                this.createButton('dice-actions', 'rethrow_button', _("Rethrow dices") + ` (${args.throwNumber}/${args.maxThrowNumber})`, () => this.onRethrow(), !args.dices.some(dice => !dice.locked));
+                this.createButton('dice-actions', 'rethrow_button', _("Rethrow dice") + ` (${args.throwNumber}/${args.maxThrowNumber})`, () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
             }
 
             if (args.rethrow3.hasCard) {
@@ -139,9 +139,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
-            case 'resolveDices':
-                this.diceManager.removeAllDices();
+            case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
+                break;
+            case 'resolveDice':
+                this.diceManager.removeAllDice();
                 break;
             case 'buyCard':
                 this.onLeavingBuyCard();
@@ -160,8 +162,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     public onUpdateActionButtons(stateName: string, args: any) {
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
-                case 'throwDices':
-                    (this as any).addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
+                case 'throwDice':
+                    (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
                     break;
                 
                 case 'buyCard':
@@ -275,16 +277,16 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public onRethrow() {
-        this.rethrowDices(this.diceManager.destroyFreeDices());      
+        this.rethrowDice(this.diceManager.destroyFreeDice());      
     }
 
-    public rethrowDices(dicesIds: number[]) {
+    public rethrowDice(diceIds: number[]) {
         if(!(this as any).checkAction('rethrow')) {
             return;
         }
 
         this.takeAction('rethrow', {
-            dicesIds: dicesIds.join(',')
+            diceIds: diceIds.join(',')
         });
     }
 
@@ -296,7 +298,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('buyEnergyDrink');
     }
 
-    public resolveDices() {
+    public resolveDice() {
         if(!(this as any).checkAction('resolve')) {
             return;
         }
@@ -391,24 +393,24 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
         this.setPoints(notif.args.playerId, notif.args.points);
-        this.diceManager.resolveNumberDices(notif.args);
+        this.diceManager.resolveNumberDice(notif.args);
     }
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
         this.setHealth(notif.args.playerId, notif.args.health);
-        this.diceManager.resolveHealthDices(notif.args);
+        this.diceManager.resolveHealthDice(notif.args);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
-        this.diceManager.resolveHealthDicesInTokyo();
+        this.diceManager.resolveHealthDiceInTokyo();
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
         this.setEnergy(notif.args.playerId, notif.args.energy);
-        this.diceManager.resolveEnergyDices(notif.args);
+        this.diceManager.resolveEnergyDice(notif.args);
     }
 
     notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
-        this.diceManager.resolveSmashDices(notif.args);
+        this.diceManager.resolveSmashDice(notif.args);
     }
 
     notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {

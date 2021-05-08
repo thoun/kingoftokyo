@@ -28,7 +28,7 @@ interface KingOfTokyoGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
-    dices: Dice[];
+    dice: Dice[];
     visibleCards: Card[];
     playersCards: { [playerId: number]: Card[] };
 }
@@ -37,8 +37,8 @@ interface KingOfTokyoGame extends Game {
     cards: Cards;
 }
 
-interface EnteringThrowDicesArgs {
-    dices: Dice[];
+interface EnteringThrowDiceArgs {
+    dice: Dice[];
     throwNumber: number;
     maxThrowNumber: number;
     inTokyo: boolean;

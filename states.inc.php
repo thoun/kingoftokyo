@@ -98,13 +98,13 @@ $playerActionsGameStates = [
     ],
 
     ST_PLAYER_THROW_DICES => [
-        "name" => "throwDices",
-        "description" => clienttranslate('${actplayer} can rethrow dices or resolve dices'),
-        "descriptionlast" => clienttranslate('${actplayer} must resolve dices'),
-        "descriptionmyturn" => clienttranslate('${you} can rethrow dices or resolve dices'),
-        "descriptionmyturnlast" => clienttranslate('${you} must resolve dices'),
+        "name" => "throwDice",
+        "description" => clienttranslate('${actplayer} can rethrow dice or resolve dice'),
+        "descriptionlast" => clienttranslate('${actplayer} must resolve dice'),
+        "descriptionmyturn" => clienttranslate('${you} can rethrow dice or resolve dice'),
+        "descriptionmyturnlast" => clienttranslate('${you} must resolve dice'),
         "type" => "activeplayer",
-        "args" => "argThrowDices",
+        "args" => "argThrowDice",
         "possibleactions" => [ "rethrow", "changeDie", "buyEnergyDrink", "rethrow3", "resolve" ],
         "transitions" => [
             "rethrow" => ST_PLAYER_THROW_DICES,
@@ -130,10 +130,10 @@ $playerActionsGameStates = [
     ],
 
     ST_RESOLVE_DICES => [
-        "name" => "resolveDices",
+        "name" => "resolveDice",
         "description" => "",
         "type" => "game",
-        "action" => "stResolveDices",
+        "action" => "stResolveDice",
         "transitions" => [
             "enterTokyo" => ST_ENTER_TOKYO,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,

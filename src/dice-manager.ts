@@ -1,50 +1,50 @@
 class DiceManager {
-    private dices: Dice[] = [];
+    private dice: Dice[] = [];
 
-    constructor(private game: KingOfTokyoGame, setupDices: Dice[]) {
-        // TODO use setupDices ?
+    constructor(private game: KingOfTokyoGame, setupDice: Dice[]) {
+        // TODO use setupDice ?
     }
 
     public hideLock() {
-        dojo.addClass('locked-dices', 'hide-lock');
+        dojo.addClass('locked-dice', 'hide-lock');
     }
     public showLock() {
-        dojo.removeClass('locked-dices', 'hide-lock');
+        dojo.removeClass('locked-dice', 'hide-lock');
     }
     
-    public destroyFreeDices(): number[] {
-        const freeDices = this.dices.filter(dice => !dice.locked);
-        freeDices.forEach(dice => this.removeDice(dice));
-        return freeDices.map(dice => dice.id);
+    public destroyFreeDice(): number[] {
+        const freeDice = this.dice.filter(dice => !dice.locked);
+        freeDice.forEach(dice => this.removeDice(dice));
+        return freeDice.map(dice => dice.id);
     }
 
-    public removeAllDices() {
-        console.log('removeAllDices', this.dices);
-        this.dices.forEach(dice => this.removeDice(dice));
-        $('locked-dices').innerHTML = '';
-        $('dices-selector').innerHTML = '';
-        this.dices = [];
+    public removeAllDice() {
+        console.log('removeAllDice', this.dice);
+        this.dice.forEach(dice => this.removeDice(dice));
+        $('locked-dice').innerHTML = '';
+        $('dice-selector').innerHTML = '';
+        this.dice = [];
     }
 
-    public setDices(dices: Dice[], firstThrow: boolean, lastTurn: boolean, inTokyo: boolean) { 
+    public setDice(dice: Dice[], firstThrow: boolean, lastTurn: boolean, inTokyo: boolean) { 
         const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
 
         if (firstThrow) {
-            $('dices-selector').innerHTML = '';
-            this.dices = [];
+            $('dice-selector').innerHTML = '';
+            this.dice = [];
         } else {
-            this.dices.forEach(dice => this.removeDice(dice));
-            $('locked-dices').innerHTML = '';
-            $('dices-selector').innerHTML = '';
-            this.dices = [];
+            this.dice.forEach(dice => this.removeDice(dice));
+            $('locked-dice').innerHTML = '';
+            $('dice-selector').innerHTML = '';
+            this.dice = [];
         }
 
-        const newDices = dices.filter(newDice => !this.dices.some(dice => dice.id === newDice.id));
-        //const oldDices = this.dices.filter(oldDice => !newDices.some(dice => dice.id === oldDice.id));
-        this.dices.push(...newDices);
+        const newDice = dice.filter(newDice => !this.dice.some(dice => dice.id === newDice.id));
+        //const oldDice = this.dice.filter(oldDice => !newDice.some(dice => dice.id === oldDice.id));
+        this.dice.push(...newDice);
 
-        /*oldDices.forEach(dice => {
-            const newDice = dices.find(nd => nd.id === dice.id);
+        /*oldDice.forEach(dice => {
+            const newDice = dice.find(nd => nd.id === dice.id);
             if (newDice) {
                 dice.value = newDice.value;
                 dice.locked = newDice.locked;
@@ -55,35 +55,35 @@ class DiceManager {
 
         const selectable = currentPlayerActive && !lastTurn;
 
-        newDices.forEach(dice => this.createDice(dice, true, selectable, inTokyo));
+        newDice.forEach(dice => this.createDice(dice, true, selectable, inTokyo));
 
-        dojo.toggleClass('rolled-dices', 'selectable', selectable);
+        dojo.toggleClass('rolled-dice', 'selectable', selectable);
 
-        //this.dices.forEach(dice => this.toggleLockDice(dice, dice.locked));
+        //this.dice.forEach(dice => this.toggleLockDice(dice, dice.locked));
 
         this.activateRethrowButton();
     }
 
-    public resolveNumberDices(args: NotifResolveNumberDiceArgs) {
-        const dices = this.dices.filter(dice => dice.value === args.diceValue);
-        (this.game as any).displayScoring( `dice${(dices[1] || dices[0]).id}`, '96c93c', args.deltaPoints, 1500);
-        this.dices.filter(dice => dice.value === args.diceValue).forEach(dice => this.removeDice(dice, 1000, 1500));
+    public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
+        const dice = this.dice.filter(dice => dice.value === args.diceValue);
+        (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, '96c93c', args.deltaPoints, 1500);
+        this.dice.filter(dice => dice.value === args.diceValue).forEach(dice => this.removeDice(dice, 1000, 1500));
     }
 
-    public resolveHealthDicesInTokyo() {
-        this.dices.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice, 1000));
+    public resolveHealthDiceInTokyo() {
+        this.dice.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice, 1000));
     }
 
     private addDiceAnimation(diceValue: number, playerIds: number[]) {
-        const dices = this.dices.filter(dice => dice.value === diceValue);
+        const dice = this.dice.filter(dice => dice.value === diceValue);
         playerIds.forEach((playerId, playerIndex) => {
             const destination = document.getElementById(`monster-figure-${playerId}`).getBoundingClientRect();
-            dices.forEach((dice, diceIndex) => {
+            dice.forEach((dice, diceIndex) => {
                 const origin = document.getElementById(`dice${dice.id}`).getBoundingClientRect();
                 const animationId = `dice${dice.id}-player${playerId}-animation`;
                 dojo.place(`<div id="${animationId}" class="animation animation${diceValue}"></div>`, `dice${dice.id}`);
                 setTimeout(() => {
-                    const middleIndex = dices.length - 1;
+                    const middleIndex = dice.length - 1;
                     const deltaX = (diceIndex - middleIndex) * 220;
                     document.getElementById(animationId).style.transform = `translate(${deltaX}px, 100px) scale(1)`;
                 }, 50);
@@ -101,15 +101,15 @@ class DiceManager {
         });
     }
 
-    public resolveHealthDices(args: NotifResolveHealthDiceArgs) {
+    public resolveHealthDice(args: NotifResolveHealthDiceArgs) {
         this.addDiceAnimation(4, [args.playerId]);
     }
 
-    public resolveEnergyDices(args: NotifResolveEnergyDiceArgs) {
+    public resolveEnergyDice(args: NotifResolveEnergyDiceArgs) {
         this.addDiceAnimation(5, [args.playerId]);
     }
 
-    public resolveSmashDices(args: NotifResolveSmashDiceArgs) {
+    public resolveSmashDice(args: NotifResolveSmashDiceArgs) {
         this.addDiceAnimation(6, args.smashedPlayersIds);
     }
 
@@ -117,14 +117,14 @@ class DiceManager {
         dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
         const diceDiv = document.getElementById(`dice${dice.id}`);
 
-        slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dices' : 'dices-selector');
+        slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dice' : 'dice-selector');
 
         this.activateRethrowButton();
     }
 
     private activateRethrowButton() {
         if (document.getElementById('rethrow_button')) {
-            dojo.toggleClass('rethrow_button', 'disabled', !this.dices.filter(dice => !dice.locked).length);
+            dojo.toggleClass('rethrow_button', 'disabled', !this.dice.filter(dice => !dice.locked).length);
         }
     }
 
@@ -147,7 +147,7 @@ class DiceManager {
     }
 
     private createDice(dice: Dice, animated: boolean, selectable: boolean, inTokyo: boolean) {
-        dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dices' : 'dices-selector');
+        dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dice' : 'dice-selector');
 
         const diceDiv = this.getDiceDiv(dice);
 
@@ -171,7 +171,7 @@ class DiceManager {
         } else {
             dojo.destroy(`dice${dice.id}`);
         }
-        this.dices.splice(this.dices.indexOf(dice), 1);
+        this.dice.splice(this.dice.indexOf(dice), 1);
     }
 
 }

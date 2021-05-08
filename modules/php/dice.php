@@ -6,21 +6,21 @@ require_once(__DIR__.'/../dice.php');
 
 use KOT\Dice;
 
-trait DicesTrait {
+trait DiceTrait {
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
     
-    function getDices(int $number) {
+    function getDice(int $number) {
         $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked` FROM dice ORDER BY dice_id limit $number";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
     function getFirst3Dice(int $number) {
-        $dices = $this->getDices($number);
-        foreach ($dices as $dice) {
+        $dice = $this->getDice($number);
+        foreach ($dice as $dice) {
             if ($dice->value === 3) {
                 return $dice;
             }
@@ -28,10 +28,10 @@ trait DicesTrait {
         return null;
     }
 
-    public function throwDices($playerId) {
-        $dices = $this->getDices($this->getDicesNumber($playerId));
+    public function throwDice($playerId) {
+        $dice = $this->getDice($this->getDiceNumber($playerId));
 
-        foreach ($dices as &$dice) {
+        foreach ($dice as &$dice) {
             if (!$dice->locked) {
                 $dice->value = bga_rand(1, 6);
                 self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
@@ -47,20 +47,20 @@ trait DicesTrait {
         }
     }
 
-    function getDicesNumber(int $playerId) {
-        $remove = intval($this->getGameStateValue('lessDiesForNextTurn'));
+    function getDiceNumber(int $playerId) {
+        $remove = intval($this->getGameStateValue('lessDiceForNextTurn'));
 
         return 6 + $this->countExtraHead($playerId) - $remove;
     }
 
-    function resolveNumberDices(int $playerId, int $number, int $diceCount) {
+    function resolveNumberDice(int $playerId, int $number, int $diceCount) {
         // number
         if ($diceCount >= 3) {
             $points = $number + $diceCount - 3;
 
             $this->applyGetPoints($playerId, $points, -1);
 
-            self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${dice_value} dices'), [
+            self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${dice_value} dice'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'deltaPoints' => $points,
@@ -87,7 +87,7 @@ trait DicesTrait {
         }
     }
 
-    function resolveHealthDices(int $playerId, int $diceCount) {
+    function resolveHealthDice(int $playerId, int $diceCount) {
         if ($this->inTokyo($playerId)) {
             self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} wins no [Heart] (player in Tokyo)'), [
                 'playerId' => $playerId,
@@ -110,7 +110,7 @@ trait DicesTrait {
         }
     }
 
-    function resolveEnergyDices(int $playerId, int $diceCount) {
+    function resolveEnergyDice(int $playerId, int $diceCount) {
         $this->applyGetEnergy($playerId, $diceCount, -1);
 
         self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} [Energy]'), [
@@ -122,7 +122,7 @@ trait DicesTrait {
     }
 
     
-    function resolveSmashDices(int $playerId, int $diceCount) {
+    function resolveSmashDice(int $playerId, int $diceCount) {
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, 29);
 
@@ -159,6 +159,21 @@ trait DicesTrait {
         }
     }
 
+    function getChangeDieCards(int $playerId) {
+        // Herd Culler
+        $hasHerdCuller = $this->countCardOfType($playerId, 22) > 0 && intval(self::getGameStateValue('herdCullerUsed')) == 0;
+        // Plot Twist
+        $hasPlotTwist = $this->countCardOfType($playerId, 33) > 0;
+        // Stretchy
+        $hasStretchy = $this->countCardOfType($playerId, 44) > 0;
+
+        return [
+            'hasHerdCuller' => $hasHerdCuller,
+            'hasPlotTwist' => $hasPlotTwist,
+            'hasStretchy' => $hasStretchy,
+        ];
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -168,11 +183,11 @@ trait DicesTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
   	
-    public function rethrowDices(string $dicesIds) {
+    public function rethrowDice(string $diceIds) {
         $playerId = self::getActivePlayerId();
         self::DbQuery("UPDATE dice SET `locked` = true");
-        self::DbQuery("UPDATE dice SET `locked` = false where `dice_id` IN ($dicesIds)");
-        $this->throwDices($playerId);
+        self::DbQuery("UPDATE dice SET `locked` = false where `dice_id` IN ($diceIds)");
+        $this->throwDice($playerId);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
         self::setGameStateValue('throwNumber', $throwNumber);
@@ -182,7 +197,7 @@ trait DicesTrait {
 
     public function rethrow3() {
         $playerId = self::getActivePlayerId();
-        $dice = $this->getFirst3Dice($this->getDicesNumber($playerId));
+        $dice = $this->getFirst3Dice($this->getDiceNumber($playerId));
 
         if ($dice == null) {
             throw new \Error('No dice 3');
@@ -194,7 +209,7 @@ trait DicesTrait {
         $this->gamestate->nextState('rethrow3');
     }
 
-    public function resolveDices() {
+    public function resolveDice() {
         $this->gamestate->nextState('changeDie');
     }
 
@@ -209,10 +224,10 @@ trait DicesTrait {
         game state.
     */
 
-    function argThrowDices() {
+    function argThrowDice() {
         $playerId = self::getActivePlayerId();
-        $diceNumber = $this->getDicesNumber($playerId);
-        $dices = $this->getDices($diceNumber);
+        $diceNumber = $this->getDiceNumber($playerId);
+        $dice = $this->getDice($diceNumber);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
         $maxThrowNumber = $this->getThrowNumber($playerId);
@@ -233,7 +248,7 @@ trait DicesTrait {
         return [
             'throwNumber' => $throwNumber,
             'maxThrowNumber' => $maxThrowNumber,
-            'dices' => $dices,
+            'dice' => $dice,
             'inTokyo' => $this->inTokyo($playerId),
             'energyDrink' => [
                 'hasCard' => $hasEnergyDrink,
@@ -247,8 +262,19 @@ trait DicesTrait {
     }
 
     function argChangeDie() {
-        // TODO
-        return [];
+        $playerId = self::getActivePlayerId();
+
+        $cardsArg = $this->getChangeDieCards($playerId);
+
+        $diceArg = [];
+        if ($cardsArg['hasHerdCuller'] || $cardsArg['hasPlotTwist'] || $cardsArg['hasStretchy']) {
+            $diceNumber = $this->getDiceNumber($playerId);
+            $diceArg = [
+                'dice' => $this->getDice($diceNumber),
+            ];
+        }
+
+        return $cardsArg + $diceArg;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -256,20 +282,25 @@ trait DicesTrait {
 ////////////
 
     function stChangeDie() {
-        // TODO        
-        $this->gamestate->nextState('resolve');
+        $playerId = self::getActivePlayerId();
+
+        $cards = $this->getChangeDieCards($playerId);
+
+        if (!$cards['hasHerdCuller'] && !$cards['hasPlotTwist'] && !$cards['hasStretchy']) {
+            $this->gamestate->nextState('resolve');
+        }
     }
 
-    function stResolveDices() {
+    function stResolveDice() {
         $playerId = self::getActivePlayerId();
         $playerInTokyo = $this->inTokyo($playerId);
-        $dices = $this->getDices($this->getDicesNumber($playerId));
+        $dice = $this->getDice($this->getDiceNumber($playerId));
 
         $smashTokyo = false;
 
         $diceCounts = [];
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-            $diceCounts[$diceFace] = count(array_values(array_filter($dices, function($dice) use ($diceFace) { return $dice->value == $diceFace; })));
+            $diceCounts[$diceFace] = count(array_values(array_filter($dice, function($dice) use ($diceFace) { return $dice->value == $diceFace; })));
         }
 
         // acid attack
@@ -320,7 +351,7 @@ trait DicesTrait {
             }
 
             // complete destruction
-            if ($diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dices 1-2-3 check with previous if
+            if ($diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
                 $countCompleteDestruction = $this->countCardOfType($playerId, 8);
                 if ($countCompleteDestruction > 0) {
                     $this->applyGetPoints($playerId, 9 * $countCompleteDestruction, 8);
@@ -352,22 +383,22 @@ trait DicesTrait {
             $diceCount = $diceCounts[$diceFace];
             // number
             if ($diceFace <= 3) { 
-                $this->resolveNumberDices($playerId, $diceFace, $diceCount);
+                $this->resolveNumberDice($playerId, $diceFace, $diceCount);
             }
 
             // health
             if ($diceFace == 4 && $diceCount > 0) {
-                $this->resolveHealthDices($playerId, $diceCount);
+                $this->resolveHealthDice($playerId, $diceCount);
             }
 
             // energy
             if ($diceFace == 5 && $diceCount > 0) {
-                $this->resolveEnergyDices($playerId, $diceCount);
+                $this->resolveEnergyDice($playerId, $diceCount);
             }
 
             // smash
             if ($diceFace == 6 && $diceCount > 0) {
-                $this->resolveSmashDices($playerId, $diceCount);
+                $this->resolveSmashDice($playerId, $diceCount);
             }
         }
 

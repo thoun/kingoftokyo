@@ -93,12 +93,12 @@ trait PlayerTrait {
             }
         }
 
-        // throw dices
+        // throw dice
 
         self::setGameStateValue('throwNumber', 1);
         self::DbQuery( "UPDATE dice SET `dice_value` = 0, `locked` = false" );
 
-        $this->throwDices($playerId);
+        $this->throwDice($playerId);
 
         $this->gamestate->nextState('throw');
     }
@@ -138,7 +138,7 @@ trait PlayerTrait {
         $playerId = self::getActivePlayerId();
 
         // clean game state values
-        $this->setGameStateValue('lessDiesForNextTurn', 0);
+        $this->setGameStateValue('lessDiceForNextTurn', 0);
 
         // apply end of turn effects
 
@@ -190,12 +190,12 @@ trait PlayerTrait {
         if (intval($this->getGameStateValue('playAgainAfterTurnOneLessDie')) == 1) { // extra turn for current player with one less die
             $anotherTimeWithCard = 16;
             $this->setGameStateValue('playAgainAfterTurnOneLessDie', 0);
-            $this->setGameStateValue('lessDiesForNextTurn', intval($this->getGameStateValue('lessDiesForNextTurn')) + 1);
+            $this->setGameStateValue('lessDiceForNextTurn', intval($this->getGameStateValue('lessDiceForNextTurn')) + 1);
             
             // TOCHECK if we chain Freeze Time, is it always just one less dice or are they added ? Considered Juste one less
             // TOCHECK can Freeze Time be added to Frenzy ? Considered Yes and Freeze Time before Frenzy
         } else {
-            $this->setGameStateValue('lessDiesForNextTurn', 0);
+            $this->setGameStateValue('lessDiceForNextTurn', 0);
         }
 
         if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue('playAgainAfterTurn')) == 1) { // extra turn for current player

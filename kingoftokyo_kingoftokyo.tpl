@@ -1,9 +1,9 @@
 {OVERALL_GAME_HEADER}
 
-<div id="rolled-dices" class="whiteblock">
-    <div id="locked-dices" class="hide-lock">
+<div id="rolled-dice" class="whiteblock">
+    <div id="locked-dice" class="hide-lock">
     </div>
-    <div id="dices-selector"></div>
+    <div id="dice-selector"></div>
     <div id="dice-actions"></div>
 </div>
 

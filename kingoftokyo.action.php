@@ -40,9 +40,9 @@
     public function rethrow() {
         self::setAjaxMode();
 
-        $dicesIds = self::getArg("dicesIds", AT_numberlist, true);
+        $diceIds = self::getArg("diceIds", AT_numberlist, true);
 
-        $this->game->rethrowDices($dicesIds);
+        $this->game->rethrowDice($diceIds);
 
         self::ajaxResponse();
     }
@@ -66,7 +66,7 @@
     public function resolve() {
         self::setAjaxMode();
 
-        $this->game->resolveDices();
+        $this->game->resolveDice();
 
         self::ajaxResponse();
     }

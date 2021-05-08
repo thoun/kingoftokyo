@@ -22,14 +22,14 @@ require_once('modules/dice.php');
 require_once('modules/card.php');
 require_once('modules/php/utils.php');
 require_once('modules/php/player.php');
-require_once('modules/php/dices.php');
+require_once('modules/php/dice.php');
 require_once('modules/php/cards.php');
 
 
 class KingOfTokyo extends Table {
     use KOT\States\UtilTrait;
     use KOT\States\PlayerTrait;
-    use KOT\States\DicesTrait;
+    use KOT\States\DiceTrait;
     use KOT\States\CardsTrait;
 
 	function __construct(){
@@ -49,7 +49,8 @@ class KingOfTokyo extends Table {
             "energyDrinks" => 13,
             "loseHeartEnteringTokyo" => 14,
             "playAgainAfterTurnOneLessDie" => 15,
-            "lessDiesForNextTurn" => 16,
+            "lessDiceForNextTurn" => 16,
+            "herdCullerUsed" => 17,
             "energyOnBatteryMonster" => 99,
             //      ...
             //    "my_first_game_variant" => 100,
@@ -103,7 +104,7 @@ class KingOfTokyo extends Table {
         self::DbQuery( $sql );
         self::reloadPlayersBasicInfos();
 
-        // Create dices
+        // Create dice
         self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
         self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true), (0, true)");
 
@@ -113,10 +114,11 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('throwNumber', 0);
         self::setGameStateInitialValue('playAgainAfterTurn', 0);
         self::setGameStateInitialValue('playAgainAfterTurnOneLessDie', 0);
-        self::setGameStateInitialValue('lessDiesForNextTurn', 0);
+        self::setGameStateInitialValue('lessDiceForNextTurn', 0);
         self::setGameStateInitialValue('damageDoneByActivePlayer', 0);
         self::setGameStateInitialValue('energyDrinks', 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
+        self::setGameStateInitialValue('herdCullerUsed', 0);
         self::setGameStateInitialValue('energyOnBatteryMonster', 0);
 
         // Init game statistics
@@ -129,7 +131,9 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(5))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(22))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(33))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(44))[0])->id, 'hand', 2343492);
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -159,7 +163,7 @@ class KingOfTokyo extends Table {
         // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
-        $result['dices'] = $activePlayerId ? $this->getDices($this->getDicesNumber($activePlayerId)) : [];
+        $result['dice'] = $activePlayerId ? $this->getDice($this->getDiceNumber($activePlayerId)) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
 
