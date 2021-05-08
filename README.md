@@ -39,3 +39,5 @@ Make animations from cards when cards add smashes/energy/health during dice coun
 roll wheels after or during animation
 Fix dices position when clicking them
 Add option to leave tokyo as soon as possible
+Add checkActions & more security (reroll 3 have dice3, ...)
+Freeze animations on roll 3

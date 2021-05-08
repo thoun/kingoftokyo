@@ -54,6 +54,14 @@
 
         self::ajaxResponse();
     }
+
+    public function rethrow3() {
+        self::setAjaxMode();
+
+        $this->game->rethrow3();
+
+        self::ajaxResponse();
+    }
   	
     public function resolve() {
         self::setAjaxMode();

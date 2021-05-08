@@ -718,8 +718,6 @@ var KingOfTokyo = /** @class */ (function () {
         log('Entering state: ' + stateName, args.args);
         switch (stateName) {
             case 'throwDices':
-                var tdArgs = args.args;
-                this.setGamestateDescription(tdArgs.throwNumber >= tdArgs.maxThrowNumber ? "last" : '');
                 this.onEnteringThrowDices(args.args);
                 break;
             case 'resolveDices':
@@ -741,9 +739,23 @@ var KingOfTokyo = /** @class */ (function () {
         this.updatePageTitle();
     };
     KingOfTokyo.prototype.onEnteringThrowDices = function (args) {
+        var _this = this;
+        this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? "last" : '');
         this.diceManager.showLock();
         var dices = args.dices;
         this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
+        if (this.isCurrentPlayerActive()) {
+            if (args.throwNumber < args.maxThrowNumber) {
+                this.createButton('dice-actions', 'rethrow_button', _("Rethrow dices") + (" (" + args.throwNumber + "/" + args.maxThrowNumber + ")"), function () { return _this.onRethrow(); }, !args.dices.some(function (dice) { return !dice.locked; }));
+            }
+            if (args.rethrow3.hasCard) {
+                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
+            }
+            if (args.energyDrink.hasCard && args.throwNumber === args.maxThrowNumber) {
+                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + " ( 1 <span class=\"small icon energy\"></span>)", function () { return _this.buyEnergyDrink(); });
+                this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
+            }
+        }
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args) {
         if (this.isCurrentPlayerActive()) {
@@ -761,6 +773,7 @@ var KingOfTokyo = /** @class */ (function () {
         switch (stateName) {
             case 'resolveDices':
                 this.diceManager.removeAllDices();
+                document.getElementById('dice-actions').innerHTML = '';
                 break;
             case 'buyCard':
                 this.onLeavingBuyCard();
@@ -778,15 +791,6 @@ var KingOfTokyo = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'throwDices':
-                    var tdArgs = args;
-                    if (tdArgs.throwNumber < tdArgs.maxThrowNumber) {
-                        this.addActionButton('rethrow_button', _("Rethrow dices") + (" " + tdArgs.throwNumber + "/" + tdArgs.maxThrowNumber), 'onRethrow');
-                        dojo.addClass('rethrow_button', 'disabled');
-                    }
-                    if (tdArgs.haveEnergyDrink && tdArgs.throwNumber === tdArgs.maxThrowNumber) {
-                        this.addActionButton('buy_energy_drink_button', _("Get extra die Roll") + " ( 1 <span class=\"small icon energy\"></span>)", 'buyEnergyDrink');
-                        this.checkBuyEnergyDrinkState(tdArgs.playerEnergy);
-                    }
                     this.addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
                     break;
                 case 'buyCard':
@@ -806,6 +810,15 @@ var KingOfTokyo = /** @class */ (function () {
     ///////////////////////////////////////////////////
     //// Utility methods
     ///////////////////////////////////////////////////
+    KingOfTokyo.prototype.createButton = function (destinationId, id, text, callback, disabled) {
+        if (disabled === void 0) { disabled = false; }
+        var html = "<button class=\"action-button bgabutton bgabutton_blue\" id=\"" + id + "\">\n            " + text + "\n        </button>";
+        dojo.place(html, destinationId);
+        if (disabled) {
+            dojo.addClass(id, 'disabled');
+        }
+        document.getElementById(id).addEventListener('click', function () { return callback(); });
+    };
     KingOfTokyo.prototype.getOrderedPlayers = function () {
         var _this = this;
         return this.gamedatas.playerorder.map(function (id) { return _this.gamedatas.players[Number(id)]; });
@@ -871,6 +884,9 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('rethrow', {
             dicesIds: dicesIds.join(',')
         });
+    };
+    KingOfTokyo.prototype.rethrow3 = function () {
+        this.takeAction('rethrow3');
     };
     KingOfTokyo.prototype.buyEnergyDrink = function () {
         this.takeAction('buyEnergyDrink');

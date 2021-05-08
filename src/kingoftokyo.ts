@@ -74,8 +74,6 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         switch (stateName) {
             case 'throwDices':
-                const tdArgs = args.args as EnteringThrowDicesArgs;
-                this.setGamestateDescription(tdArgs.throwNumber >= tdArgs.maxThrowNumber ? `last` : '');
                 this.onEnteringThrowDices(args.args);
                 break;
             case 'resolveDices': 
@@ -100,11 +98,28 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringThrowDices(args: EnteringThrowDicesArgs) {
+        this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? `last` : '');
+
         this.diceManager.showLock();
 
         const dices = args.dices;
 
         this.diceManager.setDices(dices, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
+        
+        if ((this as any).isCurrentPlayerActive()) {
+            if (args.throwNumber < args.maxThrowNumber) {
+                this.createButton('dice-actions', 'rethrow_button', _("Rethrow dices") + ` (${args.throwNumber}/${args.maxThrowNumber})`, () => this.onRethrow(), !args.dices.some(dice => !dice.locked));
+            }
+
+            if (args.rethrow3.hasCard) {
+                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3(), !args.rethrow3.hasDice3);
+            }
+
+            if (args.energyDrink.hasCard && args.throwNumber === args.maxThrowNumber) {
+                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + ` ( 1 <span class="small icon energy"></span>)`, () => this.buyEnergyDrink());
+                this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
+            }
+        }
     }
 
     private onEnteringBuyCard(args: EnteringBuyCardArgs) {
@@ -126,6 +141,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch (stateName) {
             case 'resolveDices':
                 this.diceManager.removeAllDices();
+                document.getElementById('dice-actions').innerHTML = '';
                 break;
             case 'buyCard':
                 this.onLeavingBuyCard();
@@ -145,15 +161,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'throwDices':
-                    const tdArgs = args as EnteringThrowDicesArgs;
-                    if (tdArgs.throwNumber < tdArgs.maxThrowNumber) {
-                        (this as any).addActionButton('rethrow_button', _("Rethrow dices") + ` ${tdArgs.throwNumber}/${tdArgs.maxThrowNumber}`, 'onRethrow');
-                        dojo.addClass('rethrow_button', 'disabled');
-                    }
-                    if (tdArgs.haveEnergyDrink && tdArgs.throwNumber === tdArgs.maxThrowNumber) {
-                        (this as any).addActionButton('buy_energy_drink_button', _("Get extra die Roll") + " ( 1 <span class=\"small icon energy\"></span>)", 'buyEnergyDrink');
-                        this.checkBuyEnergyDrinkState(tdArgs.playerEnergy);
-                    }
                     (this as any).addActionButton('resolve_button', _("Resolve dices"), 'resolveDices', null, null, 'red');
                     break;
                 
@@ -180,6 +187,17 @@ class KingOfTokyo implements KingOfTokyoGame {
 
 
     ///////////////////////////////////////////////////
+
+    private createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false) {
+        const html = `<button class="action-button bgabutton bgabutton_blue" id="${id}">
+            ${text}
+        </button>`;
+        dojo.place(html, destinationId);
+        if (disabled) {
+            dojo.addClass(id, 'disabled');
+        }
+        document.getElementById(id).addEventListener('click', () => callback());
+    }
 
     private getOrderedPlayers(): Player[] {
         return this.gamedatas.playerorder.map(id => this.gamedatas.players[Number(id)]);
@@ -268,6 +286,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('rethrow', {
             dicesIds: dicesIds.join(',')
         });
+    }
+
+    public rethrow3() {
+        this.takeAction('rethrow3');
     }
 
     public buyEnergyDrink() {

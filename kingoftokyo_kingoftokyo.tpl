@@ -4,6 +4,7 @@
     <div id="locked-dices" class="hide-lock">
     </div>
     <div id="dices-selector"></div>
+    <div id="dice-actions"></div>
 </div>
 
 <div id="table">

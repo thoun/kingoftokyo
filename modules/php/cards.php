@@ -187,6 +187,7 @@ trait CardsTrait {
                         $this->moveToTokyo($playerId, true);
                     } else {
                         // we force Tokyo city player out
+                        // TOCHECK If 5-6 players and both spots used, we enter tokyo city ? Considered Yes
                         $this->leaveTokyo($this->getPlayerIdInTokyoCity());
                         $this->moveToTokyo($playerId, false);
                     }

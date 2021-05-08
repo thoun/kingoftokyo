@@ -18,6 +18,16 @@ trait DicesTrait {
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
+    function getFirst3Dice(int $number) {
+        $dices = $this->getDices($number);
+        foreach ($dices as $dice) {
+            if ($dice->value === 3) {
+                return $dice;
+            }
+        }
+        return null;
+    }
+
     public function throwDices($playerId) {
         $dices = $this->getDices($this->getDicesNumber($playerId));
 
@@ -38,7 +48,7 @@ trait DicesTrait {
     }
 
     function getDicesNumber(int $playerId) {
-        $remove = intval($this->getGameStateValue('oneLessDieForNextTurn'));
+        $remove = intval($this->getGameStateValue('lessDiesForNextTurn'));
 
         return 6 + $this->countExtraHead($playerId) - $remove;
     }
@@ -170,8 +180,22 @@ trait DicesTrait {
         $this->gamestate->nextState('rethrow');
     }
 
+    public function rethrow3() {
+        $playerId = self::getActivePlayerId();
+        $dice = $this->getFirst3Dice($this->getDicesNumber($playerId));
+
+        if ($dice == null) {
+            throw new \Error('No dice 3');
+        }
+
+        $dice->value = bga_rand(1, 6);
+        self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
+
+        $this->gamestate->nextState('rethrow3');
+    }
+
     public function resolveDices() {
-        $this->gamestate->nextState('resolve');
+        $this->gamestate->nextState('changeDie');
     }
 
 
@@ -187,10 +211,23 @@ trait DicesTrait {
 
     function argThrowDices() {
         $playerId = self::getActivePlayerId();
-        $dices = $this->getDices($this->getDicesNumber($playerId));
+        $diceNumber = $this->getDicesNumber($playerId);
+        $dices = $this->getDices($diceNumber);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
         $maxThrowNumber = $this->getThrowNumber($playerId);
+
+        $hasEnergyDrink = $this->countCardOfType($playerId, 45) > 0; // Energy drink
+        $playerEnergy = null;
+        if ($hasEnergyDrink) {
+            $playerEnergy = $this->getPlayerEnergy($playerId);
+        }
+
+        $hasBackgroundDweller = $this->countCardOfType($playerId, 5) > 0; // Background Dweller
+        $hasDice3 = null;
+        if ($hasBackgroundDweller) {
+            $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
+        }
     
         // return values:
         return [
@@ -198,14 +235,30 @@ trait DicesTrait {
             'maxThrowNumber' => $maxThrowNumber,
             'dices' => $dices,
             'inTokyo' => $this->inTokyo($playerId),
-            'haveEnergyDrink' => $this->countCardOfType($playerId, 45) > 0,
-            'playerEnergy' => $this->getPlayerEnergy($playerId),
+            'energyDrink' => [
+                'hasCard' => $hasEnergyDrink,
+                'playerEnergy' => $playerEnergy,
+            ],
+            'rethrow3' => [
+                'hasCard' => $hasBackgroundDweller,
+                'hasDice3' => $hasDice3,
+            ]
         ];
+    }
+
+    function argChangeDie() {
+        // TODO
+        return [];
     }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
+
+    function stChangeDie() {
+        // TODO        
+        $this->gamestate->nextState('resolve');
+    }
 
     function stResolveDices() {
         $playerId = self::getActivePlayerId();
@@ -282,6 +335,7 @@ trait DicesTrait {
                 $playersIds = $this->getPlayersIds();
                 $playerIndex = array_search($playerId, $playersIds);
                 $playerCount = count($playersIds);
+                // TOCHECK we ignore in/out of tokyo ? Considered Yes
                 $leftPlayerId = $playersIds[($playerIndex + 1) % $playerCount];
                 $rightPlayerId = $playersIds[($playerIndex + $playerCount - 1) % $playerCount];
                 
