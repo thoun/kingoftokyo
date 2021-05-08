@@ -113,7 +113,7 @@ trait PlayerTrait {
         // burrowing
         $loseHeartForBurrowing = intval(self::getGameStateValue('loseHeartEnteringTokyo'));
         if ($loseHeartForBurrowing > 0) {
-            $this->applyDamage($playerId, $loseHeartForBurrowing, null, 6);
+            $this->applyDamage($playerId, $loseHeartForBurrowing, 0, 6);
             self::setGameStateValue('loseHeartEnteringTokyo', 0);
         }            
 
@@ -123,6 +123,8 @@ trait PlayerTrait {
             } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
                 $this->moveToTokyo($playerId, true);
             }
+        } else {
+            $this->eliminatePlayers($playerId);
         }
 
         if ($this->getMaxPlayerScore() >= MAX_POINT || $this->getRemainingPlayers() <= 1) { // in case burrowing let only 1 player alive
