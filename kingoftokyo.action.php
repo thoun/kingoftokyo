@@ -63,6 +63,26 @@
         self::ajaxResponse();
     }
   	
+    public function goToChangeDie() {
+        self::setAjaxMode();
+
+        $this->game->goToChangeDie();
+
+        self::ajaxResponse();
+    }
+  	
+    public function changeDie() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+        $value = self::getArg("value", AT_posint, true);
+        $card = self::getArg("card", AT_posint, true);
+
+        $this->game->changeDie($id, $value, $card);
+
+        self::ajaxResponse();
+    }
+  	
     public function resolve() {
         self::setAjaxMode();
 

@@ -526,72 +526,70 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.destroyFreeDice = function () {
         var _this = this;
-        var freeDice = this.dice.filter(function (dice) { return !dice.locked; });
-        freeDice.forEach(function (dice) { return _this.removeDice(dice); });
-        return freeDice.map(function (dice) { return dice.id; });
+        var freeDice = this.dice.filter(function (die) { return !die.locked; });
+        freeDice.forEach(function (die) { return _this.removeDice(die); });
+        return freeDice.map(function (die) { return die.id; });
     };
     DiceManager.prototype.removeAllDice = function () {
         var _this = this;
-        console.log('removeAllDice', this.dice);
-        this.dice.forEach(function (dice) { return _this.removeDice(dice); });
+        this.dice.forEach(function (die) { return _this.removeDice(die); });
         $('locked-dice').innerHTML = '';
         $('dice-selector').innerHTML = '';
         this.dice = [];
     };
-    DiceManager.prototype.setDice = function (dice, firstThrow, lastTurn, inTokyo) {
-        var _a;
+    DiceManager.prototype.setDiceForThrowDice = function (dice, lastTurn, inTokyo) {
         var _this = this;
+        var _a;
         var currentPlayerActive = this.game.isCurrentPlayerActive();
-        if (firstThrow) {
-            $('dice-selector').innerHTML = '';
-            this.dice = [];
-        }
-        else {
-            this.dice.forEach(function (dice) { return _this.removeDice(dice); });
-            $('locked-dice').innerHTML = '';
-            $('dice-selector').innerHTML = '';
-            this.dice = [];
-        }
-        var newDice = dice.filter(function (newDice) { return !_this.dice.some(function (dice) { return dice.id === newDice.id; }); });
-        //const oldDice = this.dice.filter(oldDice => !newDice.some(dice => dice.id === oldDice.id));
-        (_a = this.dice).push.apply(_a, newDice);
-        /*oldDice.forEach(dice => {
-            const newDice = dice.find(nd => nd.id === dice.id);
-            if (newDice) {
-                dice.value = newDice.value;
-                dice.locked = newDice.locked;
-                const div = document.getElementById(`dice${dice.id}`);
-                div.dataset.diceValue = ''+dice.value;
-            }
-        });*/
+        (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
+        $('locked-dice').innerHTML = '';
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
         var selectable = currentPlayerActive && !lastTurn;
-        newDice.forEach(function (dice) { return _this.createDice(dice, true, selectable, inTokyo); });
+        dice.forEach(function (die) { return _this.createDice(die, true, selectable, inTokyo); });
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
-        //this.dice.forEach(dice => this.toggleLockDice(dice, dice.locked));
-        this.activateRethrowButton();
+    };
+    DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo) {
+        var _this = this;
+        var _a;
+        var currentPlayerActive = this.game.isCurrentPlayerActive();
+        (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
+        var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
+        dice.forEach(function (die) {
+            var divId = "dice" + die.id;
+            dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
+            var selectable = currentPlayerActive && (!onlyHerdCuller || die.value !== 1);
+            dojo.toggleClass(divId, 'selectable', selectable);
+            if (selectable) {
+                dojo.place("<div id=\"discussion_bubble_" + divId + "\" class=\"discussion_bubble change-die-discussion_bubble\"></div>", divId);
+                document.getElementById(divId).addEventListener('click', function () { return _this.toggleBubbleChangeDie(die); });
+            }
+        });
     };
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
-        var dice = this.dice.filter(function (dice) { return dice.value === args.diceValue; });
+        var dice = this.dice.filter(function (die) { return die.value === args.diceValue; });
         this.game.displayScoring("dice" + (dice[1] || dice[0]).id, '96c93c', args.deltaPoints, 1500);
-        this.dice.filter(function (dice) { return dice.value === args.diceValue; }).forEach(function (dice) { return _this.removeDice(dice, 1000, 1500); });
+        this.dice.filter(function (die) { return die.value === args.diceValue; }).forEach(function (die) { return _this.removeDice(die, 1000, 1500); });
     };
     DiceManager.prototype.resolveHealthDiceInTokyo = function () {
         var _this = this;
-        this.dice.filter(function (dice) { return dice.value === 4; }).forEach(function (dice) { return _this.removeDice(dice, 1000); });
+        this.dice.filter(function (die) { return die.value === 4; }).forEach(function (die) { return _this.removeDice(die, 1000); });
     };
     DiceManager.prototype.addDiceAnimation = function (diceValue, playerIds) {
         var _this = this;
-        var dice = this.dice.filter(function (dice) { return dice.value === diceValue; });
+        var dice = this.dice.filter(function (die) { return die.value === diceValue; });
         playerIds.forEach(function (playerId, playerIndex) {
             var destination = document.getElementById("monster-figure-" + playerId).getBoundingClientRect();
-            dice.forEach(function (dice, diceIndex) {
-                var origin = document.getElementById("dice" + dice.id).getBoundingClientRect();
-                var animationId = "dice" + dice.id + "-player" + playerId + "-animation";
-                dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\"></div>", "dice" + dice.id);
+            dice.forEach(function (die, dieIndex) {
+                var origin = document.getElementById("dice" + die.id).getBoundingClientRect();
+                var animationId = "dice" + die.id + "-player" + playerId + "-animation";
+                dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\"></div>", "dice" + die.id);
                 setTimeout(function () {
                     var middleIndex = dice.length - 1;
-                    var deltaX = (diceIndex - middleIndex) * 220;
+                    var deltaX = (dieIndex - middleIndex) * 220;
                     document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
                 }, 50);
                 setTimeout(function () {
@@ -600,7 +598,7 @@ var DiceManager = /** @class */ (function () {
                     document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(0.30)";
                 }, 1500);
                 if (playerIndex === playerIds.length - 1) {
-                    setTimeout(function () { return _this.removeDice(dice); }, 2500);
+                    setTimeout(function () { return _this.removeDice(die); }, 2500);
                 }
             });
         });
@@ -614,57 +612,72 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.resolveSmashDice = function (args) {
         this.addDiceAnimation(6, args.smashedPlayersIds);
     };
-    DiceManager.prototype.toggleLockDice = function (dice, forcedLockValue) {
+    DiceManager.prototype.toggleLockDice = function (die, forcedLockValue) {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
-        dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
-        var diceDiv = document.getElementById("dice" + dice.id);
-        slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dice' : 'dice-selector');
+        die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
+        var dieDiv = document.getElementById("dice" + die.id);
+        slideToObjectAndAttach(this.game, dieDiv, die.locked ? 'locked-dice' : 'dice-selector');
         this.activateRethrowButton();
     };
     DiceManager.prototype.activateRethrowButton = function () {
         if (document.getElementById('rethrow_button')) {
-            dojo.toggleClass('rethrow_button', 'disabled', !this.dice.filter(function (dice) { return !dice.locked; }).length);
+            dojo.toggleClass('rethrow_button', 'disabled', !this.dice.some(function (die) { return !die.locked; }));
         }
     };
-    DiceManager.prototype.createDiceHtml = function (dice, inTokyo) {
-        var html = "<div id=\"dice" + dice.id + "\" class=\"dice dice" + dice.value + "\" data-dice-id=\"" + dice.id + "\" data-dice-value=\"" + dice.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + dice.value + "\">";
-        for (var die = 1; die <= 6; die++) {
-            html += "<li class=\"die-item " + (dice.extra ? 'green' : 'black') + " side" + die + "\" data-side=\"" + die + "\"></li>";
+    DiceManager.prototype.createDiceHtml = function (die, inTokyo) {
+        var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
+        for (var dieFace = 1; dieFace <= 6; dieFace++) {
+            html += "<li class=\"die-item " + (die.extra ? 'green' : 'black') + " side" + dieFace + "\" data-side=\"" + dieFace + "\"></li>";
         }
         html += "</ol>";
-        if (dice.value === 4 && inTokyo) {
+        if (die.value === 4 && inTokyo) {
             html += "<div class=\"icon forbidden\"></div>";
         }
         html += "</div>";
         return html;
     };
-    DiceManager.prototype.getDiceDiv = function (dice) {
-        return document.getElementById("dice" + dice.id);
+    DiceManager.prototype.getDiceDiv = function (die) {
+        return document.getElementById("dice" + die.id);
     };
-    DiceManager.prototype.createDice = function (dice, animated, selectable, inTokyo) {
+    DiceManager.prototype.createDice = function (die, animated, selectable, inTokyo) {
         var _this = this;
-        dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dice' : 'dice-selector');
-        var diceDiv = this.getDiceDiv(dice);
-        if (!dice.locked && animated) {
-            diceDiv.classList.add('rolled');
-            setTimeout(function () { return diceDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 100);
-            setTimeout(function () { return diceDiv.classList.remove('rolled'); }, 1200);
+        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? 'locked-dice' : 'dice-selector');
+        var dieDiv = this.getDiceDiv(die);
+        if (!die.locked && animated) {
+            dieDiv.classList.add('rolled');
+            setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 100);
+            setTimeout(function () { return dieDiv.classList.remove('rolled'); }, 1200);
         }
         else {
-            setTimeout(function () { return diceDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
+            setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
         }
         if (selectable) {
-            diceDiv.addEventListener('click', function () { return _this.toggleLockDice(dice); });
+            dieDiv.addEventListener('click', function () { return _this.toggleLockDice(die); });
         }
     };
-    DiceManager.prototype.removeDice = function (dice, duration, delay) {
+    DiceManager.prototype.removeDice = function (die, duration, delay) {
         if (duration) {
-            this.game.fadeOutAndDestroy("dice" + dice.id, duration, delay);
+            this.game.fadeOutAndDestroy("dice" + die.id, duration, delay);
         }
         else {
-            dojo.destroy("dice" + dice.id);
+            dojo.destroy("dice" + die.id);
         }
-        this.dice.splice(this.dice.indexOf(dice), 1);
+        this.dice.splice(this.dice.indexOf(die), 1);
+    };
+    DiceManager.prototype.toggleBubbleChangeDie = function (die) {
+        var bubble = document.getElementById("discussion_bubble_dice" + die.id);
+        var visible = bubble.dataset.visible == 'true';
+        if (visible) {
+            bubble.style.display = 'none';
+            bubble.dataset.visible = 'false';
+        }
+        else {
+            if (bubble.innerHTML == '') {
+                dojo.place("\n                    <div>TODO show selectable die faces</div>\n                    <div class=\"action-buttons\">TODO buttons</div>\n                ", bubble.id); // TODO activate buttons on conditions
+            }
+            bubble.style.display = 'block';
+            bubble.dataset.visible = 'true';
+        }
     };
     return DiceManager;
 }());
@@ -720,6 +733,9 @@ var KingOfTokyo = /** @class */ (function () {
             case 'throwDice':
                 this.onEnteringThrowDice(args.args);
                 break;
+            case 'changeDie':
+                this.onEnteringChangeDie(args.args);
+                break;
             case 'resolveDice':
                 this.diceManager.hideLock();
                 break;
@@ -743,7 +759,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? "last" : '');
         this.diceManager.showLock();
         var dice = args.dice;
-        this.diceManager.setDice(dice, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
+        this.diceManager.setDiceForThrowDice(dice, args.throwNumber === args.maxThrowNumber, args.inTokyo);
         if (this.isCurrentPlayerActive()) {
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', _("Rethrow dice") + (" (" + args.throwNumber + "/" + args.maxThrowNumber + ")"), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
@@ -755,6 +771,12 @@ var KingOfTokyo = /** @class */ (function () {
                 this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + " ( 1 <span class=\"small icon energy\"></span>)", function () { return _this.buyEnergyDrink(); });
                 this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
             }
+        }
+    };
+    KingOfTokyo.prototype.onEnteringChangeDie = function (args) {
+        var _a;
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo);
         }
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args) {
@@ -793,6 +815,9 @@ var KingOfTokyo = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'throwDice':
+                    this.addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+                    break;
+                case 'changeDie':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
                     break;
                 case 'buyCard':
@@ -892,6 +917,18 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.buyEnergyDrink = function () {
         this.takeAction('buyEnergyDrink');
+    };
+    KingOfTokyo.prototype.changeDie = function (id, value, card) {
+        if (!this.checkAction('changeDie')) {
+            return;
+        }
+        this.takeAction('changeDie');
+    };
+    KingOfTokyo.prototype.goToChangeDie = function () {
+        if (!this.checkAction('goToChangeDie')) {
+            return;
+        }
+        this.takeAction('goToChangeDie');
     };
     KingOfTokyo.prototype.resolveDice = function () {
         if (!this.checkAction('resolve')) {

@@ -76,6 +76,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'throwDice':
                 this.onEnteringThrowDice(args.args);
                 break;
+            case 'changeDie': 
+                this.onEnteringChangeDie(args.args);
+                break;
             case 'resolveDice': 
                 this.diceManager.hideLock();
                 break;
@@ -104,7 +107,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const dice = args.dice;
 
-        this.diceManager.setDice(dice, args.throwNumber === 1, args.throwNumber === args.maxThrowNumber, args.inTokyo);
+        this.diceManager.setDiceForThrowDice(dice, args.throwNumber === args.maxThrowNumber, args.inTokyo);
         
         if ((this as any).isCurrentPlayerActive()) {
             if (args.throwNumber < args.maxThrowNumber) {
@@ -119,6 +122,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + ` ( 1 <span class="small icon energy"></span>)`, () => this.buyEnergyDrink());
                 this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
             }
+        }
+    }
+
+    private onEnteringChangeDie(args: EnteringChangeDieArgs) {
+        if (args.dice?.length) {
+            this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo);
         }
     }
 
@@ -163,6 +172,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'throwDice':
+                    (this as any).addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+                    break;
+                case 'changeDie':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
                     break;
                 
@@ -296,6 +308,22 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public buyEnergyDrink() {
         this.takeAction('buyEnergyDrink');
+    }
+
+    public changeDie(id: number, value: number, card: number) {
+        if(!(this as any).checkAction('changeDie')) {
+            return;
+        }
+
+        this.takeAction('changeDie');
+    }
+
+    public goToChangeDie() {
+        if(!(this as any).checkAction('goToChangeDie')) {
+            return;
+        }
+
+        this.takeAction('goToChangeDie');
     }
 
     public resolveDice() {

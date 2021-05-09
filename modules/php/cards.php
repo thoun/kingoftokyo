@@ -335,7 +335,7 @@ trait CardsTrait {
         $this->applyGetEnergyIgnoreCards($playerId, 2, 28);
 
         if ($energyOnBatteryMonster <= 0) {
-            $card = $this->getCardFromDb(array_value($this->cards->getCardsOfType(28))[0]);
+            $card = $this->getCardFromDb(array_values($this->cards->getCardsOfTypeInLocation(28, null, 'hand', $playerId))[0]);
             $this->cards->moveCard($card->id, 'discard');        
             self::notifyAllPlayers("removeCards", '', [
                 'playerId' => $playerId,
@@ -358,6 +358,16 @@ trait CardsTrait {
         self::setGameStateValue('energyDrinks', $energyDrinks);
 
         $this->gamestate->nextState('buyEnergyDrink');        
+    }
+
+    function removeCardById($playerId, $id) {
+        $this->cards->moveCard($card->id, 'discard');
+    }
+
+    function removeCardByType($playerId, $type) {
+        $card = $this->getCardFromDb(array_values($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId))[0]);
+
+        $this->removeCardById($playerId, $card->id);
     }
 
 //////////////////////////////////////////////////////////////////////////////

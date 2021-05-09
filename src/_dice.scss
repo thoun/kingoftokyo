@@ -39,6 +39,10 @@ $tokyoGreen: #96c93c;
       }
   }
 
+  .dice.selectable {
+    cursor: pointer;
+  }
+
   .icon.forbidden {
     position: absolute;
     bottom: -10px;
@@ -290,5 +294,16 @@ $size: 0.25rem;
   
     &.animation6 {
       background-position: 100% 0%;
+    }
+  }
+
+  .change-die-discussion_bubble {
+    bottom: 110%;
+    left: -24px;
+
+    .dice-actions {
+      button {
+        width: auto;
+      }
     }
   }

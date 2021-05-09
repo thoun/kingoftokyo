@@ -105,10 +105,10 @@ $playerActionsGameStates = [
         "descriptionmyturnlast" => clienttranslate('${you} must resolve dice'),
         "type" => "activeplayer",
         "args" => "argThrowDice",
-        "possibleactions" => [ "rethrow", "changeDie", "buyEnergyDrink", "rethrow3", "resolve" ],
+        "possibleactions" => [ "rethrow", "goToChangeDie", "buyEnergyDrink", "rethrow3", "resolve" ],
         "transitions" => [
             "rethrow" => ST_PLAYER_THROW_DICES,
-            "changeDie" => ST_PLAYER_CHANGE_DIE,
+            "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
             "buyEnergyDrink" => ST_PLAYER_THROW_DICES,
             "rethrow3" => ST_PLAYER_THROW_DICES,
             "zombiePass" => ST_NEXT_PLAYER,
@@ -122,8 +122,9 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stChangeDie",
         "args" => "argChangeDie",
-        "possibleactions" => [ "resolve" ],
+        "possibleactions" => [ "changeDie", "resolve" ],
         "transitions" => [
+            "changeDie" => ST_PLAYER_CHANGE_DIE,
             "resolve" => ST_RESOLVE_DICES,
         ],
 

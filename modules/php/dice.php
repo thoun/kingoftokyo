@@ -161,7 +161,8 @@ trait DiceTrait {
 
     function getChangeDieCards(int $playerId) {
         // Herd Culler
-        $hasHerdCuller = $this->countCardOfType($playerId, 22) > 0 && intval(self::getGameStateValue('herdCullerUsed')) == 0;
+        $countHerdCuller = $this->countCardOfType($playerId, 22);
+        $hasHerdCuller = $countHerdCuller > 0 && intval(self::getGameStateValue('herdCullerUsed')) < $countHerdCuller;
         // Plot Twist
         $hasPlotTwist = $this->countCardOfType($playerId, 33) > 0;
         // Stretchy
@@ -204,13 +205,36 @@ trait DiceTrait {
         }
 
         $dice->value = bga_rand(1, 6);
-        self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
+        self::DbQuery("UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id);
 
         $this->gamestate->nextState('rethrow3');
     }
 
-    public function resolveDice() {
+    public function changeDie(int $id, int $value, int $card) {
+        self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
+
+        if ($card == 22) {
+            self::getGameStateValue('herdCullerUsed', intval(self::getGameStateValue('herdCullerUsed')) + 1);
+        } else {
+
+            $playerId = self::getActivePlayerId();
+
+            if ($card == 33) {
+                $this->removeCardByType($playerId, 33);
+            } else if ($card == 44) {
+                $this->applyLoseEnergyIgnoreCards($playerId, 2, -1);
+            }
+        }
+
         $this->gamestate->nextState('changeDie');
+    }
+
+    public function goToChangeDie() {
+        $this->gamestate->nextState('goToChangeDie');
+    }
+
+    public function resolveDice() {
+        $this->gamestate->nextState('resolve');
     }
 
 
@@ -271,6 +295,7 @@ trait DiceTrait {
             $diceNumber = $this->getDiceNumber($playerId);
             $diceArg = [
                 'dice' => $this->getDice($diceNumber),
+                'inTokyo' => $this->inTokyo($playerId),
             ];
         }
 

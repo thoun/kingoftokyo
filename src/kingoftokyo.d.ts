@@ -35,13 +35,18 @@ interface KingOfTokyoGamedatas {
 
 interface KingOfTokyoGame extends Game {
     cards: Cards;
+
+    changeDie: (id: number, value: number, card: number) => void;
 }
 
-interface EnteringThrowDiceArgs {
+interface EnteringDiceArgs {
     dice: Dice[];
+    inTokyo: boolean;
+}
+
+interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     throwNumber: number;
     maxThrowNumber: number;
-    inTokyo: boolean;
     energyDrink: {
         hasCard: boolean;
         playerEnergy: number;
@@ -50,6 +55,12 @@ interface EnteringThrowDiceArgs {
         hasCard: boolean;
         hasDice3: boolean;
     };
+}
+
+interface EnteringChangeDieArgs extends EnteringDiceArgs {
+    hasHerdCuller: boolean;
+    hasPlotTwist: boolean;
+    hasStretchy: boolean;
 }
 
 interface EnteringBuyCardArgs {

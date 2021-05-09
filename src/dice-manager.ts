@@ -13,78 +13,75 @@ class DiceManager {
     }
     
     public destroyFreeDice(): number[] {
-        const freeDice = this.dice.filter(dice => !dice.locked);
-        freeDice.forEach(dice => this.removeDice(dice));
-        return freeDice.map(dice => dice.id);
+        const freeDice = this.dice.filter(die => !die.locked);
+        freeDice.forEach(die => this.removeDice(die));
+        return freeDice.map(die => die.id);
     }
 
     public removeAllDice() {
-        console.log('removeAllDice', this.dice);
-        this.dice.forEach(dice => this.removeDice(dice));
+        this.dice.forEach(die => this.removeDice(die));
         $('locked-dice').innerHTML = '';
         $('dice-selector').innerHTML = '';
         this.dice = [];
     }
 
-    public setDice(dice: Dice[], firstThrow: boolean, lastTurn: boolean, inTokyo: boolean) { 
+    public setDiceForThrowDice(dice: Dice[], lastTurn: boolean, inTokyo: boolean) { 
         const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
 
-        if (firstThrow) {
-            $('dice-selector').innerHTML = '';
-            this.dice = [];
-        } else {
-            this.dice.forEach(dice => this.removeDice(dice));
-            $('locked-dice').innerHTML = '';
-            $('dice-selector').innerHTML = '';
-            this.dice = [];
-        }
-
-        const newDice = dice.filter(newDice => !this.dice.some(dice => dice.id === newDice.id));
-        //const oldDice = this.dice.filter(oldDice => !newDice.some(dice => dice.id === oldDice.id));
-        this.dice.push(...newDice);
-
-        /*oldDice.forEach(dice => {
-            const newDice = dice.find(nd => nd.id === dice.id);
-            if (newDice) {
-                dice.value = newDice.value;
-                dice.locked = newDice.locked;
-                const div = document.getElementById(`dice${dice.id}`);
-                div.dataset.diceValue = ''+dice.value;
-            }
-        });*/
+        this.dice?.forEach(die => this.removeDice(die));        
+        $('locked-dice').innerHTML = '';
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
 
         const selectable = currentPlayerActive && !lastTurn;
 
-        newDice.forEach(dice => this.createDice(dice, true, selectable, inTokyo));
+        dice.forEach(die => this.createDice(die, true, selectable, inTokyo));
 
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
+    }
 
-        //this.dice.forEach(dice => this.toggleLockDice(dice, dice.locked));
+    public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean) { 
+        const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
 
-        this.activateRethrowButton();
+        this.dice?.forEach(die => this.removeDice(die));  
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
+        
+        const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
+        dice.forEach(die => {
+            const divId = `dice${die.id}`;
+            dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
+            const selectable = currentPlayerActive && (!onlyHerdCuller || die.value !== 1);
+            dojo.toggleClass(divId, 'selectable', selectable);
+
+            if (selectable) {
+                dojo.place(`<div id="discussion_bubble_${divId}" class="discussion_bubble change-die-discussion_bubble"></div>`, divId);
+                document.getElementById(divId).addEventListener('click', () => this.toggleBubbleChangeDie(die));
+            }
+        });
     }
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
-        const dice = this.dice.filter(dice => dice.value === args.diceValue);
+        const dice = this.dice.filter(die => die.value === args.diceValue);
         (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, '96c93c', args.deltaPoints, 1500);
-        this.dice.filter(dice => dice.value === args.diceValue).forEach(dice => this.removeDice(dice, 1000, 1500));
+        this.dice.filter(die => die.value === args.diceValue).forEach(die => this.removeDice(die, 1000, 1500));
     }
 
     public resolveHealthDiceInTokyo() {
-        this.dice.filter(dice => dice.value === 4).forEach(dice => this.removeDice(dice, 1000));
+        this.dice.filter(die => die.value === 4).forEach(die => this.removeDice(die, 1000));
     }
 
     private addDiceAnimation(diceValue: number, playerIds: number[]) {
-        const dice = this.dice.filter(dice => dice.value === diceValue);
+        const dice = this.dice.filter(die => die.value === diceValue);
         playerIds.forEach((playerId, playerIndex) => {
             const destination = document.getElementById(`monster-figure-${playerId}`).getBoundingClientRect();
-            dice.forEach((dice, diceIndex) => {
-                const origin = document.getElementById(`dice${dice.id}`).getBoundingClientRect();
-                const animationId = `dice${dice.id}-player${playerId}-animation`;
-                dojo.place(`<div id="${animationId}" class="animation animation${diceValue}"></div>`, `dice${dice.id}`);
+            dice.forEach((die, dieIndex) => {
+                const origin = document.getElementById(`dice${die.id}`).getBoundingClientRect();
+                const animationId = `dice${die.id}-player${playerId}-animation`;
+                dojo.place(`<div id="${animationId}" class="animation animation${diceValue}"></div>`, `dice${die.id}`);
                 setTimeout(() => {
                     const middleIndex = dice.length - 1;
-                    const deltaX = (diceIndex - middleIndex) * 220;
+                    const deltaX = (dieIndex - middleIndex) * 220;
                     document.getElementById(animationId).style.transform = `translate(${deltaX}px, 100px) scale(1)`;
                 }, 50);
 
@@ -95,7 +92,7 @@ class DiceManager {
                 }, 1500);
 
                 if (playerIndex === playerIds.length - 1) {
-                    setTimeout(() => this.removeDice(dice), 2500);
+                    setTimeout(() => this.removeDice(die), 2500);
                 }
             });
         });
@@ -113,65 +110,87 @@ class DiceManager {
         this.addDiceAnimation(6, args.smashedPlayersIds);
     }
 
-    private toggleLockDice(dice: Dice, forcedLockValue: boolean | null = null) {
-        dice.locked = forcedLockValue === null ? !dice.locked : forcedLockValue;
-        const diceDiv = document.getElementById(`dice${dice.id}`);
+    private toggleLockDice(die: Dice, forcedLockValue: boolean | null = null) {
+        die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
+        const dieDiv = document.getElementById(`dice${die.id}`);
 
-        slideToObjectAndAttach(this.game, diceDiv, dice.locked ? 'locked-dice' : 'dice-selector');
+        slideToObjectAndAttach(this.game, dieDiv, die.locked ? 'locked-dice' : 'dice-selector');
 
         this.activateRethrowButton();
     }
 
     private activateRethrowButton() {
         if (document.getElementById('rethrow_button')) {
-            dojo.toggleClass('rethrow_button', 'disabled', !this.dice.filter(dice => !dice.locked).length);
+            dojo.toggleClass('rethrow_button', 'disabled', !this.dice.some(die => !die.locked));
         }
     }
 
-    private createDiceHtml(dice: Dice, inTokyo: boolean) {
-        let html = `<div id="dice${dice.id}" class="dice dice${dice.value}" data-dice-id="${dice.id}" data-dice-value="${dice.value}">
-        <ol class="die-list" data-roll="${dice.value}">`;
-        for (let die=1; die<=6; die++) {
-            html += `<li class="die-item ${dice.extra ? 'green' : 'black'} side${die}" data-side="${die}"></li>`;
+    private createDiceHtml(die: Dice, inTokyo: boolean) {
+        let html = `<div id="dice${die.id}" class="dice dice${die.value}" data-dice-id="${die.id}" data-dice-value="${die.value}">
+        <ol class="die-list" data-roll="${die.value}">`;
+        for (let dieFace=1; dieFace<=6; dieFace++) {
+            html += `<li class="die-item ${die.extra ? 'green' : 'black'} side${dieFace}" data-side="${dieFace}"></li>`;
         }
         html += `</ol>`;
-        if (dice.value === 4 && inTokyo) {            
+        if (die.value === 4 && inTokyo) {            
             html += `<div class="icon forbidden"></div>`;
         }
         html += `</div>`;
         return html;
     }
 
-    private getDiceDiv(dice: Dice) {
-        return document.getElementById(`dice${dice.id}`);
+    private getDiceDiv(die: Dice) {
+        return document.getElementById(`dice${die.id}`);
     }
 
-    private createDice(dice: Dice, animated: boolean, selectable: boolean, inTokyo: boolean) {
-        dojo.place(this.createDiceHtml(dice, inTokyo), dice.locked ? 'locked-dice' : 'dice-selector');
+    private createDice(die: Dice, animated: boolean, selectable: boolean, inTokyo: boolean) {
+        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? 'locked-dice' : 'dice-selector');
 
-        const diceDiv = this.getDiceDiv(dice);
+        const dieDiv = this.getDiceDiv(die);
 
-        if (!dice.locked && animated) {
-            diceDiv.classList.add('rolled');
-            setTimeout(() => diceDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 100); 
-            setTimeout(() => diceDiv.classList.remove('rolled'), 1200); 
+        if (!die.locked && animated) {
+            dieDiv.classList.add('rolled');
+            setTimeout(() => dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 100); 
+            setTimeout(() => dieDiv.classList.remove('rolled'), 1200); 
         } else {
-            setTimeout(() => diceDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'), 100); 
+            setTimeout(() => dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'), 100); 
         }
 
         if (selectable) {
-            diceDiv.addEventListener('click', () => this.toggleLockDice(dice));
+            dieDiv.addEventListener('click', () => this.toggleLockDice(die));
         }
 
     }
 
-    private removeDice(dice: Dice, duration?: number, delay?: number) {
+    private removeDice(die: Dice, duration?: number, delay?: number) {
         if (duration) {
-            (this.game as any).fadeOutAndDestroy(`dice${dice.id}`, duration, delay);
+            (this.game as any).fadeOutAndDestroy(`dice${die.id}`, duration, delay);
         } else {
-            dojo.destroy(`dice${dice.id}`);
+            dojo.destroy(`dice${die.id}`);
         }
-        this.dice.splice(this.dice.indexOf(dice), 1);
+        this.dice.splice(this.dice.indexOf(die), 1);
+    }
+
+    private toggleBubbleChangeDie(die: Dice) {
+        const bubble = document.getElementById(`discussion_bubble_dice${die.id}`);
+        const visible = bubble.dataset.visible == 'true';
+
+        if (visible) {
+            bubble.style.display = 'none';
+            bubble.dataset.visible = 'false';
+            
+        } else {
+            if (bubble.innerHTML == '') {
+                dojo.place(`
+                    <div>TODO show selectable die faces</div>
+                    <div class="action-buttons">TODO buttons</div>
+                `, bubble.id); // TODO activate buttons on conditions
+            }
+
+            bubble.style.display = 'block';
+            bubble.dataset.visible = 'true';
+        }
+        
     }
 
 }
