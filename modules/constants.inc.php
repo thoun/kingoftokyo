@@ -17,6 +17,8 @@ define('ST_ENTER_TOKYO', 31);
 
 define('ST_PLAYER_BUY_CARD', 40);
 
+define('ST_PLAYER_SELL_CARD', 50);
+
 define('ST_END', 90);
 define('ST_NEXT_PLAYER', 91);
 

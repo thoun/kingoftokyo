@@ -126,6 +126,24 @@
         self::ajaxResponse();
     }
   	
+    public function goToSellCard() {
+        self::setAjaxMode();
+
+        $this->game->goToSellCard();
+
+        self::ajaxResponse();
+    }
+  	
+    public function sellCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->sellCard($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function endTurn() {
         self::setAjaxMode();
 

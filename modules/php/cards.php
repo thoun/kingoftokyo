@@ -412,10 +412,11 @@ trait CardsTrait {
         $this->cards->moveCard($id, 'hand', $playerId);
 
         if ($from > 0) {    
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy card from ${player_name2}'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from ${player_name2}'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'card' => $card,
+                'card_name' => $this->getCardName($card->type),
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId),
                 'from' => $from,
@@ -424,10 +425,11 @@ trait CardsTrait {
         } else {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
     
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy card'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
                 'card' => $card,
+                'card_name' => $this->getCardName($card->type),
                 'newCard' => $newCard,
                 'energy' => $this->getPlayerEnergy($playerId),
             ]);
@@ -466,6 +468,34 @@ trait CardsTrait {
         ]);
 
         $this->gamestate->nextState('renew');
+    }
+
+    function goToSellCard() {
+        $this->gamestate->nextState('goToSellCard');
+    }
+
+    
+    function sellCard(int $id) {
+        $playerId = self::getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($id));
+
+        $fullCost = $this->CARD_COST[$card->type];
+
+        $this->removeCard($playerId, $card, true);
+
+        self::notifyAllPlayers("removeCards", clienttranslate('${player_name} sells ${card_name}'), [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'cards' => [$card],
+            'card_name' =>$this->getCardName($card->type),
+            'energy' => $this->getPlayerEnergy($playerId),
+        ]);
+
+        // TOCHECK can metamorph be chained with Friend of children ? Considered Yes
+        $this->applyGetEnergy($playerId, $fullCost, 0);
+
+        $this->gamestate->nextState('sellCard');
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -513,4 +543,14 @@ trait CardsTrait {
 //////////// Game state actions
 ////////////
 
+    function stSellCard() {
+        $playerId = self::getActivePlayerId();
+
+        // metamorph
+        $countMetamorph = $this->countCardOfType($playerId, 26);
+
+        if ($countMetamorph < 1) { // no needto check remaining cards, if player got metamoph he got cards to sell
+            $this->gamestate->nextState('endTurn');
+        }
+    }
 }

@@ -38,7 +38,8 @@ interface KingOfTokyoGame extends Game {
 
     changeDie: (id: number, value: number, card: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
-    onVisibleCardClick: (controlName: string, cardId: string, from: number) => void;
+    onVisibleCardClick: (stock: Stock, cardId: string, from: number) => void;
+    getPlayerId: () => number;
 }
 
 interface EnteringDiceArgs {

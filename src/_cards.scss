@@ -151,12 +151,13 @@ $description-size: 7pt;
     position: relative;
     color: white;
     font-family: 'goodgirl';
-    font-size: 5pt;
-    width: 80px;
+    font-size: 7pt;
+    margin-right: 30px;
+    margin-left: 5px;
     text-align: center;
 
     .outline {
-        -webkit-text-stroke: 8px #00aeef;
+        -webkit-text-stroke: 4px #00aeef;
         position: absolute;
         left: 0;
         top: 0;

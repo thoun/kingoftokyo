@@ -172,11 +172,25 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} can buy a card'),
         "type" => "activeplayer",
         "args" => "argBuyCard",
-        "possibleactions" => [ "buyCard", "endTurn", "renew" ],
+        "possibleactions" => [ "buyCard", "goToSellCard", "renew" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
-            "endTurn" => ST_END,
+            "goToSellCard" => ST_PLAYER_SELL_CARD,
             "renew" => ST_PLAYER_BUY_CARD,
+            "zombiePass" => ST_NEXT_PLAYER,
+        ]
+    ],
+
+    ST_PLAYER_SELL_CARD => [
+        "name" => "sellCard",
+        "description" => clienttranslate('${actplayer} can sell a card'),
+        "descriptionmyturn" => clienttranslate('${you} can sell a card'),
+        "type" => "activeplayer",
+        "action" => "stSellCard",
+        "possibleactions" => [ "sellCard", "endTurn" ],
+        "transitions" => [
+            "sellCard" => ST_PLAYER_SELL_CARD,
+            "endTurn" => ST_END,
             "zombiePass" => ST_NEXT_PLAYER,
         ]
     ],

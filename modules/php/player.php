@@ -140,7 +140,7 @@ trait PlayerTrait {
         // clean game state values
         $this->setGameStateValue('lessDiceForNextTurn', 0);
 
-        // apply end of turn effects
+        // apply end of turn effects (after Selling Cards)
 
         // rooting for the underdog
         // TOCHECK is it applied before other end of turn monsters (it may change the fewest Stars) ? considered Yes
@@ -163,7 +163,7 @@ trait PlayerTrait {
             $this->applyGetPoints($playerId, $countHerbivore, 21);
         }
 
-        // solar powered
+        // solar powered (TODO move to before selling cards)
         $countSolarPowered = $this->countCardOfType($playerId, 42);
         if ($countSolarPowered > 0 && $this->getPlayerEnergy($playerId) == 0) {
             $this->applyGetEnergy($playerId, $countSolarPowered, 42);

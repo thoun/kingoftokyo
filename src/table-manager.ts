@@ -27,7 +27,7 @@ class TableManager {
     }
 
     private setPlayerTables(playerTables: PlayerTable[]) {
-        const currentPlayerId = Number((this.game as any).player_id);
+        const currentPlayerId = Number(this.game.getPlayerId());
         const playerTablesOrdered = playerTables.filter(playerTable => !!playerTable).sort((a, b) => b.playerNo - a.playerNo);
         const playerIndex = playerTablesOrdered.findIndex(playerTable => playerTable.playerId === currentPlayerId);
         if (playerIndex) { // not spectator (or 0)            

@@ -86,6 +86,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'buyCard':
                 this.onEnteringBuyCard(args.args);
                 break;
+            case 'sellCard':
+                this.onEnteringSellCard();
+                break;
 
             case 'endTurn':
                 this.onEnteringEndTurn();
@@ -137,8 +140,14 @@ class KingOfTokyo implements KingOfTokyoGame {
             args.disabledIds.forEach(id => dojo.query(`div[id$="_cards_item_${id}"]`).addClass('disabled'));
 
             if (args.canBuyFromPlayers) {
-                this.playerTables.filter(playerTable => playerTable.playerId != Number((this as any).player_id)).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+                this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
             }
+        }
+    }
+
+    private onEnteringSellCard() {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
         }
     }
 
@@ -161,6 +170,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'buyCard':
                 this.onLeavingBuyCard();
                 break;
+            case 'sellCard':
+                this.onLeavingSellCard();
+                break;
         }
     }
 
@@ -168,6 +180,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.setSelectionMode(0);
         dojo.query('.stockitem').removeClass('disabled');
         this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));
+    }
+
+    private onLeavingSellCard() {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(0));
+        }
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -182,18 +200,22 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'changeDie':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
                     break;
-                
-                case 'buyCard':
-                    (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), 'onRenew');
-                    if (this.energyCounters[(this as any).player_id].getValue() < 2) {
-                        dojo.addClass('renew_button', 'disabled');
-                    }
-                    (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
-                    break;
 
                 case 'leaveTokyo':
                     (this as any).addActionButton('stayInTokyo_button', _("Stay in Tokyo"), 'onStayInTokyo');
                     (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
+                    break;
+                
+                case 'buyCard':
+                    (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), 'onRenew');
+                    if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
+                        dojo.addClass('renew_button', 'disabled');
+                    }
+                    (this as any).addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
+                    break;
+                
+                case 'sellCard':
+                    (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
             }
 
@@ -206,6 +228,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
 
     ///////////////////////////////////////////////////
+
+    public getPlayerId(): number {
+        return Number((this as any).player_id);
+    }
 
     public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false) {
         const html = `<button class="action-button bgabutton bgabutton_blue" id="${id}">
@@ -277,20 +303,24 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.onItemCreate = (card_div, card_type_id) => this.cards.setupNewCard(card_div, card_type_id); 
         this.visibleCards.image_items_per_row = 10;
         this.visibleCards.centerItems = true;
-        dojo.connect(this.visibleCards, 'onChangeSelection', this, (controlName: string, item_id: string) => this.onVisibleCardClick(controlName, item_id));
+        dojo.connect(this.visibleCards, 'onChangeSelection', this, (_, item_id: string) => this.onVisibleCardClick(this.visibleCards, item_id));
 
         this.cards.setupCards([this.visibleCards]);
 
         visibleCards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
     }
 
-    public onVisibleCardClick(controlName: string, cardId: string, from: number = 0) {
-        if (dojo.hasClass(`${controlName}_item_${cardId}`, 'disabled')) {
-            this.visibleCards.unselectItem(cardId);
+    public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) {
+        if (dojo.hasClass(`${stock.container_div.id}_item_${cardId}`, 'disabled')) {
+            stock.unselectItem(cardId);
             return;
         }
 
-        this.buyCard(cardId, from);
+        if (this.gamedatas.gamestate.name === 'sellCard') {
+            this.sellCard(cardId);
+        } else {
+            this.buyCard(cardId, from)
+        }
     }
 
     public onRethrow() {
@@ -369,12 +399,30 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public sellCard(id: number | string) {
+        if(!(this as any).checkAction('sellCard')) {
+            return;
+        }
+
+        this.takeAction('sellCard', {
+            id
+        });
+    }
+
     public onRenew() {
         if(!(this as any).checkAction('renew')) {
             return;
         }
 
         this.takeAction('renew');
+    }
+
+    public goToSellCard() {
+        if(!(this as any).checkAction('goToSellCard')) {
+            return;
+        }
+
+        this.takeAction('goToSellCard');
     }
 
     public onEndTurn() {
@@ -521,7 +569,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     
     private setEnergy(playerId: number, energy: number) {
         this.energyCounters[playerId].toValue(energy);
-        this.checkBuyEnergyDrinkState(this.energyCounters[(this as any).player_id].getValue()); // disable button if energy gets down to 0
+        this.checkBuyEnergyDrinkState(this.energyCounters[this.getPlayerId()].getValue()); // disable button if energy gets down to 0
     }
 
     private checkBuyEnergyDrinkState(energy: number) {
