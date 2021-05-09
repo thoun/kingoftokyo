@@ -57,12 +57,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         // placement of monster must be after TableManager first paint
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
 
-        $('test').addEventListener('click', () => this.notif_resolveSmashDice({
+        /*$('test').addEventListener('click', () => this.notif_resolveSmashDice({
             args: {
                 number: 3,
                 smashedPlayersIds: [2343492, 2343493]
             }
-        } as any));
+        } as any));*/
 
         this.setupNotifications();
 
@@ -529,7 +529,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (newCard) {
             moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
-            this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`);
+            this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`, 'deck');
         } else {
             moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
         }

@@ -13,10 +13,10 @@ $description-width: 112px;
 $description-height: 38px;
 $description-size: 7pt;
 
-.stockitem {
-    border-radius:10px;
-    margin:5px;
-    border:1px solid grey;
+.stockitem, #deck {
+    border-radius: 10px;
+    margin: 5px;
+    // border: 1px solid white;
     text-align: center;
     overflow: hidden;
 

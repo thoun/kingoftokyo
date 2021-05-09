@@ -793,12 +793,12 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
-        $('test').addEventListener('click', function () { return _this.notif_resolveSmashDice({
+        /*$('test').addEventListener('click', () => this.notif_resolveSmashDice({
             args: {
                 number: 3,
                 smashedPlayersIds: [2343492, 2343493]
             }
-        }); });
+        } as any));*/
         this.setupNotifications();
         log("Ending game setup");
     };
@@ -1180,7 +1180,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.setEnergy(notif.args.playerId, notif.args.energy);
         if (newCard) {
             moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
-            this.visibleCards.addToStockWithId(newCard.type, "" + newCard.id);
+            this.visibleCards.addToStockWithId(newCard.type, "" + newCard.id, 'deck');
         }
         else {
             moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);

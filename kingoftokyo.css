@@ -393,14 +393,13 @@
   width: auto;
 }
 
-.stockitem {
+.stockitem, #deck {
   border-radius: 10px;
   margin: 5px;
-  border: 1px solid grey;
   text-align: center;
   overflow: hidden;
 }
-.stockitem .bottom {
+.stockitem .bottom, #deck .bottom {
   position: absolute;
   bottom: 0px;
   width: 100%;
@@ -410,7 +409,7 @@
   background-size: 120% auto;
   background-position: bottom;
 }
-.stockitem .name-wrapper {
+.stockitem .name-wrapper, #deck .name-wrapper {
   position: absolute;
   top: 14px;
   left: 34px;
@@ -421,20 +420,20 @@
   width: 98px;
   text-align: center;
 }
-.stockitem .name-wrapper .outline {
+.stockitem .name-wrapper .outline, #deck .name-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   -webkit-text-stroke: 8px #96c93c;
   width: 100%;
 }
-.stockitem .name-wrapper .text {
+.stockitem .name-wrapper .text, #deck .name-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
 }
-.stockitem .type-wrapper {
+.stockitem .type-wrapper, #deck .type-wrapper {
   position: absolute;
   top: 142px;
   left: 0px;
@@ -443,25 +442,25 @@
   transform: rotate(-10deg);
   font-family: "goodgirl";
 }
-.stockitem .type-wrapper.keep .outline {
+.stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline {
   -webkit-text-stroke: 8px #00aeef;
 }
-.stockitem .type-wrapper.discard .outline {
+.stockitem .type-wrapper.discard .outline, #deck .type-wrapper.discard .outline {
   -webkit-text-stroke: 8px #ef1923;
 }
-.stockitem .type-wrapper .outline {
+.stockitem .type-wrapper .outline, #deck .type-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .type-wrapper .text {
+.stockitem .type-wrapper .text, #deck .type-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .description-wrapper {
+.stockitem .description-wrapper, #deck .description-wrapper {
   position: absolute;
   top: 144px;
   left: 4px;
@@ -476,12 +475,12 @@
   transform: rotate(-6deg);
   font-size: 7pt;
 }
-.stockitem .description-wrapper .icon {
+.stockitem .description-wrapper .icon, #deck .description-wrapper .icon {
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
 }
-.stockitem.disabled {
+.stockitem.disabled, #deck.disabled {
   opacity: 0.5 !important;
   cursor: not-allowed;
 }
@@ -553,6 +552,16 @@
 #table #table-center {
   position: absolute;
   width: 420px;
+}
+#table #table-center #deck-wrapper {
+  display: flex;
+  justify-content: center;
+}
+#table #table-center #deck-wrapper #deck {
+  width: 185px;
+  height: 132px;
+  background: url("img/card-back.jpg");
+  box-shadow: 4px 4px 0px 0px #333;
 }
 #table #table-center #visible-cards {
   margin-bottom: 10px;

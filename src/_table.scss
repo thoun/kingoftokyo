@@ -5,6 +5,18 @@
         position: absolute;
         width: 420px;
 
+        #deck-wrapper {
+            display: flex;
+            justify-content: center;
+
+            #deck {
+                width: 185px;
+                height: 132px;
+                background: url('img/card-back.jpg');
+                box-shadow: 4px 4px 0px 0px #333;
+            }
+        }
+
         #visible-cards {
             margin-bottom: 10px;
         }
