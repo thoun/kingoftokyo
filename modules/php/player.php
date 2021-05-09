@@ -78,6 +78,7 @@ trait PlayerTrait {
 
         self::setGameStateValue('damageDoneByActivePlayer', 0);
         self::setGameStateValue('energyDrinks', 0);
+        self::setGameStateValue('madeInALabCard', 0);
 
         // apply monster effects
 

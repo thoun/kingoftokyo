@@ -15,6 +15,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private energyCounters: Counter[] = [];
     private diceManager: DiceManager;
     private visibleCards: Stock;
+    private pickCard: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
     public cards: Cards;
@@ -56,13 +57,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
-
-        /*$('test').addEventListener('click', () => this.notif_resolveSmashDice({
-            args: {
-                number: 3,
-                smashedPlayersIds: [2343492, 2343493]
-            }
-        } as any));*/
 
         this.setupNotifications();
 
@@ -143,11 +137,16 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringBuyCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
-            args.disabledIds.forEach(id => dojo.query(`div[id$="_cards_item_${id}"]`).addClass('disabled'));
 
             if (args.canBuyFromPlayers) {
                 this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
             }
+
+            if (args._private?.pickCard) {
+                this.showPickStock(args._private.pickCard);
+            }
+
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
         }
     }
 
@@ -185,7 +184,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onLeavingBuyCard() {
         this.visibleCards.setSelectionMode(0);
         dojo.query('.stockitem').removeClass('disabled');
-        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));
+        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));            
+        this.hidePickStock();
     }
 
     private onLeavingSellCard() {
@@ -444,6 +444,36 @@ class KingOfTokyo implements KingOfTokyoGame {
         data.lock = true;
         (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
     }
+    
+    private showPickStock(card: Card) {
+        if (!this.pickCard) { 
+            dojo.place('<div id="pick-stock"></div>', 'deck');
+
+            this.pickCard = new ebg.stock() as Stock;
+            this.pickCard.setSelectionAppearance('class');
+            this.pickCard.selectionClass = 'no-visible-selection';
+            this.pickCard.create(this, $('pick-stock'), CARD_WIDTH, CARD_HEIGHT);
+            this.pickCard.setSelectionMode(1);
+            this.pickCard.onItemCreate = (card_div, card_type_id) => this.cards.setupNewCard(card_div, card_type_id); 
+            this.pickCard.image_items_per_row = 10;
+            this.pickCard.centerItems = true;
+            dojo.connect(this.pickCard, 'onChangeSelection', this, (_, item_id: string) => this.onVisibleCardClick(this.pickCard, item_id));
+        } else {
+            document.getElementById('pick-stock').style.display = 'block';
+        }
+
+        this.cards.setupCards([this.pickCard]);
+
+        this.pickCard.addToStockWithId(card.type, `${card.id}`);
+    }
+
+    private hidePickStock() {
+        const div = document.getElementById('pick-stock');
+        if (div) {
+            document.getElementById('pick-stock').style.display = 'none';
+            this.pickCard.removeAll();
+        }
+    }
 
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications
@@ -530,8 +560,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (newCard) {
             moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
             this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`, 'deck');
-        } else {
+        } else if (notif.args.from > 0) {
             moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
+        } else { // from Made in a lab Pick
+            if (this.pickCard) { // active player
+                moveToAnotherStock(this.pickCard, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
+            } else {
+                this.playerTables[notif.args.playerId].cards.addToStockWithId(card.type, `${card.id}`, 'deck');
+            }
         }
 
         this.tableManager.placePlayerTable(); // adapt to new card

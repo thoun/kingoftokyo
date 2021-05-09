@@ -19,7 +19,7 @@
  *
  */
     
-$this->KEEP_CARDS_TODO = [7,20,25,27,31,35,36,37,40,41,48];
+$this->KEEP_CARDS_TODO = [7,20,27,31,35,36,37,40,41,48];
 
 $this->CARD_COST = [
 // KEEP

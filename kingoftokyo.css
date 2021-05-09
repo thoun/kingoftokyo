@@ -481,7 +481,7 @@
   margin-bottom: -2px;
 }
 .stockitem.disabled, #deck.disabled {
-  opacity: 0.5 !important;
+  opacity: 0.7 !important;
   cursor: not-allowed;
 }
 
@@ -562,6 +562,14 @@
   height: 132px;
   background: url("img/card-back.jpg");
   box-shadow: 4px 4px 0px 0px #333;
+  position: relative;
+  overflow: visible;
+}
+#table #table-center #deck-wrapper #deck #pick-stock {
+  position: absolute;
+  bottom: -5px;
+  width: 100%;
+  z-index: 5;
 }
 #table #table-center #visible-cards {
   margin-bottom: 10px;

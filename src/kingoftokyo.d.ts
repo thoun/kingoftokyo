@@ -70,6 +70,9 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
 interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
+    _private: {
+        pickCard: Card;
+    };
 }
 
 interface NotifResolveArgs {

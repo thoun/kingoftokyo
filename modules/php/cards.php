@@ -133,39 +133,12 @@ trait CardsTrait {
 
         switch($type) {
             // KEEP
-            case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
-            case 6: return _("<strong>Add [diceSmash] to your Roll while you are in Tokyo. When you Yield Tokyo, the monster taking it loses 1[heart].</strong>");
-            case 7: return _("If you lose [heart], roll a die for each [heart] you lost. <strong>Each [diceHeart] reduces the loss by 1[heart].</strong>");
-            case 8: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy] <strong>gain 9[Star]</strong> in addition to the regular effects.");
-            case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
-            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
             case 12: 
                 $this->applyGetHealth($playerId, 2, $type); 
                 break;
-            case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
-            case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
-            case 18: return _("<strong>You have one extra die Roll</strong> each turn.");
-            case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
-            case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
-            case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
-            case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
-            case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
-            case 27: return _("<strong>Choose a [keep] card any monster has in play</strong> and put a Mimic token on it. <strong>This card counts as a duplicate of that card as if you had just bought it.</strong> Spend 1[Energy] at the start of your turn to move the Mimic token and change the card you are mimicking.");
             case 28: 
                 self::setGameStateValue('energyOnBatteryMonster', 6);
                 break;
-            case 29: return _("<strong>Your [diceSmash] damage all other Monsters.</strong>");
-            case 31: return _("<strong>Whenever a Power card is revealed you have the option of buying it</strong> immediately.");
-            case 32: return _("<strong>You can buy Power cards from other monsters.</strong> Pay them the [Energy] cost.");
-            case 33: return _("Before resolving your dice, you may <strong>change one die to any result</strong>. Discard when used.");
-            case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
-            case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the reroll [diceHeart], discard this card.");
-            case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong>");
-            case 40: return _("Give 1 <i>Shrink Ray</i> to each Monster you Smash with your [diceSmash]. <strong>At the beginning of their turn, Monster roll 1 less dice for each <i>Shrink Ray</i> token they have on them</strong>. A <i>Shrink Ray</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
-            case 41: return _("Place 3 <i>Smoke</i> counters on this card. <strong>Spend 1 <i>Smoke</i> counter for an extra Roll.</strong> Discard this card when all <i>Smoke</i> counters are spent.");
-            case 44: return _("Before resolving your dice, you can spend 2[Energy] to <strong>change one of your dice to any result.</strong>");
-            case 45: return _("Spend 1[Energy] to <strong>get 1 extra die Roll.</strong>");
-            case 48: return _("<strong>Spend 2[Energy] to lose [Heart]<strong> this turn.");
             
             // DISCARD
             case 101: 
@@ -411,7 +384,7 @@ trait CardsTrait {
         }
         $this->cards->moveCard($id, 'hand', $playerId);
 
-        if ($from > 0) {    
+        if ($from > 0) {
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from ${player_name2}'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -422,6 +395,18 @@ trait CardsTrait {
                 'from' => $from,
                 'player_name2' => $this->getPlayerName($from),
             ]);
+        } else if ($id == self::getGameStateValue('madeInALabCard')) {
+            
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from top deck'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'card' => $card,
+                'card_name' => $this->getCardName($card->type),
+                'newCard' => null,
+                'energy' => $this->getPlayerEnergy($playerId),
+            ]);
+
+            self::setGameStateValue('madeInALabCard', 1001); // To not pick another one on same turn
         } else {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
     
@@ -433,6 +418,9 @@ trait CardsTrait {
                 'newCard' => $newCard,
                 'energy' => $this->getPlayerEnergy($playerId),
             ]);
+
+            // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
+            self::setGameStateValue('madeInALabCard', 1001);
         }
 
         $this->applyEffects($card, $playerId);
@@ -512,7 +500,7 @@ trait CardsTrait {
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
         // parasitic tentacles
-        $canBuyFromPlayers = $this->countCardOfType($playerId, 32);
+        $canBuyFromPlayers = $this->countCardOfType($playerId, 32) > 0;
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         
@@ -531,12 +519,32 @@ trait CardsTrait {
             }
         }
 
+        // made in a lab
+        $canPick = $this->countCardOfType($playerId, 25) > 0;
+
+        $pickArgs = [];
+        if ($canPick && self::getGameStateValue('madeInALabCard') < 1000) {
+            $pickCard = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
+            self::setGameStateValue('madeInALabCard', $pickCard->id);
+
+            if (!$this->canBuyCard($playerId, $this->getCardCost($playerId, $pickCard->type))) {
+                $disabledIds[] = $pickCard->id;
+            }
+
+            $pickArgs = [
+                '_private' => [          // Using "_private" keyword, all data inside this array will be made private
+                    'active' => [       // Using "active" keyword inside "_private", you select active player(s)
+                        'pickCard' => $pickCard,   // will be send only to active player(s)
+                    ]
+                ],
+            ];
+        }
     
         // return values:
         return [
             'disabledIds' => $disabledIds,
             'canBuyFromPlayers' => $canBuyFromPlayers,
-        ];
+        ] + $pickArgs;
     }
 
 //////////////////////////////////////////////////////////////////////////////
