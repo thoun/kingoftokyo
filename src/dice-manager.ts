@@ -89,8 +89,10 @@ class DiceManager {
                 setTimeout(() => {
                     const deltaX = destination.left - origin.left + 59;
                     const deltaY = destination.top - origin.top + 59;
+                    
+                    document.getElementById(animationId).style.transition = `transform 0.5s ease-in`;
                     document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.30)`;
-                }, 1500);
+                }, 1000);
 
                 if (playerIndex === playerIds.length - 1) {
                     setTimeout(() => this.removeDice(die), 2500);

@@ -282,7 +282,7 @@ $size: 0.25rem;
     top: -94px;
     left: -94px;
     transform: scale(0.15);
-    transition: transform 1s;
+    transition: transform 0.5s ease-out;
   
     &.animation4 {
       background-position: 0% 0%;

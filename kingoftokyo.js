@@ -631,8 +631,9 @@ var DiceManager = /** @class */ (function () {
                 setTimeout(function () {
                     var deltaX = destination.left - origin.left + 59;
                     var deltaY = destination.top - origin.top + 59;
+                    document.getElementById(animationId).style.transition = "transform 0.5s ease-in";
                     document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(0.30)";
-                }, 1500);
+                }, 1000);
                 if (playerIndex === playerIds.length - 1) {
                     setTimeout(function () { return _this.removeDice(die); }, 2500);
                 }
@@ -756,7 +757,6 @@ var DiceManager = /** @class */ (function () {
     return DiceManager;
 }());
 var ANIMATION_MS = 1500;
-var LONG_ANIMATION_MS = 2500;
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
@@ -793,6 +793,12 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
+        $('test').addEventListener('click', function () { return _this.notif_resolveSmashDice({
+            args: {
+                number: 3,
+                smashedPlayersIds: [2343492, 2343493]
+            }
+        }); });
         this.setupNotifications();
         log("Ending game setup");
     };
@@ -1117,12 +1123,12 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var notifs = [
             ['resolveNumberDice', ANIMATION_MS],
-            ['resolveHealthDice', LONG_ANIMATION_MS],
+            ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealthDiceInTokyo', ANIMATION_MS],
-            ['resolveEnergyDice', LONG_ANIMATION_MS],
-            ['resolveSmashDice', LONG_ANIMATION_MS],
-            ['playerEliminated', LONG_ANIMATION_MS],
-            ['playerEntersTokyo', LONG_ANIMATION_MS],
+            ['resolveEnergyDice', ANIMATION_MS],
+            ['resolveSmashDice', ANIMATION_MS],
+            ['playerEliminated', ANIMATION_MS],
+            ['playerEntersTokyo', ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],

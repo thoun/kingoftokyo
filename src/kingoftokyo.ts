@@ -8,7 +8,6 @@ declare const g_gamethemeurl;
 declare const board: HTMLDivElement;
 
 const ANIMATION_MS = 1500;
-const LONG_ANIMATION_MS = 2500;
 
 class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
@@ -57,6 +56,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
+
+        $('test').addEventListener('click', () => this.notif_resolveSmashDice({
+            args: {
+                number: 3,
+                smashedPlayersIds: [2343492, 2343493]
+            }
+        } as any));
 
         this.setupNotifications();
 
@@ -456,12 +462,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const notifs = [
             ['resolveNumberDice', ANIMATION_MS],
-            ['resolveHealthDice', LONG_ANIMATION_MS],
+            ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealthDiceInTokyo', ANIMATION_MS],
-            ['resolveEnergyDice', LONG_ANIMATION_MS],
-            ['resolveSmashDice', LONG_ANIMATION_MS],
-            ['playerEliminated', LONG_ANIMATION_MS],
-            ['playerEntersTokyo', LONG_ANIMATION_MS],
+            ['resolveEnergyDice', ANIMATION_MS],
+            ['resolveSmashDice', ANIMATION_MS],
+            ['playerEliminated', ANIMATION_MS],
+            ['playerEntersTokyo', ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],

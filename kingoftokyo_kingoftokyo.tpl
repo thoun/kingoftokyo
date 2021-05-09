@@ -1,5 +1,5 @@
 {OVERALL_GAME_HEADER}
-
+<button class="bgabutton bgabutton_red" id="test">TEST</button>
 <div id="rolled-dice" class="whiteblock">
     <div id="locked-dice" class="hide-lock">
     </div>
