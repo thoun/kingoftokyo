@@ -134,7 +134,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringBuyCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
-            args.disabledIds.forEach(id => dojo.query(`#visible-cards_item_${id}`).addClass('disabled'));
+            args.disabledIds.forEach(id => dojo.query(`div[id$="_cards_item_${id}"]`).addClass('disabled'));
+
+            if (args.canBuyFromPlayers) {
+                this.playerTables.filter(playerTable => playerTable.playerId != Number((this as any).player_id)).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            }
         }
     }
 
@@ -162,7 +166,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onLeavingBuyCard() {
         this.visibleCards.setSelectionMode(0);
-        dojo.query('#visible-cards .stockitem').removeClass('disabled');
+        dojo.query('.stockitem').removeClass('disabled');
+        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -272,20 +277,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.onItemCreate = (card_div, card_type_id) => this.cards.setupNewCard(card_div, card_type_id); 
         this.visibleCards.image_items_per_row = 10;
         this.visibleCards.centerItems = true;
-        dojo.connect(this.visibleCards, 'onChangeSelection', this, 'onVisibleCardClick');
+        dojo.connect(this.visibleCards, 'onChangeSelection', this, (controlName: string, item_id: string) => this.onVisibleCardClick(controlName, item_id));
 
         this.cards.setupCards([this.visibleCards]);
 
         visibleCards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
     }
 
-    private onVisibleCardClick(control_name: string, item_id: string) {
-        if (dojo.hasClass(`visible-cards_item_${item_id}`, 'disabled')) {
-            this.visibleCards.unselectItem(item_id);
+    public onVisibleCardClick(controlName: string, cardId: string, from: number = 0) {
+        if (dojo.hasClass(`${controlName}_item_${cardId}`, 'disabled')) {
+            this.visibleCards.unselectItem(cardId);
             return;
         }
 
-        this.buyCard(item_id);
+        this.buyCard(cardId, from);
     }
 
     public onRethrow() {
@@ -353,13 +358,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('leave');
     }
 
-    public buyCard(id: number | string) {
+    public buyCard(id: number | string, from: number) {
         if(!(this as any).checkAction('buyCard')) {
             return;
         }
 
         this.takeAction('buyCard', {
-            id
+            id,
+            from
         });
     }
 
@@ -467,8 +473,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         const newCard = notif.args.newCard;
         this.setEnergy(notif.args.playerId, notif.args.energy);
 
-        moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
-        this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`);
+        if (newCard) {
+            moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
+            this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`);
+        } else {
+            moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
+        }
 
         this.tableManager.placePlayerTable(); // adapt to new card
     }

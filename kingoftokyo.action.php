@@ -111,8 +111,9 @@
         self::setAjaxMode();
 
         $id = self::getArg("id", AT_posint, true);
+        $from = self::getArg("from", AT_posint, true);
 
-        $this->game->buyCard($id);
+        $this->game->buyCard($id, $from);
 
         self::ajaxResponse();
     }

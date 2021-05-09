@@ -360,14 +360,22 @@ trait CardsTrait {
         $this->gamestate->nextState('buyEnergyDrink');        
     }
 
-    function removeCardById($playerId, $id) {
-        $this->cards->moveCard($id, 'discard');
+    function removeCard(int $playerId, $card, bool $silent = false) {
+        $this->cards->moveCard($card->id, 'discard');
+
+        if (!$silent) {
+            self::notifyAllPlayers("removeCards", '', [
+                'playerId' => $playerId,
+                'player_name' => $playerName,
+                'cards' => [$card],
+            ]);
+        }        
     }
 
-    function removeCardByType($playerId, $cardType) {
+    function removeCardByType(int $playerId, int $cardType, bool $silent = false) {
         $card = $this->getCardFromDb(array_values($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId))[0]);
 
-        $this->removeCardById($playerId, $card->id);
+        $this->removeCard($playerId, $card, $silent);
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -379,11 +387,12 @@ trait CardsTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function buyCard(int $id) {
+    function buyCard(int $id, int $from) {
         $playerId = self::getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
+        // TOCHECK can it buy with parasitic tentacles whith reduced price ? Considered Yes
         $cost = $this->getCardCost($playerId, $card->type);
         if (!$this->canBuyCard($playerId, $cost)) {
             throw new \Error('Not enough energy');
@@ -397,17 +406,32 @@ trait CardsTrait {
             $this->applyGetPoints($playerId, $countMediaFriendly, 9);
         }
 
+        if ($from > 0) {
+            $this->removeCard($from, $card, true);
+        }
         $this->cards->moveCard($id, 'hand', $playerId);
 
-        $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
-
-        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} pick card'), [
-            'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
-            'card' => $card,
-            'newCard' => $newCard,
-            'energy' => $this->getPlayerEnergy($playerId),
-        ]);
+        if ($from > 0) {    
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy card from ${player_name2}'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'card' => $card,
+                'newCard' => null,
+                'energy' => $this->getPlayerEnergy($playerId),
+                'from' => $from,
+                'player_name2' => $this->getPlayerName($from),
+            ]);
+        } else {
+            $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
+    
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy card'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'card' => $card,
+                'newCard' => $newCard,
+                'energy' => $this->getPlayerEnergy($playerId),
+            ]);
+        }
 
         $this->applyEffects($card, $playerId);
 
@@ -457,14 +481,31 @@ trait CardsTrait {
         $playerId = self::getActivePlayerId();
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
+        // parasitic tentacles
+        $canBuyFromPlayers = $this->countCardOfType($playerId, 32);
+
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         
         $disabledCards = array_values(array_filter($cards, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
         $disabledIds = array_map(function ($card) { return $card->id; }, $disabledCards);
+
+        if ($canBuyFromPlayers) {
+            $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+            foreach($otherPlayersIds as $otherPlayerId) {
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+                // TOCHECK can it buy with parasitic tentacles whith reduced price ? Considered Yes
+                $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
+                $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCards);
+                
+                $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
+            }
+        }
+
     
         // return values:
         return [
             'disabledIds' => $disabledIds,
+            'canBuyFromPlayers' => $canBuyFromPlayers,
         ];
     }
 

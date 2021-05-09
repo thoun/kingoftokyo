@@ -38,6 +38,7 @@ interface KingOfTokyoGame extends Game {
 
     changeDie: (id: number, value: number, card: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
+    onVisibleCardClick: (controlName: string, cardId: string, from: number) => void;
 }
 
 interface EnteringDiceArgs {
@@ -67,6 +68,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
 
 interface EnteringBuyCardArgs {
     disabledIds: number[];
+    canBuyFromPlayers: boolean;
 }
 
 interface NotifResolveArgs {
@@ -120,6 +122,7 @@ interface NotifBuyCardArgs {
     card: Card;
     newCard: Card;
     energy: number;
+    from: number;
 }
 
 interface NotifRenewCardsArgs {
