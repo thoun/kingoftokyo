@@ -24,9 +24,23 @@ trait PlayerTrait {
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
         ]);
-    
-        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
-        $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
+
+        // Jets
+        $countJets = $this->countCardOfType($playerId, 24);
+        if ($countJets > 0) {
+            $delayedDamage = intval($this->getGameStateValue('damageForJetsIfStayingInTokyo'));
+            $this->applyDamage($playerId, $delayedDamage, 0, 0);
+        }
+
+        // staying with Jets may eliminate players
+        $endGame = $this->eliminatePlayers($playerId);
+
+        if ($endGame) {
+            $this->gamestate->nextState('next');
+        } else {
+            // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
+            $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
+        }
     }
 
     function actionLeaveTokyo() {

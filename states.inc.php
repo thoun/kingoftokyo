@@ -151,6 +151,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
             "resume" => ST_ENTER_TOKYO,
+            "endGame" => ST_END_GAME,
             "zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],

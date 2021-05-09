@@ -51,6 +51,7 @@ class KingOfTokyo extends Table {
             "playAgainAfterTurnOneLessDie" => 15,
             "lessDiceForNextTurn" => 16,
             "herdCullerUsed" => 17,
+            "damageForJetsIfStayingInTokyo" => 18,
             "energyOnBatteryMonster" => 99,
             //      ...
             //    "my_first_game_variant" => 100,
@@ -119,6 +120,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('energyDrinks', 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('herdCullerUsed', 0);
+        self::setGameStateInitialValue('damageForJetsIfStayingInTokyo', 0);
         self::setGameStateInitialValue('energyOnBatteryMonster', 0);
 
         // Init game statistics
@@ -131,9 +133,7 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(26))[0])->id, 'hand', 2343492);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(2))[0])->id, 'hand', 2343492);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(3))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(24))[0])->id, 'hand', 2343492);
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();

@@ -128,12 +128,13 @@ trait DiceTrait {
 
         $message = null;
         $smashedPlayersIds = null;
+        $inTokyo = $this->inTokyo($playerId);
 
         if ($countNovaBreath) {
             $message = clienttranslate('${player_name} give ${number} [diceSmash] to all other Monsters');
             $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
         } else {
-            $smashTokyo = !$this->inTokyo($playerId);
+            $smashTokyo = !$inTokyo;
             $message = $smashTokyo ? 
                 clienttranslate('${player_name} give ${number} [diceSmash] to Monsters in Tokyo') :
                 clienttranslate('${player_name} give ${number} [diceSmash] to Monsters outside Tokyo');
@@ -141,7 +142,14 @@ trait DiceTrait {
         }
 
         foreach($smashedPlayersIds as $smashedPlayerId) {
-            $this->applyDamage($smashedPlayerId, $diceCount, $playerId, 0);
+            // Jets
+            $countJets = $this->countCardOfType($smashedPlayerId, 24);
+
+            if ($countJets > 0) {
+                $this->setGameStateValue('damageForJetsIfStayingInTokyo', $diceCount);
+            } else {
+                $this->applyDamage($smashedPlayerId, $diceCount, $playerId, 0);
+            }
         }
 
         self::notifyAllPlayers("resolveSmashDice", $message, [
