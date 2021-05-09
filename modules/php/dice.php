@@ -214,7 +214,7 @@ trait DiceTrait {
         self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
 
         if ($card == 22) {
-            self::getGameStateValue('herdCullerUsed', intval(self::getGameStateValue('herdCullerUsed')) + 1);
+            self::setGameStateValue('herdCullerUsed', intval(self::getGameStateValue('herdCullerUsed')) + 1);
         } else {
 
             $playerId = self::getActivePlayerId();
@@ -222,7 +222,7 @@ trait DiceTrait {
             if ($card == 33) {
                 $this->removeCardByType($playerId, 33);
             } else if ($card == 44) {
-                $this->applyLoseEnergyIgnoreCards($playerId, 2, -1);
+                $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
             }
         }
 
@@ -297,6 +297,10 @@ trait DiceTrait {
                 'dice' => $this->getDice($diceNumber),
                 'inTokyo' => $this->inTokyo($playerId),
             ];
+
+            if ($cardsArg['hasStretchy']) {
+                $diceArg['hasEnergyForStretchy'] = $this->getPlayerEnergy($playerId) >= 2;
+            }
         }
 
         return $cardsArg + $diceArg;

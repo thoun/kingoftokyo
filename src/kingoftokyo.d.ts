@@ -37,6 +37,7 @@ interface KingOfTokyoGame extends Game {
     cards: Cards;
 
     changeDie: (id: number, value: number, card: number) => void;
+    createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
 }
 
 interface EnteringDiceArgs {
@@ -61,6 +62,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasHerdCuller: boolean;
     hasPlotTwist: boolean;
     hasStretchy: boolean;
+    hasEnergyForStretchy: boolean;
 }
 
 interface EnteringBuyCardArgs {

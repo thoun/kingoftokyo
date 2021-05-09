@@ -298,10 +298,36 @@ $size: 0.25rem;
   }
 
   .change-die-discussion_bubble {
-    bottom: 110%;
+    top: 110%;
+    bottom: unset;
     left: -24px;
 
-    .dice-actions {
+    &::after {
+      top: -10px;
+      bottom: unset;
+      border-width: 0 15px 15px 15px;
+    }
+
+    .die-face-selector {
+      display: flex;
+      justify-content: space-evenly;
+      margin: 10px;
+
+      .dice-icon {
+        width: 33px;
+        height: 33px;
+
+        &.selected {
+          box-shadow: 0 0 3px 3px red;
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+
       button {
         width: auto;
       }

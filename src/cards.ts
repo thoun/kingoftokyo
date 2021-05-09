@@ -115,7 +115,7 @@ class Cards {
         return null;
     }
 
-    private getCardName(cardTypeId: number) {
+    public getCardName(cardTypeId: number) {
         switch( cardTypeId ) {
             // KEEP
             case 1: return _("Acid Attack");

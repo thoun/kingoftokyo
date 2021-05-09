@@ -179,7 +179,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 
                 case 'buyCard':
-                    (this as any).addActionButton('renew_button', _("Renew cards") + ` ( 2 <span class="small icon energy"></span>)`, 'onRenew');
+                    (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), 'onRenew');
                     if (this.energyCounters[(this as any).player_id].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
@@ -202,7 +202,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     ///////////////////////////////////////////////////
 
-    private createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false) {
+    public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false) {
         const html = `<button class="action-button bgabutton bgabutton_blue" id="${id}">
             ${text}
         </button>`;
@@ -315,7 +315,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             return;
         }
 
-        this.takeAction('changeDie');
+        this.takeAction('changeDie', {
+            id,
+            value,
+            card
+        });
     }
 
     public goToChangeDie() {

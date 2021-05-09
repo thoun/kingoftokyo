@@ -361,10 +361,10 @@ trait CardsTrait {
     }
 
     function removeCardById($playerId, $id) {
-        $this->cards->moveCard($card->id, 'discard');
+        $this->cards->moveCard($id, 'discard');
     }
 
-    function removeCardByType($playerId, $type) {
+    function removeCardByType($playerId, $cardType) {
         $card = $this->getCardFromDb(array_values($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId))[0]);
 
         $this->removeCardById($playerId, $card->id);

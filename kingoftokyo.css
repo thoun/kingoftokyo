@@ -363,10 +363,33 @@
 }
 
 .change-die-discussion_bubble {
-  bottom: 110%;
+  top: 110%;
+  bottom: unset;
   left: -24px;
 }
-.change-die-discussion_bubble .dice-actions button {
+.change-die-discussion_bubble::after {
+  top: -10px;
+  bottom: unset;
+  border-width: 0 15px 15px 15px;
+}
+.change-die-discussion_bubble .die-face-selector {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 10px;
+}
+.change-die-discussion_bubble .die-face-selector .dice-icon {
+  width: 33px;
+  height: 33px;
+}
+.change-die-discussion_bubble .die-face-selector .dice-icon.selected {
+  box-shadow: 0 0 3px 3px red;
+}
+.change-die-discussion_bubble .action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.change-die-discussion_bubble .action-buttons button {
   width: auto;
 }
 
@@ -696,10 +719,6 @@
   background-image: url("img/icons.png");
   background-size: auto 100%;
 }
-.icon.small {
-  width: 16px;
-  height: 16px;
-}
 .icon.points {
   background-position: 0% 0%;
 }
@@ -717,6 +736,12 @@
 }
 
 .log .icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -2px;
+}
+
+button .icon, a .icon {
   width: 16px;
   height: 16px;
   margin-bottom: -2px;
