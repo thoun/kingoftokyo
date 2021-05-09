@@ -2,9 +2,9 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../dice.php');
+require_once(__DIR__.'/objects/dice.php');
 
-use KOT\Dice;
+use KOT\Objects\Dice;
 
 trait DiceTrait {
 

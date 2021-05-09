@@ -2,13 +2,13 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../dice.php');
-require_once(__DIR__.'/../card.php');
-require_once(__DIR__.'/../player.php');
+require_once(__DIR__.'/objects/dice.php');
+require_once(__DIR__.'/objects/card.php');
+require_once(__DIR__.'/objects/player.php');
 
-use KOT\Card;
-use KOT\Dice;
-use KOT\Player;
+use KOT\Objects\Card;
+use KOT\Objects\Dice;
+use KOT\Objects\Player;
 
 trait UtilTrait {
 

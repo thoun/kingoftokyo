@@ -18,8 +18,8 @@
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php');
 
-require_once('modules/dice.php');
-require_once('modules/card.php');
+require_once('modules/php/objects/dice.php');
+require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
 require_once('modules/php/player.php');
 require_once('modules/php/dice.php');

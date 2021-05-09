@@ -1,5 +1,5 @@
 <?php
-namespace KOT;
+namespace KOT\Objects;
 
 
 class Player {
