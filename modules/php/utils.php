@@ -36,6 +36,14 @@ trait UtilTrait {
         return intval(self::getUniqueValueFromDB("SELECT player_energy FROM player where `player_id` = $playerId"));
     }
 
+    function getPlayerPoisonTokens(int $playerId) {
+        return intval(self::getUniqueValueFromDB("SELECT player_poison_tokens FROM player where `player_id` = $playerId"));
+    }
+
+    function getPlayerShrinkRayTokens(int $playerId) {
+        return intval(self::getUniqueValueFromDB("SELECT player_shrink_ray_tokens FROM player where `player_id` = $playerId"));
+    }
+
     function getThrowNumber(int $playerId) {
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, 18);

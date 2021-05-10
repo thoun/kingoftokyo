@@ -48,9 +48,9 @@ trait DiceTrait {
     }
 
     function getDiceNumber(int $playerId) {
-        $remove = intval($this->getGameStateValue('lessDiceForNextTurn'));
+        $remove = intval($this->getGameStateValue('lessDiceForNextTurn')) + $this->getPlayerShrinkRayTokens($playerId);
 
-        return 6 + $this->countExtraHead($playerId) - $remove;
+        return max(6 + $this->countExtraHead($playerId) - $remove, 0);
     }
 
     function resolveNumberDice(int $playerId, int $number, int $diceCount) {

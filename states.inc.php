@@ -203,6 +203,7 @@ $playerActionsGameStates = [
         "action" => "stEndTurn",
         "transitions" => [ 
             "nextPlayer" => ST_NEXT_PLAYER,
+            "endGame" => ST_END_GAME,
         ],
     ],
 ];

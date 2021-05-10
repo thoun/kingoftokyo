@@ -191,7 +191,18 @@ trait PlayerTrait {
         $discardCardsIds = array_map(function ($card) { return $card->id; }, $discardCards);
         $this->cards->moveCards($discardCardsIds, 'discard');
 
-        $this->gamestate->nextState('nextPlayer');
+        // apply poison
+        $countPoison = $this->getPlayerPoisonTokens($playerId);
+        $this->applyDamage($playerId, $countPoison, 0, 35);
+
+        // poison may eliminate players
+        $endGame = $this->eliminatePlayers($playerId);
+
+        if ($endGame) {
+            $this->gamestate->nextState('endGame');
+        } else {
+            $this->gamestate->nextState('nextPlayer');
+        }
     }
 
     function stNextPlayer() {        
