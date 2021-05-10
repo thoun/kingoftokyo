@@ -93,11 +93,11 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stStartTurn",
         "transitions" => [ 
-            "throw" => ST_PLAYER_THROW_DICES,
+            "throw" => ST_PLAYER_THROW_DICE,
         ],
     ],
 
-    ST_PLAYER_THROW_DICES => [
+    ST_PLAYER_THROW_DICE => [
         "name" => "throwDice",
         "description" => clienttranslate('${actplayer} can rethrow dice or resolve dice'),
         "descriptionlast" => clienttranslate('${actplayer} must resolve dice'),
@@ -107,10 +107,10 @@ $playerActionsGameStates = [
         "args" => "argThrowDice",
         "possibleactions" => [ "rethrow", "goToChangeDie", "buyEnergyDrink", "rethrow3", "resolve" ],
         "transitions" => [
-            "rethrow" => ST_PLAYER_THROW_DICES,
+            "rethrow" => ST_PLAYER_THROW_DICE,
             "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
-            "buyEnergyDrink" => ST_PLAYER_THROW_DICES,
-            "rethrow3" => ST_PLAYER_THROW_DICES,
+            "buyEnergyDrink" => ST_PLAYER_THROW_DICE,
+            "rethrow3" => ST_PLAYER_THROW_DICE,
             "zombiePass" => ST_NEXT_PLAYER,
         ],
     ],  
@@ -125,16 +125,56 @@ $playerActionsGameStates = [
         "possibleactions" => [ "changeDie", "resolve" ],
         "transitions" => [
             "changeDie" => ST_PLAYER_CHANGE_DIE,
-            "resolve" => ST_RESOLVE_DICES,
+            "resolve" => ST_RESOLVE_DICE,
         ],
 
     ],
 
-    ST_RESOLVE_DICES => [
+    ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => "",
         "type" => "game",
         "action" => "stResolveDice",
+        "transitions" => [
+            "next" => ST_RESOLVE_NUMBER_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_NUMBER_DICE => [
+        "name" => "resolveNumberDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveNumberDice",
+        "transitions" => [
+            "next" => ST_RESOLVE_HEART_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_HEART_DICE => [
+        "name" => "resolveHeartDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveHeartDice",
+        "transitions" => [
+            "next" => ST_RESOLVE_ENERGY_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_ENERGY_DICE => [
+        "name" => "resolveEnergyDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveEnergyDice",
+        "transitions" => [
+            "next" => ST_RESOLVE_SMASH_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_SMASH_DICE => [
+        "name" => "resolveSmashDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveSmashDice",
         "transitions" => [
             "enterTokyo" => ST_ENTER_TOKYO,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,

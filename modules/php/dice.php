@@ -435,10 +435,9 @@ trait DiceTrait {
             }
         }
 
-        //$this->setGlobalVariable('diceCounts', $diceCounts);
-        // $this->getGlobalVariable('diceCounts'));
+        $this->setGlobalVariable('diceCounts', $diceCounts);
 
-        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+        /*for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
             $diceCount = $diceCounts[$diceFace];
             // number
             if ($diceFace <= 3) { 
@@ -468,6 +467,68 @@ trait DiceTrait {
             $this->gamestate->nextState('endGame');
         } else {
             $smashTokyo = $diceCounts[6] >= 1 && !$playerInTokyo && count($this->getPlayersIdsInTokyo()) > 0;
+            $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
+        }*/
+
+        $this->gamestate->nextState('next');
+    }
+
+    function stResolveNumberDice() {
+        $playerId = self::getActivePlayerId();
+
+        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+
+        for ($diceFace = 1; $diceFace <= 3; $diceFace++) {
+            $diceCount = $diceCounts[$diceFace];
+            $this->resolveNumberDice($playerId, $diceFace, $diceCount);
+        }
+
+        $this->gamestate->nextState('next');
+    }
+
+    function stResolveHeartDice() {
+        $playerId = self::getActivePlayerId();
+        
+        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+
+        $diceCount = $diceCounts[4];
+        if ($diceCount > 0) {
+            $this->resolveHealthDice($playerId, $diceCount);
+        }
+
+        $this->gamestate->nextState('next');
+    }
+
+    function stResolveEnergyDice() {
+        $playerId = self::getActivePlayerId();
+        
+        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+
+        $diceCount = $diceCounts[5];
+        if ($diceCount > 0) {
+            $this->resolveEnergyDice($playerId, $diceCount);
+        }
+
+        $this->gamestate->nextState('next');
+    }
+
+    function stResolveSmashDice() {
+        $playerId = self::getActivePlayerId();
+        
+        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+
+        $diceCount = $diceCounts[6];
+        if ($diceCount > 0) {
+            $this->resolveSmashDice($playerId, $diceCount);
+        }
+
+        // dice resolve may eliminate players
+        $endGame = $this->eliminatePlayers($playerId);
+
+        if ($endGame) {
+            $this->gamestate->nextState('endGame');
+        } else {
+            $smashTokyo = $diceCounts[6] >= 1 && !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
             $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
         }
     }

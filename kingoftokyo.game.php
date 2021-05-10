@@ -137,6 +137,7 @@ class KingOfTokyo extends Table {
         // TODO TEMP card to test
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(35))[0])->id, 'hand', 2343492);
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(40))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(20))[0])->id, 'hand', 2343492);
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -173,7 +174,7 @@ class KingOfTokyo extends Table {
         $result['playersCards'] = [];
         foreach ($result['players'] as $player_id => $playerDb) {
             $result['playersCards'][$player_id] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player_id));
-            
+
             $playerDb['poisonTokens'] = intval($playerDb['poisonTokens']);
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
         }
