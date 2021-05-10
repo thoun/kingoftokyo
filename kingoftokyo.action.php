@@ -90,6 +90,16 @@
 
         self::ajaxResponse();
     }
+
+    public function applyHeartDieChoices() {
+        self::setAjaxMode();
+
+        // TODO $id = self::getArg("id", AT_posint, true);
+
+        $this->game->applyHeartDieChoices($heartDieChoices);
+
+        self::ajaxResponse();
+    }
   	
     public function stay() {
         self::setAjaxMode();

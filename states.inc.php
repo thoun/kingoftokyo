@@ -152,9 +152,12 @@ $playerActionsGameStates = [
 
     ST_RESOLVE_HEART_DICE => [
         "name" => "resolveHeartDice",
-        "description" => "",
-        "type" => "game",
+        "description" => clienttranslate('${actplayer} can select effect of [diceHeart] dice'),
+        "descriptionmyturn" => clienttranslate('${you} can select effect of [diceHeart] dice'),
+        "type" => "activeplayer",
         "action" => "stResolveHeartDice",
+        "args" => "argResolveHeartDice",
+        "possibleactions" => [ "applyHeartDieChoices" ],
         "transitions" => [
             "next" => ST_RESOLVE_ENERGY_DICE,
         ],
@@ -196,16 +199,16 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_ENTER_TOKYO => array(
+    ST_ENTER_TOKYO => [
         "name" => "enterTokyo",
         "description" => "",
         "type" => "game",
         "action" => "stEnterTokyo",
-        "transitions" => array( 
+        "transitions" => [
             "next" => ST_PLAYER_BUY_CARD,
             "endGame" => ST_END_GAME,
-        )
-    ),
+        ],
+    ],
 
     ST_PLAYER_BUY_CARD => [
         "name" => "buyCard",

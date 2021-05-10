@@ -72,6 +72,18 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasEnergyForStretchy: boolean;
 }
 
+interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
+    hasHealingRay: boolean;
+    healablePlayers: {
+        id: number;
+        name: string; 
+        color: string; 
+        missingHearts: number;
+    }[];
+    poisonTokens: number;
+    shrinkRayTokens: number;
+}
+
 interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;

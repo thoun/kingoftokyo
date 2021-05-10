@@ -30,6 +30,10 @@ trait UtilTrait {
         }
     }
 
+    function removeGlobalVariable(string $name) {
+        self::DbQuery("DELETE FROM `global_variables` where `name` = '$name'");
+    }
+
     function getMaxPlayerScore() {
         return intval(self::getUniqueValueFromDB("SELECT max(player_score) FROM player"));
     }
@@ -175,6 +179,17 @@ trait UtilTrait {
         $sql = "SELECT * FROM player";
         if (!$includeEliminated) {
             $sql .= " WHERE player_eliminated = 0";
+        }
+        $sql .= " ORDER BY player_no";
+        $dbResults = self::getCollectionFromDB($sql);
+        return array_map(function($dbResult) { return new Player($dbResult); }, array_values($dbResults));
+    }
+
+    // get other players    
+    function getOtherPlayers(int $playerId, bool $includeEliminated = false) {
+        $sql = "SELECT * FROM player WHERE player_id <> $playerId";
+        if (!$includeEliminated) {
+            $sql .= " AND player_eliminated = 0";
         }
         $sql .= " ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);

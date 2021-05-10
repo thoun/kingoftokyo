@@ -168,7 +168,6 @@ trait DiceTrait {
 
         // Shrink Ray
         // TOCHECK can Shrink Ray be mimicked and give 2 tokens ? considered No
-        // TOCHECK can Shrink Ray give back 6th dice as soon as token is removed, or does player keeps 5 dice for all rolls ?
         $countShrinkRay = $this->countCardOfType($playerId, 40);
         if ($countShrinkRay > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
@@ -199,6 +198,17 @@ trait DiceTrait {
             'hasHerdCuller' => $hasHerdCuller,
             'hasPlotTwist' => $hasPlotTwist,
             'hasStretchy' => $hasStretchy,
+        ];
+    }
+
+    function getSelectHeartDiceUse(int $playerId) {        
+        // Healing Ray
+        $countHealingRay = $this->countCardOfType($playerId, 20);
+
+        return [
+            'hasHealingRay' => $countHealingRay > 0,
+            'shrinkRayTokens' => $this->getPlayerShrinkRayTokens($playerId),
+            'poisonTokens' => $this->getPlayerPoisonTokens($playerId),
         ];
     }
 
@@ -258,6 +268,22 @@ trait DiceTrait {
 
     public function goToChangeDie() {
         $this->gamestate->nextState('goToChangeDie');
+    }
+
+    function applyHeartDieChoices($heartDieChoices) {
+
+        $playerId = self::getActivePlayerId();
+        
+        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+
+        $diceCount = $diceCounts[4];
+
+        if ($diceCount > 0) {
+            // TODO resolve with $heartDieChoices
+            $this->resolveHealthDice($playerId, $diceCount);
+        }
+
+        $this->gamestate->nextState('next');
     }
 
     public function resolveDice() {
@@ -331,6 +357,59 @@ trait DiceTrait {
         }
 
         return $cardsArg + $diceArg;
+    }
+
+    function argResolveHeartDice() {
+        $playerId = self::getActivePlayerId();
+
+        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+        $diceCount = $diceCounts[4];
+
+        if ($diceCount > 0) {  
+
+            $diceNumber = $this->getDiceNumber($playerId);
+            $dice = $this->getDice($diceNumber);
+    
+            $selectHeartDiceUseArg = $this->getSelectHeartDiceUse($playerId);  
+
+            $canSelectHeartDiceUse = false;
+            if ($this->inTokyo($playerId)) {
+                $canSelectHeartDiceUse = $selectHeartDiceUse['hasHealingRay'];
+            } else {
+                $canSelectHeartDiceUse = $selectHeartDiceUse['hasHealingRay'] || $selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0;
+            }
+
+            $diceArg = $canSelectHeartDiceUse ? [
+                'dice' => $dice,
+                'inTokyo' => $this->inTokyo($playerId),
+            ] : [];
+    
+            if ($selectHeartDiceUseArg['hasHealingRay']) {
+                $otherPlayers = $this->getOtherPlayers($playerId);
+    
+                $diceArg['healablePlayers'] = [];
+    
+                foreach($otherPlayers as $otherPlayer) {
+                    $missingHearts = $this->getPlayerMaxHealth($otherPlayer->id) - $this->getPlayerHealth($otherPlayer->id);
+    
+                    // $energy = $otherPlayer->energy;
+                    // TOCHECK Healing ray can be user on player with 0 energy ? Considered Yes
+    
+                    if ($missingHearts > 0) {
+                        $playerHealInformations = new \stdClass();
+                        $playerHealInformations->id = $otherPlayer->id;
+                        $playerHealInformations->name = $otherPlayer->name;
+                        $playerHealInformations->color = $otherPlayer->color;
+                        $playerHealInformations->missingHearts = $missingHearts;
+    
+                        $diceArg['healablePlayers'][] = $playerHealInformations;
+                    }
+                }
+            }
+    
+            return $selectHeartDiceUseArg + $diceArg;
+        }
+        return [];
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -492,11 +571,26 @@ trait DiceTrait {
         $diceCounts = $this->getGlobalVariable('diceCounts', true);
 
         $diceCount = $diceCounts[4];
+        $canSelectHeartDiceUse = false;
+
         if ($diceCount > 0) {
+
+            $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);
+
+            // TOCHECK remove Shrink Ray & Poison tokens is impossible in Tokyo, but healing other players (even if other player is in Tokyo ?) ? Considered Yes and Yes
+            if ($this->inTokyo($playerId)) {
+                $canSelectHeartDiceUse = $selectHeartDiceUse['hasHealingRay'];
+            } else {
+                $canSelectHeartDiceUse = $selectHeartDiceUse['hasHealingRay'] || $selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0;
+            }
+            self::debug('[GBA] '.$selectHeartDiceUse['hasHealingRay'].' '.$selectHeartDiceUse['shrinkRayTokens']. ' ' .$selectHeartDiceUse['poisonTokens'].' '.$canSelectHeartDiceUse);
+
             $this->resolveHealthDice($playerId, $diceCount);
         }
 
-        $this->gamestate->nextState('next');
+        if (!$canSelectHeartDiceUse) {
+            $this->gamestate->nextState('next');
+        }
     }
 
     function stResolveEnergyDice() {

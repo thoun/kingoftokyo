@@ -813,6 +813,9 @@ var KingOfTokyo = /** @class */ (function () {
             case 'resolveDice':
                 this.diceManager.hideLock();
                 break;
+            case 'resolveHeartDice':
+                this.onEnteringResolveHeartDice(args.args);
+                break;
             case 'buyCard':
                 this.onEnteringBuyCard(args.args);
                 break;
@@ -856,6 +859,13 @@ var KingOfTokyo = /** @class */ (function () {
             this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo);
         }
     };
+    KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args) {
+        var _a;
+        if (((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) && this.isCurrentPlayerActive()) {
+            //create node ('heart-action-selector') just under rolled-dices;
+            // TODO add element under rolled dice, where each heart dice can select its action
+        }
+    };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args) {
         var _this = this;
         var _a;
@@ -887,7 +897,12 @@ var KingOfTokyo = /** @class */ (function () {
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
                 break;
-            case 'resolveDice':
+            case 'resolveHeartDice':
+                if (document.getElementById('heart-action-selector')) {
+                    dojo.destroy('heart-action-selector');
+                }
+                break;
+            case 'resolveSmashDice':
                 this.diceManager.removeAllDice();
                 break;
             case 'buyCard':

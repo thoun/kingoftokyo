@@ -82,6 +82,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'resolveDice': 
                 this.diceManager.hideLock();
                 break;
+            case 'resolveHeartDice':
+                this.onEnteringResolveHeartDice(args.args);
+                break;
             
             case 'buyCard':
                 this.onEnteringBuyCard(args.args);
@@ -134,6 +137,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs) {
+        if (args.dice?.length && (this as any).isCurrentPlayerActive()) {
+            //create node ('heart-action-selector') just under rolled-dices;
+            // TODO add element under rolled dice, where each heart dice can select its action
+        }
+    }
+
     private onEnteringBuyCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
@@ -168,8 +178,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch (stateName) {
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
+                break;                
+            case 'resolveHeartDice':
+                if (document.getElementById('heart-action-selector')) {
+                    dojo.destroy('heart-action-selector');
+                }
                 break;
-            case 'resolveDice':
+            case 'resolveSmashDice':
                 this.diceManager.removeAllDice();
                 break;
             case 'buyCard':
