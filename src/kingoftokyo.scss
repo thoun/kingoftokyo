@@ -19,8 +19,6 @@
     }
 }
 
-
-
 .icon {
     display: inline-block;
     position: relative;
@@ -66,3 +64,30 @@ button, a {
   }
 }
   
+
+.token {
+  display: inline-block;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background-image: url('img/tokens.png');
+  background-size: auto 100%;
+  border-radius: 50%;
+  box-shadow: 1px 1px 1px 1px black;
+
+  &.shrink-ray {
+    background-position: 0% 0%;
+  }
+
+  &.poison {
+    background-position: 33.33% 0%;
+  }
+
+  &.smoke-cloud {
+    background-position: 66.66% 0%;
+  }
+
+  &.mimick {
+    background-position: 100% 0%;
+  }
+}

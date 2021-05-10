@@ -972,6 +972,9 @@ var KingOfTokyo = /** @class */ (function () {
             energyCounter.create("energy-counter-" + player.id);
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
+            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token\"></div>\n            </div>", "player_board_" + player.id);
+            _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
+            _this.setPoisonTokens(playerId, player.poisonTokens);
             dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"></div>", "player_board_" + player.id);
             if (player.location > 0) {
                 dojo.addClass("overall_player_board_" + playerId, 'intokyo');
@@ -1161,6 +1164,8 @@ var KingOfTokyo = /** @class */ (function () {
             ['points', 1],
             ['health', 1],
             ['energy', 1],
+            ['shrinkRayToken', 1],
+            ['poisonToken', 1],
             ['removeCards', 1],
         ];
         notifs.forEach(function (notif) {
@@ -1240,6 +1245,12 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_energy = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy);
     };
+    KingOfTokyo.prototype.notif_shrinkRayToken = function (notif) {
+        this.setShrinkRayTokens(notif.args.playerId, notif.args.tokens);
+    };
+    KingOfTokyo.prototype.notif_poisonToken = function (notif) {
+        this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points) {
         var _a;
         (_a = this.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.toValue(points);
@@ -1252,6 +1263,22 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setEnergy = function (playerId, energy) {
         this.energyCounters[playerId].toValue(energy);
         this.checkBuyEnergyDrinkState(this.energyCounters[this.getPlayerId()].getValue()); // disable button if energy gets down to 0
+    };
+    KingOfTokyo.prototype.setPlayerTokens = function (playerId, tokens, tokenName) {
+        var containerId = "player-board-" + tokenName + "-tokens-" + playerId;
+        var container = document.getElementById(containerId);
+        while (container.childElementCount > tokens) {
+            container.removeChild(container.lastChild);
+        }
+        for (var i = container.childElementCount; i < tokens; i++) {
+            dojo.place("<div class=\"" + tokenName + " token\"></div>", containerId);
+        }
+    };
+    KingOfTokyo.prototype.setShrinkRayTokens = function (playerId, tokens) {
+        this.setPlayerTokens(playerId, tokens, 'shrink-ray');
+    };
+    KingOfTokyo.prototype.setPoisonTokens = function (playerId, tokens) {
+        this.setPlayerTokens(playerId, tokens, 'poison');
     };
     KingOfTokyo.prototype.checkBuyEnergyDrinkState = function (energy) {
         if (document.getElementById('buy_energy_drink_button')) {

@@ -135,7 +135,8 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(25))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(35))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(40))[0])->id, 'hand', 2343492);
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -159,7 +160,7 @@ class KingOfTokyo extends Table {
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no FROM player ";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
 
         // Gather all information about current game situation (visible by player $current_player_id).
@@ -172,6 +173,9 @@ class KingOfTokyo extends Table {
         $result['playersCards'] = [];
         foreach ($result['players'] as $player_id => $playerDb) {
             $result['playersCards'][$player_id] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player_id));
+            
+            $playerDb['poisonTokens'] = intval($playerDb['poisonTokens']);
+            $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
         }
 
         return $result;

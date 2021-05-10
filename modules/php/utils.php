@@ -401,8 +401,36 @@ trait UtilTrait {
         }
     }
 
+    function applyGetShrinkRayToken(int $playerId) {
+        $deltaTokens = 1;
+        self::DbQuery("UPDATE player SET `player_shrink_ray_tokens` = `player_shrink_ray_tokens` + $deltaTokens where `player_id` = $playerId");
+
+        $message = _('${player_name} gets ${delta_tokens} Shrink Ray token with ${card_name}');
+        self::notifyAllPlayers('shrinkRayToken', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'delta_tokens' => $deltaTokens,
+            'card_name' => $this->getCardName(40),
+            'tokens' => $this->getPlayerShrinkRayTokens($playerId),
+        ]);
+    }
+
+    function applyGetPoisonToken(int $playerId) {
+        $deltaTokens = 1;
+        self::DbQuery("UPDATE player SET `player_poison_tokens` = `player_poison_tokens` + $deltaTokens where `player_id` = $playerId");
+
+        $message = _('${player_name} gets ${delta_tokens} Poison token with ${card_name}');
+        self::notifyAllPlayers('poisonToken', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'delta_tokens' => $deltaTokens,
+            'card_name' => $this->getCardName(35),
+            'tokens' => $this->getPlayerPoisonTokens($playerId),
+        ]);
+    }
+
     function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = 2343492 AND `player_score` = (select min(`player_score`) from `player`) AND (SELECT count(*) FROM `player` where `player_score` = (select min(`player_score`) from `player`)) = 1";
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`) AND (SELECT count(*) FROM `player` where `player_score` = (select min(`player_score`) from `player`)) = 1";
         return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 }

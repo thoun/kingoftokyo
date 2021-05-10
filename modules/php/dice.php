@@ -165,6 +165,25 @@ trait DiceTrait {
             // TOCHECK does Alpha Monster applies after other cards adding Smashes ? considered Yes
             $this->applyGetPoints($playerId, $countAlphaMonster, 3);
         }
+
+        // Shrink Ray
+        // TOCHECK can Shrink Ray be mimicked and give 2 tokens ? considered No
+        // TOCHECK can Shrink Ray give back 6th dice as soon as token is removed, or does player keeps 5 dice for all rolls ?
+        $countShrinkRay = $this->countCardOfType($playerId, 40);
+        if ($countShrinkRay > 0) {
+            foreach($smashedPlayersIds as $smashedPlayerId) {
+                $this->applyGetShrinkRayToken($smashedPlayerId);
+            }
+        }
+
+        // Poison Spit
+        // TOCHECK can Poison Spit be mimicked and give 2 tokens ? considered No
+        $countPoisonSpit = $this->countCardOfType($playerId, 35);
+        if ($countPoisonSpit > 0) {
+            foreach($smashedPlayersIds as $smashedPlayerId) {
+                $this->applyGetPoisonToken($smashedPlayerId);
+            }
+        }        
     }
 
     function getChangeDieCards(int $playerId) {

@@ -34,6 +34,17 @@
   align-items: center;
 }
 
+.player-tokens {
+  display: flex;
+  flex-wrap: wrap;
+}
+.player-tokens .player-token {
+  margin: 0 5px;
+}
+.player-tokens .player-token > div:not(:first-child) {
+  margin-left: -25px;
+}
+
 #rolled-dice {
   display: flex;
   justify-content: center;
@@ -763,4 +774,27 @@ button .icon, a .icon {
   width: 16px;
   height: 16px;
   margin-bottom: -2px;
+}
+
+.token {
+  display: inline-block;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background-image: url("img/tokens.png");
+  background-size: auto 100%;
+  border-radius: 50%;
+  box-shadow: 1px 1px 1px 1px black;
+}
+.token.shrink-ray {
+  background-position: 0% 0%;
+}
+.token.poison {
+  background-position: 33.33% 0%;
+}
+.token.smoke-cloud {
+  background-position: 66.66% 0%;
+}
+.token.mimick {
+  background-position: 100% 0%;
 }

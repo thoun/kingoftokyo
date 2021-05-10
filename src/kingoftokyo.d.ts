@@ -15,6 +15,11 @@ interface Card {
     cost: number;
 }
 
+interface KingOfTokyoPlayer extends Player {
+    poisonTokens: number;
+    shrinkRayTokens: number;
+}
+
 interface KingOfTokyoGamedatas {
     current_player_id: string;
     decision: {decision_type: string};
@@ -24,7 +29,7 @@ interface KingOfTokyoGamedatas {
     neutralized_player_id: string;
     notifications: {last_packet_id: string, move_nbr: string}
     playerorder: (string | number)[];
-    players: { [playerId: number]: Player };
+    players: { [playerId: number]: KingOfTokyoPlayer };
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
@@ -152,4 +157,8 @@ interface NotifHealthArgs extends NotifResolveArgs {
 
 interface NotifEnergyArgs extends NotifResolveArgs {
     energy: number;
+}
+
+interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
+    tokens: number;
 }

@@ -40,3 +40,16 @@
     align-items: center;
   }
 }
+
+.player-tokens {
+  display: flex;
+  flex-wrap: wrap;
+
+  .player-token {
+    margin: 0 5px;
+    
+    &>div:not(:first-child) {
+      margin-left: -25px;
+    }
+  }
+}

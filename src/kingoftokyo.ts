@@ -281,6 +281,14 @@ class KingOfTokyo implements KingOfTokyoGame {
             energyCounter.setValue((player as any).energy);
             this.energyCounters[playerId] = energyCounter;
 
+            dojo.place(`<div class="player-tokens">
+                <div id="player-board-shrink-ray-tokens-${player.id}" class="player-token"></div>
+                <div id="player-board-poison-tokens-${player.id}" class="player-token"></div>
+            </div>`, `player_board_${player.id}`);
+
+            this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
+            this.setPoisonTokens(playerId, player.poisonTokens);
+
             dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${(player as any).monster}"></div>`, `player_board_${player.id}`);
 
             if ((player as any).location > 0) {
@@ -504,6 +512,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['points', 1],
             ['health', 1],
             ['energy', 1],
+            ['shrinkRayToken', 1],
+            ['poisonToken', 1],
             ['removeCards', 1],
         ];
     
@@ -598,6 +608,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_energy(notif: Notif<NotifEnergyArgs>) {
         this.setEnergy(notif.args.playerId, notif.args.energy);
     }
+
+    notif_shrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
+        this.setShrinkRayTokens(notif.args.playerId, notif.args.tokens);
+    }
+
+    notif_poisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
+        this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
+    }
     
     private setPoints(playerId: number, points: number) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
@@ -612,6 +630,25 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setEnergy(playerId: number, energy: number) {
         this.energyCounters[playerId].toValue(energy);
         this.checkBuyEnergyDrinkState(this.energyCounters[this.getPlayerId()].getValue()); // disable button if energy gets down to 0
+    }
+
+    private setPlayerTokens(playerId: number, tokens: number, tokenName: string) {
+        const containerId = `player-board-${tokenName}-tokens-${playerId}`;
+        const container = document.getElementById(containerId);
+        while (container.childElementCount > tokens) {
+            container.removeChild(container.lastChild);
+        }
+        for (let i=container.childElementCount; i<tokens; i++) {
+            dojo.place(`<div class="${tokenName} token"></div>`, containerId);
+        }
+    }
+
+    private setShrinkRayTokens(playerId: number, tokens: number) {
+        this.setPlayerTokens(playerId, tokens, 'shrink-ray');
+    }
+
+    private setPoisonTokens(playerId: number, tokens: number) {
+        this.setPlayerTokens(playerId, tokens, 'poison');
     }
 
     private checkBuyEnergyDrinkState(energy: number) {
