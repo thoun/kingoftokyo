@@ -435,6 +435,9 @@ trait DiceTrait {
             }
         }
 
+        //$this->setGlobalVariable('diceCounts', $diceCounts);
+        // $this->getGlobalVariable('diceCounts'));
+
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
             $diceCount = $diceCounts[$diceFace];
             // number

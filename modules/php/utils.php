@@ -16,6 +16,20 @@ trait UtilTrait {
     //////////// Utility functions
     ////////////
 
+    function setGlobalVariable(string $name, $obj) {
+        $jsonObj = json_encode($obj);
+        self::DbQuery("INSERT INTO `global_variables`(`name`, `value`)  VALUES ('$name', '$jsonObj') ON DUPLICATE KEY UPDATE `value` = '$jsonObj'");
+    }
+
+    function getGlobalVariable(string $name, $asArray = null) {
+        $json_obj = self::getUniqueValueFromDB("SELECT `value` FROM `global_variables` where `name` = '$name'");
+        if ($json_obj) {
+            return json_decode($json_obj, $asArray);
+        } else {
+            return null;
+        }
+    }
+
     function getMaxPlayerScore() {
         return intval(self::getUniqueValueFromDB("SELECT max(player_score) FROM player"));
     }
