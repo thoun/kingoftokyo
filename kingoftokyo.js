@@ -1130,7 +1130,7 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token\"></div>\n            </div>", "player_board_" + player.id);
             _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
             _this.setPoisonTokens(playerId, player.poisonTokens);
-            dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"></div>", "player_board_" + player.id);
+            dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"><div class=\"kot-token\"></div></div>", "player_board_" + player.id);
             if (player.location > 0) {
                 dojo.addClass("overall_player_board_" + playerId, 'intokyo');
             }

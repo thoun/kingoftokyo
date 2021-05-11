@@ -326,7 +326,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
             this.setPoisonTokens(playerId, player.poisonTokens);
 
-            dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${(player as any).monster}"></div>`, `player_board_${player.id}`);
+            dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${(player as any).monster}"><div class="kot-token"></div></div>`, `player_board_${player.id}`);
 
             if ((player as any).location > 0) {
                 dojo.addClass(`overall_player_board_${playerId}`, 'intokyo');

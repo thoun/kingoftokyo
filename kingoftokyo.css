@@ -1,7 +1,9 @@
 @charset "UTF-8";
 @import url(../../../css/csslayer.css);
-.player-board.intokyo {
-  box-shadow: 0 0 3px 3px #ffea0a;
+.player-board {
+  /*&.intokyo {
+    box-shadow: 0 0 3px 3px #ffea0a;
+  }*/
 }
 .player-board.eliminated-player {
   background-color: #b9b9b9;
@@ -14,7 +16,7 @@
 }
 .player-board .monster-figure {
   background-repeat: no-repeat;
-  background-position: top center;
+  background-position: 75% top;
   margin-bottom: -5px;
   height: 45px;
 }
@@ -43,6 +45,21 @@
 }
 .player-tokens .player-token > div:not(:first-child) {
   margin-left: -25px;
+}
+
+.kot-token {
+  opacity: 0;
+  transition: opacity 1s;
+  width: 50px;
+  height: 50px;
+  background: url("img/kot-logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.intokyo .kot-token {
+  opacity: 1;
 }
 
 #rolled-dice {
