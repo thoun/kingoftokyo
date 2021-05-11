@@ -116,6 +116,17 @@ $description-size: 7pt;
         opacity: 0.7 !important;
         cursor: not-allowed;
     }
+
+    .card-token {
+        position: absolute;
+
+        &.energy-cube {
+            background: url('img/energy-cube.png') center no-repeat;
+            width: 32px;
+            height: 32px;
+            background-size: contain;
+        }
+    }
 }
 
 .card-tooltip {

@@ -13,6 +13,7 @@ interface Card {
     id: number;
     type: number;
     cost: number;
+    tokens: number;
 }
 
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
@@ -182,4 +183,9 @@ interface NotifEnergyArgs extends NotifResolveArgs {
 
 interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
     tokens: number;
+}
+
+interface NotifSetCardTokensArgs {
+    playerId: number;
+    card: Card;
 }

@@ -136,9 +136,6 @@ trait CardsTrait {
             case 12: 
                 $this->applyGetHealth($playerId, 2, $type); 
                 break;
-            case 28: 
-                self::setGameStateValue('energyOnBatteryMonster', 6);
-                break;
             
             // DISCARD
             case 101: 
@@ -239,8 +236,12 @@ trait CardsTrait {
     }
 
     function countCardOfType($playerId, $cardType, $includeMimick = true) {
-        return count($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+        return count($this->getCardsOfType($playerId, $cardType, $includeMimick));
+    }
+
+    function getCardsOfType($playerId, $cardType, $includeMimick = true) {
         // TODO mimick
+        return $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
     }
 
     function countExtraHead($playerId) {
@@ -301,20 +302,14 @@ trait CardsTrait {
         }
     }
 
-    function applyBatteryMonster(int $playerId) {
-        $energyOnBatteryMonster = intval(self::getGameStateValue('energyOnBatteryMonster')) - 2;
-        self::setGameStateValue('energyOnBatteryMonster', $energyOnBatteryMonster);
+    function applyBatteryMonster(int $playerId, $card) {
+        $energyOnBatteryMonster = $card->tokens - 2;
+        $this->setCardTokens($playerId, $card, $energyOnBatteryMonster);
 
         $this->applyGetEnergyIgnoreCards($playerId, 2, 28);
 
         if ($energyOnBatteryMonster <= 0) {
-            $card = $this->getCardFromDb(array_values($this->cards->getCardsOfTypeInLocation(28, null, 'hand', $playerId))[0]);
-            $this->cards->moveCard($card->id, 'discard');        
-            self::notifyAllPlayers("removeCards", '', [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'cards' => [$card],
-            ]);
+            $this->removeCard($playerId, $card);
         }
     }
 
@@ -351,6 +346,18 @@ trait CardsTrait {
         $this->removeCard($playerId, $card, $silent);
     }
 
+    function setCardTokens(int $playerId, $card, int $tokens, bool $silent = false) {
+        $card->tokens = $tokens;
+        self::DbQuery("UPDATE `card` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
+
+        if (!$silent) {
+            self::notifyAllPlayers("setCardTokens", '', [
+                'playerId' => $playerId,
+                'card' => $card,
+            ]);
+        }
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -383,6 +390,14 @@ trait CardsTrait {
             $this->removeCard($from, $card, true);
         }
         $this->cards->moveCard($id, 'hand', $playerId);
+
+        $tokens = 0;
+        if ($card->type == 28) { $tokens = 6; }
+        if ($card->type == 41) { $tokens = 3; }
+
+        if ($tokens > 0) {
+            $this->setCardTokens($playerId, $card, $tokens, true);
+        }
 
         if ($from > 0) {
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from ${player_name2}'), [

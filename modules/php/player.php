@@ -83,8 +83,9 @@ trait PlayerTrait {
         // apply monster effects
 
         // battery monster
-        if ($this->countCardOfType($playerId, 28) > 0) { // TODO what if mimick
-            $this->applyBatteryMonster($playerId);
+        $batteryMonsterCards = $this->getCardsOfType($playerId, 28);
+        foreach($batteryMonsterCards as $batteryMonsterCard) {
+            $this->applyBatteryMonster($playerId, $batteryMonsterCard);
         }
 
         // apply in tokyo at start

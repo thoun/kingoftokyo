@@ -16,20 +16,6 @@ function slideToObjectAndAttach(game, object, destinationId, posX, posY) {
     }));
     animation.play();
 }
-function moveToAnotherStock(sourceStock, destinationStock, uniqueId, cardId) {
-    if (sourceStock === destinationStock) {
-        return;
-    }
-    var sourceStockItemId = sourceStock.container_div.id + "_item_" + cardId;
-    if (document.getElementById(sourceStockItemId)) {
-        destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
-        sourceStock.removeFromStockById(cardId);
-    }
-    else {
-        console.warn(sourceStockItemId + " not found in ", sourceStock);
-        destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
-    }
-}
 function formatTextIcons(rawText) {
     return rawText
         .replace(/\[Star\]/ig, '<span class="icon points"></span>')
@@ -70,6 +56,76 @@ var Cards = /** @class */ (function () {
             displayedNumber /= 10;
         }
         return displayedNumber * 100 + color;
+    };
+    Cards.prototype.getDistance = function (p1, p2) {
+        return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+    };
+    Cards.prototype.placeTokensOnCard = function (stock, card, playerId) {
+        var _this = this;
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        var placed = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
+        // remove tokens
+        for (var i = card.tokens; i < placed.length; i++) {
+            if (card.type === 28 && playerId) {
+                this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
+            }
+            else {
+                this.game.fadeOutAndDestroy(divId + "-token" + i);
+            }
+        }
+        placed.splice(card.tokens, placed.length - card.tokens);
+        var _loop_1 = function (i) {
+            var newPlace = {
+                x: Math.random() * 100 + 16,
+                y: Math.random() * 100 + 16,
+            };
+            var protection = 0;
+            while (protection < 1000 && placed.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
+                newPlace.x = Math.random() * 100 + 16;
+                newPlace.y = Math.random() * 100 + 16;
+                protection++;
+            }
+            placed.push(newPlace);
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
+            if (card.type === 28) {
+                html += "energy-cube";
+            }
+            else if (card.type === 41) {
+                html += "smoke-cloud token";
+            }
+            html += "\"></div>";
+            dojo.place(html, divId);
+        };
+        // add tokens
+        for (var i = placed.length; i < card.tokens; i++) {
+            _loop_1(i);
+        }
+        div.dataset.placed = JSON.stringify(placed);
+    };
+    Cards.prototype.addCardsToStock = function (stock, cards, from) {
+        var _this = this;
+        if (!cards.length) {
+            return;
+        }
+        cards.forEach(function (card) { return stock.addToStockWithId(card.type, "" + card.id, from); });
+        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(stock, card); });
+    };
+    Cards.prototype.moveToAnotherStock = function (sourceStock, destinationStock, card) {
+        if (sourceStock === destinationStock) {
+            return;
+        }
+        var sourceStockItemId = sourceStock.container_div.id + "_item_" + card.id;
+        if (document.getElementById(sourceStockItemId)) {
+            this.addCardsToStock(destinationStock, [card], sourceStockItemId);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
+            sourceStock.removeFromStockById("" + card.id);
+        }
+        else {
+            console.warn(sourceStockItemId + " not found in ", sourceStock);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
+            this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
+        }
     };
     Cards.prototype.getCardCost = function (cardTypeId) {
         switch (cardTypeId) {
@@ -359,7 +415,7 @@ var PlayerTable = /** @class */ (function () {
         this.cards.centerItems = true;
         dojo.connect(this.cards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleCardClick(_this.cards, item_id, _this.playerId); });
         this.game.cards.setupCards([this.cards]);
-        cards.forEach(function (card) { return _this.cards.addToStockWithId(card.type, "" + card.id); });
+        this.game.cards.addCardsToStock(this.cards, cards);
         this.initialLocation = Number(player.location);
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
@@ -516,7 +572,7 @@ var TableManager = /** @class */ (function () {
 var DieFaceSelector = /** @class */ (function () {
     function DieFaceSelector(nodeId, inTokyo) {
         var _this = this;
-        var _loop_1 = function (face) {
+        var _loop_2 = function (face) {
             var faceId = nodeId + "-face" + face;
             var html = "<div id=\"" + faceId + "\" class=\"dice-icon dice" + face + "\">";
             if (face === 4 && inTokyo) {
@@ -539,7 +595,7 @@ var DieFaceSelector = /** @class */ (function () {
             });
         };
         for (var face = 1; face <= 6; face++) {
-            _loop_1(face);
+            _loop_2(face);
         }
     }
     DieFaceSelector.prototype.getValue = function () {
@@ -1158,7 +1214,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, function (_, item_id) { return _this.onVisibleCardClick(_this.visibleCards, item_id); });
         this.cards.setupCards([this.visibleCards]);
-        visibleCards.forEach(function (card) { return _this.visibleCards.addToStockWithId(card.type, "" + card.id); });
+        this.cards.addCardsToStock(this.visibleCards, visibleCards);
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from) {
         if (from === void 0) { from = 0; }
@@ -1291,7 +1347,7 @@ var KingOfTokyo = /** @class */ (function () {
             document.getElementById('pick-stock').style.display = 'block';
         }
         this.cards.setupCards([this.pickCard]);
-        this.pickCard.addToStockWithId(card.type, "" + card.id);
+        this.cards.addCardsToStock(this.pickCard, [card]);
     };
     KingOfTokyo.prototype.hidePickStock = function () {
         var div = document.getElementById('pick-stock');
@@ -1330,6 +1386,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['energy', 1],
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
+            ['setCardTokens', 1],
             ['removeCards', 1],
         ];
         notifs.forEach(function (notif) {
@@ -1379,18 +1436,18 @@ var KingOfTokyo = /** @class */ (function () {
         var newCard = notif.args.newCard;
         this.setEnergy(notif.args.playerId, notif.args.energy);
         if (newCard) {
-            moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
-            this.visibleCards.addToStockWithId(newCard.type, "" + newCard.id, 'deck');
+            this.cards.moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card);
+            this.cards.addCardsToStock(this.visibleCards, [newCard], 'deck');
         }
         else if (notif.args.from > 0) {
-            moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
+            this.cards.moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card);
         }
         else { // from Made in a lab Pick
             if (this.pickCard) { // active player
-                moveToAnotherStock(this.pickCard, this.playerTables[notif.args.playerId].cards, card.type, "" + card.id);
+                this.cards.moveToAnotherStock(this.pickCard, this.playerTables[notif.args.playerId].cards, card);
             }
             else {
-                this.playerTables[notif.args.playerId].cards.addToStockWithId(card.type, "" + card.id, 'deck');
+                this.cards.addCardsToStock(this.playerTables[notif.args.playerId].cards, [card], 'deck');
             }
         }
         this.tableManager.placePlayerTable(); // adapt to new card
@@ -1400,10 +1457,9 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager.placePlayerTable(); // adapt after removed cards
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
-        var _this = this;
         this.setEnergy(notif.args.playerId, notif.args.energy);
         this.visibleCards.removeAll();
-        notif.args.cards.forEach(function (card) { return _this.visibleCards.addToStockWithId(card.type, "" + card.id); });
+        this.cards.addCardsToStock(this.visibleCards, notif.args.cards, 'deck');
     };
     KingOfTokyo.prototype.notif_points = function (notif) {
         this.setPoints(notif.args.playerId, notif.args.points);
@@ -1419,6 +1475,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_poisonToken = function (notif) {
         this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
+    };
+    KingOfTokyo.prototype.notif_setCardTokens = function (notif) {
+        this.cards.placeTokensOnCard(this.playerTables[notif.args.playerId].cards, notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points) {
         var _a;

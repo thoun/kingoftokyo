@@ -357,8 +357,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         dojo.connect(this.visibleCards, 'onChangeSelection', this, (_, item_id: string) => this.onVisibleCardClick(this.visibleCards, item_id));
 
         this.cards.setupCards([this.visibleCards]);
-
-        visibleCards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
+        this.cards.addCardsToStock(this.visibleCards, visibleCards);
     }
 
     public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) {
@@ -521,8 +520,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.cards.setupCards([this.pickCard]);
-
-        this.pickCard.addToStockWithId(card.type, `${card.id}`);
+        this.cards.addCardsToStock(this.pickCard, [card]);
     }
 
     private hidePickStock() {
@@ -564,6 +562,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['energy', 1],
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
+            ['setCardTokens', 1],
             ['removeCards', 1],
         ];
     
@@ -624,15 +623,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setEnergy(notif.args.playerId, notif.args.energy);
 
         if (newCard) {
-            moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
-            this.visibleCards.addToStockWithId(newCard.type, `${newCard.id}`, 'deck');
+            this.cards.moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card);
+            this.cards.addCardsToStock(this.visibleCards, [newCard], 'deck');
         } else if (notif.args.from > 0) {
-            moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
+            this.cards.moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card);
         } else { // from Made in a lab Pick
             if (this.pickCard) { // active player
-                moveToAnotherStock(this.pickCard, this.playerTables[notif.args.playerId].cards, card.type, `${card.id}`);
+                this.cards.moveToAnotherStock(this.pickCard, this.playerTables[notif.args.playerId].cards, card);
             } else {
-                this.playerTables[notif.args.playerId].cards.addToStockWithId(card.type, `${card.id}`, 'deck');
+                this.cards.addCardsToStock(this.playerTables[notif.args.playerId].cards, [card], 'deck');
             }
         }
 
@@ -648,7 +647,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setEnergy(notif.args.playerId, notif.args.energy);
 
         this.visibleCards.removeAll();
-        notif.args.cards.forEach(card => this.visibleCards.addToStockWithId(card.type, `${card.id}`));
+        this.cards.addCardsToStock(this.visibleCards, notif.args.cards, 'deck');
     }
 
     
@@ -671,6 +670,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_poisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
         this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
+    }
+
+    notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {
+        this.cards.placeTokensOnCard(this.playerTables[notif.args.playerId].cards, notif.args.card, notif.args.playerId);
     }
     
     private setPoints(playerId: number, points: number) {

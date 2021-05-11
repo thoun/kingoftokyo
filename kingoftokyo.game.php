@@ -53,7 +53,6 @@ class KingOfTokyo extends Table {
             "herdCullerUsed" => 17,
             "damageForJetsIfStayingInTokyo" => 18,
             "madeInALabCard" => 19,
-            "energyOnBatteryMonster" => 99,
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
@@ -123,7 +122,6 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('herdCullerUsed', 0);
         self::setGameStateInitialValue('damageForJetsIfStayingInTokyo', 0);
         self::setGameStateInitialValue('madeInALabCard', 0);
-        self::setGameStateInitialValue('energyOnBatteryMonster', 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -135,9 +133,8 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(35))[0])->id, 'hand', 2343492);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(40))[0])->id, 'hand', 2343493);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(20))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(28))[0])->id, 'table');
+        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(41))[0])->id, 'hand', 2343492);
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();

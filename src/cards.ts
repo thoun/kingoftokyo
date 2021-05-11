@@ -1,6 +1,11 @@
 const CARD_WIDTH = 132;
 const CARD_HEIGHT = 185;
 
+interface PlacedTokens {
+    x: number;
+    y: number;
+}
+
 class Cards {
     constructor (private game: KingOfTokyoGame) {}
     
@@ -29,6 +34,78 @@ class Cards {
             displayedNumber /= 10;
         }
         return displayedNumber * 100 + color;
+    }
+
+    private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {
+        return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+    }
+
+    public placeTokensOnCard(stock: Stock, card: Card, playerId?: number) {
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+        const div = document.getElementById(divId);
+        const placed: PlacedTokens[] = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
+
+        // remove tokens
+        for (let i = card.tokens; i < placed.length; i++) {
+            if (card.type === 28 && playerId) {
+                (this.game as any).slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
+            } else {
+                (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+            }
+        }
+        placed.splice(card.tokens, placed.length - card.tokens);
+
+        // add tokens
+        for (let i = placed.length; i < card.tokens; i++) {
+            const newPlace = {
+                x: Math.random() * 100 + 16,
+                y: Math.random() * 100 + 16,
+            };
+            let protection = 0;
+            while (protection < 1000 && placed.some(place => this.getDistance(newPlace, place) < 32)) {
+                newPlace.x = Math.random() * 100 + 16;
+                newPlace.y = Math.random() * 100 + 16;
+                protection++;
+            }
+
+            placed.push(newPlace);
+            let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="card-token `;
+            if (card.type === 28) {
+                html += `energy-cube`;
+            } else if (card.type === 41) {
+                html += `smoke-cloud token`;
+            }
+            html += `"></div>`;
+            dojo.place(html, divId);
+        }
+
+        div.dataset.placed = JSON.stringify(placed);
+    }
+    
+    public addCardsToStock(stock: Stock, cards: Card[], from?: string) {
+        if (!cards.length) {
+            return;
+        }
+
+        cards.forEach(card => stock.addToStockWithId(card.type, `${card.id}`, from));
+        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
+    }
+
+    public moveToAnotherStock(sourceStock: Stock, destinationStock: Stock, card: Card) {
+        if (sourceStock === destinationStock) {
+            return;
+        }
+        
+        const sourceStockItemId = `${sourceStock.container_div.id}_item_${card.id}`;
+        if (document.getElementById(sourceStockItemId)) {     
+            this.addCardsToStock(destinationStock, [card], sourceStockItemId);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
+            sourceStock.removeFromStockById(`${card.id}`);
+        } else {
+            console.warn(`${sourceStockItemId} not found in `, sourceStock);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
+            this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
+        }
     }
 
     private getCardCost(cardTypeId: number) {

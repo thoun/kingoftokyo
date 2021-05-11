@@ -28,13 +28,13 @@ CREATE TABLE IF NOT EXISTS `dice` (
 ) ENGINE=InnoDB;
 
 -- card_type : 0..100 for keep power, 100..200 for discard power
--- card_type_arg : cost
+-- card_type_arg : tokens
 -- card_location : deck / player / discard
 -- card_location_arg : player id
 CREATE TABLE IF NOT EXISTS `card` (
   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `card_type` smallint unsigned NOT NULL,
-  `card_type_arg` tinyint unsigned NOT NULL,
+  `card_type_arg` tinyint unsigned NULL,
   `card_location` varchar(16) NOT NULL,
   `card_location_arg` INT(10) unsigned NOT NULL,
   PRIMARY KEY (`card_id`)

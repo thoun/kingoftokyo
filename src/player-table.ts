@@ -41,8 +41,7 @@ class PlayerTable {
         dojo.connect(this.cards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.cards, item_id, this.playerId));
 
         this.game.cards.setupCards([this.cards]);
-
-        cards.forEach(card => this.cards.addToStockWithId(card.type, `${card.id}`));
+        this.game.cards.addCardsToStock(this.cards, cards);
 
         this.initialLocation = Number((player as any).location);
 

@@ -13,7 +13,6 @@
         "src/stock.d.ts",
         "src/kingoftokyo.d.ts",
         "src/slide-utils.ts",
-        "src/stock-utils.ts",
         "src/text-icons-formatter.ts",
         "src/cards.ts",
         "src/player-table.ts",

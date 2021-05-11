@@ -567,6 +567,15 @@
   opacity: 0.7 !important;
   cursor: not-allowed;
 }
+.stockitem .card-token, #deck .card-token {
+  position: absolute;
+}
+.stockitem .card-token.energy-cube, #deck .card-token.energy-cube {
+  background: url("img/energy-cube.png") center no-repeat;
+  width: 32px;
+  height: 32px;
+  background-size: contain;
+}
 
 .card-tooltip .icon {
   width: 12px;
