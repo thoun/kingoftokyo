@@ -195,9 +195,9 @@ trait UtilTrait {
         $dbResults = self::getCollectionFromDB($sql);
         return array_map(function($dbResult) { return new Player($dbResult); }, array_values($dbResults));
     }
-    
-    function eliminatePlayers(int $currentTurnPlayerId) {
-        $players = $this->getPlayers(true);
+
+    function getOrderedPlayers(int $currentTurnPlayerId, bool $includeEliminated = false) {
+        $players = $this->getPlayers($includeEliminated);
         // TODO UnitTests
 
         $playerIndex = 0; 
@@ -212,6 +212,12 @@ trait UtilTrait {
         if ($playerIndex > 0) { // we start from $currentTurnPlayerId and then follow order
             $orderedPlayers = array_merge(array_slice($players, $playerIndex), array_slice($players, 0, $playerIndex));
         }
+
+        return $orderedPlayers;
+    }
+    
+    function eliminatePlayers(int $currentTurnPlayerId) {
+        $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, true);
 
         $endGame = false;
 

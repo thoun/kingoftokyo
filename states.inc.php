@@ -220,10 +220,28 @@ $playerActionsGameStates = [
         "possibleactions" => [ "buyCard", "goToSellCard", "renew" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
+            "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "renew" => ST_PLAYER_BUY_CARD,
             "zombiePass" => ST_NEXT_PLAYER,
         ]
+    ],
+
+    ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD => [
+        "name" => "opportunistBuyCard",
+        "description" => clienttranslate('Player with Opportunist can buy revealed card'),
+        "descriptionmyturn" => clienttranslate('${you} can buy revealed card'),
+        "type" => "multipleactiveplayer",
+        "action" => "stOpportunistBuyCard",
+        "args" => "argOpportunistBuyCard",
+        "possibleactions" => [ "buyCard", "opportunistSkip" ],
+        "transitions" => [
+            "nextOpportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
+            "buyCard" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
+            "endOpportunist" => ST_PLAYER_BUY_CARD,
+            "endGame" => ST_END_GAME,
+            "zombiePass" => ST_PLAYER_BUY_CARD,
+        ],
     ],
 
     ST_PLAYER_SELL_CARD => [

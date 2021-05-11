@@ -96,6 +96,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             
             case 'buyCard':
+            case 'opportunistBuyCard':
                 this.onEnteringBuyCard(args.args);
                 break;
             case 'sellCard':
@@ -214,6 +215,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.diceManager.removeAllDice();
                 break;
             case 'buyCard':
+            case 'opportunistBuyCard':
                 this.onLeavingBuyCard();
                 break;
             case 'sellCard':
@@ -260,7 +262,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
                     break;
-                
+                case 'opportunistBuyCard':
+                    (this as any).addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
+                    break;
                 case 'sellCard':
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
@@ -372,6 +376,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
+        /*} else if (this.gamedatas.gamestate.name === 'opportunistBuyCard') {
+            this.opportunistBuyCard(cardId);*/
         } else {
             this.buyCard(cardId, from)
         }
@@ -494,6 +500,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('goToSellCard');
+    }
+
+    public opportunistSkip() {
+        if(!(this as any).checkAction('opportunistSkip')) {
+            return;
+        }
+
+        this.takeAction('opportunistSkip');
     }
 
     public onEndTurn() {

@@ -152,6 +152,14 @@
         self::ajaxResponse();
     }
   	
+    public function opportunistSkip() {
+        self::setAjaxMode();
+
+        $this->game->opportunistSkip();
+
+        self::ajaxResponse();
+    }
+  	
     public function sellCard() {
         self::setAjaxMode();
 

@@ -382,6 +382,20 @@ trait CardsTrait {
         }
     }
 
+    function getPlayersWithOpportunist(int $playerId) {
+        $orderedPlayers = $this->getOrderedPlayers($playerId);
+        $opportunistPlayerIds = [];
+
+        foreach($orderedPlayers as $player) {
+            $countOpportunist = $this->countCardOfType($player->id, 31);
+            if ($countOpportunist > 0) {
+                $opportunistPlayerIds[] = $player->id;
+            }            
+        }
+
+        return $opportunistPlayerIds;
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -392,7 +406,9 @@ trait CardsTrait {
     */
 
     function buyCard(int $id, int $from) {
-        $playerId = self::getActivePlayerId();
+        $stateName = $this->gamestate->state()['name'];
+        $opportunist = $stateName === 'opportunistBuyCard';
+        $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
@@ -422,6 +438,8 @@ trait CardsTrait {
         if ($tokens > 0) {
             $this->setCardTokens($playerId, $card, $tokens, true);
         }
+
+        $newCard = null;
 
         if ($from > 0) {
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from ${player_name2}'), [
@@ -470,7 +488,21 @@ trait CardsTrait {
         if ($endGame) {
             $this->gamestate->nextState('endGame');
         } else {
-            $this->gamestate->nextState('buyCard');
+
+            if ($opportunist) {
+                $this->setGlobalVariable('revealedCardsIds', [$newCard->id]);
+                $this->gamestate->nextState('buyCard');
+            } else {
+                $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
+
+                if (count($playersWithOpportunist) > 0) {
+                    $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
+                    $this->setGlobalVariable('revealedCardsIds', [$newCard->id]);
+                    $this->gamestate->nextState('opportunist');
+                } else {
+                    $this->gamestate->nextState('buyCard');
+                }
+            }
         }
     }
 
@@ -494,7 +526,22 @@ trait CardsTrait {
             'energy' => $this->getPlayerEnergy($playerId),
         ]);
 
-        $this->gamestate->nextState('renew');
+        $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
+
+        if (count($playersWithOpportunist) > 0) {
+            $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
+            $this->setGlobalVariable('revealedCardsIds', array_map(function($card) { return $card->id; }, $cards));
+            $this->gamestate->nextState('opportunist');
+        } else {
+            $this->gamestate->nextState('renew');
+        }
+    }
+
+    function opportunistSkip() {
+        $playerId = self::getCurrentPlayerId();
+
+        // Make this player unactive now (and tell the machine state to use transtion "nextOpportunist" if all players are now unactive
+        $this->gamestate->setPlayerNonMultiactive($playerId, "nextOpportunist");
     }
 
     function goToSellCard() {
@@ -586,9 +633,37 @@ trait CardsTrait {
         ] + $pickArgs;
     }
 
+    function argOpportunistBuyCard() {
+        $revealedCardsIds = $this->getGlobalVariable('revealedCardsIds', true);
+
+        $playersIds = array_values($this->gamestate->getActivePlayerList());
+        if (count($playersIds) > 0) {
+            $playerId = $playersIds[0];
+
+            $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+            
+            $disabledCards = array_values(array_filter($cards, function ($card) use ($playerId, $revealedCardsIds) { return !in_array($card->id, $revealedCardsIds) || !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
+            $disabledIds = array_map(function ($card) { return $card->id; }, $disabledCards);
+
+            return [
+                'disabledIds' => $disabledIds,
+            ];
+        } else {
+            return [];
+        }
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
+
+    function stOpportunistBuyCard() {
+        $playersWithOpportunist = $this->getGlobalVariable('playersWithOpportunist', true);
+        $playerWithOpportunist = array_shift($playersWithOpportunist);
+        $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
+
+        $this->gamestate->setPlayersMultiactive([$playerWithOpportunist], count($playersWithOpportunist) > 0 ? 'nextOpportunist' : 'endOpportunist');
+    }
 
     function stSellCard() {
         $playerId = self::getActivePlayerId();

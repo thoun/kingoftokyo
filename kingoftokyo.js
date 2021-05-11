@@ -1002,6 +1002,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringResolveHeartDice(args.args);
                 break;
             case 'buyCard':
+            case 'opportunistBuyCard':
                 this.onEnteringBuyCard(args.args);
                 break;
             case 'sellCard':
@@ -1105,6 +1106,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.diceManager.removeAllDice();
                 break;
             case 'buyCard':
+            case 'opportunistBuyCard':
                 this.onLeavingBuyCard();
                 break;
             case 'sellCard':
@@ -1146,6 +1148,9 @@ var KingOfTokyo = /** @class */ (function () {
                         dojo.addClass('renew_button', 'disabled');
                     }
                     this.addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
+                    break;
+                case 'opportunistBuyCard':
+                    this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
                     break;
                 case 'sellCard':
                     this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
@@ -1227,6 +1232,8 @@ var KingOfTokyo = /** @class */ (function () {
         }
         if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
+            /*} else if (this.gamedatas.gamestate.name === 'opportunistBuyCard') {
+                this.opportunistBuyCard(cardId);*/
         }
         else {
             this.buyCard(cardId, from);
@@ -1323,6 +1330,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('goToSellCard');
+    };
+    KingOfTokyo.prototype.opportunistSkip = function () {
+        if (!this.checkAction('opportunistSkip')) {
+            return;
+        }
+        this.takeAction('opportunistSkip');
     };
     KingOfTokyo.prototype.onEndTurn = function () {
         if (!this.checkAction('endTurn')) {
