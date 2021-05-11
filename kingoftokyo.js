@@ -1038,8 +1038,11 @@ var KingOfTokyo = /** @class */ (function () {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
             }
             if (args.energyDrink.hasCard && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + " ( 1 <span class=\"small icon energy\"></span>)", function () { return _this.buyEnergyDrink(); });
+                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(" ( 1[Energy])"), function () { return _this.buyEnergyDrink(); });
                 this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
+            }
+            if (args.hasSmokeCloud && args.throwNumber === args.maxThrowNumber) {
+                this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + " (<span class=\"smoke-cloud token\"></span>)", function () { return _this.useSmokeCloud(); });
             }
         }
     };
@@ -1245,6 +1248,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.buyEnergyDrink = function () {
         this.takeAction('buyEnergyDrink');
+    };
+    KingOfTokyo.prototype.useSmokeCloud = function () {
+        this.takeAction('useSmokeCloud');
     };
     KingOfTokyo.prototype.changeDie = function (id, value, card) {
         if (!this.checkAction('changeDie')) {

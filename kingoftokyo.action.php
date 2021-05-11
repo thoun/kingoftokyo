@@ -54,6 +54,14 @@
 
         self::ajaxResponse();
     }
+  	
+    public function useSmokeCloud() {
+        self::setAjaxMode();
+
+        $this->game->useSmokeCloud();
+
+        self::ajaxResponse();
+    }
 
     public function rethrow3() {
         self::setAjaxMode();

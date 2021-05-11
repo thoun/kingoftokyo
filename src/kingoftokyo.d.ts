@@ -72,6 +72,7 @@ interface EnteringThrowDiceArgs extends EnteringDiceArgs {
         hasCard: boolean;
         hasDice3: boolean;
     };
+    hasSmokeCloud: boolean;
 }
 
 interface EnteringChangeDieArgs extends EnteringDiceArgs {

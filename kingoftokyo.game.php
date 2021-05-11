@@ -133,7 +133,7 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(28))[0])->id, 'table');
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(41))[0])->id, 'table');
         //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(41))[0])->id, 'hand', 2343492);
 
         // Activate first player (which is in general a good idea :) )

@@ -328,13 +328,37 @@ trait CardsTrait {
         $this->gamestate->nextState('buyEnergyDrink');        
     }
 
+    function useSmokeCloud() {
+        $playerId = self::getActivePlayerId();
+
+        $cards = $this->getCardsOfType($playerId, 41);
+
+        if (count($cards) == 0) {
+            throw new \Error('No Smoke Cloud card');
+        }
+
+        $card = $cards[0];
+
+        if ($card->tokens < 1) {
+            throw new \Error('Not enough token');
+        }
+
+        $tokensOnCard = $card->tokens - 1;
+        $this->setCardTokens($playerId, $card, $tokensOnCard);
+
+        if ($tokensOnCard <= 0) {
+            $this->removeCard($playerId, $card);
+        }
+
+        $this->gamestate->nextState('useSmokeCloud');        
+    }
+
     function removeCard(int $playerId, $card, bool $silent = false) {
         $this->cards->moveCard($card->id, 'discard');
 
         if (!$silent) {
             self::notifyAllPlayers("removeCards", '', [
                 'playerId' => $playerId,
-                'player_name' => $playerName,
                 'cards' => [$card],
             ]);
         }        

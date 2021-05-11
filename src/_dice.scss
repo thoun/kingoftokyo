@@ -52,6 +52,11 @@ $tokyoGreen: #96c93c;
   #dice-actions {
     button {
       width: auto;
+
+      .token {
+        width: 16px;
+        height: 16px;
+      }
     }
   }
 }

@@ -364,6 +364,8 @@ trait DiceTrait {
         if ($hasBackgroundDweller) {
             $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
         }
+
+        $hasSmokeCloud = $this->countCardOfType($playerId, 41) > 0; // Smoke Cloud
     
         // return values:
         return [
@@ -378,7 +380,8 @@ trait DiceTrait {
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $hasDice3,
-            ]
+            ],
+            'hasSmokeCloud' => $hasSmokeCloud
         ];
     }
 
