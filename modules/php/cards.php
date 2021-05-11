@@ -107,7 +107,7 @@ trait CardsTrait {
         }
         
         for($value=101; $value<=118; $value++) { // discard
-            //$cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
         }
 
         $this->cards->createCards($cards, 'deck');

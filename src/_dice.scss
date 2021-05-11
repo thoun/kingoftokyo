@@ -272,7 +272,7 @@ $size: 0.25rem;
     transform: rotate3d(1, 0, 0, 180deg) translateZ(4*$size);
   }
 
-  .animation {
+.animation {
     position: absolute;
     z-index: 10;
     width: 220px;
@@ -332,4 +332,70 @@ $size: 0.25rem;
         width: auto;
       }
     }
+}
+
+#heart-action-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .die {
+    display: flex;
+    align-items: center;
+    margin: 5px;
+
+    .die-face {
+      display: flex;
+      justify-content: center;
+      width: 80px;
+
+      .dice-icon {
+        width: 33px;
+        height: 33px;
+      }
+    }
+
+    .toggle-buttons {
+      display: flex;
+
+      .toggle-button {
+        background: #FFFFFFAA;
+        //display: inline-block;
+        padding: 10px 15px;
+        font-size: 14px;
+        cursor: pointer;
+    
+        &.disabled {
+          background: #AAAAAA;
+          cursor: not-allowed;
+          pointer-events: none;
+        }
+    
+        &.selected {
+          box-shadow: 0 0 3px 3px red;
+          z-index: 1; // so shadow goes over next button
+        }
+    
+        
+        &:first-child {
+          border-radius: 5px 0 0 5px;
+        }
+        &:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+        &:not(:last-child) {
+            border-right: 1px solid #DDDDDD;
+        }
+      }
+    }
   }
+
+  #heart-action-selector-apply-wrapper {
+    display: flex;
+    justify-content: center;
+
+    #heart-action-selector-apply {
+      width: 120px;
+    }
+  }
+}

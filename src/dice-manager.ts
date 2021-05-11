@@ -62,6 +62,21 @@ class DiceManager {
         });
     }
 
+    public setDiceForSelectHeartAction(dice: Dice[], inTokyo: boolean) { 
+        if (this.dice.length) {
+            return;
+        }
+        //this.dice?.forEach(die => this.removeDice(die));  
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
+        
+        dice.forEach(die => {
+            const divId = `dice${die.id}`;
+            dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
+            setTimeout(() => document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'), 100);
+        });
+    }
+
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
         const dice = this.dice.filter(die => die.value === args.diceValue);
         (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, '96c93c', args.deltaPoints, 1500);

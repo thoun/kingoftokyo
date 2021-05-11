@@ -94,7 +94,7 @@
     public function applyHeartDieChoices() {
         self::setAjaxMode();
 
-        // TODO $id = self::getArg("id", AT_posint, true);
+        $heartDieChoices = json_decode(base64_decode(self::getArg("selections", AT_base64, true)));
 
         $this->game->applyHeartDieChoices($heartDieChoices);
 

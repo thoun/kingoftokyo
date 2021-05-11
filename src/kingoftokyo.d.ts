@@ -15,6 +15,13 @@ interface Card {
     cost: number;
 }
 
+type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
+
+interface HeartActionSelection {
+    action: HeartAction;
+    playerId?: number;
+}
+
 interface KingOfTokyoPlayer extends Player {
     poisonTokens: number;
     shrinkRayTokens: number;
@@ -45,6 +52,7 @@ interface KingOfTokyoGame extends Game {
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
     onVisibleCardClick: (stock: Stock, cardId: string, from: number) => void;
     getPlayerId: () => number;
+    applyHeartActions: (selections: HeartActionSelection[]) => void;
 }
 
 interface EnteringDiceArgs {

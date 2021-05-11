@@ -604,6 +604,20 @@ var DiceManager = /** @class */ (function () {
             }
         });
     };
+    DiceManager.prototype.setDiceForSelectHeartAction = function (dice, inTokyo) {
+        var _this = this;
+        if (this.dice.length) {
+            return;
+        }
+        //this.dice?.forEach(die => this.removeDice(die));  
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
+        dice.forEach(function (die) {
+            var divId = "dice" + die.id;
+            dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
+            setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
+        });
+    };
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
         var dice = this.dice.filter(function (die) { return die.value === args.diceValue; });
@@ -756,6 +770,108 @@ var DiceManager = /** @class */ (function () {
     };
     return DiceManager;
 }());
+var HeartActionSelector = /** @class */ (function () {
+    function HeartActionSelector(game, nodeId, args) {
+        var _this = this;
+        this.game = game;
+        this.nodeId = nodeId;
+        this.args = args;
+        this.selections = [];
+        this.createToggleButtons(nodeId, args);
+        dojo.place("<div id=\"" + nodeId + "-apply-wrapper\"><button class=\"bgabutton bgabutton_blue\" id=\"" + nodeId + "-apply\">" + _('Apply') + "</button></div>", nodeId);
+        document.getElementById(nodeId + "-apply").addEventListener('click', function () { return _this.game.applyHeartActions(_this.selections); });
+    }
+    HeartActionSelector.prototype.createToggleButtons = function (nodeId, args) {
+        var _this = this;
+        args.dice.filter(function (die) { return die.value === 4; }).forEach(function (die, index) {
+            var html = "<div class=\"die\">\n                <div class=\"die-face\">\n                    <div class=\"dice-icon dice4\">";
+            if (args.inTokyo) {
+                html += "<div class=\"icon forbidden\"></div>";
+            }
+            html += "</div>\n                </div>\n                <div id=\"" + nodeId + "-die" + index + "\" class=\"toggle-buttons\"></div>\n            </div>";
+            dojo.place(html, nodeId);
+            _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-heal", _('Heal'), function () { return _this.healSelected(index); }, false, true);
+            _this.selections[index] = { action: 'heal' };
+            if (args.shrinkRayTokens > 0) {
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-shrink-ray", _('Remove Shrink Ray token'), function () { return _this.shrinkRaySelected(index); }, args.inTokyo);
+            }
+            if (args.poisonTokens > 0) {
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-poison", _('Remove Poison token'), function () { return _this.poisonSelected(index); }, args.inTokyo);
+            }
+            if (args.hasHealingRay) {
+                args.healablePlayers.forEach(function (healablePlayer) {
+                    return _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-heal-player-" + healablePlayer.id, dojo.string.substitute(_('Heal player ${player_name}'), { 'player_name': "<span style=\"color: #" + healablePlayer.color + "\">" + healablePlayer.name + "</span>" }), function () { return _this.healPlayerSelected(index, healablePlayer.id); }, false);
+                });
+            }
+        });
+    };
+    HeartActionSelector.prototype.createToggleButton = function (destinationId, id, text, callback, disabled, selected) {
+        if (selected === void 0) { selected = false; }
+        var html = "<div class=\"toggle-button\" id=\"" + id + "\">\n            " + text + "\n        </button>";
+        dojo.place(html, destinationId);
+        if (disabled) {
+            dojo.addClass(id, 'disabled');
+        }
+        else if (selected) {
+            dojo.addClass(id, 'selected');
+        }
+        document.getElementById(id).addEventListener('click', function () { return callback(); });
+    };
+    HeartActionSelector.prototype.removeOldSelection = function (index) {
+        var oldSelectionId = this.selections[index].action == 'heal-player' ? this.nodeId + "-die" + index + "-heal-player-" + this.selections[index].playerId : this.nodeId + "-die" + index + "-" + this.selections[index].action;
+        dojo.removeClass(oldSelectionId, 'selected');
+    };
+    HeartActionSelector.prototype.healSelected = function (index) {
+        if (this.selections[index].action == 'heal') {
+            return;
+        }
+        this.removeOldSelection(index);
+        this.selections[index].action = 'heal';
+        dojo.addClass(this.nodeId + "-die" + index + "-" + this.selections[index].action, 'selected');
+        this.checkDisabled();
+    };
+    HeartActionSelector.prototype.shrinkRaySelected = function (index) {
+        if (this.selections[index].action == 'shrink-ray') {
+            return;
+        }
+        this.removeOldSelection(index);
+        this.selections[index].action = 'shrink-ray';
+        dojo.addClass(this.nodeId + "-die" + index + "-" + this.selections[index].action, 'selected');
+        this.checkDisabled();
+    };
+    HeartActionSelector.prototype.poisonSelected = function (index) {
+        if (this.selections[index].action == 'poison') {
+            return;
+        }
+        this.removeOldSelection(index);
+        this.selections[index].action = 'poison';
+        dojo.addClass(this.nodeId + "-die" + index + "-" + this.selections[index].action, 'selected');
+        this.checkDisabled();
+    };
+    HeartActionSelector.prototype.healPlayerSelected = function (index, playerId) {
+        if (this.selections[index].action == 'heal-player' && this.selections[index].playerId == playerId) {
+            return;
+        }
+        this.removeOldSelection(index);
+        this.selections[index].action = 'heal-player';
+        this.selections[index].playerId = playerId;
+        dojo.addClass(this.nodeId + "-die" + index + "-heal-player-" + playerId, 'selected');
+        this.checkDisabled();
+    };
+    HeartActionSelector.prototype.checkDisabled = function () {
+        var _this = this;
+        var removedShrinkRays = this.selections.filter(function (selection) { return selection.action === 'shrink-ray'; }).length;
+        var removedPoisons = this.selections.filter(function (selection) { return selection.action === 'poison'; }).length;
+        var healedPlayers = [];
+        this.args.healablePlayers.forEach(function (player) { return healedPlayers[player.id] = _this.selections.filter(function (selection) { return selection.action === 'heal-player' && selection.playerId == player.id; }).length; });
+        this.selections.forEach(function (selection, index) {
+            dojo.toggleClass(_this.nodeId + "-die" + index + "-shrink-ray", 'disabled', selection.action != 'shrink-ray' && removedShrinkRays >= _this.args.shrinkRayTokens);
+            dojo.toggleClass(_this.nodeId + "-die" + index + "-poison", 'disabled', selection.action != 'poison' && removedPoisons >= _this.args.poisonTokens);
+            _this.args.healablePlayers.forEach(function (player) { return dojo.toggleClass(_this.nodeId + "-die" + index + "-heal-player-" + player.id, 'disabled', selection.action != 'heal-player' && selection.playerId != player.id && healedPlayers[player.id] >= player.missingHearts); });
+        });
+    };
+    return HeartActionSelector;
+}());
 var ANIMATION_MS = 1500;
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
@@ -861,9 +977,12 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args) {
         var _a;
-        if (((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) && this.isCurrentPlayerActive()) {
-            //create node ('heart-action-selector') just under rolled-dices;
-            // TODO add element under rolled dice, where each heart dice can select its action
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
+            if (this.isCurrentPlayerActive()) {
+                dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice', 'after');
+                this.heartActionSelector = new HeartActionSelector(this, 'heart-action-selector', args);
+            }
         }
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args) {
@@ -899,6 +1018,7 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'resolveHeartDice':
                 if (document.getElementById('heart-action-selector')) {
+                    this.heartActionSelector = null;
                     dojo.destroy('heart-action-selector');
                 }
                 break;
@@ -1071,6 +1191,15 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('resolve');
+    };
+    KingOfTokyo.prototype.applyHeartActions = function (selections) {
+        if (!this.checkAction('applyHeartDieChoices')) {
+            return;
+        }
+        var base64 = btoa(JSON.stringify(selections));
+        this.takeAction('applyHeartDieChoices', {
+            selections: base64
+        });
     };
     KingOfTokyo.prototype.onStayInTokyo = function () {
         if (!this.checkAction('stay')) {

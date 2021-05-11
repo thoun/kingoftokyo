@@ -458,6 +458,37 @@ trait UtilTrait {
         ]);
     }
 
+    function removeShrinkRayToken(int $playerId) {
+        $deltaTokens = 1;
+        $actualTokens = $this->getPlayerShrinkRayTokens($playerId);
+        $newTokens = max($actualTokens - $deltaTokens, 0);
+
+        self::DbQuery("UPDATE player SET `player_shrink_ray_tokens` = $newTokens where `player_id` = $playerId");
+
+        self::notifyAllPlayers('shrinkRayToken', '', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'delta_tokens' => $deltaTokens,
+            'tokens' => $newTokens,
+        ]);
+    }
+    
+
+    function removePoisonToken(int $playerId) {
+        $deltaTokens = 1;
+        $actualTokens = $this->getPlayerPoisonTokens($playerId);
+        $newTokens = max($actualTokens - $deltaTokens, 0);
+
+        self::DbQuery("UPDATE player SET `player_poison_tokens` = $newTokens where `player_id` = $playerId");
+
+        self::notifyAllPlayers('poisonToken', '', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'delta_tokens' => $deltaTokens,
+            'tokens' => $newTokens,
+        ]);
+    }
+
     function isFewestStars(int $playerId) {
         $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`) AND (SELECT count(*) FROM `player` where `player_score` = (select min(`player_score`) from `player`)) = 1";
         return intval(self::getUniqueValueFromDB($sql)) > 0;

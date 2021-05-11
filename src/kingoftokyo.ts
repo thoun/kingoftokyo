@@ -14,6 +14,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
     private diceManager: DiceManager;
+    private heartActionSelector: HeartActionSelector;
     private visibleCards: Stock;
     private pickCard: Stock;
     private playerTables: PlayerTable[] = [];
@@ -138,9 +139,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs) {
-        if (args.dice?.length && (this as any).isCurrentPlayerActive()) {
-            //create node ('heart-action-selector') just under rolled-dices;
-            // TODO add element under rolled dice, where each heart dice can select its action
+        if (args.dice?.length) {
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
+
+            if ((this as any).isCurrentPlayerActive()) {
+                dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice', 'after');
+                this.heartActionSelector = new HeartActionSelector(this, 'heart-action-selector', args);
+            }
         }
     }
 
@@ -181,6 +186,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;                
             case 'resolveHeartDice':
                 if (document.getElementById('heart-action-selector')) {
+                    this.heartActionSelector = null;
                     dojo.destroy('heart-action-selector');
                 }
                 break;
@@ -400,6 +406,19 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('resolve');
+    }
+
+    public applyHeartActions(selections: HeartActionSelection[]) {
+        if(!(this as any).checkAction('applyHeartDieChoices')) {
+            return;
+        }
+
+        const base64 = btoa(JSON.stringify(selections));
+
+        this.takeAction('applyHeartDieChoices', {
+            selections: base64
+        });
+
     }
 
     public onStayInTokyo() {
