@@ -426,11 +426,11 @@ trait DiceTrait {
             $diceArg = $canSelectHeartDiceUse ? [
                 'dice' => $dice,
                 'inTokyo' => $this->inTokyo($playerId),
-            ] : [];
+            ] : [ 'skipped' => true ];
     
             return $selectHeartDiceUseArg + $diceArg;
         }
-        return [];
+        return [ 'skipped' => true ];
     }
 
 //////////////////////////////////////////////////////////////////////////////

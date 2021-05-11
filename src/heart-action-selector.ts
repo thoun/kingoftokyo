@@ -135,10 +135,15 @@ class HeartActionSelector {
         this.args.healablePlayers.forEach(player => healedPlayers[player.id] = this.selections.filter(selection => selection.action === 'heal-player' && selection.playerId == player.id).length);
 
         this.selections.forEach((selection, index) => {
-            dojo.toggleClass(`${this.nodeId}-die${index}-shrink-ray`, 'disabled', selection.action != 'shrink-ray' && removedShrinkRays >= this.args.shrinkRayTokens);
-            dojo.toggleClass(`${this.nodeId}-die${index}-poison`, 'disabled', selection.action != 'poison' && removedPoisons >= this.args.poisonTokens);
-
-            this.args.healablePlayers.forEach(player => dojo.toggleClass(`${this.nodeId}-die${index}-heal-player-${player.id}`, 'disabled', selection.action != 'heal-player' && selection.playerId != player.id && healedPlayers[player.id] >= player.missingHearts));
+            if (this.args.shrinkRayTokens > 0) {
+                dojo.toggleClass(`${this.nodeId}-die${index}-shrink-ray`, 'disabled', selection.action != 'shrink-ray' && removedShrinkRays >= this.args.shrinkRayTokens);
+            }
+            if (this.args.poisonTokens > 0) {
+                dojo.toggleClass(`${this.nodeId}-die${index}-poison`, 'disabled', selection.action != 'poison' && removedPoisons >= this.args.poisonTokens);
+            }
+            if (this.args.hasHealingRay) {
+                this.args.healablePlayers.forEach(player => dojo.toggleClass(`${this.nodeId}-die${index}-heal-player-${player.id}`, 'disabled', selection.action != 'heal-player' && selection.playerId != player.id && healedPlayers[player.id] >= player.missingHearts));
+            }
         });
     }
 

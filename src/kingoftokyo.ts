@@ -114,6 +114,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`; 
         (this as any).updatePageTitle();        
     }
+    
+    private removeGamestateDescription() {
+        this.gamedatas.gamestate.description = ''; 
+        this.gamedatas.gamestate.descriptionmyturn = ''; 
+        (this as any).updatePageTitle();        
+    }
 
     private onEnteringThrowDice(args: EnteringThrowDiceArgs) {
         this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? `last` : '');
@@ -147,6 +153,9 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs) {
+        if (args.skipped) {
+            this.removeGamestateDescription();
+        }
         if (args.dice?.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
 

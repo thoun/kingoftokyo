@@ -865,9 +865,15 @@ var HeartActionSelector = /** @class */ (function () {
         var healedPlayers = [];
         this.args.healablePlayers.forEach(function (player) { return healedPlayers[player.id] = _this.selections.filter(function (selection) { return selection.action === 'heal-player' && selection.playerId == player.id; }).length; });
         this.selections.forEach(function (selection, index) {
-            dojo.toggleClass(_this.nodeId + "-die" + index + "-shrink-ray", 'disabled', selection.action != 'shrink-ray' && removedShrinkRays >= _this.args.shrinkRayTokens);
-            dojo.toggleClass(_this.nodeId + "-die" + index + "-poison", 'disabled', selection.action != 'poison' && removedPoisons >= _this.args.poisonTokens);
-            _this.args.healablePlayers.forEach(function (player) { return dojo.toggleClass(_this.nodeId + "-die" + index + "-heal-player-" + player.id, 'disabled', selection.action != 'heal-player' && selection.playerId != player.id && healedPlayers[player.id] >= player.missingHearts); });
+            if (_this.args.shrinkRayTokens > 0) {
+                dojo.toggleClass(_this.nodeId + "-die" + index + "-shrink-ray", 'disabled', selection.action != 'shrink-ray' && removedShrinkRays >= _this.args.shrinkRayTokens);
+            }
+            if (_this.args.poisonTokens > 0) {
+                dojo.toggleClass(_this.nodeId + "-die" + index + "-poison", 'disabled', selection.action != 'poison' && removedPoisons >= _this.args.poisonTokens);
+            }
+            if (_this.args.hasHealingRay) {
+                _this.args.healablePlayers.forEach(function (player) { return dojo.toggleClass(_this.nodeId + "-die" + index + "-heal-player-" + player.id, 'disabled', selection.action != 'heal-player' && selection.playerId != player.id && healedPlayers[player.id] >= player.missingHearts); });
+            }
         });
     };
     return HeartActionSelector;
@@ -957,6 +963,11 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.gamestate.descriptionmyturn = "" + originalState['descriptionmyturn' + property];
         this.updatePageTitle();
     };
+    KingOfTokyo.prototype.removeGamestateDescription = function () {
+        this.gamedatas.gamestate.description = '';
+        this.gamedatas.gamestate.descriptionmyturn = '';
+        this.updatePageTitle();
+    };
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
         var _this = this;
         this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? "last" : '');
@@ -984,6 +995,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args) {
         var _a;
+        if (args.skipped) {
+            this.removeGamestateDescription();
+        }
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
             if (this.isCurrentPlayerActive()) {

@@ -430,6 +430,7 @@
   background: #FFFFFFAA;
   padding: 10px 15px;
   font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
 }
 #heart-action-selector .die .toggle-buttons .toggle-button.disabled {

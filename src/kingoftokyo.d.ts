@@ -90,6 +90,7 @@ interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
     }[];
     poisonTokens: number;
     shrinkRayTokens: number;
+    skipped: boolean;
 }
 
 interface EnteringBuyCardArgs {
