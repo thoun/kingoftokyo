@@ -4,17 +4,18 @@ declare const $;
 declare const dojo: Dojo;
 declare const _;
 declare const g_gamethemeurl;
+declare const playSound;
 
 declare const board: HTMLDivElement;
 
 const ANIMATION_MS = 1500;
+const PUNCH_SOUND_DURATION = 250;
 
 class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
     private diceManager: DiceManager;
-    private heartActionSelector: HeartActionSelector;
     private visibleCards: Stock;
     private pickCard: Stock;
     private playerTables: PlayerTable[] = [];
@@ -60,6 +61,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
 
         this.setupNotifications();
+
+        /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
+            args: {
+                number: 3,
+                smashedPlayersIds: [2343492, 2343493]
+            }
+        } as any));*/
 
         log( "Ending game setup" );
     }
@@ -144,7 +152,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             if ((this as any).isCurrentPlayerActive()) {
                 dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice', 'after');
-                this.heartActionSelector = new HeartActionSelector(this, 'heart-action-selector', args);
+                new HeartActionSelector(this, 'heart-action-selector', args);
             }
         }
     }
@@ -186,7 +194,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;                
             case 'resolveHeartDice':
                 if (document.getElementById('heart-action-selector')) {
-                    this.heartActionSelector = null;
                     dojo.destroy('heart-action-selector');
                 }
                 break;
@@ -577,6 +584,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
         this.diceManager.resolveSmashDice(notif.args);
+
+        if (notif.args.smashedPlayersIds.length > 0) {
+            for (let delayIndex = 0; delayIndex < notif.args.number; delayIndex++) {
+                setTimeout(() => playSound('kot-punch'), ANIMATION_MS -(PUNCH_SOUND_DURATION * delayIndex - 1));
+            }
+        }
     }
 
     notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {

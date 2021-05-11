@@ -22,4 +22,7 @@
     </div>
 </div>
 
+<audio id="audiosrc_kot-punch" src="{GAMETHEMEURL}sounds/punch.mp3" preload="none" autobuffer></audio>
+<audio id="audiosrc_o_kot-punch" src="{GAMETHEMEURL}sounds/punch.ogg" preload="none" autobuffer></audio>
+
 {OVERALL_GAME_FOOTER}

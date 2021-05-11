@@ -873,6 +873,7 @@ var HeartActionSelector = /** @class */ (function () {
     return HeartActionSelector;
 }());
 var ANIMATION_MS = 1500;
+var PUNCH_SOUND_DURATION = 250;
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
@@ -910,6 +911,12 @@ var KingOfTokyo = /** @class */ (function () {
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setupNotifications();
+        /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
+            args: {
+                number: 3,
+                smashedPlayersIds: [2343492, 2343493]
+            }
+        } as any));*/
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
@@ -981,7 +988,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
             if (this.isCurrentPlayerActive()) {
                 dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice', 'after');
-                this.heartActionSelector = new HeartActionSelector(this, 'heart-action-selector', args);
+                new HeartActionSelector(this, 'heart-action-selector', args);
             }
         }
     };
@@ -1018,7 +1025,6 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'resolveHeartDice':
                 if (document.getElementById('heart-action-selector')) {
-                    this.heartActionSelector = null;
                     dojo.destroy('heart-action-selector');
                 }
                 break;
@@ -1334,6 +1340,11 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_resolveSmashDice = function (notif) {
         this.diceManager.resolveSmashDice(notif.args);
+        if (notif.args.smashedPlayersIds.length > 0) {
+            for (var delayIndex = 0; delayIndex < notif.args.number; delayIndex++) {
+                setTimeout(function () { return playSound('kot-punch'); }, ANIMATION_MS - (PUNCH_SOUND_DURATION * delayIndex - 1));
+            }
+        }
     };
     KingOfTokyo.prototype.notif_playerEliminated = function (notif) {
         var playerId = Number(notif.args.who_quits);

@@ -537,39 +537,6 @@ trait DiceTrait {
 
         $this->setGlobalVariable('diceCounts', $diceCounts);
 
-        /*for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-            $diceCount = $diceCounts[$diceFace];
-            // number
-            if ($diceFace <= 3) { 
-                $this->resolveNumberDice($playerId, $diceFace, $diceCount);
-            }
-
-            // health
-            if ($diceFace == 4 && $diceCount > 0) {
-                $this->resolveHealthDice($playerId, $diceCount);
-            }
-
-            // energy
-            if ($diceFace == 5 && $diceCount > 0) {
-                $this->resolveEnergyDice($playerId, $diceCount);
-            }
-
-            // smash
-            if ($diceFace == 6 && $diceCount > 0) {
-                $this->resolveSmashDice($playerId, $diceCount);
-            }
-        }
-
-        // dice resolve may eliminate players
-        $endGame = $this->eliminatePlayers($playerId);
-
-        if ($endGame) {
-            $this->gamestate->nextState('endGame');
-        } else {
-            $smashTokyo = $diceCounts[6] >= 1 && !$playerInTokyo && count($this->getPlayersIdsInTokyo()) > 0;
-            $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
-        }*/
-
         $this->gamestate->nextState('next');
     }
 
@@ -604,12 +571,10 @@ trait DiceTrait {
             } else {
                 $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0;
             }
-            self::debug('[GBA] '.$selectHeartDiceUse['hasHealingRay'].' '.$selectHeartDiceUse['shrinkRayTokens']. ' ' .$selectHeartDiceUse['poisonTokens'].' '.$canSelectHeartDiceUse);
-
-            $this->resolveHealthDice($playerId, $diceCount);
         }
 
         if (!$canSelectHeartDiceUse) {
+            $this->resolveHealthDice($playerId, $diceCount);
             $this->gamestate->nextState('next');
         }
     }
