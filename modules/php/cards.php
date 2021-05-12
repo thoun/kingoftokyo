@@ -3,8 +3,10 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/objects/card.php');
+require_once(__DIR__.'/objects/player-intervention.php');
 
 use KOT\Objects\Card;
+use KOT\Objects\OpportunistIntervention;
 
 trait CardsTrait {
 
@@ -490,14 +492,18 @@ trait CardsTrait {
         } else {
 
             if ($opportunist) {
-                $this->setGlobalVariable('revealedCardsIds', [$newCard->id]);
+                $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
+                $opportunistIntervention->revealedCardsIds = [$newCard->id];
+                $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
+
                 $this->gamestate->nextState('buyCard');
             } else {
                 $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
 
                 if (count($playersWithOpportunist) > 0) {
                     $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
-                    $this->setGlobalVariable('revealedCardsIds', [$newCard->id]);
+                    $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCard->id]);
+                    $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
                     $this->gamestate->nextState('opportunist');
                 } else {
                     $this->gamestate->nextState('buyCard');
@@ -530,7 +536,9 @@ trait CardsTrait {
 
         if (count($playersWithOpportunist) > 0) {
             $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
-            $this->setGlobalVariable('revealedCardsIds', array_map(function($card) { return $card->id; }, $cards));
+            $renewedCardsIds = array_map(function($card) { return $card->id; }, $cards);
+            $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, $renewedCardsIds);
+            $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
             $this->gamestate->nextState('opportunist');
         } else {
             $this->gamestate->nextState('renew');
@@ -634,11 +642,11 @@ trait CardsTrait {
     }
 
     function argOpportunistBuyCard() {
-        $revealedCardsIds = $this->getGlobalVariable('revealedCardsIds', true);
+        $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
+        $revealedCardsIds = $opportunistIntervention ? $opportunistIntervention->revealedCardsIds : [];
 
-        $playersIds = array_values($this->gamestate->getActivePlayerList());
-        if (count($playersIds) > 0) {
-            $playerId = $playersIds[0];
+        $playerId = $opportunistIntervention->currentPlayerId;
+        if ($playerId != null) {
 
             $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
             
@@ -658,11 +666,12 @@ trait CardsTrait {
 ////////////
 
     function stOpportunistBuyCard() {
-        $playersWithOpportunist = $this->getGlobalVariable('playersWithOpportunist', true);
-        $playerWithOpportunist = array_shift($playersWithOpportunist);
-        $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
+        $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
+        $opportunistIntervention->currentPlayerId = array_shift($opportunistIntervention->remainingPlayersId);
+        $lastOpportunist = count($opportunistIntervention->remainingPlayersId) > 0;
+        $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
 
-        $this->gamestate->setPlayersMultiactive([$playerWithOpportunist], count($playersWithOpportunist) > 0 ? 'nextOpportunist' : 'endOpportunist');
+        $this->gamestate->setPlayersMultiactive([$opportunistIntervention->currentPlayerId], $lastOpportunist ? 'nextOpportunist' : 'endOpportunist');
     }
 
     function stSellCard() {

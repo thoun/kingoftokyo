@@ -30,7 +30,7 @@ trait UtilTrait {
         }
     }
 
-    function removeGlobalVariable(string $name) {
+    function deleteGlobalVariable(string $name) {
         self::DbQuery("DELETE FROM `global_variables` where `name` = '$name'");
     }
 

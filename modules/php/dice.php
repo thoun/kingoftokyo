@@ -193,6 +193,7 @@ trait DiceTrait {
         $hasPlotTwist = $this->countCardOfType($playerId, 33) > 0;
         // Stretchy
         $hasStretchy = $this->countCardOfType($playerId, 44) > 0;
+        // TOCHECK is Stretchy only once per turn ?
 
         return [
             'hasHerdCuller' => $hasHerdCuller,
