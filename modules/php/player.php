@@ -194,7 +194,9 @@ trait PlayerTrait {
 
         // apply poison
         $countPoison = $this->getPlayerPoisonTokens($playerId);
-        $this->applyDamage($playerId, $countPoison, 0, 35);
+        if ($countPoison > 0) {
+            $this->applyDamage($playerId, $countPoison, 0, 35);
+        }
 
         // poison may eliminate players
         $endGame = $this->eliminatePlayers($playerId);
