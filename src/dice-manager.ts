@@ -77,6 +77,29 @@ class DiceManager {
         });
     }
 
+    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean) {
+        if (this.dice.length) {
+            return;
+        }
+        //this.dice?.forEach(die => this.removeDice(die));  
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
+
+        const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
+        
+        dice.forEach(die => {
+            const divId = `dice${die.id}`;
+            dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
+            setTimeout(() => document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'), 100);
+
+            if (currentPlayerActive) {
+                document.getElementById(divId).addEventListener('click', () => this.game.psychicProbeRollDie(die.id));
+            }
+        });
+
+        dojo.toggleClass('rolled-dice', 'selectable', currentPlayerActive);
+    }
+
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
         const dice = this.dice.filter(die => die.value === args.diceValue);
         (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, '96c93c', args.deltaPoints, 1500);
@@ -257,7 +280,7 @@ class DiceManager {
                     if (args.hasPlotTwist) {
                         dojo.toggleClass(plotTwistButtonId, 'disabled', value < 1);
                     }
-                    if (args.hasStretchy && args.hasEnergyForStretchy) {
+                    if (args.hasStretchy) {
                         dojo.toggleClass(stretchyButtonId, 'disabled', value < 1);
                     }
                 };

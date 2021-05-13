@@ -3,8 +3,10 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/objects/dice.php');
+require_once(__DIR__.'/objects/player-intervention.php');
 
 use KOT\Objects\Dice;
+use KOT\Objects\PsychicProbeIntervention;
 
 trait DiceTrait {
 
@@ -192,14 +194,18 @@ trait DiceTrait {
         // Plot Twist
         $hasPlotTwist = $this->countCardOfType($playerId, 33) > 0;
         // Stretchy
-        $hasStretchy = $this->countCardOfType($playerId, 44) > 0;
-        // TOCHECK is Stretchy only once per turn ?
+        $hasStretchy = $this->countCardOfType($playerId, 44) > 0 && $this->getPlayerEnergy($playerId) >= 2;
+        // TOCHECK is Stretchy only once per turn ? Considered No
 
         return [
             'hasHerdCuller' => $hasHerdCuller,
             'hasPlotTwist' => $hasPlotTwist,
             'hasStretchy' => $hasStretchy,
         ];
+    }
+
+    function canChangeDie(array $cards) {
+        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        
@@ -233,6 +239,24 @@ trait DiceTrait {
             'shrinkRayTokens' => $this->getPlayerShrinkRayTokens($playerId),
             'poisonTokens' => $this->getPlayerPoisonTokens($playerId),
         ];
+    }
+
+    
+
+    function getPlayersWithPsychicProbe(int $playerId) {
+        $orderedPlayers = $this->getOrderedPlayers($playerId);
+        $psychicProbePlayerIds = [];
+
+        foreach($orderedPlayers as $player) {
+            if ($player->id != $playerId) {
+                $countsychicProbe = $this->countCardOfType($player->id, 36);
+                if ($countsychicProbe > 0) {
+                    $psychicProbePlayerIds[] = $player->id;
+                }            
+            }
+        }
+
+        return $psychicProbePlayerIds;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -289,8 +313,48 @@ trait DiceTrait {
         $this->gamestate->nextState('changeDie');
     }
 
+    public function psychicProbeRollDie(int $id) {
+        $psychicProbeIntervention = $this->getGlobalVariable('PsychicProbeIntervention');
+        $currentPlayerId = $psychicProbeIntervention->currentPlayerId;
+
+        $value = bga_rand(1, 6);
+        self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
+
+        if ($value == 4) {
+            $currentPlayerCards = array_values(array_filter($psychicProbeIntervention->cards, function ($card) use ($currentPlayerId) { return $card->location_arg == $currentPlayerId; }));
+            if (count($currentPlayerCards > 0)) {
+                $this->removeCard($currentPlayerId, $currentPlayerCards[0]);
+            }
+        }
+
+        $this->gamestate->nextState('nextPsychicProbe');
+    }
+
+    
+
     public function goToChangeDie() {
-        $this->gamestate->nextState('goToChangeDie');
+        $playerId = self::getActivePlayerId();
+
+        $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
+
+        if (count($playersWithPsychicProbe) > 0) {
+            $cards = [];
+            foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
+                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, 36));
+            }
+            $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
+            $this->setGlobalVariable('PsychicProbeIntervention', $psychicProbeIntervention);
+            $this->gamestate->nextState('psychicProbe');
+        } else {
+            $this->gamestate->nextState('goToChangeDie');
+        }
+    }
+
+    function psychicProbeSkip() {
+        $playerId = self::getCurrentPlayerId();
+
+        // Make this player unactive now (and tell the machine state to use transition "nextPsychicProbe" if all players are now unactive
+        $this->gamestate->setPlayerNonMultiactive($playerId, "nextPsychicProbe");
     }
 
     function applyHeartDieChoices(array $heartDieChoices) {
@@ -392,19 +456,27 @@ trait DiceTrait {
         $cardsArg = $this->getChangeDieCards($playerId);
 
         $diceArg = [];
-        if ($cardsArg['hasHerdCuller'] || $cardsArg['hasPlotTwist'] || $cardsArg['hasStretchy']) {
+        if ($this->canChangeDie($cardsArg)) {
             $diceNumber = $this->getDiceNumber($playerId);
             $diceArg = [
                 'dice' => $this->getDice($diceNumber),
                 'inTokyo' => $this->inTokyo($playerId),
             ];
-
-            if ($cardsArg['hasStretchy']) {
-                $diceArg['hasEnergyForStretchy'] = $this->getPlayerEnergy($playerId) >= 2;
-            }
         }
 
         return $cardsArg + $diceArg;
+    }
+
+    function argPsychicProbeRollDie() {
+        $psychicProbeIntervention = $this->getGlobalVariable('PsychicProbeIntervention');
+        $playerId = $psychicProbeIntervention->currentPlayerId;
+        $activePlayerId = $psychicProbeIntervention->activePlayerId;
+
+        $diceNumber = $this->getDiceNumber($activePlayerId);
+        return [
+            'dice' => $this->getDice($diceNumber),
+            'inTokyo' => $this->inTokyo($activePlayerId),
+        ];
     }
 
     function argResolveHeartDice() {
@@ -446,9 +518,29 @@ trait DiceTrait {
 
         $cards = $this->getChangeDieCards($playerId);
 
-        if (!$cards['hasHerdCuller'] && !$cards['hasPlotTwist'] && !$cards['hasStretchy']) {
+        if (!$this->canChangeDie($cards)) {
             $this->gamestate->nextState('resolve');
         }
+    }
+
+    function stPsychicProbeRollDie() {
+        $psychicProbeIntervention = $this->getGlobalVariable('PsychicProbeIntervention');
+        $psychicProbeIntervention->currentPlayerId = array_shift($psychicProbeIntervention->remainingPlayersId);
+        $lastPsychicProbe = count($psychicProbeIntervention->remainingPlayersId) > 0;
+        $this->setGlobalVariable('PsychicProbeIntervention', $psychicProbeIntervention);
+
+        $nextState = 'nextPsychicProbe';
+        if ($lastPsychicProbe) {
+            $backToChangeDie = $this->canChangeDie($this->getChangeDieCards($psychicProbeIntervention->activePlayerId));
+            $nextState = $backToChangeDie ? 'endPsychicProbeAndChangeDieAgain' : 'endPsychicProbe';
+            // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded, is Mimick disarded ? Considered no but token removed
+            // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded before Mimic turn, Can Mimic player still do Psychic Probe roll during this turn ? Considered Yes but TODO probably change to No
+        }
+
+        $this->gamestate->setPlayersMultiactive(
+            $psychicProbeIntervention->currentPlayerId != null ? [$psychicProbeIntervention->currentPlayerId] : [],
+            $nextState
+        );
     }
 
     function stResolveDice() {

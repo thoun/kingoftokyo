@@ -674,6 +674,25 @@ var DiceManager = /** @class */ (function () {
             setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
         });
     };
+    DiceManager.prototype.setDiceForPsychicProbe = function (dice, inTokyo) {
+        var _this = this;
+        if (this.dice.length) {
+            return;
+        }
+        //this.dice?.forEach(die => this.removeDice(die));  
+        $('dice-selector').innerHTML = '';
+        this.dice = dice;
+        var currentPlayerActive = this.game.isCurrentPlayerActive();
+        dice.forEach(function (die) {
+            var divId = "dice" + die.id;
+            dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
+            setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
+            if (currentPlayerActive) {
+                document.getElementById(divId).addEventListener('click', function () { return _this.game.psychicProbeRollDie(die.id); });
+            }
+        });
+        dojo.toggleClass('rolled-dice', 'selectable', currentPlayerActive);
+    };
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
         var dice = this.dice.filter(function (die) { return die.value === args.diceValue; });
@@ -814,7 +833,7 @@ var DiceManager = /** @class */ (function () {
                     if (args.hasPlotTwist) {
                         dojo.toggleClass(plotTwistButtonId_1, 'disabled', value < 1);
                     }
-                    if (args.hasStretchy && args.hasEnergyForStretchy) {
+                    if (args.hasStretchy) {
                         dojo.toggleClass(stretchyButtonId_1, 'disabled', value < 1);
                     }
                 };
@@ -995,6 +1014,9 @@ var KingOfTokyo = /** @class */ (function () {
             case 'changeDie':
                 this.onEnteringChangeDie(args.args);
                 break;
+            case 'psychicProbeRollDie':
+                this.onEnteringPsychicProbeRollDie(args.args);
+                break;
             case 'resolveDice':
                 this.diceManager.hideLock();
                 break;
@@ -1052,6 +1074,9 @@ var KingOfTokyo = /** @class */ (function () {
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo);
         }
+    };
+    KingOfTokyo.prototype.onEnteringPsychicProbeRollDie = function (args) {
+        this.diceManager.setDiceForPsychicProbe(args.dice, args.inTokyo);
     };
     KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args) {
         var _a;
@@ -1137,6 +1162,9 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'changeDie':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
+                    break;
+                case 'psychicProbeRollDie':
+                    this.addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
                     break;
                 case 'leaveTokyo':
                     this.addActionButton('stayInTokyo_button', _("Stay in Tokyo"), 'onStayInTokyo');
@@ -1269,6 +1297,14 @@ var KingOfTokyo = /** @class */ (function () {
             card: card
         });
     };
+    KingOfTokyo.prototype.psychicProbeRollDie = function (id) {
+        if (!this.checkAction('psychicProbeRollDie')) {
+            return;
+        }
+        this.takeAction('psychicProbeRollDie', {
+            id: id
+        });
+    };
     KingOfTokyo.prototype.goToChangeDie = function () {
         if (!this.checkAction('goToChangeDie')) {
             return;
@@ -1336,6 +1372,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('opportunistSkip');
+    };
+    KingOfTokyo.prototype.psychicProbeSkip = function () {
+        if (!this.checkAction('psychicProbeSkip')) {
+            return;
+        }
+        this.takeAction('psychicProbeSkip');
     };
     KingOfTokyo.prototype.onEndTurn = function () {
         if (!this.checkAction('endTurn')) {

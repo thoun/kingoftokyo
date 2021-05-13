@@ -389,10 +389,12 @@ trait CardsTrait {
         $opportunistPlayerIds = [];
 
         foreach($orderedPlayers as $player) {
-            $countOpportunist = $this->countCardOfType($player->id, 31);
-            if ($countOpportunist > 0) {
-                $opportunistPlayerIds[] = $player->id;
-            }            
+            if ($player->id != $playerId) {
+                $countOpportunist = $this->countCardOfType($player->id, 31);
+                if ($countOpportunist > 0) {
+                    $opportunistPlayerIds[] = $player->id;
+                }   
+            }         
         }
 
         return $opportunistPlayerIds;
@@ -496,12 +498,12 @@ trait CardsTrait {
                 $opportunistIntervention->revealedCardsIds = [$newCard->id];
                 $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
 
-                $this->gamestate->nextState('buyCard');
+                $this->setInterventionNextState('OpportunistIntervention', 'keep', null, $opportunistIntervention);
+                $this->gamestate->nextState('stay');
             } else {
                 $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
 
                 if (count($playersWithOpportunist) > 0) {
-                    $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
                     $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCard->id]);
                     $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
                     $this->gamestate->nextState('opportunist');
@@ -535,7 +537,6 @@ trait CardsTrait {
         $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
 
         if (count($playersWithOpportunist) > 0) {
-            $this->setGlobalVariable('playersWithOpportunist', $playersWithOpportunist);
             $renewedCardsIds = array_map(function($card) { return $card->id; }, $cards);
             $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, $renewedCardsIds);
             $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
@@ -548,8 +549,8 @@ trait CardsTrait {
     function opportunistSkip() {
         $playerId = self::getCurrentPlayerId();
 
-        // Make this player unactive now (and tell the machine state to use transtion "nextOpportunist" if all players are now unactive
-        $this->gamestate->setPlayerNonMultiactive($playerId, "nextOpportunist");
+        $this->setInterventionNextState('OpportunistIntervention', 'next', 'end');
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
     function goToSellCard() {
@@ -645,7 +646,7 @@ trait CardsTrait {
         $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
         $revealedCardsIds = $opportunistIntervention ? $opportunistIntervention->revealedCardsIds : [];
 
-        $playerId = $opportunistIntervention->currentPlayerId;
+        $playerId = $opportunistIntervention && count($opportunistIntervention->remainingPlayersId) > 0 ? $opportunistIntervention->remainingPlayersId[0] : null;
         if ($playerId != null) {
 
             $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
@@ -666,12 +667,7 @@ trait CardsTrait {
 ////////////
 
     function stOpportunistBuyCard() {
-        $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
-        $opportunistIntervention->currentPlayerId = array_shift($opportunistIntervention->remainingPlayersId);
-        $lastOpportunist = count($opportunistIntervention->remainingPlayersId) > 0;
-        $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
-
-        $this->gamestate->setPlayersMultiactive([$opportunistIntervention->currentPlayerId], $lastOpportunist ? 'nextOpportunist' : 'endOpportunist');
+        $this->stIntervention('OpportunistIntervention');
     }
 
     function stSellCard() {

@@ -109,6 +109,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "rethrow" => ST_PLAYER_THROW_DICE,
             "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
+            "psychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
             "buyEnergyDrink" => ST_PLAYER_THROW_DICE,
             "useSmokeCloud" => ST_PLAYER_THROW_DICE,
             "rethrow3" => ST_PLAYER_THROW_DICE,
@@ -126,9 +127,27 @@ $playerActionsGameStates = [
         "possibleactions" => [ "changeDie", "resolve" ],
         "transitions" => [
             "changeDie" => ST_PLAYER_CHANGE_DIE,
+            "changeDieWithPsychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
             "resolve" => ST_RESOLVE_DICE,
         ],
 
+    ],
+
+    ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE => [
+        "name" => "psychicProbeRollDie",
+        "description" => clienttranslate('Player with Psychic Probe can reroll a die'),
+        "descriptionmyturn" => clienttranslate('${you} can reroll a die'),
+        "type" => "multipleactiveplayer",
+        "action" => "stPsychicProbeRollDie",
+        "args" => "argPsychicProbeRollDie",
+        "possibleactions" => [ "psychicProbeRollDie", "psychicProbeSkip" ],
+        "transitions" => [
+            "nextPsychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
+            "endPsychicProbe" => ST_RESOLVE_DICE,
+            "endPsychicProbeAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
+            "endGame" => ST_END_GAME,
+            "zombiePass" => ST_PLAYER_BUY_CARD,
+        ],
     ],
 
     ST_RESOLVE_DICE => [
@@ -236,9 +255,8 @@ $playerActionsGameStates = [
         "args" => "argOpportunistBuyCard",
         "possibleactions" => [ "buyCard", "opportunistSkip" ],
         "transitions" => [
-            "nextOpportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
-            "buyCard" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
-            "endOpportunist" => ST_PLAYER_BUY_CARD,
+            "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
+            "end" => ST_PLAYER_BUY_CARD,
             "endGame" => ST_END_GAME,
             "zombiePass" => ST_PLAYER_BUY_CARD,
         ],

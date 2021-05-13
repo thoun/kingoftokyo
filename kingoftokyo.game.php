@@ -24,6 +24,7 @@ require_once('modules/php/utils.php');
 require_once('modules/php/player.php');
 require_once('modules/php/dice.php');
 require_once('modules/php/cards.php');
+require_once('modules/php/intervention.php');
 
 
 class KingOfTokyo extends Table {
@@ -31,6 +32,7 @@ class KingOfTokyo extends Table {
     use KOT\States\PlayerTrait;
     use KOT\States\DiceTrait;
     use KOT\States\CardsTrait;
+    use KOT\States\InterventionTrait;
 
 	function __construct(){
 
@@ -133,6 +135,7 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
+        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(36))[0])->id, 'hand', 2343492);
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(31))[0])->id, 'hand', 2343492);
 
         // Activate first player (which is in general a good idea :) )

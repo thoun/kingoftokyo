@@ -10,6 +10,7 @@ define('ST_BGA_GAME_SETUP', 1);
 define('ST_START', 20);
 define('ST_PLAYER_THROW_DICE', 21);
 define('ST_PLAYER_CHANGE_DIE', 23);
+define('ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE', 24);
 
 define('ST_RESOLVE_DICE', 30);
 define('ST_RESOLVE_NUMBER_DICE', 31);

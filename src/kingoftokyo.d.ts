@@ -50,6 +50,7 @@ interface KingOfTokyoGame extends Game {
     cards: Cards;
 
     changeDie: (id: number, value: number, card: number) => void;
+    psychicProbeRollDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
     onVisibleCardClick: (stock: Stock, cardId: string, from: number) => void;
     getPlayerId: () => number;
@@ -79,7 +80,6 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasHerdCuller: boolean;
     hasPlotTwist: boolean;
     hasStretchy: boolean;
-    hasEnergyForStretchy: boolean;
 }
 
 interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {

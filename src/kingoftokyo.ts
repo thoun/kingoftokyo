@@ -88,6 +88,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'changeDie': 
                 this.onEnteringChangeDie(args.args);
                 break;
+            case 'psychicProbeRollDie': 
+                this.onEnteringPsychicProbeRollDie(args.args);
+                break;
             case 'resolveDice': 
                 this.diceManager.hideLock();
                 break;
@@ -155,6 +158,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (args.dice?.length) {
             this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo);
         }
+    }
+
+    private onEnteringPsychicProbeRollDie(args: EnteringDiceArgs) {
+        this.diceManager.setDiceForPsychicProbe(args.dice, args.inTokyo);
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs) {
@@ -248,6 +255,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'changeDie':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
+                    break;
+                case 'psychicProbeRollDie':
+                    (this as any).addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
                     break;
 
                 case 'leaveTokyo':
@@ -421,6 +431,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public  psychicProbeRollDie(id: number) {
+        if(!(this as any).checkAction('psychicProbeRollDie')) {
+            return;
+        }
+
+        this.takeAction('psychicProbeRollDie', {
+            id
+        });
+    }
+
     public goToChangeDie() {
         if(!(this as any).checkAction('goToChangeDie')) {
             return;
@@ -508,6 +528,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('opportunistSkip');
+    }
+
+    public psychicProbeSkip() {
+        if(!(this as any).checkAction('psychicProbeSkip')) {
+            return;
+        }
+
+        this.takeAction('psychicProbeSkip');
     }
 
     public onEndTurn() {

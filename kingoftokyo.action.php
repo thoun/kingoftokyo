@@ -91,6 +91,24 @@
         self::ajaxResponse();
     }
   	
+    public function psychicProbeRollDie() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->psychicProbeRollDie($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function psychicProbeSkip() {
+        self::setAjaxMode();
+
+        $this->game->psychicProbeSkip();
+
+        self::ajaxResponse();
+    }
+  	
     public function resolve() {
         self::setAjaxMode();
 

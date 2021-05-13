@@ -3,8 +3,9 @@ namespace KOT\Objects;
 
 // a Player Intervention is when a player who is not the active player, can do one action during active player (choosing to stay/leave in tokyo is not in this case as they can choose both at the same time, here it's one then the other)
 class PlayerIntervention {
-    public $currentPlayerId;
-    public $remainingPlayersId;
+    public $nextState = 'keep'; // keep (current player continues) / next (intervention player) / or leaving transition
+    public $endState = 'end';
+    public $remainingPlayersId; // first is current one
 
     public function __construct(array $remainingPlayersId) {
         $this->remainingPlayersId = $remainingPlayersId;
@@ -18,6 +19,18 @@ class OpportunistIntervention extends PlayerIntervention {
         parent::__construct($remainingPlayersId);
 
         $this->revealedCardsIds = $revealedCardsIds;
+    } 
+}
+
+class PsychicProbeIntervention extends PlayerIntervention {
+    public $activePlayerId;
+    public $cards;
+
+    public function __construct(array $remainingPlayersId, int $activePlayerId, array $cards) {
+        parent::__construct($remainingPlayersId);
+
+        $this->activePlayerId = $activePlayerId;
+        $this->cards = $cards;
     } 
 }
 ?>
