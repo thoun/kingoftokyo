@@ -142,9 +142,9 @@ $playerActionsGameStates = [
         "args" => "argPsychicProbeRollDie",
         "possibleactions" => [ "psychicProbeRollDie", "psychicProbeSkip" ],
         "transitions" => [
-            "nextPsychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
-            "endPsychicProbe" => ST_RESOLVE_DICE,
-            "endPsychicProbeAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
+            "stay" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
+            "end" => ST_RESOLVE_DICE,
+            "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
             "endGame" => ST_END_GAME,
             "zombiePass" => ST_PLAYER_BUY_CARD,
         ],

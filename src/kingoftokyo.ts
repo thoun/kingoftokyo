@@ -787,8 +787,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                     args.card_name = `<strong>${args.card_name}</strong>`;
                 }
 
-                if (args.dice_value && args.dice_value.indexOf(']') > 0) {
-                    args.dice_value = formatTextIcons(args.dice_value);
+                for (const property in args) {
+                    if (args[property]?.indexOf?.(']') > 0) {
+                        args[property] = formatTextIcons(args[property]);
+                    }
                 }
 
                 log = formatTextIcons(log);

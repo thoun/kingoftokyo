@@ -1584,14 +1584,17 @@ var KingOfTokyo = /** @class */ (function () {
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
     KingOfTokyo.prototype.format_string_recursive = function (log, args) {
+        var _a, _b;
         try {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
                 if (args.card_name && args.card_name[0] != '<') {
                     args.card_name = "<strong>" + args.card_name + "</strong>";
                 }
-                if (args.dice_value && args.dice_value.indexOf(']') > 0) {
-                    args.dice_value = formatTextIcons(args.dice_value);
+                for (var property in args) {
+                    if (((_b = (_a = args[property]) === null || _a === void 0 ? void 0 : _a.indexOf) === null || _b === void 0 ? void 0 : _b.call(_a, ']')) > 0) {
+                        args[property] = formatTextIcons(args[property]);
+                    }
                 }
                 log = formatTextIcons(log);
             }

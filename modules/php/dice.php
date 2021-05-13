@@ -20,6 +20,12 @@ trait DiceTrait {
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
+    function getDieById(int $id) {
+        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked` FROM dice WHERE `dice_id` = $id";
+        $dbDices = self::getCollectionFromDB($sql);
+        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices))[0];
+    }
+
     function getFirst3Dice(int $number) {
         $dice = $this->getDice($number);
         foreach ($dice as $dice) {
@@ -259,6 +265,22 @@ trait DiceTrait {
         return $psychicProbePlayerIds;
     }
 
+    function getPsychicProbeInterventionEndState($intervention) {
+        $backToChangeDie = $this->canChangeDie($this->getChangeDieCards($intervention->activePlayerId));
+        return $backToChangeDie ? 'endAndChangeDieAgain' : 'end';
+    }
+
+    function getDieFaceLogName(int $number) {
+        switch($number) {
+            case 1:
+            case 2:
+            case 3: return "[dice$number]";
+            case 4: return "[diceHeart]";
+            case 5: return "[diceEnergy]";
+            case 6: return "[diceSmash]";
+        }
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -314,23 +336,42 @@ trait DiceTrait {
     }
 
     public function psychicProbeRollDie(int $id) {
-        $psychicProbeIntervention = $this->getGlobalVariable('PsychicProbeIntervention');
-        $currentPlayerId = $psychicProbeIntervention->currentPlayerId;
+        $intervention = $this->getGlobalVariable('PsychicProbeIntervention');
+        $playerId = $intervention->remainingPlayersId[0];
 
+        $die = $this->getDieById($id);
         $value = bga_rand(1, 6);
         self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
 
         if ($value == 4) {
-            $currentPlayerCards = array_values(array_filter($psychicProbeIntervention->cards, function ($card) use ($currentPlayerId) { return $card->location_arg == $currentPlayerId; }));
+            $currentPlayerCards = array_values(array_filter($intervention->cards, function ($card) use ($playerId) { return $card->location_arg == $currentPlayerId; }));
             if (count($currentPlayerCards > 0)) {
-                $this->removeCard($currentPlayerId, $currentPlayerCards[0]);
+                $card = $currentPlayerCards[0];
+                $this->removeCard($playerId, $card);
+
+                if ($card->type == 36) { // real Psychic Probe             
+                    // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded, is Mimick disarded ? Considered no but token removed
+                    // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded before Mimic turn, Can Mimic player still do Psychic Probe roll during this turn ? Considered Yes but TODO probably change to No
+                }
             }
         }
 
-        $this->gamestate->nextState('nextPsychicProbe');
-    }
+        $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+        if ($value == 4) {
+            $message .= ' ' . clienttranslate('(${card_name} is discarded)');
+        }
+        self::notifyAllPlayers("psychicProbeRollDie", $message, [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'card_name' => $this->getCardName(36),
+            'die_face_before' => $this->getDieFaceLogName($die->value),
+            'die_face_after' => $this->getDieFaceLogName($value),
+        ]);
+        // TODO NOTIF
 
-    
+        $this->setInterventionNextState('PsychicProbeIntervention', 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+    }
 
     public function goToChangeDie() {
         $playerId = self::getActivePlayerId();
@@ -353,8 +394,9 @@ trait DiceTrait {
     function psychicProbeSkip() {
         $playerId = self::getCurrentPlayerId();
 
-        // Make this player unactive now (and tell the machine state to use transition "nextPsychicProbe" if all players are now unactive
-        $this->gamestate->setPlayerNonMultiactive($playerId, "nextPsychicProbe");
+        $intervention = $this->getGlobalVariable('PsychicProbeIntervention');
+        $this->setInterventionNextState('PsychicProbeIntervention', 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
     function applyHeartDieChoices(array $heartDieChoices) {
@@ -469,7 +511,6 @@ trait DiceTrait {
 
     function argPsychicProbeRollDie() {
         $psychicProbeIntervention = $this->getGlobalVariable('PsychicProbeIntervention');
-        $playerId = $psychicProbeIntervention->currentPlayerId;
         $activePlayerId = $psychicProbeIntervention->activePlayerId;
 
         $diceNumber = $this->getDiceNumber($activePlayerId);
@@ -524,23 +565,7 @@ trait DiceTrait {
     }
 
     function stPsychicProbeRollDie() {
-        $psychicProbeIntervention = $this->getGlobalVariable('PsychicProbeIntervention');
-        $psychicProbeIntervention->currentPlayerId = array_shift($psychicProbeIntervention->remainingPlayersId);
-        $lastPsychicProbe = count($psychicProbeIntervention->remainingPlayersId) > 0;
-        $this->setGlobalVariable('PsychicProbeIntervention', $psychicProbeIntervention);
-
-        $nextState = 'nextPsychicProbe';
-        if ($lastPsychicProbe) {
-            $backToChangeDie = $this->canChangeDie($this->getChangeDieCards($psychicProbeIntervention->activePlayerId));
-            $nextState = $backToChangeDie ? 'endPsychicProbeAndChangeDieAgain' : 'endPsychicProbe';
-            // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded, is Mimick disarded ? Considered no but token removed
-            // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded before Mimic turn, Can Mimic player still do Psychic Probe roll during this turn ? Considered Yes but TODO probably change to No
-        }
-
-        $this->gamestate->setPlayersMultiactive(
-            $psychicProbeIntervention->currentPlayerId != null ? [$psychicProbeIntervention->currentPlayerId] : [],
-            $nextState
-        );
+        $this->stIntervention('PsychicProbeIntervention');
     }
 
     function stResolveDice() {
