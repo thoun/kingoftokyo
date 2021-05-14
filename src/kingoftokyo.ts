@@ -88,9 +88,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'changeDie': 
                 this.onEnteringChangeDie(args.args);
                 break;
-            case 'psychicProbeRollDie': 
-                this.onEnteringPsychicProbeRollDie(args.args);
-                break;
             case 'resolveDice': 
                 this.diceManager.hideLock();
                 break;
@@ -99,7 +96,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             
             case 'buyCard':
-            case 'opportunistBuyCard':
                 this.onEnteringBuyCard(args.args);
                 break;
             case 'sellCard':
@@ -179,6 +175,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringBuyCard(args: EnteringBuyCardArgs) {
+        console.log(args, (this as any).isCurrentPlayerActive());
         if ((this as any).isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
 
@@ -258,6 +255,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'psychicProbeRollDie':
                     (this as any).addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
+                    this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
                     break;
 
                 case 'leaveTokyo':
@@ -274,6 +272,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'opportunistBuyCard':
                     (this as any).addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
+                    this.onEnteringBuyCard(args); // because it's multiplayer, enter action must be set here
                     break;
                 case 'sellCard':
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');

@@ -43,3 +43,4 @@ Add checkActions & more security (reroll 3 have dice3, ...)
 Freeze animations on roll 3
 Add a oncePerTurnCardUsed array in globol variables reseted at stPlayerStart
 split states : stResolveHeartNoAction & stResolveHeartAction, do one of them
+Opportunist : set oportunist player energy on intervention to be usable on args

@@ -1014,9 +1014,6 @@ var KingOfTokyo = /** @class */ (function () {
             case 'changeDie':
                 this.onEnteringChangeDie(args.args);
                 break;
-            case 'psychicProbeRollDie':
-                this.onEnteringPsychicProbeRollDie(args.args);
-                break;
             case 'resolveDice':
                 this.diceManager.hideLock();
                 break;
@@ -1024,7 +1021,6 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringResolveHeartDice(args.args);
                 break;
             case 'buyCard':
-            case 'opportunistBuyCard':
                 this.onEnteringBuyCard(args.args);
                 break;
             case 'sellCard':
@@ -1094,6 +1090,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringBuyCard = function (args) {
         var _this = this;
         var _a;
+        console.log(args, this.isCurrentPlayerActive());
         if (this.isCurrentPlayerActive()) {
             this.visibleCards.setSelectionMode(1);
             if (args.canBuyFromPlayers) {
@@ -1165,6 +1162,7 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'psychicProbeRollDie':
                     this.addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
+                    this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
                     break;
                 case 'leaveTokyo':
                     this.addActionButton('stayInTokyo_button', _("Stay in Tokyo"), 'onStayInTokyo');
@@ -1179,6 +1177,7 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'opportunistBuyCard':
                     this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
+                    this.onEnteringBuyCard(args); // because it's multiplayer, enter action must be set here
                     break;
                 case 'sellCard':
                     this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
