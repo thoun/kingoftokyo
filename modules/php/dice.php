@@ -422,7 +422,6 @@ trait DiceTrait {
             'die_face_before' => $this->getDieFaceLogName($die->value),
             'die_face_after' => $this->getDieFaceLogName($value),
         ]);
-        // TODO NOTIF
 
         $this->setInterventionNextState('PsychicProbeIntervention', 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
@@ -627,6 +626,16 @@ trait DiceTrait {
         $playerId = self::getActivePlayerId();
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getDice($this->getDiceNumber($playerId));
+
+        $diceStr = '';
+        foreach($dice as $idie) {
+            $diceStr .= $this->getDieFaceLogName($idie->value);
+        }
+        self::notifyAllPlayers("resolveDice", clienttranslate('${player_name} resolve dice ${dice}'), [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'dice' => $diceStr,
+        ]);
 
         $smashTokyo = false;
 
