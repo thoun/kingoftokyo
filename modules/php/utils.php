@@ -30,6 +30,25 @@ trait UtilTrait {
         }
     }
 
+    function isUsedCard(int $cardId, $usedCards = null) {
+        $cardsIds = $this->getUsedCard();
+        return array_search($cardId, $cardsIds) !== false;
+    }
+
+    function setUsedCard(int $cardId) {
+        $cardsIds = $this->getUsedCard();
+        $cardsIds[] = $cardId;
+        $this->setGlobalVariable('usedCards', $cardsIds);
+    }
+
+    function getUsedCard() {
+        return $this->getGlobalVariable('usedCards', true);
+    }
+
+    function resetUsedCards() {
+        $this->setGlobalVariable('usedCards', []);
+    }
+
     function deleteGlobalVariable(string $name) {
         self::DbQuery("DELETE FROM `global_variables` where `name` = '$name'");
     }

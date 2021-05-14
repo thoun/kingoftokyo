@@ -195,8 +195,18 @@ trait DiceTrait {
 
     function getChangeDieCards(int $playerId) {
         // Herd Culler
-        $countHerdCuller = $this->countCardOfType($playerId, 22);
-        $hasHerdCuller = $countHerdCuller > 0 && intval(self::getGameStateValue('herdCullerUsed')) < $countHerdCuller;
+        $herdCullerCards = $this->getCardsOfType($playerId, 22);
+        $availableHerdCullers = 0;
+        $herdCullerCount = count($herdCullerCards);
+        if ($herdCullerCount > 0) {
+            $usedCards = $this->getUsedCard();
+            foreach ($herdCullerCards as $herdCullerCard) {
+                if (array_search($herdCullerCard->id, $usedCards) === false) {
+                    $availableHerdCullers++;
+                }
+            }
+        }
+        $hasHerdCuller = $herdCullerCount > 0 && $availableHerdCullers > 0;
         // Plot Twist
         $hasPlotTwist = $this->countCardOfType($playerId, 33) > 0;
         // Stretchy
@@ -317,14 +327,25 @@ trait DiceTrait {
     }
 
     public function changeDie(int $id, int $value, int $card) {
+        $playerId = self::getActivePlayerId();
+
         self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
 
         if ($card == 22) {
-            self::setGameStateValue('herdCullerUsed', intval(self::getGameStateValue('herdCullerUsed')) + 1);
+            $usedCards = $this->getUsedCard();
+            $herdCullerCards = $this->getCardsOfType($playerId, 22);
+            $usedCardOnThisTurn = null;
+            foreach($herdCullerCards as $herdCullerCard) {
+                if (array_search($herdCullerCard->id, $usedCards) === false) {
+                    $usedCardOnThisTurn = $herdCullerCard->id;
+                }
+            }
+            if ($usedCardOnThisTurn == null) {
+                throw new \Error('No unused Herd Culler for this player');
+            } else {
+                $this->setUsedCard($usedCardOnThisTurn);
+            }
         } else {
-
-            $playerId = self::getActivePlayerId();
-
             if ($card == 33) {
                 $this->removeCardByType($playerId, 33);
             } else if ($card == 44) {
