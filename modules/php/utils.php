@@ -260,7 +260,9 @@ trait UtilTrait {
 
         $playersBeforeElimination = $this->getRemainingPlayers();
 
-        $this->cards->moveAllCardsInLocation('hand', 'discard', $player->id);
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
+        $this->removeCards($cards, true);
+        
         self::eliminatePlayer($player->id);
 
         if ($playersBeforeElimination == 5) { // 5 players to 4, clear Tokyo Bay

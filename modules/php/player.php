@@ -117,7 +117,11 @@ trait PlayerTrait {
 
         $this->throwDice($playerId);
 
-        $this->gamestate->nextState('throw');
+        if ($this->canChangeMimickedCard()) {
+            $this->gamestate->nextState('changeMimickedCard');
+        } else {
+            $this->gamestate->nextState('throw');
+        }
     }
 
     function stLeaveTokyo() {

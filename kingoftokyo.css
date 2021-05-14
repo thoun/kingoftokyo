@@ -846,7 +846,7 @@
   background-position: 100% 0%;
 }
 
-#page-title .dice-icon {
+#page-title .dice-icon, #page-title .icon {
   width: 20px;
   height: 20px;
 }

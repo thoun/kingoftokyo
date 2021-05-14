@@ -237,7 +237,11 @@ trait CardsTrait {
         }
     }
 
-    function setMimickedCard(int $cardId, int $cardType) {
+    function setMimickedCard(int $cardId, int $cardType = null) {
+        if ($cardType == null && $cardId > 0) {
+            $cardType = $this->getCardFromDb($this->cards->getCard($cardId))->type;
+        }
+
         $infos = new \stdClass();
         $infos->cardId = $cardId;
         $infos->cardType = $cardType;
@@ -274,7 +278,7 @@ trait CardsTrait {
         if ($includeMimick && $cardType != 27) { // don't search for mimick mimicking itself
             $mimickedCardType = $this->getMimickedCardType();
             if ($mimickedCardType == $cardType) {
-                $cards[] = $this->getCardsOfType($playerId, 27, $includeMimick); // mimick
+                $cards = array_merge($cards, $this->getCardsOfType($playerId, 27, $includeMimick)); // mimick
             }
         }
 
@@ -302,12 +306,7 @@ trait CardsTrait {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $this->cards->moveAllCardsInLocation('hand', 'discard', $playerId);        
-        self::notifyAllPlayers("removeCards", '', [
-            'playerId' => $playerId,
-            'player_name' => $playerName,
-            'cards' => $cards,
-        ]);
+        $this->removeCards($playerId, $cards);
 
         // lose all stars
         $points = 0;
@@ -393,12 +392,38 @@ trait CardsTrait {
     function removeCard(int $playerId, $card, bool $silent = false) {
         $this->cards->moveCard($card->id, 'discard');
 
+        $removeMimickToken = false;
+        if ($card->type == 27) { // Mimic
+            $this->deleteGlobalVariable('MimickedCard');
+            $removeMimickToken = true;
+        } else if ($card->id == $this->getMimickedCardId()) {
+            $this->setMimickedCard(0, 0); // 0 means no mimicked card
+            $removeMimickToken = true;
+        }
+
+        if ($removeMimickToken) {
+            // TODO MIMIC remove mimick token
+        }
+
         if (!$silent) {
             self::notifyAllPlayers("removeCards", '', [
                 'playerId' => $playerId,
                 'cards' => [$card],
             ]);
         }        
+    }
+
+    function removeCards(int $playerId, array $cards, bool $silent = false) {
+        foreach($cards as $card) {
+            $this->removeCard($playerId, $card, true);
+        }
+
+        if (!$silent && count($cards) > 0) {
+            self::notifyAllPlayers("removeCards", '', [
+                'playerId' => $playerId,
+                'cards' => $cards,
+            ]);
+        }
     }
 
     function removeCardByType(int $playerId, int $cardType, bool $silent = false) {
@@ -433,6 +458,29 @@ trait CardsTrait {
         }
 
         return $opportunistPlayerIds;
+    }
+
+    function canChangeMimickedCard() {
+        $playerId = self::getActivePlayerId();
+
+        // check if player have mimic card
+        if ($this->countCardOfType($playerId, 27, false) == 0) {
+            return false;
+        }
+
+        $playersIds = $this->getPlayersIds();
+        $mimickedCardId = $this->getMimickedCardId();
+
+        foreach($playersIds as $playerId) {
+            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            foreach($cardsOfPlayer as $card) {
+                if ($card->type != 27 && $card->type < 100 && $mimickedCardId != $card->id) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -527,24 +575,35 @@ trait CardsTrait {
         if ($endGame) {
             $this->gamestate->nextState('endGame');
         } else {
+            $mimic = $card->type == 27;
 
-            if ($opportunist) {
-                $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
-                $opportunistIntervention->revealedCardsIds = [$newCard->id];
+            $newCardId = 0;
+            if ($newCard != null) {
+                $newCardId = $newCard->id;
+            }
+            self::setGameStateValue('newCardId', $newCardId);
+
+            $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
+        }
+    }
+
+    function redirectAfterBuyCard($playerId, $newCardId, $mimic) {
+        if ($this->getGlobalVariable('OpportunistIntervention') != null) {
+            $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
+            $opportunistIntervention->revealedCardsIds = [$newCardId];
+            $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
+
+            $this->setInterventionNextState('OpportunistIntervention', 'keep', null, $opportunistIntervention);
+            $this->gamestate->nextState($mimic ? 'buyMimicCard' : 'stay');
+        } else {
+            $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
+
+            if (count($playersWithOpportunist) > 0) {
+                $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCardId]);
                 $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
-
-                $this->setInterventionNextState('OpportunistIntervention', 'keep', null, $opportunistIntervention);
-                $this->gamestate->nextState('stay');
+                $this->gamestate->nextState($mimic ? 'buyMimicCard' : 'opportunist');
             } else {
-                $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
-
-                if (count($playersWithOpportunist) > 0) {
-                    $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCard->id]);
-                    $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
-                    $this->gamestate->nextState('opportunist');
-                } else {
-                    $this->gamestate->nextState('buyCard');
-                }
+                $this->gamestate->nextState($mimic ? 'buyMimicCard' : 'buyCard');
             }
         }
     }
@@ -617,13 +676,15 @@ trait CardsTrait {
     }
 
     function chooseMimickedCard(int $mimickedCardId) {
-        // TODO MIMIC
+        $playerId = self::getActivePlayerId();
 
-        // TODO factorize "end of buy"
+        $this->setMimickedCard($mimickedCardId);
+
+        $this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false);
     }
 
     function changeMimickedCard(int $mimickedCardId) {
-        // TODO MIMIC
+        $this->setMimickedCard($mimickedCardId);
 
         $this->gamestate->nextState('next');
     }
@@ -713,9 +774,32 @@ trait CardsTrait {
         }
     }
 
+    function argChooseMimickedCard() {
+        $playersIds = $this->getPlayersIds();
+
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $disabledIds = array_map(function ($card) { return $card->id; }, $cards);
+
+        foreach($playersIds as $playerId) {
+            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) { return $card->type == 27 && $card->type >= 100; }));
+            $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
+            
+            $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
+        }
+
+        return [
+            'disabledIds' => $disabledIds,
+        ];
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
+
+    function stBuyCard() {
+        $this->deleteGlobalVariable('OpportunistIntervention');
+    }
 
     function stOpportunistBuyCard() {
         $this->stIntervention('OpportunistIntervention');

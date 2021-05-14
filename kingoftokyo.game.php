@@ -54,6 +54,7 @@ class KingOfTokyo extends Table {
             "lessDiceForNextTurn" => 16,
             "damageForJetsIfStayingInTokyo" => 18,
             "madeInALabCard" => 19,
+            "newCardId" => 20,
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
@@ -122,6 +123,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('damageForJetsIfStayingInTokyo', 0);
         self::setGameStateInitialValue('madeInALabCard', 0);
+        self::setGameStateInitialValue('newCardId', 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

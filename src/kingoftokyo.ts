@@ -82,6 +82,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         log( 'Entering state: '+stateName , args.args );
 
         switch (stateName) {
+            case 'changeMimickedCard':
+            case 'chooseMimickedCard':
+                this.onEnteringChooseMimickedCard(args.args);
+                break;
             case 'throwDice':
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -176,8 +180,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringBuyCard(args: EnteringBuyCardArgs, isCurrentPlayerActive: boolean) {
-        console.log(args, (this as any).isCurrentPlayerActive());
-        if ((this as any).isCurrentPlayerActive()) {
+        if (isCurrentPlayerActive) {
             this.visibleCards.setSelectionMode(1);
 
             if (args.canBuyFromPlayers) {
@@ -188,6 +191,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.showPickStock(args._private.pickCard);
             }
 
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
+        }
+    }
+
+    private onEnteringChooseMimickedCard(args: EnteringBuyCardArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(1));
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
         }
     }
@@ -208,6 +218,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
+            case 'changeMimickedCard':
+            case 'chooseMimickedCard':
+                this.onLeavingChooseMimickedCard();
+                break;            
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
                 break;                
@@ -236,6 +250,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.hidePickStock();
     }
 
+    private onLeavingChooseMimickedCard() {
+        dojo.query('.stockitem').removeClass('disabled');
+        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));
+    }
+
     private onLeavingSellCard() {
         if ((this as any).isCurrentPlayerActive()) {
             this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(0));
@@ -248,6 +267,9 @@ class KingOfTokyo implements KingOfTokyoGame {
     public onUpdateActionButtons(stateName: string, args: any) {
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'changeMimickedCard':
+                    (this as any).addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
+                    break;
                 case 'throwDice':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
                     break;
@@ -379,6 +401,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) {
+        if (!cardId) {
+            return;
+        }
+        
         if (dojo.hasClass(`${stock.container_div.id}_item_${cardId}`, 'disabled')) {
             stock.unselectItem(cardId);
             return;
@@ -386,8 +412,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
-        /*} else if (this.gamedatas.gamestate.name === 'opportunistBuyCard') {
-            this.opportunistBuyCard(cardId);*/
+        } else if (this.gamedatas.gamestate.name === 'chooseMimickedCard') {
+            this.chooseMimickedCard(cardId);
+        } else if (this.gamedatas.gamestate.name === 'changeMimickedCard') {
+            this.changeMimickedCard(cardId);
         } else {
             this.buyCard(cardId, from)
         }
@@ -496,6 +524,26 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public chooseMimickedCard(id: number | string) {
+        if(!(this as any).checkAction('chooseMimickedCard')) {
+            return;
+        }
+
+        this.takeAction('chooseMimickedCard', {
+            id
+        });
+    }
+
+    public changeMimickedCard(id: number | string) {
+        if(!(this as any).checkAction('changeMimickedCard')) {
+            return;
+        }
+
+        this.takeAction('changeMimickedCard', {
+            id
+        });
+    }
+
     public sellCard(id: number | string) {
         if(!(this as any).checkAction('sellCard')) {
             return;
@@ -536,6 +584,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('psychicProbeSkip');
+    }
+
+    public skipChangeMimickedCard() {
+        if(!(this as any).checkAction('skipChangeMimickedCard')) {
+            return;
+        }
+
+        this.takeAction('skipChangeMimickedCard');
     }
 
     public onEndTurn() {

@@ -413,7 +413,7 @@ var PlayerTable = /** @class */ (function () {
         this.cards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
         this.cards.image_items_per_row = 10;
         this.cards.centerItems = true;
-        dojo.connect(this.cards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleCardClick(_this.cards, item_id, _this.playerId); });
+        dojo.connect(this.cards, 'onChangeSelection', this, function (_, itemId) { return _this.game.onVisibleCardClick(_this.cards, itemId, _this.playerId); });
         this.game.cards.setupCards([this.cards]);
         this.game.cards.addCardsToStock(this.cards, cards);
         this.initialLocation = Number(player.location);
@@ -1005,6 +1005,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringState = function (stateName, args) {
         log('Entering state: ' + stateName, args.args);
         switch (stateName) {
+            case 'changeMimickedCard':
+            case 'chooseMimickedCard':
+                this.onEnteringChooseMimickedCard(args.args);
+                break;
             case 'throwDice':
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -1088,8 +1092,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
         var _this = this;
         var _a;
-        console.log(args, this.isCurrentPlayerActive());
-        if (this.isCurrentPlayerActive()) {
+        if (isCurrentPlayerActive) {
             this.visibleCards.setSelectionMode(1);
             if (args.canBuyFromPlayers) {
                 this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
@@ -1097,6 +1100,12 @@ var KingOfTokyo = /** @class */ (function () {
             if ((_a = args._private) === null || _a === void 0 ? void 0 : _a.pickCard) {
                 this.showPickStock(args._private.pickCard);
             }
+            args.disabledIds.forEach(function (id) { return document.querySelector("div[id$=\"_item_" + id + "\"]").classList.add('disabled'); });
+        }
+    };
+    KingOfTokyo.prototype.onEnteringChooseMimickedCard = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
             args.disabledIds.forEach(function (id) { return document.querySelector("div[id$=\"_item_" + id + "\"]").classList.add('disabled'); });
         }
     };
@@ -1114,6 +1123,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         switch (stateName) {
+            case 'changeMimickedCard':
+            case 'chooseMimickedCard':
+                this.onLeavingChooseMimickedCard();
+                break;
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
                 break;
@@ -1140,6 +1153,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(0); });
         this.hidePickStock();
     };
+    KingOfTokyo.prototype.onLeavingChooseMimickedCard = function () {
+        dojo.query('.stockitem').removeClass('disabled');
+        this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(0); });
+    };
     KingOfTokyo.prototype.onLeavingSellCard = function () {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
@@ -1152,6 +1169,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onUpdateActionButtons = function (stateName, args) {
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'changeMimickedCard':
+                    this.addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
+                    break;
                 case 'throwDice':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
                     break;
@@ -1251,14 +1271,21 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from) {
         if (from === void 0) { from = 0; }
+        if (!cardId) {
+            return;
+        }
         if (dojo.hasClass(stock.container_div.id + "_item_" + cardId, 'disabled')) {
             stock.unselectItem(cardId);
             return;
         }
         if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
-            /*} else if (this.gamedatas.gamestate.name === 'opportunistBuyCard') {
-                this.opportunistBuyCard(cardId);*/
+        }
+        else if (this.gamedatas.gamestate.name === 'chooseMimickedCard') {
+            this.chooseMimickedCard(cardId);
+        }
+        else if (this.gamedatas.gamestate.name === 'changeMimickedCard') {
+            this.changeMimickedCard(cardId);
         }
         else {
             this.buyCard(cardId, from);
@@ -1344,6 +1371,22 @@ var KingOfTokyo = /** @class */ (function () {
             from: from
         });
     };
+    KingOfTokyo.prototype.chooseMimickedCard = function (id) {
+        if (!this.checkAction('chooseMimickedCard')) {
+            return;
+        }
+        this.takeAction('chooseMimickedCard', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.changeMimickedCard = function (id) {
+        if (!this.checkAction('changeMimickedCard')) {
+            return;
+        }
+        this.takeAction('changeMimickedCard', {
+            id: id
+        });
+    };
     KingOfTokyo.prototype.sellCard = function (id) {
         if (!this.checkAction('sellCard')) {
             return;
@@ -1375,6 +1418,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('psychicProbeSkip');
+    };
+    KingOfTokyo.prototype.skipChangeMimickedCard = function () {
+        if (!this.checkAction('skipChangeMimickedCard')) {
+            return;
+        }
+        this.takeAction('skipChangeMimickedCard');
     };
     KingOfTokyo.prototype.onEndTurn = function () {
         if (!this.checkAction('endTurn')) {
