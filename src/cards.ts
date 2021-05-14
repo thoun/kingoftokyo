@@ -6,6 +6,12 @@ interface PlacedTokens {
     y: number;
 }
 
+interface CardPlacedTokens {
+    tokens: PlacedTokens[];
+    mimicToken: PlacedTokens;
+}
+
+
 class Cards {
     constructor (private game: KingOfTokyoGame) {}
     
@@ -40,10 +46,54 @@ class Cards {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     }
 
+    public placeMimicOnCard(stock: Stock, card: Card) {
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+        const div = document.getElementById(divId);
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        
+        cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
+
+        let html = `<div id="${divId}-mimic-token" style="left: ${cardPlaced.mimicToken.x - 16}px; top: ${cardPlaced.mimicToken.y - 16}px;" class="card-token mimic token"></div>`;
+        dojo.place(html, divId);
+
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    }
+
+    public removeMimicOnCard(stock: Stock, card: Card) {        
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+        const div = document.getElementById(divId);
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        cardPlaced.mimicToken = null;
+
+        (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    }
+
+    private getPlaceOnCard(cardPlaced: CardPlacedTokens): PlacedTokens {
+        const newPlace = {
+            x: Math.random() * 100 + 16,
+            y: Math.random() * 100 + 16,
+        };
+        let protection = 0;
+        const otherPlaces = cardPlaced.tokens.slice();
+        if (cardPlaced.mimicToken) {
+            otherPlaces.push(cardPlaced.mimicToken);
+        }
+        while (protection < 1000 && otherPlaces.some(place => this.getDistance(newPlace, place) < 32)) {
+            newPlace.x = Math.random() * 100 + 16;
+            newPlace.y = Math.random() * 100 + 16;
+            protection++;
+        }
+
+        return newPlace;
+    }
+
     public placeTokensOnCard(stock: Stock, card: Card, playerId?: number) {
         const divId = `${stock.container_div.id}_item_${card.id}`;
         const div = document.getElementById(divId);
-        const placed: PlacedTokens[] = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        const placed: PlacedTokens[] = cardPlaced.tokens;
 
         // remove tokens
         for (let i = card.tokens; i < placed.length; i++) {
@@ -57,16 +107,7 @@ class Cards {
 
         // add tokens
         for (let i = placed.length; i < card.tokens; i++) {
-            const newPlace = {
-                x: Math.random() * 100 + 16,
-                y: Math.random() * 100 + 16,
-            };
-            let protection = 0;
-            while (protection < 1000 && placed.some(place => this.getDistance(newPlace, place) < 32)) {
-                newPlace.x = Math.random() * 100 + 16;
-                newPlace.y = Math.random() * 100 + 16;
-                protection++;
-            }
+            const newPlace = this.getPlaceOnCard(cardPlaced);
 
             placed.push(newPlace);
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="card-token `;
@@ -79,7 +120,7 @@ class Cards {
             dojo.place(html, divId);
         }
 
-        div.dataset.placed = JSON.stringify(placed);
+        div.dataset.placed = JSON.stringify(cardPlaced);
     }
     
     public addCardsToStock(stock: Stock, cards: Card[], from?: string) {

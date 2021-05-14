@@ -60,11 +60,46 @@ var Cards = /** @class */ (function () {
     Cards.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
-    Cards.prototype.placeTokensOnCard = function (stock, card, playerId) {
-        var _this = this;
+    Cards.prototype.placeMimicOnCard = function (stock, card) {
         var divId = stock.container_div.id + "_item_" + card.id;
         var div = document.getElementById(divId);
-        var placed = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
+        var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token mimic token\"></div>";
+        dojo.place(html, divId);
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    };
+    Cards.prototype.removeMimicOnCard = function (stock, card) {
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        cardPlaced.mimicToken = null;
+        this.game.fadeOutAndDestroy(divId + "-mimic-token");
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    };
+    Cards.prototype.getPlaceOnCard = function (cardPlaced) {
+        var _this = this;
+        var newPlace = {
+            x: Math.random() * 100 + 16,
+            y: Math.random() * 100 + 16,
+        };
+        var protection = 0;
+        var otherPlaces = cardPlaced.tokens.slice();
+        if (cardPlaced.mimicToken) {
+            otherPlaces.push(cardPlaced.mimicToken);
+        }
+        while (protection < 1000 && otherPlaces.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
+            newPlace.x = Math.random() * 100 + 16;
+            newPlace.y = Math.random() * 100 + 16;
+            protection++;
+        }
+        return newPlace;
+    };
+    Cards.prototype.placeTokensOnCard = function (stock, card, playerId) {
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        var placed = cardPlaced.tokens;
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
             if (card.type === 28 && playerId) {
@@ -75,17 +110,9 @@ var Cards = /** @class */ (function () {
             }
         }
         placed.splice(card.tokens, placed.length - card.tokens);
-        var _loop_1 = function (i) {
-            var newPlace = {
-                x: Math.random() * 100 + 16,
-                y: Math.random() * 100 + 16,
-            };
-            var protection = 0;
-            while (protection < 1000 && placed.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
-                newPlace.x = Math.random() * 100 + 16;
-                newPlace.y = Math.random() * 100 + 16;
-                protection++;
-            }
+        // add tokens
+        for (var i = placed.length; i < card.tokens; i++) {
+            var newPlace = this.getPlaceOnCard(cardPlaced);
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
             if (card.type === 28) {
@@ -96,12 +123,8 @@ var Cards = /** @class */ (function () {
             }
             html += "\"></div>";
             dojo.place(html, divId);
-        };
-        // add tokens
-        for (var i = placed.length; i < card.tokens; i++) {
-            _loop_1(i);
         }
-        div.dataset.placed = JSON.stringify(placed);
+        div.dataset.placed = JSON.stringify(cardPlaced);
     };
     Cards.prototype.addCardsToStock = function (stock, cards, from) {
         var _this = this;
@@ -572,7 +595,7 @@ var TableManager = /** @class */ (function () {
 var DieFaceSelector = /** @class */ (function () {
     function DieFaceSelector(nodeId, inTokyo) {
         var _this = this;
-        var _loop_2 = function (face) {
+        var _loop_1 = function (face) {
             var faceId = nodeId + "-face" + face;
             var html = "<div id=\"" + faceId + "\" class=\"dice-icon dice" + face + "\">";
             if (face === 4 && inTokyo) {
@@ -595,7 +618,7 @@ var DieFaceSelector = /** @class */ (function () {
             });
         };
         for (var face = 1; face <= 6; face++) {
-            _loop_2(face);
+            _loop_1(face);
         }
     }
     DieFaceSelector.prototype.getValue = function () {
@@ -988,6 +1011,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
+        this.setMimicToken(gamedatas.mimickedCard);
         this.setupNotifications();
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
             args: {
@@ -1291,6 +1315,28 @@ var KingOfTokyo = /** @class */ (function () {
             this.buyCard(cardId, from);
         }
     };
+    KingOfTokyo.prototype.setMimicToken = function (card) {
+        var _this = this;
+        if (!card) {
+            return;
+        }
+        this.playerTables.forEach(function (playerTable) {
+            if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
+                _this.cards.placeMimicOnCard(playerTable.cards, card);
+            }
+        });
+    };
+    KingOfTokyo.prototype.removeMimicToken = function (card) {
+        var _this = this;
+        if (!card) {
+            return;
+        }
+        this.playerTables.forEach(function (playerTable) {
+            if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
+                _this.cards.removeMimicOnCard(playerTable.cards, card);
+            }
+        });
+    };
     KingOfTokyo.prototype.onRethrow = function () {
         this.rethrowDice(this.diceManager.destroyFreeDice());
     };
@@ -1495,6 +1541,8 @@ var KingOfTokyo = /** @class */ (function () {
             ['poisonToken', 1],
             ['setCardTokens', 1],
             ['removeCards', 1],
+            ['setMimicToken', 1],
+            ['removeMimicToken', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -1562,6 +1610,12 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_removeCards = function (notif) {
         this.playerTables[notif.args.playerId].removeCards(notif.args.cards);
         this.tableManager.placePlayerTable(); // adapt after removed cards
+    };
+    KingOfTokyo.prototype.notif_setMimicToken = function (notif) {
+        this.setMimicToken(notif.args.card);
+    };
+    KingOfTokyo.prototype.notif_removeMimicToken = function (notif) {
+        this.removeMimicToken(notif.args.card);
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy);

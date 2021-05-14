@@ -44,6 +44,7 @@ interface KingOfTokyoGamedatas {
     dice: Dice[];
     visibleCards: Card[];
     playersCards: { [playerId: number]: Card[] };
+    mimickedCard: Card | null;
 }
 
 interface KingOfTokyoGame extends Game {

@@ -237,33 +237,51 @@ trait CardsTrait {
         }
     }
 
-    function setMimickedCard(int $cardId, int $cardType = null) {
-        if ($cardType == null && $cardId > 0) {
-            $cardType = $this->getCardFromDb($this->cards->getCard($cardId))->type;
+    function setMimickedCardId(int $cardId) {
+        if ($cardId == 0) {
+            $card = $this->getMimickedCard();
+            if ($card) {
+                $this->deleteGlobalVariable('MimickedCard');
+                self::notifyAllPlayers("removeMimicToken", '', [
+                    'card' => $card,
+                ]);
+            }
+        } else {
+            $card = $this->getCardFromDb($this->cards->getCard($cardId));
+            $this->setMimickedCard($card);
         }
-
-        $infos = new \stdClass();
-        $infos->cardId = $cardId;
-        $infos->cardType = $cardType;
-        $this->setGlobalVariable('MimickedCard', $infos);
     }
 
-    function getMimickedCardInfos() {
+    function setMimickedCard(object $card) {
+        $oldCard = $this->getMimickedCard();
+        if ($oldCard) {
+            self::notifyAllPlayers("removeMimicToken", '', [
+                'card' => $oldCard,
+            ]);
+        }
+
+        $this->setGlobalVariable('MimickedCard', $card);
+        self::notifyAllPlayers("setMimicToken", '', [
+            'card' => $card,
+        ]);
+    }
+
+    function getMimickedCard() {
         return $this->getGlobalVariable('MimickedCard');
     }
 
     function getMimickedCardId() {
-        $infos = $this->getGlobalVariable('MimickedCard');
-        if ($infos) {
-            return $infos->cardId;
+        $card = $this->getGlobalVariable('MimickedCard');
+        if ($card != null) {
+            return $card->id;
         }
         return null;
     }
 
     function getMimickedCardType() {
-        $infos = $this->getGlobalVariable('MimickedCard');
-        if ($infos) {
-            return $infos->cardType;
+        $card = $this->getGlobalVariable('MimickedCard');
+        if ($card != null) {
+            return $card->type;
         }
         return null;
     }
@@ -397,12 +415,14 @@ trait CardsTrait {
             $this->deleteGlobalVariable('MimickedCard');
             $removeMimickToken = true;
         } else if ($card->id == $this->getMimickedCardId()) {
-            $this->setMimickedCard(0, 0); // 0 means no mimicked card
+            $this->setMimickedCardId(0); // 0 means no mimicked card
             $removeMimickToken = true;
         }
 
         if ($removeMimickToken) {
-            // TODO MIMIC remove mimick token
+            self::notifyAllPlayers("removeMimicToken", '', [
+                'card' => $card,
+            ]);
         }
 
         if (!$silent) {
@@ -678,13 +698,13 @@ trait CardsTrait {
     function chooseMimickedCard(int $mimickedCardId) {
         $playerId = self::getActivePlayerId();
 
-        $this->setMimickedCard($mimickedCardId);
+        $this->setMimickedCardId($mimickedCardId);
 
         $this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false);
     }
 
     function changeMimickedCard(int $mimickedCardId) {
-        $this->setMimickedCard($mimickedCardId);
+        $this->setMimickedCardId($mimickedCardId);
 
         $this->gamestate->nextState('next');
     }

@@ -59,6 +59,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
+        this.setMimicToken(gamedatas.mimickedCard);
 
         this.setupNotifications();
 
@@ -404,7 +405,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (!cardId) {
             return;
         }
-        
+
         if (dojo.hasClass(`${stock.container_div.id}_item_${cardId}`, 'disabled')) {
             stock.unselectItem(cardId);
             return;
@@ -419,6 +420,30 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else {
             this.buyCard(cardId, from)
         }
+    }
+
+    private setMimicToken(card: Card) {
+        if (!card) {
+            return;
+        }
+
+        this.playerTables.forEach(playerTable => {
+            if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
+                this.cards.placeMimicOnCard(playerTable.cards, card);
+            }
+        });
+    }
+
+    private removeMimicToken(card: Card) {
+        if (!card) {
+            return;
+        }
+
+        this.playerTables.forEach(playerTable => {
+            if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
+                this.cards.removeMimicOnCard(playerTable.cards, card);
+            }
+        });
     }
 
     public onRethrow() {
@@ -670,6 +695,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['poisonToken', 1],
             ['setCardTokens', 1],
             ['removeCards', 1],
+            ['setMimicToken', 1],
+            ['removeMimicToken', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -747,6 +774,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_removeCards(notif: Notif<NotifRemoveCardsArgs>) {
         this.playerTables[notif.args.playerId].removeCards(notif.args.cards);
         this.tableManager.placePlayerTable(); // adapt after removed cards
+    }
+
+    notif_setMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
+        this.setMimicToken(notif.args.card);
+    }
+
+    notif_removeMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
+        this.removeMimicToken(notif.args.card);
     }
 
     notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {

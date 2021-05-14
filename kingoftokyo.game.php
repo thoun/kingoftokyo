@@ -179,6 +179,8 @@ class KingOfTokyo extends Table {
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
         }
 
+        $result['mimickedCard'] = $this->getMimickedCard();
+
         return $result;
     }
 
