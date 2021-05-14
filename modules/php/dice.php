@@ -265,8 +265,16 @@ trait DiceTrait {
 
         foreach($orderedPlayers as $player) {
             if ($player->id != $playerId) {
-                $countsychicProbe = $this->countCardOfType($player->id, 36);
-                if ($countsychicProbe > 0) {
+
+                $psychicProbeCards = $this->getCardsOfType($player->id, 36);
+                $unusedPsychicProbeCards = 0;
+                $usedCards = $this->getUsedCard();
+                foreach($psychicProbeCards as $psychicProbeCard) {
+                    if (array_search($psychicProbeCard->id, $usedCards) === false) {
+                        $unusedPsychicProbeCards++;
+                    }
+                }
+                if ($unusedPsychicProbeCards > 0) {
                     $psychicProbePlayerIds[] = $player->id;
                 }            
             }
@@ -353,7 +361,19 @@ trait DiceTrait {
             }
         }
 
-        $this->gamestate->nextState('changeDie');
+        $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
+
+        if (count($playersWithPsychicProbe) > 0) {
+            $cards = [];
+            foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
+                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, 36));
+            }
+            $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
+            $this->setGlobalVariable('PsychicProbeIntervention', $psychicProbeIntervention);
+            $this->gamestate->nextState('changeDieWithPsychicProbe');
+        } else {
+            $this->gamestate->nextState('changeDie');
+        }
     }
 
     public function psychicProbeRollDie(int $id) {
@@ -363,10 +383,24 @@ trait DiceTrait {
         $die = $this->getDieById($id);
         $value = bga_rand(1, 6);
         self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
+        
+        $usedCards = $this->getUsedCard();
+        $psychicProbeCards = $this->getCardsOfType($playerId, 36);
+        $usedCardOnThisTurn = null;
+        foreach($psychicProbeCards as $psychicProbeCard) {
+            if (array_search($psychicProbeCard->id, $usedCards) === false) {
+                $usedCardOnThisTurn = $psychicProbeCard->id;
+            }
+        }
+        if ($usedCardOnThisTurn == null) {
+            throw new \Error('No unused Psychic Probe for this player');
+        } else {
+            $this->setUsedCard($usedCardOnThisTurn);
+        }
 
         if ($value == 4) {
             $currentPlayerCards = array_values(array_filter($intervention->cards, function ($card) use ($playerId) { return $card->location_arg == $currentPlayerId; }));
-            if (count($currentPlayerCards > 0)) {
+            if (count($currentPlayerCards) > 0) {
                 $card = $currentPlayerCards[0];
                 $this->removeCard($playerId, $card);
 

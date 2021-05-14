@@ -25,24 +25,20 @@ class DiceManager {
         this.dice = [];
     }
 
-    public setDiceForThrowDice(dice: Dice[], lastTurn: boolean, inTokyo: boolean) { 
-        const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
-
+    public setDiceForThrowDice(dice: Dice[], lastTurn: boolean, inTokyo: boolean, isCurrentPlayerActive: boolean) {
         this.dice?.forEach(die => this.removeDice(die));        
         $('locked-dice').innerHTML = '';
         $('dice-selector').innerHTML = '';
         this.dice = dice;
 
-        const selectable = currentPlayerActive && !lastTurn;
+        const selectable = isCurrentPlayerActive && !lastTurn;
 
         dice.forEach(die => this.createDice(die, true, selectable, inTokyo));
 
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     }
 
-    public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean) { 
-        const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
-
+    public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
         this.dice?.forEach(die => this.removeDice(die));  
         $('dice-selector').innerHTML = '';
         this.dice = dice;
@@ -51,7 +47,7 @@ class DiceManager {
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
-            const selectable = currentPlayerActive && (!onlyHerdCuller || die.value !== 1);
+            const selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             setTimeout(() => document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'), 100); 
 
@@ -77,27 +73,25 @@ class DiceManager {
         });
     }
 
-    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean) {
+    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
         if (this.dice.length) {
             return;
         }
         //this.dice?.forEach(die => this.removeDice(die));  
         $('dice-selector').innerHTML = '';
         this.dice = dice;
-
-        const currentPlayerActive = (this.game as any).isCurrentPlayerActive();
         
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
             setTimeout(() => document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'), 100);
 
-            if (currentPlayerActive) {
+            if (isCurrentPlayerActive) {
                 document.getElementById(divId).addEventListener('click', () => this.game.psychicProbeRollDie(die.id));
             }
         });
 
-        dojo.toggleClass('rolled-dice', 'selectable', currentPlayerActive);
+        dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
     }
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {

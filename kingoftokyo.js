@@ -628,22 +628,20 @@ var DiceManager = /** @class */ (function () {
         $('dice-selector').innerHTML = '';
         this.dice = [];
     };
-    DiceManager.prototype.setDiceForThrowDice = function (dice, lastTurn, inTokyo) {
+    DiceManager.prototype.setDiceForThrowDice = function (dice, lastTurn, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
-        var currentPlayerActive = this.game.isCurrentPlayerActive();
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         $('locked-dice').innerHTML = '';
         $('dice-selector').innerHTML = '';
         this.dice = dice;
-        var selectable = currentPlayerActive && !lastTurn;
+        var selectable = isCurrentPlayerActive && !lastTurn;
         dice.forEach(function (die) { return _this.createDice(die, true, selectable, inTokyo); });
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     };
-    DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo) {
+    DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
-        var currentPlayerActive = this.game.isCurrentPlayerActive();
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         $('dice-selector').innerHTML = '';
         this.dice = dice;
@@ -651,7 +649,7 @@ var DiceManager = /** @class */ (function () {
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
             dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
-            var selectable = currentPlayerActive && (!onlyHerdCuller || die.value !== 1);
+            var selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
             if (selectable) {
@@ -674,7 +672,7 @@ var DiceManager = /** @class */ (function () {
             setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
         });
     };
-    DiceManager.prototype.setDiceForPsychicProbe = function (dice, inTokyo) {
+    DiceManager.prototype.setDiceForPsychicProbe = function (dice, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         if (this.dice.length) {
             return;
@@ -682,16 +680,15 @@ var DiceManager = /** @class */ (function () {
         //this.dice?.forEach(die => this.removeDice(die));  
         $('dice-selector').innerHTML = '';
         this.dice = dice;
-        var currentPlayerActive = this.game.isCurrentPlayerActive();
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
             dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
             setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
-            if (currentPlayerActive) {
+            if (isCurrentPlayerActive) {
                 document.getElementById(divId).addEventListener('click', function () { return _this.game.psychicProbeRollDie(die.id); });
             }
         });
-        dojo.toggleClass('rolled-dice', 'selectable', currentPlayerActive);
+        dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
     };
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
@@ -1012,16 +1009,16 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringThrowDice(args.args);
                 break;
             case 'changeDie':
-                this.onEnteringChangeDie(args.args);
+                this.onEnteringChangeDie(args.args, this.isCurrentPlayerActive());
                 break;
             case 'resolveDice':
                 this.diceManager.hideLock();
                 break;
             case 'resolveHeartDice':
-                this.onEnteringResolveHeartDice(args.args);
+                this.onEnteringResolveHeartDice(args.args, this.isCurrentPlayerActive());
                 break;
             case 'buyCard':
-                this.onEnteringBuyCard(args.args);
+                this.onEnteringBuyCard(args.args, this.isCurrentPlayerActive());
                 break;
             case 'sellCard':
                 this.onEnteringSellCard();
@@ -1048,8 +1045,9 @@ var KingOfTokyo = /** @class */ (function () {
         this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? "last" : '');
         this.diceManager.showLock();
         var dice = args.dice;
-        this.diceManager.setDiceForThrowDice(dice, args.throwNumber === args.maxThrowNumber, args.inTokyo);
-        if (this.isCurrentPlayerActive()) {
+        var isCurrentPlayerActive = this.isCurrentPlayerActive();
+        this.diceManager.setDiceForThrowDice(dice, args.throwNumber === args.maxThrowNumber, args.inTokyo, isCurrentPlayerActive);
+        if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', _("Rethrow dice") + (" (" + args.throwNumber + "/" + args.maxThrowNumber + ")"), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
             }
@@ -1065,29 +1063,29 @@ var KingOfTokyo = /** @class */ (function () {
             }
         }
     };
-    KingOfTokyo.prototype.onEnteringChangeDie = function (args) {
+    KingOfTokyo.prototype.onEnteringChangeDie = function (args, isCurrentPlayerActive) {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo);
+            this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
         }
     };
-    KingOfTokyo.prototype.onEnteringPsychicProbeRollDie = function (args) {
-        this.diceManager.setDiceForPsychicProbe(args.dice, args.inTokyo);
+    KingOfTokyo.prototype.onEnteringPsychicProbeRollDie = function (args, isCurrentPlayerActive) {
+        this.diceManager.setDiceForPsychicProbe(args.dice, args.inTokyo, isCurrentPlayerActive);
     };
-    KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args) {
+    KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args, isCurrentPlayerActive) {
         var _a;
         if (args.skipped) {
             this.removeGamestateDescription();
         }
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
-            if (this.isCurrentPlayerActive()) {
+            if (isCurrentPlayerActive) {
                 dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
             }
         }
     };
-    KingOfTokyo.prototype.onEnteringBuyCard = function (args) {
+    KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
         var _this = this;
         var _a;
         console.log(args, this.isCurrentPlayerActive());
@@ -1162,7 +1160,7 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'psychicProbeRollDie':
                     this.addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
-                    this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
+                    this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'leaveTokyo':
                     this.addActionButton('stayInTokyo_button', _("Stay in Tokyo"), 'onStayInTokyo');
@@ -1177,7 +1175,7 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'opportunistBuyCard':
                     this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
-                    this.onEnteringBuyCard(args); // because it's multiplayer, enter action must be set here
+                    this.onEnteringBuyCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'sellCard':
                     this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');

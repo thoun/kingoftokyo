@@ -405,6 +405,7 @@
   margin: 10px;
 }
 .change-die-discussion_bubble .die-face-selector .dice-icon {
+  position: relative;
   width: 33px;
   height: 33px;
 }
@@ -436,6 +437,7 @@
   width: 80px;
 }
 #heart-action-selector .die .die-face .dice-icon {
+  position: relative;
   width: 33px;
   height: 33px;
 }
