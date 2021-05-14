@@ -93,8 +93,20 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stStartTurn",
         "transitions" => [ 
+            "changeMimickedCard" => ST_PLAYER_CHANGE_MIMICKED_CARD,
             "throw" => ST_PLAYER_THROW_DICE,
         ],
+    ],
+
+    ST_PLAYER_CHANGE_MIMICKED_CARD => [
+        "name" => "changeMimickedCard",
+        "description" => clienttranslate('${actplayer} can change mimicked card for 1[Energy]'),
+        "descriptionmyturn" => clienttranslate('${you} can change mimicked card for 1[Energy]'),
+        "type" => "activeplayer",
+        "possibleactions" => [ "changeMimickedCard", "skipChangeMimickedCard" ],
+        "transitions" => [
+            "next" => ST_PLAYER_THROW_DICE,
+        ]
     ],
 
     ST_PLAYER_THROW_DICE => [
@@ -237,6 +249,22 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argBuyCard",
         "possibleactions" => [ "buyCard", "goToSellCard", "renew" ],
+        "transitions" => [
+            "buyCard" => ST_PLAYER_BUY_CARD,
+            "buyMimicCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD,
+            "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
+            "goToSellCard" => ST_PLAYER_SELL_CARD,
+            "renew" => ST_PLAYER_BUY_CARD,
+            "zombiePass" => ST_NEXT_PLAYER,
+        ]
+    ],
+
+    ST_PLAYER_CHOOSE_MIMICKED_CARD => [
+        "name" => "chooseMimickedCard",
+        "description" => clienttranslate('${actplayer} can select a card to mimic'),
+        "descriptionmyturn" => clienttranslate('${you} can select a card to mimic'),
+        "type" => "activeplayer",
+        "possibleactions" => [ "chooseMimickedCard" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,

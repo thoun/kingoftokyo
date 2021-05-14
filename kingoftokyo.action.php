@@ -154,6 +154,26 @@
         self::ajaxResponse();
     }
   	
+    public function chooseMimickedCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->chooseMimickedCard($id);
+
+        self::ajaxResponse();
+    }
+
+    public function changeMimickedCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->changeMimickedCard($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function renew() {
         self::setAjaxMode();
 
@@ -174,6 +194,14 @@
         self::setAjaxMode();
 
         $this->game->opportunistSkip();
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipChangeMimickedCard() {
+        self::setAjaxMode();
+
+        $this->game->skipChangeMimickedCard();
 
         self::ajaxResponse();
     }

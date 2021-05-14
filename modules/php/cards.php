@@ -237,13 +237,48 @@ trait CardsTrait {
         }
     }
 
+    function setMimickedCard(int $cardId, int $cardType) {
+        $infos = new \stdClass();
+        $infos->cardId = $cardId;
+        $infos->cardType = $cardType;
+        $this->setGlobalVariable('MimickedCard', $infos);
+    }
+
+    function getMimickedCardInfos() {
+        return $this->getGlobalVariable('MimickedCard');
+    }
+
+    function getMimickedCardId() {
+        $infos = $this->getGlobalVariable('MimickedCard');
+        if ($infos) {
+            return $infos->cardId;
+        }
+        return null;
+    }
+
+    function getMimickedCardType() {
+        $infos = $this->getGlobalVariable('MimickedCard');
+        if ($infos) {
+            return $infos->cardType;
+        }
+        return null;
+    }
+
     function countCardOfType($playerId, $cardType, $includeMimick = true) {
         return count($this->getCardsOfType($playerId, $cardType, $includeMimick));
     }
 
     function getCardsOfType($playerId, $cardType, $includeMimick = true) {
-        // TODO mimick
-        return $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+        $cards = $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+
+        if ($includeMimick && $cardType != 27) { // don't search for mimick mimicking itself
+            $mimickedCardType = $this->getMimickedCardType();
+            if ($mimickedCardType == $cardType) {
+                $cards[] = $this->getCardsOfType($playerId, 27, $includeMimick); // mimick
+            }
+        }
+
+        return $cards;
     }
 
     function countExtraHead($playerId) {
@@ -579,6 +614,22 @@ trait CardsTrait {
         $this->applyGetEnergy($playerId, $fullCost, 0);
 
         $this->gamestate->nextState('sellCard');
+    }
+
+    function chooseMimickedCard(int $mimickedCardId) {
+        // TODO MIMIC
+
+        // TODO factorize "end of buy"
+    }
+
+    function changeMimickedCard(int $mimickedCardId) {
+        // TODO MIMIC
+
+        $this->gamestate->nextState('next');
+    }
+
+    function skipChangeMimickedCard() {
+        $this->gamestate->nextState('next');
     }
 
 //////////////////////////////////////////////////////////////////////////////
