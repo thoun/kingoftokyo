@@ -41,6 +41,6 @@ Fix dice position when clicking them
 Add option to leave tokyo as soon as possible
 Add checkActions & more security (reroll 3 have dice3, ...)
 Freeze animations on roll 3
-Add a oncePerTurnCardUsed array in globol variables reseted at stPlayerStart
 split states : stResolveHeartNoAction & stResolveHeartAction, do one of them
 mimic : apply mimicked card effect on choose/change
+TODO analize No Thanks for actions (for Rapid Healing)

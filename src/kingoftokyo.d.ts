@@ -7,6 +7,7 @@ interface Dice {
     value: number;
     extra: boolean;
     locked: boolean;
+    rolled: boolean;
 }
 
 interface Card {

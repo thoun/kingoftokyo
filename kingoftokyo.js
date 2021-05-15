@@ -659,7 +659,7 @@ var DiceManager = /** @class */ (function () {
         $('dice-selector').innerHTML = '';
         this.dice = dice;
         var selectable = isCurrentPlayerActive && !lastTurn;
-        dice.forEach(function (die) { return _this.createDice(die, true, selectable, inTokyo); });
+        dice.forEach(function (die) { return _this.createDice(die, selectable, inTokyo); });
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     };
     DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo, isCurrentPlayerActive) {
@@ -674,7 +674,7 @@ var DiceManager = /** @class */ (function () {
             dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
             var selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
-            setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
+            _this.addDiceRollClass(die);
             if (selectable) {
                 dojo.place("<div id=\"discussion_bubble_" + divId + "\" class=\"discussion_bubble change-die-discussion_bubble\"></div>", divId);
                 document.getElementById(divId).addEventListener('click', function () { return _this.toggleBubbleChangeDie(die, args); });
@@ -692,7 +692,7 @@ var DiceManager = /** @class */ (function () {
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
             dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
-            setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
+            _this.addDiceRollClass(die);
         });
     };
     DiceManager.prototype.setDiceForPsychicProbe = function (dice, inTokyo, isCurrentPlayerActive) {
@@ -706,7 +706,7 @@ var DiceManager = /** @class */ (function () {
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
             dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
-            setTimeout(function () { return document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
+            _this.addDiceRollClass(die);
             if (isCurrentPlayerActive) {
                 document.getElementById(divId).addEventListener('click', function () { return _this.game.psychicProbeRollDie(die.id); });
             }
@@ -785,20 +785,23 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.getDiceDiv = function (die) {
         return document.getElementById("dice" + die.id);
     };
-    DiceManager.prototype.createDice = function (die, animated, selectable, inTokyo) {
+    DiceManager.prototype.createDice = function (die, selectable, inTokyo) {
         var _this = this;
         dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? 'locked-dice' : 'dice-selector');
+        this.addDiceRollClass(die);
+        if (selectable) {
+            this.getDiceDiv(die).addEventListener('click', function () { return _this.toggleLockDice(die); });
+        }
+    };
+    DiceManager.prototype.addDiceRollClass = function (die) {
         var dieDiv = this.getDiceDiv(die);
-        if (!die.locked && animated) {
+        if (die.rolled) {
             dieDiv.classList.add('rolled');
             setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 100);
             setTimeout(function () { return dieDiv.classList.remove('rolled'); }, 1200);
         }
         else {
-            setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'); }, 100);
-        }
-        if (selectable) {
-            dieDiv.addEventListener('click', function () { return _this.toggleLockDice(die); });
+            dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll');
         }
     };
     DiceManager.prototype.removeDice = function (die, duration, delay) {

@@ -33,7 +33,7 @@ class DiceManager {
 
         const selectable = isCurrentPlayerActive && !lastTurn;
 
-        dice.forEach(die => this.createDice(die, true, selectable, inTokyo));
+        dice.forEach(die => this.createDice(die, selectable, inTokyo));
 
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     }
@@ -49,7 +49,7 @@ class DiceManager {
             dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
             const selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
-            setTimeout(() => document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'), 100); 
+            this.addDiceRollClass(die);
 
             if (selectable) {
                 dojo.place(`<div id="discussion_bubble_${divId}" class="discussion_bubble change-die-discussion_bubble"></div>`, divId);
@@ -69,7 +69,7 @@ class DiceManager {
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
-            setTimeout(() => document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'), 100);
+            this.addDiceRollClass(die);
         });
     }
 
@@ -84,7 +84,7 @@ class DiceManager {
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
-            setTimeout(() => document.getElementById(divId).getElementsByClassName('die-list')[0].classList.add('no-roll'), 100);
+            this.addDiceRollClass(die);
 
             if (isCurrentPlayerActive) {
                 document.getElementById(divId).addEventListener('click', () => this.game.psychicProbeRollDie(die.id));
@@ -178,23 +178,26 @@ class DiceManager {
         return document.getElementById(`dice${die.id}`);
     }
 
-    private createDice(die: Dice, animated: boolean, selectable: boolean, inTokyo: boolean) {
+    private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
         dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? 'locked-dice' : 'dice-selector');
 
+        this.addDiceRollClass(die);
+
+        if (selectable) {
+            this.getDiceDiv(die).addEventListener('click', () => this.toggleLockDice(die));
+        }
+    }
+
+    private addDiceRollClass(die: Dice) {
         const dieDiv = this.getDiceDiv(die);
 
-        if (!die.locked && animated) {
+        if (die.rolled) {
             dieDiv.classList.add('rolled');
             setTimeout(() => dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 100); 
             setTimeout(() => dieDiv.classList.remove('rolled'), 1200); 
         } else {
-            setTimeout(() => dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll'), 100); 
+            dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll');
         }
-
-        if (selectable) {
-            dieDiv.addEventListener('click', () => this.toggleLockDice(die));
-        }
-
     }
 
     private removeDice(die: Dice, duration?: number, delay?: number) {

@@ -15,13 +15,13 @@ trait DiceTrait {
     ////////////
     
     function getDice(int $number) {
-        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked` FROM dice ORDER BY dice_id limit $number";
+        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked`, `rolled` FROM dice ORDER BY dice_id limit $number";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
     function getDieById(int $id) {
-        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked` FROM dice WHERE `dice_id` = $id";
+        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked`, `rolled` FROM dice WHERE `dice_id` = $id";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices))[0];
     }
@@ -39,19 +39,13 @@ trait DiceTrait {
     public function throwDice($playerId) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
+        self::DbQuery( "UPDATE dice SET `rolled` = false");
+        
         foreach ($dice as &$dice) {
             if (!$dice->locked) {
                 $dice->value = bga_rand(1, 6);
-                self::DbQuery( "UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id );
+                self::DbQuery( "UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id );
             }
-        }
-        
-        $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
-        $maxThrowNumber = $this->getThrowNumber($playerId);
-
-        // force lock on last throw
-        if ($throwNumber == $maxThrowNumber) {
-            self::DbQuery( "UPDATE dice SET `locked` = true" );
         }
     }
 
@@ -310,8 +304,8 @@ trait DiceTrait {
   	
     public function rethrowDice(string $diceIds) {
         $playerId = self::getActivePlayerId();
-        self::DbQuery("UPDATE dice SET `locked` = true");
-        self::DbQuery("UPDATE dice SET `locked` = false where `dice_id` IN ($diceIds)");
+        self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
+        self::DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN ($diceIds)");
         $this->throwDice($playerId);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
@@ -329,7 +323,8 @@ trait DiceTrait {
         }
 
         $dice->value = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `dice_value`=".$dice->value." where `dice_id`=".$dice->id);
+        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dice->id);
+        self::DbQuery("UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id);
 
         $this->gamestate->nextState('rethrow3');
     }
@@ -337,7 +332,8 @@ trait DiceTrait {
     public function changeDie(int $id, int $value, int $card) {
         $playerId = self::getActivePlayerId();
 
-        self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
+        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
+        self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
 
         if ($card == 22) {
             $usedCards = $this->getUsedCard();
@@ -382,7 +378,8 @@ trait DiceTrait {
 
         $die = $this->getDieById($id);
         $value = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `dice_value`=".$value." where `dice_id`=".$id);
+        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
+        self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
         
         $usedCards = $this->getUsedCard();
         $psychicProbeCards = $this->getCardsOfType($playerId, 36);

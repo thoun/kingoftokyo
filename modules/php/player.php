@@ -113,7 +113,7 @@ trait PlayerTrait {
         // throw dice
 
         self::setGameStateValue('throwNumber', 1);
-        self::DbQuery( "UPDATE dice SET `dice_value` = 0, `locked` = false" );
+        self::DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true");
 
         $this->throwDice($playerId);
 

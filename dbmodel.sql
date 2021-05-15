@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `dice` (
   `dice_value` TINYINT unsigned NOT NULL DEFAULT 0,
   `extra` TINYINT unsigned NOT NULL DEFAULT false,
   `locked` TINYINT unsigned NOT NULL DEFAULT false,
+  `rolled` TINYINT unsigned NOT NULL DEFAULT true,
   PRIMARY KEY (`dice_id`)
 ) ENGINE=InnoDB;
 
