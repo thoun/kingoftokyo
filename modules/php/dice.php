@@ -631,7 +631,8 @@ trait DiceTrait {
         foreach($dice as $idie) {
             $diceStr .= $this->getDieFaceLogName($idie->value);
         }
-        self::notifyAllPlayers("resolveDice", clienttranslate('${player_name} resolve dice ${dice}'), [
+
+        self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolve dice ${dice}'), [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'dice' => $diceStr,
@@ -644,10 +645,16 @@ trait DiceTrait {
             $diceCounts[$diceFace] = count(array_values(array_filter($dice, function($dice) use ($diceFace) { return $dice->value == $diceFace; })));
         }
 
+        $addedSmashes = 0;
+        $cardsAddingSmashes = [];
+
         // acid attack
         $countAcidAttack = $this->countCardOfType($playerId, 1);
         if ($countAcidAttack > 0) {
             $diceCounts[6] += $countAcidAttack;
+            $addedSmashes += $countAcidAttack;
+
+            for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = 1; }
         }
 
         // burrowing
@@ -655,6 +662,9 @@ trait DiceTrait {
             $countBurrowing = $this->countCardOfType($playerId, 6);
             if ($countBurrowing > 0) {
                 $diceCounts[6] += $countBurrowing;
+                $addedSmashes += $countBurrowing;
+
+                for ($i=0; $i<$countBurrowing; $i++) { $cardsAddingSmashes[] = 6; }
             }
         }
 
@@ -663,6 +673,9 @@ trait DiceTrait {
             $countPoisonQuills = $this->countCardOfType($playerId, 34);
             if ($countPoisonQuills > 0) {
                 $diceCounts[6] += 2 * $countPoisonQuills;
+                $addedSmashes += 2 * $countPoisonQuills;
+                
+                for ($i=0; $i<$countPoisonQuills; $i++) { $cardsAddingSmashes[] = 34; }
             }
         }
 
@@ -672,6 +685,9 @@ trait DiceTrait {
             $countSpikedTail = $this->countCardOfType($playerId, 43);
             if ($countSpikedTail > 0) {
                 $diceCounts[6] += $countSpikedTail;
+                $addedSmashes += $countSpikedTail;
+                
+                for ($i=0; $i<$countSpikedTail; $i++) { $cardsAddingSmashes[] = 43; }
             }
 
             // urbavore
@@ -680,8 +696,28 @@ trait DiceTrait {
                 $countUrbavore = $this->countCardOfType($playerId, 46);
                 if ($countUrbavore > 0) {
                     $diceCounts[6] += $countUrbavore;
+                    $addedSmashes += $countUrbavore;
+                
+                    for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = 46; }
                 }
             }
+        }
+
+        if ($addedSmashes > 0) {
+            $diceStr = '';
+            for ($i=0; $i<$addedSmashes; $i++) { 
+                $diceStr .= $this->getDieFaceLogName(6); 
+            }
+            
+            $cardNames = array_map(function($cardType) { return $this->getCardName($cardType); }, $cardsAddingSmashes);
+            $cardNamesStr = implode(', ', $cardNames);
+
+            self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+                'dice' => $diceStr,
+                'card_name' => $cardNamesStr,
+            ]);
         }
 
         // detritivore

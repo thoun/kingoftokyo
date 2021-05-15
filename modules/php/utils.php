@@ -353,6 +353,7 @@ trait UtilTrait {
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType) {
         // Armor plating
+        // TOCHECK Can a player leave tokyo if one smash and armor plating ?
         $countArmorPlating = $this->countCardOfType($playerId, 4);
         if ($countArmorPlating > 0 && $health == 1) {
             return;

@@ -533,7 +533,9 @@ trait CardsTrait {
             $this->applyGetPoints($playerId, $countMediaFriendly, 9);
         }
 
+        $mimickedCardId = null;
         if ($from > 0) {
+            $mimickedCardId = $this->getMimickedCardId();
             $this->removeCard($from, $card, true);
         }
         $this->cards->moveCard($id, 'hand', $playerId);
@@ -585,6 +587,11 @@ trait CardsTrait {
 
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
             self::setGameStateValue('madeInALabCard', 1001);
+        }
+
+        if ($from > 0 && $mimickedCardId == $card->id) {
+            // Is card bought from player, when having mimic token, keep mimic token ? Considered yes
+            $this->setMimickedCard($card);
         }
 
         $this->applyEffects($card, $playerId);
