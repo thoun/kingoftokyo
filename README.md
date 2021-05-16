@@ -40,8 +40,6 @@ roll wheels after or during animation
 Fix dice position when clicking them
 Add option to leave tokyo as soon as possible
 Add checkActions & more security (reroll 3 have dice3, ...)
-Freeze animations on roll 3
-split states : stResolveHeartNoAction & stResolveHeartAction, do one of them
 mimic : apply mimicked card effect on choose/change
 TODO analize No Thanks for actions (for Rapid Healing)
 TODO when entering resolve dice, slide dices to same group

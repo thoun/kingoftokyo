@@ -180,16 +180,26 @@ $playerActionsGameStates = [
         "action" => "stResolveNumberDice",
         "transitions" => [
             "next" => ST_RESOLVE_HEART_DICE,
+            "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
         ],
     ],
 
     ST_RESOLVE_HEART_DICE => [
         "name" => "resolveHeartDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveHeartDice",
+        "transitions" => [
+            "next" => ST_RESOLVE_ENERGY_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_HEART_DICE_ACTION => [
+        "name" => "resolveHeartDiceAction",
         "description" => clienttranslate('${actplayer} can select effect of [diceHeart] dice'),
         "descriptionmyturn" => clienttranslate('${you} can select effect of [diceHeart] dice'),
         "type" => "activeplayer",
-        "action" => "stResolveHeartDice",
-        "args" => "argResolveHeartDice",
+        "args" => "argResolveHeartDiceAction",
         "possibleactions" => [ "applyHeartDieChoices" ],
         "transitions" => [
             "next" => ST_RESOLVE_ENERGY_DICE,

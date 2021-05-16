@@ -1049,7 +1049,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'resolveDice':
                 this.diceManager.hideLock();
                 break;
-            case 'resolveHeartDice':
+            case 'resolveHeartDiceAction':
                 this.onEnteringResolveHeartDice(args.args, this.isCurrentPlayerActive());
                 break;
             case 'buyCard':
@@ -1161,7 +1161,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
                 break;
-            case 'resolveHeartDice':
+            case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {
                     dojo.destroy('heart-action-selector');
                 }

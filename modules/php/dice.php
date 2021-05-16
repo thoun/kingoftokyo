@@ -571,7 +571,7 @@ trait DiceTrait {
         ];
     }
 
-    function argResolveHeartDice() {
+    function argResolveHeartDiceAction() {
         $playerId = self::getActivePlayerId();
 
         $diceCounts = $this->getGlobalVariable('diceCounts', true);
@@ -770,19 +770,8 @@ trait DiceTrait {
             $this->resolveNumberDice($playerId, $diceFace, $diceCount);
         }
 
-        $this->gamestate->nextState('next');
-    }
-
-    function stResolveHeartDice() {
-        $playerId = self::getActivePlayerId();
-        
-        $diceCounts = $this->getGlobalVariable('diceCounts', true);
-
-        $diceCount = $diceCounts[4];
         $canSelectHeartDiceUse = false;
-
-        if ($diceCount > 0) {
-
+        if ($diceCounts[4] > 0) {
             $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);
 
             // TOCHECK remove Shrink Ray & Poison tokens is impossible in Tokyo, but healing other players (even if other player is in Tokyo ?) ? Considered Yes and Yes
@@ -793,10 +782,21 @@ trait DiceTrait {
             }
         }
 
-        if (!$canSelectHeartDiceUse) {
-            $this->resolveHealthDice($playerId, $diceCount);
+        if ($canSelectHeartDiceUse) {
+            $this->gamestate->nextState('nextAction');
+        } else {
             $this->gamestate->nextState('next');
         }
+    }
+
+    function stResolveHeartDice() {
+        $playerId = self::getActivePlayerId();
+        
+        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+
+        $diceCount = $diceCounts[4];
+        $this->resolveHealthDice($playerId, $diceCount);
+        $this->gamestate->nextState('next');
     }
 
     function stResolveEnergyDice() {
