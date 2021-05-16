@@ -44,3 +44,4 @@ Freeze animations on roll 3
 split states : stResolveHeartNoAction & stResolveHeartAction, do one of them
 mimic : apply mimicked card effect on choose/change
 TODO analize No Thanks for actions (for Rapid Healing)
+TODO when entering resolve dice, slide dices to same group

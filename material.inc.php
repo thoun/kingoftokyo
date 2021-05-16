@@ -18,8 +18,6 @@
  * are available everywhere in your game logic code.
  *
  */
-    
-$this->KEEP_CARDS_TODO = [7,37,48];
 
 $this->CARD_COST = [
 // KEEP

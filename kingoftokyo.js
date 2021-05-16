@@ -647,16 +647,20 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.removeAllDice = function () {
         var _this = this;
         this.dice.forEach(function (die) { return _this.removeDice(die); });
-        $('locked-dice').innerHTML = '';
-        $('dice-selector').innerHTML = '';
+        for (var i = 1; i <= 6; i++) {
+            document.getElementById("locked-dice" + i).innerHTML = '';
+            document.getElementById("dice-selector" + i).innerHTML = '';
+        }
         this.dice = [];
     };
     DiceManager.prototype.setDiceForThrowDice = function (dice, lastTurn, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
-        $('locked-dice').innerHTML = '';
-        $('dice-selector').innerHTML = '';
+        for (var i = 1; i <= 6; i++) {
+            document.getElementById("locked-dice" + i).innerHTML = '';
+            document.getElementById("dice-selector" + i).innerHTML = '';
+        }
         this.dice = dice;
         var selectable = isCurrentPlayerActive && !lastTurn;
         dice.forEach(function (die) { return _this.createDice(die, selectable, inTokyo); });
@@ -762,7 +766,7 @@ var DiceManager = /** @class */ (function () {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         var dieDiv = document.getElementById("dice" + die.id);
-        slideToObjectAndAttach(this.game, dieDiv, die.locked ? 'locked-dice' : 'dice-selector');
+        slideToObjectAndAttach(this.game, dieDiv, die.locked ? "locked-dice" + die.value : "dice-selector" + die.value);
         this.activateRethrowButton();
     };
     DiceManager.prototype.activateRethrowButton = function () {
@@ -787,7 +791,7 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.createDice = function (die, selectable, inTokyo) {
         var _this = this;
-        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? 'locked-dice' : 'dice-selector');
+        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? "locked-dice" + die.value : "dice-selector" + die.value);
         this.addDiceRollClass(die);
         if (selectable) {
             this.getDiceDiv(die).addEventListener('click', function () { return _this.toggleLockDice(die); });

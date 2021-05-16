@@ -620,6 +620,8 @@ trait DiceTrait {
     }
 
     function stResolveDice() {
+        self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
+
         $playerId = self::getActivePlayerId();
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getDice($this->getDiceNumber($playerId));
