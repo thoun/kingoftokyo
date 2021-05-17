@@ -155,11 +155,10 @@ trait PlayerTrait {
         }
     }
 
-    function stEndTurn() {
+    function stResolveEndTurn() {
         $playerId = self::getActivePlayerId();
 
-        // clean game state values
-        $this->setGameStateValue('lessDiceForNextTurn', 0);
+        
 
         // apply end of turn effects (after Selling Cards)
 
@@ -202,6 +201,15 @@ trait PlayerTrait {
         if ($countPoison > 0) {
             $this->applyDamage($playerId, $countPoison, 0, 35);
         }
+
+        $this->gamestate->nextState('endTurn');
+    }
+
+    function stEndTurn() {
+        $playerId = self::getActivePlayerId();
+
+        // clean game state values
+        $this->setGameStateValue('lessDiceForNextTurn', 0);
 
         // poison may eliminate players
         $endGame = $this->eliminatePlayers($playerId);

@@ -278,33 +278,33 @@ trait CardsTrait {
     }
 
     function getMimickedCardPlayerId() {
-        $mimickedCard = $this->getGlobalVariable('MimickedCard');
-        if ($mimickedCard != null && $mimickedCard->playerId != null) {
-            return $mimickedCard->playerId;
+        $mimickedCardObj = $this->getGlobalVariable('MimickedCard');
+        if ($mimickedCardObj != null && $mimickedCardObj->playerId != null) {
+            return $mimickedCardObj->playerId;
         }
         return 0;
     }
 
     function getMimickedCard() {
-        $mimickedCard = $this->getGlobalVariable('MimickedCard');
-        if ($mimickedCard != null) {
-            return $mimickedCard->card;
+        $mimickedCardObj = $this->getGlobalVariable('MimickedCard');
+        if ($mimickedCardObj != null) {
+            return $mimickedCardObj->card;
         }
         return null;
     }
 
     function getMimickedCardId() {
-        $mimickedCard = $this->getGlobalVariable('MimickedCard');
-        if ($mimickedCard != null && $mimickedCard->card != null) {
-            return $mimickedCard->card->id;
+        $mimickedCard = $this->getMimickedCard();
+        if ($mimickedCard != null) {
+            return $mimickedCard->id;
         }
         return null;
     }
 
     function getMimickedCardType() {
-        $mimickedCard = $this->getGlobalVariable('MimickedCard');
-        if ($mimickedCard != null && $mimickedCard->card != null) {
-            return $mimickedCard->card->type;
+        $mimickedCard = $this->getMimickedCard();
+        if ($mimickedCard != null) {
+            return $mimickedCard->type;
         }
         return null;
     }

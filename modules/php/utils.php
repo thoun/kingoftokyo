@@ -242,14 +242,14 @@ trait UtilTrait {
 
         foreach($orderedPlayers as $player) {
             if ($player->health == 0 && !$player->eliminated) {
-                $endGame = $this->eliminateAPlayer($player);
+                $endGame = $this->eliminateAPlayer($player, $currentTurnPlayerId);
             }
         }
 
         return $endGame;
     }
 
-    function eliminateAPlayer(object $player) { // return $endGame
+    function eliminateAPlayer(object $player, int $currentTurnPlayerId) { // return $endGame
         self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0 where `player_id` = $player->id");
 
         /* no need for notif, framework does it
@@ -261,7 +261,7 @@ trait UtilTrait {
         $playersBeforeElimination = $this->getRemainingPlayers();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
-        $this->removeCards($cards, true);
+        $this->removeCards($player->id, $cards, true);
         
         self::eliminatePlayer($player->id);
 
@@ -273,6 +273,12 @@ trait UtilTrait {
             if (!$this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true) && $playersBeforeElimination == 5) {
                 $this->leaveTokyo($this->getPlayerIdInTokyoBay());
             }
+        }
+
+        if ($this->getRemainingPlayers() <= 1) {
+            $this->gamestate->jumpToState(ST_END_GAME);
+        } else if ($currentTurnPlayerId == $player->id) {
+            $this->gamestate->jumpToState(ST_END_TURN);
         }
 
         return $this->getRemainingPlayers() <= 1;

@@ -224,14 +224,13 @@ class KingOfTokyo extends Table {
         if ($state['type'] == "activeplayer") {
             switch ($statename) {
                 default:
-                    $this->gamestate->nextState( "zombiePass" );
+                    $this->gamestate->jumpToState(ST_NEXT_PLAYER);
+                    //$this->gamestate->nextState( "zombiePass" );
                 	break;
             }
 
             return;
-        }
-
-        if ($state['type'] == "multipleactiveplayer") {
+        } else if ($state['type'] == "multipleactiveplayer") {
             // Make sure player is in a non blocking status for role turn
             $sql = "
                 UPDATE  player

@@ -312,9 +312,20 @@ $playerActionsGameStates = [
         "possibleactions" => [ "sellCard", "endTurn" ],
         "transitions" => [
             "sellCard" => ST_PLAYER_SELL_CARD,
-            "endTurn" => ST_END,
+            "endTurn" => ST_RESOLVE_END_TURN,
             "zombiePass" => ST_NEXT_PLAYER,
         ]
+    ],
+
+    ST_RESOLVE_END_TURN => [
+        "name" => "resolveEndTurn",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveEndTurn",
+        "transitions" => [ 
+            "endTurn" => ST_END,
+            "zombiePass" => ST_NEXT_PLAYER,
+        ],
     ],
 
     ST_END => [

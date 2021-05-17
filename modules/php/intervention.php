@@ -33,6 +33,7 @@ trait InterventionTrait {
             $this->setGlobalVariable($interventionName, $intervention);
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
         } else { // leaving transition
+            $this->deleteGlobalVariable($interventionName);
             $this->gamestate->nextState($intervention->endState);
         }
     }
