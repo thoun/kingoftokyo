@@ -62,6 +62,14 @@
 
         self::ajaxResponse();
     }
+  	
+    public function useRapidHealing() {
+        self::setAjaxMode();
+
+        $this->game->useRapidHealing();
+
+        self::ajaxResponse();
+    }
 
     public function rethrow3() {
         self::setAjaxMode();

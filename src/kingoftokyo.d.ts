@@ -25,8 +25,14 @@ interface HeartActionSelection {
 }
 
 interface KingOfTokyoPlayer extends Player {
+    player_no: string;
     poisonTokens: number;
     shrinkRayTokens: number;
+    rapidHealing: boolean;
+    health: number;
+    energy: number;
+    monster: number;
+    location: number;
 }
 
 interface KingOfTokyoGamedatas {
@@ -191,4 +197,10 @@ interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
 interface NotifSetCardTokensArgs {
     playerId: number;
     card: Card;
+}
+
+interface NotifToggleRapidHealingArgs {
+    playerId: number;
+    active: boolean;
+    playerEnergy: number;
 }

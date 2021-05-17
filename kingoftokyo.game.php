@@ -135,13 +135,15 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-    $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(27))[0])->id, /*'table'*/ 'hand', 2343492);
-        $mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(6))[0]);
-        $this->setMimickedCard($mimickedCard);
-        $this->cards->moveCard( $mimickedCard->id, 'hand', 2343492);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(8))[0])->id, 'hand', 2343493);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(27))[0])->id, /*'table'*/ 'hand', 2343492);
+        $mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(37))[0]);
+        $this->setMimickedCard(2343492, $mimickedCard);
+        $this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
+        /*$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(8))[0])->id, 'hand', 2343493);
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(9))[0])->id, 'hand', 2343492);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(32))[0])->id, 'hand', 2343493);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(32))[0])->id, 'hand', 2343493);*/
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(26))[0])->id, 'hand', 2343493);
+        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(37))[0])->id, 'table');
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -176,11 +178,13 @@ class KingOfTokyo extends Table {
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
 
         $result['playersCards'] = [];
-        foreach ($result['players'] as $player_id => $playerDb) {
-            $result['playersCards'][$player_id] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player_id));
+        foreach ($result['players'] as $playerId => &$playerDb) {
+            $result['playersCards'][$playerId] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
 
             $playerDb['poisonTokens'] = intval($playerDb['poisonTokens']);
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
+
+            $playerDb['rapidHealing'] = $this->countCardOfType($playerId, 37) > 0;
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();

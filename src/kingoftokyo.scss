@@ -55,6 +55,17 @@
   }
 }
 
+#rolled-dice-and-rapid-healing {  
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+
+  #rapid-healing-wrapper:not(:empty) {
+    margin-right: 15px;
+  }
+}
+
 .log {  
   .icon {
     width: 16px;

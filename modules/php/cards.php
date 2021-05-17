@@ -235,8 +235,11 @@ trait CardsTrait {
         }
     }
 
-    function setMimickedCardId(int $cardId) {
+    function setMimickedCardId(int $playerId, int $cardId) {
         if ($cardId == 0) {
+            $mimickedCardPlayerId = $this->getMimickedCardPlayerId();
+            $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, 37);
+            
             $card = $this->getMimickedCard();
             if ($card) {
                 $this->deleteGlobalVariable('MimickedCard');
@@ -244,13 +247,18 @@ trait CardsTrait {
                     'card' => $card,
                 ]);
             }
+        
+            $this->toggleRapidHealing($mimickedCardPlayerId, $countRapidHealingBefore);
         } else {
             $card = $this->getCardFromDb($this->cards->getCard($cardId));
-            $this->setMimickedCard($card);
+            $this->setMimickedCard($playerId, $card);
         }
     }
 
-    function setMimickedCard(object $card) {
+    function setMimickedCard(int $playerId, object $card) {
+        $mimickedCardPlayerId = $this->getMimickedCardPlayerId();
+        $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, 37);
+
         $oldCard = $this->getMimickedCard();
         if ($oldCard) {
             self::notifyAllPlayers("removeMimicToken", '', [
@@ -258,28 +266,45 @@ trait CardsTrait {
             ]);
         }
 
-        $this->setGlobalVariable('MimickedCard', $card);
+        $mimickedCard = new \stdClass();
+        $mimickedCard->card = $card;
+        $mimickedCard->playerId = $playerId;
+        $this->setGlobalVariable('MimickedCard', $mimickedCard);
         self::notifyAllPlayers("setMimicToken", '', [
             'card' => $card,
         ]);
+        
+        $this->toggleRapidHealing($mimickedCardPlayerId, $countRapidHealingBefore);
+    }
+
+    function getMimickedCardPlayerId() {
+        $mimickedCard = $this->getGlobalVariable('MimickedCard');
+        if ($mimickedCard != null && $mimickedCard->playerId != null) {
+            return $mimickedCard->playerId;
+        }
+        return 0;
     }
 
     function getMimickedCard() {
-        return $this->getGlobalVariable('MimickedCard');
+        $mimickedCard = $this->getGlobalVariable('MimickedCard');
+        if ($mimickedCard != null) {
+            return $mimickedCard->card;
+        }
+        return null;
     }
 
     function getMimickedCardId() {
-        $card = $this->getGlobalVariable('MimickedCard');
-        if ($card != null) {
-            return $card->id;
+        $mimickedCard = $this->getGlobalVariable('MimickedCard');
+        if ($mimickedCard != null && $mimickedCard->card != null) {
+            return $mimickedCard->card->id;
         }
         return null;
     }
 
     function getMimickedCardType() {
-        $card = $this->getGlobalVariable('MimickedCard');
-        if ($card != null) {
-            return $card->type;
+        $mimickedCard = $this->getGlobalVariable('MimickedCard');
+        if ($mimickedCard != null && $mimickedCard->card != null) {
+            return $mimickedCard->card->type;
         }
         return null;
     }
@@ -405,17 +430,44 @@ trait CardsTrait {
         $this->gamestate->nextState('useSmokeCloud');        
     }
 
+    function useRapidHealing() {
+        $playerId = self::getCurrentPlayerId(); // current, not active !
+
+        if ($this->getPlayerEnergy($playerId) < 2) {
+            throw new \Error('Not enough energy');
+        }
+
+        $health = $this->getPlayerHealth($playerId);
+
+        if ($health <= 0) {
+            throw new \Error('You can\'t heal when you\'re dead');
+        }
+
+        if ($health >= $this->getPlayerMaxHealth($playerId)) {
+            throw new \Error('You can\'t heal when you\'re already at full life');
+        }
+
+        if ($this->countCardOfType($playerId, 37) == 0) {
+            throw new \Error('No Rapid Healing card');
+        }
+
+        $this->applyGetHealth($playerId, 1, 37);
+        $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
+    }
+
     function removeCard(int $playerId, $card, bool $silent = false) {
-        $this->cards->moveCard($card->id, 'discard');
+        $countRapidHealingBefore = $this->countCardOfType($playerId, 37);
 
         $removeMimickToken = false;
         if ($card->type == 27) { // Mimic
-            $this->deleteGlobalVariable('MimickedCard');
+            $this->setMimickedCardId($playerId, 0); // 0 means no mimicked card
             $removeMimickToken = true;
         } else if ($card->id == $this->getMimickedCardId()) {
-            $this->setMimickedCardId(0); // 0 means no mimicked card
+            $this->setMimickedCardId($playerId, 0); // 0 means no mimicked card
             $removeMimickToken = true;
         }
+
+        $this->cards->moveCard($card->id, 'discard');
 
         if ($removeMimickToken) {
             self::notifyAllPlayers("removeMimicToken", '', [
@@ -429,6 +481,26 @@ trait CardsTrait {
                 'cards' => [$card],
             ]);
         }        
+        
+        $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
+    }
+
+    function toggleRapidHealing(int $playerId, int $countRapidHealingBefore) {
+        $countRapidHealingAfter = $this->countCardOfType($playerId, 37);
+        if ($countRapidHealingBefore != $countRapidHealingAfter) {
+            $active = $countRapidHealingAfter > $countRapidHealingBefore;
+
+            $playerEnergy = null;
+            if ($active) {
+                $playerEnergy = $this->getPlayerEnergy($playerId);
+            }            
+
+            self::notifyPlayer($playerId, 'toggleRapidHealing', '', [
+                'playerId' => $playerId,
+                'active' => $active,
+                'playerEnergy' => $playerEnergy
+            ]);
+        }
     }
 
     function removeCards(int $playerId, array $cards, bool $silent = false) {
@@ -530,6 +602,8 @@ trait CardsTrait {
         if ($countMediaFriendly > 0) {
             $this->applyGetPoints($playerId, $countMediaFriendly, 9);
         }
+        
+        $countRapidHealingBefore = $this->countCardOfType($playerId, 37);
 
         $mimickedCardId = null;
         if ($from > 0) {
@@ -586,10 +660,12 @@ trait CardsTrait {
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
             self::setGameStateValue('madeInALabCard', 1001);
         }
+        
+        $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
         if ($from > 0 && $mimickedCardId == $card->id) {
             // Is card bought from player, when having mimic token, keep mimic token ? Considered yes
-            $this->setMimickedCard($card);
+            $this->setMimickedCard($playerId, $card);
         }
 
         $this->applyEffects($card, $playerId);
@@ -703,13 +779,15 @@ trait CardsTrait {
     function chooseMimickedCard(int $mimickedCardId) {
         $playerId = self::getActivePlayerId();
 
-        $this->setMimickedCardId($mimickedCardId);
+        $this->setMimickedCardId($playerId, $mimickedCardId);
 
         $this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false);
     }
 
     function changeMimickedCard(int $mimickedCardId) {
-        $this->setMimickedCardId($mimickedCardId);
+        $playerId = self::getActivePlayerId();
+
+        $this->setMimickedCardId($playerId, $mimickedCardId);
 
         $this->gamestate->nextState('next');
     }

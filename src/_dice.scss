@@ -3,6 +3,7 @@ $tokyoGreen: #96c93c;
 #rolled-dice {
   display: flex;
   justify-content: center;
+  flex: 1;
 
   #locked-dice {
     border: 2px solid #a6c136;

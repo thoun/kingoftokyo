@@ -60,6 +60,7 @@
 #rolled-dice {
   display: flex;
   justify-content: center;
+  flex: 1;
 }
 #rolled-dice #locked-dice {
   border: 2px solid #a6c136;
@@ -849,6 +850,16 @@
 #page-title .dice-icon, #page-title .icon {
   width: 20px;
   height: 20px;
+}
+
+#rolled-dice-and-rapid-healing {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+#rolled-dice-and-rapid-healing #rapid-healing-wrapper:not(:empty) {
+  margin-right: 15px;
 }
 
 .log .icon {

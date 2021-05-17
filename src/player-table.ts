@@ -12,10 +12,10 @@ class PlayerTable {
 
     public cards: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: Player, cards: Card[]) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[]) {
         this.playerId = Number(player.id);
-        this.playerNo = Number((player as any).player_no);
-        this.monster = Number((player as any).monster);
+        this.playerNo = Number(player.player_no);
+        this.monster = Number(player.monster);
         dojo.place(`
         <div id="player-table-${player.id}" class="player-table ${Number(player.eliminated) > 0 ? 'eliminated' : ''}">
             <div class="player-name" style="color: #${player.color}">${player.name}</div> 
@@ -43,10 +43,10 @@ class PlayerTable {
         this.game.cards.setupCards([this.cards]);
         this.game.cards.addCardsToStock(this.cards, cards);
 
-        this.initialLocation = Number((player as any).location);
+        this.initialLocation = Number(player.location);
 
         this.setPoints(Number(player.score));
-        this.setHealth(Number((player as any).health));
+        this.setHealth(Number(player.health));
     }
 
     public initPlacement() {

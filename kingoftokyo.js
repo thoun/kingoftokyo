@@ -1002,8 +1002,9 @@ var KingOfTokyo = /** @class */ (function () {
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
         var _this = this;
+        var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1, 2, 3, 4, 5, 6].filter(function (i) { return !Object.values(gamedatas.players).some(function (player) { return Number(player.mmonster) === i; }); }).forEach(function (i) {
+        [1, 2, 3, 4, 5, 6].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
             _this.dontPreloadImage("monster-board-" + (i + 1) + ".png");
             _this.dontPreloadImage("monster-figure-" + (i + 1) + ".png");
         });
@@ -1019,6 +1020,10 @@ var KingOfTokyo = /** @class */ (function () {
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setMimicToken(gamedatas.mimickedCard);
+        var playerId = this.getPlayerId();
+        if (players.some(function (player) { return player.rapidHealing && Number(player.id) === playerId; })) {
+            this.addRapidHealingButton(players.find(function (player) { return Number(player.id) === playerId; }).energy);
+        }
         this.setupNotifications();
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
             args: {
@@ -1322,6 +1327,17 @@ var KingOfTokyo = /** @class */ (function () {
             this.buyCard(cardId, from);
         }
     };
+    KingOfTokyo.prototype.addRapidHealingButton = function (userEnergy) {
+        var _this = this;
+        if (!document.getElementById('rapidHealingButton')) {
+            this.createButton('rapid-healing-wrapper', 'rapidHealingButton', formatTextIcons(_('Gain 1[Heart]') + " (2[Energy])"), function () { return _this.useRapidHealing(); }, userEnergy < 2);
+        }
+    };
+    KingOfTokyo.prototype.removeRapidHealingButton = function () {
+        if (document.getElementById('rapidHealingButton')) {
+            dojo.destroy('rapidHealingButton');
+        }
+    };
     KingOfTokyo.prototype.setMimicToken = function (card) {
         var _this = this;
         if (!card) {
@@ -1363,6 +1379,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.useSmokeCloud = function () {
         this.takeAction('useSmokeCloud');
+    };
+    KingOfTokyo.prototype.useRapidHealing = function () {
+        this.takeAction('useRapidHealing');
     };
     KingOfTokyo.prototype.changeDie = function (id, value, card) {
         if (!this.checkAction('changeDie')) {
@@ -1550,6 +1569,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['removeCards', 1],
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
+            ['toggleRapidHealing', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -1647,6 +1667,14 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_setCardTokens = function (notif) {
         this.cards.placeTokensOnCard(this.playerTables[notif.args.playerId].cards, notif.args.card, notif.args.playerId);
     };
+    KingOfTokyo.prototype.notif_toggleRapidHealing = function (notif) {
+        if (notif.args.active) {
+            this.addRapidHealingButton(notif.args.playerEnergy);
+        }
+        else {
+            this.removeRapidHealingButton();
+        }
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points) {
         var _a;
         (_a = this.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.toValue(points);
@@ -1658,7 +1686,10 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.setEnergy = function (playerId, energy) {
         this.energyCounters[playerId].toValue(energy);
-        this.checkBuyEnergyDrinkState(this.energyCounters[this.getPlayerId()].getValue()); // disable button if energy gets down to 0
+        this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
+        if (document.getElementById('rapidHealingButton')) {
+            dojo.toggleClass('rapidHealingButton', 'disabled', energy < 2);
+        }
     };
     KingOfTokyo.prototype.setPlayerTokens = function (playerId, tokens, tokenName) {
         var containerId = "player-board-" + tokenName + "-tokens-" + playerId;
