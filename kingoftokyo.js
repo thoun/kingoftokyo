@@ -74,7 +74,9 @@ var Cards = /** @class */ (function () {
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = null;
-        this.game.fadeOutAndDestroy(divId + "-mimic-token");
+        if (document.getElementById(divId + "-mimic-token")) {
+            this.game.fadeOutAndDestroy(divId + "-mimic-token");
+        }
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
     Cards.prototype.getPlaceOnCard = function (cardPlaced) {

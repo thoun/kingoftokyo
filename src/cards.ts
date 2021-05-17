@@ -65,7 +65,9 @@ class Cards {
         const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
         cardPlaced.mimicToken = null;
 
-        (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+        if (document.getElementById(`${divId}-mimic-token`)) {
+            (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+        }
 
         div.dataset.placed = JSON.stringify(cardPlaced);
     }

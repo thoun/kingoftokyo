@@ -90,9 +90,10 @@ class KingOfTokyo extends Table {
 
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_monster) VALUES ";
-        $values = array();
+        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_score_aux, player_monster) VALUES ";
+        $values = [];
         $affectedMonsters = [];
+        $eliminationRank = count($players) - 1;
         foreach( $players as $player_id => $player ) {
             $playerMonster = bga_rand(0, 5);
             while (array_search($playerMonster, $affectedMonsters) !== false) {
@@ -101,7 +102,7 @@ class KingOfTokyo extends Table {
             $affectedMonsters[] = $playerMonster;
 
             $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $playerMonster)";
+            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
