@@ -126,7 +126,7 @@ $playerActionsGameStates = [
             "buyEnergyDrink" => ST_PLAYER_THROW_DICE,
             "useSmokeCloud" => ST_PLAYER_THROW_DICE,
             "rethrow3" => ST_PLAYER_THROW_DICE,
-            "zombiePass" => ST_NEXT_PLAYER,
+            //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],  
 
@@ -158,8 +158,8 @@ $playerActionsGameStates = [
             "stay" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
             "end" => ST_RESOLVE_DICE,
             "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
-            "endGame" => ST_END_GAME,
-            "zombiePass" => ST_PLAYER_BUY_CARD,
+            //"endGame" => ST_END_GAME,
+            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -224,7 +224,23 @@ $playerActionsGameStates = [
         "transitions" => [
             "enterTokyo" => ST_ENTER_TOKYO,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
-            "endGame" => ST_END_GAME,
+            //"endGame" => ST_END_GAME,
+        ],
+    ],
+
+    ST_MULTIPLAYER_CANCEL_DAMAGE => [
+        "name" => "cancelDamage",
+        "description" => clienttranslate('A player can reduce damage'),
+        "descriptionmyturn" => clienttranslate('${you} can reduce damage'),
+        "type" => "multipleactiveplayer",
+        "action" => "stCancelDamage",
+        "args" => "argCancelDamage",
+        "possibleactions" => [ "throwCamouflageDices", "useWings", "skipWings" ],
+        "transitions" => [
+            "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
+            //"end" => ST_RESOLVE_DICE,
+            //"endGame" => ST_END_GAME,
+            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -237,8 +253,8 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
             "resume" => ST_ENTER_TOKYO,
-            "endGame" => ST_END_GAME,
-            "zombiePass" => ST_PLAYER_BUY_CARD,
+            //"endGame" => ST_END_GAME,
+            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -249,7 +265,7 @@ $playerActionsGameStates = [
         "action" => "stEnterTokyo",
         "transitions" => [
             "next" => ST_PLAYER_BUY_CARD,
-            "endGame" => ST_END_GAME,
+            //"endGame" => ST_END_GAME,
         ],
     ],
 
@@ -267,7 +283,7 @@ $playerActionsGameStates = [
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "renew" => ST_PLAYER_BUY_CARD,
-            "zombiePass" => ST_NEXT_PLAYER,
+            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -283,7 +299,7 @@ $playerActionsGameStates = [
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "renew" => ST_PLAYER_BUY_CARD,
-            "zombiePass" => ST_NEXT_PLAYER,
+            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -298,8 +314,8 @@ $playerActionsGameStates = [
         "transitions" => [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "end" => ST_PLAYER_BUY_CARD,
-            "endGame" => ST_END_GAME,
-            "zombiePass" => ST_PLAYER_BUY_CARD,
+            //"endGame" => ST_END_GAME,
+            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -313,7 +329,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "sellCard" => ST_PLAYER_SELL_CARD,
             "endTurn" => ST_RESOLVE_END_TURN,
-            "zombiePass" => ST_NEXT_PLAYER,
+            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -324,7 +340,7 @@ $playerActionsGameStates = [
         "action" => "stResolveEndTurn",
         "transitions" => [ 
             "endTurn" => ST_END,
-            "zombiePass" => ST_NEXT_PLAYER,
+            //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],
 
@@ -335,7 +351,7 @@ $playerActionsGameStates = [
         "action" => "stEndTurn",
         "transitions" => [ 
             "nextPlayer" => ST_NEXT_PLAYER,
-            "endGame" => ST_END_GAME,
+            //"endGame" => ST_END_GAME,
         ],
     ],
 ];

@@ -232,6 +232,30 @@
         self::ajaxResponse();
     }
 
+    public function throwCamouflageDices() {
+        self::setAjaxMode();
+
+        $this->game->throwCamouflageDices();
+
+        self::ajaxResponse();
+    }
+    
+    public function useWings() {
+        self::setAjaxMode();
+
+        $this->game->useWings();
+
+        self::ajaxResponse();
+    }
+
+    public function skipWings() {
+        self::setAjaxMode();
+
+        $this->game->skipWings();
+
+        self::ajaxResponse();
+    }
+
   }
   
 

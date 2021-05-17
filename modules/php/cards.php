@@ -794,6 +794,78 @@ trait CardsTrait {
 
     function skipChangeMimickedCard() {
         $this->gamestate->nextState('next');
+    }    
+
+    function throwCamouflageDices() {
+        $playerId = self::getCurrentPlayerId();
+
+        if ($this->countCardOfType($playerId, 7) == 0) {
+            throw new \Error('No Camouflage card');
+        }
+
+        // TODO CANCEL throw dices
+        $cancelledDamage = 2;
+
+        $intervention = $this->getGlobalVariable('CancelDamageIntervention');
+        $intervention->playersUsedDices[] = $playerId;
+
+        $remainingDamage = $intervention->damage - $cancelledDamage;
+
+        self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name} to not reduce [Heart] loss by ${cancelled}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => $this->getCardName(7),
+            'cancelled' => $cancelledDamage,
+        ]);
+
+        if ($remainingDamage > 0) {
+            $this->applyDamage($playerId, $intervention->damage, $intervention->damageDealerId, $intervention->cardType);
+        }
+
+        $this->setInterventionNextState('CancelDamageIntervention', 'next', 'end');
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+    }
+    
+    function useWings() {
+        $playerId = self::getCurrentPlayerId();
+
+        if ($this->getPlayerEnergy($playerId) < 2) {
+            throw new \Error('Not enough energy');
+        }
+
+        if ($this->countCardOfType($playerId, 48) == 0) {
+            throw new \Error('No Wings card');
+        }
+
+        $usedWings = $this->getGlobalVariable('UsedWings', true);
+
+        if (array_search($playerId, $usedWings) !== false) {
+            throw new \Error('You already used Wings in this turn');
+        }
+
+        $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
+        $usedWings[] = $playerId;
+        $this->setGlobalVariable('UsedWings', $usedWings);
+
+        self::notifyAllPlayers("useWings", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => $this->getCardName(48),
+        ]);
+
+        $this->setInterventionNextState('CancelDamageIntervention', 'next', 'end');
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+    }
+
+    function skipWings() {
+        $playerId = self::getCurrentPlayerId();
+
+        $intervention = $this->getGlobalVariable('CancelDamageIntervention');
+
+        $this->applyDamage($playerId, $intervention->damage, $intervention->damageDealerId, $intervention->cardType);
+
+        $this->setInterventionNextState('CancelDamageIntervention', 'next', 'end');
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -896,6 +968,25 @@ trait CardsTrait {
         ];
     }
 
+    function argCancelDamage() {
+        $intervention = $this->getGlobalVariable('CancelDamageIntervention');
+
+        $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
+        if ($playerId != null) {
+            $canThrowDices = $this->countCardOfType($playerId, 7) > 0 && array_search($playerId, $intervention->playersUsedDices) === false;
+            $canUseWings = $this->countCardOfType($playerId, 48) > 0;
+            $canSkipWings = $canUseWings && !$canThrowDices;
+            return [
+                'canThrowDices' => $canThrowDices,
+                'canUseWings' => $canUseWings,
+                'canSkipWings' => $canSkipWings,
+                'playerEnergy' => $this->getPlayerEnergy($playerId),
+            ];
+        } else {
+            return [];
+        }
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
@@ -917,5 +1008,9 @@ trait CardsTrait {
         if ($countMetamorph < 1) { // no needto check remaining cards, if player got metamoph he got cards to sell
             $this->gamestate->nextState('endTurn');
         }
+    }
+
+    function stCancelDamage() {
+        $this->stIntervention('CancelDamageIntervention');
     }
 }

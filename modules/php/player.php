@@ -80,6 +80,7 @@ trait PlayerTrait {
         self::setGameStateValue('energyDrinks', 0);
         self::setGameStateValue('madeInALabCard', 0);
         $this->resetUsedCards();
+        $this->setGlobalVariable('UsedWings', []);
 
         // apply monster effects
 

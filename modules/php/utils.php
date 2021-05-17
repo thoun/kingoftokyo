@@ -360,6 +360,10 @@ trait UtilTrait {
     }
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType) {
+        if (array_search($playerId, $this->getGlobalVariable('UsedWings', true)) !== false) {
+            return; // player has wings and cannot lose hearts
+        }
+
         // Armor plating
         // TOCHECK Can a player leave tokyo if one smash and armor plating ?
         $countArmorPlating = $this->countCardOfType($playerId, 4);
@@ -396,6 +400,9 @@ trait UtilTrait {
     }
 
     function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType) {
+        if (array_search($playerId, $this->getGlobalVariable('UsedWings', true)) !== false) {
+            return; // player has wings and cannot lose hearts
+        }
 
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = max($actualHealth - $health, 0);
