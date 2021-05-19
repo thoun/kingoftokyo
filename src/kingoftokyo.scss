@@ -53,6 +53,10 @@
     width: 20px;
     height: 20px;
   }
+
+  .icon {
+    margin: -5px 0;
+  }
 }
 
 #rolled-dice-and-rapid-healing {  
@@ -76,9 +80,9 @@
 
 button, a {
   .icon {
-    width: 16px;
-    height: 16px;
-    margin-bottom: -2px;
+    width: 20px;
+    height: 20px;
+    margin: -5px 0;
   }
 }
   

@@ -186,6 +186,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private onEnteringCancelDamage(args: EnteringCancelDamageArgs, isCurrentPlayerActive: boolean) {
+        // TODO cancel
+    }
+
     private onEnteringBuyCard(args: EnteringBuyCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
             this.visibleCards.setSelectionMode(1);
@@ -306,6 +310,23 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'sellCard':
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
+                    break;
+                
+                case 'cancelDamage':
+                    const cancelArgs = args as EnteringCancelDamageArgs;
+                    if (cancelArgs.canThrowDices) {
+                        (this as any).addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
+                    }
+                    if (cancelArgs.canUseWings) {
+                        (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48)})), 'useWings');
+                        if (cancelArgs.playerEnergy < 2) {
+                            dojo.addClass('useWings_button', 'disabled');
+                        }
+                    }
+                    if (cancelArgs.canSkipWings) {
+                        (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48)}), 'skipWings');
+                    }
+                    this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
             }
 
@@ -653,6 +674,30 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('endTurn');
+    }
+
+    public throwCamouflageDice() {
+        if(!(this as any).checkAction('throwCamouflageDice')) {
+            return;
+        }
+
+        this.takeAction('throwCamouflageDice');
+    }
+
+    public useWings() {
+        if(!(this as any).checkAction('useWings')) {
+            return;
+        }
+
+        this.takeAction('useWings');
+    }
+
+    public skipWings() {
+        if(!(this as any).checkAction('skipWings')) {
+            return;
+        }
+
+        this.takeAction('skipWings');
     }
 
     public takeAction(action: string, data?: any) {

@@ -145,8 +145,9 @@ class KingOfTokyo extends Table {
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(32))[0])->id, 'hand', 2343493);*/
         //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(26))[0])->id, 'hand', 2343493);
         //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(37))[0])->id, 'table');
-        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(7))[0])->id, 'hand', 2343492);
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(7))[0])->id, 'hand', 2343492);
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(48))[0])->id, 'hand', 2343492);
+        self::DbQuery("UPDATE player SET `player_location` = 1 where `player_id` = 2343492");
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();

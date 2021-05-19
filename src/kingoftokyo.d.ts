@@ -204,3 +204,10 @@ interface NotifToggleRapidHealingArgs {
     active: boolean;
     playerEnergy: number;
 }
+
+interface EnteringCancelDamageArgs {
+    canSkipWings: boolean;
+    canThrowDices: boolean;
+    canUseWings: boolean;
+    playerEnergy: number;
+}

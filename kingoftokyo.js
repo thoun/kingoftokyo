@@ -1127,6 +1127,9 @@ var KingOfTokyo = /** @class */ (function () {
             }
         }
     };
+    KingOfTokyo.prototype.onEnteringCancelDamage = function (args, isCurrentPlayerActive) {
+        // TODO cancel
+    };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
         var _this = this;
         var _a;
@@ -1237,6 +1240,22 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'sellCard':
                     this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
+                    break;
+                case 'cancelDamage':
+                    var cancelArgs = args;
+                    if (cancelArgs.canThrowDices) {
+                        this.addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
+                    }
+                    if (cancelArgs.canUseWings) {
+                        this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48) })), 'useWings');
+                        if (cancelArgs.playerEnergy < 2) {
+                            dojo.addClass('useWings_button', 'disabled');
+                        }
+                    }
+                    if (cancelArgs.canSkipWings) {
+                        this.addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48) }), 'skipWings');
+                    }
+                    this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
             }
         }
@@ -1504,6 +1523,24 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('endTurn');
+    };
+    KingOfTokyo.prototype.throwCamouflageDice = function () {
+        if (!this.checkAction('throwCamouflageDice')) {
+            return;
+        }
+        this.takeAction('throwCamouflageDice');
+    };
+    KingOfTokyo.prototype.useWings = function () {
+        if (!this.checkAction('useWings')) {
+            return;
+        }
+        this.takeAction('useWings');
+    };
+    KingOfTokyo.prototype.skipWings = function () {
+        if (!this.checkAction('skipWings')) {
+            return;
+        }
+        this.takeAction('skipWings');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

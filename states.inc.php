@@ -224,6 +224,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "enterTokyo" => ST_ENTER_TOKYO,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
+            "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             //"endGame" => ST_END_GAME,
         ],
     ],
@@ -235,12 +236,12 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stCancelDamage",
         "args" => "argCancelDamage",
-        "possibleactions" => [ "throwCamouflageDices", "useWings", "skipWings" ],
+        "possibleactions" => [ "throwCamouflageDice", "useWings", "skipWings" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
-            //"end" => ST_RESOLVE_DICE,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
+            "enterTokyo" => ST_ENTER_TOKYO,
+            "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
+            "zombiePass" => ST_END_TURN,
         ],
     ],
 
@@ -339,12 +340,12 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stResolveEndTurn",
         "transitions" => [ 
-            "endTurn" => ST_END,
+            "endTurn" => ST_END_TURN,
             //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],
 
-    ST_END => [
+    ST_END_TURN => [
         "name" => "endTurn",
         "description" => "",
         "type" => "game",

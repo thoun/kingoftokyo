@@ -232,10 +232,10 @@
         self::ajaxResponse();
     }
 
-    public function throwCamouflageDices() {
+    public function throwCamouflageDice() {
         self::setAjaxMode();
 
-        $this->game->throwCamouflageDices();
+        $this->game->throwCamouflageDice();
 
         self::ajaxResponse();
     }

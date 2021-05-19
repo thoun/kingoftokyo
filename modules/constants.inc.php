@@ -32,7 +32,7 @@ define('ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD', 52);
 define('ST_PLAYER_SELL_CARD', 60);
 
 define('ST_RESOLVE_END_TURN', 80);
-define('ST_END', 81);
+define('ST_END_TURN', 81);
 define('ST_NEXT_PLAYER', 90);
 
 define('ST_END_GAME', 99);

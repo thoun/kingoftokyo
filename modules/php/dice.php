@@ -4,9 +4,11 @@ namespace KOT\States;
 
 require_once(__DIR__.'/objects/dice.php');
 require_once(__DIR__.'/objects/player-intervention.php');
+require_once(__DIR__.'/objects/damage.php');
 
 use KOT\Objects\Dice;
 use KOT\Objects\PsychicProbeIntervention;
+use KOT\Objects\Damage;
 
 trait DiceTrait {
 
@@ -132,6 +134,8 @@ trait DiceTrait {
         $smashedPlayersIds = null;
         $inTokyo = $this->inTokyo($playerId);
 
+        $damages = [];
+
         if ($countNovaBreath) {
             $message = clienttranslate('${player_name} give ${number} [diceSmash] to all other Monsters');
             $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
@@ -150,7 +154,7 @@ trait DiceTrait {
             if ($countJets > 0) {
                 $this->setGameStateValue('damageForJetsIfStayingInTokyo', $diceCount);
             } else {
-                $this->applyDamage($smashedPlayerId, $diceCount, $playerId, 0);
+                $damages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
             }
         }
 
@@ -184,7 +188,11 @@ trait DiceTrait {
             foreach($smashedPlayersIds as $smashedPlayerId) {
                 $this->applyGetPoisonToken($smashedPlayerId);
             }
-        }        
+        }
+
+        // TOCHECK Can a player leave tokyo if he cancel all damage while in tokyo (with wings or camouflage) ? Considered Yes
+        $cancelDamageEndState = !$inTokyo && count($this->getPlayersIdsInTokyo()) > 0 ? "smashes" : "enterTokyo";
+        return $this->resolveDamages($damages, $cancelDamageEndState);
     }
 
     function getChangeDieCards(int $playerId) {
@@ -735,6 +743,7 @@ trait DiceTrait {
             }
         }
 
+        $fireBreathingDamages = [];
         // fire breathing
         if ($diceCounts[6] >= 1) {
             $countFireBreathing = $this->countCardOfType($playerId, 15);
@@ -745,15 +754,17 @@ trait DiceTrait {
                 // TOCHECK we ignore in/out of tokyo ? Considered Yes
                 $leftPlayerId = $playersIds[($playerIndex + 1) % $playerCount];
                 $rightPlayerId = $playersIds[($playerIndex + $playerCount - 1) % $playerCount];
-                
+
                 if ($leftPlayerId != $playerId) {
-                    $this->applyDamage($leftPlayerId, $countFireBreathing, $playerId, 15);
+                    $fireBreathingDamages[] = new Damage($leftPlayerId, $countFireBreathing, $playerId, 15);
                 }
                 if ($rightPlayerId != $playerId && $rightPlayerId != $leftPlayerId) {
-                    $this->applyDamage($rightPlayerId, $countFireBreathing, $playerId, 15);
+                    $fireBreathingDamages[] = new Damage($rightPlayerId, $countFireBreathing, $playerId, 15);
                 }
             }
         }
+
+        $this->setGlobalVariable('fireBreathingDamages', $fireBreathingDamages);
 
         $this->setGlobalVariable('diceCounts', $diceCounts);
 
@@ -818,18 +829,32 @@ trait DiceTrait {
         $diceCounts = $this->getGlobalVariable('diceCounts', true);
 
         $diceCount = $diceCounts[6];
+
+        $redirects = null;
+        $smashTokyo = null;
+        $cancelDamageEndState = null;
+
         if ($diceCount > 0) {
-            $this->resolveSmashDice($playerId, $diceCount);
-        }
-
-        // dice resolve may eliminate players
-        $endGame = $this->eliminatePlayers($playerId);
-
-        if ($endGame) {
-            $this->gamestate->nextState('endGame');
+            $smashTokyo = !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
+            $cancelDamageEndState = $smashTokyo ? "smashes" : "enterTokyo";
+            $redirects = $this->resolveSmashDice($playerId, $diceCount);
         } else {
-            $smashTokyo = $diceCounts[6] >= 1 && !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
-            $this->gamestate->nextState($smashTokyo ? 'smashes' : 'enterTokyo');
+            $fireBreathingDamages = $this->getGlobalVariable('fireBreathingDamages', true);
+
+            $smashTokyo = false;
+            foreach($fireBreathingDamages as $fireBreathingDamage) {
+                if ($this->inTokyo($fireBreathingDamage->playerId)) {
+                    $smashTokyo = true;
+                    break;
+                }
+            }
+
+            $cancelDamageEndState = $smashTokyo ? "smashes" : "enterTokyo";
+            die('TEST A '.$cancelDamageEndState);
+            $redirects = $this->resolveDamages($fireBreathingDamages, $cancelDamageEndState);
         }
+        
+        $nextState = $redirects ? 'cancelDamage' : $cancelDamageEndState;
+        $this->gamestate->nextState($nextState);
     }
 }

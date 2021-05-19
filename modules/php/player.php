@@ -5,6 +5,25 @@ namespace KOT\States;
 trait PlayerTrait {
 
 //////////////////////////////////////////////////////////////////////////////
+//////////// Utility functions
+////////////
+
+    function isInvincible(int $playerId) {
+        return array_search($playerId, $this->getGlobalVariable('UsedWings', true)) !== false;
+    }
+
+    function setInvincible(int $playerId) {        
+        $usedWings = $this->getGlobalVariable('UsedWings', true);
+        $usedWings[] = $playerId;
+        $this->setGlobalVariable('UsedWings', $usedWings);
+    }
+
+    function isFewestStars(int $playerId) {
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`) AND (SELECT count(*) FROM `player` where `player_score` = (select min(`player_score`) from `player`)) = 1";
+        return intval(self::getUniqueValueFromDB($sql)) > 0;
+    }
+
+//////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
 
@@ -207,19 +226,19 @@ trait PlayerTrait {
     }
 
     function stEndTurn() {
-        $playerId = self::getActivePlayerId();
+        //$playerId = self::getActivePlayerId();
 
         // clean game state values
         $this->setGameStateValue('lessDiceForNextTurn', 0);
 
         // poison may eliminate players
-        $endGame = $this->eliminatePlayers($playerId);
+        /*$endGame = $this->eliminatePlayers($playerId);
 
         if ($endGame) {
             $this->gamestate->nextState('endGame');
-        } else {
+        } else {*/
             $this->gamestate->nextState('nextPlayer');
-        }
+        /*}*/
     }
 
     function stNextPlayer() {        

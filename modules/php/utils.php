@@ -5,10 +5,12 @@ namespace KOT\States;
 require_once(__DIR__.'/objects/dice.php');
 require_once(__DIR__.'/objects/card.php');
 require_once(__DIR__.'/objects/player.php');
+require_once(__DIR__.'/objects/player-intervention.php');
 
 use KOT\Objects\Card;
 use KOT\Objects\Dice;
 use KOT\Objects\Player;
+use KOT\Objects\CancelDamageIntervention;
 
 trait UtilTrait {
 
@@ -16,7 +18,10 @@ trait UtilTrait {
     //////////// Utility functions
     ////////////
 
-    function setGlobalVariable(string $name, $obj) {
+    function setGlobalVariable(string $name, /*object|array*/ $obj) {
+        /*if ($obj == null) {
+            throw new \Error('Global Variable null');
+        }*/
         $jsonObj = json_encode($obj);
         self::DbQuery("INSERT INTO `global_variables`(`name`, `value`)  VALUES ('$name', '$jsonObj') ON DUPLICATE KEY UPDATE `value` = '$jsonObj'");
     }
@@ -24,7 +29,8 @@ trait UtilTrait {
     function getGlobalVariable(string $name, $asArray = null) {
         $json_obj = self::getUniqueValueFromDB("SELECT `value` FROM `global_variables` where `name` = '$name'");
         if ($json_obj) {
-            return json_decode($json_obj, $asArray);
+            $object = json_decode($json_obj, $asArray);
+            return $object;
         } else {
             return null;
         }
@@ -360,7 +366,7 @@ trait UtilTrait {
     }
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType) {
-        if (array_search($playerId, $this->getGlobalVariable('UsedWings', true)) !== false) {
+        if ($this->isInvincible($playerId)) {
             return; // player has wings and cannot lose hearts
         }
 
@@ -400,7 +406,7 @@ trait UtilTrait {
     }
 
     function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType) {
-        if (array_search($playerId, $this->getGlobalVariable('UsedWings', true)) !== false) {
+        if ($this->isInvincible($playerId)) {
             return; // player has wings and cannot lose hearts
         }
 
@@ -423,6 +429,8 @@ trait UtilTrait {
         if ($damageDealerId == self::getActivePlayerId()) {
             self::setGameStateValue('damageDoneByActivePlayer', 1);
         }
+
+        $this->eliminatePlayers($damageDealerId); // TODO active player instead of damageDealerId
 
         return $newHealth;
     }
@@ -532,8 +540,37 @@ trait UtilTrait {
         ]);
     }
 
-    function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`) AND (SELECT count(*) FROM `player` where `player_score` = (select min(`player_score`) from `player`)) = 1";
-        return intval(self::getUniqueValueFromDB($sql)) > 0;
+    function resolveDamages(array $damages, /* string|int */ $endStateOrTransition) { // bool redirect to cancelDamage
+        if ($endStateOrTransition == null || (gettype($endStateOrTransition) != 'string' && gettype($endStateOrTransition) != 'integer')) {
+            throw new \Error('resolveDamages : endStateOrTransition wrong'); 
+        }
+
+        $cancellableDamages = [];
+        $playersIds = [];
+        foreach ($damages as $damage) {
+            if ($this->canRedirectToCancelDamage($damage->playerId)) {
+                $cancellableDamages[] = $damage;
+                if (!in_array($damage->playerId, $playersIds)) {
+                    $playersIds[] = $damage->playerId;
+                }
+            } else {
+                if ($damage->ignoreCards) {
+                    $this->applyDamageIgnoreCards($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType);
+                } else {
+                    $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType);
+                }
+            }
+        }
+
+        if (count($cancellableDamages) > 0) {
+            $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages);
+            $cancelDamageIntervention->endState = $endStateOrTransition;
+            $this->setGlobalVariable('CancelDamageIntervention', $cancelDamageIntervention);
+            //$this->gamestate->nextState('cancelDamage');
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -8,7 +8,7 @@ trait InterventionTrait {
     //////////// Utility functions
     ////////////
 
-    function setInterventionNextState(string $interventionName, string $nextState, $endState, object $intervention = null) {
+    function setInterventionNextState(string $interventionName, string $nextState, $endState = null, object $intervention = null) {
         if ($intervention == null) {
             $intervention = $this->getGlobalVariable($interventionName);
         }
@@ -34,7 +34,11 @@ trait InterventionTrait {
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
         } else { // leaving transition
             $this->deleteGlobalVariable($interventionName);
-            $this->gamestate->nextState($intervention->endState);
+            if (gettype($intervention->endState) == 'string') {
+                $this->gamestate->nextState($intervention->endState);
+            } else {
+                $this->gamestate->jumpToState($intervention->endState);
+            }
         }
     }
 }
