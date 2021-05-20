@@ -290,8 +290,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_CHOOSE_MIMICKED_CARD => [
         "name" => "chooseMimickedCard",
-        "description" => clienttranslate('${actplayer} can select a card to mimic'),
-        "descriptionmyturn" => clienttranslate('${you} can select a card to mimic'),
+        "description" => clienttranslate('${actplayer} must select a card to mimic'),
+        "descriptionmyturn" => clienttranslate('${you} must select a card to mimic'),
         "type" => "activeplayer",
         "args" => "argChooseMimickedCard",
         "possibleactions" => [ "chooseMimickedCard" ],
@@ -311,6 +311,23 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stOpportunistBuyCard",
         "args" => "argOpportunistBuyCard",
+        "possibleactions" => [ "buyCard", "opportunistSkip" ],
+        "transitions" => [
+            "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
+            "stayMimicCard" => ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD,
+            "end" => ST_PLAYER_BUY_CARD,
+            //"endGame" => ST_END_GAME,
+            //"zombiePass" => ST_PLAYER_BUY_CARD,
+        ],
+    ],
+
+    ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD => [
+        "name" => "opportunistChooseMimicCard",
+        "description" => clienttranslate('Player with Opportunist must select a card to mimic'),
+        "descriptionmyturn" => clienttranslate('${you} must select a card to mimic'),
+        "type" => "multipleactiveplayer",
+        "action" => "stOpportunistChooseMimicCard",
+        "args" => "argOpportunistChooseMimicCard",
         "possibleactions" => [ "buyCard", "opportunistSkip" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,

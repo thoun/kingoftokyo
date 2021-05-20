@@ -689,7 +689,7 @@ trait CardsTrait {
             }
             self::setGameStateValue('newCardId', $newCardId);
 
-            $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
+            $this->redirectAfterBuyCard($playerId, $newCardId, $mimic); // TODO mimic only if cards available to mimic. same for MPOpportunist transition
         }
     }
 
