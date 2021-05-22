@@ -566,7 +566,7 @@ trait UtilTrait {
             $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages);
             $cancelDamageIntervention->endState = $endStateOrTransition;
             $this->setGlobalVariable('CancelDamageIntervention', $cancelDamageIntervention);
-            //$this->gamestate->nextState('cancelDamage');
+            $this->gamestate->jumpToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
 
             return true;
         } else {

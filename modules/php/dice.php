@@ -836,7 +836,6 @@ trait DiceTrait {
 
         if ($diceCount > 0) {
             $smashTokyo = !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
-            $cancelDamageEndState = $smashTokyo ? "smashes" : "enterTokyo";
             $redirects = $this->resolveSmashDice($playerId, $diceCount);
         } else {
             $fireBreathingDamages = $this->getGlobalVariable('fireBreathingDamages', true);
@@ -853,7 +852,8 @@ trait DiceTrait {
             $redirects = $this->resolveDamages($fireBreathingDamages, $cancelDamageEndState);
         }
         
-        $nextState = $redirects ? 'cancelDamage' : $cancelDamageEndState;
-        $this->gamestate->nextState($nextState);
+        if (!$redirects) {
+            $this->gamestate->nextState($smashTokyo ? "smashes" : "enterTokyo");
+        }
     }
 }

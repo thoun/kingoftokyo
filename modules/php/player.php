@@ -54,16 +54,9 @@ trait PlayerTrait {
             $delayedDamage = intval($this->getGameStateValue('damageForJetsIfStayingInTokyo'));
             $this->applyDamage($playerId, $delayedDamage, 0, 0);
         }
-
-        // staying with Jets may eliminate players
-        $endGame = $this->eliminatePlayers($playerId);
-
-        if ($endGame) {
-            $this->gamestate->nextState('next');
-        } else {
-            // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
-            $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
-        }
+        
+        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
+        $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
     }
 
     function actionLeaveTokyo() {
@@ -152,27 +145,35 @@ trait PlayerTrait {
         $this->gamestate->setPlayersMultiactive($this->getPlayersIdsInTokyo(), 'resume');
     }
 
-    function stEnterTokyo() {
+    
+    function stEnterTokyoApplyBurrowing() {
         $playerId = self::getActivePlayerId();
 
         // burrowing
         $loseHeartForBurrowing = intval(self::getGameStateValue('loseHeartEnteringTokyo'));
         if ($loseHeartForBurrowing > 0) {
-            $this->applyDamage($playerId, $loseHeartForBurrowing, 0, 6);
-            self::setGameStateValue('loseHeartEnteringTokyo', 0);
-        }            
+            $damage = new Damage($playerId, $loseHeartForBurrowing, 0, 6);
+            $redirects = $this->resolveDamages([$damage], 'enterTokyoAfterBurrowing');
 
+            self::setGameStateValue('loseHeartEnteringTokyo', 0);
+        }        
+
+        if (!$redirects) {
+            $this->gamestate->nextState('next');
+        }
+    }
+
+        
+    function stEnterTokyo() {
         if ($this->getPlayerHealth($playerId) > 0) { // enter only if burrowing doesn't kill player
             if ($this->isTokyoEmpty(false)) {
                 $this->moveToTokyo($playerId, false);
             } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
                 $this->moveToTokyo($playerId, true);
             }
-        } else {
-            $this->eliminatePlayers($playerId);
         }
 
-        if ($this->getMaxPlayerScore() >= MAX_POINT || $this->getRemainingPlayers() <= 1) { // in case burrowing let only 1 player alive
+        if ($this->getMaxPlayerScore() >= MAX_POINT) {
             $this->gamestate->nextState('endGame');
         } else {
             $this->gamestate->nextState('next');
@@ -226,7 +227,9 @@ trait PlayerTrait {
             $redirects = $this->resolveDamages([$damage], 'endTurn');
         }
 
-        $this->gamestate->nextState($redirects ? 'cancelDamage' : 'endTurn');
+        if (!$redirects) {
+            $this->gamestate->nextState('endTurn');
+        }
     }
 
     function stEndTurn() {

@@ -222,7 +222,7 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stResolveSmashDice",
         "transitions" => [
-            "enterTokyo" => ST_ENTER_TOKYO,
+            "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
             "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             //"endGame" => ST_END_GAME,
@@ -239,7 +239,8 @@ $playerActionsGameStates = [
         "possibleactions" => [ "throwCamouflageDice", "useWings", "skipWings" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
-            "enterTokyo" => ST_ENTER_TOKYO,
+            "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
+            "enterTokyoAfterBurrowing" => ST_ENTER_TOKYO,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
             "endTurn" => ST_END_TURN,
             "zombiePass" => ST_END_TURN,
@@ -254,9 +255,20 @@ $playerActionsGameStates = [
         "action" => "stLeaveTokyo",
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
-            "resume" => ST_ENTER_TOKYO,
+            "resume" => ST_ENTER_TOKYO_APPLY_BURROWING,
             //"endGame" => ST_END_GAME,
             //"zombiePass" => ST_PLAYER_BUY_CARD,
+        ],
+    ],
+
+    ST_ENTER_TOKYO_APPLY_BURROWING => [
+        "name" => "enterTokyoApplyBurrowing",
+        "description" => "",
+        "type" => "game",
+        "action" => "stEnterTokyoApplyBurrowing",
+        "transitions" => [
+            "next" => ST_ENTER_TOKYO,
+            //"endGame" => ST_END_GAME,
         ],
     ],
 

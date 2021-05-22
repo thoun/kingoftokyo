@@ -228,10 +228,8 @@ trait CardsTrait {
             case 119:
                 $count = $this->cards->countCardInLocation('hand', $player_id);
                 $this->applyGetPoints($playerId, $count, $type);
-                $this->applyDamage($playerId, $count, $playerId, $type);
-                
+                $this->applyDamage($playerId, $count, $playerId, $type);                
                 break;
-            case 120:
         }
     }
 
