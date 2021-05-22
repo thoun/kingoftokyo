@@ -52,7 +52,6 @@ class KingOfTokyo extends Table {
             "loseHeartEnteringTokyo" => 14,
             "playAgainAfterTurnOneLessDie" => 15,
             "lessDiceForNextTurn" => 16,
-            "damageForJetsIfStayingInTokyo" => 18,
             "madeInALabCard" => 19,
             "newCardId" => 20,
             //      ...
@@ -122,7 +121,6 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('damageDoneByActivePlayer', 0);
         self::setGameStateInitialValue('energyDrinks', 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
-        self::setGameStateInitialValue('damageForJetsIfStayingInTokyo', 0);
         self::setGameStateInitialValue('madeInALabCard', 0);
         self::setGameStateInitialValue('newCardId', 0);
 

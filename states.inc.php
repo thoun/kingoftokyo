@@ -255,10 +255,20 @@ $playerActionsGameStates = [
         "action" => "stLeaveTokyo",
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
-            "resume" => ST_ENTER_TOKYO_APPLY_BURROWING,
+            "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
             //"endGame" => ST_END_GAME,
             //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
+    ],
+
+    ST_LEAVE_TOKYO_APPLY_JETS => [
+        "name" => "enterTokyoApplyBurrowing",
+        "description" => "",
+        "type" => "game",
+        "action" => "stLeaveTokyoApplyJets",
+        "transitions" => [
+            "resume" => ST_ENTER_TOKYO_APPLY_BURROWING,
+        ],        
     ],
 
     ST_ENTER_TOKYO_APPLY_BURROWING => [

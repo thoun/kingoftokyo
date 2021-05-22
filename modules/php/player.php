@@ -47,13 +47,6 @@ trait PlayerTrait {
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
         ]);
-
-        // Jets
-        $countJets = $this->countCardOfType($playerId, 24);
-        if ($countJets > 0) {
-            $delayedDamage = intval($this->getGameStateValue('damageForJetsIfStayingInTokyo'));
-            $this->applyDamage($playerId, $delayedDamage, 0, 0, self::getActivePlayerId()); // TODO replace by resolveDamages but in Multi-player ?
-        }
         
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
@@ -63,6 +56,10 @@ trait PlayerTrait {
         $playerId = self::getCurrentPlayerId();
 
         $this->leaveTokyo($playerId);
+
+        $jetsDamages = $this->getGlobalVariable('JetsDamages');
+        $jetsDamages = array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; });
+        $this->setGlobalVariable('JetsDamages', $jetsDamages);
         
         // burrowing
         $countBurrowing = $this->countCardOfType($playerId, 6);
@@ -145,6 +142,18 @@ trait PlayerTrait {
         $this->gamestate->setPlayersMultiactive($this->getPlayersIdsInTokyo(), 'resume');
     }
 
+    function stLeaveTokyoApplyJets() {
+        $jetsDamages = $this->getGlobalVariable('JetsDamages');
+        
+        $redirects = false;
+        if (count($jetsDamages) > 0) {
+            $redirects = $this->resolveDamages($jetsDamages, ST_ENTER_TOKYO_APPLY_BURROWING);
+        }
+
+        if (!$redirects) {
+            $this->gamestate->nextState('next');
+        }
+    }
     
     function stEnterTokyoApplyBurrowing() {
         $playerId = self::getActivePlayerId();

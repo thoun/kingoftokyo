@@ -147,16 +147,18 @@ trait DiceTrait {
             $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
         }
 
+        $jetsDamages = [];
         foreach($smashedPlayersIds as $smashedPlayerId) {
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, 24);
 
             if ($countJets > 0) {
-                $this->setGameStateValue('damageForJetsIfStayingInTokyo', $diceCount);
+                $jetsDamages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
             } else {
                 $damages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
             }
         }
+        $this->setGlobalVariable('JetsDamages', $jetsDamages)  ;      
 
         self::notifyAllPlayers("resolveSmashDice", $message, [
             'playerId' => $playerId,
