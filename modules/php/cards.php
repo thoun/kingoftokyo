@@ -4,9 +4,11 @@ namespace KOT\States;
 
 require_once(__DIR__.'/objects/card.php');
 require_once(__DIR__.'/objects/player-intervention.php');
+require_once(__DIR__.'/objects/damage.php');
 
 use KOT\Objects\Card;
 use KOT\Objects\OpportunistIntervention;
+use KOT\Objects\Damage;
 
 trait CardsTrait {
 
@@ -128,7 +130,7 @@ trait CardsTrait {
         return array_map(function($dbCard) { return $this->getCardFromDb($dbCard); }, array_values($dbCards));
     }
 
-    function applyEffects($card, $playerId) {
+    function applyEffects($card, $playerId) { // return $damages
         $type = $card->type;
 
         switch($type) {
@@ -174,37 +176,38 @@ trait CardsTrait {
                 break;
             case 108: 
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                $damages = [];
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyDamage($otherPlayerId, 2, $playerId, $type);
+                    $damages[] = new Damage($otherPlayerId, 2, $playerId, $type);
                 }
-                break;
+                return $damages;
             case 109: 
                 $this->setGameStateValue('playAgainAfterTurn', 1);
                 break;
             case 110: 
                 $this->applyGetPoints($playerId, 2, $type);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                $damages = [];
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyDamage($otherPlayerId, 3, $playerId, $type);
+                    $damages[] = new Damage($otherPlayerId, 3, $playerId, $type);
                 }
-                break;
+                return $damages;
             case 111:
                 $this->applyGetHealth($playerId, 2, $type);
                 break;
             case 112: 
                 $playersIds = $this->getPlayersIds();
+                $damages = [];
                 foreach ($playersIds as $pId) {
-                    $this->applyDamage($pId, 3, $playerId, $type);
+                    $damages[] = new Damage($pId, 3, $playerId, $type);
                 }
-                break;
+                return $damages;
             case 113: 
                 $this->applyGetPoints($playerId, 5, $type);
-                $this->applyDamage($playerId, 4, $playerId, $type);
-                break;
+                return [new Damage($playerId, 4, $playerId, $type)];
             case 114:
                 $this->applyGetPoints($playerId, 2, $type);
-                $this->applyDamage($playerId, 2, $playerId, $type);
-                break;
+                return [new Damage($playerId, 2, $playerId, $type)];
             case 115:
                 $this->applyGetPoints($playerId, 2, $type);
                 $this->applyGetHealth($playerId, 3, $type);
@@ -214,8 +217,7 @@ trait CardsTrait {
                 break;
             case 117:
                 $this->applyGetPoints($playerId, 4, $type);
-                $this->applyDamage($playerId, 3, $playerId, $type);
-                break;
+                return [new Damage($playerId, 3, $playerId, $type)];
             case 118: 
                 $this->applyGetPoints($playerId, 2, $type);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
@@ -228,8 +230,7 @@ trait CardsTrait {
             case 119:
                 $count = $this->cards->countCardInLocation('hand', $player_id);
                 $this->applyGetPoints($playerId, $count, $type);
-                $this->applyDamage($playerId, $count, $playerId, $type);                
-                break;
+                return [new Damage($playerId, $count, $playerId, $type)];
         }
     }
 
@@ -671,43 +672,44 @@ trait CardsTrait {
             $this->setMimickedCard($playerId, $card);
         }
 
-        $this->applyEffects($card, $playerId);
+        $damages = $this->applyEffects($card, $playerId);
 
-        // cards effects may eliminate players
-        $endGame = $this->eliminatePlayers($playerId);
+        $mimic = $card->type == 27;
 
-        if ($endGame) {
-            $this->gamestate->nextState('endGame');
-        } else {
-            $mimic = $card->type == 27;
+        $newCardId = 0;
+        if ($newCard != null) {
+            $newCardId = $newCard->id;
+        }
+        self::setGameStateValue('newCardId', $newCardId);
 
-            $newCardId = 0;
-            if ($newCard != null) {
-                $newCardId = $newCard->id;
-            }
-            self::setGameStateValue('newCardId', $newCardId);
+        $redirects = false;
+        if ($damages != null && count($damages) > 0) {
+            $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
+            $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard); // TODO apply opportunist checks like redirectAfterBuyCard
+        }
 
-            $this->redirectAfterBuyCard($playerId, $newCardId, $mimic); // TODO mimic only if cards available to mimic. same for MPOpportunist transition
+        if (!$redirects) {
+            $this->gamestate->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic)); // TODO mimic only if cards available to mimic. same for MPOpportunist transition
         }
     }
 
-    function redirectAfterBuyCard($playerId, $newCardId, $mimic) {
+    function redirectAfterBuyCard($playerId, $newCardId, $mimic) { // return whereToRedirect
         if ($this->getGlobalVariable('OpportunistIntervention') != null) {
             $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
             $opportunistIntervention->revealedCardsIds = [$newCardId];
             $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
 
             $this->setInterventionNextState('OpportunistIntervention', 'keep', null, $opportunistIntervention);
-            $this->gamestate->nextState($mimic ? 'buyMimicCard' : 'stay');
+            return $mimic ? ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
         } else {
             $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
 
             if (count($playersWithOpportunist) > 0) {
                 $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCardId]);
                 $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
-                $this->gamestate->nextState($mimic ? 'buyMimicCard' : 'opportunist');
+                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
             } else {
-                $this->gamestate->nextState($mimic ? 'buyMimicCard' : 'buyCard');
+                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_PLAYER_BUY_CARD;
             }
         }
     }
@@ -784,7 +786,7 @@ trait CardsTrait {
 
         $this->setMimickedCardId($playerId, $mimickedCardId);
 
-        $this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false);
+        $this->gamestate->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
     }
 
     function changeMimickedCard(int $mimickedCardId) {
@@ -859,7 +861,7 @@ trait CardsTrait {
             $intervention->damages[0]->damage -= $cancelledDamage;
         } else {
             if ($remainingDamage > 0) {
-                $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType);
+                $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
             }
             $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
         }
@@ -906,7 +908,7 @@ trait CardsTrait {
             }
         }
 
-        $this->applyDamage($playerId, $totalDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType);
+        $this->applyDamage($playerId, $totalDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
 
         $this->setInterventionNextState('CancelDamageIntervention', 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');

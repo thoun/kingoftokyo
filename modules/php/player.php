@@ -52,7 +52,7 @@ trait PlayerTrait {
         $countJets = $this->countCardOfType($playerId, 24);
         if ($countJets > 0) {
             $delayedDamage = intval($this->getGameStateValue('damageForJetsIfStayingInTokyo'));
-            $this->applyDamage($playerId, $delayedDamage, 0, 0);
+            $this->applyDamage($playerId, $delayedDamage, 0, 0, self::getActivePlayerId()); // TODO replace by resolveDamages but in Multi-player ?
         }
         
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
@@ -149,6 +149,7 @@ trait PlayerTrait {
     function stEnterTokyoApplyBurrowing() {
         $playerId = self::getActivePlayerId();
 
+        $redirects = false;
         // burrowing
         $loseHeartForBurrowing = intval(self::getGameStateValue('loseHeartEnteringTokyo'));
         if ($loseHeartForBurrowing > 0) {
@@ -165,6 +166,8 @@ trait PlayerTrait {
 
         
     function stEnterTokyo() {
+        $playerId = self::getActivePlayerId();
+
         if ($this->getPlayerHealth($playerId) > 0) { // enter only if burrowing doesn't kill player
             if ($this->isTokyoEmpty(false)) {
                 $this->moveToTokyo($playerId, false);
@@ -206,7 +209,7 @@ trait PlayerTrait {
             $this->applyGetPoints($playerId, $countHerbivore, 21);
         }
 
-        // solar powered (TODO move to before selling cards)
+        // solar powered
         $countSolarPowered = $this->countCardOfType($playerId, 42);
         if ($countSolarPowered > 0 && $this->getPlayerEnergy($playerId) == 0) {
             $this->applyGetEnergy($playerId, $countSolarPowered, 42);

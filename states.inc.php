@@ -387,9 +387,5 @@ $playerActionsGameStates = [
         ],
     ],
 ];
-
-$cardsGameStates = [
-    // TODO
-];
  
-$machinestates = $basicGameStates + $playerActionsGameStates + $cardsGameStates;
+$machinestates = $basicGameStates + $playerActionsGameStates;

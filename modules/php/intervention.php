@@ -36,8 +36,10 @@ trait InterventionTrait {
             $this->deleteGlobalVariable($interventionName);
             if (gettype($intervention->endState) == 'string') {
                 $this->gamestate->nextState($intervention->endState);
-            } else {
+            } else if (gettype($intervention->endState) == 'integer') {
                 $this->gamestate->jumpToState($intervention->endState);
+            } else {
+                throw new \Error('invalide endState');
             }
         }
     }

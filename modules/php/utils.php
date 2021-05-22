@@ -365,7 +365,7 @@ trait UtilTrait {
         }
     }
 
-    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType) {
+    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
         if ($this->isInvincible($playerId)) {
             return; // player has wings and cannot lose hearts
         }
@@ -377,7 +377,7 @@ trait UtilTrait {
             return;
         }
 
-        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType);
+        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId);
 
         if ($newHealth == 0) {
             // eater of the dead 
@@ -405,7 +405,7 @@ trait UtilTrait {
         }
     }
 
-    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType) {
+    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
         if ($this->isInvincible($playerId)) {
             return; // player has wings and cannot lose hearts
         }
@@ -430,7 +430,7 @@ trait UtilTrait {
             self::setGameStateValue('damageDoneByActivePlayer', 1);
         }
 
-        $this->eliminatePlayers($damageDealerId); // TODO active player instead of damageDealerId
+        $this->eliminatePlayers($activePlayerId);
 
         return $newHealth;
     }
@@ -540,9 +540,9 @@ trait UtilTrait {
         ]);
     }
 
-    function resolveDamages(array $damages, /* string|int */ $endStateOrTransition) { // bool redirect to cancelDamage
+    function resolveDamages(int $activePlayerId, array $damages, /* string|int|function */ $endStateOrTransition) { // bool redirect to cancelDamage
         if ($endStateOrTransition == null || (gettype($endStateOrTransition) != 'string' && gettype($endStateOrTransition) != 'integer')) {
-            throw new \Error('resolveDamages : endStateOrTransition wrong'); 
+            throw new \Error('resolveDamages : endStateOrTransition wrong '); 
         }
 
         $cancellableDamages = [];
@@ -554,10 +554,11 @@ trait UtilTrait {
                     $playersIds[] = $damage->playerId;
                 }
             } else {
+                $activePlayerId = self::getActivePlayerId();
                 if ($damage->ignoreCards) {
-                    $this->applyDamageIgnoreCards($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType);
+                    $this->applyDamageIgnoreCards($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId);
                 } else {
-                    $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType);
+                    $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId);
                 }
             }
         }
