@@ -241,6 +241,7 @@ $playerActionsGameStates = [
             "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             "enterTokyo" => ST_ENTER_TOKYO,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
+            "endTurn" => ST_END_TURN,
             "zombiePass" => ST_END_TURN,
         ],
     ],
@@ -357,6 +358,7 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stResolveEndTurn",
         "transitions" => [ 
+            "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             "endTurn" => ST_END_TURN,
             //"zombiePass" => ST_NEXT_PLAYER,
         ],

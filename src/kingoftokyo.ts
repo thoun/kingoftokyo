@@ -180,7 +180,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
 
             if (isCurrentPlayerActive) {
-                dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice', 'after');
+                dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice-and-rapid-healing', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
             }
         }

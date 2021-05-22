@@ -671,7 +671,7 @@ var DiceManager = /** @class */ (function () {
         var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
-            dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
+            dojo.place(_this.createDiceHtml(die, inTokyo), "dice-selector" + die.value);
             var selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             _this.addDiceRollClass(die);
@@ -689,7 +689,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
+            dojo.place(_this.createDiceHtml(die, inTokyo), "dice-selector" + die.value);
             _this.addDiceRollClass(die);
         });
     };
@@ -701,7 +701,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
+            dojo.place(_this.createDiceHtml(die, inTokyo), "dice-selector" + die.value);
             _this.addDiceRollClass(die);
             if (isCurrentPlayerActive) {
                 var divId = "dice" + die.id;
@@ -721,7 +721,7 @@ var DiceManager = /** @class */ (function () {
                 locked: false,
                 rolled: true,
             };
-            dojo.place(_this.createDiceHtml(die, false), 'dice-selector');
+            dojo.place(_this.createDiceHtml(die, false), "dice-selector" + die.value);
             _this.addDiceRollClass(die);
         });
     };
@@ -1134,7 +1134,7 @@ var KingOfTokyo = /** @class */ (function () {
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
             if (isCurrentPlayerActive) {
-                dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice', 'after');
+                dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice-and-rapid-healing', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
             }
         }

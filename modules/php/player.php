@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/objects/damage.php');
+
+use KOT\Objects\Damage;
+
 trait PlayerTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -178,8 +182,6 @@ trait PlayerTrait {
     function stResolveEndTurn() {
         $playerId = self::getActivePlayerId();
 
-        
-
         // apply end of turn effects (after Selling Cards)
 
         // rooting for the underdog
@@ -217,12 +219,14 @@ trait PlayerTrait {
         $this->cards->moveCards($discardCardsIds, 'discard');
 
         // apply poison
+        $redirects = false;
         $countPoison = $this->getPlayerPoisonTokens($playerId);
         if ($countPoison > 0) {
-            $this->applyDamage($playerId, $countPoison, 0, 35);
+            $damage = new Damage($playerId, $countPoison, 0, 35);
+            $redirects = $this->resolveDamages([$damage], 'endTurn');
         }
 
-        $this->gamestate->nextState('endTurn');
+        $this->gamestate->nextState($redirects ? 'cancelDamage' : 'endTurn');
     }
 
     function stEndTurn() {

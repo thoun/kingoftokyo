@@ -44,7 +44,7 @@ class DiceManager {
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
-            dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
+            dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);
             const selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
@@ -64,7 +64,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
+            dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);
             this.addDiceRollClass(die);
         });
     }
@@ -77,7 +77,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            dojo.place(this.createDiceHtml(die, inTokyo), 'dice-selector');
+            dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);
             this.addDiceRollClass(die);
 
             if (isCurrentPlayerActive) {
@@ -99,7 +99,7 @@ class DiceManager {
                 locked: false,
                 rolled: true,
             };
-            dojo.place(this.createDiceHtml(die, false), 'dice-selector');
+            dojo.place(this.createDiceHtml(die, false), `dice-selector${die.value}`);
             this.addDiceRollClass(die);
         });
     }

@@ -840,13 +840,19 @@ trait CardsTrait {
             $args = $this->argCancelDamage();
         }
 
-        self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name} and reduce [Heart] loss by ${cancelledDamage}'), [
+        $diceStr = '';
+        foreach($diceValues as $dieValue) {
+            $diceStr .= $this->getDieFaceLogName($dieValue);
+        }
+
+        self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and reduce [Heart] loss by ${cancelledDamage}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $this->getCardName(7),
             'cancelledDamage' => $cancelledDamage,
             'diceValues' => $diceValues,
             'cancelDamageArgs' => $args,
+            'dice' => $diceStr,
         ]);
 
         // TOCHECK can a player leaves tokyo even if he cancelled all damage with Camonflage or Wings ? Considered Yes
