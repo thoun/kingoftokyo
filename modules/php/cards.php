@@ -825,9 +825,20 @@ trait CardsTrait {
 
         $cancelledDamage = count(array_values(array_filter($diceValues, function($face) { return $face === 4; }))); // heart dices
 
-        $intervention->playersUsedDice[$playerId] = $diceValues;
+        $intervention->playersUsedDice->{$playerId} = $diceValues;
 
-        $remainingDamage = $intervention->damage - $cancelledDamage;
+        $remainingDamage = $dice - $cancelledDamage;
+
+        $this->setInterventionNextState('CancelDamageIntervention', 'next', null, $intervention); // we use this to save changes to $intervention
+
+        $args = null;
+
+        // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
+        $stayOnState = $remainingDamage > 0 && $this->countCardOfType($playerId, 48) > 0;
+
+        if ($stayOnState) {
+            $args = $this->argCancelDamage();
+        }
 
         self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name} and reduce [Heart] loss by ${cancelledDamage}'), [
             'playerId' => $playerId,
@@ -835,17 +846,17 @@ trait CardsTrait {
             'card_name' => $this->getCardName(7),
             'cancelledDamage' => $cancelledDamage,
             'diceValues' => $diceValues,
+            'cancelDamageArgs' => $args,
         ]);
 
-        if ($remainingDamage > 0) {
-            $this->applyDamage($playerId, $intervention->damage, $intervention->damageDealerId, $intervention->cardType);
-        }
+        // TOCHECK can a player leaves tokyo even if he cancelled all damage with Camonflage or Wings ? Considered Yes
 
-        $this->setInterventionNextState('CancelDamageIntervention', 'next');
-
-        if ($remainingDamage > 0 && $this->countCardOfType($playerId, 48) == 0) {
-            // if player doesn't also have wings, and some damages aren't cancelled, we stay on state
+        if ($stayOnState) {
+            $intervention->damages[0]->damage -= $cancelledDamage;
         } else {
+            if ($remainingDamage > 0) {
+                $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType);
+            }
             $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
         }
     }
@@ -884,7 +895,14 @@ trait CardsTrait {
 
         $intervention = $this->getGlobalVariable('CancelDamageIntervention');
 
-        $this->applyDamage($playerId, $intervention->damage, $intervention->damageDealerId, $intervention->cardType);
+        $totalDamage = 0;
+        foreach($intervention->damages as $damage) {
+            if ($damage->playerId == $playerId) {
+                $totalDamage += $damage->damage;
+            }
+        }
+
+        $this->applyDamage($playerId, $totalDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType);
 
         $this->setInterventionNextState('CancelDamageIntervention', 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
@@ -995,11 +1013,18 @@ trait CardsTrait {
 
         $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
         if ($playerId != null) {
-            $canThrowDices = $this->countCardOfType($playerId, 7) > 0 && !array_key_exists($playerId, $intervention->playersUsedDice);
+            $dice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->$playerId : null; //$playerId must stay with $ !
+
+            $canThrowDices = $this->countCardOfType($playerId, 7) > 0 && $dice == null;
             $canUseWings = $this->countCardOfType($playerId, 48) > 0;
             $canSkipWings = $canUseWings && !$canThrowDices;
 
-            $dice = array_key_exists($playerId, $intervention->playersUsedDice) ? $intervention->playersUsedDice[$playerId] : null;
+            $remainingDamage = 0;
+            foreach($intervention->damages as $damage) {
+                if ($damage->playerId == $playerId) {
+                    $remainingDamage += $damage->damage;
+                }
+            }
 
             return [
                 'canThrowDices' => $canThrowDices,
@@ -1007,9 +1032,12 @@ trait CardsTrait {
                 'canSkipWings' => $canSkipWings,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
+                'damage' => $remainingDamage,
             ];
         } else {
-            return [];
+            return [
+                'damage' => '',
+            ];
         }
     }
 

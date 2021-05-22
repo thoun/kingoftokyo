@@ -37,12 +37,13 @@ class PsychicProbeIntervention extends PlayerIntervention {
 
 class CancelDamageIntervention extends PlayerIntervention {
     public $damages;
-    public $playersUsedDice = []; // store playerId => diceFaces
+    public $playersUsedDice; // store playerId => diceFaces
 
     public function __construct(array $remainingPlayersId, array $damages) {
         parent::__construct(ST_MULTIPLAYER_CANCEL_DAMAGE, $remainingPlayersId);
 
-        $this->damages;
+        $this->damages = $damages;
+        $this->playersUsedDice = new \stdClass();
     } 
 }
 ?>

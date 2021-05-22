@@ -231,8 +231,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_CANCEL_DAMAGE => [
         "name" => "cancelDamage",
-        "description" => clienttranslate('A player can reduce damage'),
-        "descriptionmyturn" => clienttranslate('${you} can reduce damage'),
+        "description" => clienttranslate('A player can reduce damage (${damage}[Heart])'),
+        "descriptionmyturn" => clienttranslate('${you} can reduce damage (${damage}[Heart])'),
         "type" => "multipleactiveplayer",
         "action" => "stCancelDamage",
         "args" => "argCancelDamage",

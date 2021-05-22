@@ -649,20 +649,14 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.removeAllDice = function () {
         var _this = this;
         this.dice.forEach(function (die) { return _this.removeDice(die); });
-        for (var i = 1; i <= 6; i++) {
-            document.getElementById("locked-dice" + i).innerHTML = '';
-            document.getElementById("dice-selector" + i).innerHTML = '';
-        }
+        this.clearDiceHtml();
         this.dice = [];
     };
     DiceManager.prototype.setDiceForThrowDice = function (dice, lastTurn, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
-        for (var i = 1; i <= 6; i++) {
-            document.getElementById("locked-dice" + i).innerHTML = '';
-            document.getElementById("dice-selector" + i).innerHTML = '';
-        }
+        this.clearDiceHtml();
         this.dice = dice;
         var selectable = isCurrentPlayerActive && !lastTurn;
         dice.forEach(function (die) { return _this.createDice(die, selectable, inTokyo); });
@@ -672,7 +666,7 @@ var DiceManager = /** @class */ (function () {
         var _this = this;
         var _a;
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
-        $('dice-selector').innerHTML = '';
+        this.clearDiceHtml();
         this.dice = dice;
         var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
         dice.forEach(function (die) {
@@ -692,11 +686,9 @@ var DiceManager = /** @class */ (function () {
         if (this.dice.length) {
             return;
         }
-        //this.dice?.forEach(die => this.removeDice(die));  
-        $('dice-selector').innerHTML = '';
+        this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            var divId = "dice" + die.id;
             dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
             _this.addDiceRollClass(die);
         });
@@ -706,18 +698,38 @@ var DiceManager = /** @class */ (function () {
         if (this.dice.length) {
             return;
         }
-        //this.dice?.forEach(die => this.removeDice(die));  
-        $('dice-selector').innerHTML = '';
+        this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            var divId = "dice" + die.id;
             dojo.place(_this.createDiceHtml(die, inTokyo), 'dice-selector');
             _this.addDiceRollClass(die);
             if (isCurrentPlayerActive) {
+                var divId = "dice" + die.id;
                 document.getElementById(divId).addEventListener('click', function () { return _this.game.psychicProbeRollDie(die.id); });
             }
         });
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
+    };
+    DiceManager.prototype.showCamouflageRoll = function (diceValues) {
+        var _this = this;
+        this.clearDiceHtml();
+        diceValues.forEach(function (dieValue, index) {
+            var die = {
+                id: index,
+                value: dieValue,
+                extra: false,
+                locked: false,
+                rolled: true,
+            };
+            dojo.place(_this.createDiceHtml(die, false), 'dice-selector');
+            _this.addDiceRollClass(die);
+        });
+    };
+    DiceManager.prototype.clearDiceHtml = function () {
+        for (var i = 1; i <= 6; i++) {
+            document.getElementById("locked-dice" + i).innerHTML = '';
+            document.getElementById("dice-selector" + i).innerHTML = '';
+        }
     };
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
@@ -1127,8 +1139,25 @@ var KingOfTokyo = /** @class */ (function () {
             }
         }
     };
-    KingOfTokyo.prototype.onEnteringCancelDamage = function (args, isCurrentPlayerActive) {
-        // TODO cancel
+    KingOfTokyo.prototype.onEnteringCancelDamage = function (args) {
+        if (args.dice) {
+            this.diceManager.showCamouflageRoll(args.dice);
+        }
+        if (args.canThrowDices && !document.getElementById('throwCamouflageDice_button')) {
+            this.addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
+        }
+        else if (!args.canThrowDices && document.getElementById('throwCamouflageDice_button')) {
+            dojo.destroy('throwCamouflageDice_button');
+        }
+        if (args.canUseWings && !document.getElementById('useWings_button')) {
+            this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48) })), 'useWings');
+            if (args.playerEnergy < 2) {
+                dojo.addClass('useWings_button', 'disabled');
+            }
+        }
+        if (args.canSkipWings && !document.getElementById('skipWings_button')) {
+            this.addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48) }), 'skipWings');
+        }
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
         var _this = this;
@@ -1186,6 +1215,9 @@ var KingOfTokyo = /** @class */ (function () {
             case 'sellCard':
                 this.onLeavingSellCard();
                 break;
+            case 'cancelDamage':
+                this.diceManager.removeAllDice();
+                break;
         }
     };
     KingOfTokyo.prototype.onLeavingBuyCard = function () {
@@ -1242,20 +1274,7 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
                 case 'cancelDamage':
-                    var cancelArgs = args;
-                    if (cancelArgs.canThrowDices) {
-                        this.addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
-                    }
-                    if (cancelArgs.canUseWings) {
-                        this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48) })), 'useWings');
-                        if (cancelArgs.playerEnergy < 2) {
-                            dojo.addClass('useWings_button', 'disabled');
-                        }
-                    }
-                    if (cancelArgs.canSkipWings) {
-                        this.addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48) }), 'skipWings');
-                    }
-                    this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
+                    this.onEnteringCancelDamage(args); // because it's multiplayer, enter action must be set here
                     break;
             }
         }
@@ -1599,6 +1618,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['renewCards', ANIMATION_MS],
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
+            ['useCamouflage', ANIMATION_MS],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -1712,6 +1732,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         else {
             this.removeRapidHealingButton();
+        }
+    };
+    KingOfTokyo.prototype.notif_useCamouflage = function (notif) {
+        this.diceManager.showCamouflageRoll(notif.args.diceValues);
+        if (notif.args.cancelDamageArgs) {
+            this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
         }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points) {

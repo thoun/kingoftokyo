@@ -186,8 +186,26 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private onEnteringCancelDamage(args: EnteringCancelDamageArgs, isCurrentPlayerActive: boolean) {
-        // TODO cancel
+    private onEnteringCancelDamage(args: EnteringCancelDamageArgs) {
+        if (args.dice) {
+            this.diceManager.showCamouflageRoll(args.dice);
+        }
+
+        if (args.canThrowDices && !document.getElementById('throwCamouflageDice_button')) {
+            (this as any).addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
+        } else if (!args.canThrowDices && document.getElementById('throwCamouflageDice_button')) {
+            dojo.destroy('throwCamouflageDice_button');
+        }
+
+        if (args.canUseWings && !document.getElementById('useWings_button')) {
+            (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48)})), 'useWings');
+            if (args.playerEnergy < 2) {
+                dojo.addClass('useWings_button', 'disabled');
+            }
+        }
+        if (args.canSkipWings && !document.getElementById('skipWings_button')) {
+            (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48)}), 'skipWings');
+        }
     }
 
     private onEnteringBuyCard(args: EnteringBuyCardArgs, isCurrentPlayerActive: boolean) {
@@ -251,6 +269,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'sellCard':
                 this.onLeavingSellCard();
                 break;
+
+            case 'cancelDamage':
+                this.diceManager.removeAllDice();
+                break;
         }
     }
 
@@ -313,20 +335,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 
                 case 'cancelDamage':
-                    const cancelArgs = args as EnteringCancelDamageArgs;
-                    if (cancelArgs.canThrowDices) {
-                        (this as any).addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
-                    }
-                    if (cancelArgs.canUseWings) {
-                        (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48)})), 'useWings');
-                        if (cancelArgs.playerEnergy < 2) {
-                            dojo.addClass('useWings_button', 'disabled');
-                        }
-                    }
-                    if (cancelArgs.canSkipWings) {
-                        (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48)}), 'skipWings');
-                    }
-                    this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
+                    this.onEnteringCancelDamage(args); // because it's multiplayer, enter action must be set here
                     break;
             }
 
@@ -761,6 +770,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['renewCards', ANIMATION_MS],
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
+            ['useCamouflage', ANIMATION_MS],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -894,6 +904,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.addRapidHealingButton(notif.args.playerEnergy);
         } else {
             this.removeRapidHealingButton();
+        }
+    }
+
+    notif_useCamouflage(notif: Notif<NotifUseCamouflageArgs>) {
+        this.diceManager.showCamouflageRoll(notif.args.diceValues);
+        if (notif.args.cancelDamageArgs) {
+            this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
         }
     }
     

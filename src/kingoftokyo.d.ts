@@ -111,6 +111,14 @@ interface EnteringBuyCardArgs {
     };
 }
 
+interface EnteringCancelDamageArgs {
+    canSkipWings: boolean;
+    canThrowDices: boolean;
+    canUseWings: boolean;
+    playerEnergy: number;
+    dice: number[];
+}
+
 interface NotifResolveArgs {
     playerId: number;
     player_name: string;
@@ -205,9 +213,8 @@ interface NotifToggleRapidHealingArgs {
     playerEnergy: number;
 }
 
-interface EnteringCancelDamageArgs {
-    canSkipWings: boolean;
-    canThrowDices: boolean;
-    canUseWings: boolean;
-    playerEnergy: number;
+interface NotifUseCamouflageArgs {
+    playerId: number;
+    diceValues: number[];
+    cancelDamageArgs: EnteringCancelDamageArgs;
 }

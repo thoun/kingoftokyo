@@ -850,7 +850,6 @@ trait DiceTrait {
             }
 
             $cancelDamageEndState = $smashTokyo ? "smashes" : "enterTokyo";
-            die('TEST A '.$cancelDamageEndState);
             $redirects = $this->resolveDamages($fireBreathingDamages, $cancelDamageEndState);
         }
         
