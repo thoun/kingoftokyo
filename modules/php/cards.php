@@ -135,9 +135,8 @@ trait CardsTrait {
 
         switch($type) {
             // KEEP
-            case 12: 
+            case EVEN_BIGGER_CARD: 
                 $this->applyGetHealth($playerId, 2, $type);
-
                 $this->notifMaxHealth($playerId);
                 break;
             
@@ -168,7 +167,7 @@ trait CardsTrait {
                 }
                 break;
             case 105:
-                $this->applyGetEnergy($playerId, 9, $type);
+                $this->applyGetEnergy($playerId, MEDIA_FRIENDLY_CARD, $type);
                 break;
             case 106: case 107:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
@@ -349,7 +348,7 @@ trait CardsTrait {
         $cardCost = $this->CARD_COST[$cardType];
 
         // alien origin
-        $countAlienOrigin = $this->countCardOfType($playerId, 2);
+        $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
 
         return max($cardCost - $countAlienOrigin, 0);
     }
@@ -386,7 +385,7 @@ trait CardsTrait {
             'playerId' => $playerId,
             'player_name' => $playerName,
             'health' => $health,
-            'card_name' => $this->getCardName(23),
+            'card_name' => $this->getCardName(IT_HAS_A_CHILD_CARD),
         ]);
 
         if ($this->inTokyo($playerId)) {
@@ -473,11 +472,11 @@ trait CardsTrait {
     function removeCard(int $playerId, $card, bool $silent = false) {
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
-        $changeMaxHealth = $card->type == 12;
+        $changeMaxHealth = $card->type == EVEN_BIGGER_CARD;
         
         $removeMimickToken = false;
         if ($card->type == MIMIC_CARD) { // Mimic
-            $changeMaxHealth = $this->getMimickedCardType() == 12;
+            $changeMaxHealth = $this->getMimickedCardType() == EVEN_BIGGER_CARD;
             $this->setMimickedCardId($playerId, 0); // 0 means no mimicked card
             $removeMimickToken = true;
         } else if ($card->id == $this->getMimickedCardId()) {
@@ -596,7 +595,7 @@ trait CardsTrait {
     }
 
     function canRedirectToCancelDamage(int $playerId) {
-        return $this->countCardOfType($playerId, 7) > 0 || 
+        return $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
           ($this->countCardOfType($playerId, WINGS_CARD) > 0 && !$this->isInvincible($playerId));
     }
 
@@ -633,9 +632,9 @@ trait CardsTrait {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         // media friendly
-        $countMediaFriendly = $this->countCardOfType($playerId, 9);
+        $countMediaFriendly = $this->countCardOfType($playerId, MEDIA_FRIENDLY_CARD);
         if ($countMediaFriendly > 0) {
-            $this->applyGetPoints($playerId, $countMediaFriendly, 9);
+            $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
         }
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
@@ -834,7 +833,7 @@ trait CardsTrait {
     function throwCamouflageDice() {
         $playerId = self::getCurrentPlayerId();
 
-        if ($this->countCardOfType($playerId, 7) == 0) {
+        if ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) == 0) {
             throw new \Error('No Camouflage card');
         }
 
@@ -878,7 +877,7 @@ trait CardsTrait {
         self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and reduce [Heart] loss by ${cancelledDamage}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'card_name' => $this->getCardName(7),
+            'card_name' => $this->getCardName(CAMOUFLAGE_CARD),
             'cancelledDamage' => $cancelledDamage,
             'diceValues' => $diceValues,
             'cancelDamageArgs' => $args,
@@ -1050,7 +1049,7 @@ trait CardsTrait {
         if ($playerId != null) {
             $dice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->$playerId : null; //$playerId must stay with $ !
 
-            $canThrowDices = $this->countCardOfType($playerId, 7) > 0 && $dice == null;
+            $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && $dice == null;
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
             $canSkipWings = $canUseWings && !$canThrowDices;
 

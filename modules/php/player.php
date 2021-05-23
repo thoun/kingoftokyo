@@ -69,7 +69,7 @@ trait PlayerTrait {
         $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
         
         // burrowing
-        $countBurrowing = $this->countCardOfType($playerId, 6);
+        $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
         if ($countBurrowing > 0) {
             self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
         }
@@ -169,7 +169,7 @@ trait PlayerTrait {
         // burrowing
         $loseHeartForBurrowing = intval(self::getGameStateValue('loseHeartEnteringTokyo'));
         if ($loseHeartForBurrowing > 0) {
-            $damage = new Damage($playerId, $loseHeartForBurrowing, 0, 6);
+            $damage = new Damage($playerId, $loseHeartForBurrowing, 0, BURROWING_CARD);
             $redirects = $this->resolveDamages([$damage], 'enterTokyoAfterBurrowing');
 
             self::setGameStateValue('loseHeartEnteringTokyo', 0);
@@ -212,17 +212,17 @@ trait PlayerTrait {
         }
 
         // energy hoarder
-        $countEnergyHoarder = $this->countCardOfType($playerId, 11);
+        $countEnergyHoarder = $this->countCardOfType($playerId, ENERGY_HOARDER_CARD);
         if ($countEnergyHoarder > 0) {
             $playerEnergy = $this->getPlayerEnergy($playerId);
             $points = floor($playerEnergy / 6);
-            $this->applyGetPoints($playerId, $points * $countEnergyHoarder, 11);
+            $this->applyGetPoints($playerId, $points * $countEnergyHoarder, ENERGY_HOARDER_CARD);
         }
 
         // herbivore
-        $countHerbivore = $this->countCardOfType($playerId, 21);
+        $countHerbivore = $this->countCardOfType($playerId, HERBIVORE_CARD);
         if ($countHerbivore > 0 && intval(self::getGameStateValue('damageDoneByActivePlayer')) == 0) {
-            $this->applyGetPoints($playerId, $countHerbivore, 21);
+            $this->applyGetPoints($playerId, $countHerbivore, HERBIVORE_CARD);
         }
 
         // solar powered
@@ -276,7 +276,7 @@ trait PlayerTrait {
         $anotherTimeWithCard = 0;
 
         if (intval($this->getGameStateValue('playAgainAfterTurnOneLessDie')) == 1) { // extra turn for current player with one less die
-            $anotherTimeWithCard = 16;
+            $anotherTimeWithCard = FREEZE_TIME_CARD;
             $this->setGameStateValue('playAgainAfterTurnOneLessDie', 0);
             $this->setGameStateValue('lessDiceForNextTurn', intval($this->getGameStateValue('lessDiceForNextTurn')) + 1);
             

@@ -89,7 +89,7 @@ trait UtilTrait {
 
     function getThrowNumber(int $playerId) {
         // giant brain
-        $countGiantBrain = $this->countCardOfType($playerId, 18);
+        $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
         // energy drink
         $energyDrinks = intval(self::getGameStateValue('energyDrinks'));
         return 3 + $countGiantBrain + $energyDrinks;
@@ -97,7 +97,7 @@ trait UtilTrait {
 
     function getPlayerMaxHealth(int $playerId) {
         // even bigger
-        $countEvenBigger = $this->countCardOfType($playerId, 12);
+        $countEvenBigger = $this->countCardOfType($playerId, EVEN_BIGGER_CARD);
         return 10 + (2 * $countEvenBigger);
     }
 
@@ -371,8 +371,8 @@ trait UtilTrait {
         }
 
         // Armor plating
-        // TOCHECK Can a player leave tokyo if one smash and armor plating ?
-        $countArmorPlating = $this->countCardOfType($playerId, 4);
+        // TOCHECK Can a player leave tokyo if one smash and armor plating ? Considered Yes
+        $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
         if ($countArmorPlating > 0 && $health == 1) {
             return;
         }
@@ -383,9 +383,9 @@ trait UtilTrait {
             // eater of the dead 
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
-                $countEaterOfTheDead = $this->countCardOfType($otherPlayerId, 10);
+                $countEaterOfTheDead = $this->countCardOfType($otherPlayerId, EATER_OF_THE_DEAD_CARD);
                 if ($countEaterOfTheDead > 0) {
-                    $this->applyGetPoints($otherPlayerId, 3 * $countEaterOfTheDead, 10);
+                    $this->applyGetPoints($otherPlayerId, 3 * $countEaterOfTheDead, EATER_OF_THE_DEAD_CARD);
                 }
             }
         }
@@ -398,7 +398,7 @@ trait UtilTrait {
             }
         }
 
-        if ($this->countCardOfType($playerId, 23) > 0 && $this->getPlayerHealth($playerId) == 0) {
+        if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
             // it has a child
             $this->applyItHasAChild($playerId);
             // TODO make notifs for this happen after dice notifs
@@ -439,9 +439,9 @@ trait UtilTrait {
         $this->applyGetEnergyIgnoreCards($playerId, $energy, $cardType);
 
         // friend of children
-        $countFriendOfChildren = $this->countCardOfType($playerId, 17);
+        $countFriendOfChildren = $this->countCardOfType($playerId, FRIEND_OF_CHILDREN_CARD);
         if ($countFriendOfChildren > 0) {
-            $this->applyGetEnergyIgnoreCards($playerId, $countFriendOfChildren, 17);
+            $this->applyGetEnergyIgnoreCards($playerId, $countFriendOfChildren, FRIEND_OF_CHILDREN_CARD);
         }
     }
 

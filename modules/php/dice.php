@@ -75,13 +75,13 @@ trait DiceTrait {
 
             if ($number == 1) {
                 // gourmet
-                $countGourmet = $this->countCardOfType($playerId, 19);
+                $countGourmet = $this->countCardOfType($playerId, GOURMET_CARD);
                 if ($countGourmet > 0) {
-                    $this->applyGetPoints($playerId, 2 * $countGourmet, 19);
+                    $this->applyGetPoints($playerId, 2 * $countGourmet, GOURMET_CARD);
                 }
 
                 // Freeze Time
-                $countFreezeTime = $this->countCardOfType($playerId, 16);
+                $countFreezeTime = $this->countCardOfType($playerId, FREEZE_TIME_CARD);
                 if ($countFreezeTime > 0) {
                     // TOCHECK Can Freeze Time be cloned and win 2 new turn ? If yes, 1 or 2 less die next turn ? Considered No
                     $this->setGameStateValue('playAgainAfterTurnOneLessDie', 1);
@@ -150,7 +150,7 @@ trait DiceTrait {
         $jetsDamages = [];
         foreach($smashedPlayersIds as $smashedPlayerId) {
             // Jets
-            $countJets = $this->countCardOfType($smashedPlayerId, 24);
+            $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
             if ($countJets > 0) {
                 $jetsDamages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
@@ -168,10 +168,10 @@ trait DiceTrait {
         ]);
 
         // Alpha Monster
-        $countAlphaMonster = $this->countCardOfType($playerId, 3);
+        $countAlphaMonster = $this->countCardOfType($playerId, ALPHA_MONSTER_CARD);
         if ($countAlphaMonster > 0) {
             // TOCHECK does Alpha Monster applies after other cards adding Smashes ? considered Yes
-            $this->applyGetPoints($playerId, $countAlphaMonster, 3);
+            $this->applyGetPoints($playerId, $countAlphaMonster, 3ALPHA_MONSTER_CARD);
         }
 
         // Shrink Ray
@@ -203,7 +203,7 @@ trait DiceTrait {
 
     function getChangeDieCards(int $playerId) {
         // Herd Culler
-        $herdCullerCards = $this->getCardsOfType($playerId, 22);
+        $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
         $availableHerdCullers = 0;
         $herdCullerCount = count($herdCullerCards);
         if ($herdCullerCount > 0) {
@@ -234,7 +234,7 @@ trait DiceTrait {
 
     function getSelectHeartDiceUse(int $playerId) {        
         // Healing Ray
-        $countHealingRay = $this->countCardOfType($playerId, 20);
+        $countHealingRay = $this->countCardOfType($playerId, HEALING_RAY_CARD);
         $healablePlayers = [];
         if ($countHealingRay > 0) {
             $otherPlayers = $this->getOtherPlayers($playerId);
@@ -349,9 +349,9 @@ trait DiceTrait {
         self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
         self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
 
-        if ($card == 22) {
+        if ($card == HERD_CULLER_CARD) {
             $usedCards = $this->getUsedCard();
-            $herdCullerCards = $this->getCardsOfType($playerId, 22);
+            $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
             $usedCardOnThisTurn = null;
             foreach($herdCullerCards as $herdCullerCard) {
                 if (array_search($herdCullerCard->id, $usedCards) === false) {
@@ -495,7 +495,7 @@ trait DiceTrait {
             $this->resolveHealthDice($playerId, $heal);
         }
         foreach ($healPlayer as $healPlayerId => $healNumber) {
-            $this->applyGetHealth($healPlayerId, $healNumber, 20);
+            $this->applyGetHealth($healPlayerId, $healNumber, HEALING_RAY_CARD);
             $this->applyLoseEnergy($healPlayerId, $healNumber * 2, 0);
         }
 
@@ -531,7 +531,7 @@ trait DiceTrait {
             $playerEnergy = $this->getPlayerEnergy($playerId);
         }
 
-        $hasBackgroundDweller = $this->countCardOfType($playerId, 5) > 0; // Background Dweller
+        $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
         $hasDice3 = null;
         if ($hasBackgroundDweller) {
             $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
@@ -662,22 +662,22 @@ trait DiceTrait {
         $cardsAddingSmashes = [];
 
         // acid attack
-        $countAcidAttack = $this->countCardOfType($playerId, 1);
+        $countAcidAttack = $this->countCardOfType($playerId, ACID_ATTACK_CARD);
         if ($countAcidAttack > 0) {
             $diceCounts[6] += $countAcidAttack;
             $addedSmashes += $countAcidAttack;
 
-            for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = 1; }
+            for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = ACID_ATTACK_CARD; }
         }
 
         // burrowing
         if ($playerInTokyo) {
-            $countBurrowing = $this->countCardOfType($playerId, 6);
+            $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
             if ($countBurrowing > 0) {
                 $diceCounts[6] += $countBurrowing;
                 $addedSmashes += $countBurrowing;
 
-                for ($i=0; $i<$countBurrowing; $i++) { $cardsAddingSmashes[] = 6; }
+                for ($i=0; $i<$countBurrowing; $i++) { $cardsAddingSmashes[] = BURROWING_CARD; }
             }
         }
 
@@ -742,9 +742,9 @@ trait DiceTrait {
 
             // complete destruction
             if ($diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
-                $countCompleteDestruction = $this->countCardOfType($playerId, 8);
+                $countCompleteDestruction = $this->countCardOfType($playerId, COMPLETE_DESTRUCTION_CARD);
                 if ($countCompleteDestruction > 0) {
-                    $this->applyGetPoints($playerId, 9 * $countCompleteDestruction, 8);
+                    $this->applyGetPoints($playerId, 9 * $countCompleteDestruction, COMPLETE_DESTRUCTION_CARD);
                 }
             }
         }
@@ -752,7 +752,7 @@ trait DiceTrait {
         $fireBreathingDamages = [];
         // fire breathing
         if ($diceCounts[6] >= 1) {
-            $countFireBreathing = $this->countCardOfType($playerId, 15);
+            $countFireBreathing = $this->countCardOfType($playerId, FIRE_BREATHING_CARD);
             if ($countFireBreathing > 0) {
                 $playersIds = $this->getPlayersIds();
                 $playerIndex = array_search($playerId, $playersIds);
@@ -762,10 +762,10 @@ trait DiceTrait {
                 $rightPlayerId = $playersIds[($playerIndex + $playerCount - 1) % $playerCount];
 
                 if ($leftPlayerId != $playerId) {
-                    $fireBreathingDamages[] = new Damage($leftPlayerId, $countFireBreathing, $playerId, 15);
+                    $fireBreathingDamages[] = new Damage($leftPlayerId, $countFireBreathing, $playerId, FIRE_BREATHING_CARD);
                 }
                 if ($rightPlayerId != $playerId && $rightPlayerId != $leftPlayerId) {
-                    $fireBreathingDamages[] = new Damage($rightPlayerId, $countFireBreathing, $playerId, 15);
+                    $fireBreathingDamages[] = new Damage($rightPlayerId, $countFireBreathing, $playerId, FIRE_BREATHING_CARD);
                 }
             }
         }

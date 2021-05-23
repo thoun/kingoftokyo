@@ -65,6 +65,28 @@ define('MADE_IN_A_LAB', 'MadeInALab');
  * Cards
  */
 
+define('ACID_ATTACK_CARD', 1);
+define('ALIEN_ORIGIN_CARD', 2);
+define('ALPHA_MONSTER_CARD', 3);
+define('ARMOR_PLATING_CARD', 4);
+define('BACKGROUND_DWELLER_CARD', 5);
+define('BURROWING_CARD', 6);
+define('CAMOUFLAGE_CARD', 7);
+define('COMPLETE_DESTRUCTION_CARD', 8);
+define('MEDIA_FRIENDLY_CARD', 9);
+define('EATER_OF_THE_DEAD_CARD', 10);
+define('ENERGY_HOARDER_CARD', 11);
+define('EVEN_BIGGER_CARD', 12);
+define('FIRE_BREATHING_CARD', 15);
+define('FREEZE_TIME_CARD', 16);
+define('FRIEND_OF_CHILDREN_CARD', 17);
+define('GIANT_BRAIN_CARD', 18);
+define('GOURMET_CARD', 19);
+define('HEALING_RAY_CARD', 20);
+define('HERBIVORE_CARD', 21);
+define('HERD_CULLER_CARD', 22);
+define('IT_HAS_A_CHILD_CARD', 23);
+define('JETS_CARD', 24);
 define('MADE_IN_A_LAB_CARD', 25);
 define('METAMORPH_CARD', 26);
 define('MIMIC_CARD', 27);
