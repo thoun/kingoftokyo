@@ -158,7 +158,7 @@ trait DiceTrait {
                 $damages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
             }
         }
-        $this->setGlobalVariable('JetsDamages', $jetsDamages)  ;      
+        $this->setGlobalVariable('JetsDamages', $jetsDamages);      
 
         self::notifyAllPlayers("resolveSmashDice", $message, [
             'playerId' => $playerId,
@@ -193,8 +193,12 @@ trait DiceTrait {
         }
 
         // TOCHECK Can a player leave tokyo if he cancel all damage while in tokyo (with wings or camouflage) ? Considered Yes
-        $cancelDamageEndState = !$inTokyo && count($this->getPlayersIdsInTokyo()) > 0 ? "smashes" : "enterTokyo";
-        return $this->resolveDamages($damages, $cancelDamageEndState);
+        if (count($damages) > 0) {
+            $cancelDamageEndState = !$inTokyo && count($this->getPlayersIdsInTokyo()) > 0 ? "smashes" : "enterTokyo";
+            return $this->resolveDamages($damages, $cancelDamageEndState);
+        } else {
+            return false;
+        }
     }
 
     function getChangeDieCards(int $playerId) {

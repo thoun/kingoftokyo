@@ -25,7 +25,7 @@ require_once('modules/php/player.php');
 require_once('modules/php/dice.php');
 require_once('modules/php/cards.php');
 require_once('modules/php/intervention.php');
-
+require_once('modules/php/debug-util.php');
 
 class KingOfTokyo extends Table {
     use KOT\States\UtilTrait;
@@ -33,6 +33,7 @@ class KingOfTokyo extends Table {
     use KOT\States\DiceTrait;
     use KOT\States\CardsTrait;
     use KOT\States\InterventionTrait;
+    use KOT\States\DebugUtilTrait;
 
 	function __construct(){
 
@@ -134,18 +135,7 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(27))[0])->id, /*'table'*/ 'hand', 2343492);
-        //$mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(37))[0]);
-        //$this->setMimickedCard(2343492, $mimickedCard);
-        //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
-        /*$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(8))[0])->id, 'hand', 2343493);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(9))[0])->id, 'hand', 2343492);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(32))[0])->id, 'hand', 2343493);*/
-        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(26))[0])->id, 'hand', 2343493);
-        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(37))[0])->id, 'table');
-        //$this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(7))[0])->id, 'hand', 2343492);
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType(48))[0])->id, 'hand', 2343492);
-        self::DbQuery("UPDATE player SET `player_location` = 1 where `player_id` = 2343492");
+        $this->debugSetup();
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();

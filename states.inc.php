@@ -262,12 +262,12 @@ $playerActionsGameStates = [
     ],
 
     ST_LEAVE_TOKYO_APPLY_JETS => [
-        "name" => "enterTokyoApplyBurrowing",
+        "name" => "leaveTokyoApplyJets",
         "description" => "",
         "type" => "game",
         "action" => "stLeaveTokyoApplyJets",
         "transitions" => [
-            "resume" => ST_ENTER_TOKYO_APPLY_BURROWING,
+            "next" => ST_ENTER_TOKYO_APPLY_BURROWING,
         ],        
     ],
 

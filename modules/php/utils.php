@@ -540,7 +540,7 @@ trait UtilTrait {
         ]);
     }
 
-    function resolveDamages(int $activePlayerId, array $damages, /* string|int|function */ $endStateOrTransition) { // bool redirect to cancelDamage
+    function resolveDamages(array $damages, /* string|int|function */ $endStateOrTransition) { // bool redirect to cancelDamage
         if ($endStateOrTransition == null || (gettype($endStateOrTransition) != 'string' && gettype($endStateOrTransition) != 'integer')) {
             throw new \Error('resolveDamages : endStateOrTransition wrong '); 
         }
