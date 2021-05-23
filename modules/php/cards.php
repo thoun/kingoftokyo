@@ -136,7 +136,9 @@ trait CardsTrait {
         switch($type) {
             // KEEP
             case 12: 
-                $this->applyGetHealth($playerId, 2, $type); 
+                $this->applyGetHealth($playerId, 2, $type);
+
+                $this->notifMaxHealth($playerId);
                 break;
             
             // DISCARD
@@ -457,8 +459,11 @@ trait CardsTrait {
     function removeCard(int $playerId, $card, bool $silent = false) {
         $countRapidHealingBefore = $this->countCardOfType($playerId, 37);
 
+        $changeMaxHealth = $card->type == 12;
+        
         $removeMimickToken = false;
         if ($card->type == 27) { // Mimic
+            $changeMaxHealth = $this->getMimickedCardType() == 12;
             $this->setMimickedCardId($playerId, 0); // 0 means no mimicked card
             $removeMimickToken = true;
         } else if ($card->id == $this->getMimickedCardId()) {
@@ -479,6 +484,9 @@ trait CardsTrait {
                 'playerId' => $playerId,
                 'cards' => [$card],
             ]);
+        }
+        if ($changeMaxHealth) {
+            $this->notifMaxHealth($playerId);
         }        
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
@@ -497,7 +505,8 @@ trait CardsTrait {
             self::notifyPlayer($playerId, 'toggleRapidHealing', '', [
                 'playerId' => $playerId,
                 'active' => $active,
-                'playerEnergy' => $playerEnergy
+                'playerEnergy' => $playerEnergy,
+                'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
             ]);
         }
     }

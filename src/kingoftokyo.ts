@@ -64,7 +64,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const playerId = this.getPlayerId();
         if (players.some(player => player.rapidHealing && Number(player.id) === playerId)) {
-            this.addRapidHealingButton(players.find(player => Number(player.id) === playerId).energy)
+            const player = players.find(player => Number(player.id) === playerId);
+            this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
         }
 
         this.setupNotifications();
@@ -461,14 +462,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private addRapidHealingButton(userEnergy: number) {
+    private addRapidHealingButton(userEnergy: number, isMaxHealth: boolean) {
         if (!document.getElementById('rapidHealingButton')) {
             this.createButton(
                 'rapid-healing-wrapper', 
                 'rapidHealingButton', 
                 formatTextIcons(`${_('Gain 1[Heart]')} (2[Energy])`), 
                 () => this.useRapidHealing(), 
-                userEnergy < 2
+                userEnergy < 2 || isMaxHealth
             );
         }
     }
@@ -476,6 +477,16 @@ class KingOfTokyo implements KingOfTokyoGame {
     private removeRapidHealingButton() {
         if (document.getElementById('rapidHealingButton')) {
             dojo.destroy('rapidHealingButton');
+        }
+    }
+
+    private checkRapidHealingButtonState() {
+        if (document.getElementById('rapidHealingButton')) {
+            const playerId = this.getPlayerId();
+            const userEnergy = this.energyCounters[playerId].getValue();
+            const health = this.healthCounters[playerId].getValue();
+            const maxHealth = this.gamedatas.players[playerId].maxHealth;
+            dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
         }
     }
 
@@ -777,6 +788,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['points', 1],
             ['health', 1],
             ['energy', 1],
+            ['maxHealth', 1],
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
             ['setCardTokens', 1],
@@ -886,6 +898,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setHealth(notif.args.playerId, notif.args.health);
     }
 
+    notif_maxHealth(notif: Notif<NotifMaxHealthArgs>) {
+        this.setMaxHealth(notif.args.playerId, notif.args.maxHealth);
+    }
+
     notif_energy(notif: Notif<NotifEnergyArgs>) {
         this.setEnergy(notif.args.playerId, notif.args.energy);
     }
@@ -904,7 +920,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_toggleRapidHealing(notif: Notif<NotifToggleRapidHealingArgs>) {
         if (notif.args.active) {
-            this.addRapidHealingButton(notif.args.playerEnergy);
+            this.addRapidHealingButton(notif.args.playerEnergy, notif.args.isMaxHealth);
         } else {
             this.removeRapidHealingButton();
         }
@@ -925,15 +941,18 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setHealth(playerId: number, health: number) {
         this.healthCounters[playerId].toValue(health);
         this.playerTables[playerId].setHealth(health);
+        this.checkRapidHealingButtonState();
+    }
+    
+    private setMaxHealth(playerId: number, maxHealth: number) {
+        this.gamedatas.players[playerId].maxHealth = maxHealth;
+        this.checkRapidHealingButtonState();
     }
     
     private setEnergy(playerId: number, energy: number) {
         this.energyCounters[playerId].toValue(energy);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
-
-        if (document.getElementById('rapidHealingButton')) {
-            dojo.toggleClass('rapidHealingButton', 'disabled', energy < 2);
-        }
+        this.checkRapidHealingButtonState();
     }
 
     private setPlayerTokens(playerId: number, tokens: number, tokenName: string) {

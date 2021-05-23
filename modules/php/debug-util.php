@@ -12,8 +12,8 @@ trait DebugUtilTrait {
         //$mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(37))[0]);
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
-        $this->debugSetCardInHand(31, 2343492);
-        $this->debugSetCardInTable(27);
+        $this->debugSetCardInHand(37, 2343492);
+        //$this->debugSetCardInTable(27);
         //$this->debugSetPlayerInLocation(2343492, 1);
     }
 

@@ -33,6 +33,7 @@ interface KingOfTokyoPlayer extends Player {
     energy: number;
     monster: number;
     location: number;
+    maxHealth: number;
 }
 
 interface KingOfTokyoGamedatas {
@@ -198,6 +199,10 @@ interface NotifEnergyArgs extends NotifResolveArgs {
     energy: number;
 }
 
+interface NotifMaxHealthArgs extends NotifResolveArgs {
+    maxHealth: number;
+}
+
 interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
     tokens: number;
 }
@@ -211,6 +216,7 @@ interface NotifToggleRapidHealingArgs {
     playerId: number;
     active: boolean;
     playerEnergy: number;
+    isMaxHealth: boolean;
 }
 
 interface NotifUseCamouflageArgs {

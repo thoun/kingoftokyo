@@ -177,6 +177,7 @@ class KingOfTokyo extends Table {
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
 
             $playerDb['rapidHealing'] = $this->countCardOfType($playerId, 37) > 0;
+            $playerDb['maxHealth'] = $this->getPlayerMaxHealth($playerId);
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();
