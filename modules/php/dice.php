@@ -379,7 +379,7 @@ trait DiceTrait {
                 $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, 36));
             }
             $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
-            $this->setGlobalVariable('PsychicProbeIntervention', $psychicProbeIntervention);
+            $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
             $this->gamestate->nextState('changeDieWithPsychicProbe');
         } else {
             $this->gamestate->nextState('changeDie');
@@ -387,7 +387,7 @@ trait DiceTrait {
     }
 
     public function psychicProbeRollDie(int $id) {
-        $intervention = $this->getGlobalVariable('PsychicProbeIntervention');
+        $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
         $playerId = $intervention->remainingPlayersId[0];
 
         $die = $this->getDieById($id);
@@ -434,7 +434,7 @@ trait DiceTrait {
             'die_face_after' => $this->getDieFaceLogName($value),
         ]);
 
-        $this->setInterventionNextState('PsychicProbeIntervention', 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
+        $this->setInterventionNextState(PSYCHIC_PROBE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
@@ -449,7 +449,7 @@ trait DiceTrait {
                 $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, 36));
             }
             $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
-            $this->setGlobalVariable('PsychicProbeIntervention', $psychicProbeIntervention);
+            $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
             $this->gamestate->nextState('psychicProbe');
         } else {
             $this->gamestate->nextState('goToChangeDie');
@@ -459,8 +459,8 @@ trait DiceTrait {
     function psychicProbeSkip() {
         $playerId = self::getCurrentPlayerId();
 
-        $intervention = $this->getGlobalVariable('PsychicProbeIntervention');
-        $this->setInterventionNextState('PsychicProbeIntervention', 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
+        $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
+        $this->setInterventionNextState(PSYCHIC_PROBE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
@@ -575,7 +575,7 @@ trait DiceTrait {
     }
 
     function argPsychicProbeRollDie() {
-        $psychicProbeIntervention = $this->getGlobalVariable('PsychicProbeIntervention');
+        $psychicProbeIntervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
         $activePlayerId = $psychicProbeIntervention->activePlayerId;
 
         $diceNumber = $this->getDiceNumber($activePlayerId);
@@ -630,7 +630,7 @@ trait DiceTrait {
     }
 
     function stPsychicProbeRollDie() {
-        $this->stIntervention('PsychicProbeIntervention');
+        $this->stIntervention(PSYCHIC_PROBE_INTERVENTION);
     }
 
     function stResolveDice() {

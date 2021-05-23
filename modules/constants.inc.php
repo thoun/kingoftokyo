@@ -40,4 +40,12 @@ define('ST_NEXT_PLAYER', 90);
 
 define('ST_END_GAME', 99);
 define('END_SCORE', 100);
+
+/*
+ * Interventions
+ */
+
+define('PSYCHIC_PROBE_INTERVENTION', 'PsychicProbeIntervention');
+define('OPPORTUNIST_INTERVENTION', 'OpportunistIntervention');
+define('CANCEL_DAMAGE_INTERVENTION', 'CancelDamageIntervention');
 ?>

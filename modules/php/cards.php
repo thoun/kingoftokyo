@@ -703,19 +703,19 @@ trait CardsTrait {
     }
 
     function redirectAfterBuyCard($playerId, $newCardId, $mimic) { // return whereToRedirect
-        if ($this->getGlobalVariable('OpportunistIntervention') != null) {
-            $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
+        $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
+        if ($opportunistIntervention) {
             $opportunistIntervention->revealedCardsIds = [$newCardId];
-            $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
+            $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
 
-            $this->setInterventionNextState('OpportunistIntervention', 'keep', null, $opportunistIntervention);
+            $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'keep', null, $opportunistIntervention);
             return $mimic ? ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
         } else {
             $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
 
             if (count($playersWithOpportunist) > 0) {
                 $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCardId]);
-                $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
+                $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
                 return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
             } else {
                 return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_PLAYER_BUY_CARD;
@@ -748,7 +748,7 @@ trait CardsTrait {
         if (count($playersWithOpportunist) > 0) {
             $renewedCardsIds = array_map(function($card) { return $card->id; }, $cards);
             $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, $renewedCardsIds);
-            $this->setGlobalVariable('OpportunistIntervention', $opportunistIntervention);
+            $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
             $this->gamestate->nextState('opportunist');
         } else {
             $this->gamestate->nextState('renew');
@@ -758,7 +758,7 @@ trait CardsTrait {
     function opportunistSkip() {
         $playerId = self::getCurrentPlayerId();
 
-        $this->setInterventionNextState('OpportunistIntervention', 'next', 'end');
+        $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', 'end');
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
@@ -819,7 +819,7 @@ trait CardsTrait {
             throw new \Error('No Camouflage card');
         }
 
-        $intervention = $this->getGlobalVariable('CancelDamageIntervention');
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
         $dice = 0;
         foreach($intervention->damages as $damage) {
@@ -840,7 +840,7 @@ trait CardsTrait {
 
         $remainingDamage = $dice - $cancelledDamage;
 
-        $this->setInterventionNextState('CancelDamageIntervention', 'next', null, $intervention); // we use this to save changes to $intervention
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention); // we use this to save changes to $intervention
 
         $args = null;
 
@@ -902,15 +902,15 @@ trait CardsTrait {
             'card_name' => $this->getCardName(48),
         ]);
 
-        $intervention = $this->getGlobalVariable('CancelDamageIntervention');
-        $this->setInterventionNextState('CancelDamageIntervention', 'next', null, $intervention);
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
     function skipWings() {
         $playerId = self::getCurrentPlayerId();
 
-        $intervention = $this->getGlobalVariable('CancelDamageIntervention');
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
         $totalDamage = 0;
         foreach($intervention->damages as $damage) {
@@ -921,7 +921,7 @@ trait CardsTrait {
 
         $this->applyDamage($playerId, $totalDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
 
-        $this->setInterventionNextState('CancelDamageIntervention', 'next', null, $intervention);
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
@@ -987,7 +987,7 @@ trait CardsTrait {
     }
 
     function argOpportunistBuyCard() {
-        $opportunistIntervention = $this->getGlobalVariable('OpportunistIntervention');
+        $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
         $revealedCardsIds = $opportunistIntervention ? $opportunistIntervention->revealedCardsIds : [];
 
         $playerId = $opportunistIntervention && count($opportunistIntervention->remainingPlayersId) > 0 ? $opportunistIntervention->remainingPlayersId[0] : null;
@@ -1026,7 +1026,7 @@ trait CardsTrait {
     }
 
     function argCancelDamage() {
-        $intervention = $this->getGlobalVariable('CancelDamageIntervention');
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
         $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
         if ($playerId != null) {
@@ -1063,15 +1063,15 @@ trait CardsTrait {
 ////////////
 
     function stBuyCard() {
-        $this->deleteGlobalVariable('OpportunistIntervention');
+        $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
     }
 
     function stOpportunistBuyCard() {
-        $this->stIntervention('OpportunistIntervention');
+        $this->stIntervention(OPPORTUNIST_INTERVENTION);
     }
 
     function stOpportunistChooseMimicCard() {
-        $intervention = $this->getGlobalVariable('OpportunistIntervention');
+        $intervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
 
         $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'stay', true);
     }
@@ -1088,6 +1088,6 @@ trait CardsTrait {
     }
 
     function stCancelDamage() {
-        $this->stIntervention('CancelDamageIntervention');
+        $this->stIntervention(CANCEL_DAMAGE_INTERVENTION);
     }
 }
