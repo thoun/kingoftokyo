@@ -239,11 +239,11 @@ trait CardsTrait {
     function setMimickedCardId(int $playerId, int $cardId) {
         if ($cardId == 0) {
             $mimickedCardPlayerId = $this->getMimickedCardPlayerId();
-            $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, 37);
+            $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, RAPID_HEALING_CARD);
             
             $card = $this->getMimickedCard();
             if ($card) {
-                $this->deleteGlobalVariable('MimickedCard');
+                $this->deleteGlobalVariable(MIMICKED_CARD);
                 self::notifyAllPlayers("removeMimicToken", '', [
                     'card' => $card,
                 ]);
@@ -258,7 +258,7 @@ trait CardsTrait {
 
     function setMimickedCard(int $playerId, object $card) {
         $mimickedCardPlayerId = $this->getMimickedCardPlayerId();
-        $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, 37);
+        $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, RAPID_HEALING_CARD);
 
         $oldCard = $this->getMimickedCard();
         if ($oldCard) {
@@ -270,7 +270,7 @@ trait CardsTrait {
         $mimickedCard = new \stdClass();
         $mimickedCard->card = $card;
         $mimickedCard->playerId = $playerId;
-        $this->setGlobalVariable('MimickedCard', $mimickedCard);
+        $this->setGlobalVariable(MIMICKED_CARD, $mimickedCard);
         self::notifyAllPlayers("setMimicToken", '', [
             'card' => $card,
         ]);
@@ -279,7 +279,7 @@ trait CardsTrait {
     }
 
     function getMimickedCardPlayerId() {
-        $mimickedCardObj = $this->getGlobalVariable('MimickedCard');
+        $mimickedCardObj = $this->getGlobalVariable(MIMICKED_CARD);
         if ($mimickedCardObj != null && $mimickedCardObj->playerId != null) {
             return $mimickedCardObj->playerId;
         }
@@ -287,7 +287,7 @@ trait CardsTrait {
     }
 
     function getMimickedCard() {
-        $mimickedCardObj = $this->getGlobalVariable('MimickedCard');
+        $mimickedCardObj = $this->getGlobalVariable(MIMICKED_CARD);
         if ($mimickedCardObj != null) {
             return $mimickedCardObj->card;
         }
@@ -310,6 +310,20 @@ trait CardsTrait {
         return null;
     }
 
+    function getMadeInALabCardId($playerId) {
+        $madeInALab = $this->getGlobalVariable(MADE_IN_A_LAB, true);
+        if (array_key_exists($playerId, $madeInALab)) {
+            return $madeInALab[$playerId];
+        }
+        return 0;
+    }
+
+    function setMadeInALabCardId($playerId, $cardId) {
+        $madeInALab = $this->getGlobalVariable(MADE_IN_A_LAB, true);
+        $madeInALab[$playerId] = $cardId;
+        $this->setGlobalVariable(MADE_IN_A_LAB, $madeInALab);
+    }
+
     function countCardOfType($playerId, $cardType, $includeMimick = true) {
         return count($this->getCardsOfType($playerId, $cardType, $includeMimick));
     }
@@ -317,10 +331,10 @@ trait CardsTrait {
     function getCardsOfType($playerId, $cardType, $includeMimick = true) {
         $cards = $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
 
-        if ($includeMimick && $cardType != 27) { // don't search for mimick mimicking itself
+        if ($includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself
             $mimickedCardType = $this->getMimickedCardType();
             if ($mimickedCardType == $cardType) {
-                $cards = array_merge($cards, $this->getCardsOfType($playerId, 27, $includeMimick)); // mimick
+                $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, $includeMimick)); // mimick
             }
         }
 
@@ -409,7 +423,7 @@ trait CardsTrait {
     function useSmokeCloud() {
         $playerId = self::getActivePlayerId();
 
-        $cards = $this->getCardsOfType($playerId, 41);
+        $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
 
         if (count($cards) == 0) {
             throw new \Error('No Smoke Cloud card');
@@ -448,21 +462,21 @@ trait CardsTrait {
             throw new \Error('You can\'t heal when you\'re already at full life');
         }
 
-        if ($this->countCardOfType($playerId, 37) == 0) {
+        if ($this->countCardOfType($playerId, RAPID_HEALING_CARD) == 0) {
             throw new \Error('No Rapid Healing card');
         }
 
-        $this->applyGetHealth($playerId, 1, 37);
+        $this->applyGetHealth($playerId, 1, RAPID_HEALING_CARD);
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
     }
 
     function removeCard(int $playerId, $card, bool $silent = false) {
-        $countRapidHealingBefore = $this->countCardOfType($playerId, 37);
+        $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
         $changeMaxHealth = $card->type == 12;
         
         $removeMimickToken = false;
-        if ($card->type == 27) { // Mimic
+        if ($card->type == MIMIC_CARD) { // Mimic
             $changeMaxHealth = $this->getMimickedCardType() == 12;
             $this->setMimickedCardId($playerId, 0); // 0 means no mimicked card
             $removeMimickToken = true;
@@ -493,7 +507,7 @@ trait CardsTrait {
     }
 
     function toggleRapidHealing(int $playerId, int $countRapidHealingBefore) {
-        $countRapidHealingAfter = $this->countCardOfType($playerId, 37);
+        $countRapidHealingAfter = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
         if ($countRapidHealingBefore != $countRapidHealingAfter) {
             $active = $countRapidHealingAfter > $countRapidHealingBefore;
 
@@ -548,7 +562,7 @@ trait CardsTrait {
 
         foreach($orderedPlayers as $player) {
             if ($player->id != $playerId) {
-                $countOpportunist = $this->countCardOfType($player->id, 31);
+                $countOpportunist = $this->countCardOfType($player->id, OPPORTUNIST_CARD);
                 if ($countOpportunist > 0) {
                     $opportunistPlayerIds[] = $player->id;
                 }   
@@ -562,7 +576,7 @@ trait CardsTrait {
         $playerId = self::getActivePlayerId();
 
         // check if player have mimic card
-        if ($this->countCardOfType($playerId, 27, false) == 0) {
+        if ($this->countCardOfType($playerId, MIMIC_CARD, false) == 0) {
             return false;
         }
 
@@ -572,7 +586,7 @@ trait CardsTrait {
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             foreach($cardsOfPlayer as $card) {
-                if ($card->type != 27 && $card->type < 100 && $mimickedCardId != $card->id) {
+                if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) {
                     return true;
                 }
             }
@@ -583,7 +597,15 @@ trait CardsTrait {
 
     function canRedirectToCancelDamage(int $playerId) {
         return $this->countCardOfType($playerId, 7) > 0 || 
-          ($this->countCardOfType($playerId, 48) > 0 && !$this->isInvincible($playerId));
+          ($this->countCardOfType($playerId, WINGS_CARD) > 0 && !$this->isInvincible($playerId));
+    }
+
+    function getTokensByCardType($cardType) {
+        switch($cardType) {
+            case BATTERY_MONSTER_CARD: return 6;
+            case SMOKE_CLOUD_CARD: return 3;
+            default: return 0;
+        }
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -616,7 +638,7 @@ trait CardsTrait {
             $this->applyGetPoints($playerId, $countMediaFriendly, 9);
         }
         
-        $countRapidHealingBefore = $this->countCardOfType($playerId, 37);
+        $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
         $mimickedCardId = null;
         if ($from > 0) {
@@ -625,10 +647,7 @@ trait CardsTrait {
         }
         $this->cards->moveCard($id, 'hand', $playerId);
 
-        $tokens = 0;
-        if ($card->type == 28) { $tokens = 6; }
-        if ($card->type == 41) { $tokens = 3; }
-
+        $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
             $this->setCardTokens($playerId, $card, $tokens, true);
         }
@@ -646,7 +665,7 @@ trait CardsTrait {
                 'from' => $from,
                 'player_name2' => $this->getPlayerName($from),
             ]);
-        } else if ($id == self::getGameStateValue('madeInALabCard')) {
+        } else if ($id == $this->getMadeInALabCardId($playerId)) {
             
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from top deck'), [
                 'playerId' => $playerId,
@@ -657,7 +676,7 @@ trait CardsTrait {
                 'energy' => $this->getPlayerEnergy($playerId),
             ]);
 
-            self::setGameStateValue('madeInALabCard', 1001); // To not pick another one on same turn
+            $this->setMadeInALabCardId($playerId, 1001); // To not pick another one on same turn
         } else {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
     
@@ -671,7 +690,7 @@ trait CardsTrait {
             ]);
 
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
-            self::setGameStateValue('madeInALabCard', 1001);
+            $this->setMadeInALabCardId($playerId, 1001);
         }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
@@ -683,7 +702,7 @@ trait CardsTrait {
 
         $damages = $this->applyEffects($card, $playerId);
 
-        $mimic = $card->type == 27;
+        $mimic = $card->type == MIMIC_CARD;
 
         $newCardId = 0;
         if ($newCard != null) {
@@ -845,7 +864,7 @@ trait CardsTrait {
         $args = null;
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
-        $stayOnState = $remainingDamage > 0 && $this->countCardOfType($playerId, 48) > 0;
+        $stayOnState = $remainingDamage > 0 && $this->countCardOfType($playerId, WINGS_CARD) > 0;
 
         if ($stayOnState) {
             $args = $this->argCancelDamage();
@@ -885,7 +904,7 @@ trait CardsTrait {
             throw new \Error('Not enough energy');
         }
 
-        if ($this->countCardOfType($playerId, 48) == 0) {
+        if ($this->countCardOfType($playerId, WINGS_CARD) == 0) {
             throw new \Error('No Wings card');
         }
 
@@ -899,7 +918,7 @@ trait CardsTrait {
         self::notifyAllPlayers("useWings", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'card_name' => $this->getCardName(48),
+            'card_name' => $this->getCardName(WINGS_CARD),
         ]);
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
@@ -939,7 +958,7 @@ trait CardsTrait {
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
         // parasitic tentacles
-        $canBuyFromPlayers = $this->countCardOfType($playerId, 32) > 0;
+        $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES) > 0;
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         
@@ -959,12 +978,11 @@ trait CardsTrait {
         }
 
         // made in a lab
-        $canPick = $this->countCardOfType($playerId, 25) > 0;
-
+        $canPick = $this->countCardOfType($playerId, MADE_IN_A_LAB_CARD) > 0;
         $pickArgs = [];
-        if ($canPick && self::getGameStateValue('madeInALabCard') < 1000) {
+        if ($canPick && $this->getMadeInALabCardId($playerId) < 1000) {
             $pickCard = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
-            self::setGameStateValue('madeInALabCard', $pickCard->id);
+            $this->setMadeInALabCardId($playerId, $pickCard->id);
 
             if (!$this->canBuyCard($playerId, $this->getCardCost($playerId, $pickCard->type))) {
                 $disabledIds[] = $pickCard->id;
@@ -1014,7 +1032,7 @@ trait CardsTrait {
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) { return $card->type == 27 && $card->type >= 100; }));
+            $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) { return $card->type == MIMIC_CARD && $card->type >= 100; }));
             $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
             
             $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
@@ -1033,7 +1051,7 @@ trait CardsTrait {
             $dice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->$playerId : null; //$playerId must stay with $ !
 
             $canThrowDices = $this->countCardOfType($playerId, 7) > 0 && $dice == null;
-            $canUseWings = $this->countCardOfType($playerId, 48) > 0;
+            $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
             $canSkipWings = $canUseWings && !$canThrowDices;
 
             $remainingDamage = 0;
@@ -1080,7 +1098,7 @@ trait CardsTrait {
         $playerId = self::getActivePlayerId();
 
         // metamorph
-        $countMetamorph = $this->countCardOfType($playerId, 26);
+        $countMetamorph = $this->countCardOfType($playerId, METAMORPH_CARD);
 
         if ($countMetamorph < 1) { // no needto check remaining cards, if player got metamoph he got cards to sell
             $this->gamestate->nextState('endTurn');

@@ -13,13 +13,13 @@ trait PlayerTrait {
 ////////////
 
     function isInvincible(int $playerId) {
-        return array_search($playerId, $this->getGlobalVariable('UsedWings', true)) !== false;
+        return array_search($playerId, $this->getGlobalVariable(USED_WINGS, true)) !== false;
     }
 
     function setInvincible(int $playerId) {        
-        $usedWings = $this->getGlobalVariable('UsedWings', true);
+        $usedWings = $this->getGlobalVariable(USED_WINGS, true);
         $usedWings[] = $playerId;
-        $this->setGlobalVariable('UsedWings', $usedWings);
+        $this->setGlobalVariable(USED_WINGS, $usedWings);
     }
 
     function isFewestStars(int $playerId) {
@@ -64,9 +64,9 @@ trait PlayerTrait {
 
         $this->leaveTokyo($playerId);
 
-        $jetsDamages = $this->getGlobalVariable('JetsDamages');
+        $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
         $jetsDamages = array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; });
-        $this->setGlobalVariable('JetsDamages', $jetsDamages);
+        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
         
         // burrowing
         $countBurrowing = $this->countCardOfType($playerId, 6);
@@ -98,14 +98,14 @@ trait PlayerTrait {
 
         self::setGameStateValue('damageDoneByActivePlayer', 0);
         self::setGameStateValue('energyDrinks', 0);
-        self::setGameStateValue('madeInALabCard', 0);
+        $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
-        $this->setGlobalVariable('UsedWings', []);
+        $this->setGlobalVariable(USED_WINGS, []);
 
         // apply monster effects
 
         // battery monster
-        $batteryMonsterCards = $this->getCardsOfType($playerId, 28);
+        $batteryMonsterCards = $this->getCardsOfType($playerId, BATTERY_MONSTER_CARD);
         foreach($batteryMonsterCards as $batteryMonsterCard) {
             $this->applyBatteryMonster($playerId, $batteryMonsterCard);
         }
@@ -125,9 +125,9 @@ trait PlayerTrait {
             ]);
 
             // urbavore
-            $countUrbavore = $this->countCardOfType($playerId, 46);
+            $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);
             if ($countUrbavore > 0) {
-                $this->applyGetPoints($playerId, $countUrbavore, 46);
+                $this->applyGetPoints($playerId, $countUrbavore, URBAVORE_CARD);
             }
         }
 
@@ -150,7 +150,7 @@ trait PlayerTrait {
     }
 
     function stLeaveTokyoApplyJets() {
-        $jetsDamages = $this->getGlobalVariable('JetsDamages');
+        $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
         
         $redirects = false;
         if (count($jetsDamages) > 0) {
@@ -206,9 +206,9 @@ trait PlayerTrait {
 
         // rooting for the underdog
         // TOCHECK is it applied before other end of turn monsters (it may change the fewest Stars) ? considered Yes
-        $countRootingForTheUnderdog = $this->countCardOfType($playerId, 39);
+        $countRootingForTheUnderdog = $this->countCardOfType($playerId, ROOTING_FOR_THE_UNDERDOG_CARD);
         if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
-            $this->applyGetPoints($playerId, $countRootingForTheUnderdog, 39);
+            $this->applyGetPoints($playerId, $countRootingForTheUnderdog, ROOTING_FOR_THE_UNDERDOG_CARD);
         }
 
         // energy hoarder
@@ -226,9 +226,9 @@ trait PlayerTrait {
         }
 
         // solar powered
-        $countSolarPowered = $this->countCardOfType($playerId, 42);
+        $countSolarPowered = $this->countCardOfType($playerId, SOLAR_POWERED_CARD);
         if ($countSolarPowered > 0 && $this->getPlayerEnergy($playerId) == 0) {
-            $this->applyGetEnergy($playerId, $countSolarPowered, 42);
+            $this->applyGetEnergy($playerId, $countSolarPowered, SOLAR_POWERED_CARD);
         }
 
         // remove discard cards
@@ -242,7 +242,7 @@ trait PlayerTrait {
         $redirects = false;
         $countPoison = $this->getPlayerPoisonTokens($playerId);
         if ($countPoison > 0) {
-            $damage = new Damage($playerId, $countPoison, 0, 35);
+            $damage = new Damage($playerId, $countPoison, 0, POISON_SPIT_CARD);
             $redirects = $this->resolveDamages([$damage], 'endTurn');
         }
 

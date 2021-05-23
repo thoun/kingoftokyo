@@ -128,7 +128,7 @@ trait DiceTrait {
     
     function resolveSmashDice(int $playerId, int $diceCount) {
         // Nova breath
-        $countNovaBreath = $this->countCardOfType($playerId, 29);
+        $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
 
         $message = null;
         $smashedPlayersIds = null;
@@ -158,7 +158,7 @@ trait DiceTrait {
                 $damages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
             }
         }
-        $this->setGlobalVariable('JetsDamages', $jetsDamages);      
+        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);      
 
         self::notifyAllPlayers("resolveSmashDice", $message, [
             'playerId' => $playerId,
@@ -176,7 +176,7 @@ trait DiceTrait {
 
         // Shrink Ray
         // TOCHECK can Shrink Ray be mimicked and give 2 tokens ? considered No
-        $countShrinkRay = $this->countCardOfType($playerId, 40);
+        $countShrinkRay = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
         if ($countShrinkRay > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
                 $this->applyGetShrinkRayToken($smashedPlayerId);
@@ -185,7 +185,7 @@ trait DiceTrait {
 
         // Poison Spit
         // TOCHECK can Poison Spit be mimicked and give 2 tokens ? considered No
-        $countPoisonSpit = $this->countCardOfType($playerId, 35);
+        $countPoisonSpit = $this->countCardOfType($playerId, POISON_SPIT_CARD);
         if ($countPoisonSpit > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
                 $this->applyGetPoisonToken($smashedPlayerId);
@@ -216,9 +216,9 @@ trait DiceTrait {
         }
         $hasHerdCuller = $herdCullerCount > 0 && $availableHerdCullers > 0;
         // Plot Twist
-        $hasPlotTwist = $this->countCardOfType($playerId, 33) > 0;
+        $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST) > 0;
         // Stretchy
-        $hasStretchy = $this->countCardOfType($playerId, 44) > 0 && $this->getPlayerEnergy($playerId) >= 2;
+        $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $this->getPlayerEnergy($playerId) >= 2;
         // TOCHECK is Stretchy only once per turn ? Considered No
 
         return [
@@ -274,7 +274,7 @@ trait DiceTrait {
         foreach($orderedPlayers as $player) {
             if ($player->id != $playerId) {
 
-                $psychicProbeCards = $this->getCardsOfType($player->id, 36);
+                $psychicProbeCards = $this->getCardsOfType($player->id, PSYCHIC_PROBE_CARD);
                 $unusedPsychicProbeCards = 0;
                 $usedCards = $this->getUsedCard();
                 foreach($psychicProbeCards as $psychicProbeCard) {
@@ -364,9 +364,9 @@ trait DiceTrait {
                 $this->setUsedCard($usedCardOnThisTurn);
             }
         } else {
-            if ($card == 33) {
-                $this->removeCardByType($playerId, 33);
-            } else if ($card == 44) {
+            if ($card == PLOT_TWIST) {
+                $this->removeCardByType($playerId, PLOT_TWIST);
+            } else if ($card == STRETCHY_CARD) {
                 $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
             }
         }
@@ -376,7 +376,7 @@ trait DiceTrait {
         if (count($playersWithPsychicProbe) > 0) {
             $cards = [];
             foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
-                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, 36));
+                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, PSYCHIC_PROBE_CARD));
             }
             $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
             $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
@@ -396,7 +396,7 @@ trait DiceTrait {
         self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
         
         $usedCards = $this->getUsedCard();
-        $psychicProbeCards = $this->getCardsOfType($playerId, 36);
+        $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
         $usedCardOnThisTurn = null;
         foreach($psychicProbeCards as $psychicProbeCard) {
             if (array_search($psychicProbeCard->id, $usedCards) === false) {
@@ -415,7 +415,7 @@ trait DiceTrait {
                 $card = $currentPlayerCards[0];
                 $this->removeCard($playerId, $card);
 
-                if ($card->type == 36) { // real Psychic Probe             
+                if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe             
                     // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded, is Mimick disarded ? Considered no but token removed
                     // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded before Mimic turn, Can Mimic player still do Psychic Probe roll during this turn ? Considered Yes but TODO probably change to No
                 }
@@ -429,7 +429,7 @@ trait DiceTrait {
         self::notifyAllPlayers("psychicProbeRollDie", $message, [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
-            'card_name' => $this->getCardName(36),
+            'card_name' => $this->getCardName(PSYCHIC_PROBE_CARD),
             'die_face_before' => $this->getDieFaceLogName($die->value),
             'die_face_after' => $this->getDieFaceLogName($value),
         ]);
@@ -446,7 +446,7 @@ trait DiceTrait {
         if (count($playersWithPsychicProbe) > 0) {
             $cards = [];
             foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
-                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, 36));
+                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, PSYCHIC_PROBE_CARD));
             }
             $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
             $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
@@ -525,7 +525,7 @@ trait DiceTrait {
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
         $maxThrowNumber = $this->getThrowNumber($playerId);
 
-        $hasEnergyDrink = $this->countCardOfType($playerId, 45) > 0; // Energy drink
+        $hasEnergyDrink = $this->countCardOfType($playerId, ENERGY_DRINK_CARD) > 0; // Energy drink
         $playerEnergy = null;
         if ($hasEnergyDrink) {
             $playerEnergy = $this->getPlayerEnergy($playerId);
@@ -537,7 +537,7 @@ trait DiceTrait {
             $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
         }
 
-        $hasSmokeCloud = $this->countCardOfType($playerId, 41) > 0; // Smoke Cloud
+        $hasSmokeCloud = $this->countCardOfType($playerId, SMOKE_CLOUD_CARD) > 0; // Smoke Cloud
     
         // return values:
         return [
@@ -588,7 +588,7 @@ trait DiceTrait {
     function argResolveHeartDiceAction() {
         $playerId = self::getActivePlayerId();
 
-        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
         $diceCount = $diceCounts[4];
 
         if ($diceCount > 0) {  
@@ -683,35 +683,35 @@ trait DiceTrait {
 
         // poison quills
         if ($diceCounts[2] >= 3) {
-            $countPoisonQuills = $this->countCardOfType($playerId, 34);
+            $countPoisonQuills = $this->countCardOfType($playerId, POISON_QUILLS_CARD);
             if ($countPoisonQuills > 0) {
                 $diceCounts[6] += 2 * $countPoisonQuills;
                 $addedSmashes += 2 * $countPoisonQuills;
                 
-                for ($i=0; $i<$countPoisonQuills; $i++) { $cardsAddingSmashes[] = 34; }
+                for ($i=0; $i<$countPoisonQuills; $i++) { $cardsAddingSmashes[] = POISON_QUILLS_CARD; }
             }
         }
 
         if ($diceCounts[6] >= 1) {
             // spiked tail
-            // TOCHECK can it be chained with Acid attack ? Considered yes
-            $countSpikedTail = $this->countCardOfType($playerId, 43);
+            // TOCHECK can Spiked Tail be chained with Acid attack ? Considered yes
+            $countSpikedTail = $this->countCardOfType($playerId, SPIKED_TAIL_CARD);
             if ($countSpikedTail > 0) {
                 $diceCounts[6] += $countSpikedTail;
                 $addedSmashes += $countSpikedTail;
                 
-                for ($i=0; $i<$countSpikedTail; $i++) { $cardsAddingSmashes[] = 43; }
+                for ($i=0; $i<$countSpikedTail; $i++) { $cardsAddingSmashes[] = SPIKED_TAIL_CARD; }
             }
 
             // urbavore
-            // TOCHECK can it be chained with Acid attack ? Considered yes
+            // TOCHECK can Urbavore be chained with Acid attack ? Considered yes
             if ($playerInTokyo) {
-                $countUrbavore = $this->countCardOfType($playerId, 46);
+                $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);
                 if ($countUrbavore > 0) {
                     $diceCounts[6] += $countUrbavore;
                     $addedSmashes += $countUrbavore;
                 
-                    for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = 46; }
+                    for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = URBAVORE_CARD; }
                 }
             }
         }
@@ -735,9 +735,9 @@ trait DiceTrait {
 
         // detritivore
         if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1) {
-            $countDetritivore = $this->countCardOfType($playerId, 30);
+            $countDetritivore = $this->countCardOfType($playerId, DETRITIVORE_CARD);
             if ($countDetritivore > 0) {
-                $this->applyGetPoints($playerId, 2 * $countDetritivore, 30);
+                $this->applyGetPoints($playerId, 2 * $countDetritivore, DETRITIVORE_CARD);
             }
 
             // complete destruction
@@ -770,9 +770,8 @@ trait DiceTrait {
             }
         }
 
-        $this->setGlobalVariable('fireBreathingDamages', $fireBreathingDamages);
-
-        $this->setGlobalVariable('diceCounts', $diceCounts);
+        $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
+        $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
 
         $this->gamestate->nextState('next');
     }
@@ -780,7 +779,7 @@ trait DiceTrait {
     function stResolveNumberDice() {
         $playerId = self::getActivePlayerId();
 
-        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         for ($diceFace = 1; $diceFace <= 3; $diceFace++) {
             $diceCount = $diceCounts[$diceFace];
@@ -809,7 +808,7 @@ trait DiceTrait {
     function stResolveHeartDice() {
         $playerId = self::getActivePlayerId();
         
-        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $diceCount = $diceCounts[4];
         $this->resolveHealthDice($playerId, $diceCount);
@@ -819,7 +818,7 @@ trait DiceTrait {
     function stResolveEnergyDice() {
         $playerId = self::getActivePlayerId();
         
-        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $diceCount = $diceCounts[5];
         if ($diceCount > 0) {
@@ -832,7 +831,7 @@ trait DiceTrait {
     function stResolveSmashDice() {
         $playerId = self::getActivePlayerId();
         
-        $diceCounts = $this->getGlobalVariable('diceCounts', true);
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $diceCount = $diceCounts[6];
 
@@ -844,7 +843,7 @@ trait DiceTrait {
             $smashTokyo = !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
             $redirects = $this->resolveSmashDice($playerId, $diceCount);
         } else {
-            $fireBreathingDamages = $this->getGlobalVariable('fireBreathingDamages', true);
+            $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 
             $smashTokyo = false;
             foreach($fireBreathingDamages as $fireBreathingDamage) {

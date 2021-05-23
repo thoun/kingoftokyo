@@ -48,4 +48,45 @@ define('END_SCORE', 100);
 define('PSYCHIC_PROBE_INTERVENTION', 'PsychicProbeIntervention');
 define('OPPORTUNIST_INTERVENTION', 'OpportunistIntervention');
 define('CANCEL_DAMAGE_INTERVENTION', 'CancelDamageIntervention');
+
+/*
+ * Global variables
+ */
+
+define('FIRE_BREATHING_DAMAGES', 'FireBreathingDamages');
+define('DICE_COUNTS', 'DiceCounts');
+define('USED_CARDS', 'UsedCards');
+define('JETS_DAMAGES', 'JetsDamages');
+define('MIMICKED_CARD', 'MimickedCard');
+define('USED_WINGS', 'UsedWings');
+define('MADE_IN_A_LAB', 'MadeInALab');
+
+/*
+ * Cards
+ */
+
+define('MADE_IN_A_LAB_CARD', 25);
+define('METAMORPH_CARD', 26);
+define('MIMIC_CARD', 27);
+define('BATTERY_MONSTER_CARD', 28);
+define('NOVA_BREATH_CARD', 29);
+define('DETRITIVORE_CARD', 30);
+define('OPPORTUNIST_CARD', 31);
+define('PARASITIC_TENTACLES', 32);
+define('PLOT_TWIST', 33);
+define('POISON_QUILLS_CARD', 34);
+define('POISON_SPIT_CARD', 35);
+define('PSYCHIC_PROBE_CARD', 36);
+define('RAPID_HEALING_CARD', 37);
+define('REGENERATION_CARD', 38);
+define('ROOTING_FOR_THE_UNDERDOG_CARD', 39);
+define('SHRINK_RAY_CARD', 40);
+define('SMOKE_CLOUD_CARD', 41);
+define('SOLAR_POWERED_CARD', 42);
+define('SPIKED_TAIL_CARD', 43);
+define('STRETCHY_CARD', 44);
+define('ENERGY_DRINK_CARD', 45);
+define('URBAVORE_CARD', 46);
+define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
+define('WINGS_CARD', 48);
 ?>

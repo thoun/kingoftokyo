@@ -44,15 +44,15 @@ trait UtilTrait {
     function setUsedCard(int $cardId) {
         $cardsIds = $this->getUsedCard();
         $cardsIds[] = $cardId;
-        $this->setGlobalVariable('usedCards', $cardsIds);
+        $this->setGlobalVariable(USED_CARDS, $cardsIds);
     }
 
     function getUsedCard() {
-        return $this->getGlobalVariable('usedCards', true);
+        return $this->getGlobalVariable(USED_CARDS, true);
     }
 
     function resetUsedCards() {
-        $this->setGlobalVariable('usedCards', []);
+        $this->setGlobalVariable(USED_CARDS, []);
     }
 
     function deleteGlobalVariable(string $name) {
@@ -340,9 +340,9 @@ trait UtilTrait {
         $this->applyGetHealthIgnoreCards($playerId, $health, $cardType);
         
         // regeneration
-        $countRegeneration = $this->countCardOfType($playerId, 38);
+        $countRegeneration = $this->countCardOfType($playerId, REGENERATION_CARD);
         if ($countRegeneration > 0) {
-            $this->applyGetHealthIgnoreCards($playerId, $countRegeneration, 38);
+            $this->applyGetHealthIgnoreCards($playerId, $countRegeneration, REGENERATION_CARD);
         }
     }
 
@@ -392,9 +392,9 @@ trait UtilTrait {
 
         if ($health >= 2) {
             // we're only making it stronger          
-            $countWereOnlyMakingItStronger = $this->countCardOfType($playerId, 47);
+            $countWereOnlyMakingItStronger = $this->countCardOfType($playerId, WE_RE_ONLY_MAKING_IT_STRONGER_CARD);
             if ($countWereOnlyMakingItStronger > 0) {
-                $this->applyGetEnergy($playerId, $countWereOnlyMakingItStronger, 47);
+                $this->applyGetEnergy($playerId, $countWereOnlyMakingItStronger, WE_RE_ONLY_MAKING_IT_STRONGER_CARD);
             }
         }
 
@@ -490,7 +490,7 @@ trait UtilTrait {
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'delta_tokens' => $deltaTokens,
-            'card_name' => $this->getCardName(40),
+            'card_name' => $this->getCardName(SHRINK_RAY_CARD),
             'tokens' => $this->getPlayerShrinkRayTokens($playerId),
         ]);
     }
@@ -504,7 +504,7 @@ trait UtilTrait {
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'delta_tokens' => $deltaTokens,
-            'card_name' => $this->getCardName(35),
+            'card_name' => $this->getCardName(POISON_SPIT_CARD),
             'tokens' => $this->getPlayerPoisonTokens($playerId),
         ]);
     }

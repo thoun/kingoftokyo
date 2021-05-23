@@ -53,7 +53,6 @@ class KingOfTokyo extends Table {
             "loseHeartEnteringTokyo" => 14,
             "playAgainAfterTurnOneLessDie" => 15,
             "lessDiceForNextTurn" => 16,
-            "madeInALabCard" => 19,
             "newCardId" => 20,
             //      ...
             //    "my_first_game_variant" => 100,
@@ -122,7 +121,6 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('damageDoneByActivePlayer', 0);
         self::setGameStateInitialValue('energyDrinks', 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
-        self::setGameStateInitialValue('madeInALabCard', 0);
         self::setGameStateInitialValue('newCardId', 0);
 
         // Init game statistics
@@ -176,7 +174,7 @@ class KingOfTokyo extends Table {
             $playerDb['poisonTokens'] = intval($playerDb['poisonTokens']);
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
 
-            $playerDb['rapidHealing'] = $this->countCardOfType($playerId, 37) > 0;
+            $playerDb['rapidHealing'] = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
             $playerDb['maxHealth'] = $this->getPlayerMaxHealth($playerId);
         }
 

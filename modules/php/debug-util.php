@@ -9,11 +9,11 @@ trait DebugUtilTrait {
 ////////////
 
     function debugSetup() {
-        //$mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(37))[0]);
+        //$mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(RAPID_HEALING_CARD))[0]);
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
-        $this->debugSetCardInHand(37, 2343492);
-        //$this->debugSetCardInTable(27);
+        $this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492);
+        //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetPlayerInLocation(2343492, 1);
     }
 
