@@ -805,12 +805,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
-        this.setPoints(notif.args.playerId, notif.args.points);
+        this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);
         this.diceManager.resolveNumberDice(notif.args);
     }
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
-        this.setHealth(notif.args.playerId, notif.args.health);
+        this.setHealth(notif.args.playerId, notif.args.health, ANIMATION_MS);
         this.diceManager.resolveHealthDice(notif.args);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
@@ -933,14 +933,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
     
-    private setPoints(playerId: number, points: number) {
+    private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
-        this.playerTables[playerId].setPoints(points);
+        this.playerTables[playerId].setPoints(points, delay);
     }
     
-    private setHealth(playerId: number, health: number) {
+    private setHealth(playerId: number, health: number, delay: number = 0) {
         this.healthCounters[playerId].toValue(health);
-        this.playerTables[playerId].setHealth(health);
+        this.playerTables[playerId].setHealth(health, delay);
         this.checkRapidHealingButtonState();
     }
     

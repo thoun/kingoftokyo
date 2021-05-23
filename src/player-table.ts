@@ -73,12 +73,18 @@ class PlayerTable {
         cardsIds.forEach(id => this.cards.removeFromStockById(''+id));
     }
 
-    public setPoints(points: number) {
-        document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[points]}deg)`;
+    public setPoints(points: number, delay: number = 0) {
+        setTimeout(
+            () => document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[points]}deg)`,
+            delay
+        );
     }
 
-    public setHealth(health: number) {
-        document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${health > 12 ? 22 : HEALTH_DEG[health]}deg)`;
+    public setHealth(health: number, delay: number = 0) {
+        setTimeout(
+            () => document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${health > 12 ? 22 : HEALTH_DEG[health]}deg)`,
+            delay
+        );
     }
 
     public eliminatePlayer() {

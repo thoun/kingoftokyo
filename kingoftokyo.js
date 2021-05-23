@@ -489,11 +489,15 @@ var PlayerTable = /** @class */ (function () {
         var cardsIds = cards.map(function (card) { return card.id; });
         cardsIds.forEach(function (id) { return _this.cards.removeFromStockById('' + id); });
     };
-    PlayerTable.prototype.setPoints = function (points) {
-        document.getElementById("blue-wheel-" + this.playerId).style.transform = "rotate(" + POINTS_DEG[points] + "deg)";
+    PlayerTable.prototype.setPoints = function (points, delay) {
+        var _this = this;
+        if (delay === void 0) { delay = 0; }
+        setTimeout(function () { return document.getElementById("blue-wheel-" + _this.playerId).style.transform = "rotate(" + POINTS_DEG[points] + "deg)"; }, delay);
     };
-    PlayerTable.prototype.setHealth = function (health) {
-        document.getElementById("red-wheel-" + this.playerId).style.transform = "rotate(" + (health > 12 ? 22 : HEALTH_DEG[health]) + "deg)";
+    PlayerTable.prototype.setHealth = function (health, delay) {
+        var _this = this;
+        if (delay === void 0) { delay = 0; }
+        setTimeout(function () { return document.getElementById("red-wheel-" + _this.playerId).style.transform = "rotate(" + (health > 12 ? 22 : HEALTH_DEG[health]) + "deg)"; }, delay);
     };
     PlayerTable.prototype.eliminatePlayer = function () {
         this.cards.removeAll();
@@ -1673,11 +1677,11 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.notif_resolveNumberDice = function (notif) {
-        this.setPoints(notif.args.playerId, notif.args.points);
+        this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);
         this.diceManager.resolveNumberDice(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveHealthDice = function (notif) {
-        this.setHealth(notif.args.playerId, notif.args.health);
+        this.setHealth(notif.args.playerId, notif.args.health, ANIMATION_MS);
         this.diceManager.resolveHealthDice(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveHealthDiceInTokyo = function (notif) {
@@ -1780,14 +1784,16 @@ var KingOfTokyo = /** @class */ (function () {
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
         }
     };
-    KingOfTokyo.prototype.setPoints = function (playerId, points) {
+    KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
+        if (delay === void 0) { delay = 0; }
         (_a = this.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.toValue(points);
-        this.playerTables[playerId].setPoints(points);
+        this.playerTables[playerId].setPoints(points, delay);
     };
-    KingOfTokyo.prototype.setHealth = function (playerId, health) {
+    KingOfTokyo.prototype.setHealth = function (playerId, health, delay) {
+        if (delay === void 0) { delay = 0; }
         this.healthCounters[playerId].toValue(health);
-        this.playerTables[playerId].setHealth(health);
+        this.playerTables[playerId].setHealth(health, delay);
         this.checkRapidHealingButtonState();
     };
     KingOfTokyo.prototype.setMaxHealth = function (playerId, maxHealth) {
