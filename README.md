@@ -35,7 +35,5 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 # TODO
 check all TOCHECK with editor
 Stack notifications for dice + card effects to make them the right order
-
 Add option to leave tokyo as soon as possible
 Add checkActions & more security (reroll 3 have dice3, ...)
-add description of mimicked card on mimic tooltip
