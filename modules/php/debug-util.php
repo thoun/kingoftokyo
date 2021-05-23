@@ -13,7 +13,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         $this->debugSetCardInHand(MIMIC_CARD, 2343492);
-        $this->debugSetCardInTable(SMOKE_CLOUD_CARD);
+        $this->debugSetCardInTable(104);
         //$this->debugSetPlayerInLocation(2343492, 1);
     }
 

@@ -240,57 +240,57 @@ var Cards = /** @class */ (function () {
         }
         return null;
     };
-    Cards.prototype.getCardName = function (cardTypeId) {
+    Cards.prototype.getColoredCardName = function (cardTypeId) {
         switch (cardTypeId) {
             // KEEP
-            case 1: return _("Acid Attack");
-            case 2: return _("Alien Origin");
-            case 3: return _("Alpha Monster");
-            case 4: return _("Armor Plating");
-            case 5: return _("Background Dweller");
-            case 6: return _("Burrowing");
-            case 7: return _("Camouflage");
-            case 8: return _("Complete Destruction");
-            case 9: return _("Media Friendly");
-            case 10: return _("Eater of the Dead");
-            case 11: return _("Energy Hoarder");
-            case 12: return _("Even Bigger");
+            case 1: return _("[724468]Acid [6E3F63]Attack");
+            case 2: return _("[442E70]Alien [57347E]Origin");
+            case 3: return _("[624A9E]Alpha Monster");
+            case 4: return _("[6FBA44]Armor Plating");
+            case 5: return _("[0068A1]Background [0070AA]Dweller");
+            case 6: return _("[5A6E79]Burrowing");
+            case 7: return _("[5DB1DD]Camouflage");
+            case 8: return _("[7C7269]Complete [958B7F]Destruction");
+            case 9: return _("[836380]Media-Friendly");
+            case 10: return _("[42B4B4]Eater of [25948B]the Dead");
+            case 11: return _("[0C4E4A]Energy [004C6E]Hoarder");
+            case 12: return _("[293066]Even Bigger");
             case 13:
-            case 14: return _("Extra Head");
-            case 15: return _("Fire Breathing");
-            case 16: return _("Freeze Time");
-            case 17: return _("Friend of Children");
-            case 18: return _("Giant Brain");
-            case 19: return _("Gourmet");
-            case 20: return _("Healing Ray");
-            case 21: return _("Herbivore");
-            case 22: return _("Herd Culler");
-            case 23: return _("It Has a Child");
-            case 24: return _("Jets");
-            case 25: return _("Made in a Lab");
-            case 26: return _("Metamorph");
-            case 27: return _("Mimic");
-            case 28: return _("Battery Monster");
-            case 29: return _("Nova Breath");
-            case 30: return _("Detritivore");
-            case 31: return _("Opportunist");
-            case 32: return _("Parasitic Tentacles");
-            case 33: return _("Plot Twist");
-            case 34: return _("Poison Quills");
-            case 35: return _("Poison Spit");
-            case 36: return _("Psychic Probe");
-            case 37: return _("Rapid Healing");
-            case 38: return _("Regeneration");
-            case 39: return _("Rooting for the Underdog");
-            case 40: return _("Shrink Ray");
-            case 41: return _("Smoke Cloud");
-            case 42: return _("Solar Powered");
-            case 43: return _("Spiked Tail");
-            case 44: return _("Stretchy");
-            case 45: return _("Energy Drink");
-            case 46: return _("Urbavore");
-            case 47: return _("We're Only Making It Stronger");
-            case 48: return _("Wings");
+            case 14: return _("[060D29]Extra [0C1946]Head");
+            case 15: return _("[823F24]Fire [FAAE5A]Breathing");
+            case 16: return _("[5F6D7A]Freeze Time");
+            case 17: return _("[0481C4]Friend of Children");
+            case 18: return _("[8E4522]Giant [277C43]Brain");
+            case 19: return _("[958877]Gourmet");
+            case 20: return _("[7A673C]Healing [DC825F]Ray");
+            case 21: return _("[2B63A5]Herbivore");
+            case 22: return _("[BBB595]Herd [835C25]Culler");
+            case 23: return _("[0C94D0]It Has a Child!");
+            case 24: return _("[AABEE1]Jets");
+            case 25: return _("[075087]Made in [124884]a Lab");
+            case 26: return _("[5E9541]Metamorph");
+            case 27: return _("[85A8AA]Mimic");
+            case 28: return _("[92534C]Battery [88524D]Monster");
+            case 29: return _("[67374D]Nova [83B5B6]Breath");
+            case 30: return _("[5B79A2]Detritivore");
+            case 31: return _("[0068A1]Opportunist");
+            case 32: return _("[462365]Parasitic [563D5B]Tentacles");
+            case 33: return _("[CD599A]Plot [E276A7]Twist");
+            case 34: return _("[1E345D]Poison Quills");
+            case 35: return _("[3D5C33]Poison Spit");
+            case 36: return _("[2A7C3C]Psychic [6DB446]Probe");
+            case 37: return _("[8D6E5C]Rapid [B16E44]Healing");
+            case 38: return _("[5C273B]Regeneration");
+            case 39: return _("[007DC0]Rooting for the Underdog");
+            case 40: return _("[A2B164]Shrink [A07958]Ray");
+            case 41: return _("[5E7795]Smoke Cloud");
+            case 42: return _("[142338]Solar [46617C]Powered");
+            case 43: return _("[A9C7AD]Spiked [4F6269]Tail");
+            case 44: return _("[AE2B7B]Stretchy");
+            case 45: return _("[56170E]Energy Drink");
+            case 46: return _("[B795A5]Urbavore");
+            case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
+            case 48: return _("[443E56]Wings");
             //case 49: return _("Cannibalistic");
             //case 50: return _("Intimidating Roar");
             //case 51: return _("Monster Sidekick");
@@ -301,26 +301,46 @@ var Cards = /** @class */ (function () {
             //case 56: return _("Thunder Stomp");
             //case 57: return _("Unstable DNA");
             // DISCARD
-            case 101: return _("Apartment Building");
-            case 102: return _("Commuter Train");
-            case 103: return _("Corner Store");
-            case 104: return _("Death From Above");
-            case 105: return _("Energize");
+            case 101: return _("[B180A0]Apartment [9F7595]Building");
+            case 102: return _("[496787]Commuter [415C7A]Train");
+            case 103: return _("[993422]Corner [5F6A70]Store");
+            case 104: return _("[5BB3E2]Death [45A2D6]From [CE542B]Above");
+            case 105: return _("[5D657F]Energize");
             case 106:
-            case 107: return _("Evacuation Orders");
-            case 108: return _("Flame Thrower");
-            case 109: return _("Frenzy");
-            case 110: return _("Gas Refinery");
-            case 111: return _("Heal");
-            case 112: return _("High Altitude Bombing");
-            case 113: return _("Jet Fighters");
-            case 114: return _("National Guard");
-            case 115: return _("Nuclear Power Plant");
-            case 116: return _("Skyscraper");
-            case 117: return _("Tank");
-            case 118: return _("Vast Storm");
+            case 107: return _("[7F2719]Evacuation [812819]Orders");
+            case 108: return _("[71200F]Flame [4E130B]Thrower");
+            case 109: return _("[B1624A]Frenzy");
+            case 110: return _("[645656]Gas [71625F]Refinery");
+            case 111: return _("[815321]Heal");
+            case 112: return _("[5B79A2]High Altitude Bombing");
+            case 113: return _("[EE008E]Jet [49236C]Fighters");
+            case 114: return _("[68696B]National [53575A]Guard");
+            case 115: return _("[684376]Nuclear [41375F]Power Plant");
+            case 116: return _("[5F8183]Skyscraper");
+            case 117: return _("[AF966B]Tank");
+            case 118: return _("[847443]Vast [8D7F4E]Storm");
             //case 119: return _("Amusement Park");
             //case 120: return _("Army");
+        }
+        return null;
+    };
+    Cards.prototype.getCardName = function (cardTypeId, state) {
+        var coloredCardName = this.getColoredCardName(cardTypeId);
+        if (state == 'text-only') {
+            return coloredCardName.replace(/\[(\w+)\]/g, '');
+        }
+        else if (state == 'span') {
+            var first_1 = true;
+            return coloredCardName.replace(/\[(\w+)\]/g, function (index, color) {
+                var span = "<span style=\"-webkit-text-stroke-color: #" + color + ";\">";
+                if (first_1) {
+                    first_1 = false;
+                }
+                else {
+                    span = "</span>" + span;
+                }
+                return span;
+            }) + ("" + (first_1 ? '' : '</span>'));
         }
         return null;
     };
@@ -354,7 +374,7 @@ var Cards = /** @class */ (function () {
             case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
             case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
             case 27: return _("<strong>Choose a [keep] card any monster has in play</strong> and put a Mimic token on it. <strong>This card counts as a duplicate of that card as if you had just bought it.</strong> Spend 1[Energy] at the start of your turn to move the Mimic token and change the card you are mimicking.");
-            case 28: return dojo.string.substitute(_("When you buy <i>${card_name}</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card."), { 'card_name': this.getCardName(cardTypeId) });
+            case 28: return dojo.string.substitute(_("When you buy <i>${card_name}</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card."), { 'card_name': this.getCardName(cardTypeId, 'text-only') });
             case 29: return _("<strong>Your [diceSmash] damage all other Monsters.</strong>");
             case 30: return _("<strong>When you roll at least [dice1][dice2][dice3] gain 2[Star].</strong> You can also use these dice in other combinations.");
             case 31: return _("<strong>Whenever a Power card is revealed you have the option of buying it</strong> immediately.");
@@ -409,14 +429,13 @@ var Cards = /** @class */ (function () {
         return null;
     };
     Cards.prototype.getTooltip = function (cardTypeId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': this.getCardCost(cardTypeId) }) + " <span class=\"icon energy\"></span></p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': this.getCardCost(cardTypeId) }) + " <span class=\"icon energy\"></span></p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     Cards.prototype.setupNewCard = function (card_div, card_type_id) {
         var type = card_type_id < 100 ? _('Keep') : _('Discard');
-        var name = this.getCardName(card_type_id);
         var description = formatTextIcons(this.getCardDescription(card_type_id));
-        card_div.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\"><div>" + description + "</div></div>\n        ";
+        card_div.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + this.getCardName(card_type_id, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(card_type_id, 'text-only') + "</div>\n        </div>\n        <div class=\"type-wrapper " + (card_type_id < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\"><div>" + description + "</div></div>\n        ";
         this.game.addTooltipHtml(card_div.id, this.getTooltip(card_type_id));
     };
     return Cards;
@@ -854,19 +873,19 @@ var DiceManager = /** @class */ (function () {
                 var dieFaceSelector_1 = new DieFaceSelector(bubbleDieFaceSelectorId, args.inTokyo);
                 var buttonText = _("Change die face with ${card_name}");
                 if (args.hasHerdCuller) {
-                    this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(22) + "</strong>" }), function () {
+                    this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(22, 'text-only') + "</strong>" }), function () {
                         _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 22);
                         _this.toggleBubbleChangeDie(die, args);
                     }, true);
                 }
                 if (args.hasPlotTwist) {
-                    this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(33) + "</strong>" }), function () {
+                    this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(33, 'text-only') + "</strong>" }), function () {
                         _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 33),
                             _this.toggleBubbleChangeDie(die, args);
                     }, true);
                 }
                 if (args.hasStretchy) {
-                    this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(44) + "</strong>" }) + formatTextIcons(' (2 [Energy])'), function () {
+                    this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(44, 'text-only') + "</strong>" }) + formatTextIcons(' (2 [Energy])'), function () {
                         _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 44),
                             _this.toggleBubbleChangeDie(die, args);
                     }, true);
@@ -1155,13 +1174,13 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.destroy('throwCamouflageDice_button');
         }
         if (args.canUseWings && !document.getElementById('useWings_button')) {
-            this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48) })), 'useWings');
+            this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48, 'text-only') })), 'useWings');
             if (args.playerEnergy < 2) {
                 dojo.addClass('useWings_button', 'disabled');
             }
         }
         if (args.canSkipWings && !document.getElementById('skipWings_button')) {
-            this.addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48) }), 'skipWings');
+            this.addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }), 'skipWings');
         }
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {

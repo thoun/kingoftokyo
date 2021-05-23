@@ -254,7 +254,7 @@ class DiceManager {
                     this.game.createButton(
                         bubbleActionButtonsId, 
                         herdCullerButtonId, 
-                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(22)}</strong>` }),
+                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(22, 'text-only')}</strong>` }),
                         () => {
                             this.game.changeDie(die.id, dieFaceSelector.getValue(), 22);
                             this.toggleBubbleChangeDie(die, args);
@@ -266,7 +266,7 @@ class DiceManager {
                     this.game.createButton(
                         bubbleActionButtonsId, 
                         plotTwistButtonId, 
-                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(33)}</strong>` }),
+                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(33, 'text-only')}</strong>` }),
                         () => {
                             this.game.changeDie(die.id, dieFaceSelector.getValue(), 33),
                             this.toggleBubbleChangeDie(die, args);
@@ -278,7 +278,7 @@ class DiceManager {
                     this.game.createButton(
                         bubbleActionButtonsId, 
                         stretchyButtonId, 
-                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(44)}</strong>` }) + formatTextIcons(' (2 [Energy])'),
+                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(44, 'text-only')}</strong>` }) + formatTextIcons(' (2 [Energy])'),
                         () => {
                             this.game.changeDie(die.id, dieFaceSelector.getValue(), 44),
                             this.toggleBubbleChangeDie(die, args);

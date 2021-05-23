@@ -199,13 +199,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         if (args.canUseWings && !document.getElementById('useWings_button')) {
-            (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48)})), 'useWings');
+            (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48, 'text-only')})), 'useWings');
             if (args.playerEnergy < 2) {
                 dojo.addClass('useWings_button', 'disabled');
             }
         }
         if (args.canSkipWings && !document.getElementById('skipWings_button')) {
-            (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48)}), 'skipWings');
+            (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}), 'skipWings');
         }
     }
 
