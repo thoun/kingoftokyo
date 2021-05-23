@@ -442,7 +442,16 @@ trait CardsTrait {
             throw new \Error('No Smoke Cloud card');
         }
 
-        $card = $cards[0];
+        // we choose mimic card first, if available
+        $card = null;
+        foreach($cards as $icard) {
+            if ($icard->type == MIMIC_CARD && $icard->tokens > 0) {
+                $card = $icard;
+            }
+        }
+        if ($card == null) {
+            $card = $cards[0];
+        }
 
         if ($card->tokens < 1) {
             throw new \Error('Not enough token');
@@ -451,7 +460,7 @@ trait CardsTrait {
         $tokensOnCard = $card->tokens - 1;
         $this->setCardTokens($playerId, $card, $tokensOnCard);
 
-        // TOCHECK When Mimic is set on Smoke Cloud, and run out of tokens, is the Mimic card discarded ? Considered No
+        // TOCHECK When Mimic is set on Smoke Cloud, and run out of tokens, is the Mimic card discarded ? Or is mimic token removed ? Considered No and No
         if ($tokensOnCard <= 0 && $card->type != MIMIC_CARD) {
             $this->removeCard($playerId, $card);
         }
