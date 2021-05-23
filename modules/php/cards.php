@@ -253,7 +253,7 @@ trait CardsTrait {
             $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
         }
 
-        if ($mimicCard && $card->type == EVEN_BIGGER_CARD) {
+        if ($mimicCard && $card && $card->type == EVEN_BIGGER_CARD) {
             $this->changeMaxHealth($mimicCard->location_arg);
         } 
     

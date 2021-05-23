@@ -192,6 +192,9 @@ trait DiceTrait {
             }
         }
 
+        $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES);
+        $damages = array_merge($damages, $fireBreathingDamages);
+
         // TOCHECK Can a player leave tokyo if he cancel all damage while in tokyo (with wings or camouflage) ? Considered Yes
         if (count($damages) > 0) {
             $cancelDamageEndState = !$inTokyo && count($this->getPlayersIdsInTokyo()) > 0 ? "smashes" : "enterTokyo";
@@ -841,26 +844,12 @@ trait DiceTrait {
 
         $diceCount = $diceCounts[6];
 
-        $redirects = null;
-        $smashTokyo = null;
-        $cancelDamageEndState = null;
+        $redirects = false;
+        $smashTokyo = false;
 
         if ($diceCount > 0) {
             $smashTokyo = !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
             $redirects = $this->resolveSmashDice($playerId, $diceCount);
-        } else {
-            $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
-
-            $smashTokyo = false;
-            foreach($fireBreathingDamages as $fireBreathingDamage) {
-                if ($this->inTokyo($fireBreathingDamage->playerId)) {
-                    $smashTokyo = true;
-                    break;
-                }
-            }
-
-            $cancelDamageEndState = $smashTokyo ? "smashes" : "enterTokyo";
-            $redirects = $this->resolveDamages($fireBreathingDamages, $cancelDamageEndState);
         }
         
         if (!$redirects) {
