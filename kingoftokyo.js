@@ -1195,6 +1195,7 @@ var KingOfTokyo = /** @class */ (function () {
         switch (stateName) {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
+            case 'opportunistChooseMimicCard':
                 this.onLeavingChooseMimickedCard();
                 break;
             case 'throwDice':
@@ -1270,6 +1271,8 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
                     this.onEnteringBuyCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'opportunistChooseMimicCard':
+                    this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
                 case 'sellCard':
                     this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
@@ -1357,7 +1360,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
         }
-        else if (this.gamedatas.gamestate.name === 'chooseMimickedCard') {
+        else if (this.gamedatas.gamestate.name === 'chooseMimickedCard' || this.gamedatas.gamestate.name === 'opportunistChooseMimicCard') {
             this.chooseMimickedCard(cardId);
         }
         else if (this.gamedatas.gamestate.name === 'changeMimickedCard') {

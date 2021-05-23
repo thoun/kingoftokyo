@@ -782,7 +782,9 @@ trait CardsTrait {
     }
 
     function chooseMimickedCard(int $mimickedCardId) {
-        $playerId = self::getActivePlayerId();
+        $stateName = $this->gamestate->state()['name'];
+        $opportunist = $stateName === 'opportunistChooseMimicCard';
+        $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
 
         $this->setMimickedCardId($playerId, $mimickedCardId);
 
@@ -1057,6 +1059,12 @@ trait CardsTrait {
 
     function stOpportunistBuyCard() {
         $this->stIntervention('OpportunistIntervention');
+    }
+
+    function stOpportunistChooseMimicCard() {
+        $intervention = $this->getGlobalVariable('OpportunistIntervention');
+
+        $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'stay', true);
     }
 
     function stSellCard() {

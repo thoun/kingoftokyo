@@ -249,6 +249,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch (stateName) {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
+            case 'opportunistChooseMimicCard':
                 this.onLeavingChooseMimickedCard();
                 break;            
             case 'throwDice':
@@ -330,6 +331,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
                     this.onEnteringBuyCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'opportunistChooseMimicCard':
+                    this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
                 case 'sellCard':
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
@@ -449,7 +452,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
-        } else if (this.gamedatas.gamestate.name === 'chooseMimickedCard') {
+        } else if (this.gamedatas.gamestate.name === 'chooseMimickedCard' || this.gamedatas.gamestate.name === 'opportunistChooseMimicCard') {
             this.chooseMimickedCard(cardId);
         } else if (this.gamedatas.gamestate.name === 'changeMimickedCard') {
             this.changeMimickedCard(cardId);

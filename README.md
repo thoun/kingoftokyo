@@ -42,5 +42,4 @@ Add option to leave tokyo as soon as possible
 Add checkActions & more security (reroll 3 have dice3, ...)
 mimic : apply mimicked card effect on choose/change
 disable Rapid Healing if full life
-TODO opportunist buy mimic card
-TODO test jets again
+add description of mimicked card on mimic tooltip
