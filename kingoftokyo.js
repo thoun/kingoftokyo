@@ -100,11 +100,15 @@ var Cards = /** @class */ (function () {
     Cards.prototype.placeTokensOnCard = function (stock, card, playerId) {
         var divId = stock.container_div.id + "_item_" + card.id;
         var div = document.getElementById(divId);
+        if (!div) {
+            return;
+        }
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         var placed = cardPlaced.tokens;
+        var cardType = card.mimicType || card.type;
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
-            if (card.type === 28 && playerId) {
+            if (cardType === 28 && playerId) {
                 this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
             }
             else {
@@ -117,10 +121,10 @@ var Cards = /** @class */ (function () {
             var newPlace = this.getPlaceOnCard(cardPlaced);
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
-            if (card.type === 28) {
+            if (cardType === 28) {
                 html += "energy-cube";
             }
-            else if (card.type === 41) {
+            else if (cardType === 41) {
                 html += "smoke-cloud token";
             }
             html += "\"></div>";

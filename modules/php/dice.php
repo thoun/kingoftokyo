@@ -171,7 +171,7 @@ trait DiceTrait {
         $countAlphaMonster = $this->countCardOfType($playerId, ALPHA_MONSTER_CARD);
         if ($countAlphaMonster > 0) {
             // TOCHECK does Alpha Monster applies after other cards adding Smashes ? considered Yes
-            $this->applyGetPoints($playerId, $countAlphaMonster, 3ALPHA_MONSTER_CARD);
+            $this->applyGetPoints($playerId, $countAlphaMonster, ALPHA_MONSTER_CARD);
         }
 
         // Shrink Ray
@@ -811,7 +811,9 @@ trait DiceTrait {
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $diceCount = $diceCounts[4];
-        $this->resolveHealthDice($playerId, $diceCount);
+        if ($diceCount > 0) {
+            $this->resolveHealthDice($playerId, $diceCount);
+        }
         $this->gamestate->nextState('next');
     }
 

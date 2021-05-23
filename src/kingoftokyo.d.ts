@@ -15,6 +15,7 @@ interface Card {
     type: number;
     cost: number;
     tokens: number;
+    mimicType: number;
 }
 
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';

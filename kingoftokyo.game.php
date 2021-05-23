@@ -171,6 +171,12 @@ class KingOfTokyo extends Table {
         foreach ($result['players'] as $playerId => &$playerDb) {
             $result['playersCards'][$playerId] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
 
+            foreach($result['playersCards'][$playerId] as &$card) {
+                if ($card->type == MIMIC_CARD) {
+                    $card->mimicType = $this->getMimickedCardType();
+                }
+            }
+
             $playerDb['poisonTokens'] = intval($playerDb['poisonTokens']);
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
 

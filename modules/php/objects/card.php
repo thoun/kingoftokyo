@@ -7,6 +7,7 @@ class Card {
     public $location_arg;
     public $type; // 0..100 for keep power, 100..200 for discard power
     public $tokens;
+    public $mimicType;
 
     public function __construct($dbCard) {
         $this->id = intval($dbCard['id']);
