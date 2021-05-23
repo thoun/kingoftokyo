@@ -14,6 +14,9 @@ trait InterventionTrait {
         }
 
         $intervention->nextState = $nextState;
+        if ($nextState === 'next') {            
+            array_shift($intervention->remainingPlayersId); 
+        }
         if ($endState != null) {
             $intervention->endState = $endState;
         }
@@ -22,15 +25,11 @@ trait InterventionTrait {
     }
 
     function stIntervention(string $interventionName) {
-
         $intervention = $this->getGlobalVariable($interventionName);
-        $intervention->currentPlayerId = $intervention->remainingPlayersId[0];
 
         if ($intervention->nextState === 'keep') { // current player continues / next (intervention player) / or leaving transition
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
-        } else if ($intervention->nextState === 'next' && count($intervention->remainingPlayersId) > 1) { // next intervention player
-            array_shift($intervention->remainingPlayersId); 
-            $this->setGlobalVariable($interventionName, $intervention);
+        } else if ($intervention->nextState === 'next' && count($intervention->remainingPlayersId) > 0) { // next intervention player
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
         } else { // leaving transition
             $this->deleteGlobalVariable($interventionName);
