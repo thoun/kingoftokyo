@@ -819,7 +819,7 @@ var DiceManager = /** @class */ (function () {
         var dieDiv = this.getDiceDiv(die);
         if (die.rolled) {
             dieDiv.classList.add('rolled');
-            setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 100);
+            setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 200);
             setTimeout(function () { return dieDiv.classList.remove('rolled'); }, 1200);
         }
         else {

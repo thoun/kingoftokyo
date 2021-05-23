@@ -100,6 +100,7 @@ $description-size: 7pt;
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-wrap: wrap;
         color: black;
         transform: rotate(-6deg);
         font-size: $description-size;

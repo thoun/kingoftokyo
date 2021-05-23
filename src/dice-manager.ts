@@ -210,7 +210,7 @@ class DiceManager {
 
         if (die.rolled) {
             dieDiv.classList.add('rolled');
-            setTimeout(() => dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 100); 
+            setTimeout(() => dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 200); 
             setTimeout(() => dieDiv.classList.remove('rolled'), 1200); 
         } else {
             dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll');

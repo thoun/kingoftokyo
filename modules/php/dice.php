@@ -537,7 +537,11 @@ trait DiceTrait {
             $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
         }
 
-        $hasSmokeCloud = $this->countCardOfType($playerId, SMOKE_CLOUD_CARD) > 0; // Smoke Cloud
+        $smokeCloudsTokens = 0;
+        $smokeCloudCards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD); // Smoke Cloud
+        foreach($smokeCloudCards as $smokeCloudCard) {
+            $smokeCloudsTokens += $smokeCloudCard->tokens;
+        }
     
         // return values:
         return [
@@ -553,7 +557,7 @@ trait DiceTrait {
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $hasDice3,
             ],
-            'hasSmokeCloud' => $hasSmokeCloud
+            'hasSmokeCloud' => $smokeCloudsTokens > 0,
         ];
     }
 

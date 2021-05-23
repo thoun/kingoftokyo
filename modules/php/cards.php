@@ -603,6 +603,7 @@ trait CardsTrait {
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             foreach($cardsOfPlayer as $card) {
+                // TOCHECK Can Mimic card be set again to same card ? For example use it on smoke cloudagain to reset tokens to 3 ? Considered No
                 if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) {
                     return true;
                 }
@@ -1046,10 +1047,11 @@ trait CardsTrait {
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(function ($card) { return $card->id; }, $cards);
+        $mimickedCardId = $this->getMimickedCardId();
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) { return $card->type == MIMIC_CARD && $card->type >= 100; }));
+            $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; }));
             $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
             
             $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
