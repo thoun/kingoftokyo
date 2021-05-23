@@ -156,6 +156,29 @@ class Cards {
         }
     }
 
+    private getCardNamePoisition(cardTypeId: number) {
+        switch( cardTypeId ) {
+            // KEEP
+            case 3: return [0, 90];
+            case 9: return [35, 95];
+            case 11: return [0, 85];
+            case 17: return [0, 85];
+            case 19: return [0, 50];
+            case 27: return [35, 65];
+            case 38: return [0, 100];
+            case 43: return [35, 100];
+            case 45: return [0, 85];
+            case 102: return [30, 80];
+            case 106: case 107: return [35, 65];
+            case 111: return [35, 95];
+            case 112: return [35, 35];
+            case 113: return [35, 65];
+            case 114: return [35, 95];
+            case 115: return [0, 80];
+        }
+        return null;
+    }
+
     private getCardCost(cardTypeId: number) {
         switch( cardTypeId ) {
             // KEEP
@@ -435,15 +458,16 @@ class Cards {
         return tooltip;
     }
 
-    public setupNewCard(card_div: HTMLDivElement, card_type_id: number) {
-        const type = card_type_id < 100 ? _('Keep') : _('Discard');
-        const description = formatTextIcons(this.getCardDescription(card_type_id));
-        card_div.innerHTML = `<div class="bottom"></div>
-        <div class="name-wrapper">
-            <div class="outline">${this.getCardName(card_type_id, 'span')}</div>
-            <div class="text">${this.getCardName(card_type_id, 'text-only')}</div>
+    public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
+        const type = cardType < 100 ? _('Keep') : _('Discard');
+        const description = formatTextIcons(this.getCardDescription(cardType));
+        const position = this.getCardNamePoisition(cardType);
+        cardDiv.innerHTML = `<div class="bottom"></div>
+        <div class="name-wrapper" ${position ? `style="left: ${position[0]}px; top: ${position[1]}px;"` : ''}>
+            <div class="outline">${this.getCardName(cardType, 'span')}</div>
+            <div class="text">${this.getCardName(cardType, 'text-only')}</div>
         </div>
-        <div class="type-wrapper ${ card_type_id < 100 ? 'keep' : 'discard'}">
+        <div class="type-wrapper ${ cardType < 100 ? 'keep' : 'discard'}">
             <div class="outline">${type}</div>
             <div class="text">${type}</div>
         </div>
@@ -451,6 +475,6 @@ class Cards {
         <div class="description-wrapper"><div>${description}</div></div>
         `;
         
-        (this.game as any).addTooltipHtml( card_div.id, this.getTooltip(card_type_id));
+        (this.game as any).addTooltipHtml( cardDiv.id, this.getTooltip(cardType));
     }
 }
