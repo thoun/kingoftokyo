@@ -398,12 +398,6 @@ trait UtilTrait {
                 $this->applyGetEnergy($playerId, $countWereOnlyMakingItStronger, WE_RE_ONLY_MAKING_IT_STRONGER_CARD);
             }
         }
-
-        if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
-            // it has a child
-            $this->applyItHasAChild($playerId);
-            // TODO make notifs for this happen after dice notifs
-        }
     }
 
     function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
@@ -429,6 +423,13 @@ trait UtilTrait {
 
         if ($damageDealerId == self::getActivePlayerId()) {
             self::setGameStateValue('damageDoneByActivePlayer', 1);
+        }
+
+        // must be done before player eliminations
+        if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
+            // it has a child
+            $this->applyItHasAChild($playerId);
+            // TODO make notifs for this happen after dice notifs
         }
 
         $this->eliminatePlayers($activePlayerId);

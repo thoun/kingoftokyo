@@ -13,8 +13,9 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         $this->debugSetCardInHand(MIMIC_CARD, 2343492);
-        $this->setMimickedCard(2343492, $this->debugSetCardInHand(22, 2343493));
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->setMimickedCard(2343492, $this->debugSetCardInHand(23, 2343493));
+        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerHealth(2343492, 1);
     }
 
     private function debugSetCardInTable($cardType) {
@@ -29,5 +30,9 @@ trait DebugUtilTrait {
 
     private function debugSetPlayerInLocation($playerId, $location) {
         self::DbQuery("UPDATE player SET `player_location` = $location where `player_id` = $playerId");
+    }
+
+    private function debugSetPlayerHealth($playerId, $health) {
+        self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
     }
 }

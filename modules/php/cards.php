@@ -348,7 +348,7 @@ trait CardsTrait {
         if ($includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself
             $mimickedCardType = $this->getMimickedCardType();
             if ($mimickedCardType == $cardType) {
-                $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, $includeMimick)); // mimick
+                $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, false)); // mimick
             }
         }
 
