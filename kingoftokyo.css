@@ -500,16 +500,15 @@
   left: 34px;
   font-size: 10pt;
   color: white;
-  transform: rotate(10deg);
   font-family: "goodgirl";
-  width: 98px;
+  width: 95px;
   text-align: center;
 }
 .stockitem .name-wrapper .outline, #deck .name-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
-  -webkit-text-stroke: 8px #96c93c;
+  -webkit-text-stroke: 4px #96c93c;
   width: 100%;
 }
 .stockitem .name-wrapper .text, #deck .name-wrapper .text {
@@ -528,10 +527,10 @@
   font-family: "goodgirl";
 }
 .stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline {
-  -webkit-text-stroke: 8px #00aeef;
+  -webkit-text-stroke: 4px #00aeef;
 }
 .stockitem .type-wrapper.discard .outline, #deck .type-wrapper.discard .outline {
-  -webkit-text-stroke: 8px #ef1923;
+  -webkit-text-stroke: 4px #ef1923;
 }
 .stockitem .type-wrapper .outline, #deck .type-wrapper .outline {
   position: absolute;
@@ -627,7 +626,7 @@
   text-align: center;
 }
 .card-keep-text .outline {
-  -webkit-text-stroke: 4px #00aeef;
+  -webkit-text-stroke: 2px #00aeef;
   position: absolute;
   left: 0;
   top: 0;

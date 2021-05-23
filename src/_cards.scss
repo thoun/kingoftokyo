@@ -1,6 +1,6 @@
 $name-left: 34px;
 $name-top: 14px;
-$name-width: 98px;
+$name-width: 95px;
 $name-size: 10pt;
 
 $type-left: 0px;
@@ -37,7 +37,6 @@ $description-size: 7pt;
         left: $name-left;
         font-size: $name-size;
         color: white;
-        transform: rotate(10deg);
         font-family: 'goodgirl';
         width: $name-width;
         text-align: center;
@@ -46,7 +45,7 @@ $description-size: 7pt;
             position: absolute;
             left: 0;
             top: 0;
-            -webkit-text-stroke: 8px $tokyoGreen;
+            -webkit-text-stroke: 4px $tokyoGreen;
             width: 100%;
         }
 
@@ -68,11 +67,11 @@ $description-size: 7pt;
         font-family: 'goodgirl';
 
         &.keep .outline { // blue
-            -webkit-text-stroke: 8px #00aeef;
+            -webkit-text-stroke: 4px #00aeef;
         }
 
         &.discard .outline { // red
-            -webkit-text-stroke: 8px #ef1923;
+            -webkit-text-stroke: 4px #ef1923;
         }
 
         .outline {
@@ -168,7 +167,7 @@ $description-size: 7pt;
     text-align: center;
 
     .outline {
-        -webkit-text-stroke: 4px #00aeef;
+        -webkit-text-stroke: 2px #00aeef;
         position: absolute;
         left: 0;
         top: 0;
