@@ -226,14 +226,18 @@ class DiceManager {
         this.dice.splice(this.dice.indexOf(die), 1);
     }
 
+    private hideBubble(dieId: number) {
+        const bubble = document.getElementById(`discussion_bubble_dice${dieId}`);
+        bubble.style.display = 'none';
+        bubble.dataset.visible = 'false';
+    }
+
     private toggleBubbleChangeDie(die: Dice, args: EnteringChangeDieArgs) {
         const bubble = document.getElementById(`discussion_bubble_dice${die.id}`);
         const visible = bubble.dataset.visible == 'true';
 
         if (visible) {
-            bubble.style.display = 'none';
-            bubble.dataset.visible = 'false';
-            
+            this.hideBubble(die.id);
         } else {
             if (bubble.innerHTML == '') {
                 const bubbleActionButtonsId = `discussion_bubble_dice${die.id}-action-buttons`;
@@ -301,6 +305,8 @@ class DiceManager {
 
                 bubble.addEventListener('click', event => event.stopImmediatePropagation());
             }
+
+            args.dice.filter(idie => idie.id != die.id).forEach(idie => this.hideBubble(idie.id));
 
             bubble.style.display = 'block';
             bubble.dataset.visible = 'true';

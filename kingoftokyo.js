@@ -882,13 +882,17 @@ var DiceManager = /** @class */ (function () {
         }
         this.dice.splice(this.dice.indexOf(die), 1);
     };
+    DiceManager.prototype.hideBubble = function (dieId) {
+        var bubble = document.getElementById("discussion_bubble_dice" + dieId);
+        bubble.style.display = 'none';
+        bubble.dataset.visible = 'false';
+    };
     DiceManager.prototype.toggleBubbleChangeDie = function (die, args) {
         var _this = this;
         var bubble = document.getElementById("discussion_bubble_dice" + die.id);
         var visible = bubble.dataset.visible == 'true';
         if (visible) {
-            bubble.style.display = 'none';
-            bubble.dataset.visible = 'false';
+            this.hideBubble(die.id);
         }
         else {
             if (bubble.innerHTML == '') {
@@ -931,6 +935,7 @@ var DiceManager = /** @class */ (function () {
                 };
                 bubble.addEventListener('click', function (event) { return event.stopImmediatePropagation(); });
             }
+            args.dice.filter(function (idie) { return idie.id != die.id; }).forEach(function (idie) { return _this.hideBubble(idie.id); });
             bubble.style.display = 'block';
             bubble.dataset.visible = 'true';
         }

@@ -764,7 +764,7 @@ trait DiceTrait {
                 $playersIds = $this->getPlayersIds();
                 $playerIndex = array_search($playerId, $playersIds);
                 $playerCount = count($playersIds);
-                // TOCHECK we ignore in/out of tokyo ? Considered Yes
+                
                 $leftPlayerId = $playersIds[($playerIndex + 1) % $playerCount];
                 $rightPlayerId = $playersIds[($playerIndex + $playerCount - 1) % $playerCount];
 

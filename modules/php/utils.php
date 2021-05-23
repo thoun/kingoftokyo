@@ -88,6 +88,7 @@ trait UtilTrait {
     }
 
     function getThrowNumber(int $playerId) {
+        // TOCHECK If Giant Brain is mimicked, does player have 2 extra rolls ? Considered Yes
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
         // energy drink
