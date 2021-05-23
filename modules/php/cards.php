@@ -138,7 +138,7 @@ trait CardsTrait {
             // KEEP
             case EVEN_BIGGER_CARD: 
                 $this->applyGetHealth($playerId, 2, $cardType);
-                $this->notifMaxHealth($playerId);
+                $this->changeMaxHealth($playerId);
                 break;
             
             // DISCARD
@@ -252,6 +252,10 @@ trait CardsTrait {
         if ($mimicCard && $mimicCard->tokens > 0) {
             $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
         }
+
+        if ($mimicCard && $card->type == EVEN_BIGGER_CARD) {
+            $this->changeMaxHealth($mimicCard->location_arg);
+        } 
     
         $this->toggleRapidHealing($mimickedCardPlayerId, $countRapidHealingBefore);
     }
@@ -265,12 +269,7 @@ trait CardsTrait {
         $mimickedCardPlayerId = $this->getMimickedCardPlayerId();
         $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, RAPID_HEALING_CARD);
 
-        $oldCard = $this->getMimickedCard();
-        if ($oldCard) {
-            self::notifyAllPlayers("removeMimicToken", '', [
-                'card' => $oldCard,
-            ]);
-        }
+        $this->removeMimicToken();
 
         $mimickedCard = new \stdClass();
         $mimickedCard->card = $card;
@@ -525,7 +524,7 @@ trait CardsTrait {
             ]);
         }
         if ($changeMaxHealth) {
-            $this->notifMaxHealth($playerId);
+            $this->changeMaxHealth($playerId);
         }        
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
@@ -852,6 +851,9 @@ trait CardsTrait {
         $playerId = self::getActivePlayerId();
 
         $this->setMimickedCardId($playerId, $mimickedCardId);
+
+        // we throw dices again, in case dice count has been changed by mimic
+        $this->throwDice($playerId);
 
         $this->gamestate->nextState('next');
     }

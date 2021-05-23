@@ -27,10 +27,19 @@ trait PlayerTrait {
         return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 
-    function notifMaxHealth(int $playerId) {
+    function changeMaxHealth(int $playerId) {
+        $health = $this->getPlayerHealth($playerId);
+        $maxHealth = $this->getPlayerMaxHealth($playerId);
+
+        if ($health > $maxHealth) {
+            $health = $maxHealth;
+            self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+        }
+
         self::notifyAllPlayers('maxHealth', '', [
             'playerId' => $playerId,
-            'maxHealth' => $this->getPlayerMaxHealth($playerId),
+            'health' => $health,
+            'maxHealth' => $maxHealth,
         ]);
     }
 

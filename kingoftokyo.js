@@ -1781,6 +1781,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_maxHealth = function (notif) {
         this.setMaxHealth(notif.args.playerId, notif.args.maxHealth);
+        this.setHealth(notif.args.playerId, notif.args.health);
     };
     KingOfTokyo.prototype.notif_energy = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy);

@@ -200,7 +200,7 @@ interface NotifEnergyArgs extends NotifResolveArgs {
     energy: number;
 }
 
-interface NotifMaxHealthArgs extends NotifResolveArgs {
+interface NotifMaxHealthArgs extends NotifHealthArgs {
     maxHealth: number;
 }
 

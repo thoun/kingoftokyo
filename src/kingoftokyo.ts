@@ -900,6 +900,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_maxHealth(notif: Notif<NotifMaxHealthArgs>) {
         this.setMaxHealth(notif.args.playerId, notif.args.maxHealth);
+        this.setHealth(notif.args.playerId, notif.args.health);
     }
 
     notif_energy(notif: Notif<NotifEnergyArgs>) {
