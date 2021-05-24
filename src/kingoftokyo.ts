@@ -239,9 +239,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringEndTurn() {
-        // clean discard cards
-        this.playerTables.forEach(playerTable => playerTable.removeDiscardCards());
-        this.tableManager.placePlayerTable(); // adapt to removed card
     }
 
     public onLeavingState(stateName: string) {

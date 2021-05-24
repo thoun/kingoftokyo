@@ -240,13 +240,6 @@ trait PlayerTrait {
             $this->applyGetEnergy($playerId, $countSolarPowered, SOLAR_POWERED_CARD);
         }
 
-        // remove discard cards
-
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $discardCards = array_filter($cards, function($card) { return $card->type >= 100; });
-        $discardCardsIds = array_map(function ($card) { return $card->id; }, $discardCards);
-        $this->cards->moveCards($discardCardsIds, 'discard');
-
         // apply poison
         $redirects = false;
         $countPoison = $this->getPlayerPoisonTokens($playerId);

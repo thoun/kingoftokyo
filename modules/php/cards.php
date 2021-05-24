@@ -628,12 +628,19 @@ trait CardsTrait {
           ($this->countCardOfType($playerId, WINGS_CARD) > 0 && !$this->isInvincible($playerId));
     }
 
-    function getTokensByCardType($cardType) {
+    function getTokensByCardType(int $cardType) {
         switch($cardType) {
             case BATTERY_MONSTER_CARD: return 6;
             case SMOKE_CLOUD_CARD: return 3;
             default: return 0;
         }
+    }
+
+    
+    function removeDiscardCards(int $playerId) {
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $discardCards = array_values(array_filter($cards, function($card) { return $card->type >= 100; }));
+        $this->removeCards($playerId, $discardCards);
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -649,6 +656,8 @@ trait CardsTrait {
         $stateName = $this->gamestate->state()['name'];
         $opportunist = $stateName === 'opportunistBuyCard';
         $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
+        
+        $this->removeDiscardCards($playerId);
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
@@ -777,6 +786,8 @@ trait CardsTrait {
             throw new \Error('Not enough energy');
         }
 
+        $this->removeDiscardCards($playerId);
+
         $cost = 2;
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
@@ -804,12 +815,17 @@ trait CardsTrait {
 
     function opportunistSkip() {
         $playerId = self::getCurrentPlayerId();
+        $this->removeDiscardCards($playerId);
 
         $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', 'end');
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
-    function goToSellCard() {
+    function goToSellCard() {   
+        $playerId = self::getActivePlayerId();  
+           
+        $this->removeDiscardCards($playerId);
+
         $this->gamestate->nextState('goToSellCard');
     }
 
@@ -1009,6 +1025,7 @@ trait CardsTrait {
         }
 
         // made in a lab
+        // TOCHECK If mimicked, can player see 2 top cards ? Considered No
         $canPick = $this->countCardOfType($playerId, MADE_IN_A_LAB_CARD) > 0;
         $pickArgs = [];
         if ($canPick && $this->getMadeInALabCardId($playerId) < 1000) {
@@ -1132,7 +1149,7 @@ trait CardsTrait {
         // metamorph
         $countMetamorph = $this->countCardOfType($playerId, METAMORPH_CARD);
 
-        if ($countMetamorph < 1) { // no needto check remaining cards, if player got metamoph he got cards to sell
+        if ($countMetamorph < 1) { // no need to check remaining cards, if player got metamoph he got cards to sell
             $this->gamestate->nextState('endTurn');
         }
     }

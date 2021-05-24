@@ -62,11 +62,6 @@ class PlayerTable {
     public leaveTokyo() {  
         slideToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}`);
     }
-    
-    public removeDiscardCards() {
-        const discardCardsIds = this.cards.getAllItems().filter(item => item.type >= 100).map(item => Number(item.id));
-        discardCardsIds.forEach(id => this.cards.removeFromStockById(''+id));
-    }
 
     public removeCards(cards: Card[]) {
         const cardsIds = cards.map(card => card.id);

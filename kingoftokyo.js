@@ -503,11 +503,6 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.leaveTokyo = function () {
         slideToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId);
     };
-    PlayerTable.prototype.removeDiscardCards = function () {
-        var _this = this;
-        var discardCardsIds = this.cards.getAllItems().filter(function (item) { return item.type >= 100; }).map(function (item) { return Number(item.id); });
-        discardCardsIds.forEach(function (id) { return _this.cards.removeFromStockById('' + id); });
-    };
     PlayerTable.prototype.removeCards = function (cards) {
         var _this = this;
         var cardsIds = cards.map(function (card) { return card.id; });
@@ -1243,9 +1238,6 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
-        // clean discard cards
-        this.playerTables.forEach(function (playerTable) { return playerTable.removeDiscardCards(); });
-        this.tableManager.placePlayerTable(); // adapt to removed card
     };
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
