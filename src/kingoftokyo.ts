@@ -538,7 +538,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public useSmokeCloud() {
-        this.takeAction('useSmokeCloud');
+        const diceIds = this.diceManager.destroyFreeDice();
+        
+        this.takeAction('useSmokeCloud', {
+            diceIds: diceIds.join(',')
+        });
     }
 
     public useRapidHealing() {

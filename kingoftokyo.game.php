@@ -18,6 +18,7 @@
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php');
 
+require_once('modules/constants.inc.php');
 require_once('modules/php/objects/dice.php');
 require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
@@ -46,18 +47,14 @@ class KingOfTokyo extends Table {
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         self::initGameStateLabels([
-            "throwNumber" => 10,
-            "playAgainAfterTurn" => 11,
-            "damageDoneByActivePlayer" => 12,
-            "energyDrinks" => 13,
-            "loseHeartEnteringTokyo" => 14,
-            "playAgainAfterTurnOneLessDie" => 15,
-            "lessDiceForNextTurn" => 16,
-            "newCardId" => 20,
-            //      ...
-            //    "my_first_game_variant" => 100,
-            //    "my_second_game_variant" => 101,
-            //      ...
+            'throwNumber' => 10,
+            'playAgainAfterTurn' => 11,
+            'damageDoneByActivePlayer' => 12,
+            EXTRA_ROLLS => 13,
+            'loseHeartEnteringTokyo' => 14,
+            'playAgainAfterTurnOneLessDie' => 15,
+            'lessDiceForNextTurn' => 16,
+            'newCardId' => 20,
         ]);      
 		
         $this->cards = self::getNew("module.common.deck");
@@ -119,7 +116,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('playAgainAfterTurnOneLessDie', 0);
         self::setGameStateInitialValue('lessDiceForNextTurn', 0);
         self::setGameStateInitialValue('damageDoneByActivePlayer', 0);
-        self::setGameStateInitialValue('energyDrinks', 0);
+        self::setGameStateInitialValue(EXTRA_ROLLS, 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('newCardId', 0);
 

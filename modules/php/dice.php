@@ -343,7 +343,7 @@ trait DiceTrait {
         self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dice->id);
         self::DbQuery("UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id);
 
-        $this->gamestate->nextState('rethrow3');
+        $this->gamestate->nextState('rethrow');
     }
 
     public function changeDie(int $id, int $value, int $card) {

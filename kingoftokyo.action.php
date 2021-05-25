@@ -60,7 +60,9 @@
     public function useSmokeCloud() {
         self::setAjaxMode();
 
-        $this->game->useSmokeCloud();
+        $diceIds = self::getArg("diceIds", AT_numberlist, true);
+
+        $this->game->useSmokeCloud($diceIds);
 
         self::ajaxResponse();
     }

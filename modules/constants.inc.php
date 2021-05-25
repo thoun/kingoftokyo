@@ -50,6 +50,12 @@ define('OPPORTUNIST_INTERVENTION', 'OpportunistIntervention');
 define('CANCEL_DAMAGE_INTERVENTION', 'CancelDamageIntervention');
 
 /*
+ * Variables
+ */
+
+define('EXTRA_ROLLS', 'ExtraRolls');
+
+/*
  * Global variables
  */
 

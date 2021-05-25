@@ -428,13 +428,13 @@ trait CardsTrait {
 
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
         
-        $energyDrinks = intval(self::getGameStateValue('energyDrinks')) + 1;
-        self::setGameStateValue('energyDrinks', $energyDrinks);
+        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS)) + 1;
+        self::setGameStateValue(EXTRA_ROLLS, $extraRolls);
 
         $this->rethrowDice($diceIds);    
     }
 
-    function useSmokeCloud() {
+    function useSmokeCloud($diceIds) {
         $playerId = self::getActivePlayerId();
 
         $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
@@ -465,8 +465,11 @@ trait CardsTrait {
         if ($tokensOnCard <= 0 && $card->type != MIMIC_CARD) {
             $this->removeCard($playerId, $card);
         }
+        
+        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS)) + 1;
+        self::setGameStateValue(EXTRA_ROLLS, $extraRolls);
 
-        $this->gamestate->nextState('useSmokeCloud');        
+        $this->rethrowDice($diceIds);
     }
 
     function useRapidHealing() {

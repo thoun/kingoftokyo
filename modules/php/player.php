@@ -106,7 +106,7 @@ trait PlayerTrait {
         $playerId = self::getActivePlayerId();
 
         self::setGameStateValue('damageDoneByActivePlayer', 0);
-        self::setGameStateValue('energyDrinks', 0);
+        self::setGameStateValue(EXTRA_ROLLS, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);

@@ -92,8 +92,8 @@ trait UtilTrait {
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
         // energy drink
-        $energyDrinks = intval(self::getGameStateValue('energyDrinks'));
-        return 3 + $countGiantBrain + $energyDrinks;
+        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS));
+        return 3 + $countGiantBrain + $extraRolls;
     }
 
     function getPlayerMaxHealth(int $playerId) {

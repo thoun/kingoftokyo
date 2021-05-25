@@ -1482,7 +1482,10 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.useSmokeCloud = function () {
-        this.takeAction('useSmokeCloud');
+        var diceIds = this.diceManager.destroyFreeDice();
+        this.takeAction('useSmokeCloud', {
+            diceIds: diceIds.join(',')
+        });
     };
     KingOfTokyo.prototype.useRapidHealing = function () {
         this.takeAction('useRapidHealing');

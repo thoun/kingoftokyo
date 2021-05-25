@@ -123,8 +123,6 @@ $playerActionsGameStates = [
             "rethrow" => ST_PLAYER_THROW_DICE,
             "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
             "psychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
-            "useSmokeCloud" => ST_PLAYER_THROW_DICE,
-            "rethrow3" => ST_PLAYER_THROW_DICE,
             //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],  
