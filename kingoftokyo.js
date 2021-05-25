@@ -698,13 +698,13 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = [];
     };
-    DiceManager.prototype.setDiceForThrowDice = function (dice, lastTurn, inTokyo, isCurrentPlayerActive) {
+    DiceManager.prototype.setDiceForThrowDice = function (dice, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
-        var selectable = isCurrentPlayerActive && !lastTurn;
+        var selectable = isCurrentPlayerActive;
         dice.forEach(function (die) { return _this.createDice(die, selectable, inTokyo); });
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     };
@@ -1152,7 +1152,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.showLock();
         var dice = args.dice;
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
-        this.diceManager.setDiceForThrowDice(dice, args.throwNumber === args.maxThrowNumber, args.inTokyo, isCurrentPlayerActive);
+        this.diceManager.setDiceForThrowDice(dice, args.inTokyo, isCurrentPlayerActive);
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', _("Rethrow dice") + (" (" + args.throwNumber + "/" + args.maxThrowNumber + ")"), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
@@ -1476,7 +1476,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('rethrow3');
     };
     KingOfTokyo.prototype.buyEnergyDrink = function () {
-        this.takeAction('buyEnergyDrink');
+        var diceIds = this.diceManager.destroyFreeDice();
+        this.takeAction('buyEnergyDrink', {
+            diceIds: diceIds.join(',')
+        });
     };
     KingOfTokyo.prototype.useSmokeCloud = function () {
         this.takeAction('useSmokeCloud');

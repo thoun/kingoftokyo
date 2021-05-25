@@ -419,7 +419,7 @@ trait CardsTrait {
         }
     }
 
-    function buyEnergyDrink() {
+    function buyEnergyDrink($diceIds) {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
@@ -431,7 +431,7 @@ trait CardsTrait {
         $energyDrinks = intval(self::getGameStateValue('energyDrinks')) + 1;
         self::setGameStateValue('energyDrinks', $energyDrinks);
 
-        $this->gamestate->nextState('buyEnergyDrink');        
+        $this->rethrowDice($diceIds);    
     }
 
     function useSmokeCloud() {

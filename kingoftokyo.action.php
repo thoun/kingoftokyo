@@ -50,7 +50,9 @@
     public function buyEnergyDrink() {
         self::setAjaxMode();
 
-        $this->game->buyEnergyDrink();
+        $diceIds = self::getArg("diceIds", AT_numberlist, true);
+
+        $this->game->buyEnergyDrink($diceIds);
 
         self::ajaxResponse();
     }

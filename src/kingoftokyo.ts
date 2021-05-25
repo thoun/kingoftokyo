@@ -141,7 +141,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         const dice = args.dice;
         const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
 
-        this.diceManager.setDiceForThrowDice(dice, args.throwNumber === args.maxThrowNumber, args.inTokyo, isCurrentPlayerActive);
+        this.diceManager.setDiceForThrowDice(dice, args.inTokyo, isCurrentPlayerActive);
         
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
@@ -530,7 +530,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public buyEnergyDrink() {
-        this.takeAction('buyEnergyDrink');
+        const diceIds = this.diceManager.destroyFreeDice();
+
+        this.takeAction('buyEnergyDrink', {
+            diceIds: diceIds.join(',')
+        });
     }
 
     public useSmokeCloud() {

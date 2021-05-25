@@ -24,12 +24,12 @@ class DiceManager {
         this.dice = [];
     }
 
-    public setDiceForThrowDice(dice: Dice[], lastTurn: boolean, inTokyo: boolean, isCurrentPlayerActive: boolean) {
+    public setDiceForThrowDice(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
         this.dice?.forEach(die => this.removeDice(die));
         this.clearDiceHtml();
         this.dice = dice;
 
-        const selectable = isCurrentPlayerActive && !lastTurn;
+        const selectable = isCurrentPlayerActive;
 
         dice.forEach(die => this.createDice(die, selectable, inTokyo));
 
