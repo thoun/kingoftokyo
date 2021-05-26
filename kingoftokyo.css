@@ -483,6 +483,7 @@
   margin: 5px;
   text-align: center;
   overflow: hidden;
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
 }
 .stockitem .bottom, #deck .bottom {
   position: absolute;
@@ -718,11 +719,11 @@
 }
 #table .player-table .player-name.goodgirl {
   font-family: "goodgirl";
-  font-size: 14pt;
+  font-size: 16pt;
 }
 #table .player-table .player-name.goodgirl .outline {
   position: absolute;
-  top: 5px;
+  top: 2px;
   left: 0;
   width: 100%;
   display: block;
@@ -733,7 +734,7 @@
 }
 #table .player-table .player-name.goodgirl .text {
   position: absolute;
-  top: 5px;
+  top: 2px;
   left: 0;
   width: 100%;
 }
@@ -834,6 +835,10 @@ html {
   background: url("img/background.jpg") #102f50;
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+.whiteblock {
+  background: #FFFFFFAA;
 }
 
 .monster0 {

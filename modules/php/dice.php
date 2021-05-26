@@ -51,6 +51,10 @@ trait DiceTrait {
         }
     }
 
+    function fixDices() {
+        self::DbQuery( "UPDATE dice SET `rolled` = false");
+    }
+
     function getDiceNumber(int $playerId) {
         $remove = intval($this->getGameStateValue('lessDiceForNextTurn')) + $this->getPlayerShrinkRayTokens($playerId);
 
@@ -361,8 +365,7 @@ trait DiceTrait {
     public function changeDie(int $id, int $value, int $cardType) {
         $playerId = self::getActivePlayerId();
 
-        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
-        self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
+        self::DbQuery("UPDATE dice SET `dice_value` = ".$value." where `dice_id` = ".$id);
 
         if ($cardType == HERD_CULLER_CARD) {
             $usedCards = $this->getUsedCard();
@@ -475,6 +478,8 @@ trait DiceTrait {
         $playerId = self::getActivePlayerId();
 
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
+
+        $this->fixDices();
 
         if (count($playersWithPsychicProbe) > 0) {
             $cards = [];

@@ -19,6 +19,10 @@ html {
   background-repeat: no-repeat;
 }
 
+.whiteblock {
+  background: #FFFFFFAA;
+}
+
 @for $i from 0 through 5 {
     .monster#{$i} {
         background-image: url('img/monster-figure-#{$i + 1}.png');

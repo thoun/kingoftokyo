@@ -559,7 +559,7 @@ var TableManager = /** @class */ (function () {
     }
     TableManager.prototype.setPlayerTables = function (playerTables) {
         var currentPlayerId = Number(this.game.getPlayerId());
-        var playerTablesOrdered = playerTables.filter(function (playerTable) { return !!playerTable; }).sort(function (a, b) { return b.playerNo - a.playerNo; });
+        var playerTablesOrdered = playerTables.filter(function (playerTable) { return !!playerTable; }).sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
         if (playerIndex) { // not spectator (or 0)            
             this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
@@ -567,6 +567,7 @@ var TableManager = /** @class */ (function () {
         else { // spectator
             this.playerTables = playerTablesOrdered.filter(function (playerTable) { return !!playerTable; });
         }
+        console.log(playerTablesOrdered, this.playerTables);
     };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
