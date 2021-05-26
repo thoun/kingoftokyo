@@ -155,7 +155,8 @@ trait PlayerTrait {
     }
 
     function stLeaveTokyo() {
-        $this->gamestate->setPlayersMultiactive($this->getPlayersIdsInTokyo(), 'resume');
+        $smashedPlayersInTokyo = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
+        $this->gamestate->setPlayersMultiactive($smashedPlayersInTokyo, 'resume');
     }
 
     function stLeaveTokyoApplyJets() {
@@ -193,7 +194,7 @@ trait PlayerTrait {
     function stEnterTokyo() {
         $playerId = self::getActivePlayerId();
 
-        if ($this->getPlayerHealth($playerId) > 0) { // enter only if burrowing doesn't kill player
+        if ($this->getPlayerHealth($playerId) > 0 && !$this->inTokyo($playerId)) { // enter only if burrowing doesn't kill player
             if ($this->isTokyoEmpty(false)) {
                 $this->moveToTokyo($playerId, false);
             } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {

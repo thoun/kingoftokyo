@@ -531,7 +531,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 var PLAYER_TABLE_WIDTH = 420;
-var PLAYER_BOARD_HEIGHT = 193;
+var PLAYER_BOARD_HEIGHT = 227;
 var CARDS_PER_ROW = 3;
 var CENTER_TABLE_WIDTH = 420;
 var DISPOSITION_2_COLUMNS = [];
@@ -632,7 +632,7 @@ var TableManager = /** @class */ (function () {
                 });
             });
         }
-        tableDiv.style.height = height + 50 + "px";
+        tableDiv.style.height = height + 10 + "px";
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
         var cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
@@ -1869,7 +1869,7 @@ var KingOfTokyo = /** @class */ (function () {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
                 if (args.card_name && args.card_name[0] != '<') {
-                    args.card_name = "<strong>" + args.card_name + "</strong>";
+                    args.card_name = "<strong>" + _(args.card_name) + "</strong>";
                 }
                 for (var property in args) {
                     if (((_b = (_a = args[property]) === null || _a === void 0 ? void 0 : _a.indexOf) === null || _b === void 0 ? void 0 : _b.call(_a, ']')) > 0) {

@@ -1004,7 +1004,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 // Representation of the color of a card
                 
                 if (args.card_name && args.card_name[0] != '<') {
-                    args.card_name = `<strong>${args.card_name}</strong>`;
+                    args.card_name = `<strong>${_(args.card_name)}</strong>`;
                 }
 
                 for (const property in args) {

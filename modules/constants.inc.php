@@ -48,6 +48,7 @@ define('END_SCORE', 100);
 define('PSYCHIC_PROBE_INTERVENTION', 'PsychicProbeIntervention');
 define('OPPORTUNIST_INTERVENTION', 'OpportunistIntervention');
 define('CANCEL_DAMAGE_INTERVENTION', 'CancelDamageIntervention');
+define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
 
 /*
  * Variables

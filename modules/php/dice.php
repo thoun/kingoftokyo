@@ -126,13 +126,14 @@ trait DiceTrait {
     }
 
     
-    function resolveSmashDice(int $playerId, int $diceCount) {
+    function resolveSmashDice(int $playerId, int $diceCount) { // return nextState / null
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
 
         $message = null;
         $smashedPlayersIds = null;
         $inTokyo = $this->inTokyo($playerId);
+        $nextState = "enterTokyo";
 
         $damages = [];
 
@@ -148,7 +149,12 @@ trait DiceTrait {
         }
 
         $jetsDamages = [];
+        $smashedPlayersInTokyo = [];
         foreach($smashedPlayersIds as $smashedPlayerId) {
+            if ($this->inTokyo($smashedPlayerId)) {
+                $smashedPlayersInTokyo[] = $smashedPlayerId;
+            }
+
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
@@ -158,6 +164,12 @@ trait DiceTrait {
                 $damages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
             }
         }
+
+        if (count($smashedPlayersInTokyo) > 0) {
+            $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $smashedPlayersInTokyo);
+            $nextState = "smashes";
+        }
+
         $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);      
 
         self::notifyAllPlayers("resolveSmashDice", $message, [
@@ -197,11 +209,11 @@ trait DiceTrait {
 
         // TOCHECK Can a player leave tokyo if he cancel all damage while in tokyo (with wings or camouflage) ? Considered Yes
         if (count($damages) > 0) {
-            $cancelDamageEndState = !$inTokyo && count($this->getPlayersIdsInTokyo()) > 0 ? "smashes" : "enterTokyo";
-            return $this->resolveDamages($damages, $cancelDamageEndState);
-        } else {
-            return false;
+            if ($this->resolveDamages($damages, $nextState)) {
+                return null; // no redirect on stResolveSmashDice, handled by resolveDamages
+            }
         }
+        return $nextState;
     }
 
     function getChangeDieCards(int $playerId) {
@@ -844,16 +856,15 @@ trait DiceTrait {
 
         $diceCount = $diceCounts[6];
 
-        $redirects = false;
+        $nextState = 'enterTokyo';
         $smashTokyo = false;
 
         if ($diceCount > 0) {
-            $smashTokyo = !$this->inTokyo($playerId) && count($this->getPlayersIdsInTokyo()) > 0;
-            $redirects = $this->resolveSmashDice($playerId, $diceCount);
+            $nextState = $this->resolveSmashDice($playerId, $diceCount);
         }
         
-        if (!$redirects) {
-            $this->gamestate->nextState($smashTokyo ? "smashes" : "enterTokyo");
+        if ($nextState != null) {
+            $this->gamestate->nextState($nextState);
         }
     }
 }
