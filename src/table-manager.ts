@@ -1,5 +1,5 @@
 const PLAYER_TABLE_WIDTH = 420;
-const PLAYER_BOARD_HEIGHT = 227;
+const PLAYER_BOARD_HEIGHT = 247;
 const CARDS_PER_ROW = 3;
 const CENTER_TABLE_WIDTH = 420;
 
@@ -110,11 +110,11 @@ class TableManager {
             });
         }
         
-        tableDiv.style.height = `${height + 10}px`;
+        tableDiv.style.height = `${height}px`;
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {
         const cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
-        return PLAYER_BOARD_HEIGHT + CARD_HEIGHT * cardRows;
+        return PLAYER_BOARD_HEIGHT + ((CARD_HEIGHT + 5) * cardRows);
     }
 }

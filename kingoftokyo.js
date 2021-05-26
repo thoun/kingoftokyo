@@ -531,7 +531,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 var PLAYER_TABLE_WIDTH = 420;
-var PLAYER_BOARD_HEIGHT = 227;
+var PLAYER_BOARD_HEIGHT = 247;
 var CARDS_PER_ROW = 3;
 var CENTER_TABLE_WIDTH = 420;
 var DISPOSITION_2_COLUMNS = [];
@@ -632,11 +632,11 @@ var TableManager = /** @class */ (function () {
                 });
             });
         }
-        tableDiv.style.height = height + 10 + "px";
+        tableDiv.style.height = height + "px";
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
         var cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
-        return PLAYER_BOARD_HEIGHT + CARD_HEIGHT * cardRows;
+        return PLAYER_BOARD_HEIGHT + ((CARD_HEIGHT + 5) * cardRows);
     };
     return TableManager;
 }());
