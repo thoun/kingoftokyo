@@ -24,7 +24,7 @@
 </div>
 
 <div id="table">
-    <div id="table-center">
+    <div id="table-center" class="whiteblock">
         <div id="deck-wrapper">
             <div id="deck"></div>
         </div>

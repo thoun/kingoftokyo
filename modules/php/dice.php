@@ -358,13 +358,13 @@ trait DiceTrait {
         $this->gamestate->nextState('rethrow');
     }
 
-    public function changeDie(int $id, int $value, int $card) {
+    public function changeDie(int $id, int $value, int $cardType) {
         $playerId = self::getActivePlayerId();
 
         self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
         self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
 
-        if ($card == HERD_CULLER_CARD) {
+        if ($cardType == HERD_CULLER_CARD) {
             $usedCards = $this->getUsedCard();
             $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
             $usedCardOnThisTurn = null;
@@ -379,9 +379,27 @@ trait DiceTrait {
                 $this->setUsedCard($usedCardOnThisTurn);
             }
         } else {
-            if ($card == PLOT_TWIST) {
-                $this->removeCardByType($playerId, PLOT_TWIST);
-            } else if ($card == STRETCHY_CARD) {
+            if ($cardType == PLOT_TWIST) {
+                $cards = $this->getCardsOfType($playerId, PLOT_TWIST);
+
+                // we choose mimic card first, if available
+                $card = null;
+                foreach($cards as $icard) {
+                    if ($icard->type == MIMIC_CARD) {
+                        $card = $icard;
+                    }
+                }
+                if ($card == null) {
+                    $card = $cards[0];
+                }
+
+                // TOCHECK When Mimic is set on Plot Twist, is the Mimic card discarded ? Or is mimic token removed ? Considered No and Yes
+                if ($card->type == MIMIC_CARD) {
+                    $this->removeMimicToken();
+                } else {
+                    $this->removeCard($playerId, $card);
+                }
+            } else if ($cardType == STRETCHY_CARD) {
                 $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
             }
         }

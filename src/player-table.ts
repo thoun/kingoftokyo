@@ -17,7 +17,7 @@ class PlayerTable {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         dojo.place(`
-        <div id="player-table-${player.id}" class="player-table ${Number(player.eliminated) > 0 ? 'eliminated' : ''}">
+        <div id="player-table-${player.id}" class="player-table whiteblock ${Number(player.eliminated) > 0 ? 'eliminated' : ''}">
             <div class="player-name goodgirl" style="color: #${player.color}">
                 <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
                 <div class="text">${player.name}</div>

@@ -830,6 +830,12 @@
   font-weight: normal;
   font-style: normal;
 }
+html {
+  background: url("img/background.jpg") #102f50;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .monster0 {
   background-image: url("img/monster-figure-1.png");
 }

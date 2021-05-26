@@ -13,6 +13,12 @@
     font-style: normal;
 }
 
+html {
+  background: url('img/background.jpg') #102f50;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 @for $i from 0 through 5 {
     .monster#{$i} {
         background-image: url('img/monster-figure-#{$i + 1}.png');

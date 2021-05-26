@@ -476,7 +476,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div class=\"player-name goodgirl\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div class=\"player-name goodgirl\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -534,6 +534,10 @@ var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
 var CARDS_PER_ROW = 3;
 var CENTER_TABLE_WIDTH = 420;
+var TABLE_MARGIN = 20;
+var PLAYER_TABLE_WIDTH_MARGINS = PLAYER_TABLE_WIDTH + 2 * TABLE_MARGIN;
+var PLAYER_BOARD_HEIGHT_MARGINS = PLAYER_BOARD_HEIGHT + 2 * TABLE_MARGIN;
+var CENTER_TABLE_WIDTH_MARGINS = CENTER_TABLE_WIDTH + 2 * TABLE_MARGIN;
 var DISPOSITION_2_COLUMNS = [];
 var DISPOSITION_3_COLUMNS = [];
 DISPOSITION_2_COLUMNS[2] = [[0], [1]];
@@ -570,16 +574,16 @@ var TableManager = /** @class */ (function () {
         var players = this.playerTables.length;
         var tableDiv = document.getElementById('table');
         var tableWidth = tableDiv.clientWidth;
-        var availableColumns = Math.min(3, Math.floor(tableWidth / 420));
+        var availableColumns = Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS));
         var idealColumns = players == 2 ? 2 : 3;
         var tableCenterDiv = document.getElementById('table-center');
-        tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH) / 2 + "px";
+        tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2 + "px";
         tableCenterDiv.style.top = "0px";
         if (availableColumns === 1) {
             var top_1 = tableCenterDiv.clientHeight;
             this.playerTables.forEach(function (playerTable) {
                 var playerTableDiv = document.getElementById("player-table-" + playerTable.playerId);
-                playerTableDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH) / 2 + "px";
+                playerTableDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2 + "px";
                 playerTableDiv.style.top = top_1 + "px";
                 top_1 += _this.getPlayerTableHeight(playerTable);
                 height = Math.max(height, top_1);
@@ -592,10 +596,10 @@ var TableManager = /** @class */ (function () {
                 id: _this.playerTables[columnIndex].playerId,
                 height: _this.getPlayerTableHeight(_this.playerTables[columnIndex]),
             }); }); });
-            var tableCenter_1 = (columns_1 === 3 ? tableWidth : tableWidth - PLAYER_TABLE_WIDTH) / 2;
+            var tableCenter_1 = (columns_1 === 3 ? tableWidth : tableWidth - PLAYER_TABLE_WIDTH_MARGINS) / 2;
             var centerColumnIndex_1 = columns_1 === 3 ? 1 : 0;
             if (columns_1 === 2) {
-                tableCenterDiv.style.left = tableCenter_1 - CENTER_TABLE_WIDTH / 2 + "px";
+                tableCenterDiv.style.left = tableCenter_1 - CENTER_TABLE_WIDTH_MARGINS / 2 + "px";
             }
             // we always compute "center" column first
             (columns_1 === 3 ? [1, 0, 2] : [0, 1]).forEach(function (columnIndex) {
@@ -614,13 +618,13 @@ var TableManager = /** @class */ (function () {
                 dispositionColumn.forEach(function (playerInfos, index) {
                     var playerTableDiv = document.getElementById("player-table-" + playerInfos.id);
                     if (centerColumn) {
-                        playerTableDiv.style.left = tableCenter_1 - PLAYER_TABLE_WIDTH / 2 + "px";
+                        playerTableDiv.style.left = tableCenter_1 - PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
                     }
                     else if (rightColumn) {
-                        playerTableDiv.style.left = tableCenter_1 + PLAYER_TABLE_WIDTH / 2 + "px";
+                        playerTableDiv.style.left = tableCenter_1 + PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
                     }
                     else if (leftColumn) {
-                        playerTableDiv.style.left = (tableCenter_1 - PLAYER_TABLE_WIDTH / 2) - PLAYER_TABLE_WIDTH + "px";
+                        playerTableDiv.style.left = (tableCenter_1 - PLAYER_TABLE_WIDTH_MARGINS / 2) - PLAYER_TABLE_WIDTH_MARGINS + "px";
                     }
                     playerTableDiv.style.top = top + "px";
                     top += playerInfos.height;
@@ -636,7 +640,7 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
         var cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
-        return PLAYER_BOARD_HEIGHT + ((CARD_HEIGHT + 5) * cardRows);
+        return PLAYER_BOARD_HEIGHT_MARGINS + ((CARD_HEIGHT + 5) * cardRows);
     };
     return TableManager;
 }());

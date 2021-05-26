@@ -2,6 +2,10 @@ const PLAYER_TABLE_WIDTH = 420;
 const PLAYER_BOARD_HEIGHT = 247;
 const CARDS_PER_ROW = 3;
 const CENTER_TABLE_WIDTH = 420;
+const TABLE_MARGIN = 20;
+const PLAYER_TABLE_WIDTH_MARGINS = PLAYER_TABLE_WIDTH + 2*TABLE_MARGIN;
+const PLAYER_BOARD_HEIGHT_MARGINS = PLAYER_BOARD_HEIGHT + 2*TABLE_MARGIN;
+const CENTER_TABLE_WIDTH_MARGINS = CENTER_TABLE_WIDTH + 2*TABLE_MARGIN;
 
 const DISPOSITION_2_COLUMNS = [];
 const DISPOSITION_3_COLUMNS = [];
@@ -43,18 +47,18 @@ class TableManager {
         const players = this.playerTables.length;
         const tableDiv = document.getElementById('table');
         const tableWidth = tableDiv.clientWidth;
-        const availableColumns = Math.min(3, Math.floor(tableWidth / 420));
+        const availableColumns = Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS));
         const idealColumns = players == 2 ? 2 : 3;
 
         const tableCenterDiv = document.getElementById('table-center');
-        tableCenterDiv.style.left = `${(tableWidth - CENTER_TABLE_WIDTH) / 2}px`;
+        tableCenterDiv.style.left = `${(tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2}px`;
         tableCenterDiv.style.top = `0px`;
 
         if (availableColumns === 1) {
             let top = tableCenterDiv.clientHeight;
             this.playerTables.forEach(playerTable => {
                 const playerTableDiv = document.getElementById(`player-table-${playerTable.playerId}`);
-                playerTableDiv.style.left = `${(tableWidth - CENTER_TABLE_WIDTH) / 2}px`;
+                playerTableDiv.style.left = `${(tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2}px`;
                 playerTableDiv.style.top = `${top}px`;
                 top += this.getPlayerTableHeight(playerTable);
                 height = Math.max(height, top);
@@ -67,11 +71,11 @@ class TableManager {
                 id: this.playerTables[columnIndex].playerId,
                 height: this.getPlayerTableHeight(this.playerTables[columnIndex]),
             })));
-            const tableCenter: number = (columns === 3 ? tableWidth : tableWidth - PLAYER_TABLE_WIDTH) / 2;
+            const tableCenter: number = (columns === 3 ? tableWidth : tableWidth - PLAYER_TABLE_WIDTH_MARGINS) / 2;
             const centerColumnIndex = columns === 3 ? 1 : 0;
 
             if (columns === 2) {                
-                tableCenterDiv.style.left = `${tableCenter - CENTER_TABLE_WIDTH / 2}px`;
+                tableCenterDiv.style.left = `${tableCenter - CENTER_TABLE_WIDTH_MARGINS / 2}px`;
             }
 
             // we always compute "center" column first
@@ -91,11 +95,11 @@ class TableManager {
                 dispositionColumn.forEach((playerInfos, index) => {
                     const playerTableDiv = document.getElementById(`player-table-${playerInfos.id}`);
                     if (centerColumn) {
-                        playerTableDiv.style.left = `${tableCenter - PLAYER_TABLE_WIDTH / 2}px`;
+                        playerTableDiv.style.left = `${tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2}px`;
                     } else if (rightColumn) {
-                        playerTableDiv.style.left = `${tableCenter + PLAYER_TABLE_WIDTH / 2}px`;
+                        playerTableDiv.style.left = `${tableCenter + PLAYER_TABLE_WIDTH_MARGINS / 2}px`;
                     } else if (leftColumn) {
-                        playerTableDiv.style.left = `${(tableCenter - PLAYER_TABLE_WIDTH / 2) - PLAYER_TABLE_WIDTH}px`;
+                        playerTableDiv.style.left = `${(tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2) - PLAYER_TABLE_WIDTH_MARGINS}px`;
                     }
                     playerTableDiv.style.top = `${top}px`;
                     top += playerInfos.height;
@@ -115,6 +119,6 @@ class TableManager {
 
     private getPlayerTableHeight(playerTable: PlayerTable) {
         const cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
-        return PLAYER_BOARD_HEIGHT + ((CARD_HEIGHT + 5) * cardRows);
+        return PLAYER_BOARD_HEIGHT_MARGINS + ((CARD_HEIGHT + 5) * cardRows);
     }
 }
