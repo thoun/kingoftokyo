@@ -742,7 +742,18 @@ trait CardsTrait {
 
         $damages = $this->applyEffects($card->type, $playerId);
 
-        $mimic = $card->type == MIMIC_CARD;
+        $mimic = false;
+        if ($card->type == MIMIC_CARD) {
+            $countAvailableCardsForMimic = 0;
+
+            $playersIds = $this->getPlayersIds();
+            foreach($playersIds as $playerId) {
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type != MIMIC_CARD && $card->type < 100; })));
+            }
+
+            $mimic = $countAvailableCardsForMimic > 0;
+        }
 
         $newCardId = 0;
         if ($newCard != null) {
@@ -757,7 +768,7 @@ trait CardsTrait {
         }
 
         if (!$redirects) {
-            $this->gamestate->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic)); // TODO mimic only if cards available to mimic. same for MPOpportunist transition
+            $this->gamestate->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic));
         }
     }
 
