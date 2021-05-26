@@ -10,9 +10,46 @@
     }
 
     .player-name {
-        font-weight: bold;
-        text-shadow: 1px 1px 1px black;
         padding: 5px;
+        position: relative;
+        height: 18px;
+        width: 100%;
+        text-align: center;
+        text-overflow: ellipsis;
+
+        &.classic {
+            font-weight: bold;
+            text-shadow: 1px 1px 1px black;
+
+            .outline {
+                display: none;
+            }
+        }
+
+        &.goodgirl {
+            font-family: 'goodgirl';
+            font-size: 14pt;
+            
+            .outline {
+                position: absolute;
+                top: 5px;
+                left: 0;
+                width: 100%;
+                display: block;
+                -webkit-text-stroke: 4px black;
+
+                &.white {
+                    -webkit-text-stroke: 4px white;
+                }
+            }
+            
+            .text {
+                position: absolute;
+                top: 5px;
+                left: 0;
+                width: 100%;
+            }
+        }
     }
 
     .monster-board-wrapper {

@@ -38,3 +38,4 @@ Stack notifications for dice + card effects to make them the right order
 Add option to leave tokyo as soon as possible
 Add checkActions & more security (reroll 3 have dice3, ...)
 add animation for smashes even if no smash dice (poison quills)
+option to choose between GoodGirl & classic player-name

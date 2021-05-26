@@ -18,7 +18,10 @@ class PlayerTable {
         this.monster = Number(player.monster);
         dojo.place(`
         <div id="player-table-${player.id}" class="player-table ${Number(player.eliminated) > 0 ? 'eliminated' : ''}">
-            <div class="player-name" style="color: #${player.color}">${player.name}</div> 
+            <div class="player-name goodgirl" style="color: #${player.color}">
+                <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
+                <div class="text">${player.name}</div>
+            </div> 
             <div class="monster-board-wrapper">
                 <div class="blue wheel" id="blue-wheel-${player.id}"></div>
                 <div class="red wheel" id="red-wheel-${player.id}"></div>
