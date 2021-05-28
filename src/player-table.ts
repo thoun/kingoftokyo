@@ -12,7 +12,7 @@ class PlayerTable {
 
     public cards: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[]) {
+    constructor(private kot: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[]) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -36,15 +36,15 @@ class PlayerTable {
         this.cards = new ebg.stock() as Stock;
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
-        this.cards.create(this.game, $(`cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
+        this.cards.create(this.kot.game, $(`cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
         this.cards.setSelectionMode(0);
-        this.cards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
+        this.cards.onItemCreate = (card_div, card_type_id) => this.kot.cards.setupNewCard(card_div, card_type_id);
         this.cards.image_items_per_row = 10;
         this.cards.centerItems = true;
-        dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.cards, itemId, this.playerId));
+        dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.kot.onVisibleCardClick(this.cards, itemId, this.playerId));
 
-        this.game.cards.setupCards([this.cards]);
-        this.game.cards.addCardsToStock(this.cards, cards);
+        this.kot.cards.setupCards([this.cards]);
+        this.kot.cards.addCardsToStock(this.cards, cards);
 
         this.initialLocation = Number(player.location);
 
@@ -59,11 +59,11 @@ class PlayerTable {
     }
 
     public enterTokyo(location: number) {        
-        slideToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `tokyo-${location == 2 ? 'bay' : 'city'}`);
+        slideToObjectAndAttach(this.kot.game, document.getElementById(`monster-figure-${this.playerId}`), `tokyo-${location == 2 ? 'bay' : 'city'}`);
     }
 
     public leaveTokyo() {  
-        slideToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}`);
+        slideToObjectAndAttach(this.kot.game, document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}`);
     }
 
     public removeCards(cards: Card[]) {
@@ -87,7 +87,7 @@ class PlayerTable {
 
     public eliminatePlayer() {
         this.cards.removeAll();
-        (this.game as any).fadeOutAndDestroy(`player-board-monster-figure-${this.playerId}`);
+        this.kot.game.fadeOutAndDestroy(`player-board-monster-figure-${this.playerId}`);
         dojo.addClass(`player-table-${this.playerId}`, 'eliminated');
     }
     

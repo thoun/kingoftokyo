@@ -56,8 +56,9 @@ interface KingOfTokyoGamedatas {
     mimickedCard: Card | null;
 }
 
-interface KingOfTokyoGame extends Game {
+interface KingOfTokyoGame/* extends Game*/ {
     cards: Cards;
+    game: Game;
 
     changeDie: (id: number, value: number, card: number) => void;
     psychicProbeRollDie: (id: number) => void;

@@ -12,6 +12,8 @@ const ANIMATION_MS = 1500;
 const PUNCH_SOUND_DURATION = 250;
 
 class KingOfTokyo implements KingOfTokyoGame {
+    private page: any;
+    public game: Game;
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
@@ -22,7 +24,9 @@ class KingOfTokyo implements KingOfTokyoGame {
     private tableManager: TableManager;
     public cards: Cards;
 
-    constructor() {  
+    constructor(window: any) {
+        this.game = window.bgagame.kingoftokyo.superclass;
+        this.page = window.bgagame.kingoftokyo;
     }
     
     /*
@@ -42,8 +46,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1,2,3,4,5,6].filter(i => !players.some(player => Number(player.monster) === i)).forEach(i => {
-            (this as any).dontPreloadImage(`monster-board-${i + 1}.png`);
-            (this as any).dontPreloadImage(`monster-figure-${i + 1}.png`);
+            this.game.dontPreloadImage(`monster-board-${i + 1}.png`);
+            this.game.dontPreloadImage(`monster-figure-${i + 1}.png`);
         });
 
         log( "Starting game setup" );
@@ -432,7 +436,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards = new ebg.stock() as Stock;
         this.visibleCards.setSelectionAppearance('class');
         this.visibleCards.selectionClass = 'no-visible-selection';
-        this.visibleCards.create(this, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
+        this.visibleCards.create(this.page, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = (card_div, card_type_id) => this.cards.setupNewCard(card_div, card_type_id); 
         this.visibleCards.image_items_per_row = 10;

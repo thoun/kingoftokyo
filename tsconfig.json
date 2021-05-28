@@ -1,7 +1,7 @@
 {
     "rootDir": ".", 
     "compilerOptions": {
-      "target": "es5",
+      "target": "es6",
       "module": "none",
       "lib": ["dom", "esnext"],  
       "sourceMap": false,

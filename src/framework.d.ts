@@ -3,12 +3,14 @@
  */
 
 interface Game {
-    setup: (gamedatas: any) => void;
-    onEnteringState: (stateName: string, args: any) => void;
-    onLeavingState: (stateName: string ) => void;
-    onUpdateActionButtons: (stateName: string, args: any) => void;
-    setupNotifications: () => void;
-    //format_string_recursive: (log: string, args: any) => void;
+    setup(gamedatas: any): void;
+    onEnteringState(stateName: string, args: any): void;
+    onLeavingState(stateName: string ): void;
+    onUpdateActionButtons(stateName: string, args: any): void;
+    setupNotifications(): void;
+    format_string_recursive: (log: string, args: any) => void;
+    dontPreloadImage(file: string): void;
+    fadeOutAndDestroy(id: string): void;
 }
 
 interface Notif<T> {

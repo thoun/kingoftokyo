@@ -16,7 +16,7 @@ interface Stock {
     selectionClass: string;
     container_div: HTMLDivElement;
 
-    create: (game: Game, $div: any, cardwidth: number, cardheight: number) => void;
+    create: (page: any, $div: any, cardwidth: number, cardheight: number) => void;
     setSelectionMode: (selectionMode: number) => void;            
     centerItems: boolean;
     image_items_per_row: number;
