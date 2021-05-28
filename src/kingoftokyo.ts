@@ -87,7 +87,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     //                  You can use this method to perform some user interface changes at this moment.
     //
     public onEnteringState(stateName: string, args: any) {
-        log( 'Entering state: '+stateName , args.args );
+        log('Entering state: ' + stateName, args.args);
+        this.showActivePlayer(Number(args.active_player));
 
         switch (stateName) {
             case 'changeMimickedCard':
@@ -118,6 +119,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringEndTurn();
                 break;
         }
+    }
+
+    private showActivePlayer(playerId: number) {
+        this.playerTables.forEach(playerTable => playerTable.setActivePlayer(playerId == playerTable.playerId));
     }
     
     private setGamestateDescription(property: string = '') {

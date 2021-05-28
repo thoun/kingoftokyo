@@ -90,4 +90,8 @@ class PlayerTable {
         (this.game as any).fadeOutAndDestroy(`player-board-monster-figure-${this.playerId}`);
         dojo.addClass(`player-table-${this.playerId}`, 'eliminated');
     }
+    
+    public setActivePlayer(active: boolean): void {
+        dojo.toggleClass(`monster-board-${this.playerId}`, 'active', active);
+    }
 }

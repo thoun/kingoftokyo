@@ -9,6 +9,7 @@
         opacity: 0.5;
     }
 
+
     .player-name {
         padding: 5px;
         position: relative;
@@ -97,6 +98,11 @@
                 &.monster#{$i} {
                     background-image: url('img/monster-board-#{$i + 1}.png');
                 }
+            }
+
+            &.active {
+                border: 3px solid #ffcf13;
+                margin: -3px;
             }
         }
     }

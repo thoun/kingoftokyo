@@ -523,6 +523,9 @@ var PlayerTable = /** @class */ (function () {
         this.game.fadeOutAndDestroy("player-board-monster-figure-" + this.playerId);
         dojo.addClass("player-table-" + this.playerId, 'eliminated');
     };
+    PlayerTable.prototype.setActivePlayer = function (active) {
+        dojo.toggleClass("monster-board-" + this.playerId, 'active', active);
+    };
     return PlayerTable;
 }());
 var __spreadArray = (this && this.__spreadArray) || function (to, from) {
@@ -1111,6 +1114,7 @@ var KingOfTokyo = /** @class */ (function () {
     //
     KingOfTokyo.prototype.onEnteringState = function (stateName, args) {
         log('Entering state: ' + stateName, args.args);
+        this.showActivePlayer(Number(args.active_player));
         switch (stateName) {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -1138,6 +1142,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringEndTurn();
                 break;
         }
+    };
+    KingOfTokyo.prototype.showActivePlayer = function (playerId) {
+        this.playerTables.forEach(function (playerTable) { return playerTable.setActivePlayer(playerId == playerTable.playerId); });
     };
     KingOfTokyo.prototype.setGamestateDescription = function (property) {
         if (property === void 0) { property = ''; }

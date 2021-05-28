@@ -794,6 +794,10 @@
 #table .player-table .monster-board-wrapper .monster-board.monster5 {
   background-image: url("img/monster-board-6.png");
 }
+#table .player-table .monster-board-wrapper .monster-board.active {
+  border: 3px solid #ffcf13;
+  margin: -3px;
+}
 #table .player-table .player-cards {
   width: 100%;
 }
