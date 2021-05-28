@@ -940,4 +940,13 @@ button .icon, a .icon {
 }
 .token.mimic {
   background-position: 100% 0%;
+  box-shadow: 0 0 4px 4px #9cc060;
+  /*
+  box-shadow: 0 0 4px 2px #9cc060;
+  animation: mimic-highlight-animation 3s alternate infinite ease-in-out;
+  @keyframes mimic-highlight-animation {
+    50% { 
+        box-shadow: 0 0 8px 4px #9cc060;
+    }
+  }*/
 }
