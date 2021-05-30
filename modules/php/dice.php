@@ -235,7 +235,7 @@ trait DiceTrait {
         }
         $hasHerdCuller = $herdCullerCount > 0 && $availableHerdCullers > 0;
         // Plot Twist
-        $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST) > 0;
+        $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST_CARD) > 0;
         // Stretchy
         $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $this->getPlayerEnergy($playerId) >= 2;
         // TOCHECK is Stretchy only once per turn ? Considered No
@@ -365,6 +365,7 @@ trait DiceTrait {
     public function changeDie(int $id, int $value, int $cardType) {
         $playerId = self::getActivePlayerId();
 
+        $die = $this->getDieById($id);
         self::DbQuery("UPDATE dice SET `dice_value` = ".$value." where `dice_id` = ".$id);
 
         if ($cardType == HERD_CULLER_CARD) {
@@ -381,31 +382,40 @@ trait DiceTrait {
             } else {
                 $this->setUsedCard($usedCardOnThisTurn);
             }
-        } else {
-            if ($cardType == PLOT_TWIST) {
-                $cards = $this->getCardsOfType($playerId, PLOT_TWIST);
+        } else if ($cardType == PLOT_TWIST_CARD) {
+            $cards = $this->getCardsOfType($playerId, PLOT_TWIST_CARD);
 
-                // we choose mimic card first, if available
-                $card = null;
-                foreach($cards as $icard) {
-                    if ($icard->type == MIMIC_CARD) {
-                        $card = $icard;
-                    }
+            // we choose mimic card first, if available
+            $card = null;
+            foreach($cards as $icard) {
+                if ($icard->type == MIMIC_CARD) {
+                    $card = $icard;
                 }
-                if ($card == null) {
-                    $card = $cards[0];
-                }
-
-                // TOCHECK When Mimic is set on Plot Twist, is the Mimic card discarded ? Or is mimic token removed ? Considered No and Yes
-                if ($card->type == MIMIC_CARD) {
-                    $this->removeMimicToken();
-                } else {
-                    $this->removeCard($playerId, $card);
-                }
-            } else if ($cardType == STRETCHY_CARD) {
-                $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
             }
+            if ($card == null) {
+                $card = $cards[0];
+            }
+
+            // TOCHECK When Mimic is set on Plot Twist, is the Mimic card discarded ? Or is mimic token removed ? Considered No and Yes
+            if ($card->type == MIMIC_CARD) {
+                $this->removeMimicToken();
+            } else {
+                $this->removeCard($playerId, $card);
+            }
+        } else if ($cardType == STRETCHY_CARD) {
+            $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
         }
+
+        $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+        self::notifyAllPlayers("changeDie", $message, [
+            'playerId' => $playerId,
+            'player_name' => self::getActivePlayerName(),
+            'card_name' => $this->getCardName($cardType),
+            'dieId' => $die->id,
+            'toValue' => $value,
+            'die_face_before' => $this->getDieFaceLogName($die->value),
+            'die_face_after' => $this->getDieFaceLogName($value),
+        ]);
 
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
 
@@ -462,10 +472,12 @@ trait DiceTrait {
         if ($value == 4) {
             $message .= ' ' . clienttranslate('(${card_name} is discarded)');
         }
-        self::notifyAllPlayers("psychicProbeRollDie", $message, [
+        self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'card_name' => $this->getCardName(PSYCHIC_PROBE_CARD),
+            'dieId' => $die->id,
+            'toValue' => $value,
             'die_face_before' => $this->getDieFaceLogName($die->value),
             'die_face_after' => $this->getDieFaceLogName($value),
         ]);
@@ -676,9 +688,11 @@ trait DiceTrait {
     }
 
     function stResolveDice() {
+        $playerId = self::getActivePlayerId();
+        self::giveExtraTime($playerId);
+
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
-        $playerId = self::getActivePlayerId();
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getDice($this->getDiceNumber($playerId));
 

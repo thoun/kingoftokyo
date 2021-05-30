@@ -806,6 +806,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
+            ['changeDie', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -942,6 +943,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (notif.args.cancelDamageArgs) {
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
         }
+    }
+
+    notif_changeDie(notif: Notif<NotifChangeDieArgs>) {
+        this.diceManager.changeDie(notif.args.dieId, notif.args.toValue);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

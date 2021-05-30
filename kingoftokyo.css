@@ -272,6 +272,10 @@
   transition: transform 0;
 }
 
+.change-die-roll {
+  transition: transform 0.5s ease-in-out;
+}
+
 .even-roll[data-roll="1"] {
   transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
 }
@@ -344,6 +348,30 @@
   transform: rotateX(360deg) rotateY(900deg) rotateZ(360deg);
 }
 
+.change-die-roll[data-roll="1"] {
+  transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
+}
+
+.change-die-roll[data-roll="2"] {
+  transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
+}
+
+.change-die-roll[data-roll="3"] {
+  transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
+}
+
+.change-die-roll[data-roll="4"] {
+  transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
+}
+
+.change-die-roll[data-roll="5"] {
+  transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
+}
+
+.change-die-roll[data-roll="6"] {
+  transform: rotateX(360deg) rotateY(900deg) rotateZ(360deg);
+}
+
 [data-side="1"] {
   transform: rotate3d(0, 0, 0, 90deg) translateZ(1rem);
 }
@@ -394,6 +422,7 @@
   top: 110%;
   bottom: unset;
   left: -98px;
+  cursor: default;
 }
 .change-die-discussion_bubble::after {
   top: -10px;
@@ -409,9 +438,15 @@
   position: relative;
   width: 33px;
   height: 33px;
+  cursor: pointer;
 }
 .change-die-discussion_bubble .die-face-selector .dice-icon.selected {
   box-shadow: 0 0 3px 3px red;
+}
+.change-die-discussion_bubble .die-face-selector .dice-icon.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 .change-die-discussion_bubble .action-buttons {
   display: flex;

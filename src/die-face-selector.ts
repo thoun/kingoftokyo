@@ -4,10 +4,10 @@ class DieFaceSelector {
 
     private value: number;
 
-    constructor(nodeId: string, inTokyo: boolean) {
+    constructor(private nodeId: string, private dieValue: number, inTokyo: boolean) {
         for (let face=1; face<=6; face++) {
             const faceId = `${nodeId}-face${face}`;
-            let html = `<div id="${faceId}" class="dice-icon dice${face}">`;
+            let html = `<div id="${faceId}" class="dice-icon dice${face} ${dieValue == face ? 'disabled' : ''}">`;
             if (face === 4 && inTokyo) {            
                 html += `<div class="icon forbidden"></div>`;
             }
@@ -19,8 +19,7 @@ class DieFaceSelector {
                     if (this.value === face) {
                         return;
                     }
-
-                    dojo.removeClass(`${nodeId}-face${this.value}`, 'selected');
+                    this.reset();
                 }
 
                 this.value = face;
@@ -33,6 +32,16 @@ class DieFaceSelector {
 
     public getValue() {
         return this.value;
+    }
+
+    public reset(dieValue?: number) {
+        dojo.removeClass(`${this.nodeId}-face${this.value}`, 'selected');
+
+        if (dieValue && dieValue != this.dieValue) {
+            dojo.removeClass(`${this.nodeId}-face${this.dieValue}`, 'disabled');
+            this.dieValue = dieValue;
+            dojo.addClass(`${this.nodeId}-face${this.dieValue}`, 'disabled');
+        }
     }
 
 }

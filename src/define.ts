@@ -5,5 +5,5 @@ define([
     "ebg/stock"
 ],
 function (dojo, declare) {
-    return declare("bgagame.kingoftokyo", ebg.core.gamegui, new KingOfTokyo());             
+    return declare("bgagame.kingoftokyo", ebg.core.gamegui, new KingOfTokyo());
 });

@@ -1019,7 +1019,7 @@ trait CardsTrait {
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
         // parasitic tentacles
-        $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES) > 0;
+        $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) > 0;
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         

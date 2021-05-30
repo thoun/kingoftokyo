@@ -225,3 +225,9 @@ interface NotifUseCamouflageArgs {
     diceValues: number[];
     cancelDamageArgs: EnteringCancelDamageArgs;
 }
+
+interface NotifChangeDieArgs {
+    playerId: number;
+    dieId: number;
+    toValue: number;
+}

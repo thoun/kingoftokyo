@@ -39,9 +39,6 @@ class TableManager {
         } else { // spectator
             this.playerTables = playerTablesOrdered.filter(playerTable => !!playerTable);
         }
-
-        console.log(playerTablesOrdered, this.playerTables);
-
     }
 
     public placePlayerTable() {

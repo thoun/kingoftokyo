@@ -1,5 +1,6 @@
 class DiceManager {
     private dice: Dice[] = [];
+    private dieFaceSelectors: DieFaceSelector[] = [];
 
     constructor(private game: KingOfTokyoGame, setupDice: Dice[]) {
         // TODO use setupDice ?
@@ -37,6 +38,10 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
+        if (this.dice.length) {
+            return;
+        }
+
         this.dice?.forEach(die => this.removeDice(die));  
         this.clearDiceHtml();
         this.dice = dice;
@@ -87,6 +92,24 @@ class DiceManager {
         });
 
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
+    }
+
+    public changeDie(dieId: number, toValue: number) {
+        const die = this.dice.find(die => die.id == dieId);
+        if (die) {
+            die.value = toValue;
+        }
+        const divId = `dice${dieId}`;
+        const div = document.getElementById(divId);
+        if (div) {
+            dojo.removeClass(div, `dice${div.dataset.diceValue}`);
+            div.dataset.diceValue = ''+toValue;
+            dojo.addClass(div, `dice${toValue}`);
+            const list = div.getElementsByTagName('ol')[0];
+            dojo.removeClass(list, 'no-roll');
+            dojo.addClass(list, 'change-die-roll');
+            list.dataset.roll = ''+toValue;
+        }
     }
 
     showCamouflageRoll(diceValues: number[]) {
@@ -239,18 +262,26 @@ class DiceManager {
         if (visible) {
             this.hideBubble(die.id);
         } else {
-            if (bubble.innerHTML == '') {
-                const bubbleActionButtonsId = `discussion_bubble_dice${die.id}-action-buttons`;
-                const bubbleDieFaceSelectorId = `discussion_bubble_dice${die.id}-die-face-selector`;
+            const bubbleActionButtonsId = `discussion_bubble_dice${die.id}-action-buttons`;
+            const bubbleDieFaceSelectorId = `discussion_bubble_dice${die.id}-die-face-selector`;
+            const creation = bubble.innerHTML == '';
+            if (creation) {
                 dojo.place(`
                 <div id="${bubbleDieFaceSelectorId}" class="die-face-selector"></div>
                 <div id="${bubbleActionButtonsId}" class="action-buttons"></div>
                 `, bubble.id);
+            }
 
-                const herdCullerButtonId = `${bubbleActionButtonsId}-herdCuller`;
-                const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
-                const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
-                const dieFaceSelector = new DieFaceSelector(bubbleDieFaceSelectorId, args.inTokyo);
+            const herdCullerButtonId = `${bubbleActionButtonsId}-herdCuller`;
+            const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
+            const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
+
+            if (!this.dieFaceSelectors[die.id]) {
+                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die.value, args.inTokyo);
+            }
+            const dieFaceSelector = this.dieFaceSelectors[die.id];
+
+            if (creation) {
 
                 const buttonText = _("Change die face with ${card_name}");
                 
@@ -304,6 +335,19 @@ class DiceManager {
                 };
 
                 bubble.addEventListener('click', event => event.stopImmediatePropagation());
+            }
+
+            if (die.value == dieFaceSelector.getValue()) {
+                dieFaceSelector.reset(die.value);
+                if (args.hasHerdCuller) {
+                    dojo.addClass(herdCullerButtonId, 'disabled');
+                }
+                if (args.hasPlotTwist) {
+                    dojo.addClass(plotTwistButtonId, 'disabled');
+                }
+                if (args.hasStretchy) {
+                    dojo.addClass(stretchyButtonId, 'disabled');
+                }
             }
 
             args.dice.filter(idie => idie.id != die.id).forEach(idie => this.hideBubble(idie.id));

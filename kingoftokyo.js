@@ -570,7 +570,6 @@ var TableManager = /** @class */ (function () {
         else { // spectator
             this.playerTables = playerTablesOrdered.filter(function (playerTable) { return !!playerTable; });
         }
-        console.log(playerTablesOrdered, this.playerTables);
     };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
@@ -649,11 +648,13 @@ var TableManager = /** @class */ (function () {
     return TableManager;
 }());
 var DieFaceSelector = /** @class */ (function () {
-    function DieFaceSelector(nodeId, inTokyo) {
+    function DieFaceSelector(nodeId, dieValue, inTokyo) {
         var _this = this;
+        this.nodeId = nodeId;
+        this.dieValue = dieValue;
         var _loop_1 = function (face) {
             var faceId = nodeId + "-face" + face;
-            var html = "<div id=\"" + faceId + "\" class=\"dice-icon dice" + face + "\">";
+            var html = "<div id=\"" + faceId + "\" class=\"dice-icon dice" + face + " " + (dieValue == face ? 'disabled' : '') + "\">";
             if (face === 4 && inTokyo) {
                 html += "<div class=\"icon forbidden\"></div>";
             }
@@ -665,7 +666,7 @@ var DieFaceSelector = /** @class */ (function () {
                     if (_this.value === face) {
                         return;
                     }
-                    dojo.removeClass(nodeId + "-face" + _this.value, 'selected');
+                    _this.reset();
                 }
                 _this.value = face;
                 dojo.addClass(nodeId + "-face" + _this.value, 'selected');
@@ -680,12 +681,21 @@ var DieFaceSelector = /** @class */ (function () {
     DieFaceSelector.prototype.getValue = function () {
         return this.value;
     };
+    DieFaceSelector.prototype.reset = function (dieValue) {
+        dojo.removeClass(this.nodeId + "-face" + this.value, 'selected');
+        if (dieValue && dieValue != this.dieValue) {
+            dojo.removeClass(this.nodeId + "-face" + this.dieValue, 'disabled');
+            this.dieValue = dieValue;
+            dojo.addClass(this.nodeId + "-face" + this.dieValue, 'disabled');
+        }
+    };
     return DieFaceSelector;
 }());
 var DiceManager = /** @class */ (function () {
     function DiceManager(game, setupDice) {
         this.game = game;
         this.dice = [];
+        this.dieFaceSelectors = [];
         // TODO use setupDice ?
     }
     DiceManager.prototype.hideLock = function () {
@@ -719,6 +729,9 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
+        if (this.dice.length) {
+            return;
+        }
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
@@ -763,6 +776,23 @@ var DiceManager = /** @class */ (function () {
             }
         });
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
+    };
+    DiceManager.prototype.changeDie = function (dieId, toValue) {
+        var die = this.dice.find(function (die) { return die.id == dieId; });
+        if (die) {
+            die.value = toValue;
+        }
+        var divId = "dice" + dieId;
+        var div = document.getElementById(divId);
+        if (div) {
+            dojo.removeClass(div, "dice" + div.dataset.diceValue);
+            div.dataset.diceValue = '' + toValue;
+            dojo.addClass(div, "dice" + toValue);
+            var list = div.getElementsByTagName('ol')[0];
+            dojo.removeClass(list, 'no-roll');
+            dojo.addClass(list, 'change-die-roll');
+            list.dataset.roll = '' + toValue;
+        }
     };
     DiceManager.prototype.showCamouflageRoll = function (diceValues) {
         var _this = this;
@@ -898,14 +928,20 @@ var DiceManager = /** @class */ (function () {
             this.hideBubble(die.id);
         }
         else {
-            if (bubble.innerHTML == '') {
-                var bubbleActionButtonsId = "discussion_bubble_dice" + die.id + "-action-buttons";
-                var bubbleDieFaceSelectorId = "discussion_bubble_dice" + die.id + "-die-face-selector";
+            var bubbleActionButtonsId = "discussion_bubble_dice" + die.id + "-action-buttons";
+            var bubbleDieFaceSelectorId = "discussion_bubble_dice" + die.id + "-die-face-selector";
+            var creation = bubble.innerHTML == '';
+            if (creation) {
                 dojo.place("\n                <div id=\"" + bubbleDieFaceSelectorId + "\" class=\"die-face-selector\"></div>\n                <div id=\"" + bubbleActionButtonsId + "\" class=\"action-buttons\"></div>\n                ", bubble.id);
-                var herdCullerButtonId_1 = bubbleActionButtonsId + "-herdCuller";
-                var plotTwistButtonId_1 = bubbleActionButtonsId + "-plotTwist";
-                var stretchyButtonId_1 = bubbleActionButtonsId + "-stretchy";
-                var dieFaceSelector_1 = new DieFaceSelector(bubbleDieFaceSelectorId, args.inTokyo);
+            }
+            var herdCullerButtonId_1 = bubbleActionButtonsId + "-herdCuller";
+            var plotTwistButtonId_1 = bubbleActionButtonsId + "-plotTwist";
+            var stretchyButtonId_1 = bubbleActionButtonsId + "-stretchy";
+            if (!this.dieFaceSelectors[die.id]) {
+                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die.value, args.inTokyo);
+            }
+            var dieFaceSelector_1 = this.dieFaceSelectors[die.id];
+            if (creation) {
                 var buttonText = _("Change die face with ${card_name}");
                 if (args.hasHerdCuller) {
                     this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(22, 'text-only') + "</strong>" }), function () {
@@ -937,6 +973,18 @@ var DiceManager = /** @class */ (function () {
                     }
                 };
                 bubble.addEventListener('click', function (event) { return event.stopImmediatePropagation(); });
+            }
+            if (die.value == dieFaceSelector_1.getValue()) {
+                dieFaceSelector_1.reset(die.value);
+                if (args.hasHerdCuller) {
+                    dojo.addClass(herdCullerButtonId_1, 'disabled');
+                }
+                if (args.hasPlotTwist) {
+                    dojo.addClass(plotTwistButtonId_1, 'disabled');
+                }
+                if (args.hasStretchy) {
+                    dojo.addClass(stretchyButtonId_1, 'disabled');
+                }
             }
             args.dice.filter(function (idie) { return idie.id != die.id; }).forEach(function (idie) { return _this.hideBubble(idie.id); });
             bubble.style.display = 'block';
@@ -1709,6 +1757,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
+            ['changeDie', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -1823,6 +1872,9 @@ var KingOfTokyo = /** @class */ (function () {
         if (notif.args.cancelDamageArgs) {
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
         }
+    };
+    KingOfTokyo.prototype.notif_changeDie = function (notif) {
+        this.diceManager.changeDie(notif.args.dieId, notif.args.toValue);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
