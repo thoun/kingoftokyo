@@ -23,18 +23,24 @@
     <div id="rapid-healing-wrapper"></div>
 </div>
 
-<div id="table">
-    <div id="table-center" class="whiteblock">
-        <div id="deck-wrapper">
-            <div id="deck"></div>
-        </div>
-        <div id="visible-cards">
-        </div>
+<div id="zoom-wrapper">
+    <div id="table">
+        <div id="table-center" class="whiteblock">
+            <div id="deck-wrapper">
+                <div id="deck"></div>
+            </div>
+            <div id="visible-cards">
+            </div>
 
-        <div id="board">
-            <div id="tokyo-city"></div>
-            <div id="tokyo-bay"></div>
+            <div id="board">
+                <div id="tokyo-city"></div>
+                <div id="tokyo-bay"></div>
+            </div>
         </div>
+    </div>
+    <div id="zoom-controls">
+        <button id="zoom-out"></button>
+        <button id="zoom-in" class="disabled"></button>
     </div>
 </div>
 

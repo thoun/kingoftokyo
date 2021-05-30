@@ -1103,11 +1103,19 @@ var HeartActionSelector = /** @class */ (function () {
 }());
 var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
+var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
+var ZOOM_LEVELS_MARGIN = [-300, -166, -100, -60, -33, -14, 0];
+var LOCAL_STORAGE_ZOOM_KEY = 'KingOfTokyo-zoom';
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
         this.energyCounters = [];
         this.playerTables = [];
+        this.zoom = 1;
+        var zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
+        if (zoomStr) {
+            this.setZoom(Number(zoomStr));
+        }
     }
     /*
         setup:
@@ -1147,6 +1155,8 @@ var KingOfTokyo = /** @class */ (function () {
             this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
         }
         this.setupNotifications();
+        document.getElementById('zoom-out').addEventListener('click', function () { return _this.zoomOut(); });
+        document.getElementById('zoom-in').addEventListener('click', function () { return _this.zoomIn(); });
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
             args: {
                 number: 3,
@@ -1719,6 +1729,39 @@ var KingOfTokyo = /** @class */ (function () {
             document.getElementById('pick-stock').style.display = 'none';
             this.pickCard.removeAll();
         }
+    };
+    KingOfTokyo.prototype.setZoom = function (zoom) {
+        var _a;
+        if (zoom === void 0) { zoom = 1; }
+        this.zoom = zoom;
+        localStorage.setItem(LOCAL_STORAGE_ZOOM_KEY, '' + this.zoom);
+        var newIndex = ZOOM_LEVELS.indexOf(this.zoom);
+        dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
+        dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
+        var div = document.getElementById('table');
+        if (zoom === 1) {
+            div.style.transform = '';
+            div.style.margin = '';
+        }
+        else {
+            div.style.transform = "scale(" + zoom + ")";
+            div.style.margin = "0 " + ZOOM_LEVELS_MARGIN[newIndex] + "% " + (1 - zoom) * -100 + "% 0";
+        }
+        (_a = this.tableManager) === null || _a === void 0 ? void 0 : _a.placePlayerTable();
+    };
+    KingOfTokyo.prototype.zoomIn = function () {
+        if (this.zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]) {
+            return;
+        }
+        var newIndex = ZOOM_LEVELS.indexOf(this.zoom) + 1;
+        this.setZoom(ZOOM_LEVELS[newIndex]);
+    };
+    KingOfTokyo.prototype.zoomOut = function () {
+        if (this.zoom === ZOOM_LEVELS[0]) {
+            return;
+        }
+        var newIndex = ZOOM_LEVELS.indexOf(this.zoom) - 1;
+        this.setZoom(ZOOM_LEVELS[newIndex]);
     };
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications

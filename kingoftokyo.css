@@ -678,6 +678,7 @@
 
 #table {
   position: relative;
+  transform-origin: left top;
 }
 #table #table-center {
   position: absolute;
@@ -945,6 +946,34 @@ html {
 }
 #rolled-dice-and-rapid-healing #rapid-healing-wrapper:not(:empty) {
   margin-right: 15px;
+}
+
+#zoom-wrapper {
+  position: relative;
+}
+#zoom-wrapper #zoom-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#zoom-wrapper #zoom-controls button {
+  width: 32px;
+  height: 32px;
+  background: url("img/zoom.svg");
+  background-size: auto 220%;
+}
+#zoom-wrapper #zoom-controls button:not(.disabled) {
+  cursor: pointer;
+}
+#zoom-wrapper #zoom-controls button.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+#zoom-wrapper #zoom-controls #zoom-in {
+  background-position: 6% 94%;
+}
+#zoom-wrapper #zoom-controls #zoom-out {
+  background-position: 82% 94%;
 }
 
 .log .icon {
