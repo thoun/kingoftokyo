@@ -18,13 +18,27 @@
         text-align: center;
         text-overflow: ellipsis;
 
-        &.classic {
-            font-weight: bold;
-            text-shadow: 1px 1px 1px black;
+        .outline {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            display: block;
+            -webkit-text-stroke: 4px black;
 
-            .outline {
-                display: none;
+            &.white {
+                -webkit-text-stroke: 4px white;
             }
+        }
+            
+        .text {
+            position: absolute;
+            left: 0;
+            width: 100%;
+        }
+
+        &.standard {
+            font-weight: bold;
+            font-size: 15pt;
         }
 
         &.goodgirl {
@@ -32,23 +46,11 @@
             font-size: 16pt;
             
             .outline {
-                position: absolute;
                 top: 2px;
-                left: 0;
-                width: 100%;
-                display: block;
-                -webkit-text-stroke: 4px black;
-
-                &.white {
-                    -webkit-text-stroke: 4px white;
-                }
             }
             
             .text {
-                position: absolute;
                 top: 2px;
-                left: 0;
-                width: 100%;
             }
         }
     }

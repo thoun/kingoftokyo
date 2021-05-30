@@ -33,9 +33,9 @@ Also add one auto-FTP upload extension (for example https://marketplace.visualst
 Make sure ftp-sync.json and node_modules are in .gitignore
 
 # TODO
+Add checkActions & more security (reroll 3 have dice3, ...)
 Stack notifications for dice + card effects to make them the right order
 Add option to leave tokyo as soon as possible
-Add checkActions & more security (reroll 3 have dice3, ...)
 add animation for smashes even if no smash dice (poison quills)
-option to choose between GoodGirl & classic player-name
+option to choose between GoodGirl & classic player-name => https://en.doc.boardgamearena.com/Game_options_and_preferences:_gameoptions.inc.php
 add stats

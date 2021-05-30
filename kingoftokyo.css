@@ -745,33 +745,34 @@
   text-align: center;
   text-overflow: ellipsis;
 }
-#table .player-table .player-name.classic {
-  font-weight: bold;
-  text-shadow: 1px 1px 1px black;
+#table .player-table .player-name .outline {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: block;
+  -webkit-text-stroke: 4px black;
 }
-#table .player-table .player-name.classic .outline {
-  display: none;
+#table .player-table .player-name .outline.white {
+  -webkit-text-stroke: 4px white;
+}
+#table .player-table .player-name .text {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+#table .player-table .player-name.standard {
+  font-weight: bold;
+  font-size: 15pt;
 }
 #table .player-table .player-name.goodgirl {
   font-family: "goodgirl";
   font-size: 16pt;
 }
 #table .player-table .player-name.goodgirl .outline {
-  position: absolute;
   top: 2px;
-  left: 0;
-  width: 100%;
-  display: block;
-  -webkit-text-stroke: 4px black;
-}
-#table .player-table .player-name.goodgirl .outline.white {
-  -webkit-text-stroke: 4px white;
 }
 #table .player-table .player-name.goodgirl .text {
-  position: absolute;
   top: 2px;
-  left: 0;
-  width: 100%;
 }
 #table .player-table .monster-board-wrapper {
   position: relative;
@@ -950,6 +951,12 @@ html {
   width: 16px;
   height: 16px;
   margin-bottom: -2px;
+}
+.log .dice-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 button .icon, a .icon {
