@@ -57,6 +57,7 @@ interface KingOfTokyoGamedatas {
 }
 
 interface KingOfTokyoGame extends Game {
+    isDefaultFont(): boolean;
     cards: Cards;
 
     changeDie: (id: number, value: number, card: number) => void;

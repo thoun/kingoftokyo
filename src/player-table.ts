@@ -18,7 +18,7 @@ class PlayerTable {
         this.monster = Number(player.monster);
         dojo.place(`
         <div id="player-table-${player.id}" class="player-table whiteblock ${Number(player.eliminated) > 0 ? 'eliminated' : ''}">
-            <div class="player-name goodgirl" style="color: #${player.color}">
+            <div id="player-name-${player.id}" class="player-name ${game.isDefaultFont() ? 'standard' : 'goodgirl'}" style="color: #${player.color}">
                 <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
                 <div class="text">${player.name}</div>
             </div> 
@@ -93,5 +93,11 @@ class PlayerTable {
     
     public setActivePlayer(active: boolean): void {
         dojo.toggleClass(`monster-board-${this.playerId}`, 'active', active);
+    }
+    
+    public setFont(prefValue: number): void {
+        const defaultFont = prefValue === 1;
+        dojo.toggleClass(`player-name-${this.playerId}`, 'standard', defaultFont);
+        dojo.toggleClass(`player-name-${this.playerId}`, 'goodgirl', !defaultFont);
     }
 }

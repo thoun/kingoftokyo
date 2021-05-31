@@ -52,4 +52,16 @@ $game_options = array(
 
 );
 
+$game_preferences = [
+    201 => [
+        'name' => totranslate('Font style'),
+        'needReload' => false, // after user changes this preference game interface would auto-reload
+        'values' => [
+            1 => [ 'name' => totranslate( 'Default font' )],
+            2 => [ 'name' => totranslate( 'King of Tokyo font' )],
+        ],
+        'default' => 2
+    ],
+];
+
 

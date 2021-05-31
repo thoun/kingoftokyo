@@ -476,7 +476,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div class=\"player-name goodgirl\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -525,6 +525,11 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setActivePlayer = function (active) {
         dojo.toggleClass("monster-board-" + this.playerId, 'active', active);
+    };
+    PlayerTable.prototype.setFont = function (prefValue) {
+        var defaultFont = prefValue === 1;
+        dojo.toggleClass("player-name-" + this.playerId, 'standard', defaultFont);
+        dojo.toggleClass("player-name-" + this.playerId, 'goodgirl', !defaultFont);
     };
     return PlayerTable;
 }());
@@ -1177,6 +1182,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
         }
         this.setupNotifications();
+        this.setupPreferences();
         document.getElementById('zoom-out').addEventListener('click', function () { return _this.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { return _this.zoomIn(); });
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
@@ -1428,6 +1434,9 @@ var KingOfTokyo = /** @class */ (function () {
     ///////////////////////////////////////////////////
     KingOfTokyo.prototype.getPlayerId = function () {
         return Number(this.player_id);
+    };
+    KingOfTokyo.prototype.isDefaultFont = function () {
+        return Number(this.prefs[201].value) == 1;
     };
     KingOfTokyo.prototype.createButton = function (destinationId, id, text, callback, disabled) {
         if (disabled === void 0) { disabled = false; }
@@ -1784,6 +1793,32 @@ var KingOfTokyo = /** @class */ (function () {
         }
         var newIndex = ZOOM_LEVELS.indexOf(this.zoom) - 1;
         this.setZoom(ZOOM_LEVELS[newIndex]);
+    };
+    KingOfTokyo.prototype.setupPreferences = function () {
+        var _this = this;
+        // Extract the ID and value from the UI control
+        var onchange = function (e) {
+            var match = e.target.id.match(/^preference_control_(\d+)$/);
+            if (!match) {
+                return;
+            }
+            var prefId = +match[1];
+            var prefValue = +e.target.value;
+            _this.prefs[prefId].value = prefValue;
+            _this.onPreferenceChange(prefId, prefValue);
+        };
+        // Call onPreferenceChange() when any value changes
+        dojo.query(".preference_control").connect("onchange", onchange);
+        // Call onPreferenceChange() now
+        dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
+    };
+    KingOfTokyo.prototype.onPreferenceChange = function (prefId, prefValue) {
+        switch (prefId) {
+            // KEEP
+            case 201:
+                this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
+                break;
+        }
     };
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications

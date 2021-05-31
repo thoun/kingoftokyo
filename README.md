@@ -36,5 +36,4 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 Stack notifications for dice + card effects to make them the right order
 Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
-option to choose between GoodGirl & classic player-name => https://en.doc.boardgamearena.com/Game_options_and_preferences:_gameoptions.inc.php
 add stats

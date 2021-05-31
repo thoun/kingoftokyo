@@ -77,6 +77,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.setupNotifications();
+        this.setupPreferences();
 
         document.getElementById('zoom-out').addEventListener('click', () => this.zoomOut());
         document.getElementById('zoom-in').addEventListener('click', () => this.zoomIn());
@@ -368,6 +369,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public getPlayerId(): number {
         return Number((this as any).player_id);
+    }
+
+    public isDefaultFont(): boolean {
+        return Number((this as any).prefs[201].value) == 1;
     }
 
     public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false) {
@@ -812,6 +817,38 @@ class KingOfTokyo implements KingOfTokyoGame {
         const newIndex = ZOOM_LEVELS.indexOf(this.zoom) - 1;
         this.setZoom(ZOOM_LEVELS[newIndex]);
     }
+
+    private setupPreferences() {
+        // Extract the ID and value from the UI control
+        const onchange = (e) => {
+          var match = e.target.id.match(/^preference_control_(\d+)$/);
+          if (!match) {
+            return;
+          }
+          var prefId = +match[1];
+          var prefValue = +e.target.value;
+          (this as any).prefs[prefId].value = prefValue;
+          this.onPreferenceChange(prefId, prefValue);
+        }
+        
+        // Call onPreferenceChange() when any value changes
+        dojo.query(".preference_control").connect("onchange", onchange);
+        
+        // Call onPreferenceChange() now
+        dojo.forEach(
+          dojo.query("#ingame_menu_content .preference_control"),
+          el => onchange({ target: el })
+        );
+      }
+      
+      private onPreferenceChange(prefId: number, prefValue: number) {
+        switch (prefId) {
+            // KEEP
+            case 201: 
+                this.playerTables.forEach(playerTable => playerTable.setFont(prefValue));
+                break;
+        }
+      }
 
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications

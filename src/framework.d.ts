@@ -32,6 +32,7 @@ interface Dojo {
     toggleClass: (node: string | HTMLElement, className: string, forceValue: boolean) => void;
     connect: Function;
     query: Function;
+    forEach: Function;
     subscribe: Function;
     string: any;
     fx: {
