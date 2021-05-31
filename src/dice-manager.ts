@@ -1,6 +1,10 @@
+type DieClickAction = 'move' | 'change' | 'psychicProbeRoll';
+
 class DiceManager {
     private dice: Dice[] = [];
     private dieFaceSelectors: DieFaceSelector[] = [];
+    private action: DieClickAction;
+    private changeDieArgs: EnteringChangeDieArgs;
 
     constructor(private game: KingOfTokyoGame, setupDice: Dice[]) {
         // TODO use setupDice ?
@@ -26,6 +30,7 @@ class DiceManager {
     }
 
     public setDiceForThrowDice(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
+        this.action = 'move';
         this.dice?.forEach(die => this.removeDice(die));
         this.clearDiceHtml();
         this.dice = dice;
@@ -38,6 +43,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
+        this.action = 'change';
         if (this.dice.length) {
             return;
         }
@@ -47,6 +53,7 @@ class DiceManager {
         this.dice = dice;
         
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
+        this.changeDieArgs = args;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);
@@ -55,13 +62,13 @@ class DiceManager {
             this.addDiceRollClass(die);
 
             if (selectable) {
-                dojo.place(`<div id="discussion_bubble_${divId}" class="discussion_bubble change-die-discussion_bubble"></div>`, divId);
-                document.getElementById(divId).addEventListener('click', () => this.toggleBubbleChangeDie(die, args));
+                document.getElementById(divId).addEventListener('click', () => this.dieClick(die));
             }
         });
     }
 
     public setDiceForSelectHeartAction(dice: Dice[], inTokyo: boolean) { 
+        this.action = null;
         if (this.dice.length) {
             return;
         }
@@ -75,6 +82,7 @@ class DiceManager {
     }
 
     setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
+        this.action = 'psychicProbeRoll';
         if (this.dice.length) {
             return;
         }
@@ -87,7 +95,7 @@ class DiceManager {
 
             if (isCurrentPlayerActive) {
                 const divId = `dice${die.id}`;
-                document.getElementById(divId).addEventListener('click', () => this.game.psychicProbeRollDie(die.id));
+                document.getElementById(divId).addEventListener('click', () => this.dieClick(die));
             }
         });
 
@@ -224,7 +232,17 @@ class DiceManager {
         this.addDiceRollClass(die);
 
         if (selectable) {
-            this.getDiceDiv(die).addEventListener('click', () => this.toggleLockDice(die));
+            this.getDiceDiv(die).addEventListener('click', () => this.dieClick(die));
+        }
+    }
+
+    private dieClick(die: Dice) {
+        if (this.action === 'move') {
+            this.toggleLockDice(die);
+        } else if (this.action === 'change') {
+            this.toggleBubbleChangeDie(die);
+        } else if (this.action === 'psychicProbeRoll') {
+            this.game.psychicProbeRollDie(die.id);
         }
     }
 
@@ -251,19 +269,25 @@ class DiceManager {
 
     private hideBubble(dieId: number) {
         const bubble = document.getElementById(`discussion_bubble_dice${dieId}`);
-        bubble.style.display = 'none';
-        bubble.dataset.visible = 'false';
+        if (bubble) {
+            bubble.style.display = 'none';
+            bubble.dataset.visible = 'false';
+        }
     }
 
-    private toggleBubbleChangeDie(die: Dice, args: EnteringChangeDieArgs) {
-        const bubble = document.getElementById(`discussion_bubble_dice${die.id}`);
+    private toggleBubbleChangeDie(die: Dice) {
+        const divId = `dice${die.id}`;           
+        if (!document.getElementById(`discussion_bubble_${divId}`)) { 
+            dojo.place(`<div id="discussion_bubble_${divId}" class="discussion_bubble change-die-discussion_bubble"></div>`, divId);
+        }
+        const bubble = document.getElementById(`discussion_bubble_${divId}`);
         const visible = bubble.dataset.visible == 'true';
 
         if (visible) {
             this.hideBubble(die.id);
         } else {
-            const bubbleActionButtonsId = `discussion_bubble_dice${die.id}-action-buttons`;
-            const bubbleDieFaceSelectorId = `discussion_bubble_dice${die.id}-die-face-selector`;
+            const bubbleActionButtonsId = `discussion_bubble_${divId}-action-buttons`;
+            const bubbleDieFaceSelectorId = `discussion_bubble_${divId}-die-face-selector`;
             const creation = bubble.innerHTML == '';
             if (creation) {
                 dojo.place(`
@@ -275,6 +299,8 @@ class DiceManager {
             const herdCullerButtonId = `${bubbleActionButtonsId}-herdCuller`;
             const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
             const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
+
+            const args = this.changeDieArgs;
 
             if (!this.dieFaceSelectors[die.id]) {
                 this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die.value, args.inTokyo);
@@ -292,7 +318,7 @@ class DiceManager {
                         dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(22, 'text-only')}</strong>` }),
                         () => {
                             this.game.changeDie(die.id, dieFaceSelector.getValue(), 22);
-                            this.toggleBubbleChangeDie(die, args);
+                            this.toggleBubbleChangeDie(die);
                         },
                         true
                     );
@@ -304,7 +330,7 @@ class DiceManager {
                         dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(33, 'text-only')}</strong>` }),
                         () => {
                             this.game.changeDie(die.id, dieFaceSelector.getValue(), 33),
-                            this.toggleBubbleChangeDie(die, args);
+                            this.toggleBubbleChangeDie(die);
                         },
                         true
                     );
@@ -316,7 +342,7 @@ class DiceManager {
                         dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(44, 'text-only')}</strong>` }) + formatTextIcons(' (2 [Energy])'),
                         () => {
                             this.game.changeDie(die.id, dieFaceSelector.getValue(), 44),
-                            this.toggleBubbleChangeDie(die, args);
+                            this.toggleBubbleChangeDie(die);
                         },
                         true
                     );
