@@ -671,8 +671,6 @@ trait CardsTrait {
         $stateName = $this->gamestate->state()['name'];
         $opportunist = $stateName === 'opportunistBuyCard';
         $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
-        
-        $this->removeDiscardCards($playerId);
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
@@ -681,6 +679,12 @@ trait CardsTrait {
         if (!$this->canBuyCard($playerId, $cost)) {
             throw new \Error('Not enough energy');
         }
+
+        if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
+            throw new \Error("You can't buy from other players without Parasitic Tentacles");
+        }
+        
+        $this->removeDiscardCards($playerId);
 
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
@@ -866,6 +870,10 @@ trait CardsTrait {
         $this->checkAction('sellCard');
    
         $playerId = self::getActivePlayerId();
+        
+        if ($this->countCardOfType($playerId, METAMORPH_CARD) == 0) {
+            throw new \Error("You can't sell cards without Metamorph");
+        }
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 

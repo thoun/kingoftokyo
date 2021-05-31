@@ -370,15 +370,15 @@ trait DiceTrait {
         $this->checkAction('rethrow3');
 
         $playerId = self::getActivePlayerId();
-        $dice = $this->getFirst3Dice($this->getDiceNumber($playerId));
+        $die = $this->getFirst3Dice($this->getDiceNumber($playerId));
 
-        if ($dice == null) {
-            throw new \Error('No dice 3');
+        if ($die == null) {
+            throw new \Error('No 3 die');
         }
 
         $dice->value = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dice->id);
-        self::DbQuery("UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id);
+        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$die->id);
+        self::DbQuery("UPDATE dice SET `dice_value` = ".$die->value.", `rolled` = true where `dice_id` = ".$die->id);
 
         $this->gamestate->nextState('rethrow');
     }
@@ -389,6 +389,11 @@ trait DiceTrait {
         $playerId = self::getActivePlayerId();
 
         $die = $this->getDieById($id);
+
+        if ($die == null) {
+            throw new \Error('No selected die');
+        }
+
         self::DbQuery("UPDATE dice SET `dice_value` = ".$value." where `dice_id` = ".$id);
 
         if ($cardType == HERD_CULLER_CARD) {
@@ -460,6 +465,10 @@ trait DiceTrait {
 
         $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
         $playerId = $intervention->remainingPlayersId[0];
+
+        if ($this->countCardOfType($playerId, PSYCHIC_PROBE_CARD) == 0) {
+            throw new \Error('No Psychic Probe card');
+        }
 
         $die = $this->getDieById($id);
         $value = bga_rand(1, 6);
@@ -550,6 +559,16 @@ trait DiceTrait {
 
         $heal = 0;
         $healPlayer = [];
+
+        $healPlayerCount = 0;
+        foreach ($heartDieChoices as $heartDieChoice) {
+            if ($heartDieChoice->action == 'heal-player') {
+                $healPlayerCount++;
+            }
+        }
+        if ($healPlayerCount > 0 && $this->countCardOfType($playerId, HEALING_RAY_CARD) == 0) {
+            throw new \Error('No Healing Ray card');
+        }
         
         foreach ($heartDieChoices as $heartDieChoice) {
             switch ($heartDieChoice->action) {
