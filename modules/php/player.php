@@ -53,10 +53,14 @@ trait PlayerTrait {
     */
 
     function endTurn() {
+        $this->checkAction('endTurn');
+   
         $this->gamestate->nextState('endTurn');
     }
 
     function stayInTokyo() {
+        $this->checkAction('stay');
+
         $playerId = self::getCurrentPlayerId();
 
         self::notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
@@ -69,6 +73,8 @@ trait PlayerTrait {
     }
 
     function actionLeaveTokyo() {
+        $this->checkAction('leave');
+
         $playerId = self::getCurrentPlayerId();
 
         $this->leaveTokyo($playerId);

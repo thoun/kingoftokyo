@@ -42,7 +42,7 @@
 
         $diceIds = self::getArg("diceIds", AT_numberlist, true);
 
-        $this->game->rethrowDice($diceIds);
+        $this->game->actionRethrowDice($diceIds);
 
         self::ajaxResponse();
     }

@@ -325,17 +325,8 @@ trait DiceTrait {
             case 6: return "[diceSmash]";
         }
     }
-
-//////////////////////////////////////////////////////////////////////////////
-//////////// Player actions
-////////////
-
-    /*
-        Each time a player is doing some game action, one of the methods below is called.
-        (note: each method below must match an input method in kingoftokyo.action.php)
-    */
   	
-    public function rethrowDice(string $diceIds) {
+    function rethrowDice(string $diceIds) {
         $playerId = self::getActivePlayerId();
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
         self::DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN ($diceIds)");
@@ -347,7 +338,37 @@ trait DiceTrait {
         $this->gamestate->nextState('rethrow');
     }
 
+
+//////////////////////////////////////////////////////////////////////////////
+//////////// Player actions
+////////////
+
+    /*
+        Each time a player is doing some game action, one of the methods below is called.
+        (note: each method below must match an input method in kingoftokyo.action.php)
+    */
+  	
+    public function actionRethrowDice(string $diceIds) {
+        $this->checkAction('rethrow');
+
+        $playerId = self::getActivePlayerId();
+
+        $throwNumber = intval(self::getGameStateValue('throwNumber'));
+        $maxThrowNumber = $this->getThrowNumber($playerId);
+
+        if ($throwNumber >= $maxThrowNumber) {
+            throw new \Error("You can't throw dices (max throw)");
+        }
+        if (!$diceIds || $diceIds == '') {
+            throw new \Error("No selected dice to throw");
+        }
+
+        $this->rethrowDice($diceIds);
+    }
+
     public function rethrow3() {
+        $this->checkAction('rethrow3');
+
         $playerId = self::getActivePlayerId();
         $dice = $this->getFirst3Dice($this->getDiceNumber($playerId));
 
@@ -363,6 +384,8 @@ trait DiceTrait {
     }
 
     public function changeDie(int $id, int $value, int $cardType) {
+        $this->checkAction('changeDie');
+
         $playerId = self::getActivePlayerId();
 
         $die = $this->getDieById($id);
@@ -433,6 +456,8 @@ trait DiceTrait {
     }
 
     public function psychicProbeRollDie(int $id) {
+        $this->checkAction('psychicProbeRollDie');
+
         $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
         $playerId = $intervention->remainingPlayersId[0];
 
@@ -487,6 +512,8 @@ trait DiceTrait {
     }
 
     public function goToChangeDie() {
+        $this->checkAction('goToChangeDie');
+
         $playerId = self::getActivePlayerId();
 
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
@@ -507,6 +534,8 @@ trait DiceTrait {
     }
 
     function psychicProbeSkip() {
+        $this->checkAction('psychicProbeSkip');
+
         $playerId = self::getCurrentPlayerId();
 
         $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
@@ -515,6 +544,8 @@ trait DiceTrait {
     }
 
     function applyHeartDieChoices(array $heartDieChoices) {
+        $this->checkAction('applyHeartDieChoices');
+
         $playerId = self::getActivePlayerId();
 
         $heal = 0;
@@ -553,6 +584,8 @@ trait DiceTrait {
     }
 
     public function resolveDice() {
+        $this->checkAction('resolve');
+
         $this->gamestate->nextState('resolve');
     }
 

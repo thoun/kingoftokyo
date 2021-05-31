@@ -420,10 +420,18 @@ trait CardsTrait {
     }
 
     function buyEnergyDrink($diceIds) {
+        $this->checkAction('buyEnergyDrink');
+
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
             throw new \Error('Not enough energy');
+        }
+
+        $cards = $this->getCardsOfType($playerId, ENERGY_DRINK_CARD);
+
+        if (count($cards) == 0) {
+            throw new \Error('No Energy Drink card');
         }
 
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
@@ -435,6 +443,8 @@ trait CardsTrait {
     }
 
     function useSmokeCloud($diceIds) {
+        $this->checkAction('useSmokeCloud');
+
         $playerId = self::getActivePlayerId();
 
         $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
@@ -656,6 +666,8 @@ trait CardsTrait {
     */
 
     function buyCard(int $id, int $from) {
+        $this->checkAction('buyCard');
+
         $stateName = $this->gamestate->state()['name'];
         $opportunist = $stateName === 'opportunistBuyCard';
         $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
@@ -794,6 +806,8 @@ trait CardsTrait {
     }
 
     function renewCards() {
+        $this->checkAction('renew');
+
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
@@ -828,6 +842,8 @@ trait CardsTrait {
     }
 
     function opportunistSkip() {
+        $this->checkAction('opportunistSkip');
+   
         $playerId = self::getCurrentPlayerId();
         $this->removeDiscardCards($playerId);
 
@@ -835,7 +851,9 @@ trait CardsTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
-    function goToSellCard() {   
+    function goToSellCard() {
+        $this->checkAction('goToSellCard');
+   
         $playerId = self::getActivePlayerId();  
            
         $this->removeDiscardCards($playerId);
@@ -845,6 +863,8 @@ trait CardsTrait {
 
     
     function sellCard(int $id) {
+        $this->checkAction('sellCard');
+   
         $playerId = self::getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
@@ -868,6 +888,8 @@ trait CardsTrait {
     }
 
     function chooseMimickedCard(int $mimickedCardId) {
+        $this->checkAction('chooseMimickedCard');
+
         $stateName = $this->gamestate->state()['name'];
         $opportunist = $stateName === 'opportunistChooseMimicCard';
         $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
@@ -878,6 +900,8 @@ trait CardsTrait {
     }
 
     function changeMimickedCard(int $mimickedCardId) {
+        $this->checkAction('changeMimickedCard');
+
         $playerId = self::getActivePlayerId();
 
         $this->setMimickedCardId($playerId, $mimickedCardId);
@@ -889,10 +913,14 @@ trait CardsTrait {
     }
 
     function skipChangeMimickedCard() {
+        $this->checkAction('skipChangeMimickedCard');
+
         $this->gamestate->nextState('next');
     }    
 
     function throwCamouflageDice() {
+        $this->checkAction('throwCamouflageDice');
+
         $playerId = self::getCurrentPlayerId();
 
         if ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) == 0) {
@@ -959,6 +987,8 @@ trait CardsTrait {
     }
     
     function useWings() {
+        $this->checkAction('useWings');
+
         $playerId = self::getCurrentPlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
@@ -988,6 +1018,8 @@ trait CardsTrait {
     }
 
     function skipWings() {
+        $this->checkAction('skipWings');
+
         $playerId = self::getCurrentPlayerId();
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
