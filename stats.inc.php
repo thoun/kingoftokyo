@@ -73,5 +73,9 @@ $stats_type = [
         "wonEnergyCubes" => ["id" => 39, "type" => "int", "name" => totranslate("Won energy cubes")],
         "endScore" => ["id" => 40, "type" => "int", "name" => totranslate("End score (if game finished to points)")],
         "endHealth" => ["id" => 41, "type" => "int", "name" => totranslate("End life (if alive)")],
+        "rethrownDice" => ["id" => 42, "type" => "int", "name" => totranslate("Rethrown dice")],
+        "pointsWonWith1Dice" => ["id" => 43, "type" => "int", "name" => totranslate("Points won with 1 dice")],
+        "pointsWonWith2Dice" => ["id" => 44, "type" => "int", "name" => totranslate("Points won with 2 dice")],
+        "pointsWonWith3Dice" => ["id" => 45, "type" => "int", "name" => totranslate("Points won with 3 dice")],
     ],
 ];

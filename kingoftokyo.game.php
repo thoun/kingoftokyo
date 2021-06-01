@@ -138,7 +138,8 @@ class KingOfTokyo extends Table {
         self::initStat('player', 'keepBoughtCards', 0);
         self::initStat('player', 'discardBoughtCards', 0);
         self::initStat('player', 'damageDealt', 0);
-        self::initStat('player', 'selfHeal', 0);
+        self::initStat('player', 'damage', 0);
+        self::initStat('player', 'heal', 0);
         self::initStat('player', 'wonEnergyCubes', 0);
         self::initStat('player', 'endScore', 0);
         self::initStat('player', 'endHealth', 0);

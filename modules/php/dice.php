@@ -68,6 +68,8 @@ trait DiceTrait {
 
             $this->applyGetPoints($playerId, $points, -1);
 
+            self::incStat($points, 'pointsWonWith'.$number.'Dice', $playerId);
+
             self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${dice_value} dice'), [
                 'playerId' => $playerId,
                 'player_name' => self::getActivePlayerName(),
@@ -330,6 +332,10 @@ trait DiceTrait {
         $playerId = self::getActivePlayerId();
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
         self::DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN ($diceIds)");
+
+        $diceCount = count(explode(',', $diceIds));
+        self::incStat($diceCount, 'rethrownDice', $playerId);
+
         $this->throwDice($playerId);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;

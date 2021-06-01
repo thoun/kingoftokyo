@@ -417,9 +417,9 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if ($damageDealerId > 0) {
-            self::incStat($damage, 'damageDealt', $damageDealerId);
+            self::incStat($health, 'damageDealt', $damageDealerId);
         }
-        self::incStat($damage, 'damage', $playerId);
+        self::incStat($health, 'damage', $playerId);
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_health} [Heart] with ${card_name}');

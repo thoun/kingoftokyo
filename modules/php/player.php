@@ -286,9 +286,6 @@ trait PlayerTrait {
     function stNextPlayer() {        
         $playerId = self::getActivePlayerId();
 
-        self::incStat(1, 'turns_number');
-        self::incStat(1, 'turns_number', $playerId);
-
         $anotherTimeWithCard = 0;
 
         if (intval($this->getGameStateValue('playAgainAfterTurnOneLessDie')) == 1) { // extra turn for current player with one less die
