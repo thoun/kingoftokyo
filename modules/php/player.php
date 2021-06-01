@@ -111,6 +111,8 @@ trait PlayerTrait {
     function stStartTurn() {
         $playerId = self::getActivePlayerId();
 
+        self::incStat(1, 'turnsNumber', $playerId);
+
         self::setGameStateValue('damageDoneByActivePlayer', 0);
         self::setGameStateValue(EXTRA_ROLLS, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);

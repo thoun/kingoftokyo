@@ -33,7 +33,6 @@ Also add one auto-FTP upload extension (for example https://marketplace.visualst
 Make sure ftp-sync.json and node_modules are in .gitignore
 
 # TODO
-Stack notifications for dice + card effects to make them the right order
 Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
 add stats

@@ -47,49 +47,29 @@
     
 */
 
-$stats_type = array(
-
+$stats_type = [
     // Statistics global to table
-    "table" => array(
-
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
-
-/*
-        Examples:
-
-
-        "table_teststat1" => array(   "id"=> 10,
-                                "name" => totranslate("table test stat 1"), 
-                                "type" => "int" ),
-                                
-        "table_teststat2" => array(   "id"=> 11,
-                                "name" => totranslate("table test stat 2"), 
-                                "type" => "float" )
-*/  
-    ),
+    "table" => [
+        "turnsNumber" => ["id" => 10, "type" => "int", "name" => totranslate("Number of turns")],
+        "pointsWin" => ["id" => 11, "type" => "bool", "name" => totranslate("Won by points")],
+        "eliminationWin" => ["id" => 12, "type" => "bool", "name" => totranslate("Won by elimination")],
+        "survivorRatio" => ["id" => 20, "type" => "float", "name" => totranslate("Survivors ratio")],
+    ],
     
     // Statistics existing for each player
-    "player" => array(
-
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
-    
-/*
-        Examples:    
-        
-        
-        "player_teststat1" => array(   "id"=> 10,
-                                "name" => totranslate("player test stat 1"), 
-                                "type" => "int" ),
-                                
-        "player_teststat2" => array(   "id"=> 11,
-                                "name" => totranslate("player test stat 2"), 
-                                "type" => "float" )
-
-*/    
-    )
-
-);
+    "player" => [
+        "turnsNumber" => ["id" => 10, "type" => "int", "name" => totranslate("Number of turns")],
+        "pointsWin" => ["id" => 11, "type" => "bool", "name" => totranslate("Won by points")],
+        "eliminationWin" => ["id" => 12, "type" => "bool", "name" => totranslate("Won by elimination")],
+        "survived" => ["id" => 30, "type" => "bool", "name" => totranslate("Survived")],
+        "turnsInTokyo" => ["id" => 31, "type" => "int", "name" => totranslate("Turns in Tokyo")],
+        "tokyoEnters" => ["id" => 32, "type" => "int", "name" => totranslate("Tokyo enters")],
+        "tokyoLeaves" => ["id" => 33, "type" => "int", "name" => totranslate("Tokyo leaves")],
+        "keepBoughtCards" => ["id" => 34, "type" => "int", "name" => totranslate("Bought cards (Keep)")],
+        "discardBoughtCards" => ["id" => 35, "type" => "int", "name" => totranslate("Bought cards (Discard)")],
+        "damageDealt" => ["id" => 36, "type" => "int", "name" => totranslate("Damage dealt")],
+        "selfHeal" => ["id" => 37, "type" => "int", "name" => totranslate("Self heal")],
+        "wonEnergyCubes" => ["id" => 38, "type" => "int", "name" => totranslate("Won energy cubes")],
+        "scorePoints" => ["id" => 39, "type" => "int", "name" => totranslate("Points")],
+    ],
+];

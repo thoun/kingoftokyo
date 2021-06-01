@@ -122,8 +122,25 @@ class KingOfTokyo extends Table {
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
-        //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
-        //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
+        self::initStat('table', 'turnsNumber', 0);   // Init a table statistics
+        self::initStat('player', 'turnsNumber', 0);  // Init a player statistics (for all players)
+        self::initStat('table', 'pointsWin', 0);
+        self::initStat('player', 'pointsWin', 0);
+        self::initStat('table', 'eliminationWin', 0);
+        self::initStat('player', 'eliminationWin', 0);
+        
+        self::initStat('table', 'survivorRatio', 0);
+
+        self::initStat('player', 'survived', 0);
+        self::initStat('player', 'turnsInTokyo', 0);
+        self::initStat('player', 'tokyoEnters', 0);
+        self::initStat('player', 'tokyoLeaves', 0);
+        self::initStat('player', 'keepBoughtCards', 0);
+        self::initStat('player', 'discardBoughtCards', 0);
+        self::initStat('player', 'damageDealt', 0);
+        self::initStat('player', 'selfHeal', 0);
+        self::initStat('player', 'wonEnergyCubes', 0);
+        self::initStat('player', 'scorePoints', 0);
 
         // setup the initial game situation here
         $this->initCards();
