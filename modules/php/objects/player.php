@@ -7,6 +7,7 @@ class Player {
     public $name;
     public $color;
     public $no;
+    public $score;
     public $health;
     public $energy;
     public $location;
@@ -19,6 +20,7 @@ class Player {
         $this->name = $dbPlayer['player_name'];
         $this->color = $dbPlayer['player_color'];
         $this->no = intval($dbPlayer['player_no']);
+        $this->score = intval($dbPlayer['player_score']);
         $this->health = intval($dbPlayer['player_health']);
         $this->energy = intval($dbPlayer['player_energy']);
         $this->location = intval($dbPlayer['player_location']);

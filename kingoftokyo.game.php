@@ -140,7 +140,8 @@ class KingOfTokyo extends Table {
         self::initStat('player', 'damageDealt', 0);
         self::initStat('player', 'selfHeal', 0);
         self::initStat('player', 'wonEnergyCubes', 0);
-        self::initStat('player', 'scorePoints', 0);
+        self::initStat('player', 'endScore', 0);
+        self::initStat('player', 'endHealth', 0);
 
         // setup the initial game situation here
         $this->initCards();
@@ -215,6 +216,45 @@ class KingOfTokyo extends Table {
     */
     function getGameProgression() {
         return $this->getMaxPlayerScore() * 5;
+    }
+
+    function stGameEnd() {
+        $players = $this->getPlayers(true);
+        $playerCount = count($players);
+        $remainingPlayers = 0;
+        $pointsWin = false;
+        foreach($players as $player) {
+            if (!$player->eliminated) {
+                $remainingPlayers++;
+            } 
+            if ($player->score == MAX_POINT) {
+                $pointsWin = true;
+            } 
+        }
+        $eliminationWin = $this->getRemainingPlayers() == 1;
+
+        self::setStat($pointsWin ? 1 : 0, 'pointsWin');
+        self::setStat($eliminationWin ? 1 : 0, 'eliminationWin');
+        self::setStat($remainingPlayers / (float) $playerCount, 'survivorRatio');
+
+        foreach($players as $player) {            
+            self::setStat($player->eliminated ? 0 : 1, 'survived', $player->id);
+
+            if (!$player->eliminated) {
+                if ($player->score == MAX_POINT) {
+                    self::setStat(1, 'pointsWin', $player->id);
+                } else if ($eliminationWin) {
+                    self::setStat(1, 'eliminationWin', $player->id);
+                }
+
+                if ($pointsWin) {
+                    self::setStat($player->score, 'endScore', $player->id);
+                }
+                self::setStat($player->health, 'endHealth', $player->id);
+            }            
+        }
+
+        parent::stGameEnd();
     }
 
 //////////////////////////////////////////////////////////////////////////////

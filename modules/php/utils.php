@@ -129,16 +129,20 @@ trait UtilTrait {
             'locationName' => $locationName,
             'points' => $this->getPlayerScore($playerId),
         ]);
+
+        self::incStat(1, 'tokyoEnters', $playerId);
     }
 
     function leaveTokyo($playerId) {
 
         self::DbQuery("UPDATE player SET player_location = 0 where `player_id` = $playerId");
 
-        self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} chooses to leave Tokyo'), [
+        self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
         ]);
+
+        self::incStat(1, 'tokyoLeaves', $playerId);
     }
 
     function moveFromTokyoBayToCity($playerId) {
@@ -354,6 +358,8 @@ trait UtilTrait {
         $newHealth = min($actualHealth + $health, $maxHealth);
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
+        self::incStat($health, 'heal', $playerId);
+
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_health} [Heart] with ${card_name}');
             self::notifyAllPlayers('health', $message, [
@@ -410,6 +416,11 @@ trait UtilTrait {
 
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
+        if ($damageDealerId > 0) {
+            self::incStat($damage, 'damageDealt', $damageDealerId);
+        }
+        self::incStat($damage, 'damage', $playerId);
+
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_health} [Heart] with ${card_name}');
             self::notifyAllPlayers('health', $message, [
@@ -460,6 +471,8 @@ trait UtilTrait {
                 'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
             ]);
         }
+
+        self::incStat($energy, 'wonEnergyCubes', $playerId);
     }
 
     function applyLoseEnergy(int $playerId, int $energy, int $cardType) {

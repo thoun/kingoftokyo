@@ -748,6 +748,12 @@ trait CardsTrait {
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
             $this->setMadeInALabCardId($playerId, 1001);
         }
+
+        if ($card->type < 100) {
+            self::incStat(1, 'keepBoughtCards', $playerId);
+        } else {
+            self::incStat(1, 'discardBoughtCards', $playerId);
+        }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 

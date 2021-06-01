@@ -113,6 +113,11 @@ trait PlayerTrait {
 
         self::incStat(1, 'turnsNumber', $playerId);
 
+        $idsInTokyo = $this->getPlayersIdsInTokyo();
+        foreach($idsInTokyo as $id) {
+            self::incStat(1, 'turnsInTokyo', $id);
+        }
+
         self::setGameStateValue('damageDoneByActivePlayer', 0);
         self::setGameStateValue(EXTRA_ROLLS, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);

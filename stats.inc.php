@@ -68,8 +68,10 @@ $stats_type = [
         "keepBoughtCards" => ["id" => 34, "type" => "int", "name" => totranslate("Bought cards (Keep)")],
         "discardBoughtCards" => ["id" => 35, "type" => "int", "name" => totranslate("Bought cards (Discard)")],
         "damageDealt" => ["id" => 36, "type" => "int", "name" => totranslate("Damage dealt")],
-        "selfHeal" => ["id" => 37, "type" => "int", "name" => totranslate("Self heal")],
-        "wonEnergyCubes" => ["id" => 38, "type" => "int", "name" => totranslate("Won energy cubes")],
-        "scorePoints" => ["id" => 39, "type" => "int", "name" => totranslate("Points")],
+        "damage" => ["id" => 37, "type" => "int", "name" => totranslate("Life loss")],
+        "heal" => ["id" => 38, "type" => "int", "name" => totranslate("Heal")],
+        "wonEnergyCubes" => ["id" => 39, "type" => "int", "name" => totranslate("Won energy cubes")],
+        "endScore" => ["id" => 40, "type" => "int", "name" => totranslate("End score (if game finished to points)")],
+        "endHealth" => ["id" => 41, "type" => "int", "name" => totranslate("End life (if alive)")],
     ],
 ];
