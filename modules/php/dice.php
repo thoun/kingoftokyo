@@ -188,12 +188,10 @@ trait DiceTrait {
         // Alpha Monster
         $countAlphaMonster = $this->countCardOfType($playerId, ALPHA_MONSTER_CARD);
         if ($countAlphaMonster > 0) {
-            // TOCHECK does Alpha Monster applies after other cards adding Smashes ? considered Yes
             $this->applyGetPoints($playerId, $countAlphaMonster, ALPHA_MONSTER_CARD);
         }
 
         // Shrink Ray
-        // TOCHECK can Shrink Ray be mimicked and give 2 tokens ? considered No
         $countShrinkRay = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
         if ($countShrinkRay > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
@@ -202,7 +200,6 @@ trait DiceTrait {
         }
 
         // Poison Spit
-        // TOCHECK can Poison Spit be mimicked and give 2 tokens ? considered No
         $countPoisonSpit = $this->countCardOfType($playerId, POISON_SPIT_CARD);
         if ($countPoisonSpit > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {

@@ -378,7 +378,8 @@ trait UtilTrait {
         }
 
         // Armor plating
-        // TOCHECK Can a player leave tokyo if one smash and armor plating ? Considered Yes
+        // TOCHECK Can a player leave tokyo if one smash and armor plating ? TODO Change to NO
+        // TOCHECK Can a player with Armor plating mimic this card and avoid damage when he take 1 or 2 damages ? Considered No
         $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
         if ($countArmorPlating > 0 && $health == 1) {
             return;

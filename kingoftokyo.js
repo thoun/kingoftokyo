@@ -417,7 +417,7 @@ var Cards = /** @class */ (function () {
             case 45: return _("Spend 1[Energy] to <strong>get 1 extra die Roll.</strong>");
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
-            case 48: return _("<strong>Spend 2[Energy] to lose [Heart]<strong> this turn.");
+            case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
             //case 49: return _("When you do damage gain 1[Heart].");
             //case 50: return _("The monsters in Tokyo must yield if you damage them.");
             //case 51: return _("If someone kills you, Go back to 10[Heart] and lose all your [Star]. If either of you or your killer win, or all other players are eliminated then you both win. If your killer is eliminated then you are also. If you are eliminated a second time this card has no effect.");

@@ -227,13 +227,6 @@ trait PlayerTrait {
 
         // apply end of turn effects (after Selling Cards)
 
-        // rooting for the underdog
-        // TOCHECK is it applied before other end of turn monsters (it may change the fewest Stars) ? considered Yes
-        $countRootingForTheUnderdog = $this->countCardOfType($playerId, ROOTING_FOR_THE_UNDERDOG_CARD);
-        if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
-            $this->applyGetPoints($playerId, $countRootingForTheUnderdog, ROOTING_FOR_THE_UNDERDOG_CARD);
-        }
-
         // energy hoarder
         $countEnergyHoarder = $this->countCardOfType($playerId, ENERGY_HOARDER_CARD);
         if ($countEnergyHoarder > 0) {
@@ -283,7 +276,16 @@ trait PlayerTrait {
         /*}*/
     }
 
-    function stNextPlayer() {        
+    function stNextPlayer() {  
+        $playersIds = $this->getPlayersIds();
+        foreach($playersIds as $playerId) {
+            // rooting for the underdog
+            $countRootingForTheUnderdog = $this->countCardOfType($playerId, ROOTING_FOR_THE_UNDERDOG_CARD);
+            if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
+                $this->applyGetPoints($playerId, $countRootingForTheUnderdog, ROOTING_FOR_THE_UNDERDOG_CARD);
+            }
+        }
+        
         $playerId = self::getActivePlayerId();
 
         $anotherTimeWithCard = 0;
