@@ -1000,6 +1000,8 @@ trait CardsTrait {
         } else {
             if ($remainingDamage > 0) {
                 $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
+            } else {
+                $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }
             $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
         }
@@ -1024,6 +1026,8 @@ trait CardsTrait {
 
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
         $this->setInvincible($playerId);
+
+        $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
         self::notifyAllPlayers("useWings", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
             'playerId' => $playerId,

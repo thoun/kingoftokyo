@@ -297,6 +297,16 @@ trait UtilTrait {
         return $this->getRemainingPlayers() <= 1;
     }
 
+    function removePlayerFromSmashedPlayersInTokyo(int $playerId) {
+        $playersIds = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
+
+        if ($playersIds != null && array_search($playerId, $playersIds) !== false) {
+            $playersIds = array_filter($playersIds, function ($id) use ($playerId) { return $id != $playerId; });
+
+            $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $playersIds);
+        }
+    }
+
     // $cardType = 0 => notification with no message
     // $cardType = -1 => no notification
 
@@ -374,6 +384,7 @@ trait UtilTrait {
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
         if ($this->isInvincible($playerId)) {
+            $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return; // player has wings and cannot lose hearts
         }
 
@@ -382,6 +393,7 @@ trait UtilTrait {
         // TOCHECK Can a player with Armor plating mimic this card and avoid damage when he take 1 or 2 damages ? Considered No
         $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
         if ($countArmorPlating > 0 && $health == 1) {
+            $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return;
         }
 
@@ -409,6 +421,7 @@ trait UtilTrait {
 
     function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
         if ($this->isInvincible($playerId)) {
+            $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return; // player has wings and cannot lose hearts
         }
 

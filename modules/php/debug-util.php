@@ -19,9 +19,8 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(104);
-        $this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->setMimickedCard(2343492,$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
-        //$this->debugSetEnergy(20);
     }
 
     private function debugSetCardInTable($cardType) {
@@ -48,5 +47,9 @@ trait DebugUtilTrait {
 
     private function debugSetEnergy($energy) {
         self::DbQuery("UPDATE player SET `player_energy` = $energy");
+    }
+
+    private function debugSetPlayerScore($playerId, $score) {
+        self::DbQuery("UPDATE player SET `player_score` = $score where `player_id` = $playerId");
     }
 }
