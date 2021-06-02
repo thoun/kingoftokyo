@@ -154,17 +154,21 @@ trait CardsTrait {
             case 104: 
                 $this->applyGetPoints($playerId, 2, $cardType);
                 if (!$this->inTokyo($playerId)) {
-                    // take control of Tokyo
-                    if ($this->isTokyoEmpty(false)) {
-                        $this->moveToTokyo($playerId, false);
-                    } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
-                        $this->moveToTokyo($playerId, true);
-                    } else {
-                        // we force Tokyo city player out
-                        // TOCHECK If 5-6 players and both spots used, we enter tokyo city ? Considered Yes
-                        $this->leaveTokyo($this->getPlayerIdInTokyoCity());
-                        $this->moveToTokyo($playerId, false);
+                    // remove other players in Tokyo
+                    $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
+                    $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
+                    if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
+                        $this->leaveTokyo($playerInTokyoBay);
                     }
+                    if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
+                        $this->leaveTokyo($playerInTokyoCity);
+                    }
+
+                    // take control of Tokyo
+                    $this->moveToTokyo($playerId, false);
+                    // TOCHECK With 5-6 players and both spots taken : if player buying Death From Above is already in Tokyo, is the other spot forced out of Tokyo ? Considered No
+                    // If yes, we must do nothing if in tokyo city and move if in tokyo bay :
+                    // $this->moveFromTokyoBayToCity($this->getPlayerIdInTokyoBay());
                 }
                 break;
             case 105:
@@ -281,6 +285,7 @@ trait CardsTrait {
             'card_name' => $this->getCardName($card->type),
         ]);
 
+        // no need to check for damage return, no discard card can be mimicked
         $this->applyEffects($card->type, $mimicOwnerId);
 
         $tokens = $this->getTokensByCardType($card->type);
