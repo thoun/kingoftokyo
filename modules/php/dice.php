@@ -209,7 +209,6 @@ trait DiceTrait {
         $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES);
         $damages = array_merge($damages, $fireBreathingDamages);
 
-        // TOCHECK Can a player leave tokyo if he cancel all damage while in tokyo (with wings or camouflage) ? Considered Yes
         if (count($damages) > 0) {
             if ($this->resolveDamages($damages, $nextState)) {
                 return null; // no redirect on stResolveSmashDice, handled by resolveDamages
@@ -236,8 +235,7 @@ trait DiceTrait {
         $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST_CARD) > 0;
         // Stretchy
         $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $this->getPlayerEnergy($playerId) >= 2;
-        // TOCHECK is Stretchy only once per turn ? Considered No
-
+        
         return [
             'hasHerdCuller' => $hasHerdCuller,
             'hasPlotTwist' => $hasPlotTwist,
@@ -258,8 +256,6 @@ trait DiceTrait {
     
             foreach($otherPlayers as $otherPlayer) {
                 $missingHearts = $this->getPlayerMaxHealth($otherPlayer->id) - $this->getPlayerHealth($otherPlayer->id);
-
-                // TOCHECK Healing ray can be user on player with 0 energy ? Considered Yes
 
                 if ($missingHearts > 0) {
                     $playerHealInformations = new \stdClass();
@@ -492,14 +488,27 @@ trait DiceTrait {
         }
 
         if ($value == 4) {
-            $currentPlayerCards = array_values(array_filter($intervention->cards, function ($card) use ($playerId) { return $card->location_arg == $currentPlayerId; }));
+            $currentPlayerCards = array_values(array_filter($intervention->cards, function ($card) use ($playerId) { return $card->location_arg == $playerId; }));
             if (count($currentPlayerCards) > 0) {
-                $card = $currentPlayerCards[0];
-                $this->removeCard($playerId, $card);
 
-                if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe             
+                $card = null;
+                // TOCHECK can we select Mimic in priority if player have both ?
+                foreach($currentPlayerCards as $icard) {
+                    if ($icard->type == MIMIC_CARD) {
+                        $card = $icard;
+                    }
+                }
+                if ($card == null) {
+                    $card = $currentPlayerCards[0];
+                }
+
+                if ($card->type == MIMIC_CARD) {
+                    $this->removeMimicToken();
                     // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded, is Mimick disarded ? Considered no but token removed
-                    // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded before Mimic turn, Can Mimic player still do Psychic Probe roll during this turn ? Considered Yes but TODO probably change to No
+                } else { // real Psychic Probe  
+                    $this->removeCard($playerId, $card); // will remove mimic token
+                    // in case we had a mimic player to play after current player, we clear array because he can't anymore 
+                    $intervention->remainingPlayersId = []; // intervention will be saved on setInterventionNextState
                 }
             }
         }
@@ -799,7 +808,6 @@ trait DiceTrait {
 
         if ($diceCounts[6] >= 1) {
             // spiked tail
-            // TOCHECK can Spiked Tail be chained with Acid attack ? Considered yes
             $countSpikedTail = $this->countCardOfType($playerId, SPIKED_TAIL_CARD);
             if ($countSpikedTail > 0) {
                 $diceCounts[6] += $countSpikedTail;
@@ -809,7 +817,6 @@ trait DiceTrait {
             }
 
             // urbavore
-            // TOCHECK can Urbavore be chained with Acid attack ? Considered yes
             if ($playerInTokyo) {
                 $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);
                 if ($countUrbavore > 0) {

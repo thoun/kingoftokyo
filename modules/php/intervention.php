@@ -14,7 +14,7 @@ trait InterventionTrait {
         }
 
         $intervention->nextState = $nextState;
-        if ($nextState === 'next') {            
+        if ($nextState === 'next' && count($intervention->remainingPlayersId) > 0) {
             array_shift($intervention->remainingPlayersId); 
         }
         if ($endState != null) {

@@ -476,7 +476,6 @@ trait CardsTrait {
         $tokensOnCard = $card->tokens - 1;
         $this->setCardTokens($playerId, $card, $tokensOnCard);
 
-        // TOCHECK When Mimic is set on Smoke Cloud, and run out of tokens, is the Mimic card discarded ? Or is mimic token removed ? Considered No and No
         if ($tokensOnCard <= 0 && $card->type != MIMIC_CARD) {
             $this->removeCard($playerId, $card);
         }
@@ -631,7 +630,6 @@ trait CardsTrait {
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             foreach($cardsOfPlayer as $card) {
-                // TOCHECK Can Mimic card be set again to same card ? For example use it on smoke cloudagain to reset tokens to 3 ? Considered No
                 if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) {
                     return true;
                 }
@@ -679,7 +677,6 @@ trait CardsTrait {
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
-        // TOCHECK can it buy with parasitic tentacles whith reduced price ? Considered Yes
         $cost = $this->getCardCost($playerId, $card->type);
         if (!$this->canBuyCard($playerId, $cost)) {
             throw new \Error('Not enough energy');
@@ -900,7 +897,6 @@ trait CardsTrait {
             'energy' => $this->getPlayerEnergy($playerId),
         ]);
 
-        // TOCHECK can metamorph be chained with Friend of children ? Considered Yes
         $this->applyGetEnergy($playerId, $fullCost, 0);
 
         $this->gamestate->nextState('sellCard');
@@ -993,8 +989,6 @@ trait CardsTrait {
             'dice' => $diceStr,
         ]);
 
-        // TOCHECK can a player leaves tokyo even if he cancelled all damage with Camonflage or Wings ? Considered Yes
-
         if ($stayOnState) {
             $intervention->damages[0]->damage -= $cancelledDamage;
         } else {
@@ -1085,7 +1079,6 @@ trait CardsTrait {
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
-                // TOCHECK can it buy with parasitic tentacles whith reduced price ? Considered Yes
                 $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
                 $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCards);
                 

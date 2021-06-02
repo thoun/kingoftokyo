@@ -88,7 +88,6 @@ trait UtilTrait {
     }
 
     function getThrowNumber(int $playerId) {
-        // TOCHECK If Giant Brain is mimicked, does player have 2 extra rolls ? Considered Yes
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
         // energy drink
@@ -389,8 +388,7 @@ trait UtilTrait {
         }
 
         // Armor plating
-        // TOCHECK Can a player leave tokyo if one smash and armor plating ? TODO Change to NO
-        // TOCHECK Can a player with Armor plating mimic this card and avoid damage when he take 1 or 2 damages ? Considered No
+        // TOCHECK Can a player with Armor plating mimic this card and avoid damage when he take 2 damage ? Considered No
         $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
         if ($countArmorPlating > 0 && $health == 1) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);

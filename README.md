@@ -38,3 +38,5 @@ add animation for smashes even if no smash dice (poison quills)
 
 test zombie
 test translate
+when entering psychic probe roll, no clic possible (event not binded on non active players)
+remove dice sort on non-locked dice to show randomness

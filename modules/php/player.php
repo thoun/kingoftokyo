@@ -133,7 +133,6 @@ trait PlayerTrait {
         }
 
         // apply in tokyo at start
-        // TOCHECK when starting a new turn with Freeze Time, and in Tokyo, do you win 2 points between your 2 turns ? Considered Yes
         if ($this->inTokyo($playerId)) {
             // start turn in tokyo
             $incScore = 2;
