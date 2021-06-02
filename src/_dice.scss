@@ -44,12 +44,6 @@ $tokyoGreen: #96c93c;
     cursor: pointer;
   }
 
-  .icon.forbidden {
-    position: absolute;
-    bottom: -10px;
-    right: -10px;
-  }
-
   #dice-actions {
     button {
       width: auto;
@@ -60,6 +54,12 @@ $tokyoGreen: #96c93c;
       }
     }
   }
+}
+
+.icon.forbidden {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
 }
 
 $size: 0.25rem;
@@ -396,6 +396,7 @@ $size: 0.25rem;
       display: flex;
 
       .toggle-button {
+        user-select: none;
         background: #FFFFFFAA;
         //display: inline-block;
         padding: 10px 15px;

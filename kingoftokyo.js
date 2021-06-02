@@ -1034,19 +1034,20 @@ var HeartActionSelector = /** @class */ (function () {
     HeartActionSelector.prototype.createToggleButtons = function (nodeId, args) {
         var _this = this;
         args.dice.filter(function (die) { return die.value === 4; }).forEach(function (die, index) {
-            var html = "<div class=\"die\">\n                <div class=\"die-face\">\n                    <div class=\"dice-icon dice4\">";
-            if (args.inTokyo) {
-                html += "<div class=\"icon forbidden\"></div>";
-            }
-            html += "</div>\n                </div>\n                <div id=\"" + nodeId + "-die" + index + "\" class=\"toggle-buttons\"></div>\n            </div>";
+            var html = "<div class=\"die\">\n                <div class=\"die-face\">\n                    <div class=\"dice-icon dice4\"></div>\n                </div>\n                <div id=\"" + nodeId + "-die" + index + "\" class=\"toggle-buttons\"></div>\n            </div>";
             dojo.place(html, nodeId);
             _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-heal", _('Heal'), function () { return _this.healSelected(index); }, false, true);
+            if (args.inTokyo) {
+                var buttonDiv = document.getElementById(nodeId + "-die" + index + "-heal");
+                buttonDiv.style.position = 'relative';
+                buttonDiv.innerHTML += "<div class=\"icon forbidden\"></div>";
+            }
             _this.selections[index] = { action: 'heal' };
             if (args.shrinkRayTokens > 0) {
-                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-shrink-ray", _('Remove Shrink Ray token'), function () { return _this.shrinkRaySelected(index); }, args.inTokyo);
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-shrink-ray", _('Remove Shrink Ray token'), function () { return _this.shrinkRaySelected(index); }, false);
             }
             if (args.poisonTokens > 0) {
-                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-poison", _('Remove Poison token'), function () { return _this.poisonSelected(index); }, args.inTokyo);
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-poison", _('Remove Poison token'), function () { return _this.poisonSelected(index); }, false);
             }
             if (args.hasHealingRay) {
                 args.healablePlayers.forEach(function (healablePlayer) {

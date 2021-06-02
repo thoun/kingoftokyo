@@ -12,11 +12,7 @@ class HeartActionSelector {
         args.dice.filter(die => die.value === 4).forEach((die, index) => {
             let html = `<div class="die">
                 <div class="die-face">
-                    <div class="dice-icon dice4">`;
-                if (args.inTokyo) {            
-                    html += `<div class="icon forbidden"></div>`;
-                }
-                html += `</div>
+                    <div class="dice-icon dice4"></div>
                 </div>
                 <div id="${nodeId}-die${index}" class="toggle-buttons"></div>
             </div>`;
@@ -30,6 +26,13 @@ class HeartActionSelector {
                 false,
                 true
             );
+                       
+            if (args.inTokyo) {
+                const buttonDiv = document.getElementById(`${nodeId}-die${index}-heal`);
+                buttonDiv.style.position = 'relative';
+                buttonDiv.innerHTML += `<div class="icon forbidden"></div>`;
+            }
+
             this.selections[index] = {action: 'heal' };
 
             if (args.shrinkRayTokens > 0) {
@@ -38,7 +41,7 @@ class HeartActionSelector {
                     `${nodeId}-die${index}-shrink-ray`, 
                     _('Remove Shrink Ray token'), 
                     () => this.shrinkRaySelected(index),
-                    args.inTokyo
+                    false
                 );
             }
             if (args.poisonTokens > 0) {
@@ -47,7 +50,7 @@ class HeartActionSelector {
                     `${nodeId}-die${index}-poison`, 
                     _('Remove Poison token'), 
                     () => this.poisonSelected(index),
-                    args.inTokyo
+                    false
                 );
             }
             if (args.hasHealingRay) {

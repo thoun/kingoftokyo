@@ -710,12 +710,7 @@ trait DiceTrait {
     
             $selectHeartDiceUseArg = $this->getSelectHeartDiceUse($playerId);  
 
-            $canSelectHeartDiceUse = false;
-            if ($this->inTokyo($playerId)) {
-                $canSelectHeartDiceUse = $selectHeartDiceUseArg['hasHealingRay'];
-            } else {
-                $canSelectHeartDiceUse = $selectHeartDiceUseArg['hasHealingRay'] || $selectHeartDiceUseArg['shrinkRayTokens'] > 0 || $selectHeartDiceUseArg['poisonTokens'] > 0;
-            }
+            $canSelectHeartDiceUse = $selectHeartDiceUseArg['hasHealingRay'] || $selectHeartDiceUseArg['shrinkRayTokens'] > 0 || $selectHeartDiceUseArg['poisonTokens'] > 0;
 
             $diceArg = $canSelectHeartDiceUse ? [
                 'dice' => $dice,
@@ -904,12 +899,7 @@ trait DiceTrait {
         if ($diceCounts[4] > 0) {
             $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);
 
-            // TOCHECK remove Shrink Ray & Poison tokens is impossible in Tokyo, but healing other players (even if other player is in Tokyo ?) ? Considered Yes and Yes
-            if ($this->inTokyo($playerId)) {
-                $canSelectHeartDiceUse = $selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0;
-            } else {
-                $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0;
-            }
+            $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0;
         }
 
         if ($canSelectHeartDiceUse) {

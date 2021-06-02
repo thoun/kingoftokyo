@@ -91,17 +91,18 @@
 #rolled-dice .dice.selectable {
   cursor: pointer;
 }
-#rolled-dice .icon.forbidden {
-  position: absolute;
-  bottom: -10px;
-  right: -10px;
-}
 #rolled-dice #dice-actions button {
   width: auto;
 }
 #rolled-dice #dice-actions button .token {
   width: 16px;
   height: 16px;
+}
+
+.icon.forbidden {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
 }
 
 .dice {
@@ -481,6 +482,7 @@
   display: flex;
 }
 #heart-action-selector .die .toggle-buttons .toggle-button {
+  user-select: none;
   background: #FFFFFFAA;
   padding: 10px 15px;
   font-size: 14px;
