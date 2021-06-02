@@ -234,8 +234,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
             }
 
-            if (args._private?.pickCard) {
-                this.showPickStock(args._private.pickCard);
+            if (args._private?.pickCards?.length) {
+                this.showPickStock(args._private.pickCards);
             }
 
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
@@ -459,7 +459,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.cards.addCardsToStock(this.visibleCards, visibleCards);
     }
 
-    public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) {
+    public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) { // from : player id
         if (!cardId) {
             return;
         }
@@ -476,7 +476,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else if (this.gamedatas.gamestate.name === 'changeMimickedCard') {
             this.changeMimickedCard(cardId);
         } else {
-            this.buyCard(cardId, from)
+            const removeFromPickIds = this.pickCard?.items.map(item => Number(item.id));
+            removeFromPickIds.forEach(id => {
+                if (id !== Number(cardId)) {
+                    this.pickCard.removeFromStockById(''+id);
+                }
+            });
+            this.buyCard(cardId, from);
         }
     }
 
@@ -755,9 +761,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
     }
     
-    private showPickStock(card: Card) {
+    private showPickStock(cards: Card[]) {
         if (!this.pickCard) { 
-            dojo.place('<div id="pick-stock"></div>', 'deck');
+            dojo.place('<div id="pick-stock"></div>', 'deck-wrapper');
 
             this.pickCard = new ebg.stock() as Stock;
             this.pickCard.setSelectionAppearance('class');
@@ -773,7 +779,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.cards.setupCards([this.pickCard]);
-        this.cards.addCardsToStock(this.pickCard, [card]);
+        this.cards.addCardsToStock(this.pickCard, cards);
     }
 
     private hidePickStock() {

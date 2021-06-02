@@ -329,17 +329,17 @@ trait CardsTrait {
         return null;
     }
 
-    function getMadeInALabCardId($playerId) {
+    function getMadeInALabCardIds($playerId) {
         $madeInALab = $this->getGlobalVariable(MADE_IN_A_LAB, true);
         if (array_key_exists($playerId, $madeInALab)) {
             return $madeInALab[$playerId];
         }
-        return 0;
+        return [];
     }
 
-    function setMadeInALabCardId($playerId, $cardId) {
+    function setMadeInALabCardIds(int $playerId, array $cardIds) {
         $madeInALab = $this->getGlobalVariable(MADE_IN_A_LAB, true);
-        $madeInALab[$playerId] = $cardId;
+        $madeInALab[$playerId] = $cardIds;
         $this->setGlobalVariable(MADE_IN_A_LAB, $madeInALab);
     }
 
@@ -726,7 +726,7 @@ trait CardsTrait {
                 'from' => $from,
                 'player_name2' => $this->getPlayerName($from),
             ]);
-        } else if ($id == $this->getMadeInALabCardId($playerId)) {
+        } else if (array_search($id, $this->getMadeInALabCardIds($playerId)) !== false) {
             
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from top deck'), [
                 'playerId' => $playerId,
@@ -737,7 +737,7 @@ trait CardsTrait {
                 'energy' => $this->getPlayerEnergy($playerId),
             ]);
 
-            $this->setMadeInALabCardId($playerId, 1001); // To not pick another one on same turn
+            $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
     
@@ -751,7 +751,7 @@ trait CardsTrait {
             ]);
 
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
-            $this->setMadeInALabCardId($playerId, 1001);
+            $this->setMadeInALabCardIds($playerId, [0]);
         }
 
         if ($card->type < 100) {
@@ -1094,24 +1094,29 @@ trait CardsTrait {
         }
 
         // made in a lab
-        // TOCHECK If mimicked, can player see 2 top cards ? Considered No
-        $canPick = $this->countCardOfType($playerId, MADE_IN_A_LAB_CARD) > 0;
+        $canPick = $this->countCardOfType($playerId, MADE_IN_A_LAB_CARD);
         $pickArgs = [];
-        if ($canPick && $this->getMadeInALabCardId($playerId) < 1000) {
-            $pickCard = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
-            $this->setMadeInALabCardId($playerId, $pickCard->id);
+        if ($canPick > 0) {
+            $madeInALabCardIds = $this->getMadeInALabCardIds($playerId);
+            $canUseMadeInALab = $madeInALabCardIds == null || count($madeInALabCardIds) == 0 || $madeInALabCardIds[0] != 0;
+            if ($canUseMadeInALab) {
+                $pickCards = $this->getCardsFromDb($this->cards->getCardsOnTop($canPick, 'deck'));
+                $this->setMadeInALabCardIds($playerId, array_map(function($card) { return $card->id; }, $pickCards));
 
-            if (!$this->canBuyCard($playerId, $this->getCardCost($playerId, $pickCard->type))) {
-                $disabledIds[] = $pickCard->id;
+                foreach($pickCards as $pickCard) {
+                    if (!$this->canBuyCard($playerId, $this->getCardCost($playerId, $pickCard->type))) {
+                        $disabledIds[] = $pickCard->id;
+                    }
+                }
+
+                $pickArgs = [
+                    '_private' => [          // Using "_private" keyword, all data inside this array will be made private
+                        'active' => [       // Using "active" keyword inside "_private", you select active player(s)
+                            'pickCards' => $pickCards,   // will be send only to active player(s)
+                        ]
+                    ],
+                ];
             }
-
-            $pickArgs = [
-                '_private' => [          // Using "_private" keyword, all data inside this array will be made private
-                    'active' => [       // Using "active" keyword inside "_private", you select active player(s)
-                        'pickCard' => $pickCard,   // will be send only to active player(s)
-                    ]
-                ],
-            ];
         }
     
         // return values:

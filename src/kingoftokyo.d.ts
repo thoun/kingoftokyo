@@ -110,7 +110,7 @@ interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
     _private: {
-        pickCard: Card;
+        pickCards: Card[];
     };
 }
 

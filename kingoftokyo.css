@@ -689,16 +689,16 @@
 #table #table-center #deck-wrapper {
   display: flex;
   justify-content: center;
+  position: relative;
+  overflow: visible;
 }
 #table #table-center #deck-wrapper #deck {
   width: 185px;
   height: 132px;
   background: url("img/card-back.jpg");
   box-shadow: 4px 4px 0px 0px #333;
-  position: relative;
-  overflow: visible;
 }
-#table #table-center #deck-wrapper #deck #pick-stock {
+#table #table-center #deck-wrapper #pick-stock {
   position: absolute;
   bottom: -5px;
   width: 100%;

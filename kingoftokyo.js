@@ -1312,14 +1312,14 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
         var _this = this;
-        var _a;
+        var _a, _b;
         if (isCurrentPlayerActive) {
             this.visibleCards.setSelectionMode(1);
             if (args.canBuyFromPlayers) {
                 this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
             }
-            if ((_a = args._private) === null || _a === void 0 ? void 0 : _a.pickCard) {
-                this.showPickStock(args._private.pickCard);
+            if ((_b = (_a = args._private) === null || _a === void 0 ? void 0 : _a.pickCards) === null || _b === void 0 ? void 0 : _b.length) {
+                this.showPickStock(args._private.pickCards);
             }
             args.disabledIds.forEach(function (id) { return document.querySelector("div[id$=\"_item_" + id + "\"]").classList.add('disabled'); });
         }
@@ -1500,6 +1500,8 @@ var KingOfTokyo = /** @class */ (function () {
         this.cards.addCardsToStock(this.visibleCards, visibleCards);
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from) {
+        var _this = this;
+        var _a;
         if (from === void 0) { from = 0; }
         if (!cardId) {
             return;
@@ -1518,6 +1520,12 @@ var KingOfTokyo = /** @class */ (function () {
             this.changeMimickedCard(cardId);
         }
         else {
+            var removeFromPickIds = (_a = this.pickCard) === null || _a === void 0 ? void 0 : _a.items.map(function (item) { return Number(item.id); });
+            removeFromPickIds.forEach(function (id) {
+                if (id !== Number(cardId)) {
+                    _this.pickCard.removeFromStockById('' + id);
+                }
+            });
             this.buyCard(cardId, from);
         }
     };
@@ -1735,10 +1743,10 @@ var KingOfTokyo = /** @class */ (function () {
         data.lock = true;
         this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
     };
-    KingOfTokyo.prototype.showPickStock = function (card) {
+    KingOfTokyo.prototype.showPickStock = function (cards) {
         var _this = this;
         if (!this.pickCard) {
-            dojo.place('<div id="pick-stock"></div>', 'deck');
+            dojo.place('<div id="pick-stock"></div>', 'deck-wrapper');
             this.pickCard = new ebg.stock();
             this.pickCard.setSelectionAppearance('class');
             this.pickCard.selectionClass = 'no-visible-selection';
@@ -1753,7 +1761,7 @@ var KingOfTokyo = /** @class */ (function () {
             document.getElementById('pick-stock').style.display = 'block';
         }
         this.cards.setupCards([this.pickCard]);
-        this.cards.addCardsToStock(this.pickCard, [card]);
+        this.cards.addCardsToStock(this.pickCard, cards);
     };
     KingOfTokyo.prototype.hidePickStock = function () {
         var div = document.getElementById('pick-stock');
