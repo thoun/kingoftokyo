@@ -496,8 +496,7 @@ trait UtilTrait {
         }
     }
 
-    function applyGetShrinkRayToken(int $playerId) {
-        $deltaTokens = 1;
+    function applyGetShrinkRayToken(int $playerId, int $deltaTokens) {
         self::DbQuery("UPDATE player SET `player_shrink_ray_tokens` = `player_shrink_ray_tokens` + $deltaTokens where `player_id` = $playerId");
 
         $message = _('${player_name} gets ${delta_tokens} Shrink Ray token with ${card_name}');
@@ -510,8 +509,7 @@ trait UtilTrait {
         ]);
     }
 
-    function applyGetPoisonToken(int $playerId) {
-        $deltaTokens = 1;
+    function applyGetPoisonToken(int $playerId, int $deltaTokens) {
         self::DbQuery("UPDATE player SET `player_poison_tokens` = `player_poison_tokens` + $deltaTokens where `player_id` = $playerId");
 
         $message = _('${player_name} gets ${delta_tokens} Poison token with ${card_name}');

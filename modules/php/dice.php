@@ -197,7 +197,7 @@ trait DiceTrait {
         $countShrinkRay = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
         if ($countShrinkRay > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
-                $this->applyGetShrinkRayToken($smashedPlayerId);
+                $this->applyGetShrinkRayToken($smashedPlayerId, $countShrinkRay);
             }
         }
 
@@ -206,7 +206,7 @@ trait DiceTrait {
         $countPoisonSpit = $this->countCardOfType($playerId, POISON_SPIT_CARD);
         if ($countPoisonSpit > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
-                $this->applyGetPoisonToken($smashedPlayerId);
+                $this->applyGetPoisonToken($smashedPlayerId, $countPoisonSpit);
             }
         }
 
