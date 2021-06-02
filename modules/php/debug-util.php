@@ -12,14 +12,14 @@ trait DebugUtilTrait {
         //$mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(RAPID_HEALING_CARD))[0]);
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
-        $this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetPlayerEnergy(2343492, 10);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(104);
-        /*$this->setMimickedCard(2343492,*/$this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492)/*)*/;
+        $this->debugSetCardInHand(MIMIC_CARD, 2343492);
+        $this->setMimickedCard(2343492, $this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492));
     }
 
     private function debugSetCardInTable($cardType) {

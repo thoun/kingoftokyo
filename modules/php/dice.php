@@ -56,7 +56,7 @@ trait DiceTrait {
     }
 
     function getDiceNumber(int $playerId) {
-        $remove = intval($this->getGameStateValue('lessDiceForNextTurn')) + $this->getPlayerShrinkRayTokens($playerId);
+        $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
         return max(6 + $this->countExtraHead($playerId) - $remove, 0);
     }
@@ -89,8 +89,7 @@ trait DiceTrait {
                 // Freeze Time
                 $countFreezeTime = $this->countCardOfType($playerId, FREEZE_TIME_CARD);
                 if ($countFreezeTime > 0) {
-                    // TOCHECK Can Freeze Time be cloned and win 2 new turn ? If yes, 1 or 2 less die next turn ? Considered No
-                    $this->setGameStateValue('playAgainAfterTurnOneLessDie', 1);
+                    $this->incGameStateValue(FREEZE_TIME_MAX_TURNS, $countFreezeTime);
                 }
                 
             }

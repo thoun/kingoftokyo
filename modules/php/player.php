@@ -269,9 +269,6 @@ trait PlayerTrait {
     function stEndTurn() {
         //$playerId = self::getActivePlayerId();
 
-        // clean game state values
-        $this->setGameStateValue('lessDiceForNextTurn', 0);
-
         // poison may eliminate players
         /*$endGame = $this->eliminatePlayers($playerId);
 
@@ -296,20 +293,20 @@ trait PlayerTrait {
 
         $anotherTimeWithCard = 0;
 
-        if (intval($this->getGameStateValue('playAgainAfterTurnOneLessDie')) == 1) { // extra turn for current player with one less die
+        $freezeTimeMaxTurns = intval($this->getGameStateValue(FREEZE_TIME_MAX_TURNS));
+        $freezeTimeCurrentTurn = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
+
+        if ($freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
+            $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
+            $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
+        } if ($freezeTimeCurrentTurn < $freezeTimeMaxTurns) { // extra turn for current player with one less die
             $anotherTimeWithCard = FREEZE_TIME_CARD;
-            $this->setGameStateValue('playAgainAfterTurnOneLessDie', 0);
-            $this->setGameStateValue('lessDiceForNextTurn', intval($this->getGameStateValue('lessDiceForNextTurn')) + 1);
-            
-            // TOCHECK if we chain Freeze Time, is it always just one less dice or are they added ? Considered Juste one less
-            // TOCHECK can Freeze Time be added to Frenzy ? Considered Yes and Freeze Time before Frenzy
-        } else {
-            $this->setGameStateValue('lessDiceForNextTurn', 0);
+            $this->incGameStateValue(FREEZE_TIME_CURRENT_TURN, 1);
         }
 
-        if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue('playAgainAfterTurn')) == 1) { // extra turn for current player
-            $anotherTimeWithCard = 109;
-            $this->setGameStateValue('playAgainAfterTurn', 0);            
+        if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
+            $anotherTimeWithCard = 109; // Frenzy
+            $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);            
         }
         
         if ($anotherTimeWithCard > 0) {

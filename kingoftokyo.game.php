@@ -48,12 +48,12 @@ class KingOfTokyo extends Table {
         parent::__construct();
         self::initGameStateLabels([
             'throwNumber' => 10,
-            'playAgainAfterTurn' => 11,
+            FRENZY_EXTRA_TURN => 11,
             'damageDoneByActivePlayer' => 12,
             EXTRA_ROLLS => 13,
             'loseHeartEnteringTokyo' => 14,
-            'playAgainAfterTurnOneLessDie' => 15,
-            'lessDiceForNextTurn' => 16,
+            FREEZE_TIME_MAX_TURNS => 15,
+            FREEZE_TIME_CURRENT_TURN => 16,
             'newCardId' => 20,
         ]);      
 		
@@ -112,9 +112,9 @@ class KingOfTokyo extends Table {
 
         // Init global values with their initial values
         self::setGameStateInitialValue('throwNumber', 0);
-        self::setGameStateInitialValue('playAgainAfterTurn', 0);
-        self::setGameStateInitialValue('playAgainAfterTurnOneLessDie', 0);
-        self::setGameStateInitialValue('lessDiceForNextTurn', 0);
+        self::setGameStateInitialValue(FRENZY_EXTRA_TURN, 0);
+        self::setGameStateInitialValue(FREEZE_TIME_MAX_TURNS, 0);
+        self::setGameStateInitialValue(FREEZE_TIME_CURRENT_TURN, 0);
         self::setGameStateInitialValue('damageDoneByActivePlayer', 0);
         self::setGameStateInitialValue(EXTRA_ROLLS, 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);

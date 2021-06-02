@@ -55,6 +55,9 @@ define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
  */
 
 define('EXTRA_ROLLS', 'ExtraRolls');
+define('FREEZE_TIME_MAX_TURNS', 'FreezeTimeMaxTurns');
+define('FREEZE_TIME_CURRENT_TURN', 'FreezeTimeCurrentTurn');
+define('FRENZY_EXTRA_TURN', 'FrenzyExtraTurn');
 
 /*
  * Global variables

@@ -37,3 +37,4 @@ Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
 
 test zombie
+test translate

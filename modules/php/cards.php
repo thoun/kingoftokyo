@@ -188,7 +188,7 @@ trait CardsTrait {
                 }
                 return $damages;
             case 109: 
-                $this->setGameStateValue('playAgainAfterTurn', 1);
+                $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
                 break;
             case 110: 
                 $this->applyGetPoints($playerId, 2, $cardType);
