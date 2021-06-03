@@ -459,7 +459,10 @@ var Cards = /** @class */ (function () {
         var type = cardType < 100 ? _('Keep') : _('Discard');
         var description = formatTextIcons(this.getCardDescription(cardType));
         var position = this.getCardNamePoisition(cardType);
-        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" " + (position ? "style=\"left: " + position[0] + "px; top: " + position[1] + "px;\"" : '') + ">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n        </div>\n        <div class=\"type-wrapper " + (cardType < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\"><div>" + description + "</div></div>\n        ";
+        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" " + (position ? "style=\"left: " + position[0] + "px; top: " + position[1] + "px;\"" : '') + ">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n        </div>\n        <div class=\"type-wrapper " + (cardType < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
+        cardDiv.getElementsByClassName('bottom')[0].style.top = 166 - textHeight + "px";
+        cardDiv.getElementsByClassName('type-wrapper')[0].style.top = 168 - textHeight + "px";
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     return Cards;

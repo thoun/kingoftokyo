@@ -462,6 +462,7 @@ class Cards {
         const type = cardType < 100 ? _('Keep') : _('Discard');
         const description = formatTextIcons(this.getCardDescription(cardType));
         const position = this.getCardNamePoisition(cardType);
+
         cardDiv.innerHTML = `<div class="bottom"></div>
         <div class="name-wrapper" ${position ? `style="left: ${position[0]}px; top: ${position[1]}px;"` : ''}>
             <div class="outline">${this.getCardName(cardType, 'span')}</div>
@@ -472,9 +473,12 @@ class Cards {
             <div class="text">${type}</div>
         </div>
         
-        <div class="description-wrapper"><div>${description}</div></div>
-        `;
+        <div class="description-wrapper">${description}</div>`;
+
+        const textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+        (cardDiv.getElementsByClassName('bottom')[0] as HTMLDivElement).style.top = `${166 - textHeight}px`;
+        (cardDiv.getElementsByClassName('type-wrapper')[0] as HTMLDivElement).style.top = `${168 - textHeight}px`;
         
-        (this.game as any).addTooltipHtml( cardDiv.id, this.getTooltip(cardType));
+        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
 }

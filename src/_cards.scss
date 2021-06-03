@@ -4,13 +4,10 @@ $name-width: 95px;
 $name-size: 10pt;
 
 $type-left: 0px;
-$type-top: 142px;
 $type-size: 9pt;
 
 $description-left: 4px;
-$description-top: 144px;
-$description-width: 112px;
-$description-height: 38px;
+$description-width: 124px;
 $description-size: 7pt;
 
 .stockitem, #deck {
@@ -23,13 +20,10 @@ $description-size: 7pt;
 
     .bottom {
         position: absolute;
-        bottom: 0px;
+        bottom: 0;
         width: 100%;
-        height: 100%;
         background: url('img/card-bottom.png');
-        background-repeat: no-repeat;
-        background-size: 120% auto;
-        background-position: bottom;
+        background-position: center top;
     }
 
     .name-wrapper {
@@ -60,11 +54,10 @@ $description-size: 7pt;
 
     .type-wrapper {
         position: absolute;
-        top: $type-top;
         left: $type-left;
         font-size: $type-size;
         color: white;
-        transform: rotate(-10deg);
+        transform: rotate(-5deg);
         font-family: 'goodgirl';
 
         &.keep .outline { // blue
@@ -92,18 +85,12 @@ $description-size: 7pt;
 
     .description-wrapper {
         position: absolute;
-        top: $description-top;
         left: $description-left;
         width: $description-width;
-        height: $description-height;
+        bottom: 4px;
         text-overflow: ellipsis;
         text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
         color: black;
-        transform: rotate(-6deg);
         font-size: $description-size;
 
         .icon {

@@ -524,13 +524,10 @@
 }
 .stockitem .bottom, #deck .bottom {
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
   width: 100%;
-  height: 100%;
   background: url("img/card-bottom.png");
-  background-repeat: no-repeat;
-  background-size: 120% auto;
-  background-position: bottom;
+  background-position: center top;
 }
 .stockitem .name-wrapper, #deck .name-wrapper {
   position: absolute;
@@ -557,11 +554,10 @@
 }
 .stockitem .type-wrapper, #deck .type-wrapper {
   position: absolute;
-  top: 142px;
   left: 0px;
   font-size: 9pt;
   color: white;
-  transform: rotate(-10deg);
+  transform: rotate(-5deg);
   font-family: "goodgirl";
 }
 .stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline {
@@ -584,18 +580,12 @@
 }
 .stockitem .description-wrapper, #deck .description-wrapper {
   position: absolute;
-  top: 144px;
   left: 4px;
-  width: 112px;
-  height: 38px;
+  width: 124px;
+  bottom: 4px;
   text-overflow: ellipsis;
   text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
   color: black;
-  transform: rotate(-6deg);
   font-size: 7pt;
 }
 .stockitem .description-wrapper .icon, #deck .description-wrapper .icon {
