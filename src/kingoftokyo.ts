@@ -140,8 +140,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setGamestateDescription(property: string = '') {
         const originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
         this.gamedatas.gamestate.description = `${originalState['description' + property]}`; 
-        this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`; 
-        (this as any).updatePageTitle();        
+        this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
+        (this as any).updatePageTitle();
     }
     
     private removeGamestateDescription() {
@@ -1028,7 +1028,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_useCamouflage(notif: Notif<NotifUseCamouflageArgs>) {
         this.diceManager.showCamouflageRoll(notif.args.diceValues);
-        if (notif.args.cancelDamageArgs) {
+        if (notif.args.cancelDamageArgs) { 
+            this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
+            (this as any).updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
         }
     }

@@ -1979,6 +1979,8 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_useCamouflage = function (notif) {
         this.diceManager.showCamouflageRoll(notif.args.diceValues);
         if (notif.args.cancelDamageArgs) {
+            this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
+            this.updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
         }
     };

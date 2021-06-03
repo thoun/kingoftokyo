@@ -9,6 +9,7 @@ require_once(__DIR__.'/objects/damage.php');
 use KOT\Objects\Card;
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\Damage;
+use KOT\Objects\PlayersUsedDice;
 
 trait CardsTrait {
 
@@ -938,7 +939,8 @@ trait CardsTrait {
 
         $playerId = self::getCurrentPlayerId();
 
-        if ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) == 0) {
+        $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
+        if ($countCamouflage == 0) {
             throw new \Error('No Camouflage card');
         }
 
@@ -959,7 +961,7 @@ trait CardsTrait {
 
         $cancelledDamage = count(array_values(array_filter($diceValues, function($face) { return $face === 4; }))); // heart dices
 
-        $intervention->playersUsedDice->{$playerId} = $diceValues;
+        $intervention->playersUsedDice->{$playerId} = new PlayersUsedDice($diceValues, $countCamouflage);
 
         $remainingDamage = $dice - $cancelledDamage;
 
@@ -968,10 +970,20 @@ trait CardsTrait {
         $args = null;
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
-        $stayOnState = $remainingDamage > 0 && $this->countCardOfType($playerId, WINGS_CARD) > 0;
+        $stayOnState = false;
+        if ($remainingDamage > 0) {
+            $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0 || 
+                ($countCamouflage == 2 && !$intervention->doubleTurnUsed);
+        }
 
         if ($stayOnState) {
-            $args = $this->argCancelDamage();
+            $intervention->damages[0]->damage -= $cancelledDamage;
+            if ($countCamouflage == 2) {
+                $intervention->doubleTurnUsed = true;
+            }
+            $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+
+            $args = $this->argCancelDamage($playerId);
         }
 
         $diceStr = '';
@@ -989,9 +1001,7 @@ trait CardsTrait {
             'dice' => $diceStr,
         ]);
 
-        if ($stayOnState) {
-            $intervention->damages[0]->damage -= $cancelledDamage;
-        } else {
+        if (!$stayOnState) {
             if ($remainingDamage > 0) {
                 $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
             } else {
@@ -1159,14 +1169,17 @@ trait CardsTrait {
         ];
     }
 
-    function argCancelDamage() {
+    function argCancelDamage($playerId = null) {
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
-        $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
+        if ($playerId == null) {
+            $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
+        }
         if ($playerId != null) {
-            $dice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->$playerId : null; //$playerId must stay with $ !
+            $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
+            $dice = $playersUsedDice != null ? $playersUsedDice->diceFaces : null;
 
-            $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && $dice == null;
+            $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
             $canSkipWings = $canUseWings && !$canThrowDices;
 

@@ -388,7 +388,6 @@ trait UtilTrait {
         }
 
         // Armor plating
-        // TOCHECK Can a player with Armor plating mimic this card and avoid damage when he take 2 damage ? Considered No
         $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
         if ($countArmorPlating > 0 && $health == 1) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);

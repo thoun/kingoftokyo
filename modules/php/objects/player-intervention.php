@@ -35,9 +35,21 @@ class PsychicProbeIntervention extends PlayerIntervention {
     } 
 }
 
+class PlayersUsedDice {
+    public $diceFaces; // number[]
+    public $rolls = 1; // number
+    public $maxRolls; // number
+
+    public function __construct(array $diceFaces, int $maxRolls) {
+        $this->diceFaces = $diceFaces;
+        $this->maxRolls = $maxRolls;
+    }
+}
+
 class CancelDamageIntervention extends PlayerIntervention {
     public $damages;
-    public $playersUsedDice; // store playerId => diceFaces
+    public $playersUsedDice; // store playerId => PlayersUsedDice
+    public $doubleTurnUsed = false; // if player have camouflage & mimic
 
     public function __construct(array $remainingPlayersId, array $damages) {
         parent::__construct(ST_MULTIPLAYER_CANCEL_DAMAGE, $remainingPlayersId);
