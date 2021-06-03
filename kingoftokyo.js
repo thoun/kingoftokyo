@@ -933,7 +933,10 @@ var DiceManager = /** @class */ (function () {
         if (die.rolled) {
             dojo.removeClass(dieDiv, 'no-roll');
             dieDiv.classList.add('rolled');
-            setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 200);
+            setTimeout(function () {
+                !dieDiv.getElementsByClassName('die-list')[0] && console.log(dieDiv.innerHTML, dieDiv);
+                dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll');
+            }, 200);
             setTimeout(function () { return dieDiv.classList.remove('rolled'); }, 1200);
         }
         else {
