@@ -44,6 +44,8 @@ class DiceManager {
 
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
         this.action = 'change';
+        this.changeDieArgs = args;
+        
         if (this.dice.length) {
             return;
         }
@@ -53,7 +55,6 @@ class DiceManager {
         this.dice = dice;
         
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
-        this.changeDieArgs = args;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);

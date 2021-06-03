@@ -736,6 +736,7 @@ var DiceManager = /** @class */ (function () {
         var _this = this;
         var _a;
         this.action = 'change';
+        this.changeDieArgs = args;
         if (this.dice.length) {
             return;
         }
@@ -743,7 +744,6 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
-        this.changeDieArgs = args;
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
             dojo.place(_this.createDiceHtml(die, inTokyo), "dice-selector" + die.value);

@@ -410,24 +410,8 @@ trait DiceTrait {
             }
         } else if ($cardType == PLOT_TWIST_CARD) {
             $cards = $this->getCardsOfType($playerId, PLOT_TWIST_CARD);
-
-            // we choose mimic card first, if available
-            $card = null;
-            foreach($cards as $icard) {
-                if ($icard->type == MIMIC_CARD) {
-                    $card = $icard;
-                }
-            }
-            if ($card == null) {
-                $card = $cards[0];
-            }
-
-            // TOCHECK When Mimic is set on Plot Twist, is the Mimic card discarded ? Or is mimic token removed ? Considered No and Yes
-            if ($card->type == MIMIC_CARD) {
-                $this->removeMimicToken();
-            } else {
-                $this->removeCard($playerId, $card);
-            }
+            // we remove Plot Twist and Mimic if user mimicked it
+            $this->removeCards($playerId, $cards);
         } else if ($cardType == STRETCHY_CARD) {
             $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
         }
