@@ -151,22 +151,17 @@ $description-size: 7pt;
     color: white;
     font-family: 'goodgirl';
     font-size: 7pt;
-    margin-right: 24px;
-    margin-left: 2px;
+    margin: 2px;
     text-align: center;
 
     .outline {
         -webkit-text-stroke: 3px #00aeef;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
     }
 
     .text {
         position: absolute;
         left: 0;
         top: 0;
-        width: 100%;
+        z-index: 1;
     }
 }

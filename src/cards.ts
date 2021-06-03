@@ -475,7 +475,12 @@ class Cards {
         
         <div class="description-wrapper">${description}</div>`;
 
-        const textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+        let textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+
+        if (textHeight > 80) {
+            (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).style.fontSize = '6pt';
+            textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+        }
         (cardDiv.getElementsByClassName('bottom')[0] as HTMLDivElement).style.top = `${166 - textHeight}px`;
         (cardDiv.getElementsByClassName('type-wrapper')[0] as HTMLDivElement).style.top = `${168 - textHeight}px`;
         
