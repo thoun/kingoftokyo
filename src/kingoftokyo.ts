@@ -1102,18 +1102,26 @@ class KingOfTokyo implements KingOfTokyoGame {
         try {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
-                
-                if (args.card_name && args.card_name[0] != '<') {
-                    args.card_name = `<strong>${_(args.card_name)}</strong>`;
+                if (args.card_name) {
+                    let types: number[] = null;
+                    if (typeof args.card_name == 'number') {
+                        types = [args.card_name];
+                    } else if (typeof args.card_name == 'string' && args.card_name[0] >= '0' && args.card_name[0] <= '9') {
+                        types = args.card_name.split(',').map((cardType: string) => Number(cardType));
+                    }
+                    if (types !== null) {
+                        const names: string[] = types.map((cardType: number) => this.cards.getCardName(cardType, 'text-only'));
+                        args.card_name = `<strong>${names.join(', ')}</strong>`;
+                    }
                 }
 
                 for (const property in args) {
                     if (args[property]?.indexOf?.(']') > 0) {
-                        args[property] = formatTextIcons(args[property]);
+                        args[property] = formatTextIcons(_(args[property]));
                     }
                 }
 
-                log = formatTextIcons(log);
+                log = formatTextIcons(_(log));
             }
         } catch (e) {
             console.error(log,args,"Exception thrown", e.stack);

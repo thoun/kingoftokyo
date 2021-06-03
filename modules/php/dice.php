@@ -420,7 +420,7 @@ trait DiceTrait {
         self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
-            'card_name' => $this->getCardName($cardType),
+            'card_name' => $cardType,
             'dieId' => $die->id,
             'toValue' => $value,
             'die_face_before' => $this->getDieFaceLogName($die->value),
@@ -494,7 +494,7 @@ trait DiceTrait {
         self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
-            'card_name' => $this->getCardName(PSYCHIC_PROBE_CARD),
+            'card_name' => PSYCHIC_PROBE_CARD,
             'dieId' => $die->id,
             'toValue' => $value,
             'roll' => true,
@@ -809,8 +809,7 @@ trait DiceTrait {
                 $diceStr .= $this->getDieFaceLogName(6); 
             }
             
-            $cardNames = array_map(function($cardType) { return $this->getCardName($cardType); }, $cardsAddingSmashes);
-            $cardNamesStr = implode(', ', $cardNames);
+            $cardNamesStr = implode(', ', $cardsAddingSmashes);
 
             self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
                 'playerId' => $playerId,

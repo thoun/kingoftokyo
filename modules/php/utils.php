@@ -321,13 +321,13 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_points} [Star] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} wins ${delta_points} [Star] with ${card_name}');
             self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'points' => $newScore,
                 'delta_points' => $points,
-                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
+                'card_name' => $cardType == 0 ? null : $cardType,
             ]);
         }
     }
@@ -338,13 +338,13 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_points} [Star] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_points} [Star] with ${card_name}');
             self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'points' => $newScore,
                 'delta_points' => $points,
-                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
+                'card_name' => $cardType == 0 ? null : $cardType,
             ]);
         }
     }
@@ -370,13 +370,13 @@ trait UtilTrait {
         self::incStat($health, 'heal', $playerId);
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_health} [Heart] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} wins ${delta_health} [Heart] with ${card_name}');
             self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'health' => $newHealth,
                 'delta_health' => $health,
-                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
+                'card_name' => $cardType == 0 ? null : $cardType,
             ]);
         }
     }
@@ -433,13 +433,13 @@ trait UtilTrait {
         self::incStat($health, 'damage', $playerId);
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_health} [Heart] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
             self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'health' => $newHealth,
                 'delta_health' => $health,
-                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
+                'card_name' => $cardType == 0 ? null : $cardType,
             ]);
         }
 
@@ -473,13 +473,13 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} wins ${delta_energy} [Energy] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} wins ${delta_energy} [Energy] with ${card_name}');
             self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'energy' => $this->getPlayerEnergy($playerId),
                 'delta_energy' => $energy,
-                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
+                'card_name' => $cardType == 0 ? null : $cardType,
             ]);
         }
 
@@ -496,13 +496,13 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : _('${player_name} loses ${delta_energy} [Energy] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_energy} [Energy] with ${card_name}');
             self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'energy' => $newEnergy,
                 'delta_energy' => $energy,
-                'card_name' => $cardType == 0 ? null : $this->getCardName($cardType),
+                'card_name' => $cardType == 0 ? null : $cardType,
             ]);
         }
     }
@@ -510,12 +510,12 @@ trait UtilTrait {
     function applyGetShrinkRayToken(int $playerId, int $deltaTokens) {
         self::DbQuery("UPDATE player SET `player_shrink_ray_tokens` = `player_shrink_ray_tokens` + $deltaTokens where `player_id` = $playerId");
 
-        $message = _('${player_name} gets ${delta_tokens} Shrink Ray token with ${card_name}');
+        $message = clienttranslate('${player_name} gets ${delta_tokens} Shrink Ray token with ${card_name}');
         self::notifyAllPlayers('shrinkRayToken', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'delta_tokens' => $deltaTokens,
-            'card_name' => $this->getCardName(SHRINK_RAY_CARD),
+            'card_name' => SHRINK_RAY_CARD,
             'tokens' => $this->getPlayerShrinkRayTokens($playerId),
         ]);
     }
@@ -523,12 +523,12 @@ trait UtilTrait {
     function applyGetPoisonToken(int $playerId, int $deltaTokens) {
         self::DbQuery("UPDATE player SET `player_poison_tokens` = `player_poison_tokens` + $deltaTokens where `player_id` = $playerId");
 
-        $message = _('${player_name} gets ${delta_tokens} Poison token with ${card_name}');
+        $message = clienttranslate('${player_name} gets ${delta_tokens} Poison token with ${card_name}');
         self::notifyAllPlayers('poisonToken', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'delta_tokens' => $deltaTokens,
-            'card_name' => $this->getCardName(POISON_SPIT_CARD),
+            'card_name' => POISON_SPIT_CARD,
             'tokens' => $this->getPlayerPoisonTokens($playerId),
         ]);
     }

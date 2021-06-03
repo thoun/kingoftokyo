@@ -2053,19 +2053,30 @@ var KingOfTokyo = /** @class */ (function () {
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
     KingOfTokyo.prototype.format_string_recursive = function (log, args) {
+        var _this = this;
         var _a, _b;
         try {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
-                if (args.card_name && args.card_name[0] != '<') {
-                    args.card_name = "<strong>" + _(args.card_name) + "</strong>";
+                if (args.card_name) {
+                    var types = null;
+                    if (typeof args.card_name == 'number') {
+                        types = [args.card_name];
+                    }
+                    else if (typeof args.card_name == 'string' && args.card_name[0] >= '0' && args.card_name[0] <= '9') {
+                        types = args.card_name.split(',').map(function (cardType) { return Number(cardType); });
+                    }
+                    if (types !== null) {
+                        var names = types.map(function (cardType) { return _this.cards.getCardName(cardType, 'text-only'); });
+                        args.card_name = "<strong>" + names.join(', ') + "</strong>";
+                    }
                 }
                 for (var property in args) {
                     if (((_b = (_a = args[property]) === null || _a === void 0 ? void 0 : _a.indexOf) === null || _b === void 0 ? void 0 : _b.call(_a, ']')) > 0) {
-                        args[property] = formatTextIcons(args[property]);
+                        args[property] = formatTextIcons(_(args[property]));
                     }
                 }
-                log = formatTextIcons(log);
+                log = formatTextIcons(_(log));
             }
         }
         catch (e) {

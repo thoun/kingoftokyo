@@ -37,7 +37,6 @@ Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
 
 test zombie
-test translate
 remove dice sort on non-locked dice to show randomness
 change die : remove/add forbidden icon if changie die from tokyo player
 change die : check selectable bu multiplayer current
