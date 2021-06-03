@@ -114,6 +114,7 @@ class TableManager {
         }
         
         tableDiv.style.height = `${height}px`;
+        document.getElementById('zoom-wrapper').style.height = `${height * this.game.zoom}px`;
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {

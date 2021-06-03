@@ -652,6 +652,7 @@ var TableManager = /** @class */ (function () {
             });
         }
         tableDiv.style.height = height + "px";
+        document.getElementById('zoom-wrapper').style.height = height * this.game.zoom + "px";
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
         var cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));

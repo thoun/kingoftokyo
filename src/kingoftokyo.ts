@@ -23,7 +23,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private pickCard: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
-    private zoom: number = 1;
+    public zoom: number = 1;
     public cards: Cards;
 
     constructor() {
