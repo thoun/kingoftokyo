@@ -1521,7 +1521,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         else {
             var removeFromPickIds = (_a = this.pickCard) === null || _a === void 0 ? void 0 : _a.items.map(function (item) { return Number(item.id); });
-            removeFromPickIds.forEach(function (id) {
+            removeFromPickIds === null || removeFromPickIds === void 0 ? void 0 : removeFromPickIds.forEach(function (id) {
                 if (id !== Number(cardId)) {
                     _this.pickCard.removeFromStockById('' + id);
                 }

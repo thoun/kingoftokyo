@@ -477,7 +477,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.changeMimickedCard(cardId);
         } else {
             const removeFromPickIds = this.pickCard?.items.map(item => Number(item.id));
-            removeFromPickIds.forEach(id => {
+            removeFromPickIds?.forEach(id => {
                 if (id !== Number(cardId)) {
                     this.pickCard.removeFromStockById(''+id);
                 }

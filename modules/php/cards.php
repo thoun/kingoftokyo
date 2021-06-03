@@ -154,22 +154,22 @@ trait CardsTrait {
                 break;
             case 104: 
                 $this->applyGetPoints($playerId, 2, $cardType);
-                if (!$this->inTokyo($playerId)) {
-                    // remove other players in Tokyo
-                    $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
-                    $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
-                    if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
-                        $this->leaveTokyo($playerInTokyoBay);
-                    }
-                    if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
-                        $this->leaveTokyo($playerInTokyoCity);
-                    }
 
+                // remove other players in Tokyo
+                $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
+                $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
+                if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
+                    $this->leaveTokyo($playerInTokyoBay);
+                }
+                if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
+                    $this->leaveTokyo($playerInTokyoCity);
+                }
+
+                if ($playerInTokyoBay == $playerId) {
+                    $this->moveFromTokyoBayToCity($playerId);
+                } else if ($playerInTokyoCity != $playerId) {
                     // take control of Tokyo
                     $this->moveToTokyo($playerId, false);
-                    // TOCHECK With 5-6 players and both spots taken : if player buying Death From Above is already in Tokyo, is the other spot forced out of Tokyo ? Considered No
-                    // If yes, we must do nothing if in tokyo city and move if in tokyo bay :
-                    // $this->moveFromTokyoBayToCity($this->getPlayerIdInTokyoBay());
                 }
                 break;
             case 105:
