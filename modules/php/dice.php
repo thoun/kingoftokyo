@@ -475,25 +475,15 @@ trait DiceTrait {
             $currentPlayerCards = array_values(array_filter($intervention->cards, function ($card) use ($playerId) { return $card->location_arg == $playerId; }));
             if (count($currentPlayerCards) > 0) {
 
-                $card = null;
-                // TOCHECK can we select Mimic in priority if player have both ?
-                foreach($currentPlayerCards as $icard) {
-                    if ($icard->type == MIMIC_CARD) {
-                        $card = $icard;
-                    }
-                }
-                if ($card == null) {
-                    $card = $currentPlayerCards[0];
-                }
+                // we remove Plot Twist and Mimic if user mimicked it
+                foreach($currentPlayerCards as $card) {
+                    $this->removeCard($playerId, $card);
 
-                if ($card->type == MIMIC_CARD) {
-                    $this->removeMimicToken();
-                    // TOCHECK If Mimic is set on Psychic Probe and Psychic Probe is discarded, is Mimick disarded ? Considered no but token removed
-                } else { // real Psychic Probe  
-                    $this->removeCard($playerId, $card); // will remove mimic token
-                    // in case we had a mimic player to play after current player, we clear array because he can't anymore 
-                    $intervention->remainingPlayersId = []; // intervention will be saved on setInterventionNextState
-                }
+                    if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe
+                        // in case we had a mimic player to play after current player, we clear array because he can't anymore 
+                        $intervention->remainingPlayersId = []; // intervention will be saved on setInterventionNextState
+                    }
+                }                
             }
         }
 
@@ -507,6 +497,7 @@ trait DiceTrait {
             'card_name' => $this->getCardName(PSYCHIC_PROBE_CARD),
             'dieId' => $die->id,
             'toValue' => $value,
+            'roll' => true,
             'die_face_before' => $this->getDieFaceLogName($die->value),
             'die_face_after' => $this->getDieFaceLogName($value),
         ]);

@@ -737,9 +737,9 @@ var DiceManager = /** @class */ (function () {
         var _a;
         this.action = 'change';
         this.changeDieArgs = args;
-        if (this.dice.length) {
+        /*if (this.dice.length) { if active, event are not reset and roll is not applied
             return;
-        }
+        }*/
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
@@ -786,7 +786,7 @@ var DiceManager = /** @class */ (function () {
         });
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
     };
-    DiceManager.prototype.changeDie = function (dieId, toValue) {
+    DiceManager.prototype.changeDie = function (dieId, toValue, roll) {
         var die = this.dice.find(function (die) { return die.id == dieId; });
         if (die) {
             die.value = toValue;
@@ -799,7 +799,13 @@ var DiceManager = /** @class */ (function () {
             dojo.addClass(div, "dice" + toValue);
             var list = div.getElementsByTagName('ol')[0];
             dojo.removeClass(list, 'no-roll');
-            dojo.addClass(list, 'change-die-roll');
+            dojo.addClass(list, roll ? 'odd-roll' : 'change-die-roll');
+            if (roll) {
+                this.addDiceRollClass({
+                    id: dieId,
+                    rolled: roll
+                });
+            }
             list.dataset.roll = '' + toValue;
         }
     };
@@ -918,6 +924,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.addDiceRollClass = function (die) {
         var dieDiv = this.getDiceDiv(die);
         if (die.rolled) {
+            dojo.removeClass(dieDiv, 'no-roll');
             dieDiv.classList.add('rolled');
             setTimeout(function () { return dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 200);
             setTimeout(function () { return dieDiv.classList.remove('rolled'); }, 1200);
@@ -1985,7 +1992,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.notif_changeDie = function (notif) {
-        this.diceManager.changeDie(notif.args.dieId, notif.args.toValue);
+        this.diceManager.changeDie(notif.args.dieId, notif.args.toValue, notif.args.roll);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

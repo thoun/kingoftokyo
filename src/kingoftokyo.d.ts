@@ -231,4 +231,5 @@ interface NotifChangeDieArgs {
     playerId: number;
     dieId: number;
     toValue: number;
+    roll?: boolean;
 }

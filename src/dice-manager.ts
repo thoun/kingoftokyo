@@ -45,10 +45,10 @@ class DiceManager {
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
         this.action = 'change';
         this.changeDieArgs = args;
-        
-        if (this.dice.length) {
+
+        /*if (this.dice.length) { if active, event are not reset and roll is not applied
             return;
-        }
+        }*/
 
         this.dice?.forEach(die => this.removeDice(die));  
         this.clearDiceHtml();
@@ -103,7 +103,7 @@ class DiceManager {
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
     }
 
-    public changeDie(dieId: number, toValue: number) {
+    public changeDie(dieId: number, toValue: number, roll?: boolean) {
         const die = this.dice.find(die => die.id == dieId);
         if (die) {
             die.value = toValue;
@@ -116,7 +116,13 @@ class DiceManager {
             dojo.addClass(div, `dice${toValue}`);
             const list = div.getElementsByTagName('ol')[0];
             dojo.removeClass(list, 'no-roll');
-            dojo.addClass(list, 'change-die-roll');
+            dojo.addClass(list, roll ? 'odd-roll' : 'change-die-roll');
+            if (roll) {
+                this.addDiceRollClass({
+                    id: dieId,
+                    rolled: roll
+                } as Dice);
+            }
             list.dataset.roll = ''+toValue;
         }
     }
@@ -250,7 +256,8 @@ class DiceManager {
     private addDiceRollClass(die: Dice) {
         const dieDiv = this.getDiceDiv(die);
 
-        if (die.rolled) {
+        if (die.rolled) {            
+            dojo.removeClass(dieDiv, 'no-roll');
             dieDiv.classList.add('rolled');
             setTimeout(() => dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 200); 
             setTimeout(() => dieDiv.classList.remove('rolled'), 1200); 

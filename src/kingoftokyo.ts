@@ -1036,7 +1036,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_changeDie(notif: Notif<NotifChangeDieArgs>) {
-        this.diceManager.changeDie(notif.args.dieId, notif.args.toValue);
+        this.diceManager.changeDie(notif.args.dieId, notif.args.toValue, notif.args.roll);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
