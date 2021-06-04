@@ -1881,6 +1881,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
+            ['changeDie', ANIMATION_MS],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -1892,7 +1893,6 @@ var KingOfTokyo = /** @class */ (function () {
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
-            ['changeDie', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);

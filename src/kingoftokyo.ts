@@ -883,6 +883,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
+            ['changeDie', ANIMATION_MS],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -894,7 +895,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
-            ['changeDie', 1],
         ];
     
         notifs.forEach((notif) => {
