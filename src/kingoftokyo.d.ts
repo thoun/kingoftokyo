@@ -230,6 +230,7 @@ interface NotifUseCamouflageArgs {
 
 interface NotifChangeDieArgs {
     playerId: number;
+    inTokyo: boolean;
     dieId: number;
     toValue: number;
     roll?: boolean;

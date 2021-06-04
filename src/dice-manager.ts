@@ -84,9 +84,11 @@ class DiceManager {
 
     setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
         this.action = 'psychicProbeRoll';
-        if (this.dice.length) {
+
+        /*if (this.dice.length) { if active, event are not reset and roll is not applied
             return;
-        }
+        }*/
+
         this.clearDiceHtml();
         this.dice = dice;
         
@@ -103,11 +105,8 @@ class DiceManager {
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
     }
 
-    public changeDie(dieId: number, toValue: number, roll?: boolean) {
+    public changeDie(dieId: number, inTokyo: boolean, toValue: number, roll?: boolean) {
         const die = this.dice.find(die => die.id == dieId);
-        if (die) {
-            die.value = toValue;
-        }
         const divId = `dice${dieId}`;
         const div = document.getElementById(divId);
         if (div) {
@@ -123,7 +122,17 @@ class DiceManager {
                     rolled: roll
                 } as Dice);
             }
+            if (inTokyo) {
+                if (die.value !== 4 && toValue === 4) {
+                    dojo.place('<div class="icon forbidden"></div>', divId);
+                } else if (die.value === 4 && toValue !== 4) {
+                    Array.from(div.getElementsByClassName('forbidden')).forEach((elem: HTMLElement) => dojo.destroy(elem));
+                }
+            }
             list.dataset.roll = ''+toValue;
+        }
+        if (die) {
+            die.value = toValue;
         }
     }
 

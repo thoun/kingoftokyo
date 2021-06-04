@@ -384,7 +384,7 @@ trait DiceTrait {
     public function changeDie(int $id, int $value, int $cardType) {
         $this->checkAction('changeDie');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = self::getCurrentPlayerId();
 
         $die = $this->getDieById($id);
 
@@ -416,12 +416,15 @@ trait DiceTrait {
             $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
         }
 
+        $inTokyo = $this->inTokyo(self::getActivePlayerId());
+
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => self::getActivePlayerName(),
             'card_name' => $cardType,
             'dieId' => $die->id,
+            'inTokyo' => $inTokyo,
             'toValue' => $value,
             'die_face_before' => $this->getDieFaceLogName($die->value),
             'die_face_after' => $this->getDieFaceLogName($value),

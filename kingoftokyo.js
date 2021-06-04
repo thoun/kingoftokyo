@@ -779,9 +779,9 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForPsychicProbe = function (dice, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         this.action = 'psychicProbeRoll';
-        if (this.dice.length) {
+        /*if (this.dice.length) { if active, event are not reset and roll is not applied
             return;
-        }
+        }*/
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
@@ -794,11 +794,8 @@ var DiceManager = /** @class */ (function () {
         });
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
     };
-    DiceManager.prototype.changeDie = function (dieId, toValue, roll) {
+    DiceManager.prototype.changeDie = function (dieId, inTokyo, toValue, roll) {
         var die = this.dice.find(function (die) { return die.id == dieId; });
-        if (die) {
-            die.value = toValue;
-        }
         var divId = "dice" + dieId;
         var div = document.getElementById(divId);
         if (div) {
@@ -814,7 +811,18 @@ var DiceManager = /** @class */ (function () {
                     rolled: roll
                 });
             }
+            if (inTokyo) {
+                if (die.value !== 4 && toValue === 4) {
+                    dojo.place('<div class="icon forbidden"></div>', divId);
+                }
+                else if (die.value === 4 && toValue !== 4) {
+                    Array.from(div.getElementsByClassName('forbidden')).forEach(function (elem) { return dojo.destroy(elem); });
+                }
+            }
             list.dataset.roll = '' + toValue;
+        }
+        if (die) {
+            die.value = toValue;
         }
     };
     DiceManager.prototype.showCamouflageRoll = function (diceValues) {
@@ -2003,7 +2011,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.notif_changeDie = function (notif) {
-        this.diceManager.changeDie(notif.args.dieId, notif.args.toValue, notif.args.roll);
+        this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

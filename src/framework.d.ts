@@ -49,7 +49,7 @@ interface Dojo {
     fadeIn: Function;
     trim: Function;
     stopEvent: (evt) => void;
-    destroy: (nodeId: string) => void;
+    destroy: (node: string | HTMLElement) => void;
     position: (obj: HTMLElement, includeScroll?: boolean) => { w: number; h: number; x: number; y: number; };
 }
 
