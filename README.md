@@ -37,5 +37,4 @@ Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
 
 remove dice sort on non-locked dice to show randomness player
-change die : check selectable by multiplayer current
 change die : make sure new states animations start only after change die animation
