@@ -81,7 +81,21 @@ class KingOfTokyo extends Table {
         // Set the colors of the players with HTML color code
         // The default below is red/green/blue/orange/brown
         // The number of colors defined here must correspond to the maximum number of players allowed for the gams
-        $default_colors = array( "ff0000", "008000", "0000ff", "ffa500", "773300" );
+        $COLORS = [
+            '000000',
+            'ffffff',
+            'ff0000',
+            '008000',
+            '0000ff',
+            'ffa500',
+            'e94190',
+            '982fff',
+            '72c3b1',
+            'f07f16',
+            'bdd002',
+            '7b7b7b',
+        ];
+        $default_colors = $COLORS; // PHP will copy simple array with "="
 
 
         // Create players
@@ -102,6 +116,7 @@ class KingOfTokyo extends Table {
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
+        self::reattributeColorsBasedOnPreferences($players, $COLORS);
         self::reloadPlayersBasicInfos();
 
         // Create dice
