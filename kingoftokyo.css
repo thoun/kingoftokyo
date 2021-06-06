@@ -1,5 +1,8 @@
 @charset "UTF-8";
 @import url(../../../css/csslayer.css);
+.player-board {
+  background-color: white;
+}
 .player-board.eliminated-player {
   background-color: #b9b9b9;
 }
