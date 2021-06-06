@@ -106,6 +106,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringChangeDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
             case 'resolveDice': 
+                this.diceManager.lockAll();
                 this.diceManager.hideLock();
                 break;
             case 'resolveHeartDiceAction':

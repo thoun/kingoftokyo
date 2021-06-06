@@ -57,7 +57,7 @@ class DiceManager {
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
-            dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);
+            dojo.place(this.createDiceHtml(die, inTokyo), `locked-dice${die.value}`);
             const selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
@@ -77,7 +77,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);
+            dojo.place(this.createDiceHtml(die, inTokyo), `locked-dice${die.value}`);
             this.addDiceRollClass(die);
         });
     }
@@ -93,7 +93,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            dojo.place(this.createDiceHtml(die, inTokyo), `dice-selector${die.value}`);
+            dojo.place(this.createDiceHtml(die, inTokyo), `locked-dice${die.value}`);
             this.addDiceRollClass(die);
 
             if (isCurrentPlayerActive) {
@@ -146,7 +146,7 @@ class DiceManager {
                 locked: false,
                 rolled: true,
             };
-            dojo.place(this.createDiceHtml(die, false), `dice-selector${die.value}`);
+            dojo.place(this.createDiceHtml(die, false), `dice-selector`);
             this.addDiceRollClass(die);
         });
     }
@@ -154,8 +154,8 @@ class DiceManager {
     private clearDiceHtml() {        
         for (let i=1; i<=6; i++) {
             document.getElementById(`locked-dice${i}`).innerHTML = '';
-            document.getElementById(`dice-selector${i}`).innerHTML = '';
         }
+        document.getElementById(`dice-selector`).innerHTML = '';
     }
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
@@ -213,9 +213,13 @@ class DiceManager {
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         const dieDiv = document.getElementById(`dice${die.id}`);
 
-        slideToObjectAndAttach(this.game, dieDiv, die.locked ? `locked-dice${die.value}` : `dice-selector${die.value}`);
+        slideToObjectAndAttach(this.game, dieDiv, die.locked ? `locked-dice${die.value}` : `dice-selector`);
 
         this.activateRethrowButton();
+    }
+
+    public lockAll() {
+        this.dice?.filter(die => !die.locked).forEach(die => this.toggleLockDice(die, true));
     }
 
     private activateRethrowButton() {
@@ -243,7 +247,7 @@ class DiceManager {
     }
 
     private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
-        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? `locked-dice${die.value}` : `dice-selector${die.value}`);
+        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? `locked-dice${die.value}` : `dice-selector`);
 
         this.addDiceRollClass(die);
 

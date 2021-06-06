@@ -11,12 +11,6 @@
             <div id="locked-dice6"></div>
         </div>
         <div id="dice-selector">
-            <div id="dice-selector1"></div>
-            <div id="dice-selector2"></div>
-            <div id="dice-selector3"></div>
-            <div id="dice-selector4"></div>
-            <div id="dice-selector5"></div>
-            <div id="dice-selector6"></div>
         </div>
         <div id="dice-actions"></div>
     </div>

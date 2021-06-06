@@ -799,7 +799,7 @@ var DiceManager = /** @class */ (function () {
         var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
-            dojo.place(_this.createDiceHtml(die, inTokyo), "dice-selector" + die.value);
+            dojo.place(_this.createDiceHtml(die, inTokyo), "locked-dice" + die.value);
             var selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             _this.addDiceRollClass(die);
@@ -817,7 +817,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            dojo.place(_this.createDiceHtml(die, inTokyo), "dice-selector" + die.value);
+            dojo.place(_this.createDiceHtml(die, inTokyo), "locked-dice" + die.value);
             _this.addDiceRollClass(die);
         });
     };
@@ -830,7 +830,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            dojo.place(_this.createDiceHtml(die, inTokyo), "dice-selector" + die.value);
+            dojo.place(_this.createDiceHtml(die, inTokyo), "locked-dice" + die.value);
             _this.addDiceRollClass(die);
             if (isCurrentPlayerActive) {
                 var divId = "dice" + die.id;
@@ -881,15 +881,15 @@ var DiceManager = /** @class */ (function () {
                 locked: false,
                 rolled: true,
             };
-            dojo.place(_this.createDiceHtml(die, false), "dice-selector" + die.value);
+            dojo.place(_this.createDiceHtml(die, false), "dice-selector");
             _this.addDiceRollClass(die);
         });
     };
     DiceManager.prototype.clearDiceHtml = function () {
         for (var i = 1; i <= 6; i++) {
             document.getElementById("locked-dice" + i).innerHTML = '';
-            document.getElementById("dice-selector" + i).innerHTML = '';
         }
+        document.getElementById("dice-selector").innerHTML = '';
     };
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
@@ -940,8 +940,13 @@ var DiceManager = /** @class */ (function () {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         var dieDiv = document.getElementById("dice" + die.id);
-        slideToObjectAndAttach(this.game, dieDiv, die.locked ? "locked-dice" + die.value : "dice-selector" + die.value);
+        slideToObjectAndAttach(this.game, dieDiv, die.locked ? "locked-dice" + die.value : "dice-selector");
         this.activateRethrowButton();
+    };
+    DiceManager.prototype.lockAll = function () {
+        var _this = this;
+        var _a;
+        (_a = this.dice) === null || _a === void 0 ? void 0 : _a.filter(function (die) { return !die.locked; }).forEach(function (die) { return _this.toggleLockDice(die, true); });
     };
     DiceManager.prototype.activateRethrowButton = function () {
         if (document.getElementById('rethrow_button')) {
@@ -965,7 +970,7 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.createDice = function (die, selectable, inTokyo) {
         var _this = this;
-        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? "locked-dice" + die.value : "dice-selector" + die.value);
+        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? "locked-dice" + die.value : "dice-selector");
         this.addDiceRollClass(die);
         if (selectable) {
             this.getDiceDiv(die).addEventListener('click', function () { return _this.dieClick(die); });
@@ -1277,6 +1282,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringChangeDie(args.args, this.isCurrentPlayerActive());
                 break;
             case 'resolveDice':
+                this.diceManager.lockAll();
                 this.diceManager.hideLock();
                 break;
             case 'resolveHeartDiceAction':
