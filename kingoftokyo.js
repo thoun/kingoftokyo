@@ -565,12 +565,20 @@ DISPOSITION_3_COLUMNS[3] = [[1], [0], [2]];
 DISPOSITION_3_COLUMNS[4] = [[1], [2, 0], [3]];
 DISPOSITION_3_COLUMNS[5] = [[2, 1], [0], [3, 4]];
 DISPOSITION_3_COLUMNS[6] = [[2, 1], [5, 0], [3, 4]];
+var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
+var ZOOM_LEVELS_MARGIN = [-300, -166, -100, -60, -33, -14, 0];
+var LOCAL_STORAGE_ZOOM_KEY = 'KingOfTokyo-zoom';
 var TableManager = /** @class */ (function () {
     function TableManager(game, playerTables) {
         var _this = this;
         this.game = game;
+        this.zoom = 1;
         this.setPlayerTables(playerTables);
         this.game.onScreenWidthChange = function () { return _this.placePlayerTable(); };
+        var zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
+        if (zoomStr) {
+            this.setZoom(Number(zoomStr));
+        }
     }
     TableManager.prototype.setPlayerTables = function (playerTables) {
         var currentPlayerId = Number(this.game.getPlayerId());
@@ -587,9 +595,14 @@ var TableManager = /** @class */ (function () {
         var _this = this;
         var height = 0;
         var players = this.playerTables.length;
+        var zoomWrapper = document.getElementById('zoom-wrapper');
         var tableDiv = document.getElementById('table');
         var tableWidth = tableDiv.clientWidth;
-        var availableColumns = Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS));
+        while (this.zoom > ZOOM_LEVELS[0] && tableWidth / this.zoom < CENTER_TABLE_WIDTH) {
+            this.zoomOut();
+            tableWidth = tableDiv.clientWidth;
+        }
+        var availableColumns = Math.max(1, Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS)));
         var idealColumns = players == 2 ? 2 : 3;
         var tableCenterDiv = document.getElementById('table-center');
         tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2 + "px";
@@ -652,11 +665,43 @@ var TableManager = /** @class */ (function () {
             });
         }
         tableDiv.style.height = height + "px";
-        document.getElementById('zoom-wrapper').style.height = height * this.game.zoom + "px";
+        zoomWrapper.style.height = height * this.zoom + "px";
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
         var cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
         return PLAYER_BOARD_HEIGHT_MARGINS + ((CARD_HEIGHT + 5) * cardRows);
+    };
+    TableManager.prototype.setZoom = function (zoom) {
+        if (zoom === void 0) { zoom = 1; }
+        this.zoom = zoom;
+        localStorage.setItem(LOCAL_STORAGE_ZOOM_KEY, '' + this.zoom);
+        var newIndex = ZOOM_LEVELS.indexOf(this.zoom);
+        dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
+        dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
+        var div = document.getElementById('table');
+        if (zoom === 1) {
+            div.style.transform = '';
+            div.style.margin = '';
+        }
+        else {
+            div.style.transform = "scale(" + zoom + ")";
+            div.style.margin = "0 " + ZOOM_LEVELS_MARGIN[newIndex] + "% " + (1 - zoom) * -100 + "% 0";
+        }
+        this.placePlayerTable();
+    };
+    TableManager.prototype.zoomIn = function () {
+        if (this.zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]) {
+            return;
+        }
+        var newIndex = ZOOM_LEVELS.indexOf(this.zoom) + 1;
+        this.setZoom(ZOOM_LEVELS[newIndex]);
+    };
+    TableManager.prototype.zoomOut = function () {
+        if (this.zoom === ZOOM_LEVELS[0]) {
+            return;
+        }
+        var newIndex = ZOOM_LEVELS.indexOf(this.zoom) - 1;
+        this.setZoom(ZOOM_LEVELS[newIndex]);
     };
     return TableManager;
 }());
@@ -1157,19 +1202,11 @@ var HeartActionSelector = /** @class */ (function () {
 }());
 var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
-var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
-var ZOOM_LEVELS_MARGIN = [-300, -166, -100, -60, -33, -14, 0];
-var LOCAL_STORAGE_ZOOM_KEY = 'KingOfTokyo-zoom';
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
         this.energyCounters = [];
         this.playerTables = [];
-        this.zoom = 1;
-        var zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
-        if (zoomStr) {
-            this.setZoom(Number(zoomStr));
-        }
     }
     /*
         setup:
@@ -1210,8 +1247,8 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.setupNotifications();
         this.setupPreferences();
-        document.getElementById('zoom-out').addEventListener('click', function () { return _this.zoomOut(); });
-        document.getElementById('zoom-in').addEventListener('click', function () { return _this.zoomIn(); });
+        document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
+        document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
             args: {
                 number: 3,
@@ -1795,39 +1832,6 @@ var KingOfTokyo = /** @class */ (function () {
             document.getElementById('pick-stock').style.display = 'none';
             this.pickCard.removeAll();
         }
-    };
-    KingOfTokyo.prototype.setZoom = function (zoom) {
-        var _a;
-        if (zoom === void 0) { zoom = 1; }
-        this.zoom = zoom;
-        localStorage.setItem(LOCAL_STORAGE_ZOOM_KEY, '' + this.zoom);
-        var newIndex = ZOOM_LEVELS.indexOf(this.zoom);
-        dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
-        dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
-        var div = document.getElementById('table');
-        if (zoom === 1) {
-            div.style.transform = '';
-            div.style.margin = '';
-        }
-        else {
-            div.style.transform = "scale(" + zoom + ")";
-            div.style.margin = "0 " + ZOOM_LEVELS_MARGIN[newIndex] + "% " + (1 - zoom) * -100 + "% 0";
-        }
-        (_a = this.tableManager) === null || _a === void 0 ? void 0 : _a.placePlayerTable();
-    };
-    KingOfTokyo.prototype.zoomIn = function () {
-        if (this.zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]) {
-            return;
-        }
-        var newIndex = ZOOM_LEVELS.indexOf(this.zoom) + 1;
-        this.setZoom(ZOOM_LEVELS[newIndex]);
-    };
-    KingOfTokyo.prototype.zoomOut = function () {
-        if (this.zoom === ZOOM_LEVELS[0]) {
-            return;
-        }
-        var newIndex = ZOOM_LEVELS.indexOf(this.zoom) - 1;
-        this.setZoom(ZOOM_LEVELS[newIndex]);
     };
     KingOfTokyo.prototype.setupPreferences = function () {
         var _this = this;

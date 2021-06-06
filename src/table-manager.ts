@@ -21,13 +21,23 @@ DISPOSITION_3_COLUMNS[4] = [[1], [2, 0], [3]];
 DISPOSITION_3_COLUMNS[5] = [[2, 1], [0], [3, 4]];
 DISPOSITION_3_COLUMNS[6] = [[2, 1], [5, 0], [3, 4]];
 
+const ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
+const ZOOM_LEVELS_MARGIN = [-300, -166, -100, -60, -33, -14, 0];
+const LOCAL_STORAGE_ZOOM_KEY = 'KingOfTokyo-zoom';
+
 class TableManager {
     private playerTables: PlayerTable[]; // players in order, but starting with player_id
+    public zoom: number = 1;
 
     constructor(private game: KingOfTokyoGame, playerTables: PlayerTable[]) {
         this.setPlayerTables(playerTables);
 
         (this.game as any).onScreenWidthChange = () => this.placePlayerTable();
+        
+        const zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
+        if (zoomStr) {
+            this.setZoom(Number(zoomStr));
+        }
     }
 
     private setPlayerTables(playerTables: PlayerTable[]) {
@@ -44,9 +54,16 @@ class TableManager {
     public placePlayerTable() {
         let height = 0;
         const players = this.playerTables.length;
+        const zoomWrapper = document.getElementById('zoom-wrapper');
         const tableDiv = document.getElementById('table');
-        const tableWidth = tableDiv.clientWidth;
-        const availableColumns = Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS));
+        let tableWidth = tableDiv.clientWidth;
+
+        while (this.zoom > ZOOM_LEVELS[0] && tableWidth/this.zoom < CENTER_TABLE_WIDTH) {
+            this.zoomOut();
+            tableWidth = tableDiv.clientWidth;
+        }
+
+        const availableColumns = Math.max(1, Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS)));
         const idealColumns = players == 2 ? 2 : 3;
 
         const tableCenterDiv = document.getElementById('table-center');
@@ -114,11 +131,45 @@ class TableManager {
         }
         
         tableDiv.style.height = `${height}px`;
-        document.getElementById('zoom-wrapper').style.height = `${height * this.game.zoom}px`;
+        zoomWrapper.style.height = `${height * this.zoom}px`;
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {
         const cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
         return PLAYER_BOARD_HEIGHT_MARGINS + ((CARD_HEIGHT + 5) * cardRows);
+    }
+
+    private setZoom(zoom: number = 1) {
+        this.zoom = zoom;
+        localStorage.setItem(LOCAL_STORAGE_ZOOM_KEY, ''+this.zoom);
+        const newIndex = ZOOM_LEVELS.indexOf(this.zoom);
+        dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
+        dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
+
+        const div = document.getElementById('table');
+        if (zoom === 1) {
+            div.style.transform = '';
+            div.style.margin = '';
+        } else {
+            div.style.transform = `scale(${zoom})`;
+            div.style.margin = `0 ${ZOOM_LEVELS_MARGIN[newIndex]}% ${(1-zoom)*-100}% 0`;
+        }
+        this.placePlayerTable();
+    }
+
+    public zoomIn() {
+        if (this.zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]) {
+            return;
+        }
+        const newIndex = ZOOM_LEVELS.indexOf(this.zoom) + 1;
+        this.setZoom(ZOOM_LEVELS[newIndex]);
+    }
+
+    public zoomOut() {
+        if (this.zoom === ZOOM_LEVELS[0]) {
+            return;
+        }
+        const newIndex = ZOOM_LEVELS.indexOf(this.zoom) - 1;
+        this.setZoom(ZOOM_LEVELS[newIndex]);
     }
 }

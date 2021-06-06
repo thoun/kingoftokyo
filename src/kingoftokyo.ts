@@ -10,9 +10,6 @@ declare const board: HTMLDivElement;
 
 const ANIMATION_MS = 1500;
 const PUNCH_SOUND_DURATION = 250;
-const ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
-const ZOOM_LEVELS_MARGIN = [-300, -166, -100, -60, -33, -14, 0];
-const LOCAL_STORAGE_ZOOM_KEY = 'KingOfTokyo-zoom';
 
 class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
@@ -23,14 +20,9 @@ class KingOfTokyo implements KingOfTokyoGame {
     private pickCard: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
-    public zoom: number = 1;
     public cards: Cards;
 
     constructor() {
-        const zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
-        if (zoomStr) {
-            this.setZoom(Number(zoomStr));
-        }
     }
     
     /*
@@ -79,8 +71,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setupNotifications();
         this.setupPreferences();
 
-        document.getElementById('zoom-out').addEventListener('click', () => this.zoomOut());
-        document.getElementById('zoom-in').addEventListener('click', () => this.zoomIn());
+        document.getElementById('zoom-out').addEventListener('click', () => this.tableManager?.zoomOut());
+        document.getElementById('zoom-in').addEventListener('click', () => this.tableManager?.zoomIn());
 
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
             args: {
@@ -788,40 +780,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             document.getElementById('pick-stock').style.display = 'none';
             this.pickCard.removeAll();
         }
-    }
-
-    private setZoom(zoom: number = 1) {
-        this.zoom = zoom;
-        localStorage.setItem(LOCAL_STORAGE_ZOOM_KEY, ''+this.zoom);
-        const newIndex = ZOOM_LEVELS.indexOf(this.zoom);
-        dojo.toggleClass('zoom-in', 'disabled', newIndex === ZOOM_LEVELS.length - 1);
-        dojo.toggleClass('zoom-out', 'disabled', newIndex === 0);
-
-        const div = document.getElementById('table');
-        if (zoom === 1) {
-            div.style.transform = '';
-            div.style.margin = '';
-        } else {
-            div.style.transform = `scale(${zoom})`;
-            div.style.margin = `0 ${ZOOM_LEVELS_MARGIN[newIndex]}% ${(1-zoom)*-100}% 0`;
-        }
-        this.tableManager?.placePlayerTable();
-    }
-
-    private zoomIn() {
-        if (this.zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]) {
-            return;
-        }
-        const newIndex = ZOOM_LEVELS.indexOf(this.zoom) + 1;
-        this.setZoom(ZOOM_LEVELS[newIndex]);
-    }
-
-    private zoomOut() {
-        if (this.zoom === ZOOM_LEVELS[0]) {
-            return;
-        }
-        const newIndex = ZOOM_LEVELS.indexOf(this.zoom) - 1;
-        this.setZoom(ZOOM_LEVELS[newIndex]);
     }
 
     private setupPreferences() {

@@ -59,7 +59,6 @@ interface KingOfTokyoGamedatas {
 interface KingOfTokyoGame extends Game {
     isDefaultFont(): boolean;
     cards: Cards;
-    zoom: number;
 
     changeDie: (id: number, value: number, card: number) => void;
     psychicProbeRollDie: (id: number) => void;

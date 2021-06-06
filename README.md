@@ -37,4 +37,3 @@ Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
 set smash dice not upside down
 remove dice sort on non-locked dice to show randomness player
-fix display on mobile (auto-zoom out ?)
