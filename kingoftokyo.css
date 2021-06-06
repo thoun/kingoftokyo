@@ -301,7 +301,7 @@
 }
 
 .even-roll[data-roll="6"] {
-  transform: rotateX(360deg) rotateY(900deg) rotateZ(360deg);
+  transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
 }
 
 .odd-roll[data-roll="1"] {
@@ -325,7 +325,7 @@
 }
 
 .odd-roll[data-roll="6"] {
-  transform: rotateX(-360deg) rotateY(-900deg) rotateZ(-360deg);
+  transform: rotateX(-360deg) rotateY(-900deg) rotateZ(-540deg);
 }
 
 .no-roll[data-roll="1"] {
@@ -349,7 +349,7 @@
 }
 
 .no-roll[data-roll="6"] {
-  transform: rotateX(360deg) rotateY(900deg) rotateZ(360deg);
+  transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
 }
 
 .change-die-roll[data-roll="1"] {
@@ -373,7 +373,7 @@
 }
 
 .change-die-roll[data-roll="6"] {
-  transform: rotateX(360deg) rotateY(900deg) rotateZ(360deg);
+  transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
 }
 
 [data-side="1"] {
