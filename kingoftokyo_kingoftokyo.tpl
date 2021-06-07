@@ -1,5 +1,6 @@
 {OVERALL_GAME_HEADER}
-<!--<button class="bgabutton bgabutton_red" id="test">TEST</button>-->
+<!--<button class="bgabutton bgabutton_red" id="test1">enter</button>
+<button class="bgabutton bgabutton_red" id="test2">leave</button>-->
 <div id="rolled-dice-and-rapid-healing">
     <div id="rolled-dice" class="whiteblock">
         <div id="locked-dice" class="hide-lock">

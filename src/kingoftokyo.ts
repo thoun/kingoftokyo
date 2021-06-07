@@ -79,6 +79,17 @@ class KingOfTokyo implements KingOfTokyoGame {
                 number: 3,
                 smashedPlayersIds: [2343492, 2343493]
             }
+        } as any));
+        document.getElementById('test1').addEventListener('click', () => this.notif_playerEntersTokyo({
+            args: {
+                playerId: 2343492,
+                location: 1
+            }
+        } as any));
+        document.getElementById('test2').addEventListener('click', () => this.notif_leaveTokyo({
+            args: {
+                playerId: 2343492,
+            }
         } as any));*/
 
         log( "Ending game setup" );
@@ -434,6 +445,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getOrderedPlayers().forEach(player =>
             this.playerTables[Number(player.id)] = new PlayerTable(this, player, gamedatas.playersCards[Number(player.id)])
         );
+    }
+
+    public getZoom() {
+        return this.tableManager.zoom;
     }
 
     private createVisibleCards(visibleCards: Card[]) {

@@ -26,7 +26,9 @@ class PlayerTable {
                 <div class="blue wheel" id="blue-wheel-${player.id}"></div>
                 <div class="red wheel" id="red-wheel-${player.id}"></div>
                 <div id="monster-board-${player.id}" class="monster-board monster${this.monster}">
-                    <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>
+                    <div id="monster-board-${player.id}-figure-wrapper" class="monster-board-figure-wrapper">
+                        <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>
+                    </div>
                 </div>  
             </div> 
             <div id="cards-${player.id}" class="player-cards"></div>      
@@ -59,11 +61,11 @@ class PlayerTable {
     }
 
     public enterTokyo(location: number) {        
-        slideToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `tokyo-${location == 2 ? 'bay' : 'city'}`);
+        transitionToObjectAndAttach(document.getElementById(`monster-figure-${this.playerId}`), `tokyo-${location == 2 ? 'bay' : 'city'}`, this.game.getZoom());
     }
 
     public leaveTokyo() {  
-        slideToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}`);
+        transitionToObjectAndAttach(document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}-figure-wrapper`, this.game.getZoom());
     }
 
     public removeCards(cards: Card[]) {

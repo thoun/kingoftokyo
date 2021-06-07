@@ -66,6 +66,7 @@ interface KingOfTokyoGame extends Game {
     onVisibleCardClick: (stock: Stock, cardId: string, from: number) => void;
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
+    getZoom(): number;
 }
 
 interface EnteringDiceArgs {

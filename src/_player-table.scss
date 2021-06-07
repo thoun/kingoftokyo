@@ -96,7 +96,12 @@
             position: relative;
             z-index: 2;
 
-            @for $i from 1 through 65 {
+            .monster-board-figure-wrapper {
+                width: 150px;
+                height: 150px;
+            }
+
+            @for $i from 1 through 6 {
                 &.monster#{$i} {
                     background-image: url('img/monster-board-#{$i}.png');
                 }

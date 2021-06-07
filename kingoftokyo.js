@@ -20,6 +20,28 @@ function slideToObjectAndAttach(game, object, destinationId, posX, posY) {
         animation.play();
     });
 }
+function transitionToObjectAndAttach(object, destinationId, zoom) {
+    return new Promise(function (resolve) {
+        var destination = document.getElementById(destinationId);
+        if (destination.contains(object)) {
+            return resolve(false);
+        }
+        var destinationBR = document.getElementById(destinationId).getBoundingClientRect();
+        var originBR = object.getBoundingClientRect();
+        var deltaX = destinationBR.left - originBR.left;
+        var deltaY = destinationBR.top - originBR.top;
+        object.style.zIndex = '10';
+        object.style.transition = "transform 0.5s linear";
+        object.style.transform = "translate(" + deltaX / zoom + "px, " + deltaY / zoom + "px)";
+        setTimeout(function () {
+            object.style.zIndex = null;
+            object.style.transition = null;
+            object.style.transform = null;
+            destination.appendChild(object);
+            resolve(true);
+        }, 500);
+    });
+}
 function formatTextIcons(rawText) {
     return rawText
         .replace(/\[Star\]/ig, '<span class="icon points"></span>')
@@ -487,7 +509,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div class=\"monster-board-wrapper\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -509,10 +531,10 @@ var PlayerTable = /** @class */ (function () {
         }
     };
     PlayerTable.prototype.enterTokyo = function (location) {
-        slideToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "tokyo-" + (location == 2 ? 'bay' : 'city'));
+        transitionToObjectAndAttach(document.getElementById("monster-figure-" + this.playerId), "tokyo-" + (location == 2 ? 'bay' : 'city'), this.game.getZoom());
     };
     PlayerTable.prototype.leaveTokyo = function () {
-        slideToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId);
+        transitionToObjectAndAttach(document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId + "-figure-wrapper", this.game.getZoom());
     };
     PlayerTable.prototype.removeCards = function (cards) {
         var _this = this;
@@ -1305,6 +1327,17 @@ var KingOfTokyo = /** @class */ (function () {
                 number: 3,
                 smashedPlayersIds: [2343492, 2343493]
             }
+        } as any));
+        document.getElementById('test1').addEventListener('click', () => this.notif_playerEntersTokyo({
+            args: {
+                playerId: 2343492,
+                location: 1
+            }
+        } as any));
+        document.getElementById('test2').addEventListener('click', () => this.notif_leaveTokyo({
+            args: {
+                playerId: 2343492,
+            }
         } as any));*/
         log("Ending game setup");
     };
@@ -1598,6 +1631,9 @@ var KingOfTokyo = /** @class */ (function () {
         this.getOrderedPlayers().forEach(function (player) {
             return _this.playerTables[Number(player.id)] = new PlayerTable(_this, player, gamedatas.playersCards[Number(player.id)]);
         });
+    };
+    KingOfTokyo.prototype.getZoom = function () {
+        return this.tableManager.zoom;
     };
     KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
         var _this = this;
