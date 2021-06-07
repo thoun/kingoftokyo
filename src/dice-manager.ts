@@ -277,8 +277,8 @@ class DiceManager {
         return html;
     }
 
-    private getDiceDiv(die: Dice) {
-        return document.getElementById(`dice${die.id}`);
+    private getDiceDiv(die: Dice): HTMLDivElement {
+        return document.getElementById(`dice${die.id}`) as HTMLDivElement;
     }
 
     private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
@@ -301,19 +301,25 @@ class DiceManager {
         }
     }
 
+    private addRollToDiv(dieDiv: HTMLDivElement, rollClass: string, attempt: number = 0) {
+        const dieList = dieDiv.getElementsByClassName('die-list')[0];
+        if (dieList) {
+            dieList.classList.add(rollClass);
+        } else if (attempt < 5) {
+            setTimeout(() => this.addRollToDiv(dieDiv, rollClass, attempt + 1), 200); 
+        }
+    }
+
     private addDiceRollClass(die: Dice) {
         const dieDiv = this.getDiceDiv(die);
 
         if (die.rolled) {            
             dojo.removeClass(dieDiv, 'no-roll');
             dieDiv.classList.add('rolled');
-            setTimeout(() => {
-                !dieDiv.getElementsByClassName('die-list')[0] && console.log(dieDiv.innerHTML, dieDiv);
-                dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll')
-            }, 200); 
+            setTimeout(() => this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 200); 
             setTimeout(() => dieDiv.classList.remove('rolled'), 1200); 
         } else {
-            dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll');
+            this.addRollToDiv(dieDiv, 'no-roll');
         }
     }
 

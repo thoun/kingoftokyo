@@ -1024,19 +1024,28 @@ var DiceManager = /** @class */ (function () {
             this.game.psychicProbeRollDie(die.id);
         }
     };
+    DiceManager.prototype.addRollToDiv = function (dieDiv, rollClass, attempt) {
+        var _this = this;
+        if (attempt === void 0) { attempt = 0; }
+        var dieList = dieDiv.getElementsByClassName('die-list')[0];
+        if (dieList) {
+            dieList.classList.add(rollClass);
+        }
+        else if (attempt < 5) {
+            setTimeout(function () { return _this.addRollToDiv(dieDiv, rollClass, attempt + 1); }, 200);
+        }
+    };
     DiceManager.prototype.addDiceRollClass = function (die) {
+        var _this = this;
         var dieDiv = this.getDiceDiv(die);
         if (die.rolled) {
             dojo.removeClass(dieDiv, 'no-roll');
             dieDiv.classList.add('rolled');
-            setTimeout(function () {
-                !dieDiv.getElementsByClassName('die-list')[0] && console.log(dieDiv.innerHTML, dieDiv);
-                dieDiv.getElementsByClassName('die-list')[0].classList.add(Math.random() < 0.5 ? 'odd-roll' : 'even-roll');
-            }, 200);
+            setTimeout(function () { return _this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 200);
             setTimeout(function () { return dieDiv.classList.remove('rolled'); }, 1200);
         }
         else {
-            dieDiv.getElementsByClassName('die-list')[0].classList.add('no-roll');
+            this.addRollToDiv(dieDiv, 'no-roll');
         }
     };
     DiceManager.prototype.removeDice = function (die, duration, delay) {
