@@ -183,11 +183,11 @@ class DiceManager {
                 }, 50);
 
                 setTimeout(() => {
-                    const deltaX = destination.left - origin.left + 59;
-                    const deltaY = destination.top - origin.top + 59;
+                    const deltaX = destination.left - origin.left + 59 * this.game.getZoom();
+                    const deltaY = destination.top - origin.top + 59 * this.game.getZoom();
                     
                     document.getElementById(animationId).style.transition = `transform 0.5s ease-in`;
-                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.30)`;
+                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${0.3 * this.game.getZoom()})`;
                 }, 1000);
 
                 if (playerIndex === playerIds.length - 1) {
