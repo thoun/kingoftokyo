@@ -123,9 +123,9 @@
     background-size: contain;
     filter: drop-shadow(6px 6px 4px black); // TODO add it to pictures
 
-    @for $i from 0 through 5 {
+    @for $i from 1 through 6 {
         &.monster#{$i} {
-            background-image: url('img/monster-figure-#{$i + 1}.png');
+            background-image: url('img/monster-figure-#{$i}.png');
         }
     }
 }

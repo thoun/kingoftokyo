@@ -91,9 +91,9 @@ class KingOfTokyo extends Table {
         $affectedMonsters = [];
         $eliminationRank = count($players) - 1;
         foreach( $players as $player_id => $player ) {
-            $playerMonster = bga_rand(0, 5);
+            $playerMonster = bga_rand(1, 6);
             while (array_search($playerMonster, $affectedMonsters) !== false) {
-                $playerMonster = bga_rand(0, 5);
+                $playerMonster = bga_rand(1, 6);
             }
             $affectedMonsters[] = $playerMonster;
 

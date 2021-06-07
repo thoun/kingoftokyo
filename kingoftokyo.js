@@ -1,20 +1,24 @@
 function slideToObjectAndAttach(game, object, destinationId, posX, posY) {
-    var destination = document.getElementById(destinationId);
-    if (destination.contains(object)) {
-        return;
-    }
-    object.style.zIndex = '10';
-    var animation = (posX || posY) ?
-        game.slideToObjectPos(object, destinationId, posX, posY) :
-        game.slideToObject(object, destinationId);
-    dojo.connect(animation, 'onEnd', dojo.hitch(this, function () {
-        object.style.top = 'unset';
-        object.style.left = 'unset';
-        object.style.position = 'relative';
-        object.style.zIndex = 'unset';
-        destination.appendChild(object);
-    }));
-    animation.play();
+    var _this = this;
+    return new Promise(function (resolve) {
+        var destination = document.getElementById(destinationId);
+        if (destination.contains(object)) {
+            return resolve(false);
+        }
+        object.style.zIndex = '10';
+        var animation = (posX || posY) ?
+            game.slideToObjectPos(object, destinationId, posX, posY) :
+            game.slideToObject(object, destinationId);
+        dojo.connect(animation, 'onEnd', dojo.hitch(_this, function () {
+            object.style.top = 'unset';
+            object.style.left = 'unset';
+            object.style.position = 'relative';
+            object.style.zIndex = 'unset';
+            destination.appendChild(object);
+            resolve(true);
+        }));
+        animation.play();
+    });
 }
 function formatTextIcons(rawText) {
     return rawText
@@ -939,8 +943,41 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.toggleLockDice = function (die, forcedLockValue) {
         if (forcedLockValue === void 0) { forcedLockValue = null; }
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
-        var dieDiv = document.getElementById("dice" + die.id);
-        slideToObjectAndAttach(this.game, dieDiv, die.locked ? "locked-dice" + die.value : "dice-selector");
+        var dieDivId = "dice" + die.id;
+        var dieDiv = document.getElementById(dieDivId);
+        var destinationId = die.locked ? "locked-dice" + die.value : "dice-selector";
+        var tempDestinationId = "temp-destination-wrapper-" + destinationId + "-" + die.id;
+        var tempOriginId = "temp-origin-wrapper-" + destinationId + "-" + die.id;
+        dojo.place("<div id=\"" + tempDestinationId + "\" style=\"width: 0px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: 0;\"></div>", destinationId);
+        dojo.place("<div id=\"" + tempOriginId + "\" style=\"width: " + dieDiv.clientWidth + "px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: -3px 6px 3px -3px;\"></div>", dieDivId, 'after');
+        var destination = document.getElementById(destinationId);
+        var tempDestination = document.getElementById(tempDestinationId);
+        var tempOrigin = document.getElementById(tempOriginId);
+        tempOrigin.appendChild(dieDiv);
+        dojo.animateProperty({
+            node: tempDestinationId,
+            properties: {
+                width: dieDiv.clientHeight,
+            }
+        }).play();
+        dojo.animateProperty({
+            node: tempOriginId,
+            properties: {
+                width: 0,
+            }
+        }).play();
+        dojo.animateProperty({
+            node: dieDivId,
+            properties: {
+                marginLeft: -13
+            }
+        }).play();
+        slideToObjectAndAttach(this.game, dieDiv, tempDestinationId).then(function () {
+            dieDiv.style.marginLeft = '3px';
+            destination.append(tempDestination.childNodes[0]);
+            dojo.destroy(tempDestination);
+            dojo.destroy(tempOrigin);
+        });
         this.activateRethrowButton();
     };
     DiceManager.prototype.lockAll = function () {
@@ -1230,8 +1267,8 @@ var KingOfTokyo = /** @class */ (function () {
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1, 2, 3, 4, 5, 6].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
-            _this.dontPreloadImage("monster-board-" + (i + 1) + ".png");
-            _this.dontPreloadImage("monster-figure-" + (i + 1) + ".png");
+            _this.dontPreloadImage("monster-board-" + i + ".png");
+            _this.dontPreloadImage("monster-figure-" + i + ".png");
         });
         log("Starting game setup");
         this.gamedatas = gamedatas;

@@ -86,7 +86,7 @@
   border: 2px solid transparent;
   min-height: 40px;
   display: flex;
-  justify-content: center;
+  align-items: center;
 }
 #rolled-dice.selectable .dice {
   cursor: pointer;
@@ -837,22 +837,22 @@
   background-size: contain;
   filter: drop-shadow(6px 6px 4px black);
 }
-#table .monster-figure.monster0 {
+#table .monster-figure.monster1 {
   background-image: url("img/monster-figure-1.png");
 }
-#table .monster-figure.monster1 {
+#table .monster-figure.monster2 {
   background-image: url("img/monster-figure-2.png");
 }
-#table .monster-figure.monster2 {
+#table .monster-figure.monster3 {
   background-image: url("img/monster-figure-3.png");
 }
-#table .monster-figure.monster3 {
+#table .monster-figure.monster4 {
   background-image: url("img/monster-figure-4.png");
 }
-#table .monster-figure.monster4 {
+#table .monster-figure.monster5 {
   background-image: url("img/monster-figure-5.png");
 }
-#table .monster-figure.monster5 {
+#table .monster-figure.monster6 {
   background-image: url("img/monster-figure-6.png");
 }
 
@@ -872,27 +872,27 @@ html {
   background: #FFFFFFAA;
 }
 
-.monster0 {
+.monster1 {
   background-image: url("img/monster-figure-1.png");
 }
 
-.monster1 {
+.monster2 {
   background-image: url("img/monster-figure-2.png");
 }
 
-.monster2 {
+.monster3 {
   background-image: url("img/monster-figure-3.png");
 }
 
-.monster3 {
+.monster4 {
   background-image: url("img/monster-figure-4.png");
 }
 
-.monster4 {
+.monster5 {
   background-image: url("img/monster-figure-5.png");
 }
 
-.monster5 {
+.monster6 {
   background-image: url("img/monster-figure-6.png");
 }
 

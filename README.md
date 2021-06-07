@@ -35,4 +35,3 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 # TODO
 Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
-prepare dice zone when they are sliding in resolveDice / toggleLock

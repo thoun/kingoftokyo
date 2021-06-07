@@ -44,7 +44,11 @@ interface Dojo {
             duration: number;
             unit: string;
         }) => any;
-    };
+    };    
+    animateProperty: (params: {
+        node: string;
+        properties: any;
+    }) => any;
     marginBox: Function;
     fadeIn: Function;
     trim: Function;
