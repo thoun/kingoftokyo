@@ -96,9 +96,9 @@
             position: relative;
             z-index: 2;
 
-            @for $i from 0 through 5 {
+            @for $i from 1 through 65 {
                 &.monster#{$i} {
-                    background-image: url('img/monster-board-#{$i + 1}.png');
+                    background-image: url('img/monster-board-#{$i}.png');
                 }
             }
 
