@@ -275,6 +275,18 @@ trait UtilTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         
+        $state = $this->gamestate->state();
+        // if player is playing in multipleactiveplayer (for example Camouflage roll fail to avoid elimination)
+        if ($state['name'] == 'cancelDamage' && array_search($player->id, $this->gamestate->getActivePlayerList()) !== false) {
+            $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+            $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
+        } else if ($state['name'] == 'opportunistBuyCard' && array_search($player->id, $this->gamestate->getActivePlayerList()) !== false) {
+            $this->removeDiscardCards($player->id);
+            $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', 'end');
+            $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
+        }
+
         self::eliminatePlayer($player->id);
 
         if ($playersBeforeElimination == 5) { // 5 players to 4, clear Tokyo Bay

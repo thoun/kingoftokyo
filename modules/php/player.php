@@ -168,8 +168,18 @@ trait PlayerTrait {
 
     function stLeaveTokyo() {
         $smashedPlayersInTokyo = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
-        if (count($smashedPlayersInTokyo) > 0) {
-            $this->gamestate->setPlayersMultiactive($smashedPlayersInTokyo, 'resume');
+        $aliveSmashedPlayersInTokyo = [];
+
+        foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
+            if ($this->getPlayerHealth($smashedPlayerInTokyo) > 0) {
+                $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
+            } else {
+                $this->leaveTokyo($smashedPlayerInTokyo);
+            }
+        }
+
+        if (count($aliveSmashedPlayersInTokyo) > 0) {
+            $this->gamestate->setPlayersMultiactive($aliveSmashedPlayersInTokyo, 'resume');
         } else {
             $this->gamestate->nextState('resume');
         }
