@@ -80,6 +80,12 @@ html {
   }
 }
 
+@media screen and (max-width: 550px) {
+  #rolled-dice-and-rapid-healing {
+    display: block;
+  }
+}
+
 #zoom-wrapper {
   position: relative;
 

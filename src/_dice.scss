@@ -4,6 +4,7 @@ $tokyoGreen: #96c93c;
   display: flex;
   justify-content: center;
   flex: 1;
+  flex-wrap: wrap;
 
   #locked-dice {
     border: 2px solid #a6c136;
@@ -11,6 +12,10 @@ $tokyoGreen: #96c93c;
     margin-right: 20px;
     display: flex;
     align-items: center;
+
+    > div {
+      white-space: nowrap;
+    }
 
     &:before {
       content: '🔒';
