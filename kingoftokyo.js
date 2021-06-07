@@ -1328,7 +1328,6 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringChangeDie(args.args, this.isCurrentPlayerActive());
                 break;
             case 'resolveDice':
-                this.diceManager.lockAll();
                 this.diceManager.hideLock();
                 break;
             case 'resolveHeartDiceAction':
@@ -1938,6 +1937,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
+            ['resolvePlayerDice', 500],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -2068,6 +2068,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_changeDie = function (notif) {
         this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
+    };
+    KingOfTokyo.prototype.notif_resolvePlayerDice = function () {
+        this.diceManager.lockAll();
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

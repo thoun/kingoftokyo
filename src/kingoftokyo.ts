@@ -106,7 +106,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringChangeDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
             case 'resolveDice': 
-                this.diceManager.lockAll();
                 this.diceManager.hideLock();
                 break;
             case 'resolveHeartDiceAction':
@@ -843,6 +842,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
+            ['resolvePlayerDice', 500],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -996,6 +996,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_changeDie(notif: Notif<NotifChangeDieArgs>) {
         this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
+    }
+
+    notif_resolvePlayerDice() {
+        this.diceManager.lockAll();
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
