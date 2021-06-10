@@ -421,7 +421,7 @@ trait DiceTrait {
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => $this->getPlayerName($playerId),
             'card_name' => $cardType,
             'dieId' => $die->id,
             'inTokyo' => $inTokyo,
@@ -496,7 +496,7 @@ trait DiceTrait {
         }
         self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => $this->getPlayerName($playerId),
             'card_name' => PSYCHIC_PROBE_CARD,
             'dieId' => $die->id,
             'toValue' => $value,

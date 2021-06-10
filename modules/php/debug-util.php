@@ -21,7 +21,7 @@ trait DebugUtilTrait {
         //$this->debugSetEnergy(10);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
-        $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
+        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
     }
 
     private function debugSetCardInTable($cardType) {
