@@ -22,9 +22,10 @@ class PlayerTable {
                 <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
                 <div class="text">${player.name}</div>
             </div> 
-            <div class="monster-board-wrapper">
+            <div id="monster-board-wrapper-${player.id}" class="monster-board-wrapper ${player.location > 0 ? 'intokyo' : ''}">
                 <div class="blue wheel" id="blue-wheel-${player.id}"></div>
                 <div class="red wheel" id="red-wheel-${player.id}"></div>
+                <div class="kot-token"></div>
                 <div id="monster-board-${player.id}" class="monster-board monster${this.monster}">
                     <div id="monster-board-${player.id}-figure-wrapper" class="monster-board-figure-wrapper">
                         <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>

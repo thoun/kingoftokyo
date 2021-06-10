@@ -772,6 +772,12 @@
 #table .player-table .monster-board-wrapper {
   position: relative;
 }
+#table .player-table .monster-board-wrapper .kot-token {
+  z-index: 3;
+  position: absolute;
+  top: -25px;
+  left: -25px;
+}
 #table .player-table .monster-board-wrapper .wheel {
   position: absolute;
   z-index: 1;
@@ -832,6 +838,7 @@
 #table .player-table .monster-board-wrapper .monster-board.active {
   border: 3px solid #ffcf13;
   margin: -3px;
+  box-shadow: 0px 0px 5px 2px #ffcf13;
 }
 #table .player-table .player-cards {
   width: 100%;

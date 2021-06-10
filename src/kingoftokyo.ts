@@ -165,7 +165,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
-                this.createButton('dice-actions', 'rethrow_button', _("Rethrow dice") + ` (${args.throwNumber}/${args.maxThrowNumber})`, () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
+                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} left)"), { 'number': args.maxThrowNumber-args.throwNumber }), () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
             }
 
             if (args.rethrow3.hasCard) {
@@ -914,12 +914,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
         this.playerTables[notif.args.playerId].leaveTokyo();
         dojo.removeClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
+        dojo.removeClass(`monster-board-wrapper_${notif.args.playerId}`, 'intokyo');
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
         dojo.addClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
+        dojo.addClass(`monster-board-wrapper_${notif.args.playerId}`, 'intokyo');
     }
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
