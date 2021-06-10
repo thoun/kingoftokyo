@@ -866,7 +866,7 @@
 
 @font-face {
   font-family: "goodgirl";
-  src: url("font/goodgirl-webfont.woff2") format("woff2"), url("font/goodgirl-webfont.woff") format("woff");
+  src: url("img/goodgirl-webfont.woff2") format("woff2"), url("img/goodgirl-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
