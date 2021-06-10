@@ -3,6 +3,7 @@ const log = isDebug ? console.log.bind(window.console) : function () { };
 
 const POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
 const HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
+const SPLIT_ENERGY_CUBES = 6;
 
 class PlayerTable {
     public playerId: number;
@@ -30,8 +31,10 @@ class PlayerTable {
                     <div id="monster-board-${player.id}-figure-wrapper" class="monster-board-figure-wrapper">
                         <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>
                     </div>
-                </div>  
+                </div>
             </div> 
+            <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
+            <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>
             <div id="cards-${player.id}" class="player-cards ${cards.length ? '' : 'empty'}"></div>      
         </div>
 
@@ -53,6 +56,7 @@ class PlayerTable {
 
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
+        this.setEnergy(Number(player.energy));
     }
 
     public initPlacement() {
@@ -88,6 +92,16 @@ class PlayerTable {
         );
     }
 
+    public setEnergy(energy: number, delay: number = 0) {
+        setTimeout(
+            () => {
+                this.setEnergyOnSide('left', Math.min(energy, SPLIT_ENERGY_CUBES));
+                this.setEnergyOnSide('right', Math.max(energy - SPLIT_ENERGY_CUBES, 0));
+            },
+            delay
+        );
+    }
+
     public eliminatePlayer() {
         this.cards.removeAll();
         (this.game as any).fadeOutAndDestroy(`player-board-monster-figure-${this.playerId}`);
@@ -102,5 +116,50 @@ class PlayerTable {
         const defaultFont = prefValue === 1;
         dojo.toggleClass(`player-name-${this.playerId}`, 'standard', defaultFont);
         dojo.toggleClass(`player-name-${this.playerId}`, 'goodgirl', !defaultFont);
+    }
+
+    private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {
+        return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+    }
+
+    private getPlaceOnCard(placed: PlacedTokens[]): PlacedTokens {
+        const newPlace = {
+            x: Math.random() * 33 + 16,
+            y: Math.random() * 188 + 16,
+        };
+        let protection = 0;
+        while (protection < 1000 && placed.some(place => this.getDistance(newPlace, place) < 32)) {
+            newPlace.x = Math.random() * 33 + 16;
+            newPlace.y = Math.random() * 188 + 16;
+            protection++;
+        }
+
+        return newPlace;
+    }
+
+    public setEnergyOnSide(side: 'left' | 'right', energy: number) {
+        const divId = `energy-wrapper-${this.playerId}-${side}`;
+        const div = document.getElementById(divId);
+        if (!div) {
+            return;
+        }
+        const placed: PlacedTokens[] = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
+
+        // remove tokens
+        for (let i = energy; i < placed.length; i++) {
+            (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+        }
+        placed.splice(energy, placed.length - energy);
+
+        // add tokens
+        for (let i = placed.length; i < energy; i++) {
+            const newPlace = this.getPlaceOnCard(placed);
+
+            placed.push(newPlace);
+            let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="energy-cube"></div>`;
+            dojo.place(html, divId);
+        }
+
+        div.dataset.placed = JSON.stringify(placed);
     }
 }

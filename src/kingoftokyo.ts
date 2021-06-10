@@ -930,7 +930,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
-        this.setEnergy(notif.args.playerId, notif.args.energy);
+        this.setEnergy(notif.args.playerId, notif.args.energy, ANIMATION_MS);
         this.diceManager.resolveEnergyDice(notif.args);
     }
 
@@ -1074,8 +1074,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.checkRapidHealingButtonState();
     }
     
-    private setEnergy(playerId: number, energy: number) {
+    private setEnergy(playerId: number, energy: number, delay: number = 0) {
         this.energyCounters[playerId].toValue(energy);
+        this.playerTables[playerId].setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
     }

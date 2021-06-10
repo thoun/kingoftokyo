@@ -107,14 +107,15 @@ $description-size: 7pt;
 
     .card-token {
         position: absolute;
-
-        &.energy-cube {
-            background: url('img/energy-cube.png') center no-repeat;
-            width: 32px;
-            height: 32px;
-            background-size: contain;
-        }
     }
+}
+
+.energy-cube {
+    position: absolute;
+    background: url('img/energy-cube.png') center no-repeat;
+    width: 32px;
+    height: 32px;
+    background-size: contain;
 }
 
 .card-tooltip {

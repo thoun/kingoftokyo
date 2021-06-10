@@ -123,6 +123,21 @@
         }
     }
 
+    .energy-wrapper {
+        position: absolute;
+        z-index: 4;
+        top: 40px;
+        width: 65px;
+        height: 220px;
+
+        &.left {
+            left: 5px;
+        }
+        &.right {
+            right: 5px;
+        }
+    }
+
     .player-cards {
         width: 100%;
 

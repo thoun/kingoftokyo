@@ -501,6 +501,7 @@ var isDebug = window.location.host == 'studio.boardgamearena.com';
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
+var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, cards) {
         var _this = this;
@@ -509,7 +510,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>\n            <div id=\"cards-" + player.id + "\" class=\"player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -524,6 +525,7 @@ var PlayerTable = /** @class */ (function () {
         this.initialLocation = Number(player.location);
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
+        this.setEnergy(Number(player.energy));
     }
     PlayerTable.prototype.initPlacement = function () {
         if (this.initialLocation > 0) {
@@ -551,6 +553,14 @@ var PlayerTable = /** @class */ (function () {
         if (delay === void 0) { delay = 0; }
         setTimeout(function () { return document.getElementById("red-wheel-" + _this.playerId).style.transform = "rotate(" + (health > 12 ? 22 : HEALTH_DEG[health]) + "deg)"; }, delay);
     };
+    PlayerTable.prototype.setEnergy = function (energy, delay) {
+        var _this = this;
+        if (delay === void 0) { delay = 0; }
+        setTimeout(function () {
+            _this.setEnergyOnSide('left', Math.min(energy, SPLIT_ENERGY_CUBES));
+            _this.setEnergyOnSide('right', Math.max(energy - SPLIT_ENERGY_CUBES, 0));
+        }, delay);
+    };
     PlayerTable.prototype.eliminatePlayer = function () {
         this.cards.removeAll();
         this.game.fadeOutAndDestroy("player-board-monster-figure-" + this.playerId);
@@ -563,6 +573,44 @@ var PlayerTable = /** @class */ (function () {
         var defaultFont = prefValue === 1;
         dojo.toggleClass("player-name-" + this.playerId, 'standard', defaultFont);
         dojo.toggleClass("player-name-" + this.playerId, 'goodgirl', !defaultFont);
+    };
+    PlayerTable.prototype.getDistance = function (p1, p2) {
+        return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+    };
+    PlayerTable.prototype.getPlaceOnCard = function (placed) {
+        var _this = this;
+        var newPlace = {
+            x: Math.random() * 33 + 16,
+            y: Math.random() * 188 + 16,
+        };
+        var protection = 0;
+        while (protection < 1000 && placed.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
+            newPlace.x = Math.random() * 33 + 16;
+            newPlace.y = Math.random() * 188 + 16;
+            protection++;
+        }
+        return newPlace;
+    };
+    PlayerTable.prototype.setEnergyOnSide = function (side, energy) {
+        var divId = "energy-wrapper-" + this.playerId + "-" + side;
+        var div = document.getElementById(divId);
+        if (!div) {
+            return;
+        }
+        var placed = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
+        // remove tokens
+        for (var i = energy; i < placed.length; i++) {
+            this.game.fadeOutAndDestroy(divId + "-token" + i);
+        }
+        placed.splice(energy, placed.length - energy);
+        // add tokens
+        for (var i = placed.length; i < energy; i++) {
+            var newPlace = this.getPlaceOnCard(placed);
+            placed.push(newPlace);
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"energy-cube\"></div>";
+            dojo.place(html, divId);
+        }
+        div.dataset.placed = JSON.stringify(placed);
     };
     return PlayerTable;
 }());
@@ -2055,7 +2103,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.resolveHealthDiceInTokyo();
     };
     KingOfTokyo.prototype.notif_resolveEnergyDice = function (notif) {
-        this.setEnergy(notif.args.playerId, notif.args.energy);
+        this.setEnergy(notif.args.playerId, notif.args.energy, ANIMATION_MS);
         this.diceManager.resolveEnergyDice(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveSmashDice = function (notif) {
@@ -2178,8 +2226,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.players[playerId].maxHealth = maxHealth;
         this.checkRapidHealingButtonState();
     };
-    KingOfTokyo.prototype.setEnergy = function (playerId, energy) {
+    KingOfTokyo.prototype.setEnergy = function (playerId, energy, delay) {
+        if (delay === void 0) { delay = 0; }
         this.energyCounters[playerId].toValue(energy);
+        this.playerTables[playerId].setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
     };
