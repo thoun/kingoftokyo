@@ -579,18 +579,24 @@ var TABLE_MARGIN = 20;
 var PLAYER_TABLE_WIDTH_MARGINS = PLAYER_TABLE_WIDTH + 2 * TABLE_MARGIN;
 var PLAYER_BOARD_HEIGHT_MARGINS = PLAYER_BOARD_HEIGHT + 2 * TABLE_MARGIN;
 var CENTER_TABLE_WIDTH_MARGINS = CENTER_TABLE_WIDTH + 2 * TABLE_MARGIN;
+var DISPOSITION_1_COLUMN = [];
 var DISPOSITION_2_COLUMNS = [];
 var DISPOSITION_3_COLUMNS = [];
+DISPOSITION_1_COLUMN[2] = [[0, 1]];
+DISPOSITION_1_COLUMN[3] = [[0, 1, 2]];
+DISPOSITION_1_COLUMN[4] = [[0, 1, 2, 3]];
+DISPOSITION_1_COLUMN[5] = [[0, 1, 2, 3, 4]];
+DISPOSITION_1_COLUMN[6] = [[0, 1, 2, 3, 4, 5]];
 DISPOSITION_2_COLUMNS[2] = [[0], [1]];
 DISPOSITION_2_COLUMNS[3] = [[0], [1, 2]];
-DISPOSITION_2_COLUMNS[4] = [[1, 0], [2, 3]];
-DISPOSITION_2_COLUMNS[5] = [[1, 0], [2, 3, 4]];
-DISPOSITION_2_COLUMNS[6] = [[1, 0], [2, 3, 4, 5]];
-DISPOSITION_3_COLUMNS[2] = [[], [0], [1]];
-DISPOSITION_3_COLUMNS[3] = [[1], [0], [2]];
-DISPOSITION_3_COLUMNS[4] = [[1], [2, 0], [3]];
-DISPOSITION_3_COLUMNS[5] = [[2, 1], [0], [3, 4]];
-DISPOSITION_3_COLUMNS[6] = [[2, 1], [5, 0], [3, 4]];
+DISPOSITION_2_COLUMNS[4] = [[0], [1, 2, 3]];
+DISPOSITION_2_COLUMNS[5] = [[0, 4], [1, 2, 3]];
+DISPOSITION_2_COLUMNS[6] = [[0, 5], [1, 2, 3, 4]];
+DISPOSITION_3_COLUMNS[2] = [[0], [], [1]];
+DISPOSITION_3_COLUMNS[3] = [[0, 2], [], [1]];
+DISPOSITION_3_COLUMNS[4] = [[0, 3], [], [1, 2]];
+DISPOSITION_3_COLUMNS[5] = [[0, 4, 3], [], [1, 2]];
+DISPOSITION_3_COLUMNS[6] = [[0, 5, 4], [], [1, 2, 3]];
 var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
 var ZOOM_LEVELS_MARGIN = [-300, -166, -100, -60, -33, -14, 0];
 var LOCAL_STORAGE_ZOOM_KEY = 'KingOfTokyo-zoom';
@@ -619,7 +625,6 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
-        var height = 0;
         var players = this.playerTables.length;
         var zoomWrapper = document.getElementById('zoom-wrapper');
         var tableDiv = document.getElementById('table');
@@ -629,67 +634,75 @@ var TableManager = /** @class */ (function () {
             tableWidth = tableDiv.clientWidth;
         }
         var availableColumns = Math.max(1, Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS)));
-        var idealColumns = players == 2 ? 2 : 3;
         var tableCenterDiv = document.getElementById('table-center');
         tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2 + "px";
         tableCenterDiv.style.top = "0px";
-        if (availableColumns === 1) {
-            var top_1 = tableCenterDiv.clientHeight;
-            this.playerTables.forEach(function (playerTable) {
-                var playerTableDiv = document.getElementById("player-table-" + playerTable.playerId);
-                playerTableDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2 + "px";
-                playerTableDiv.style.top = top_1 + "px";
-                top_1 += _this.getPlayerTableHeight(playerTable);
-                height = Math.max(height, top_1);
-            });
+        var height = tableCenterDiv.clientHeight;
+        var columns = Math.min(availableColumns, 3);
+        var dispositionModelColumn;
+        if (columns === 1) {
+            dispositionModelColumn = DISPOSITION_1_COLUMN;
+        }
+        else if (columns === 2) {
+            dispositionModelColumn = DISPOSITION_2_COLUMNS;
         }
         else {
-            var columns_1 = Math.min(availableColumns, idealColumns);
-            var dispositionModel = (columns_1 === 3 ? DISPOSITION_3_COLUMNS : DISPOSITION_2_COLUMNS)[players];
-            var disposition_1 = dispositionModel.map(function (columnIndexes) { return columnIndexes.map(function (columnIndex) { return ({
-                id: _this.playerTables[columnIndex].playerId,
-                height: _this.getPlayerTableHeight(_this.playerTables[columnIndex]),
-            }); }); });
-            var tableCenter_1 = (columns_1 === 3 ? tableWidth : tableWidth - PLAYER_TABLE_WIDTH_MARGINS) / 2;
-            var centerColumnIndex_1 = columns_1 === 3 ? 1 : 0;
-            if (columns_1 === 2) {
-                tableCenterDiv.style.left = tableCenter_1 - CENTER_TABLE_WIDTH_MARGINS / 2 + "px";
-            }
-            // we always compute "center" column first
-            (columns_1 === 3 ? [1, 0, 2] : [0, 1]).forEach(function (columnIndex) {
-                var leftColumn = columnIndex === 0 && columns_1 === 3;
-                var centerColumn = centerColumnIndex_1 === columnIndex;
-                var rightColumn = columnIndex > centerColumnIndex_1;
-                var playerOverTable = centerColumn && disposition_1[columnIndex].length > 1;
-                var dispositionColumn = disposition_1[columnIndex];
-                var top;
-                if (centerColumn) {
-                    top = !playerOverTable ? tableCenterDiv.clientHeight + 20 : 0;
-                }
-                else {
-                    top = Math.max(0, (height - dispositionColumn.map(function (dc) { return dc.height; }).reduce(function (a, b) { return a + b; }, 0)) / 2);
-                }
-                dispositionColumn.forEach(function (playerInfos, index) {
-                    var playerTableDiv = document.getElementById("player-table-" + playerInfos.id);
-                    if (centerColumn) {
-                        playerTableDiv.style.left = tableCenter_1 - PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
-                    }
-                    else if (rightColumn) {
-                        playerTableDiv.style.left = tableCenter_1 + PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
-                    }
-                    else if (leftColumn) {
-                        playerTableDiv.style.left = (tableCenter_1 - PLAYER_TABLE_WIDTH_MARGINS / 2) - PLAYER_TABLE_WIDTH_MARGINS + "px";
-                    }
-                    playerTableDiv.style.top = top + "px";
-                    top += playerInfos.height;
-                    if (centerColumn && index == 0 && disposition_1[columnIndex].length > 1) {
-                        tableCenterDiv.style.top = playerInfos.height + "px";
-                        top += tableCenterDiv.clientHeight + 20;
-                    }
-                    height = Math.max(height, top);
-                });
-            });
+            dispositionModelColumn = DISPOSITION_3_COLUMNS;
         }
+        var dispositionModel = dispositionModelColumn[players];
+        var disposition = dispositionModel.map(function (columnIndexes) { return columnIndexes.map(function (columnIndex) { return ({
+            id: _this.playerTables[columnIndex].playerId,
+            height: _this.getPlayerTableHeight(_this.playerTables[columnIndex]),
+        }); }); });
+        var tableCenter = (columns === 2 ? tableWidth - PLAYER_TABLE_WIDTH_MARGINS : tableWidth) / 2;
+        var centerColumnIndex = columns === 3 ? 1 : 0;
+        if (columns === 2) {
+            tableCenterDiv.style.left = tableCenter - CENTER_TABLE_WIDTH_MARGINS / 2 + "px";
+        }
+        // we always compute "center" column first
+        var columnOrder;
+        if (columns === 1) {
+            columnOrder = [0];
+        }
+        else if (columns === 2) {
+            columnOrder = [0, 1];
+        }
+        else {
+            columnOrder = [1, 0, 2];
+        }
+        columnOrder.forEach(function (columnIndex) {
+            var leftColumn = columnIndex === 0 && columns === 3;
+            var centerColumn = centerColumnIndex === columnIndex;
+            var rightColumn = columnIndex > centerColumnIndex;
+            var playerOverTable = centerColumn && disposition[columnIndex].length;
+            var dispositionColumn = disposition[columnIndex];
+            var top;
+            if (centerColumn) {
+                top = !playerOverTable ? tableCenterDiv.clientHeight + 20 : 0;
+            }
+            else {
+                top = Math.max(0, (height - dispositionColumn.map(function (dc) { return dc.height; }).reduce(function (a, b) { return a + b; }, 0)) / 2);
+            }
+            dispositionColumn.forEach(function (playerInfos, index) {
+                var playerTableDiv = document.getElementById("player-table-" + playerInfos.id);
+                if (centerColumn) {
+                    playerTableDiv.style.left = tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
+                }
+                else if (rightColumn) {
+                    playerTableDiv.style.left = tableCenter + PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
+                }
+                else if (leftColumn) {
+                    playerTableDiv.style.left = (tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2) - PLAYER_TABLE_WIDTH_MARGINS + "px";
+                }
+                playerTableDiv.style.top = top + "px";
+                top += playerInfos.height;
+                if (centerColumn && playerOverTable && index === 0) {
+                    tableCenterDiv.style.top = playerInfos.height + "px";
+                    top += tableCenterDiv.clientHeight + 20;
+                }
+                height = Math.max(height, top);
+            });
+        });
         tableDiv.style.height = height + "px";
         zoomWrapper.style.height = height * this.zoom + "px";
     };
