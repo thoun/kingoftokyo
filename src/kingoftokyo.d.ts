@@ -123,6 +123,11 @@ interface EnteringCancelDamageArgs {
     dice: number[];
 }
 
+interface EnteringLeaveTokyoArgs {
+    jetsDamage: number;
+    jetsPlayers: number[];
+}
+
 interface NotifResolveArgs {
     playerId: number;
     player_name: string;

@@ -250,6 +250,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} must choose to stay or leave Tokyo'),
         "type" => "multipleactiveplayer",
         "action" => "stLeaveTokyo",
+        "args" => "argLeaveTokyo",
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
             "resume" => ST_LEAVE_TOKYO_APPLY_JETS,

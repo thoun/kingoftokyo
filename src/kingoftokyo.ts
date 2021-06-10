@@ -334,7 +334,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
 
                 case 'leaveTokyo':
-                    (this as any).addActionButton('stayInTokyo_button', _("Stay in Tokyo"), 'onStayInTokyo');
+                    let label = _("Stay in Tokyo");
+                    const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
+                    if (argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId())) {
+                        label += formatTextIcons(` (- ${argsLeaveTokyo.jetsDamage} [heart])`);
+                    }
+                    (this as any).addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
                     (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
                     break;
                 

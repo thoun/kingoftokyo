@@ -1550,6 +1550,7 @@ var KingOfTokyo = /** @class */ (function () {
     //                        action status bar (ie: the HTML links in the status bar).
     //
     KingOfTokyo.prototype.onUpdateActionButtons = function (stateName, args) {
+        var _a;
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'changeMimickedCard':
@@ -1566,7 +1567,12 @@ var KingOfTokyo = /** @class */ (function () {
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'leaveTokyo':
-                    this.addActionButton('stayInTokyo_button', _("Stay in Tokyo"), 'onStayInTokyo');
+                    var label = _("Stay in Tokyo");
+                    var argsLeaveTokyo = args;
+                    if ((_a = argsLeaveTokyo.jetsPlayers) === null || _a === void 0 ? void 0 : _a.includes(this.getPlayerId())) {
+                        label += formatTextIcons(" (- " + argsLeaveTokyo.jetsDamage + " [heart])");
+                    }
+                    this.addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
                     this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
                     break;
                 case 'buyCard':
