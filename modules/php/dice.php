@@ -731,10 +731,12 @@ trait DiceTrait {
 
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getDice($this->getDiceNumber($playerId));
+        $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
+        sort($diceValues);
 
         $diceStr = '';
-        foreach($dice as $idie) {
-            $diceStr .= $this->getDieFaceLogName($idie->value);
+        foreach($diceValues as $dieValue) {
+            $diceStr .= $this->getDieFaceLogName($dieValue);
         }
 
         self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolve dice ${dice}'), [
@@ -747,7 +749,7 @@ trait DiceTrait {
 
         $diceCounts = [];
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-            $diceCounts[$diceFace] = count(array_values(array_filter($dice, function($dice) use ($diceFace) { return $dice->value == $diceFace; })));
+            $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
         }
 
         $addedSmashes = 0;
