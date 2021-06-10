@@ -149,8 +149,9 @@ class TableManager {
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {
-        const cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
-        return PLAYER_BOARD_HEIGHT_MARGINS + ((CARD_HEIGHT + 5) * cardRows);
+        const cardRows = Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW);
+        const cardHeight = cardRows === 0 ? 20 : ((CARD_HEIGHT + 5) * cardRows);
+        return PLAYER_BOARD_HEIGHT_MARGINS + cardHeight;
     }
 
     private setZoom(zoom: number = 1) {

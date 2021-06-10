@@ -708,8 +708,9 @@ var TableManager = /** @class */ (function () {
         zoomWrapper.style.height = height * this.zoom + "px";
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
-        var cardRows = Math.max(1, Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW));
-        return PLAYER_BOARD_HEIGHT_MARGINS + ((CARD_HEIGHT + 5) * cardRows);
+        var cardRows = Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW);
+        var cardHeight = cardRows === 0 ? 20 : ((CARD_HEIGHT + 5) * cardRows);
+        return PLAYER_BOARD_HEIGHT_MARGINS + cardHeight;
     };
     TableManager.prototype.setZoom = function (zoom) {
         if (zoom === void 0) { zoom = 1; }
