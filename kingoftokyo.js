@@ -509,7 +509,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards\"></div>      \n        </div>\n\n        ", 'table');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>  \n            </div> \n            <div id=\"cards-" + player.id + "\" class=\"player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -633,6 +633,7 @@ var TableManager = /** @class */ (function () {
             this.zoomOut();
             tableWidth = tableDiv.clientWidth;
         }
+        this.playerTables.forEach(function (playerTable) { return dojo.toggleClass("cards-" + playerTable.playerId, 'empty', !playerTable.cards.items.length); });
         var availableColumns = Math.max(1, Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS)));
         var tableCenterDiv = document.getElementById('table-center');
         tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2 + "px";
@@ -2035,13 +2036,13 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_leaveTokyo = function (notif) {
         this.playerTables[notif.args.playerId].leaveTokyo();
         dojo.removeClass("overall_player_board_" + notif.args.playerId, 'intokyo');
-        dojo.removeClass("monster-board-wrapper_" + notif.args.playerId, 'intokyo');
+        dojo.removeClass("monster-board-wrapper-" + notif.args.playerId, 'intokyo');
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
         dojo.addClass("overall_player_board_" + notif.args.playerId, 'intokyo');
-        dojo.addClass("monster-board-wrapper_" + notif.args.playerId, 'intokyo');
+        dojo.addClass("monster-board-wrapper-" + notif.args.playerId, 'intokyo');
     };
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var card = notif.args.card;

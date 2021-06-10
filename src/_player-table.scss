@@ -17,6 +17,7 @@
         width: 100%;
         text-align: center;
         text-overflow: ellipsis;
+        z-index: 5;
 
         .outline {
             position: absolute;
@@ -124,6 +125,10 @@
 
     .player-cards {
         width: 100%;
+
+        &.empty {
+            max-height: 20px;
+        }
     }
 }
 

@@ -70,6 +70,8 @@ class TableManager {
             tableWidth = tableDiv.clientWidth;
         }
 
+        this.playerTables.forEach(playerTable => dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length))
+        
         const availableColumns = Math.max(1, Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS)));
 
         const tableCenterDiv = document.getElementById('table-center');

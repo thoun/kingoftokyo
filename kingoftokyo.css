@@ -739,6 +739,7 @@
   width: 100%;
   text-align: center;
   text-overflow: ellipsis;
+  z-index: 5;
 }
 #table .player-table .player-name .outline {
   position: absolute;
@@ -842,6 +843,9 @@
 }
 #table .player-table .player-cards {
   width: 100%;
+}
+#table .player-table .player-cards.empty {
+  max-height: 20px;
 }
 #table .monster-figure {
   position: relative;

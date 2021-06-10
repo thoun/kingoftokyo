@@ -32,7 +32,7 @@ class PlayerTable {
                     </div>
                 </div>  
             </div> 
-            <div id="cards-${player.id}" class="player-cards"></div>      
+            <div id="cards-${player.id}" class="player-cards ${cards.length ? '' : 'empty'}"></div>      
         </div>
 
         `, 'table');

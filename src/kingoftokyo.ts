@@ -914,14 +914,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
         this.playerTables[notif.args.playerId].leaveTokyo();
         dojo.removeClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
-        dojo.removeClass(`monster-board-wrapper_${notif.args.playerId}`, 'intokyo');
+        dojo.removeClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
         dojo.addClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
-        dojo.addClass(`monster-board-wrapper_${notif.args.playerId}`, 'intokyo');
+        dojo.addClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
     }
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
