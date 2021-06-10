@@ -1367,27 +1367,35 @@ var KingOfTokyo = /** @class */ (function () {
         switch (stateName) {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
+                this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
             case 'changeDie':
+                this.setDiceSelectorVisibility(true);
                 this.onEnteringChangeDie(args.args, this.isCurrentPlayerActive());
                 break;
             case 'resolveDice':
+                this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
                 break;
             case 'resolveHeartDiceAction':
+                this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, this.isCurrentPlayerActive());
                 break;
             case 'buyCard':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringBuyCard(args.args, this.isCurrentPlayerActive());
                 break;
             case 'sellCard':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringSellCard();
                 break;
             case 'endTurn':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
                 break;
         }
@@ -1552,6 +1560,24 @@ var KingOfTokyo = /** @class */ (function () {
     //
     KingOfTokyo.prototype.onUpdateActionButtons = function (stateName, args) {
         var _a;
+        switch (stateName) {
+            case 'psychicProbeRollDie':
+                this.setDiceSelectorVisibility(true);
+                break;
+            case 'leaveTokyo':
+                this.setDiceSelectorVisibility(false);
+                break;
+            case 'opportunistBuyCard':
+                this.setDiceSelectorVisibility(false);
+                break;
+            case 'opportunistChooseMimicCard':
+                this.setDiceSelectorVisibility(false);
+                break;
+            case 'cancelDamage':
+                var argsCancelDamage = args;
+                this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
+                break;
+        }
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'changeMimickedCard':
@@ -1589,6 +1615,7 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'opportunistChooseMimicCard':
                     this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
+                    break;
                 case 'sellCard':
                     this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
@@ -1652,6 +1679,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.getOrderedPlayers().forEach(function (player) {
             return _this.playerTables[Number(player.id)] = new PlayerTable(_this, player, gamedatas.playersCards[Number(player.id)]);
         });
+    };
+    KingOfTokyo.prototype.setDiceSelectorVisibility = function (visible) {
+        var div = document.getElementById('rolled-dice');
+        div.style.display = visible ? 'flex' : 'none';
     };
     KingOfTokyo.prototype.getZoom = function () {
         return this.tableManager.zoom;

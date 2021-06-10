@@ -108,29 +108,37 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch (stateName) {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
+                this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
             case 'changeDie': 
+                this.setDiceSelectorVisibility(true);
                 this.onEnteringChangeDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
             case 'resolveDice': 
+                this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
                 break;
             case 'resolveHeartDiceAction':
+                this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, (this as any).isCurrentPlayerActive());
                 break;
             
             case 'buyCard':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringBuyCard(args.args, (this as any).isCurrentPlayerActive());
                 break;
             case 'sellCard':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringSellCard();
                 break;
 
             case 'endTurn':
+                this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
                 break;
         }
@@ -317,6 +325,26 @@ class KingOfTokyo implements KingOfTokyoGame {
     //                        action status bar (ie: the HTML links in the status bar).
     //
     public onUpdateActionButtons(stateName: string, args: any) {
+
+        switch (stateName) {
+            case 'psychicProbeRollDie':
+                this.setDiceSelectorVisibility(true);
+                break;
+            case 'leaveTokyo':
+                this.setDiceSelectorVisibility(false);
+                break;
+            case 'opportunistBuyCard':
+                this.setDiceSelectorVisibility(false);
+                break;
+            case 'opportunistChooseMimicCard':
+                this.setDiceSelectorVisibility(false);
+                break;            
+            case 'cancelDamage':
+                const argsCancelDamage = args as EnteringCancelDamageArgs;
+                this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
+                break;
+        }
+
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'changeMimickedCard':
@@ -356,6 +384,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'opportunistChooseMimicCard':
                     this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
+                    break;
                 case 'sellCard':
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
@@ -450,6 +479,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getOrderedPlayers().forEach(player =>
             this.playerTables[Number(player.id)] = new PlayerTable(this, player, gamedatas.playersCards[Number(player.id)])
         );
+    }
+
+    private setDiceSelectorVisibility(visible: boolean) {
+        const div = document.getElementById('rolled-dice');
+        div.style.display = visible ? 'flex' : 'none';
     }
 
     public getZoom() {
