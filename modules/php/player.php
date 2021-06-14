@@ -265,6 +265,12 @@ trait PlayerTrait {
         $playerId = self::getActivePlayerId();
 
         // apply end of turn effects (after Selling Cards)
+        
+        // rooting for the underdog
+        $countRootingForTheUnderdog = $this->countCardOfType($playerId, ROOTING_FOR_THE_UNDERDOG_CARD);
+        if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
+            $this->applyGetPoints($playerId, $countRootingForTheUnderdog, ROOTING_FOR_THE_UNDERDOG_CARD);
+        }
 
         // energy hoarder
         $countEnergyHoarder = $this->countCardOfType($playerId, ENERGY_HOARDER_CARD);
@@ -312,16 +318,7 @@ trait PlayerTrait {
         /*}*/
     }
 
-    function stNextPlayer() {  
-        $playersIds = $this->getPlayersIds();
-        foreach($playersIds as $playerId) {
-            // rooting for the underdog
-            $countRootingForTheUnderdog = $this->countCardOfType($playerId, ROOTING_FOR_THE_UNDERDOG_CARD);
-            if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
-                $this->applyGetPoints($playerId, $countRootingForTheUnderdog, ROOTING_FOR_THE_UNDERDOG_CARD);
-            }
-        }
-        
+    function stNextPlayer() {
         $playerId = self::getActivePlayerId();
 
         $anotherTimeWithCard = 0;
