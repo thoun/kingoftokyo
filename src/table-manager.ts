@@ -52,7 +52,8 @@ class TableManager {
         const currentPlayerId = Number(this.game.getPlayerId());
         const playerTablesOrdered = playerTables.filter(playerTable => !!playerTable).sort((a, b) => a.playerNo - b.playerNo);
         const playerIndex = playerTablesOrdered.findIndex(playerTable => playerTable.playerId === currentPlayerId);
-        if (playerIndex) { // not spectator (or 0)            
+        
+        if (playerIndex > 0) { // not spectator (or 0)            
             this.playerTables = [...playerTablesOrdered.slice(playerIndex), ...playerTablesOrdered.slice(0, playerIndex)];
         } else { // spectator
             this.playerTables = playerTablesOrdered.filter(playerTable => !!playerTable);
@@ -61,6 +62,7 @@ class TableManager {
 
     public placePlayerTable() {
         const players = this.playerTables.length;
+
         const zoomWrapper = document.getElementById('zoom-wrapper');
         const tableDiv = document.getElementById('table');
         let tableWidth = tableDiv.clientWidth;

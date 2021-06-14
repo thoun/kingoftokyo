@@ -174,7 +174,7 @@ class KingOfTokyo extends Table {
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens FROM player ";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens FROM player order by player_no";
         $result['players'] = self::getCollectionFromDb( $sql );
 
         // Gather all information about current game situation (visible by player $current_player_id).
@@ -202,6 +202,7 @@ class KingOfTokyo extends Table {
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();
+        $result['playerOrder'] = array_keys($result['players']);
 
         return $result;
     }

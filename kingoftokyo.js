@@ -664,7 +664,7 @@ var TableManager = /** @class */ (function () {
         var currentPlayerId = Number(this.game.getPlayerId());
         var playerTablesOrdered = playerTables.filter(function (playerTable) { return !!playerTable; }).sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
-        if (playerIndex) { // not spectator (or 0)            
+        if (playerIndex > 0) { // not spectator (or 0)            
             this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
         }
         else { // spectator
@@ -1693,7 +1693,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.getOrderedPlayers = function () {
         var _this = this;
-        return this.gamedatas.playerorder.map(function (id) { return _this.gamedatas.players[Number(id)]; });
+        return this.gamedatas.playerOrder.map(function (id) { return _this.gamedatas.players[id]; });
     };
     KingOfTokyo.prototype.createPlayerPanels = function (gamedatas) {
         var _this = this;
