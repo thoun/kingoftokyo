@@ -454,23 +454,23 @@ var Cards = /** @class */ (function () {
             //case 56: return _("If you score 4[Star] in a turn, all players roll one less die until your next turn.");
             //case 57: return _("If you yield Tokyo you can take any card the recipient has and give him this card.");
             // DISCARD
-            case 101: return _("<strong>+ 3[Star].</strong>");
-            case 102: return _("<strong>+ 2[Star].</strong>");
-            case 103: return _("<strong>+ 1[Star].</strong>");
+            case 101: return "<strong>+ 3[Star].</strong>";
+            case 102: return "<strong>+ 2[Star].</strong>";
+            case 103: return "<strong>+ 1[Star].</strong>";
             case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it.");
-            case 105: return _("<strong>+ 9[Energy].</strong>");
+            case 105: return "<strong>+ 9[Energy].</strong>";
             case 106:
             case 107: return _("<strong>All other Monsters lose 5[Star].</strong>");
             case 108: return _("<strong>All other Monsters lose 2[Heart].</strong>");
             case 109: return _("<strong>Take another turn</strong> after this one");
             case 110: return _("<strong>+ 2[Star] and deal all other monsters lose 3[Heart].</strong>");
-            case 111: return _("<strong>+ 2[Heart]</strong>");
+            case 111: return "<strong>+ 2[Heart]</strong>";
             case 112: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Heart].</strong>");
-            case 113: return _("<strong>+ 5[Star] -4[Heart].</strong>");
-            case 114: return _("<strong>+ 2[Star] -2[Heart].</strong>");
-            case 115: return _("<strong>+ 2[Star] +3[Heart].</strong>");
-            case 116: return _("<strong>+ 4[Star].");
-            case 117: return _("<strong>+ 4[Star] -3[Heart].</strong>");
+            case 113: return "<strong>+ 5[Star] -4[Heart].</strong>";
+            case 114: return "<strong>+ 2[Star] -2[Heart].</strong>";
+            case 115: return "<strong>+ 2[Star] +3[Heart].</strong>";
+            case 116: return "<strong>+ 4[Star].";
+            case 117: return "<strong>+ 4[Star] -3[Heart].</strong>";
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
             //case 119: return _("<strong>+ 4[Star].");
             //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
