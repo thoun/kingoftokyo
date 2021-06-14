@@ -14,14 +14,16 @@ trait DebugUtilTrait {
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
-        $this->debugSetPlayerInLocation(2343493, 2);
+        //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetPlayerEnergy(2343492, 10);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(104);
-        //$this->debugSetEnergy(10);
+        $this->debugSetEnergy(10);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
-        $this->debugSetCardInHand(JETS_CARD, 2343492);
+        $this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343492);
+        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
     }
 
     private function debugSetCardInTable($cardType) {

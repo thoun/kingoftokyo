@@ -180,7 +180,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3(), !args.rethrow3.hasDice3);
             }
 
-            if (args.energyDrink.hasCard && args.throwNumber === args.maxThrowNumber) {
+            if (args.energyDrink?.hasCard && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(` ( 1[Energy])`), () => this.buyEnergyDrink());
                 this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
             }
@@ -188,6 +188,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (args.hasSmokeCloud && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + ` (<span class="smoke-cloud token"></span>)`, () => this.useSmokeCloud());
             }
+        }
+
+        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.energyDrink?.hasCard) {
+            this.diceManager.disableDiceToggle();
         }
     }
 

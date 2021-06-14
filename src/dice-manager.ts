@@ -42,6 +42,11 @@ class DiceManager {
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     }
 
+    public disableDiceToggle() {
+        dojo.removeClass('rolled-dice', 'selectable');
+        this.action = undefined;
+    }
+
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
         this.action = 'change';
         this.changeDieArgs = args;

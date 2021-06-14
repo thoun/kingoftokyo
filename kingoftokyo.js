@@ -874,6 +874,10 @@ var DiceManager = /** @class */ (function () {
         dice.forEach(function (die) { return _this.createDice(die, selectable, inTokyo); });
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     };
+    DiceManager.prototype.disableDiceToggle = function () {
+        dojo.removeClass('rolled-dice', 'selectable');
+        this.action = undefined;
+    };
     DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
@@ -1465,6 +1469,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
         var _this = this;
+        var _a, _b;
         this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? "last" : '');
         this.diceManager.showLock();
         var dice = args.dice;
@@ -1477,13 +1482,16 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.rethrow3.hasCard) {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
             }
-            if (args.energyDrink.hasCard && args.throwNumber === args.maxThrowNumber) {
+            if (((_a = args.energyDrink) === null || _a === void 0 ? void 0 : _a.hasCard) && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(" ( 1[Energy])"), function () { return _this.buyEnergyDrink(); });
                 this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
             }
             if (args.hasSmokeCloud && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + " (<span class=\"smoke-cloud token\"></span>)", function () { return _this.useSmokeCloud(); });
             }
+        }
+        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !((_b = args.energyDrink) === null || _b === void 0 ? void 0 : _b.hasCard)) {
+            this.diceManager.disableDiceToggle();
         }
     };
     KingOfTokyo.prototype.onEnteringChangeDie = function (args, isCurrentPlayerActive) {

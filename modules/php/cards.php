@@ -635,8 +635,11 @@ trait CardsTrait {
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId),
                 'from' => $from,
-                'player_name2' => $this->getPlayerName($from),
+                'player_name2' => $this->getPlayerName($from),             
             ]);
+
+            $this->applyGetEnergy($from, $cost, 0);
+            
         } else if (array_search($id, $this->getMadeInALabCardIds($playerId)) !== false) {
             
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from top deck'), [
