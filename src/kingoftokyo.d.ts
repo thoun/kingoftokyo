@@ -50,7 +50,6 @@ interface KingOfTokyoGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
-    playerOrder: number[];
     dice: Dice[];
     visibleCards: Card[];
     playersCards: { [playerId: number]: Card[] };

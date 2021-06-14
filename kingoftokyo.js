@@ -1692,8 +1692,7 @@ var KingOfTokyo = /** @class */ (function () {
         document.getElementById(id).addEventListener('click', function () { return callback(); });
     };
     KingOfTokyo.prototype.getOrderedPlayers = function () {
-        var _this = this;
-        return this.gamedatas.playerOrder.map(function (id) { return _this.gamedatas.players[id]; });
+        return Object.values(this.gamedatas.players).sort(function (a, b) { return Number(a.player_no) - Number(b.player_no); });
     };
     KingOfTokyo.prototype.createPlayerPanels = function (gamedatas) {
         var _this = this;

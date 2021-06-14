@@ -202,7 +202,6 @@ class KingOfTokyo extends Table {
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();
-        $result['playerOrder'] = array_keys($result['players']);
 
         return $result;
     }

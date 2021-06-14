@@ -424,7 +424,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private getOrderedPlayers(): KingOfTokyoPlayer[] {
-        return this.gamedatas.playerOrder.map(id => this.gamedatas.players[id]);
+        return Object.values(this.gamedatas.players).sort((a,b) => Number(a.player_no) - Number(b.player_no));
     }
 
     private createPlayerPanels(gamedatas: KingOfTokyoGamedatas) {
