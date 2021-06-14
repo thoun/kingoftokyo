@@ -869,7 +869,6 @@
   background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
-  filter: drop-shadow(6px 6px 4px black);
 }
 #table .monster-figure.monster1 {
   background-image: url("img/monster-figure-1.png");

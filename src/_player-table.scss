@@ -154,7 +154,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
-    filter: drop-shadow(6px 6px 4px black); // TODO add it to pictures
+    // filter: drop-shadow(6px 6px 4px black); // TODO add it to pictures
 
     @for $i from 1 through 6 {
         &.monster#{$i} {
