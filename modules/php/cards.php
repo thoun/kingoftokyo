@@ -629,7 +629,7 @@ trait CardsTrait {
         if ($from > 0) {
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from ${player_name2}'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => null,
@@ -644,7 +644,7 @@ trait CardsTrait {
             
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from top deck'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => null,
@@ -657,7 +657,7 @@ trait CardsTrait {
     
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name}'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => $newCard,
@@ -753,7 +753,7 @@ trait CardsTrait {
 
         self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renew visible cards'), [
             'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
             'energy' => $this->getPlayerEnergy($playerId),
         ]);
@@ -808,7 +808,7 @@ trait CardsTrait {
 
         self::notifyAllPlayers("removeCards", clienttranslate('${player_name} sells ${card_name}'), [
             'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => $this->getPlayerName($playerId),
             'cards' => [$card],
             'card_name' =>$card->type,
             'energy' => $this->getPlayerEnergy($playerId),

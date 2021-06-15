@@ -164,7 +164,7 @@ trait PlayerTrait {
             $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
             self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and wins ${deltaPoints} [Star]'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'points' => $this->getPlayerScore($playerId),
                 'deltaPoints' => $incScore,
             ]);
@@ -342,7 +342,7 @@ trait PlayerTrait {
         if ($anotherTimeWithCard > 0) {
             self::notifyAllPlayers('playAgain', clienttranslate('${player_name} take another turn with ${card_name}'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'card_name' => $anotherTimeWithCard,
             ]);
         } else {

@@ -72,7 +72,7 @@ trait DiceTrait {
 
             self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} wins ${deltaPoints} with ${dice_value} dice'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'deltaPoints' => $points,
                 'points' => $this->getPlayerScore($playerId),
                 'diceValue' => $number,
@@ -100,7 +100,7 @@ trait DiceTrait {
         if ($this->inTokyo($playerId)) {
             self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} wins no [Heart] (player in Tokyo)'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
             ]);
         } else {
             $health = $this->getPlayerHealth($playerId);
@@ -111,7 +111,7 @@ trait DiceTrait {
 
                 self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} wins ${deltaHealth} [Heart]'), [
                     'playerId' => $playerId,
-                    'player_name' => self::getActivePlayerName(),
+                    'player_name' => $this->getPlayerName($playerId),
                     'health' => $newHealth,
                     'deltaHealth' => $diceCount,
                 ]);
@@ -124,7 +124,7 @@ trait DiceTrait {
 
         self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} wins ${deltaEnergy} [Energy]'), [
             'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => $this->getPlayerName($playerId),
             'deltaEnergy' => $diceCount,
             'energy' => $this->getPlayerEnergy($playerId),
         ]);
@@ -179,7 +179,7 @@ trait DiceTrait {
 
         self::notifyAllPlayers("resolveSmashDice", $message, [
             'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => $this->getPlayerName($playerId),
             'number' => $diceCount,
             'smashedPlayersIds' => $smashedPlayersIds,
         ]);
@@ -765,7 +765,7 @@ trait DiceTrait {
 
         self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolve dice ${dice}'), [
             'playerId' => $playerId,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => $this->getPlayerName($playerId),
             'dice' => $diceStr,
         ]);
 
@@ -842,7 +842,7 @@ trait DiceTrait {
 
             self::notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
                 'playerId' => $playerId,
-                'player_name' => self::getActivePlayerName(),
+                'player_name' => $this->getPlayerName($playerId),
                 'dice' => $diceStr,
                 'card_name' => $cardNamesStr,
             ]);
