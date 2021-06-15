@@ -1744,7 +1744,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables = this.getOrderedPlayers().map(function (player) { return new PlayerTable(_this, player, gamedatas.playersCards[Number(player.id)]); });
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
-        return this.playerTables.find(function (playerTable) { return playerTable.playerId === playerId; });
+        return this.playerTables.find(function (playerTable) { return playerTable.playerId === Number(playerId); });
     };
     KingOfTokyo.prototype.setDiceSelectorVisibility = function (visible) {
         var div = document.getElementById('rolled-dice');

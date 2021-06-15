@@ -484,7 +484,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private getPlayerTable(playerId: number): PlayerTable {
-        return this.playerTables.find(playerTable => playerTable.playerId === playerId);
+        return this.playerTables.find(playerTable => playerTable.playerId === Number(playerId));
     }
 
     private setDiceSelectorVisibility(visible: boolean) {
