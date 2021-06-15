@@ -594,8 +594,22 @@ trait DiceTrait {
             $this->resolveHealthDice($playerId, $heal);
         }
         foreach ($healPlayer as $healPlayerId => $healNumber) {
-            $this->applyGetHealth($healPlayerId, $healNumber, HEALING_RAY_CARD);
-            $this->applyLoseEnergy($healPlayerId, $healNumber * 2, 0);
+            $this->applyGetHealth($healPlayerId, $healNumber, 0);
+            
+            $playerEnergy = $this->getPlayerEnergy($healPlayerId);
+            $theoricalEnergyLoss = $healNumber * 2;
+            $energyLoss = min($playerEnergy, $theoricalEnergyLoss);
+            
+            $this->applyLoseEnergy($healPlayerId, $energyLoss, 0);
+            $this->applyGetEnergy($playerId, $energyLoss, 0);
+
+            self::notifyAllPlayers("resolveHealingRay", clienttranslate('${player_name2} wins ${healNumber} [Heart] with ${card_name} and pays ${player_name} ${energy} [Energy]'), [
+                'player_name' => $this->getPlayerName($playerId),
+                'player_name2' => $this->getPlayerName($healPlayerId),
+                'energy' => $energyLoss,
+                'healNumber' => $healNumber,
+                'card_name' => HEALING_RAY_CARD
+            ]);
         }
 
         $this->gamestate->nextState('next');
