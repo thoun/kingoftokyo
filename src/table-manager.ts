@@ -38,30 +38,32 @@ class TableManager {
     public zoom: number = 1;
 
     constructor(private game: KingOfTokyoGame, playerTables: PlayerTable[]) { 
-        const start = new Date().getTime();       
         const zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
         if (zoomStr) {
             this.zoom = Number(zoomStr);
         }
-        console.log('TableManager read localStorage', new Date().getTime() - start);
 
         this.setPlayerTables(playerTables);
-        console.log('TableManager setPlayerTables', new Date().getTime() - start);
 
         (this.game as any).onScreenWidthChange = () => this.setAutoZoomAndPlacePlayerTables();
-        console.log('TableManager onScreenWidthChange', new Date().getTime() - start);
     }
 
-    private setPlayerTables(playerTables: PlayerTable[]) {
+    private setPlayerTables(playerTablesWithNulls: PlayerTable[]) {
+        const start = new Date().getTime();       
         const currentPlayerId = Number(this.game.getPlayerId());
-        const playerTablesOrdered = playerTables.filter(playerTable => !!playerTable).sort((a, b) => a.playerNo - b.playerNo);
+        const playerTables = playerTablesWithNulls.filter(playerTable => !!playerTable);
+        console.log('TableManager setPlayerTables after filter', new Date().getTime() - start);
+        const playerTablesOrdered = playerTables.sort((a, b) => a.playerNo - b.playerNo);
+        console.log('TableManager setPlayerTables after sort', new Date().getTime() - start);
         const playerIndex = playerTablesOrdered.findIndex(playerTable => playerTable.playerId === currentPlayerId);
+        console.log('TableManager setPlayerTables after find index', new Date().getTime() - start);
         
         if (playerIndex > 0) { // not spectator (or 0)            
             this.playerTables = [...playerTablesOrdered.slice(playerIndex), ...playerTablesOrdered.slice(0, playerIndex)];
         } else { // spectator
-            this.playerTables = playerTablesOrdered.filter(playerTable => !!playerTable);
+            this.playerTables = playerTablesOrdered;
         }
+        console.log('TableManager setPlayerTables after slice', new Date().getTime() - start);
     }
 
     public setAutoZoomAndPlacePlayerTables() {

@@ -653,27 +653,29 @@ var TableManager = /** @class */ (function () {
         var _this = this;
         this.game = game;
         this.zoom = 1;
-        var start = new Date().getTime();
         var zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
         if (zoomStr) {
             this.zoom = Number(zoomStr);
         }
-        console.log('TableManager read localStorage', new Date().getTime() - start);
         this.setPlayerTables(playerTables);
-        console.log('TableManager setPlayerTables', new Date().getTime() - start);
         this.game.onScreenWidthChange = function () { return _this.setAutoZoomAndPlacePlayerTables(); };
-        console.log('TableManager onScreenWidthChange', new Date().getTime() - start);
     }
-    TableManager.prototype.setPlayerTables = function (playerTables) {
+    TableManager.prototype.setPlayerTables = function (playerTablesWithNulls) {
+        var start = new Date().getTime();
         var currentPlayerId = Number(this.game.getPlayerId());
-        var playerTablesOrdered = playerTables.filter(function (playerTable) { return !!playerTable; }).sort(function (a, b) { return a.playerNo - b.playerNo; });
+        var playerTables = playerTablesWithNulls.filter(function (playerTable) { return !!playerTable; });
+        console.log('TableManager setPlayerTables after filter', new Date().getTime() - start);
+        var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
+        console.log('TableManager setPlayerTables after sort', new Date().getTime() - start);
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
+        console.log('TableManager setPlayerTables after find index', new Date().getTime() - start);
         if (playerIndex > 0) { // not spectator (or 0)            
             this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
         }
         else { // spectator
-            this.playerTables = playerTablesOrdered.filter(function (playerTable) { return !!playerTable; });
+            this.playerTables = playerTablesOrdered;
         }
+        console.log('TableManager setPlayerTables after slice', new Date().getTime() - start);
     };
     TableManager.prototype.setAutoZoomAndPlacePlayerTables = function () {
         var zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
@@ -1371,8 +1373,6 @@ var KingOfTokyo = /** @class */ (function () {
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
         var _this = this;
-        var start = new Date().getTime();
-        console.log('setup start');
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1, 2, 3, 4, 5, 6].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
@@ -1383,16 +1383,11 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
         this.createPlayerPanels(gamedatas);
-        console.log('setup player panels created', new Date().getTime() - start);
         this.diceManager = new DiceManager(this, gamedatas.dice);
-        console.log('setup dice manager created', new Date().getTime() - start);
         this.cards = new Cards(this);
         this.createVisibleCards(gamedatas.visibleCards);
-        console.log('setup table cards created', new Date().getTime() - start);
         this.createPlayerTables(gamedatas);
-        console.log('setup player tables created', new Date().getTime() - start);
         this.tableManager = new TableManager(this, this.playerTables);
-        console.log('setup table manager created', new Date().getTime() - start);
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setMimicToken(gamedatas.mimickedCard);
@@ -1402,9 +1397,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
         }
         this.setupNotifications();
-        console.log('setup notif', new Date().getTime() - start);
         // this.setupPreferences();
-        console.log('setup pref', new Date().getTime() - start);
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
@@ -1471,7 +1464,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.showActivePlayer = function (playerId) {
-        this.playerTables.forEach(function (playerTable) { return playerTable.setActivePlayer(playerId == playerTable.playerId); });
+        // this.playerTables.forEach(playerTable => playerTable.setActivePlayer(playerId == playerTable.playerId));
     };
     KingOfTokyo.prototype.setGamestateDescription = function (property) {
         if (property === void 0) { property = ''; }
