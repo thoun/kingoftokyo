@@ -37,15 +37,15 @@ class TableManager {
     private playerTables: PlayerTable[]; // players in order, but starting with player_id
     public zoom: number = 1;
 
-    constructor(private game: KingOfTokyoGame, playerTables: PlayerTable[]) {
-        this.setPlayerTables(playerTables);
-
-        (this.game as any).onScreenWidthChange = () => this.placePlayerTable();
-        
+    constructor(private game: KingOfTokyoGame, playerTables: PlayerTable[]) {        
         const zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
         if (zoomStr) {
-            this.setZoom(Number(zoomStr));
+            this.zoom = Number(zoomStr);
         }
+
+        this.setPlayerTables(playerTables);
+
+        (this.game as any).onScreenWidthChange = () => this.setAutoZoomAndPlacePlayerTables();
     }
 
     private setPlayerTables(playerTables: PlayerTable[]) {
@@ -60,17 +60,23 @@ class TableManager {
         }
     }
 
+    public setAutoZoomAndPlacePlayerTables() {
+        const zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
+        let newZoom = this.zoom;
+        while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth/newZoom < CENTER_TABLE_WIDTH) {
+            newZoom = ZOOM_LEVELS[ZOOM_LEVELS.indexOf(this.zoom) - 1];
+        }
+        // zoom will also place player tables. we call setZoom even if this method didn't change it because it might have been changed by localStorage zoom
+        this.setZoom(newZoom);
+    }
+
     public placePlayerTable() {
+        const start = new Date().getTime();
         const players = this.playerTables.length;
 
         const zoomWrapper = document.getElementById('zoom-wrapper');
         const tableDiv = document.getElementById('table');
         let tableWidth = tableDiv.clientWidth;
-
-        while (this.zoom > ZOOM_LEVELS[0] && tableWidth/this.zoom < CENTER_TABLE_WIDTH) {
-            this.zoomOut();
-            tableWidth = tableDiv.clientWidth;
-        }
 
         this.playerTables.forEach(playerTable => dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length))
         
@@ -148,6 +154,8 @@ class TableManager {
 
         tableDiv.style.height = `${height}px`;
         zoomWrapper.style.height = `${height * this.zoom}px`;
+
+        console.log('placePlayerTable done in ', new Date().getTime() - start);
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {

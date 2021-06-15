@@ -39,7 +39,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     */
 
     public setup(gamedatas: KingOfTokyoGamedatas) {
-        const debut = new Date().getTime();
+        const start = new Date().getTime();
         console.log('setup start');
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
@@ -55,16 +55,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         log('gamedatas', gamedatas);
 
         this.createPlayerPanels(gamedatas); 
-        console.log('setup player panels created', new Date().getTime() - debut);
+        console.log('setup player panels created', new Date().getTime() - start);
         this.diceManager = new DiceManager(this, gamedatas.dice);  
-        console.log('setup dice manager created', new Date().getTime() - debut);
+        console.log('setup dice manager created', new Date().getTime() - start);
         this.cards = new Cards(this);
         this.createVisibleCards(gamedatas.visibleCards);
-        console.log('setup table cards created', new Date().getTime() - debut);
+        console.log('setup table cards created', new Date().getTime() - start);
         this.createPlayerTables(gamedatas);
-        console.log('setup player tables created', new Date().getTime() - debut);
+        console.log('setup player tables created', new Date().getTime() - start);
         this.tableManager = new TableManager(this, this.playerTables);
-        console.log('setup table manager created', new Date().getTime() - debut);
+        console.log('setup table manager created', new Date().getTime() - start);
         // placement of monster must be after TableManager first paint
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
         this.setMimicToken(gamedatas.mimickedCard);
@@ -76,9 +76,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.setupNotifications();
-        console.log('setup notif', new Date().getTime() - debut);
-        this.setupPreferences();
-        console.log('setup pref', new Date().getTime() - debut);
+        console.log('setup notif', new Date().getTime() - start);
+        // this.setupPreferences();
+        console.log('setup pref', new Date().getTime() - start);
 
         document.getElementById('zoom-out').addEventListener('click', () => this.tableManager?.zoomOut());
         document.getElementById('zoom-in').addEventListener('click', () => this.tableManager?.zoomIn());
@@ -870,16 +870,16 @@ class KingOfTokyo implements KingOfTokyoGame {
           dojo.query("#ingame_menu_content .preference_control"),
           el => onchange({ target: el })
         );
-      }
+    }
       
-      private onPreferenceChange(prefId: number, prefValue: number) {
+    private onPreferenceChange(prefId: number, prefValue: number) {
         switch (prefId) {
             // KEEP
             case 201: 
                 this.playerTables.forEach(playerTable => playerTable.setFont(prefValue));
                 break;
         }
-      }
+    }
 
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications
