@@ -37,15 +37,19 @@ class TableManager {
     private playerTables: PlayerTable[]; // players in order, but starting with player_id
     public zoom: number = 1;
 
-    constructor(private game: KingOfTokyoGame, playerTables: PlayerTable[]) {        
+    constructor(private game: KingOfTokyoGame, playerTables: PlayerTable[]) { 
+        const start = new Date().getTime();       
         const zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
         if (zoomStr) {
             this.zoom = Number(zoomStr);
         }
+        console.log('TableManager read localStorage', new Date().getTime() - start);
 
         this.setPlayerTables(playerTables);
+        console.log('TableManager setPlayerTables', new Date().getTime() - start);
 
         (this.game as any).onScreenWidthChange = () => this.setAutoZoomAndPlacePlayerTables();
+        console.log('TableManager onScreenWidthChange', new Date().getTime() - start);
     }
 
     private setPlayerTables(playerTables: PlayerTable[]) {
@@ -71,7 +75,6 @@ class TableManager {
     }
 
     public placePlayerTable() {
-        const start = new Date().getTime();
         const players = this.playerTables.length;
 
         const zoomWrapper = document.getElementById('zoom-wrapper');
@@ -154,8 +157,6 @@ class TableManager {
 
         tableDiv.style.height = `${height}px`;
         zoomWrapper.style.height = `${height * this.zoom}px`;
-
-        console.log('placePlayerTable done in ', new Date().getTime() - start);
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {

@@ -653,12 +653,16 @@ var TableManager = /** @class */ (function () {
         var _this = this;
         this.game = game;
         this.zoom = 1;
+        var start = new Date().getTime();
         var zoomStr = localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY);
         if (zoomStr) {
             this.zoom = Number(zoomStr);
         }
+        console.log('TableManager read localStorage', new Date().getTime() - start);
         this.setPlayerTables(playerTables);
+        console.log('TableManager setPlayerTables', new Date().getTime() - start);
         this.game.onScreenWidthChange = function () { return _this.setAutoZoomAndPlacePlayerTables(); };
+        console.log('TableManager onScreenWidthChange', new Date().getTime() - start);
     }
     TableManager.prototype.setPlayerTables = function (playerTables) {
         var currentPlayerId = Number(this.game.getPlayerId());
@@ -682,7 +686,6 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
-        var start = new Date().getTime();
         var players = this.playerTables.length;
         var zoomWrapper = document.getElementById('zoom-wrapper');
         var tableDiv = document.getElementById('table');
@@ -760,7 +763,6 @@ var TableManager = /** @class */ (function () {
         });
         tableDiv.style.height = height + "px";
         zoomWrapper.style.height = height * this.zoom + "px";
-        console.log('placePlayerTable done in ', new Date().getTime() - start);
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
         var cardRows = Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW);
