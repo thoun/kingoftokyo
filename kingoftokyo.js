@@ -1362,6 +1362,8 @@ var KingOfTokyo = /** @class */ (function () {
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
         var _this = this;
+        var debut = new Date().getTime();
+        console.log('setup start');
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1, 2, 3, 4, 5, 6].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
@@ -1372,11 +1374,16 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
         this.createPlayerPanels(gamedatas);
+        console.log('setup player panels created', new Date().getTime() - debut);
         this.diceManager = new DiceManager(this, gamedatas.dice);
+        console.log('setup dice manager created', new Date().getTime() - debut);
         this.cards = new Cards(this);
         this.createVisibleCards(gamedatas.visibleCards);
+        console.log('setup table cards created', new Date().getTime() - debut);
         this.createPlayerTables(gamedatas);
+        console.log('setup player tables created', new Date().getTime() - debut);
         this.tableManager = new TableManager(this, this.playerTables);
+        console.log('setup table manager created', new Date().getTime() - debut);
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setMimicToken(gamedatas.mimickedCard);
@@ -1386,7 +1393,9 @@ var KingOfTokyo = /** @class */ (function () {
             this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
         }
         this.setupNotifications();
+        console.log('setup notif', new Date().getTime() - debut);
         this.setupPreferences();
+        console.log('setup pref', new Date().getTime() - debut);
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
