@@ -374,9 +374,19 @@ trait DiceTrait {
             throw new \Error('No 3 die');
         }
 
-        $dice->value = bga_rand(1, 6);
+        $newValue = bga_rand(1, 6);
         self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$die->id);
-        self::DbQuery("UPDATE dice SET `dice_value` = ".$die->value.", `rolled` = true where `dice_id` = ".$die->id);
+        self::DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$die->id);
+
+        $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+        self::notifyAllPlayers('rethrow3', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => BACKGROUND_DWELLER_CARD,
+            'dieId' => $die->id,
+            'die_face_before' => $this->getDieFaceLogName($die->value),
+            'die_face_after' => $this->getDieFaceLogName($newValue),
+        ]);
 
         $this->gamestate->nextState('rethrow');
     }
