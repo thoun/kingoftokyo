@@ -48,10 +48,9 @@ class TableManager {
         (this.game as any).onScreenWidthChange = () => this.setAutoZoomAndPlacePlayerTables();
     }
 
-    private setPlayerTables(playerTablesWithNulls: PlayerTable[]) {
+    private setPlayerTables(playerTables: PlayerTable[]) {
         const start = new Date().getTime();       
         const currentPlayerId = Number(this.game.getPlayerId());
-        const playerTables = playerTablesWithNulls.filter(playerTable => !!playerTable);
         console.log('TableManager setPlayerTables after filter', new Date().getTime() - start);
         const playerTablesOrdered = playerTables.sort((a, b) => a.playerNo - b.playerNo);
         console.log('TableManager setPlayerTables after sort', new Date().getTime() - start);

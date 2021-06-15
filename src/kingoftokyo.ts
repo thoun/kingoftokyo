@@ -69,7 +69,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.setupNotifications();
-        // this.setupPreferences();
+        this.setupPreferences();
 
         document.getElementById('zoom-out').addEventListener('click', () => this.tableManager?.zoomOut());
         document.getElementById('zoom-in').addEventListener('click', () => this.tableManager?.zoomIn());
@@ -145,7 +145,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private showActivePlayer(playerId: number) {
-        // this.playerTables.forEach(playerTable => playerTable.setActivePlayer(playerId == playerTable.playerId));
+        this.playerTables.forEach(playerTable => playerTable.setActivePlayer(playerId == playerTable.playerId));
     }
     
     private setGamestateDescription(property: string = '') {
@@ -480,9 +480,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
-        this.getOrderedPlayers().forEach(player =>
-            this.playerTables[Number(player.id)] = new PlayerTable(this, player, gamedatas.playersCards[Number(player.id)])
-        );
+        this.playerTables = this.getOrderedPlayers().map(player => new PlayerTable(this, player, gamedatas.playersCards[Number(player.id)]));
+    }
+
+    private getPlayerTable(playerId: number): PlayerTable {
+        return this.playerTables.find(playerTable => playerTable.playerId === playerId);
     }
 
     private setDiceSelectorVisibility(visible: boolean) {
@@ -638,7 +640,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public  psychicProbeRollDie(id: number) {
+    public psychicProbeRollDie(id: number) {
         if(!(this as any).checkAction('psychicProbeRollDie')) {
             return;
         }
@@ -955,13 +957,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
-        this.playerTables[notif.args.playerId].leaveTokyo();
+        this.getPlayerTable(notif.args.playerId).leaveTokyo();
         dojo.removeClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
         dojo.removeClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
-        this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
+        this.getPlayerTable(notif.args.playerId).enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
         dojo.addClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
         dojo.addClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
@@ -973,15 +975,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setEnergy(notif.args.playerId, notif.args.energy);
 
         if (newCard) {
-            this.cards.moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card);
+            this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
             this.cards.addCardsToStock(this.visibleCards, [newCard], 'deck');
         } else if (notif.args.from > 0) {
-            this.cards.moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card);
+            this.cards.moveToAnotherStock(this.getPlayerTable(notif.args.from).cards, this.getPlayerTable(notif.args.playerId).cards, card);
         } else { // from Made in a lab Pick
             if (this.pickCard) { // active player
-                this.cards.moveToAnotherStock(this.pickCard, this.playerTables[notif.args.playerId].cards, card);
+                this.cards.moveToAnotherStock(this.pickCard, this.getPlayerTable(notif.args.playerId).cards, card);
             } else {
-                this.cards.addCardsToStock(this.playerTables[notif.args.playerId].cards, [card], 'deck');
+                this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
         }
 
@@ -989,7 +991,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_removeCards(notif: Notif<NotifRemoveCardsArgs>) {
-        this.playerTables[notif.args.playerId].removeCards(notif.args.cards);
+        this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
         this.tableManager.placePlayerTable(); // adapt after removed cards
     }
 
@@ -1034,7 +1036,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {
-        this.cards.placeTokensOnCard(this.playerTables[notif.args.playerId].cards, notif.args.card, notif.args.playerId);
+        this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
     }
 
     notif_toggleRapidHealing(notif: Notif<NotifToggleRapidHealingArgs>) {
@@ -1064,12 +1066,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
-        this.playerTables[playerId].setPoints(points, delay);
+        this.getPlayerTable(playerId).setPoints(points, delay);
     }
     
     private setHealth(playerId: number, health: number, delay: number = 0) {
         this.healthCounters[playerId].toValue(health);
-        this.playerTables[playerId].setHealth(health, delay);
+        this.getPlayerTable(playerId).setHealth(health, delay);
         this.checkRapidHealingButtonState();
     }
     
@@ -1080,7 +1082,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     
     private setEnergy(playerId: number, energy: number, delay: number = 0) {
         this.energyCounters[playerId].toValue(energy);
-        this.playerTables[playerId].setEnergy(energy, delay);
+        this.getPlayerTable(playerId).setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
     }
@@ -1115,7 +1117,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         document.getElementById(`overall_player_board_${playerId}`).classList.add('eliminated-player');
         dojo.place(`<div class="icon dead"></div>`, `player_board_${playerId}`);
 
-        this.playerTables[playerId].eliminatePlayer();
+        this.getPlayerTable(playerId).eliminatePlayer();
         this.tableManager.placePlayerTable(); // because all player's card were removed
 
     }

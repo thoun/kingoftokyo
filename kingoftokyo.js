@@ -660,10 +660,9 @@ var TableManager = /** @class */ (function () {
         this.setPlayerTables(playerTables);
         this.game.onScreenWidthChange = function () { return _this.setAutoZoomAndPlacePlayerTables(); };
     }
-    TableManager.prototype.setPlayerTables = function (playerTablesWithNulls) {
+    TableManager.prototype.setPlayerTables = function (playerTables) {
         var start = new Date().getTime();
         var currentPlayerId = Number(this.game.getPlayerId());
-        var playerTables = playerTablesWithNulls.filter(function (playerTable) { return !!playerTable; });
         console.log('TableManager setPlayerTables after filter', new Date().getTime() - start);
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
         console.log('TableManager setPlayerTables after sort', new Date().getTime() - start);
@@ -1397,7 +1396,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
         }
         this.setupNotifications();
-        // this.setupPreferences();
+        this.setupPreferences();
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
@@ -1464,7 +1463,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.showActivePlayer = function (playerId) {
-        // this.playerTables.forEach(playerTable => playerTable.setActivePlayer(playerId == playerTable.playerId));
+        this.playerTables.forEach(function (playerTable) { return playerTable.setActivePlayer(playerId == playerTable.playerId); });
     };
     KingOfTokyo.prototype.setGamestateDescription = function (property) {
         if (property === void 0) { property = ''; }
@@ -1742,9 +1741,10 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
-        this.getOrderedPlayers().forEach(function (player) {
-            return _this.playerTables[Number(player.id)] = new PlayerTable(_this, player, gamedatas.playersCards[Number(player.id)]);
-        });
+        this.playerTables = this.getOrderedPlayers().map(function (player) { return new PlayerTable(_this, player, gamedatas.playersCards[Number(player.id)]); });
+    };
+    KingOfTokyo.prototype.getPlayerTable = function (playerId) {
+        return this.playerTables.find(function (playerTable) { return playerTable.playerId === playerId; });
     };
     KingOfTokyo.prototype.setDiceSelectorVisibility = function (visible) {
         var div = document.getElementById('rolled-dice');
@@ -2138,12 +2138,12 @@ var KingOfTokyo = /** @class */ (function () {
         this.eliminatePlayer(playerId);
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (notif) {
-        this.playerTables[notif.args.playerId].leaveTokyo();
+        this.getPlayerTable(notif.args.playerId).leaveTokyo();
         dojo.removeClass("overall_player_board_" + notif.args.playerId, 'intokyo');
         dojo.removeClass("monster-board-wrapper-" + notif.args.playerId, 'intokyo');
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
-        this.playerTables[notif.args.playerId].enterTokyo(notif.args.location);
+        this.getPlayerTable(notif.args.playerId).enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
         dojo.addClass("overall_player_board_" + notif.args.playerId, 'intokyo');
         dojo.addClass("monster-board-wrapper-" + notif.args.playerId, 'intokyo');
@@ -2153,24 +2153,24 @@ var KingOfTokyo = /** @class */ (function () {
         var newCard = notif.args.newCard;
         this.setEnergy(notif.args.playerId, notif.args.energy);
         if (newCard) {
-            this.cards.moveToAnotherStock(this.visibleCards, this.playerTables[notif.args.playerId].cards, card);
+            this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
             this.cards.addCardsToStock(this.visibleCards, [newCard], 'deck');
         }
         else if (notif.args.from > 0) {
-            this.cards.moveToAnotherStock(this.playerTables[notif.args.from].cards, this.playerTables[notif.args.playerId].cards, card);
+            this.cards.moveToAnotherStock(this.getPlayerTable(notif.args.from).cards, this.getPlayerTable(notif.args.playerId).cards, card);
         }
         else { // from Made in a lab Pick
             if (this.pickCard) { // active player
-                this.cards.moveToAnotherStock(this.pickCard, this.playerTables[notif.args.playerId].cards, card);
+                this.cards.moveToAnotherStock(this.pickCard, this.getPlayerTable(notif.args.playerId).cards, card);
             }
             else {
-                this.cards.addCardsToStock(this.playerTables[notif.args.playerId].cards, [card], 'deck');
+                this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
         }
         this.tableManager.placePlayerTable(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_removeCards = function (notif) {
-        this.playerTables[notif.args.playerId].removeCards(notif.args.cards);
+        this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
         this.tableManager.placePlayerTable(); // adapt after removed cards
     };
     KingOfTokyo.prototype.notif_setMimicToken = function (notif) {
@@ -2204,7 +2204,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
     };
     KingOfTokyo.prototype.notif_setCardTokens = function (notif) {
-        this.cards.placeTokensOnCard(this.playerTables[notif.args.playerId].cards, notif.args.card, notif.args.playerId);
+        this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_toggleRapidHealing = function (notif) {
         if (notif.args.active) {
@@ -2232,12 +2232,12 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         if (delay === void 0) { delay = 0; }
         (_a = this.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.toValue(points);
-        this.playerTables[playerId].setPoints(points, delay);
+        this.getPlayerTable(playerId).setPoints(points, delay);
     };
     KingOfTokyo.prototype.setHealth = function (playerId, health, delay) {
         if (delay === void 0) { delay = 0; }
         this.healthCounters[playerId].toValue(health);
-        this.playerTables[playerId].setHealth(health, delay);
+        this.getPlayerTable(playerId).setHealth(health, delay);
         this.checkRapidHealingButtonState();
     };
     KingOfTokyo.prototype.setMaxHealth = function (playerId, maxHealth) {
@@ -2247,7 +2247,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setEnergy = function (playerId, energy, delay) {
         if (delay === void 0) { delay = 0; }
         this.energyCounters[playerId].toValue(energy);
-        this.playerTables[playerId].setEnergy(energy, delay);
+        this.getPlayerTable(playerId).setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
     };
@@ -2276,7 +2276,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.players[playerId].eliminated = 1;
         document.getElementById("overall_player_board_" + playerId).classList.add('eliminated-player');
         dojo.place("<div class=\"icon dead\"></div>", "player_board_" + playerId);
-        this.playerTables[playerId].eliminatePlayer();
+        this.getPlayerTable(playerId).eliminatePlayer();
         this.tableManager.placePlayerTable(); // because all player's card were removed
     };
     /* This enable to inject translatable styled things to logs or action bar */
