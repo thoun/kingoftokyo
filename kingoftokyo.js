@@ -1651,6 +1651,10 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'throwDice':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+                    var argsThrowDice = args;
+                    if (argsThrowDice.throwNumber === argsThrowDice.maxThrowNumber && !argsThrowDice.energyDrink.hasCard && !argsThrowDice.hasSmokeCloud && !argsThrowDice.rethrow3.hasCard) {
+                        this.startActionTimer('resolve_button', 3);
+                    }
                     break;
                 case 'changeDie':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
@@ -1674,6 +1678,10 @@ var KingOfTokyo = /** @class */ (function () {
                         dojo.addClass('renew_button', 'disabled');
                     }
                     this.addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
+                    var argsBuyCard = args;
+                    if (!argsBuyCard.canBuyOrNenew) {
+                        this.startActionTimer('endTurn_button', 3);
+                    }
                     break;
                 case 'opportunistBuyCard':
                     this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
@@ -1887,7 +1895,7 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.goToChangeDie = function () {
-        if (!this.checkAction('goToChangeDie')) {
+        if (!this.checkAction('goToChangeDie', true)) {
             return;
         }
         this.takeAction('goToChangeDie');
@@ -1945,7 +1953,7 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.sellCard = function (id) {
-        if (!this.checkAction('sellCard')) {
+        if (!this.checkAction('sellCard', true)) {
             return;
         }
         this.takeAction('sellCard', {
@@ -2063,6 +2071,27 @@ var KingOfTokyo = /** @class */ (function () {
                 this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
                 break;
         }
+    };
+    KingOfTokyo.prototype.startActionTimer = function (buttonId, time) {
+        var button = document.getElementById(buttonId);
+        var actionTimerId = null;
+        var _actionTimerLabel = button.innerHTML;
+        var _actionTimerSeconds = time;
+        var actionTimerFunction = function () {
+            var button = document.getElementById(buttonId);
+            if (button == null) {
+                window.clearInterval(actionTimerId);
+            }
+            else if (_actionTimerSeconds-- > 1) {
+                button.innerHTML = _actionTimerLabel + ' (' + _actionTimerSeconds + ')';
+            }
+            else {
+                window.clearInterval(actionTimerId);
+                button.click();
+            }
+        };
+        actionTimerFunction();
+        actionTimerId = window.setInterval(function () { return actionTimerFunction(); }, 1000);
     };
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications

@@ -356,6 +356,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'throwDice':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+
+                    const argsThrowDice = args as EnteringThrowDiceArgs;
+                    if (argsThrowDice.throwNumber === argsThrowDice.maxThrowNumber && !argsThrowDice.energyDrink.hasCard && !argsThrowDice.hasSmokeCloud && !argsThrowDice.rethrow3.hasCard) {
+                        this.startActionTimer('resolve_button', 3);
+                    }
                     break;
                 case 'changeDie':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
@@ -381,6 +386,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                         dojo.addClass('renew_button', 'disabled');
                     }
                     (this as any).addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
+
+                    const argsBuyCard = args as EnteringBuyCardArgs;
+                    if (!argsBuyCard.canBuyOrNenew) {
+                        this.startActionTimer('endTurn_button', 3);
+                    }
                     break;
                 case 'opportunistBuyCard':
                     (this as any).addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
@@ -651,7 +661,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public goToChangeDie() {
-        if(!(this as any).checkAction('goToChangeDie')) {
+        if(!(this as any).checkAction('goToChangeDie', true)) {
             return;
         }
 
@@ -726,7 +736,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public sellCard(id: number | string) {
-        if(!(this as any).checkAction('sellCard')) {
+        if(!(this as any).checkAction('sellCard', true)) {
             return;
         }
 
@@ -873,6 +883,30 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
         }
     }
+
+
+
+    private startActionTimer(buttonId: string, time: number) {
+        const button = document.getElementById(buttonId);
+ 
+        let actionTimerId = null;
+        const _actionTimerLabel = button.innerHTML;
+        let _actionTimerSeconds = time;
+        const actionTimerFunction = () => {
+          const button = document.getElementById(buttonId);
+          if (button == null) {
+            window.clearInterval(actionTimerId);
+          } else if (_actionTimerSeconds-- > 1) {
+            button.innerHTML = _actionTimerLabel + ' (' + _actionTimerSeconds + ')';
+          } else {
+            window.clearInterval(actionTimerId);
+            button.click();
+          }
+        };
+        actionTimerFunction();
+        actionTimerId = window.setInterval(() => actionTimerFunction(), 1000);
+      }
+
 
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications

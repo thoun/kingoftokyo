@@ -993,22 +993,34 @@ trait CardsTrait {
         $playerId = self::getActivePlayerId();
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
+        $canBuyOrNenew = $playerEnergy >= 2;
+
         // parasitic tentacles
         $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) > 0;
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         
-        $disabledCards = array_values(array_filter($cards, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
-        $disabledIds = array_map(function ($card) { return $card->id; }, $disabledCards);
+        $disabledIds = [];
+        foreach ($cards as $card) {
+            if ($this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                $canBuyOrNenew = true;
+            } else {
+                $disabledIds[] = $card->id;
+            }
+        }
 
         if ($canBuyFromPlayers) {
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
-                $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) use ($playerId) { return !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
-                $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCards);
-                
-                $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
+
+                foreach ($cardsOfPlayer as $card) {
+                    if ($this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                        $canBuyOrNenew = true;
+                    } else {
+                        $disabledIds[] = $card->id;
+                    }
+                }
             }
         }
 
@@ -1022,9 +1034,11 @@ trait CardsTrait {
                 $pickCards = $this->getCardsFromDb($this->cards->getCardsOnTop($canPick, 'deck'));
                 $this->setMadeInALabCardIds($playerId, array_map(function($card) { return $card->id; }, $pickCards));
 
-                foreach($pickCards as $pickCard) {
-                    if (!$this->canBuyCard($playerId, $this->getCardCost($playerId, $pickCard->type))) {
-                        $disabledIds[] = $pickCard->id;
+                foreach ($pickCards as $card) {
+                    if ($this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                        $canBuyOrNenew = true;
+                    } else {
+                        $disabledIds[] = $card->id;
                     }
                 }
 
@@ -1042,6 +1056,7 @@ trait CardsTrait {
         return [
             'disabledIds' => $disabledIds,
             'canBuyFromPlayers' => $canBuyFromPlayers,
+            'canBuyOrNenew' => $canBuyOrNenew,
         ] + $pickArgs;
     }
 

@@ -110,6 +110,7 @@ interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
 interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
+    canBuyOrNenew: boolean;
     _private: {
         pickCards: Card[];
     };
