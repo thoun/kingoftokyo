@@ -184,7 +184,7 @@ trait PlayerTrait {
             $incScore = 2;
 
             $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
-            self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and wins ${deltaPoints} [Star]'), [
+            self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'points' => $this->getPlayerScore($playerId),
