@@ -17,6 +17,8 @@
   background-position: 75% top;
   margin-bottom: -5px;
   height: 45px;
+  background-size: auto;
+  width: auto;
 }
 .player-board .player_score, .player-board .fa-star {
   font-weight: bold;
@@ -864,29 +866,6 @@
 }
 #table .monster-figure {
   position: relative;
-  width: 150px;
-  height: 150px;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-#table .monster-figure.monster1 {
-  background-image: url("img/monster-figure-1.png");
-}
-#table .monster-figure.monster2 {
-  background-image: url("img/monster-figure-2.png");
-}
-#table .monster-figure.monster3 {
-  background-image: url("img/monster-figure-3.png");
-}
-#table .monster-figure.monster4 {
-  background-image: url("img/monster-figure-4.png");
-}
-#table .monster-figure.monster5 {
-  background-image: url("img/monster-figure-5.png");
-}
-#table .monster-figure.monster6 {
-  background-image: url("img/monster-figure-6.png");
 }
 
 @font-face {
@@ -903,30 +882,6 @@ html {
 
 .whiteblock {
   background: #FFFFFFAA;
-}
-
-.monster1 {
-  background-image: url("img/monster-figure-1.png");
-}
-
-.monster2 {
-  background-image: url("img/monster-figure-2.png");
-}
-
-.monster3 {
-  background-image: url("img/monster-figure-3.png");
-}
-
-.monster4 {
-  background-image: url("img/monster-figure-4.png");
-}
-
-.monster5 {
-  background-image: url("img/monster-figure-5.png");
-}
-
-.monster6 {
-  background-image: url("img/monster-figure-6.png");
 }
 
 .icon {
@@ -959,6 +914,49 @@ html {
 }
 #page-title .icon {
   margin: -5px 0;
+}
+
+#monster-pick {
+  display: flex;
+  align-content: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 20px;
+}
+#monster-pick.selectable .monster-figure {
+  cursor: pointer;
+}
+
+.monster-figure {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.monster-figure.monster1 {
+  background-image: url("img/monster-figure-1.png");
+}
+.monster-figure.monster2 {
+  background-image: url("img/monster-figure-2.png");
+}
+.monster-figure.monster3 {
+  background-image: url("img/monster-figure-3.png");
+}
+.monster-figure.monster4 {
+  background-image: url("img/monster-figure-4.png");
+}
+.monster-figure.monster5 {
+  background-image: url("img/monster-figure-5.png");
+}
+.monster-figure.monster6 {
+  background-image: url("img/monster-figure-6.png");
+}
+
+#kot-table.pickMonster {
+  display: none;
 }
 
 #rolled-dice-and-rapid-healing {

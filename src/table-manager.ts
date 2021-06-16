@@ -66,6 +66,10 @@ class TableManager {
     }
 
     public setAutoZoomAndPlacePlayerTables() {
+        if (dojo.hasClass('kot-table', 'pickMonster')) {
+            return;
+        }
+        
         const zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
         let newZoom = this.zoom;
         while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth/newZoom < CENTER_TABLE_WIDTH) {
@@ -76,6 +80,9 @@ class TableManager {
     }
 
     public placePlayerTable() {
+        if (dojo.hasClass('kot-table', 'pickMonster')) {
+            return;
+        }
         const players = this.playerTables.length;
 
         const zoomWrapper = document.getElementById('zoom-wrapper');

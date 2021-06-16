@@ -612,6 +612,13 @@ var PlayerTable = /** @class */ (function () {
         }
         div.dataset.placed = JSON.stringify(placed);
     };
+    PlayerTable.prototype.setMonster = function (monster) {
+        var newMonsterClass = "monster" + monster;
+        dojo.removeClass("monster-figure-" + this.playerId, 'monster0');
+        dojo.addClass("monster-figure-" + this.playerId, newMonsterClass);
+        dojo.removeClass("monster-board-" + this.playerId, 'monster0');
+        dojo.addClass("monster-board-" + this.playerId, newMonsterClass);
+    };
     return PlayerTable;
 }());
 var __spreadArray = (this && this.__spreadArray) || function (to, from) {
@@ -677,6 +684,9 @@ var TableManager = /** @class */ (function () {
         console.log('TableManager setPlayerTables after slice', new Date().getTime() - start);
     };
     TableManager.prototype.setAutoZoomAndPlacePlayerTables = function () {
+        if (dojo.hasClass('kot-table', 'pickMonster')) {
+            return;
+        }
         var zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
         var newZoom = this.zoom;
         while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth / newZoom < CENTER_TABLE_WIDTH) {
@@ -687,6 +697,9 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
+        if (dojo.hasClass('kot-table', 'pickMonster')) {
+            return;
+        }
         var players = this.playerTables.length;
         var zoomWrapper = document.getElementById('zoom-wrapper');
         var tableDiv = document.getElementById('table');
@@ -1427,12 +1440,22 @@ var KingOfTokyo = /** @class */ (function () {
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
         switch (stateName) {
+            case 'pickMonster':
+                dojo.addClass('kot-table', 'pickMonster');
+                this.onEnteringPickMonster(args.args);
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
+                if (dojo.hasClass('kot-table', 'pickMonster')) {
+                    dojo.removeClass('kot-table', 'pickMonster');
+                    this.fadeOutAndDestroy('monster-pick');
+                    this.tableManager.setAutoZoomAndPlacePlayerTables();
+                    this.visibleCards.updateDisplay();
+                }
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -1476,6 +1499,19 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.gamestate.description = '';
         this.gamedatas.gamestate.descriptionmyturn = '';
         this.updatePageTitle();
+    };
+    KingOfTokyo.prototype.onEnteringPickMonster = function (args) {
+        var _this = this;
+        // TODO clean only needed
+        document.getElementById('monster-pick').innerHTML = '';
+        args.availableMonsters.forEach(function (monster) {
+            dojo.place("\n            <div id=\"pick-monster-figure-" + monster + "\" class=\"monster-figure monster" + monster + "\"></div>\n            ", "monster-pick");
+            document.getElementById("pick-monster-figure-" + monster).addEventListener('click', function () {
+                _this.pickMonster(monster);
+            });
+        });
+        var isCurrentPlayerActive = this.isCurrentPlayerActive();
+        dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
     };
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
         var _this = this;
@@ -1653,7 +1689,7 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
                     var argsThrowDice = args;
                     if (argsThrowDice.throwNumber === argsThrowDice.maxThrowNumber && !argsThrowDice.energyDrink.hasCard && !argsThrowDice.hasSmokeCloud && !argsThrowDice.rethrow3.hasCard) {
-                        this.startActionTimer('resolve_button', 3);
+                        this.startActionTimer('resolve_button', 5);
                     }
                     break;
                 case 'changeDie':
@@ -1680,7 +1716,7 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
                     var argsBuyCard = args;
                     if (!argsBuyCard.canBuyOrNenew) {
-                        this.startActionTimer('endTurn_button', 3);
+                        this.startActionTimer('endTurn_button', 5);
                     }
                     break;
                 case 'opportunistBuyCard':
@@ -1845,6 +1881,14 @@ var KingOfTokyo = /** @class */ (function () {
             if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
                 _this.cards.removeMimicOnCard(playerTable.cards, card);
             }
+        });
+    };
+    KingOfTokyo.prototype.pickMonster = function (monster) {
+        if (!this.checkAction('pickMonster')) {
+            return;
+        }
+        this.takeAction('pickMonster', {
+            monster: monster
         });
     };
     KingOfTokyo.prototype.onRethrow = function () {
@@ -2108,6 +2152,7 @@ var KingOfTokyo = /** @class */ (function () {
         //log( 'notifications subscriptions setup' );
         var _this = this;
         var notifs = [
+            ['pickMonster', 500],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealthDiceInTokyo', ANIMATION_MS],
@@ -2137,6 +2182,19 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
             _this.notifqueue.setSynchronous(notif[0], notif[1]);
         });
+    };
+    KingOfTokyo.prototype.notif_pickMonster = function (notif) {
+        var _this = this;
+        var monsterDiv = document.getElementById("pick-monster-figure-" + notif.args.monster);
+        var destinationId = "player-board-monster-figure-" + notif.args.playerId;
+        var animation = this.slideToObject(monsterDiv, destinationId);
+        dojo.connect(animation, 'onEnd', dojo.hitch(this, function () {
+            _this.fadeOutAndDestroy(monsterDiv);
+            dojo.removeClass(destinationId, 'monster0');
+            dojo.addClass(destinationId, "monster" + notif.args.monster);
+        }));
+        animation.play();
+        this.getPlayerTable(notif.args.playerId).setMonster(notif.args.monster);
     };
     KingOfTokyo.prototype.notif_resolveNumberDice = function (notif) {
         this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);

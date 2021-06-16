@@ -106,12 +106,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.showActivePlayer(Number(args.active_player));
 
         switch (stateName) {
+            case 'pickMonster':
+                dojo.addClass('kot-table', 'pickMonster');
+                this.onEnteringPickMonster(args.args);
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
+                if (dojo.hasClass('kot-table', 'pickMonster')) {
+                    dojo.removeClass('kot-table', 'pickMonster');
+                    (this as any).fadeOutAndDestroy('monster-pick');
+                    this.tableManager.setAutoZoomAndPlacePlayerTables();
+                    this.visibleCards.updateDisplay();
+                }
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -159,6 +169,23 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.gamedatas.gamestate.description = ''; 
         this.gamedatas.gamestate.descriptionmyturn = ''; 
         (this as any).updatePageTitle();        
+    }
+    
+    private onEnteringPickMonster(args: EnteringPickMonsterArgs) {
+        // TODO clean only needed
+        document.getElementById('monster-pick').innerHTML = '';
+        args.availableMonsters.forEach(monster => {
+            dojo.place(`
+            <div id="pick-monster-figure-${monster}" class="monster-figure monster${monster}"></div>
+            `, `monster-pick`);
+
+            document.getElementById(`pick-monster-figure-${monster}`).addEventListener('click', () => {
+                this.pickMonster(monster);
+            })
+        });
+
+        const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
+        dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
     }
 
     private onEnteringThrowDice(args: EnteringThrowDiceArgs) {
@@ -359,7 +386,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                     const argsThrowDice = args as EnteringThrowDiceArgs;
                     if (argsThrowDice.throwNumber === argsThrowDice.maxThrowNumber && !argsThrowDice.energyDrink.hasCard && !argsThrowDice.hasSmokeCloud && !argsThrowDice.rethrow3.hasCard) {
-                        this.startActionTimer('resolve_button', 3);
+                        this.startActionTimer('resolve_button', 5);
                     }
                     break;
                 case 'changeDie':
@@ -389,7 +416,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                     const argsBuyCard = args as EnteringBuyCardArgs;
                     if (!argsBuyCard.canBuyOrNenew) {
-                        this.startActionTimer('endTurn_button', 3);
+                        this.startActionTimer('endTurn_button', 5);
                     }
                     break;
                 case 'opportunistBuyCard':
@@ -597,6 +624,16 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
                 this.cards.removeMimicOnCard(playerTable.cards, card);
             }
+        });
+    }
+
+    public pickMonster(monster: number) {
+        if(!(this as any).checkAction('pickMonster')) {
+            return;
+        }
+
+        this.takeAction('pickMonster', {
+            monster
         });
     }
 
@@ -924,6 +961,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         //log( 'notifications subscriptions setup' );
 
         const notifs = [
+            ['pickMonster', 500],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealthDiceInTokyo', ANIMATION_MS],
@@ -954,6 +992,21 @@ class KingOfTokyo implements KingOfTokyoGame {
             dojo.subscribe(notif[0], this, `notif_${notif[0]}`);
             (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
         });
+    }
+
+    notif_pickMonster(notif: Notif<NotifPickMonsterArgs>) {
+       const monsterDiv = document.getElementById(`pick-monster-figure-${notif.args.monster}`); 
+       const destinationId = `player-board-monster-figure-${notif.args.playerId}`;
+       const animation = (this as any).slideToObject(monsterDiv, destinationId);
+
+        dojo.connect(animation, 'onEnd', dojo.hitch(this, () => {
+            (this as any).fadeOutAndDestroy(monsterDiv);
+            dojo.removeClass(destinationId, 'monster0');
+            dojo.addClass(destinationId, `monster${notif.args.monster}`);
+        }));
+        animation.play();
+
+        this.getPlayerTable(notif.args.playerId).setMonster(notif.args.monster);
     }
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {

@@ -162,4 +162,14 @@ class PlayerTable {
 
         div.dataset.placed = JSON.stringify(placed);
     }
+    
+    public setMonster(monster: number) {
+        const newMonsterClass = `monster${monster}`;
+
+        dojo.removeClass(`monster-figure-${this.playerId}`, 'monster0');
+        dojo.addClass(`monster-figure-${this.playerId}`, newMonsterClass);
+
+        dojo.removeClass(`monster-board-${this.playerId}`, 'monster0');
+        dojo.addClass(`monster-board-${this.playerId}`, newMonsterClass);
+    }
 }

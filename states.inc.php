@@ -62,6 +62,28 @@ $basicGameStates = [
         "transitions" => [ "" => ST_START ]
     ],
 
+    ST_START => [
+        "name" => "start",
+        "description" => "",
+        "type" => "game",
+        "action" => "stStart",
+        "transitions" => [ 
+            "pickMonster" => ST_PLAYER_PICK_MONSTER,
+            "start" => ST_START_TURN,
+        ],
+    ],
+
+    ST_PICK_MONSTER_NEXT_PLAYER => [
+        "name" => "pickMonsterNextPlayer",
+        "description" => "",
+        "type" => "game",
+        "action" => "stPickMonsterNextPlayer",
+        "transitions" => [
+            "nextPlayer" => ST_PLAYER_PICK_MONSTER,
+            "start" => ST_START_TURN,
+        ],
+    ],
+
     ST_NEXT_PLAYER => [
         "name" => "nextPlayer",
         "description" => "",
@@ -69,7 +91,7 @@ $basicGameStates = [
         "action" => "stNextPlayer",
         "updateGameProgression" => true,
         "transitions" => [
-            "nextPlayer" => ST_START, 
+            "nextPlayer" => ST_START_TURN, 
             "endGame" => ST_END_GAME,
         ],
     ],
@@ -87,7 +109,22 @@ $basicGameStates = [
 
 $playerActionsGameStates = [
 
-    ST_START => [
+    ST_PLAYER_PICK_MONSTER => [
+        "name" => "pickMonster",
+        "description" => clienttranslate('${actplayer} must pick a monster'),
+        "descriptionmyturn" => clienttranslate('${you} must pick a monster'),
+        "type" => "activeplayer",
+        "action" => "stPickMonster",
+        "args" => "argPickMonster",
+        "possibleactions" => [ "pickMonster" ],
+        "transitions" => [
+            "next" => ST_PICK_MONSTER_NEXT_PLAYER,
+            "start" => ST_START_TURN,
+        ],
+
+    ],
+
+    ST_START_TURN => [
         "name" => "startTurn",
         "description" => "",
         "type" => "game",

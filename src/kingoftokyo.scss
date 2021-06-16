@@ -23,12 +23,6 @@ html {
   background: #FFFFFFAA;
 }
 
-@for $i from 1 through 6 {
-    .monster#{$i} {
-        background-image: url('img/monster-figure-#{$i}.png');
-    }
-}
-
 .icon {
     display: inline-block;
     position: relative;
@@ -67,6 +61,40 @@ html {
   .icon {
     margin: -5px 0;
   }
+}
+
+#monster-pick {
+  display: flex;
+  align-content: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 20px;
+
+  &.selectable {
+    .monster-figure {
+      cursor: pointer;
+    }
+  }
+}
+
+.monster-figure {    
+  position: relative;
+  width: 150px;
+  height: 150px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  @for $i from 1 through 6 {
+      &.monster#{$i} {
+          background-image: url('img/monster-figure-#{$i}.png');
+      }
+  }
+}
+
+#kot-table.pickMonster {
+  display: none;
 }
 
 #rolled-dice-and-rapid-healing {  
