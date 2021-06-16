@@ -5,7 +5,7 @@
 <div id="monster-pick"></div>
 
 <div id="kot-table">
-    <div id="rolled-dice-and-rapid-healing">
+    <div id="rolled-dice-and-rapid-actions">
         <div id="rolled-dice" class="whiteblock">
             <div id="locked-dice" class="hide-lock">
                 <div id="locked-dice1"></div>
@@ -19,7 +19,7 @@
             </div>
             <div id="dice-actions"></div>
         </div>
-        <div id="rapid-healing-wrapper"></div>
+        <div id="rapid-actions-wrapper"></div>
     </div>
 
     <div id="zoom-wrapper">

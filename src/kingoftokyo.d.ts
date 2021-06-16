@@ -54,6 +54,7 @@ interface KingOfTokyoGamedatas {
     visibleCards: Card[];
     playersCards: { [playerId: number]: Card[] };
     mimickedCard: Card | null;
+    leaveTokyoUnder: number;
 }
 
 interface KingOfTokyoGame extends Game {
@@ -249,4 +250,8 @@ interface NotifChangeDieArgs {
     dieId: number;
     toValue: number;
     roll?: boolean;
+}
+
+interface NotifUpdateLeaveTokyoUnderArgs {
+    under: number;
 }

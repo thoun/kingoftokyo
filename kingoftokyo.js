@@ -668,20 +668,15 @@ var TableManager = /** @class */ (function () {
         this.game.onScreenWidthChange = function () { return _this.setAutoZoomAndPlacePlayerTables(); };
     }
     TableManager.prototype.setPlayerTables = function (playerTables) {
-        var start = new Date().getTime();
         var currentPlayerId = Number(this.game.getPlayerId());
-        console.log('TableManager setPlayerTables after filter', new Date().getTime() - start);
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
-        console.log('TableManager setPlayerTables after sort', new Date().getTime() - start);
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
-        console.log('TableManager setPlayerTables after find index', new Date().getTime() - start);
         if (playerIndex > 0) { // not spectator (or 0)            
             this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
         }
         else { // spectator
             this.playerTables = playerTablesOrdered;
         }
-        console.log('TableManager setPlayerTables after slice', new Date().getTime() - start);
     };
     TableManager.prototype.setAutoZoomAndPlacePlayerTables = function () {
         if (dojo.hasClass('kot-table', 'pickMonster')) {
@@ -1404,9 +1399,12 @@ var KingOfTokyo = /** @class */ (function () {
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setMimicToken(gamedatas.mimickedCard);
         var playerId = this.getPlayerId();
-        if (players.some(function (player) { return player.rapidHealing && Number(player.id) === playerId; })) {
-            var player = players.find(function (player) { return Number(player.id) === playerId; });
-            this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
+        var currentPlayer = players.find(function (player) { return Number(player.id) === playerId; });
+        if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.rapidHealing) {
+            this.addRapidHealingButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
+        }
+        if ((currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.location) > 0) {
+            this.addAutoLeaveUnderButton();
         }
         this.setupNotifications();
         this.setupPreferences();
@@ -1557,7 +1555,7 @@ var KingOfTokyo = /** @class */ (function () {
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
             if (isCurrentPlayerActive) {
-                dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice-and-rapid-healing', 'after');
+                dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice-and-rapid-actions', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
             }
         }
@@ -1844,7 +1842,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addRapidHealingButton = function (userEnergy, isMaxHealth) {
         var _this = this;
         if (!document.getElementById('rapidHealingButton')) {
-            this.createButton('rapid-healing-wrapper', 'rapidHealingButton', formatTextIcons(_('Gain 1[Heart]') + " (2[Energy])"), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
+            this.createButton('rapid-actions-wrapper', 'rapidHealingButton', formatTextIcons(_('Gain 1[Heart]') + " (2[Energy])"), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
         }
     };
     KingOfTokyo.prototype.removeRapidHealingButton = function () {
@@ -1859,6 +1857,58 @@ var KingOfTokyo = /** @class */ (function () {
             var health = this.healthCounters[playerId].getValue();
             var maxHealth = this.gamedatas.players[playerId].maxHealth;
             dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
+        }
+    };
+    KingOfTokyo.prototype.addAutoLeaveUnderButton = function () {
+        var _this = this;
+        if (!document.getElementById('autoLeaveUnderButton')) {
+            this.createButton('rapid-actions-wrapper', 'autoLeaveUnderButton', _("Leave Tokyo") + ' &#x25BE;', function () { return _this.toggleAutoLeaveUnderPopin(); });
+        }
+    };
+    KingOfTokyo.prototype.removeAutoLeaveUnderButton = function () {
+        if (document.getElementById('autoLeaveUnderButton')) {
+            dojo.destroy('autoLeaveUnderButton');
+        }
+    };
+    KingOfTokyo.prototype.toggleAutoLeaveUnderPopin = function () {
+        var bubble = document.getElementById("discussion_bubble_autoLeaveUnder");
+        if ((bubble === null || bubble === void 0 ? void 0 : bubble.dataset.visible) === 'true') {
+            this.closeAutoLeaveUnderPopin();
+        }
+        else {
+            this.openAutoLeaveUnderPopin();
+        }
+    };
+    KingOfTokyo.prototype.openAutoLeaveUnderPopin = function () {
+        var _this = this;
+        var popinId = "discussion_bubble_autoLeaveUnder";
+        var bubble = document.getElementById(popinId);
+        if (!bubble) {
+            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoLeaveUnderBubble\">\n                <div>" + _("Leave tokyo when life is under ") + "</div><div class=\"button-grid\">";
+            for (var i = 10; i > 0; i--) {
+                html += "<button class=\"action-button bgabutton " + (this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton " + (i == 1 ? 'disable' : '') + "\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i == 1 ? _('Disabled') : i) + "\n                </button>";
+            }
+            html += "</div></div>";
+            dojo.place(html, 'autoLeaveUnderButton');
+            var _loop_2 = function (i) {
+                document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
+                    _this.setLeaveTokyoUnder(i);
+                    setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
+                });
+            };
+            for (var i = 10; i > 0; i--) {
+                _loop_2(i);
+            }
+            bubble = document.getElementById(popinId);
+        }
+        bubble.style.display = 'block';
+        bubble.dataset.visible = 'true';
+    };
+    KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
+        var bubble = document.getElementById("discussion_bubble_autoLeaveUnder");
+        if (bubble) {
+            bubble.style.display = 'none';
+            bubble.dataset.visible = 'false';
         }
     };
     KingOfTokyo.prototype.setMimicToken = function (card) {
@@ -2058,6 +2108,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipWings');
     };
+    KingOfTokyo.prototype.setLeaveTokyoUnder = function (under) {
+        this.takeAction('setLeaveTokyoUnder', {
+            under: under
+        });
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -2177,6 +2232,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
+            ['updateLeaveTokyoUnder', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -2228,12 +2284,18 @@ var KingOfTokyo = /** @class */ (function () {
         this.getPlayerTable(notif.args.playerId).leaveTokyo();
         dojo.removeClass("overall_player_board_" + notif.args.playerId, 'intokyo');
         dojo.removeClass("monster-board-wrapper-" + notif.args.playerId, 'intokyo');
+        if (notif.args.playerId == this.getPlayerId()) {
+            this.removeAutoLeaveUnderButton();
+        }
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         this.getPlayerTable(notif.args.playerId).enterTokyo(notif.args.location);
         this.setPoints(notif.args.playerId, notif.args.points);
         dojo.addClass("overall_player_board_" + notif.args.playerId, 'intokyo');
         dojo.addClass("monster-board-wrapper-" + notif.args.playerId, 'intokyo');
+        if (notif.args.playerId == this.getPlayerId()) {
+            this.addAutoLeaveUnderButton();
+        }
     };
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var card = notif.args.card;
@@ -2314,6 +2376,15 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_resolvePlayerDice = function () {
         this.diceManager.lockAll();
+    };
+    KingOfTokyo.prototype.notif_updateLeaveTokyoUnder = function (notif) {
+        dojo.query('.autoLeaveButton').removeClass('bgabutton_blue');
+        dojo.query('.autoLeaveButton').addClass('bgabutton_gray');
+        var popinId = "discussion_bubble_autoLeaveUnder";
+        if (document.getElementById(popinId + "_set" + notif.args.under)) {
+            dojo.removeClass(popinId + "_set" + notif.args.under, 'bgabutton_gray');
+            dojo.addClass(popinId + "_set" + notif.args.under, 'bgabutton_blue');
+        }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

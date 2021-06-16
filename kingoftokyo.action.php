@@ -269,6 +269,16 @@
 
         self::ajaxResponse();
     }
+  	
+    public function setLeaveTokyoUnder() {
+        self::setAjaxMode();
+
+        $under = self::getArg("under", AT_posint, true);
+
+        $this->game->setLeaveTokyoUnder($under);
+
+        self::ajaxResponse();
+    }
 
   }
   

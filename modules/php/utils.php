@@ -134,11 +134,14 @@ trait UtilTrait {
 
     function leaveTokyo($playerId) {
 
-        self::DbQuery("UPDATE player SET player_location = 0 where `player_id` = $playerId");
+        self::DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null where `player_id` = $playerId");
 
         self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
+        ]);
+        self::notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+            'under' => 0,
         ]);
 
         self::incStat(1, 'tokyoLeaves', $playerId);

@@ -49,20 +49,15 @@ class TableManager {
     }
 
     private setPlayerTables(playerTables: PlayerTable[]) {
-        const start = new Date().getTime();       
         const currentPlayerId = Number(this.game.getPlayerId());
-        console.log('TableManager setPlayerTables after filter', new Date().getTime() - start);
         const playerTablesOrdered = playerTables.sort((a, b) => a.playerNo - b.playerNo);
-        console.log('TableManager setPlayerTables after sort', new Date().getTime() - start);
         const playerIndex = playerTablesOrdered.findIndex(playerTable => playerTable.playerId === currentPlayerId);
-        console.log('TableManager setPlayerTables after find index', new Date().getTime() - start);
         
         if (playerIndex > 0) { // not spectator (or 0)            
             this.playerTables = [...playerTablesOrdered.slice(playerIndex), ...playerTablesOrdered.slice(0, playerIndex)];
         } else { // spectator
             this.playerTables = playerTablesOrdered;
         }
-        console.log('TableManager setPlayerTables after slice', new Date().getTime() - start);
     }
 
     public setAutoZoomAndPlacePlayerTables() {

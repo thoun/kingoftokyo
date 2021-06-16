@@ -210,6 +210,8 @@ class KingOfTokyo extends Table {
 
         $result['mimickedCard'] = $this->getMimickedCard();
 
+        $result['leaveTokyoUnder'] = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));
+
         return $result;
     }
 
@@ -312,5 +314,18 @@ class KingOfTokyo extends Table {
         }
 
         throw new feException( "Zombie mode not supported at this game state: ".$statename );
+    }
+
+    function upgradeTableDb($from_version) {
+ 
+        if ($from_version <= 2106161618) { // where your CURRENT version in production has number YYMMDD-HHMM        
+            // You DB schema update request.
+            // Note: all tables names should be prefixed by "DBPREFIX_" to be compatible with the applyDbUpgradeToAllDB method you should use below
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `leave_tokyo_under` tinyint unsigned";
+
+            // The method below is applying your DB schema update request to all tables, including the BGA framework utility tables like "zz_replayXXXX" or "zz_savepointXXXX".
+            // You should really use this request, in conjunction with "DBPREFIX_" in your $sql, so ALL tables are updated. All utility tables MUST have the same schema than the main table, otherwise the game may be blocked.
+            self::applyDbUpgradeToAllDB($sql);        
+        }
     }
 }
