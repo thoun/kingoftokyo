@@ -109,7 +109,7 @@ class PlayerTable {
     }
     
     public setActivePlayer(active: boolean): void {
-        dojo.toggleClass(`monster-board-${this.playerId}`, 'active', active);
+        dojo.toggleClass(`player-table-${this.playerId}`, 'active', active);
     }
     
     public setFont(prefValue: number): void {

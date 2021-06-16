@@ -567,7 +567,7 @@ var PlayerTable = /** @class */ (function () {
         dojo.addClass("player-table-" + this.playerId, 'eliminated');
     };
     PlayerTable.prototype.setActivePlayer = function (active) {
-        dojo.toggleClass("monster-board-" + this.playerId, 'active', active);
+        dojo.toggleClass("player-table-" + this.playerId, 'active', active);
     };
     PlayerTable.prototype.setFont = function (prefValue) {
         var defaultFont = prefValue === 1;

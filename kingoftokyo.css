@@ -734,6 +734,11 @@
 #table .player-table.eliminated {
   opacity: 0.5;
 }
+#table .player-table.active {
+  border: 3px solid #ffcf13;
+  margin: -3px;
+  box-shadow: 0px 0px 5px 2px #ffcf13;
+}
 #table .player-table .player-name {
   padding: 5px;
   position: relative;
@@ -837,11 +842,6 @@
 }
 #table .player-table .monster-board-wrapper .monster-board.monster6 {
   background-image: url("img/monster-board-6.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.active {
-  border: 3px solid #ffcf13;
-  margin: -3px;
-  box-shadow: 0px 0px 5px 2px #ffcf13;
 }
 #table .player-table .energy-wrapper {
   position: absolute;
@@ -1010,6 +1010,18 @@ html {
   margin-bottom: -2px;
 }
 .log .dice-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.gamelogreview .icon {
+  width: 20px;
+  height: 20px;
+  margin-bottom: -2px;
+}
+.gamelogreview .dice-icon {
   width: 20px;
   height: 20px;
   margin-left: 2px;
