@@ -37,6 +37,16 @@
   	
   	// defines your action entry points there
   	
+    public function pickMonster() {
+        self::setAjaxMode();
+
+        $monster = self::getArg("monster", AT_posint, true);
+
+        $this->game->pickMonster($monster);
+
+        self::ajaxResponse();
+    }
+  	
     public function rethrow() {
         self::setAjaxMode();
 

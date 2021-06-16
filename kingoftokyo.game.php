@@ -22,6 +22,7 @@ require_once('modules/constants.inc.php');
 require_once('modules/php/objects/dice.php');
 require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
+require_once('modules/php/monster.php');
 require_once('modules/php/player.php');
 require_once('modules/php/dice.php');
 require_once('modules/php/cards.php');
@@ -30,6 +31,7 @@ require_once('modules/php/debug-util.php');
 
 class KingOfTokyo extends Table {
     use KOT\States\UtilTrait;
+    use KOT\States\MonsterTrait;
     use KOT\States\PlayerTrait;
     use KOT\States\DiceTrait;
     use KOT\States\CardsTrait;
@@ -55,6 +57,7 @@ class KingOfTokyo extends Table {
             FREEZE_TIME_MAX_TURNS => 15,
             FREEZE_TIME_CURRENT_TURN => 16,
             'newCardId' => 20,
+            PICK_MONSTER_OPTION => 100,
         ]);      
 		
         $this->cards = self::getNew("module.common.deck");
@@ -91,11 +94,15 @@ class KingOfTokyo extends Table {
         $affectedMonsters = [];
         $eliminationRank = count($players) - 1;
         foreach( $players as $player_id => $player ) {
-            $playerMonster = bga_rand(1, 6);
-            while (array_search($playerMonster, $affectedMonsters) !== false) {
+            $playerMonster = 0;
+
+            if (!$this->canPickMonster()) {
                 $playerMonster = bga_rand(1, 6);
+                while (array_search($playerMonster, $affectedMonsters) !== false) {
+                    $playerMonster = bga_rand(1, 6);
+                }
+                $affectedMonsters[] = $playerMonster;
             }
-            $affectedMonsters[] = $playerMonster;
 
             $color = array_shift( $default_colors );
             $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
@@ -220,6 +227,10 @@ class KingOfTokyo extends Table {
         return $this->getMaxPlayerScore() * 5;
     }
 
+    function stStart() {
+        $this->gamestate->nextState($this->canPickMonster() ? 'pickMonster' : 'start');
+    }
+
     function stGameEnd() {
         $players = $this->getPlayers(true);
         $playerCount = count($players);
@@ -276,6 +287,10 @@ class KingOfTokyo extends Table {
 
         if ($state['type'] == "activeplayer") {
             switch ($statename) {
+                case 'pickMonster':
+                    $this->setMonster($active_player, $this->getAvailableMonsters()[0]);
+                    $this->gamestate->nextState('next');
+                    return;
                 default:
                     $this->gamestate->jumpToState(ST_NEXT_PLAYER);
                     //$this->gamestate->nextState( "zombiePass" );

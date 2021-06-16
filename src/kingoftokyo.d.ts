@@ -69,6 +69,10 @@ interface KingOfTokyoGame extends Game {
     getZoom(): number;
 }
 
+interface EnteringPickMonsterArgs {
+    availableMonsters: number[];
+}
+
 interface EnteringDiceArgs {
     dice: Dice[];
     inTokyo: boolean;
@@ -127,6 +131,11 @@ interface EnteringCancelDamageArgs {
 interface EnteringLeaveTokyoArgs {
     jetsDamage: number;
     jetsPlayers: number[];
+}
+
+interface NotifPickMonsterArgs {
+    playerId: number;
+    monster: number;
 }
 
 interface NotifResolveArgs {

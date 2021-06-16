@@ -7,7 +7,11 @@ define('START_LIFE', 10);
  */
 define('ST_BGA_GAME_SETUP', 1);
 
-define('ST_START', 20);
+define('ST_START', 10);
+define('ST_PLAYER_PICK_MONSTER', 11);
+define('ST_PICK_MONSTER_NEXT_PLAYER', 12);
+
+define('ST_START_TURN', 20);
 define('ST_PLAYER_CHANGE_MIMICKED_CARD', 21);
 define('ST_PLAYER_THROW_DICE', 22);
 define('ST_PLAYER_CHANGE_DIE', 23);
@@ -49,6 +53,12 @@ define('PSYCHIC_PROBE_INTERVENTION', 'PsychicProbeIntervention');
 define('OPPORTUNIST_INTERVENTION', 'OpportunistIntervention');
 define('CANCEL_DAMAGE_INTERVENTION', 'CancelDamageIntervention');
 define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
+
+/*
+ * Options
+ */
+
+define('PICK_MONSTER_OPTION', 'PickMonsterOption');
 
 /*
  * Variables

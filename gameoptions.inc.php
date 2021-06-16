@@ -24,33 +24,24 @@
  *
  */
 
-$game_options = array(
+$game_options = [
 
-    /* Example of game variant:
-    
-    
-    // note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.
-    100 => array(
-                'name' => totranslate('my game option'),    
-                'values' => array(
-
-                            // A simple value for this option:
-                            1 => array( 'name' => totranslate('option 1') )
-
-                            // A simple value for this option.
-                            // If this value is chosen, the value of "tmdisplay" is displayed in the game lobby
-                            2 => array( 'name' => totranslate('option 2'), 'tmdisplay' => totranslate('option 2') ),
-
-                            // Another value, with other options:
-                            //  beta=true => this option is in beta version right now.
-                            //  nobeginner=true  =>  this option is not recommended for beginners
-                            3 => array( 'name' => totranslate('option 3'),  'beta' => true, 'nobeginner' => true ),) )
-                        )
-            )
-
-    */
-
-);
+    /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
+    100 => [
+        'name' => totranslate('Pick monster'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Automatic'), 
+                'description' => totranslate("A random monster is automatically picked"),
+            ],
+            2 => [
+                'name' => totranslate('Pick'), 
+                'description' => totranslate("Every player choose it's mosnter before playing"),
+            ],
+        ],
+        'default' => 1,
+    ],
+];
 
 $game_preferences = [
     201 => [
