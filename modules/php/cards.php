@@ -1066,21 +1066,36 @@ trait CardsTrait {
 
         $playerId = $opportunistIntervention && count($opportunistIntervention->remainingPlayersId) > 0 ? $opportunistIntervention->remainingPlayersId[0] : null;
         if ($playerId != null) {
+            $canBuy = false;
 
             $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
-            
-            $disabledCards = array_values(array_filter($cards, function ($card) use ($playerId, $revealedCardsIds) { return !in_array($card->id, $revealedCardsIds) || !$this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type)); }));
-            $disabledIds = array_map(function ($card) { return $card->id; }, $disabledCards);
+
+            $disabledIds = [];
+            foreach ($cards as $card) {
+                if (in_array($card->id, $revealedCardsIds) && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                    $canBuy = true;
+                } else {
+                    $disabledIds[] = $card->id;
+                }
+            }
 
             return [
                 'disabledIds' => $disabledIds,
+                'canBuy' => $canBuy,
             ];
         } else {
-            return [];
+            return [
+                'canBuy' => false,
+            ];
         }
     }
 
     function argChooseMimickedCard() {
+        $playerId = self::getActivePlayerId();
+        $playerEnergy = $this->getPlayerEnergy($playerId);
+
+        $canChange = $playerEnergy >= 1;
+
         $playersIds = $this->getPlayersIds();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
@@ -1097,6 +1112,7 @@ trait CardsTrait {
 
         return [
             'disabledIds' => $disabledIds,
+            'canChange' => $canChange,
         ];
     }
 

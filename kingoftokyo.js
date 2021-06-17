@@ -1682,6 +1682,9 @@ var KingOfTokyo = /** @class */ (function () {
             switch (stateName) {
                 case 'changeMimickedCard':
                     this.addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
+                    if (!args.canChange) {
+                        this.startActionTimer('skipChangeMimickedCard_button', 5);
+                    }
                     break;
                 case 'throwDice':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
@@ -1719,6 +1722,9 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'opportunistBuyCard':
                     this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
+                    if (!args.canBuy) {
+                        this.startActionTimer('opportunistSkip_button', 5);
+                    }
                     this.onEnteringBuyCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'opportunistChooseMimicCard':
@@ -2048,7 +2054,7 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.sellCard = function (id) {
-        if (!this.checkAction('sellCard', true)) {
+        if (!this.checkAction('sellCard')) {
             return;
         }
         this.takeAction('sellCard', {
@@ -2062,13 +2068,13 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('renew');
     };
     KingOfTokyo.prototype.goToSellCard = function () {
-        if (!this.checkAction('goToSellCard')) {
+        if (!this.checkAction('goToSellCard', true)) {
             return;
         }
         this.takeAction('goToSellCard');
     };
     KingOfTokyo.prototype.opportunistSkip = function () {
-        if (!this.checkAction('opportunistSkip')) {
+        if (!this.checkAction('opportunistSkip', true)) {
             return;
         }
         this.takeAction('opportunistSkip');
@@ -2080,7 +2086,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('psychicProbeSkip');
     };
     KingOfTokyo.prototype.skipChangeMimickedCard = function () {
-        if (!this.checkAction('skipChangeMimickedCard')) {
+        if (!this.checkAction('skipChangeMimickedCard', true)) {
             return;
         }
         this.takeAction('skipChangeMimickedCard');
@@ -2173,6 +2179,10 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.startActionTimer = function (buttonId, time) {
+        var _a;
+        if (((_a = this.prefs[202]) === null || _a === void 0 ? void 0 : _a.value) === 2) {
+            return;
+        }
         var button = document.getElementById(buttonId);
         var actionTimerId = null;
         var _actionTimerLabel = button.innerHTML;

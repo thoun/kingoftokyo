@@ -384,6 +384,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             switch (stateName) {
                 case 'changeMimickedCard':
                     (this as any).addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
+
+                    if (!args.canChange) {
+                        this.startActionTimer('skipChangeMimickedCard_button', 5);
+                    }
                     break;
                 case 'throwDice':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
@@ -425,6 +429,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'opportunistBuyCard':
                     (this as any).addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
+
+                    if (!args.canBuy) {
+                        this.startActionTimer('opportunistSkip_button', 5);
+                    }
+
                     this.onEnteringBuyCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'opportunistChooseMimicCard':
@@ -839,7 +848,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public sellCard(id: number | string) {
-        if(!(this as any).checkAction('sellCard', true)) {
+        if(!(this as any).checkAction('sellCard')) {
             return;
         }
 
@@ -857,7 +866,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public goToSellCard() {
-        if(!(this as any).checkAction('goToSellCard')) {
+        if(!(this as any).checkAction('goToSellCard', true)) {
             return;
         }
 
@@ -865,7 +874,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public opportunistSkip() {
-        if(!(this as any).checkAction('opportunistSkip')) {
+        if(!(this as any).checkAction('opportunistSkip', true)) {
             return;
         }
 
@@ -881,7 +890,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public skipChangeMimickedCard() {
-        if(!(this as any).checkAction('skipChangeMimickedCard')) {
+        if(!(this as any).checkAction('skipChangeMimickedCard', true)) {
             return;
         }
 
@@ -996,6 +1005,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
 
     private startActionTimer(buttonId: string, time: number) {
+        if ((this as any).prefs[202]?.value === 2) {
+            return;
+        }
+
         const button = document.getElementById(buttonId);
  
         let actionTimerId = null;
