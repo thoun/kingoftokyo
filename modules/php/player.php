@@ -374,7 +374,7 @@ trait PlayerTrait {
         }
         
         if ($anotherTimeWithCard > 0) {
-            self::notifyAllPlayers('playAgain', clienttranslate('${player_name} take another turn with ${card_name}'), [
+            self::notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => $anotherTimeWithCard,

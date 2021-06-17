@@ -627,7 +627,7 @@ trait CardsTrait {
         $newCard = null;
 
         if ($from > 0) {
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from ${player_name2}'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -642,7 +642,7 @@ trait CardsTrait {
             
         } else if (array_search($id, $this->getMadeInALabCardIds($playerId)) !== false) {
             
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name} from top deck'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -655,7 +655,7 @@ trait CardsTrait {
         } else {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
     
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buy ${card_name}'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -753,7 +753,7 @@ trait CardsTrait {
         $this->cards->moveAllCardsInLocation('table', 'discard');
         $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
 
-        self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renew visible cards'), [
+        self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,

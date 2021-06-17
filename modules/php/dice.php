@@ -764,7 +764,7 @@ trait DiceTrait {
             $diceStr .= $this->getDieFaceLogName($dieValue);
         }
 
-        self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolve dice ${dice}'), [
+        self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolves dice ${dice}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'dice' => $diceStr,
