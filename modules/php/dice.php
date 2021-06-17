@@ -156,14 +156,15 @@ trait DiceTrait {
         $jetsDamages = [];
         $smashedPlayersInTokyo = [];
         foreach($smashedPlayersIds as $smashedPlayerId) {
-            if ($this->inTokyo($smashedPlayerId)) {
+            $smashedPlayerIsInTokyo = $this->inTokyo($smashedPlayerId);
+            if ($smashedPlayerIsInTokyo) {
                 $smashedPlayersInTokyo[] = $smashedPlayerId;
             }
 
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
-            if ($countJets > 0) {
+            if ($countJets > 0 && $smashedPlayerIsInTokyo) {
                 $jetsDamages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
             } else {
                 $damages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
