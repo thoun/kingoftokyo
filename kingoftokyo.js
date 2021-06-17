@@ -1389,9 +1389,9 @@ var KingOfTokyo = /** @class */ (function () {
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
+        this.cards = new Cards(this);
         this.createPlayerPanels(gamedatas);
         this.diceManager = new DiceManager(this, gamedatas.dice);
-        this.cards = new Cards(this);
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -1521,7 +1521,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.setDiceForThrowDice(dice, args.inTokyo, isCurrentPlayerActive);
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
-                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} left)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
+                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
             }
             if (args.rethrow3.hasCard) {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
@@ -1768,7 +1768,7 @@ var KingOfTokyo = /** @class */ (function () {
             energyCounter.create("energy-counter-" + player.id);
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
-            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token\"></div>\n            </div>", "player_board_" + player.id);
+            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
             _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
             _this.setPoisonTokens(playerId, player.poisonTokens);
             dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"><div class=\"kot-token\"></div></div>", "player_board_" + player.id);
@@ -1779,7 +1779,8 @@ var KingOfTokyo = /** @class */ (function () {
                 setTimeout(function () { return _this.eliminatePlayer(playerId); }, 200);
             }
         });
-        // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
+        this.addTooltipHtmlToClass('shrink-ray-tokens', dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') }));
+        this.addTooltipHtmlToClass('poison-tokens', dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') }));
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;

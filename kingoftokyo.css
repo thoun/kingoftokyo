@@ -1061,6 +1061,12 @@ button .icon, a .icon {
   margin: -5px 0;
 }
 
+.dijitTooltipContents .icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -2px;
+}
+
 .token {
   display: inline-block;
   position: relative;

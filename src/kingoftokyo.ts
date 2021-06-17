@@ -52,9 +52,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         log('gamedatas', gamedatas);
 
+        this.cards = new Cards(this);
         this.createPlayerPanels(gamedatas); 
         this.diceManager = new DiceManager(this, gamedatas.dice);  
-        this.cards = new Cards(this);
         this.createVisibleCards(gamedatas.visibleCards);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -204,7 +204,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
-                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} left)"), { 'number': args.maxThrowNumber-args.throwNumber }), () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
+                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber-args.throwNumber }), () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
             }
 
             if (args.rethrow3.hasCard) {
@@ -500,8 +500,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.energyCounters[playerId] = energyCounter;
 
             dojo.place(`<div class="player-tokens">
-                <div id="player-board-shrink-ray-tokens-${player.id}" class="player-token"></div>
-                <div id="player-board-poison-tokens-${player.id}" class="player-token"></div>
+                <div id="player-board-shrink-ray-tokens-${player.id}" class="player-token shrink-ray-tokens"></div>
+                <div id="player-board-poison-tokens-${player.id}" class="player-token poison-tokens"></div>
             </div>`, `player_board_${player.id}`);
 
             this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
@@ -517,7 +517,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
         });
 
-        // (this as any).addTooltipHtmlToClass('lord-counter', _("Number of lords in player table"));
+        (this as any).addTooltipHtmlToClass('shrink-ray-tokens', dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')}));
+        (this as any).addTooltipHtmlToClass('poison-tokens', dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')}));
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {

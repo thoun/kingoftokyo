@@ -33,10 +33,12 @@ $game_options = [
             1 => [
                 'name' => totranslate('Automatic'), 
                 'description' => totranslate("A random monster is automatically picked"),
+                'tmdisplay' => totranslate('Random monster'),
             ],
             2 => [
                 'name' => totranslate('Pick'), 
-                'description' => totranslate("Every player choose it's mosnter before playing"),
+                'description' => totranslate("Every player choose it's monster before playing"),
+                'tmdisplay' => totranslate('Players can pick a monster'),
             ],
         ],
         'default' => 1,
