@@ -68,7 +68,7 @@ class TableManager {
         const zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
         let newZoom = this.zoom;
         while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth/newZoom < CENTER_TABLE_WIDTH) {
-            newZoom = ZOOM_LEVELS[ZOOM_LEVELS.indexOf(this.zoom) - 1];
+            newZoom = ZOOM_LEVELS[ZOOM_LEVELS.indexOf(newZoom) - 1];
         }
         // zoom will also place player tables. we call setZoom even if this method didn't change it because it might have been changed by localStorage zoom
         this.setZoom(newZoom);
