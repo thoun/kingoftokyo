@@ -46,13 +46,19 @@ trait PlayerTrait {
     function autoLeave(int $playerId, int $health) {
         $leaveUnder = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));
 
+        if ($leaveUnder == 0) {
+            return false;
+        }
+
         $leave = $health < $leaveUnder;
 
         if ($leave) {
             $this->leaveTokyo($playerId);
+        } else {
+            $this->notifStayInTokyo($playerId);
         }
 
-        return $leave;
+        return true;
     }
 
     function setLeaveTokyoUnder(int $under) {
@@ -80,15 +86,19 @@ trait PlayerTrait {
         $this->gamestate->nextState('endTurn');
     }
 
+    function notifStayInTokyo($playerId) {
+        self::notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+        ]);
+    }
+
     function stayInTokyo() {
         $this->checkAction('stay');
 
         $playerId = self::getCurrentPlayerId();
 
-        self::notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-        ]);
+        $this->notifStayInTokyo($playerId);
         
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
