@@ -291,7 +291,7 @@ trait PlayerTrait {
         }
 
         if ($this->getMaxPlayerScore() >= MAX_POINT) {
-            $this->gamestate->jumpToState(ST_END_GAME);
+            $this->jumpToState(ST_END_GAME);
         } else {
             $this->gamestate->nextState('next');
         }
@@ -388,7 +388,7 @@ trait PlayerTrait {
         self::giveExtraTime($playerId);
 
         if ($this->getMaxPlayerScore() >= MAX_POINT) {
-            $this->gamestate->jumpToState(ST_END_GAME);
+            $this->jumpToState(ST_END_GAME);
         } else {
             $this->gamestate->nextState('nextPlayer');
         }

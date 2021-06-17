@@ -36,7 +36,7 @@ trait InterventionTrait {
             if (gettype($intervention->endState) == 'string') {
                 $this->gamestate->nextState($intervention->endState);
             } else if (gettype($intervention->endState) == 'integer') {
-                $this->gamestate->jumpToState($intervention->endState);
+                $this->jumpToState($intervention->endState);
             } else {
                 throw new \Error('invalide endState');
             }

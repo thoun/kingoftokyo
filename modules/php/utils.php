@@ -303,9 +303,9 @@ trait UtilTrait {
         }
 
         if ($this->getRemainingPlayers() <= 1) {
-            $this->gamestate->jumpToState(ST_END_GAME);
+            $this->jumpToState(ST_END_GAME);
         } else if ($currentTurnPlayerId == $player->id) {
-            $this->gamestate->jumpToState(ST_END_TURN);
+            $this->jumpToState(ST_END_TURN);
         }
 
         return $this->getRemainingPlayers() <= 1;
@@ -606,11 +606,18 @@ trait UtilTrait {
             $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages);
             $cancelDamageIntervention->endState = $endStateOrTransition;
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $cancelDamageIntervention);
-            $this->gamestate->jumpToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
+            $this->jumpToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
 
             return true;
         } else {
             return false;
+        }
+    }
+
+    function jumpToState(int $stateId) {
+        $state = $this->gamestate->state();
+        if ($state['name'] != 'gameEnd') {
+            $this->gamestate->jumpToState($stateId);
         }
     }
 }

@@ -157,7 +157,7 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        //$this->debugSetup();
+        $this->debugSetup();
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -294,7 +294,7 @@ class KingOfTokyo extends Table {
                     $this->gamestate->nextState('next');
                     return;
                 default:
-                    $this->gamestate->jumpToState(ST_NEXT_PLAYER);
+                    $this->jumpToState(ST_NEXT_PLAYER);
                     //$this->gamestate->nextState( "zombiePass" );
                 	break;
             }

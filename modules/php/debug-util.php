@@ -15,14 +15,14 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetPlayerHealth(2343492, 6);
-        //$this->debugSetCardInTable(MIMIC_CARD);
+        $this->debugSetPlayerHealth(2343492, 1);
+        $this->debugSetPlayerHealth(2343493, 1);
+        $this->debugSetCardInTable(112);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
-        //$this->debugSetPlayerEnergy(2343493, 10);
+        $this->debugSetEnergy(10);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
-        $this->debugSetCardInHand(MIMIC_CARD, 2343492);
-        $this->debugSetCardInHand(1, 2343493);
+        //$this->debugSetCardInHand(1, 2343493);
     }
 
     private function debugSetCardInTable($cardType) {

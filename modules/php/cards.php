@@ -709,7 +709,9 @@ trait CardsTrait {
         }
 
         if (!$redirects) {
-            $this->gamestate->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic));
+            $stateName = $this->gamestate->state()['name'];
+
+            $this->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic));
         }
     }
 
@@ -828,7 +830,7 @@ trait CardsTrait {
 
         $this->setMimickedCardId($playerId, $mimickedCardId);
 
-        $this->gamestate->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
+        $this->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
     }
 
     function changeMimickedCard(int $mimickedCardId) {
