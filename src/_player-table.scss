@@ -137,6 +137,30 @@
         }
     }
 
+    .token-wrapper {
+        position: absolute;
+        z-index: 4;
+        width: 65px;
+        height: 170px;
+
+        &.poison {
+            left: 5px;
+            bottom: 5px;
+
+            .token {
+                box-shadow: 0 0 4px 4px #5e8cc2;
+            }
+        }
+        &.shrink-ray {
+            top: 5px;
+            right: 5px;
+
+            .token {
+                box-shadow: 0 0 4px 4px #d7e2a1;
+            }
+        }
+    }
+
     .player-cards {
         width: 100%;
 

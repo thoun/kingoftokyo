@@ -1289,10 +1289,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private setShrinkRayTokens(playerId: number, tokens: number) {
         this.setPlayerTokens(playerId, tokens, 'shrink-ray');
+        this.getPlayerTable(playerId)?.setShrinkRayTokens(tokens);
     }
 
     private setPoisonTokens(playerId: number, tokens: number) {
         this.setPlayerTokens(playerId, tokens, 'poison');
+        this.getPlayerTable(playerId)?.setPoisonTokens(tokens);
     }
 
     private checkBuyEnergyDrinkState(energy: number) {

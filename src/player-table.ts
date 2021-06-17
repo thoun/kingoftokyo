@@ -32,6 +32,8 @@ class PlayerTable {
                         <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>
                     </div>
                 </div>
+                <div id="token-wrapper-${this.playerId}-poison" class="token-wrapper poison"></div>
+                <div id="token-wrapper-${this.playerId}-shrink-ray" class="token-wrapper shrink-ray"></div>
             </div> 
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
             <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>
@@ -57,6 +59,8 @@ class PlayerTable {
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
         this.setEnergy(Number(player.energy));
+        this.setPoisonTokens(Number(player.poisonTokens));
+        this.setShrinkRayTokens(Number(player.shrinkRayTokens));
     }
 
     public initPlacement() {
@@ -122,7 +126,7 @@ class PlayerTable {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     }
 
-    private getPlaceOnCard(placed: PlacedTokens[]): PlacedTokens {
+    private getPlaceEnergySide(placed: PlacedTokens[]): PlacedTokens {
         const newPlace = {
             x: Math.random() * 33 + 16,
             y: Math.random() * 188 + 16,
@@ -137,7 +141,7 @@ class PlayerTable {
         return newPlace;
     }
 
-    public setEnergyOnSide(side: 'left' | 'right', energy: number) {
+    private setEnergyOnSide(side: 'left' | 'right', energy: number) {
         const divId = `energy-wrapper-${this.playerId}-${side}`;
         const div = document.getElementById(divId);
         if (!div) {
@@ -153,7 +157,7 @@ class PlayerTable {
 
         // add tokens
         for (let i = placed.length; i < energy; i++) {
-            const newPlace = this.getPlaceOnCard(placed);
+            const newPlace = this.getPlaceEnergySide(placed);
 
             placed.push(newPlace);
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="energy-cube"></div>`;
@@ -171,5 +175,54 @@ class PlayerTable {
 
         dojo.removeClass(`monster-board-${this.playerId}`, 'monster0');
         dojo.addClass(`monster-board-${this.playerId}`, newMonsterClass);
+    }
+
+    private getPlaceToken(placed: PlacedTokens[]): PlacedTokens {
+        const newPlace = {
+            x: Math.random() * 33 + 16,
+            y: Math.random() * 138 + 16,
+        };
+        let protection = 0;
+        while (protection < 1000 && placed.some(place => this.getDistance(newPlace, place) < 32)) {
+            newPlace.x = Math.random() * 33 + 16;
+            newPlace.y = Math.random() * 138 + 16;
+            protection++;
+        }
+
+        return newPlace;
+    }
+
+    private setTokens(type: 'poison' | 'shrink-ray', tokens: number) {
+        const divId = `token-wrapper-${this.playerId}-${type}`;
+        const div = document.getElementById(divId);
+        if (!div) {
+            return;
+        }
+        const placed: PlacedTokens[] = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
+
+        // remove tokens
+        for (let i = tokens; i < placed.length; i++) {
+            (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+        }
+        placed.splice(tokens, placed.length - tokens);
+
+        // add tokens
+        for (let i = placed.length; i < tokens; i++) {
+            const newPlace = this.getPlaceToken(placed);
+
+            placed.push(newPlace);
+            let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="${type} token"></div>`;
+            dojo.place(html, divId);
+        }
+
+        div.dataset.placed = JSON.stringify(placed);
+    }
+
+    public setPoisonTokens(tokens: number) {
+        this.setTokens('poison', tokens);
+    }
+
+    public setShrinkRayTokens(tokens: number) {
+        this.setTokens('shrink-ray', tokens);
     }
 }

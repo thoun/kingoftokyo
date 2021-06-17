@@ -858,6 +858,26 @@
 #table .player-table .energy-wrapper.right {
   right: 5px;
 }
+#table .player-table .token-wrapper {
+  position: absolute;
+  z-index: 4;
+  width: 65px;
+  height: 170px;
+}
+#table .player-table .token-wrapper.poison {
+  left: 5px;
+  bottom: 5px;
+}
+#table .player-table .token-wrapper.poison .token {
+  box-shadow: 0 0 4px 4px #5e8cc2;
+}
+#table .player-table .token-wrapper.shrink-ray {
+  top: 5px;
+  right: 5px;
+}
+#table .player-table .token-wrapper.shrink-ray .token {
+  box-shadow: 0 0 4px 4px #d7e2a1;
+}
 #table .player-table .player-cards {
   width: 100%;
 }
