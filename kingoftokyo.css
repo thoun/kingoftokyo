@@ -959,18 +959,47 @@ html {
   display: none;
 }
 
-#rolled-dice-and-rapid-healing {
+#rolled-dice-and-rapid-actions {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
   align-items: center;
 }
-#rolled-dice-and-rapid-healing #rapid-healing-wrapper:not(:empty) {
+#rolled-dice-and-rapid-actions #rapid-actions-wrapper:not(:empty) {
   margin-right: 15px;
+}
+#rolled-dice-and-rapid-actions #autoLeaveUnderButton {
+  position: relative;
+  overflow: visible;
+}
+
+.autoLeaveUnderBubble {
+  top: 35px;
+  bottom: unset;
+  right: 0px;
+  cursor: default;
+  width: 200px;
+  white-space: normal;
+  box-shadow: 1px 1px 4px 1px black;
+}
+.autoLeaveUnderBubble::after {
+  top: -10px;
+  bottom: unset;
+  border-width: 0 15px 15px 15px;
+}
+.autoLeaveUnderBubble .button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 10px;
+  margin-right: 10px;
+}
+.autoLeaveUnderBubble .button-grid .disable {
+  grid-column-start: 1;
+  grid-column-end: 4;
 }
 
 @media screen and (max-width: 550px) {
-  #rolled-dice-and-rapid-healing {
+  #rolled-dice-and-rapid-actions {
     display: block;
   }
 }

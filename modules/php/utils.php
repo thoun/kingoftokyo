@@ -121,7 +121,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET player_score = player_score + $incScore, player_location = $location where `player_id` = $playerId");
 
         $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
-        self::notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} and wins 1 [Star]'), [
+        self::notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
@@ -134,11 +134,14 @@ trait UtilTrait {
 
     function leaveTokyo($playerId) {
 
-        self::DbQuery("UPDATE player SET player_location = 0 where `player_id` = $playerId");
+        self::DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null where `player_id` = $playerId");
 
         self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
+        ]);
+        self::notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+            'under' => 0,
         ]);
 
         self::incStat(1, 'tokyoLeaves', $playerId);
@@ -333,7 +336,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : clienttranslate('${player_name} wins ${delta_points} [Star] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_points} [Star] with ${card_name}');
             self::notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
@@ -382,7 +385,7 @@ trait UtilTrait {
         self::incStat($health, 'heal', $playerId);
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : clienttranslate('${player_name} wins ${delta_health} [Heart] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_health} [Heart] with ${card_name}');
             self::notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
@@ -485,7 +488,7 @@ trait UtilTrait {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
         if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : clienttranslate('${player_name} wins ${delta_energy} [Energy] with ${card_name}');
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
             self::notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),

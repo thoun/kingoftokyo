@@ -33,5 +33,5 @@ Also add one auto-FTP upload extension (for example https://marketplace.visualst
 Make sure ftp-sync.json and node_modules are in .gitignore
 
 # TODO
-Add option to leave tokyo as soon as possible
 add animation for smashes even if no smash dice (poison quills)
+add tooltip over toggle dice saying ctrl+click to keep all of same type, maj+click to move anything but selected

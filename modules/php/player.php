@@ -43,6 +43,28 @@ trait PlayerTrait {
         ]);
     }
 
+    function autoLeave(int $playerId, int $health) {
+        $leaveUnder = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));
+
+        $leave = $health < $leaveUnder;
+
+        if ($leave) {
+            $this->leaveTokyo($playerId);
+        }
+
+        return $leave;
+    }
+
+    function setLeaveTokyoUnder(int $under) {
+        $playerId = self::getCurrentPlayerId(); // current, not active !
+
+        self::DbQuery("UPDATE player SET `leave_tokyo_under` = $under where `player_id` = $playerId");
+
+        self::notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+            'under' => $under,
+        ]);
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -162,7 +184,7 @@ trait PlayerTrait {
             $incScore = 2;
 
             $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
-            self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and wins ${deltaPoints} [Star]'), [
+            self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'points' => $this->getPlayerScore($playerId),
@@ -195,8 +217,12 @@ trait PlayerTrait {
         $aliveSmashedPlayersInTokyo = [];
 
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
-            if ($this->getPlayerHealth($smashedPlayerInTokyo) > 0) {
-                $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
+            $playerHealth = $this->getPlayerHealth($smashedPlayerInTokyo);
+            if ($playerHealth > 0) {
+
+                if (!$this->autoLeave($smashedPlayerInTokyo, $playerHealth)) {
+                    $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
+                }
             } else {
                 $this->leaveTokyo($smashedPlayerInTokyo);
             }

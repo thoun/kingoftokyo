@@ -63,9 +63,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setMimicToken(gamedatas.mimickedCard);
 
         const playerId = this.getPlayerId();
-        if (players.some(player => player.rapidHealing && Number(player.id) === playerId)) {
-            const player = players.find(player => Number(player.id) === playerId);
-            this.addRapidHealingButton(player.energy, player.health >= player.maxHealth);
+        const currentPlayer = players.find(player => Number(player.id) === playerId);
+
+        if (currentPlayer?.rapidHealing) {
+            this.addRapidHealingButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
+        }        
+        if (currentPlayer?.location > 0) {
+            this.addAutoLeaveUnderButton();
         }
 
         this.setupNotifications();
@@ -240,7 +244,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
 
             if (isCurrentPlayerActive) {
-                dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice-and-rapid-healing', 'after');
+                dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice-and-rapid-actions', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
             }
         }
@@ -578,7 +582,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private addRapidHealingButton(userEnergy: number, isMaxHealth: boolean) {
         if (!document.getElementById('rapidHealingButton')) {
             this.createButton(
-                'rapid-healing-wrapper', 
+                'rapid-actions-wrapper', 
                 'rapidHealingButton', 
                 formatTextIcons(`${_('Gain 1[Heart]')} (2[Energy])`), 
                 () => this.useRapidHealing(), 
@@ -600,6 +604,67 @@ class KingOfTokyo implements KingOfTokyoGame {
             const health = this.healthCounters[playerId].getValue();
             const maxHealth = this.gamedatas.players[playerId].maxHealth;
             dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
+        }
+    }
+
+    private addAutoLeaveUnderButton() {
+        if (!document.getElementById('autoLeaveUnderButton')) {
+            this.createButton(
+                'rapid-actions-wrapper', 
+                'autoLeaveUnderButton', 
+                _("Leave Tokyo") + ' &#x25BE;', 
+                () => this.toggleAutoLeaveUnderPopin(), 
+            );
+        }
+    }
+
+    private removeAutoLeaveUnderButton() {
+        if (document.getElementById('autoLeaveUnderButton')) {
+            dojo.destroy('autoLeaveUnderButton');
+        }
+    }
+
+    private toggleAutoLeaveUnderPopin() {
+        const bubble = document.getElementById(`discussion_bubble_autoLeaveUnder`);
+        if (bubble?.dataset.visible === 'true') {
+            this.closeAutoLeaveUnderPopin();
+        } else {
+            this.openAutoLeaveUnderPopin();
+        }
+    }
+
+    private openAutoLeaveUnderPopin() {
+        const popinId = `discussion_bubble_autoLeaveUnder`;
+        let bubble = document.getElementById(popinId);
+        if (!bubble) { 
+            let html = `<div id="${popinId}" class="discussion_bubble autoLeaveUnderBubble">
+                <div>${_("Leave tokyo when life is under ")}</div><div class="button-grid">`;
+            for (let i=10; i>0; i--) {
+                html += `<button class="action-button bgabutton ${this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray'} autoLeaveButton ${i == 1 ? 'disable' : ''}" id="${popinId}_set${i}">
+                    ${i == 1 ? _('Disabled') : i}
+                </button>`;
+            }
+            html += `</div></div>`;
+            dojo.place(html, 'autoLeaveUnderButton');
+            for (let i=10; i>0; i--) {
+                document.getElementById(`${popinId}_set${i}`).addEventListener('click', () => {
+                    this.setLeaveTokyoUnder(i);
+                    setTimeout(() => this.closeAutoLeaveUnderPopin(), 100);
+                });
+            }
+
+            bubble = document.getElementById(popinId);
+        }
+
+        bubble.style.display = 'block';
+        bubble.dataset.visible = 'true';
+    }
+
+    private closeAutoLeaveUnderPopin() {
+        const bubble = document.getElementById(`discussion_bubble_autoLeaveUnder`);
+        if (bubble) {
+            bubble.style.display = 'none';
+            bubble.dataset.visible = 'false';
         }
     }
 
@@ -854,6 +919,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('skipWings');
     }
 
+    public setLeaveTokyoUnder(under: number) {
+        this.takeAction('setLeaveTokyoUnder', {
+            under
+        });
+    }
+
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
@@ -986,6 +1057,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
+            ['updateLeaveTokyoUnder', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -1047,6 +1119,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getPlayerTable(notif.args.playerId).leaveTokyo();
         dojo.removeClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
         dojo.removeClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
+        if (notif.args.playerId == this.getPlayerId()) {
+            this.removeAutoLeaveUnderButton();
+        }        
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
@@ -1054,6 +1129,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setPoints(notif.args.playerId, notif.args.points);
         dojo.addClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
         dojo.addClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
+        if (notif.args.playerId == this.getPlayerId()) {
+            this.addAutoLeaveUnderButton();
+        }  
     }
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
@@ -1149,6 +1227,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolvePlayerDice() {
         this.diceManager.lockAll();
+    }
+
+    notif_updateLeaveTokyoUnder(notif: Notif<NotifUpdateLeaveTokyoUnderArgs>) {                    
+        dojo.query('.autoLeaveButton').removeClass('bgabutton_blue');
+        dojo.query('.autoLeaveButton').addClass('bgabutton_gray');
+        const popinId = `discussion_bubble_autoLeaveUnder`;
+        if (document.getElementById(`${popinId}_set${notif.args.under}`)) {
+            dojo.removeClass(`${popinId}_set${notif.args.under}`, 'bgabutton_gray');
+            dojo.addClass(`${popinId}_set${notif.args.under}`, 'bgabutton_blue');
+        }
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
