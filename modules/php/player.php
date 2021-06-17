@@ -54,11 +54,9 @@ trait PlayerTrait {
 
         if ($leave) {
             $this->leaveTokyo($playerId);
-        } else {
-            $this->notifStayInTokyo($playerId);
         }
 
-        return true;
+        return $leave;
     }
 
     function setLeaveTokyoUnder(int $under) {
