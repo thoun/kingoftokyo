@@ -330,7 +330,7 @@ trait UtilTrait {
 
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
         $actualScore = $this->getPlayerScore($playerId);
-        $newScore = min($actualScore + $points, MAX_POINT);
+        $newScore = $actualScore + $points;
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {

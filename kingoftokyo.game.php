@@ -157,7 +157,7 @@ class KingOfTokyo extends Table {
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
 
         // TODO TEMP card to test
-        $this->debugSetup();
+        //$this->debugSetup();
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -242,7 +242,7 @@ class KingOfTokyo extends Table {
             if (!$player->eliminated) {
                 $remainingPlayers++;
             } 
-            if ($player->score == MAX_POINT) {
+            if ($player->score >= MAX_POINT) {
                 $pointsWin = true;
             } 
         }
@@ -256,7 +256,7 @@ class KingOfTokyo extends Table {
             self::setStat($player->eliminated ? 0 : 1, 'survived', $player->id);
 
             if (!$player->eliminated) {
-                if ($player->score == MAX_POINT) {
+                if ($player->score >= MAX_POINT) {
                     self::setStat(1, 'pointsWin', $player->id);
                 } else if ($eliminationWin) {
                     self::setStat(1, 'eliminationWin', $player->id);

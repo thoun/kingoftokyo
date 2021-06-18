@@ -41,4 +41,3 @@ fix opacity on made in a lab
 sometimes a shadow stays with dice (a 7 ghost die)
 allow player suicide
 one smash + fire breathing does nothing on player with armor ?
-can a player go over 20 points ?
