@@ -118,7 +118,7 @@ trait UtilTrait {
     function moveToTokyo(int $playerId, bool $bay) {
         $location = $bay ? 2 : 1;
         $incScore = 1;
-        $this->applyGetPointsIgnoreCards($playerId, $incScore, 0);
+        self::DbQuery("UPDATE player SET player_score = player_score + $incScore, player_location = $location where `player_id` = $playerId");
 
         $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
         self::notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]'), [
