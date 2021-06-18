@@ -288,11 +288,7 @@ trait PlayerTrait {
             }
         }
 
-        if ($this->getMaxPlayerScore() >= MAX_POINT) {
-            $this->jumpToState(ST_END_GAME);
-        } else {
-            $this->gamestate->nextState('next');
-        }
+        $this->gamestate->nextState('next');
     }
 
     function stResolveEndTurn() {

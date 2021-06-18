@@ -13,7 +13,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
@@ -22,7 +22,8 @@ trait DebugUtilTrait {
         //$this->debugSetEnergy(10);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
-        $this->debugSetCardInHand(JETS_CARD, 2343493);
+        //$this->debugSetCardInHand(JETS_CARD, 2343493);
+        $this->debugSetPoints(19);
     }
 
     private function debugSetCardInTable($cardType) {
@@ -51,7 +52,11 @@ trait DebugUtilTrait {
         self::DbQuery("UPDATE player SET `player_energy` = $energy");
     }
 
-    private function debugSetPlayerScore($playerId, $score) {
-        self::DbQuery("UPDATE player SET `player_score` = $score where `player_id` = $playerId");
+    private function debugSetPlayerPoints($playerId, $points) {
+        self::DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+    }
+
+    private function debugSetPoints($points) {
+        self::DbQuery("UPDATE player SET `player_score` = $points");
     }
 }
