@@ -648,13 +648,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         let bubble = document.getElementById(popinId);
         if (!bubble) { 
             let html = `<div id="${popinId}" class="discussion_bubble autoLeaveUnderBubble">
-                <div>${_("Leave tokyo when life is under ")}</div><div class="button-grid">`;
+                <div>${_("Automatically leave tokyo when life goes down to, or under")}</div>
+                <div class="button-grid">`;
             for (let i=10; i>0; i--) {
                 html += `<button class="action-button bgabutton ${this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray'} autoLeaveButton ${i == 1 ? 'disable' : ''}" id="${popinId}_set${i}">
-                    ${i == 1 ? _('Disabled') : i}
+                    ${i == 1 ? _('Disabled') : i-1}
                 </button>`;
             }
-            html += `</div></div>`;
+            html += `</div>
+            <div>${_("If your life is over it, or if disabled, you'll be asked if you want to stay or leave")}</div>
+            </div>`;
             dojo.place(html, 'autoLeaveUnderButton');
             for (let i=10; i>0; i--) {
                 document.getElementById(`${popinId}_set${i}`).addEventListener('click', () => {

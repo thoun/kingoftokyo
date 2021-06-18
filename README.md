@@ -37,3 +37,7 @@ add animation for smashes even if no smash dice (poison quills)
 add tooltip over toggle dice saying ctrl+click to keep all of same type, maj+click to move anything but selected
 slide energy cubes from battery monster
 ask editor for bonus monsters, scoring mode, not showing the other tokyo player choosed to leave
+fix opacity on made in a lab
+sometimes a shadow stays with dice (a 7 ghost die)
+allow player suicide
+one smash + fire breathing does nothing on player with armor ?

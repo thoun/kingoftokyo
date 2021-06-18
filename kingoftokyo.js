@@ -1934,11 +1934,11 @@ var KingOfTokyo = /** @class */ (function () {
         var popinId = "discussion_bubble_autoLeaveUnder";
         var bubble = document.getElementById(popinId);
         if (!bubble) {
-            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoLeaveUnderBubble\">\n                <div>" + _("Leave tokyo when life is under ") + "</div><div class=\"button-grid\">";
+            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoLeaveUnderBubble\">\n                <div>" + _("Automatically leave tokyo when life goes down to, or under") + "</div>\n                <div class=\"button-grid\">";
             for (var i = 10; i > 0; i--) {
-                html += "<button class=\"action-button bgabutton " + (this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton " + (i == 1 ? 'disable' : '') + "\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i == 1 ? _('Disabled') : i) + "\n                </button>";
+                html += "<button class=\"action-button bgabutton " + (this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton " + (i == 1 ? 'disable' : '') + "\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i == 1 ? _('Disabled') : i - 1) + "\n                </button>";
             }
-            html += "</div></div>";
+            html += "</div>\n            <div>" + _("If your life is over it, or if disabled, you'll be asked if you want to stay or leave") + "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
             var _loop_2 = function (i) {
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
