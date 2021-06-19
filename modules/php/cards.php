@@ -782,8 +782,10 @@ trait CardsTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
-    function goToSellCard() {
-        $this->checkAction('goToSellCard');
+    function goToSellCard($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('goToSellCard');
+        }
    
         $playerId = self::getActivePlayerId();  
            
@@ -846,8 +848,10 @@ trait CardsTrait {
         $this->gamestate->nextState('next');
     }
 
-    function skipChangeMimickedCard() {
-        $this->checkAction('skipChangeMimickedCard');
+    function skipChangeMimickedCard($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipChangeMimickedCard');
+        }
 
         $this->gamestate->nextState('next');
     }    
@@ -1062,29 +1066,35 @@ trait CardsTrait {
         ] + $pickArgs;
     }
 
-    function argOpportunistBuyCard() {
+    function argOpportunistBuyCardWithPlayerId(int $playerId) {        
         $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
         $revealedCardsIds = $opportunistIntervention ? $opportunistIntervention->revealedCardsIds : [];
 
+        $canBuy = false;
+
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+
+        $disabledIds = [];
+        foreach ($cards as $card) {
+            if (in_array($card->id, $revealedCardsIds) && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                $canBuy = true;
+            } else {
+                $disabledIds[] = $card->id;
+            }
+        }
+
+        return [
+            'disabledIds' => $disabledIds,
+            'canBuy' => $canBuy,
+        ];
+    }
+
+    function argOpportunistBuyCard() {
+        $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
+
         $playerId = $opportunistIntervention && count($opportunistIntervention->remainingPlayersId) > 0 ? $opportunistIntervention->remainingPlayersId[0] : null;
         if ($playerId != null) {
-            $canBuy = false;
-
-            $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
-
-            $disabledIds = [];
-            foreach ($cards as $card) {
-                if (in_array($card->id, $revealedCardsIds) && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
-                    $canBuy = true;
-                } else {
-                    $disabledIds[] = $card->id;
-                }
-            }
-
-            return [
-                'disabledIds' => $disabledIds,
-                'canBuy' => $canBuy,
-            ];
+            return $this->argOpportunistBuyCardWithPlayerId($playerId);
         } else {
             return [
                 'canBuy' => false,
@@ -1158,11 +1168,31 @@ trait CardsTrait {
 //////////// Game state actions
 ////////////
 
+    function stChooseMimickedCard() {
+        if ($this->isTurnBased() && !$this->argChooseMimickedCard()['canChange']) {
+            // skip state
+            $this->skipChangeMimickedCard(true);
+        }
+    }
+
     function stBuyCard() {
         $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
+
+        if ($this->isTurnBased() && !$this->argBuyCard()['canBuyOrNenew']) {
+            // skip state
+            $this->goToSellCard(true);
+        }
     }
 
     function stOpportunistBuyCard() {
+        if ($this->isTurnBased()) { // in turn based, we remove players when they can't buy anything
+            $intervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
+            $intervention->remainingPlayersId = array_values(array_filter($intervention->remainingPlayersId, function($playerId) {
+                return $this->argOpportunistBuyCardWithPlayerId($playerId)['canBuy'];
+            }));
+            $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $intervention);
+        }
+
         $this->stIntervention(OPPORTUNIST_INTERVENTION);
     }
 

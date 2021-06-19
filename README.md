@@ -41,3 +41,23 @@ fix opacity on made in a lab
 sometimes a shadow stays with dice (a 7 ghost die)
 allow player suicide
 one smash + fire breathing does nothing on player with armor ?
+
+
+                case 'buyCard':
+                    (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), 'onRenew');
+                    if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
+                        dojo.addClass('renew_button', 'disabled');
+                    }
+                    (this as any).addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
+
+                    const argsBuyCard = args as EnteringBuyCardArgs;
+                    if (!argsBuyCard.canBuyOrNenew) {
+                        this.startActionTimer('endTurn_button', 5);
+                    }
+                    break;
+                case 'opportunistBuyCard':
+                    (this as any).addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
+
+                    if (!args.canBuy) {
+                        this.startActionTimer('opportunistSkip_button', 5);
+                    }

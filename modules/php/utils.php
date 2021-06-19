@@ -18,6 +18,10 @@ trait UtilTrait {
     //////////// Utility functions
     ////////////
 
+    function isTurnBased() {
+        return intval($this->gamestate->table_globals[200]) >= 10;
+    }
+
     function setGlobalVariable(string $name, /*object|array*/ $obj) {
         /*if ($obj == null) {
             throw new \Error('Global Variable null');

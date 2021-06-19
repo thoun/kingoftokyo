@@ -520,8 +520,10 @@ trait DiceTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
-    public function goToChangeDie() {
-        $this->checkAction('goToChangeDie');
+    public function goToChangeDie($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('goToChangeDie');
+        }
 
         $playerId = self::getActivePlayerId();
 
@@ -658,6 +660,9 @@ trait DiceTrait {
         foreach($smokeCloudCards as $smokeCloudCard) {
             $smokeCloudsTokens += $smokeCloudCard->tokens;
         }
+        $hasSmokeCloud = $smokeCloudsTokens > 0;
+
+        $hasActions = $throwNumber < $maxThrowNumber || ($hasEnergyDrink && $playerEnergy >= 1) || $hasSmokeCloud;
     
         // return values:
         return [
@@ -673,7 +678,8 @@ trait DiceTrait {
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $hasDice3,
             ],
-            'hasSmokeCloud' => $smokeCloudsTokens > 0,
+            'hasSmokeCloud' => $hasSmokeCloud,
+            'hasActions' => $hasActions,
         ];
     }
 
@@ -733,6 +739,14 @@ trait DiceTrait {
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
+
+    function stThrowDice() {
+        // disabled so player can see last roll
+        /*if ($this->isTurnBased() && !$this->argThrowDice()['hasActions']) {
+            // skip state
+            $this->goToChangeDie(true);
+        }*/
+    }
 
     function stChangeDie() {
         $playerId = self::getActivePlayerId();

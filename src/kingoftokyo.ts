@@ -393,7 +393,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
 
                     const argsThrowDice = args as EnteringThrowDiceArgs;
-                    if (argsThrowDice.throwNumber === argsThrowDice.maxThrowNumber && !argsThrowDice.energyDrink.hasCard && !argsThrowDice.hasSmokeCloud && !argsThrowDice.rethrow3.hasCard) {
+                    if (!argsThrowDice.hasActions) {
                         this.startActionTimer('resolve_button', 5);
                     }
                     break;

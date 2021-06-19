@@ -27,7 +27,7 @@ trait InterventionTrait {
     function stIntervention(string $interventionName) {
         $intervention = $this->getGlobalVariable($interventionName);
 
-        if ($intervention->nextState === 'keep') { // current player continues / next (intervention player) / or leaving transition
+        if ($intervention->nextState === 'keep' && count($intervention->remainingPlayersId) > 0) { // current player continues / next (intervention player) / or leaving transition
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
         } else if ($intervention->nextState === 'next' && count($intervention->remainingPlayersId) > 0) { // next intervention player
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);

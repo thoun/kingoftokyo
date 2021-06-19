@@ -1732,7 +1732,7 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'throwDice':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
                     var argsThrowDice = args;
-                    if (argsThrowDice.throwNumber === argsThrowDice.maxThrowNumber && !argsThrowDice.energyDrink.hasCard && !argsThrowDice.hasSmokeCloud && !argsThrowDice.rethrow3.hasCard) {
+                    if (!argsThrowDice.hasActions) {
                         this.startActionTimer('resolve_button', 5);
                     }
                     break;

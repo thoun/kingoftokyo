@@ -19,11 +19,11 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetCardInTable(112);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
-        //$this->debugSetEnergy(10);
-        //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
+        $this->debugSetPlayerEnergy(2343492, 10);
+        $this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
-        $this->debugSetPoints(19);
+        //$this->debugSetPoints(19);
     }
 
     private function debugSetCardInTable($cardType) {
