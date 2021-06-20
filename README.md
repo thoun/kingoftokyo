@@ -34,30 +34,11 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 
 # TODO
 add animation for smashes even if no smash dice (poison quills)
-add tooltip over toggle dice saying ctrl+click to keep all of same type, maj+click to move anything but selected
 slide energy cubes from battery monster
-ask editor for bonus monsters, scoring mode, not showing the other tokyo player choosed to leave
+ask editor for bonus monsters, scoring mode, not showing the other tokyo player choosed to leave. asked
 fix opacity on made in a lab
 sometimes a shadow stays with dice (a 7 ghost die)
 allow player suicide
-one smash + fire breathing does nothing on player with armor ?
-
-
-                case 'buyCard':
-                    (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), 'onRenew');
-                    if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
-                        dojo.addClass('renew_button', 'disabled');
-                    }
-                    (this as any).addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
-
-                    const argsBuyCard = args as EnteringBuyCardArgs;
-                    if (!argsBuyCard.canBuyOrNenew) {
-                        this.startActionTimer('endTurn_button', 5);
-                    }
-                    break;
-                case 'opportunistBuyCard':
-                    (this as any).addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
-
-                    if (!args.canBuy) {
-                        this.startActionTimer('opportunistSkip_button', 5);
-                    }
+one smash + fire breathing does nothing on player with armor ? asked
+can background dweller be used with camouflage rolls ? or after psychic probe, py active player ? or on a psychic probe roll, il player with psychic probe also got background dweller ?
+make heart animations go to position/sr tokens or healed players with healing ray

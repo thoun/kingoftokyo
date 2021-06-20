@@ -207,6 +207,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber-args.throwNumber }), () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
+
+                (this as any).addTooltip(
+                    'rethrow_button', 
+                    _("Click on dice you want to keep to lock them, then click this button to rethrow the others"),
+                    `${_("Ctrl+click to move all dice with same value")}<br>
+                    ${_("Alt+click to move all dice but clicked die")}`);
             }
 
             if (args.rethrow3.hasCard) {

@@ -958,7 +958,7 @@ var DiceManager = /** @class */ (function () {
             dojo.toggleClass(divId, 'selectable', selectable);
             _this.addDiceRollClass(die);
             if (selectable) {
-                document.getElementById(divId).addEventListener('click', function () { return _this.dieClick(die); });
+                document.getElementById(divId).addEventListener('click', function (event) { return _this.dieClick(die, event); });
             }
         });
     };
@@ -988,7 +988,7 @@ var DiceManager = /** @class */ (function () {
             _this.addDiceRollClass(die);
             if (isCurrentPlayerActive) {
                 var divId = "dice" + die.id;
-                document.getElementById(divId).addEventListener('click', function () { return _this.dieClick(die); });
+                document.getElementById(divId).addEventListener('click', function (event) { return _this.dieClick(die, event); });
             }
         });
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
@@ -1090,8 +1090,23 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.resolveSmashDice = function (args) {
         this.addDiceAnimation(6, args.smashedPlayersIds);
     };
-    DiceManager.prototype.toggleLockDice = function (die, forcedLockValue) {
+    DiceManager.prototype.toggleLockDice = function (die, event, forcedLockValue) {
+        var _this = this;
         if (forcedLockValue === void 0) { forcedLockValue = null; }
+        if ((event === null || event === void 0 ? void 0 : event.altKey) || (event === null || event === void 0 ? void 0 : event.ctrlKey)) {
+            var dice = [];
+            if (event.ctrlKey && event.altKey) { // move everything but die.value dice
+                dice = this.dice.filter(function (idie) { return idie.locked === die.locked && idie.value !== die.value; });
+            }
+            else if (event.ctrlKey) { // move everything with die.value dice
+                dice = this.dice.filter(function (idie) { return idie.locked === die.locked && idie.value === die.value; });
+            }
+            else { // move everything but die
+                dice = this.dice.filter(function (idie) { return idie.locked === die.locked && idie.id !== die.id; });
+            }
+            dice.forEach(function (idie) { return _this.toggleLockDice(idie, null); });
+            return;
+        }
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         var dieDivId = "dice" + die.id;
         var dieDiv = document.getElementById(dieDivId);
@@ -1133,7 +1148,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.lockAll = function () {
         var _this = this;
         var _a;
-        (_a = this.dice) === null || _a === void 0 ? void 0 : _a.filter(function (die) { return !die.locked; }).forEach(function (die) { return _this.toggleLockDice(die, true); });
+        (_a = this.dice) === null || _a === void 0 ? void 0 : _a.filter(function (die) { return !die.locked; }).forEach(function (die) { return _this.toggleLockDice(die, null, true); });
     };
     DiceManager.prototype.activateRethrowButton = function () {
         if (document.getElementById('rethrow_button')) {
@@ -1160,12 +1175,12 @@ var DiceManager = /** @class */ (function () {
         dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? "locked-dice" + die.value : "dice-selector");
         this.addDiceRollClass(die);
         if (selectable) {
-            this.getDiceDiv(die).addEventListener('click', function () { return _this.dieClick(die); });
+            this.getDiceDiv(die).addEventListener('click', function (event) { return _this.dieClick(die, event); });
         }
     };
-    DiceManager.prototype.dieClick = function (die) {
+    DiceManager.prototype.dieClick = function (die, event) {
         if (this.action === 'move') {
-            this.toggleLockDice(die);
+            this.toggleLockDice(die, event);
         }
         else if (this.action === 'change') {
             this.toggleBubbleChangeDie(die);
@@ -1567,6 +1582,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
+                this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to rethrow the others"), _("Ctrl+click to move all dice with same value") + "<br>\n                    " + _("Alt+click to move all dice but clicked die"));
             }
             if (args.rethrow3.hasCard) {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);

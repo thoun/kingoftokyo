@@ -23,7 +23,7 @@ trait PlayerTrait {
     }
 
     function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player`) AND (SELECT count(*) FROM `player` where `player_score` = (select min(`player_score`) from `player`)) = 1";
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0) AND (SELECT count(*) FROM `player` where player_eliminated = 0 and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0)) = 1";
         return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 

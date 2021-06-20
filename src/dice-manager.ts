@@ -68,7 +68,7 @@ class DiceManager {
             this.addDiceRollClass(die);
 
             if (selectable) {
-                document.getElementById(divId).addEventListener('click', () => this.dieClick(die));
+                document.getElementById(divId).addEventListener('click', event => this.dieClick(die, event));
             }
         });
     }
@@ -103,7 +103,7 @@ class DiceManager {
 
             if (isCurrentPlayerActive) {
                 const divId = `dice${die.id}`;
-                document.getElementById(divId).addEventListener('click', () => this.dieClick(die));
+                document.getElementById(divId).addEventListener('click', event => this.dieClick(die, event));
             }
         });
 
@@ -214,7 +214,23 @@ class DiceManager {
         this.addDiceAnimation(6, args.smashedPlayersIds);
     }
 
-    private toggleLockDice(die: Dice, forcedLockValue: boolean | null = null) {
+    private toggleLockDice(die: Dice, event: MouseEvent, forcedLockValue: boolean | null = null) {
+        if (event?.altKey || event?.ctrlKey) {
+            let dice = [];
+            
+            if (event.ctrlKey && event.altKey) { // move everything but die.value dice
+                dice = this.dice.filter(idie => idie.locked === die.locked && idie.value !== die.value);
+            } else if (event.ctrlKey) { // move everything with die.value dice
+                dice = this.dice.filter(idie => idie.locked === die.locked && idie.value === die.value);
+            } else { // move everything but die
+                dice = this.dice.filter(idie => idie.locked === die.locked && idie.id !== die.id);
+            }
+
+            dice.forEach(idie => this.toggleLockDice(idie, null));
+            return;
+        }
+
+
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         const dieDivId = `dice${die.id}`;
         const dieDiv = document.getElementById(dieDivId);
@@ -259,7 +275,7 @@ class DiceManager {
     }
 
     public lockAll() {
-        this.dice?.filter(die => !die.locked).forEach(die => this.toggleLockDice(die, true));
+        this.dice?.filter(die => !die.locked).forEach(die => this.toggleLockDice(die, null, true));
     }
 
     private activateRethrowButton() {
@@ -292,13 +308,13 @@ class DiceManager {
         this.addDiceRollClass(die);
 
         if (selectable) {
-            this.getDiceDiv(die).addEventListener('click', () => this.dieClick(die));
+            this.getDiceDiv(die).addEventListener('click', event => this.dieClick(die, event));
         }
     }
 
-    private dieClick(die: Dice) {
+    private dieClick(die: Dice, event: MouseEvent) {
         if (this.action === 'move') {
-            this.toggleLockDice(die);
+            this.toggleLockDice(die, event);
         } else if (this.action === 'change') {
             this.toggleBubbleChangeDie(die);
         } else if (this.action === 'psychicProbeRoll') {
