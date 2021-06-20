@@ -13,16 +13,16 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetCardInTable(112);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
-        $this->debugSetPlayerEnergy(2343492, 10);
-        $this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
+        //$this->debugSetPlayerEnergy(2343492, 10);
+        //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
-        //$this->debugSetCardInHand(JETS_CARD, 2343493);
+        $this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343492);
         //$this->debugSetPoints(19);
     }
 

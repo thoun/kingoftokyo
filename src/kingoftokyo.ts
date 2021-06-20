@@ -122,9 +122,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'throwDice':
                 if (dojo.hasClass('kot-table', 'pickMonster')) {
                     dojo.removeClass('kot-table', 'pickMonster');
-                    (this as any).fadeOutAndDestroy('monster-pick');
                     this.tableManager.setAutoZoomAndPlacePlayerTables();
                     this.visibleCards.updateDisplay();
+                }
+                if (document.getElementById('monster-pick')) {                    
+                    (this as any).fadeOutAndDestroy('monster-pick');
                 }
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);

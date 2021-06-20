@@ -1493,9 +1493,11 @@ var KingOfTokyo = /** @class */ (function () {
             case 'throwDice':
                 if (dojo.hasClass('kot-table', 'pickMonster')) {
                     dojo.removeClass('kot-table', 'pickMonster');
-                    this.fadeOutAndDestroy('monster-pick');
                     this.tableManager.setAutoZoomAndPlacePlayerTables();
                     this.visibleCards.updateDisplay();
+                }
+                if (document.getElementById('monster-pick')) {
+                    this.fadeOutAndDestroy('monster-pick');
                 }
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);

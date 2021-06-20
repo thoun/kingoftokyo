@@ -225,14 +225,16 @@ trait PlayerTrait {
         $aliveSmashedPlayersInTokyo = [];
 
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
-            $playerHealth = $this->getPlayerHealth($smashedPlayerInTokyo);
-            if ($playerHealth > 0) {
+            if ($this->inTokyo($smashedPlayerInTokyo)) { // we check if player is still in Tokyo, it could have left with It has a child!
+                $playerHealth = $this->getPlayerHealth($smashedPlayerInTokyo);
+                if ($playerHealth > 0) {
 
-                if (!$this->autoLeave($smashedPlayerInTokyo, $playerHealth)) {
-                    $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
+                    if (!$this->autoLeave($smashedPlayerInTokyo, $playerHealth)) {
+                        $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
+                    }
+                } else {
+                    $this->leaveTokyo($smashedPlayerInTokyo);
                 }
-            } else {
-                $this->leaveTokyo($smashedPlayerInTokyo);
             }
         }
 
