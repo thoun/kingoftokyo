@@ -36,6 +36,13 @@ trait PlayerTrait {
             self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
         }
 
+        if (intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM player where `player_id` = $playerId")) > $maxHealth) {
+            self::DbQuery("UPDATE player SET `leave_tokyo_under` = $maxHealth where `player_id` = $playerId");
+            self::notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+                'under' => $maxHealth,
+            ]);
+        }
+
         self::notifyAllPlayers('maxHealth', '', [
             'playerId' => $playerId,
             'health' => $health,

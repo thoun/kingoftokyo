@@ -1952,8 +1952,9 @@ var KingOfTokyo = /** @class */ (function () {
         var popinId = "discussion_bubble_autoLeaveUnder";
         var bubble = document.getElementById(popinId);
         if (!bubble) {
-            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoLeaveUnderBubble\">\n                <div>" + _("Automatically leave tokyo when life goes down to, or under") + "</div>\n                <div class=\"button-grid\">";
-            for (var i = 10; i > 0; i--) {
+            var maxHealth = this.gamedatas.players[this.getPlayerId()].maxHealth;
+            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoLeaveUnderBubble\">\n                <div>" + _("Automatically leave tokyo when life goes down to, or under") + "</div>\n                <div id=\"" + popinId + "-buttons\" class=\"button-grid\">";
+            for (var i = maxHealth; i > 0; i--) {
                 html += "<button class=\"action-button bgabutton " + (this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton " + (i == 1 ? 'disable' : '') + "\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i == 1 ? _('Disabled') : i - 1) + "\n                </button>";
             }
             html += "</div>\n            <div>" + _("If your life is over it, or if disabled, you'll be asked if you want to stay or leave") + "</div>\n            </div>";
@@ -1964,13 +1965,36 @@ var KingOfTokyo = /** @class */ (function () {
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
-            for (var i = 10; i > 0; i--) {
+            for (var i = maxHealth; i > 0; i--) {
                 _loop_2(i);
             }
             bubble = document.getElementById(popinId);
         }
         bubble.style.display = 'block';
         bubble.dataset.visible = 'true';
+    };
+    KingOfTokyo.prototype.updateAutoLeavePopinButtons = function () {
+        var _this = this;
+        var popinId = "discussion_bubble_autoLeaveUnder";
+        var maxHealth = this.gamedatas.players[this.getPlayerId()].maxHealth;
+        for (var i = maxHealth + 1; i <= 14; i++) {
+            if (document.getElementById(popinId + "_set" + i)) {
+                dojo.destroy(popinId + "_set" + i);
+            }
+        }
+        var _loop_3 = function (i) {
+            if (!document.getElementById(popinId + "_set" + i)) {
+                dojo.place("<button class=\"action-button bgabutton " + (this_1.gamedatas.leaveTokyoUnder === i || (i == 1 && !this_1.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton " + (i == 1 ? 'disable' : '') + "\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i == 1 ? _('Disabled') : i - 1) + "\n                </button>", popinId + "-buttons", 'first');
+                document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
+                    _this.setLeaveTokyoUnder(i);
+                    setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
+                });
+            }
+        };
+        var this_1 = this;
+        for (var i = 11; i <= maxHealth; i++) {
+            _loop_3(i);
+        }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
         var bubble = document.getElementById("discussion_bubble_autoLeaveUnder");
@@ -2473,6 +2497,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setMaxHealth = function (playerId, maxHealth) {
         this.gamedatas.players[playerId].maxHealth = maxHealth;
         this.checkRapidHealingButtonState();
+        var popinId = "discussion_bubble_autoLeaveUnder";
+        if (document.getElementById(popinId)) {
+            this.updateAutoLeavePopinButtons();
+        }
     };
     KingOfTokyo.prototype.setEnergy = function (playerId, energy, delay) {
         if (delay === void 0) { delay = 0; }

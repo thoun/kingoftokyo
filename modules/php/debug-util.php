@@ -17,13 +17,11 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343492, 1);
-        //$this->debugSetCardInTable(112);
+        $this->debugSetCardInTable(EVEN_BIGGER_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
-        //$this->debugSetPlayerEnergy(2343492, 10);
-        $this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343492);
-        $this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343493);
+        $this->debugSetPlayerEnergy(2343492, 10);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
-        //$this->debugSetCardInHand(ROOTING_FOR_THE_UNDERDOG_CARD, 2343492);
+        $this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);
     }
 

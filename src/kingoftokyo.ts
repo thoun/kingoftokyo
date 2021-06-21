@@ -655,10 +655,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         const popinId = `discussion_bubble_autoLeaveUnder`;
         let bubble = document.getElementById(popinId);
         if (!bubble) { 
+            const maxHealth = this.gamedatas.players[this.getPlayerId()].maxHealth;
             let html = `<div id="${popinId}" class="discussion_bubble autoLeaveUnderBubble">
                 <div>${_("Automatically leave tokyo when life goes down to, or under")}</div>
-                <div class="button-grid">`;
-            for (let i=10; i>0; i--) {
+                <div id="${popinId}-buttons" class="button-grid">`;
+            for (let i = maxHealth; i>0; i--) {
                 html += `<button class="action-button bgabutton ${this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray'} autoLeaveButton ${i == 1 ? 'disable' : ''}" id="${popinId}_set${i}">
                     ${i == 1 ? _('Disabled') : i-1}
                 </button>`;
@@ -667,7 +668,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             <div>${_("If your life is over it, or if disabled, you'll be asked if you want to stay or leave")}</div>
             </div>`;
             dojo.place(html, 'autoLeaveUnderButton');
-            for (let i=10; i>0; i--) {
+            for (let i = maxHealth; i>0; i--) {
                 document.getElementById(`${popinId}_set${i}`).addEventListener('click', () => {
                     this.setLeaveTokyoUnder(i);
                     setTimeout(() => this.closeAutoLeaveUnderPopin(), 100);
@@ -679,6 +680,28 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         bubble.style.display = 'block';
         bubble.dataset.visible = 'true';
+    }
+
+    private updateAutoLeavePopinButtons() {
+        const popinId = `discussion_bubble_autoLeaveUnder`;
+        const maxHealth = this.gamedatas.players[this.getPlayerId()].maxHealth;
+        for (let i = maxHealth + 1; i<=14; i++) {
+            if (document.getElementById(`${popinId}_set${i}`)) {
+                dojo.destroy(`${popinId}_set${i}`);
+            }
+        }
+
+        for (let i = 11; i<=maxHealth; i++) {
+            if (!document.getElementById(`${popinId}_set${i}`)) {
+                dojo.place(`<button class="action-button bgabutton ${this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray'} autoLeaveButton ${i == 1 ? 'disable' : ''}" id="${popinId}_set${i}">
+                    ${i == 1 ? _('Disabled') : i-1}
+                </button>`, `${popinId}-buttons`, 'first');
+                document.getElementById(`${popinId}_set${i}`).addEventListener('click', () => {
+                    this.setLeaveTokyoUnder(i);
+                    setTimeout(() => this.closeAutoLeaveUnderPopin(), 100);
+                });
+            }
+        }
     }
 
     private closeAutoLeaveUnderPopin() {
@@ -1278,6 +1301,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setMaxHealth(playerId: number, maxHealth: number) {
         this.gamedatas.players[playerId].maxHealth = maxHealth;
         this.checkRapidHealingButtonState();
+        const popinId = `discussion_bubble_autoLeaveUnder`;
+        if (document.getElementById(popinId)) {
+            this.updateAutoLeavePopinButtons();
+        }
     }
     
     private setEnergy(playerId: number, energy: number, delay: number = 0) {
