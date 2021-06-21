@@ -16,11 +16,12 @@ trait DebugUtilTrait {
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetPlayerHealth(2343492, 1);
-        $this->debugSetPlayerHealth(2343492, 1);
+        //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetCardInTable(112);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetPlayerEnergy(2343492, 10);
-        //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
+        $this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343492);
+        $this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
         //$this->debugSetCardInHand(ROOTING_FOR_THE_UNDERDOG_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);

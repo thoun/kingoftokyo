@@ -207,8 +207,12 @@ trait DiceTrait {
             }
         }
 
-        $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES);
-        $damages = array_merge($damages, $fireBreathingDamages);
+        $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
+        foreach ($damages as &$damage) {
+            if (array_key_exists($damage->playerId, $fireBreathingDamages)) {
+                $damage->damage += $fireBreathingDamages[$damage->playerId];
+            }
+        }
 
         if (count($damages) > 0) {
             if ($this->resolveDamages($damages, $nextState)) {
@@ -892,10 +896,10 @@ trait DiceTrait {
                 $rightPlayerId = $playersIds[($playerIndex + $playerCount - 1) % $playerCount];
 
                 if ($leftPlayerId != $playerId) {
-                    $fireBreathingDamages[] = new Damage($leftPlayerId, $countFireBreathing, $playerId, FIRE_BREATHING_CARD);
+                    $fireBreathingDamages[$leftPlayerId] = $countFireBreathing;
                 }
                 if ($rightPlayerId != $playerId && $rightPlayerId != $leftPlayerId) {
-                    $fireBreathingDamages[] = new Damage($rightPlayerId, $countFireBreathing, $playerId, FIRE_BREATHING_CARD);
+                    $fireBreathingDamages[$rightPlayerId] = $countFireBreathing;
                 }
             }
         }
