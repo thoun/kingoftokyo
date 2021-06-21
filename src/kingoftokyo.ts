@@ -1322,6 +1322,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getPlayerTable(playerId).eliminatePlayer();
         this.tableManager.placePlayerTable(); // because all player's card were removed
 
+        dojo.removeClass(`overall_player_board_${playerId}`, 'intokyo');
+        dojo.removeClass(`monster-board-wrapper-${playerId}`, 'intokyo');
+        if (playerId == this.getPlayerId()) {
+            this.removeAutoLeaveUnderButton();
+        }
     }
 
     /* This enable to inject translatable styled things to logs or action bar */

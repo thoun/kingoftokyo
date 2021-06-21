@@ -565,7 +565,7 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.eliminatePlayer = function () {
         this.cards.removeAll();
-        this.game.fadeOutAndDestroy("player-board-monster-figure-" + this.playerId);
+        this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
         dojo.addClass("player-table-" + this.playerId, 'eliminated');
     };
     PlayerTable.prototype.setActivePlayer = function (active) {
@@ -2512,6 +2512,11 @@ var KingOfTokyo = /** @class */ (function () {
         dojo.place("<div class=\"icon dead\"></div>", "player_board_" + playerId);
         this.getPlayerTable(playerId).eliminatePlayer();
         this.tableManager.placePlayerTable(); // because all player's card were removed
+        dojo.removeClass("overall_player_board_" + playerId, 'intokyo');
+        dojo.removeClass("monster-board-wrapper-" + playerId, 'intokyo');
+        if (playerId == this.getPlayerId()) {
+            this.removeAutoLeaveUnderButton();
+        }
     };
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
