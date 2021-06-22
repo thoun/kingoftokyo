@@ -709,9 +709,10 @@ trait CardsTrait {
         }
 
         if (!$redirects) {
-            $stateName = $this->gamestate->state()['name'];
-
-            $this->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic));
+            // we only redirect if player is still alive (no card suicide that have set next player active)
+            if (!$opportunist && array_search($playerId, $this->gamestate->getActivePlayerList())) {
+                $this->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic), $playerId);
+            }
         }
     }
 

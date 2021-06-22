@@ -208,6 +208,12 @@ trait UtilTrait {
         $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+    }  
+
+    function getPlayer(int $id) {
+        $sql = "SELECT * FROM player WHERE player_id = $id";
+        $dbResults = self::getCollectionFromDB($sql);
+        return array_map(function($dbResult) { return new Player($dbResult); }, array_values($dbResults))[0];
     }
 
     // get players    
@@ -252,21 +258,31 @@ trait UtilTrait {
         return $orderedPlayers;
     }
     
-    function eliminatePlayers(int $currentTurnPlayerId) {
+    function eliminatePlayers(int $currentTurnPlayerId) { // return redirected
         $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, true);
 
-        $endGame = false;
+        $redirected = false;
 
         foreach($orderedPlayers as $player) {
             if ($player->health == 0 && !$player->eliminated) {
-                $endGame = $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                $redirected = $this->eliminateAPlayer($player, $currentTurnPlayerId);
             }
         }
 
-        return $endGame;
+        return $redirected;
     }
 
-    function eliminateAPlayer(object $player, int $currentTurnPlayerId) { // return $endGame
+    function eliminateAPlayer(object $player, int $currentTurnPlayerId) { // return redirected
+        $state = $this->gamestate->state();
+
+        // if player is killing himself
+        if ($player->id == $currentTurnPlayerId && $state['type'] == 'activeplayer') {
+            self::setGameStateValue(KILL_ACTIVE_PLAYER, $player->id);
+            $this->jumpToState(ST_END_TURN);
+
+            return true;
+        }
+
         $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0"));
 
         self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $eliminatedPlayersCount, player_location = 0 where `player_id` = $player->id");
@@ -282,7 +298,6 @@ trait UtilTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         
-        $state = $this->gamestate->state();
         // if player is playing in multipleactiveplayer (for example Camouflage roll fail to avoid elimination)
         if ($state['name'] == 'cancelDamage' && array_search($player->id, $this->gamestate->getActivePlayerList()) !== false) {
             $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
@@ -308,8 +323,6 @@ trait UtilTrait {
 
         if ($this->getRemainingPlayers() <= 1) {
             $this->jumpToState(ST_END_GAME);
-        } else if ($currentTurnPlayerId == $player->id) {
-            $this->jumpToState(ST_END_TURN);
         }
 
         return $this->getRemainingPlayers() <= 1;
@@ -618,6 +631,7 @@ trait UtilTrait {
 
     function jumpToState(int $stateId) {
         $state = $this->gamestate->state();
+        // we redirect only if game is not ended, and player is still active (not redirected to next player)
         if ($state['name'] != 'gameEnd') {
             $this->gamestate->jumpToState($stateId);
         }

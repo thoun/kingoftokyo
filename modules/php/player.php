@@ -360,40 +360,54 @@ trait PlayerTrait {
     function stNextPlayer() {
         $playerId = self::getActivePlayerId();
 
-        $anotherTimeWithCard = 0;
+        $killPlayer = intval($this->getGameStateValue(KILL_ACTIVE_PLAYER)) == $playerId;
+        $redirected = false;
 
-        $freezeTimeMaxTurns = intval($this->getGameStateValue(FREEZE_TIME_MAX_TURNS));
-        $freezeTimeCurrentTurn = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
-
-        if ($freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
-            $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
-            $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
-        } if ($freezeTimeCurrentTurn < $freezeTimeMaxTurns) { // extra turn for current player with one less die
-            $anotherTimeWithCard = FREEZE_TIME_CARD;
-            $this->incGameStateValue(FREEZE_TIME_CURRENT_TURN, 1);
-        }
-
-        if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
-            $anotherTimeWithCard = 109; // Frenzy
-            $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);            
-        }
-        
-        if ($anotherTimeWithCard > 0) {
-            self::notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'card_name' => $anotherTimeWithCard,
-            ]);
-        } else {
+        if ($killPlayer) {
             $playerId = self::activeNextPlayer();
+
+            $eliminatedPlayer = $this->getPlayer(intval($this->getGameStateValue(KILL_ACTIVE_PLAYER)));
+            $redirected = $this->eliminateAPlayer($eliminatedPlayer, $playerId);
+            $this->setGameStateValue(KILL_ACTIVE_PLAYER, 0);
+        } else {
+
+            $anotherTimeWithCard = 0;
+
+            $freezeTimeMaxTurns = intval($this->getGameStateValue(FREEZE_TIME_MAX_TURNS));
+            $freezeTimeCurrentTurn = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
+
+            if ($freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
+                $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
+                $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
+            } if ($freezeTimeCurrentTurn < $freezeTimeMaxTurns) { // extra turn for current player with one less die
+                $anotherTimeWithCard = FREEZE_TIME_CARD;
+                $this->incGameStateValue(FREEZE_TIME_CURRENT_TURN, 1);
+            }
+
+            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
+                $anotherTimeWithCard = 109; // Frenzy
+                $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);            
+            }
+            
+            if ($anotherTimeWithCard > 0) {
+                self::notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'card_name' => $anotherTimeWithCard,
+                ]);
+            } else {
+                $playerId = self::activeNextPlayer();
+            }
         }
 
         self::giveExtraTime($playerId);
 
-        if ($this->getMaxPlayerScore() >= MAX_POINT) {
-            $this->jumpToState(ST_END_GAME);
-        } else {
-            $this->gamestate->nextState('nextPlayer');
+        if (!$redirected) {
+            if ($this->getMaxPlayerScore() >= MAX_POINT) {
+                $this->jumpToState(ST_END_GAME);
+            } else {
+                $this->gamestate->nextState('nextPlayer');
+            }
         }
     }
 }

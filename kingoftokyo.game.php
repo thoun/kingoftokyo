@@ -56,6 +56,7 @@ class KingOfTokyo extends Table {
             'loseHeartEnteringTokyo' => 14,
             FREEZE_TIME_MAX_TURNS => 15,
             FREEZE_TIME_CURRENT_TURN => 16,
+            KILL_ACTIVE_PLAYER => 17,
             'newCardId' => 20,
             PICK_MONSTER_OPTION => 100,
         ]);      
@@ -127,6 +128,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(EXTRA_ROLLS, 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('newCardId', 0);
+        self::setGameStateInitialValue(KILL_ACTIVE_PLAYER, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

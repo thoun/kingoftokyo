@@ -35,10 +35,9 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 # TODO
 add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
-ask editor for bonus monsters, scoring mode, not showing the other tokyo player choosed to leave. asked
-fix opacity on made in a lab
 sometimes a shadow stays with dice (a 7 ghost die)
-allow player suicide
-one smash + fire breathing does nothing on player with armor ? asked
 can background dweller be used with camouflage rolls ? or after psychic probe, py active player ? or on a psychic probe roll, il player with psychic probe also got background dweller ?
 make heart animations go to position/sr tokens or healed players with healing ray
+make a tutorial
+add english rules in wiki
+advanced option in RT to skip timer phases
