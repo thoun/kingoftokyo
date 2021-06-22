@@ -164,15 +164,15 @@ trait DiceTrait {
             }
 
             $fireBreathingDamage = array_key_exists($smashedPlayerId, $fireBreathingDamages) ? $fireBreathingDamages[$smashedPlayerId] : 0;
-            $damageAmout = $diceCount + $fireBreathingDamage;
+            $damageAmount = $diceCount + $fireBreathingDamage;
 
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
             if ($countJets > 0 && $smashedPlayerIsInTokyo) {                
-                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmout, $playerId, 0);
+                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0);
             } else {
-                $damages[] = new Damage($smashedPlayerId, $damageAmout, $playerId, 0);
+                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0);
             }
         }
 
@@ -209,6 +209,21 @@ trait DiceTrait {
         if ($countPoisonSpit > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
                 $this->applyGetPoisonToken($smashedPlayerId, $countPoisonSpit);
+            }
+        }
+
+        // fire breathing
+        foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
+            self::notifyAllPlayers("fireBreathingExtraDamage", '${player_name} loses ${number} extra [Heart] with ${card_name}', [
+                'playerId' => $damagePlayerId,
+                'player_name' => $this->getPlayerName($damagePlayerId),
+                'number' => 1,
+                'card_name' => FIRE_BREATHING_CARD,
+            ]);
+
+            // we add damage only if it's not already counted in smashed players
+            if (array_search($damagePlayerId, $smashedPlayersIds) === false) {
+                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0);
             }
         }
 

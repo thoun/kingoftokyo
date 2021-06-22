@@ -36,7 +36,7 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 sometimes a shadow stays with dice (a 7 ghost die)
-can background dweller be used with camouflage rolls ? or after psychic probe, py active player ? or on a psychic probe roll, il player with psychic probe also got background dweller ?
+can background dweller be used with camouflage rolls ? or after psychic probe, by active player ? or on a psychic probe roll, if player with psychic probe also got background dweller ?
 make heart animations go to position/sr tokens or healed players with healing ray
 make a tutorial
 add english rules in wiki
