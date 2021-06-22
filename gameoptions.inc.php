@@ -43,6 +43,23 @@ $game_options = [
         ],
         'default' => 1,
     ],
+
+    110 => [
+        'name' => totranslate('Skip phase with no possible actions'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+                'description' => totranslate("Game phases are always visible, with a timer if no possible actions")
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'description' => totranslate("Game phases are skipped if no possible actions"),
+                'tmdisplay' => totranslate('Skip phases with no possible actions'),
+            ],
+        ],
+        'default' => 1,
+        'nobeginner' => true
+    ]
 ];
 
 $game_preferences = [

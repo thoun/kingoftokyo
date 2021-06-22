@@ -59,6 +59,7 @@ define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
  */
 
 define('PICK_MONSTER_OPTION', 'PickMonsterOption');
+define('AUTO_SKIP_OPTION', 'AutoSkipOption');
 
 /*
  * Variables

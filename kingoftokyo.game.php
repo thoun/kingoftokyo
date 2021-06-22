@@ -59,6 +59,7 @@ class KingOfTokyo extends Table {
             KILL_ACTIVE_PLAYER => 17,
             'newCardId' => 20,
             PICK_MONSTER_OPTION => 100,
+            AUTO_SKIP_OPTION => 110,
         ]);      
 		
         $this->cards = self::getNew("module.common.deck");

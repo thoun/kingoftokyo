@@ -744,7 +744,7 @@ trait DiceTrait {
 
     function stThrowDice() {
         // disabled so player can see last roll
-        /*if ($this->isTurnBased() && !$this->argThrowDice()['hasActions']) {
+        /*if ($this->autoSkipImpossibleActions() && !$this->argThrowDice()['hasActions']) {
             // skip state
             $this->goToChangeDie(true);
         }*/

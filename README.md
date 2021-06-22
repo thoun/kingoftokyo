@@ -40,4 +40,3 @@ can background dweller be used with camouflage rolls ? or after psychic probe, p
 make heart animations go to position/sr tokens or healed players with healing ray
 make a tutorial
 add english rules in wiki
-advanced option in RT to skip timer phases

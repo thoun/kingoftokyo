@@ -1172,7 +1172,7 @@ trait CardsTrait {
 ////////////
 
     function stChooseMimickedCard() {
-        if ($this->isTurnBased() && !$this->argChooseMimickedCard()['canChange']) {
+        if ($this->autoSkipImpossibleActions() && !$this->argChooseMimickedCard()['canChange']) {
             // skip state
             $this->skipChangeMimickedCard(true);
         }
@@ -1181,14 +1181,14 @@ trait CardsTrait {
     function stBuyCard() {
         $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
 
-        if ($this->isTurnBased() && !$this->argBuyCard()['canBuyOrNenew']) {
+        if ($this->autoSkipImpossibleActions() && !$this->argBuyCard()['canBuyOrNenew']) {
             // skip state
             $this->goToSellCard(true);
         }
     }
 
     function stOpportunistBuyCard() {
-        if ($this->isTurnBased()) { // in turn based, we remove players when they can't buy anything
+        if ($this->autoSkipImpossibleActions()) { // in turn based, we remove players when they can't buy anything
             $intervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
             $intervention->remainingPlayersId = array_values(array_filter($intervention->remainingPlayersId, function($playerId) {
                 return $this->argOpportunistBuyCardWithPlayerId($playerId)['canBuy'];

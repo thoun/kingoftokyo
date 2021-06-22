@@ -22,6 +22,10 @@ trait UtilTrait {
         return intval($this->gamestate->table_globals[200]) >= 10;
     }
 
+    function autoSkipImpossibleActions() {
+        return $this->isTurnBased() || intval(self::getGameStateValue(AUTO_SKIP_OPTION)) === 2;
+    }
+
     function setGlobalVariable(string $name, /*object|array*/ $obj) {
         /*if ($obj == null) {
             throw new \Error('Global Variable null');
