@@ -153,6 +153,8 @@ trait DiceTrait {
             $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
         }
 
+        $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
+
         $jetsDamages = [];
         $smashedPlayersInTokyo = [];
         foreach($smashedPlayersIds as $smashedPlayerId) {
@@ -161,13 +163,16 @@ trait DiceTrait {
                 $smashedPlayersInTokyo[] = $smashedPlayerId;
             }
 
+            $fireBreathingDamage = array_key_exists($smashedPlayerId, $fireBreathingDamages) ? $fireBreathingDamages[$smashedPlayerId] : 0;
+            $damageAmout = $diceCount + $fireBreathingDamage;
+
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
-            if ($countJets > 0 && $smashedPlayerIsInTokyo) {
-                $jetsDamages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
+            if ($countJets > 0 && $smashedPlayerIsInTokyo) {                
+                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmout, $playerId, 0);
             } else {
-                $damages[] = new Damage($smashedPlayerId, $diceCount, $playerId, 0);
+                $damages[] = new Damage($smashedPlayerId, $damageAmout, $playerId, 0);
             }
         }
 
@@ -204,13 +209,6 @@ trait DiceTrait {
         if ($countPoisonSpit > 0) {
             foreach($smashedPlayersIds as $smashedPlayerId) {
                 $this->applyGetPoisonToken($smashedPlayerId, $countPoisonSpit);
-            }
-        }
-
-        $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
-        foreach ($damages as &$damage) {
-            if (array_key_exists($damage->playerId, $fireBreathingDamages)) {
-                $damage->damage += $fireBreathingDamages[$damage->playerId];
             }
         }
 
