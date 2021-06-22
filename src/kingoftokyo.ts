@@ -424,13 +424,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 
                 case 'buyCard':
+                    const argsBuyCard = args as EnteringBuyCardArgs;
+
                     (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), 'onRenew');
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
-                    (this as any).addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
+                    (this as any).addActionButton('endTurn_button', argsBuyCard.canSell ? _("Sell cards") : _("End turn"), 'goToSellCard', null, null, 'red');
 
-                    const argsBuyCard = args as EnteringBuyCardArgs;
                     if (!argsBuyCard.canBuyOrNenew) {
                         this.startActionTimer('endTurn_button', 5);
                     }

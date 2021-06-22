@@ -1771,12 +1771,12 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
                     break;
                 case 'buyCard':
+                    var argsBuyCard = args;
                     this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(" ( 2 [Energy])"), 'onRenew');
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
-                    this.addActionButton('endTurn_button', _("End turn"), 'goToSellCard', null, null, 'red');
-                    var argsBuyCard = args;
+                    this.addActionButton('endTurn_button', argsBuyCard.canSell ? _("Sell cards") : _("End turn"), 'goToSellCard', null, null, 'red');
                     if (!argsBuyCard.canBuyOrNenew) {
                         this.startActionTimer('endTurn_button', 5);
                     }

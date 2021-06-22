@@ -1001,6 +1001,7 @@ trait CardsTrait {
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
         $canBuyOrNenew = $playerEnergy >= 2;
+        $canSell = $this->countCardOfType($playerId, METAMORPH_CARD) > 0;
 
         // parasitic tentacles
         $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) > 0;
@@ -1064,6 +1065,7 @@ trait CardsTrait {
             'disabledIds' => $disabledIds,
             'canBuyFromPlayers' => $canBuyFromPlayers,
             'canBuyOrNenew' => $canBuyOrNenew,
+            'canSell' => $canSell,
         ] + $pickArgs;
     }
 
