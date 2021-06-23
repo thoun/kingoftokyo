@@ -40,3 +40,6 @@ can background dweller be used with camouflage rolls ? or after psychic probe, b
 make heart animations go to position/sr tokens or healed players with healing ray
 make a tutorial
 add english rules in wiki
+invisible dice : same bug for every player
+after buying a card, argBuyCard is not refreshed
+when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
