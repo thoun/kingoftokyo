@@ -196,7 +196,7 @@ class DiceManager {
                 }, 1000);
 
                 if (playerIndex === playerIds.length - 1) {
-                    setTimeout(() => this.removeDice(die), 2500);
+                    this.removeDice(die, 500, 2500);
                 }
             });
         });

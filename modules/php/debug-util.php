@@ -18,14 +18,14 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetCardInTable(113);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
-        $this->debugSetPlayerEnergy(2343492, 10);
+        //$this->debugSetPlayerEnergy(2343492, 10);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
         //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);
 
         // Activate first player must be commented in setup if this is used
-        $this->gamestate->changeActivePlayer(2343493);
+        //$this->gamestate->changeActivePlayer(2343493);
     }
 
     private function debugSetCardInTable($cardType) {

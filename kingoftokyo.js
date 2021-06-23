@@ -1076,7 +1076,7 @@ var DiceManager = /** @class */ (function () {
                     document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(" + 0.3 * _this.game.getZoom() + ")";
                 }, 1000);
                 if (playerIndex === playerIds.length - 1) {
-                    setTimeout(function () { return _this.removeDice(die); }, 2500);
+                    _this.removeDice(die, 500, 2500);
                 }
             });
         });
