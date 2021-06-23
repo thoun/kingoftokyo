@@ -9,5 +9,5 @@ function formatTextIcons(rawText: string) {
         .replace(/\[diceHeart\]/ig, '<span class="dice-icon dice4"></span>')
         .replace(/\[diceEnergy\]/ig, '<span class="dice-icon dice5"></span>')
         .replace(/\[diceSmash\]/ig, '<span class="dice-icon dice6"></span>')
-        .replace(/\[keep\]/ig, '<span class="card-keep-text"><span class="outline">Keep</span><span class="text">Keep</span></span>');
+        .replace(/\[keep\]/ig, `<span class="card-keep-text"><span class="outline">${_('Keep')}</span><span class="text">${_('Keep')}</span></span>`);
 }
