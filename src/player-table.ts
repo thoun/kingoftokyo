@@ -114,6 +114,7 @@ class PlayerTable {
     
     public setActivePlayer(active: boolean): void {
         dojo.toggleClass(`player-table-${this.playerId}`, 'active', active);
+        dojo.toggleClass(`overall_player_board_${this.playerId}`, 'active', active);
     }
     
     public setFont(prefValue: number): void {

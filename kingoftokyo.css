@@ -3,6 +3,9 @@
 .player-board {
   background-color: white;
 }
+.player-board.active {
+  box-shadow: 0px 0px 2px 3px #ffcf13;
+}
 .player-board.eliminated-player {
   background-color: #b9b9b9;
 }

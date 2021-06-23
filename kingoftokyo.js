@@ -570,6 +570,7 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setActivePlayer = function (active) {
         dojo.toggleClass("player-table-" + this.playerId, 'active', active);
+        dojo.toggleClass("overall_player_board_" + this.playerId, 'active', active);
     };
     PlayerTable.prototype.setFont = function (prefValue) {
         var defaultFont = prefValue === 1;
