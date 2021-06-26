@@ -679,7 +679,7 @@ trait DiceTrait {
         }
         $hasSmokeCloud = $smokeCloudsTokens > 0;
 
-        $hasActions = $throwNumber < $maxThrowNumber || ($hasEnergyDrink && $playerEnergy >= 1) || $hasSmokeCloud;
+        $hasActions = $throwNumber < $maxThrowNumber || ($hasEnergyDrink && $playerEnergy >= 1) || $hasDice3 || $hasSmokeCloud;
     
         // return values:
         return [

@@ -21,7 +21,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerEnergy(2343492, 10);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
         //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343492);
-        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
+        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);
 
         // Activate first player must be commented in setup if this is used
