@@ -304,10 +304,15 @@ trait UtilTrait {
         
         // if player is playing in multipleactiveplayer (for example Camouflage roll fail to avoid elimination)
         if ($state['name'] == 'cancelDamage' && array_search($player->id, $this->gamestate->getActivePlayerList()) !== false) {
+            self::setGameStateValue(MULTIPLAYER_BEING_KILLED, $player->id);
+
             $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
             $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
+
         } else if ($state['name'] == 'opportunistBuyCard' && array_search($player->id, $this->gamestate->getActivePlayerList()) !== false) {
+            self::setGameStateValue(MULTIPLAYER_BEING_KILLED, $player->id);
+
             $this->removeDiscardCards($player->id);
             $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', 'end');
             $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');

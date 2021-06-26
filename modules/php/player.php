@@ -365,6 +365,11 @@ trait PlayerTrait {
 
         if ($killPlayer) {
             $playerId = self::activeNextPlayer();
+            
+            if (intval(self::getGameStateValue(MULTIPLAYER_BEING_KILLED)) == $playerId) {
+                $playerId = self::activeNextPlayer();
+                self::setGameStateValue(MULTIPLAYER_BEING_KILLED, 0);
+            }
 
             $eliminatedPlayer = $this->getPlayer(intval($this->getGameStateValue(KILL_ACTIVE_PLAYER)));
             $redirected = $this->eliminateAPlayer($eliminatedPlayer, $playerId);
@@ -397,6 +402,11 @@ trait PlayerTrait {
                 ]);
             } else {
                 $playerId = self::activeNextPlayer();
+            
+                if (intval(self::getGameStateValue(MULTIPLAYER_BEING_KILLED)) == $playerId) {
+                    $playerId = self::activeNextPlayer();
+                    self::setGameStateValue(MULTIPLAYER_BEING_KILLED, 0);
+                }
             }
         }
 
