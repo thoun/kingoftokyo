@@ -41,8 +41,14 @@ class HeartActionSelector {
                     `${nodeId}-die${index}-shrink-ray`, 
                     _('Remove Shrink Ray token'), 
                     () => this.shrinkRaySelected(index),
-                    false
+                    args.inTokyo
                 );
+                       
+                if (args.inTokyo) {
+                    const buttonDiv = document.getElementById(`${nodeId}-die${index}-shrink-ray`);
+                    buttonDiv.style.position = 'relative';
+                    buttonDiv.innerHTML += `<div class="icon forbidden"></div>`;
+                }
             }
             if (args.poisonTokens > 0) {
                 this.createToggleButton(
@@ -50,8 +56,14 @@ class HeartActionSelector {
                     `${nodeId}-die${index}-poison`, 
                     _('Remove Poison token'), 
                     () => this.poisonSelected(index),
-                    false
+                    args.inTokyo
                 );
+                       
+                if (args.inTokyo) {
+                    const buttonDiv = document.getElementById(`${nodeId}-die${index}-poison`);
+                    buttonDiv.style.position = 'relative';
+                    buttonDiv.innerHTML += `<div class="icon forbidden"></div>`;
+                }
             }
             if (args.hasHealingRay) {
                 args.healablePlayers.forEach(healablePlayer =>

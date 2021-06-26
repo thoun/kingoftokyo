@@ -741,11 +741,13 @@ trait DiceTrait {
     
             $selectHeartDiceUseArg = $this->getSelectHeartDiceUse($playerId);  
 
-            $canSelectHeartDiceUse = $selectHeartDiceUseArg['hasHealingRay'] || $selectHeartDiceUseArg['shrinkRayTokens'] > 0 || $selectHeartDiceUseArg['poisonTokens'] > 0;
+            $inTokyo = $this->inTokyo($playerId);
+
+            $canSelectHeartDiceUse = $selectHeartDiceUseArg['hasHealingRay'] || (($selectHeartDiceUseArg['shrinkRayTokens'] > 0 || $selectHeartDiceUseArg['poisonTokens'] > 0) && !$inTokyo);
 
             $diceArg = $canSelectHeartDiceUse ? [
                 'dice' => $dice,
-                'inTokyo' => $this->inTokyo($playerId),
+                'inTokyo' => $inTokyo,
             ] : [ 'skipped' => true ];
     
             return $selectHeartDiceUseArg + $diceArg;
@@ -936,8 +938,11 @@ trait DiceTrait {
         $canSelectHeartDiceUse = false;
         if ($diceCounts[4] > 0) {
             $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);
+            $inTokyo = $this->inTokyo($playerId);
 
-            $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0;
+            $canRemoveToken = ($selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0) && !$inTokyo;
+
+            $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $canRemoveToken;
         }
 
         if ($canSelectHeartDiceUse) {

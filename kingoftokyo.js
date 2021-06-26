@@ -1332,10 +1332,20 @@ var HeartActionSelector = /** @class */ (function () {
             }
             _this.selections[index] = { action: 'heal' };
             if (args.shrinkRayTokens > 0) {
-                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-shrink-ray", _('Remove Shrink Ray token'), function () { return _this.shrinkRaySelected(index); }, false);
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-shrink-ray", _('Remove Shrink Ray token'), function () { return _this.shrinkRaySelected(index); }, args.inTokyo);
+                if (args.inTokyo) {
+                    var buttonDiv = document.getElementById(nodeId + "-die" + index + "-shrink-ray");
+                    buttonDiv.style.position = 'relative';
+                    buttonDiv.innerHTML += "<div class=\"icon forbidden\"></div>";
+                }
             }
             if (args.poisonTokens > 0) {
-                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-poison", _('Remove Poison token'), function () { return _this.poisonSelected(index); }, false);
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-poison", _('Remove Poison token'), function () { return _this.poisonSelected(index); }, args.inTokyo);
+                if (args.inTokyo) {
+                    var buttonDiv = document.getElementById(nodeId + "-die" + index + "-poison");
+                    buttonDiv.style.position = 'relative';
+                    buttonDiv.innerHTML += "<div class=\"icon forbidden\"></div>";
+                }
             }
             if (args.hasHealingRay) {
                 args.healablePlayers.forEach(function (healablePlayer) {
