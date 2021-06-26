@@ -143,13 +143,13 @@ trait DiceTrait {
         $damages = [];
 
         if ($countNovaBreath) {
-            $message = clienttranslate('${player_name} give ${number} [diceSmash] to all other Monsters');
+            $message = clienttranslate('${player_name} smashes all other Monsters with ${number} [diceSmash]');
             $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
         } else {
             $smashTokyo = !$inTokyo;
             $message = $smashTokyo ? 
-                clienttranslate('${player_name} give ${number} [diceSmash] to Monsters in Tokyo') :
-                clienttranslate('${player_name} give ${number} [diceSmash] to Monsters outside Tokyo');
+                clienttranslate('${player_name} smashes Monsters in Tokyo with ${number} [diceSmash]') :
+                clienttranslate('${player_name} smashes Monsters outside Tokyo with ${number} [diceSmash]');
             $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
         }
 
