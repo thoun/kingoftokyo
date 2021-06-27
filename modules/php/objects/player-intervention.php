@@ -36,12 +36,12 @@ class PsychicProbeIntervention extends PlayerIntervention {
 }
 
 class PlayersUsedDice {
-    public $diceFaces; // number[]
+    public $dice; // Dice[]
     public $rolls = 1; // number
     public $maxRolls; // number
 
-    public function __construct(array $diceFaces, int $maxRolls) {
-        $this->diceFaces = $diceFaces;
+    public function __construct(array $dice, int $maxRolls) {
+        $this->dice = $dice;
         $this->maxRolls = $maxRolls;
     }
 }

@@ -409,6 +409,33 @@ trait DiceTrait {
         $this->gamestate->nextState('rethrow');
     }
 
+    public function rethrow3camouflage() {
+        $this->checkAction('rethrow3camouflage');
+
+        $playerId = self::getCurrentPlayerId();
+
+        $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
+        if ($countBackgroundDweller == 0) {
+            throw new \Error('No Background Dweller card');
+        }
+
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+
+        $dice = $intervention->playersUsedDice->{$playerId}->dice;
+        $rethrown = false;
+        for ($i=0; $i<count($dice); $i++) {
+            if (!$rethrown && $dice[$i]->value == 3) {
+                $dice[$i]->value = bga_rand(1, 6);
+                $dice[$i]->rolled = true;
+                $rethrown = true;
+            } else {                
+                $dice[$i]->rolled = false;
+            }
+        }
+
+        $this->endThrowCamouflageDice($playerId, $intervention, $dice);
+    }
+
     public function changeDie(int $id, int $value, int $cardType) {
         $this->checkAction('changeDie');
 

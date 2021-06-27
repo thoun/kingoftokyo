@@ -141,9 +141,9 @@ class DiceManager {
         }
     }
 
-    showCamouflageRoll(diceValues: Dice[]) {
+    showCamouflageRoll(dice: Dice[]) {
         this.clearDiceHtml();
-        diceValues.forEach((dieValue, index) => {
+        dice.forEach((dieValue, index) => {
             const die: Dice = {
                 id: index,
                 value: dieValue.value,

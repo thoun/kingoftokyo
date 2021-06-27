@@ -92,6 +92,14 @@
 
         self::ajaxResponse();
     }
+
+    public function rethrow3camouflage() {
+        self::setAjaxMode();
+
+        $this->game->rethrow3camouflage();
+
+        self::ajaxResponse();
+    }
   	
     public function goToChangeDie() {
         self::setAjaxMode();

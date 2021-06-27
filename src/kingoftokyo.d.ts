@@ -79,17 +79,21 @@ interface EnteringDiceArgs {
     inTokyo: boolean;
 }
 
+interface EnergyDrink {
+    hasCard: boolean;
+    playerEnergy: number;
+}
+
+interface Rethrow3 {
+    hasCard: boolean;
+    hasDice3: boolean;
+}
+
 interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     throwNumber: number;
     maxThrowNumber: number;
-    energyDrink: {
-        hasCard: boolean;
-        playerEnergy: number;
-    }
-    rethrow3: {
-        hasCard: boolean;
-        hasDice3: boolean;
-    };
+    energyDrink: EnergyDrink;
+    rethrow3: Rethrow3;
     hasSmokeCloud: boolean;
     hasActions: boolean;
 }
@@ -129,6 +133,7 @@ interface EnteringCancelDamageArgs {
     canUseWings: boolean;
     playerEnergy: number;
     dice: Dice[];
+    rethrow3: Rethrow3;
 }
 
 interface EnteringLeaveTokyoArgs {

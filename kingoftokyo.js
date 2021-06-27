@@ -1025,10 +1025,10 @@ var DiceManager = /** @class */ (function () {
             die.value = toValue;
         }
     };
-    DiceManager.prototype.showCamouflageRoll = function (diceValues) {
+    DiceManager.prototype.showCamouflageRoll = function (dice) {
         var _this = this;
         this.clearDiceHtml();
-        diceValues.forEach(function (dieValue, index) {
+        dice.forEach(function (dieValue, index) {
             var die = {
                 id: index,
                 value: dieValue.value,
@@ -1633,8 +1633,18 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringCancelDamage = function (args) {
+        var _this = this;
+        var _a;
         if (args.dice) {
             this.diceManager.showCamouflageRoll(args.dice);
+        }
+        if (args.dice && ((_a = args.rethrow3) === null || _a === void 0 ? void 0 : _a.hasCard)) {
+            if (document.getElementById('rethrow3camouflage_button')) {
+                dojo.toggleClass('rethrow3camouflage_button', 'disabled', !args.rethrow3.hasDice3);
+            }
+            else {
+                this.createButton('dice-actions', 'rethrow3camouflage_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3camouflage(); }, !args.rethrow3.hasDice3);
+            }
         }
         if (args.canThrowDices && !document.getElementById('throwCamouflageDice_button')) {
             this.addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
@@ -1708,6 +1718,9 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'cancelDamage':
                 this.diceManager.removeAllDice();
+                if (document.getElementById('rethrow3camouflage_button')) {
+                    dojo.destroy('rethrow3camouflage_button');
+                }
                 break;
         }
     };
@@ -2057,6 +2070,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.rethrow3 = function () {
         this.takeAction('rethrow3');
+    };
+    KingOfTokyo.prototype.rethrow3camouflage = function () {
+        this.takeAction('rethrow3camouflage');
     };
     KingOfTokyo.prototype.buyEnergyDrink = function () {
         var diceIds = this.diceManager.destroyFreeDice();
@@ -2471,11 +2487,13 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.notif_useCamouflage = function (notif) {
-        this.diceManager.showCamouflageRoll(notif.args.diceValues);
         if (notif.args.cancelDamageArgs) {
             this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
             this.updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
+        }
+        else {
+            this.diceManager.showCamouflageRoll(notif.args.diceValues);
         }
     };
     KingOfTokyo.prototype.notif_changeDie = function (notif) {

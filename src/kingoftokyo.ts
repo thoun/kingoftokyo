@@ -261,6 +261,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringCancelDamage(args: EnteringCancelDamageArgs) {
         if (args.dice) {
             this.diceManager.showCamouflageRoll(args.dice);
+        }        
+
+        if (args.dice && args.rethrow3?.hasCard) {
+            if (document.getElementById('rethrow3camouflage_button')) {
+                dojo.toggleClass('rethrow3camouflage_button', 'disabled', !args.rethrow3.hasDice3);
+            } else {
+                this.createButton('dice-actions', 'rethrow3camouflage_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3camouflage(), !args.rethrow3.hasDice3);
+            }
         }
 
         if (args.canThrowDices && !document.getElementById('throwCamouflageDice_button')) {
@@ -342,6 +350,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             case 'cancelDamage':
                 this.diceManager.removeAllDice();
+                if (document.getElementById('rethrow3camouflage_button')) {
+                    dojo.destroy('rethrow3camouflage_button');
+                }
                 break;
         }
     }
@@ -763,6 +774,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public rethrow3() {
         this.takeAction('rethrow3');
+    }
+
+    public rethrow3camouflage() {
+        this.takeAction('rethrow3camouflage');
     }
 
     public buyEnergyDrink() {
@@ -1262,11 +1277,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_useCamouflage(notif: Notif<NotifUseCamouflageArgs>) {
-        this.diceManager.showCamouflageRoll(notif.args.diceValues);
         if (notif.args.cancelDamageArgs) { 
             this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
             (this as any).updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
+        } else {            
+            this.diceManager.showCamouflageRoll(notif.args.diceValues);
         }
     }
 
