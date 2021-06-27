@@ -100,6 +100,14 @@
 
         self::ajaxResponse();
     }
+
+    public function rethrow3psychicProbe() {
+        self::setAjaxMode();
+
+        $this->game->rethrow3psychicProbe();
+
+        self::ajaxResponse();
+    }
   	
     public function goToChangeDie() {
         self::setAjaxMode();

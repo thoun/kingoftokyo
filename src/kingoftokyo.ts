@@ -240,8 +240,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private onEnteringPsychicProbeRollDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
-        this.diceManager.setDiceForPsychicProbe(args.dice, args.inTokyo, isCurrentPlayerActive);
+    private onEnteringPsychicProbeRollDie(args: EnteringPsychicProbeRollDieArgs, isCurrentPlayerActive: boolean) {
+        this.diceManager.setDiceForPsychicProbe(args.dice, args.inTokyo, isCurrentPlayerActive && args.canRoll);
+
+        if (args.dice && args.rethrow3?.hasCard) {
+            if (document.getElementById('rethrow3psychicProbe_button')) {
+                dojo.toggleClass('rethrow3psychicProbe_button', 'disabled', !args.rethrow3.hasDice3);
+            } else {
+                this.createButton('dice-actions', 'rethrow3psychicProbe_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3psychicProbe(), !args.rethrow3.hasDice3);
+            }
+        }
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs, isCurrentPlayerActive: boolean) {
@@ -331,7 +339,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;            
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
-                break;                
+                break;  
+            case 'psychicProbeRollDie':
+                if (document.getElementById('rethrow3psychicProbe_button')) {
+                    dojo.destroy('rethrow3psychicProbe_button');
+                }   
+                break;             
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {
                     dojo.destroy('heart-action-selector');
@@ -778,6 +791,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public rethrow3camouflage() {
         this.takeAction('rethrow3camouflage');
+    }
+
+    public rethrow3psychicProbe() {
+        this.takeAction('rethrow3psychicProbe');
     }
 
     public buyEnergyDrink() {
@@ -1287,7 +1304,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_changeDie(notif: Notif<NotifChangeDieArgs>) {
-        this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
+        console.log('notif_changeDie', notif.args);
+        if (notif.args.psychicProbeRollDieArgs) {
+            const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
+            this.onEnteringPsychicProbeRollDie(notif.args.psychicProbeRollDieArgs, isCurrentPlayerActive);
+        } else {            
+            this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
+        }
     }
 
     notif_resolvePlayerDice() {

@@ -98,20 +98,27 @@ interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     hasActions: boolean;
 }
 
+interface EnteringPsychicProbeRollDieArgs extends EnteringDiceArgs {
+    canRoll: boolean;
+    rethrow3: Rethrow3;
+}
+
 interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasHerdCuller: boolean;
     hasPlotTwist: boolean;
     hasStretchy: boolean;
 }
 
+interface HealablePlayer {
+    id: number;
+    name: string; 
+    color: string; 
+    missingHearts: number;
+}
+
 interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
     hasHealingRay: boolean;
-    healablePlayers: {
-        id: number;
-        name: string; 
-        color: string; 
-        missingHearts: number;
-    }[];
+    healablePlayers: HealablePlayer[];
     poisonTokens: number;
     shrinkRayTokens: number;
     skipped: boolean;
@@ -257,6 +264,7 @@ interface NotifChangeDieArgs {
     dieId: number;
     toValue: number;
     roll?: boolean;
+    psychicProbeRollDieArgs?: EnteringPsychicProbeRollDieArgs;
 }
 
 interface NotifUpdateLeaveTokyoUnderArgs {
