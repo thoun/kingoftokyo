@@ -128,7 +128,7 @@ interface EnteringCancelDamageArgs {
     canThrowDices: boolean;
     canUseWings: boolean;
     playerEnergy: number;
-    dice: number[];
+    dice: Dice[];
 }
 
 interface EnteringLeaveTokyoArgs {
@@ -242,7 +242,7 @@ interface NotifToggleRapidHealingArgs {
 
 interface NotifUseCamouflageArgs {
     playerId: number;
-    diceValues: number[];
+    diceValues: Dice[];
     cancelDamageArgs: EnteringCancelDamageArgs;
 }
 

@@ -1031,10 +1031,10 @@ var DiceManager = /** @class */ (function () {
         diceValues.forEach(function (dieValue, index) {
             var die = {
                 id: index,
-                value: dieValue,
+                value: dieValue.value,
                 extra: false,
                 locked: false,
-                rolled: true,
+                rolled: dieValue.rolled,
             };
             dojo.place(_this.createDiceHtml(die, false), "dice-selector");
             _this.addDiceRollClass(die);

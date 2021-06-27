@@ -869,16 +869,22 @@ trait CardsTrait {
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
-        $dice = 0;
+        $diceNumber = 0;
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $dice += $damage->damage;
+                $diceNumber += $damage->damage;
             }
         }
 
+        $dice = [];
         $diceValues = [];
-        for ($i=0; $i<$dice; $i++) {
-            $diceValues[] = bga_rand(1, 6);
+        for ($i=0; $i<$diceNumber; $i++) {
+            $face = bga_rand(1, 6);
+            $diceValues[] = $face;
+            $newDie = new \stdClass(); // Dice-like
+            $newDie->value = $face;
+            $newDie->rolled = true;
+            $dice[] = $newDie;
         }
 
 
@@ -886,7 +892,7 @@ trait CardsTrait {
 
         $intervention->playersUsedDice->{$playerId} = new PlayersUsedDice($diceValues, $countCamouflage);
 
-        $remainingDamage = $dice - $cancelledDamage;
+        $remainingDamage = $diceNumber - $cancelledDamage;
 
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention); // we use this to save changes to $intervention
 
@@ -910,7 +916,7 @@ trait CardsTrait {
         }
 
         $diceStr = '';
-        foreach($diceValues as $dieValue) {
+        foreach ($diceValues as $dieValue) {
             $diceStr .= $this->getDieFaceLogName($dieValue);
         }
 
@@ -919,7 +925,7 @@ trait CardsTrait {
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => CAMOUFLAGE_CARD,
             'cancelledDamage' => $cancelledDamage,
-            'diceValues' => $diceValues,
+            'diceValues' => $dice,
             'cancelDamageArgs' => $args,
             'dice' => $diceStr,
         ]);

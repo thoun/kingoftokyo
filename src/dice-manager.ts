@@ -141,15 +141,15 @@ class DiceManager {
         }
     }
 
-    showCamouflageRoll(diceValues: number[]) {
+    showCamouflageRoll(diceValues: Dice[]) {
         this.clearDiceHtml();
         diceValues.forEach((dieValue, index) => {
             const die: Dice = {
                 id: index,
-                value: dieValue,
+                value: dieValue.value,
                 extra: false,
                 locked: false,
-                rolled: true,
+                rolled: dieValue.rolled,
             };
             dojo.place(this.createDiceHtml(die, false), `dice-selector`);
             this.addDiceRollClass(die);
