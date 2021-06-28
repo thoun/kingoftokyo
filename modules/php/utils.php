@@ -287,7 +287,7 @@ trait UtilTrait {
             return true;
         }
 
-        $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0"));
+        $eliminatedPlayersCount = self::getGameStateValue(KILL_PLAYERS_SCORE_AUX);
 
         self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $eliminatedPlayersCount, player_location = 0 where `player_id` = $player->id");
 
@@ -644,5 +644,10 @@ trait UtilTrait {
         if ($state['name'] != 'gameEnd') {
             $this->gamestate->jumpToState($stateId);
         }
+    }
+
+    function updateKillPlayersScoreAux() {
+        $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0"));
+        self::setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount);
     }
 }

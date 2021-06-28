@@ -36,15 +36,7 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 sometimes a shadow stays with dice (a 7 ghost die)
-can background dweller be used with camouflage rolls ? or after psychic probe, by active player ? or on a psychic probe roll, if player with psychic probe also got background dweller ?
 make heart animations go to position/sr tokens or healed players with healing ray
 make a tutorial
 add english rules in wiki
-invisible dice : same bug for every player
-after buying a card, argBuyCard is not refreshed
 when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
-
-Quelques questions à propose de la carte Background Dweller/Ninja Urbain)
-Est-ce que le joueur peut l'utiliser pour un lancer de dés de la carte Camouflage ?
-Est-ce qu'un joueur peut la jouer après Psychic Probe, si le résultat est un 3 ?
-Est-ce qu(un) joueur qui possède à la fois Background Dweller et Psychic Probe peut relancer un 3 qu'il a obtenu avec Psychic Probe ? 

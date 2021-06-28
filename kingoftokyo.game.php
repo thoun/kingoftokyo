@@ -60,6 +60,7 @@ class KingOfTokyo extends Table {
             MULTIPLAYER_BEING_KILLED => 18,
             PSYCHIC_PROBE_ROLLED_A_3 => 19,
             'newCardId' => 20,
+            KILL_PLAYERS_SCORE_AUX => 21,
             PICK_MONSTER_OPTION => 100,
             AUTO_SKIP_OPTION => 110,
         ]);      
@@ -134,6 +135,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(KILL_ACTIVE_PLAYER, 0);
         self::setGameStateInitialValue(MULTIPLAYER_BEING_KILLED, 0);
         self::setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
+        self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
