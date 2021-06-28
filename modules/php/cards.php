@@ -887,20 +887,22 @@ trait CardsTrait {
             $dice[] = $newDie;
         }
 
-        $this->endThrowCamouflageDice($playerId, $intervention, $dice);
+        $this->endThrowCamouflageDice($playerId, $intervention, $dice, true);
     }
 
-    function endThrowCamouflageDice(int $playerId, object $intervention, array $dice) {
+    function endThrowCamouflageDice(int $playerId, object $intervention, array $dice, bool $incCamouflageRolls) {
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
         $diceValues = array_map(function ($die) { return $die->value; }, $dice);
 
         $cancelledDamage = count(array_values(array_filter($diceValues, function($face) { return $face === 4; }))); // heart dices
 
-        $intervention->playersUsedDice->{$playerId} = new PlayersUsedDice($dice, $countCamouflage);
+        $playerUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : new PlayersUsedDice($dice, $countCamouflage);
+        if ($incCamouflageRolls) {
+            $playerUsedDice->rolls = $playerUsedDice->rolls + 1;
+        } 
+        $intervention->playersUsedDice->{$playerId} = $playerUsedDice;
 
         $remainingDamage = count($dice) - $cancelledDamage;
-
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention); // we use this to save changes to $intervention
 
         $args = null;
 
@@ -910,7 +912,7 @@ trait CardsTrait {
         if ($remainingDamage > 0) {
             $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && array_search(3, $diceValues) !== false;
             $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0 || $canRethrow3 ||
-                ($countCamouflage == 2 && !$intervention->doubleTurnUsed);
+                ($intervention->camouflageRolls < $countCamouflage);
         }
 
         $diceStr = '';
@@ -918,11 +920,12 @@ trait CardsTrait {
             $diceStr .= $this->getDieFaceLogName($dieValue);
         }
 
+        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+
         $args = $this->argCancelDamage($playerId, $canRethrow3 ? (array_search(3, $diceValues) !== false) : false);
 
         if ($canRethrow3) {
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-
             self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and can rethrow [dice3]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
@@ -934,9 +937,6 @@ trait CardsTrait {
         } else {
             if ($stayOnState) {
                 $intervention->damages[0]->damage -= $cancelledDamage;
-                if ($countCamouflage == 2) {
-                    $intervention->doubleTurnUsed = true;
-                }
                 $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
             }
 
@@ -952,12 +952,16 @@ trait CardsTrait {
         }
 
         if (!$stayOnState) {
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+
             if ($remainingDamage > 0) {
                 $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }
             $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+        } else {            
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
         }
     }
     
@@ -1164,6 +1168,7 @@ trait CardsTrait {
         if ($playerId == null) {
             $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
         }
+        
         if ($playerId != null) {
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
@@ -1184,6 +1189,8 @@ trait CardsTrait {
             if ($hasBackgroundDweller) {
                 $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
             }*/
+
+            //die('GBA.'.json_encode($playersUsedDice).'-'.$canThrowDices.'-'.$canSkipWings);
 
             return [
                 'canThrowDices' => $canThrowDices,

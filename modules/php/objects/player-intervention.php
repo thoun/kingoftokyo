@@ -38,7 +38,7 @@ class PsychicProbeIntervention extends PlayerIntervention {
 
 class PlayersUsedDice {
     public $dice; // Dice[]
-    public $rolls = 1; // number
+    public $rolls = 0; // number
     public $maxRolls; // number
 
     public function __construct(array $dice, int $maxRolls) {
@@ -50,7 +50,7 @@ class PlayersUsedDice {
 class CancelDamageIntervention extends PlayerIntervention {
     public $damages;
     public $playersUsedDice; // store playerId => PlayersUsedDice
-    public $doubleTurnUsed = false; // if player have camouflage & mimic
+    public $camouflageRolls = 0;
 
     public function __construct(array $remainingPlayersId, array $damages) {
         parent::__construct(ST_MULTIPLAYER_CANCEL_DAMAGE, $remainingPlayersId);

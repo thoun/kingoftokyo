@@ -274,33 +274,35 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private onEnteringCancelDamage(args: EnteringCancelDamageArgs) {
+    private onEnteringCancelDamage(args: EnteringCancelDamageArgs, isCurrentPlayerActive: boolean) {
         if (args.dice) {
             this.diceManager.showCamouflageRoll(args.dice);
-        }        
-
-        if (args.dice && args.rethrow3?.hasCard) {
-            if (document.getElementById('rethrow3camouflage_button')) {
-                dojo.toggleClass('rethrow3camouflage_button', 'disabled', !args.rethrow3.hasDice3);
-            } else {
-                this.createButton('dice-actions', 'rethrow3camouflage_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3camouflage(), !args.rethrow3.hasDice3);
+        }
+        console.log(args, isCurrentPlayerActive);
+        if (isCurrentPlayerActive) {
+            if (args.dice && args.rethrow3?.hasCard) {
+                if (document.getElementById('rethrow3camouflage_button')) {
+                    dojo.toggleClass('rethrow3camouflage_button', 'disabled', !args.rethrow3.hasDice3);
+                } else {
+                    this.createButton('dice-actions', 'rethrow3camouflage_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3camouflage(), !args.rethrow3.hasDice3);
+                }
             }
-        }
 
-        if (args.canThrowDices && !document.getElementById('throwCamouflageDice_button')) {
-            (this as any).addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
-        } else if (!args.canThrowDices && document.getElementById('throwCamouflageDice_button')) {
-            dojo.destroy('throwCamouflageDice_button');
-        }
-
-        if (args.canUseWings && !document.getElementById('useWings_button')) {
-            (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48, 'text-only')})), 'useWings');
-            if (args.playerEnergy < 2) {
-                dojo.addClass('useWings_button', 'disabled');
+            if (args.canThrowDices && !document.getElementById('throwCamouflageDice_button')) {
+                (this as any).addActionButton('throwCamouflageDice_button', _("Throw dice"), 'throwCamouflageDice');
+            } else if (!args.canThrowDices && document.getElementById('throwCamouflageDice_button')) {
+                dojo.destroy('throwCamouflageDice_button');
             }
-        }
-        if (args.canSkipWings && !document.getElementById('skipWings_button')) {
-            (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}), 'skipWings');
+
+            if (args.canUseWings && !document.getElementById('useWings_button')) {
+                (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48, 'text-only')})), 'useWings');
+                if (args.playerEnergy < 2) {
+                    dojo.addClass('useWings_button', 'disabled');
+                }
+            }
+            if (args.canSkipWings && !document.getElementById('skipWings_button')) {
+                (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}), 'skipWings');
+            }
         }
     }
 
@@ -490,7 +492,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 
                 case 'cancelDamage':
-                    this.onEnteringCancelDamage(args); // because it's multiplayer, enter action must be set here
+                    this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
             }
 
@@ -1314,14 +1316,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (notif.args.cancelDamageArgs) { 
             this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
             (this as any).updatePageTitle();
-            this.onEnteringCancelDamage(notif.args.cancelDamageArgs);
+            this.onEnteringCancelDamage(notif.args.cancelDamageArgs, (this as any).isCurrentPlayerActive());
         } else {            
             this.diceManager.showCamouflageRoll(notif.args.diceValues);
         }
     }
 
     notif_changeDie(notif: Notif<NotifChangeDieArgs>) {
-        console.log('notif_changeDie', notif.args);
         if (notif.args.psychicProbeRollDieArgs) {
             const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
             this.onEnteringPsychicProbeRollDie(notif.args.psychicProbeRollDieArgs, isCurrentPlayerActive);

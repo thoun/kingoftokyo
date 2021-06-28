@@ -15,14 +15,15 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetPoints(19);
+        $this->debugSetEnergy(19);
         //$this->debugSetCardInTable(113);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetPlayerEnergy(2343492, 10);
-        //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
+        $this->debugSetCardInHand(MIMIC_CARD, 2343493);
+        $this->setMimickedCard(2343493, $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493));
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
-        //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
-        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
+        $this->debugSetCardInHand(WINGS_CARD, 2343493);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetPlayerPoints(2343493,10);
 
         // Activate first player must be commented in setup if this is used

@@ -449,7 +449,7 @@ trait DiceTrait {
             }
         }
 
-        $this->endThrowCamouflageDice($playerId, $intervention, $dice);
+        $this->endThrowCamouflageDice($playerId, $intervention, $dice, false);
     }
 
     public function rethrow3psychicProbe() {
