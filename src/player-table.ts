@@ -84,7 +84,7 @@ class PlayerTable {
 
     public setPoints(points: number, delay: number = 0) {
         setTimeout(
-            () => document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[points]}deg)`,
+            () => document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[Math.min(20, points)]}deg)`,
             delay
         );
     }

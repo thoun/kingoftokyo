@@ -15,7 +15,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetHealth(2);
+        $this->debugSetPoints(19);
         //$this->debugSetCardInTable(113);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetPlayerEnergy(2343492, 10);

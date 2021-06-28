@@ -548,7 +548,7 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.setPoints = function (points, delay) {
         var _this = this;
         if (delay === void 0) { delay = 0; }
-        setTimeout(function () { return document.getElementById("blue-wheel-" + _this.playerId).style.transform = "rotate(" + POINTS_DEG[points] + "deg)"; }, delay);
+        setTimeout(function () { return document.getElementById("blue-wheel-" + _this.playerId).style.transform = "rotate(" + POINTS_DEG[Math.min(20, points)] + "deg)"; }, delay);
     };
     PlayerTable.prototype.setHealth = function (health, delay) {
         var _this = this;
