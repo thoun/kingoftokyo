@@ -20,7 +20,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetPlayerEnergy(2343492, 10);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493));
-        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
+        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
+        $this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
         $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);
 

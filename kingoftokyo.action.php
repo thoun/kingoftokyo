@@ -108,6 +108,14 @@
 
         self::ajaxResponse();
     }
+
+    public function rethrow3changeDie() {
+        self::setAjaxMode();
+
+        $this->game->rethrow3changeDie();
+
+        self::ajaxResponse();
+    }
   	
     public function goToChangeDie() {
         self::setAjaxMode();

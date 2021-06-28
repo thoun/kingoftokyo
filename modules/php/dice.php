@@ -323,7 +323,9 @@ trait DiceTrait {
     }
 
     function getPsychicProbeInterventionEndState($intervention) {
-        $backToChangeDie = $this->canChangeDie($this->getChangeDieCards($intervention->activePlayerId));
+        $canChangeWithCards = $this->canChangeDie($this->getChangeDieCards($intervention->activePlayerId));
+        $canRetrow3 = intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($intervention->activePlayerId, BACKGROUND_DWELLER_CARD) > 0;
+        $backToChangeDie = $canChangeWithCards || $canRetrow3;
         return $backToChangeDie ? 'endAndChangeDieAgain' : 'end';
     }
 
@@ -352,6 +354,20 @@ trait DiceTrait {
         self::setGameStateValue('throwNumber', $throwNumber);
 
         $this->gamestate->nextState('rethrow');
+    }
+
+    function getPsychicProbeIntervention(int $playerId) { // rturn null or PsychicProbeIntervention
+        $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
+
+        if (count($playersWithPsychicProbe) > 0) {
+            $cards = [];
+            foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
+                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, PSYCHIC_PROBE_CARD));
+            }
+            $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
+            return $psychicProbeIntervention;
+        }
+        return null;
     }
 
 
@@ -470,6 +486,41 @@ trait DiceTrait {
         $this->endPsychicProbeRollDie($intervention, $playerId, $die, $newValue);
     }
 
+    public function rethrow3changeDie() {
+        $this->checkAction('rethrow3changeDie');
+
+        $playerId = self::getActivePlayerId();
+        $dieId = intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3));
+
+        if ($dieId == 0) {
+            throw new \Error('No 3 die');
+        }
+
+        self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
+
+        $newValue = bga_rand(1, 6);
+        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
+        self::DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$dieId);
+
+        $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+        self::notifyAllPlayers('rethrow3', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => BACKGROUND_DWELLER_CARD,
+            'dieId' => $dieId,
+            'die_face_before' => $this->getDieFaceLogName(3),
+            'die_face_after' => $this->getDieFaceLogName($newValue),
+        ]);
+
+        $psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
+        if ($psychicProbeIntervention != null) {
+            $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
+            $this->gamestate->nextState('changeDieWithPsychicProbe');
+        } else {
+            $this->gamestate->nextState('changeDie');
+        }
+    }
+
     public function changeDie(int $id, int $value, int $cardType) {
         $this->checkAction('changeDie');
 
@@ -481,7 +532,7 @@ trait DiceTrait {
             throw new \Error('No selected die');
         }
 
-        self::DbQuery("UPDATE dice SET `dice_value` = ".$value." where `dice_id` = ".$id);
+        self::DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$value." where `dice_id` = ".$id);
 
         if ($cardType == HERD_CULLER_CARD) {
             $usedCards = $this->getUsedCard();
@@ -519,14 +570,8 @@ trait DiceTrait {
             'die_face_after' => $this->getDieFaceLogName($value),
         ]);
 
-        $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
-
-        if (count($playersWithPsychicProbe) > 0) {
-            $cards = [];
-            foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
-                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, PSYCHIC_PROBE_CARD));
-            }
-            $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
+        $psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
+        if ($psychicProbeIntervention != null) {
             $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
             $this->gamestate->nextState('changeDieWithPsychicProbe');
         } else {
@@ -595,6 +640,10 @@ trait DiceTrait {
         $die->value = $value;
         $intervention->lastRolledDie = $die;
 
+        if ($value == 3) {
+            self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, $die->id);
+        }
+
         self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
@@ -626,12 +675,8 @@ trait DiceTrait {
 
         $this->fixDices();
 
-        if (count($playersWithPsychicProbe) > 0) {
-            $cards = [];
-            foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
-                $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, PSYCHIC_PROBE_CARD));
-            }
-            $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
+        $psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
+        if ($psychicProbeIntervention != null) {
             $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
             $this->gamestate->nextState('psychicProbe');
         } else {
@@ -783,14 +828,18 @@ trait DiceTrait {
 
         $cardsArg = $this->getChangeDieCards($playerId);
 
-        $diceArg = [];
-        if ($this->canChangeDie($cardsArg)) {
-            $diceNumber = $this->getDiceNumber($playerId);
-            $diceArg = [
-                'dice' => $this->getDice($diceNumber),
-                'inTokyo' => $this->inTokyo($playerId),
-            ];
-        }
+        $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
+        $canRetrow3 = $hasBackgroundDweller && intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
+
+        $diceNumber = $this->getDiceNumber($playerId);
+        $diceArg = [
+            'dice' => $this->getDice($diceNumber),
+            'inTokyo' => $this->inTokyo($playerId),
+            'rethrow3' => [
+                'hasCard' => $hasBackgroundDweller,
+                'hasDice3' => $canRetrow3,
+            ],
+        ];
 
         return $cardsArg + $diceArg;
     }
@@ -874,9 +923,10 @@ trait DiceTrait {
     function stChangeDie() {
         $playerId = self::getActivePlayerId();
 
-        $cards = $this->getChangeDieCards($playerId);
-
-        if (!$this->canChangeDie($cards)) {
+        $canChangeWithCards = $this->canChangeDie($this->getChangeDieCards($playerId));
+        $canRetrow3 = intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
+        
+        if (!$canChangeWithCards && !$canRetrow3) {
             $this->gamestate->nextState('resolve');
         }
     }

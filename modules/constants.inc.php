@@ -71,6 +71,7 @@ define('FREEZE_TIME_CURRENT_TURN', 'FreezeTimeCurrentTurn');
 define('FRENZY_EXTRA_TURN', 'FrenzyExtraTurn');
 define('KILL_ACTIVE_PLAYER', 'KillActivePlayer');
 define('MULTIPLAYER_BEING_KILLED', 'MultiplayerBeingKilled');
+define('PSYCHIC_PROBE_ROLLED_A_3', 'PsychicProbeRolledA3');
 
 /*
  * Global variables

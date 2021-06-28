@@ -42,18 +42,23 @@ class DiceManager {
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     }
 
-    public disableDiceToggle() {
+    public disableDiceAction() {
         dojo.removeClass('rolled-dice', 'selectable');
         this.action = undefined;
     }
 
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
-        this.action = 'change';
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy ? 'change' : null;
         this.changeDieArgs = args;
 
-        /*if (this.dice.length) { if active, event are not reset and roll is not applied
+        if (this.dice.length) {
+            dice.forEach(die => {
+                const divId = `dice${die.id}`;
+                const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
+                dojo.toggleClass(divId, 'selectable', selectable);
+            });
             return;
-        }*/
+        }
 
         this.dice?.forEach(die => this.removeDice(die));  
         this.clearDiceHtml();
@@ -63,7 +68,7 @@ class DiceManager {
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             dojo.place(this.createDiceHtml(die, inTokyo), `locked-dice${die.value}`);
-            const selectable = isCurrentPlayerActive && (!onlyHerdCuller || die.value !== 1);
+            const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
 

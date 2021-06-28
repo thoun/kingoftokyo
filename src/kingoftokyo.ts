@@ -230,13 +230,21 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.energyDrink?.hasCard) {
-            this.diceManager.disableDiceToggle();
+            this.diceManager.disableDiceAction();
         }
     }
 
     private onEnteringChangeDie(args: EnteringChangeDieArgs, isCurrentPlayerActive: boolean) {
         if (args.dice?.length) {
             this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
+        }
+
+        if (args.dice && args.rethrow3?.hasCard) {
+            if (document.getElementById('rethrow3changeDie_button')) {
+                dojo.toggleClass('rethrow3changeDie_button', 'disabled', !args.rethrow3.hasDice3);
+            } else {
+                this.createButton('dice-actions', 'rethrow3changeDie_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3changeDie(), !args.rethrow3.hasDice3);
+            }
         }
     }
 
@@ -344,7 +352,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (document.getElementById('rethrow3psychicProbe_button')) {
                     dojo.destroy('rethrow3psychicProbe_button');
                 }   
-                break;             
+                break;
+            case 'changeDie':                 
+                if (document.getElementById('rethrow3changeDie_button')) {
+                    dojo.destroy('rethrow3changeDie_button');
+                }   
+                break; 
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {
                     dojo.destroy('heart-action-selector');
@@ -795,6 +808,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public rethrow3psychicProbe() {
         this.takeAction('rethrow3psychicProbe');
+    }
+
+    public rethrow3changeDie() {
+        this.takeAction('rethrow3changeDie');
     }
 
     public buyEnergyDrink() {
