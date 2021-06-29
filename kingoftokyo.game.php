@@ -63,6 +63,7 @@ class KingOfTokyo extends Table {
             KILL_PLAYERS_SCORE_AUX => 21,
             PICK_MONSTER_OPTION => 100,
             AUTO_SKIP_OPTION => 110,
+            'ALPHA_DEBUG_20ENERGY_OPTION' => 150,
         ]);      
 		
         $this->cards = self::getNew("module.common.deck");
@@ -167,6 +168,9 @@ class KingOfTokyo extends Table {
 
         // TODO TEMP card to test
         //$this->debugSetup();
+        if (intval(self::getGameStateValue('ALPHA_DEBUG_20ENERGY_OPTION')) === 2) {
+            $this->debugSetEnergy(20);
+        }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();

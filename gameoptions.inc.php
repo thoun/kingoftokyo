@@ -59,7 +59,20 @@ $game_options = [
         ],
         'default' => 1,
         'nobeginner' => true
-    ]
+    ],
+
+    150 => [
+        'name' => 'ALPHA DEBUG : start with 20 rnergy',
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+            ],
+        ],
+        'default' => 1,
+    ],
 ];
 
 $game_preferences = [
