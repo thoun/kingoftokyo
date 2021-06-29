@@ -50,7 +50,6 @@ class PlayersUsedDice {
 class CancelDamageIntervention extends PlayerIntervention {
     public $damages;
     public $playersUsedDice; // store playerId => PlayersUsedDice
-    public $camouflageRolls = 0;
 
     public function __construct(array $remainingPlayersId, array $damages) {
         parent::__construct(ST_MULTIPLAYER_CANCEL_DAMAGE, $remainingPlayersId);

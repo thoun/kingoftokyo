@@ -912,7 +912,7 @@ trait CardsTrait {
         if ($remainingDamage > 0) {
             $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && array_search(3, $diceValues) !== false;
             $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0 || $canRethrow3 ||
-                ($intervention->camouflageRolls < $countCamouflage);
+                ($playerUsedDice->rolls < $countCamouflage);
         }
 
         $diceStr = '';
