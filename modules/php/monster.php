@@ -78,6 +78,11 @@ trait MonsterTrait {
     function stPickMonster() {
         if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
             $this->gamestate->nextState('start');
+        } else {
+            $availableMonsters = $this->getAvailableMonsters();
+            if (count($availableMonsters) == 1) {
+                $this->pickMonster($availableMonsters[0]);
+            }
         }
     }
 
