@@ -101,7 +101,7 @@ $description-size: 7pt;
     }
     
     &.disabled {
-        opacity: 0.7 !important;
+        filter: contrast(0.6);
         cursor: not-allowed;
     }
 

@@ -1069,34 +1069,31 @@ trait CardsTrait {
         $pickArgs = [];
         if ($canPick > 0) {
             $madeInALabCardIds = $this->getMadeInALabCardIds($playerId);
-            $canUseMadeInALab = $madeInALabCardIds == null || count($madeInALabCardIds) == 0 || $madeInALabCardIds[0] != 0;
-            if ($canUseMadeInALab) {
-                $pickCards = $this->getCardsFromDb($this->cards->getCardsOnTop($canPick, 'deck'));
-                $this->setMadeInALabCardIds($playerId, array_map(function($card) { return $card->id; }, $pickCards));
+            $pickCards = $this->getCardsFromDb($this->cards->getCardsOnTop($canPick, 'deck'));
+            $this->setMadeInALabCardIds($playerId, array_map(function($card) { return $card->id; }, $pickCards));
 
-                foreach ($pickCards as $card) {
-                    if ($this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
-                        $canBuyOrNenew = true;
-                    } else {
-                        $disabledIds[] = $card->id;
-                    }
+            foreach ($pickCards as $card) {
+                if ($this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                    $canBuyOrNenew = true;
+                } else {
+                    $disabledIds[] = $card->id;
                 }
-
-                $pickArgs = [
-                    '_private' => [          // Using "_private" keyword, all data inside this array will be made private
-                        'active' => [       // Using "active" keyword inside "_private", you select active player(s)
-                            'pickCards' => $pickCards,   // will be send only to active player(s)
-                        ]
-                    ],
-                ];
             }
+
+            $pickArgs = [
+                '_private' => [          // Using "_private" keyword, all data inside this array will be made private
+                    'active' => [       // Using "active" keyword inside "_private", you select active player(s)
+                        'pickCards' => $pickCards,   // will be send only to active player(s)
+                    ]
+                ],
+            ];
         }
     
         // return values:
         return [
             'disabledIds' => $disabledIds,
             'canBuyFromPlayers' => $canBuyFromPlayers,
-            'canBuyOrNenew' => $canBuyOrNenew,
+            'canBuyOrNenew' => $canBuyOrNenew || $canPick, // if a player can see 1st deck card, we don't skip his turn or add a timer
             'canSell' => $canSell,
         ] + $pickArgs;
     }
