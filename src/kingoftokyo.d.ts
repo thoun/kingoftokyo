@@ -55,6 +55,7 @@ interface KingOfTokyoGamedatas {
     playersCards: { [playerId: number]: Card[] };
     mimickedCard: Card | null;
     leaveTokyoUnder: number;
+    twoPlayersVariant: boolean;
 }
 
 interface KingOfTokyoGame extends Game {

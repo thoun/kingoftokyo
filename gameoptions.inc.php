@@ -84,12 +84,16 @@ $game_options = [
             ],
         ],
         'default' => 2,
-        'displaycondition' => $max2playersCondition,
+        'displaycondition' => [
+            'type' => 'maxplayers',
+            'value' => 2,
+            'message' => totranslate('Variant is limited to 2 players')
+        ],
         'startcondition' => $max2playersCondition,
     ],
 
     150 => [
-        'name' => 'ALPHA DEBUG : start with 20 rnergy',
+        'name' => 'ALPHA DEBUG : start with 20 Energy',
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),

@@ -1460,9 +1460,13 @@ var KingOfTokyo = /** @class */ (function () {
             _this.dontPreloadImage("monster-board-" + i + ".png");
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });
+        this.dontPreloadImage("tokyo-2pvariant.jpg");
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
+        if (gamedatas.twoPlayersVariant) {
+            dojo.addClass('board', 'twoPlayersVariant');
+        }
         this.cards = new Cards(this);
         this.createPlayerPanels(gamedatas);
         this.diceManager = new DiceManager(this, gamedatas.dice);

@@ -45,12 +45,17 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).dontPreloadImage(`monster-board-${i}.png`);
             (this as any).dontPreloadImage(`monster-figure-${i}.png`);
         });
+        (this as any).dontPreloadImage(`tokyo-2pvariant.jpg`);
 
         log( "Starting game setup" );
         
         this.gamedatas = gamedatas;
 
         log('gamedatas', gamedatas);
+
+        if (gamedatas.twoPlayersVariant) {
+            dojo.addClass('board', 'twoPlayersVariant');
+        }
 
         this.cards = new Cards(this);
         this.createPlayerPanels(gamedatas); 

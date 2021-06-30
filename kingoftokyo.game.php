@@ -226,6 +226,8 @@ class KingOfTokyo extends Table {
 
         $result['leaveTokyoUnder'] = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));
 
+        $result['twoPlayersVariant'] = $this->isTwoPlayersVariant();
+
         return $result;
     }
 
