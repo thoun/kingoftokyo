@@ -197,15 +197,28 @@ trait PlayerTrait {
         // apply in tokyo at start
         if ($this->inTokyo($playerId)) {
             // start turn in tokyo
-            $incScore = 2;
 
-            $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
-            self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'points' => $this->getPlayerScore($playerId),
-                'deltaPoints' => $incScore,
-            ]);
+            if ($this->isTwoPlayersVariant()) {
+                $incEnergy = 1;
+                $this->applyGetEnergyIgnoreCards($playerId, $incEnergy, -1);
+
+                self::notifyAllPlayers('energy', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'energy' => $this->getPlayerEnergy($playerId),
+                    'deltaEnergy' => $incEnergy,
+                ]);
+            } else {
+                $incScore = 2;
+                $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
+
+                self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'points' => $this->getPlayerScore($playerId),
+                    'deltaPoints' => $incScore,
+                ]);
+            }
 
             // urbavore
             $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);

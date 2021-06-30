@@ -63,6 +63,7 @@ class KingOfTokyo extends Table {
             KILL_PLAYERS_SCORE_AUX => 21,
             PICK_MONSTER_OPTION => 100,
             AUTO_SKIP_OPTION => 110,
+            TWO_PLAYERS_VARIANT_OPTION => 120,
             'ALPHA_DEBUG_20ENERGY_OPTION' => 150,
         ]);      
 		

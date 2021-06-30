@@ -197,6 +197,7 @@ interface NotifPlayerEntersTokyoArgs {
     location: number;
     locationName: string;
     points: number;
+    energy: number;
 }
 
 interface NotifBuyCardArgs {

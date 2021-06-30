@@ -24,6 +24,17 @@
  *
  */
 
+$max2playersCondition = [
+    1 => [],
+    2 => [
+        [
+            'type' => 'maxplayers',
+            'value' => 2,
+            'message' => totranslate('Variant is limited to 2 players')
+        ],
+    ],
+];
+
 $game_options = [
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
@@ -59,6 +70,22 @@ $game_options = [
         ],
         'default' => 1,
         'nobeginner' => true
+    ],
+
+    120 => [
+        'name' => totranslate('2-players variant'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'description' => totranslate("When entering or starting a turn on Tokyo, you gain 1 energy instead of points"),
+            ],
+        ],
+        'default' => 2,
+        'displaycondition' => $max2playersCondition,
+        'startcondition' => $max2playersCondition,
     ],
 
     150 => [

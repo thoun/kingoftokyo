@@ -22,6 +22,10 @@ trait UtilTrait {
         return intval($this->gamestate->table_globals[200]) >= 10;
     }
 
+    function isTwoPlayersVariant() {
+        return intval(self::getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
+    }
+
     function autoSkipImpossibleActions() {
         return $this->isTurnBased() || intval(self::getGameStateValue(AUTO_SKIP_OPTION)) === 2;
     }
@@ -125,16 +129,25 @@ trait UtilTrait {
 
     function moveToTokyo(int $playerId, bool $bay) {
         $location = $bay ? 2 : 1;
-        $incScore = 1;
-        self::DbQuery("UPDATE player SET player_score = player_score + $incScore, player_location = $location where `player_id` = $playerId");
+        $message = null;
+        if ($this->isTwoPlayersVariant()) {
+            $incEnergy = 1;
+            self::DbQuery("UPDATE player SET player_energy = player_energy + $incEnergy, player_location = $location where `player_id` = $playerId");
+            $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Energy]');
+        } else {
+            $incScore = 1;
+            self::DbQuery("UPDATE player SET player_score = player_score + $incScore, player_location = $location where `player_id` = $playerId");
+            $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
+        }
 
         $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
-        self::notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]'), [
+        self::notifyAllPlayers("playerEntersTokyo", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
             'locationName' => $locationName,
             'points' => $this->getPlayerScore($playerId),
+            'energy' => $this->getPlayerEnergy($playerId),
         ]);
 
         self::incStat(1, 'tokyoEnters', $playerId);
@@ -167,6 +180,7 @@ trait UtilTrait {
             'location' => $location,
             'locationName' => $locationName,
             'points' => $this->getPlayerScore($playerId),
+            'energy' => $this->getPlayerEnergy($playerId),
         ]);
     }
 
