@@ -24,17 +24,6 @@
  *
  */
 
-$max2playersCondition = [
-    1 => [],
-    2 => [
-        [
-            'type' => 'maxplayers',
-            'value' => 2,
-            'message' => totranslate('Variant is limited to 2 players')
-        ],
-    ],
-];
-
 $game_options = [
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
@@ -84,12 +73,20 @@ $game_options = [
             ],
         ],
         'default' => 2,
-        'displaycondition' => [
+        'displaycondition' => [[
             'type' => 'maxplayers',
             'value' => 2,
-            'message' => totranslate('Variant is limited to 2 players')
+        ]],
+        'startcondition' => [
+            1 => [],
+            2 => [
+                [
+                    'type' => 'maxplayers',
+                    'value' => 2,
+                    'message' => totranslate('Variant is limited to 2 players')
+                ],
+            ],
         ],
-        'startcondition' => $max2playersCondition,
     ],
 
     150 => [
