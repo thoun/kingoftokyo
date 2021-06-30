@@ -1837,9 +1837,9 @@ var KingOfTokyo = /** @class */ (function () {
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
-                    this.addActionButton('endTurn_button', argsBuyCard.canSell ? _("Sell cards") : _("End turn"), 'goToSellCard', null, null, 'red');
+                    this.addActionButton('goToSellCard_button', argsBuyCard.canSell ? _("Sell cards") : _("End turn"), 'goToSellCard', null, null, 'red');
                     if (!argsBuyCard.canBuyOrNenew) {
-                        this.startActionTimer('endTurn_button', 5);
+                        this.startActionTimer('goToSellCard_button', 5);
                     }
                     break;
                 case 'opportunistBuyCard':
