@@ -333,6 +333,7 @@ trait PlayerTrait {
         }
 
         // apply poison
+        $this->updateKillPlayersScoreAux();   
         $redirects = false;
         $countPoison = $this->getPlayerPoisonTokens($playerId);
         if ($countPoison > 0) {
@@ -346,16 +347,7 @@ trait PlayerTrait {
     }
 
     function stEndTurn() {
-        //$playerId = self::getActivePlayerId();
-
-        // poison may eliminate players
-        /*$endGame = $this->eliminatePlayers($playerId);
-
-        if ($endGame) {
-            $this->gamestate->nextState('endGame');
-        } else {*/
-            $this->gamestate->nextState('nextPlayer');
-        /*}*/
+        $this->gamestate->nextState('nextPlayer');
     }
 
     function stNextPlayer() {

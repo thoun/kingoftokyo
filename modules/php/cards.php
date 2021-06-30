@@ -705,15 +705,16 @@ trait CardsTrait {
         self::setGameStateValue('newCardId', $newCardId);
 
         $redirects = false;
+        $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
+
         if ($damages != null && count($damages) > 0) {
-            $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
             $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard); // TODO apply opportunist checks like redirectAfterBuyCard
         }
 
         if (!$redirects) {
             // we only redirect if player is still alive (no card suicide that have set next player active)
-            if (!$opportunist && array_search($playerId, $this->gamestate->getActivePlayerList()) !== false) {
-                $this->jumpToState($this->redirectAfterBuyCard($playerId, $newCardId, $mimic), $playerId);
+            if (!$this->getPlayer($playerId)->eliminated) {
+                $this->jumpToState($redirectAfterBuyCard, $playerId);
             }
         }
     }
