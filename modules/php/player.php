@@ -61,6 +61,12 @@ trait PlayerTrait {
 
         if ($leave) {
             $this->leaveTokyo($playerId);
+        
+            // burrowing
+            $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+            if ($countBurrowing > 0) {
+                self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
+            }
         }
 
         return $leave;

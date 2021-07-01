@@ -73,9 +73,21 @@ trait CardsTrait {
                 $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
                 if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
                     $this->leaveTokyo($playerInTokyoBay);
+        
+                    // burrowing
+                    $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+                    if ($countBurrowing > 0) {
+                        self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
+                    }
                 }
                 if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
                     $this->leaveTokyo($playerInTokyoCity);
+        
+                    // burrowing
+                    $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+                    if ($countBurrowing > 0) {
+                        self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
+                    }
                 }
 
                 if ($playerInTokyoBay == $playerId) {
