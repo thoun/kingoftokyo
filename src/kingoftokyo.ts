@@ -545,6 +545,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         Object.values(gamedatas.players).forEach(player => {
             const playerId = Number(player.id);  
 
+            const eliminated = Number(player.eliminated) > 0;
+
             // health & energy counters
             dojo.place(`<div class="counters">
                 <div id="health-counter-wrapper-${player.id}" class="health-counter">
@@ -572,15 +574,17 @@ class KingOfTokyo implements KingOfTokyoGame {
                 <div id="player-board-poison-tokens-${player.id}" class="player-token poison-tokens"></div>
             </div>`, `player_board_${player.id}`);
 
-            this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
-            this.setPoisonTokens(playerId, player.poisonTokens);
+            if (!eliminated) {
+                this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
+                this.setPoisonTokens(playerId, player.poisonTokens);
+            }
 
             dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${player.monster}"><div class="kot-token"></div></div>`, `player_board_${player.id}`);
 
             if (player.location > 0) {
                 dojo.addClass(`overall_player_board_${playerId}`, 'intokyo');
             }
-            if (player.eliminated) {
+            if (eliminated) {
                 setTimeout(() => this.eliminatePlayer(playerId), 200);
             }
         });
@@ -1441,6 +1445,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (playerId == this.getPlayerId()) {
             this.removeAutoLeaveUnderButton();
         }
+        
+        this.setShrinkRayTokens(playerId, 0);
+        this.setPoisonTokens(playerId, 0);
     }
 
     /* This enable to inject translatable styled things to logs or action bar */

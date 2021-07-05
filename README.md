@@ -38,5 +38,4 @@ slide energy cubes from battery monster
 sometimes a shadow stays with dice (a 7 ghost die)
 add english rules in wiki
 when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
-clean sr/poison tokens when dead
 reduce top for card nade when description hides it (mimic in french for example)

@@ -18,8 +18,11 @@ class PlayerTable {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
+
+        const eliminated = Number(player.eliminated) > 0;
+
         dojo.place(`
-        <div id="player-table-${player.id}" class="player-table whiteblock ${Number(player.eliminated) > 0 ? 'eliminated' : ''}">
+        <div id="player-table-${player.id}" class="player-table whiteblock ${eliminated ? 'eliminated' : ''}">
             <div id="player-name-${player.id}" class="player-name ${game.isDefaultFont() ? 'standard' : 'goodgirl'}" style="color: #${player.color}">
                 <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
                 <div class="text">${player.name}</div>
@@ -60,8 +63,10 @@ class PlayerTable {
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
         this.setEnergy(Number(player.energy));
-        this.setPoisonTokens(Number(player.poisonTokens));
-        this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+        if (!eliminated) {
+            this.setPoisonTokens(Number(player.poisonTokens));
+            this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+        }
     }
 
     public initPlacement() {

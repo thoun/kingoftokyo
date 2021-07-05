@@ -510,7 +510,8 @@ var PlayerTable = /** @class */ (function () {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (Number(player.eliminated) > 0 ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>\n            <div id=\"cards-" + player.id + "\" class=\"player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
+        var eliminated = Number(player.eliminated) > 0;
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>\n            <div id=\"cards-" + player.id + "\" class=\"player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -526,8 +527,10 @@ var PlayerTable = /** @class */ (function () {
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
         this.setEnergy(Number(player.energy));
-        this.setPoisonTokens(Number(player.poisonTokens));
-        this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+        if (!eliminated) {
+            this.setPoisonTokens(Number(player.poisonTokens));
+            this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+        }
     }
     PlayerTable.prototype.initPlacement = function () {
         if (this.initialLocation > 0) {
@@ -1900,6 +1903,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         Object.values(gamedatas.players).forEach(function (player) {
             var playerId = Number(player.id);
+            var eliminated = Number(player.eliminated) > 0;
             // health & energy counters
             dojo.place("<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"health-counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"energy-counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>\n            </div>", "player_board_" + player.id);
             var healthCounter = new ebg.counter();
@@ -1911,13 +1915,15 @@ var KingOfTokyo = /** @class */ (function () {
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
             dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
-            _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
-            _this.setPoisonTokens(playerId, player.poisonTokens);
+            if (!eliminated) {
+                _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
+                _this.setPoisonTokens(playerId, player.poisonTokens);
+            }
             dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"><div class=\"kot-token\"></div></div>", "player_board_" + player.id);
             if (player.location > 0) {
                 dojo.addClass("overall_player_board_" + playerId, 'intokyo');
             }
-            if (player.eliminated) {
+            if (eliminated) {
                 setTimeout(function () { return _this.eliminatePlayer(playerId); }, 200);
             }
         });
@@ -2653,6 +2659,8 @@ var KingOfTokyo = /** @class */ (function () {
         if (playerId == this.getPlayerId()) {
             this.removeAutoLeaveUnderButton();
         }
+        this.setShrinkRayTokens(playerId, 0);
+        this.setPoisonTokens(playerId, 0);
     };
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
