@@ -654,6 +654,7 @@ var PlayerTable = /** @class */ (function () {
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"" + type + " token\"></div>";
             dojo.place(html, divId);
+            this.game.addTooltipHtml(divId + "-token" + i, type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP);
         }
         div.dataset.placed = JSON.stringify(placed);
     };
@@ -1468,6 +1469,8 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.addClass('board', 'twoPlayersVariant');
         }
         this.cards = new Cards(this);
+        this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
+        this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);
         this.diceManager = new DiceManager(this, gamedatas.dice);
         this.createVisibleCards(gamedatas.visibleCards);
@@ -1911,8 +1914,8 @@ var KingOfTokyo = /** @class */ (function () {
                 setTimeout(function () { return _this.eliminatePlayer(playerId); }, 200);
             }
         });
-        this.addTooltipHtmlToClass('shrink-ray-tokens', dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') }));
-        this.addTooltipHtmlToClass('poison-tokens', dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') }));
+        this.addTooltipHtmlToClass('shrink-ray-tokens', this.SHINK_RAY_TOKEN_TOOLTIP);
+        this.addTooltipHtmlToClass('poison-tokens', this.POISON_TOKEN_TOOLTIP);
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;

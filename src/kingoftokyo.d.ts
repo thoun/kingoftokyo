@@ -61,6 +61,8 @@ interface KingOfTokyoGamedatas {
 interface KingOfTokyoGame extends Game {
     isDefaultFont(): boolean;
     cards: Cards;
+    POISON_TOKEN_TOOLTIP: string;
+    SHINK_RAY_TOKEN_TOOLTIP: string;
 
     changeDie: (id: number, value: number, card: number) => void;
     psychicProbeRollDie: (id: number) => void;

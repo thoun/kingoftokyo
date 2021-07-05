@@ -78,19 +78,6 @@ $game_options = [
             'value' => 2,
         ]]
     ],
-
-    150 => [
-        'name' => 'ALPHA DEBUG : start with 20 Energy',
-        'values' => [
-            1 => [
-                'name' => totranslate('Disabled'),
-            ],
-            2 => [
-                'name' => totranslate('Enabled'),
-            ],
-        ],
-        'default' => 1,
-    ],
 ];
 
 $game_preferences = [

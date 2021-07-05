@@ -214,6 +214,8 @@ class PlayerTable {
             placed.push(newPlace);
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="${type} token"></div>`;
             dojo.place(html, divId);
+
+            (this.game as any).addTooltipHtml(`${divId}-token${i}`, type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP)
         }
 
         div.dataset.placed = JSON.stringify(placed);

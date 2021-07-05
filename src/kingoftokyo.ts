@@ -21,6 +21,9 @@ class KingOfTokyo implements KingOfTokyoGame {
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
     public cards: Cards;
+        
+    public SHINK_RAY_TOKEN_TOOLTIP;
+    public POISON_TOKEN_TOOLTIP;
 
     constructor() {
     }
@@ -58,6 +61,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.cards = new Cards(this);
+        this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});
+        this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
+    
         this.createPlayerPanels(gamedatas); 
         this.diceManager = new DiceManager(this, gamedatas.dice);  
         this.createVisibleCards(gamedatas.visibleCards);
@@ -579,8 +585,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
         });
 
-        (this as any).addTooltipHtmlToClass('shrink-ray-tokens', dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')}));
-        (this as any).addTooltipHtmlToClass('poison-tokens', dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')}));
+        (this as any).addTooltipHtmlToClass('shrink-ray-tokens', this.SHINK_RAY_TOKEN_TOOLTIP);
+        (this as any).addTooltipHtmlToClass('poison-tokens', this.POISON_TOKEN_TOOLTIP);
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {

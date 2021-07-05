@@ -169,9 +169,6 @@ class KingOfTokyo extends Table {
 
         // TODO TEMP card to test
         //$this->debugSetup();
-        if (intval(self::getGameStateValue('ALPHA_DEBUG_20ENERGY_OPTION')) === 2) {
-            $this->debugSetEnergy(20);
-        }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
