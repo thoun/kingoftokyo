@@ -121,10 +121,6 @@ trait PlayerTrait {
         $playerId = self::getCurrentPlayerId();
 
         $this->leaveTokyo($playerId);
-
-        $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
-        $jetsDamages = array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; });
-        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
         
         // burrowing
         $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);

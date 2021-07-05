@@ -179,6 +179,8 @@ trait DiceTrait {
         if (count($smashedPlayersInTokyo) > 0) {
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $smashedPlayersInTokyo);
             $nextState = "smashes";
+        } else {
+            $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
         }
 
         $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);      

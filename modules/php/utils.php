@@ -153,7 +153,7 @@ trait UtilTrait {
         self::incStat(1, 'tokyoEnters', $playerId);
     }
 
-    function leaveTokyo($playerId) {
+    function leaveTokyo(int $playerId) {
 
         self::DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null where `player_id` = $playerId");
 
@@ -165,10 +165,14 @@ trait UtilTrait {
             'under' => 0,
         ]);
 
+        $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
+        $jetsDamages = array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; });
+        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
+
         self::incStat(1, 'tokyoLeaves', $playerId);
     }
 
-    function moveFromTokyoBayToCity($playerId) {
+    function moveFromTokyoBayToCity(int $playerId) {
         $location = 1;
 
         self::DbQuery("UPDATE player SET player_location =  $location where `player_id` = $playerId");
