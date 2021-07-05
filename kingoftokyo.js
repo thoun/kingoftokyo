@@ -182,7 +182,7 @@ var Cards = /** @class */ (function () {
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
     };
-    Cards.prototype.getCardNamePoisition = function (cardTypeId) {
+    Cards.prototype.getCardNamePosition = function (cardTypeId) {
         switch (cardTypeId) {
             // KEEP
             case 3: return [0, 90];
@@ -484,15 +484,23 @@ var Cards = /** @class */ (function () {
     Cards.prototype.setupNewCard = function (cardDiv, cardType) {
         var type = cardType < 100 ? _('Keep') : _('Discard');
         var description = formatTextIcons(this.getCardDescription(cardType));
-        var position = this.getCardNamePoisition(cardType);
+        var position = this.getCardNamePosition(cardType);
         cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" " + (position ? "style=\"left: " + position[0] + "px; top: " + position[1] + "px;\"" : '') + ">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n        </div>\n        <div class=\"type-wrapper " + (cardType < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
         var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         if (textHeight > 80) {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';
             textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         }
-        cardDiv.getElementsByClassName('bottom')[0].style.top = 166 - textHeight + "px";
-        cardDiv.getElementsByClassName('type-wrapper')[0].style.top = 168 - textHeight + "px";
+        var height = Math.min(textHeight, 116);
+        cardDiv.getElementsByClassName('bottom')[0].style.top = 166 - height + "px";
+        cardDiv.getElementsByClassName('type-wrapper')[0].style.top = 168 - height + "px";
+        var nameTopPosition = (position === null || position === void 0 ? void 0 : position[1]) || 14;
+        var nameWrapperDiv = cardDiv.getElementsByClassName('name-wrapper')[0];
+        var nameDiv = nameWrapperDiv.getElementsByClassName('text')[0];
+        var spaceBetweenDescriptionAndName = (155 - height) - (nameTopPosition + nameDiv.clientHeight);
+        if (spaceBetweenDescriptionAndName < 0) {
+            nameWrapperDiv.style.top = Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName) + "px";
+        }
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     return Cards;

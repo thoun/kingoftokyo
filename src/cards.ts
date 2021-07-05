@@ -156,7 +156,7 @@ class Cards {
         }
     }
 
-    private getCardNamePoisition(cardTypeId: number) {
+    private getCardNamePosition(cardTypeId: number) {
         switch( cardTypeId ) {
             // KEEP
             case 3: return [0, 90];
@@ -461,7 +461,7 @@ class Cards {
     public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
         const type = cardType < 100 ? _('Keep') : _('Discard');
         const description = formatTextIcons(this.getCardDescription(cardType));
-        const position = this.getCardNamePoisition(cardType);
+        const position = this.getCardNamePosition(cardType);
 
         cardDiv.innerHTML = `<div class="bottom"></div>
         <div class="name-wrapper" ${position ? `style="left: ${position[0]}px; top: ${position[1]}px;"` : ''}>
@@ -481,8 +481,17 @@ class Cards {
             (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).style.fontSize = '6pt';
             textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
         }
-        (cardDiv.getElementsByClassName('bottom')[0] as HTMLDivElement).style.top = `${166 - textHeight}px`;
-        (cardDiv.getElementsByClassName('type-wrapper')[0] as HTMLDivElement).style.top = `${168 - textHeight}px`;
+        const height = Math.min(textHeight, 116);
+        (cardDiv.getElementsByClassName('bottom')[0] as HTMLDivElement).style.top = `${166 - height}px`;
+        (cardDiv.getElementsByClassName('type-wrapper')[0] as HTMLDivElement).style.top = `${168 - height}px`;
+
+        const nameTopPosition = position?.[1] || 14;
+        const nameWrapperDiv = cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement;
+        const nameDiv = nameWrapperDiv.getElementsByClassName('text')[0] as HTMLDivElement;
+        const spaceBetweenDescriptionAndName = (155 - height) - (nameTopPosition + nameDiv.clientHeight);
+        if (spaceBetweenDescriptionAndName < 0) {
+            nameWrapperDiv.style.top = `${Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName)}px`;
+        }
         
         (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
