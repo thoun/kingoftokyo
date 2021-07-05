@@ -1244,9 +1244,15 @@ trait CardsTrait {
     function stOpportunistBuyCard() {
         if ($this->autoSkipImpossibleActions()) { // in turn based, we remove players when they can't buy anything
             $intervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
-            $intervention->remainingPlayersId = array_values(array_filter($intervention->remainingPlayersId, function($playerId) {
-                return $this->argOpportunistBuyCardWithPlayerId($playerId)['canBuy'];
-            }));
+            $remainingPlayersId = [];
+            foreach($intervention->remainingPlayersId as $playerId) {
+                if ($this->argOpportunistBuyCardWithPlayerId($playerId)['canBuy']) {
+                    $remainingPlayersId[] = $playerId;
+                } else {
+                    $this->removeDiscardCards($playerId);
+                }
+            }
+            $intervention->remainingPlayersId = $remainingPlayersId;
             $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $intervention);
         }
 

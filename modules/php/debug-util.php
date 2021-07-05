@@ -17,9 +17,10 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetCardInTable(113);
+        self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 100 where `card_type` > 100");
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        //$this->debugSetPlayerEnergy(2343492, 10);
+        $this->debugSetEnergy(10);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493));
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
@@ -28,11 +29,10 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetPlayerPoints(2343493,10);
-        $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
-        $this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
+        $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
 
         // Activate first player must be commented in setup if this is used
-        $this->gamestate->changeActivePlayer(2343493);
+        $this->gamestate->changeActivePlayer(2343492);
     }
 
     private function debugSetCardInTable($cardType) {
