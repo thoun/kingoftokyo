@@ -67,7 +67,7 @@ class DiceManager {
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
-            dojo.place(this.createDiceHtml(die, inTokyo), `locked-dice${die.value}`);
+            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${die.value}`);
             const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
@@ -87,7 +87,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            dojo.place(this.createDiceHtml(die, inTokyo), `locked-dice${die.value}`);
+            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${die.value}`);
             this.addDiceRollClass(die);
         });
     }
@@ -103,7 +103,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            dojo.place(this.createDiceHtml(die, inTokyo), `locked-dice${die.value}`);
+            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${die.value}`);
             this.addDiceRollClass(die);
 
             if (isCurrentPlayerActive) {
@@ -156,7 +156,7 @@ class DiceManager {
                 locked: false,
                 rolled: dieValue.rolled,
             };
-            dojo.place(this.createDiceHtml(die, false), `dice-selector`);
+            this.createAndPlaceDiceHtml(die, false, `dice-selector`);
             this.addDiceRollClass(die);
         });
     }
@@ -297,7 +297,7 @@ class DiceManager {
         }
     }
 
-    private createDiceHtml(die: Dice, inTokyo: boolean) {
+    private createAndPlaceDiceHtml(die: Dice, inTokyo: boolean, destinationId: string) {
         let html = `<div id="dice${die.id}" class="dice dice${die.value}" data-dice-id="${die.id}" data-dice-value="${die.value}">
         <ol class="die-list" data-roll="${die.value}">`;
         for (let dieFace=1; dieFace<=6; dieFace++) {
@@ -308,7 +308,13 @@ class DiceManager {
             html += `<div class="icon forbidden"></div>`;
         }
         html += `</div>`;
-        return html;
+
+        // security to destroy pre-existing die with same id
+        if (document.getElementById(`dice${die.id}`)) {
+            dojo.destroy(`dice${die.id}`);
+        }
+
+        dojo.place(html, destinationId);
     }
 
     private getDiceDiv(die: Dice): HTMLDivElement {
@@ -316,7 +322,7 @@ class DiceManager {
     }
 
     private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
-        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? `locked-dice${die.value}` : `dice-selector`);
+        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? `locked-dice${die.value}` : `dice-selector`);
 
         this.addDiceRollClass(die);
 

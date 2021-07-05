@@ -971,7 +971,7 @@ var DiceManager = /** @class */ (function () {
         var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
-            dojo.place(_this.createDiceHtml(die, inTokyo), "locked-dice" + die.value);
+            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + die.value);
             var selectable = isCurrentPlayerActive && _this.action !== null && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             _this.addDiceRollClass(die);
@@ -989,7 +989,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            dojo.place(_this.createDiceHtml(die, inTokyo), "locked-dice" + die.value);
+            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + die.value);
             _this.addDiceRollClass(die);
         });
     };
@@ -1002,7 +1002,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            dojo.place(_this.createDiceHtml(die, inTokyo), "locked-dice" + die.value);
+            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + die.value);
             _this.addDiceRollClass(die);
             if (isCurrentPlayerActive) {
                 var divId = "dice" + die.id;
@@ -1053,7 +1053,7 @@ var DiceManager = /** @class */ (function () {
                 locked: false,
                 rolled: dieValue.rolled,
             };
-            dojo.place(_this.createDiceHtml(die, false), "dice-selector");
+            _this.createAndPlaceDiceHtml(die, false, "dice-selector");
             _this.addDiceRollClass(die);
         });
     };
@@ -1180,7 +1180,7 @@ var DiceManager = /** @class */ (function () {
             dojo.toggleClass('rethrow_button', 'disabled', !this.dice.some(function (die) { return !die.locked; }));
         }
     };
-    DiceManager.prototype.createDiceHtml = function (die, inTokyo) {
+    DiceManager.prototype.createAndPlaceDiceHtml = function (die, inTokyo, destinationId) {
         var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
         for (var dieFace = 1; dieFace <= 6; dieFace++) {
             html += "<li class=\"die-item " + (die.extra ? 'green' : 'black') + " side" + dieFace + "\" data-side=\"" + dieFace + "\"></li>";
@@ -1190,14 +1190,18 @@ var DiceManager = /** @class */ (function () {
             html += "<div class=\"icon forbidden\"></div>";
         }
         html += "</div>";
-        return html;
+        // security to destroy pre-existing die with same id
+        if (document.getElementById("dice" + die.id)) {
+            dojo.destroy("dice" + die.id);
+        }
+        dojo.place(html, destinationId);
     };
     DiceManager.prototype.getDiceDiv = function (die) {
         return document.getElementById("dice" + die.id);
     };
     DiceManager.prototype.createDice = function (die, selectable, inTokyo) {
         var _this = this;
-        dojo.place(this.createDiceHtml(die, inTokyo), die.locked ? "locked-dice" + die.value : "dice-selector");
+        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? "locked-dice" + die.value : "dice-selector");
         this.addDiceRollClass(die);
         if (selectable) {
             this.getDiceDiv(die).addEventListener('click', function (event) { return _this.dieClick(die, event); });
