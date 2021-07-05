@@ -76,17 +76,7 @@ $game_options = [
         'displaycondition' => [[
             'type' => 'maxplayers',
             'value' => 2,
-        ]],
-        'startcondition' => [
-            1 => [],
-            2 => [
-                [
-                    'type' => 'maxplayers',
-                    'value' => 2,
-                    'message' => totranslate('Variant is limited to 2 players')
-                ],
-            ],
-        ],
+        ]]
     ],
 
     150 => [

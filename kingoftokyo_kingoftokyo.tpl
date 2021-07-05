@@ -8,6 +8,7 @@
     <div id="rolled-dice-and-rapid-actions">
         <div id="rolled-dice" class="whiteblock">
             <div id="locked-dice" class="hide-lock">
+                <div id="lock"></div>
                 <div id="locked-dice1"></div>
                 <div id="locked-dice2"></div>
                 <div id="locked-dice3"></div>

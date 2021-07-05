@@ -1,4 +1,3 @@
-@charset "UTF-8";
 @import url(../../../css/csslayer.css);
 .player-board {
   background-color: white;
@@ -78,18 +77,22 @@
   display: flex;
   align-items: center;
 }
+#rolled-dice #locked-dice #lock {
+  background: url("img/lock.svg") #a6c136;
+  color: #211D1F;
+  width: 32px;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 #rolled-dice #locked-dice > div {
   white-space: nowrap;
-}
-#rolled-dice #locked-dice:before {
-  content: "🔒";
-  margin: 0 8px;
 }
 #rolled-dice #locked-dice.hide-lock {
   border-color: transparent;
 }
-#rolled-dice #locked-dice.hide-lock:before {
-  content: "";
+#rolled-dice #locked-dice.hide-lock #lock {
+  display: none;
 }
 #rolled-dice #dice-selector {
   border: 2px solid transparent;
@@ -166,8 +169,8 @@
   background-image: url("img/black_dice.png");
 }
 .die-item.green {
-  background-color: #96c93c;
-  border-color: #96c93c;
+  background-color: #a6c136;
+  border-color: #a6c136;
   background-image: url("img/green_dice.png");
 }
 .die-item.side1 {
@@ -555,7 +558,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  -webkit-text-stroke: 4px #96c93c;
+  -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
 .stockitem .name-wrapper .text, #deck .name-wrapper .text {
@@ -627,7 +630,7 @@
   margin-bottom: -2px;
 }
 .card-tooltip .cost {
-  color: #96c93c;
+  color: #a6c136;
 }
 
 .dice-icon {

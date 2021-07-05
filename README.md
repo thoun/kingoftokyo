@@ -37,6 +37,8 @@ add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 sometimes a shadow stays with dice (a 7 ghost die)
 make heart animations go to position/sr tokens or healed players with healing ray
-make a tutorial
 add english rules in wiki
 when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
+clean sr/poison tokens when dead
+reduce top for card nade when description hides it (mimic in french for example)
+tooltip on monsterboards tokens
