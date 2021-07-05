@@ -1167,6 +1167,13 @@ var DiceManager = /** @class */ (function () {
             destination.append(tempDestination.childNodes[0]);
             dojo.destroy(tempDestination);
             dojo.destroy(tempOrigin);
+            // uniqueness security
+            try {
+                dojo.query("#" + dieDivId).slice(1).forEach(function (excessElement) { return dojo.destroy(excessElement); });
+            }
+            catch (e) {
+                console.error(e, dojo.query("#" + dieDivId));
+            }
         });
         this.activateRethrowButton();
     };
@@ -1191,9 +1198,8 @@ var DiceManager = /** @class */ (function () {
         }
         html += "</div>";
         // security to destroy pre-existing die with same id
-        if (document.getElementById("dice" + die.id)) {
-            dojo.destroy("dice" + die.id);
-        }
+        var dieDiv = document.getElementById("dice" + die.id);
+        dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
         dojo.place(html, destinationId);
     };
     DiceManager.prototype.getDiceDiv = function (die) {
@@ -1247,7 +1253,8 @@ var DiceManager = /** @class */ (function () {
             this.game.fadeOutAndDestroy("dice" + die.id, duration, delay);
         }
         else {
-            dojo.destroy("dice" + die.id);
+            var dieDiv = document.getElementById("dice" + die.id);
+            dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
         }
         this.dice.splice(this.dice.indexOf(die), 1);
     };

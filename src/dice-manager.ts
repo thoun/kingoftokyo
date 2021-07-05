@@ -282,6 +282,13 @@ class DiceManager {
             destination.append(tempDestination.childNodes[0]);
             dojo.destroy(tempDestination);
             dojo.destroy(tempOrigin);
+
+            // uniqueness security
+            try {
+                dojo.query(`#${dieDivId}`).slice(1).forEach(excessElement => dojo.destroy(excessElement));
+            } catch(e) {
+                console.error(e, dojo.query(`#${dieDivId}`));
+            }
         });
 
         this.activateRethrowButton();
@@ -310,9 +317,8 @@ class DiceManager {
         html += `</div>`;
 
         // security to destroy pre-existing die with same id
-        if (document.getElementById(`dice${die.id}`)) {
-            dojo.destroy(`dice${die.id}`);
-        }
+        const dieDiv = document.getElementById(`dice${die.id}`);
+        dieDiv?.parentNode.removeChild(dieDiv);
 
         dojo.place(html, destinationId);
     }
@@ -367,7 +373,8 @@ class DiceManager {
         if (duration) {
             (this.game as any).fadeOutAndDestroy(`dice${die.id}`, duration, delay);
         } else {
-            dojo.destroy(`dice${die.id}`);
+            const dieDiv = document.getElementById(`dice${die.id}`);
+            dieDiv?.parentNode.removeChild(dieDiv);
         }
         this.dice.splice(this.dice.indexOf(die), 1);
     }
