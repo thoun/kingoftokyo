@@ -1146,7 +1146,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['pickMonster', 500],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
+            ['resolveHealingRay', ANIMATION_MS],
             ['resolveHealthDiceInTokyo', ANIMATION_MS],
+            ['removeShrinkRayToken', ANIMATION_MS],
+            ['removePoisonToken', ANIMATION_MS],
             ['resolveEnergyDice', ANIMATION_MS],
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
@@ -1199,10 +1202,13 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
         this.setHealth(notif.args.playerId, notif.args.health, ANIMATION_MS);
-        this.diceManager.resolveHealthDice(notif.args);
+        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
         this.diceManager.resolveHealthDiceInTokyo();
+    }
+    notif_resolveHealingRay(notif: Notif<NotifResolveHealingRayArgs>) {
+        this.diceManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
@@ -1310,6 +1316,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_poisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
         this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
+    }
+
+    notif_removeShrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
+        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
+        this.notif_shrinkRayToken(notif);
+    }
+
+    notif_removePoisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
+        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
+        this.notif_poisonToken(notif);
     }
 
     notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {

@@ -178,12 +178,20 @@ class DiceManager {
         this.dice.filter(die => die.value === 4).forEach(die => this.removeDice(die, 1000));
     }
 
-    private addDiceAnimation(diceValue: number, playerIds: number[]) {
-        const dice = this.dice.filter(die => die.value === diceValue);
+    private addDiceAnimation(diceValue: number, playerIds: number[], number?: number, targetToken?: TokenType) {
+        let dice = this.dice.filter(die => die.value === diceValue && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+        if (number) {
+            dice = dice.slice(0, number);
+        }
+        console.log('animate', dice);
+
         playerIds.forEach((playerId, playerIndex) => {
-            const destination = document.getElementById(`monster-figure-${playerId}`).getBoundingClientRect();
+            const destination = document.getElementById(targetToken ? `token-wrapper-${playerId}-${targetToken}-token0` : `monster-figure-${playerId}`).getBoundingClientRect();
+            const shift = targetToken ? 16 : 59;
             dice.forEach((die, dieIndex) => {
-                const origin = document.getElementById(`dice${die.id}`).getBoundingClientRect();
+                const dieDiv = document.getElementById(`dice${die.id}`);
+                dieDiv.dataset.animated = 'true';
+                const origin = dieDiv.getBoundingClientRect();
                 const animationId = `dice${die.id}-player${playerId}-animation`;
                 dojo.place(`<div id="${animationId}" class="animation animation${diceValue}"></div>`, `dice${die.id}`);
                 setTimeout(() => {
@@ -193,8 +201,8 @@ class DiceManager {
                 }, 50);
 
                 setTimeout(() => {
-                    const deltaX = destination.left - origin.left + 59 * this.game.getZoom();
-                    const deltaY = destination.top - origin.top + 59 * this.game.getZoom();
+                    const deltaX = destination.left - origin.left + shift * this.game.getZoom();
+                    const deltaY = destination.top - origin.top + shift * this.game.getZoom();
                     
                     document.getElementById(animationId).style.transition = `transform 0.5s ease-in`;
                     document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${0.3 * this.game.getZoom()})`;
@@ -207,8 +215,8 @@ class DiceManager {
         });
     }
 
-    public resolveHealthDice(args: NotifResolveHealthDiceArgs) {
-        this.addDiceAnimation(4, [args.playerId]);
+    public resolveHealthDice(playerId: number, number: number, targetToken?: TokenType) {
+        this.addDiceAnimation(4, [playerId], number, targetToken);
     }
 
     public resolveEnergyDice(args: NotifResolveEnergyDiceArgs) {

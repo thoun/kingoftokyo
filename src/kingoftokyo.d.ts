@@ -167,12 +167,18 @@ interface NotifResolveNumberDiceArgs extends NotifResolveArgs {
     deltaPoints: number;
     diceValue: number;
 }
-
 interface NotifResolveHealthDiceArgs extends NotifResolveArgs {
     health: number;
     deltaHealth: number;
 }
 interface NotifResolveHealthDiceInTokyoArgs extends NotifResolveArgs {}
+
+
+
+interface NotifResolveHealingRayArgs {
+    healedPlayerId: number;
+    healNumber: number;
+}
 
 interface NotifResolveEnergyDiceArgs extends NotifResolveArgs {
     energy: number;
@@ -243,6 +249,7 @@ interface NotifMaxHealthArgs extends NotifHealthArgs {
 
 interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
     tokens: number;
+    deltaTokens?: number;
 }
 
 interface NotifSetCardTokensArgs {

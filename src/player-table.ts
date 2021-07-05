@@ -4,6 +4,7 @@ const log = isDebug ? console.log.bind(window.console) : function () { };
 const POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
 const HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 const SPLIT_ENERGY_CUBES = 6;
+type TokenType = 'poison' | 'shrink-ray';
 
 class PlayerTable {
     public playerId: number;
@@ -193,7 +194,7 @@ class PlayerTable {
         return newPlace;
     }
 
-    private setTokens(type: 'poison' | 'shrink-ray', tokens: number) {
+    private setTokens(type: TokenType, tokens: number) {
         const divId = `token-wrapper-${this.playerId}-${type}`;
         const div = document.getElementById(divId);
         if (!div) {

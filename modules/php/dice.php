@@ -700,6 +700,8 @@ trait DiceTrait {
         $playerId = self::getActivePlayerId();
 
         $heal = 0;
+        $removeShrinkRayToken = 0;
+        $removePoisonToken = 0;
         $healPlayer = [];
 
         $healPlayerCount = 0;
@@ -718,10 +720,10 @@ trait DiceTrait {
                     $heal++;
                     break;
                 case 'shrink-ray':
-                    $this->removeShrinkRayToken($playerId);
+                    $removeShrinkRayToken++;
                     break;
                 case 'poison':
-                    $this->removePoisonToken($playerId);
+                    $removePoisonToken++;
                     break;
                 case 'heal-player':
                     if (array_key_exists($heartDieChoice->playerId, $healPlayer)) {
@@ -736,6 +738,14 @@ trait DiceTrait {
         if ($heal > 0) {
             $this->resolveHealthDice($playerId, $heal);
         }
+
+        if ($removeShrinkRayToken > 0) {
+            $this->removeShrinkRayToken($playerId, $removeShrinkRayToken);
+        }
+        if ($removePoisonToken > 0) {
+            $this->removePoisonToken($playerId, $removePoisonToken);
+        }
+
         foreach ($healPlayer as $healPlayerId => $healNumber) {
             $this->applyGetHealth($healPlayerId, $healNumber, 0);
             
@@ -750,6 +760,7 @@ trait DiceTrait {
                 'player_name' => $this->getPlayerName($playerId),
                 'player_name2' => $this->getPlayerName($healPlayerId),
                 'energy' => $energyLoss,
+                'healedPlayerId' => $healPlayerId,
                 'healNumber' => $healNumber,
                 'card_name' => HEALING_RAY_CARD
             ]);

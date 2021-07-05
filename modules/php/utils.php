@@ -586,33 +586,31 @@ trait UtilTrait {
         ]);
     }
 
-    function removeShrinkRayToken(int $playerId) {
-        $deltaTokens = 1;
+    function removeShrinkRayToken(int $playerId, int $deltaTokens = 1) {
         $actualTokens = $this->getPlayerShrinkRayTokens($playerId);
         $newTokens = max($actualTokens - $deltaTokens, 0);
 
         self::DbQuery("UPDATE player SET `player_shrink_ray_tokens` = $newTokens where `player_id` = $playerId");
 
-        self::notifyAllPlayers('shrinkRayToken', '', [
+        self::notifyAllPlayers('removeShrinkRayToken', '', [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'delta_tokens' => $deltaTokens,
+            'deltaTokens' => $deltaTokens,
             'tokens' => $newTokens,
         ]);
     }
     
 
-    function removePoisonToken(int $playerId) {
-        $deltaTokens = 1;
+    function removePoisonToken(int $playerId, int $deltaTokens = 1) {
         $actualTokens = $this->getPlayerPoisonTokens($playerId);
         $newTokens = max($actualTokens - $deltaTokens, 0);
 
         self::DbQuery("UPDATE player SET `player_poison_tokens` = $newTokens where `player_id` = $playerId");
 
-        self::notifyAllPlayers('poisonToken', '', [
+        self::notifyAllPlayers('removePoisonToken', '', [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'delta_tokens' => $deltaTokens,
+            'deltaTokens' => $deltaTokens,
             'tokens' => $newTokens,
         ]);
     }
