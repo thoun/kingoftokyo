@@ -59,7 +59,7 @@ $gameinfos = [
 
     // If in the game, all losers are equal (no score to rank them or explicit in the rules that losers are not ranked between them), set this to true 
     // The game end result will display "Winner" for the 1st player and "Loser" for all other players
-    'losers_not_ranked' => true,
+    'losers_not_ranked' => false,
     
     // Allow to rank solo games for games where it's the only available mode (ex: Thermopyles). Should be left to false for games where solo mode exists in addition to multiple players mode.
     'solo_mode_ranked' => false,
