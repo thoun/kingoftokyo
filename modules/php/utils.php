@@ -283,7 +283,7 @@ trait UtilTrait {
     }
     
     function eliminatePlayers(int $currentTurnPlayerId) { // return redirected
-        $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, true);
+        $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, false);
 
         $redirected = false;
 
@@ -350,11 +350,7 @@ trait UtilTrait {
             }
         }
 
-        if ($this->getRemainingPlayers() <= 1) {
-            $this->jumpToState(ST_END_GAME);
-        }
-
-        return $this->getRemainingPlayers() <= 1;
+        return false;
     }
 
     function removePlayerFromSmashedPlayersInTokyo(int $playerId) {

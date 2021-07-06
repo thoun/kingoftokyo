@@ -371,7 +371,6 @@ trait PlayerTrait {
         $playerId = self::getActivePlayerId();
 
         $killPlayer = intval($this->getGameStateValue(KILL_ACTIVE_PLAYER)) == $playerId;
-        $redirected = false;
 
         if ($killPlayer) {
             $playerId = self::activeNextPlayer();
@@ -382,7 +381,7 @@ trait PlayerTrait {
             }
 
             $eliminatedPlayer = $this->getPlayer(intval($this->getGameStateValue(KILL_ACTIVE_PLAYER)));
-            $redirected = $this->eliminateAPlayer($eliminatedPlayer, $playerId);
+            $this->eliminateAPlayer($eliminatedPlayer, $playerId);
             $this->setGameStateValue(KILL_ACTIVE_PLAYER, 0);
         } else {
 
@@ -422,12 +421,10 @@ trait PlayerTrait {
 
         self::giveExtraTime($playerId);
 
-        if (!$redirected) {
-            if ($this->getMaxPlayerScore() >= MAX_POINT) {
-                $this->jumpToState(ST_END_GAME);
-            } else {
-                $this->gamestate->nextState('nextPlayer');
-            }
+        if ($this->getRemainingPlayers() <= 1 || $this->getMaxPlayerScore() >= MAX_POINT) {
+            $this->jumpToState(ST_END_GAME);
+        } else {
+            $this->gamestate->nextState('nextPlayer');
         }
     }
 }

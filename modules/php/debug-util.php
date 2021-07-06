@@ -15,8 +15,11 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetPlayerHealth(2343493, 6);
+        $this->debugSetHealth(1);
+        $this->debugSetPlayerHealth(2343492, 4);
+        self::DbQuery("UPDATE player SET `player_poison_tokens` = 4 where `player_id` = 2343492");
         //$this->debugSetCardInTable(104);
+        $this->debugSetCardInTable(112);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 100 where `card_type` > 100");
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
