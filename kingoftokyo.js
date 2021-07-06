@@ -1079,7 +1079,6 @@ var DiceManager = /** @class */ (function () {
         if (number) {
             dice = dice.slice(0, number);
         }
-        console.log('animate', dice);
         playerIds.forEach(function (playerId, playerIndex) {
             var destination = document.getElementById(targetToken ? "token-wrapper-" + playerId + "-" + targetToken + "-token0" : "monster-figure-" + playerId).getBoundingClientRect();
             var shift = targetToken ? 16 : 59;
@@ -1164,16 +1163,11 @@ var DiceManager = /** @class */ (function () {
         }).play();
         slideToObjectAndAttach(this.game, dieDiv, tempDestinationId).then(function () {
             dieDiv.style.marginLeft = '3px';
-            destination.append(tempDestination.childNodes[0]);
+            if (tempDestination.parentElement) { // we only attach if temp div still exists (not deleted)
+                destination.append(tempDestination.childNodes[0]);
+            }
             dojo.destroy(tempDestination);
             dojo.destroy(tempOrigin);
-            // uniqueness security
-            try {
-                dojo.query("#" + dieDivId).slice(1).forEach(function (excessElement) { return dojo.destroy(excessElement); });
-            }
-            catch (e) {
-                console.error(e, dojo.query("#" + dieDivId));
-            }
         });
         this.activateRethrowButton();
     };

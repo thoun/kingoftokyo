@@ -183,7 +183,6 @@ class DiceManager {
         if (number) {
             dice = dice.slice(0, number);
         }
-        console.log('animate', dice);
 
         playerIds.forEach((playerId, playerIndex) => {
             const destination = document.getElementById(targetToken ? `token-wrapper-${playerId}-${targetToken}-token0` : `monster-figure-${playerId}`).getBoundingClientRect();
@@ -279,16 +278,11 @@ class DiceManager {
         }).play();
         slideToObjectAndAttach(this.game, dieDiv, tempDestinationId).then(() => {
             dieDiv.style.marginLeft = '3px';
-            destination.append(tempDestination.childNodes[0]);
+            if (tempDestination.parentElement) { // we only attach if temp div still exists (not deleted)
+                destination.append(tempDestination.childNodes[0]);
+            }
             dojo.destroy(tempDestination);
             dojo.destroy(tempOrigin);
-
-            // uniqueness security
-            try {
-                dojo.query(`#${dieDivId}`).slice(1).forEach(excessElement => dojo.destroy(excessElement));
-            } catch(e) {
-                console.error(e, dojo.query(`#${dieDivId}`));
-            }
         });
 
         this.activateRethrowButton();
