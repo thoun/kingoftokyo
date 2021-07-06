@@ -337,12 +337,13 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argBuyCard",
         "action" => "stBuyCard",
-        "possibleactions" => [ "buyCard", "goToSellCard", "renew" ],
+        "possibleactions" => [ "buyCard", "goToSellCard", "endTurn", "renew" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
             "buyMimicCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD,
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
+            "endTurn" => ST_RESOLVE_END_TURN,
             "renew" => ST_PLAYER_BUY_CARD,
             //"zombiePass" => ST_NEXT_PLAYER,
         ]

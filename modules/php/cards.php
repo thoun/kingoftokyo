@@ -1235,9 +1235,14 @@ trait CardsTrait {
     function stBuyCard() {
         $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
 
-        if ($this->autoSkipImpossibleActions() && !$this->argBuyCard()['canBuyOrNenew']) {
+        $args = $this->argBuyCard();
+        if ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) {
             // skip state
-            $this->goToSellCard(true);
+            if ($args['canSell']) {
+                $this->goToSellCard(true);
+            } else {
+                $this->endTurn(true);
+            }            
         }
     }
 

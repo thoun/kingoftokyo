@@ -91,8 +91,10 @@ trait PlayerTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function endTurn() {
-        $this->checkAction('endTurn');
+    function endTurn($skipActionCheck = false) {
+        if (!$skipActionCheck) {            
+            $this->checkAction('endTurn');
+        }
    
         $this->gamestate->nextState('endTurn');
     }

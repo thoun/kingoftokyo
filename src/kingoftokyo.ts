@@ -480,10 +480,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
-                    (this as any).addActionButton('goToSellCard_button', argsBuyCard.canSell ? _("Sell cards") : _("End turn"), 'goToSellCard', null, null, 'red');
+                    if (argsBuyCard.canSell) {
+                        (this as any).addActionButton('goToSellCard_button', _("End turn and sell cards"), 'goToSellCard');
+                    }
 
-                    if (!argsBuyCard.canBuyOrNenew) {
-                        this.startActionTimer('goToSellCard_button', 5);
+                    (this as any).addActionButton('endTurn_button', argsBuyCard.canSell ? _("End turn without selling") : _("End turn"), 'onEndTurn', null, null, 'red');
+
+                    if (!argsBuyCard.canBuyOrNenew && !argsBuyCard.canSell) {
+                        this.startActionTimer('endTurn_button', 5);
                     }
                     break;
                 case 'opportunistBuyCard':
@@ -499,7 +503,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
                     break;
                 case 'sellCard':
-                    (this as any).addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
+                    (this as any).addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
                 
                 case 'cancelDamage':

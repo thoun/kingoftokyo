@@ -1867,9 +1867,12 @@ var KingOfTokyo = /** @class */ (function () {
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
-                    this.addActionButton('goToSellCard_button', argsBuyCard.canSell ? _("Sell cards") : _("End turn"), 'goToSellCard', null, null, 'red');
-                    if (!argsBuyCard.canBuyOrNenew) {
-                        this.startActionTimer('goToSellCard_button', 5);
+                    if (argsBuyCard.canSell) {
+                        this.addActionButton('goToSellCard_button', _("End turn and sell cards"), 'goToSellCard');
+                    }
+                    this.addActionButton('endTurn_button', argsBuyCard.canSell ? _("End turn without selling") : _("End turn"), 'onEndTurn', null, null, 'red');
+                    if (!argsBuyCard.canBuyOrNenew && !argsBuyCard.canSell) {
+                        this.startActionTimer('endTurn_button', 5);
                     }
                     break;
                 case 'opportunistBuyCard':
@@ -1883,7 +1886,7 @@ var KingOfTokyo = /** @class */ (function () {
                     this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
                     break;
                 case 'sellCard':
-                    this.addActionButton('endTurn_button', _("End turn"), 'onEndTurn', null, null, 'red');
+                    this.addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
                 case 'cancelDamage':
                     this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here

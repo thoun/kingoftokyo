@@ -166,8 +166,10 @@ trait UtilTrait {
         ]);
 
         $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
-        $jetsDamages = array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; });
-        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
+        if ($jetsDamages != null) {
+            $jetsDamages = array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; });
+            $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
+        }
 
         self::incStat(1, 'tokyoLeaves', $playerId);
     }
