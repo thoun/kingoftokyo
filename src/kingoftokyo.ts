@@ -22,8 +22,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     private tableManager: TableManager;
     public cards: Cards;
         
-    public SHINK_RAY_TOKEN_TOOLTIP;
-    public POISON_TOKEN_TOOLTIP;
+    public SHINK_RAY_TOKEN_TOOLTIP: string;
+    public POISON_TOKEN_TOOLTIP: string;
 
     constructor() {
     }
@@ -1429,9 +1429,18 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getPlayerTable(playerId)?.setPoisonTokens(tokens);
     }
 
-    private checkBuyEnergyDrinkState(energy: number) {
+    public checkBuyEnergyDrinkState(energy: number = null) {
         if (document.getElementById('buy_energy_drink_button')) {
-            dojo.toggleClass('buy_energy_drink_button', 'disabled', energy < 1);
+            if (energy === null) {
+                energy = this.energyCounters[this.getPlayerId()].getValue();
+            }
+            dojo.toggleClass('buy_energy_drink_button', 'disabled', energy < 1 || !this.diceManager.canRethrow());
+        }
+    }
+
+    public checkUseSmokeCloudState() {
+        if (document.getElementById('use_smoke_cloud_button')) {
+            dojo.toggleClass('use_smoke_cloud_button', 'disabled', !this.diceManager.canRethrow());
         }
     }
 

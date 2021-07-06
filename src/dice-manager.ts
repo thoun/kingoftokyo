@@ -286,6 +286,8 @@ class DiceManager {
         });
 
         this.activateRethrowButton();
+        this.game.checkBuyEnergyDrinkState();
+        this.game.checkUseSmokeCloudState();
     }
 
     public lockAll() {
@@ -294,8 +296,12 @@ class DiceManager {
 
     private activateRethrowButton() {
         if (document.getElementById('rethrow_button')) {
-            dojo.toggleClass('rethrow_button', 'disabled', !this.dice.some(die => !die.locked));
+            dojo.toggleClass('rethrow_button', 'disabled', !this.canRethrow());
         }
+    }
+
+    public canRethrow(): boolean {
+        return this.dice.some(die => !die.locked);
     }
 
     private createAndPlaceDiceHtml(die: Dice, inTokyo: boolean, destinationId: string) {

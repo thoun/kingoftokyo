@@ -71,6 +71,8 @@ interface KingOfTokyoGame extends Game {
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
     getZoom(): number;
+    checkBuyEnergyDrinkState(): void;
+    checkUseSmokeCloudState(): void;
 }
 
 interface EnteringPickMonsterArgs {

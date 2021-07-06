@@ -1170,6 +1170,8 @@ var DiceManager = /** @class */ (function () {
             dojo.destroy(tempOrigin);
         });
         this.activateRethrowButton();
+        this.game.checkBuyEnergyDrinkState();
+        this.game.checkUseSmokeCloudState();
     };
     DiceManager.prototype.lockAll = function () {
         var _this = this;
@@ -1178,8 +1180,11 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.activateRethrowButton = function () {
         if (document.getElementById('rethrow_button')) {
-            dojo.toggleClass('rethrow_button', 'disabled', !this.dice.some(function (die) { return !die.locked; }));
+            dojo.toggleClass('rethrow_button', 'disabled', !this.canRethrow());
         }
+    };
+    DiceManager.prototype.canRethrow = function () {
+        return this.dice.some(function (die) { return !die.locked; });
     };
     DiceManager.prototype.createAndPlaceDiceHtml = function (die, inTokyo, destinationId) {
         var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
@@ -2659,8 +2664,17 @@ var KingOfTokyo = /** @class */ (function () {
         (_a = this.getPlayerTable(playerId)) === null || _a === void 0 ? void 0 : _a.setPoisonTokens(tokens);
     };
     KingOfTokyo.prototype.checkBuyEnergyDrinkState = function (energy) {
+        if (energy === void 0) { energy = null; }
         if (document.getElementById('buy_energy_drink_button')) {
-            dojo.toggleClass('buy_energy_drink_button', 'disabled', energy < 1);
+            if (energy === null) {
+                energy = this.energyCounters[this.getPlayerId()].getValue();
+            }
+            dojo.toggleClass('buy_energy_drink_button', 'disabled', energy < 1 || !this.diceManager.canRethrow());
+        }
+    };
+    KingOfTokyo.prototype.checkUseSmokeCloudState = function () {
+        if (document.getElementById('use_smoke_cloud_button')) {
+            dojo.toggleClass('use_smoke_cloud_button', 'disabled', !this.diceManager.canRethrow());
         }
     };
     KingOfTokyo.prototype.eliminatePlayer = function (playerId) {
