@@ -69,24 +69,25 @@ trait CardsTrait {
                 $this->applyGetPoints($playerId, 2, $cardType);
 
                 // remove other players in Tokyo
+                $damages = [];
                 $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
                 $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
                 if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
                     $this->leaveTokyo($playerInTokyoBay);
         
                     // burrowing
-                    $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+                    $countBurrowing = $this->countCardOfType($playerInTokyoBay, BURROWING_CARD);
                     if ($countBurrowing > 0) {
-                        self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
+                        $damages[] = new Damage($playerId, $countBurrowing, $playerInTokyoBay, BURROWING_CARD);
                     }
                 }
                 if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
                     $this->leaveTokyo($playerInTokyoCity);
         
                     // burrowing
-                    $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+                    $countBurrowing = $this->countCardOfType($playerInTokyoCity, BURROWING_CARD);
                     if ($countBurrowing > 0) {
-                        self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
+                        $damages[] = new Damage($playerId, $countBurrowing, $playerInTokyoCity, BURROWING_CARD);
                     }
                 }
 
@@ -96,7 +97,8 @@ trait CardsTrait {
                     // take control of Tokyo
                     $this->moveToTokyo($playerId, false);
                 }
-                break;
+            
+                return $damages;
             case 105:
                 $this->applyGetEnergy($playerId, MEDIA_FRIENDLY_CARD, $cardType);
                 break;
