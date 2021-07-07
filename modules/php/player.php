@@ -95,6 +95,9 @@ trait PlayerTrait {
         if (!$skipActionCheck) {            
             $this->checkAction('endTurn');
         }
+        
+        $playerId = self::getActivePlayerId();
+        $this->removeDiscardCards($playerId);
    
         $this->gamestate->nextState('endTurn');
     }

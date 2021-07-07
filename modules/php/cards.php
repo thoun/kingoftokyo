@@ -1244,7 +1244,7 @@ trait CardsTrait {
                 $this->goToSellCard(true);
             } else {
                 $this->endTurn(true);
-            }            
+            }
         }
     }
 

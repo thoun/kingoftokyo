@@ -1041,8 +1041,8 @@ html {
   right: 0;
 }
 #zoom-wrapper #zoom-controls button {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   background: url("img/zoom.svg");
   background-size: auto 220%;
 }
