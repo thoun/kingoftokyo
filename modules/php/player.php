@@ -43,6 +43,13 @@ trait PlayerTrait {
             ]);
         }
 
+        if (intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM player where `player_id` = $playerId")) > $maxHealth) {
+            self::DbQuery("UPDATE player SET `stay_tokyo_over` = $maxHealth where `player_id` = $playerId");
+            self::notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+                'over' => $maxHealth,
+            ]);
+        }
+
         self::notifyAllPlayers('maxHealth', '', [
             'playerId' => $playerId,
             'health' => $health,
@@ -72,6 +79,33 @@ trait PlayerTrait {
         return $leave;
     }
 
+    function autoStay(int $playerId, int $health) {
+        $stayOver = intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $playerId"));
+
+        if ($stayOver == 0) {
+            return false;
+        }
+
+        $healthAfterJets = $health;        
+
+        $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
+        if ($jetsDamages != null) {
+            foreach($jetsDamages as $jetsDamage) {
+                if ($jetsDamage->playerId == $playerId) {
+                    $healthAfterJets -= $jetsDamage->damage;
+                }
+            }
+        }
+
+        $stay = $healthAfterJets >= $stayOver - 1;
+
+        if ($stay) {
+            $this->notifStayInTokyo($playerId);
+        }
+
+        return $stay;
+    }
+
     function setLeaveTokyoUnder(int $under) {
         $playerId = self::getCurrentPlayerId(); // current, not active !
 
@@ -79,6 +113,29 @@ trait PlayerTrait {
 
         self::notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
             'under' => $under,
+        ]);
+
+        $stayOver = intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $playerId"));
+        if ($stayOver != 0 && $stayOver < $under) {
+            self::DbQuery("UPDATE player SET `stay_tokyo_over` = 0 where `player_id` = $playerId");
+            self::notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+                'over' => 0,
+            ]);
+        }
+    }
+
+    function setStayTokyoOver(int $over) {
+        $playerId = self::getCurrentPlayerId(); // current, not active !
+
+        $leaveUnder = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));
+        if ($leaveUnder != 0 && $over <= $leaveUnder) {
+            throw new \Error("Can't set StayInTokyoOver less than LeaveTokyoUnder");
+        }
+
+        self::DbQuery("UPDATE player SET `stay_tokyo_over` = $over where `player_id` = $playerId");
+
+        self::notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+            'over' => $over,
         ]);
     }
 
@@ -257,7 +314,7 @@ trait PlayerTrait {
                 $playerHealth = $this->getPlayerHealth($smashedPlayerInTokyo);
                 if ($playerHealth > 0) {
 
-                    if (!$this->autoLeave($smashedPlayerInTokyo, $playerHealth)) {
+                    if (!$this->autoLeave($smashedPlayerInTokyo, $playerHealth) && !$this->autoStay($smashedPlayerInTokyo, $playerHealth)) {
                         $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
                     }
                 } else {

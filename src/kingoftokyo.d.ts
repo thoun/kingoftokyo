@@ -55,6 +55,7 @@ interface KingOfTokyoGamedatas {
     playersCards: { [playerId: number]: Card[] };
     mimickedCard: Card | null;
     leaveTokyoUnder: number;
+    stayTokyoOver: number;
     twoPlayersVariant: boolean;
 }
 
@@ -283,4 +284,8 @@ interface NotifChangeDieArgs {
 
 interface NotifUpdateLeaveTokyoUnderArgs {
     under: number;
+}
+
+interface NotifUpdateStayTokyoOverArgs {
+    over: number;
 }

@@ -1026,6 +1026,10 @@ html {
   grid-column-start: 1;
   grid-column-end: 4;
 }
+.autoLeaveUnderBubble hr {
+  border-color: #4871b6;
+  border-width: 2px;
+}
 
 @media screen and (max-width: 550px) {
   #rolled-dice-and-rapid-actions {

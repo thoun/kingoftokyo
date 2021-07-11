@@ -216,7 +216,7 @@ trait DiceTrait {
 
         // fire breathing
         foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
-            self::notifyAllPlayers("fireBreathingExtraDamage", '${player_name} loses ${number} extra [Heart] with ${card_name}', [
+            self::notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerName($damagePlayerId),
                 'number' => 1,

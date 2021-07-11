@@ -303,6 +303,16 @@
 
         self::ajaxResponse();
     }
+  	
+    public function setStayTokyoOver() {
+        self::setAjaxMode();
+
+        $over = self::getArg("over", AT_posint, true);
+
+        $this->game->setStayTokyoOver($over);
+
+        self::ajaxResponse();
+    }
 
   }
   

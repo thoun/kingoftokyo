@@ -222,6 +222,7 @@ class KingOfTokyo extends Table {
         $result['mimickedCard'] = $this->getMimickedCard();
 
         $result['leaveTokyoUnder'] = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));
+        $result['stayTokyoOver'] = intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $current_player_id"));
 
         $result['twoPlayersVariant'] = $this->isTwoPlayersVariant();
 
@@ -338,7 +339,12 @@ class KingOfTokyo extends Table {
 
             // The method below is applying your DB schema update request to all tables, including the BGA framework utility tables like "zz_replayXXXX" or "zz_savepointXXXX".
             // You should really use this request, in conjunction with "DBPREFIX_" in your $sql, so ALL tables are updated. All utility tables MUST have the same schema than the main table, otherwise the game may be blocked.
-            self::applyDbUpgradeToAllDB($sql);        
+            self::applyDbUpgradeToAllDB($sql);
+        }
+
+        if ($from_version <= 2107071429) {
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `stay_tokyo_over` tinyint unsigned";
+            self::applyDbUpgradeToAllDB($sql);
         }
     }
 }
