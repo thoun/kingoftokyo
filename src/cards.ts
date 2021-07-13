@@ -459,6 +459,11 @@ class Cards {
     }
 
     public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
+        this.setDivAsCard(cardDiv, cardType);        
+        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+    }
+
+    public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
         const type = cardType < 100 ? _('Keep') : _('Discard');
         const description = formatTextIcons(this.getCardDescription(cardType));
         const position = this.getCardNamePosition(cardType);
@@ -492,7 +497,31 @@ class Cards {
         if (spaceBetweenDescriptionAndName < 0) {
             nameWrapperDiv.style.top = `${Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName)}px`;
         }
-        
-        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+    }
+
+    public changeMimicTooltip(mimicCardId: string, mimickedCard: Card) {
+        let mimickedCardText = '-';
+        if (mimickedCard) {
+            const tempDiv: HTMLDivElement = document.createElement('div');
+            tempDiv.classList.add('stockitem');
+            tempDiv.style.width = `${CARD_WIDTH}px`;
+            tempDiv.style.height = `${CARD_HEIGHT}px`;
+            tempDiv.style.position = `relative`;
+            tempDiv.style.backgroundImage = mimickedCard.type < 100 ? `url('${g_gamethemeurl}img/keep-cards.jpg')` : `url('${g_gamethemeurl}img/discard-cards.jpg')`;
+            const imagePosition = mimickedCard.type < 100 ? mimickedCard.type - 1 : mimickedCard.type - 101;
+            const image_items_per_row = 10;
+            var row = Math.floor(imagePosition / image_items_per_row);
+            const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
+            const yBackgroundPercent = row * 100;
+            tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
+
+            document.body.appendChild(tempDiv);
+            this.setDivAsCard(tempDiv, mimickedCard.type);
+            document.body.removeChild(tempDiv);
+
+            mimickedCardText = `<br>${tempDiv.outerHTML}`;
+        }
+
+        (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(27) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
     }
 }

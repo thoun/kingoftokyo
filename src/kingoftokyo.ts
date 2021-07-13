@@ -813,9 +813,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.cards.placeMimicOnCard(playerTable.cards, card);
             }
         });
+
+        this.setMimicTooltip(card);
     }
 
     private removeMimicToken(card: Card) {
+        this.setMimicTooltip(null);
+
         if (!card) {
             return;
         }
@@ -823,6 +827,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables.forEach(playerTable => {
             if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
                 this.cards.removeMimicOnCard(playerTable.cards, card);
+            }
+        });
+    }
+
+    private setMimicTooltip(mimickedCard: Card) {
+        this.playerTables.forEach(playerTable => {
+            const mimicCardItem = playerTable.cards.items.find(item => Number(item.type) == 27);
+            if (mimicCardItem) {
+                this.cards.changeMimicTooltip(`cards-${playerTable.playerId}_item_${mimicCardItem.id}`, mimickedCard);
             }
         });
     }

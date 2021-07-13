@@ -15,17 +15,17 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(3);
-        //$this->debugSetPlayerHealth(2343492, 4);
+        //$this->debugSetEnergy(3);
+        $this->debugSetPlayerHealth(2343492, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 4 where `player_id` = 2343492");
-        $this->debugSetCardInTable(108);
+        //$this->debugSetCardInTable(108);
         //$this->debugSetCardInTable(112);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 100 where `card_type` > 100");
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        //$this->debugSetEnergy(10);
+        //$this->debugSetEnergy(20);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
-        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493));
+        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(BURROWING_CARD, 2343493));
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
@@ -35,6 +35,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
+        //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
 
         // Activate first player must be commented in setup if this is used
         $this->gamestate->changeActivePlayer(2343492);

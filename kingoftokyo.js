@@ -482,6 +482,10 @@ var Cards = /** @class */ (function () {
         return tooltip;
     };
     Cards.prototype.setupNewCard = function (cardDiv, cardType) {
+        this.setDivAsCard(cardDiv, cardType);
+        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+    };
+    Cards.prototype.setDivAsCard = function (cardDiv, cardType) {
         var type = cardType < 100 ? _('Keep') : _('Discard');
         var description = formatTextIcons(this.getCardDescription(cardType));
         var position = this.getCardNamePosition(cardType);
@@ -501,7 +505,28 @@ var Cards = /** @class */ (function () {
         if (spaceBetweenDescriptionAndName < 0) {
             nameWrapperDiv.style.top = Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName) + "px";
         }
-        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+    };
+    Cards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCard) {
+        var mimickedCardText = '-';
+        if (mimickedCard) {
+            var tempDiv = document.createElement('div');
+            tempDiv.classList.add('stockitem');
+            tempDiv.style.width = CARD_WIDTH + "px";
+            tempDiv.style.height = CARD_HEIGHT + "px";
+            tempDiv.style.position = "relative";
+            tempDiv.style.backgroundImage = mimickedCard.type < 100 ? "url('" + g_gamethemeurl + "img/keep-cards.jpg')" : "url('" + g_gamethemeurl + "img/discard-cards.jpg')";
+            var imagePosition = mimickedCard.type < 100 ? mimickedCard.type - 1 : mimickedCard.type - 101;
+            var image_items_per_row = 10;
+            var row = Math.floor(imagePosition / image_items_per_row);
+            var xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
+            var yBackgroundPercent = row * 100;
+            tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% -" + yBackgroundPercent + "%";
+            document.body.appendChild(tempDiv);
+            this.setDivAsCard(tempDiv, mimickedCard.type);
+            document.body.removeChild(tempDiv);
+            mimickedCardText = "<br>" + tempDiv.outerHTML;
+        }
+        this.game.addTooltipHtml(mimicCardId, this.getTooltip(27) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
     return Cards;
 }());
@@ -2149,15 +2174,26 @@ var KingOfTokyo = /** @class */ (function () {
                 _this.cards.placeMimicOnCard(playerTable.cards, card);
             }
         });
+        this.setMimicTooltip(card);
     };
     KingOfTokyo.prototype.removeMimicToken = function (card) {
         var _this = this;
+        this.setMimicTooltip(null);
         if (!card) {
             return;
         }
         this.playerTables.forEach(function (playerTable) {
             if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
                 _this.cards.removeMimicOnCard(playerTable.cards, card);
+            }
+        });
+    };
+    KingOfTokyo.prototype.setMimicTooltip = function (mimickedCard) {
+        var _this = this;
+        this.playerTables.forEach(function (playerTable) {
+            var mimicCardItem = playerTable.cards.items.find(function (item) { return Number(item.type) == 27; });
+            if (mimicCardItem) {
+                _this.cards.changeMimicTooltip("cards-" + playerTable.playerId + "_item_" + mimicCardItem.id, mimickedCard);
             }
         });
     };

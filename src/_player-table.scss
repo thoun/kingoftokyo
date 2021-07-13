@@ -6,7 +6,8 @@
     align-items: center;
 
     &.eliminated {
-        opacity: 0.5;
+        // opacity: 0.5;
+        filter: grayscale(1);
     }
 
     &.active {
