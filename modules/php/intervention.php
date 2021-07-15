@@ -27,9 +27,9 @@ trait InterventionTrait {
     function stIntervention(string $interventionName) {
         $intervention = $this->getGlobalVariable($interventionName);
 
-        if ($intervention->nextState === 'keep' && count($intervention->remainingPlayersId) > 0) { // current player continues / next (intervention player) / or leaving transition
-            $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
-        } else if ($intervention->nextState === 'next' && count($intervention->remainingPlayersId) > 0) { // next intervention player
+        $keep = ($intervention->nextState === 'keep' || $intervention->nextState === 'next') && count($intervention->remainingPlayersId) > 0 && $this->getPlayerHealth($intervention->remainingPlayersId[0]) > 0;
+        
+        if ($keep) { // current player continues / next (intervention player) / or leaving transition
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
         } else { // leaving transition
             $this->deleteGlobalVariable($interventionName);
@@ -38,7 +38,7 @@ trait InterventionTrait {
             } else if (gettype($intervention->endState) == 'integer') {
                 $this->jumpToState($intervention->endState);
             } else {
-                throw new \Error('invalide endState');
+                throw new \Error('Invalid endState');
             }
         }
     }
