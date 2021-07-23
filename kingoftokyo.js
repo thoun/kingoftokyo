@@ -661,12 +661,11 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.getPlaceToken = function (placed) {
         var _this = this;
         var newPlace = {
-            x: Math.random() * 33 + 16,
+            x: 16,
             y: Math.random() * 138 + 16,
         };
         var protection = 0;
         while (protection < 1000 && placed.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
-            newPlace.x = Math.random() * 33 + 16;
             newPlace.y = Math.random() * 138 + 16;
             protection++;
         }

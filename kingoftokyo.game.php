@@ -166,12 +166,12 @@ class KingOfTokyo extends Table {
         // setup the initial game situation here
         $this->initCards();
         $this->cards->pickCardsForLocation(3, 'deck', 'table');
-
-        // TODO TEMP card to test
-        //$this->debugSetup();
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
+
+        // TODO TEMP card to test
+        //$this->debugSetup();
 
         /************ End of the game initialization *****/
     }

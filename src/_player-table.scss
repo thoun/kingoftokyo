@@ -144,8 +144,12 @@
         width: 65px;
         height: 170px;
 
+        .token {
+            position: absolute;
+        }
+
         &.poison {
-            left: 5px;
+            left: -15px;
             bottom: 5px;
 
             .token {
@@ -154,7 +158,7 @@
         }
         &.shrink-ray {
             top: 5px;
-            right: 5px;
+            right: -50px;
 
             .token {
                 box-shadow: 0 0 4px 4px #d7e2a1;

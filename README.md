@@ -37,3 +37,7 @@ add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 add english rules in wiki
 when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
+
+${player_name} achète ${card_name} depuis la pioche pour ${cost} [energy]
+${player_name} achète ${card_name} à ${player_name2} et paye ${cost} [energy] à ${player_name2}
+${player_name} achète ${card_name} pour ${cost} [energy]

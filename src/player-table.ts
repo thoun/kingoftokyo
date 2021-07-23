@@ -186,12 +186,11 @@ class PlayerTable {
 
     private getPlaceToken(placed: PlacedTokens[]): PlacedTokens {
         const newPlace = {
-            x: Math.random() * 33 + 16,
+            x: 16,
             y: Math.random() * 138 + 16,
         };
         let protection = 0;
         while (protection < 1000 && placed.some(place => this.getDistance(newPlace, place) < 32)) {
-            newPlace.x = Math.random() * 33 + 16;
             newPlace.y = Math.random() * 138 + 16;
             protection++;
         }

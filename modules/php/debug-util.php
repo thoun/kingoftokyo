@@ -37,7 +37,6 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
 
-        // Activate first player must be commented in setup if this is used
         $this->gamestate->changeActivePlayer(2343492);
     }
 

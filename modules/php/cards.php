@@ -643,7 +643,7 @@ trait CardsTrait {
         $newCard = null;
 
         if ($from > 0) {
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2}'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -651,33 +651,36 @@ trait CardsTrait {
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId),
                 'from' => $from,
-                'player_name2' => $this->getPlayerName($from),             
+                'player_name2' => $this->getPlayerName($from),   
+                'cost' => $cost,
             ]);
 
             $this->applyGetEnergy($from, $cost, 0);
             
         } else if (array_search($id, $this->getMadeInALabCardIds($playerId)) !== false) {
             
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => null,
-                'energy' => $this->getPlayerEnergy($playerId),
+                'energy' => $this->getPlayerEnergy($playerId), 
+                'cost' => $cost,
             ]);
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
     
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name}'), [
+            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => $newCard,
-                'energy' => $this->getPlayerEnergy($playerId),
+                'energy' => $this->getPlayerEnergy($playerId), 
+                'cost' => $cost,
             ]);
 
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
