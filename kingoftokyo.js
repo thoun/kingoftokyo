@@ -1656,7 +1656,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.setDiceForThrowDice(dice, args.inTokyo, isCurrentPlayerActive);
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
-                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Rethrow dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
+                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
                 this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to rethrow the others"), _("Ctrl+click to move all dice with same value") + "<br>\n                    " + _("Alt+click to move all dice but clicked die"));
             }
             if (args.rethrow3.hasCard) {

@@ -1021,6 +1021,11 @@ trait CardsTrait {
 
         $playerId = self::getCurrentPlayerId();
 
+        $this->applySkipWings($playerId);
+    }
+
+    function applySkipWings(int $playerId) {
+
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
         $totalDamage = 0;
@@ -1288,5 +1293,30 @@ trait CardsTrait {
 
     function stCancelDamage() {
         $this->stIntervention(CANCEL_DAMAGE_INTERVENTION);
+
+        if ($this->autoSkipImpossibleActions()) {
+            
+            $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+            
+            $playerId = null;
+            if ($intervention != null && $intervention->remainingPlayersId != null && count($intervention->remainingPlayersId) > 0) {
+                $playerId = $intervention->remainingPlayersId[0];
+            } else {
+                return;
+            }
+
+            $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
+            $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
+
+            $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
+
+            $hasDice3 = $hasBackgroundDweller && $dice != null ? (array_search(3, $diceValues) !== false) : false;
+
+            $arg = $this->argCancelDamage($playerId, $hasDice3);
+
+            if (!$arg['canThrowDices'] && $arg['playerEnergy'] < 2 && !$arg['rethrow3']['hasDice3']) {
+                $this->applySkipWings($playerId);
+            }
+        }
     }
 }

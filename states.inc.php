@@ -150,9 +150,9 @@ $playerActionsGameStates = [
 
     ST_PLAYER_THROW_DICE => [
         "name" => "throwDice",
-        "description" => clienttranslate('${actplayer} can rethrow dice or resolve dice'),
+        "description" => clienttranslate('${actplayer} can reroll dice or resolve dice'),
         "descriptionlast" => clienttranslate('${actplayer} must resolve dice'),
-        "descriptionmyturn" => clienttranslate('${you} can rethrow dice or resolve dice'),
+        "descriptionmyturn" => clienttranslate('${you} can reroll dice or resolve dice'),
         "descriptionmyturnlast" => clienttranslate('${you} must resolve dice'),
         "type" => "activeplayer",
         "action" => "stThrowDice",
