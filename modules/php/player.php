@@ -182,6 +182,10 @@ trait PlayerTrait {
 
         $playerId = self::getCurrentPlayerId();
 
+        $this->applyActionLeaveTokyo($playerId);
+    }
+
+    function applyActionLeaveTokyo(int $playerId) {
         $this->leaveTokyo($playerId);
         
         // burrowing

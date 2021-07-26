@@ -315,16 +315,32 @@ class KingOfTokyo extends Table {
 
             return;
         } else if ($state['type'] == "multipleactiveplayer") {
-            // Make sure player is in a non blocking status for role turn
-            $sql = "
-                UPDATE  player
-                SET     player_is_multiactive = 0
-                WHERE   player_id = $active_player
-            ";
-            self::DbQuery( $sql );
+            switch ($statename) {
+                case 'psychicProbeRollDie':
+                    $this->applyPsychicProbeSkip($active_player);
+                    return;
+                case 'cancelDamage':
+                    $this->applySkipWings($active_player);
+                    return;
+                case 'leaveTokyo':
+                    $this->applyActionLeaveTokyo($active_player);
+                    return;
+                case 'opportunistBuyCard':
+                    $this->applyOpportunistSkip($active_player);
+                    return;
+                case 'opportunistChooseMimicCard':
+                default:
+                    // Make sure player is in a non blocking status for role turn
+                    $sql = "
+                        UPDATE  player
+                        SET     player_is_multiactive = 0
+                        WHERE   player_id = $active_player
+                    ";
+                    self::DbQuery( $sql );
 
-            $this->gamestate->updateMultiactiveOrNextState( '' );
-            return;
+                    $this->gamestate->updateMultiactiveOrNextState('end');
+                    return;
+            }
         }
 
         throw new feException( "Zombie mode not supported at this game state: ".$statename );

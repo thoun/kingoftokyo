@@ -691,6 +691,10 @@ trait DiceTrait {
 
         $playerId = self::getCurrentPlayerId();
 
+        $this->applyPsychicProbeSkip($playerId);
+    }
+
+    function applyPsychicProbeSkip(int $playerId) {
         $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
         $this->setInterventionNextState(PSYCHIC_PROBE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');

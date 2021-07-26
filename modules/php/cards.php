@@ -797,6 +797,11 @@ trait CardsTrait {
         $this->checkAction('opportunistSkip');
    
         $playerId = self::getCurrentPlayerId();
+
+        $this->applyOpportunistSkip($playerId);
+    }
+
+    function applyOpportunistSkip(int $playerId) {
         $this->removeDiscardCards($playerId);
 
         $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', 'end');

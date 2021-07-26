@@ -15,7 +15,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(8);
+        //$this->debugSetEnergy(8);
         //$this->debugSetPlayerHealth(2343492, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 4 where `player_id` = 2343492");
         //$this->debugSetCardInTable(108);
@@ -30,7 +30,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
-        $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
+        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetPlayerPoints(2343493,10);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
