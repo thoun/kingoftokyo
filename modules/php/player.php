@@ -324,7 +324,7 @@ trait PlayerTrait {
         }
 
         if (count($aliveSmashedPlayersInTokyo) > 0) {
-            $this->gamestate->setPlayersMultiactive($aliveSmashedPlayersInTokyo, 'resume');
+            $this->gamestate->setPlayersMultiactive($aliveSmashedPlayersInTokyo, 'resume', true);
         } else {
             $this->gamestate->nextState('resume');
         }
