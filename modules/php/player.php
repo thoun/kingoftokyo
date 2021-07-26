@@ -240,6 +240,7 @@ trait PlayerTrait {
     function stStartTurn() {
         $playerId = self::getActivePlayerId();
 
+        self::incStat(1, 'turnsNumber');
         self::incStat(1, 'turnsNumber', $playerId);
 
         $idsInTokyo = $this->getPlayersIdsInTokyo();

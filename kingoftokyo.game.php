@@ -272,7 +272,8 @@ class KingOfTokyo extends Table {
             if (!$player->eliminated) {
                 if ($player->score >= MAX_POINT) {
                     self::setStat(1, 'pointsWin', $player->id);
-                } else if ($eliminationWin) {
+                }
+                if ($eliminationWin) {
                     self::setStat(1, 'eliminationWin', $player->id);
                 }
 
