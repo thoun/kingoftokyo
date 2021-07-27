@@ -434,7 +434,7 @@ class Cards {
             case 106: case 107: return _("<strong>All other Monsters lose 5[Star].</strong>");
             case 108: return _("<strong>All other Monsters lose 2[Heart].</strong>");
             case 109: return _("<strong>Take another turn</strong> after this one");
-            case 110: return _("<strong>+ 2[Star] and deal all other monsters lose 3[Heart].</strong>");
+            case 110: return _("<strong>+ 2[Star] and all other monsters lose 3[Heart].</strong>");
             case 111: return "<strong>+ 2[Heart]</strong>";
             case 112: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Heart].</strong>");
             case 113: return "<strong>+ 5[Star] -4[Heart].</strong>";

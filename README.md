@@ -37,3 +37,5 @@ add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 add english rules in wiki
 when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
+
+2p variant + Friend of Children
