@@ -1288,6 +1288,9 @@ var DiceManager = /** @class */ (function () {
             bubble.dataset.visible = 'false';
         }
     };
+    DiceManager.prototype.removeAllBubbles = function () {
+        Array.from(document.getElementsByClassName('change-die-discussion_bubble')).forEach(function (elem) { return elem.parentElement.removeChild(elem); });
+    };
     DiceManager.prototype.toggleBubbleChangeDie = function (die) {
         var _this = this;
         var divId = "dice" + die.id;
@@ -1796,6 +1799,7 @@ var KingOfTokyo = /** @class */ (function () {
                 if (document.getElementById('rethrow3changeDie_button')) {
                     dojo.destroy('rethrow3changeDie_button');
                 }
+                this.diceManager.removeAllBubbles();
                 break;
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {

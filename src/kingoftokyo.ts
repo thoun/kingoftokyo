@@ -369,7 +369,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'changeDie':                 
                 if (document.getElementById('rethrow3changeDie_button')) {
                     dojo.destroy('rethrow3changeDie_button');
-                }   
+                }
+                this.diceManager.removeAllBubbles();
                 break; 
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {

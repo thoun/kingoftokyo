@@ -387,6 +387,10 @@ class DiceManager {
         }
     }
 
+    public removeAllBubbles() {
+        Array.from(document.getElementsByClassName('change-die-discussion_bubble')).forEach(elem => elem.parentElement.removeChild(elem));
+    }
+
     private toggleBubbleChangeDie(die: Dice) {
         const divId = `dice${die.id}`;           
         if (!document.getElementById(`discussion_bubble_${divId}`)) { 
