@@ -87,6 +87,10 @@ $size: 0.25rem;
     &.rolled {
         animation: rolled-dice 1s forwards;
         transform: translateY(-40vh);
+
+        .icon.forbidden {
+          display: none;
+        }
     }
 }
 

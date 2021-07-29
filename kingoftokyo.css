@@ -133,6 +133,9 @@
   animation: rolled-dice 1s forwards;
   transform: translateY(-40vh);
 }
+.dice.rolled .icon.forbidden {
+  display: none;
+}
 
 @keyframes rolled-dice {
   100% {
