@@ -434,7 +434,7 @@ var Cards = /** @class */ (function () {
             case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the reroll [diceHeart], discard this card.");
             case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong>");
             case 38: return _("When gain [Heart], <strong>gain 1 extra [Heart].</strong>");
-            case 39: return _("At the end of a turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
+            case 39: return _("At the end of your turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
             case 40: return _("Give 1 <i>Shrink Ray</i> to each Monster you Smash with your [diceSmash]. <strong>At the beginning of their turn, Monster roll 1 less dice for each <i>Shrink Ray</i> token they have on them</strong>. A <i>Shrink Ray</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 41: return _("Place 3 <i>Smoke</i> counters on this card. <strong>Spend 1 <i>Smoke</i> counter for an extra Roll.</strong> Discard this card when all <i>Smoke</i> counters are spent.");
             case 42: return _("At the end of your turn <strong>gain 1[Energy] if you have no [Energy].</strong>");
