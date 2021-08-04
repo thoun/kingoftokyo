@@ -1289,11 +1289,13 @@ var DiceManager = /** @class */ (function () {
         }
     };
     DiceManager.prototype.removeAllBubbles = function () {
+        this.dieFaceSelectors = [];
         Array.from(document.getElementsByClassName('change-die-discussion_bubble')).forEach(function (elem) { return elem.parentElement.removeChild(elem); });
     };
     DiceManager.prototype.toggleBubbleChangeDie = function (die) {
         var _this = this;
         var divId = "dice" + die.id;
+        console.log('exists ', "discussion_bubble_" + divId, document.getElementById("discussion_bubble_" + divId));
         if (!document.getElementById("discussion_bubble_" + divId)) {
             dojo.place("<div id=\"discussion_bubble_" + divId + "\" class=\"discussion_bubble change-die-discussion_bubble\"></div>", divId);
         }

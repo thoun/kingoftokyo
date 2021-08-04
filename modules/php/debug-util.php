@@ -29,7 +29,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
-        //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
+        $this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);

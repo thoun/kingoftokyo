@@ -39,3 +39,8 @@ add english rules in wiki
 when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
 
 2p variant + Friend of Children
+if a player is smashed and shoulg get a token, but escapes damage with wings / camouflage, does he still gets the token ? considered yes
+
+does herbivore applies on turn it's bought ? considered yes
+
+5-6 players : if a player leaves Tokyo city but the other one chooses to stay in Tokyo Bay, does smashing player takes the empty spot, or is Tokyo Bay player moved to City before other player enters ? (then he would enter in Tokyo Bay) Considered take leaver's place

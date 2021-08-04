@@ -388,11 +388,13 @@ class DiceManager {
     }
 
     public removeAllBubbles() {
+        this.dieFaceSelectors = [];
         Array.from(document.getElementsByClassName('change-die-discussion_bubble')).forEach(elem => elem.parentElement.removeChild(elem));
     }
 
     private toggleBubbleChangeDie(die: Dice) {
-        const divId = `dice${die.id}`;           
+        const divId = `dice${die.id}`;    
+        console.log('exists ', `discussion_bubble_${divId}`, document.getElementById(`discussion_bubble_${divId}`));       
         if (!document.getElementById(`discussion_bubble_${divId}`)) { 
             dojo.place(`<div id="discussion_bubble_${divId}" class="discussion_bubble change-die-discussion_bubble"></div>`, divId);
         }
