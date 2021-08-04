@@ -13,10 +13,10 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetEnergy(8);
-        //$this->debugSetPlayerHealth(2343493, 1);
+        $this->debugSetPlayerHealth(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 4 where `player_id` = 2343492");
         //$this->debugSetCardInTable(108);
         //$this->debugSetCardInTable(118);
@@ -29,8 +29,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
-        $this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
-        $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
+        //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);

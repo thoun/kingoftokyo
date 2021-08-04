@@ -559,8 +559,8 @@ var PlayerTable = /** @class */ (function () {
         this.initialLocation = Number(player.location);
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
-        this.setEnergy(Number(player.energy));
         if (!eliminated) {
+            this.setEnergy(Number(player.energy));
             this.setPoisonTokens(Number(player.poisonTokens));
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
         }
@@ -600,6 +600,7 @@ var PlayerTable = /** @class */ (function () {
         }, delay);
     };
     PlayerTable.prototype.eliminatePlayer = function () {
+        this.setEnergy(0);
         this.cards.removeAll();
         this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
         dojo.addClass("player-table-" + this.playerId, 'eliminated');

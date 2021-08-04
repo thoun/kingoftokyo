@@ -62,8 +62,8 @@ class PlayerTable {
 
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
-        this.setEnergy(Number(player.energy));
         if (!eliminated) {
+            this.setEnergy(Number(player.energy));
             this.setPoisonTokens(Number(player.poisonTokens));
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
         }
@@ -113,6 +113,7 @@ class PlayerTable {
     }
 
     public eliminatePlayer() {
+        this.setEnergy(0);
         this.cards.removeAll();
         (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);
         dojo.addClass(`player-table-${this.playerId}`, 'eliminated');
