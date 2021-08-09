@@ -55,7 +55,7 @@ If a Monster loses his last Life Point, he is eliminated.
 
 '''Since no Monster starts the game in Tokyo, the Monster who plays first does not cause Monsters to lose heart with smash dices.'''
 
-Note : Lost heart from a Power card effect is different thansmash dices. A Monster can only yield Tokyo when losing hearts from smash dice.
+Note : Lost heart from a Power card effect is different than smash dices. A Monster can only yield Tokyo when losing hearts from smash dice.
 
 == Enter Tokyo ==
 

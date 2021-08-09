@@ -267,7 +267,6 @@ trait UtilTrait {
 
     function getOrderedPlayers(int $currentTurnPlayerId, bool $includeEliminated = false) {
         $players = $this->getPlayers($includeEliminated);
-        // TODO UnitTests
 
         $playerIndex = 0; 
         foreach($players as $player) {
