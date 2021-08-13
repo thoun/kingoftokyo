@@ -44,3 +44,5 @@ if a player is smashed and shoulg get a token, but escapes damage with wings / c
 does herbivore applies on turn it's bought ? considered yes
 
 5-6 players : if a player leaves Tokyo city but the other one chooses to stay in Tokyo Bay, does smashing player takes the empty spot, or is Tokyo Bay player moved to City before other player enters ? (then he would enter in Tokyo Bay) Considered take leaver's place
+
+«We had a bug where I bought a $7 card that allowed me to play another turn, I played that turn, killed the other person, and then was given a 3rd turn. https://boardgamearena.com/2/kingoftokyo?table=193649502#

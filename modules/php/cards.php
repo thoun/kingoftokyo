@@ -868,8 +868,8 @@ trait CardsTrait {
 
         $this->setMimickedCardId($playerId, $mimickedCardId);
 
-        // we throw dices again, in case dice count has been changed by mimic
-        $this->throwDice($playerId);
+        // we throw dices now, in case dice count has been changed by mimic
+        $this->throwDice($playerId, true);
 
         $this->gamestate->nextState('next');
     }
@@ -878,6 +878,11 @@ trait CardsTrait {
         if (!$skipActionCheck) {
             $this->checkAction('skipChangeMimickedCard');
         }
+
+        $playerId = self::getActivePlayerId();
+
+        // we throw dices now, in case dice count has been changed by mimic
+        $this->throwDice($playerId, true);
 
         $this->gamestate->nextState('next');
     }    

@@ -301,11 +301,11 @@ trait PlayerTrait {
         self::setGameStateValue('throwNumber', 1);
         self::DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true");
 
-        $this->throwDice($playerId);
-
         if ($this->canChangeMimickedCard()) {
             $this->gamestate->nextState('changeMimickedCard');
         } else {
+            $this->throwDice($playerId, true);
+            
             $this->gamestate->nextState('throw');
         }
     }

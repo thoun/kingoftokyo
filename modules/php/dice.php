@@ -38,17 +38,45 @@ trait DiceTrait {
         return null;
     }
 
-    public function throwDice($playerId) {
+    public function throwDice(int $playerId, bool $firstRoll) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
         self::DbQuery( "UPDATE dice SET `rolled` = false");
+
+        $rolledDiceStr = '';
+        $lockedDiceStr = '';
+        $lockedDice = [];
         
         foreach ($dice as &$dice) {
-            if (!$dice->locked) {
+            if ($dice->locked) {
+                $lockedDice[] = $dice->value;
+            } else {
                 $dice->value = bga_rand(1, 6);
                 self::DbQuery( "UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id );
+                $rolledDiceStr .= $this->getDieFaceLogName($dice->value);
             }
         }
+
+        $message = null;
+        if ($firstRoll) {
+            $message = clienttranslate('${player_name} rolls dice ${rolledDice}');
+        } else if (count($lockedDice) == 0) {
+            $message = clienttranslate('${player_name} rerolls dice ${rolledDice}');
+        } else {
+            sort($lockedDice);
+            foreach ($lockedDice as $lockedDie) {
+                $lockedDiceStr .= $this->getDieFaceLogName($lockedDie);
+            }
+
+            $message = clienttranslate('${player_name} keeps ${lockedDice} and rerolls dice ${rolledDice}');
+        }
+
+        self::notifyAllPlayers("diceLog", $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'rolledDice' => $rolledDiceStr,
+            'lockedDice' => $lockedDiceStr,
+        ]);
     }
 
     function fixDices() {
@@ -350,7 +378,7 @@ trait DiceTrait {
         $diceCount = count(explode(',', $diceIds));
         self::incStat($diceCount, 'rethrownDice', $playerId);
 
-        $this->throwDice($playerId);
+        $this->throwDice($playerId, false);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
         self::setGameStateValue('throwNumber', $throwNumber);
