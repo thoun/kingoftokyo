@@ -866,6 +866,11 @@ trait CardsTrait {
 
         $playerId = self::getActivePlayerId();
 
+        if ($this->getPlayerEnergy($playerId) < 1) {
+            throw new \Error('Not enough energy');
+        }
+        $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
+
         $this->setMimickedCardId($playerId, $mimickedCardId);
 
         // we throw dices now, in case dice count has been changed by mimic
@@ -1180,7 +1185,9 @@ trait CardsTrait {
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            $disabledCardsOfPlayer = array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; }));
+            $disabledCardsOfPlayer = $canChange ? 
+                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; })) :
+                $cardsOfPlayer;
             $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
             
             $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
