@@ -1172,7 +1172,11 @@ trait CardsTrait {
         }
     }
 
-    function argChooseMimickedCard() {
+    function argChangeMimickedCard() {
+        return $this->argChooseMimickedCard(true);
+    }
+
+    function argChooseMimickedCard($limitToOneEnergy = false) {
         $playerId = self::getActivePlayerId();
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
@@ -1186,7 +1190,7 @@ trait CardsTrait {
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            $disabledCardsOfPlayer = $canChange ? 
+            $disabledCardsOfPlayer = $canChange || !$limitToOneEnergy ? 
                 array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; })) :
                 $cardsOfPlayer;
             $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
@@ -1254,7 +1258,7 @@ trait CardsTrait {
 ////////////
 
     function stChooseMimickedCard() {
-        if ($this->autoSkipImpossibleActions() && !$this->argChooseMimickedCard()['canChange']) {
+        if ($this->autoSkipImpossibleActions() && !$this->argChooseMimickedCard(true)['canChange']) {
             // skip state
             $this->skipChangeMimickedCard(true);
         }
