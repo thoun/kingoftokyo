@@ -57,26 +57,28 @@ trait DiceTrait {
             }
         }
 
-        $message = null;
-        if ($firstRoll) {
-            $message = clienttranslate('${player_name} rolls dice ${rolledDice}');
-        } else if (count($lockedDice) == 0) {
-            $message = clienttranslate('${player_name} rerolls dice ${rolledDice}');
-        } else {
-            sort($lockedDice);
-            foreach ($lockedDice as $lockedDie) {
-                $lockedDiceStr .= $this->getDieFaceLogName($lockedDie);
+        if (!$this->getPlayer($playerId)->eliminated) {
+            $message = null;
+            if ($firstRoll) {
+                $message = clienttranslate('${player_name} rolls dice ${rolledDice}');
+            } else if (count($lockedDice) == 0) {
+                $message = clienttranslate('${player_name} rerolls dice ${rolledDice}');
+            } else {
+                sort($lockedDice);
+                foreach ($lockedDice as $lockedDie) {
+                    $lockedDiceStr .= $this->getDieFaceLogName($lockedDie);
+                }
+
+                $message = clienttranslate('${player_name} keeps ${lockedDice} and rerolls dice ${rolledDice}');
             }
 
-            $message = clienttranslate('${player_name} keeps ${lockedDice} and rerolls dice ${rolledDice}');
+            self::notifyAllPlayers("diceLog", $message, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'rolledDice' => $rolledDiceStr,
+                'lockedDice' => $lockedDiceStr,
+            ]);
         }
-
-        self::notifyAllPlayers("diceLog", $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'rolledDice' => $rolledDiceStr,
-            'lockedDice' => $lockedDiceStr,
-        ]);
     }
 
     function fixDices() {
