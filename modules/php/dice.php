@@ -649,7 +649,7 @@ trait DiceTrait {
 
                 // we remove Plot Twist and Mimic if user mimicked it
                 foreach($currentPlayerCards as $card) {
-                    $this->removeCard($playerId, $card);
+                    $this->removeCard($playerId, $card, false, true);
 
                     if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe
                         // in case we had a mimic player to play after current player, we clear array because he can't anymore 

@@ -1335,8 +1335,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_removeCards(notif: Notif<NotifRemoveCardsArgs>) {
-        this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
-        this.tableManager.placePlayerTable(); // adapt after removed cards
+        if (notif.args.delay) {
+            notif.args.delay = false;
+            setTimeout(() => this.notif_removeCards(notif), ANIMATION_MS);
+        } else {
+            this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
+            this.tableManager.placePlayerTable(); // adapt after removed cards
+        }
     }
 
     notif_setMimicToken(notif: Notif<NotifSetCardTokensArgs>) {

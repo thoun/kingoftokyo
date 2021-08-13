@@ -2614,8 +2614,15 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager.placePlayerTable(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_removeCards = function (notif) {
-        this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
-        this.tableManager.placePlayerTable(); // adapt after removed cards
+        var _this = this;
+        if (notif.args.delay) {
+            notif.args.delay = false;
+            setTimeout(function () { return _this.notif_removeCards(notif); }, ANIMATION_MS);
+        }
+        else {
+            this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
+            this.tableManager.placePlayerTable(); // adapt after removed cards
+        }
     };
     KingOfTokyo.prototype.notif_setMimicToken = function (notif) {
         this.setMimicToken(notif.args.card);

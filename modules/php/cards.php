@@ -439,7 +439,7 @@ trait CardsTrait {
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
     }
 
-    function removeCard(int $playerId, $card, bool $silent = false) {
+    function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false) {
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
         $changeMaxHealth = $card->type == EVEN_BIGGER_CARD;
@@ -466,6 +466,7 @@ trait CardsTrait {
             self::notifyAllPlayers("removeCards", '', [
                 'playerId' => $playerId,
                 'cards' => [$card],
+                'delay' => $delay,
             ]);
         }
         if ($changeMaxHealth) {

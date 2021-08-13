@@ -232,6 +232,7 @@ interface NotifRemoveCardsArgs {
     playerId: number;
     player_name: string;
     cards: Card[];
+    delay: boolean;
 }
 
 interface NotifPointsArgs extends NotifResolveArgs {
