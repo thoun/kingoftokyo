@@ -305,7 +305,7 @@ trait PlayerTrait {
             $this->gamestate->nextState('changeMimickedCard');
         } else {
             $this->throwDice($playerId, true);
-            
+
             $this->gamestate->nextState('throw');
         }
     }
@@ -485,6 +485,13 @@ trait PlayerTrait {
         }
 
         self::giveExtraTime($playerId);
+
+        // check no player need to be eliminated before checking end game
+        if (intval(self::getGameStateValue(MULTIPLAYER_BEING_KILLED)) > 0) {
+            $eliminatedPlayer = $this->getPlayer(intval($this->getGameStateValue(MULTIPLAYER_BEING_KILLED)));
+            $this->eliminateAPlayer($eliminatedPlayer, $playerId);
+            self::setGameStateValue(MULTIPLAYER_BEING_KILLED, 0);
+        }
 
         if ($this->getRemainingPlayers() <= 1 || $this->getMaxPlayerScore() >= MAX_POINT) {
             $this->jumpToState(ST_END_GAME);
