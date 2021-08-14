@@ -250,7 +250,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
         }
 
-        if (args.dice && args.rethrow3?.hasCard) {
+        if (isCurrentPlayerActive && args.dice && args.rethrow3?.hasCard) {
             if (document.getElementById('rethrow3changeDie_button')) {
                 dojo.toggleClass('rethrow3changeDie_button', 'disabled', !args.rethrow3.hasDice3);
             } else {

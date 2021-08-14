@@ -1685,7 +1685,7 @@ var KingOfTokyo = /** @class */ (function () {
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForChangeDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
         }
-        if (args.dice && ((_b = args.rethrow3) === null || _b === void 0 ? void 0 : _b.hasCard)) {
+        if (isCurrentPlayerActive && args.dice && ((_b = args.rethrow3) === null || _b === void 0 ? void 0 : _b.hasCard)) {
             if (document.getElementById('rethrow3changeDie_button')) {
                 dojo.toggleClass('rethrow3changeDie_button', 'disabled', !args.rethrow3.hasDice3);
             }

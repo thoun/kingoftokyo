@@ -13,37 +13,37 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        $this->debugSetPlayerInLocation(2343496, 1);
+        //$this->debugSetPlayerInLocation(2343496, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetEnergy(5);
-        $this->debugSetPlayerHealth(2343492, 1);
+        //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343494, 3);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 4 where `player_id` = 2343492");
         //$this->debugSetCardInTable(109);
         //$this->debugSetCardInTable(118);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = 117");
-        $this->debugSetCardInTable(MIMIC_CARD);
+        //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        $this->debugSetEnergy(8);
+        //$this->debugSetEnergy(8);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->debugSetCardInHand(13, 2343492);
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(BURROWING_CARD, 2343493));
-        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
+        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetPlayerPoints(2343493,10);
-        $this->debugSetCardInHand(BURROWING_CARD, 2343492);
+        //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
-        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
+        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
 
         $this->gamestate->changeActivePlayer(2343492);
 
         //$this->eliminatePlayer(2343493);
-        $this->eliminatePlayer(2343494);
+        //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
         //$this->eliminatePlayer(2343497);
     }
