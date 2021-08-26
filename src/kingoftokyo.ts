@@ -21,6 +21,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
     public cards: Cards;
+    private rapidHealingSyncHearts: number;
         
     public SHINK_RAY_TOKEN_TOOLTIP: string;
     public POISON_TOKEN_TOOLTIP: string;
@@ -221,7 +222,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                 (this as any).addTooltip(
                     'rethrow_button', 
-                    _("Click on dice you want to keep to lock them, then click this button to rethrow the others"),
+                    _("Click on dice you want to keep to lock them, then click this button to reroll the others"),
                     `${_("Ctrl+click to move all dice with same value")}<br>
                     ${_("Alt+click to move all dice but clicked die")}`);
             }
@@ -306,13 +307,18 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.canUseWings && !document.getElementById('useWings_button')) {
-                (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48, 'text-only')})), 'useWings');
+                (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only')})), 'useWings');
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
                 }
             }
             if (args.canSkipWings && !document.getElementById('skipWings_button')) {
                 (this as any).addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}), 'skipWings');
+            }
+
+            if (args.rapidHealingHearts && !document.getElementById('rapidHealingSync_button')) {
+                this.rapidHealingSyncHearts = args.rapidHealingHearts;
+                (this as any).addActionButton('rapidHealingSync_button', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (${2*args.rapidHealingHearts}[Energy])`), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': args.rapidHealingHearts }), 'useRapidHealingSync');
             }
         }
     }
@@ -662,7 +668,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'rapid-actions-wrapper', 
                 'rapidHealingButton', 
-                formatTextIcons(`${_('Gain 1[Heart]')} (2[Energy])`), 
+                formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 })} (2[Energy])`), 
                 () => this.useRapidHealing(), 
                 userEnergy < 2 || isMaxHealth
             );
@@ -1080,6 +1086,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('skipWings');
     }
 
+    public useRapidHealingSync() {
+        if(!(this as any).checkAction('useRapidHealingSync')) {
+            return;
+        }
+
+        this.takeAction('useRapidHealingSync');
+    }
+
     public setLeaveTokyoUnder(under: number) {
         this.takeAction('setLeaveTokyoUnder', {
             under
@@ -1365,6 +1379,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_health(notif: Notif<NotifHealthArgs>) {
         this.setHealth(notif.args.playerId, notif.args.health);
+
+        const rapidHealingSyncButton = document.getElementById('rapidHealingSync_button');
+        if (rapidHealingSyncButton && notif.args.playerId === this.getPlayerId()) {
+            this.rapidHealingSyncHearts = Math.max(0, this.rapidHealingSyncHearts - notif.args.delta_health);
+            rapidHealingSyncButton.innerHTML = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (${2*this.rapidHealingSyncHearts}[Energy])`), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': this.rapidHealingSyncHearts });
+        }
     }
 
     notif_maxHealth(notif: Notif<NotifMaxHealthArgs>) {

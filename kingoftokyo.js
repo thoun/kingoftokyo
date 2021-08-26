@@ -1662,7 +1662,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
-                this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to rethrow the others"), _("Ctrl+click to move all dice with same value") + "<br>\n                    " + _("Alt+click to move all dice but clicked die"));
+                this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to reroll the others"), _("Ctrl+click to move all dice with same value") + "<br>\n                    " + _("Alt+click to move all dice but clicked die"));
             }
             if (args.rethrow3.hasCard) {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
@@ -1743,13 +1743,17 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.destroy('throwCamouflageDice_button');
             }
             if (args.canUseWings && !document.getElementById('useWings_button')) {
-                this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name} ( 2[Energy] )"), { 'card_name': this.cards.getCardName(48, 'text-only') })), 'useWings');
+                this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only') })), 'useWings');
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
                 }
             }
             if (args.canSkipWings && !document.getElementById('skipWings_button')) {
                 this.addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }), 'skipWings');
+            }
+            if (args.rapidHealingHearts && !document.getElementById('rapidHealingSync_button')) {
+                this.rapidHealingSyncHearts = args.rapidHealingHearts;
+                this.addActionButton('rapidHealingSync_button', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (" + 2 * args.rapidHealingHearts + "[Energy])"), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': args.rapidHealingHearts }), 'useRapidHealingSync');
             }
         }
     };
@@ -2042,7 +2046,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addRapidHealingButton = function (userEnergy, isMaxHealth) {
         var _this = this;
         if (!document.getElementById('rapidHealingButton')) {
-            this.createButton('rapid-actions-wrapper', 'rapidHealingButton', formatTextIcons(_('Gain 1[Heart]') + " (2[Energy])"), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
+            this.createButton('rapid-actions-wrapper', 'rapidHealingButton', formatTextIcons(dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 }) + " (2[Energy])"), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
         }
     };
     KingOfTokyo.prototype.removeRapidHealingButton = function () {
@@ -2386,6 +2390,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipWings');
     };
+    KingOfTokyo.prototype.useRapidHealingSync = function () {
+        if (!this.checkAction('useRapidHealingSync')) {
+            return;
+        }
+        this.takeAction('useRapidHealingSync');
+    };
     KingOfTokyo.prototype.setLeaveTokyoUnder = function (under) {
         this.takeAction('setLeaveTokyoUnder', {
             under: under
@@ -2640,6 +2650,11 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_health = function (notif) {
         this.setHealth(notif.args.playerId, notif.args.health);
+        var rapidHealingSyncButton = document.getElementById('rapidHealingSync_button');
+        if (rapidHealingSyncButton && notif.args.playerId === this.getPlayerId()) {
+            this.rapidHealingSyncHearts = Math.max(0, this.rapidHealingSyncHearts - notif.args.delta_health);
+            rapidHealingSyncButton.innerHTML = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (" + 2 * this.rapidHealingSyncHearts + "[Energy])"), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': this.rapidHealingSyncHearts });
+        }
     };
     KingOfTokyo.prototype.notif_maxHealth = function (notif) {
         this.setMaxHealth(notif.args.playerId, notif.args.maxHealth);

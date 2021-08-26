@@ -417,6 +417,10 @@ trait CardsTrait {
     function useRapidHealing() {
         $playerId = self::getCurrentPlayerId(); // current, not active !
 
+        $this->applyRapidHealing($playerId);
+    }
+
+    function applyRapidHealing(int $playerId) {
         if ($this->getPlayerEnergy($playerId) < 2) {
             throw new \Error('Not enough energy');
         }
@@ -568,9 +572,10 @@ trait CardsTrait {
         return false;
     }
 
-    function canRedirectToCancelDamage(int $playerId) {
+    function canRedirectToCancelDamage(int $playerId, int $damage) {
         return $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
-          ($this->countCardOfType($playerId, WINGS_CARD) > 0 && !$this->isInvincible($playerId));
+          ($this->countCardOfType($playerId, WINGS_CARD) > 0 && !$this->isInvincible($playerId)) ||
+          $this->showRapidHealingOnDamage($playerId, $damage) > 0;
     }
 
     function getTokensByCardType(int $cardType) {
@@ -586,6 +591,26 @@ trait CardsTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $discardCards = array_values(array_filter($cards, function($card) { return $card->type >= 100; }));
         $this->removeCards($playerId, $discardCards);
+    }
+
+    function getDamageToCancelToSurvive(int $remainingDamage, int $playerHealth) {
+        return $remainingDamage - $playerHealth + 1;
+    }
+
+    function showRapidHealingOnDamage(int $playerId, int $remainingDamage) {
+        $hasRapidHealing = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
+
+        $playerHealth = $this->getPlayerHealth($playerId);
+        $canUseRapidHealing = $hasRapidHealing && $playerHealth <= $remainingDamage;
+        if ($canUseRapidHealing) {
+            $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $playerHealth);
+            if ($this->getPlayerEnergy($playerId) >= (2 * $damageToCancelToSurvive)) {
+                return $damageToCancelToSurvive;
+            } else {
+                return 0;
+            }
+        }
+        return 0;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -998,6 +1023,37 @@ trait CardsTrait {
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
         }
     }
+
+    function useRapidHealingSync() {
+        $this->checkAction('useRapidHealingSync');
+
+        $playerId = self::getCurrentPlayerId();
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+
+        $remainingDamage = 0;
+        foreach($intervention->damages as $damage) {
+            if ($damage->playerId == $playerId) {
+                $remainingDamage += $damage->damage;
+            }
+        }
+    
+        $playerHealth = $this->getPlayerHealth($playerId);
+        $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $playerHealth);
+
+        for ($i=0; $i<$damageToCancelToSurvive; $i++) {
+            if ($this->getPlayerEnergy($playerId) >= 2) {
+                $this->applyRapidHealing($playerId);
+                $remainingDamage--;
+            } else {
+                break;
+            }
+        }
+        
+        $this->applyDamage($playerId, $intervention->damages[0]->damage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
+
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+    }
     
     function useWings() {
         $this->checkAction('useWings');
@@ -1226,17 +1282,14 @@ trait CardsTrait {
                 }
             }
 
-            $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
-            /*$hasDice3 = null;
-            if ($hasBackgroundDweller) {
-                $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
-            }*/
+            $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
 
-            //die('GBA.'.json_encode($playersUsedDice).'-'.$canThrowDices.'-'.$canSkipWings);
+            $rapidHealingHearts = $this->showRapidHealingOnDamage($playerId, $remainingDamage);
 
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
+                'rapidHealingHearts' => $rapidHealingHearts,
                 'canSkipWings' => $canSkipWings,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,

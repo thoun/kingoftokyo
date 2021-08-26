@@ -148,6 +148,7 @@ interface EnteringCancelDamageArgs {
     playerEnergy: number;
     dice: Dice[];
     rethrow3: Rethrow3;
+    rapidHealingHearts: number;
 }
 
 interface EnteringLeaveTokyoArgs {
@@ -241,6 +242,7 @@ interface NotifPointsArgs extends NotifResolveArgs {
 
 interface NotifHealthArgs extends NotifResolveArgs {
     health: number;
+    delta_health: number;
 }
 
 interface NotifEnergyArgs extends NotifResolveArgs {
