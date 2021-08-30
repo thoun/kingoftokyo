@@ -269,7 +269,7 @@ trait PlayerTrait {
 
             if ($this->isTwoPlayersVariant()) {
                 $incEnergy = 1;
-                $this->applyGetEnergyIgnoreCards($playerId, $incEnergy, -1);
+                $this->applyGetEnergy($playerId, $incEnergy, -1);
 
                 self::notifyAllPlayers('energy', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
                     'playerId' => $playerId,

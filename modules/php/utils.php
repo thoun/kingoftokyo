@@ -132,8 +132,9 @@ trait UtilTrait {
         $message = null;
         if ($this->isTwoPlayersVariant()) {
             $incEnergy = 1;
-            self::DbQuery("UPDATE player SET player_energy = player_energy + $incEnergy, player_location = $location where `player_id` = $playerId");
+            self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
             $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Energy]');
+            $this->applyGetEnergy($playerId, $incEnergy, -1);
         } else {
             $incScore = 1;
             self::DbQuery("UPDATE player SET player_score = player_score + $incScore, player_location = $location where `player_id` = $playerId");
