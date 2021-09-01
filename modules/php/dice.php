@@ -602,13 +602,15 @@ trait DiceTrait {
             'die_face_after' => $this->getDieFaceLogName($value),
         ]);
 
-        $psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
+        // psychic probe should not be called after change die (or only after a Background Dweller roll ?)
+        /*$psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
         if ($psychicProbeIntervention != null) {
             $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
             $this->gamestate->nextState('changeDieWithPsychicProbe');
         } else {
             $this->gamestate->nextState('changeDie');
-        }
+        }*/
+        $this->gamestate->nextState('changeDie');
     }
 
     public function psychicProbeRollDie(int $id) {
