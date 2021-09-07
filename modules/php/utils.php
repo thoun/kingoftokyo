@@ -303,7 +303,7 @@ trait UtilTrait {
         $state = $this->gamestate->state();
 
         // if player is killing himself
-        if ($player->id == $currentTurnPlayerId && $state['type'] == 'activeplayer') {
+        if ($player->id == $currentTurnPlayerId) {
             self::setGameStateValue(KILL_ACTIVE_PLAYER, $player->id);
             $this->jumpToState(ST_END_TURN);
 
