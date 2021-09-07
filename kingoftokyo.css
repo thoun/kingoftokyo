@@ -1129,6 +1129,7 @@ button .icon, a .icon {
 }
 .token.smoke-cloud {
   background-position: 66.66% 0%;
+  box-shadow: 0 0 4px 4px white;
 }
 .token.mimic {
   background-position: 100% 0%;

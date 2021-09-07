@@ -9,18 +9,24 @@ trait DebugUtilTrait {
 ////////////
 
     function debugSetup() {
+        global $g_config;
+        if (!$g_config['debug_from_chat']) { 
+            return;
+        } 
+
         //$mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(RAPID_HEALING_CARD))[0]);
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetEnergy(20);
         //$this->debugSetPlayerHealth(2343492, 1);
-        //$this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343494, 1);
+        //$this->debugSetPlayerHealth(2343495, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 4 where `player_id` = 2343492");
         //$this->debugSetCardInTable(109);
-        //$this->debugSetCardInTable(118);
+        $this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = 117");
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -29,11 +35,12 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(BURROWING_CARD, 2343493));
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343495);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
-        $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
-        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
+        //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
+        //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343494);
         //$this->debugSetPlayerPoints(2343493,10);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
