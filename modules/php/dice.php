@@ -535,7 +535,7 @@ trait DiceTrait {
         self::DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$dieId);
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        self::notifyAllPlayers('rethrow3', $message, [
+        self::notifyAllPlayers('rethrow3changeDie', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,

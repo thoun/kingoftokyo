@@ -1162,38 +1162,40 @@ var DiceManager = /** @class */ (function () {
         var destinationId = die.locked ? "locked-dice" + die.value : "dice-selector";
         var tempDestinationId = "temp-destination-wrapper-" + destinationId + "-" + die.id;
         var tempOriginId = "temp-origin-wrapper-" + destinationId + "-" + die.id;
-        dojo.place("<div id=\"" + tempDestinationId + "\" style=\"width: 0px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: 0;\"></div>", destinationId);
-        dojo.place("<div id=\"" + tempOriginId + "\" style=\"width: " + dieDiv.clientWidth + "px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: -3px 6px 3px -3px;\"></div>", dieDivId, 'after');
-        var destination = document.getElementById(destinationId);
-        var tempDestination = document.getElementById(tempDestinationId);
-        var tempOrigin = document.getElementById(tempOriginId);
-        tempOrigin.appendChild(dieDiv);
-        dojo.animateProperty({
-            node: tempDestinationId,
-            properties: {
-                width: dieDiv.clientHeight,
-            }
-        }).play();
-        dojo.animateProperty({
-            node: tempOriginId,
-            properties: {
-                width: 0,
-            }
-        }).play();
-        dojo.animateProperty({
-            node: dieDivId,
-            properties: {
-                marginLeft: -13
-            }
-        }).play();
-        slideToObjectAndAttach(this.game, dieDiv, tempDestinationId).then(function () {
-            dieDiv.style.marginLeft = '3px';
-            if (tempDestination.parentElement) { // we only attach if temp div still exists (not deleted)
-                destination.append(tempDestination.childNodes[0]);
-            }
-            dojo.destroy(tempDestination);
-            dojo.destroy(tempOrigin);
-        });
+        if (document.getElementById(destinationId)) {
+            dojo.place("<div id=\"" + tempDestinationId + "\" style=\"width: 0px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: 0;\"></div>", destinationId);
+            dojo.place("<div id=\"" + tempOriginId + "\" style=\"width: " + dieDiv.clientWidth + "px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: -3px 6px 3px -3px;\"></div>", dieDivId, 'after');
+            var destination_1 = document.getElementById(destinationId);
+            var tempDestination_1 = document.getElementById(tempDestinationId);
+            var tempOrigin_1 = document.getElementById(tempOriginId);
+            tempOrigin_1.appendChild(dieDiv);
+            dojo.animateProperty({
+                node: tempDestinationId,
+                properties: {
+                    width: dieDiv.clientHeight,
+                }
+            }).play();
+            dojo.animateProperty({
+                node: tempOriginId,
+                properties: {
+                    width: 0,
+                }
+            }).play();
+            dojo.animateProperty({
+                node: dieDivId,
+                properties: {
+                    marginLeft: -13
+                }
+            }).play();
+            slideToObjectAndAttach(this.game, dieDiv, tempDestinationId).then(function () {
+                dieDiv.style.marginLeft = '3px';
+                if (tempDestination_1.parentElement) { // we only attach if temp div still exists (not deleted)
+                    destination_1.append(tempDestination_1.childNodes[0]);
+                }
+                dojo.destroy(tempDestination_1);
+                dojo.destroy(tempOrigin_1);
+            });
+        }
         this.activateRethrowButton();
         this.game.checkBuyEnergyDrinkState();
         this.game.checkUseSmokeCloudState();
@@ -2520,6 +2522,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
+            ['rethrow3changeDie', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['points', 1],
             ['health', 1],
@@ -2706,6 +2709,9 @@ var KingOfTokyo = /** @class */ (function () {
         else {
             this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
         }
+    };
+    KingOfTokyo.prototype.notif_rethrow3changeDie = function (notif) {
+        this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
     };
     KingOfTokyo.prototype.notif_resolvePlayerDice = function () {
         this.diceManager.lockAll();

@@ -1233,6 +1233,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
+            ['rethrow3changeDie', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['points', 1],
             ['health', 1],
@@ -1440,9 +1441,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (notif.args.psychicProbeRollDieArgs) {
             const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
             this.onEnteringPsychicProbeRollDie(notif.args.psychicProbeRollDieArgs, isCurrentPlayerActive);
-        } else {            
+        } else {
             this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
         }
+    }
+
+    notif_rethrow3changeDie(notif: Notif<NotifChangeDieArgs>) {
+        this.diceManager.changeDie(notif.args.dieId, notif.args.inTokyo, notif.args.toValue, notif.args.roll);
     }
 
     notif_resolvePlayerDice() {

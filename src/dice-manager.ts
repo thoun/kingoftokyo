@@ -250,40 +250,43 @@ class DiceManager {
         const destinationId = die.locked ? `locked-dice${die.value}` : `dice-selector`;
         const tempDestinationId = `temp-destination-wrapper-${destinationId}-${die.id}`;
         const tempOriginId = `temp-origin-wrapper-${destinationId}-${die.id}`;
-        dojo.place(`<div id="${tempDestinationId}" style="width: 0px; height: ${dieDiv.clientHeight}px; display: inline-block; margin: 0;"></div>`, destinationId);
-        dojo.place(`<div id="${tempOriginId}" style="width: ${dieDiv.clientWidth}px; height: ${dieDiv.clientHeight}px; display: inline-block; margin: -3px 6px 3px -3px;"></div>`, dieDivId, 'after');
-        
-        const destination = document.getElementById(destinationId);
-        const tempDestination = document.getElementById(tempDestinationId);
-        const tempOrigin = document.getElementById(tempOriginId);
-        tempOrigin.appendChild(dieDiv);
 
-        dojo.animateProperty({
-            node: tempDestinationId,
-            properties: {
-                width: dieDiv.clientHeight,
-            }
-        }).play();
-        dojo.animateProperty({
-            node: tempOriginId,
-            properties: {
-                width: 0,
-            }
-        }).play();
-        dojo.animateProperty({
-            node: dieDivId,
-            properties: {
-                marginLeft: -13
-            }
-        }).play();
-        slideToObjectAndAttach(this.game, dieDiv, tempDestinationId).then(() => {
-            dieDiv.style.marginLeft = '3px';
-            if (tempDestination.parentElement) { // we only attach if temp div still exists (not deleted)
-                destination.append(tempDestination.childNodes[0]);
-            }
-            dojo.destroy(tempDestination);
-            dojo.destroy(tempOrigin);
-        });
+        if (document.getElementById(destinationId)) {
+            dojo.place(`<div id="${tempDestinationId}" style="width: 0px; height: ${dieDiv.clientHeight}px; display: inline-block; margin: 0;"></div>`, destinationId);
+            dojo.place(`<div id="${tempOriginId}" style="width: ${dieDiv.clientWidth}px; height: ${dieDiv.clientHeight}px; display: inline-block; margin: -3px 6px 3px -3px;"></div>`, dieDivId, 'after');
+            
+            const destination = document.getElementById(destinationId);
+            const tempDestination = document.getElementById(tempDestinationId);
+            const tempOrigin = document.getElementById(tempOriginId);
+            tempOrigin.appendChild(dieDiv);
+
+            dojo.animateProperty({
+                node: tempDestinationId,
+                properties: {
+                    width: dieDiv.clientHeight,
+                }
+            }).play();
+            dojo.animateProperty({
+                node: tempOriginId,
+                properties: {
+                    width: 0,
+                }
+            }).play();
+            dojo.animateProperty({
+                node: dieDivId,
+                properties: {
+                    marginLeft: -13
+                }
+            }).play();
+            slideToObjectAndAttach(this.game, dieDiv, tempDestinationId).then(() => {
+                dieDiv.style.marginLeft = '3px';
+                if (tempDestination.parentElement) { // we only attach if temp div still exists (not deleted)
+                    destination.append(tempDestination.childNodes[0]);
+                }
+                dojo.destroy(tempDestination);
+                dojo.destroy(tempOrigin);
+            });
+        }
 
         this.activateRethrowButton();
         this.game.checkBuyEnergyDrinkState();
