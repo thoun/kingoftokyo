@@ -104,6 +104,7 @@ $basicGameStates = [
         "type" => "manager",
         "action" => "stGameEnd",
         "args" => "argGameEnd",
+        "updateGameProgression" => true,
     ],
 ];
 

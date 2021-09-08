@@ -1407,12 +1407,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_removeShrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
         this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
-        this.notif_shrinkRayToken(notif);
+        setTimeout(() => this.notif_shrinkRayToken(notif), ANIMATION_MS);
     }
 
     notif_removePoisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
         this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
-        this.notif_poisonToken(notif);
+        setTimeout(() => this.notif_poisonToken(notif), ANIMATION_MS);
     }
 
     notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {

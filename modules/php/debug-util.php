@@ -18,11 +18,11 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetEnergy(4);
-        $this->debugSetPlayerPoints(2343492, 20);
-        $this->debugSetHealth(2);
+        //$this->debugSetPlayerPoints(2343492, 20);
+        //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343494, 1);
         //$this->debugSetPlayerHealth(2343495, 1);
         self::DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343492");
@@ -48,6 +48,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
+        $this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
 
         $this->gamestate->changeActivePlayer(2343492);
 

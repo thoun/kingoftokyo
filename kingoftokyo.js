@@ -1105,7 +1105,6 @@ var DiceManager = /** @class */ (function () {
             dice = dice.slice(0, number);
         }
         playerIds.forEach(function (playerId, playerIndex) {
-            var destination = document.getElementById(targetToken ? "token-wrapper-" + playerId + "-" + targetToken + "-token0" : "monster-figure-" + playerId).getBoundingClientRect();
             var shift = targetToken ? 16 : 59;
             dice.forEach(function (die, dieIndex) {
                 var dieDiv = document.getElementById("dice" + die.id);
@@ -1119,6 +1118,12 @@ var DiceManager = /** @class */ (function () {
                     document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
                 }, 50);
                 setTimeout(function () {
+                    var targetId = "monster-figure-" + playerId;
+                    if (targetToken) {
+                        var tokensDivs = document.querySelectorAll("div[id^='token-wrapper-" + playerId + "-" + targetToken + "-token'");
+                        targetId = tokensDivs[tokensDivs.length - (dieIndex + 1)].id;
+                    }
+                    var destination = document.getElementById(targetId).getBoundingClientRect();
                     var deltaX = destination.left - origin.left + shift * _this.game.getZoom();
                     var deltaY = destination.top - origin.top + shift * _this.game.getZoom();
                     document.getElementById(animationId).style.transition = "transform 0.5s ease-in";
@@ -2673,12 +2678,14 @@ var KingOfTokyo = /** @class */ (function () {
         this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
     };
     KingOfTokyo.prototype.notif_removeShrinkRayToken = function (notif) {
+        var _this = this;
         this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
-        this.notif_shrinkRayToken(notif);
+        setTimeout(function () { return _this.notif_shrinkRayToken(notif); }, ANIMATION_MS);
     };
     KingOfTokyo.prototype.notif_removePoisonToken = function (notif) {
+        var _this = this;
         this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
-        this.notif_poisonToken(notif);
+        setTimeout(function () { return _this.notif_poisonToken(notif); }, ANIMATION_MS);
     };
     KingOfTokyo.prototype.notif_setCardTokens = function (notif) {
         this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);

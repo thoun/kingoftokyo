@@ -185,7 +185,7 @@ class DiceManager {
         }
 
         playerIds.forEach((playerId, playerIndex) => {
-            const destination = document.getElementById(targetToken ? `token-wrapper-${playerId}-${targetToken}-token0` : `monster-figure-${playerId}`).getBoundingClientRect();
+
             const shift = targetToken ? 16 : 59;
             dice.forEach((die, dieIndex) => {
                 const dieDiv = document.getElementById(`dice${die.id}`);
@@ -200,9 +200,16 @@ class DiceManager {
                 }, 50);
 
                 setTimeout(() => {
+                    let targetId = `monster-figure-${playerId}`;
+                    if (targetToken) {
+                        const tokensDivs = document.querySelectorAll(`div[id^='token-wrapper-${playerId}-${targetToken}-token'`);
+                        targetId = tokensDivs[tokensDivs.length - (dieIndex + 1)].id;
+                    }
+                    let destination = document.getElementById(targetId).getBoundingClientRect();
+
                     const deltaX = destination.left - origin.left + shift * this.game.getZoom();
                     const deltaY = destination.top - origin.top + shift * this.game.getZoom();
-                    
+
                     document.getElementById(animationId).style.transition = `transform 0.5s ease-in`;
                     document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${0.3 * this.game.getZoom()})`;
                 }, 1000);

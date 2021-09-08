@@ -240,6 +240,11 @@ class KingOfTokyo extends Table {
         (see states.inc.php)
     */
     function getGameProgression() {
+        $stateName = $this->gamestate->state()['name']; 
+        if ($stateName === 'gameEnd') {
+            return 100;
+        }
+
         return $this->getMaxPlayerScore() * 5;
     }
 
