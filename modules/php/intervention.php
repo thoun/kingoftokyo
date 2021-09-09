@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/objects/player-intervention.php');
+
+use KOT\Objects\CancelDamageIntervention;
+
 trait InterventionTrait {
 
     //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +31,33 @@ trait InterventionTrait {
     function stIntervention(string $interventionName) {
         $intervention = $this->getGlobalVariable($interventionName);
 
-        $keep = ($intervention->nextState === 'keep' || $intervention->nextState === 'next') && count($intervention->remainingPlayersId) > 0 && $this->getPlayerHealth($intervention->remainingPlayersId[0]) > 0;
+        $keep = ($intervention->nextState === 'keep' || $intervention->nextState === 'next') 
+            && count($intervention->remainingPlayersId) > 0
+            && $this->getPlayerHealth($intervention->remainingPlayersId[0]) > 0;
+        if ($keep && $interventionName === CANCEL_DAMAGE_INTERVENTION) {
+            // we check if player still ca do intervention (in case player got mimic, and mimicked camouflage player dies before mimic player intervention)
+
+            $playerId = $intervention->remainingPlayersId[0];
+
+            $damage = 0;
+            foreach($intervention->damages as $d) {
+                if ($d->playerId == $playerId) {
+                    $damage = $d->damage;
+                    break;
+                }
+            } 
+
+            $keep = CancelDamageIntervention::canDoIntervention($this, $playerId, $damage);
+
+            // if player cannot cancel damage, we apply them
+            if (!$keep) {                
+                foreach($intervention->damages as $d) {
+                    if ($d->playerId == $playerId) {
+                        $this->applyDamage($d->playerId, $d->damage, $d->damageDealerId, $d->cardType, self::getActivePlayerId());
+                    }
+                } 
+            }
+        }
         
         if ($keep) { // current player continues / next (intervention player) / or leaving transition
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);

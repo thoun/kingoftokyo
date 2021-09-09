@@ -1733,7 +1733,6 @@ var KingOfTokyo = /** @class */ (function () {
         if (args.dice) {
             this.diceManager.showCamouflageRoll(args.dice);
         }
-        console.log(args, isCurrentPlayerActive);
         if (isCurrentPlayerActive) {
             if (args.dice && ((_a = args.rethrow3) === null || _a === void 0 ? void 0 : _a.hasCard)) {
                 if (document.getElementById('rethrow3camouflage_button')) {
@@ -1755,8 +1754,8 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.addClass('useWings_button', 'disabled');
                 }
             }
-            if (args.canSkipWings && !document.getElementById('skipWings_button')) {
-                this.addActionButton('skipWings_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }), 'skipWings');
+            if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
+                this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), 'skipWings');
             }
             if (args.rapidHealingHearts && !document.getElementById('rapidHealingSync_button')) {
                 this.rapidHealingSyncHearts = args.rapidHealingHearts;

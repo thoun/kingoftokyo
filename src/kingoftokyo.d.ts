@@ -142,7 +142,6 @@ interface EnteringBuyCardArgs {
 }
 
 interface EnteringCancelDamageArgs {
-    canSkipWings: boolean;
     canThrowDices: boolean;
     canUseWings: boolean;
     playerEnergy: number;

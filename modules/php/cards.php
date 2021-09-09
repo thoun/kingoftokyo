@@ -572,12 +572,6 @@ trait CardsTrait {
         return false;
     }
 
-    function canRedirectToCancelDamage(int $playerId, int $damage) {
-        return $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
-          ($this->countCardOfType($playerId, WINGS_CARD) > 0 && !$this->isInvincible($playerId)) ||
-          $this->showRapidHealingOnDamage($playerId, $damage) > 0;
-    }
-
     function getTokensByCardType(int $cardType) {
         switch($cardType) {
             case BATTERY_MONSTER_CARD: return 6;
@@ -1273,7 +1267,6 @@ trait CardsTrait {
 
             $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
-            $canSkipWings = $canUseWings && !$canThrowDices;
 
             $remainingDamage = 0;
             foreach($intervention->damages as $damage) {
@@ -1290,7 +1283,6 @@ trait CardsTrait {
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
                 'rapidHealingHearts' => $rapidHealingHearts,
-                'canSkipWings' => $canSkipWings,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
                 'damage' => $remainingDamage,

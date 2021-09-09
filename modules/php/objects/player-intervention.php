@@ -20,7 +20,7 @@ class OpportunistIntervention extends PlayerIntervention {
         parent::__construct(ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD, $remainingPlayersId);
 
         $this->revealedCardsIds = $revealedCardsIds;
-    } 
+    }
 }
 
 class PsychicProbeIntervention extends PlayerIntervention {
@@ -33,7 +33,7 @@ class PsychicProbeIntervention extends PlayerIntervention {
 
         $this->activePlayerId = $activePlayerId;
         $this->cards = $cards;
-    } 
+    }
 }
 
 class PlayersUsedDice {
@@ -48,7 +48,7 @@ class PlayersUsedDice {
 }
 
 class CancelDamageIntervention extends PlayerIntervention {
-    public $damages;
+    public $damage;
     public $playersUsedDice; // store playerId => PlayersUsedDice
 
     public function __construct(array $remainingPlayersId, array $damages) {
@@ -56,6 +56,12 @@ class CancelDamageIntervention extends PlayerIntervention {
 
         $this->damages = $damages;
         $this->playersUsedDice = new \stdClass();
-    } 
+    }
+
+    public static function canDoIntervention(object $game, int $playerId, int $damage) {
+        return $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
+          ($game->countCardOfType($playerId, WINGS_CARD) > 0 && !$game->isInvincible($playerId)) ||
+          $game->showRapidHealingOnDamage($playerId, $damage) > 0;
+    }
 }
 ?>

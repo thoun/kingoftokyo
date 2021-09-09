@@ -56,8 +56,6 @@ class KingOfTokyo extends Table {
             'loseHeartEnteringTokyo' => 14,
             FREEZE_TIME_MAX_TURNS => 15,
             FREEZE_TIME_CURRENT_TURN => 16,
-            KILL_ACTIVE_PLAYER => 17,
-            MULTIPLAYER_BEING_KILLED => 18,
             PSYCHIC_PROBE_ROLLED_A_3 => 19,
             'newCardId' => 20,
             KILL_PLAYERS_SCORE_AUX => 21,
@@ -134,8 +132,6 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(EXTRA_ROLLS, 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('newCardId', 0);
-        self::setGameStateInitialValue(KILL_ACTIVE_PLAYER, 0);
-        self::setGameStateInitialValue(MULTIPLAYER_BEING_KILLED, 0);
         self::setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 0);
 
@@ -366,6 +362,11 @@ class KingOfTokyo extends Table {
 
         if ($from_version <= 2107071429) {
             $sql = "ALTER TABLE `DBPREFIX_player` ADD `stay_tokyo_over` tinyint unsigned";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+ 
+        if ($from_version <= 2109081842) {
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_dead` tinyint unsigned NOT NULL DEFAULT false";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

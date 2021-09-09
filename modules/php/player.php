@@ -23,7 +23,7 @@ trait PlayerTrait {
     }
 
     function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0) AND (SELECT count(*) FROM `player` where player_eliminated = 0 and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0)) = 1";
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = false) AND (SELECT count(*) FROM `player` where player_eliminated = 0 AND player_dead = false and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = false)) = 1";
         return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 
@@ -137,6 +137,30 @@ trait PlayerTrait {
         self::notifyPlayer($playerId, 'updateStayTokyoOver', '', [
             'over' => $over,
         ]);
+    }
+
+    function asyncEliminatePlayer($playerId) {
+        self::DbQuery("UPDATE player SET `player_dead` = true where `player_id` = $playerId");
+    }
+
+    function killDeadPlayers() {
+        $activePlayerId = intval(self::getActivePlayerId());
+
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = true ORDER BY player_no";
+        $dbResults = self::getCollectionFromDB($sql);
+        $playersIds = array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+
+        $killActive = false;
+
+        foreach($playersIds as $playerId) {
+            $this->eliminateAPlayer($this->getPlayer($playerId), $playerId);
+
+            if ($activePlayerId === $playerId) {
+                $killActive = true;
+            }
+        }
+
+        return $killActive;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -435,21 +459,11 @@ trait PlayerTrait {
     function stNextPlayer() {
         $playerId = self::getActivePlayerId();
 
-        $killPlayer = intval($this->getGameStateValue(KILL_ACTIVE_PLAYER)) == $playerId;
+        $killPlayer = $this->killDeadPlayers();
 
         if ($killPlayer) {
             $playerId = self::activeNextPlayer();
-            
-            if (intval(self::getGameStateValue(MULTIPLAYER_BEING_KILLED)) == $playerId) {
-                $playerId = self::activeNextPlayer();
-                self::setGameStateValue(MULTIPLAYER_BEING_KILLED, 0);
-            }
-
-            $eliminatedPlayer = $this->getPlayer(intval($this->getGameStateValue(KILL_ACTIVE_PLAYER)));
-            $this->eliminateAPlayer($eliminatedPlayer, $playerId);
-            $this->setGameStateValue(KILL_ACTIVE_PLAYER, 0);
         } else {
-
             $anotherTimeWithCard = 0;
 
             $freezeTimeMaxTurns = intval($this->getGameStateValue(FREEZE_TIME_MAX_TURNS));
@@ -476,26 +490,14 @@ trait PlayerTrait {
                 ]);
             } else {
                 $playerId = self::activeNextPlayer();
-            
-                if (intval(self::getGameStateValue(MULTIPLAYER_BEING_KILLED)) == $playerId) {
-                    $playerId = self::activeNextPlayer();
-                    self::setGameStateValue(MULTIPLAYER_BEING_KILLED, 0);
-                }
             }
-        }
-
-        self::giveExtraTime($playerId);
-
-        // check no player need to be eliminated before checking end game
-        if (intval(self::getGameStateValue(MULTIPLAYER_BEING_KILLED)) > 0) {
-            $eliminatedPlayer = $this->getPlayer(intval($this->getGameStateValue(MULTIPLAYER_BEING_KILLED)));
-            $this->eliminateAPlayer($eliminatedPlayer, $playerId);
-            self::setGameStateValue(MULTIPLAYER_BEING_KILLED, 0);
         }
 
         if ($this->getRemainingPlayers() <= 1 || $this->getMaxPlayerScore() >= MAX_POINT) {
             $this->jumpToState(ST_END_GAME);
         } else {
+            self::giveExtraTime($playerId);
+
             $this->gamestate->nextState('nextPlayer');
         }
     }

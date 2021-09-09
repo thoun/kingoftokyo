@@ -24,7 +24,7 @@ class Player {
         $this->health = intval($dbPlayer['player_health']);
         $this->energy = intval($dbPlayer['player_energy']);
         $this->location = intval($dbPlayer['player_location']);
-        $this->eliminated = boolval($dbPlayer['player_eliminated']);
+        $this->eliminated = boolval($dbPlayer['player_eliminated']) || boolval($dbPlayer['player_dead']);
         $this->shrinkRayTokens = intval($dbPlayer['player_shrink_ray_tokens']);
         $this->poisonTokens = intval($dbPlayer['player_poison_tokens']);
     } 
