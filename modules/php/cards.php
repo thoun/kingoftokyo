@@ -168,9 +168,8 @@ trait CardsTrait {
         }
     }
 
-    function removeMimicToken() {
-        $mimickedCardPlayerId = $this->getMimickedCardPlayerId();
-        $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, RAPID_HEALING_CARD);
+    function removeMimicToken(int $mimicOwnerId) {
+        $countRapidHealingBefore = $this->countCardOfType($mimicOwnerId, RAPID_HEALING_CARD);
         
         $card = $this->getMimickedCard();
         if ($card) {
@@ -189,7 +188,7 @@ trait CardsTrait {
             $this->changeMaxHealth($mimicCard->location_arg);
         } 
     
-        $this->toggleRapidHealing($mimickedCardPlayerId, $countRapidHealingBefore);
+        $this->toggleRapidHealing($mimicOwnerId, $countRapidHealingBefore);
     }
 
     function setMimickedCardId(int $mimicOwnerId, int $cardId) {
@@ -198,10 +197,9 @@ trait CardsTrait {
     }
 
     function setMimickedCard(int $mimicOwnerId, object $card) {
-        $mimickedCardPlayerId = $this->getMimickedCardPlayerId();
-        $countRapidHealingBefore = $this->countCardOfType($mimickedCardPlayerId, RAPID_HEALING_CARD);
+        $countRapidHealingBefore = $this->countCardOfType($mimicOwnerId, RAPID_HEALING_CARD);
 
-        $this->removeMimicToken();
+        $this->removeMimicToken($mimicOwnerId);
 
         $mimickedCard = new \stdClass();
         $mimickedCard->card = $card;
@@ -222,15 +220,7 @@ trait CardsTrait {
             $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
         }
         
-        $this->toggleRapidHealing($mimickedCardPlayerId, $countRapidHealingBefore);
-    }
-
-    function getMimickedCardPlayerId() {
-        $mimickedCardObj = $this->getGlobalVariable(MIMICKED_CARD);
-        if ($mimickedCardObj != null && $mimickedCardObj->playerId != null) {
-            return $mimickedCardObj->playerId;
-        }
-        return 0;
+        $this->toggleRapidHealing($mimicOwnerId, $countRapidHealingBefore);
     }
 
     function getMimickedCard() {
@@ -451,10 +441,10 @@ trait CardsTrait {
         $removeMimickToken = false;
         if ($card->type == MIMIC_CARD) { // Mimic
             $changeMaxHealth = $this->getMimickedCardType() == EVEN_BIGGER_CARD;
-            $this->removeMimicToken();
+            $this->removeMimicToken($playerId);
             $removeMimickToken = true;
         } else if ($card->id == $this->getMimickedCardId()) {
-            $this->removeMimicToken();
+            $this->removeMimicToken($playerId);
             $removeMimickToken = true;
         }
 
@@ -482,6 +472,7 @@ trait CardsTrait {
 
     function toggleRapidHealing(int $playerId, int $countRapidHealingBefore) {
         $countRapidHealingAfter = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
+        
         if ($countRapidHealingBefore != $countRapidHealingAfter) {
             $active = $countRapidHealingAfter > $countRapidHealingBefore;
 
