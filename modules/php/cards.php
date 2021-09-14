@@ -1099,7 +1099,11 @@ trait CardsTrait {
         $this->applyDamage($playerId, $totalDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId());
 
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+
+        // we check we are still in cancelDamage (we could be redirected if player is eliminated)
+        if ($this->gamestate->state()['name'] == 'cancelDamage') {
+            $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+        }
     }
 
 //////////////////////////////////////////////////////////////////////////////
