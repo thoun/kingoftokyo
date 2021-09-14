@@ -1003,7 +1003,11 @@ trait CardsTrait {
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }
-            $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+
+            // we check we are still in cancelDamage (we could be redirected if camouflage roll kills player)
+            if ($this->gamestate->state()['name'] == 'cancelDamage') {
+                $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+            }
         } else {            
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
         }
