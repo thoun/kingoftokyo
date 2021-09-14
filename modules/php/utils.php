@@ -321,8 +321,6 @@ trait UtilTrait {
             'player_name' => $player->name,
         ]);*/
 
-        $playersBeforeElimination = $this->getRemainingPlayers();
-
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         
@@ -343,12 +341,10 @@ trait UtilTrait {
 
         self::eliminatePlayer($player->id);
 
-        if ($playersBeforeElimination == 5) { // 5 players to 4, clear Tokyo Bay
-            if ($this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true)) {
+        if (!$this->isTokyoEmpty(true) && !$this->tokyoBayUsed()) { // 5 players to 4, Tokyo Bay got a player but it shouldn't, so player is moved
+            if ($this->isTokyoEmpty(false)) {
                 $this->moveFromTokyoBayToCity($this->getPlayerIdInTokyoBay());
-            }
-
-            if (!$this->isTokyoEmpty(false) && !$this->isTokyoEmpty(true) && $playersBeforeElimination == 5) {
+            } else {
                 $this->leaveTokyo($this->getPlayerIdInTokyoBay());
             }
         }
