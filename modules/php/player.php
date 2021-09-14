@@ -163,6 +163,14 @@ trait PlayerTrait {
         return $killActive;
     }
 
+    function setFinalScore(bool $eliminationWin) {
+        $case = $eliminationWin ? 
+            "player_eliminated = 0 AND player_dead = false AND player_health > 0" :
+            "player_eliminated = 0 AND player_dead = false and player_health > 0 and player_score >= 20";
+            
+        self::DbQuery("UPDATE player SET player_score = (CASE WHEN $case THEN 1 ELSE 0 END)"); // TODO and tiebreaker message
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -439,7 +447,6 @@ trait PlayerTrait {
         }
 
         // apply poison
-        $this->updateKillPlayersScoreAux();   
         $redirects = false;
         $countPoison = $this->getPlayerPoisonTokens($playerId);
         if ($countPoison > 0) {

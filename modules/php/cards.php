@@ -623,9 +623,7 @@ trait CardsTrait {
 
         if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
             throw new \Error("You can't buy from other players without Parasitic Tentacles");
-        }
-
-        $this->updateKillPlayersScoreAux();        
+        }    
         
         $this->removeDiscardCards($playerId);
 

@@ -58,7 +58,6 @@ class KingOfTokyo extends Table {
             FREEZE_TIME_CURRENT_TURN => 16,
             PSYCHIC_PROBE_ROLLED_A_3 => 19,
             'newCardId' => 20,
-            KILL_PLAYERS_SCORE_AUX => 21,
             PICK_MONSTER_OPTION => 100,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
@@ -94,10 +93,9 @@ class KingOfTokyo extends Table {
 
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_score_aux, player_monster) VALUES ";
+        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_monster) VALUES ";
         $values = [];
         $affectedMonsters = [];
-        $eliminationRank = count($players) - 1;
         foreach( $players as $player_id => $player ) {
             $playerMonster = 0;
 
@@ -110,7 +108,7 @@ class KingOfTokyo extends Table {
             }
 
             $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
+            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $playerMonster)";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
@@ -133,7 +131,6 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('newCardId', 0);
         self::setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
-        self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -284,6 +281,8 @@ class KingOfTokyo extends Table {
                 self::setStat($player->health, 'endHealth', $player->id);
             }            
         }
+
+        $this->setFinalScore($eliminationWin);
 
         parent::stGameEnd();
     }

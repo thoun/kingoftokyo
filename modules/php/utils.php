@@ -311,9 +311,7 @@ trait UtilTrait {
             return true;
         }
 
-        $eliminatedPlayersCount = self::getGameStateValue(KILL_PLAYERS_SCORE_AUX);
-
-        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $eliminatedPlayersCount, player_location = 0 where `player_id` = $player->id");
+        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0 where `player_id` = $player->id");
 
         /* no need for notif, framework does it
         self::notifyAllPlayers("playerEliminated", clienttranslate('${player_name} is eliminated !'), [
@@ -661,10 +659,5 @@ trait UtilTrait {
         if ($state['name'] != 'gameEnd') {
             $this->gamestate->jumpToState($stateId);
         }
-    }
-
-    function updateKillPlayersScoreAux() {
-        $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead = true"));
-        self::setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount);
     }
 }

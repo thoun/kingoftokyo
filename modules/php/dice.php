@@ -985,8 +985,6 @@ trait DiceTrait {
     }
 
     function stResolveDice() {
-        $this->updateKillPlayersScoreAux();
-        
         $playerId = self::getActivePlayerId();
         self::giveExtraTime($playerId);
 
