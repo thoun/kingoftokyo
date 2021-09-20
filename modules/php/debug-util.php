@@ -19,12 +19,12 @@ trait DebugUtilTrait {
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         //$this->debugSetPlayerInLocation(2343492, 1);
-        $this->debugSetPlayerInLocation(2343493, 2);
+        //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetEnergy(20);
-        //$this->debugSetPlayerPoints(2343492, 20);
+        $this->debugSetPlayerPoints(2343492, 19);
         //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343494, 1);
-        $this->debugSetPlayerHealth(2343495, 1);
+        //$this->debugSetPlayerHealth(2343495, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343492");
         //$this->debugSetCardInTable(112);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -52,7 +52,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
 
-        $this->gamestate->changeActivePlayer(2343493);
+        $this->gamestate->changeActivePlayer(2343492);
 
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);

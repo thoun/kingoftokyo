@@ -137,7 +137,8 @@ trait UtilTrait {
             $this->applyGetEnergy($playerId, $incEnergy, -1);
         } else {
             $incScore = 1;
-            self::DbQuery("UPDATE player SET player_score = player_score + $incScore, player_location = $location where `player_id` = $playerId");
+            self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
+            $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
             $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
         }
 
@@ -371,7 +372,7 @@ trait UtilTrait {
 
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
         $actualScore = $this->getPlayerScore($playerId);
-        $newScore = $actualScore + $points;
+        $newScore = min(20, $actualScore + $points);
         self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
