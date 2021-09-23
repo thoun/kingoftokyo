@@ -251,17 +251,20 @@ class KingOfTokyo extends Table {
     function stGameEnd() {
         $players = $this->getPlayers(true);
         $playerCount = count($players);
-        $remainingPlayers = 0;
+        $remainingPlayers = $this->getRemainingPlayers();
         $pointsWin = false;
         foreach($players as $player) {
-            if (!$player->eliminated) {
-                $remainingPlayers++;
-            } 
             if ($player->score >= MAX_POINT) {
                 $pointsWin = true;
             } 
         }
-        $eliminationWin = $this->getRemainingPlayers() == 1;
+
+        // in case everyone is dead, no ranking
+        if ($remainingPlayers == 0) {
+            self::DbQuery("UPDATE player SET `player_score` = 0, `player_score_aux` = 0");
+        }
+
+        $eliminationWin = $remainingPlayers == 1;
 
         self::setStat($pointsWin ? 1 : 0, 'pointsWin');
         self::setStat($eliminationWin ? 1 : 0, 'eliminationWin');

@@ -21,13 +21,12 @@ trait DebugUtilTrait {
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetEnergy(20);
-        $this->debugSetPlayerPoints(2343492, 20);
-        $this->debugSetPlayerPoints(2343493, 20);
-        //$this->debugSetHealth(1);
+        //$this->debugSetPlayerPoints(2343492, 20);
+        $this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343494, 1);
         //$this->debugSetPlayerHealth(2343495, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 9 where `player_id` = 2343492");
-        //$this->debugSetCardInTable(112);
+        $this->debugSetCardInTable(112);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = 117");
         //$this->debugSetCardInTable(MIMIC_CARD);

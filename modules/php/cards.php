@@ -599,8 +599,11 @@ trait CardsTrait {
     }
 
     function isSureWin(int $playerId) {
-        if ($this->getPlayerScore($playerId) < 20) {
-            return false;
+        $eliminationWin = $this->getRemainingPlayers() === 1 && $this->getPlayerHealth($playerId) > 0;
+        $scoreWin = $this->getPlayerScore($playerId) >= MAX_POINT;
+
+        if (!$eliminationWin && !$scoreWin) {
+            return false; // player is not winning
         }
 
         if ($this->getPlayerHealth($playerId) <= $this->getPlayerPoisonTokens($playerId)) {
@@ -608,7 +611,7 @@ trait CardsTrait {
             return false;
         }
 
-        if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_score >= 20")) > 1) {
+        if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_score >= ".MAX_POINT)) > 1) {
             // can't skip, can try to eliminate other 20 points player to not share tie
             return false;
         }
