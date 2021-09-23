@@ -436,9 +436,19 @@ trait UtilTrait {
         }
     }
 
+    private function logDamageBlocked(int $playerId, int $cardType) {
+        self::notifyAllPlayers('damageBlockedLog', clienttranslate('${player_name} prevents damage with ${card_name}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => $cardType,
+        ]);
+    }
+
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+
+            $this->logDamageBlocked($playerId, WINGS_CARD);
             return; // player has wings and cannot lose hearts
         }
 
@@ -446,6 +456,8 @@ trait UtilTrait {
         $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
         if ($countArmorPlating > 0 && $health == 1) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+
+            $this->logDamageBlocked($playerId, ARMOR_PLATING_CARD);
             return;
         }
 
