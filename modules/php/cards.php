@@ -598,6 +598,24 @@ trait CardsTrait {
         return 0;
     }
 
+    function isSureWin(int $playerId) {
+        if ($this->getPlayerScore($playerId) < 20) {
+            return false;
+        }
+
+        if ($this->getPlayerHealth($playerId) <= $this->getPlayerPoisonTokens($playerId)) {
+            // can't skip, must try to heal poison
+            return false;
+        }
+
+        if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_score >= 20")) > 1) {
+            // can't skip, can try to eliminate other 20 points player to not share tie
+            return false;
+        }
+
+        return true;
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -1312,7 +1330,7 @@ trait CardsTrait {
         $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
 
         $args = $this->argBuyCard();
-        if ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) {
+        if (($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin(self::getActivePlayerId())) {
             // skip state
             if ($args['canSell']) {
                 $this->goToSellCard(true);
