@@ -781,7 +781,7 @@ trait CardsTrait {
                 $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
                 return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
             } else {
-                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_END_TURN;
+                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_PLAYER_BUY_CARD;
             }
         }
     }

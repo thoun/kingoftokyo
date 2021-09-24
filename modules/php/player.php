@@ -467,6 +467,8 @@ trait PlayerTrait {
     function stNextPlayer() {
         $playerId = self::getActivePlayerId();
 
+        $this->removeDiscardCards($playerId);
+
         $killPlayer = $this->killDeadPlayers();
 
         if ($killPlayer) {
