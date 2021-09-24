@@ -35,6 +35,7 @@ interface KingOfTokyoPlayer extends Player {
     monster: number;
     location: number;
     maxHealth: number;
+    playerDead: number;
 }
 
 interface KingOfTokyoGamedatas {

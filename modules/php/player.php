@@ -23,7 +23,7 @@ trait PlayerTrait {
     }
 
     function isFewestStars(int $playerId) {
-        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = false) AND (SELECT count(*) FROM `player` where player_eliminated = 0 AND player_dead = false and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = false)) = 1";
+        $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = 0) AND (SELECT count(*) FROM `player` where player_eliminated = 0 AND player_dead = 0 and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = 0)) = 1";
         return intval(self::getUniqueValueFromDB($sql)) > 0;
     }
 
@@ -139,21 +139,29 @@ trait PlayerTrait {
         ]);
     }
 
-    function asyncEliminatePlayer($playerId) {
-        self::DbQuery("UPDATE player SET `player_dead` = true where `player_id` = $playerId");
+    function asyncEliminatePlayer(int $playerId) {
+        $scoreAux = intval(self::getGameStateValue(KILL_PLAYERS_SCORE_AUX));
+        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0, `player_dead` = $scoreAux where `player_id` = $playerId");
+
+        self::notifyAllPlayers('kotPlayerEliminated', '', [
+            'who_quits' => $playerId,
+        ]);
     }
 
     function killDeadPlayers() {
         $activePlayerId = intval(self::getActivePlayerId());
 
-        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = true ORDER BY player_no";
+        $sql = "SELECT player_id, player_dead FROM player WHERE player_eliminated = 0 AND player_dead > 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        $playersIds = array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
 
         $killActive = false;
 
-        foreach($playersIds as $playerId) {
-            $this->eliminateAPlayer($this->getPlayer($playerId), $playerId);
+        foreach($dbResults as $dbResult) {
+            $playerId = intval($dbResult['player_id']);
+            $playerDead = intval($dbResult['player_dead']);
+
+            self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $playerDead, player_location = 0 where `player_id` = $playerId");
+            self::eliminatePlayer($playerId);
 
             if ($activePlayerId === $playerId) {
                 $killActive = true;

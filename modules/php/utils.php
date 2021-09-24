@@ -114,7 +114,7 @@ trait UtilTrait {
     }
 
     function getRemainingPlayers() {
-        return intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0 AND player_dead = false"));
+        return intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
     }
 
     function tokyoBayUsed() {
@@ -204,18 +204,18 @@ trait UtilTrait {
 
     private function getPlayersIdsFromLocation(bool $inside) {
         $sign = $inside ? '>' : '=';
-        $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 AND player_dead = false ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
     }
 
     function getPlayerIdInTokyoCity() {
-        $sql = "SELECT player_id FROM player WHERE player_location = 1 AND player_eliminated = 0 AND player_dead = false ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_location = 1 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         return intval(self::getUniqueValueFromDB($sql));
     }
 
     function getPlayerIdInTokyoBay() {
-        $sql = "SELECT player_id FROM player WHERE player_location = 2 AND player_eliminated = 0 AND player_dead = false ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_location = 2 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         return intval(self::getUniqueValueFromDB($sql));
     }
 
@@ -228,13 +228,13 @@ trait UtilTrait {
     }*/
 
     function getPlayersIds() {
-        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = false ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
     }
 
     function getOtherPlayersIds(int $playerId) {
-        $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 AND player_dead = false ORDER BY player_no";
+        $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
         return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
     }  
@@ -249,7 +249,7 @@ trait UtilTrait {
     function getPlayers(bool $includeEliminated = false) {
         $sql = "SELECT * FROM player";
         if (!$includeEliminated) {
-            $sql .= " WHERE player_eliminated = 0 AND player_dead = false";
+            $sql .= " WHERE player_eliminated = 0 AND player_dead = 0";
         }
         $sql .= " ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
@@ -260,7 +260,7 @@ trait UtilTrait {
     function getOtherPlayers(int $playerId, bool $includeEliminated = false) {
         $sql = "SELECT * FROM player WHERE player_id <> $playerId";
         if (!$includeEliminated) {
-            $sql .= " AND player_eliminated = 0 AND player_dead = false";
+            $sql .= " AND player_eliminated = 0 AND player_dead = 0";
         }
         $sql .= " ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
@@ -286,61 +286,37 @@ trait UtilTrait {
         return $orderedPlayers;
     }
     
-    function eliminatePlayers(int $currentTurnPlayerId) { // return redirected
+    function eliminatePlayers(int $currentTurnPlayerId) {
         $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, false);
-
-        $redirected = false;
 
         foreach($orderedPlayers as $player) {
             if ($player->health == 0 && !$player->eliminated) {
-                $redirected = $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                $this->eliminateAPlayer($player, $currentTurnPlayerId);
             }
         }
-
-        return $redirected;
     }
 
-    function eliminateAPlayer(object $player, int $currentTurnPlayerId) { // return redirected
+    function eliminateAPlayer(object $player, int $currentTurnPlayerId) {
         $state = $this->gamestate->state();
 
         // if player is killing himself
         // in a game state, we can kill him, but else we have to wait the end of his turn
-        if ($state['type'] != 'game' && $player->id == $currentTurnPlayerId) {
+        $playerIsActivePlayer = array_search($player->id, $this->gamestate->getActivePlayerList()) !== false;
+        if ($player->id == $currentTurnPlayerId || $playerIsActivePlayer) {
             $this->asyncEliminatePlayer($player->id);
-            $this->jumpToState(ST_END_TURN);
-
-            return true;
+        } else {
+            $scoreAux = intval(self::getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
+            self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
+            self::eliminatePlayer($player->id); // no need for notif, framework does it
         }
-
-        $eliminatedPlayersCount = self::getGameStateValue(KILL_PLAYERS_SCORE_AUX);
-
-        self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $eliminatedPlayersCount, player_location = 0 where `player_id` = $player->id");
-
-        /* no need for notif, framework does it
-        self::notifyAllPlayers("playerEliminated", clienttranslate('${player_name} is eliminated !'), [
-            'playerId' => $player->id,
-            'player_name' => $player->name,
-        ]);*/
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         
-        // if player is playing in multipleactiveplayer (for example Camouflage roll fail to avoid elimination)
-        if ($state['name'] == 'cancelDamage' && array_search($player->id, $this->gamestate->getActivePlayerList()) !== false) {
-            $this->asyncEliminatePlayer($player->id);
-
-            //$this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null);
+        // if player is playing in multipleactiveplayer
+        if ($playerIsActivePlayer) {
             $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
-
-        } else if ($state['name'] == 'opportunistBuyCard' && array_search($player->id, $this->gamestate->getActivePlayerList()) !== false) {
-            $this->asyncEliminatePlayer($player->id);
-
-            $this->removeDiscardCards($player->id);
-            //$this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', 'end');
-            $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
-        }
-
-        self::eliminatePlayer($player->id);
+        }        
 
         if (!$this->isTokyoEmpty(true) && !$this->tokyoBayUsed()) { // 5 players to 4, Tokyo Bay got a player but it shouldn't, so player is moved
             if ($this->isTokyoEmpty(false)) {
@@ -349,8 +325,6 @@ trait UtilTrait {
                 $this->leaveTokyo($this->getPlayerIdInTokyoBay());
             }
         }
-
-        return false;
     }
 
     function removePlayerFromSmashedPlayersInTokyo(int $playerId) {
@@ -673,7 +647,7 @@ trait UtilTrait {
     }
 
     function updateKillPlayersScoreAux() {
-        $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead = true"));
-        self::setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount);
+        $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead > 0"));
+        self::setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount + 1);
     }
 }

@@ -602,7 +602,9 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.eliminatePlayer = function () {
         this.setEnergy(0);
         this.cards.removeAll();
-        this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
+        if (document.getElementById("monster-figure-" + this.playerId)) {
+            this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
+        }
         dojo.addClass("player-table-" + this.playerId, 'eliminated');
     };
     PlayerTable.prototype.setActivePlayer = function (active) {
@@ -1964,7 +1966,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         Object.values(gamedatas.players).forEach(function (player) {
             var playerId = Number(player.id);
-            var eliminated = Number(player.eliminated) > 0;
+            var eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
             // health & energy counters
             dojo.place("<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"health-counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"energy-counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>\n            </div>", "player_board_" + player.id);
             var healthCounter = new ebg.counter();
@@ -2541,6 +2543,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['toggleRapidHealing', 1],
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
+            ['kotPlayerEliminated', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -2590,6 +2593,9 @@ var KingOfTokyo = /** @class */ (function () {
         var playerId = Number(notif.args.who_quits);
         this.setPoints(playerId, 0);
         this.eliminatePlayer(playerId);
+    };
+    KingOfTokyo.prototype.notif_kotPlayerEliminated = function (notif) {
+        this.notif_playerEliminated(notif);
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (notif) {
         this.getPlayerTable(notif.args.playerId).leaveTokyo();
@@ -2809,10 +2815,14 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.eliminatePlayer = function (playerId) {
         this.gamedatas.players[playerId].eliminated = 1;
         document.getElementById("overall_player_board_" + playerId).classList.add('eliminated-player');
-        dojo.place("<div class=\"icon dead\"></div>", "player_board_" + playerId);
+        if (!document.getElementById("dead-icon-" + playerId)) {
+            dojo.place("<div id=\"dead-icon-" + playerId + "\" class=\"icon dead\"></div>", "player_board_" + playerId);
+        }
         this.getPlayerTable(playerId).eliminatePlayer();
         this.tableManager.placePlayerTable(); // because all player's card were removed
-        this.fadeOutAndDestroy("player-board-monster-figure-" + playerId);
+        if (document.getElementById("player-board-monster-figure-" + playerId)) {
+            this.fadeOutAndDestroy("player-board-monster-figure-" + playerId);
+        }
         dojo.removeClass("overall_player_board_" + playerId, 'intokyo');
         dojo.removeClass("monster-board-wrapper-" + playerId, 'intokyo');
         if (playerId == this.getPlayerId()) {

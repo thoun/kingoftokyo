@@ -97,7 +97,7 @@ class KingOfTokyo extends Table {
         $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_score_aux, player_monster) VALUES ";
         $values = [];
         $affectedMonsters = [];
-        $eliminationRank = count($players) - 1;
+        $eliminationRank = count($players);
         foreach( $players as $player_id => $player ) {
             $playerMonster = 0;
 
@@ -133,7 +133,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('newCardId', 0);
         self::setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
-        self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 0);
+        self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 1);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -188,7 +188,7 @@ class KingOfTokyo extends Table {
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens FROM player order by player_no";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead FROM player order by player_no";
         $result['players'] = self::getCollectionFromDb( $sql );
 
         // Gather all information about current game situation (visible by player $current_player_id).
@@ -210,6 +210,7 @@ class KingOfTokyo extends Table {
 
             $playerDb['poisonTokens'] = intval($playerDb['poisonTokens']);
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
+            $playerDb['playerDead'] = intval($playerDb['playerDead']);
 
             $playerDb['rapidHealing'] = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
             $playerDb['maxHealth'] = $this->getPlayerMaxHealth($playerId);
@@ -369,7 +370,7 @@ class KingOfTokyo extends Table {
         }
  
         if ($from_version <= 2109081842) {
-            $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_dead` tinyint unsigned NOT NULL DEFAULT false";
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_dead` tinyint unsigned NOT NULL DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

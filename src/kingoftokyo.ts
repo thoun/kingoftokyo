@@ -556,7 +556,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         Object.values(gamedatas.players).forEach(player => {
             const playerId = Number(player.id);  
 
-            const eliminated = Number(player.eliminated) > 0;
+            const eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
 
             // health & energy counters
             dojo.place(`<div class="counters">
@@ -1248,6 +1248,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['toggleRapidHealing', 1],
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
+            ['kotPlayerEliminated', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -1306,6 +1307,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         const playerId = Number(notif.args.who_quits);
         this.setPoints(playerId, 0);
         this.eliminatePlayer(playerId);
+    }
+
+    notif_kotPlayerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {
+        this.notif_playerEliminated(notif);
     }
 
     notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
@@ -1545,12 +1550,16 @@ class KingOfTokyo implements KingOfTokyoGame {
     private eliminatePlayer(playerId: number) {
         this.gamedatas.players[playerId].eliminated = 1;
         document.getElementById(`overall_player_board_${playerId}`).classList.add('eliminated-player');
-        dojo.place(`<div class="icon dead"></div>`, `player_board_${playerId}`);
+        if (!document.getElementById(`dead-icon-${playerId}`)) {
+            dojo.place(`<div id="dead-icon-${playerId}" class="icon dead"></div>`, `player_board_${playerId}`);
+        }
 
         this.getPlayerTable(playerId).eliminatePlayer();
         this.tableManager.placePlayerTable(); // because all player's card were removed
 
-        (this as any).fadeOutAndDestroy(`player-board-monster-figure-${playerId}`);
+        if (document.getElementById(`player-board-monster-figure-${playerId}`)) {
+            (this as any).fadeOutAndDestroy(`player-board-monster-figure-${playerId}`);
+        }
         dojo.removeClass(`overall_player_board_${playerId}`, 'intokyo');
         dojo.removeClass(`monster-board-wrapper-${playerId}`, 'intokyo');
         if (playerId == this.getPlayerId()) {

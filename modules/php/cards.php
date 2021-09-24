@@ -761,10 +761,7 @@ trait CardsTrait {
         }
 
         if (!$redirects) {
-            // we only redirect if player is still alive (no card suicide that have set next player active)
-            if (!$this->getPlayer($playerId)->eliminated) {
-                $this->jumpToState($redirectAfterBuyCard, $playerId);
-            }
+            $this->jumpToState($redirectAfterBuyCard, $playerId);
         }
     }
 
@@ -784,7 +781,7 @@ trait CardsTrait {
                 $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
                 return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
             } else {
-                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_PLAYER_BUY_CARD;
+                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_END_TURN;
             }
         }
     }
@@ -1332,8 +1329,16 @@ trait CardsTrait {
     function stBuyCard() {
         $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
 
+        $playerId = intval(self::getActivePlayerId()); 
+
+        // if player is dead async, he can't buy or sell
+        if ($this->getPlayerHealth($playerId) === 0) {
+            $this->endTurn(true);
+            return;
+        }
+
         $args = $this->argBuyCard();
-        if (($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin(self::getActivePlayerId())) {
+        if (($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId)) {
             // skip state
             if ($args['canSell']) {
                 $this->goToSellCard(true);

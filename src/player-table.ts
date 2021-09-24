@@ -115,7 +115,9 @@ class PlayerTable {
     public eliminatePlayer() {
         this.setEnergy(0);
         this.cards.removeAll();
-        (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);
+        if (document.getElementById(`monster-figure-${this.playerId}`)) {
+            (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);
+        }
         dojo.addClass(`player-table-${this.playerId}`, 'eliminated');
     }
     
