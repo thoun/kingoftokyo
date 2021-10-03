@@ -78,9 +78,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                     
                     var event = new Event('change');
                     select.dispatchEvent(event);
-
-                    dojo.destroy('board-corner-highlight');
-                    dojo.destroy('twoPlayersVariant-message');
                 });
             }
         }
@@ -1193,6 +1190,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             // KEEP
             case 201: 
                 this.playerTables.forEach(playerTable => playerTable.setFont(prefValue));
+                break;
+            case 203: 
+                if (prefValue == 2) {
+                    dojo.destroy('board-corner-highlight');
+                    dojo.destroy('twoPlayersVariant-message');
+                }
                 break;
         }
     }

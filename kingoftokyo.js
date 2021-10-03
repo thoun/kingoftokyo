@@ -1542,8 +1542,6 @@ var KingOfTokyo = /** @class */ (function () {
                     select.value = '2';
                     var event = new Event('change');
                     select.dispatchEvent(event);
-                    dojo.destroy('board-corner-highlight');
-                    dojo.destroy('twoPlayersVariant-message');
                 });
             }
         }
@@ -2482,6 +2480,12 @@ var KingOfTokyo = /** @class */ (function () {
             // KEEP
             case 201:
                 this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
+                break;
+            case 203:
+                if (prefValue == 2) {
+                    dojo.destroy('board-corner-highlight');
+                    dojo.destroy('twoPlayersVariant-message');
+                }
                 break;
         }
     };
