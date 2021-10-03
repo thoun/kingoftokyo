@@ -738,6 +738,29 @@
   width: 150px;
   height: 150px;
 }
+#table #table-center #board #twoPlayersVariant-message {
+  position: absolute;
+  bottom: 50px;
+  left: 19px;
+  right: 19px;
+  background: #FFFFFFCC;
+  box-shadow: 0px 0px 5px 2px #FFFFFFCC;
+  padding: 5px;
+}
+#table #table-center #board #twoPlayersVariant-message #hide-twoPlayersVariant-message {
+  font-weight: bold;
+  cursor: pointer;
+}
+#table #table-center #board #board-corner-highlight {
+  position: absolute;
+  border: 3px solid #ffcf13;
+  margin: -3px;
+  box-shadow: 0px 0px 5px 2px #ffcf13;
+  bottom: 13px;
+  height: 26px;
+  left: 22px;
+  width: 83px;
+}
 #table .player-table {
   width: 420px;
   position: absolute;

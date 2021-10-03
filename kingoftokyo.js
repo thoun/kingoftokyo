@@ -1521,6 +1521,7 @@ var KingOfTokyo = /** @class */ (function () {
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
         var _this = this;
+        var _a;
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1, 2, 3, 4, 5, 6].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
@@ -1533,6 +1534,18 @@ var KingOfTokyo = /** @class */ (function () {
         log('gamedatas', gamedatas);
         if (gamedatas.twoPlayersVariant) {
             dojo.addClass('board', 'twoPlayersVariant');
+            // 2-players variant notice
+            if (Object.keys(gamedatas.players).length == 2 && ((_a = this.prefs[203]) === null || _a === void 0 ? void 0 : _a.value) == 1) {
+                dojo.place("\n                    <div id=\"board-corner-highlight\"></div>\n                    <div id=\"twoPlayersVariant-message\">\n                        " + _("You are playing the 2-players variant.") + "<br>\n                        " + _("When entering or starting a turn on Tokyo, you gain 1 energy instead of points") + ".<br>\n                        " + _("You can check if variant is activated in the bottom left corner of the table.") + "<br>\n                        <div style=\"text-align: center\"><a id=\"hide-twoPlayersVariant-message\">" + _("Dismiss") + "</a></div>\n                    </div>\n                ", 'board');
+                document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', function () {
+                    var select = document.getElementById('preference_control_203');
+                    select.value = '2';
+                    var event = new Event('change');
+                    select.dispatchEvent(event);
+                    dojo.destroy('board-corner-highlight');
+                    dojo.destroy('twoPlayersVariant-message');
+                });
+            }
         }
         this.cards = new Cards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });

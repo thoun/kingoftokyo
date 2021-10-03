@@ -100,6 +100,16 @@ $game_preferences = [
         ],
         'default' => 1
     ],
+
+    203 => [
+        'name' => totranslate('Show 2-players variant notice'),
+        'needReload' => true,
+        'values' => [
+            1 => ['name' => totranslate('Enabled')],
+            2 => ['name' => totranslate('Disabled')],
+        ],
+        'default' => 1
+    ],
 ];
 
 
