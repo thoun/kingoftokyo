@@ -433,7 +433,7 @@ trait CardsTrait {
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
     }
 
-    function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false) {
+    function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false, bool $ignoreMimicToken = false) {
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
         $changeMaxHealth = $card->type == EVEN_BIGGER_CARD;
@@ -443,7 +443,7 @@ trait CardsTrait {
             $changeMaxHealth = $this->getMimickedCardType() == EVEN_BIGGER_CARD;
             $this->removeMimicToken($playerId);
             $removeMimickToken = true;
-        } else if ($card->id == $this->getMimickedCardId()) {
+        } else if ($card->id == $this->getMimickedCardId() && !$ignoreMimicToken) {
             $this->removeMimicToken($playerId);
             $removeMimickToken = true;
         }
@@ -662,8 +662,9 @@ trait CardsTrait {
 
         $mimickedCardId = null;
         if ($from > 0) {
-            $mimickedCardId = $this->getMimickedCardId();
-            $this->removeCard($from, $card, true);
+            $mimickedCardId = $this->getMimickedCardId();            
+            // If card bought from player, when having mimic token, keep mimic token ? Considered yes
+            $this->removeCard($from, $card, true, false, true);
         }
         $this->cards->moveCard($id, 'hand', $playerId);
 
@@ -728,8 +729,11 @@ trait CardsTrait {
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
         if ($from > 0 && $mimickedCardId == $card->id) {
-            // Is card bought from player, when having mimic token, keep mimic token ? Considered yes
-            $this->setMimickedCard($playerId, $card);
+            // If card bought from player, we put back mimic token
+
+            self::notifyAllPlayers("setMimicToken", '', [
+                'card' => $card,
+            ]);
         }
 
         $damages = $this->applyEffects($card->type, $playerId);

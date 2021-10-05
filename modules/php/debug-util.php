@@ -34,7 +34,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         $this->debugSetCardInHand(MIMIC_CARD, 2343493);
-        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494));
+        $this->setMimickedCard(2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
@@ -54,7 +54,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
-        $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493);
+        //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493);
 
         $this->gamestate->changeActivePlayer(2343492);
 
