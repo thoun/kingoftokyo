@@ -183,6 +183,13 @@ trait DiceTrait {
             $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
         }
 
+        
+
+        // Shrink Ray
+        $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD) > 0;
+        // Poison Spit
+        $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD) > 0;
+
         $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 
         $jetsDamages = [];
@@ -200,9 +207,9 @@ trait DiceTrait {
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
             if ($countJets > 0 && $smashedPlayerIsInTokyo) {                
-                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0);
+                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, false, $giveShrinkRayToken, $givePoisonSpitToken);
             } else {
-                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0);
+                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, false, $giveShrinkRayToken, $givePoisonSpitToken);
             }
         }
 
@@ -228,22 +235,6 @@ trait DiceTrait {
             $this->applyGetPoints($playerId, $countAlphaMonster, ALPHA_MONSTER_CARD);
         }
 
-        // Shrink Ray
-        $countShrinkRay = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
-        if ($countShrinkRay > 0) {
-            foreach($smashedPlayersIds as $smashedPlayerId) {
-                $this->applyGetShrinkRayToken($smashedPlayerId, $countShrinkRay);
-            }
-        }
-
-        // Poison Spit
-        $countPoisonSpit = $this->countCardOfType($playerId, POISON_SPIT_CARD);
-        if ($countPoisonSpit > 0) {
-            foreach($smashedPlayersIds as $smashedPlayerId) {
-                $this->applyGetPoisonToken($smashedPlayerId, $countPoisonSpit);
-            }
-        }
-
         // fire breathing
         foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
             self::notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
@@ -255,7 +246,7 @@ trait DiceTrait {
 
             // we add damage only if it's not already counted in smashed players
             if (array_search($damagePlayerId, $smashedPlayersIds) === false) {
-                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0);
+                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0, false, $giveShrinkRayToken, $givePoisonSpitToken);
             }
         }
 

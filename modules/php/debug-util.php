@@ -20,10 +20,10 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(20);
+        //$this->debugSetEnergy(20);
         //$this->debugSetPlayerPoints(2343492, 20);
         //$this->debugSetHealth(1);
-        $this->debugSetPlayerHealth(2343492, 3);
+        //$this->debugSetPlayerHealth(2343492, 3);
         //$this->debugSetPlayerHealth(2343495, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 9 where `player_id` = 2343492");
         //$this->debugSetCardInTable(112);
@@ -33,14 +33,14 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        $this->debugSetCardInHand(MIMIC_CARD, 2343493);
-        $this->setMimickedCard(2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
+        //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
+        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
@@ -51,9 +51,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
-        //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
+        $this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
+        $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
-        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493);
 
         $this->gamestate->changeActivePlayer(2343492);

@@ -418,7 +418,7 @@ trait UtilTrait {
         ]);
     }
 
-    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
+    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, bool $giveShrinkRayToken, bool $givePoisonSpitToken) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
@@ -435,7 +435,7 @@ trait UtilTrait {
             return;
         }
 
-        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId);
+        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId, $giveShrinkRayToken, $givePoisonSpitToken);
 
         if ($newHealth == 0) {
             // eater of the dead 
@@ -457,7 +457,7 @@ trait UtilTrait {
         }
     }
 
-    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId) {
+    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, bool $giveShrinkRayToken, bool $givePoisonSpitToken) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return; // player has wings and cannot lose hearts
@@ -482,6 +482,16 @@ trait UtilTrait {
                 'delta_health' => $health,
                 'card_name' => $cardType == 0 ? null : $cardType,
             ]);
+        }
+
+        // Shrink Ray
+        if ($giveShrinkRayToken) {
+            $this->applyGetShrinkRayToken($playerId, 1);
+        }
+
+        // Poison Spit
+        if ($givePoisonSpitToken > 0) {
+            $this->applyGetPoisonToken($playerId, 1);
         }
 
         if ($damageDealerId == self::getActivePlayerId()) {
@@ -619,9 +629,9 @@ trait UtilTrait {
             } else {
                 $activePlayerId = self::getActivePlayerId();
                 if ($damage->ignoreCards) {
-                    $this->applyDamageIgnoreCards($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId);
+                    $this->applyDamageIgnoreCards($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
                 } else {
-                    $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId);
+                    $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
                 }
             }
         }
