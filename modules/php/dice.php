@@ -421,8 +421,13 @@ trait DiceTrait {
         $this->rethrowDice($diceIds);
     }
 
-    public function rethrow3() {
+    public function rethrow3(string $diceIds = null) {
         $this->checkAction('rethrow3');
+
+        if ($diceIds !== null) {
+            self::DbQuery("UPDATE dice SET `locked` = false");
+            self::DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN ($diceIds)");
+        }
 
         $playerId = self::getActivePlayerId();
         $die = $this->getFirst3Dice($this->getDiceNumber($playerId));

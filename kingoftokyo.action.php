@@ -96,7 +96,9 @@
     public function rethrow3() {
         self::setAjaxMode();
 
-        $this->game->rethrow3();
+        $diceIds = self::getArg("diceIds", AT_numberlist, false);
+
+        $this->game->rethrow3($diceIds);
 
         self::ajaxResponse();
     }

@@ -16,6 +16,10 @@ class DiceManager {
     public showLock() {
         dojo.removeClass('locked-dice', 'hide-lock');
     }
+
+    public getLockedDice() {
+        return this.dice.filter(die => die.locked);
+    }
     
     public destroyFreeDice(): number[] {
         const freeDice = this.dice.filter(die => !die.locked);

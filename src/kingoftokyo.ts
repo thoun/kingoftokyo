@@ -893,7 +893,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public rethrow3() {
-        this.takeAction('rethrow3');
+        const lockedDice = this.diceManager.getLockedDice();
+
+        this.takeAction('rethrow3', {
+            diceIds: lockedDice.map(die => die.id).join(',')
+        });
     }
 
     public rethrow3camouflage() {

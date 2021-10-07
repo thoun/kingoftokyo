@@ -952,6 +952,9 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.showLock = function () {
         dojo.removeClass('locked-dice', 'hide-lock');
     };
+    DiceManager.prototype.getLockedDice = function () {
+        return this.dice.filter(function (die) { return die.locked; });
+    };
     DiceManager.prototype.destroyFreeDice = function () {
         var _this = this;
         var freeDice = this.dice.filter(function (die) { return !die.locked; });
@@ -2245,7 +2248,10 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.rethrow3 = function () {
-        this.takeAction('rethrow3');
+        var lockedDice = this.diceManager.getLockedDice();
+        this.takeAction('rethrow3', {
+            diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
+        });
     };
     KingOfTokyo.prototype.rethrow3camouflage = function () {
         this.takeAction('rethrow3camouflage');
