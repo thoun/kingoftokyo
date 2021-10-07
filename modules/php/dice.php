@@ -426,7 +426,9 @@ trait DiceTrait {
 
         if ($diceIds !== null) {
             self::DbQuery("UPDATE dice SET `locked` = false");
-            self::DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN ($diceIds)");
+            if ($diceIds != '') {
+                self::DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN ($diceIds)");
+            }
         }
 
         $playerId = self::getActivePlayerId();
