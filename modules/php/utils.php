@@ -172,7 +172,7 @@ trait UtilTrait {
 
         $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
         if ($jetsDamages != null) {
-            $jetsDamages = array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; });
+            $jetsDamages = array_values(array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; }));
             $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
         }
 
