@@ -36,14 +36,14 @@ trait InitialCardTrait {
         $this->checkAction('chooseInitialCard');
 
         $topCards = $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck'));
-        if ($this->array_some($topCards, function($topCard) use ($id) { return $topCard->id == $id; })) {
+        if (!$this->array_some($topCards, function($topCard) use ($id) { return $topCard->id == $id; })) {
             throw new \Error('Card not available');
         }
         $otherCard = $this->array_find($topCards, function($topCard) use ($id) { return $topCard->id != $id; });
 
         $playerId = self::getActivePlayerId();
 
-        $this->setInitialCard($playerId, $id);
+        $this->setInitialCard($playerId, $id, $otherCard);
 
         $this->gamestate->nextState('next');
     }

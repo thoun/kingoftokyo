@@ -283,8 +283,6 @@ class KingOfTokyo extends Table {
         $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
 
         self::notifyAllPlayers("setInitialCards", '', [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
         ]);
 

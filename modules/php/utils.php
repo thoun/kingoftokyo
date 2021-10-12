@@ -18,6 +18,24 @@ trait UtilTrait {
     //////////// Utility functions
     ////////////
 
+    function array_find(array $array, callable $fn) {
+        foreach ($array as $value) {
+            if($fn($value)) {
+                return $value;
+            }
+        }
+        return null;
+    }
+
+    function array_some(array $array, callable $fn) {
+        foreach ($array as $value) {
+            if($fn($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function isTurnBased() {
         return intval($this->gamestate->table_globals[200]) >= 10;
     }
@@ -26,8 +44,14 @@ trait UtilTrait {
         return intval(self::getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
     }
 
-    private function getGameVersion() {
-        return intval(self::getGameStateValue(GAME_VERSION_OPTION));
+    private function getGameVersion() {        
+        global $g_config;
+        if ($g_config['debug_from_chat']) { 
+            return 2;
+        } else {
+            return 1;
+        }
+        //TODOTR return intval(self::getGameStateValue(GAME_VERSION_OPTION));
     }
 
     function isHalloweenExpansion() {

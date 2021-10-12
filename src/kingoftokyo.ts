@@ -151,23 +151,19 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringPickMonster(args.args);
                 break;
             case 'chooseInitialCard':
+                this.replaceMonsterChoiceByTable();
                 this.onEnteringChooseInitialCard(args.args);
                 break;
             case 'startGame':
-            if (document.getElementById('monster-pick')) {
-                (this as any).fadeOutAndDestroy('monster-pick');
-            }
+                this.replaceMonsterChoiceByTable();
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
-                if (dojo.hasClass('kot-table', 'pickMonster')) {
-                    dojo.removeClass('kot-table', 'pickMonster');
-                    this.tableManager.setAutoZoomAndPlacePlayerTables();
-                    this.visibleCards.updateDisplay();
-                }
+                this.replaceMonsterChoiceByTable();
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -396,6 +392,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
+            case 'chooseInitialCard':                
+                this.visibleCards.setSelectionMode(0);
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'opportunistChooseMimicCard':
@@ -664,6 +663,17 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public getZoom() {
         return this.tableManager.zoom;
+    }
+
+    private replaceMonsterChoiceByTable() {
+        if (document.getElementById('monster-pick')) {
+            (this as any).fadeOutAndDestroy('monster-pick');
+        }
+        if (dojo.hasClass('kot-table', 'pickMonster')) {
+            dojo.removeClass('kot-table', 'pickMonster');
+            this.tableManager.setAutoZoomAndPlacePlayerTables();
+            this.visibleCards.updateDisplay();
+        }
     }
 
     private createVisibleCards(visibleCards: Card[]) {
@@ -1434,9 +1444,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
         const card = notif.args.card;
         const newCard = notif.args.newCard;
-        this.setEnergy(notif.args.playerId, notif.args.energy);
+        if (notif.args.energy !== undefined) {
+            this.setEnergy(notif.args.playerId, notif.args.energy);
+        }
 
-        if (newCard) {
+        if (notif.args.discardCard) { // initial card
+            this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
+            this.visibleCards.removeFromStockById(''+notif.args.discardCard.id);
+        } else if (newCard) {
             this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
             this.cards.addCardsToStock(this.visibleCards, [newCard], 'deck');
         } else if (notif.args.from > 0) {
@@ -1447,10 +1462,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             } else {
                 this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
-        }
-
-        if (notif.args.discardCard) {
-            this.visibleCards.removeFromStockById(''+notif.args.discardCard.id);
         }
 
         this.tableManager.placePlayerTable(); // adapt to new card

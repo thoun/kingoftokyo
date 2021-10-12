@@ -28,8 +28,6 @@ trait MonsterTrait {
     }
 
     function setMonster(int $playerId, int $monsterId) {
-        $this->checkAction('setMonster');
-
         self::DbQuery("UPDATE player SET `player_monster` = $monsterId where `player_id` = $playerId");
 
         self::notifyAllPlayers('pickMonster', '', [
@@ -48,6 +46,8 @@ trait MonsterTrait {
     */
 
     function pickMonster(int $monsterId) {
+        $this->checkAction('pickMonster');
+
         $playerId = self::getActivePlayerId();
 
         $this->setMonster($playerId, $monsterId);

@@ -389,18 +389,18 @@ var Cards = /** @class */ (function () {
             //case 120: return _("Army");
             // COSTUME
             // TODOTR
-            case 201:
-            case 202:
-            case 203:
-            case 204:
-            case 205:
-            case 206:
-            case 207:
-            case 208:
-            case 209:
-            case 210:
-            case 211:
-            case 212: return '';
+            case 201: return '[353d4b]Cosmonaute';
+            case 202: return '[005c98]Fantome';
+            case 203: return '[213b75]Vampire';
+            case 204: return '[5a4f86]Sorciere';
+            case 205: return '[3c4b53]Diable';
+            case 206: return '[584b84]Pirate';
+            case 207: return '[bb6082]Princesse';
+            case 208: return '[7e8670]Zombie';
+            case 209: return '[52373d]Cheerleader';
+            case 210: return '[146088]Robot';
+            case 211: return '[733010]Statue de la liberté';
+            case 212: return '[2d4554]Clown';
         }
         return null;
     };
@@ -506,19 +506,19 @@ var Cards = /** @class */ (function () {
             //case 119: return _("<strong>+ 4[Star].");
             //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
             // COSTUME
-            // TODO
-            case 201:
-            case 202:
-            case 203:
-            case 204:
-            case 205:
-            case 206:
-            case 207:
-            case 208:
-            case 209:
-            case 210:
-            case 211:
-            case 212: return '';
+            // TODOTR
+            case 201: return 'description complète de la carte Cosmonaute';
+            case 202: return 'description complète de la carte Fantome';
+            case 203: return 'description complète de la carte Vampire';
+            case 204: return 'description complète de la carte Sorciere';
+            case 205: return 'description complète de la carte Diable';
+            case 206: return 'description complète de la carte Pirate';
+            case 207: return 'description complète de la carte Princesse';
+            case 208: return 'description complète de la carte Zombie';
+            case 209: return 'description complète de la carte Cheerleader';
+            case 210: return 'description complète de la carte Robot';
+            case 211: return 'description complète de la carte Statue de la liberté';
+            case 212: return 'description complète de la carte Clown';
         }
         return null;
     };
@@ -1685,23 +1685,19 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringPickMonster(args.args);
                 break;
             case 'chooseInitialCard':
+                this.replaceMonsterChoiceByTable();
                 this.onEnteringChooseInitialCard(args.args);
                 break;
             case 'startGame':
-                if (document.getElementById('monster-pick')) {
-                    this.fadeOutAndDestroy('monster-pick');
-                }
+                this.replaceMonsterChoiceByTable();
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
-                if (dojo.hasClass('kot-table', 'pickMonster')) {
-                    dojo.removeClass('kot-table', 'pickMonster');
-                    this.tableManager.setAutoZoomAndPlacePlayerTables();
-                    this.visibleCards.updateDisplay();
-                }
+                this.replaceMonsterChoiceByTable();
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -1902,6 +1898,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         switch (stateName) {
+            case 'chooseInitialCard':
+                this.visibleCards.setSelectionMode(0);
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'opportunistChooseMimicCard':
@@ -2119,6 +2118,16 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.getZoom = function () {
         return this.tableManager.zoom;
+    };
+    KingOfTokyo.prototype.replaceMonsterChoiceByTable = function () {
+        if (document.getElementById('monster-pick')) {
+            this.fadeOutAndDestroy('monster-pick');
+        }
+        if (dojo.hasClass('kot-table', 'pickMonster')) {
+            dojo.removeClass('kot-table', 'pickMonster');
+            this.tableManager.setAutoZoomAndPlacePlayerTables();
+            this.visibleCards.updateDisplay();
+        }
     };
     KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
         var _this = this;
@@ -2772,8 +2781,14 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var card = notif.args.card;
         var newCard = notif.args.newCard;
-        this.setEnergy(notif.args.playerId, notif.args.energy);
-        if (newCard) {
+        if (notif.args.energy !== undefined) {
+            this.setEnergy(notif.args.playerId, notif.args.energy);
+        }
+        if (notif.args.discardCard) { // initial card
+            this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
+            this.visibleCards.removeFromStockById('' + notif.args.discardCard.id);
+        }
+        else if (newCard) {
             this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
             this.cards.addCardsToStock(this.visibleCards, [newCard], 'deck');
         }
@@ -2787,9 +2802,6 @@ var KingOfTokyo = /** @class */ (function () {
             else {
                 this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
-        }
-        if (notif.args.discardCard) {
-            this.visibleCards.removeFromStockById('' + notif.args.discardCard.id);
         }
         this.tableManager.placePlayerTable(); // adapt to new card
     };

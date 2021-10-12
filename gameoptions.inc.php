@@ -26,7 +26,7 @@
 
 $game_options = [
 
-    101 => [
+    /* TODOTR 101 => [
         'name' => totranslate('Game version'),
         'values' => [
             1 => [
@@ -37,7 +37,7 @@ $game_options = [
             ],
         ],
         'default' => 1,
-    ],
+    ],*/
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
