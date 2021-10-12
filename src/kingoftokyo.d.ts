@@ -58,6 +58,7 @@ interface KingOfTokyoGamedatas {
     leaveTokyoUnder: number;
     stayTokyoOver: number;
     twoPlayersVariant: boolean;
+    halloweenExpansion: boolean;
 }
 
 interface KingOfTokyoGame extends Game {

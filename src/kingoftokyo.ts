@@ -50,6 +50,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).dontPreloadImage(`monster-figure-${i}.png`);
         });
         (this as any).dontPreloadImage(`tokyo-2pvariant.jpg`);
+        if (!gamedatas.halloweenExpansion) {
+            (this as any).dontPreloadImage(`costume-cards.jpg`);
+        }
 
         log( "Starting game setup" );
         

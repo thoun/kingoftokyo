@@ -26,6 +26,14 @@ trait UtilTrait {
         return intval(self::getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
     }
 
+    private function getGameVersion() {
+        return intval(self::getGameStateValue(GAME_VERSION_OPTION));
+    }
+
+    function isHalloweenExpansion() {
+        return $this->getGameVersion() === 2;
+    }
+
     function autoSkipImpossibleActions() {
         return $this->isTurnBased() || intval(self::getGameStateValue(AUTO_SKIP_OPTION)) === 2;
     }

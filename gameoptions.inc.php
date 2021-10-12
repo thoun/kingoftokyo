@@ -26,6 +26,19 @@
 
 $game_options = [
 
+    101 => [
+        'name' => totranslate('Game version'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Base version'), 
+            ],
+            2 => [
+                'name' => totranslate('Halloween expansion'), 
+            ],
+        ],
+        'default' => 1,
+    ],
+
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
         'name' => totranslate('Pick monster'),
