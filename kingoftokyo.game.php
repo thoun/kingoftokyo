@@ -59,6 +59,8 @@ class KingOfTokyo extends Table {
             PSYCHIC_PROBE_ROLLED_A_3 => 19,
             'newCardId' => 20,
             KILL_PLAYERS_SCORE_AUX => 21,
+            FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 22,
+            PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 23,
             PICK_MONSTER_OPTION => 100,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
@@ -134,6 +136,8 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue('newCardId', 0);
         self::setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 1);
+        self::setGameStateInitialValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
+        self::setGameStateInitialValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

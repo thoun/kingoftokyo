@@ -29,7 +29,7 @@ trait DebugUtilTrait {
         $this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(113);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
-        //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = 117");
+        //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FRENZY_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -42,7 +42,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
-        $this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
+        //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
+        //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343494);

@@ -46,7 +46,7 @@ trait CardsTrait {
         return array_map(function($dbCard) { return $this->getCardFromDb($dbCard); }, array_values($dbCards));
     }
 
-    function applyEffects($cardType, $playerId) { // return $damages
+    function applyEffects(int $cardType, int $playerId, bool $opportunist) { // return $damages
 
         switch($cardType) {
             // KEEP
@@ -116,7 +116,12 @@ trait CardsTrait {
                 }
                 return $damages;
             case FRENZY_CARD: 
-                $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
+                if ($opportunist) {
+                    $this->setGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, $playerId);
+                    $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, self::getActivePlayerId());
+                } else {
+                    $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
+                }
                 break;
             case 110: 
                 $this->applyGetPoints($playerId, 2, $cardType);
@@ -212,7 +217,7 @@ trait CardsTrait {
         ]);
 
         // no need to check for damage return, no discard card can be mimicked
-        $this->applyEffects($card->type, $mimicOwnerId);
+        $this->applyEffects($card->type, $mimicOwnerId, false);
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
@@ -736,7 +741,7 @@ trait CardsTrait {
             ]);
         }
 
-        $damages = $this->applyEffects($card->type, $playerId);
+        $damages = $this->applyEffects($card->type, $playerId, $opportunist);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {

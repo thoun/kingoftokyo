@@ -464,6 +464,31 @@ trait PlayerTrait {
         $this->gamestate->nextState('nextPlayer');
     }
 
+    private function activateNextPlayer() {
+        $frenzyExtraTurnForOpportunist = intval($this->getGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST));
+        $playerBeforeFrenzyExtraTurnForOpportunist = intval($this->getGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST));
+        if ($frenzyExtraTurnForOpportunist > 0 && !$this->getPlayer($frenzyExtraTurnForOpportunist)->eliminated) {
+            $this->gamestate->changeActivePlayer($frenzyExtraTurnForOpportunist);
+            $playerId = $frenzyExtraTurnForOpportunist;
+            $this->setGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
+
+            self::notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card_name' => FRENZY_CARD,
+            ]);
+
+        } else if ($playerBeforeFrenzyExtraTurnForOpportunist > 0) {
+            $this->gamestate->changeActivePlayer($playerBeforeFrenzyExtraTurnForOpportunist);
+            $playerId = self::activeNextPlayer();
+            $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
+        } else {
+            $playerId = self::activeNextPlayer();
+        }
+
+        return $playerId;
+    }
+
     function stNextPlayer() {
         $playerId = self::getActivePlayerId();
 
@@ -475,8 +500,8 @@ trait PlayerTrait {
             $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
             $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
             $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);
-            
-            $playerId = self::activeNextPlayer();
+
+            $playerId = $this->activateNextPlayer();
         } else {
             $anotherTimeWithCard = 0;
 
@@ -503,7 +528,7 @@ trait PlayerTrait {
                     'card_name' => $anotherTimeWithCard,
                 ]);
             } else {
-                $playerId = self::activeNextPlayer();
+                $playerId = $this->activateNextPlayer();
             }
         }
 
