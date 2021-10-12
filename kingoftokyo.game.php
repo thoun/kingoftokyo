@@ -27,8 +27,14 @@ require_once('modules/php/player-utils.php');
 require_once('modules/php/player-actions.php');
 require_once('modules/php/player-args.php');
 require_once('modules/php/player-states.php');
-require_once('modules/php/dice.php');
-require_once('modules/php/cards.php');
+require_once('modules/php/dice-utils.php');
+require_once('modules/php/dice-actions.php');
+require_once('modules/php/dice-args.php');
+require_once('modules/php/dice-states.php');
+require_once('modules/php/cards-utils.php');
+require_once('modules/php/cards-actions.php');
+require_once('modules/php/cards-args.php');
+require_once('modules/php/cards-states.php');
 require_once('modules/php/intervention.php');
 require_once('modules/php/debug-util.php');
 
@@ -39,8 +45,14 @@ class KingOfTokyo extends Table {
     use KOT\States\PlayerActionTrait;
     use KOT\States\PlayerArgTrait;
     use KOT\States\PlayerStateTrait;
-    use KOT\States\DiceTrait;
-    use KOT\States\CardsTrait;
+    use KOT\States\DiceUtilTrait;
+    use KOT\States\DiceActionTrait;
+    use KOT\States\DiceArgTrait;
+    use KOT\States\DiceStateTrait;
+    use KOT\States\CardsUtilTrait;
+    use KOT\States\CardsActionTrait;
+    use KOT\States\CardsArgTrait;
+    use KOT\States\CardsStateTrait;
     use KOT\States\InterventionTrait;
     use KOT\States\DebugUtilTrait;
 

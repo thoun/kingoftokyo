@@ -71,6 +71,10 @@ var Cards = /** @class */ (function () {
             for (var id = 101; id <= 118; id++) { // discard
                 stock.addItemType(id, id, discardcardsurl, id - 101);
             }
+            var costumecardsurl = g_gamethemeurl + "img/costume-cards.jpg";
+            for (var id = 201; id <= 212; id++) { // costume
+                stock.addItemType(id, id, costumecardsurl, id - 201);
+            }
         });
     };
     Cards.prototype.getCardUniqueId = function (color, value) {
@@ -286,6 +290,19 @@ var Cards = /** @class */ (function () {
             case 118: return 6;
             //case 119: return 6;
             //case 120: return 2;
+            // COSTUME
+            case 101: return 4;
+            case 102: return 4;
+            case 103: return 3;
+            case 104: return 4;
+            case 105: return 3;
+            case 106: return 4;
+            case 107: return 5;
+            case 108: return 4;
+            case 109: return 3;
+            case 110: return 4;
+            case 111: return 4;
+            case 112: return 3;
         }
         return null;
     };
@@ -370,6 +387,8 @@ var Cards = /** @class */ (function () {
             case 118: return _("[847443]Vast [8D7F4E]Storm");
             //case 119: return _("Amusement Park");
             //case 120: return _("Army");
+            // COSTUME
+            // TODO
         }
         return null;
     };
@@ -474,6 +493,8 @@ var Cards = /** @class */ (function () {
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
             //case 119: return _("<strong>+ 4[Star].");
             //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
+            // COSTUME
+            // TODO
         }
         return null;
     };
@@ -1532,6 +1553,9 @@ var KingOfTokyo = /** @class */ (function () {
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });
         this.dontPreloadImage("tokyo-2pvariant.jpg");
+        if (!gamedatas.halloweenExpansion) {
+            this.dontPreloadImage("costume-cards.jpg");
+        }
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
