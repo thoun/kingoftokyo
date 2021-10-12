@@ -134,9 +134,11 @@ trait UtilTrait {
     function getThrowNumber(int $playerId) {
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
+        // statue of libery
+        $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
         // energy drink
         $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS));
-        return 3 + $countGiantBrain + $extraRolls;
+        return 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls;
     }
 
     function getPlayerMaxHealth(int $playerId) {
@@ -531,6 +533,13 @@ trait UtilTrait {
         }
             
         self::DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
+
+        // pirate
+        $pirateCards = $this->getCardsOfType($damageDealerId, PIRATE_CARD);
+        if (count($pirateCards) > 0 && $this->getPlayerEnergy($playerId) >= 1) {
+            $this->applyLoseEnergy($playerId, 1, PIRATE_CARD);
+            $this->applyGetEnergy($damageDealerId, 1, PIRATE_CARD);
+        }
 
         // must be done before player eliminations
         if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {

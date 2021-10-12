@@ -40,6 +40,12 @@ trait PlayerStateTrait {
             $this->applyBatteryMonster($playerId, $batteryMonsterCard);
         }
 
+        // princess
+        $princessCards = $this->getCardsOfType($playerId, PRINCESS_CARD);
+        foreach($princessCards as $princessCard) {
+            $this->applyGetPoints($playerId, 1, PRINCESS_CARD);
+        }
+
         // apply in tokyo at start
         if ($this->inTokyo($playerId)) {
             // start turn in tokyo
