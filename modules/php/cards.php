@@ -115,7 +115,7 @@ trait CardsTrait {
                     $damages[] = new Damage($otherPlayerId, 2, $playerId, $cardType);
                 }
                 return $damages;
-            case 109: 
+            case FRENZY_CARD: 
                 $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
                 break;
             case 110: 

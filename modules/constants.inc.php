@@ -88,7 +88,7 @@ define('MADE_IN_A_LAB', 'MadeInALab');
 /*
  * Cards
  */
-
+// keep
 define('ACID_ATTACK_CARD', 1);
 define('ALIEN_ORIGIN_CARD', 2);
 define('ALPHA_MONSTER_CARD', 3);
@@ -135,4 +135,6 @@ define('ENERGY_DRINK_CARD', 45);
 define('URBAVORE_CARD', 46);
 define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
 define('WINGS_CARD', 48);
+// discard
+define('FRENZY_CARD', 109);
 ?>

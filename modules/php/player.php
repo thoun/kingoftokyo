@@ -472,6 +472,10 @@ trait PlayerTrait {
         $killPlayer = $this->killDeadPlayers();
 
         if ($killPlayer) {
+            $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
+            $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
+            $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);
+            
             $playerId = self::activeNextPlayer();
         } else {
             $anotherTimeWithCard = 0;
