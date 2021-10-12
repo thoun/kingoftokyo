@@ -24,6 +24,7 @@ trait PlayerStateTrait {
         }
 
         self::setGameStateValue('damageDoneByActivePlayer', 0);
+        self::DbQuery("TRUNCATE TABLE `turn_damages`");
         self::setGameStateValue(EXTRA_ROLLS, 0);
         self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         self::setGameStateValue(SKIP_BUY_PHASE, 0);

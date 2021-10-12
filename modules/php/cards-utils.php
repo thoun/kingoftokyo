@@ -144,7 +144,7 @@ trait CardsUtilTrait {
             case 111:
                 $this->applyGetHealth($playerId, 2, $cardType);
                 break;
-            case 112: 
+            case HIGH_ALTITUDE_BOMBING_CARD: 
                 $playersIds = $this->getPlayersIds();
                 $damages = [];
                 foreach ($playersIds as $pId) {
@@ -283,7 +283,7 @@ trait CardsUtilTrait {
     function getCardsOfType($playerId, $cardType, $includeMimick = true) {
         $cards = $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
 
-        if ($includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself
+        if ($cardType < 100 && $includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself, nor discard/costume cards
             $mimickedCardType = $this->getMimickedCardType();
             if ($mimickedCardType == $cardType) {
                 $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, false)); // mimick

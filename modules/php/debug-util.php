@@ -27,7 +27,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth(2343492, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         $this->debugSetCardInTable(FRENZY_CARD);
-        //$this->debugSetCardInTable(113);
+        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FRENZY_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);

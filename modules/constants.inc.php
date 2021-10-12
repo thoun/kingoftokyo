@@ -148,4 +148,5 @@ define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
 define('WINGS_CARD', 48);
 // discard
 define('FRENZY_CARD', 109);
+define('HIGH_ALTITUDE_BOMBING_CARD', 112);
 ?>

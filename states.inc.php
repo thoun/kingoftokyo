@@ -140,8 +140,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_CHOOSE_INITIAL_CARD => [
         "name" => "chooseInitialCard",
-        "description" => '', // TODOTR clienttranslate('${actplayer} must choose a card'),
-        "descriptionmyturn" => '', // TODOTR clienttranslate('${you} must choose a card'),
+        "description" => '', //  client TODOTR translate('${actplayer} must choose a card'),
+        "descriptionmyturn" => '', // client TODOTR translate('${you} must choose a card'),
         "type" => "activeplayer",
         "action" => "stChooseInitialCard",
         "args" => "argChooseInitialCard",

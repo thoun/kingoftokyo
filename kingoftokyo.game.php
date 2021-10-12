@@ -193,7 +193,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        //$this->debugSetup();
+        $this->debugSetup();
 
         /************ End of the game initialization *****/
     }
@@ -411,6 +411,17 @@ class KingOfTokyo extends Table {
  
         if ($from_version <= 2109081842) {
             $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_dead` tinyint unsigned NOT NULL DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+ 
+        if ($from_version <= 2110122249) {
+            $sql = "
+            CREATE TABLE IF NOT EXISTS `DBPREFIX_turn_damages` (
+              `from` INT(10) unsigned NOT NULL,
+              `to` INT(10) unsigned NOT NULL,
+              `damages` TINYINT unsigned NOT NULL,
+              PRIMARY KEY (`from`, `to`)
+            ) ENGINE=InnoDB;";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

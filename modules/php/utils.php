@@ -529,6 +529,8 @@ trait UtilTrait {
         if ($damageDealerId == self::getActivePlayerId()) {
             self::setGameStateValue('damageDoneByActivePlayer', 1);
         }
+            
+        self::DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
 
         // must be done before player eliminations
         if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {

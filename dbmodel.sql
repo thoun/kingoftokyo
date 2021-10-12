@@ -57,3 +57,10 @@ CREATE TABLE IF NOT EXISTS `global_variables` (
   `value` json,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `turn_damages` (
+  `from` INT(10) unsigned NOT NULL,
+  `to` INT(10) unsigned NOT NULL,
+  `damages` TINYINT unsigned NOT NULL,
+  PRIMARY KEY (`from`, `to`)
+) ENGINE=InnoDB;
