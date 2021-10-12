@@ -155,6 +155,9 @@ interface EnteringCancelDamageArgs {
 interface EnteringLeaveTokyoArgs {
     jetsDamage: number;
     jetsPlayers: number[];
+    _private?: {
+        skipBuyPhase: boolean;
+    };
 }
 
 interface NotifPickMonsterArgs {

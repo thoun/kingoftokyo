@@ -23,7 +23,10 @@ require_once('modules/php/objects/dice.php');
 require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
 require_once('modules/php/monster.php');
-require_once('modules/php/player.php');
+require_once('modules/php/player-utils.php');
+require_once('modules/php/player-actions.php');
+require_once('modules/php/player-args.php');
+require_once('modules/php/player-states.php');
 require_once('modules/php/dice.php');
 require_once('modules/php/cards.php');
 require_once('modules/php/intervention.php');
@@ -32,7 +35,10 @@ require_once('modules/php/debug-util.php');
 class KingOfTokyo extends Table {
     use KOT\States\UtilTrait;
     use KOT\States\MonsterTrait;
-    use KOT\States\PlayerTrait;
+    use KOT\States\PlayerUtilTrait;
+    use KOT\States\PlayerActionTrait;
+    use KOT\States\PlayerArgTrait;
+    use KOT\States\PlayerStateTrait;
     use KOT\States\DiceTrait;
     use KOT\States\CardsTrait;
     use KOT\States\InterventionTrait;
@@ -61,10 +67,11 @@ class KingOfTokyo extends Table {
             KILL_PLAYERS_SCORE_AUX => 21,
             FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 22,
             PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 23,
+            SKIP_BUY_PHASE => 24,
+
             PICK_MONSTER_OPTION => 100,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
-            'ALPHA_DEBUG_20ENERGY_OPTION' => 150,
         ]);      
 		
         $this->cards = self::getNew("module.common.deck");
@@ -138,6 +145,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 1);
         self::setGameStateInitialValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         self::setGameStateInitialValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
+        self::setGameStateInitialValue(SKIP_BUY_PHASE, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

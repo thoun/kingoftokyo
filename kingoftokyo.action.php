@@ -323,6 +323,16 @@
 
         self::ajaxResponse();
     }
+  	
+    public function setSkipBuyPhase() {
+        self::setAjaxMode();
+
+        $skipBuyPhase = self::getArg("skipBuyPhase", AT_bool, true);
+
+        $this->game->setSkipBuyPhase($skipBuyPhase);
+
+        self::ajaxResponse();
+    }
 
   }
   

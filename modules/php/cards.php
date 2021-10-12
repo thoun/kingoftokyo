@@ -1347,7 +1347,7 @@ trait CardsTrait {
         }
 
         $args = $this->argBuyCard();
-        if (($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId)) {
+        if (boolval(self::getGameStateValue(SKIP_BUY_PHASE)) || ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId)) {
             // skip state
             if ($args['canSell']) {
                 $this->goToSellCard(true);

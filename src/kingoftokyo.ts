@@ -406,6 +406,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'resolveSmashDice':
                 this.diceManager.removeAllDice();
+                break;            
+            case 'leaveTokyo':
+                this.removeSkipBuyPhaseToggle();
                 break;
             case 'buyCard':
             case 'opportunistBuyCard':
@@ -453,6 +456,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
+
+                const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
+                if (argsLeaveTokyo._private) {
+                    this.addSkipBuyPhaseToggle(argsLeaveTokyo._private.skipBuyPhase);
+                }
                 break;
             case 'opportunistBuyCard':
                 this.setDiceSelectorVisibility(false);
@@ -712,6 +720,26 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private addSkipBuyPhaseToggle(active: boolean) {
+        if (!document.getElementById('skipBuyPhaseWrapper')) {
+            dojo.place(`<div id="skipBuyPhaseWrapper">
+                <label class="switch">
+                    <input id="skipBuyPhaseCheckbox" type="checkbox" ${active ? 'checked' : ''}>
+                    <span class="slider round"></span>
+                </label>
+                <label for="skipBuyPhaseCheckbox" class="text-label">${_("Skip buy phase")}</label>
+            </div>`, 'rapid-actions-wrapper');
+
+            document.getElementById('skipBuyPhaseCheckbox').addEventListener('change', (e: any) => this.setSkipBuyPhase(e.target.checked));
+        }
+    }
+
+    private removeSkipBuyPhaseToggle() {
+        if (document.getElementById('skipBuyPhaseWrapper')) {
+            dojo.destroy('skipBuyPhaseWrapper');
+        }
+    }
+
     private addAutoLeaveUnderButton() {
         if (!document.getElementById('autoLeaveUnderButton')) {
             this.createButton(
@@ -930,6 +958,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public useRapidHealing() {
         this.takeAction('useRapidHealing');
+    }
+
+    public setSkipBuyPhase(skipBuyPhase: boolean) {
+        this.takeAction('setSkipBuyPhase', {
+            skipBuyPhase
+        });
     }
 
     public changeDie(id: number, value: number, card: number) {

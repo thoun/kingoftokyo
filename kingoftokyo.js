@@ -1837,6 +1837,9 @@ var KingOfTokyo = /** @class */ (function () {
             case 'resolveSmashDice':
                 this.diceManager.removeAllDice();
                 break;
+            case 'leaveTokyo':
+                this.removeSkipBuyPhaseToggle();
+                break;
             case 'buyCard':
             case 'opportunistBuyCard':
                 this.onLeavingBuyCard();
@@ -1879,6 +1882,10 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
+                var argsLeaveTokyo = args;
+                if (argsLeaveTokyo._private) {
+                    this.addSkipBuyPhaseToggle(argsLeaveTokyo._private.skipBuyPhase);
+                }
                 break;
             case 'opportunistBuyCard':
                 this.setDiceSelectorVisibility(false);
@@ -2085,6 +2092,18 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
         }
     };
+    KingOfTokyo.prototype.addSkipBuyPhaseToggle = function (active) {
+        var _this = this;
+        if (!document.getElementById('skipBuyPhaseWrapper')) {
+            dojo.place("<div id=\"skipBuyPhaseWrapper\">\n                <label class=\"switch\">\n                    <input id=\"skipBuyPhaseCheckbox\" type=\"checkbox\" " + (active ? 'checked' : '') + ">\n                    <span class=\"slider round\"></span>\n                </label>\n                <label for=\"skipBuyPhaseCheckbox\" class=\"text-label\">" + _("Skip buy phase") + "</label>\n            </div>", 'rapid-actions-wrapper');
+            document.getElementById('skipBuyPhaseCheckbox').addEventListener('change', function (e) { return _this.setSkipBuyPhase(e.target.checked); });
+        }
+    };
+    KingOfTokyo.prototype.removeSkipBuyPhaseToggle = function () {
+        if (document.getElementById('skipBuyPhaseWrapper')) {
+            dojo.destroy('skipBuyPhaseWrapper');
+        }
+    };
     KingOfTokyo.prototype.addAutoLeaveUnderButton = function () {
         var _this = this;
         if (!document.getElementById('autoLeaveUnderButton')) {
@@ -2276,6 +2295,11 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.useRapidHealing = function () {
         this.takeAction('useRapidHealing');
+    };
+    KingOfTokyo.prototype.setSkipBuyPhase = function (skipBuyPhase) {
+        this.takeAction('setSkipBuyPhase', {
+            skipBuyPhase: skipBuyPhase
+        });
     };
     KingOfTokyo.prototype.changeDie = function (id, value, card) {
         if (!this.checkAction('changeDie')) {
