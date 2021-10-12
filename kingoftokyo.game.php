@@ -23,6 +23,7 @@ require_once('modules/php/objects/dice.php');
 require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
 require_once('modules/php/monster.php');
+require_once('modules/php/initial-card.php');
 require_once('modules/php/player-utils.php');
 require_once('modules/php/player-actions.php');
 require_once('modules/php/player-args.php');
@@ -41,6 +42,7 @@ require_once('modules/php/debug-util.php');
 class KingOfTokyo extends Table {
     use KOT\States\UtilTrait;
     use KOT\States\MonsterTrait;
+    use KOT\States\InitialCardTrait;
     use KOT\States\PlayerUtilTrait;
     use KOT\States\PlayerActionTrait;
     use KOT\States\PlayerArgTrait;
@@ -186,7 +188,6 @@ class KingOfTokyo extends Table {
 
         // setup the initial game situation here
         $this->initCards();
-        $this->cards->pickCardsForLocation(3, 'deck', 'table');
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -214,7 +215,7 @@ class KingOfTokyo extends Table {
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
         $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead FROM player order by player_no";
-        $result['players'] = self::getCollectionFromDb( $sql );
+        $result['players'] = self::getCollectionFromDb($sql);
 
         // Gather all information about current game situation (visible by player $current_player_id).
 
@@ -272,7 +273,22 @@ class KingOfTokyo extends Table {
     }
 
     function stStart() {
-        $this->gamestate->nextState($this->canPickMonster() ? 'pickMonster' : 'start');
+        $this->gamestate->nextState($this->canPickMonster() ? 'pickMonster' : ($this->isHalloweenExpansion() ? 'chooseInitialCard' : 'start'));
+    }
+
+    function stStartGame() {
+        $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
+        $this->cards->shuffle('deck'); 
+
+        $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
+
+        self::notifyAllPlayers("setInitialCards", '', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'cards' => $cards,
+        ]);
+
+        $this->gamestate->nextState('start');
     }
 
     function stGameEnd() {

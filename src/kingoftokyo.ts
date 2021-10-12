@@ -150,6 +150,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 dojo.addClass('kot-table', 'pickMonster');
                 this.onEnteringPickMonster(args.args);
                 break;
+            case 'chooseInitialCard':
+                this.onEnteringChooseInitialCard(args.args);
+                break;
+            case 'startGame':
+            if (document.getElementById('monster-pick')) {
+                (this as any).fadeOutAndDestroy('monster-pick');
+            }
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
                 this.setDiceSelectorVisibility(false);
@@ -160,9 +167,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                     dojo.removeClass('kot-table', 'pickMonster');
                     this.tableManager.setAutoZoomAndPlacePlayerTables();
                     this.visibleCards.updateDisplay();
-                }
-                if (document.getElementById('monster-pick')) {                    
-                    (this as any).fadeOutAndDestroy('monster-pick');
                 }
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
@@ -228,6 +232,15 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
+    }
+
+    private onEnteringChooseInitialCard(args: EnteringChooseInitialCardArgs) {
+        //this.visibleCards.removeAllTo('deck');
+        this.cards.addCardsToStock(this.visibleCards, args.cards, 'deck');
+
+        if ((this as any).isCurrentPlayerActive()) {
+            this.visibleCards.setSelectionMode(1);
+        }
     }
 
     private onEnteringThrowDice(args: EnteringThrowDiceArgs) {
@@ -678,7 +691,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             return;
         }
 
-        if (this.gamedatas.gamestate.name === 'sellCard') {
+        if (this.gamedatas.gamestate.name === 'chooseInitialCard') {
+            this.chooseInitialCard(Number(cardId));
+        } else if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
         } else if (this.gamedatas.gamestate.name === 'chooseMimickedCard' || this.gamedatas.gamestate.name === 'opportunistChooseMimicCard') {
             this.chooseMimickedCard(cardId);
@@ -906,6 +921,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('pickMonster', {
             monster
+        });
+    }
+
+    public chooseInitialCard(id: number) {
+        if(!(this as any).checkAction('chooseInitialCard')) {
+            return;
+        }
+
+        this.takeAction('chooseInitialCard', {
+            id
         });
     }
 
@@ -1286,6 +1311,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const notifs = [
             ['pickMonster', 500],
+            ['setInitialCards', 500],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealingRay', ANIMATION_MS],
@@ -1338,6 +1364,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         animation.play();
 
         this.getPlayerTable(notif.args.playerId).setMonster(notif.args.monster);
+    }
+
+    notif_setInitialCards(notif: Notif<NotifSetInitialCardsArgs>) {
+        this.cards.addCardsToStock(this.visibleCards, notif.args.cards, 'deck');
     }
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
@@ -1417,6 +1447,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             } else {
                 this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
+        }
+
+        if (notif.args.discardCard) {
+            this.visibleCards.removeFromStockById(''+notif.args.discardCard.id);
         }
 
         this.tableManager.placePlayerTable(); // adapt to new card

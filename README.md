@@ -37,5 +37,4 @@ add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 when locking some dice then reroll 3s with background dweller without rethrowing, locked dice just before this action are lost (not important)
 
-toggle to skip buy during leave tokyo phase
-frenzy with opportunist
+replace all TODOTR

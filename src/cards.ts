@@ -266,18 +266,18 @@ class Cards {
             //case 120: return 2;
 
             // COSTUME
-            case 101: return 4;
-            case 102: return 4;
-            case 103: return 3;
-            case 104: return 4;
-            case 105: return 3;
-            case 106: return 4;
-            case 107: return 5;
-            case 108: return 4;
-            case 109: return 3;
-            case 110: return 4;
-            case 111: return 4;
-            case 112: return 3;
+            case 201: return 4;
+            case 202: return 4;
+            case 203: return 3;
+            case 204: return 4;
+            case 205: return 3;
+            case 206: return 4;
+            case 207: return 5;
+            case 208: return 4;
+            case 209: return 3;
+            case 210: return 4;
+            case 211: return 4;
+            case 212: return 3;
         }
         return null;
     }
@@ -363,7 +363,8 @@ class Cards {
             //case 120: return _("Army");
 
             // COSTUME
-            // TODO
+            // TODOTR
+            case 201: case 202: case 203: case 204: case 205: case 206: case 207: case 208: case 209: case 210: case 211: case 212: return '';
         }
         return null;
     }
@@ -470,6 +471,7 @@ class Cards {
 
             // COSTUME
             // TODO
+            case 201: case 202: case 203: case 204: case 205: case 206: case 207: case 208: case 209: case 210: case 211: case 212: return '';
         }
         return null;
     }
@@ -484,12 +486,32 @@ class Cards {
     }
 
     public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
-        this.setDivAsCard(cardDiv, cardType);        
+        this.setDivAsCard(cardDiv, cardType); 
         (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
 
+    private getCardTypeName(cardType: number) {
+        if (cardType < 100) {
+            return _('Keep');
+        } else if (cardType < 200) {
+            return _('Discard');
+        } else if (cardType < 300) {
+            return 'Costume'; //TODOTR _('Costume')
+        }
+    }
+
+    private getCardTypeClass(cardType: number) {
+        if (cardType < 100) {
+            return 'keep';
+        } else if (cardType < 200) {
+            return 'discard';
+        } else if (cardType < 300) {
+            return 'costume';
+        }
+    }
+
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
-        const type = cardType < 100 ? _('Keep') : _('Discard');
+        const type = this.getCardTypeName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType));
         const position = this.getCardNamePosition(cardType);
 
@@ -498,7 +520,7 @@ class Cards {
             <div class="outline">${this.getCardName(cardType, 'span')}</div>
             <div class="text">${this.getCardName(cardType, 'text-only')}</div>
         </div>
-        <div class="type-wrapper ${ cardType < 100 ? 'keep' : 'discard'}">
+        <div class="type-wrapper ${this.getCardTypeClass(cardType)}">
             <div class="outline">${type}</div>
             <div class="text">${type}</div>
         </div>
@@ -524,6 +546,16 @@ class Cards {
         }
     }
 
+    private getImageName(cardType: number) {
+        if (cardType < 100) {
+            return 'keep';
+        } else if (cardType < 200) {
+            return 'discard';
+        } else if (cardType < 300) {
+            return 'costume';
+        }
+    }
+
     public changeMimicTooltip(mimicCardId: string, mimickedCard: Card) {
         let mimickedCardText = '-';
         if (mimickedCard) {
@@ -532,8 +564,8 @@ class Cards {
             tempDiv.style.width = `${CARD_WIDTH}px`;
             tempDiv.style.height = `${CARD_HEIGHT}px`;
             tempDiv.style.position = `relative`;
-            tempDiv.style.backgroundImage = mimickedCard.type < 100 ? `url('${g_gamethemeurl}img/keep-cards.jpg')` : `url('${g_gamethemeurl}img/discard-cards.jpg')`;
-            const imagePosition = mimickedCard.type < 100 ? mimickedCard.type - 1 : mimickedCard.type - 101;
+            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(mimickedCard.type)}-cards.jpg')`;
+            const imagePosition = (mimickedCard.type % 100) - 1;
             const image_items_per_row = 10;
             var row = Math.floor(imagePosition / image_items_per_row);
             const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;

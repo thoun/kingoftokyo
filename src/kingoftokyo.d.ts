@@ -83,6 +83,10 @@ interface EnteringPickMonsterArgs {
     availableMonsters: number[];
 }
 
+interface EnteringChooseInitialCardArgs {
+    cards: Card[];
+}
+
 interface EnteringDiceArgs {
     dice: Dice[];
     inTokyo: boolean;
@@ -166,6 +170,10 @@ interface NotifPickMonsterArgs {
     monster: number;
 }
 
+interface NotifSetInitialCardsArgs {
+    cards: Card[];
+}
+
 interface NotifResolveArgs {
     playerId: number;
     player_name: string;
@@ -225,6 +233,7 @@ interface NotifBuyCardArgs {
     newCard: Card;
     energy: number;
     from: number;
+    discardCard?: Card;
 }
 
 interface NotifRenewCardsArgs {

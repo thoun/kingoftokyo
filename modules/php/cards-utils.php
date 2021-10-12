@@ -29,7 +29,6 @@ trait CardsUtilTrait {
         }
 
         $this->cards->createCards($cards, 'deck');
-        $this->cards->shuffle('deck'); 
 
         if ($this->isHalloweenExpansion()) { 
             $cards = [];
@@ -590,7 +589,7 @@ trait CardsUtilTrait {
     
     function removeDiscardCards(int $playerId) {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $discardCards = array_values(array_filter($cards, function($card) { return $card->type >= 100; }));
+        $discardCards = array_values(array_filter($cards, function($card) { return ($card->type >= 100 && $card->type < 200); }));
         $this->removeCards($playerId, $discardCards);
     }
 

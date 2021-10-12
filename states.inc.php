@@ -69,7 +69,8 @@ $basicGameStates = [
         "action" => "stStart",
         "transitions" => [ 
             "pickMonster" => ST_PLAYER_PICK_MONSTER,
-            "start" => ST_START_TURN,
+            "chooseInitialCard" => ST_PLAYER_CHOOSE_INITIAL_CARD,
+            "start" => ST_START_GAME,
         ],
     ],
 
@@ -80,7 +81,19 @@ $basicGameStates = [
         "action" => "stPickMonsterNextPlayer",
         "transitions" => [
             "nextPlayer" => ST_PLAYER_PICK_MONSTER,
-            "start" => ST_START_TURN,
+            "chooseInitialCard" => ST_PLAYER_CHOOSE_INITIAL_CARD,
+            "start" => ST_START_GAME,
+        ],
+    ],
+
+    ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER => [
+        "name" => "chooseInitialCardNextPlayer",
+        "description" => "",
+        "type" => "game",
+        "action" => "stChooseInitialCardNextPlayer",
+        "transitions" => [
+            "nextPlayer" => ST_PLAYER_CHOOSE_INITIAL_CARD,
+            "start" => ST_START_GAME,
         ],
     ],
 
@@ -120,9 +133,34 @@ $playerActionsGameStates = [
         "possibleactions" => [ "pickMonster" ],
         "transitions" => [
             "next" => ST_PICK_MONSTER_NEXT_PLAYER,
-            "start" => ST_START_TURN,
+            "start" => ST_START_GAME,
         ],
 
+    ],
+
+    ST_PLAYER_CHOOSE_INITIAL_CARD => [
+        "name" => "chooseInitialCard",
+        "description" => '', // TODOTR clienttranslate('${actplayer} must choose a card'),
+        "descriptionmyturn" => '', // TODOTR clienttranslate('${you} must choose a card'),
+        "type" => "activeplayer",
+        "action" => "stChooseInitialCard",
+        "args" => "argChooseInitialCard",
+        "possibleactions" => [ "chooseInitialCard" ],
+        "transitions" => [
+            "next" => ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER,
+            "start" => ST_START_GAME,
+        ],
+
+    ],
+
+    ST_START_GAME => [
+        "name" => "startGame",
+        "description" => "",
+        "type" => "game",
+        "action" => "stStartGame",
+        "transitions" => [ 
+            "start" => ST_START_TURN,
+        ],
     ],
 
     ST_START_TURN => [

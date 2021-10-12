@@ -24,11 +24,12 @@ trait MonsterTrait {
             }
         }
 
-        // TODO and test zombie in pick monster
         return $availableMonsters;
     }
 
     function setMonster(int $playerId, int $monsterId) {
+        $this->checkAction('setMonster');
+
         self::DbQuery("UPDATE player SET `player_monster` = $monsterId where `player_id` = $playerId");
 
         self::notifyAllPlayers('pickMonster', '', [
@@ -91,7 +92,7 @@ trait MonsterTrait {
         self::giveExtraTime($playerId);
 
         if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
-            $this->gamestate->nextState('start');
+            $this->gamestate->nextState($this->isHalloweenExpansion() ? 'chooseInitialCard' : 'start');
         } else {
             $this->gamestate->nextState('nextPlayer');
         }

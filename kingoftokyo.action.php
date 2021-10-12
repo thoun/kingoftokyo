@@ -47,6 +47,16 @@
         self::ajaxResponse();
     }
   	
+    public function chooseInitialCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->chooseInitialCard($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function rethrow() {
         self::setAjaxMode();
 

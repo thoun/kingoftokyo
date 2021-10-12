@@ -291,18 +291,18 @@ var Cards = /** @class */ (function () {
             //case 119: return 6;
             //case 120: return 2;
             // COSTUME
-            case 101: return 4;
-            case 102: return 4;
-            case 103: return 3;
-            case 104: return 4;
-            case 105: return 3;
-            case 106: return 4;
-            case 107: return 5;
-            case 108: return 4;
-            case 109: return 3;
-            case 110: return 4;
-            case 111: return 4;
-            case 112: return 3;
+            case 201: return 4;
+            case 202: return 4;
+            case 203: return 3;
+            case 204: return 4;
+            case 205: return 3;
+            case 206: return 4;
+            case 207: return 5;
+            case 208: return 4;
+            case 209: return 3;
+            case 210: return 4;
+            case 211: return 4;
+            case 212: return 3;
         }
         return null;
     };
@@ -388,7 +388,19 @@ var Cards = /** @class */ (function () {
             //case 119: return _("Amusement Park");
             //case 120: return _("Army");
             // COSTUME
-            // TODO
+            // TODOTR
+            case 201:
+            case 202:
+            case 203:
+            case 204:
+            case 205:
+            case 206:
+            case 207:
+            case 208:
+            case 209:
+            case 210:
+            case 211:
+            case 212: return '';
         }
         return null;
     };
@@ -495,6 +507,18 @@ var Cards = /** @class */ (function () {
             //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
             // COSTUME
             // TODO
+            case 201:
+            case 202:
+            case 203:
+            case 204:
+            case 205:
+            case 206:
+            case 207:
+            case 208:
+            case 209:
+            case 210:
+            case 211:
+            case 212: return '';
         }
         return null;
     };
@@ -506,11 +530,33 @@ var Cards = /** @class */ (function () {
         this.setDivAsCard(cardDiv, cardType);
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
+    Cards.prototype.getCardTypeName = function (cardType) {
+        if (cardType < 100) {
+            return _('Keep');
+        }
+        else if (cardType < 200) {
+            return _('Discard');
+        }
+        else if (cardType < 300) {
+            return 'Costume'; //TODOTR _('Costume')
+        }
+    };
+    Cards.prototype.getCardTypeClass = function (cardType) {
+        if (cardType < 100) {
+            return 'keep';
+        }
+        else if (cardType < 200) {
+            return 'discard';
+        }
+        else if (cardType < 300) {
+            return 'costume';
+        }
+    };
     Cards.prototype.setDivAsCard = function (cardDiv, cardType) {
-        var type = cardType < 100 ? _('Keep') : _('Discard');
+        var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
         var position = this.getCardNamePosition(cardType);
-        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" " + (position ? "style=\"left: " + position[0] + "px; top: " + position[1] + "px;\"" : '') + ">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n        </div>\n        <div class=\"type-wrapper " + (cardType < 100 ? 'keep' : 'discard') + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" " + (position ? "style=\"left: " + position[0] + "px; top: " + position[1] + "px;\"" : '') + ">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n        </div>\n        <div class=\"type-wrapper " + this.getCardTypeClass(cardType) + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
         var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         if (textHeight > 80) {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';
@@ -527,6 +573,17 @@ var Cards = /** @class */ (function () {
             nameWrapperDiv.style.top = Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName) + "px";
         }
     };
+    Cards.prototype.getImageName = function (cardType) {
+        if (cardType < 100) {
+            return 'keep';
+        }
+        else if (cardType < 200) {
+            return 'discard';
+        }
+        else if (cardType < 300) {
+            return 'costume';
+        }
+    };
     Cards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCard) {
         var mimickedCardText = '-';
         if (mimickedCard) {
@@ -535,8 +592,8 @@ var Cards = /** @class */ (function () {
             tempDiv.style.width = CARD_WIDTH + "px";
             tempDiv.style.height = CARD_HEIGHT + "px";
             tempDiv.style.position = "relative";
-            tempDiv.style.backgroundImage = mimickedCard.type < 100 ? "url('" + g_gamethemeurl + "img/keep-cards.jpg')" : "url('" + g_gamethemeurl + "img/discard-cards.jpg')";
-            var imagePosition = mimickedCard.type < 100 ? mimickedCard.type - 1 : mimickedCard.type - 101;
+            tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + this.getImageName(mimickedCard.type) + "-cards.jpg')";
+            var imagePosition = (mimickedCard.type % 100) - 1;
             var image_items_per_row = 10;
             var row = Math.floor(imagePosition / image_items_per_row);
             var xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
@@ -1627,6 +1684,13 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.addClass('kot-table', 'pickMonster');
                 this.onEnteringPickMonster(args.args);
                 break;
+            case 'chooseInitialCard':
+                this.onEnteringChooseInitialCard(args.args);
+                break;
+            case 'startGame':
+                if (document.getElementById('monster-pick')) {
+                    this.fadeOutAndDestroy('monster-pick');
+                }
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
                 this.setDiceSelectorVisibility(false);
@@ -1637,9 +1701,6 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.removeClass('kot-table', 'pickMonster');
                     this.tableManager.setAutoZoomAndPlacePlayerTables();
                     this.visibleCards.updateDisplay();
-                }
-                if (document.getElementById('monster-pick')) {
-                    this.fadeOutAndDestroy('monster-pick');
                 }
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
@@ -1697,6 +1758,13 @@ var KingOfTokyo = /** @class */ (function () {
         });
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
+    };
+    KingOfTokyo.prototype.onEnteringChooseInitialCard = function (args) {
+        //this.visibleCards.removeAllTo('deck');
+        this.cards.addCardsToStock(this.visibleCards, args.cards, 'deck');
+        if (this.isCurrentPlayerActive()) {
+            this.visibleCards.setSelectionMode(1);
+        }
     };
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
         var _this = this;
@@ -2077,7 +2145,10 @@ var KingOfTokyo = /** @class */ (function () {
             stock.unselectItem(cardId);
             return;
         }
-        if (this.gamedatas.gamestate.name === 'sellCard') {
+        if (this.gamedatas.gamestate.name === 'chooseInitialCard') {
+            this.chooseInitialCard(Number(cardId));
+        }
+        else if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
         }
         else if (this.gamedatas.gamestate.name === 'chooseMimickedCard' || this.gamedatas.gamestate.name === 'opportunistChooseMimicCard') {
@@ -2277,6 +2348,14 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('pickMonster', {
             monster: monster
+        });
+    };
+    KingOfTokyo.prototype.chooseInitialCard = function (id) {
+        if (!this.checkAction('chooseInitialCard')) {
+            return;
+        }
+        this.takeAction('chooseInitialCard', {
+            id: id
         });
     };
     KingOfTokyo.prototype.onRethrow = function () {
@@ -2584,6 +2663,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var notifs = [
             ['pickMonster', 500],
+            ['setInitialCards', 500],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealingRay', ANIMATION_MS],
@@ -2633,6 +2713,9 @@ var KingOfTokyo = /** @class */ (function () {
         }));
         animation.play();
         this.getPlayerTable(notif.args.playerId).setMonster(notif.args.monster);
+    };
+    KingOfTokyo.prototype.notif_setInitialCards = function (notif) {
+        this.cards.addCardsToStock(this.visibleCards, notif.args.cards, 'deck');
     };
     KingOfTokyo.prototype.notif_resolveNumberDice = function (notif) {
         this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);
@@ -2704,6 +2787,9 @@ var KingOfTokyo = /** @class */ (function () {
             else {
                 this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
+        }
+        if (notif.args.discardCard) {
+            this.visibleCards.removeFromStockById('' + notif.args.discardCard.id);
         }
         this.tableManager.placePlayerTable(); // adapt to new card
     };
