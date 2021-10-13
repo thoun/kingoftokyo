@@ -636,7 +636,7 @@ trait CardsUtilTrait {
 
     function applyEndOfEachMonsterCards() {
         $ghostCards = $this->getCardsFromDb($this->cards->getCardsOfType(GHOST_CARD));
-        if (count($ghostCards > 0)) {
+        if (count($ghostCards) > 0) {
             $ghostCard = $ghostCards[0];
             if ($ghostCard->location == 'hand') {
                 $playerId = intval($ghostCard->location_arg);
@@ -648,7 +648,7 @@ trait CardsUtilTrait {
         }
         
         $vampireCards = $this->getCardsFromDb($this->cards->getCardsOfType(VAMPIRE_CARD));
-        if (count($vampireCards > 0)) {
+        if (count($vampireCards) > 0) {
             $vampireCard = $vampireCards[0];
         
             if ( $vampireCard->location == 'hand') {
