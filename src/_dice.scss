@@ -353,13 +353,14 @@ $size: 0.25rem;
     .die-face-selector {
       display: flex;
       justify-content: space-evenly;
-      margin: 10px;
+      margin: 5px;
 
       .dice-icon {
         position: relative;
         width: 33px;
         height: 33px;
         cursor: pointer;
+        margin: 5px;
 
         &.selected {
           box-shadow: 0 0 3px 3px red;

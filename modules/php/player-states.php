@@ -23,11 +23,12 @@ trait PlayerStateTrait {
             self::incStat(1, 'turnsInTokyo', $id);
         }
 
+        self::DbQuery("DELETE FROM `turn_damages` WHERE 1");
         self::setGameStateValue('damageDoneByActivePlayer', 0);
-        self::DbQuery("TRUNCATE TABLE `turn_damages`");
         self::setGameStateValue(EXTRA_ROLLS, 0);
         self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         self::setGameStateValue(SKIP_BUY_PHASE, 0);
+        self::setGameStateValue(CLOWN_ACTIVATED, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);

@@ -276,16 +276,33 @@ trait DiceUtilTrait {
         $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST_CARD) > 0;
         // Stretchy
         $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $this->getPlayerEnergy($playerId) >= 2;
+
+        $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
+        // Clown
+        if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
+            $dice = $this->getDice($this->getDiceNumber($playerId));
+            $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
+            $diceCounts = [];
+            for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+                $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
+            }
+            
+            if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
+                self::setGameStateValue(CLOWN_ACTIVATED, 1);
+                $hasClown = true;
+            }
+        }
         
         return [
             'hasHerdCuller' => $hasHerdCuller,
             'hasPlotTwist' => $hasPlotTwist,
             'hasStretchy' => $hasStretchy,
+            'hasClown' => $hasClown,
         ];
     }
 
     function canChangeDie(array $cards) {
-        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'];
+        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'] || $cards['hasClown'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        

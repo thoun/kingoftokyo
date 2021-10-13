@@ -1066,7 +1066,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo, isCurrentPlayerActive) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             dice.forEach(function (die) {
@@ -1079,7 +1079,7 @@ var DiceManager = /** @class */ (function () {
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
-        var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
+        var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
             _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + die.value);
@@ -1407,6 +1407,7 @@ var DiceManager = /** @class */ (function () {
             var herdCullerButtonId_1 = bubbleActionButtonsId + "-herdCuller";
             var plotTwistButtonId_1 = bubbleActionButtonsId + "-plotTwist";
             var stretchyButtonId_1 = bubbleActionButtonsId + "-stretchy";
+            var clownButtonId_1 = bubbleActionButtonsId + "-clown";
             var args_1 = this.changeDieArgs;
             if (!this.dieFaceSelectors[die.id]) {
                 this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die.value, args_1.inTokyo);
@@ -1414,47 +1415,65 @@ var DiceManager = /** @class */ (function () {
             var dieFaceSelector_1 = this.dieFaceSelectors[die.id];
             if (creation) {
                 var buttonText = _("Change die face with ${card_name}");
-                if (args_1.hasHerdCuller) {
-                    this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(22, 'text-only') + "</strong>" }), function () {
-                        _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 22);
-                        _this.toggleBubbleChangeDie(die);
-                    }, true);
-                }
-                if (args_1.hasPlotTwist) {
-                    this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(33, 'text-only') + "</strong>" }), function () {
-                        _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 33),
+                if (args_1.hasClown) {
+                    this.game.createButton(bubbleActionButtonsId, clownButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(212, 'text-only') + "</strong>" }), function () {
+                        _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 212),
                             _this.toggleBubbleChangeDie(die);
                     }, true);
                 }
-                if (args_1.hasStretchy) {
-                    this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(44, 'text-only') + "</strong>" }) + formatTextIcons(' (2 [Energy])'), function () {
-                        _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 44),
+                else {
+                    if (args_1.hasHerdCuller) {
+                        this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(22, 'text-only') + "</strong>" }), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 22);
                             _this.toggleBubbleChangeDie(die);
-                    }, true);
-                }
-                dieFaceSelector_1.onChange = function (value) {
-                    if (args_1.hasHerdCuller && die.value > 1) {
-                        dojo.toggleClass(herdCullerButtonId_1, 'disabled', value != 1);
+                        }, true);
                     }
                     if (args_1.hasPlotTwist) {
-                        dojo.toggleClass(plotTwistButtonId_1, 'disabled', value < 1);
+                        this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(33, 'text-only') + "</strong>" }), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 33),
+                                _this.toggleBubbleChangeDie(die);
+                        }, true);
                     }
                     if (args_1.hasStretchy) {
-                        dojo.toggleClass(stretchyButtonId_1, 'disabled', value < 1);
+                        this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(44, 'text-only') + "</strong>" }) + formatTextIcons(' (2 [Energy])'), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 44),
+                                _this.toggleBubbleChangeDie(die);
+                        }, true);
+                    }
+                }
+                dieFaceSelector_1.onChange = function (value) {
+                    if (args_1.hasClown) {
+                        dojo.toggleClass(clownButtonId_1, 'disabled', value < 1);
+                    }
+                    else {
+                        if (args_1.hasHerdCuller && die.value > 1) {
+                            dojo.toggleClass(herdCullerButtonId_1, 'disabled', value != 1);
+                        }
+                        if (args_1.hasPlotTwist) {
+                            dojo.toggleClass(plotTwistButtonId_1, 'disabled', value < 1);
+                        }
+                        if (args_1.hasStretchy) {
+                            dojo.toggleClass(stretchyButtonId_1, 'disabled', value < 1);
+                        }
                     }
                 };
                 bubble.addEventListener('click', function (event) { return event.stopImmediatePropagation(); });
             }
             if (die.value == dieFaceSelector_1.getValue()) {
                 dieFaceSelector_1.reset(die.value);
-                if (args_1.hasHerdCuller) {
-                    dojo.addClass(herdCullerButtonId_1, 'disabled');
-                }
-                if (args_1.hasPlotTwist) {
-                    dojo.addClass(plotTwistButtonId_1, 'disabled');
-                }
-                if (args_1.hasStretchy) {
+                if (args_1.hasClown) {
                     dojo.addClass(stretchyButtonId_1, 'disabled');
+                }
+                else {
+                    if (args_1.hasHerdCuller) {
+                        dojo.addClass(herdCullerButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasPlotTwist) {
+                        dojo.addClass(plotTwistButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasStretchy) {
+                        dojo.addClass(stretchyButtonId_1, 'disabled');
+                    }
                 }
             }
             args_1.dice.filter(function (idie) { return idie.id != die.id; }).forEach(function (idie) { return _this.hideBubble(idie.id); });

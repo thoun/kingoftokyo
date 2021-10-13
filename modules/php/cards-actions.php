@@ -34,11 +34,11 @@ trait CardsActionTrait {
 
         $cost = $this->getCardCost($playerId, $card->type);
         if (!$this->canBuyCard($playerId, $cost)) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
-            throw new \Error("You can't buy from other players without Parasitic Tentacles");
+            throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
         }
 
         $this->updateKillPlayersScoreAux();        
@@ -191,7 +191,7 @@ trait CardsActionTrait {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         $this->removeDiscardCards($playerId);
@@ -255,7 +255,7 @@ trait CardsActionTrait {
         $playerId = self::getActivePlayerId();
         
         if ($this->countCardOfType($playerId, METAMORPH_CARD) == 0) {
-            throw new \Error("You can't sell cards without Metamorph");
+            throw new \BgaUserException("You can't sell cards without Metamorph");
         }
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
@@ -295,7 +295,7 @@ trait CardsActionTrait {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
 
@@ -467,15 +467,15 @@ trait CardsActionTrait {
         $playerId = self::getCurrentPlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         if ($this->countCardOfType($playerId, WINGS_CARD) == 0) {
-            throw new \Error('No Wings card');
+            throw new \BgaUserException('No Wings card');
         }
 
         if ($this->isInvincible($playerId)) {
-            throw new \Error('You already used Wings in this turn');
+            throw new \BgaUserException('You already used Wings in this turn');
         }
 
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);

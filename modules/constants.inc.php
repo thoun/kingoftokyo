@@ -83,6 +83,7 @@ define('KILL_PLAYERS_SCORE_AUX', 'KillPlayersScoreAux');
 define('FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'FrenzyExtraTurnForOpportunist');
 define('PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'PlayerBeforeFrenzyExtraTurnForOpportunist');
 define('SKIP_BUY_PHASE', 'SkipBuyPhase');
+define('CLOWN_ACTIVATED', 'ClownActivated');
 
 /*
  * Global variables

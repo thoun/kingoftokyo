@@ -82,6 +82,7 @@ class KingOfTokyo extends Table {
             FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 22,
             PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 23,
             SKIP_BUY_PHASE => 24,
+            CLOWN_ACTIVATED => 25,
 
             PICK_MONSTER_OPTION => 100,
             GAME_VERSION_OPTION => 101,
@@ -161,6 +162,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         self::setGameStateInitialValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         self::setGameStateInitialValue(SKIP_BUY_PHASE, 0);
+        self::setGameStateInitialValue(CLOWN_ACTIVATED, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -193,7 +195,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup();
+        //$this->debugSetup();
 
         /************ End of the game initialization *****/
     }
@@ -280,7 +282,7 @@ class KingOfTokyo extends Table {
         $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
         $this->cards->shuffle('deck'); 
 
-        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MIMIC_CARD);
+        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HERBIVORE_CARD);
         $cards = $this->placeNewCardsOnTable();
 
         self::notifyAllPlayers("setInitialCards", '', [

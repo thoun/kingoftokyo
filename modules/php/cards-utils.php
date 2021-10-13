@@ -363,13 +363,13 @@ trait CardsUtilTrait {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         $cards = $this->getCardsOfType($playerId, ENERGY_DRINK_CARD);
 
         if (count($cards) == 0) {
-            throw new \Error('No Energy Drink card');
+            throw new \BgaUserException('No Energy Drink card');
         }
 
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
@@ -388,7 +388,7 @@ trait CardsUtilTrait {
         $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
 
         if (count($cards) == 0) {
-            throw new \Error('No Smoke Cloud card');
+            throw new \BgaUserException('No Smoke Cloud card');
         }
 
         // we choose mimic card first, if available
@@ -403,7 +403,7 @@ trait CardsUtilTrait {
         }
 
         if ($card->tokens < 1) {
-            throw new \Error('Not enough token');
+            throw new \BgaUserException('Not enough token');
         }
 
         $tokensOnCard = $card->tokens - 1;
@@ -427,21 +427,21 @@ trait CardsUtilTrait {
 
     function applyRapidHealing(int $playerId) {
         if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         $health = $this->getPlayerHealth($playerId);
 
         if ($health <= 0) {
-            throw new \Error('You can\'t heal when you\'re dead');
+            throw new \BgaUserException('You can\'t heal when you\'re dead');
         }
 
         if ($health >= $this->getPlayerMaxHealth($playerId)) {
-            throw new \Error('You can\'t heal when you\'re already at full life');
+            throw new \BgaUserException('You can\'t heal when you\'re already at full life');
         }
 
         if ($this->countCardOfType($playerId, RAPID_HEALING_CARD) == 0) {
-            throw new \Error('No Rapid Healing card');
+            throw new \BgaUserException('No Rapid Healing card');
         }
 
         $this->applyGetHealth($playerId, 1, RAPID_HEALING_CARD);
