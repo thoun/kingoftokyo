@@ -109,4 +109,25 @@ trait CardsStateTrait {
             }
         }
     }
+
+    function stStealCostumeCard() {
+        $playerId = self::getActivePlayerId();
+
+        $dice = $this->getDice($this->getDiceNumber($playerId));
+        $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
+        $smashCounts = count(array_values(array_filter($diceValues, function($dice) { return $dice == 6; })));
+
+        if ($smashCounts < 3) {
+            // skip state, can't steal cards (not enough smashes)
+            $this->gamestate->nextState('endStealCostume');
+            return;
+        }
+        
+        $args = $this->argStealCostumeCard();
+        if ($this->autoSkipImpossibleActions() && !$args['canBuyFromPlayers']) {
+            // skip state, can't buy cards
+            $this->gamestate->nextState('endStealCostume');
+            return;
+        }
+    }
 }

@@ -47,7 +47,7 @@ trait UtilTrait {
     private function getGameVersion() {        
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return 2; // TODO TEMP
+            return 1; // TODO TEMP
         } else {
             return 1;
         }

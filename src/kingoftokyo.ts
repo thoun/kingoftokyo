@@ -179,6 +179,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, (this as any).isCurrentPlayerActive());
                 break;
+
+            case 'stealCostumeCard':
+                this.setDiceSelectorVisibility(false);
+                this.onEnteringStealCostumeCard(args.args, (this as any).isCurrentPlayerActive());
+                break;
             
             case 'buyCard':
                 this.setDiceSelectorVisibility(false);
@@ -356,6 +361,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private onEnteringStealCostumeCard(args: EnteringStealCostumeCardArgs, isCurrentPlayerActive: boolean) {
+        if (isCurrentPlayerActive) {
+            this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
+        }
+    }
+
     private onEnteringBuyCard(args: EnteringBuyCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
             this.visibleCards.setSelectionMode(1);
@@ -425,6 +437,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'leaveTokyo':
                 this.removeSkipBuyPhaseToggle();
                 break;
+            case 'stealCostumeCard':
             case 'buyCard':
             case 'opportunistBuyCard':
                 this.onLeavingBuyCard();
@@ -523,7 +536,16 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
                     (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
                     break;
-                
+
+                case 'stealCostumeCard':
+                    const argsStealCostumeCard = args as EnteringStealCostumeCardArgs;
+
+                    (this as any).addActionButton('endStealCostume_button', _("Skip"), 'endStealCostume', null, null, 'red');
+
+                    if (!argsStealCostumeCard.canBuyFromPlayers) {
+                        this.startActionTimer('endStealCostume_button', 5);
+                    }
+                    break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
 
@@ -702,7 +724,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         if (this.gamedatas.gamestate.name === 'chooseInitialCard') {
-            this.chooseInitialCard(Number(cardId));
+            this.chooseInitialCard(cardId);
+        } else if (this.gamedatas.gamestate.name === 'stealCostumeCard') {
+            this.stealCostumeCard(cardId);
         } else if (this.gamedatas.gamestate.name === 'sellCard') {
             this.sellCard(cardId);
         } else if (this.gamedatas.gamestate.name === 'chooseMimickedCard' || this.gamedatas.gamestate.name === 'opportunistChooseMimicCard') {
@@ -934,7 +958,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public chooseInitialCard(id: number) {
+    public chooseInitialCard(id: number | string) {
         if(!(this as any).checkAction('chooseInitialCard')) {
             return;
         }
@@ -1070,6 +1094,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('leave');
     }
 
+    public stealCostumeCard(id: number | string) {
+        if(!(this as any).checkAction('stealCostumeCard')) {
+            return;
+        }
+
+        this.takeAction('stealCostumeCard', {
+            id
+        });
+    }
+
     public buyCard(id: number | string, from: number) {
         if(!(this as any).checkAction('buyCard')) {
             return;
@@ -1149,6 +1183,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipChangeMimickedCard');
+    }
+
+    public endStealCostume() {
+        if(!(this as any).checkAction('endStealCostume')) {
+            return;
+        }
+
+        this.takeAction('endStealCostume');
     }
 
     public onEndTurn() {

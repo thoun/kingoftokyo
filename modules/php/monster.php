@@ -45,8 +45,10 @@ trait MonsterTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function pickMonster(int $monsterId) {
-        $this->checkAction('pickMonster');
+    function pickMonster(int $monsterId, $skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('pickMonster');
+        }        
 
         $playerId = self::getActivePlayerId();
 
@@ -82,7 +84,7 @@ trait MonsterTrait {
         } else {
             $availableMonsters = $this->getAvailableMonsters();
             if (count($availableMonsters) == 1) {
-                $this->pickMonster($availableMonsters[0]);
+                $this->pickMonster($availableMonsters[0], true);
             }
         }
     }

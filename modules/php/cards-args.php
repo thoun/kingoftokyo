@@ -204,4 +204,32 @@ trait CardsArgTrait {
         }
     }
 
+    function argStealCostumeCard() {
+        $playerId = self::getActivePlayerId();
+        $playerEnergy = $this->getPlayerEnergy($playerId);
+
+        $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $disabledIds = array_map(function ($card) { return $card->id; }, $tableCards); // can only take from other players, not table
+
+        $canBuyFromPlayers = false;
+
+        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+            foreach($otherPlayersIds as $otherPlayerId) {
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+
+                foreach ($cardsOfPlayer as $card) {
+                    if ($card->type > 200 && $card->type < 300 && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                        $canBuyFromPlayers = true;
+                    } else {
+                        $disabledIds[] = $card->id;
+                    }
+                }
+            }
+
+        return [
+            'disabledIds' => $disabledIds,
+            'canBuyFromPlayers' => $canBuyFromPlayers,
+        ];
+    }
+
 }

@@ -164,7 +164,11 @@ trait PlayerStateTrait {
             }
         }
 
-        $this->gamestate->nextState('next');
+        if ($this->isHalloweenExpansion()) { 
+            $this->gamestate->nextState('stealCostumeCard');
+        } else {
+            $this->gamestate->nextState('buyCard');
+        }
     }
 
     function stResolveEndTurn() {

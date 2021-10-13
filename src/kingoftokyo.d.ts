@@ -140,6 +140,11 @@ interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
     skipped: boolean;
 }
 
+interface EnteringStealCostumeCardArgs {
+    disabledIds: number[];
+    canBuyFromPlayers: boolean;
+}
+
 interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;

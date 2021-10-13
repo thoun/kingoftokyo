@@ -233,8 +233,6 @@ $playerActionsGameStates = [
             "stay" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
             "end" => ST_RESOLVE_DICE,
             "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -332,8 +330,6 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
             "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -354,7 +350,6 @@ $playerActionsGameStates = [
         "action" => "stEnterTokyoApplyBurrowing",
         "transitions" => [
             "next" => ST_ENTER_TOKYO,
-            //"endGame" => ST_END_GAME,
         ],
     ],
 
@@ -364,9 +359,23 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stEnterTokyo",
         "transitions" => [
-            "next" => ST_PLAYER_BUY_CARD,
-            //"endGame" => ST_END_GAME,
+            "stealCostumeCards" => ST_PLAYER_STEAL_COSTUME_CARD,
+            "buyCard" => ST_PLAYER_BUY_CARD,
         ],
+    ],
+
+    ST_PLAYER_STEAL_COSTUME_CARD => [
+        "name" => "stealCostumeCard",
+        "description" => "", // TODO client TEMPTR translate('${actplayer} can steal a Costume card'),
+        "descriptionmyturn" => "", // TODO client TEMPTR translate('${you} can steal a Costume card'),
+        "type" => "activeplayer",
+        "args" => "argStealCostumeCard",
+        "action" => "stStealCostumeCard",
+        "possibleactions" => [ "stealCostumeCard", "endStealCostume" ], // TODO
+        "transitions" => [
+            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
+            "endStealCostume" => ST_PLAYER_BUY_CARD,
+        ]
     ],
 
     ST_PLAYER_BUY_CARD => [
@@ -384,7 +393,6 @@ $playerActionsGameStates = [
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "endTurn" => ST_RESOLVE_END_TURN,
             "renew" => ST_PLAYER_BUY_CARD,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -400,7 +408,6 @@ $playerActionsGameStates = [
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "renew" => ST_PLAYER_BUY_CARD,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -416,8 +423,6 @@ $playerActionsGameStates = [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "stayMimicCard" => ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD,
             "end" => ST_PLAYER_BUY_CARD,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -432,8 +437,6 @@ $playerActionsGameStates = [
         "transitions" => [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "end" => ST_PLAYER_BUY_CARD,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -447,7 +450,6 @@ $playerActionsGameStates = [
         "transitions" => [
             "sellCard" => ST_PLAYER_SELL_CARD,
             "endTurn" => ST_RESOLVE_END_TURN,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -459,7 +461,6 @@ $playerActionsGameStates = [
         "transitions" => [ 
             "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             "endTurn" => ST_END_TURN,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],
 
@@ -470,7 +471,6 @@ $playerActionsGameStates = [
         "action" => "stEndTurn",
         "transitions" => [ 
             "nextPlayer" => ST_NEXT_PLAYER,
-            //"endGame" => ST_END_GAME,
         ],
     ],
 ];
