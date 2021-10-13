@@ -47,11 +47,11 @@ trait UtilTrait {
     private function getGameVersion() {        
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return 1; // TODO TEMP
+            return 2; // TODO TEMP
         } else {
             return 1;
         }
-        //TODOTR return intval(self::getGameStateValue(GAME_VERSION_OPTION));
+        //TODO TEMP return intval(self::getGameStateValue(GAME_VERSION_OPTION));
     }
 
     function isHalloweenExpansion() {
@@ -721,8 +721,17 @@ trait UtilTrait {
         return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `to` = $playerId")) > 0;
     }
 
+    function isDamageDealtThisTurn(int $playerId) {
+        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId")) > 0;
+    }
+
     function isDamageDealtToOthersThisTurn(int $playerId) {
         return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` <> $playerId")) > 0;
+    }
+
+    function playersWoundedByActivePlayerThisTurn(int $playerId) {
+        $dbResults = self::getCollectionFromDB("SELECT `to` FROM `turn_damages` WHERE `from` = $playerId");
+        return array_map(function($dbResult) { return intval($dbResult['to']); }, array_values($dbResults));
     }
 
     function placeNewCardsOnTable() {

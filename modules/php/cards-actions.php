@@ -21,6 +21,65 @@ trait CardsActionTrait {
         Each time a player is doing some game action, one of the methods below is called.
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
+    
+    function stealCostumeCard(int $id) {
+        $this->checkAction('stealCostumeCard');
+
+        $playerId = self::getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $from = $card->location_arg;
+
+        if ($card->type < 200 || $card->type > 300) {
+            throw new \BgaUserException('Not a Costume card');
+        }
+
+        // TOCHECK can player steal at reduced cost (alien origin) ? considered yes
+        $cost = $this->getCardCost($playerId, $card->type);
+        if (!$this->canBuyCard($playerId, $cost)) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        $this->updateKillPlayersScoreAux();
+
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
+
+        // TOCHECK is stealing costume considered buying (media-friendly) ? considered yes
+        // media friendly
+        $countMediaFriendly = $this->countCardOfType($playerId, MEDIA_FRIENDLY_CARD);
+        if ($countMediaFriendly > 0) {
+            $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
+        }
+
+        $this->cards->moveCard($id, 'hand', $playerId);
+        $this->removeCard($from, $card, true, false, true);
+
+        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $card,
+            'card_name' => $card->type,
+            'newCard' => null,
+            'energy' => $this->getPlayerEnergy($playerId),
+            'from' => $from,
+            'player_name2' => $this->getPlayerName($from),   
+            'cost' => $cost,
+        ]);
+
+        $this->applyGetEnergy($from, $cost, 0);
+
+        // TODO self::incStat(1, 'costumeStolenCards', $playerId);
+     
+        // no damage to handle on costume cards
+
+        $this->gamestate->nextState('stealCostumeCard');
+    }
+
+    function endStealCostume() {
+        $this->checkAction('endStealCostume');
+     
+        $this->gamestate->nextState('endStealCostume');
+    }
 
     function buyCard(int $id, int $from) {
         $this->checkAction('buyCard');
@@ -117,8 +176,10 @@ trait CardsActionTrait {
 
         if ($card->type < 100) {
             self::incStat(1, 'keepBoughtCards', $playerId);
-        } else {
+        } else if ($card->type < 200) {
             self::incStat(1, 'discardBoughtCards', $playerId);
+        } else if ($card->type < 300) {
+            // TODO self::incStat(1, 'costumeBoughtCards', $playerId);
         }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);

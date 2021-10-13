@@ -52,7 +52,7 @@ trait InitialCardTrait {
         $playersIds = $this->getPlayersIds();
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            if (count($cardsOfPlayer) == 0) {
+            if (!$this->array_some($cardsOfPlayer, function ($card) { return $card->type > 200 && $card->type < 300; })) {
                 return false;
             }
         }

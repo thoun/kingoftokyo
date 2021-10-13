@@ -359,7 +359,7 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stEnterTokyo",
         "transitions" => [
-            "stealCostumeCards" => ST_PLAYER_STEAL_COSTUME_CARD,
+            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
             "buyCard" => ST_PLAYER_BUY_CARD,
         ],
     ],
@@ -371,7 +371,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argStealCostumeCard",
         "action" => "stStealCostumeCard",
-        "possibleactions" => [ "stealCostumeCard", "endStealCostume" ], // TODO
+        "possibleactions" => [ "stealCostumeCard", "endStealCostume" ],
         "transitions" => [
             "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
             "endStealCostume" => ST_PLAYER_BUY_CARD,

@@ -213,18 +213,20 @@ trait CardsArgTrait {
 
         $canBuyFromPlayers = false;
 
+        $woundedPlayersIds = $this->playersWoundedByActivePlayerThisTurn($playerId);
         $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-            foreach($otherPlayersIds as $otherPlayerId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+        foreach($otherPlayersIds as $otherPlayerId) {
+            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+            $isWoundedPlayer = in_array($otherPlayerId, $woundedPlayersIds);
 
-                foreach ($cardsOfPlayer as $card) {
-                    if ($card->type > 200 && $card->type < 300 && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
-                        $canBuyFromPlayers = true;
-                    } else {
-                        $disabledIds[] = $card->id;
-                    }
+            foreach ($cardsOfPlayer as $card) {
+                if ($isWoundedPlayer && $card->type > 200 && $card->type < 300 && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                    $canBuyFromPlayers = true;
+                } else {
+                    $disabledIds[] = $card->id;
                 }
             }
+        }
 
         return [
             'disabledIds' => $disabledIds,
