@@ -47,7 +47,7 @@ trait UtilTrait {
     private function getGameVersion() {        
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return 2;
+            return 2; // TODO TEMP
         } else {
             return 1;
         }
@@ -172,7 +172,7 @@ trait UtilTrait {
         } else {
             $incScore = 1;
             self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
-            $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
+            $this->applyGetPoints($playerId, $incScore, -1);
             $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
         }
 
@@ -375,7 +375,15 @@ trait UtilTrait {
     // $cardType = -1 => no notification
 
     function applyGetPoints(int $playerId, int $points, int $cardType) {
-        $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
+        $newPoints = $points;
+
+        // Astronaut
+        $countAstronaut = $this->countCardOfType($playerId, ASTRONAUT_CARD);
+        if ($countAstronaut > 0 && ($this->getPlayerScore($playerId) + $points) >= 17) {
+            $newPoints = 20;
+        }
+
+        $this->applyGetPointsIgnoreCards($playerId, $newPoints, $cardType);
     }
 
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
@@ -428,6 +436,11 @@ trait UtilTrait {
 
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = min($actualHealth + $health, $maxHealth);
+
+        if ($actualHealth == $newHealth) {
+            return; // already at full life, no need for notif
+        }
+
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         self::incStat($health, 'heal', $playerId);
@@ -710,5 +723,15 @@ trait UtilTrait {
 
     function isDamageDealtToOthersThisTurn(int $playerId) {
         return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` <> $playerId")) > 0;
+    }
+
+    function placeNewCardsOnTable() {
+        $cards = [];
+        
+        for ($i=1; $i<=3; $i++) {
+            $cards[] = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $i));
+        }
+
+        return $cards;
     }
 }

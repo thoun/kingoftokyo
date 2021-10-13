@@ -367,17 +367,17 @@ class Cards {
 
             // COSTUME
             // TODOTR
-            case 201: return "[353d4b]Cosmonaute";
+            case 201: return "[353d4b]Astronaut";
             case 202: return "[005c98]Ghost";
             case 203: return "[213b75]Vampire";
-            case 204: return "[5a4f86]Sorciere";
-            case 205: return "[3c4b53]Diable";
+            case 204: return "[5a4f86]Witch";
+            case 205: return "[3c4b53]Devil";
             case 206: return "[584b84]Pirate";
             case 207: return "[bb6082]Princess";
             case 208: return "[7e8670]Zombie";
             case 209: return "[52373d]Cheerleader";
             case 210: return "[146088]Robot";
-            case 211: return "[733010]Statue de la liberté";
+            case 211: return "[733010]Statue of liberty";
             case 212: return "[2d4554]Clown";
         }
         return null;
@@ -485,18 +485,18 @@ class Cards {
 
             // COSTUME
             // TODOTR
-            case 201: return "description complète de la carte Cosmonaute";
-            case 202: return "description complète de la carte Fantome";
-            case 203: return "description complète de la carte Vampire";
-            case 204: return "description complète de la carte Sorciere";
-            case 205: return "description complète de la carte Diable";
-            case 206: return "description complète de la carte Pirate";
-            case 207: return "description complète de la carte Princesse";
-            case 208: return "description complète de la carte Zombie";
-            case 209: return "description complète de la carte Cheerleader";
-            case 210: return "description complète de la carte Robot";
-            case 211: return "description complète de la carte Statue de la liberté";
-            case 212: return "description complète de la carte Clown";
+            case 201: return "If you reach 17[Star], you win the game";
+            case 202: return "At the end of each Monster's turn, if you lost at least 1[Heart] that turn, gain 1[Heart].";
+            case 203: return "At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], gain 1[Heart].";
+            case 204: return "If you must be wounded by another Monster, you can reroll one of their dice.";
+            case 205: return "On your turn, when you make other Monsters lose at least 1[Heart], they lose an extra [Heart].";
+            case 206: return "Steal 1[Energy] from each Monster you made lose at least 1[Heart].";
+            case 207: return "Gain 1[Star] at the start of your turn.";
+            case 208: return "You are not eliminated if you reach 0[Heart]. You cannot lose [Heart] as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.";
+            case 209: return "You can choose to cheer for another Monster on their turn. If you do, add [diceSmash] to their roll.";
+            case 210: return "You can choose to lose [Energy] instead of [Heart].";
+            case 211: return "You have an extra Roll.";
+            case 212: return "If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can change the result for every die.";
         }
         return null;
     }

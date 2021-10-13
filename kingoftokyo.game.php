@@ -222,7 +222,7 @@ class KingOfTokyo extends Table {
         $activePlayerId = self::getActivePlayerId();
         $result['dice'] = $activePlayerId ? $this->getDice($this->getDiceNumber($activePlayerId)) : [];
 
-        $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
 
         $result['playersCards'] = [];
         foreach ($result['players'] as $playerId => &$playerDb) {
@@ -280,7 +280,8 @@ class KingOfTokyo extends Table {
         $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
         $this->cards->shuffle('deck'); 
 
-        $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
+        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MIMIC_CARD);
+        $cards = $this->placeNewCardsOnTable();
 
         self::notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,

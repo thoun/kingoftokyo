@@ -62,7 +62,7 @@ trait PlayerStateTrait {
                 ]);
             } else {
                 $incScore = 2;
-                $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
+                $this->applyGetPoints($playerId, $incScore, -1);
 
                 self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
                     'playerId' => $playerId,

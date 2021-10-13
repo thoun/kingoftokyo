@@ -150,9 +150,16 @@ define('WINGS_CARD', 48);
 define('FRENZY_CARD', 109);
 define('HIGH_ALTITUDE_BOMBING_CARD', 112);
 // costume
+define('ASTRONAUT_CARD', 201);
 define('GHOST_CARD', 202);
 define('VAMPIRE_CARD', 203);
+define('WITCH_CARD', 204);
+define('DEVIL_CARD', 205);
 define('PIRATE_CARD', 206);
 define('PRINCESS_CARD', 207);
+define('ZOMBIE_CARD', 208);
+define('CHEERLEADER_CARD', 209);
+define('ROBOT_CARD', 210);
 define('STATUE_OF_LIBERTY_CARD', 211);
+define('CLOWN_CARD', 212);
 ?>

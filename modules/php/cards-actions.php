@@ -30,6 +30,7 @@ trait CardsActionTrait {
         $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
+        $cardLocationArg = $card->location_arg;
 
         $cost = $this->getCardCost($playerId, $card->type);
         if (!$this->canBuyCard($playerId, $cost)) {
@@ -98,7 +99,7 @@ trait CardsActionTrait {
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
-            $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
+            $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
     
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -199,7 +200,7 @@ trait CardsActionTrait {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->cards->moveAllCardsInLocation('table', 'discard');
-        $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
+        $cards = $this->placeNewCardsOnTable();
 
         self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), [
             'playerId' => $playerId,

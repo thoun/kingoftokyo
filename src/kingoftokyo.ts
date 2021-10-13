@@ -688,7 +688,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         dojo.connect(this.visibleCards, 'onChangeSelection', this, (_, item_id: string) => this.onVisibleCardClick(this.visibleCards, item_id));
 
         this.cards.setupCards([this.visibleCards]);
-        this.cards.addCardsToStock(this.visibleCards, visibleCards);
+        this.setVisibleCards(visibleCards);
     }
 
     public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) { // from : player id
@@ -1276,7 +1276,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private setVisibleCards(cards: Card[]) {
+        const newWeights = {};
+        cards.forEach(card => newWeights[card.type] = card.location_arg);
+        this.visibleCards.changeItemsWeight(newWeights);
 
+        this.cards.addCardsToStock(this.visibleCards, cards, 'deck');
+    }
 
     private startActionTimer(buttonId: string, time: number) {
         if ((this as any).prefs[202]?.value === 2) {
@@ -1301,8 +1307,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         };
         actionTimerFunction();
         actionTimerId = window.setInterval(() => actionTimerFunction(), 1000);
-      }
-
+    }
 
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications
@@ -1443,7 +1448,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
         const card = notif.args.card;
-        const newCard = notif.args.newCard;
+        this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
+
         if (notif.args.energy !== undefined) {
             this.setEnergy(notif.args.playerId, notif.args.energy);
         }
@@ -1451,9 +1457,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (notif.args.discardCard) { // initial card
             this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
             this.visibleCards.removeFromStockById(''+notif.args.discardCard.id);
-        } else if (newCard) {
+        } else if (notif.args.newCard) {
+        const newCard = notif.args.newCard;
             this.cards.moveToAnotherStock(this.visibleCards, this.getPlayerTable(notif.args.playerId).cards, card);
             this.cards.addCardsToStock(this.visibleCards, [newCard], 'deck');
+            this.visibleCards.changeItemsWeight( { [newCard.type]: newCard.location_arg } );
         } else if (notif.args.from > 0) {
             this.cards.moveToAnotherStock(this.getPlayerTable(notif.args.from).cards, this.getPlayerTable(notif.args.playerId).cards, card);
         } else { // from Made in a lab Pick
@@ -1489,7 +1497,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setEnergy(notif.args.playerId, notif.args.energy);
 
         this.visibleCards.removeAll();
-        this.cards.addCardsToStock(this.visibleCards, notif.args.cards, 'deck');
+
+        this.setVisibleCards(notif.args.cards);
     }
 
     notif_points(notif: Notif<NotifPointsArgs>) {
