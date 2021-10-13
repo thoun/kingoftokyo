@@ -194,7 +194,7 @@ trait CardsUtilTrait {
             ]);
         }
 
-        $mimicCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(MIMIC_CARD))[0]);
+        $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
         if ($mimicCard && $mimicCard->tokens > 0) {
             $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
         }
@@ -231,7 +231,7 @@ trait CardsUtilTrait {
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
-            $mimicCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(MIMIC_CARD))[0]);
+            $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
             $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
         }
         
@@ -634,4 +634,30 @@ trait CardsUtilTrait {
         return true;
     }
 
+    function applyEndOfEachMonsterCards() {
+        $ghostCards = $this->getCardsFromDb($this->cards->getCardsOfType(GHOST_CARD));
+        if (count($ghostCards > 0)) {
+            $ghostCard = $ghostCards[0];
+            if ($ghostCard->location == 'hand') {
+                $playerId = intval($ghostCard->location_arg);
+
+                if ($this->isDamageTakenThisTurn($playerId)) {
+                    $this->applyGetHealth($playerId, 1, GHOST_CARD);
+                }
+            }
+        }
+        
+        $vampireCards = $this->getCardsFromDb($this->cards->getCardsOfType(VAMPIRE_CARD));
+        if (count($vampireCards > 0)) {
+            $vampireCard = $vampireCards[0];
+        
+            if ( $vampireCard->location == 'hand') {
+                $playerId = intval($vampireCard->location_arg);
+
+                if ($this->isDamageDealtToOthersThisTurn($playerId)) {
+                    $this->applyGetHealth($playerId, 1, VAMPIRE_CARD);
+                }
+            }
+        }
+    }
 }

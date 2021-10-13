@@ -173,6 +173,7 @@ class Cards {
             case 38: return [0, 100];
             case 43: return [35, 100];
             case 45: return [0, 85];
+            // DISCARD
             case 102: return [30, 80];
             case 106: case 107: return [35, 65];
             case 111: return [35, 95];
@@ -180,6 +181,8 @@ class Cards {
             case 113: return [35, 65];
             case 114: return [35, 95];
             case 115: return [0, 80];
+            // COSTUME            
+            case 209: return [15, 100];
         }
         return null;
     }
@@ -364,18 +367,18 @@ class Cards {
 
             // COSTUME
             // TODOTR
-            case 201: return '[353d4b]Cosmonaute';
-            case 202: return '[005c98]Fantome';
-            case 203: return '[213b75]Vampire';
-            case 204: return '[5a4f86]Sorciere';
-            case 205: return '[3c4b53]Diable';
-            case 206: return '[584b84]Pirate';
-            case 207: return '[bb6082]Princesse';
-            case 208: return '[7e8670]Zombie';
-            case 209: return '[52373d]Cheerleader';
-            case 210: return '[146088]Robot';
-            case 211: return '[733010]Statue de la liberté';
-            case 212: return '[2d4554]Clown';
+            case 201: return "[353d4b]Cosmonaute";
+            case 202: return "[005c98]Ghost";
+            case 203: return "[213b75]Vampire";
+            case 204: return "[5a4f86]Sorciere";
+            case 205: return "[3c4b53]Diable";
+            case 206: return "[584b84]Pirate";
+            case 207: return "[bb6082]Princess";
+            case 208: return "[7e8670]Zombie";
+            case 209: return "[52373d]Cheerleader";
+            case 210: return "[146088]Robot";
+            case 211: return "[733010]Statue de la liberté";
+            case 212: return "[2d4554]Clown";
         }
         return null;
     }
@@ -482,18 +485,18 @@ class Cards {
 
             // COSTUME
             // TODOTR
-            case 201: return 'description complète de la carte Cosmonaute';
-            case 202: return 'description complète de la carte Fantome';
-            case 203: return 'description complète de la carte Vampire';
-            case 204: return 'description complète de la carte Sorciere';
-            case 205: return 'description complète de la carte Diable';
-            case 206: return 'description complète de la carte Pirate';
-            case 207: return 'description complète de la carte Princesse';
-            case 208: return 'description complète de la carte Zombie';
-            case 209: return 'description complète de la carte Cheerleader';
-            case 210: return 'description complète de la carte Robot';
-            case 211: return 'description complète de la carte Statue de la liberté';
-            case 212: return 'description complète de la carte Clown';
+            case 201: return "description complète de la carte Cosmonaute";
+            case 202: return "description complète de la carte Fantome";
+            case 203: return "description complète de la carte Vampire";
+            case 204: return "description complète de la carte Sorciere";
+            case 205: return "description complète de la carte Diable";
+            case 206: return "description complète de la carte Pirate";
+            case 207: return "description complète de la carte Princesse";
+            case 208: return "description complète de la carte Zombie";
+            case 209: return "description complète de la carte Cheerleader";
+            case 210: return "description complète de la carte Robot";
+            case 211: return "description complète de la carte Statue de la liberté";
+            case 212: return "description complète de la carte Clown";
         }
         return null;
     }

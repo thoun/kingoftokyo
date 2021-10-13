@@ -245,6 +245,8 @@ trait PlayerStateTrait {
 
         $this->removeDiscardCards($playerId);
 
+        $this->applyEndOfEachMonsterCards();
+
         $killPlayer = $this->killDeadPlayers();
 
         if ($killPlayer) {

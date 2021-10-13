@@ -703,4 +703,12 @@ trait UtilTrait {
         $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead > 0"));
         self::setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount + 1);
     }
+
+    function isDamageTakenThisTurn(int $playerId) {
+        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `to` = $playerId")) > 0;
+    }
+
+    function isDamageDealtToOthersThisTurn(int $playerId) {
+        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` <> $playerId")) > 0;
+    }
 }
