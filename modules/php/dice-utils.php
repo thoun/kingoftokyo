@@ -408,4 +408,67 @@ trait DiceUtilTrait {
         return null;
     }
 
+    function addSmashesFromCards(int $playerId, array $diceCounts, bool $playerInTokyo) {
+        $addedSmashes = 0;
+        $cardsAddingSmashes = [];
+
+        // cheerleader
+        if (intval(self::getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
+            $addedSmashes += 1;
+        }
+
+        // acid attack
+        $countAcidAttack = $this->countCardOfType($playerId, ACID_ATTACK_CARD);
+        if ($countAcidAttack > 0) {
+            $addedSmashes += $countAcidAttack;
+
+            for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = ACID_ATTACK_CARD; }
+        }
+
+        // burrowing
+        if ($playerInTokyo) {
+            $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+            if ($countBurrowing > 0) {
+                $addedSmashes += $countBurrowing;
+
+                for ($i=0; $i<$countBurrowing; $i++) { $cardsAddingSmashes[] = BURROWING_CARD; }
+            }
+        }
+
+        // poison quills
+        if ($diceCounts[2] >= 3) {
+            $countPoisonQuills = $this->countCardOfType($playerId, POISON_QUILLS_CARD);
+            if ($countPoisonQuills > 0) {
+                $addedSmashes += 2 * $countPoisonQuills;
+                
+                for ($i=0; $i<$countPoisonQuills; $i++) { $cardsAddingSmashes[] = POISON_QUILLS_CARD; }
+            }
+        }
+
+        if ($diceCounts[6] >= 1) {
+            // spiked tail
+            $countSpikedTail = $this->countCardOfType($playerId, SPIKED_TAIL_CARD);
+            if ($countSpikedTail > 0) {
+                $addedSmashes += $countSpikedTail;
+                
+                for ($i=0; $i<$countSpikedTail; $i++) { $cardsAddingSmashes[] = SPIKED_TAIL_CARD; }
+            }
+
+            // urbavore
+            if ($playerInTokyo) {
+                $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);
+                if ($countUrbavore > 0) {
+                    $addedSmashes += $countUrbavore;
+                
+                    for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = URBAVORE_CARD; }
+                }
+            }
+        }
+
+        $detail = new \stdClass();
+        $detail->addedSmashes = $addedSmashes;
+        $detail->cardsAddingSmashes = $cardsAddingSmashes;
+        return $detail;
+    }
+
 }

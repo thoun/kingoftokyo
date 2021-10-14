@@ -660,4 +660,28 @@ trait CardsUtilTrait {
             }
         }
     }
+
+    function willBeWounded(int $playerId) {
+        $activePlayerId = self::getActivePlayerId();
+        $activePlayerInTokyo = $this->inTokyo($activePlayerId);
+
+        if ($this->countCardOfType($activePlayerId, NOVA_BREATH_CARD) == 0 && $this->inTokyo($playerId) == $activePlayerInTokyo) {
+            return false; // same location & no Nova card for smashing player
+        }
+
+        $dice = $this->getDice($this->getDiceNumber($activePlayerId));
+        $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
+
+        $diceCounts = [];
+        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+            $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
+        }
+
+        $detail = $this->addSmashesFromCards($activePlayerId, $diceCounts, $activePlayerInTokyo);
+        $diceCounts[6] += $detail->addedSmashes;
+
+        $minDamage = $this->countCardOfType($playerId, ARMOR_PLATING_CARD) > 0 ? 2 : 1;
+        
+        return $diceCounts[6] >= $minDamage;
+    }
 }
