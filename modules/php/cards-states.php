@@ -104,7 +104,10 @@ trait CardsStateTrait {
 
             $arg = $this->argCancelDamage($playerId, $hasDice3);
 
-            if (!$arg['canThrowDices'] && $arg['playerEnergy'] < 2 && !$arg['rethrow3']['hasDice3']) {
+            $canCancelWithCamouflage = $arg['canThrowDices'] || $arg['rethrow3']['hasDice3'];
+            $canCancelWithWings = $arg['canUseWings'] && $arg['playerEnergy'] >= 2;
+            $canCancelWithRobot = $arg['canUseRobot'] && $arg['playerEnergy'] >= 1;
+            if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot) {
                 $this->applySkipWings($playerId);
             }
         }

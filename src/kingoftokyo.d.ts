@@ -158,10 +158,12 @@ interface EnteringBuyCardArgs {
 interface EnteringCancelDamageArgs {
     canThrowDices: boolean;
     canUseWings: boolean;
+    canUseRobot: boolean;
     playerEnergy: number;
     dice: Dice[];
     rethrow3: Rethrow3;
     rapidHealingHearts: number;
+    damage: number;
 }
 
 interface EnteringLeaveTokyoArgs {

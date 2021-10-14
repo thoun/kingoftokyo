@@ -184,6 +184,7 @@ trait CardsArgTrait {
 
             $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
+            $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $remainingDamage = 0;
             foreach($intervention->damages as $damage) {
@@ -199,6 +200,7 @@ trait CardsArgTrait {
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
+                'canUseRobot' => $canUseRobot,
                 'rapidHealingHearts' => $rapidHealingHearts,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,

@@ -350,6 +350,15 @@ class KingOfTokyo implements KingOfTokyoGame {
                     dojo.addClass('useWings_button', 'disabled');
                 }
             }
+
+            if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
+                for (let i=args.damage; i>0; i--) {
+                    const id = `useRobot${i}_button`;
+                    (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(/* TODOTR _(*/"Lose ${number} [energy] instead of ${number} [heart]"/*)*/, { 'number': i})), () => this.useRobot(i));
+                    dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
+                }
+            }
+
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 (this as any).addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}) : _("Skip"), 'skipWings');
             }
@@ -1247,6 +1256,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipWings');
+    }
+
+    public useRobot(energy: number) {
+        if(!(this as any).checkAction('useRobot')) {
+            return;
+        }
+
+        this.takeAction('useRobot', {
+            energy
+        });
     }
 
     public useRapidHealingSync() {

@@ -348,6 +348,16 @@
         self::ajaxResponse();
     }
   	
+    public function useRobot() {
+        self::setAjaxMode();
+
+        $energy = self::getArg("energy", AT_posint, true);
+
+        $this->game->useRobot($energy);
+
+        self::ajaxResponse();
+    }
+  	
     public function setLeaveTokyoUnder() {
         self::setAjaxMode();
 

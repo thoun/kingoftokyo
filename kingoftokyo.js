@@ -1885,6 +1885,17 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.addClass('useWings_button', 'disabled');
                 }
             }
+            if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
+                var _loop_2 = function (i) {
+                    var id = "useRobot" + i + "_button";
+                    this_1.addActionButton(id, formatTextIcons(dojo.string.substitute(/* TODOTR _(*/ "Lose ${number} [energy] instead of ${number} [heart]" /*)*/, { 'number': i })), function () { return _this.useRobot(i); });
+                    dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
+                };
+                var this_1 = this;
+                for (var i = args.damage; i > 0; i--) {
+                    _loop_2(i);
+                }
+            }
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), 'skipWings');
             }
@@ -2300,23 +2311,23 @@ var KingOfTokyo = /** @class */ (function () {
             html += "<button class=\"action-button bgabutton " + (!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton disable\" id=\"" + popinId + "_setStay0\">" + _('Disabled') + "</button>";
             html += "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
-            var _loop_2 = function (i) {
+            var _loop_3 = function (i) {
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth; i > 0; i--) {
-                _loop_2(i);
+                _loop_3(i);
             }
-            var _loop_3 = function (i) {
+            var _loop_4 = function (i) {
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth + 1; i > 2; i--) {
-                _loop_3(i);
+                _loop_4(i);
             }
             document.getElementById(popinId + "_setStay0").addEventListener('click', function () {
                 _this.setStayTokyoOver(0);
@@ -2339,31 +2350,31 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.destroy(popinId + "_setStay" + i);
             }
         }
-        var _loop_4 = function (i) {
+        var _loop_5 = function (i) {
             if (!document.getElementById(popinId + "_set" + i)) {
-                dojo.place("<button class=\"action-button bgabutton " + (this_1.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
+                dojo.place("<button class=\"action-button bgabutton " + (this_2.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_1 = this;
+        var this_2 = this;
         for (var i = 11; i <= maxHealth; i++) {
-            _loop_4(i);
+            _loop_5(i);
         }
-        var _loop_5 = function (i) {
+        var _loop_6 = function (i) {
             if (!document.getElementById(popinId + "_setStay" + i)) {
-                dojo.place("<button class=\"action-button bgabutton " + (this_2.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_2.gamedatas.leaveTokyoUnder > 0 && i <= this_2.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
+                dojo.place("<button class=\"action-button bgabutton " + (this_3.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_3.gamedatas.leaveTokyoUnder > 0 && i <= this_3.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_2 = this;
+        var this_3 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
-            _loop_5(i);
+            _loop_6(i);
         }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
@@ -2631,6 +2642,14 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipWings');
+    };
+    KingOfTokyo.prototype.useRobot = function (energy) {
+        if (!this.checkAction('useRobot')) {
+            return;
+        }
+        this.takeAction('useRobot', {
+            energy: energy
+        });
     };
     KingOfTokyo.prototype.useRapidHealingSync = function () {
         if (!this.checkAction('useRapidHealingSync')) {

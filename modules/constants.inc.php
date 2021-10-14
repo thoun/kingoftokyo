@@ -171,7 +171,7 @@ define('PIRATE_CARD', 206);
 define('PRINCESS_CARD', 207);
 define('ZOMBIE_CARD', 208);
 define('CHEERLEADER_CARD', 209);
-define('ROBOT_CARD', 210); // TODO
+define('ROBOT_CARD', 210);
 define('STATUE_OF_LIBERTY_CARD', 211);
 define('CLOWN_CARD', 212);
 ?>
