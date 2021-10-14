@@ -67,10 +67,16 @@ define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
  * Options
  */
 
-define('GAME_VERSION_OPTION', 'GameVersionOption');
 define('PICK_MONSTER_OPTION', 'PickMonsterOption');
 define('AUTO_SKIP_OPTION', 'AutoSkipOption');
 define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption');
+define('GAME_VERSION_OPTION', 101);
+
+// game versions
+define('GAME_VERSION_BASE', 0b00000001);
+define('GAME_VERSION_DARK_EDITION', 0b00000010);
+define('GAME_VERSION_POWER_UP', 0b00000100);
+define('GAME_VERSION_HALLOWEEN', 0b00001000);
 
 /*
  * Variables

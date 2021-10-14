@@ -23,17 +23,18 @@
  * !! It is not a good idea to modify this file when a game is running !!
  *
  */
+require_once("modules/constants.inc.php");
 
 $game_options = [
 
-    /* TODOTR 101 => [
+    /* TODOTR GAME_VERSION_OPTION => [
         'name' => totranslate('Game version'),
         'values' => [
-            1 => [
+            GAME_VERSION_BASE => [
                 'name' => totranslate('Base version'), 
             ],
-            2 => [
-                'name' => totranslate('Halloween expansion'), 
+            GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN => [
+                'name' => totranslate('Base version + Halloween expansion'), 
             ],
         ],
         'default' => 1,

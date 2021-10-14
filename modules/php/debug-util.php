@@ -29,7 +29,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD); // move after deck shuffle
-        //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CLOWN_CARD);
+        self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".DEVIL_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -38,13 +38,13 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(JETS_CARD, 2343492));
-        $this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
+        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        $this->debugSetCardInHand(WINGS_CARD, 2343493);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
-        //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
+        $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);

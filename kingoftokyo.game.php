@@ -85,7 +85,7 @@ class KingOfTokyo extends Table {
             CLOWN_ACTIVATED => 25,
 
             PICK_MONSTER_OPTION => 100,
-            GAME_VERSION_OPTION => 101,
+            GAME_VERSION_OPTION => GAME_VERSION_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -282,8 +282,9 @@ class KingOfTokyo extends Table {
         $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
         $this->cards->shuffle('deck'); 
 
-        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HERBIVORE_CARD);
+        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
         $cards = $this->placeNewCardsOnTable();
+        // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
 
         self::notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,

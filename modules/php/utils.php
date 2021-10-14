@@ -47,15 +47,15 @@ trait UtilTrait {
     private function getGameVersion() {        
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return 2; // TODO TEMP
+            return GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN; // TODO TEMP
         } else {
-            return 1;
+            return GAME_VERSION_BASE;
         }
         //TODO TEMP return intval(self::getGameStateValue(GAME_VERSION_OPTION));
     }
 
     function isHalloweenExpansion() {
-        return $this->getGameVersion() === 2;
+        return $this->getGameVersion() & GAME_VERSION_HALLOWEEN === GAME_VERSION_HALLOWEEN;
     }
 
     function autoSkipImpossibleActions() {
@@ -508,6 +508,11 @@ trait UtilTrait {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return; // player has wings and cannot lose hearts
+        }
+
+        // devil
+        if ($activePlayerId == $damageDealerId && $playerId != $damageDealerId && $this->countCardOfType($damageDealerId, DEVIL_CARD) > 0) {
+            $health++;
         }
 
         $actualHealth = $this->getPlayerHealth($playerId);
