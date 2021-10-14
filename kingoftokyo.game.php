@@ -87,6 +87,7 @@ class KingOfTokyo extends Table {
 
             PICK_MONSTER_OPTION => 100,
             GAME_VERSION_OPTION => GAME_VERSION_OPTION,
+            BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -124,13 +125,16 @@ class KingOfTokyo extends Table {
         $values = [];
         $affectedMonsters = [];
         $eliminationRank = count($players);
+
+        $monsters = $this->getGameMonsters();
+
         foreach( $players as $player_id => $player ) {
             $playerMonster = 0;
 
             if (!$this->canPickMonster()) {
-                $playerMonster = bga_rand(1, 6);
-                while (array_search($playerMonster, $affectedMonsters) !== false) {
-                    $playerMonster = bga_rand(1, 6);
+                $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
+                while (in_array($playerMonster, $affectedMonsters)) {
+                    $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
                 }
                 $affectedMonsters[] = $playerMonster;
             }

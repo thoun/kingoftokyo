@@ -8,6 +8,16 @@ trait MonsterTrait {
 //////////// Utility functions
 ////////////
 
+
+    private function getGameMonsters() {
+        global $g_config;
+        if (/*intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2 ||*/ $g_config['debug_from_chat']) {  // TODO TEMP
+            return [1,2,3,4,5,6,7,8];
+        } else {
+            return [1,2,3,4,5,6];
+        }
+    }
+
     function canPickMonster() {
         return intval(self::getGameStateValue(PICK_MONSTER_OPTION)) === 2;
     }
@@ -18,9 +28,10 @@ trait MonsterTrait {
 
         $availableMonsters = [];
 
-        for ($i = 1; $i <= 6; $i++) {
-            if (array_search($i, $pickedMonsters) === false) {
-                $availableMonsters[] = $i;
+        $monsters = $this->getGameMonsters();
+        foreach ($monsters as $number) {
+            if (!in_array($number, $pickedMonsters)) {
+                $availableMonsters[] = $number;
             }
         }
 

@@ -58,6 +58,21 @@ $game_options = [
         'default' => 1,
     ],
 
+    /* TODOTR BONUS_MONSTERS_OPTION => [
+        'name' => totranslate('Bonus monsters'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+                'description' => totranslate("Only base game monsters")
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'description' => totranslate("Base game and bonus/promo monsters"),
+            ],
+        ],
+        'default' => 1,
+    ],*/
+
     110 => [
         'name' => totranslate('Skip phase with no possible actions'),
         'values' => [

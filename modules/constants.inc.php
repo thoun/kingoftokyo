@@ -73,6 +73,7 @@ define('PICK_MONSTER_OPTION', 'PickMonsterOption');
 define('AUTO_SKIP_OPTION', 'AutoSkipOption');
 define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption');
 define('GAME_VERSION_OPTION', 101);
+define('BONUS_MONSTERS_OPTION', 102);
 
 // game versions
 define('GAME_VERSION_BASE', 0b00000001);

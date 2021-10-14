@@ -44,7 +44,7 @@ trait UtilTrait {
         return intval(self::getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
     }
 
-    private function getGameVersion() {        
+    private function getGameVersion() {
         global $g_config;
         if ($g_config['debug_from_chat']) { 
             return GAME_VERSION_BASE /*| GAME_VERSION_HALLOWEEN*/; // TODO TEMP
