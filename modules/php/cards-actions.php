@@ -21,6 +21,38 @@ trait CardsActionTrait {
         Each time a player is doing some game action, one of the methods below is called.
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
+
+    
+  	
+    public function support() {
+        $this->checkAction('support');        
+        self::setGameStateValue(CHEERLEADER_SUPPORT, 1);
+
+        $playerId = self::getCurrentPlayerId();
+
+        self::notifyAllPlayers("cheerleaderChoice", '' /* client TODOTR translate('${player_name} chooses to support ${player_name2} and adds [diceSmash]')*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
+        ]);
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
+    }
+  	
+    public function dontSupport() {
+        $this->checkAction('dontSupport');
+
+        $playerId = self::getCurrentPlayerId();
+
+        self::notifyAllPlayers("cheerleaderChoice", '' /* client TODOTR translate('${player_name} chooses to not support ${player_name2}')*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
+        ]);
+
+        $playerId = self::getCurrentPlayerId();
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
+    }
     
     function stealCostumeCard(int $id) {
         $this->checkAction('stealCostumeCard');

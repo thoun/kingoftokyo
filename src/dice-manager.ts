@@ -96,7 +96,7 @@ class DiceManager {
         });
     }
 
-    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
+    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean = false) {
         this.action = 'psychicProbeRoll';
 
         /*if (this.dice.length) { if active, event are not reset and roll is not applied

@@ -83,6 +83,7 @@ class KingOfTokyo extends Table {
             PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 23,
             SKIP_BUY_PHASE => 24,
             CLOWN_ACTIVATED => 25,
+            CHEERLEADER_SUPPORT => 26,
 
             PICK_MONSTER_OPTION => 100,
             GAME_VERSION_OPTION => GAME_VERSION_OPTION,
@@ -163,6 +164,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         self::setGameStateInitialValue(SKIP_BUY_PHASE, 0);
         self::setGameStateInitialValue(CLOWN_ACTIVATED, 0);
+        self::setGameStateInitialValue(CHEERLEADER_SUPPORT, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

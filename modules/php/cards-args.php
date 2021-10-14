@@ -22,6 +22,17 @@ trait CardsArgTrait {
         These methods function is to return some additional information that is specific to the current
         game state.
     */
+
+    function argCheerleaderSupport() {
+        $activePlayerId = self::getActivePlayerId();
+        $diceNumber = $this->getDiceNumber($activePlayerId);
+
+        return [
+            'dice' => $this->getDice($diceNumber),
+            'inTokyo' => $this->inTokyo($activePlayerId),
+        ];
+    }
+
     function argBuyCard() {
         $playerId = self::getActivePlayerId();
         $playerEnergy = $this->getPlayerEnergy($playerId);

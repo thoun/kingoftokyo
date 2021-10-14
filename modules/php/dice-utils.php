@@ -371,9 +371,7 @@ trait DiceUtilTrait {
 
     function getDieFaceLogName(int $number) {
         switch($number) {
-            case 1:
-            case 2:
-            case 3: return "[dice$number]";
+            case 1: case 2: case 3: return "[dice$number]";
             case 4: return "[diceHeart]";
             case 5: return "[diceEnergy]";
             case 6: return "[diceSmash]";

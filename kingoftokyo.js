@@ -1106,6 +1106,7 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.setDiceForPsychicProbe = function (dice, inTokyo, isCurrentPlayerActive) {
         var _this = this;
+        if (isCurrentPlayerActive === void 0) { isCurrentPlayerActive = false; }
         this.action = 'psychicProbeRoll';
         /*if (this.dice.length) { if active, event are not reset and roll is not applied
             return;
@@ -2000,10 +2001,15 @@ var KingOfTokyo = /** @class */ (function () {
     //                        action status bar (ie: the HTML links in the status bar).
     //
     KingOfTokyo.prototype.onUpdateActionButtons = function (stateName, args) {
+        var _this = this;
         var _a;
         switch (stateName) {
             case 'psychicProbeRollDie':
                 this.setDiceSelectorVisibility(true);
+                break;
+            case 'cheerleaderSupport':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringPsychicProbeRollDie(args, false); // because it's multiplayer, enter action must be set here
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
@@ -2043,6 +2049,11 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'psychicProbeRollDie':
                     this.addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
+                    this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
+                    break;
+                case 'cheerleaderSupport':
+                    this.addActionButton('support_button', formatTextIcons("Support (add [diceSmash] )") /* TODOTR */, function () { return _this.support(); });
+                    this.addActionButton('dontSupport_button', "Don't support" /* TODOTR */, function () { return _this.dontSupport(); });
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'leaveTokyo':
@@ -2486,6 +2497,18 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('resolve');
+    };
+    KingOfTokyo.prototype.support = function () {
+        if (!this.checkAction('support')) {
+            return;
+        }
+        this.takeAction('support');
+    };
+    KingOfTokyo.prototype.dontSupport = function () {
+        if (!this.checkAction('dontSupport')) {
+            return;
+        }
+        this.takeAction('dontSupport');
     };
     KingOfTokyo.prototype.applyHeartActions = function (selections) {
         if (!this.checkAction('applyHeartDieChoices')) {

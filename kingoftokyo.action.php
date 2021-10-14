@@ -182,6 +182,22 @@
 
         self::ajaxResponse();
     }
+  	
+    public function support() {
+        self::setAjaxMode();
+
+        $this->game->support();
+
+        self::ajaxResponse();
+    }
+  	
+    public function dontSupport() {
+        self::setAjaxMode();
+
+        $this->game->dontSupport();
+
+        self::ajaxResponse();
+    }
 
     public function applyHeartDieChoices() {
         self::setAjaxMode();

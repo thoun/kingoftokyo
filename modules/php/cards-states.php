@@ -128,4 +128,26 @@ trait CardsStateTrait {
             return;
         }
     }
+
+    function stCheerleaderSupport() {
+        $cheerleaderSupportPlayerIds = [];
+        $cheerleaderCards = $this->getCardsFromDb($this->cards->getCardsOfType(CHEERLEADER_CARD));
+        if (count($cheerleaderCards) > 0) {
+            $cheerleaderCard = $cheerleaderCards[0];
+        
+            if ( $cheerleaderCard->location == 'hand') {
+                $playerId = intval($cheerleaderCard->location_arg);
+
+                if ($playerId != intval(self::getActivePlayerId())) {
+                    $cheerleaderSupportPlayerIds[] = $playerId;
+                }
+            }
+        }
+
+        if (count($cheerleaderSupportPlayerIds) > 0) {
+            $this->gamestate->setPlayersMultiactive($cheerleaderSupportPlayerIds, 'end', true);
+        } else {
+            $this->gamestate->nextState('end');
+        }
+    }
 }

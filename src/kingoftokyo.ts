@@ -482,6 +482,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'psychicProbeRollDie':
                 this.setDiceSelectorVisibility(true);
                 break;
+            case 'cheerleaderSupport':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringPsychicProbeRollDie(args, false); // because it's multiplayer, enter action must be set here
+                break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
 
@@ -526,7 +530,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
-
+                case 'cheerleaderSupport':
+                    (this as any).addActionButton('support_button', formatTextIcons("Support (add [diceSmash] )") /* TODOTR */, () => this.support());
+                    (this as any).addActionButton('dontSupport_button', "Don't support" /* TODOTR */, () => this.dontSupport());
+                    this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
+                    break;
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");
                     const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
@@ -1064,6 +1072,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('resolve');
+    }
+
+    public support() {
+        if(!(this as any).checkAction('support')) {
+            return;
+        }
+
+        this.takeAction('support');
+    }
+
+    public dontSupport() {
+        if(!(this as any).checkAction('dontSupport')) {
+            return;
+        }
+
+        this.takeAction('dontSupport');
     }
 
     public applyHeartActions(selections: HeartActionSelection[]) {

@@ -24,6 +24,8 @@ define('ST_PLAYER_THROW_DICE', 22);
 define('ST_PLAYER_CHANGE_DIE', 23);
 define('ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE', 24);
 
+define('ST_PREPARE_RESOLVE_DICE', 28);
+define('ST_MULTIPLAYER_CHEERLEADER_SUPPORT', 29);
 define('ST_RESOLVE_DICE', 30);
 define('ST_RESOLVE_NUMBER_DICE', 31);
 define('ST_RESOLVE_HEART_DICE', 32);
@@ -92,6 +94,7 @@ define('FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'FrenzyExtraTurnForOpportunist');
 define('PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'PlayerBeforeFrenzyExtraTurnForOpportunist');
 define('SKIP_BUY_PHASE', 'SkipBuyPhase');
 define('CLOWN_ACTIVATED', 'ClownActivated');
+define('CHEERLEADER_SUPPORT', 'CheerleaderSupport');
 
 /*
  * Global variables
@@ -162,13 +165,13 @@ define('HIGH_ALTITUDE_BOMBING_CARD', 112);
 define('ASTRONAUT_CARD', 201);
 define('GHOST_CARD', 202);
 define('VAMPIRE_CARD', 203);
-define('WITCH_CARD', 204);
+define('WITCH_CARD', 204); // TODO
 define('DEVIL_CARD', 205);
 define('PIRATE_CARD', 206);
 define('PRINCESS_CARD', 207);
-define('ZOMBIE_CARD', 208);
+define('ZOMBIE_CARD', 208); // TODO
 define('CHEERLEADER_CARD', 209);
-define('ROBOT_CARD', 210);
+define('ROBOT_CARD', 210); // TODO
 define('STATUE_OF_LIBERTY_CARD', 211);
 define('CLOWN_CARD', 212);
 ?>

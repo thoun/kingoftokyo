@@ -47,7 +47,7 @@ trait UtilTrait {
     private function getGameVersion() {        
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN; // TODO TEMP
+            return GAME_VERSION_BASE /*| GAME_VERSION_HALLOWEEN*/; // TODO TEMP
         } else {
             return GAME_VERSION_BASE;
         }
@@ -55,7 +55,7 @@ trait UtilTrait {
     }
 
     function isHalloweenExpansion() {
-        return $this->getGameVersion() & GAME_VERSION_HALLOWEEN === GAME_VERSION_HALLOWEEN;
+        return ($this->getGameVersion() & GAME_VERSION_HALLOWEEN) === GAME_VERSION_HALLOWEEN;
     }
 
     function autoSkipImpossibleActions() {
@@ -511,7 +511,8 @@ trait UtilTrait {
         }
 
         // devil
-        if ($activePlayerId == $damageDealerId && $playerId != $damageDealerId && $this->countCardOfType($damageDealerId, DEVIL_CARD) > 0) {
+        $devil = $activePlayerId == $damageDealerId && $playerId != $damageDealerId && $this->countCardOfType($damageDealerId, DEVIL_CARD) > 0;
+        if ($devil) {
             $health++;
         }
 
@@ -533,6 +534,15 @@ trait UtilTrait {
                 'health' => $newHealth,
                 'delta_health' => $health,
                 'card_name' => $cardType == 0 ? null : $cardType,
+            ]);
+        }
+
+        if ($devil) {
+            self::notifyAllPlayers('devilExtraDamage', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'delta_health' => 1,
+                'card_name' => DEVIL_CARD,
             ]);
         }
 

@@ -39,6 +39,15 @@ trait DiceStateTrait {
         $this->stIntervention(PSYCHIC_PROBE_INTERVENTION);
     }
 
+    function stPrepareResolveDice() {
+        if ($this->isHalloweenExpansion()) {
+            $this->gamestate->nextState('askCheerleaderSupport');
+        } else {
+            $this->gamestate->nextState('resolve');
+        }
+        
+    }
+
     function stResolveDice() {
         $this->updateKillPlayersScoreAux();
         
@@ -72,6 +81,11 @@ trait DiceStateTrait {
 
         $addedSmashes = 0;
         $cardsAddingSmashes = [];
+
+        // cheerleader
+        if (intval(self::getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
+            $diceCounts[6] += 1;
+        }
 
         // acid attack
         $countAcidAttack = $this->countCardOfType($playerId, ACID_ATTACK_CARD);

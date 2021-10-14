@@ -216,7 +216,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "changeDie" => ST_PLAYER_CHANGE_DIE,
             "changeDieWithPsychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
-            "resolve" => ST_RESOLVE_DICE,
+            "resolve" => ST_PREPARE_RESOLVE_DICE,
         ],
 
     ],
@@ -231,8 +231,32 @@ $playerActionsGameStates = [
         "possibleactions" => [ "psychicProbeRollDie", "psychicProbeSkip", "rethrow3psychicProbe" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
-            "end" => ST_RESOLVE_DICE,
+            "end" => ST_PREPARE_RESOLVE_DICE,
             "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
+        ],
+    ],
+
+    ST_PREPARE_RESOLVE_DICE => [
+        "name" => "prepareResolveDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stPrepareResolveDice",
+        "transitions" => [
+            "resolve" => ST_RESOLVE_DICE,
+            "askCheerleaderSupport" => ST_MULTIPLAYER_CHEERLEADER_SUPPORT,
+        ],
+    ],
+
+    ST_MULTIPLAYER_CHEERLEADER_SUPPORT => [
+        "name" => "cheerleaderSupport",
+        "description" => "", // client TODOTR translate('Player with Cheerleader can support monster'),
+        "descriptionmyturn" => "", // client TODOTR translate('${you} can support monster'),
+        "type" => "multipleactiveplayer",
+        "args" => "argCheerleaderSupport",
+        "action" => "stCheerleaderSupport",
+        "possibleactions" => [ "support", "dontSupport" ],
+        "transitions" => [
+            "end" => ST_RESOLVE_DICE,
         ],
     ],
 
