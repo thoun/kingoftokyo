@@ -169,7 +169,7 @@ define('WITCH_CARD', 204); // TODO
 define('DEVIL_CARD', 205);
 define('PIRATE_CARD', 206);
 define('PRINCESS_CARD', 207);
-define('ZOMBIE_CARD', 208); // TODO
+define('ZOMBIE_CARD', 208);
 define('CHEERLEADER_CARD', 209);
 define('ROBOT_CARD', 210); // TODO
 define('STATUE_OF_LIBERTY_CARD', 211);

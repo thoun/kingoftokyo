@@ -432,7 +432,7 @@ trait CardsUtilTrait {
 
         $health = $this->getPlayerHealth($playerId);
 
-        if ($health <= 0) {
+        if ($this->getPlayer($playerId)->eliminated) {
             throw new \BgaUserException('You can\'t heal when you\'re dead');
         }
 
@@ -614,7 +614,7 @@ trait CardsUtilTrait {
     }
 
     function isSureWin(int $playerId) {
-        $eliminationWin = $this->getRemainingPlayers() === 1 && $this->getPlayerHealth($playerId) > 0;
+        $eliminationWin = $this->getRemainingPlayers() === 1 && !$this->getPlayer($playerId)->eliminated;
         $scoreWin = $this->getPlayerScore($playerId) >= MAX_POINT;
 
         if (!$eliminationWin && !$scoreWin) {

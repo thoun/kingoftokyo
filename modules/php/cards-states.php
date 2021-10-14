@@ -30,7 +30,7 @@ trait CardsStateTrait {
         $playerId = intval(self::getActivePlayerId()); 
 
         // if player is dead async, he can't buy or sell
-        if ($this->getPlayerHealth($playerId) === 0) {
+        if ($this->getPlayer($playerId)->eliminated) {
             $this->endTurn(true);
             return;
         }

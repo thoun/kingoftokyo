@@ -157,7 +157,7 @@ trait PlayerStateTrait {
 
         $playerId = self::getActivePlayerId();
 
-        if ($this->getPlayerHealth($playerId) > 0 && !$this->inTokyo($playerId)) { // enter only if burrowing doesn't kill player
+        if (!$this->getPlayer($playerId)->eliminated && !$this->inTokyo($playerId)) { // enter only if burrowing doesn't kill player
             if ($this->isTokyoEmpty(false)) {
                 $this->moveToTokyo($playerId, false);
             } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {

@@ -47,7 +47,7 @@ trait UtilTrait {
     private function getGameVersion() {        
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return GAME_VERSION_BASE /*| GAME_VERSION_HALLOWEEN*/; // TODO TEMP
+            return GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN; // TODO TEMP
         } else {
             return GAME_VERSION_BASE;
         }
@@ -325,7 +325,10 @@ trait UtilTrait {
 
         foreach($orderedPlayers as $player) {
             if ($player->health == 0 && !$player->eliminated) {
-                $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);
+                if ($countZombie == 0) {
+                    $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                }
             }
         }
     }

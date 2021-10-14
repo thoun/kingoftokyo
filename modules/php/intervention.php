@@ -33,7 +33,7 @@ trait InterventionTrait {
 
         $keep = ($intervention->nextState === 'keep' || $intervention->nextState === 'next') 
             && count($intervention->remainingPlayersId) > 0
-            && $this->getPlayerHealth($intervention->remainingPlayersId[0]) > 0;
+            && !$this->getPlayer($intervention->remainingPlayersId[0])->eliminated;
         if ($keep && $interventionName === CANCEL_DAMAGE_INTERVENTION) {
             // we check if player still ca do intervention (in case player got mimic, and mimicked camouflage player dies before mimic player intervention)
 

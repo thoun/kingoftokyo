@@ -72,8 +72,6 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
-        $this->updateKillPlayersScoreAux();
-
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         // TOCHECK is stealing costume considered buying (media-friendly) ? considered yes
@@ -103,6 +101,10 @@ trait CardsActionTrait {
         // TODO self::incStat(1, 'costumeStolenCards', $playerId);
      
         // no damage to handle on costume cards
+
+        // if player steal Zombie, it can eliminate the previous owner
+        $this->updateKillPlayersScoreAux();
+        $this->eliminatePlayers($playerId);
 
         $this->gamestate->nextState('stealCostumeCard');
     }
