@@ -115,7 +115,7 @@
                 height: 150px;
             }
 
-            @for $i from 1 through 6 {
+            @for $i from 1 through 8 {
                 &.monster#{$i} {
                     background-image: url('img/monster-board-#{$i}.png');
                 }
@@ -177,5 +177,5 @@
 
 .monster-figure {
     position: relative;
-    // filter: drop-shadow(6px 6px 4px black); // TODO add it to pictures
+    // filter: drop-shadow(6px 6px 4px black); 
 }

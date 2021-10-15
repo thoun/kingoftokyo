@@ -107,7 +107,7 @@ trait DiceArgTrait {
             $canRoll = false;
             $usedCards = $this->getUsedCard();
             foreach($psychicProbeCards as $psychicProbeCard) {
-                if (array_search($psychicProbeCard->id, $usedCards) === false) {
+                if (!in_array($psychicProbeCard->id, $usedCards)) {
                     $canRoll = true;
                 }
             }

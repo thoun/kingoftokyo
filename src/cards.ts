@@ -485,18 +485,18 @@ class Cards {
 
             // COSTUME
             // TODOTR
-            case 201: return "If you reach 17[Star], you win the game";
-            case 202: return "At the end of each Monster's turn, if you lost at least 1[Heart] that turn, gain 1[Heart].";
-            case 203: return "At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], gain 1[Heart].";
-            case 204: return "If you must be wounded by another Monster, you can reroll one of their dice.";
-            case 205: return "On your turn, when you make other Monsters lose at least 1[Heart], they lose an extra [Heart].";
-            case 206: return "Steal 1[Energy] from each Monster you made lose at least 1[Heart].";
-            case 207: return "Gain 1[Star] at the start of your turn.";
-            case 208: return "You are not eliminated if you reach 0[Heart]. You cannot lose [Heart] as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.";
-            case 209: return "You can choose to cheer for another Monster on their turn. If you do, add [diceSmash] to their roll.";
+            case 201: return "<strong>If you reach 17[Star],</strong> you win the game";
+            case 202: return "At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>";
+            case 203: return "At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], <strong>gain 1[Heart].</strong>";
+            case 204: return "If you must be wounded <strong>by another Monster,</strong> you can reroll one of their dice.";
+            case 205: return "On your turn, when you make other Monsters lose at least 1[Heart], <strong>they lose an extra [Heart].</strong>";
+            case 206: return "<strong>Steal 1[Energy]</strong> from each Monster you made lose at least 1[Heart].";
+            case 207: return "<strong>Gain 1[Star] at the start of your turn.</strong>";
+            case 208: return "You are not eliminated if you reach 0[Heart]. <strong>You cannot lose [Heart]</strong> as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.";
+            case 209: return "<strong>You can choose to cheer for another Monster on their turn.</strong> If you do, add [diceSmash] to their roll.";
             case 210: return "You can choose to lose [Energy] instead of [Heart].";
-            case 211: return "You have an extra Roll.";
-            case 212: return "If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can change the result for every die.";
+            case 211: return "You have an <strong>extra Roll.</strong>";
+            case 212: return "If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>";
         }
         return null;
     }

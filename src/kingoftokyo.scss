@@ -86,7 +86,7 @@ html {
   background-repeat: no-repeat;
   background-size: contain;
 
-  @for $i from 1 through 6 {
+  @for $i from 1 through 8 {
       &.monster#{$i} {
           background-image: url('img/monster-figure-#{$i}.png');
       }

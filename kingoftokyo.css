@@ -884,6 +884,12 @@
 #table .player-table .monster-board-wrapper .monster-board.monster6 {
   background-image: url("img/monster-board-6.png");
 }
+#table .player-table .monster-board-wrapper .monster-board.monster7 {
+  background-image: url("img/monster-board-7.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster8 {
+  background-image: url("img/monster-board-8.png");
+}
 #table .player-table .energy-wrapper {
   position: absolute;
   z-index: 4;
@@ -1015,6 +1021,12 @@ html {
 }
 .monster-figure.monster6 {
   background-image: url("img/monster-figure-6.png");
+}
+.monster-figure.monster7 {
+  background-image: url("img/monster-figure-7.png");
+}
+.monster-figure.monster8 {
+  background-image: url("img/monster-figure-8.png");
 }
 
 #kot-table.pickMonster {

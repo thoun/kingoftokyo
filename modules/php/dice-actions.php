@@ -187,7 +187,7 @@ trait DiceActionTrait {
             $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
             $usedCardOnThisTurn = null;
             foreach($herdCullerCards as $herdCullerCard) {
-                if (array_search($herdCullerCard->id, $usedCards) === false) {
+                if (!in_array($herdCullerCard->id, $usedCards)) {
                     $usedCardOnThisTurn = $herdCullerCard->id;
                 }
             }
@@ -248,7 +248,7 @@ trait DiceActionTrait {
         $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
         $usedCardOnThisTurn = null;
         foreach($psychicProbeCards as $psychicProbeCard) {
-            if (array_search($psychicProbeCard->id, $usedCards) === false) {
+            if (!in_array($psychicProbeCard->id, $usedCards)) {
                 $usedCardOnThisTurn = $psychicProbeCard->id;
             }
         }

@@ -245,7 +245,7 @@ trait DiceUtilTrait {
             ]);
 
             // we add damage only if it's not already counted in smashed players
-            if (array_search($damagePlayerId, $smashedPlayersIds) === false) {
+            if (!in_array($damagePlayerId, $smashedPlayersIds)) {
                 $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0, false, $giveShrinkRayToken, $givePoisonSpitToken);
             }
         }
@@ -266,7 +266,7 @@ trait DiceUtilTrait {
         if ($herdCullerCount > 0) {
             $usedCards = $this->getUsedCard();
             foreach ($herdCullerCards as $herdCullerCard) {
-                if (array_search($herdCullerCard->id, $usedCards) === false) {
+                if (!in_array($herdCullerCard->id, $usedCards)) {
                     $availableHerdCullers++;
                 }
             }
@@ -349,7 +349,7 @@ trait DiceUtilTrait {
                 $unusedPsychicProbeCards = 0;
                 $usedCards = $this->getUsedCard();
                 foreach($psychicProbeCards as $psychicProbeCard) {
-                    if (array_search($psychicProbeCard->id, $usedCards) === false) {
+                    if (!in_array($psychicProbeCard->id, $usedCards)) {
                         $unusedPsychicProbeCards++;
                     }
                 }
@@ -396,6 +396,8 @@ trait DiceUtilTrait {
 
     function getPsychicProbeIntervention(int $playerId) { // rturn null or PsychicProbeIntervention
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
+
+        // TODO add Witch here ?
 
         if (count($playersWithPsychicProbe) > 0) {
             $cards = [];

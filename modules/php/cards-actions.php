@@ -178,7 +178,7 @@ trait CardsActionTrait {
 
             $this->applyGetEnergy($from, $cost, 0);
             
-        } else if (array_search($id, $this->getMadeInALabCardIds($playerId)) !== false) {
+        } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {
             
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -466,7 +466,7 @@ trait CardsActionTrait {
         $stayOnState = false;
         $canRethrow3 = false;
         if ($remainingDamage > 0) {
-            $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && array_search(3, $diceValues) !== false;
+            $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && in_array(3, $diceValues);
             $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0 || $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
                 $canRethrow3 || ($playerUsedDice->rolls < $countCamouflage);
         }
@@ -478,7 +478,7 @@ trait CardsActionTrait {
 
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
 
-        $args = $this->argCancelDamage($playerId, $canRethrow3 ? (array_search(3, $diceValues) !== false) : false);
+        $args = $this->argCancelDamage($playerId, $canRethrow3 ? in_array(3, $diceValues) : false);
 
         if ($canRethrow3) {
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);

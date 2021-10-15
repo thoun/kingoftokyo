@@ -13,7 +13,7 @@ trait PlayerUtilTrait {
 ////////////
 
     function isInvincible(int $playerId) {
-        return array_search($playerId, $this->getGlobalVariable(USED_WINGS, true)) !== false;
+        return in_array($playerId, $this->getGlobalVariable(USED_WINGS, true));
     }
 
     function setInvincible(int $playerId) {        

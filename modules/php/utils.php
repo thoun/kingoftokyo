@@ -82,7 +82,7 @@ trait UtilTrait {
 
     function isUsedCard(int $cardId, $usedCards = null) {
         $cardsIds = $this->getUsedCard();
-        return array_search($cardId, $cardsIds) !== false;
+        return in_array($cardId, $cardsIds);
     }
 
     function setUsedCard(int $cardId) {
@@ -338,7 +338,7 @@ trait UtilTrait {
 
         // if player is killing himself
         // in a game state, we can kill him, but else we have to wait the end of his turn
-        $playerIsActivePlayer = array_search($player->id, $this->gamestate->getActivePlayerList()) !== false;
+        $playerIsActivePlayer = in_array($player->id, $this->gamestate->getActivePlayerList());
         if ($player->id == $currentTurnPlayerId || $playerIsActivePlayer) {
             $this->asyncEliminatePlayer($player->id);
         } else {
@@ -367,7 +367,7 @@ trait UtilTrait {
     function removePlayerFromSmashedPlayersInTokyo(int $playerId) {
         $playersIds = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
 
-        if ($playersIds != null && array_search($playerId, $playersIds) !== false) {
+        if ($playersIds != null && in_array($playerId, $playersIds)) {
             $playersIds = array_filter($playersIds, function ($id) use ($playerId) { return $id != $playerId; });
 
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $playersIds);

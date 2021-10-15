@@ -100,7 +100,7 @@ trait CardsStateTrait {
 
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
 
-            $hasDice3 = $hasBackgroundDweller && $dice != null ? (array_search(3, $diceValues) !== false) : false;
+            $hasDice3 = $hasBackgroundDweller && $dice != null ? in_array(3, $diceValues) : false;
 
             $arg = $this->argCancelDamage($playerId, $hasDice3);
 
