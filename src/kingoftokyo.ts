@@ -91,7 +91,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     
         this.createPlayerPanels(gamedatas); 
         this.diceManager = new DiceManager(this, gamedatas.dice);  
-        this.createVisibleCards(gamedatas.visibleCards);
+        this.createVisibleCards(gamedatas.visibleCards, gamedatas.topDeckCardBackType);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -715,7 +715,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private createVisibleCards(visibleCards: Card[]) {
+    private createVisibleCards(visibleCards: Card[], topDeckCardBackType: string) {
         this.visibleCards = new ebg.stock() as Stock;
         this.visibleCards.setSelectionAppearance('class');
         this.visibleCards.selectionClass = 'no-visible-selection';
@@ -728,6 +728,14 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.cards.setupCards([this.visibleCards]);
         this.setVisibleCards(visibleCards);
+
+        this.setTopDeckCardBackType(topDeckCardBackType);
+    }
+
+    private setTopDeckCardBackType(topDeckCardBackType: string) {
+        if (topDeckCardBackType !== undefined && topDeckCardBackType !== null) {
+            document.getElementById('deck').dataset.type = topDeckCardBackType;
+        }
     }
 
     public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) { // from : player id
@@ -1531,7 +1539,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }  
     }
 
-    notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
+    notif_buyCard(notif: Notif<NotifBuyCardArgs>) {console.log(notif.args);
         const card = notif.args.card;
         this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
 
@@ -1556,6 +1564,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
         }
+
+        this.setTopDeckCardBackType(notif.args.topDeckCardBackType);
 
         this.tableManager.placePlayerTable(); // adapt to new card
     }
@@ -1584,6 +1594,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.visibleCards.removeAll();
 
         this.setVisibleCards(notif.args.cards);
+
+        this.setTopDeckCardBackType(notif.args.topDeckCardBackType);
     }
 
     notif_points(notif: Notif<NotifPointsArgs>) {

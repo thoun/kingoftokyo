@@ -707,6 +707,9 @@
   background: url("img/card-back.jpg");
   box-shadow: 4px 4px 0px 0px #333;
 }
+#table #table-center #deck-wrapper #deck[data-type=costume] {
+  background: url("img/card-back-costume.jpg");
+}
 #table #table-center #deck-wrapper #pick-stock {
   position: absolute;
   bottom: -5px;

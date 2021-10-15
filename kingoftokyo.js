@@ -1657,7 +1657,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);
         this.diceManager = new DiceManager(this, gamedatas.dice);
-        this.createVisibleCards(gamedatas.visibleCards);
+        this.createVisibleCards(gamedatas.visibleCards, gamedatas.topDeckCardBackType);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -2192,7 +2192,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.visibleCards.updateDisplay();
         }
     };
-    KingOfTokyo.prototype.createVisibleCards = function (visibleCards) {
+    KingOfTokyo.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType) {
         var _this = this;
         this.visibleCards = new ebg.stock();
         this.visibleCards.setSelectionAppearance('class');
@@ -2205,6 +2205,12 @@ var KingOfTokyo = /** @class */ (function () {
         dojo.connect(this.visibleCards, 'onChangeSelection', this, function (_, item_id) { return _this.onVisibleCardClick(_this.visibleCards, item_id); });
         this.cards.setupCards([this.visibleCards]);
         this.setVisibleCards(visibleCards);
+        this.setTopDeckCardBackType(topDeckCardBackType);
+    };
+    KingOfTokyo.prototype.setTopDeckCardBackType = function (topDeckCardBackType) {
+        if (topDeckCardBackType !== undefined && topDeckCardBackType !== null) {
+            document.getElementById('deck').dataset.type = topDeckCardBackType;
+        }
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from) {
         var _this = this;
@@ -2886,6 +2892,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var _a, _b;
+        console.log(notif.args);
         var card = notif.args.card;
         this.visibleCards.changeItemsWeight((_a = {}, _a[card.type] = card.location_arg, _a));
         if (notif.args.energy !== undefined) {
@@ -2912,6 +2919,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
         }
+        this.setTopDeckCardBackType(notif.args.topDeckCardBackType);
         this.tableManager.placePlayerTable(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_removeCards = function (notif) {
@@ -2935,6 +2943,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.setEnergy(notif.args.playerId, notif.args.energy);
         this.visibleCards.removeAll();
         this.setVisibleCards(notif.args.cards);
+        this.setTopDeckCardBackType(notif.args.topDeckCardBackType);
     };
     KingOfTokyo.prototype.notif_points = function (notif) {
         this.setPoints(notif.args.playerId, notif.args.points);

@@ -54,6 +54,7 @@ interface KingOfTokyoGamedatas {
     // Add here variables you set up in getAllDatas
     dice: Dice[];
     visibleCards: Card[];
+    topDeckCardBackType: string;
     playersCards: { [playerId: number]: Card[] };
     mimickedCard: Card | null;
     leaveTokyoUnder: number;
@@ -243,6 +244,7 @@ interface NotifBuyCardArgs {
     energy: number;
     from: number;
     discardCard?: Card;
+    topDeckCardBackType: string;
 }
 
 interface NotifRenewCardsArgs {
@@ -250,6 +252,7 @@ interface NotifRenewCardsArgs {
     player_name: string;
     cards: Card[];
     energy: number;
+    topDeckCardBackType: string;
 }
 
 interface NotifRemoveCardsArgs {

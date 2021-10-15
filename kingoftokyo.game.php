@@ -231,6 +231,7 @@ class KingOfTokyo extends Table {
         $result['dice'] = $activePlayerId ? $this->getDice($this->getDiceNumber($activePlayerId)) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
+        $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
 
         $result['playersCards'] = [];
         foreach ($result['players'] as $playerId => &$playerDb) {
@@ -285,6 +286,7 @@ class KingOfTokyo extends Table {
     }
 
     function stStartGame() {
+        $this->cards->moveAllCardsInLocation('costumedeck', 'deck');
         $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
         $this->cards->shuffle('deck'); 
 

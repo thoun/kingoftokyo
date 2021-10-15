@@ -179,6 +179,7 @@ trait CardsActionTrait {
             $this->applyGetEnergy($from, $cost, 0);
             
         } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {
+            $topDeckCardBackType = $this->getTopDeckCardBackType();
             
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -188,11 +189,13 @@ trait CardsActionTrait {
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
+                'topDeckCardBackType' => $topDeckCardBackType,
             ]);
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
+            $topDeckCardBackType = $this->getTopDeckCardBackType();
     
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -202,6 +205,7 @@ trait CardsActionTrait {
                 'newCard' => $newCard,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
+                'topDeckCardBackType' => $topDeckCardBackType,
             ]);
 
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
@@ -296,12 +300,15 @@ trait CardsActionTrait {
 
         $this->cards->moveAllCardsInLocation('table', 'discard');
         $cards = $this->placeNewCardsOnTable();
+        
+        $topDeckCardBackType = $this->getTopDeckCardBackType();
 
         self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
             'energy' => $this->getPlayerEnergy($playerId),
+            'topDeckCardBackType' => $topDeckCardBackType,
         ]);
 
         $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);

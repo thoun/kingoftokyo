@@ -20,7 +20,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(20);
+        $this->debugSetEnergy(200);
         //$this->debugSetPlayerPoints(2343492, 9);
         //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 6);

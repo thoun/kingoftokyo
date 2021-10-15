@@ -661,6 +661,16 @@ trait CardsUtilTrait {
         }
     }
 
+    function getTopDeckCardBackType() {
+        $topCardsDb = $this->cards->getCardsOnTop(1, 'deck');
+        if (count($topCardsDb) > 0) {
+            $topCard = $this->getCardsFromDb($topCardsDb)[0];
+            return floor($topCard->type / 100) == 2 ? 'costume' : 'base';
+        } else {
+            return null;
+        }
+    }
+
     function willBeWounded(int $playerId) {
         $activePlayerId = self::getActivePlayerId();
         $activePlayerInTokyo = $this->inTokyo($activePlayerId);
