@@ -1,9 +1,14 @@
 @import url(../../../css/csslayer.css);
 
+$tokyoGreen: #a6c136;
+$tokyoBlack: #211D1F;
+$halloweenOrange: #918e8a;
+
 @import 'playerboards';
 @import 'dice';
 @import 'cards';
 @import 'table';
+@import 'halloween';
 
 @font-face {
     font-family: 'goodgirl';

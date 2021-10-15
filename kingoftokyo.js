@@ -1178,7 +1178,8 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
         var dice = this.dice.filter(function (die) { return die.value === args.diceValue; });
-        this.game.displayScoring("dice" + (dice[1] || dice[0]).id, '96c93c', args.deltaPoints, 1500);
+        console.log('this.game.isHalloweenExpansion()', this.game.isHalloweenExpansion());
+        this.game.displayScoring("dice" + (dice[1] || dice[0]).id, this.game.isHalloweenExpansion() ? '000000' : '96c93c', args.deltaPoints, 1500);
         this.dice.filter(function (die) { return die.value === args.diceValue; }).forEach(function (die) { return _this.removeDice(die, 1000, 1500); });
     };
     DiceManager.prototype.resolveHealthDiceInTokyo = function () {
@@ -1625,7 +1626,6 @@ var KingOfTokyo = /** @class */ (function () {
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
         var _this = this;
-        var _a;
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1, 2, 3, 4, 5, 6, 7, 8].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
@@ -1639,18 +1639,11 @@ var KingOfTokyo = /** @class */ (function () {
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
+        if (gamedatas.halloweenExpansion) {
+            document.body.classList.add('halloween');
+        }
         if (gamedatas.twoPlayersVariant) {
-            dojo.addClass('board', 'twoPlayersVariant');
-            // 2-players variant notice
-            if (Object.keys(gamedatas.players).length == 2 && ((_a = this.prefs[203]) === null || _a === void 0 ? void 0 : _a.value) == 1) {
-                dojo.place("\n                    <div id=\"board-corner-highlight\"></div>\n                    <div id=\"twoPlayersVariant-message\">\n                        " + _("You are playing the 2-players variant.") + "<br>\n                        " + _("When entering or starting a turn on Tokyo, you gain 1 energy instead of points") + ".<br>\n                        " + _("You can check if variant is activated in the bottom left corner of the table.") + "<br>\n                        <div style=\"text-align: center\"><a id=\"hide-twoPlayersVariant-message\">" + _("Dismiss") + "</a></div>\n                    </div>\n                ", 'board');
-                document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', function () {
-                    var select = document.getElementById('preference_control_203');
-                    select.value = '2';
-                    var event = new Event('change');
-                    select.dispatchEvent(event);
-                });
-            }
+            this.addTwoPlayerVariantNotice(gamedatas);
         }
         this.cards = new Cards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
@@ -2122,6 +2115,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.getPlayerId = function () {
         return Number(this.player_id);
     };
+    KingOfTokyo.prototype.isHalloweenExpansion = function () {
+        return this.gamedatas.halloweenExpansion;
+    };
     KingOfTokyo.prototype.isDefaultFont = function () {
         return Number(this.prefs[201].value) == 1;
     };
@@ -2133,6 +2129,20 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.addClass(id, 'disabled');
         }
         document.getElementById(id).addEventListener('click', function () { return callback(); });
+    };
+    KingOfTokyo.prototype.addTwoPlayerVariantNotice = function (gamedatas) {
+        var _a;
+        dojo.addClass('board', 'twoPlayersVariant');
+        // 2-players variant notice
+        if (Object.keys(gamedatas.players).length == 2 && ((_a = this.prefs[203]) === null || _a === void 0 ? void 0 : _a.value) == 1) {
+            dojo.place("\n                    <div id=\"board-corner-highlight\"></div>\n                    <div id=\"twoPlayersVariant-message\">\n                        " + _("You are playing the 2-players variant.") + "<br>\n                        " + _("When entering or starting a turn on Tokyo, you gain 1 energy instead of points") + ".<br>\n                        " + _("You can check if variant is activated in the bottom left corner of the table.") + "<br>\n                        <div style=\"text-align: center\"><a id=\"hide-twoPlayersVariant-message\">" + _("Dismiss") + "</a></div>\n                    </div>\n                ", 'board');
+            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', function () {
+                var select = document.getElementById('preference_control_203');
+                select.value = '2';
+                var event = new Event('change');
+                select.dispatchEvent(event);
+            });
+        }
     };
     KingOfTokyo.prototype.getOrderedPlayers = function () {
         return Object.values(this.gamedatas.players).sort(function (a, b) { return Number(a.player_no) - Number(b.player_no); });

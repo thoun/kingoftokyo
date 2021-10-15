@@ -60,29 +60,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         log('gamedatas', gamedatas);
 
-        if (gamedatas.twoPlayersVariant) {
-            dojo.addClass('board', 'twoPlayersVariant');
-            
-            // 2-players variant notice
-            if (Object.keys(gamedatas.players).length == 2 && (this as any).prefs[203]?.value == 1) {
-                dojo.place(`
-                    <div id="board-corner-highlight"></div>
-                    <div id="twoPlayersVariant-message">
-                        ${_("You are playing the 2-players variant.")}<br>
-                        ${_("When entering or starting a turn on Tokyo, you gain 1 energy instead of points")}.<br>
-                        ${_("You can check if variant is activated in the bottom left corner of the table.")}<br>
-                        <div style="text-align: center"><a id="hide-twoPlayersVariant-message">${_("Dismiss")}</a></div>
-                    </div>
-                `, 'board');
+        if (gamedatas.halloweenExpansion) {
+            document.body.classList.add('halloween');
+        }
 
-                document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', () => {
-                    const select = document.getElementById('preference_control_203') as HTMLSelectElement;
-                    select.value = '2';
-                    
-                    var event = new Event('change');
-                    select.dispatchEvent(event);
-                });
-            }
+        if (gamedatas.twoPlayersVariant) {
+            this.addTwoPlayerVariantNotice(gamedatas);
         }
 
         this.cards = new Cards(this);
@@ -615,6 +598,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return Number((this as any).player_id);
     }
 
+    public isHalloweenExpansion(): boolean {
+        return this.gamedatas.halloweenExpansion;
+    }
+
     public isDefaultFont(): boolean {
         return Number((this as any).prefs[201].value) == 1;
     }
@@ -628,6 +615,31 @@ class KingOfTokyo implements KingOfTokyoGame {
             dojo.addClass(id, 'disabled');
         }
         document.getElementById(id).addEventListener('click', () => callback());
+    }
+
+    private addTwoPlayerVariantNotice(gamedatas: KingOfTokyoGamedatas) {
+        dojo.addClass('board', 'twoPlayersVariant');
+
+        // 2-players variant notice
+        if (Object.keys(gamedatas.players).length == 2 && (this as any).prefs[203]?.value == 1) {
+            dojo.place(`
+                    <div id="board-corner-highlight"></div>
+                    <div id="twoPlayersVariant-message">
+                        ${_("You are playing the 2-players variant.")}<br>
+                        ${_("When entering or starting a turn on Tokyo, you gain 1 energy instead of points")}.<br>
+                        ${_("You can check if variant is activated in the bottom left corner of the table.")}<br>
+                        <div style="text-align: center"><a id="hide-twoPlayersVariant-message">${_("Dismiss")}</a></div>
+                    </div>
+                `, 'board');
+
+            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', () => {
+                const select = document.getElementById('preference_control_203') as HTMLSelectElement;
+                select.value = '2';
+
+                var event = new Event('change');
+                select.dispatchEvent(event);
+            });
+        }
     }
 
     private getOrderedPlayers(): KingOfTokyoPlayer[] {

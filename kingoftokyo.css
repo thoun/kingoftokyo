@@ -939,6 +939,42 @@
   position: relative;
 }
 
+body.halloween #rolled-dice #locked-dice {
+  border: 2px solid #918e8a;
+}
+body.halloween #rolled-dice #locked-dice #lock {
+  background: url("img/lock.svg") #918e8a;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+body.halloween #rolled-dice #locked-dice.hide-lock {
+  border-color: transparent;
+}
+body.halloween .die-item.black {
+  background-color: #918e8a;
+  border-color: #918e8a;
+  background-image: url("img/orange_dice.png");
+}
+body.halloween .dice-icon {
+  background-image: url("img/orange_dice.png");
+}
+body.halloween .animation {
+  background-image: url("img/animations-halloween.png");
+}
+body.halloween #skipBuyPhaseWrapper input:checked + .slider {
+  background-color: #918e8a;
+}
+body.halloween #skipBuyPhaseWrapper input:focus + .slider {
+  box-shadow: 0 0 1px #918e8a;
+}
+body.halloween #table .player-table.active {
+  border: 3px solid #918e8a;
+  box-shadow: 0px 0px 5px 2px #918e8a;
+}
+body.halloween .player-board.active {
+  box-shadow: 0px 0px 2px 3px #918e8a;
+}
+
 @font-face {
   font-family: "goodgirl";
   src: url("img/goodgirl-webfont.woff2") format("woff2"), url("img/goodgirl-webfont.woff") format("woff");

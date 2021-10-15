@@ -64,6 +64,7 @@ interface KingOfTokyoGamedatas {
 }
 
 interface KingOfTokyoGame extends Game {
+    isHalloweenExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
