@@ -186,9 +186,9 @@ trait DiceUtilTrait {
         
 
         // Shrink Ray
-        $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD) > 0;
+        $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
         // Poison Spit
-        $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD) > 0;
+        $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD);
 
         $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 

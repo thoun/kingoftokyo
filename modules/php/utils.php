@@ -47,7 +47,7 @@ trait UtilTrait {
     private function getGameVersion() {
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN; // TODO TEMP
+            return GAME_VERSION_BASE /*| GAME_VERSION_HALLOWEEN*/; // TODO TEMP
         } else {
             return GAME_VERSION_BASE;
         }
@@ -468,7 +468,7 @@ trait UtilTrait {
         ]);
     }
 
-    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, bool $giveShrinkRayToken, bool $givePoisonSpitToken) {
+    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
@@ -507,7 +507,7 @@ trait UtilTrait {
         }
     }
 
-    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, bool $giveShrinkRayToken, bool $givePoisonSpitToken) {
+    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return; // player has wings and cannot lose hearts
@@ -550,13 +550,13 @@ trait UtilTrait {
         }
 
         // Shrink Ray
-        if ($giveShrinkRayToken) {
-            $this->applyGetShrinkRayToken($playerId, 1);
+        if ($giveShrinkRayToken > 0) {
+            $this->applyGetShrinkRayToken($playerId, $giveShrinkRayToken);
         }
 
         // Poison Spit
         if ($givePoisonSpitToken > 0) {
-            $this->applyGetPoisonToken($playerId, 1);
+            $this->applyGetPoisonToken($playerId, $givePoisonSpitToken);
         }
 
         if ($damageDealerId == self::getActivePlayerId()) {
