@@ -2,15 +2,15 @@
 namespace KOT\Objects;
 
 class Damage {
-    public $playerId;
-    public $damage;
-    public $damageDealerId;
-    public $cardType;
-    public $ignoreCards;
-    public $giveShrinkRayToken;
-    public $givePoisonSpitToken;
+    public /*int*/ $playerId;
+    public /*int*/ $damage;
+    public /*int*/ $damageDealerId;
+    public /*int*/ $cardType;
+    public /*bool*/ $ignoreCards;
+    public /*int*/ $giveShrinkRayToken;
+    public /*int*/ $givePoisonSpitToken;
 
-    public function __construct(int $playerId, int $damage, int $damageDealerId, int $cardType, bool $ignoreCards = false, bool $giveShrinkRayToken = false, bool $givePoisonSpitToken = false) {
+    public function __construct(int $playerId, int $damage, int $damageDealerId, int $cardType, bool $ignoreCards = false, int $giveShrinkRayToken = 0, int $givePoisonSpitToken = 0) {
         $this->playerId = $playerId;
         $this->damage = $damage;
         $this->damageDealerId = $damageDealerId;

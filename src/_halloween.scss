@@ -1,0 +1,71 @@
+$halloweenOrange: #ff8a00;
+$halloweenBlack: #000000;
+
+body.halloween {
+    #rolled-dice {
+        #locked-dice {
+          border: 2px solid $halloweenBlack;
+      
+          #lock {
+            background: url('img/lock.svg') $halloweenOrange;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 4px 0 0 4px;
+          }
+
+          &.hide-lock {
+            border-color: transparent;
+          }
+        }
+    }
+
+
+    .die-item {
+        &.black {
+            background-color: $halloweenOrange;
+            border-color: $halloweenOrange;
+            background-image: url('img/orange_dice.png');
+        }
+    }
+
+    .log {        
+        .dice-icon {
+            background-image: url('img/orange_dice.png');
+        }
+    }
+
+    .gamelogreview {        
+        .dice-icon {
+            background-image: url('img/orange_dice.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/animations-halloween.png');
+    }
+
+    #skipBuyPhaseWrapper {    
+        input:checked + .slider {
+            background-color: $halloweenOrange;
+        }
+    
+        input:focus + .slider {
+            box-shadow: 0 0 1px $halloweenOrange;
+        }
+    }
+
+    #table {
+        .player-table {    
+            &.active {
+                border: 3px solid $halloweenOrange;
+                box-shadow: 0px 0px 5px 2px $halloweenOrange;
+            }
+        }
+    }
+
+    .player-board {
+        &.active {
+          box-shadow: 0px 0px 2px 3px $halloweenOrange;
+        }
+    }
+}

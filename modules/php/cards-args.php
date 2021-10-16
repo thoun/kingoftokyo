@@ -22,6 +22,17 @@ trait CardsArgTrait {
         These methods function is to return some additional information that is specific to the current
         game state.
     */
+
+    function argCheerleaderSupport() {
+        $activePlayerId = self::getActivePlayerId();
+        $diceNumber = $this->getDiceNumber($activePlayerId);
+
+        return [
+            'dice' => $this->getDice($diceNumber),
+            'inTokyo' => $this->inTokyo($activePlayerId),
+        ];
+    }
+
     function argBuyCard() {
         $playerId = self::getActivePlayerId();
         $playerEnergy = $this->getPlayerEnergy($playerId);
@@ -147,7 +158,7 @@ trait CardsArgTrait {
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             $disabledCardsOfPlayer = $canChange || !$limitToOneEnergy ? 
-                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; })) :
+                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || ($card->type >= 100 && $card->type < 200); })) :
                 $cardsOfPlayer;
             $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
             
@@ -173,6 +184,7 @@ trait CardsArgTrait {
 
             $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
+            $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $remainingDamage = 0;
             foreach($intervention->damages as $damage) {
@@ -188,6 +200,7 @@ trait CardsArgTrait {
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
+                'canUseRobot' => $canUseRobot,
                 'rapidHealingHearts' => $rapidHealingHearts,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
@@ -202,6 +215,36 @@ trait CardsArgTrait {
                 'damage' => '',
             ];
         }
+    }
+
+    function argStealCostumeCard() {
+        $playerId = self::getActivePlayerId();
+        $playerEnergy = $this->getPlayerEnergy($playerId);
+
+        $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $disabledIds = array_map(function ($card) { return $card->id; }, $tableCards); // can only take from other players, not table
+
+        $canBuyFromPlayers = false;
+
+        $woundedPlayersIds = $this->playersWoundedByActivePlayerThisTurn($playerId);
+        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+        foreach($otherPlayersIds as $otherPlayerId) {
+            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+            $isWoundedPlayer = in_array($otherPlayerId, $woundedPlayersIds);
+
+            foreach ($cardsOfPlayer as $card) {
+                if ($isWoundedPlayer && $card->type > 200 && $card->type < 300 && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                    $canBuyFromPlayers = true;
+                } else {
+                    $disabledIds[] = $card->id;
+                }
+            }
+        }
+
+        return [
+            'disabledIds' => $disabledIds,
+            'canBuyFromPlayers' => $canBuyFromPlayers,
+        ];
     }
 
 }

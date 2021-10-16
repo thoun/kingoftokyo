@@ -30,10 +30,10 @@ trait DiceActionTrait {
         $maxThrowNumber = $this->getThrowNumber($playerId);
 
         if ($throwNumber >= $maxThrowNumber) {
-            throw new \Error("You can't throw dices (max throw)");
+            throw new \BgaUserException("You can't throw dices (max throw)");
         }
         if (!$diceIds || $diceIds == '') {
-            throw new \Error("No selected dice to throw");
+            throw new \BgaUserException("No selected dice to throw");
         }
 
         $this->rethrowDice($diceIds);
@@ -53,7 +53,7 @@ trait DiceActionTrait {
         $die = $this->getFirst3Dice($this->getDiceNumber($playerId));
 
         if ($die == null) {
-            throw new \Error('No 3 die');
+            throw new \BgaUserException('No 3 die');
         }
 
         $newValue = bga_rand(1, 6);
@@ -80,7 +80,7 @@ trait DiceActionTrait {
 
         $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
         if ($countBackgroundDweller == 0) {
-            throw new \Error('No Background Dweller card');
+            throw new \BgaUserException('No Background Dweller card');
         }
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
@@ -107,14 +107,14 @@ trait DiceActionTrait {
 
         $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
         if ($countBackgroundDweller == 0) {
-            throw new \Error('No Background Dweller card');
+            throw new \BgaUserException('No Background Dweller card');
         }
 
         $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
 
         $die = $intervention->lastRolledDie;
         if ($die == null) {
-            throw new \Error('No 3 die');
+            throw new \BgaUserException('No 3 die');
         }
 
         $newValue = bga_rand(1, 6);
@@ -141,7 +141,7 @@ trait DiceActionTrait {
         $dieId = intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3));
 
         if ($dieId == 0) {
-            throw new \Error('No 3 die');
+            throw new \BgaUserException('No 3 die');
         }
 
         self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
@@ -177,7 +177,7 @@ trait DiceActionTrait {
         $die = $this->getDieById($id);
 
         if ($die == null) {
-            throw new \Error('No selected die');
+            throw new \BgaUserException('No selected die');
         }
 
         self::DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$value." where `dice_id` = ".$id);
@@ -187,12 +187,12 @@ trait DiceActionTrait {
             $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
             $usedCardOnThisTurn = null;
             foreach($herdCullerCards as $herdCullerCard) {
-                if (array_search($herdCullerCard->id, $usedCards) === false) {
+                if (!in_array($herdCullerCard->id, $usedCards)) {
                     $usedCardOnThisTurn = $herdCullerCard->id;
                 }
             }
             if ($usedCardOnThisTurn == null) {
-                throw new \Error('No unused Herd Culler for this player');
+                throw new \BgaUserException('No unused Herd Culler for this player');
             } else {
                 $this->setUsedCard($usedCardOnThisTurn);
             }
@@ -236,7 +236,7 @@ trait DiceActionTrait {
         $playerId = $intervention->remainingPlayersId[0];
 
         if ($this->countCardOfType($playerId, PSYCHIC_PROBE_CARD) == 0) {
-            throw new \Error('No Psychic Probe card');
+            throw new \BgaUserException('No Psychic Probe card');
         }
 
         $die = $this->getDieById($id);
@@ -248,12 +248,12 @@ trait DiceActionTrait {
         $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
         $usedCardOnThisTurn = null;
         foreach($psychicProbeCards as $psychicProbeCard) {
-            if (array_search($psychicProbeCard->id, $usedCards) === false) {
+            if (!in_array($psychicProbeCard->id, $usedCards)) {
                 $usedCardOnThisTurn = $psychicProbeCard->id;
             }
         }
         if ($usedCardOnThisTurn == null) {
-            throw new \Error('No unused Psychic Probe for this player');
+            throw new \BgaUserException('No unused Psychic Probe for this player');
         } else {
             $this->setUsedCard($usedCardOnThisTurn);
         }
@@ -365,7 +365,7 @@ trait DiceActionTrait {
             }
         }
         if ($healPlayerCount > 0 && $this->countCardOfType($playerId, HEALING_RAY_CARD) == 0) {
-            throw new \Error('No Healing Ray card');
+            throw new \BgaUserException('No Healing Ray card');
         }
         
         foreach ($heartDieChoices as $heartDieChoice) {

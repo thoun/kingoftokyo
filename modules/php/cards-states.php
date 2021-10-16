@@ -30,7 +30,7 @@ trait CardsStateTrait {
         $playerId = intval(self::getActivePlayerId()); 
 
         // if player is dead async, he can't buy or sell
-        if ($this->getPlayerHealth($playerId) === 0) {
+        if ($this->getPlayer($playerId)->eliminated) {
             $this->endTurn(true);
             return;
         }
@@ -100,13 +100,57 @@ trait CardsStateTrait {
 
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
 
-            $hasDice3 = $hasBackgroundDweller && $dice != null ? (array_search(3, $diceValues) !== false) : false;
+            $hasDice3 = $hasBackgroundDweller && $dice != null ? in_array(3, $diceValues) : false;
 
             $arg = $this->argCancelDamage($playerId, $hasDice3);
 
-            if (!$arg['canThrowDices'] && $arg['playerEnergy'] < 2 && !$arg['rethrow3']['hasDice3']) {
+            $canCancelWithCamouflage = $arg['canThrowDices'] || $arg['rethrow3']['hasDice3'];
+            $canCancelWithWings = $arg['canUseWings'] && $arg['playerEnergy'] >= 2;
+            $canCancelWithRobot = $arg['canUseRobot'] && $arg['playerEnergy'] >= 1;
+            if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot) {
                 $this->applySkipWings($playerId);
             }
+        }
+    }
+
+    function stStealCostumeCard() {
+        $playerId = self::getActivePlayerId();
+
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+
+        if ($diceCounts[6] < 3) {
+            // skip state, can't steal cards (not enough smashes)
+            $this->gamestate->nextState('endStealCostume');
+            return;
+        }
+        
+        $args = $this->argStealCostumeCard();
+        if ($this->autoSkipImpossibleActions() && !$args['canBuyFromPlayers']) {
+            // skip state, can't buy cards
+            $this->gamestate->nextState('endStealCostume');
+            return;
+        }
+    }
+
+    function stCheerleaderSupport() {
+        $cheerleaderSupportPlayerIds = [];
+        $cheerleaderCards = $this->getCardsFromDb($this->cards->getCardsOfType(CHEERLEADER_CARD));
+        if (count($cheerleaderCards) > 0) {
+            $cheerleaderCard = $cheerleaderCards[0];
+        
+            if ( $cheerleaderCard->location == 'hand') {
+                $playerId = intval($cheerleaderCard->location_arg);
+
+                if ($playerId != intval(self::getActivePlayerId())) {
+                    $cheerleaderSupportPlayerIds[] = $playerId;
+                }
+            }
+        }
+
+        if (count($cheerleaderSupportPlayerIds) > 0) {
+            $this->gamestate->setPlayersMultiactive($cheerleaderSupportPlayerIds, 'end', true);
+        } else {
+            $this->gamestate->nextState('end');
         }
     }
 }

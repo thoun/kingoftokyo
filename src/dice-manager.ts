@@ -52,7 +52,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -68,7 +68,7 @@ class DiceManager {
         this.clearDiceHtml();
         this.dice = dice;
         
-        const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy;
+        const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
             this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${die.value}`);
@@ -96,7 +96,7 @@ class DiceManager {
         });
     }
 
-    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
+    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean = false) {
         this.action = 'psychicProbeRoll';
 
         /*if (this.dice.length) { if active, event are not reset and roll is not applied
@@ -174,7 +174,7 @@ class DiceManager {
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
         const dice = this.dice.filter(die => die.value === args.diceValue);
-        (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, '96c93c', args.deltaPoints, 1500);
+        (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, this.game.isHalloweenExpansion() ? '000000' : '96c93c', args.deltaPoints, 1500);
         this.dice.filter(die => die.value === args.diceValue).forEach(die => this.removeDice(die, 1000, 1500));
     }
 
@@ -430,6 +430,7 @@ class DiceManager {
             const herdCullerButtonId = `${bubbleActionButtonsId}-herdCuller`;
             const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
             const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
+            const clownButtonId = `${bubbleActionButtonsId}-clown`;
 
             const args = this.changeDieArgs;
 
@@ -442,52 +443,69 @@ class DiceManager {
 
                 const buttonText = _("Change die face with ${card_name}");
                 
-                if (args.hasHerdCuller) {
+                if (args.hasClown) {
                     this.game.createButton(
                         bubbleActionButtonsId, 
-                        herdCullerButtonId, 
-                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(22, 'text-only')}</strong>` }),
+                        clownButtonId, 
+                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(212, 'text-only')}</strong>` }),
                         () => {
-                            this.game.changeDie(die.id, dieFaceSelector.getValue(), 22);
+                            this.game.changeDie(die.id, dieFaceSelector.getValue(), 212),
                             this.toggleBubbleChangeDie(die);
                         },
                         true
                     );
-                }
-                if (args.hasPlotTwist) {
-                    this.game.createButton(
-                        bubbleActionButtonsId, 
-                        plotTwistButtonId, 
-                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(33, 'text-only')}</strong>` }),
-                        () => {
-                            this.game.changeDie(die.id, dieFaceSelector.getValue(), 33),
-                            this.toggleBubbleChangeDie(die);
-                        },
-                        true
-                    );
-                }
-                if (args.hasStretchy) {
-                    this.game.createButton(
-                        bubbleActionButtonsId, 
-                        stretchyButtonId, 
-                        dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(44, 'text-only')}</strong>` }) + formatTextIcons(' (2 [Energy])'),
-                        () => {
-                            this.game.changeDie(die.id, dieFaceSelector.getValue(), 44),
-                            this.toggleBubbleChangeDie(die);
-                        },
-                        true
-                    );
+                } else {
+                    if (args.hasHerdCuller) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            herdCullerButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(22, 'text-only')}</strong>` }),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 22);
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
+                    if (args.hasPlotTwist) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            plotTwistButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(33, 'text-only')}</strong>` }),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 33),
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
+                    if (args.hasStretchy) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            stretchyButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cards.getCardName(44, 'text-only')}</strong>` }) + formatTextIcons(' (2 [Energy])'),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 44),
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
                 }
 
                 dieFaceSelector.onChange = value => {
-                    if (args.hasHerdCuller && die.value > 1) {
-                        dojo.toggleClass(herdCullerButtonId, 'disabled', value != 1);
-                    }
-                    if (args.hasPlotTwist) {
-                        dojo.toggleClass(plotTwistButtonId, 'disabled', value < 1);
-                    }
-                    if (args.hasStretchy) {
-                        dojo.toggleClass(stretchyButtonId, 'disabled', value < 1);
+                    if (args.hasClown) {
+                        dojo.toggleClass(clownButtonId, 'disabled', value < 1);
+                    } else {
+                        if (args.hasHerdCuller && die.value > 1) {
+                            dojo.toggleClass(herdCullerButtonId, 'disabled', value != 1);
+                        }
+                        if (args.hasPlotTwist) {
+                            dojo.toggleClass(plotTwistButtonId, 'disabled', value < 1);
+                        }
+                        if (args.hasStretchy) {
+                            dojo.toggleClass(stretchyButtonId, 'disabled', value < 1);
+                        }
                     }
                 };
 
@@ -496,14 +514,19 @@ class DiceManager {
 
             if (die.value == dieFaceSelector.getValue()) {
                 dieFaceSelector.reset(die.value);
-                if (args.hasHerdCuller) {
-                    dojo.addClass(herdCullerButtonId, 'disabled');
-                }
-                if (args.hasPlotTwist) {
-                    dojo.addClass(plotTwistButtonId, 'disabled');
-                }
-                if (args.hasStretchy) {
+                
+                if (args.hasClown) {
                     dojo.addClass(stretchyButtonId, 'disabled');
+                } else {
+                    if (args.hasHerdCuller) {
+                        dojo.addClass(herdCullerButtonId, 'disabled');
+                    }
+                    if (args.hasPlotTwist) {
+                        dojo.addClass(plotTwistButtonId, 'disabled');
+                    }
+                    if (args.hasStretchy) {
+                        dojo.addClass(stretchyButtonId, 'disabled');
+                    }
                 }
             }
 

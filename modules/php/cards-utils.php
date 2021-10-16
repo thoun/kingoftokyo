@@ -29,7 +29,6 @@ trait CardsUtilTrait {
         }
 
         $this->cards->createCards($cards, 'deck');
-        $this->cards->shuffle('deck'); 
 
         if ($this->isHalloweenExpansion()) { 
             $cards = [];
@@ -67,16 +66,16 @@ trait CardsUtilTrait {
                 break;
             
             // DISCARD
-            case 101: 
+            case APPARTMENT_BUILDING_CARD: 
                 $this->applyGetPoints($playerId, 3, $cardType);
                 break;
-            case 102:
+            case COMMUTER_TRAIN_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
                 break;
-            case 103:
+            case CORNER_STORE_CARD:
                 $this->applyGetPoints($playerId, 1, $cardType);
                 break;
-            case 104: 
+            case DEATH_FROM_ABOVE_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
 
                 // remove other players in Tokyo
@@ -110,16 +109,16 @@ trait CardsUtilTrait {
                 }
             
                 return $damages;
-            case 105:
-                $this->applyGetEnergy($playerId, MEDIA_FRIENDLY_CARD, $cardType);
+            case ENERGIZE_CARD:
+                $this->applyGetEnergy($playerId, 9, $cardType);
                 break;
-            case 106: case 107:
+            case EVACUATION_ORDER_1_CARD: case EVACUATION_ORDER_2_CARD:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
                     $this->applyLosePoints($otherPlayerId, 5, $cardType);
                 }
                 break;
-            case 108: 
+            case FLAME_THROWER_CARD: 
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 $damages = [];
                 foreach ($otherPlayersIds as $otherPlayerId) {
@@ -134,7 +133,7 @@ trait CardsUtilTrait {
                     $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
                 }
                 break;
-            case 110: 
+            case GAS_REFINERY_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 $damages = [];
@@ -142,33 +141,33 @@ trait CardsUtilTrait {
                     $damages[] = new Damage($otherPlayerId, 3, $playerId, $cardType);
                 }
                 return $damages;
-            case 111:
+            case HEAL_CARD:
                 $this->applyGetHealth($playerId, 2, $cardType);
                 break;
-            case 112: 
+            case HIGH_ALTITUDE_BOMBING_CARD: 
                 $playersIds = $this->getPlayersIds();
                 $damages = [];
                 foreach ($playersIds as $pId) {
                     $damages[] = new Damage($pId, 3, $playerId, $cardType);
                 }
                 return $damages;
-            case 113: 
+            case JET_FIGHTERS_CARD: 
                 $this->applyGetPoints($playerId, 5, $cardType);
                 return [new Damage($playerId, 4, $playerId, $cardType)];
-            case 114:
+            case NATIONAL_GUARD_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
                 return [new Damage($playerId, 2, $playerId, $cardType)];
-            case 115:
+            case NUCLEAR_POWER_PLANT_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
                 $this->applyGetHealth($playerId, 3, $cardType);
                 break;
-            case 116:
+            case SKYSCRAPER_CARD:
                 $this->applyGetPoints($playerId, 4, $cardType);
                 break;
-            case 117:
+            case TANK_CARD:
                 $this->applyGetPoints($playerId, 4, $cardType);
                 return [new Damage($playerId, 3, $playerId, $cardType)];
-            case 118: 
+            case VAST_STORM_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
@@ -177,10 +176,16 @@ trait CardsUtilTrait {
                     $this->applyLoseEnergy($otherPlayerId, $lostEnergy, $cardType);
                 }
                 break;
-            case 119:
+            case MONSTER_PETS_CARD:
+                $playersIds = $this->getPlayersIds();
+                foreach ($playersIds as $pId) {
+                    $this->applyLosePoints($pId, 3, $cardType);
+                }
+                break;
+            /*case 120:
                 $count = $this->cards->countCardInLocation('hand', $player_id);
                 $this->applyGetPoints($playerId, $count, $cardType);
-                return [new Damage($playerId, $count, $playerId, $cardType)];
+                return [new Damage($playerId, $count, $playerId, $cardType)];*/
         }
     }
 
@@ -195,7 +200,7 @@ trait CardsUtilTrait {
             ]);
         }
 
-        $mimicCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(MIMIC_CARD))[0]);
+        $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
         if ($mimicCard && $mimicCard->tokens > 0) {
             $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
         }
@@ -232,7 +237,7 @@ trait CardsUtilTrait {
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
-            $mimicCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(MIMIC_CARD))[0]);
+            $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
             $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
         }
         
@@ -284,7 +289,7 @@ trait CardsUtilTrait {
     function getCardsOfType($playerId, $cardType, $includeMimick = true) {
         $cards = $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
 
-        if ($includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself
+        if ($cardType < 100 && $includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself, nor discard/costume cards
             $mimickedCardType = $this->getMimickedCardType();
             if ($mimickedCardType == $cardType) {
                 $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, false)); // mimick
@@ -295,7 +300,7 @@ trait CardsUtilTrait {
     }
 
     function countExtraHead($playerId) {
-        return $this->countCardOfType($playerId, 13) + $this->countCardOfType($playerId, 14);
+        return $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
     }
 
     function getCardCost($playerId, $cardType) {
@@ -364,13 +369,13 @@ trait CardsUtilTrait {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         $cards = $this->getCardsOfType($playerId, ENERGY_DRINK_CARD);
 
         if (count($cards) == 0) {
-            throw new \Error('No Energy Drink card');
+            throw new \BgaUserException('No Energy Drink card');
         }
 
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
@@ -389,7 +394,7 @@ trait CardsUtilTrait {
         $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
 
         if (count($cards) == 0) {
-            throw new \Error('No Smoke Cloud card');
+            throw new \BgaUserException('No Smoke Cloud card');
         }
 
         // we choose mimic card first, if available
@@ -404,7 +409,7 @@ trait CardsUtilTrait {
         }
 
         if ($card->tokens < 1) {
-            throw new \Error('Not enough token');
+            throw new \BgaUserException('Not enough token');
         }
 
         $tokensOnCard = $card->tokens - 1;
@@ -428,21 +433,21 @@ trait CardsUtilTrait {
 
     function applyRapidHealing(int $playerId) {
         if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         $health = $this->getPlayerHealth($playerId);
 
-        if ($health <= 0) {
-            throw new \Error('You can\'t heal when you\'re dead');
+        if ($this->getPlayer($playerId)->eliminated) {
+            throw new \BgaUserException('You can\'t heal when you\'re dead');
         }
 
         if ($health >= $this->getPlayerMaxHealth($playerId)) {
-            throw new \Error('You can\'t heal when you\'re already at full life');
+            throw new \BgaUserException('You can\'t heal when you\'re already at full life');
         }
 
         if ($this->countCardOfType($playerId, RAPID_HEALING_CARD) == 0) {
-            throw new \Error('No Rapid Healing card');
+            throw new \BgaUserException('No Rapid Healing card');
         }
 
         $this->applyGetHealth($playerId, 1, RAPID_HEALING_CARD);
@@ -590,7 +595,7 @@ trait CardsUtilTrait {
     
     function removeDiscardCards(int $playerId) {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $discardCards = array_values(array_filter($cards, function($card) { return $card->type >= 100; }));
+        $discardCards = array_values(array_filter($cards, function($card) { return ($card->type >= 100 && $card->type < 200); }));
         $this->removeCards($playerId, $discardCards);
     }
 
@@ -615,7 +620,7 @@ trait CardsUtilTrait {
     }
 
     function isSureWin(int $playerId) {
-        $eliminationWin = $this->getRemainingPlayers() === 1 && $this->getPlayerHealth($playerId) > 0;
+        $eliminationWin = $this->getRemainingPlayers() === 1 && !$this->getPlayer($playerId)->eliminated;
         $scoreWin = $this->getPlayerScore($playerId) >= MAX_POINT;
 
         if (!$eliminationWin && !$scoreWin) {
@@ -635,4 +640,64 @@ trait CardsUtilTrait {
         return true;
     }
 
+    function applyEndOfEachMonsterCards() {
+        $ghostCards = $this->getCardsFromDb($this->cards->getCardsOfType(GHOST_CARD));
+        if (count($ghostCards) > 0) {
+            $ghostCard = $ghostCards[0];
+            if ($ghostCard->location == 'hand') {
+                $playerId = intval($ghostCard->location_arg);
+
+                if ($this->isDamageTakenThisTurn($playerId)) {
+                    $this->applyGetHealth($playerId, 1, GHOST_CARD);
+                }
+            }
+        }
+        
+        $vampireCards = $this->getCardsFromDb($this->cards->getCardsOfType(VAMPIRE_CARD));
+        if (count($vampireCards) > 0) {
+            $vampireCard = $vampireCards[0];
+        
+            if ( $vampireCard->location == 'hand') {
+                $playerId = intval($vampireCard->location_arg);
+
+                if ($this->isDamageDealtToOthersThisTurn($playerId)) {
+                    $this->applyGetHealth($playerId, 1, VAMPIRE_CARD);
+                }
+            }
+        }
+    }
+
+    function getTopDeckCardBackType() {
+        $topCardsDb = $this->cards->getCardsOnTop(1, 'deck');
+        if (count($topCardsDb) > 0) {
+            $topCard = $this->getCardsFromDb($topCardsDb)[0];
+            return floor($topCard->type / 100) == 2 ? 'costume' : 'base';
+        } else {
+            return null;
+        }
+    }
+
+    function willBeWounded(int $playerId) {
+        $activePlayerId = self::getActivePlayerId();
+        $activePlayerInTokyo = $this->inTokyo($activePlayerId);
+
+        if ($this->countCardOfType($activePlayerId, NOVA_BREATH_CARD) == 0 && $this->inTokyo($playerId) == $activePlayerInTokyo) {
+            return false; // same location & no Nova card for smashing player
+        }
+
+        $dice = $this->getDice($this->getDiceNumber($activePlayerId));
+        $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
+
+        $diceCounts = [];
+        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+            $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
+        }
+
+        $detail = $this->addSmashesFromCards($activePlayerId, $diceCounts, $activePlayerInTokyo);
+        $diceCounts[6] += $detail->addedSmashes;
+
+        $minDamage = $this->countCardOfType($playerId, ARMOR_PLATING_CARD) > 0 ? 2 : 1;
+        
+        return $diceCounts[6] >= $minDamage;
+    }
 }

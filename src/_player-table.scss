@@ -1,9 +1,11 @@
 .player-table {
-    width: 420px;
+    width: 440px;
     position: absolute;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 10px 0;
+    box-sizing: border-box;
 
     &.eliminated {
         // opacity: 0.5;
@@ -12,7 +14,6 @@
 
     &.active {
         border: 3px solid #ffcf13;
-        margin: -3px;
         box-shadow: 0px 0px 5px 2px #ffcf13;
     }
     
@@ -115,7 +116,7 @@
                 height: 150px;
             }
 
-            @for $i from 1 through 6 {
+            @for $i from 1 through 8 {
                 &.monster#{$i} {
                     background-image: url('img/monster-board-#{$i}.png');
                 }
@@ -177,5 +178,12 @@
 
 .monster-figure {
     position: relative;
-    // filter: drop-shadow(6px 6px 4px black); // TODO add it to pictures
+    // filter: drop-shadow(6px 6px 4px black); 
+}
+
+.mode_3d {
+    .monster-figure {
+        transform: translateY(-60px) rotateX(-90deg);
+        transform-origin: bottom center;
+    }
 }

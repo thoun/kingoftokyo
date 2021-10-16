@@ -23,8 +23,22 @@
  * !! It is not a good idea to modify this file when a game is running !!
  *
  */
+require_once("modules/constants.inc.php");
 
 $game_options = [
+
+    /* TODOTR GAME_VERSION_OPTION => [
+        'name' => totranslate('Game version'),
+        'values' => [
+            GAME_VERSION_BASE => [
+                'name' => totranslate('Base version'), 
+            ],
+            GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN => [
+                'name' => totranslate('Base version + Halloween expansion'), 
+            ],
+        ],
+        'default' => 1,
+    ],*/
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
@@ -43,6 +57,21 @@ $game_options = [
         ],
         'default' => 1,
     ],
+
+    /* TODOTR BONUS_MONSTERS_OPTION => [
+        'name' => totranslate('Bonus monsters'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+                'description' => totranslate("Only base game monsters")
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'description' => totranslate("Base game and bonus/promo monsters"),
+            ],
+        ],
+        'default' => 1,
+    ],*/
 
     110 => [
         'name' => totranslate('Skip phase with no possible actions'),

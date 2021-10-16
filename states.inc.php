@@ -69,7 +69,8 @@ $basicGameStates = [
         "action" => "stStart",
         "transitions" => [ 
             "pickMonster" => ST_PLAYER_PICK_MONSTER,
-            "start" => ST_START_TURN,
+            "chooseInitialCard" => ST_PLAYER_CHOOSE_INITIAL_CARD,
+            "start" => ST_START_GAME,
         ],
     ],
 
@@ -80,7 +81,19 @@ $basicGameStates = [
         "action" => "stPickMonsterNextPlayer",
         "transitions" => [
             "nextPlayer" => ST_PLAYER_PICK_MONSTER,
-            "start" => ST_START_TURN,
+            "chooseInitialCard" => ST_PLAYER_CHOOSE_INITIAL_CARD,
+            "start" => ST_START_GAME,
+        ],
+    ],
+
+    ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER => [
+        "name" => "chooseInitialCardNextPlayer",
+        "description" => "",
+        "type" => "game",
+        "action" => "stChooseInitialCardNextPlayer",
+        "transitions" => [
+            "nextPlayer" => ST_PLAYER_CHOOSE_INITIAL_CARD,
+            "start" => ST_START_GAME,
         ],
     ],
 
@@ -120,9 +133,34 @@ $playerActionsGameStates = [
         "possibleactions" => [ "pickMonster" ],
         "transitions" => [
             "next" => ST_PICK_MONSTER_NEXT_PLAYER,
-            "start" => ST_START_TURN,
+            "start" => ST_START_GAME,
         ],
 
+    ],
+
+    ST_PLAYER_CHOOSE_INITIAL_CARD => [
+        "name" => "chooseInitialCard",
+        "description" => /*client TODOTR translate(*/'${actplayer} must choose a card'/*)*/,
+        "descriptionmyturn" => '', /*client TODOTR translate(*/'${you} must choose a card'/*)*/,
+        "type" => "activeplayer",
+        "action" => "stChooseInitialCard",
+        "args" => "argChooseInitialCard",
+        "possibleactions" => [ "chooseInitialCard" ],
+        "transitions" => [
+            "next" => ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER,
+            "start" => ST_START_GAME,
+        ],
+
+    ],
+
+    ST_START_GAME => [
+        "name" => "startGame",
+        "description" => "",
+        "type" => "game",
+        "action" => "stStartGame",
+        "transitions" => [ 
+            "start" => ST_START_TURN,
+        ],
     ],
 
     ST_START_TURN => [
@@ -178,7 +216,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "changeDie" => ST_PLAYER_CHANGE_DIE,
             "changeDieWithPsychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
-            "resolve" => ST_RESOLVE_DICE,
+            "resolve" => ST_PREPARE_RESOLVE_DICE,
         ],
 
     ],
@@ -193,10 +231,32 @@ $playerActionsGameStates = [
         "possibleactions" => [ "psychicProbeRollDie", "psychicProbeSkip", "rethrow3psychicProbe" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
-            "end" => ST_RESOLVE_DICE,
+            "end" => ST_PREPARE_RESOLVE_DICE,
             "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
+        ],
+    ],
+
+    ST_PREPARE_RESOLVE_DICE => [
+        "name" => "prepareResolveDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stPrepareResolveDice",
+        "transitions" => [
+            "resolve" => ST_RESOLVE_DICE,
+            "askCheerleaderSupport" => ST_MULTIPLAYER_CHEERLEADER_SUPPORT,
+        ],
+    ],
+
+    ST_MULTIPLAYER_CHEERLEADER_SUPPORT => [
+        "name" => "cheerleaderSupport",
+        "description" => "", /* client TODOTR translate(*/'Player with Cheerleader can support monster'/*)*/,
+        "descriptionmyturn" => "", /* client TODOTR translate(*/'${you} can support monster'/*)*/,
+        "type" => "multipleactiveplayer",
+        "args" => "argCheerleaderSupport",
+        "action" => "stCheerleaderSupport",
+        "possibleactions" => [ "support", "dontSupport" ],
+        "transitions" => [
+            "end" => ST_RESOLVE_DICE,
         ],
     ],
 
@@ -273,7 +333,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stCancelDamage",
         "args" => "argCancelDamage",
-        "possibleactions" => [ "throwCamouflageDice", "useWings", "skipWings", "useRapidHealingSync", "rethrow3camouflage" ],
+        "possibleactions" => [ "throwCamouflageDice", "useWings", "skipWings", "useRobot", "useRapidHealingSync", "rethrow3camouflage" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
@@ -294,8 +354,6 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
             "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -316,7 +374,6 @@ $playerActionsGameStates = [
         "action" => "stEnterTokyoApplyBurrowing",
         "transitions" => [
             "next" => ST_ENTER_TOKYO,
-            //"endGame" => ST_END_GAME,
         ],
     ],
 
@@ -326,9 +383,23 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stEnterTokyo",
         "transitions" => [
-            "next" => ST_PLAYER_BUY_CARD,
-            //"endGame" => ST_END_GAME,
+            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
+            "buyCard" => ST_PLAYER_BUY_CARD,
         ],
+    ],
+
+    ST_PLAYER_STEAL_COSTUME_CARD => [
+        "name" => "stealCostumeCard",
+        "description" => "", // TODO client TEMPTR translate('${actplayer} can steal a Costume card'),
+        "descriptionmyturn" => "", // TODO client TEMPTR translate('${you} can steal a Costume card'),
+        "type" => "activeplayer",
+        "args" => "argStealCostumeCard",
+        "action" => "stStealCostumeCard",
+        "possibleactions" => [ "stealCostumeCard", "endStealCostume" ],
+        "transitions" => [
+            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
+            "endStealCostume" => ST_PLAYER_BUY_CARD,
+        ]
     ],
 
     ST_PLAYER_BUY_CARD => [
@@ -346,7 +417,6 @@ $playerActionsGameStates = [
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "endTurn" => ST_RESOLVE_END_TURN,
             "renew" => ST_PLAYER_BUY_CARD,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -362,7 +432,6 @@ $playerActionsGameStates = [
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "renew" => ST_PLAYER_BUY_CARD,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -378,8 +447,6 @@ $playerActionsGameStates = [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "stayMimicCard" => ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD,
             "end" => ST_PLAYER_BUY_CARD,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -394,8 +461,6 @@ $playerActionsGameStates = [
         "transitions" => [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "end" => ST_PLAYER_BUY_CARD,
-            //"endGame" => ST_END_GAME,
-            //"zombiePass" => ST_PLAYER_BUY_CARD,
         ],
     ],
 
@@ -409,7 +474,6 @@ $playerActionsGameStates = [
         "transitions" => [
             "sellCard" => ST_PLAYER_SELL_CARD,
             "endTurn" => ST_RESOLVE_END_TURN,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ]
     ],
 
@@ -421,7 +485,6 @@ $playerActionsGameStates = [
         "transitions" => [ 
             "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             "endTurn" => ST_END_TURN,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],
 
@@ -432,7 +495,6 @@ $playerActionsGameStates = [
         "action" => "stEndTurn",
         "transitions" => [ 
             "nextPlayer" => ST_NEXT_PLAYER,
-            //"endGame" => ST_END_GAME,
         ],
     ],
 ];

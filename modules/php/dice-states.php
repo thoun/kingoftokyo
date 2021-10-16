@@ -39,6 +39,15 @@ trait DiceStateTrait {
         $this->stIntervention(PSYCHIC_PROBE_INTERVENTION);
     }
 
+    function stPrepareResolveDice() {
+        if ($this->isHalloweenExpansion()) {
+            $this->gamestate->nextState('askCheerleaderSupport');
+        } else {
+            $this->gamestate->nextState('resolve');
+        }
+        
+    }
+
     function stResolveDice() {
         $this->updateKillPlayersScoreAux();
         
@@ -70,69 +79,16 @@ trait DiceStateTrait {
             $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
         }
 
-        $addedSmashes = 0;
-        $cardsAddingSmashes = [];
+        $detail = $this->addSmashesFromCards($playerId, $diceCounts, $playerInTokyo);
+        $diceCounts[6] += $detail->addedSmashes;
 
-        // acid attack
-        $countAcidAttack = $this->countCardOfType($playerId, ACID_ATTACK_CARD);
-        if ($countAcidAttack > 0) {
-            $diceCounts[6] += $countAcidAttack;
-            $addedSmashes += $countAcidAttack;
-
-            for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = ACID_ATTACK_CARD; }
-        }
-
-        // burrowing
-        if ($playerInTokyo) {
-            $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
-            if ($countBurrowing > 0) {
-                $diceCounts[6] += $countBurrowing;
-                $addedSmashes += $countBurrowing;
-
-                for ($i=0; $i<$countBurrowing; $i++) { $cardsAddingSmashes[] = BURROWING_CARD; }
-            }
-        }
-
-        // poison quills
-        if ($diceCounts[2] >= 3) {
-            $countPoisonQuills = $this->countCardOfType($playerId, POISON_QUILLS_CARD);
-            if ($countPoisonQuills > 0) {
-                $diceCounts[6] += 2 * $countPoisonQuills;
-                $addedSmashes += 2 * $countPoisonQuills;
-                
-                for ($i=0; $i<$countPoisonQuills; $i++) { $cardsAddingSmashes[] = POISON_QUILLS_CARD; }
-            }
-        }
-
-        if ($diceCounts[6] >= 1) {
-            // spiked tail
-            $countSpikedTail = $this->countCardOfType($playerId, SPIKED_TAIL_CARD);
-            if ($countSpikedTail > 0) {
-                $diceCounts[6] += $countSpikedTail;
-                $addedSmashes += $countSpikedTail;
-                
-                for ($i=0; $i<$countSpikedTail; $i++) { $cardsAddingSmashes[] = SPIKED_TAIL_CARD; }
-            }
-
-            // urbavore
-            if ($playerInTokyo) {
-                $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);
-                if ($countUrbavore > 0) {
-                    $diceCounts[6] += $countUrbavore;
-                    $addedSmashes += $countUrbavore;
-                
-                    for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = URBAVORE_CARD; }
-                }
-            }
-        }
-
-        if ($addedSmashes > 0) {
+        if ($detail->addedSmashes > 0) {
             $diceStr = '';
-            for ($i=0; $i<$addedSmashes; $i++) { 
+            for ($i=0; $i<$detail->addedSmashes; $i++) { 
                 $diceStr .= $this->getDieFaceLogName(6); 
             }
             
-            $cardNamesStr = implode(', ', $cardsAddingSmashes);
+            $cardNamesStr = implode(', ', $detail->cardsAddingSmashes);
 
             self::notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
                 'playerId' => $playerId,

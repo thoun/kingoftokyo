@@ -186,9 +186,9 @@ trait DiceUtilTrait {
         
 
         // Shrink Ray
-        $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD) > 0;
+        $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
         // Poison Spit
-        $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD) > 0;
+        $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD);
 
         $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 
@@ -245,7 +245,7 @@ trait DiceUtilTrait {
             ]);
 
             // we add damage only if it's not already counted in smashed players
-            if (array_search($damagePlayerId, $smashedPlayersIds) === false) {
+            if (!in_array($damagePlayerId, $smashedPlayersIds)) {
                 $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0, false, $giveShrinkRayToken, $givePoisonSpitToken);
             }
         }
@@ -266,7 +266,7 @@ trait DiceUtilTrait {
         if ($herdCullerCount > 0) {
             $usedCards = $this->getUsedCard();
             foreach ($herdCullerCards as $herdCullerCard) {
-                if (array_search($herdCullerCard->id, $usedCards) === false) {
+                if (!in_array($herdCullerCard->id, $usedCards)) {
                     $availableHerdCullers++;
                 }
             }
@@ -276,16 +276,33 @@ trait DiceUtilTrait {
         $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST_CARD) > 0;
         // Stretchy
         $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $this->getPlayerEnergy($playerId) >= 2;
+
+        $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
+        // Clown
+        if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
+            $dice = $this->getDice($this->getDiceNumber($playerId));
+            $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
+            $diceCounts = [];
+            for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+                $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
+            }
+            
+            if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
+                self::setGameStateValue(CLOWN_ACTIVATED, 1);
+                $hasClown = true;
+            }
+        }
         
         return [
             'hasHerdCuller' => $hasHerdCuller,
             'hasPlotTwist' => $hasPlotTwist,
             'hasStretchy' => $hasStretchy,
+            'hasClown' => $hasClown,
         ];
     }
 
     function canChangeDie(array $cards) {
-        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'];
+        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'] || $cards['hasClown'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        
@@ -332,7 +349,7 @@ trait DiceUtilTrait {
                 $unusedPsychicProbeCards = 0;
                 $usedCards = $this->getUsedCard();
                 foreach($psychicProbeCards as $psychicProbeCard) {
-                    if (array_search($psychicProbeCard->id, $usedCards) === false) {
+                    if (!in_array($psychicProbeCard->id, $usedCards)) {
                         $unusedPsychicProbeCards++;
                     }
                 }
@@ -354,9 +371,7 @@ trait DiceUtilTrait {
 
     function getDieFaceLogName(int $number) {
         switch($number) {
-            case 1:
-            case 2:
-            case 3: return "[dice$number]";
+            case 1: case 2: case 3: return "[dice$number]";
             case 4: return "[diceHeart]";
             case 5: return "[diceEnergy]";
             case 6: return "[diceSmash]";
@@ -382,6 +397,8 @@ trait DiceUtilTrait {
     function getPsychicProbeIntervention(int $playerId) { // rturn null or PsychicProbeIntervention
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
 
+        // TODO add Witch here ?
+
         if (count($playersWithPsychicProbe) > 0) {
             $cards = [];
             foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
@@ -391,6 +408,69 @@ trait DiceUtilTrait {
             return $psychicProbeIntervention;
         }
         return null;
+    }
+
+    function addSmashesFromCards(int $playerId, array $diceCounts, bool $playerInTokyo) {
+        $addedSmashes = 0;
+        $cardsAddingSmashes = [];
+
+        // cheerleader
+        if (intval(self::getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
+            $addedSmashes += 1;
+        }
+
+        // acid attack
+        $countAcidAttack = $this->countCardOfType($playerId, ACID_ATTACK_CARD);
+        if ($countAcidAttack > 0) {
+            $addedSmashes += $countAcidAttack;
+
+            for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = ACID_ATTACK_CARD; }
+        }
+
+        // burrowing
+        if ($playerInTokyo) {
+            $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+            if ($countBurrowing > 0) {
+                $addedSmashes += $countBurrowing;
+
+                for ($i=0; $i<$countBurrowing; $i++) { $cardsAddingSmashes[] = BURROWING_CARD; }
+            }
+        }
+
+        // poison quills
+        if ($diceCounts[2] >= 3) {
+            $countPoisonQuills = $this->countCardOfType($playerId, POISON_QUILLS_CARD);
+            if ($countPoisonQuills > 0) {
+                $addedSmashes += 2 * $countPoisonQuills;
+                
+                for ($i=0; $i<$countPoisonQuills; $i++) { $cardsAddingSmashes[] = POISON_QUILLS_CARD; }
+            }
+        }
+
+        if ($diceCounts[6] >= 1) {
+            // spiked tail
+            $countSpikedTail = $this->countCardOfType($playerId, SPIKED_TAIL_CARD);
+            if ($countSpikedTail > 0) {
+                $addedSmashes += $countSpikedTail;
+                
+                for ($i=0; $i<$countSpikedTail; $i++) { $cardsAddingSmashes[] = SPIKED_TAIL_CARD; }
+            }
+
+            // urbavore
+            if ($playerInTokyo) {
+                $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);
+                if ($countUrbavore > 0) {
+                    $addedSmashes += $countUrbavore;
+                
+                    for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = URBAVORE_CARD; }
+                }
+            }
+        }
+
+        $detail = new \stdClass();
+        $detail->addedSmashes = $addedSmashes;
+        $detail->cardsAddingSmashes = $cardsAddingSmashes;
+        return $detail;
     }
 
 }

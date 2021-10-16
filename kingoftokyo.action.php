@@ -47,6 +47,16 @@
         self::ajaxResponse();
     }
   	
+    public function chooseInitialCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->chooseInitialCard($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function rethrow() {
         self::setAjaxMode();
 
@@ -172,6 +182,22 @@
 
         self::ajaxResponse();
     }
+  	
+    public function support() {
+        self::setAjaxMode();
+
+        $this->game->support();
+
+        self::ajaxResponse();
+    }
+  	
+    public function dontSupport() {
+        self::setAjaxMode();
+
+        $this->game->dontSupport();
+
+        self::ajaxResponse();
+    }
 
     public function applyHeartDieChoices() {
         self::setAjaxMode();
@@ -195,6 +221,24 @@
         self::setAjaxMode();
 
         $this->game->actionLeaveTokyo();
+
+        self::ajaxResponse();
+    }
+  	
+    public function stealCostumeCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->stealCostumeCard($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function endStealCostume() {
+        self::setAjaxMode();
+
+        $this->game->endStealCostume();
 
         self::ajaxResponse();
     }
@@ -300,6 +344,16 @@
         self::setAjaxMode();
 
         $this->game->skipWings();
+
+        self::ajaxResponse();
+    }
+  	
+    public function useRobot() {
+        self::setAjaxMode();
+
+        $energy = self::getArg("energy", AT_posint, true);
+
+        $this->game->useRobot($energy);
 
         self::ajaxResponse();
     }

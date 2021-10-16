@@ -8,6 +8,16 @@ trait MonsterTrait {
 //////////// Utility functions
 ////////////
 
+
+    private function getGameMonsters() {
+        global $g_config;
+        if (/*intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2 ||*/ $g_config['debug_from_chat']) {  // TODO TEMP
+            return [1,2,3,4,5,6,7,8];
+        } else {
+            return [1,2,3,4,5,6];
+        }
+    }
+
     function canPickMonster() {
         return intval(self::getGameStateValue(PICK_MONSTER_OPTION)) === 2;
     }
@@ -18,13 +28,13 @@ trait MonsterTrait {
 
         $availableMonsters = [];
 
-        for ($i = 1; $i <= 6; $i++) {
-            if (array_search($i, $pickedMonsters) === false) {
-                $availableMonsters[] = $i;
+        $monsters = $this->getGameMonsters();
+        foreach ($monsters as $number) {
+            if (!in_array($number, $pickedMonsters)) {
+                $availableMonsters[] = $number;
             }
         }
 
-        // TODO and test zombie in pick monster
         return $availableMonsters;
     }
 
@@ -46,7 +56,11 @@ trait MonsterTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function pickMonster(int $monsterId) {
+    function pickMonster(int $monsterId, $skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('pickMonster');
+        }        
+
         $playerId = self::getActivePlayerId();
 
         $this->setMonster($playerId, $monsterId);
@@ -81,7 +95,7 @@ trait MonsterTrait {
         } else {
             $availableMonsters = $this->getAvailableMonsters();
             if (count($availableMonsters) == 1) {
-                $this->pickMonster($availableMonsters[0]);
+                $this->pickMonster($availableMonsters[0], true);
             }
         }
     }
@@ -91,7 +105,7 @@ trait MonsterTrait {
         self::giveExtraTime($playerId);
 
         if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
-            $this->gamestate->nextState('start');
+            $this->gamestate->nextState($this->isHalloweenExpansion() ? 'chooseInitialCard' : 'start');
         } else {
             $this->gamestate->nextState('nextPlayer');
         }

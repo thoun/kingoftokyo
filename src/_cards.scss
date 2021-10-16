@@ -68,6 +68,10 @@ $description-size: 7pt;
             -webkit-text-stroke: 4px #ef1923;
         }
 
+        &.costume .outline { // orange
+            -webkit-text-stroke: 4px #f7941d;
+        }
+
         .outline {
             position: absolute;
             left: 0;

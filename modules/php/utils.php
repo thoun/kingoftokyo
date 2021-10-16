@@ -18,12 +18,52 @@ trait UtilTrait {
     //////////// Utility functions
     ////////////
 
+    function array_find(array $array, callable $fn) {
+        foreach ($array as $value) {
+            if($fn($value)) {
+                return $value;
+            }
+        }
+        return null;
+    }
+
+    function array_some(array $array, callable $fn) {
+        foreach ($array as $value) {
+            if($fn($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function isTurnBased() {
         return intval($this->gamestate->table_globals[200]) >= 10;
     }
 
     function isTwoPlayersVariant() {
         return intval(self::getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
+    }
+
+    private function getGameVersion() {
+        global $g_config;
+        if ($g_config['debug_from_chat']) { 
+            return GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN; // TODO TEMP
+        } else {
+            return GAME_VERSION_BASE;
+        }
+        //TODO TEMP return intval(self::getGameStateValue(GAME_VERSION_OPTION));
+    }
+
+    function isPowerUpExpansion() {
+        return ($this->getGameVersion() & GAME_VERSION_POWER_UP) === GAME_VERSION_POWER_UP;
+    }
+
+    function isHalloweenExpansion() {
+        return ($this->getGameVersion() & GAME_VERSION_HALLOWEEN) === GAME_VERSION_HALLOWEEN;
+    }
+
+    function isDarkEdition() {
+        return ($this->getGameVersion() & GAME_VERSION_DARK_EDITION) === GAME_VERSION_DARK_EDITION;
     }
 
     function autoSkipImpossibleActions() {
@@ -50,7 +90,7 @@ trait UtilTrait {
 
     function isUsedCard(int $cardId, $usedCards = null) {
         $cardsIds = $this->getUsedCard();
-        return array_search($cardId, $cardsIds) !== false;
+        return in_array($cardId, $cardsIds);
     }
 
     function setUsedCard(int $cardId) {
@@ -102,9 +142,11 @@ trait UtilTrait {
     function getThrowNumber(int $playerId) {
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
+        // statue of libery
+        $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
         // energy drink
         $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS));
-        return 3 + $countGiantBrain + $extraRolls;
+        return 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls;
     }
 
     function getPlayerMaxHealth(int $playerId) {
@@ -138,7 +180,7 @@ trait UtilTrait {
         } else {
             $incScore = 1;
             self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
-            $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
+            $this->applyGetPoints($playerId, $incScore, -1);
             $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
         }
 
@@ -291,7 +333,10 @@ trait UtilTrait {
 
         foreach($orderedPlayers as $player) {
             if ($player->health == 0 && !$player->eliminated) {
-                $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);
+                if ($countZombie == 0) {
+                    $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                }
             }
         }
     }
@@ -301,7 +346,7 @@ trait UtilTrait {
 
         // if player is killing himself
         // in a game state, we can kill him, but else we have to wait the end of his turn
-        $playerIsActivePlayer = array_search($player->id, $this->gamestate->getActivePlayerList()) !== false;
+        $playerIsActivePlayer = in_array($player->id, $this->gamestate->getActivePlayerList());
         if ($player->id == $currentTurnPlayerId || $playerIsActivePlayer) {
             $this->asyncEliminatePlayer($player->id);
         } else {
@@ -330,7 +375,7 @@ trait UtilTrait {
     function removePlayerFromSmashedPlayersInTokyo(int $playerId) {
         $playersIds = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
 
-        if ($playersIds != null && array_search($playerId, $playersIds) !== false) {
+        if ($playersIds != null && in_array($playerId, $playersIds)) {
             $playersIds = array_filter($playersIds, function ($id) use ($playerId) { return $id != $playerId; });
 
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $playersIds);
@@ -341,7 +386,15 @@ trait UtilTrait {
     // $cardType = -1 => no notification
 
     function applyGetPoints(int $playerId, int $points, int $cardType) {
-        $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
+        $newPoints = $points;
+
+        // Astronaut
+        $countAstronaut = $this->countCardOfType($playerId, ASTRONAUT_CARD);
+        if ($countAstronaut > 0 && ($this->getPlayerScore($playerId) + $points) >= 17) {
+            $newPoints = 20;
+        }
+
+        $this->applyGetPointsIgnoreCards($playerId, $newPoints, $cardType);
     }
 
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
@@ -394,6 +447,11 @@ trait UtilTrait {
 
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = min($actualHealth + $health, $maxHealth);
+
+        if ($actualHealth == $newHealth) {
+            return; // already at full life, no need for notif
+        }
+
         self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         self::incStat($health, 'heal', $playerId);
@@ -418,7 +476,7 @@ trait UtilTrait {
         ]);
     }
 
-    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, bool $giveShrinkRayToken, bool $givePoisonSpitToken) {
+    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
@@ -457,10 +515,16 @@ trait UtilTrait {
         }
     }
 
-    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, bool $giveShrinkRayToken, bool $givePoisonSpitToken) {
+    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return; // player has wings and cannot lose hearts
+        }
+
+        // devil
+        $devil = $activePlayerId == $damageDealerId && $playerId != $damageDealerId && $this->countCardOfType($damageDealerId, DEVIL_CARD) > 0;
+        if ($devil) {
+            $health++;
         }
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -484,18 +548,36 @@ trait UtilTrait {
             ]);
         }
 
+        if ($devil) {
+            self::notifyAllPlayers('devilExtraDamage', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'delta_health' => 1,
+                'card_name' => DEVIL_CARD,
+            ]);
+        }
+
         // Shrink Ray
-        if ($giveShrinkRayToken) {
-            $this->applyGetShrinkRayToken($playerId, 1);
+        if ($giveShrinkRayToken > 0) {
+            $this->applyGetShrinkRayToken($playerId, $giveShrinkRayToken);
         }
 
         // Poison Spit
         if ($givePoisonSpitToken > 0) {
-            $this->applyGetPoisonToken($playerId, 1);
+            $this->applyGetPoisonToken($playerId, $givePoisonSpitToken);
         }
 
         if ($damageDealerId == self::getActivePlayerId()) {
             self::setGameStateValue('damageDoneByActivePlayer', 1);
+        }
+            
+        self::DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
+
+        // pirate
+        $pirateCards = $this->getCardsOfType($damageDealerId, PIRATE_CARD);
+        if (count($pirateCards) > 0 && $this->getPlayerEnergy($playerId) >= 1) {
+            $this->applyLoseEnergy($playerId, 1, PIRATE_CARD);
+            $this->applyGetEnergy($damageDealerId, 1, PIRATE_CARD);
         }
 
         // must be done before player eliminations
@@ -659,5 +741,32 @@ trait UtilTrait {
     function updateKillPlayersScoreAux() {
         $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead > 0"));
         self::setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount + 1);
+    }
+
+    function isDamageTakenThisTurn(int $playerId) {
+        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `to` = $playerId")) > 0;
+    }
+
+    function isDamageDealtThisTurn(int $playerId) {
+        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId")) > 0;
+    }
+
+    function isDamageDealtToOthersThisTurn(int $playerId) {
+        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` <> $playerId")) > 0;
+    }
+
+    function playersWoundedByActivePlayerThisTurn(int $playerId) {
+        $dbResults = self::getCollectionFromDB("SELECT `to` FROM `turn_damages` WHERE `from` = $playerId");
+        return array_map(function($dbResult) { return intval($dbResult['to']); }, array_values($dbResults));
+    }
+
+    function placeNewCardsOnTable() {
+        $cards = [];
+        
+        for ($i=1; $i<=3; $i++) {
+            $cards[] = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $i));
+        }
+
+        return $cards;
     }
 }

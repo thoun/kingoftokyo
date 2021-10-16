@@ -11,12 +11,21 @@ define('ST_START', 10);
 define('ST_PLAYER_PICK_MONSTER', 11);
 define('ST_PICK_MONSTER_NEXT_PLAYER', 12);
 
+
+define('ST_PLAYER_CHOOSE_INITIAL_CARD', 15);
+define('ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER', 16);
+
+
+define('ST_START_GAME', 19);
+
 define('ST_START_TURN', 20);
 define('ST_PLAYER_CHANGE_MIMICKED_CARD', 21);
 define('ST_PLAYER_THROW_DICE', 22);
 define('ST_PLAYER_CHANGE_DIE', 23);
 define('ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE', 24);
 
+define('ST_PREPARE_RESOLVE_DICE', 28);
+define('ST_MULTIPLAYER_CHEERLEADER_SUPPORT', 29);
 define('ST_RESOLVE_DICE', 30);
 define('ST_RESOLVE_NUMBER_DICE', 31);
 define('ST_RESOLVE_HEART_DICE', 32);
@@ -30,6 +39,8 @@ define('ST_MULTIPLAYER_LEAVE_TOKYO', 40);
 define('ST_LEAVE_TOKYO_APPLY_JETS', 41);
 define('ST_ENTER_TOKYO_APPLY_BURROWING', 45);
 define('ST_ENTER_TOKYO', 46);
+
+define('ST_PLAYER_STEAL_COSTUME_CARD', 49);
 
 define('ST_PLAYER_BUY_CARD', 50);
 define('ST_PLAYER_CHOOSE_MIMICKED_CARD', 51);
@@ -61,6 +72,14 @@ define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
 define('PICK_MONSTER_OPTION', 'PickMonsterOption');
 define('AUTO_SKIP_OPTION', 'AutoSkipOption');
 define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption');
+define('GAME_VERSION_OPTION', 101);
+define('BONUS_MONSTERS_OPTION', 102);
+
+// game versions
+define('GAME_VERSION_BASE', 0b00000001);
+define('GAME_VERSION_DARK_EDITION', 0b00000010);
+define('GAME_VERSION_POWER_UP', 0b00000100);
+define('GAME_VERSION_HALLOWEEN', 0b00001000);
 
 /*
  * Variables
@@ -75,6 +94,8 @@ define('KILL_PLAYERS_SCORE_AUX', 'KillPlayersScoreAux');
 define('FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'FrenzyExtraTurnForOpportunist');
 define('PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'PlayerBeforeFrenzyExtraTurnForOpportunist');
 define('SKIP_BUY_PHASE', 'SkipBuyPhase');
+define('CLOWN_ACTIVATED', 'ClownActivated');
+define('CHEERLEADER_SUPPORT', 'CheerleaderSupport');
 
 /*
  * Global variables
@@ -104,6 +125,8 @@ define('MEDIA_FRIENDLY_CARD', 9);
 define('EATER_OF_THE_DEAD_CARD', 10);
 define('ENERGY_HOARDER_CARD', 11);
 define('EVEN_BIGGER_CARD', 12);
+define('EXTRA_HEAD_1_CARD', 13);
+define('EXTRA_HEAD_2_CARD', 14);
 define('FIRE_BREATHING_CARD', 15);
 define('FREEZE_TIME_CARD', 16);
 define('FRIEND_OF_CHILDREN_CARD', 17);
@@ -138,6 +161,47 @@ define('ENERGY_DRINK_CARD', 45);
 define('URBAVORE_CARD', 46);
 define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
 define('WINGS_CARD', 48);
+/*
+Dark edition :
+define('HIBERNATION', 49);
+define('NANOBOTS', 50);
+define('NATURAL_SELECTION', 51);
+define('REFLECTIVE_HIDE', 52);
+define('SUPER_JUMP', 53);
+define('UNSTABLE_DNA', 54);
+define('ZOMBIFY', 55);
+*/
 // discard
+define('APPARTMENT_BUILDING_CARD', 101);
+define('COMMUTER_TRAIN_CARD', 102);
+define('CORNER_STORE_CARD', 103);
+define('DEATH_FROM_ABOVE_CARD', 104);
+define('ENERGIZE_CARD', 105);
+define('EVACUATION_ORDER_1_CARD', 106);
+define('EVACUATION_ORDER_2_CARD', 107);
+define('FLAME_THROWER_CARD', 108);
 define('FRENZY_CARD', 109);
+define('GAS_REFINERY_CARD', 110);
+define('HEAL_CARD', 111);
+define('HIGH_ALTITUDE_BOMBING_CARD', 112);
+define('JET_FIGHTERS_CARD', 113);
+define('NATIONAL_GUARD_CARD', 114);
+define('NUCLEAR_POWER_PLANT_CARD', 115);
+define('SKYSCRAPER_CARD', 116);
+define('TANK_CARD', 117);
+define('VAST_STORM_CARD', 118);
+define('MONSTER_PETS_CARD', 119);
+// costume
+define('ASTRONAUT_CARD', 201);
+define('GHOST_CARD', 202);
+define('VAMPIRE_CARD', 203);
+define('WITCH_CARD', 204); // TODO
+define('DEVIL_CARD', 205);
+define('PIRATE_CARD', 206);
+define('PRINCESS_CARD', 207);
+define('ZOMBIE_CARD', 208);
+define('CHEERLEADER_CARD', 209);
+define('ROBOT_CARD', 210);
+define('STATUE_OF_LIBERTY_CARD', 211);
+define('CLOWN_CARD', 212);
 ?>

@@ -21,6 +21,98 @@ trait CardsActionTrait {
         Each time a player is doing some game action, one of the methods below is called.
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
+   
+  	
+    public function support() {
+        $this->checkAction('support');        
+        self::setGameStateValue(CHEERLEADER_SUPPORT, 1);
+
+        $playerId = self::getCurrentPlayerId();
+
+        self::notifyAllPlayers("cheerleaderChoice", /* client TODOTR translate(*/'${player_name} chooses to support ${player_name2} and adds [diceSmash]'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
+        ]);
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
+    }
+  	
+    public function dontSupport() {
+        $this->checkAction('dontSupport');
+
+        $playerId = self::getCurrentPlayerId();
+
+        self::notifyAllPlayers("cheerleaderChoice", /* client TODOTR translate(*/'${player_name} chooses to not support ${player_name2}'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
+        ]);
+
+        $playerId = self::getCurrentPlayerId();
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
+    }
+    
+    function stealCostumeCard(int $id) {
+        $this->checkAction('stealCostumeCard');
+
+        $playerId = self::getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $from = $card->location_arg;
+
+        if ($card->type < 200 || $card->type > 300) {
+            throw new \BgaUserException('Not a Costume card');
+        }
+
+        // TOCHECK can player steal at reduced cost (alien origin) ? considered yes
+        $cost = $this->getCardCost($playerId, $card->type);
+        if (!$this->canBuyCard($playerId, $cost)) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
+
+        // TOCHECK is stealing costume considered buying (media-friendly) ? considered yes
+        // media friendly
+        $countMediaFriendly = $this->countCardOfType($playerId, MEDIA_FRIENDLY_CARD);
+        if ($countMediaFriendly > 0) {
+            $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
+        }
+
+        $this->cards->moveCard($id, 'hand', $playerId);
+        $this->removeCard($from, $card, true, false, true);
+
+        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $card,
+            'card_name' => $card->type,
+            'newCard' => null,
+            'energy' => $this->getPlayerEnergy($playerId),
+            'from' => $from,
+            'player_name2' => $this->getPlayerName($from),   
+            'cost' => $cost,
+        ]);
+
+        $this->applyGetEnergy($from, $cost, 0);
+
+        // TODO self::incStat(1, 'costumeStolenCards', $playerId);
+     
+        // no damage to handle on costume cards
+
+        // if player steal Zombie, it can eliminate the previous owner
+        $this->updateKillPlayersScoreAux();
+        $this->eliminatePlayers($playerId);
+
+        $this->gamestate->nextState('stealCostumeCard');
+    }
+
+    function endStealCostume() {
+        $this->checkAction('endStealCostume');
+     
+        $this->gamestate->nextState('endStealCostume');
+    }
 
     function buyCard(int $id, int $from) {
         $this->checkAction('buyCard');
@@ -30,14 +122,15 @@ trait CardsActionTrait {
         $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
+        $cardLocationArg = $card->location_arg;
 
         $cost = $this->getCardCost($playerId, $card->type);
         if (!$this->canBuyCard($playerId, $cost)) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
-            throw new \Error("You can't buy from other players without Parasitic Tentacles");
+            throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
         }
 
         $this->updateKillPlayersScoreAux();        
@@ -84,7 +177,8 @@ trait CardsActionTrait {
 
             $this->applyGetEnergy($from, $cost, 0);
             
-        } else if (array_search($id, $this->getMadeInALabCardIds($playerId)) !== false) {
+        } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {
+            $topDeckCardBackType = $this->getTopDeckCardBackType();
             
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -94,11 +188,13 @@ trait CardsActionTrait {
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
+                'topDeckCardBackType' => $topDeckCardBackType,
             ]);
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
-            $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table'));
+            $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
+            $topDeckCardBackType = $this->getTopDeckCardBackType();
     
             self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -108,6 +204,7 @@ trait CardsActionTrait {
                 'newCard' => $newCard,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
+                'topDeckCardBackType' => $topDeckCardBackType,
             ]);
 
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
@@ -116,8 +213,10 @@ trait CardsActionTrait {
 
         if ($card->type < 100) {
             self::incStat(1, 'keepBoughtCards', $playerId);
-        } else {
+        } else if ($card->type < 200) {
             self::incStat(1, 'discardBoughtCards', $playerId);
+        } else if ($card->type < 300) {
+            // TODO self::incStat(1, 'costumeBoughtCards', $playerId);
         }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
@@ -190,7 +289,7 @@ trait CardsActionTrait {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         $this->removeDiscardCards($playerId);
@@ -199,13 +298,16 @@ trait CardsActionTrait {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->cards->moveAllCardsInLocation('table', 'discard');
-        $cards = $this->getCardsFromDb($this->cards->pickCardsForLocation(3, 'deck', 'table'));
+        $cards = $this->placeNewCardsOnTable();
+        
+        $topDeckCardBackType = $this->getTopDeckCardBackType();
 
         self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
             'energy' => $this->getPlayerEnergy($playerId),
+            'topDeckCardBackType' => $topDeckCardBackType,
         ]);
 
         $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
@@ -254,7 +356,7 @@ trait CardsActionTrait {
         $playerId = self::getActivePlayerId();
         
         if ($this->countCardOfType($playerId, METAMORPH_CARD) == 0) {
-            throw new \Error("You can't sell cards without Metamorph");
+            throw new \BgaUserException("You can't sell cards without Metamorph");
         }
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
@@ -294,7 +396,7 @@ trait CardsActionTrait {
         $playerId = self::getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
 
@@ -326,7 +428,7 @@ trait CardsActionTrait {
 
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
         if ($countCamouflage == 0) {
-            throw new \Error('No Camouflage card');
+            throw new \BgaUserException('No Camouflage card');
         }
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
@@ -370,9 +472,9 @@ trait CardsActionTrait {
         $stayOnState = false;
         $canRethrow3 = false;
         if ($remainingDamage > 0) {
-            $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && array_search(3, $diceValues) !== false;
-            $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0 || $canRethrow3 ||
-                ($playerUsedDice->rolls < $countCamouflage);
+            $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && in_array(3, $diceValues);
+            $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0 || $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
+                $canRethrow3 || ($playerUsedDice->rolls < $countCamouflage);
         }
 
         $diceStr = '';
@@ -382,7 +484,7 @@ trait CardsActionTrait {
 
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
 
-        $args = $this->argCancelDamage($playerId, $canRethrow3 ? (array_search(3, $diceValues) !== false) : false);
+        $args = $this->argCancelDamage($playerId, $canRethrow3 ? in_array(3, $diceValues) : false);
 
         if ($canRethrow3) {
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
@@ -466,15 +568,15 @@ trait CardsActionTrait {
         $playerId = self::getCurrentPlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new \Error('Not enough energy');
+            throw new \BgaUserException('Not enough energy');
         }
 
         if ($this->countCardOfType($playerId, WINGS_CARD) == 0) {
-            throw new \Error('No Wings card');
+            throw new \BgaUserException('No Wings card');
         }
 
         if ($this->isInvincible($playerId)) {
-            throw new \Error('You already used Wings in this turn');
+            throw new \BgaUserException('You already used Wings in this turn');
         }
 
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
@@ -522,4 +624,73 @@ trait CardsActionTrait {
         }
     }
 
+    function useRobot(int $energy) {        
+        $this->checkAction('useRobot');
+
+        $playerId = self::getCurrentPlayerId();
+
+        $countRobot = $this->countCardOfType($playerId, ROBOT_CARD);
+        if ($countRobot == 0) {
+            throw new \BgaUserException('No Robot card');
+        }
+
+        if ($this->getPlayerEnergy($playerId) < $energy) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+
+        $totalDamage = 0;
+        foreach($intervention->damages as $damage) {
+            if ($damage->playerId == $playerId) {
+                $totalDamage += $damage->damage;
+            }
+        }
+
+        $remainingDamage = $totalDamage - $energy;
+
+        $this->applyLoseEnergy($playerId, $energy, 0);
+
+        $args = null;
+
+        // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
+        $stayOnState = false;
+        if ($remainingDamage > 0) {
+            $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0/* || ($this->countCardOfType($playerId, ROBOT_CARD) > 0 && $this->getPlayerEnergy($playerId) > 0)*/;
+        }
+
+        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+
+        $args = $this->argCancelDamage($playerId, false);
+
+        if ($stayOnState) {
+            $intervention->damages[0]->damage -= $energy;
+            $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+        }
+
+        self::notifyAllPlayers("useRobot", /*client TODOTR translate(*/'${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => ROBOT_CARD,
+            'energy' => $energy,
+            'cancelDamageArgs' => $args,
+        ]);
+
+        if (!$stayOnState) {
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+
+            if ($remainingDamage > 0) {
+                $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId(), $intervention->damages[0]->giveShrinkRayToken, $intervention->damages[0]->givePoisonSpitToken);
+            } else {
+                $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+            }
+
+            // we check we are still in cancelDamage (we could be redirected if camouflage roll kills player)
+            if ($this->gamestate->state()['name'] == 'cancelDamage') {
+                $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+            }
+        } else {            
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
+        }
+    }
 }

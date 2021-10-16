@@ -16,6 +16,7 @@ interface Card {
     cost: number;
     tokens: number;
     mimicType: number;
+    location_arg: number;
 }
 
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
@@ -53,14 +54,17 @@ interface KingOfTokyoGamedatas {
     // Add here variables you set up in getAllDatas
     dice: Dice[];
     visibleCards: Card[];
+    topDeckCardBackType: string;
     playersCards: { [playerId: number]: Card[] };
     mimickedCard: Card | null;
     leaveTokyoUnder: number;
     stayTokyoOver: number;
     twoPlayersVariant: boolean;
+    halloweenExpansion: boolean;
 }
 
 interface KingOfTokyoGame extends Game {
+    isHalloweenExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
@@ -80,6 +84,10 @@ interface KingOfTokyoGame extends Game {
 
 interface EnteringPickMonsterArgs {
     availableMonsters: number[];
+}
+
+interface EnteringChooseInitialCardArgs {
+    cards: Card[];
 }
 
 interface EnteringDiceArgs {
@@ -115,6 +123,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasHerdCuller: boolean;
     hasPlotTwist: boolean;
     hasStretchy: boolean;
+    hasClown: boolean;
     rethrow3: Rethrow3;
 }
 
@@ -133,6 +142,11 @@ interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
     skipped: boolean;
 }
 
+interface EnteringStealCostumeCardArgs {
+    disabledIds: number[];
+    canBuyFromPlayers: boolean;
+}
+
 interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
@@ -146,10 +160,12 @@ interface EnteringBuyCardArgs {
 interface EnteringCancelDamageArgs {
     canThrowDices: boolean;
     canUseWings: boolean;
+    canUseRobot: boolean;
     playerEnergy: number;
     dice: Dice[];
     rethrow3: Rethrow3;
     rapidHealingHearts: number;
+    damage: number;
 }
 
 interface EnteringLeaveTokyoArgs {
@@ -163,6 +179,10 @@ interface EnteringLeaveTokyoArgs {
 interface NotifPickMonsterArgs {
     playerId: number;
     monster: number;
+}
+
+interface NotifSetInitialCardsArgs {
+    cards: Card[];
 }
 
 interface NotifResolveArgs {
@@ -224,6 +244,8 @@ interface NotifBuyCardArgs {
     newCard: Card;
     energy: number;
     from: number;
+    discardCard?: Card;
+    topDeckCardBackType: string;
 }
 
 interface NotifRenewCardsArgs {
@@ -231,6 +253,7 @@ interface NotifRenewCardsArgs {
     player_name: string;
     cards: Card[];
     energy: number;
+    topDeckCardBackType: string;
 }
 
 interface NotifRemoveCardsArgs {

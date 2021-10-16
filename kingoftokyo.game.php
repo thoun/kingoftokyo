@@ -23,6 +23,7 @@ require_once('modules/php/objects/dice.php');
 require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
 require_once('modules/php/monster.php');
+require_once('modules/php/initial-card.php');
 require_once('modules/php/player-utils.php');
 require_once('modules/php/player-actions.php');
 require_once('modules/php/player-args.php');
@@ -41,6 +42,7 @@ require_once('modules/php/debug-util.php');
 class KingOfTokyo extends Table {
     use KOT\States\UtilTrait;
     use KOT\States\MonsterTrait;
+    use KOT\States\InitialCardTrait;
     use KOT\States\PlayerUtilTrait;
     use KOT\States\PlayerActionTrait;
     use KOT\States\PlayerArgTrait;
@@ -80,8 +82,12 @@ class KingOfTokyo extends Table {
             FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 22,
             PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST => 23,
             SKIP_BUY_PHASE => 24,
+            CLOWN_ACTIVATED => 25,
+            CHEERLEADER_SUPPORT => 26,
 
             PICK_MONSTER_OPTION => 100,
+            GAME_VERSION_OPTION => GAME_VERSION_OPTION,
+            BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -119,13 +125,16 @@ class KingOfTokyo extends Table {
         $values = [];
         $affectedMonsters = [];
         $eliminationRank = count($players);
+
+        $monsters = $this->getGameMonsters();
+
         foreach( $players as $player_id => $player ) {
             $playerMonster = 0;
 
             if (!$this->canPickMonster()) {
-                $playerMonster = bga_rand(1, 6);
-                while (array_search($playerMonster, $affectedMonsters) !== false) {
-                    $playerMonster = bga_rand(1, 6);
+                $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
+                while (in_array($playerMonster, $affectedMonsters)) {
+                    $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
                 }
                 $affectedMonsters[] = $playerMonster;
             }
@@ -158,6 +167,8 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         self::setGameStateInitialValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         self::setGameStateInitialValue(SKIP_BUY_PHASE, 0);
+        self::setGameStateInitialValue(CLOWN_ACTIVATED, 0);
+        self::setGameStateInitialValue(CHEERLEADER_SUPPORT, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -185,7 +196,6 @@ class KingOfTokyo extends Table {
 
         // setup the initial game situation here
         $this->initCards();
-        $this->cards->pickCardsForLocation(3, 'deck', 'table');
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -213,14 +223,15 @@ class KingOfTokyo extends Table {
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
         $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead FROM player order by player_no";
-        $result['players'] = self::getCollectionFromDb( $sql );
+        $result['players'] = self::getCollectionFromDb($sql);
 
         // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
         $result['dice'] = $activePlayerId ? $this->getDice($this->getDiceNumber($activePlayerId)) : [];
 
-        $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
+        $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
 
         $result['playersCards'] = [];
         foreach ($result['players'] as $playerId => &$playerDb) {
@@ -246,6 +257,7 @@ class KingOfTokyo extends Table {
         $result['stayTokyoOver'] = intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $current_player_id"));
 
         $result['twoPlayersVariant'] = $this->isTwoPlayersVariant();
+        $result['halloweenExpansion'] = $this->isHalloweenExpansion();
 
         return $result;
     }
@@ -270,7 +282,23 @@ class KingOfTokyo extends Table {
     }
 
     function stStart() {
-        $this->gamestate->nextState($this->canPickMonster() ? 'pickMonster' : 'start');
+        $this->gamestate->nextState($this->canPickMonster() ? 'pickMonster' : ($this->isHalloweenExpansion() ? 'chooseInitialCard' : 'start'));
+    }
+
+    function stStartGame() {
+        $this->cards->moveAllCardsInLocation('costumedeck', 'deck');
+        $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
+        $this->cards->shuffle('deck'); 
+
+        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
+        $cards = $this->placeNewCardsOnTable();
+        // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
+
+        self::notifyAllPlayers("setInitialCards", '', [
+            'cards' => $cards,
+        ]);
+
+        $this->gamestate->nextState('start');
     }
 
     function stGameEnd() {
@@ -395,6 +423,17 @@ class KingOfTokyo extends Table {
  
         if ($from_version <= 2109081842) {
             $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_dead` tinyint unsigned NOT NULL DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+ 
+        if ($from_version <= 2110122249) {
+            $sql = "
+            CREATE TABLE IF NOT EXISTS `DBPREFIX_turn_damages` (
+              `from` INT(10) unsigned NOT NULL,
+              `to` INT(10) unsigned NOT NULL,
+              `damages` TINYINT unsigned NOT NULL,
+              PRIMARY KEY (`from`, `to`)
+            ) ENGINE=InnoDB;";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

@@ -1,9 +1,13 @@
 @import url(../../../css/csslayer.css);
 
+$tokyoGreen: #a6c136;
+$tokyoBlack: #211D1F;
+
 @import 'playerboards';
 @import 'dice';
 @import 'cards';
 @import 'table';
+@import 'halloween';
 
 @font-face {
     font-family: 'goodgirl';
@@ -11,6 +15,14 @@
          url('img/goodgirl-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+}
+
+/* make space between buttons on touch devices */
+@media (hover: none) {
+  #page-title .action-button.bgabutton, #page-title .bgabutton {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
 }
 
 html {
@@ -86,7 +98,7 @@ html {
   background-repeat: no-repeat;
   background-size: contain;
 
-  @for $i from 1 through 6 {
+  @for $i from 1 through 8 {
       &.monster#{$i} {
           background-image: url('img/monster-figure-#{$i}.png');
       }

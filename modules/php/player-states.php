@@ -23,10 +23,13 @@ trait PlayerStateTrait {
             self::incStat(1, 'turnsInTokyo', $id);
         }
 
+        self::DbQuery("DELETE FROM `turn_damages` WHERE 1");
         self::setGameStateValue('damageDoneByActivePlayer', 0);
         self::setGameStateValue(EXTRA_ROLLS, 0);
         self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         self::setGameStateValue(SKIP_BUY_PHASE, 0);
+        self::setGameStateValue(CLOWN_ACTIVATED, 0);
+        self::setGameStateValue(CHEERLEADER_SUPPORT, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);
@@ -37,6 +40,12 @@ trait PlayerStateTrait {
         $batteryMonsterCards = $this->getCardsOfType($playerId, BATTERY_MONSTER_CARD);
         foreach($batteryMonsterCards as $batteryMonsterCard) {
             $this->applyBatteryMonster($playerId, $batteryMonsterCard);
+        }
+
+        // princess
+        $princessCards = $this->getCardsOfType($playerId, PRINCESS_CARD);
+        foreach($princessCards as $princessCard) {
+            $this->applyGetPoints($playerId, 1, PRINCESS_CARD);
         }
 
         // apply in tokyo at start
@@ -55,7 +64,7 @@ trait PlayerStateTrait {
                 ]);
             } else {
                 $incScore = 2;
-                $this->applyGetPointsIgnoreCards($playerId, $incScore, -1);
+                $this->applyGetPoints($playerId, $incScore, -1);
 
                 self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
                     'playerId' => $playerId,
@@ -148,7 +157,7 @@ trait PlayerStateTrait {
 
         $playerId = self::getActivePlayerId();
 
-        if ($this->getPlayerHealth($playerId) > 0 && !$this->inTokyo($playerId)) { // enter only if burrowing doesn't kill player
+        if (!$this->getPlayer($playerId)->eliminated && !$this->inTokyo($playerId)) { // enter only if burrowing doesn't kill player
             if ($this->isTokyoEmpty(false)) {
                 $this->moveToTokyo($playerId, false);
             } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
@@ -156,7 +165,11 @@ trait PlayerStateTrait {
             }
         }
 
-        $this->gamestate->nextState('next');
+        if ($this->isHalloweenExpansion()) { 
+            $this->gamestate->nextState('stealCostumeCard');
+        } else {
+            $this->gamestate->nextState('buyCard');
+        }
     }
 
     function stResolveEndTurn() {
@@ -237,6 +250,8 @@ trait PlayerStateTrait {
         $playerId = self::getActivePlayerId();
 
         $this->removeDiscardCards($playerId);
+
+        $this->applyEndOfEachMonsterCards();
 
         $killPlayer = $this->killDeadPlayers();
 

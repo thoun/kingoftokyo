@@ -13,7 +13,7 @@ trait PlayerUtilTrait {
 ////////////
 
     function isInvincible(int $playerId) {
-        return array_search($playerId, $this->getGlobalVariable(USED_WINGS, true)) !== false;
+        return in_array($playerId, $this->getGlobalVariable(USED_WINGS, true));
     }
 
     function setInvincible(int $playerId) {        
@@ -129,7 +129,7 @@ trait PlayerUtilTrait {
 
         $leaveUnder = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));
         if ($leaveUnder != 0 && $over <= $leaveUnder) {
-            throw new \Error("Can't set StayInTokyoOver less than LeaveTokyoUnder");
+            throw new \BgaUserException("Can't set StayInTokyoOver less than LeaveTokyoUnder");
         }
 
         self::DbQuery("UPDATE player SET `stay_tokyo_over` = $over where `player_id` = $playerId");

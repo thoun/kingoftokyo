@@ -27,6 +27,11 @@ class Cards {
             for(let id=101; id<=118; id++) {  // discard
                 stock.addItemType(id, id, discardcardsurl, id - 101);
             }
+
+            const costumecardsurl = `${g_gamethemeurl}img/costume-cards.jpg`;
+            for(let id=201; id<=212; id++) {  // costume
+                stock.addItemType(id, id, costumecardsurl, id - 201);
+            }
         });
     }
     
@@ -168,6 +173,7 @@ class Cards {
             case 38: return [0, 100];
             case 43: return [35, 100];
             case 45: return [0, 85];
+            // DISCARD
             case 102: return [30, 80];
             case 106: case 107: return [35, 65];
             case 111: return [35, 95];
@@ -175,6 +181,8 @@ class Cards {
             case 113: return [35, 65];
             case 114: return [35, 95];
             case 115: return [0, 80];
+            // COSTUME            
+            case 209: return [15, 100];
         }
         return null;
     }
@@ -259,6 +267,20 @@ class Cards {
             case 118: return 6;
             //case 119: return 6;
             //case 120: return 2;
+
+            // COSTUME
+            case 201: return 4;
+            case 202: return 4;
+            case 203: return 3;
+            case 204: return 4;
+            case 205: return 3;
+            case 206: return 4;
+            case 207: return 5;
+            case 208: return 4;
+            case 209: return 3;
+            case 210: return 4;
+            case 211: return 4;
+            case 212: return 3;
         }
         return null;
     }
@@ -342,6 +364,21 @@ class Cards {
             case 118: return _("[847443]Vast [8D7F4E]Storm");
             //case 119: return _("Amusement Park");
             //case 120: return _("Army");
+
+            // COSTUME
+            // TODOTR
+            case 201: return "[353d4b]Astronaut";
+            case 202: return "[005c98]Ghost";
+            case 203: return "[213b75]Vampire";
+            case 204: return "[5a4f86]Witch";
+            case 205: return "[3c4b53]Devil";
+            case 206: return "[584b84]Pirate";
+            case 207: return "[bb6082]Princess";
+            case 208: return "[7e8670]Zombie";
+            case 209: return "[52373d]Cheerleader";
+            case 210: return "[146088]Robot";
+            case 211: return "[733010]Statue of liberty";
+            case 212: return "[2d4554]Clown";
         }
         return null;
     }
@@ -445,6 +482,21 @@ class Cards {
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
             //case 119: return _("<strong>+ 4[Star].");
             //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
+
+            // COSTUME
+            // TODOTR
+            case 201: return "<strong>If you reach 17[Star],</strong> you win the game";
+            case 202: return "At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>";
+            case 203: return "At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], <strong>gain 1[Heart].</strong>";
+            case 204: return "If you must be wounded <strong>by another Monster,</strong> you can reroll one of their dice.";
+            case 205: return "On your turn, when you make other Monsters lose at least 1[Heart], <strong>they lose an extra [Heart].</strong>";
+            case 206: return "<strong>Steal 1[Energy]</strong> from each Monster you made lose at least 1[Heart].";
+            case 207: return "<strong>Gain 1[Star] at the start of your turn.</strong>";
+            case 208: return "You are not eliminated if you reach 0[Heart]. <strong>You cannot lose [Heart]</strong> as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.";
+            case 209: return "<strong>You can choose to cheer for another Monster on their turn.</strong> If you do, add [diceSmash] to their roll.";
+            case 210: return "You can choose to lose [Energy] instead of [Heart].";
+            case 211: return "You have an <strong>extra Roll.</strong>";
+            case 212: return "If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>";
         }
         return null;
     }
@@ -459,12 +511,32 @@ class Cards {
     }
 
     public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
-        this.setDivAsCard(cardDiv, cardType);        
+        this.setDivAsCard(cardDiv, cardType); 
         (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
 
+    private getCardTypeName(cardType: number) {
+        if (cardType < 100) {
+            return _('Keep');
+        } else if (cardType < 200) {
+            return _('Discard');
+        } else if (cardType < 300) {
+            return 'Costume'; //TODOTR _('Costume')
+        }
+    }
+
+    private getCardTypeClass(cardType: number) {
+        if (cardType < 100) {
+            return 'keep';
+        } else if (cardType < 200) {
+            return 'discard';
+        } else if (cardType < 300) {
+            return 'costume';
+        }
+    }
+
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
-        const type = cardType < 100 ? _('Keep') : _('Discard');
+        const type = this.getCardTypeName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType));
         const position = this.getCardNamePosition(cardType);
 
@@ -473,7 +545,7 @@ class Cards {
             <div class="outline">${this.getCardName(cardType, 'span')}</div>
             <div class="text">${this.getCardName(cardType, 'text-only')}</div>
         </div>
-        <div class="type-wrapper ${ cardType < 100 ? 'keep' : 'discard'}">
+        <div class="type-wrapper ${this.getCardTypeClass(cardType)}">
             <div class="outline">${type}</div>
             <div class="text">${type}</div>
         </div>
@@ -499,6 +571,16 @@ class Cards {
         }
     }
 
+    private getImageName(cardType: number) {
+        if (cardType < 100) {
+            return 'keep';
+        } else if (cardType < 200) {
+            return 'discard';
+        } else if (cardType < 300) {
+            return 'costume';
+        }
+    }
+
     public changeMimicTooltip(mimicCardId: string, mimickedCard: Card) {
         let mimickedCardText = '-';
         if (mimickedCard) {
@@ -507,8 +589,8 @@ class Cards {
             tempDiv.style.width = `${CARD_WIDTH}px`;
             tempDiv.style.height = `${CARD_HEIGHT}px`;
             tempDiv.style.position = `relative`;
-            tempDiv.style.backgroundImage = mimickedCard.type < 100 ? `url('${g_gamethemeurl}img/keep-cards.jpg')` : `url('${g_gamethemeurl}img/discard-cards.jpg')`;
-            const imagePosition = mimickedCard.type < 100 ? mimickedCard.type - 1 : mimickedCard.type - 101;
+            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(mimickedCard.type)}-cards.jpg')`;
+            const imagePosition = (mimickedCard.type % 100) - 1;
             const image_items_per_row = 10;
             var row = Math.floor(imagePosition / image_items_per_row);
             const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
