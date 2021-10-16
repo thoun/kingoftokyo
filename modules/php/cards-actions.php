@@ -21,8 +21,7 @@ trait CardsActionTrait {
         Each time a player is doing some game action, one of the methods below is called.
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
-
-    
+   
   	
     public function support() {
         $this->checkAction('support');        
@@ -694,5 +693,4 @@ trait CardsActionTrait {
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
         }
     }
-
 }
