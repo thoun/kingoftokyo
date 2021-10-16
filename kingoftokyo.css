@@ -940,39 +940,43 @@
 }
 
 body.halloween #rolled-dice #locked-dice {
-  border: 2px solid #918e8a;
+  border: 2px solid #000000;
 }
 body.halloween #rolled-dice #locked-dice #lock {
-  background: url("img/lock.svg") #918e8a;
+  background: url("img/lock.svg") #ff8a00;
   background-repeat: no-repeat;
   background-position: center;
+  border-radius: 4px 0 0 4px;
 }
 body.halloween #rolled-dice #locked-dice.hide-lock {
   border-color: transparent;
 }
 body.halloween .die-item.black {
-  background-color: #918e8a;
-  border-color: #918e8a;
+  background-color: #ff8a00;
+  border-color: #ff8a00;
   background-image: url("img/orange_dice.png");
 }
-body.halloween .dice-icon {
+body.halloween .log .dice-icon {
+  background-image: url("img/orange_dice.png");
+}
+body.halloween .gamelogreview .dice-icon {
   background-image: url("img/orange_dice.png");
 }
 body.halloween .animation {
   background-image: url("img/animations-halloween.png");
 }
 body.halloween #skipBuyPhaseWrapper input:checked + .slider {
-  background-color: #918e8a;
+  background-color: #ff8a00;
 }
 body.halloween #skipBuyPhaseWrapper input:focus + .slider {
-  box-shadow: 0 0 1px #918e8a;
+  box-shadow: 0 0 1px #ff8a00;
 }
 body.halloween #table .player-table.active {
-  border: 3px solid #918e8a;
-  box-shadow: 0px 0px 5px 2px #918e8a;
+  border: 3px solid #ff8a00;
+  box-shadow: 0px 0px 5px 2px #ff8a00;
 }
 body.halloween .player-board.active {
-  box-shadow: 0px 0px 2px 3px #918e8a;
+  box-shadow: 0px 0px 2px 3px #ff8a00;
 }
 
 @font-face {
@@ -980,6 +984,13 @@ body.halloween .player-board.active {
   src: url("img/goodgirl-webfont.woff2") format("woff2"), url("img/goodgirl-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
+}
+/* make space between buttons on touch devices */
+@media (hover: none) {
+  #page-title .action-button.bgabutton, #page-title .bgabutton {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
 }
 html {
   background: url("img/background.jpg") #102f50;

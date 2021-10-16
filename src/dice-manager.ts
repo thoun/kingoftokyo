@@ -173,7 +173,7 @@ class DiceManager {
     }
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
-        const dice = this.dice.filter(die => die.value === args.diceValue);console.log('this.game.isHalloweenExpansion()', this.game.isHalloweenExpansion());
+        const dice = this.dice.filter(die => die.value === args.diceValue);
         (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, this.game.isHalloweenExpansion() ? '000000' : '96c93c', args.deltaPoints, 1500);
         this.dice.filter(die => die.value === args.diceValue).forEach(die => this.removeDice(die, 1000, 1500));
     }

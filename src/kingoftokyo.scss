@@ -2,7 +2,6 @@
 
 $tokyoGreen: #a6c136;
 $tokyoBlack: #211D1F;
-$halloweenOrange: #918e8a;
 
 @import 'playerboards';
 @import 'dice';
@@ -16,6 +15,14 @@ $halloweenOrange: #918e8a;
          url('img/goodgirl-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+}
+
+/* make space between buttons on touch devices */
+@media (hover: none) {
+  #page-title .action-button.bgabutton, #page-title .bgabutton {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
 }
 
 html {

@@ -1178,7 +1178,6 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
         var dice = this.dice.filter(function (die) { return die.value === args.diceValue; });
-        console.log('this.game.isHalloweenExpansion()', this.game.isHalloweenExpansion());
         this.game.displayScoring("dice" + (dice[1] || dice[0]).id, this.game.isHalloweenExpansion() ? '000000' : '96c93c', args.deltaPoints, 1500);
         this.dice.filter(function (die) { return die.value === args.diceValue; }).forEach(function (die) { return _this.removeDice(die, 1000, 1500); });
     };

@@ -1,12 +1,16 @@
+$halloweenOrange: #ff8a00;
+$halloweenBlack: #000000;
+
 body.halloween {
     #rolled-dice {
         #locked-dice {
-          border: 2px solid $halloweenOrange;
+          border: 2px solid $halloweenBlack;
       
           #lock {
             background: url('img/lock.svg') $halloweenOrange;
             background-repeat: no-repeat;
             background-position: center;
+            border-radius: 4px 0 0 4px;
           }
 
           &.hide-lock {
@@ -24,8 +28,16 @@ body.halloween {
         }
     }
 
-    .dice-icon {
-        background-image: url('img/orange_dice.png');
+    .log {        
+        .dice-icon {
+            background-image: url('img/orange_dice.png');
+        }
+    }
+
+    .gamelogreview {        
+        .dice-icon {
+            background-image: url('img/orange_dice.png');
+        }
     }
     
     .animation {

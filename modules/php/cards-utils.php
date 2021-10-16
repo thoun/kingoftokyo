@@ -66,16 +66,16 @@ trait CardsUtilTrait {
                 break;
             
             // DISCARD
-            case 101: 
+            case APPARTMENT_BUILDING_CARD: 
                 $this->applyGetPoints($playerId, 3, $cardType);
                 break;
-            case 102:
+            case COMMUTER_TRAIN_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
                 break;
-            case 103:
+            case CORNER_STORE_CARD:
                 $this->applyGetPoints($playerId, 1, $cardType);
                 break;
-            case 104: 
+            case DEATH_FROM_ABOVE_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
 
                 // remove other players in Tokyo
@@ -109,16 +109,16 @@ trait CardsUtilTrait {
                 }
             
                 return $damages;
-            case 105:
-                $this->applyGetEnergy($playerId, MEDIA_FRIENDLY_CARD, $cardType);
+            case ENERGIZE_CARD:
+                $this->applyGetEnergy($playerId, 9, $cardType);
                 break;
-            case 106: case 107:
+            case EVACUATION_ORDER_1_CARD: case EVACUATION_ORDER_2_CARD:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
                     $this->applyLosePoints($otherPlayerId, 5, $cardType);
                 }
                 break;
-            case 108: 
+            case FLAME_THROWER_CARD: 
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 $damages = [];
                 foreach ($otherPlayersIds as $otherPlayerId) {
@@ -133,7 +133,7 @@ trait CardsUtilTrait {
                     $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
                 }
                 break;
-            case 110: 
+            case GAS_REFINERY_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 $damages = [];
@@ -141,7 +141,7 @@ trait CardsUtilTrait {
                     $damages[] = new Damage($otherPlayerId, 3, $playerId, $cardType);
                 }
                 return $damages;
-            case 111:
+            case HEAL_CARD:
                 $this->applyGetHealth($playerId, 2, $cardType);
                 break;
             case HIGH_ALTITUDE_BOMBING_CARD: 
@@ -151,23 +151,23 @@ trait CardsUtilTrait {
                     $damages[] = new Damage($pId, 3, $playerId, $cardType);
                 }
                 return $damages;
-            case 113: 
+            case JET_FIGHTERS_CARD: 
                 $this->applyGetPoints($playerId, 5, $cardType);
                 return [new Damage($playerId, 4, $playerId, $cardType)];
-            case 114:
+            case NATIONAL_GUARD_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
                 return [new Damage($playerId, 2, $playerId, $cardType)];
-            case 115:
+            case NUCLEAR_POWER_PLANT_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
                 $this->applyGetHealth($playerId, 3, $cardType);
                 break;
-            case 116:
+            case SKYSCRAPER_CARD:
                 $this->applyGetPoints($playerId, 4, $cardType);
                 break;
-            case 117:
+            case TANK_CARD:
                 $this->applyGetPoints($playerId, 4, $cardType);
                 return [new Damage($playerId, 3, $playerId, $cardType)];
-            case 118: 
+            case VAST_STORM_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
@@ -176,10 +176,16 @@ trait CardsUtilTrait {
                     $this->applyLoseEnergy($otherPlayerId, $lostEnergy, $cardType);
                 }
                 break;
-            case 119:
+            case MONSTER_PETS_CARD:
+                $playersIds = $this->getPlayersIds();
+                foreach ($playersIds as $pId) {
+                    $this->applyLosePoints($pId, 3, $cardType);
+                }
+                break;
+            /*case 120:
                 $count = $this->cards->countCardInLocation('hand', $player_id);
                 $this->applyGetPoints($playerId, $count, $cardType);
-                return [new Damage($playerId, $count, $playerId, $cardType)];
+                return [new Damage($playerId, $count, $playerId, $cardType)];*/
         }
     }
 
@@ -294,7 +300,7 @@ trait CardsUtilTrait {
     }
 
     function countExtraHead($playerId) {
-        return $this->countCardOfType($playerId, 13) + $this->countCardOfType($playerId, 14);
+        return $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
     }
 
     function getCardCost($playerId, $cardType) {

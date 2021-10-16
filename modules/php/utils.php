@@ -47,15 +47,23 @@ trait UtilTrait {
     private function getGameVersion() {
         global $g_config;
         if ($g_config['debug_from_chat']) { 
-            return GAME_VERSION_BASE /*| GAME_VERSION_HALLOWEEN*/; // TODO TEMP
+            return GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN; // TODO TEMP
         } else {
             return GAME_VERSION_BASE;
         }
         //TODO TEMP return intval(self::getGameStateValue(GAME_VERSION_OPTION));
     }
 
+    function isPowerUpExpansion() {
+        return ($this->getGameVersion() & GAME_VERSION_POWER_UP) === GAME_VERSION_POWER_UP;
+    }
+
     function isHalloweenExpansion() {
         return ($this->getGameVersion() & GAME_VERSION_HALLOWEEN) === GAME_VERSION_HALLOWEEN;
+    }
+
+    function isDarkEdition() {
+        return ($this->getGameVersion() & GAME_VERSION_DARK_EDITION) === GAME_VERSION_DARK_EDITION;
     }
 
     function autoSkipImpossibleActions() {
