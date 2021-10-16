@@ -180,3 +180,10 @@
     position: relative;
     // filter: drop-shadow(6px 6px 4px black); 
 }
+
+.mode_3d {
+    .monster-figure {
+        transform: translateY(-60px) rotateX(-90deg);
+        transform-origin: bottom center;
+    }
+}

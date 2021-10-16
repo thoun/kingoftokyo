@@ -450,3 +450,9 @@ $size: 0.25rem;
     }
   }
 }
+
+.mode_3d {
+    .dice {
+        transform: translateZ(16px);
+    }
+}

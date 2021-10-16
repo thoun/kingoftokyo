@@ -534,6 +534,10 @@
   width: 120px;
 }
 
+.mode_3d .dice {
+  transform: translateZ(16px);
+}
+
 .stockitem, #deck {
   border-radius: 10px;
   margin: 5px;
@@ -938,6 +942,10 @@
 }
 #table .monster-figure {
   position: relative;
+}
+#table .mode_3d .monster-figure {
+  transform: translateY(-60px) rotateX(-90deg);
+  transform-origin: bottom center;
 }
 
 body.halloween #rolled-dice #locked-dice {
