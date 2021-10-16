@@ -769,18 +769,19 @@
   width: 83px;
 }
 #table .player-table {
-  width: 420px;
+  width: 440px;
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 10px 0;
+  box-sizing: border-box;
 }
 #table .player-table.eliminated {
   filter: grayscale(1);
 }
 #table .player-table.active {
   border: 3px solid #ffcf13;
-  margin: -3px;
   box-shadow: 0px 0px 5px 2px #ffcf13;
 }
 #table .player-table .player-name {
