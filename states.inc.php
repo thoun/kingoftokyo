@@ -140,8 +140,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_CHOOSE_INITIAL_CARD => [
         "name" => "chooseInitialCard",
-        "description" => '', //  client TODOTR translate('${actplayer} must choose a card'),
-        "descriptionmyturn" => '', // client TODOTR translate('${you} must choose a card'),
+        "description" => /*client TODOTR translate(*/'${actplayer} must choose a card'/*)*/,
+        "descriptionmyturn" => '', /*client TODOTR translate(*/'${you} must choose a card'/*)*/,
         "type" => "activeplayer",
         "action" => "stChooseInitialCard",
         "args" => "argChooseInitialCard",
@@ -249,8 +249,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_CHEERLEADER_SUPPORT => [
         "name" => "cheerleaderSupport",
-        "description" => "", // client TODOTR translate('Player with Cheerleader can support monster'),
-        "descriptionmyturn" => "", // client TODOTR translate('${you} can support monster'),
+        "description" => "", /* client TODOTR translate(*/'Player with Cheerleader can support monster'/*)*/,
+        "descriptionmyturn" => "", /* client TODOTR translate(*/'${you} can support monster'/*)*/,
         "type" => "multipleactiveplayer",
         "args" => "argCheerleaderSupport",
         "action" => "stCheerleaderSupport",

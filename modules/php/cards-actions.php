@@ -30,7 +30,7 @@ trait CardsActionTrait {
 
         $playerId = self::getCurrentPlayerId();
 
-        self::notifyAllPlayers("cheerleaderChoice", '' /* client TODOTR translate('${player_name} chooses to support ${player_name2} and adds [diceSmash]')*/, [
+        self::notifyAllPlayers("cheerleaderChoice", /* client TODOTR translate(*/'${player_name} chooses to support ${player_name2} and adds [diceSmash]'/*)*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
@@ -44,7 +44,7 @@ trait CardsActionTrait {
 
         $playerId = self::getCurrentPlayerId();
 
-        self::notifyAllPlayers("cheerleaderChoice", '' /* client TODOTR translate('${player_name} chooses to not support ${player_name2}')*/, [
+        self::notifyAllPlayers("cheerleaderChoice", /* client TODOTR translate(*/'${player_name} chooses to not support ${player_name2}'/*)*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
@@ -669,7 +669,7 @@ trait CardsActionTrait {
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
         }
 
-        self::notifyAllPlayers("useRobot", '' /*client TODOTR translate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]')*/, [
+        self::notifyAllPlayers("useRobot", /*client TODOTR translate(*/'${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'/*)*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => ROBOT_CARD,

@@ -161,6 +161,16 @@ define('ENERGY_DRINK_CARD', 45);
 define('URBAVORE_CARD', 46);
 define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
 define('WINGS_CARD', 48);
+/*
+Dark edition :
+define('HIBERNATION', 49);
+define('NANOBOTS', 50);
+define('NATURAL_SELECTION', 51);
+define('REFLECTIVE_HIDE', 52);
+define('SUPER_JUMP', 53);
+define('UNSTABLE_DNA', 54);
+define('ZOMBIFY', 55);
+*/
 // discard
 define('APPARTMENT_BUILDING_CARD', 101);
 define('COMMUTER_TRAIN_CARD', 102);
