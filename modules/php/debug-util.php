@@ -18,7 +18,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetEnergy(20);
         //$this->debugSetPlayerPoints(2343492, 9);
@@ -59,6 +59,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
+        $this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493);
 
