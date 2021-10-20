@@ -138,6 +138,10 @@ trait DiceStateTrait {
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
 
+        if ($diceCounts[1] >= 4 && $this->isKingKongExpansion()) {
+            $this->getNewTokyoTowerLevel($playerId);
+        }
+
         $this->gamestate->nextState('next');
     }
 

@@ -87,6 +87,7 @@ class Koth extends Table {
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
             HALLOWEEN_EXPANSION_OPTION => HALLOWEEN_EXPANSION_OPTION,
+            KINGKONG_EXPANSION_OPTION => KINGKONG_EXPANSION_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -194,6 +195,10 @@ class Koth extends Table {
 
         // setup the initial game situation here
         $this->initCards();
+
+        if ($this->isKingKongExpansion()) {
+            self::DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
+        }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -231,6 +236,12 @@ class Koth extends Table {
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
 
+        $isKingKongExpansion = $this->isKingKongExpansion();
+
+        if ($isKingKongExpansion) {
+            $result['tokyoTowerLevels'] = $this->getTokyoTowerLevels(0);
+        }
+
         $result['playersCards'] = [];
         foreach ($result['players'] as $playerId => &$playerDb) {
             $result['playersCards'][$playerId] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
@@ -247,6 +258,10 @@ class Koth extends Table {
 
             $playerDb['rapidHealing'] = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
             $playerDb['maxHealth'] = $this->getPlayerMaxHealth($playerId);
+
+            if ($isKingKongExpansion) {
+                $playerDb['tokyoTowerLevels'] = $this->getTokyoTowerLevels($playerId);
+            }
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();
@@ -256,6 +271,7 @@ class Koth extends Table {
 
         $result['twoPlayersVariant'] = $this->isTwoPlayersVariant();
         $result['halloweenExpansion'] = $this->isHalloweenExpansion();
+        $result['kingkongExpansion'] = $isKingKongExpansion;
 
         return $result;
     }

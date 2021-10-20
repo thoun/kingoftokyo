@@ -64,3 +64,9 @@ CREATE TABLE IF NOT EXISTS `turn_damages` (
   `damages` TINYINT unsigned NOT NULL,
   PRIMARY KEY (`from`, `to`)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tokyo_tower` (
+  `level` TINYINT unsigned NOT NULL,
+  `owner` INT(10) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`level`)
+) ENGINE=InnoDB;

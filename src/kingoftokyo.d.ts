@@ -37,6 +37,7 @@ interface KingOfTokyoPlayer extends Player {
     location: number;
     maxHealth: number;
     playerDead: number;
+    tokyoTowerLevels: number[];
 }
 
 interface KingOfTokyoGamedatas {
@@ -61,11 +62,14 @@ interface KingOfTokyoGamedatas {
     stayTokyoOver: number;
     twoPlayersVariant: boolean;
     halloweenExpansion: boolean;
+    kingkongExpansion: boolean;
+    tokyoTowerLevels: number[];
 }
 
 interface KingOfTokyoGame extends Game {
     isDarkEdition(): boolean;
     isHalloweenExpansion(): boolean;
+    isKingkongExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
@@ -321,4 +325,9 @@ interface NotifUpdateLeaveTokyoUnderArgs {
 
 interface NotifUpdateStayTokyoOverArgs {
     over: number;
+}
+
+interface NotifChangeTokyoTowerOwnerArgs {
+    playerId: number;
+    level: number;
 }

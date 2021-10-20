@@ -1,0 +1,32 @@
+.tokyo-tower {
+  width: 70px;
+  height: 260px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 26% 35% 38%;
+  z-index: 8;
+
+  .level {
+    background: url("img/tokyo-tower.png");
+    background-position-x: 100%;
+
+    &.level3 {
+      background-position-y: 0%;
+    }
+    &.level2 {
+      background-position-y: 42%;
+    }
+    &.level1 {
+      background-position-y: 100%;
+    }
+
+    &[data-owned="false"] {
+      opacity: 0.5; // TODOKK it could also be opacity 0 when false
+    }
+
+    &[data-owned="true"] {
+      background-position-x: 0%;
+    }
+  }
+}

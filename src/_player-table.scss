@@ -116,7 +116,7 @@
                 height: 150px;
             }
 
-            @for $i from 1 through 8 {
+            @for $i from 1 through 9 {
                 &.monster#{$i} {
                     background-image: url('img/monster-board-#{$i}.png');
                 }
@@ -173,6 +173,12 @@
         &.empty {
             max-height: 20px;
         }
+    }
+
+    .tokyo-tower-wrapper {
+        position: absolute;
+        right: 10px;
+        top: 10px;
     }
 }
 
