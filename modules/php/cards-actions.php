@@ -360,6 +360,10 @@ trait CardsActionTrait {
         }
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
+        
+        if ($card->location != 'hand' || $card->location_arg != $playerId) {
+            throw new \BgaUserException("You can't sell cards that you don't own");
+        }
 
         $fullCost = $this->CARD_COST[$card->type];
 
