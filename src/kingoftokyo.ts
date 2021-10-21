@@ -1551,7 +1551,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }  
     }
 
-    notif_buyCard(notif: Notif<NotifBuyCardArgs>) {console.log(notif.args);
+    notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
         const card = notif.args.card;
         this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
 

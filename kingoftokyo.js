@@ -2902,7 +2902,6 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var _a, _b;
-        console.log(notif.args);
         var card = notif.args.card;
         this.visibleCards.changeItemsWeight((_a = {}, _a[card.type] = card.location_arg, _a));
         if (notif.args.energy !== undefined) {
