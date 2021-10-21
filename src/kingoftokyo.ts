@@ -508,11 +508,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
                     break;
                 case 'throwDice':
-                    (this as any).addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+                    (this as any).addActionButton('goToChangeDie_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
 
                     const argsThrowDice = args as EnteringThrowDiceArgs;
                     if (!argsThrowDice.hasActions) {
-                        this.startActionTimer('resolve_button', 5);
+                        this.startActionTimer('goToChangeDie_button', 5);
                     }
                     break;
                 case 'changeDie':

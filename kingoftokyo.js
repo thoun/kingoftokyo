@@ -611,7 +611,8 @@ var Cards = /** @class */ (function () {
     };
     return Cards;
 }());
-var isDebug = window.location.host == 'studio.boardgamearena.com';
+var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
+;
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
@@ -2041,10 +2042,10 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     break;
                 case 'throwDice':
-                    this.addActionButton('resolve_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+                    this.addActionButton('goToChangeDie_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
                     var argsThrowDice = args;
                     if (!argsThrowDice.hasActions) {
-                        this.startActionTimer('resolve_button', 5);
+                        this.startActionTimer('goToChangeDie_button', 5);
                     }
                     break;
                 case 'changeDie':
