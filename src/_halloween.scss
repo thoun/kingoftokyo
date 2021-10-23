@@ -1,4 +1,4 @@
-$halloweenOrange: #ff8a00;
+$halloweenOrange: #ff8200;
 $halloweenBlack: #000000;
 
 body.halloween {
@@ -17,31 +17,6 @@ body.halloween {
             border-color: transparent;
           }
         }
-    }
-
-
-    .die-item {
-        &.black {
-            background-color: $halloweenOrange;
-            border-color: $halloweenOrange;
-            background-image: url('img/orange_dice.png');
-        }
-    }
-
-    .log {        
-        .dice-icon {
-            background-image: url('img/orange_dice.png');
-        }
-    }
-
-    .gamelogreview {        
-        .dice-icon {
-            background-image: url('img/orange_dice.png');
-        }
-    }
-    
-    .animation {
-        background-image: url('img/animations-halloween.png');
     }
 
     #skipBuyPhaseWrapper {    
@@ -67,5 +42,43 @@ body.halloween {
         &.active {
           box-shadow: 0px 0px 2px 3px $halloweenOrange;
         }
+    }
+}
+
+html[data-background="2"] {
+    background: url('img/background-halloween.jpg') #2e4d0a;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/background-halloween.jpg') #2e4d0a;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}
+
+html[data-dice="2"] {
+    .die-item {
+        &.black {
+            background-color: $halloweenOrange;
+            border-color: $halloweenOrange;
+            background-image: url('img/orange_dice.png');
+        }
+    }
+
+    .log {        
+        .dice-icon {
+            background-image: url('img/orange_dice.png');
+        }
+    }
+
+    .gamelogreview {        
+        .dice-icon {
+            background-image: url('img/orange_dice.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/animations-halloween.png');
     }
 }

@@ -14,7 +14,7 @@ trait InitialCardTrait {
         $this->cards->moveCard($id, 'hand', $playerId);
         $this->cards->moveCard($otherCard->id, 'costumediscard');
 
-        self::notifyAllPlayers("buyCard", /*client TODOTR translate(*/'${player_name} takes ${card_name}'/*)*/, [
+        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,

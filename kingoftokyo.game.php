@@ -71,7 +71,6 @@ class KingOfTokyo extends Table {
         self::initGameStateLabels([
             'throwNumber' => 10,
             FRENZY_EXTRA_TURN => 11,
-            'damageDoneByActivePlayer' => 12,
             EXTRA_ROLLS => 13,
             'loseHeartEnteringTokyo' => 14,
             FREEZE_TIME_MAX_TURNS => 15,
@@ -86,8 +85,8 @@ class KingOfTokyo extends Table {
             CHEERLEADER_SUPPORT => 26,
 
             PICK_MONSTER_OPTION => 100,
-            GAME_VERSION_OPTION => GAME_VERSION_OPTION,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
+            HALLOWEEN_EXPANSION_OPTION => HALLOWEEN_EXPANSION_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -108,7 +107,7 @@ class KingOfTokyo extends Table {
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
     */
-    protected function setupNewGame( $players, $options = []) {
+    protected function setupNewGame($players, $options = []) {
 
         $sql = "DELETE FROM player WHERE 1 ";
         self::DbQuery( $sql );
@@ -158,7 +157,6 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(FRENZY_EXTRA_TURN, 0);
         self::setGameStateInitialValue(FREEZE_TIME_MAX_TURNS, 0);
         self::setGameStateInitialValue(FREEZE_TIME_CURRENT_TURN, 0);
-        self::setGameStateInitialValue('damageDoneByActivePlayer', 0);
         self::setGameStateInitialValue(EXTRA_ROLLS, 0);
         self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('newCardId', 0);
@@ -286,11 +284,13 @@ class KingOfTokyo extends Table {
     }
 
     function stStartGame() {
-        $this->cards->moveAllCardsInLocation('costumedeck', 'deck');
-        $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
+        if ($this->isHalloweenExpansion()) {
+            $this->cards->moveAllCardsInLocation('costumedeck', 'deck');
+            $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
+        }
         $this->cards->shuffle('deck'); 
 
-        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
+        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MONSTER_PETS_CARD);
         $cards = $this->placeNewCardsOnTable();
         // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
 

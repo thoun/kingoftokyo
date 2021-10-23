@@ -23,13 +23,13 @@ class OpportunistIntervention extends PlayerIntervention {
     }
 }
 
-class PsychicProbeIntervention extends PlayerIntervention {
+class ChangeActivePlayerDieIntervention extends PlayerIntervention {
     public $activePlayerId;
     public $cards;
     public $lastRolledDie = null;
 
     public function __construct(array $remainingPlayersId, int $activePlayerId, array $cards) {
-        parent::__construct(ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE, $remainingPlayersId);
+        parent::__construct(ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE, $remainingPlayersId);
 
         $this->activePlayerId = $activePlayerId;
         $this->cards = $cards;

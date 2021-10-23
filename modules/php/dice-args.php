@@ -7,7 +7,7 @@ require_once(__DIR__.'/objects/player-intervention.php');
 require_once(__DIR__.'/objects/damage.php');
 
 use KOT\Objects\Dice;
-use KOT\Objects\PsychicProbeIntervention;
+use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\Damage;
 
 trait DiceArgTrait {
@@ -91,9 +91,9 @@ trait DiceArgTrait {
         return $cardsArg + $diceArg;
     }
 
-    function argPsychicProbeRollDie($intervention = null) {
+    function argChangeActivePlayerDie($intervention = null) {
         if ($intervention == null) {
-            $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
+            $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
         }
         $activePlayerId = $intervention->activePlayerId;
 
@@ -104,10 +104,16 @@ trait DiceArgTrait {
         $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
         if ($playerId) {
             $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
+            $witchCards = $this->getCardsOfType($playerId, WITCH_CARD);
             $canRoll = false;
             $usedCards = $this->getUsedCard();
             foreach($psychicProbeCards as $psychicProbeCard) {
                 if (!in_array($psychicProbeCard->id, $usedCards)) {
+                    $canRoll = true;
+                }
+            }
+            foreach($witchCards as $witchCard) {
+                if (!in_array($witchCard->id, $usedCards)) {
                     $canRoll = true;
                 }
             }

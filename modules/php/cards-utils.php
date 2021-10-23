@@ -19,13 +19,16 @@ trait CardsUtilTrait {
 
     function initCards() {
         $cards = [];
+
+        $gameVersion = $this->isDarkEdition() ? 'dark' : 'base';        
         
-        for($value=1; $value<=48; $value++) { // keep  
+        foreach($this->KEEP_CARDS_LIST[$gameVersion] as $value) { // keep  
             $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
         }
         
-        for($value=101; $value<=118; $value++) { // discard
-            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+        foreach($this->DISCARD_CARDS_LIST[$gameVersion] as $value) { // discard
+            $type = 100 + $value;
+            $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
         }
 
         $this->cards->createCards($cards, 'deck');
@@ -33,8 +36,9 @@ trait CardsUtilTrait {
         if ($this->isHalloweenExpansion()) { 
             $cards = [];
 
-            for($value=201; $value<=212; $value++) { // costume
-                $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+            for($value=1; $value<=12; $value++) { // costume
+                $type = 200 + $value;
+                $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
             }
 
             $this->cards->createCards($cards, 'costumedeck');
@@ -677,8 +681,7 @@ trait CardsUtilTrait {
         }
     }
 
-    function willBeWounded(int $playerId) {
-        $activePlayerId = self::getActivePlayerId();
+    function willBeWounded(int $playerId, int $activePlayerId) {
         $activePlayerInTokyo = $this->inTokyo($activePlayerId);
 
         if ($this->countCardOfType($activePlayerId, NOVA_BREATH_CARD) == 0 && $this->inTokyo($playerId) == $activePlayerInTokyo) {
@@ -699,5 +702,16 @@ trait CardsUtilTrait {
         $minDamage = $this->countCardOfType($playerId, ARMOR_PLATING_CARD) > 0 ? 2 : 1;
         
         return $diceCounts[6] >= $minDamage;
+    }
+
+    function applyAstronaut(int $playerId) {
+        // Astronaut
+        $countAstronaut = $this->countCardOfType($playerId, ASTRONAUT_CARD);
+        if ($countAstronaut > 0) {
+            $playerScore = $this->getPlayerScore($playerId);
+            if ($playerScore >= 17) {
+                $this->applyGetPoints($playerId, MAX_POINT - $playerScore, ASTRONAUT_CARD);
+            }
+        }
     }
 }

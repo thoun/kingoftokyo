@@ -22,8 +22,7 @@
  */
   
   
-  class action_kingoftokyo extends APP_GameAction
-  { 
+  class action_kingoftokyo extends APP_GameAction { 
     // Constructor: please do not modify
    	public function __default() {
         if (self::isArg( 'notifwindow')) {
@@ -124,7 +123,7 @@
     public function rethrow3psychicProbe() {
         self::setAjaxMode();
 
-        $this->game->rethrow3psychicProbe();
+        $this->game->rethrow3changeActivePlayerDie();
 
         self::ajaxResponse();
     }
@@ -162,7 +161,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->psychicProbeRollDie($id);
+        $this->game->changeActivePlayerDie($id);
 
         self::ajaxResponse();
     }

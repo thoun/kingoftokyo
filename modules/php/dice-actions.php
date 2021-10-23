@@ -7,7 +7,7 @@ require_once(__DIR__.'/objects/player-intervention.php');
 require_once(__DIR__.'/objects/damage.php');
 
 use KOT\Objects\Dice;
-use KOT\Objects\PsychicProbeIntervention;
+use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\Damage;
 
 trait DiceActionTrait {
@@ -100,7 +100,7 @@ trait DiceActionTrait {
         $this->endThrowCamouflageDice($playerId, $intervention, $dice, false);
     }
 
-    public function rethrow3psychicProbe() {
+    public function rethrow3changeActivePlayerDie() {
         $this->checkAction('rethrow3psychicProbe');
 
         $playerId = self::getCurrentPlayerId();
@@ -110,7 +110,7 @@ trait DiceActionTrait {
             throw new \BgaUserException('No Background Dweller card');
         }
 
-        $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
+        $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
 
         $die = $intervention->lastRolledDie;
         if ($die == null) {
@@ -131,7 +131,7 @@ trait DiceActionTrait {
             'die_face_after' => $this->getDieFaceLogName($newValue),
         ]);
 
-        $this->endPsychicProbeRollDie($intervention, $playerId, $die, $newValue);
+        $this->endChangeActivePlayerDie($intervention, $playerId, $die, BACKGROUND_DWELLER_CARD, $newValue);
     }
 
     public function rethrow3changeDie() {
@@ -160,9 +160,9 @@ trait DiceActionTrait {
             'die_face_after' => $this->getDieFaceLogName($newValue),
         ]);
 
-        $psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
-        if ($psychicProbeIntervention != null) {
-            $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
+        $changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);
+        if ($changeActivePlayerDieIntervention != null) {
+            $this->setGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, $changeActivePlayerDieIntervention);
             $this->gamestate->nextState('changeDieWithPsychicProbe');
         } else {
             $this->gamestate->nextState('changeDie');
@@ -219,9 +219,9 @@ trait DiceActionTrait {
         ]);
 
         // psychic probe should not be called after change die (or only after a Background Dweller roll ?)
-        /*$psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
-        if ($psychicProbeIntervention != null) {
-            $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
+        /*$changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);
+        if ($changeActivePlayerDieIntervention != null) {
+            $this->setGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, $changeActivePlayerDieIntervention);
             $this->gamestate->nextState('changeDieWithPsychicProbe');
         } else {
             $this->gamestate->nextState('changeDie');
@@ -229,45 +229,36 @@ trait DiceActionTrait {
         $this->gamestate->nextState('changeDie');
     }
 
-    public function psychicProbeRollDie(int $id) {
-        $this->checkAction('psychicProbeRollDie');
+    public function changeActivePlayerDie(int $id) {
+        $this->checkAction('psychicProbeRollDie'); // /!\ on rename 
 
-        $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
+        $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
         $playerId = $intervention->remainingPlayersId[0];
 
-        if ($this->countCardOfType($playerId, PSYCHIC_PROBE_CARD) == 0) {
-            throw new \BgaUserException('No Psychic Probe card');
+        $unusedCards = $this->getUnusedChangeActivePlayerDieCards($playerId);
+        if (count($unusedCards) == 0) {
+            die('test '.json_encode($unusedCards));
+            throw new \BgaUserException('No card allowing to throw a die from active player');
         }
+        $usedCardOnThisTurn = $unusedCards[0];
 
         $die = $this->getDieById($id);
         $value = bga_rand(1, 6);
         self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
         self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
-        
-        $usedCards = $this->getUsedCard();
-        $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
-        $usedCardOnThisTurn = null;
-        foreach($psychicProbeCards as $psychicProbeCard) {
-            if (!in_array($psychicProbeCard->id, $usedCards)) {
-                $usedCardOnThisTurn = $psychicProbeCard->id;
-            }
-        }
-        if ($usedCardOnThisTurn == null) {
-            throw new \BgaUserException('No unused Psychic Probe for this player');
-        } else {
-            $this->setUsedCard($usedCardOnThisTurn);
-        }
+        $this->setUsedCard($usedCardOnThisTurn->id);
 
-        $this->endPsychicProbeRollDie($intervention, $playerId, $die, $value);
+        $this->endChangeActivePlayerDie($intervention, $playerId, $die, $usedCardOnThisTurn->type, $value);
     }
 
-    public function endPsychicProbeRollDie(object $intervention, int $playerId, object $die, int $value) {
+    public function endChangeActivePlayerDie(object $intervention, int $playerId, object $die, int $cardType, int $value) {
+        $discardBecauseOfHeart = $value == 4 && ($cardType == PSYCHIC_PROBE_CARD || $cardType == MIMIC_CARD);
 
-        if ($value == 4) {
+        if ($discardBecauseOfHeart) {
             $currentPlayerCards = array_values(array_filter($intervention->cards, function ($card) use ($playerId) { return $card->location_arg == $playerId; }));
             if (count($currentPlayerCards) > 0) {
 
-                // we remove Plot Twist and Mimic if user mimicked it
+                // we remove Psychic Probe and Mimic if user mimicked it
                 foreach($currentPlayerCards as $card) {
                     $this->removeCard($playerId, $card, false, true);
 
@@ -280,7 +271,7 @@ trait DiceActionTrait {
         }
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        if ($value == 4) {
+        if ($discardBecauseOfHeart) {
             $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after} (${card_name} is discarded)');
         }
 
@@ -297,19 +288,21 @@ trait DiceActionTrait {
         self::notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'card_name' => PSYCHIC_PROBE_CARD,
+            'card_name' => $cardType,
             'dieId' => $die->id,
             'toValue' => $value,
             'roll' => true,
             'die_face_before' => $this->getDieFaceLogName($oldValue),
             'die_face_after' => $this->getDieFaceLogName($value),
-            'psychicProbeRollDieArgs' => $stayForRethrow3 ? $this->argPsychicProbeRollDie($intervention) : null,
+            'psychicProbeRollDieArgs' => $stayForRethrow3 ? $this->argChangeActivePlayerDie($intervention) : null,
         ]);
 
-        if ($stayForRethrow3) {
-            $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $intervention);
+        $unusedCards = $this->getUnusedChangeActivePlayerDieCards($playerId);
+
+        if ($stayForRethrow3 || count($unusedCards) > 0) {
+            $this->setGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, $intervention);
         } else {
-            $this->setInterventionNextState(PSYCHIC_PROBE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
+            $this->setInterventionNextState(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
             $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
         }
     }
@@ -325,9 +318,9 @@ trait DiceActionTrait {
 
         $this->fixDices();
 
-        $psychicProbeIntervention = $this->getPsychicProbeIntervention($playerId);
-        if ($psychicProbeIntervention != null) {
-            $this->setGlobalVariable(PSYCHIC_PROBE_INTERVENTION, $psychicProbeIntervention);
+        $changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);
+        if ($changeActivePlayerDieIntervention != null) {
+            $this->setGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, $changeActivePlayerDieIntervention);
             $this->gamestate->nextState('psychicProbe');
         } else {
             $this->gamestate->nextState('goToChangeDie');
@@ -343,8 +336,8 @@ trait DiceActionTrait {
     }
 
     function applyPsychicProbeSkip(int $playerId) {
-        $intervention = $this->getGlobalVariable(PSYCHIC_PROBE_INTERVENTION);
-        $this->setInterventionNextState(PSYCHIC_PROBE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
+        $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
+        $this->setInterventionNextState(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 

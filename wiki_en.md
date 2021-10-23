@@ -116,5 +116,10 @@ Discarding your Keep cards happens in the End of Turn step. You get back the ful
 
 All other rules remain unchanged.
 
+= Halloween version =
+Halloween version adds a new Costume cards. Players choose one costume card at the begining of the game. It is possible to have multiple Costume cards, as the unused Costume cards are shuffled on the deck, and can be bought like any other card.
+
+When a player rolls 3 smashes of more, he can steal Costume cards from players he damages (paying them the cost). He can steal several cards, from different players, at the same turn. Smash damage still apply when stealing cards is used.
+
 = Cards combinations =
 If you have a doubt about some cards combinations, you can check answers listed here : https://docs.google.com/spreadsheets/d/1DbI4EongciNvCcjQBwsMHuXxpzKA1x3ZD_MMdPzBRtM.

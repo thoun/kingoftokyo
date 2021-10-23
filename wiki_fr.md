@@ -108,5 +108,10 @@ La vente des cartes pouvoir s’effectue en fin de tour, après la phase Acheter
 
 Toutes les autres règles demeurent inchangées.
 
+= Version Halloween =
+La version Halloween ajoute les cartes Costume. Les joueurs choississent une carte Costume au début du jeu. Il est possible d'avoir plusieurs cartes Costume, les cartes inutilisées étant mélangées dans le paquet de carte, elles peuvent être achetées comme n'importe quelle autre carte.
+
+Quand un joueur obtient 3 baffes ou plus, il peut voler des cartes Costume aux monstres qu'il vient de blesser (en lui payant le cout de la carte). Il peut voler plusieurs cartes, de plusieurs joueurs, pendant le même tour. Les dommages liés aux dés baffe sont appliqués même quand le joueur vole des cartes.
+
 = Combinations de cartes =
 Si vous avez des doutes sur les combinations de cartes, vous pouvez vérifier les réponses listées ici (en anglais) : https://docs.google.com/spreadsheets/d/1DbI4EongciNvCcjQBwsMHuXxpzKA1x3ZD_MMdPzBRtM.

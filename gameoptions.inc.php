@@ -27,18 +27,18 @@ require_once("modules/constants.inc.php");
 
 $game_options = [
 
-    /* TODOTR GAME_VERSION_OPTION => [
-        'name' => totranslate('Game version'),
+    HALLOWEEN_EXPANSION_OPTION => [
+        'name' => totranslate('Halloween event'),
         'values' => [
-            GAME_VERSION_BASE => [
-                'name' => totranslate('Base version'), 
+            1 => [
+                'name' => totranslate('Disabled'),
             ],
-            GAME_VERSION_BASE | GAME_VERSION_HALLOWEEN => [
-                'name' => totranslate('Base version + Halloween expansion'), 
+            2 => [
+                'name' => totranslate('Enabled'),
             ],
         ],
         'default' => 1,
-    ],*/
+    ],
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
@@ -58,20 +58,20 @@ $game_options = [
         'default' => 1,
     ],
 
-    /* TODOTR BONUS_MONSTERS_OPTION => [
+    BONUS_MONSTERS_OPTION => [
         'name' => totranslate('Bonus monsters'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
-                'description' => totranslate("Only base game monsters")
+                'description' => totranslate("Only monsters from game version")
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'description' => totranslate("Base game and bonus/promo monsters"),
+                'description' => totranslate("Include bonus/promo monsters"),
             ],
         ],
-        'default' => 1,
-    ],*/
+        'default' => 2,
+    ],
 
     110 => [
         'name' => totranslate('Skip phase with no possible actions'),
@@ -110,16 +110,6 @@ $game_options = [
 ];
 
 $game_preferences = [
-    201 => [
-        'name' => totranslate('Font style'),
-        'needReload' => false,
-        'values' => [
-            1 => [ 'name' => totranslate( 'Default font' )],
-            2 => [ 'name' => totranslate( 'King of Tokyo font' )],
-        ],
-        'default' => 2
-    ],
-
     202 => [
         'name' => totranslate('Countdown timer when no action is possible'),
         'needReload' => false,
@@ -130,6 +120,28 @@ $game_preferences = [
         'default' => 1
     ],
 
+    204 => [
+        'name' => totranslate('Background'),
+        'needReload' => false,
+        'values' => [
+            0 => ['name' => totranslate('Automatic')],
+            1 => ['name' => totranslate('Base game')],
+            2 => ['name' => totranslate('Halloween event')],
+        ],
+        'default' => 0
+    ],
+
+    205 => [
+        'name' => totranslate('Dice'),
+        'needReload' => false,
+        'values' => [
+            0 => ['name' => totranslate('Automatic')],
+            1 => ['name' => totranslate('Base game')],
+            2 => ['name' => totranslate('Halloween event')],
+        ],
+        'default' => 0
+    ],
+
     203 => [
         'name' => totranslate('Show 2-players variant notice'),
         'needReload' => false,
@@ -138,6 +150,16 @@ $game_preferences = [
             2 => ['name' => totranslate('Disabled')],
         ],
         'default' => 1
+    ],
+
+    201 => [
+        'name' => totranslate('Font style'),
+        'needReload' => false,
+        'values' => [
+            1 => [ 'name' => totranslate( 'Default font' )],
+            2 => [ 'name' => totranslate( 'King of Tokyo font' )],
+        ],
+        'default' => 2
     ],
 ];
 

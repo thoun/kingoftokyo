@@ -33,7 +33,7 @@ class PlayerTable {
                 <div class="kot-token"></div>
                 <div id="monster-board-${player.id}" class="monster-board monster${this.monster}">
                     <div id="monster-board-${player.id}-figure-wrapper" class="monster-board-figure-wrapper">
-                        <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"></div>
+                        <div id="monster-figure-${player.id}" class="monster-figure monster${this.monster}"><div class="stand"></div></div>
                     </div>
                 </div>
                 <div id="token-wrapper-${this.playerId}-poison" class="token-wrapper poison"></div>

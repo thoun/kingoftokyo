@@ -29,7 +29,7 @@ trait CardsActionTrait {
 
         $playerId = self::getCurrentPlayerId();
 
-        self::notifyAllPlayers("cheerleaderChoice", /* client TODOTR translate(*/'${player_name} chooses to support ${player_name2} and adds [diceSmash]'/*)*/, [
+        self::notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to support ${player_name2} and adds [diceSmash]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
@@ -43,7 +43,7 @@ trait CardsActionTrait {
 
         $playerId = self::getCurrentPlayerId();
 
-        self::notifyAllPlayers("cheerleaderChoice", /* client TODOTR translate(*/'${player_name} chooses to not support ${player_name2}'/*)*/, [
+        self::notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to not support ${player_name2}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
@@ -80,8 +80,8 @@ trait CardsActionTrait {
             $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
         }
 
-        $this->cards->moveCard($id, 'hand', $playerId);
         $this->removeCard($from, $card, true, false, true);
+        $this->cards->moveCard($id, 'hand', $playerId);
 
         self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
             'playerId' => $playerId,
@@ -96,6 +96,9 @@ trait CardsActionTrait {
         ]);
 
         $this->applyGetEnergy($from, $cost, 0);
+
+        // astronaut
+        $this->applyAstronaut($playerId);
 
         // TODO self::incStat(1, 'costumeStolenCards', $playerId);
      
@@ -159,6 +162,9 @@ trait CardsActionTrait {
         if ($tokens > 0) {
             $this->setCardTokens($playerId, $card, $tokens, true);
         }
+        
+        // astronaut
+        $this->applyAstronaut($playerId);
 
         $newCard = null;
 
@@ -672,7 +678,7 @@ trait CardsActionTrait {
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
         }
 
-        self::notifyAllPlayers("useRobot", /*client TODOTR translate(*/'${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'/*)*/, [
+        self::notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => ROBOT_CARD,

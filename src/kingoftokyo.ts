@@ -20,6 +20,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private pickCard: Stock;
     private playerTables: PlayerTable[] = [];
     private tableManager: TableManager;
+    private preferencesManager: PreferencesManager;
     public cards: Cards;
     private rapidHealingSyncHearts: number;
         
@@ -50,8 +51,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).dontPreloadImage(`monster-figure-${i}.png`);
         });
         (this as any).dontPreloadImage(`tokyo-2pvariant.jpg`);
+        (this as any).dontPreloadImage(`background-halloween.jpg`);
         if (!gamedatas.halloweenExpansion) {
             (this as any).dontPreloadImage(`costume-cards.jpg`);
+            (this as any).dontPreloadImage(`orange_dice.png`);
         }
 
         log( "Starting game setup" );
@@ -92,7 +95,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.setupNotifications();
-        this.setupPreferences();
+        this.preferencesManager = new PreferencesManager(this);
 
         document.getElementById('zoom-out').addEventListener('click', () => this.tableManager?.zoomOut());
         document.getElementById('zoom-in').addEventListener('click', () => this.tableManager?.zoomIn());
@@ -337,7 +340,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
                 for (let i=args.damage; i>0; i--) {
                     const id = `useRobot${i}_button`;
-                    (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(/* TODOTR _(*/"Lose ${number} [energy] instead of ${number} [heart]"/*)*/, { 'number': i})), () => this.useRobot(i));
+                    (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this.cards.getCardName(210, 'text-only')})), () => this.useRobot(i));
                     dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
                 }
             }
@@ -356,7 +359,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringStealCostumeCard(args: EnteringStealCostumeCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
             this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
-            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
 
@@ -372,14 +375,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.showPickStock(args._private.pickCards);
             }
 
-            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
 
     private onEnteringChooseMimickedCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(1));
-            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`).classList.add('disabled'));
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
 
@@ -407,7 +410,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
                 break;  
-            case 'psychicProbeRollDie':
+            case 'changeActivePlayerDie': case 'psychicProbeRollDie': // TODO remove
                 if (document.getElementById('rethrow3psychicProbe_button')) {
                     dojo.destroy('rethrow3psychicProbe_button');
                 }   
@@ -471,7 +474,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     public onUpdateActionButtons(stateName: string, args: any) {
 
         switch (stateName) {
-            case 'psychicProbeRollDie':
+            case 'changeActivePlayerDie': case 'psychicProbeRollDie': // TODO remove
                 this.setDiceSelectorVisibility(true);
                 break;
             case 'cheerleaderSupport':
@@ -518,13 +521,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'changeDie':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
                     break;
-                case 'psychicProbeRollDie':
-                    (this as any).addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
+                    case 'changeActivePlayerDie': case 'psychicProbeRollDie': // TODO remove
+                    (this as any).addActionButton('changeActivePlayerDieSkip_button', _("Skip"), 'psychicProbeSkip');
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'cheerleaderSupport':
-                    (this as any).addActionButton('support_button', formatTextIcons("Support (add [diceSmash] )") /* TODOTR */, () => this.support());
-                    (this as any).addActionButton('dontSupport_button', "Don't support" /* TODOTR */, () => this.dontSupport());
+                    (this as any).addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), () => this.support());
+                    (this as any).addActionButton('dontSupport_button', _("Don't support"), () => this.dontSupport());
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'leaveTokyo':
@@ -600,6 +603,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public isHalloweenExpansion(): boolean {
         return this.gamedatas.halloweenExpansion;
+    }
+
+    public isDarkEdition(): boolean {
+        return false; // TODODE
     }
 
     public isDefaultFont(): boolean {
@@ -1343,42 +1350,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private setupPreferences() {
-        // Extract the ID and value from the UI control
-        const onchange = (e) => {
-          var match = e.target.id.match(/^preference_control_(\d+)$/);
-          if (!match) {
-            return;
-          }
-          var prefId = +match[1];
-          var prefValue = +e.target.value;
-          (this as any).prefs[prefId].value = prefValue;
-          this.onPreferenceChange(prefId, prefValue);
-        }
-        
-        // Call onPreferenceChange() when any value changes
-        dojo.query(".preference_control").connect("onchange", onchange);
-        
-        // Call onPreferenceChange() now
-        dojo.forEach(
-          dojo.query("#ingame_menu_content .preference_control"),
-          el => onchange({ target: el })
-        );
-    }
-      
-    private onPreferenceChange(prefId: number, prefValue: number) {
-        switch (prefId) {
-            // KEEP
-            case 201: 
-                this.playerTables.forEach(playerTable => playerTable.setFont(prefValue));
-                break;
-            case 203: 
-                if (prefValue == 2) {
-                    dojo.destroy('board-corner-highlight');
-                    dojo.destroy('twoPlayersVariant-message');
-                }
-                break;
-        }
+    
+    
+    public setFont(prefValue: number): void {
+        this.playerTables.forEach(playerTable => playerTable.setFont(prefValue));
     }
 
     private setVisibleCards(cards: Card[]) {

@@ -129,11 +129,11 @@
   border-radius: 20%;
   box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
-.dice.rolled {
+.dice[data-rolled=true] {
   animation: rolled-dice 1s forwards;
   transform: translateY(-40vh);
 }
-.dice.rolled .icon.forbidden {
+.dice[data-rolled=true] .icon.forbidden {
   display: none;
 }
 
@@ -279,115 +279,115 @@
   grid-area: nine;
 }
 
-.even-roll {
+[data-roll-type=even] {
   transition: transform 0.9s ease-out;
 }
 
-.odd-roll {
+[data-roll-type=odd] {
   transition: transform 1.1s ease-out;
 }
 
-.no-roll {
+[data-roll-type="-"] {
   transition: transform 0;
 }
 
-.change-die-roll {
+[data-roll-type=change] {
   transition: transform 0.5s ease-in-out;
 }
 
-.even-roll[data-roll="1"] {
+[data-roll-type=even][data-roll="1"] {
   transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.even-roll[data-roll="2"] {
+[data-roll-type=even][data-roll="2"] {
   transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.even-roll[data-roll="3"] {
+[data-roll-type=even][data-roll="3"] {
   transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
 }
 
-.even-roll[data-roll="4"] {
+[data-roll-type=even][data-roll="4"] {
   transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
 }
 
-.even-roll[data-roll="5"] {
+[data-roll-type=even][data-roll="5"] {
   transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.even-roll[data-roll="6"] {
+[data-roll-type=even][data-roll="6"] {
   transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
 }
 
-.odd-roll[data-roll="1"] {
+[data-roll-type=odd][data-roll="1"] {
   transform: rotateX(-360deg) rotateY(-720deg) rotateZ(-360deg);
 }
 
-.odd-roll[data-roll="2"] {
+[data-roll-type=odd][data-roll="2"] {
   transform: rotateX(-270deg) rotateY(-720deg) rotateZ(-360deg);
 }
 
-.odd-roll[data-roll="3"] {
+[data-roll-type=odd][data-roll="3"] {
   transform: rotateX(-360deg) rotateY(-810deg) rotateZ(-360deg);
 }
 
-.odd-roll[data-roll="4"] {
+[data-roll-type=odd][data-roll="4"] {
   transform: rotateX(-360deg) rotateY(-630deg) rotateZ(-360deg);
 }
 
-.odd-roll[data-roll="5"] {
+[data-roll-type=odd][data-roll="5"] {
   transform: rotateX(-450deg) rotateY(-720deg) rotateZ(-360deg);
 }
 
-.odd-roll[data-roll="6"] {
+[data-roll-type=odd][data-roll="6"] {
   transform: rotateX(-360deg) rotateY(-900deg) rotateZ(-540deg);
 }
 
-.no-roll[data-roll="1"] {
+[data-roll-type="-"][data-roll="1"] {
   transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.no-roll[data-roll="2"] {
+[data-roll-type="-"][data-roll="2"] {
   transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.no-roll[data-roll="3"] {
+[data-roll-type="-"][data-roll="3"] {
   transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
 }
 
-.no-roll[data-roll="4"] {
+[data-roll-type="-"][data-roll="4"] {
   transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
 }
 
-.no-roll[data-roll="5"] {
+[data-roll-type="-"][data-roll="5"] {
   transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.no-roll[data-roll="6"] {
+[data-roll-type="-"][data-roll="6"] {
   transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
 }
 
-.change-die-roll[data-roll="1"] {
+[data-roll-type=change][data-roll="1"] {
   transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.change-die-roll[data-roll="2"] {
+[data-roll-type=change][data-roll="2"] {
   transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.change-die-roll[data-roll="3"] {
+[data-roll-type=change][data-roll="3"] {
   transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
 }
 
-.change-die-roll[data-roll="4"] {
+[data-roll-type=change][data-roll="4"] {
   transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
 }
 
-.change-die-roll[data-roll="5"] {
+[data-roll-type=change][data-roll="5"] {
   transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
 }
 
-.change-die-roll[data-roll="6"] {
+[data-roll-type=change][data-roll="6"] {
   transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
 }
 
@@ -535,6 +535,9 @@
 }
 
 .mode_3d .dice {
+  transform: translateZ(16px);
+}
+.mode_3d .icon.forbidden {
   transform: translateZ(16px);
 }
 
@@ -943,16 +946,33 @@
 #table .monster-figure {
   position: relative;
 }
-#table .mode_3d .monster-figure {
+
+.monster-figure .stand {
+  display: none;
+}
+
+.mode_3d .monster-figure {
   transform: translateY(-60px) rotateX(-90deg);
   transform-origin: bottom center;
+}
+.mode_3d .monster-figure .stand {
+  display: inline-block;
+  width: 70px;
+  height: 70px;
+  background: black;
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  margin-left: -35px;
+  border-radius: 50%;
+  transform: rotateX(90deg);
 }
 
 body.halloween #rolled-dice #locked-dice {
   border: 2px solid #000000;
 }
 body.halloween #rolled-dice #locked-dice #lock {
-  background: url("img/lock.svg") #ff8a00;
+  background: url("img/lock.svg") #ff8200;
   background-repeat: no-repeat;
   background-position: center;
   border-radius: 4px 0 0 4px;
@@ -960,32 +980,44 @@ body.halloween #rolled-dice #locked-dice #lock {
 body.halloween #rolled-dice #locked-dice.hide-lock {
   border-color: transparent;
 }
-body.halloween .die-item.black {
-  background-color: #ff8a00;
-  border-color: #ff8a00;
-  background-image: url("img/orange_dice.png");
-}
-body.halloween .log .dice-icon {
-  background-image: url("img/orange_dice.png");
-}
-body.halloween .gamelogreview .dice-icon {
-  background-image: url("img/orange_dice.png");
-}
-body.halloween .animation {
-  background-image: url("img/animations-halloween.png");
-}
 body.halloween #skipBuyPhaseWrapper input:checked + .slider {
-  background-color: #ff8a00;
+  background-color: #ff8200;
 }
 body.halloween #skipBuyPhaseWrapper input:focus + .slider {
-  box-shadow: 0 0 1px #ff8a00;
+  box-shadow: 0 0 1px #ff8200;
 }
 body.halloween #table .player-table.active {
-  border: 3px solid #ff8a00;
-  box-shadow: 0px 0px 5px 2px #ff8a00;
+  border: 3px solid #ff8200;
+  box-shadow: 0px 0px 5px 2px #ff8200;
 }
 body.halloween .player-board.active {
-  box-shadow: 0px 0px 2px 3px #ff8a00;
+  box-shadow: 0px 0px 2px 3px #ff8200;
+}
+
+html[data-background="2"] {
+  background: url("img/background-halloween.jpg") #2e4d0a;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+html[data-background="2"] .mode_3d #game_play_area_background {
+  background: url("img/background-halloween.jpg") #2e4d0a;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+
+html[data-dice="2"] .die-item.black {
+  background-color: #ff8200;
+  border-color: #ff8200;
+  background-image: url("img/orange_dice.png");
+}
+html[data-dice="2"] .log .dice-icon {
+  background-image: url("img/orange_dice.png");
+}
+html[data-dice="2"] .gamelogreview .dice-icon {
+  background-image: url("img/orange_dice.png");
+}
+html[data-dice="2"] .animation {
+  background-image: url("img/animations-halloween.png");
 }
 
 @font-face {
@@ -1001,7 +1033,7 @@ body.halloween .player-board.active {
     margin-top: 8px;
   }
 }
-html {
+html, .mode_3d #game_play_area_background {
   background: url("img/background.jpg") #102f50;
   background-size: 100% auto;
   background-repeat: no-repeat;

@@ -22,7 +22,7 @@ define('ST_START_TURN', 20);
 define('ST_PLAYER_CHANGE_MIMICKED_CARD', 21);
 define('ST_PLAYER_THROW_DICE', 22);
 define('ST_PLAYER_CHANGE_DIE', 23);
-define('ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE', 24);
+define('ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE', 24);
 
 define('ST_PREPARE_RESOLVE_DICE', 28);
 define('ST_MULTIPLAYER_CHEERLEADER_SUPPORT', 29);
@@ -60,7 +60,7 @@ define('END_SCORE', 100);
  * Interventions
  */
 
-define('PSYCHIC_PROBE_INTERVENTION', 'PsychicProbeIntervention');
+define('CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION', 'PsychicProbeIntervention'); // /!\ on rename 
 define('OPPORTUNIST_INTERVENTION', 'OpportunistIntervention');
 define('CANCEL_DAMAGE_INTERVENTION', 'CancelDamageIntervention');
 define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
@@ -69,17 +69,12 @@ define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
  * Options
  */
 
-define('PICK_MONSTER_OPTION', 'PickMonsterOption');
-define('AUTO_SKIP_OPTION', 'AutoSkipOption');
-define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption');
-define('GAME_VERSION_OPTION', 101);
+define('PICK_MONSTER_OPTION', 'PickMonsterOption'); // 100
+define('AUTO_SKIP_OPTION', 'AutoSkipOption'); // 110
+define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption'); // 120
+//define('GAME_VERSION_OPTION', 101);
+define('HALLOWEEN_EXPANSION_OPTION', 103);
 define('BONUS_MONSTERS_OPTION', 102);
-
-// game versions
-define('GAME_VERSION_BASE', 0b00000001);
-define('GAME_VERSION_DARK_EDITION', 0b00000010);
-define('GAME_VERSION_POWER_UP', 0b00000100);
-define('GAME_VERSION_HALLOWEEN', 0b00001000);
 
 /*
  * Variables
@@ -161,16 +156,15 @@ define('ENERGY_DRINK_CARD', 45);
 define('URBAVORE_CARD', 46);
 define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
 define('WINGS_CARD', 48);
-/*
-Dark edition :
-define('HIBERNATION', 49);
-define('NANOBOTS', 50);
-define('NATURAL_SELECTION', 51);
-define('REFLECTIVE_HIDE', 52);
-define('SUPER_JUMP', 53);
-define('UNSTABLE_DNA', 54);
-define('ZOMBIFY', 55);
-*/
+//Dark edition :
+define('HIBERNATION_CARD', 49); // TODODE
+define('NANOBOTS_CARD', 50); // TODODE test
+define('NATURAL_SELECTION_CARD', 51); // TODODE
+define('REFLECTIVE_HIDE_CARD', 52); // TODODE
+define('SUPER_JUMP_CARD', 53); // TODODE
+define('UNSTABLE_DNA_CARD', 54); // TODODE
+define('ZOMBIFY_CARD', 55); // TODODE
+
 // discard
 define('APPARTMENT_BUILDING_CARD', 101);
 define('COMMUTER_TRAIN_CARD', 102);
@@ -190,12 +184,14 @@ define('NUCLEAR_POWER_PLANT_CARD', 115);
 define('SKYSCRAPER_CARD', 116);
 define('TANK_CARD', 117);
 define('VAST_STORM_CARD', 118);
+//Dark edition :
 define('MONSTER_PETS_CARD', 119);
+
 // costume
 define('ASTRONAUT_CARD', 201);
 define('GHOST_CARD', 202);
 define('VAMPIRE_CARD', 203);
-define('WITCH_CARD', 204); // TODO
+define('WITCH_CARD', 204);
 define('DEVIL_CARD', 205);
 define('PIRATE_CARD', 206);
 define('PRINCESS_CARD', 207);

@@ -128,8 +128,7 @@ class DiceManager {
             div.dataset.diceValue = ''+toValue;
             dojo.addClass(div, `dice${toValue}`);
             const list = div.getElementsByTagName('ol')[0];
-            dojo.removeClass(list, 'no-roll');
-            dojo.addClass(list, roll ? 'odd-roll' : 'change-die-roll');
+            list.dataset.rollType = roll ? 'odd' : 'change';
             if (roll) {
                 this.addDiceRollClass({
                     id: dieId,
@@ -344,10 +343,17 @@ class DiceManager {
     private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
         this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? `locked-dice${die.value}` : `dice-selector`);
 
+        const div = this.getDiceDiv(die);
+        div.addEventListener('animationend', (e: AnimationEvent) => {
+            if (e.animationName == 'rolled-dice') {
+                div.dataset.rolled = 'false';
+            }
+        });
+
         this.addDiceRollClass(die);
 
         if (selectable) {
-            this.getDiceDiv(die).addEventListener('click', event => this.dieClick(die, event));
+            div.addEventListener('click', event => this.dieClick(die, event));
         }
     }
 
@@ -361,25 +367,23 @@ class DiceManager {
         }
     }
 
-    private addRollToDiv(dieDiv: HTMLDivElement, rollClass: string, attempt: number = 0) {
-        const dieList = dieDiv.getElementsByClassName('die-list')[0];
+    private addRollToDiv(dieDiv: HTMLDivElement, rollType: string, attempt: number = 0) {
+        const dieList = (dieDiv.getElementsByClassName('die-list')[0] as HTMLDivElement);
         if (dieList) {
-            dieList.classList.add(rollClass);
+            dieList.dataset.rollType = rollType;
         } else if (attempt < 5) {
-            setTimeout(() => this.addRollToDiv(dieDiv, rollClass, attempt + 1), 200); 
+            setTimeout(() => this.addRollToDiv(dieDiv, rollType, attempt + 1), 200); 
         }
     }
 
     private addDiceRollClass(die: Dice) {
         const dieDiv = this.getDiceDiv(die);
 
+        dieDiv.dataset.rolled = die.rolled ? 'true' : 'false';
         if (die.rolled) {            
-            dojo.removeClass(dieDiv, 'no-roll');
-            dieDiv.classList.add('rolled');
-            setTimeout(() => this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd-roll' : 'even-roll'), 200); 
-            setTimeout(() => dieDiv.classList.remove('rolled'), 1200); 
+            setTimeout(() => this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd' : 'even'), 200); 
         } else {
-            this.addRollToDiv(dieDiv, 'no-roll');
+            this.addRollToDiv(dieDiv, '-');
         }
     }
 

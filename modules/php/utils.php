@@ -44,26 +44,16 @@ trait UtilTrait {
         return intval(self::getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
     }
 
-    private function getGameVersion() {
-        global $g_config;
-        if ($g_config['debug_from_chat']) { 
-            return GAME_VERSION_BASE /*| GAME_VERSION_HALLOWEEN*/; // TODO TEMP
-        } else {
-            return GAME_VERSION_BASE;
-        }
-        //TODO TEMP return intval(self::getGameStateValue(GAME_VERSION_OPTION));
-    }
-
     function isPowerUpExpansion() {
-        return ($this->getGameVersion() & GAME_VERSION_POWER_UP) === GAME_VERSION_POWER_UP;
+        return false;
     }
 
     function isHalloweenExpansion() {
-        return ($this->getGameVersion() & GAME_VERSION_HALLOWEEN) === GAME_VERSION_HALLOWEEN;
+        return intval(self::getGameStateValue(HALLOWEEN_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {
-        return ($this->getGameVersion() & GAME_VERSION_DARK_EDITION) === GAME_VERSION_DARK_EDITION;
+        return false;
     }
 
     function autoSkipImpossibleActions() {
@@ -388,13 +378,12 @@ trait UtilTrait {
     function applyGetPoints(int $playerId, int $points, int $cardType) {
         $newPoints = $points;
 
-        // Astronaut
-        $countAstronaut = $this->countCardOfType($playerId, ASTRONAUT_CARD);
-        if ($countAstronaut > 0 && ($this->getPlayerScore($playerId) + $points) >= 17) {
-            $newPoints = 20;
-        }
+        $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
 
-        $this->applyGetPointsIgnoreCards($playerId, $newPoints, $cardType);
+        if ($cardType != ASTRONAUT_CARD) { // to avoid infinite loop
+            // Astronaut
+            $this->applyAstronaut($playerId);
+        }
     }
 
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
@@ -497,11 +486,11 @@ trait UtilTrait {
 
         if ($newHealth == 0) {
             // eater of the dead 
-            $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-            foreach($otherPlayersIds as $otherPlayerId) {
-                $countEaterOfTheDead = $this->countCardOfType($otherPlayerId, EATER_OF_THE_DEAD_CARD);
+            $playersIds = $this->getPlayersIds();
+            foreach($playersIds as $pId) {
+                $countEaterOfTheDead = $this->countCardOfType($pId, EATER_OF_THE_DEAD_CARD);
                 if ($countEaterOfTheDead > 0) {
-                    $this->applyGetPoints($otherPlayerId, 3 * $countEaterOfTheDead, EATER_OF_THE_DEAD_CARD);
+                    $this->applyGetPoints($pId, 3 * $countEaterOfTheDead, EATER_OF_THE_DEAD_CARD);
                 }
             }
         }
@@ -565,10 +554,6 @@ trait UtilTrait {
         // Poison Spit
         if ($givePoisonSpitToken > 0) {
             $this->applyGetPoisonToken($playerId, $givePoisonSpitToken);
-        }
-
-        if ($damageDealerId == self::getActivePlayerId()) {
-            self::setGameStateValue('damageDoneByActivePlayer', 1);
         }
             
         self::DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");

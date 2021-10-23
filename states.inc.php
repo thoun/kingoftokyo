@@ -140,8 +140,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_CHOOSE_INITIAL_CARD => [
         "name" => "chooseInitialCard",
-        "description" => /*client TODOTR translate(*/'${actplayer} must choose a card'/*)*/,
-        "descriptionmyturn" => '', /*client TODOTR translate(*/'${you} must choose a card'/*)*/,
+        "description" => clienttranslate('${actplayer} must choose a Costume card'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a Costume card'),
         "type" => "activeplayer",
         "action" => "stChooseInitialCard",
         "args" => "argChooseInitialCard",
@@ -200,7 +200,7 @@ $playerActionsGameStates = [
         "transitions" => [
             "rethrow" => ST_PLAYER_THROW_DICE,
             "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
-            "psychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
+            "psychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
             //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],  
@@ -215,22 +215,22 @@ $playerActionsGameStates = [
         "possibleactions" => [ "changeDie", "resolve", "rethrow3changeDie" ],
         "transitions" => [
             "changeDie" => ST_PLAYER_CHANGE_DIE,
-            "changeDieWithPsychicProbe" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
+            "changeDieWithPsychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
             "resolve" => ST_PREPARE_RESOLVE_DICE,
         ],
 
     ],
 
-    ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE => [
-        "name" => "psychicProbeRollDie",
-        "description" => clienttranslate('Player with Psychic Probe can reroll a die'),
+    ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE => [
+        "name" => "psychicProbeRollDie", // 'changeActivePlayerDie'
+        "description" => clienttranslate('Players with special card can reroll a die'),
         "descriptionmyturn" => clienttranslate('${you} can reroll a die'),
         "type" => "multipleactiveplayer",
-        "action" => "stPsychicProbeRollDie",
-        "args" => "argPsychicProbeRollDie",
+        "action" => "stChangeActivePlayerDie",
+        "args" => "argChangeActivePlayerDie",
         "possibleactions" => [ "psychicProbeRollDie", "psychicProbeSkip", "rethrow3psychicProbe" ],
         "transitions" => [
-            "stay" => ST_MULTIPLAYER_PSYCHIC_PROBE_ROLL_DIE,
+            "stay" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
             "end" => ST_PREPARE_RESOLVE_DICE,
             "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
         ],
@@ -249,8 +249,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_CHEERLEADER_SUPPORT => [
         "name" => "cheerleaderSupport",
-        "description" => "", /* client TODOTR translate(*/'Player with Cheerleader can support monster'/*)*/,
-        "descriptionmyturn" => "", /* client TODOTR translate(*/'${you} can support monster'/*)*/,
+        "description" => clienttranslate('Player with Cheerleader can support monster'),
+        "descriptionmyturn" => clienttranslate('${you} can support monster'),
         "type" => "multipleactiveplayer",
         "args" => "argCheerleaderSupport",
         "action" => "stCheerleaderSupport",
@@ -390,8 +390,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_STEAL_COSTUME_CARD => [
         "name" => "stealCostumeCard",
-        "description" => "", // TODO client TEMPTR translate('${actplayer} can steal a Costume card'),
-        "descriptionmyturn" => "", // TODO client TEMPTR translate('${you} can steal a Costume card'),
+        "description" => clienttranslate('${actplayer} can steal a Costume card'),
+        "descriptionmyturn" => clienttranslate('${you} can steal a Costume card'),
         "type" => "activeplayer",
         "args" => "argStealCostumeCard",
         "action" => "stStealCostumeCard",

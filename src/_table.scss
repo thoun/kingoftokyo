@@ -94,3 +94,29 @@
     
     @import 'player-table';
 }
+
+.monster-figure {
+    .stand {
+        display: none;
+    }
+}
+
+.mode_3d {
+    .monster-figure {
+        transform: translateY(-60px) rotateX(-90deg);
+        transform-origin: bottom center;
+
+        .stand {
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            background: black;
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            margin-left: -35px;
+            border-radius: 50%;
+            transform: rotateX(90deg);
+        }
+    }
+}

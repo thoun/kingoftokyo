@@ -11,7 +11,7 @@ trait MonsterTrait {
 
     private function getGameMonsters() {
         global $g_config;
-        if (/*intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2 ||*/ $g_config['debug_from_chat']) {  // TODO TEMP
+        if (intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2 || $this->isHalloweenExpansion()) {
             return [1,2,3,4,5,6,7,8];
         } else {
             return [1,2,3,4,5,6];

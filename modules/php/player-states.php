@@ -24,7 +24,6 @@ trait PlayerStateTrait {
         }
 
         self::DbQuery("DELETE FROM `turn_damages` WHERE 1");
-        self::setGameStateValue('damageDoneByActivePlayer', 0);
         self::setGameStateValue(EXTRA_ROLLS, 0);
         self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         self::setGameStateValue(SKIP_BUY_PHASE, 0);
@@ -46,6 +45,14 @@ trait PlayerStateTrait {
         $princessCards = $this->getCardsOfType($playerId, PRINCESS_CARD);
         foreach($princessCards as $princessCard) {
             $this->applyGetPoints($playerId, 1, PRINCESS_CARD);
+        }
+
+        // nanobots
+        if ($this->getPlayerHealth($playerId) < 3) {
+            $countNanobots = $this->countCardOfType($playerId, NANOBOTS_CARD);
+            if ($countNanobots > 0) {
+                $this->applyGetHealth($playerId, 2 * $countNanobots, NANOBOTS_CARD);
+            }
         }
 
         // apply in tokyo at start
@@ -101,14 +108,13 @@ trait PlayerStateTrait {
 
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
             if ($this->inTokyo($smashedPlayerInTokyo)) { // we check if player is still in Tokyo, it could have left with It has a child!
-                $playerHealth = $this->getPlayerHealth($smashedPlayerInTokyo);
-                if ($playerHealth > 0) {
-
-                    if (!$this->autoLeave($smashedPlayerInTokyo, $playerHealth) && !$this->autoStay($smashedPlayerInTokyo, $playerHealth)) {
+                $player = $this->getPlayer($smashedPlayerInTokyo);
+                if ($player->eliminated) {
+                    $this->leaveTokyo($smashedPlayerInTokyo);
+                } else {
+                    if (!$this->autoLeave($smashedPlayerInTokyo, $player->health) && !$this->autoStay($smashedPlayerInTokyo, $player->health)) {
                         $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
                     }
-                } else {
-                    $this->leaveTokyo($smashedPlayerInTokyo);
                 }
             }
         }
@@ -193,7 +199,7 @@ trait PlayerStateTrait {
 
         // herbivore
         $countHerbivore = $this->countCardOfType($playerId, HERBIVORE_CARD);
-        if ($countHerbivore > 0 && intval(self::getGameStateValue('damageDoneByActivePlayer')) == 0) {
+        if ($countHerbivore > 0 && $this->isDamageDealtThisTurn($playerId) == 0) {
             $this->applyGetPoints($playerId, $countHerbivore, HERBIVORE_CARD);
         }
 

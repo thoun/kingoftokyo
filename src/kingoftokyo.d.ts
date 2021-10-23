@@ -64,6 +64,7 @@ interface KingOfTokyoGamedatas {
 }
 
 interface KingOfTokyoGame extends Game {
+    isDarkEdition(): boolean;
     isHalloweenExpansion(): boolean;
     isDefaultFont(): boolean;
     
@@ -80,6 +81,7 @@ interface KingOfTokyoGame extends Game {
     getZoom(): number;
     checkBuyEnergyDrinkState(): void;
     checkUseSmokeCloudState(): void;
+    setFont(prefValue: number): void;
 }
 
 interface EnteringPickMonsterArgs {

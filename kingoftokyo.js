@@ -57,23 +57,36 @@ function formatTextIcons(rawText) {
 }
 var CARD_WIDTH = 132;
 var CARD_HEIGHT = 185;
+var KEEP_CARDS_LIST = {
+    base: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48],
+    dark: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55],
+};
+var DISCARD_CARDS_LIST = {
+    base: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    dark: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19],
+};
+var COSTUME_CARDS_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 var Cards = /** @class */ (function () {
     function Cards(game) {
         this.game = game;
     }
     Cards.prototype.setupCards = function (stocks) {
+        var version = this.game.isDarkEdition() ? 'dark' : 'base';
+        var costumes = this.game.isHalloweenExpansion();
         stocks.forEach(function (stock) {
             var keepcardsurl = g_gamethemeurl + "img/keep-cards.jpg";
-            for (var id = 1; id <= 48; id++) { // keep
-                stock.addItemType(id, id, keepcardsurl, id - 1);
-            }
+            KEEP_CARDS_LIST[version].forEach(function (id, index) {
+                stock.addItemType(id, id, keepcardsurl, index);
+            });
             var discardcardsurl = g_gamethemeurl + "img/discard-cards.jpg";
-            for (var id = 101; id <= 118; id++) { // discard
-                stock.addItemType(id, id, discardcardsurl, id - 101);
-            }
-            var costumecardsurl = g_gamethemeurl + "img/costume-cards.jpg";
-            for (var id = 201; id <= 212; id++) { // costume
-                stock.addItemType(id, id, costumecardsurl, id - 201);
+            DISCARD_CARDS_LIST[version].forEach(function (id, index) {
+                stock.addItemType(100 + id, 100 + id, discardcardsurl, index);
+            });
+            if (costumes) {
+                var costumecardsurl_1 = g_gamethemeurl + "img/costume-cards.jpg";
+                COSTUME_CARDS_LIST.forEach(function (id, index) {
+                    stock.addItemType(200 + id, 200 + id, costumecardsurl_1, index);
+                });
             }
         });
     };
@@ -263,15 +276,7 @@ var Cards = /** @class */ (function () {
             case 46: return 4;
             case 47: return 3;
             case 48: return 6;
-            //case 49: return 5;
-            //case 50: return 3;
-            //case 51: return 4;
-            //case 52: return 6;
-            //case 53: return 3;
-            //case 54: return 4;
-            //case 55: return 4;
-            //case 56: return 3;
-            //case 57: return 3;
+            case 50: return 3;
             // DISCARD
             case 101: return 5;
             case 102: return 4;
@@ -291,8 +296,7 @@ var Cards = /** @class */ (function () {
             case 116: return 6;
             case 117: return 4;
             case 118: return 6;
-            //case 119: return 6;
-            //case 120: return 2;
+            case 119: return 0;
             // COSTUME
             case 201: return 4;
             case 202: return 4;
@@ -360,15 +364,13 @@ var Cards = /** @class */ (function () {
             case 46: return _("[B795A5]Urbavore");
             case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
             case 48: return _("[443E56]Wings");
-            //case 49: return _("Cannibalistic");
-            //case 50: return _("Intimidating Roar");
-            //case 51: return _("Monster Sidekick");
-            //case 52: return _("Reflective Hide");
-            //case 53: return _("Sleep Walker");
-            //case 54: return _("Super Jump");
-            //case 55: return _("Throw a Tanker");
-            //case 56: return _("Thunder Stomp");
-            //case 57: return _("Unstable DNA");
+            case 59: return "Hibernation"; // TODODE
+            case 50: return "Nanobots"; // TODODE
+            case 51: return "Natural Selection"; // TODODE
+            case 52: return "Reflective Hide"; // TODODE
+            case 53: return "Sumper Jump"; // TODODE
+            case 54: return "Unstable DNA"; // TODODE
+            case 55: return "Zombify"; // TODODE
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -388,22 +390,20 @@ var Cards = /** @class */ (function () {
             case 116: return _("[5F8183]Skyscraper");
             case 117: return _("[AF966B]Tank");
             case 118: return _("[847443]Vast [8D7F4E]Storm");
-            //case 119: return _("Amusement Park");
-            //case 120: return _("Army");
+            case 119: return "Monster pets"; // TODODE
             // COSTUME
-            // TODOTR
-            case 201: return "[353d4b]Astronaut";
-            case 202: return "[005c98]Ghost";
-            case 203: return "[213b75]Vampire";
-            case 204: return "[5a4f86]Witch";
-            case 205: return "[3c4b53]Devil";
-            case 206: return "[584b84]Pirate";
-            case 207: return "[bb6082]Princess";
-            case 208: return "[7e8670]Zombie";
-            case 209: return "[52373d]Cheerleader";
-            case 210: return "[146088]Robot";
-            case 211: return "[733010]Statue of liberty";
-            case 212: return "[2d4554]Clown";
+            case 201: return _("[353d4b]Astronaut");
+            case 202: return _("[005c98]Ghost");
+            case 203: return _("[213b75]Vampire");
+            case 204: return _("[5a4f86]Witch");
+            case 205: return _("[3c4b53]Devil");
+            case 206: return _("[584b84]Pirate");
+            case 207: return _("[bb6082]Princess");
+            case 208: return _("[7e8670]Zombie");
+            case 209: return _("[52373d]Cheerleader");
+            case 210: return _("[146088]Robot");
+            case 211: return _("[733010]Statue of liberty");
+            case 212: return _("[2d4554]Clown");
         }
         return null;
     };
@@ -478,15 +478,7 @@ var Cards = /** @class */ (function () {
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
-            //case 49: return _("When you do damage gain 1[Heart].");
-            //case 50: return _("The monsters in Tokyo must yield if you damage them.");
-            //case 51: return _("If someone kills you, Go back to 10[Heart] and lose all your [Star]. If either of you or your killer win, or all other players are eliminated then you both win. If your killer is eliminated then you are also. If you are eliminated a second time this card has no effect.");
-            //case 52: return _("If you suffer damage the monster that inflicted the damage suffers 1 as well.");
-            //case 53: return _("Spend 3[Energy] to gain 1[Star].");
-            //case 54: return _("Once each turn you may spend 1[Energy] to negate 1 damage you are receiving.");
-            //case 55: return _("On a turn you deal 3 or more damage gain 2[Star].");
-            //case 56: return _("If you score 4[Star] in a turn, all players roll one less die until your next turn.");
-            //case 57: return _("If you yield Tokyo you can take any card the recipient has and give him this card.");
+            case 50: return "At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>"; // TODODE
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
@@ -506,22 +498,20 @@ var Cards = /** @class */ (function () {
             case 116: return "<strong>+ 4[Star].";
             case 117: return "<strong>+ 4[Star] -3[Heart].</strong>";
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
-            //case 119: return _("<strong>+ 4[Star].");
-            //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
+            case 119: return "<strong>All Monsters</strong> (including you) <strong>lose 3[Star].</strong>"; // TODODE
             // COSTUME
-            // TODOTR
-            case 201: return "<strong>If you reach 17[Star],</strong> you win the game";
-            case 202: return "At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>";
-            case 203: return "At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], <strong>gain 1[Heart].</strong>";
-            case 204: return "If you must be wounded <strong>by another Monster,</strong> you can reroll one of their dice.";
-            case 205: return "On your turn, when you make other Monsters lose at least 1[Heart], <strong>they lose an extra [Heart].</strong>";
-            case 206: return "<strong>Steal 1[Energy]</strong> from each Monster you made lose at least 1[Heart].";
-            case 207: return "<strong>Gain 1[Star] at the start of your turn.</strong>";
-            case 208: return "You are not eliminated if you reach 0[Heart]. <strong>You cannot lose [Heart]</strong> as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.";
-            case 209: return "<strong>You can choose to cheer for another Monster on their turn.</strong> If you do, add [diceSmash] to their roll.";
-            case 210: return "You can choose to lose [Energy] instead of [Heart].";
-            case 211: return "You have an <strong>extra Roll.</strong>";
-            case 212: return "If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>";
+            case 201: return _("<strong>If you reach 17[Star],</strong> you win the game");
+            case 202: return _("At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>");
+            case 203: return _("At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], <strong>gain 1[Heart].</strong>");
+            case 204: return _("If you must be wounded <strong>by another Monster,</strong> you can reroll one of their dice.");
+            case 205: return _("On your turn, when you make other Monsters lose at least 1[Heart], <strong>they lose an extra [Heart].</strong>");
+            case 206: return _("<strong>Steal 1[Energy]</strong> from each Monster you made lose at least 1[Heart].");
+            case 207: return _("<strong>Gain 1[Star] at the start of your turn.</strong>");
+            case 208: return _("You are not eliminated if you reach 0[Heart]. <strong>You cannot lose [Heart]</strong> as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.");
+            case 209: return _("<strong>You can choose to cheer for another Monster on their turn.</strong> If you do, add [diceSmash] to their roll.");
+            case 210: return _("You can choose to lose [Energy] instead of [Heart].");
+            case 211: return _("You have an <strong>extra Roll.</strong>");
+            case 212: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>");
         }
         return null;
     };
@@ -541,7 +531,7 @@ var Cards = /** @class */ (function () {
             return _('Discard');
         }
         else if (cardType < 300) {
-            return 'Costume'; //TODOTR _('Costume')
+            return _('Costume');
         }
     };
     Cards.prototype.getCardTypeClass = function (cardType) {
@@ -626,7 +616,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>\n            <div id=\"cards-" + player.id + "\" class=\"player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
+        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>\n            <div id=\"cards-" + player.id + "\" class=\"player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -1133,8 +1123,7 @@ var DiceManager = /** @class */ (function () {
             div.dataset.diceValue = '' + toValue;
             dojo.addClass(div, "dice" + toValue);
             var list = div.getElementsByTagName('ol')[0];
-            dojo.removeClass(list, 'no-roll');
-            dojo.addClass(list, roll ? 'odd-roll' : 'change-die-roll');
+            list.dataset.rollType = roll ? 'odd' : 'change';
             if (roll) {
                 this.addDiceRollClass({
                     id: dieId,
@@ -1327,9 +1316,15 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.createDice = function (die, selectable, inTokyo) {
         var _this = this;
         this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? "locked-dice" + die.value : "dice-selector");
+        var div = this.getDiceDiv(die);
+        div.addEventListener('animationend', function (e) {
+            if (e.animationName == 'rolled-dice') {
+                div.dataset.rolled = 'false';
+            }
+        });
         this.addDiceRollClass(die);
         if (selectable) {
-            this.getDiceDiv(die).addEventListener('click', function (event) { return _this.dieClick(die, event); });
+            div.addEventListener('click', function (event) { return _this.dieClick(die, event); });
         }
     };
     DiceManager.prototype.dieClick = function (die, event) {
@@ -1343,28 +1338,26 @@ var DiceManager = /** @class */ (function () {
             this.game.psychicProbeRollDie(die.id);
         }
     };
-    DiceManager.prototype.addRollToDiv = function (dieDiv, rollClass, attempt) {
+    DiceManager.prototype.addRollToDiv = function (dieDiv, rollType, attempt) {
         var _this = this;
         if (attempt === void 0) { attempt = 0; }
         var dieList = dieDiv.getElementsByClassName('die-list')[0];
         if (dieList) {
-            dieList.classList.add(rollClass);
+            dieList.dataset.rollType = rollType;
         }
         else if (attempt < 5) {
-            setTimeout(function () { return _this.addRollToDiv(dieDiv, rollClass, attempt + 1); }, 200);
+            setTimeout(function () { return _this.addRollToDiv(dieDiv, rollType, attempt + 1); }, 200);
         }
     };
     DiceManager.prototype.addDiceRollClass = function (die) {
         var _this = this;
         var dieDiv = this.getDiceDiv(die);
+        dieDiv.dataset.rolled = die.rolled ? 'true' : 'false';
         if (die.rolled) {
-            dojo.removeClass(dieDiv, 'no-roll');
-            dieDiv.classList.add('rolled');
-            setTimeout(function () { return _this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd-roll' : 'even-roll'); }, 200);
-            setTimeout(function () { return dieDiv.classList.remove('rolled'); }, 1200);
+            setTimeout(function () { return _this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd' : 'even'); }, 200);
         }
         else {
-            this.addRollToDiv(dieDiv, 'no-roll');
+            this.addRollToDiv(dieDiv, '-');
         }
     };
     DiceManager.prototype.removeDice = function (die, duration, delay) {
@@ -1604,6 +1597,59 @@ var HeartActionSelector = /** @class */ (function () {
     };
     return HeartActionSelector;
 }());
+var PreferencesManager = /** @class */ (function () {
+    function PreferencesManager(game) {
+        this.game = game;
+        this.setupPreferences();
+    }
+    PreferencesManager.prototype.setupPreferences = function () {
+        var _this = this;
+        // Extract the ID and value from the UI control
+        var onchange = function (e) {
+            var match = e.target.id.match(/^preference_control_(\d+)$/);
+            if (!match) {
+                return;
+            }
+            var prefId = +match[1];
+            var prefValue = +e.target.value;
+            _this.game.prefs[prefId].value = prefValue;
+            _this.onPreferenceChange(prefId, prefValue);
+        };
+        // Call onPreferenceChange() when any value changes
+        dojo.query(".preference_control").connect("onchange", onchange);
+        // Call onPreferenceChange() now
+        dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
+    };
+    PreferencesManager.prototype.getGameVersionNumber = function (versionNumber) {
+        if (versionNumber > 0) {
+            return versionNumber;
+        }
+        else {
+            return this.game.isHalloweenExpansion() ? 2 : 1;
+        }
+    };
+    PreferencesManager.prototype.onPreferenceChange = function (prefId, prefValue) {
+        switch (prefId) {
+            // KEEP
+            case 201:
+                this.game.setFont(prefValue);
+                break;
+            case 203:
+                if (prefValue == 2) {
+                    dojo.destroy('board-corner-highlight');
+                    dojo.destroy('twoPlayersVariant-message');
+                }
+                break;
+            case 204:
+                document.getElementsByTagName('html')[0].dataset.background = '' + this.getGameVersionNumber(prefValue);
+                break;
+            case 205:
+                document.getElementsByTagName('html')[0].dataset.dice = '' + this.getGameVersionNumber(prefValue);
+                break;
+        }
+    };
+    return PreferencesManager;
+}());
 var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
 var KingOfTokyo = /** @class */ (function () {
@@ -1633,8 +1679,10 @@ var KingOfTokyo = /** @class */ (function () {
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });
         this.dontPreloadImage("tokyo-2pvariant.jpg");
+        this.dontPreloadImage("background-halloween.jpg");
         if (!gamedatas.halloweenExpansion) {
             this.dontPreloadImage("costume-cards.jpg");
+            this.dontPreloadImage("orange_dice.png");
         }
         log("Starting game setup");
         this.gamedatas = gamedatas;
@@ -1665,7 +1713,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.addAutoLeaveUnderButton();
         }
         this.setupNotifications();
-        this.setupPreferences();
+        this.preferencesManager = new PreferencesManager(this);
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
         /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
@@ -1881,7 +1929,7 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
                 var _loop_2 = function (i) {
                     var id = "useRobot" + i + "_button";
-                    this_1.addActionButton(id, formatTextIcons(dojo.string.substitute(/* TODOTR _(*/ "Lose ${number} [energy] instead of ${number} [heart]" /*)*/, { 'number': i })), function () { return _this.useRobot(i); });
+                    this_1.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this_1.cards.getCardName(210, 'text-only') })), function () { return _this.useRobot(i); });
                     dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
                 };
                 var this_1 = this;
@@ -1902,7 +1950,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         if (isCurrentPlayerActive) {
             this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
-            args.disabledIds.forEach(function (id) { return document.querySelector("div[id$=\"_item_" + id + "\"]").classList.add('disabled'); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
@@ -1916,13 +1964,13 @@ var KingOfTokyo = /** @class */ (function () {
             if ((_b = (_a = args._private) === null || _a === void 0 ? void 0 : _a.pickCards) === null || _b === void 0 ? void 0 : _b.length) {
                 this.showPickStock(args._private.pickCards);
             }
-            args.disabledIds.forEach(function (id) { return document.querySelector("div[id$=\"_item_" + id + "\"]").classList.add('disabled'); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringChooseMimickedCard = function (args) {
         if (this.isCurrentPlayerActive()) {
             this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
-            args.disabledIds.forEach(function (id) { return document.querySelector("div[id$=\"_item_" + id + "\"]").classList.add('disabled'); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringSellCard = function () {
@@ -1947,7 +1995,8 @@ var KingOfTokyo = /** @class */ (function () {
             case 'throwDice':
                 document.getElementById('dice-actions').innerHTML = '';
                 break;
-            case 'psychicProbeRollDie':
+            case 'changeActivePlayerDie':
+            case 'psychicProbeRollDie': // TODO remove
                 if (document.getElementById('rethrow3psychicProbe_button')) {
                     dojo.destroy('rethrow3psychicProbe_button');
                 }
@@ -2008,7 +2057,8 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var _a;
         switch (stateName) {
-            case 'psychicProbeRollDie':
+            case 'changeActivePlayerDie':
+            case 'psychicProbeRollDie': // TODO remove
                 this.setDiceSelectorVisibility(true);
                 break;
             case 'cheerleaderSupport':
@@ -2051,13 +2101,14 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'changeDie':
                     this.addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
                     break;
-                case 'psychicProbeRollDie':
-                    this.addActionButton('psychicProbeSkip_button', _("Skip"), 'psychicProbeSkip');
+                case 'changeActivePlayerDie':
+                case 'psychicProbeRollDie': // TODO remove
+                    this.addActionButton('changeActivePlayerDieSkip_button', _("Skip"), 'psychicProbeSkip');
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'cheerleaderSupport':
-                    this.addActionButton('support_button', formatTextIcons("Support (add [diceSmash] )") /* TODOTR */, function () { return _this.support(); });
-                    this.addActionButton('dontSupport_button', "Don't support" /* TODOTR */, function () { return _this.dontSupport(); });
+                    this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), function () { return _this.support(); });
+                    this.addActionButton('dontSupport_button', _("Don't support"), function () { return _this.dontSupport(); });
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'leaveTokyo':
@@ -2117,6 +2168,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.isHalloweenExpansion = function () {
         return this.gamedatas.halloweenExpansion;
+    };
+    KingOfTokyo.prototype.isDarkEdition = function () {
+        return false; // TODODE
     };
     KingOfTokyo.prototype.isDefaultFont = function () {
         return Number(this.prefs[201].value) == 1;
@@ -2715,37 +2769,8 @@ var KingOfTokyo = /** @class */ (function () {
             this.pickCard.removeAll();
         }
     };
-    KingOfTokyo.prototype.setupPreferences = function () {
-        var _this = this;
-        // Extract the ID and value from the UI control
-        var onchange = function (e) {
-            var match = e.target.id.match(/^preference_control_(\d+)$/);
-            if (!match) {
-                return;
-            }
-            var prefId = +match[1];
-            var prefValue = +e.target.value;
-            _this.prefs[prefId].value = prefValue;
-            _this.onPreferenceChange(prefId, prefValue);
-        };
-        // Call onPreferenceChange() when any value changes
-        dojo.query(".preference_control").connect("onchange", onchange);
-        // Call onPreferenceChange() now
-        dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
-    };
-    KingOfTokyo.prototype.onPreferenceChange = function (prefId, prefValue) {
-        switch (prefId) {
-            // KEEP
-            case 201:
-                this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
-                break;
-            case 203:
-                if (prefValue == 2) {
-                    dojo.destroy('board-corner-highlight');
-                    dojo.destroy('twoPlayersVariant-message');
-                }
-                break;
-        }
+    KingOfTokyo.prototype.setFont = function (prefValue) {
+        this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
     };
     KingOfTokyo.prototype.setVisibleCards = function (cards) {
         var newWeights = {};

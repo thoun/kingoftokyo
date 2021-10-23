@@ -7,7 +7,7 @@ require_once(__DIR__.'/objects/player-intervention.php');
 require_once(__DIR__.'/objects/damage.php');
 
 use KOT\Objects\Dice;
-use KOT\Objects\PsychicProbeIntervention;
+use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\Damage;
 
 trait DiceUtilTrait {
@@ -394,18 +394,35 @@ trait DiceUtilTrait {
         $this->gamestate->nextState('rethrow');
     }
 
-    function getPsychicProbeIntervention(int $playerId) { // rturn null or PsychicProbeIntervention
+    function getChangeActivePlayerDieIntervention(int $playerId) { // return null or ChangeActivePlayerDieIntervention
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
+        $playersWithActivatedWitch = [];
+        
+        $witchCards = $this->getCardsFromDb($this->cards->getCardsOfType(WITCH_CARD));
+        $witchCard = null;
+        if (count($witchCards) > 0) {
+            $witchCard = $witchCards[0];
+        
+            if ($witchCard->location == 'hand') {
+                $witchPlayerId = intval($witchCard->location_arg);
 
-        // TODO add Witch here ?
+                if ($this->willBeWounded($witchPlayerId, $playerId)) {
+                    $playersWithActivatedWitch[] = $witchPlayerId;
+                }
+            }
+        }
 
-        if (count($playersWithPsychicProbe) > 0) {
+        $playersWithChangeActivePlayerDieCard = array_unique(array_merge($playersWithPsychicProbe, $playersWithActivatedWitch), SORT_REGULAR);
+        if (count($playersWithChangeActivePlayerDieCard) > 0) {
             $cards = [];
             foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
                 $cards = array_merge($cards, $this->getCardsOfType($playerWithPsychicProbe, PSYCHIC_PROBE_CARD));
             }
-            $psychicProbeIntervention = new PsychicProbeIntervention($playersWithPsychicProbe, $playerId, $cards);
-            return $psychicProbeIntervention;
+            foreach ($playersWithActivatedWitch as $playerWithActivatedWitch) {
+                $cards = array_merge($cards, $this->getCardsOfType($playerWithActivatedWitch, WITCH_CARD));
+            }
+            $changeActivePlayerDieIntervention = new ChangeActivePlayerDieIntervention($playersWithChangeActivePlayerDieCard, $playerId, $cards);
+            return $changeActivePlayerDieIntervention;
         }
         return null;
     }
@@ -417,6 +434,7 @@ trait DiceUtilTrait {
         // cheerleader
         if (intval(self::getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
             $addedSmashes += 1;
+            $cardsAddingSmashes[] = CHEERLEADER_CARD;
         }
 
         // acid attack
@@ -471,6 +489,35 @@ trait DiceUtilTrait {
         $detail->addedSmashes = $addedSmashes;
         $detail->cardsAddingSmashes = $cardsAddingSmashes;
         return $detail;
+    }
+
+    function getUnusedChangeActivePlayerDieCards(int $playerId) {
+        $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
+        $witchCards = $this->getCardsOfType($playerId, WITCH_CARD);
+        if (count($witchCards) > 0 && !$this->willBeWounded($playerId, $this->getActivePlayerId())) {
+            $witchCards = [];
+        }
+        
+        $usedCards = $this->getUsedCard();
+        $unusedCards = [];
+
+        // witch first if available
+        foreach($witchCards as $witchCard) {
+            if (!in_array($witchCard->id, $usedCards)) {
+                $unusedCards[] = $witchCard;
+            }
+        }
+        // then psychic probe
+        // we want only one psychicProbe, event if player got 2
+        $psychicProbeCards = array_slice($psychicProbeCards, 0, 1);
+
+        foreach($psychicProbeCards as $psychicProbeCard) {
+            if (!in_array($psychicProbeCard->id, $usedCards)) {
+                $unusedCards[] = $psychicProbeCard;
+            }
+        }
+
+        return $unusedCards;
     }
 
 }

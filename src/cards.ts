@@ -11,26 +11,41 @@ interface CardPlacedTokens {
     mimicToken: PlacedTokens;
 }
 
+const KEEP_CARDS_LIST = {
+    base: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],
+    dark: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,  21,22,23,24,25,26,  29,30,31,32,33,34,  36,37,38,  40,41,42,43,44,45,46,47,48, 49,50,51,52,53,54,55],
+};
+
+const DISCARD_CARDS_LIST = {
+    base: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],
+    dark: [1,2,3,4,5,6,7,8,9,10,  12,13,  15,16,17,18,19],
+};
+
+const COSTUME_CARDS_LIST = [1,2,3,4,5,6,7,8,9,10,11,12];
 
 class Cards {
     constructor (private game: KingOfTokyoGame) {}
     
     public setupCards(stocks: Stock[]) {
+        const version: 'base' | 'dark' = this.game.isDarkEdition() ? 'dark' : 'base';
+        const costumes = this.game.isHalloweenExpansion();
 
         stocks.forEach(stock => {
             const keepcardsurl = `${g_gamethemeurl}img/keep-cards.jpg`;
-            for(let id=1; id<=48; id++) {  // keep
-                stock.addItemType(id, id, keepcardsurl, id - 1);
-            }
+            KEEP_CARDS_LIST[version].forEach((id, index) => {  // keep
+                stock.addItemType(id, id, keepcardsurl, index);
+            });
 
             const discardcardsurl = `${g_gamethemeurl}img/discard-cards.jpg`;
-            for(let id=101; id<=118; id++) {  // discard
-                stock.addItemType(id, id, discardcardsurl, id - 101);
-            }
+            DISCARD_CARDS_LIST[version].forEach((id, index) => {  // discard
+                stock.addItemType(100 + id, 100 + id, discardcardsurl, index);
+            });
 
-            const costumecardsurl = `${g_gamethemeurl}img/costume-cards.jpg`;
-            for(let id=201; id<=212; id++) {  // costume
-                stock.addItemType(id, id, costumecardsurl, id - 201);
+            if (costumes) {
+                const costumecardsurl = `${g_gamethemeurl}img/costume-cards.jpg`;
+                COSTUME_CARDS_LIST.forEach((id, index) => {  // costume
+                    stock.addItemType(200 + id, 200 + id, costumecardsurl, index);
+                });
             }
         });
     }
@@ -237,15 +252,7 @@ class Cards {
             case 46: return 4;
             case 47: return 3;
             case 48: return 6;
-            //case 49: return 5;
-            //case 50: return 3;
-            //case 51: return 4;
-            //case 52: return 6;
-            //case 53: return 3;
-            //case 54: return 4;
-            //case 55: return 4;
-            //case 56: return 3;
-            //case 57: return 3;
+            case 50: return 3;
             
             // DISCARD
             case 101: return 5;
@@ -265,8 +272,7 @@ class Cards {
             case 116: return 6;
             case 117: return 4;
             case 118: return 6;
-            //case 119: return 6;
-            //case 120: return 2;
+            case 119: return 0;
 
             // COSTUME
             case 201: return 4;
@@ -335,15 +341,14 @@ class Cards {
             case 46: return _("[B795A5]Urbavore");
             case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
             case 48: return _("[443E56]Wings");
-            //case 49: return _("Cannibalistic");
-            //case 50: return _("Intimidating Roar");
-            //case 51: return _("Monster Sidekick");
-            //case 52: return _("Reflective Hide");
-            //case 53: return _("Sleep Walker");
-            //case 54: return _("Super Jump");
-            //case 55: return _("Throw a Tanker");
-            //case 56: return _("Thunder Stomp");
-            //case 57: return _("Unstable DNA");
+            case 59: return "Hibernation"; // TODODE
+            case 50: return "Nanobots"; // TODODE
+            case 51: return "Natural Selection"; // TODODE
+            case 52: return "Reflective Hide"; // TODODE
+            case 53: return "Sumper Jump"; // TODODE
+            case 54: return "Unstable DNA"; // TODODE
+            case 55: return "Zombify"; // TODODE
+            
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -362,23 +367,21 @@ class Cards {
             case 116: return _("[5F8183]Skyscraper");
             case 117: return _("[AF966B]Tank");
             case 118: return _("[847443]Vast [8D7F4E]Storm");
-            //case 119: return _("Amusement Park");
-            //case 120: return _("Army");
+            case 119: return "Monster pets"; // TODODE
 
             // COSTUME
-            // TODOTR
-            case 201: return "[353d4b]Astronaut";
-            case 202: return "[005c98]Ghost";
-            case 203: return "[213b75]Vampire";
-            case 204: return "[5a4f86]Witch";
-            case 205: return "[3c4b53]Devil";
-            case 206: return "[584b84]Pirate";
-            case 207: return "[bb6082]Princess";
-            case 208: return "[7e8670]Zombie";
-            case 209: return "[52373d]Cheerleader";
-            case 210: return "[146088]Robot";
-            case 211: return "[733010]Statue of liberty";
-            case 212: return "[2d4554]Clown";
+            case 201: return _("[353d4b]Astronaut");
+            case 202: return _("[005c98]Ghost");
+            case 203: return _("[213b75]Vampire");
+            case 204: return _("[5a4f86]Witch");
+            case 205: return _("[3c4b53]Devil");
+            case 206: return _("[584b84]Pirate");
+            case 207: return _("[bb6082]Princess");
+            case 208: return _("[7e8670]Zombie");
+            case 209: return _("[52373d]Cheerleader");
+            case 210: return _("[146088]Robot");
+            case 211: return _("[733010]Statue of liberty");
+            case 212: return _("[2d4554]Clown");
         }
         return null;
     }
@@ -452,15 +455,7 @@ class Cards {
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
-            //case 49: return _("When you do damage gain 1[Heart].");
-            //case 50: return _("The monsters in Tokyo must yield if you damage them.");
-            //case 51: return _("If someone kills you, Go back to 10[Heart] and lose all your [Star]. If either of you or your killer win, or all other players are eliminated then you both win. If your killer is eliminated then you are also. If you are eliminated a second time this card has no effect.");
-            //case 52: return _("If you suffer damage the monster that inflicted the damage suffers 1 as well.");
-            //case 53: return _("Spend 3[Energy] to gain 1[Star].");
-            //case 54: return _("Once each turn you may spend 1[Energy] to negate 1 damage you are receiving.");
-            //case 55: return _("On a turn you deal 3 or more damage gain 2[Star].");
-            //case 56: return _("If you score 4[Star] in a turn, all players roll one less die until your next turn.");
-            //case 57: return _("If you yield Tokyo you can take any card the recipient has and give him this card.");
+            case 50: return "At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>"; // TODODE
 
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
@@ -480,23 +475,21 @@ class Cards {
             case 116: return "<strong>+ 4[Star].";
             case 117: return "<strong>+ 4[Star] -3[Heart].</strong>";
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
-            //case 119: return _("<strong>+ 4[Star].");
-            //case 120: return _("(+ 1[Star] and suffer one damage) for each card you have.");
+            case 119: return "<strong>All Monsters</strong> (including you) <strong>lose 3[Star].</strong>"; // TODODE
 
             // COSTUME
-            // TODOTR
-            case 201: return "<strong>If you reach 17[Star],</strong> you win the game";
-            case 202: return "At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>";
-            case 203: return "At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], <strong>gain 1[Heart].</strong>";
-            case 204: return "If you must be wounded <strong>by another Monster,</strong> you can reroll one of their dice.";
-            case 205: return "On your turn, when you make other Monsters lose at least 1[Heart], <strong>they lose an extra [Heart].</strong>";
-            case 206: return "<strong>Steal 1[Energy]</strong> from each Monster you made lose at least 1[Heart].";
-            case 207: return "<strong>Gain 1[Star] at the start of your turn.</strong>";
-            case 208: return "You are not eliminated if you reach 0[Heart]. <strong>You cannot lose [Heart]</strong> as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.";
-            case 209: return "<strong>You can choose to cheer for another Monster on their turn.</strong> If you do, add [diceSmash] to their roll.";
-            case 210: return "You can choose to lose [Energy] instead of [Heart].";
-            case 211: return "You have an <strong>extra Roll.</strong>";
-            case 212: return "If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>";
+            case 201: return _("<strong>If you reach 17[Star],</strong> you win the game");
+            case 202: return _("At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>");
+            case 203: return _("At the end of each Monster's turn, if you made another Monster lose at least 1[Heart], <strong>gain 1[Heart].</strong>");
+            case 204: return _("If you must be wounded <strong>by another Monster,</strong> you can reroll one of their dice.");
+            case 205: return _("On your turn, when you make other Monsters lose at least 1[Heart], <strong>they lose an extra [Heart].</strong>");
+            case 206: return _("<strong>Steal 1[Energy]</strong> from each Monster you made lose at least 1[Heart].");
+            case 207: return _("<strong>Gain 1[Star] at the start of your turn.</strong>");
+            case 208: return _("You are not eliminated if you reach 0[Heart]. <strong>You cannot lose [Heart]</strong> as long as you have 0[Heart]. If you lose this card while you have 0[Heart], you are immediately eliminated.");
+            case 209: return _("<strong>You can choose to cheer for another Monster on their turn.</strong> If you do, add [diceSmash] to their roll.");
+            case 210: return _("You can choose to lose [Energy] instead of [Heart].");
+            case 211: return _("You have an <strong>extra Roll.</strong>");
+            case 212: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>");
         }
         return null;
     }
@@ -521,7 +514,7 @@ class Cards {
         } else if (cardType < 200) {
             return _('Discard');
         } else if (cardType < 300) {
-            return 'Costume'; //TODOTR _('Costume')
+            return _('Costume');
         }
     }
 

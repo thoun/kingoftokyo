@@ -20,6 +20,7 @@
         "src/die-face-selector.ts",
         "src/dice-manager.ts",
         "src/heart-action-selector.ts",
+        "src/preferences-manager.ts",
         "src/kingoftokyo.ts",
         "src/define.ts"
     ]

@@ -81,7 +81,7 @@ $size: 0.25rem;
 
     box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.5);
 
-    &.rolled {
+    &[data-rolled="true"] {
         animation: rolled-dice 1s forwards;
         transform: translateY(-40vh);
 
@@ -205,89 +205,89 @@ $size: 0.25rem;
     grid-area: nine;
   }
 
-  .even-roll {
+  [data-roll-type="even"] {
     transition: transform 0.9s ease-out;
   }
-  .odd-roll {
+  [data-roll-type="odd"] {
     transition: transform 1.1s ease-out;
   }
-  .no-roll {
+  [data-roll-type="-"] {
     transition: transform 0;
   }
-  .change-die-roll {
+  [data-roll-type="change"] {
     transition: transform 0.5s ease-in-out;
   }
 
-  .even-roll[data-roll="1"] {
+  [data-roll-type="even"][data-roll="1"] {
     transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
   }
-  .even-roll[data-roll="2"] {
+  [data-roll-type="even"][data-roll="2"] {
     transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
   }
-  .even-roll[data-roll="3"] {
+  [data-roll-type="even"][data-roll="3"] {
     transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
   }
-  .even-roll[data-roll="4"] {
+  [data-roll-type="even"][data-roll="4"] {
     transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
   }
-  .even-roll[data-roll="5"] {
+  [data-roll-type="even"][data-roll="5"] {
     transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
   }
-  .even-roll[data-roll="6"] {
+  [data-roll-type="even"][data-roll="6"] {
     transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
   }
-  .odd-roll[data-roll="1"] {
+  [data-roll-type="odd"][data-roll="1"] {
     transform: rotateX(-360deg) rotateY(-720deg) rotateZ(-360deg);
   }
-  .odd-roll[data-roll="2"] {
+  [data-roll-type="odd"][data-roll="2"] {
     transform: rotateX(-270deg) rotateY(-720deg) rotateZ(-360deg);
   }
-  .odd-roll[data-roll="3"] {
+  [data-roll-type="odd"][data-roll="3"] {
     transform: rotateX(-360deg) rotateY(-810deg) rotateZ(-360deg);
   }
-  .odd-roll[data-roll="4"] {
+  [data-roll-type="odd"][data-roll="4"] {
     transform: rotateX(-360deg) rotateY(-630deg) rotateZ(-360deg);
   }
-  .odd-roll[data-roll="5"] {
+  [data-roll-type="odd"][data-roll="5"] {
     transform: rotateX(-450deg) rotateY(-720deg) rotateZ(-360deg);
   }
-  .odd-roll[data-roll="6"] {
+  [data-roll-type="odd"][data-roll="6"] {
     transform: rotateX(-360deg) rotateY(-900deg) rotateZ(-540deg);
   }
-  .no-roll[data-roll="1"] {
+  [data-roll-type="-"][data-roll="1"] {
     transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
   }
-  .no-roll[data-roll="2"] {
+  [data-roll-type="-"][data-roll="2"] {
     transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
   }
-  .no-roll[data-roll="3"] {
+  [data-roll-type="-"][data-roll="3"] {
     transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
   }
-  .no-roll[data-roll="4"] {
+  [data-roll-type="-"][data-roll="4"] {
     transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
   }
-  .no-roll[data-roll="5"] {
+  [data-roll-type="-"][data-roll="5"] {
     transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
   }
-  .no-roll[data-roll="6"] {
+  [data-roll-type="-"][data-roll="6"] {
     transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
   }
-  .change-die-roll[data-roll="1"] {
+  [data-roll-type="change"][data-roll="1"] {
     transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
   }
-  .change-die-roll[data-roll="2"] {
+  [data-roll-type="change"][data-roll="2"] {
     transform: rotateX(450deg) rotateY(720deg) rotateZ(360deg);
   }
-  .change-die-roll[data-roll="3"] {
+  [data-roll-type="change"][data-roll="3"] {
     transform: rotateX(360deg) rotateY(630deg) rotateZ(360deg);
   }
-  .change-die-roll[data-roll="4"] {
+  [data-roll-type="change"][data-roll="4"] {
     transform: rotateX(360deg) rotateY(810deg) rotateZ(360deg);
   }
-  .change-die-roll[data-roll="5"] {
+  [data-roll-type="change"][data-roll="5"] {
     transform: rotateX(270deg) rotateY(720deg) rotateZ(360deg);
   }
-  .change-die-roll[data-roll="6"] {
+  [data-roll-type="change"][data-roll="6"] {
     transform: rotateX(360deg) rotateY(900deg) rotateZ(540deg);
   }
 
@@ -455,4 +455,9 @@ $size: 0.25rem;
     .dice {
         transform: translateZ(16px);
     }
+    
+
+  .icon.forbidden {
+    transform: translateZ(16px);
+  }
 }
