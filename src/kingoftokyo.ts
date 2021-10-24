@@ -1324,7 +1324,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
-        (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
+        (this as any).ajaxcall(`/koth/koth/${action}.html`, data, this, () => {});
     }
     
     private showPickStock(cards: Card[]) {

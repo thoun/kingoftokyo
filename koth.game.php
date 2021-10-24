@@ -39,7 +39,7 @@ require_once('modules/php/cards-states.php');
 require_once('modules/php/intervention.php');
 require_once('modules/php/debug-util.php');
 
-class KingOfTokyo extends Table {
+class Koth extends Table {
     use KOT\States\UtilTrait;
     use KOT\States\MonsterTrait;
     use KOT\States\InitialCardTrait;
@@ -97,7 +97,7 @@ class KingOfTokyo extends Table {
 	}
 
     protected function getGameName() {
-        return "kingoftokyo";
+        return "koth";
     }
 
     /*
