@@ -27,7 +27,7 @@ require_once("modules/constants.inc.php");
 
 $game_options = [
 
-    HALLOWEEN_EXPANSION_OPTION => [
+    /*HALLOWEEN_EXPANSION_OPTION => [
         'name' => totranslate('Halloween event'),
         'values' => [
             1 => [
@@ -38,7 +38,7 @@ $game_options = [
             ],
         ],
         'default' => 1,
-    ],
+    ],*/
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
@@ -56,9 +56,40 @@ $game_options = [
             ],
         ],
         'default' => 1,
+
+        'fakeThing' => [
+            HALLOWEEN_EXPANSION_OPTION => [
+                'name' => totranslate('Halloween event'),
+                'values' => [
+                    1 => [
+                        'name' => totranslate('Disabled'),
+                    ],
+                    2 => [
+                        'name' => totranslate('Enabled'),
+                    ],
+                ],
+                'default' => 1,
+            ],
+
+            BONUS_MONSTERS_OPTION => [
+                'name' => totranslate('Bonus monsters'),
+                'values' => [
+                    1 => [
+                        'name' => totranslate('Disabled'),
+                        'description' => totranslate("Only monsters from game version")
+                    ],
+                    2 => [
+                        'name' => totranslate('Enabled'),
+                        'description' => totranslate("Include bonus/promo monsters"),
+                    ],
+                ],
+                'default' => 2,
+            ]
+        ],
+        
     ],
 
-    BONUS_MONSTERS_OPTION => [
+    /*BONUS_MONSTERS_OPTION => [
         'name' => totranslate('Bonus monsters'),
         'values' => [
             1 => [
@@ -71,7 +102,7 @@ $game_options = [
             ],
         ],
         'default' => 2,
-    ],
+    ],*/
 
     110 => [
         'name' => totranslate('Skip phase with no possible actions'),
@@ -117,29 +148,32 @@ $game_preferences = [
             1 => ['name' => totranslate('Enabled')],
             2 => ['name' => totranslate('Disabled')],
         ],
-        'default' => 1
-    ],
+        'default' => 1,
 
-    204 => [
-        'name' => totranslate('Background'),
-        'needReload' => false,
-        'values' => [
-            0 => ['name' => totranslate('Automatic')],
-            1 => ['name' => totranslate('Base game')],
-            2 => ['name' => totranslate('Halloween event')],
-        ],
-        'default' => 0
-    ],
+        
+        'fakeThing' => [
+            204 => [
+                'name' => totranslate('Background'),
+                'needReload' => false,
+                'values' => [
+                    0 => ['name' => totranslate('Automatic')],
+                    1 => ['name' => totranslate('Base game')],
+                    2 => ['name' => totranslate('Halloween event')],
+                ],
+                'default' => 0
+            ],
 
-    205 => [
-        'name' => totranslate('Dice'),
-        'needReload' => false,
-        'values' => [
-            0 => ['name' => totranslate('Automatic')],
-            1 => ['name' => totranslate('Base game')],
-            2 => ['name' => totranslate('Halloween event')],
-        ],
-        'default' => 0
+            205 => [
+                'name' => totranslate('Dice'),
+                'needReload' => false,
+                'values' => [
+                    0 => ['name' => totranslate('Automatic')],
+                    1 => ['name' => totranslate('Base game')],
+                    2 => ['name' => totranslate('Halloween event')],
+                ],
+                'default' => 0
+            ],
+        ]
     ],
 
     203 => [
