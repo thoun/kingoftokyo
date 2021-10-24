@@ -38,7 +38,6 @@ $game_options = [
             ],
         ],
         'default' => 1,
-        'displaycondition' => [[ 'type' => 'minplayers', 'value' => 9 ]] // TODOHA temp to hide it
     ],
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
@@ -71,8 +70,7 @@ $game_options = [
                 'description' => totranslate("Include bonus/promo monsters"),
             ],
         ],
-        'default' => 1, // TODOHA set to 2
-        'displaycondition' => [[ 'type' => 'minplayers', 'value' => 9 ]] // TODOHA temp to hide it
+        'default' => 2,
     ],
 
     110 => [
@@ -122,7 +120,7 @@ $game_preferences = [
         'default' => 1
     ],
 
-    /* TODOHA 204 => [
+    204 => [
         'name' => totranslate('Background'),
         'needReload' => false,
         'values' => [
@@ -142,7 +140,7 @@ $game_preferences = [
             2 => ['name' => totranslate('Halloween event')],
         ],
         'default' => 0
-    ],*/
+    ],
 
     203 => [
         'name' => totranslate('Show 2-players variant notice'),
