@@ -2456,14 +2456,10 @@ var PlayerTable = /** @class */ (function () {
     };
     return PlayerTable;
 }());
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
@@ -2517,7 +2513,7 @@ var TableManager = /** @class */ (function () {
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
         if (playerIndex > 0) { // not spectator (or 0)            
-            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex), true), playerTablesOrdered.slice(0, playerIndex), true);
+            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
         }
         else { // spectator
             this.playerTables = playerTablesOrdered;
@@ -6979,11 +6975,11 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
-        this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
+        this.ajaxcall("/koth/koth/" + action + ".html", data, this, function () { });
     };
     KingOfTokyo.prototype.takeNoLockAction = function (action, data) {
         data = data || {};
-        this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
+        this.ajaxcall("/koth/koth/" + action + ".html", data, this, function () { });
     };
     KingOfTokyo.prototype.setFont = function (prefValue) {
         this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
@@ -7724,5 +7720,5 @@ define([
     "ebg/counter",
     "ebg/stock"
 ], function (dojo, declare) {
-    return declare("bgagame.kingoftokyo", ebg.core.gamegui, new KingOfTokyo());
+    return declare("bgagame.koth", ebg.core.gamegui, new KingOfTokyo());
 });
