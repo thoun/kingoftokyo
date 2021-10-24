@@ -65,7 +65,7 @@ trait CardsUtilTrait {
         switch($cardType) {
             // KEEP
             case EVEN_BIGGER_CARD: 
-                $this->applyGetHealth($playerId, 2, $cardType);
+                $this->applyGetHealth($playerId, 2, $cardType, $playerId);
                 $this->changeMaxHealth($playerId);
                 break;
             
@@ -146,7 +146,7 @@ trait CardsUtilTrait {
                 }
                 return $damages;
             case HEAL_CARD:
-                $this->applyGetHealth($playerId, 2, $cardType);
+                $this->applyGetHealth($playerId, 2, $cardType, $playerId);
                 break;
             case HIGH_ALTITUDE_BOMBING_CARD: 
                 $playersIds = $this->getPlayersIds();
@@ -163,7 +163,7 @@ trait CardsUtilTrait {
                 return [new Damage($playerId, 2, $playerId, $cardType)];
             case NUCLEAR_POWER_PLANT_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
-                $this->applyGetHealth($playerId, 3, $cardType);
+                $this->applyGetHealth($playerId, 3, $cardType, $playerId);
                 break;
             case SKYSCRAPER_CARD:
                 $this->applyGetPoints($playerId, 4, $cardType);
@@ -455,7 +455,7 @@ trait CardsUtilTrait {
         }
 
         $this->applyGetHealth($playerId, 1, RAPID_HEALING_CARD);
-        $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
+        $this->applyLoseEnergyIgnoreCards($playerId, 2, 0, $playerId);
     }
 
     function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false, bool $ignoreMimicToken = false) {
@@ -652,7 +652,7 @@ trait CardsUtilTrait {
                 $playerId = intval($ghostCard->location_arg);
 
                 if ($this->isDamageTakenThisTurn($playerId)) {
-                    $this->applyGetHealth($playerId, 1, GHOST_CARD);
+                    $this->applyGetHealth($playerId, 1, GHOST_CARD, $playerId);
                 }
             }
         }
@@ -661,11 +661,11 @@ trait CardsUtilTrait {
         if (count($vampireCards) > 0) {
             $vampireCard = $vampireCards[0];
         
-            if ( $vampireCard->location == 'hand') {
+            if ($vampireCard->location == 'hand') {
                 $playerId = intval($vampireCard->location_arg);
 
                 if ($this->isDamageDealtToOthersThisTurn($playerId)) {
-                    $this->applyGetHealth($playerId, 1, VAMPIRE_CARD);
+                    $this->applyGetHealth($playerId, 1, VAMPIRE_CARD, $playerId);
                 }
             }
         }
@@ -688,13 +688,14 @@ trait CardsUtilTrait {
             return false; // same location & no Nova card for smashing player
         }
 
-        $dice = $this->getDice($this->getDiceNumber($activePlayerId));
+        $dice = $this->getPlayerRolledDice($activePlayerId);
         $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
 
         $diceCounts = [];
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
             $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
         }
+        $diceCounts[7] = 0;
 
         $detail = $this->addSmashesFromCards($activePlayerId, $diceCounts, $activePlayerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;

@@ -50,6 +50,23 @@
   height: 32px;
   width: 9px;
 }
+.counters .counter .berserk-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+}
+.counters .counter .berserk-icon-wrapper .icon.berserk {
+  background: url("img/berserk-token.png") no-repeat;
+  background-size: contain;
+  opacity: 0.3;
+  width: 23px;
+  border-radius: 3px;
+}
+.counters .counter .berserk-icon-wrapper .icon.berserk.active {
+  opacity: 1;
+  box-shadow: 0 0 3px 1px red;
+}
 
 .player-tokens {
   display: flex;
@@ -188,6 +205,11 @@
   background-color: #a6c136;
   border-color: #a6c136;
   background-image: url("img/green_dice.png");
+}
+.die-item.berserk {
+  background-color: red;
+  border-color: red;
+  background-image: url("img/berserk_dice.png");
 }
 .die-item.side1 {
   background-position: 0% 100%;
@@ -480,6 +502,15 @@
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+}
+.change-die-discussion_bubble .die-face-selector .dice-icon.black {
+  background-image: url("img/black_dice.png");
+}
+.change-die-discussion_bubble .die-face-selector .dice-icon.green {
+  background-image: url("img/green_dice.png");
+}
+.change-die-discussion_bubble .die-face-selector .dice-icon.berserk {
+  background-image: url("img/berserk_dice.png");
 }
 .change-die-discussion_bubble .action-buttons {
   display: flex;
@@ -922,6 +953,9 @@
 #table .player-table .monster-board-wrapper .monster-board.monster9 {
   background-image: url("img/monster-board-9.png");
 }
+#table .player-table .monster-board-wrapper .monster-board.monster10 {
+  background-image: url("img/monster-board-10.png");
+}
 #table .player-table .energy-wrapper {
   position: absolute;
   z-index: 4;
@@ -968,6 +1002,21 @@
   position: absolute;
   right: 10px;
   top: 10px;
+}
+#table .player-table .berserk-token {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 67px;
+  height: 94px;
+  background: url("img/berserk-token.png");
+  z-index: 3;
+  border-radius: 5px;
+  display: none;
+  box-shadow: 0 0 5px 2px red;
+}
+#table .player-table .berserk-token[data-visible=true] {
+  display: initial;
 }
 #table .monster-figure {
   position: relative;
@@ -1176,6 +1225,9 @@ html, .mode_3d #game_play_area_background {
 }
 .monster-figure.monster9 {
   background-image: url("img/monster-figure-9.png");
+}
+.monster-figure.monster10 {
+  background-image: url("img/monster-figure-10.png");
 }
 
 #kot-table.pickMonster {

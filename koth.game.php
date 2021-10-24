@@ -83,11 +83,13 @@ class Koth extends Table {
             SKIP_BUY_PHASE => 24,
             CLOWN_ACTIVATED => 25,
             CHEERLEADER_SUPPORT => 26,
+            STATE_AFTER_RESOLVE => 27,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
             HALLOWEEN_EXPANSION_OPTION => HALLOWEEN_EXPANSION_OPTION,
             KINGKONG_EXPANSION_OPTION => KINGKONG_EXPANSION_OPTION,
+            CYBERTOOTH_EXPANSION_OPTION => CYBERTOOTH_EXPANSION_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -150,6 +152,9 @@ class Koth extends Table {
         // Create dice
         self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
         self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true), (0, true)");
+        if ($this->isCybertoothExpansion()) {
+            self::DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 1)");
+        }
 
         /************ Start the game initialization *****/
 
@@ -168,6 +173,7 @@ class Koth extends Table {
         self::setGameStateInitialValue(SKIP_BUY_PHASE, 0);
         self::setGameStateInitialValue(CLOWN_ACTIVATED, 0);
         self::setGameStateInitialValue(CHEERLEADER_SUPPORT, 0);
+        self::setGameStateInitialValue(STATE_AFTER_RESOLVE, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -204,7 +210,7 @@ class Koth extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        //$this->debugSetup();
+        $this->debugSetup();
 
         /************ End of the game initialization *****/
     }
@@ -219,24 +225,29 @@ class Koth extends Table {
         _ when a player refreshes the game page (F5)
     */
     protected function getAllDatas() {
+        $isKingKongExpansion = $this->isKingKongExpansion();
+        $isCybertoothExpansion = $this->isCybertoothExpansion();
+
         $result = ['players' => []];
 
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead FROM player order by player_no";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead ";
+        if ($isCybertoothExpansion) {
+            $sql .= ", player_berserk berserk ";
+        }
+        $sql .= "FROM player order by player_no ";
         $result['players'] = self::getCollectionFromDb($sql);
 
         // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
-        $result['dice'] = $activePlayerId ? $this->getDice($this->getDiceNumber($activePlayerId)) : [];
+        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
-
-        $isKingKongExpansion = $this->isKingKongExpansion();
 
         if ($isKingKongExpansion) {
             $result['tokyoTowerLevels'] = $this->getTokyoTowerLevels(0);
@@ -262,6 +273,9 @@ class Koth extends Table {
             if ($isKingKongExpansion) {
                 $playerDb['tokyoTowerLevels'] = $this->getTokyoTowerLevels($playerId);
             }
+            if ($isCybertoothExpansion) {
+                $playerDb['berserk'] = boolval($playerDb['berserk']);
+            }
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();
@@ -272,6 +286,7 @@ class Koth extends Table {
         $result['twoPlayersVariant'] = $this->isTwoPlayersVariant();
         $result['halloweenExpansion'] = $this->isHalloweenExpansion();
         $result['kingkongExpansion'] = $isKingKongExpansion;
+        $result['cybertoothExpansion'] = $isCybertoothExpansion;
 
         return $result;
     }

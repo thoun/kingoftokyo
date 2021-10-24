@@ -17,19 +17,19 @@ trait DiceUtilTrait {
     ////////////
     
     function getDice(int $number) {
-        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked`, `rolled` FROM dice ORDER BY dice_id limit $number";
+        $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
     function getDieById(int $id) {
-        $sql = "SELECT `dice_id`, `dice_value`, `extra`, `locked`, `rolled` FROM dice WHERE `dice_id` = $id";
+        $sql = "SELECT * FROM dice WHERE `dice_id` = $id";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices))[0];
     }
 
-    function getFirst3Dice(int $number) {
-        $dice = $this->getDice($number);
+    function getFirst3Die(int $playerId) {
+        $dice = $this->getDice($this->getDiceNumber($playerId));
         foreach ($dice as $dice) {
             if ($dice->value === 3) {
                 return $dice;
@@ -38,8 +38,24 @@ trait DiceUtilTrait {
         return null;
     }
 
-    public function throwDice(int $playerId, bool $firstRoll) {
+    function getBerserkDice() {
+        $sql = "SELECT * FROM dice WHERE `type` = 1";
+        $dbDices = self::getCollectionFromDB($sql);
+        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
+    }
+
+    private function getPlayerRolledDice(int $playerId) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
+
+        if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
+            $dice = array_merge($dice, $this->getBerserkDice());
+        }
+
+        return $dice;
+    }
+
+    public function throwDice(int $playerId, bool $firstRoll) {
+        $dice = $this->getPlayerRolledDice($playerId);
 
         self::DbQuery( "UPDATE dice SET `rolled` = false");
 
@@ -136,7 +152,7 @@ trait DiceUtilTrait {
             $health = $this->getPlayerHealth($playerId);
             $maxHealth = $this->getPlayerMaxHealth($playerId);
             if ($health < $maxHealth) {
-                $this->applyGetHealth($playerId, $diceCount, -1);
+                $this->applyGetHealth($playerId, $diceCount, -1, $playerId);
                 $newHealth = $this->getPlayerHealth($playerId);
 
                 self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} gains ${deltaHealth} [Heart]'), [
@@ -161,14 +177,14 @@ trait DiceUtilTrait {
     }
 
     
-    function resolveSmashDice(int $playerId, int $diceCount) { // return nextState / null
+    function resolveSmashDice(int $playerId, int $diceCount) { // return redirects
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
 
         $message = null;
         $smashedPlayersIds = null;
         $inTokyo = $this->inTokyo($playerId);
-        $nextState = "enterTokyo";
+        $nextState = ST_ENTER_TOKYO_APPLY_BURROWING;
 
         $damages = [];
 
@@ -182,8 +198,6 @@ trait DiceUtilTrait {
                 clienttranslate('${player_name} smashes Monsters outside Tokyo with ${number} [diceSmash]');
             $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
         }
-
-        
 
         // Shrink Ray
         $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
@@ -215,12 +229,13 @@ trait DiceUtilTrait {
 
         if (count($smashedPlayersInTokyo) > 0) {
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $smashedPlayersInTokyo);
-            $nextState = "smashes";
+            $nextState = ST_MULTIPLAYER_LEAVE_TOKYO;
         } else {
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
         }
 
-        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);      
+        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
+        self::setGameStateValue(STATE_AFTER_RESOLVE, $nextState);
 
         self::notifyAllPlayers("resolveSmashDice", $message, [
             'playerId' => $playerId,
@@ -250,12 +265,11 @@ trait DiceUtilTrait {
             }
         }
 
+        $redirects = false;
         if (count($damages) > 0) {
-            if ($this->resolveDamages($damages, $nextState)) {
-                return null; // no redirect on stResolveSmashDice, handled by resolveDamages
-            }
+            $redirects = $this->resolveDamages($damages, ST_RESOLVE_SKULL_DICE);
         }
-        return $nextState;
+        return $redirects;
     }
 
     function getChangeDieCards(int $playerId) {
@@ -280,12 +294,13 @@ trait DiceUtilTrait {
         $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
-            $dice = $this->getDice($this->getDiceNumber($playerId));
+            $dice = $this->getPlayerRolledDice($playerId);
             $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
             $diceCounts = [];
             for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
                 $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
             }
+            $diceCounts[7] = 0;
             
             if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
                 self::setGameStateValue(CLOWN_ACTIVATED, 1);
@@ -542,4 +557,23 @@ trait DiceUtilTrait {
         }
     }
 
+    function applyBerserkDieToDieCounts(object $die, array &$diceCounts) {
+        switch($die->value) {
+            case 1: 
+                $diceCounts[5] += 1;
+                break;
+            case 2: 
+                $diceCounts[5] += 2;
+                break;
+            case 3: case 4: 
+                $diceCounts[6] += 1;
+                break;
+            case 5: 
+                $diceCounts[6] += 2;
+                break;
+            case 6: 
+                $diceCounts[7] = 1; // TODOCT apply effect, check death by this roll / wings...
+                break;
+        }
+    }
 }

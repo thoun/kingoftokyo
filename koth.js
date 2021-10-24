@@ -653,6 +653,9 @@ var PlayerTable = /** @class */ (function () {
             dojo.place("<div id=\"tokyo-tower-" + player.id + "\" class=\"tokyo-tower-wrapper\"></div>", "player-table-" + player.id);
             this.tokyoTower = new TokyoTower("tokyo-tower-" + player.id, player.tokyoTowerLevels);
         }
+        if (this.game.isCybertoothExpansion()) {
+            dojo.place("<div id=\"berserk-token-" + player.id + "\" class=\"berserk-token berserk-tooltip\" data-visible=\"" + (player.berserk ? 'true' : 'false') + "\"></div>", "monster-board-wrapper-" + player.id);
+        }
     }
     PlayerTable.prototype.initPlacement = function () {
         if (this.initialLocation > 0) {
@@ -793,6 +796,9 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.getTokyoTower = function () {
         return this.tokyoTower;
+    };
+    PlayerTable.prototype.setBerserk = function (berserk) {
+        document.getElementById("berserk-token-" + this.playerId).dataset.visible = berserk ? 'true' : 'false';
     };
     return PlayerTable;
 }());
@@ -988,14 +994,16 @@ var TableManager = /** @class */ (function () {
     return TableManager;
 }());
 var DieFaceSelector = /** @class */ (function () {
-    function DieFaceSelector(nodeId, dieValue, inTokyo) {
+    function DieFaceSelector(nodeId, die, inTokyo) {
         var _this = this;
         this.nodeId = nodeId;
-        this.dieValue = dieValue;
+        this.die = die;
+        this.dieValue = die.value;
+        var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         var _loop_1 = function (face) {
             var faceId = nodeId + "-face" + face;
-            var html = "<div id=\"" + faceId + "\" class=\"dice-icon dice" + face + " " + (dieValue == face ? 'disabled' : '') + "\">";
-            if (face === 4 && inTokyo) {
+            var html = "<div id=\"" + faceId + "\" class=\"dice-icon dice" + face + " " + colorClass + " " + (this_1.dieValue == face ? 'disabled' : '') + "\">";
+            if (!die.type && face === 4 && inTokyo) {
                 html += "<div class=\"icon forbidden\"></div>";
             }
             html += "</div>";
@@ -1014,6 +1022,7 @@ var DieFaceSelector = /** @class */ (function () {
                 event.stopImmediatePropagation();
             });
         };
+        var this_1 = this;
         for (var face = 1; face <= 6; face++) {
             _loop_1(face);
         }
@@ -1093,7 +1102,7 @@ var DiceManager = /** @class */ (function () {
         var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(function (die) {
             var divId = "dice" + die.id;
-            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + die.value);
+            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + _this.getDieFace(die));
             var selectable = isCurrentPlayerActive && _this.action !== null && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             _this.addDiceRollClass(die);
@@ -1111,7 +1120,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + die.value);
+            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + _this.getDieFace(die));
             _this.addDiceRollClass(die);
         });
     };
@@ -1125,7 +1134,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + die.value);
+            _this.createAndPlaceDiceHtml(die, inTokyo, "locked-dice" + _this.getDieFace(die));
             _this.addDiceRollClass(die);
             if (isCurrentPlayerActive) {
                 var divId = "dice" + die.id;
@@ -1150,7 +1159,7 @@ var DiceManager = /** @class */ (function () {
                     rolled: roll
                 });
             }
-            if (inTokyo) {
+            if (inTokyo && !die.type) {
                 if (die.value !== 4 && toValue === 4) {
                     dojo.place('<div class="icon forbidden"></div>', divId);
                 }
@@ -1174,13 +1183,14 @@ var DiceManager = /** @class */ (function () {
                 extra: false,
                 locked: false,
                 rolled: dieValue.rolled,
+                type: 0
             };
             _this.createAndPlaceDiceHtml(die, false, "dice-selector");
             _this.addDiceRollClass(die);
         });
     };
     DiceManager.prototype.clearDiceHtml = function () {
-        for (var i = 1; i <= 6; i++) {
+        for (var i = 1; i <= 7; i++) {
             document.getElementById("locked-dice" + i).innerHTML = '';
         }
         document.getElementById("dice-selector").innerHTML = '';
@@ -1195,9 +1205,43 @@ var DiceManager = /** @class */ (function () {
         var _this = this;
         this.dice.filter(function (die) { return die.value === 4; }).forEach(function (die) { return _this.removeDice(die, 1000); });
     };
+    DiceManager.prototype.getDieFace = function (die) {
+        if (die.type === 1) {
+            if (die.value <= 2) {
+                return 5;
+            }
+            else if (die.value <= 5) {
+                return 6;
+            }
+            else {
+                return 7;
+            }
+        }
+        else {
+            return die.value;
+        }
+    };
+    DiceManager.prototype.getDiceShowingFace = function (face) {
+        var dice = this.dice.filter(function (die) { return !die.type && die.value === face && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+        if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
+            return dice;
+        }
+        else {
+            var berserkDice = this.dice.filter(function (die) { return die.type === 1; });
+            if (face == 5) { // energy
+                return berserkDice.filter(function (die) { return die.value >= 1 && die.value <= 2 && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+            }
+            else if (face == 6) { // smash
+                return berserkDice.filter(function (die) { return die.value >= 3 && die.value <= 5 && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+            }
+            else {
+                return [];
+            }
+        }
+    };
     DiceManager.prototype.addDiceAnimation = function (diceValue, playerIds, number, targetToken) {
         var _this = this;
-        var dice = this.dice.filter(function (die) { return die.value === diceValue && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+        var dice = this.getDiceShowingFace(diceValue);
         if (number) {
             dice = dice.slice(0, number);
         }
@@ -1247,10 +1291,10 @@ var DiceManager = /** @class */ (function () {
         if ((event === null || event === void 0 ? void 0 : event.altKey) || (event === null || event === void 0 ? void 0 : event.ctrlKey)) {
             var dice = [];
             if (event.ctrlKey && event.altKey) { // move everything but die.value dice
-                dice = this.dice.filter(function (idie) { return idie.locked === die.locked && idie.value !== die.value; });
+                dice = this.dice.filter(function (idie) { return idie.locked === die.locked && _this.getDieFace(idie) !== _this.getDieFace(die); });
             }
             else if (event.ctrlKey) { // move everything with die.value dice
-                dice = this.dice.filter(function (idie) { return idie.locked === die.locked && idie.value === die.value; });
+                dice = this.dice.filter(function (idie) { return idie.locked === die.locked && _this.getDieFace(idie) === _this.getDieFace(die); });
             }
             else { // move everything but die
                 dice = this.dice.filter(function (idie) { return idie.locked === die.locked && idie.id !== die.id; });
@@ -1261,7 +1305,7 @@ var DiceManager = /** @class */ (function () {
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         var dieDivId = "dice" + die.id;
         var dieDiv = document.getElementById(dieDivId);
-        var destinationId = die.locked ? "locked-dice" + die.value : "dice-selector";
+        var destinationId = die.locked ? "locked-dice" + this.getDieFace(die) : "dice-selector";
         var tempDestinationId = "temp-destination-wrapper-" + destinationId + "-" + die.id;
         var tempOriginId = "temp-origin-wrapper-" + destinationId + "-" + die.id;
         if (document.getElementById(destinationId)) {
@@ -1317,11 +1361,12 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.createAndPlaceDiceHtml = function (die, inTokyo, destinationId) {
         var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
+        var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (var dieFace = 1; dieFace <= 6; dieFace++) {
-            html += "<li class=\"die-item " + (die.extra ? 'green' : 'black') + " side" + dieFace + "\" data-side=\"" + dieFace + "\"></li>";
+            html += "<li class=\"die-item " + colorClass + " side" + dieFace + "\" data-side=\"" + dieFace + "\"></li>";
         }
         html += "</ol>";
-        if (die.value === 4 && inTokyo) {
+        if (!die.type && die.value === 4 && inTokyo) {
             html += "<div class=\"icon forbidden\"></div>";
         }
         html += "</div>";
@@ -1335,7 +1380,7 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.createDice = function (die, selectable, inTokyo) {
         var _this = this;
-        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? "locked-dice" + die.value : "dice-selector");
+        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? "locked-dice" + this.getDieFace(die) : "dice-selector");
         var div = this.getDiceDiv(die);
         div.addEventListener('animationend', function (e) {
             if (e.animationName == 'rolled-dice') {
@@ -1425,7 +1470,7 @@ var DiceManager = /** @class */ (function () {
             var clownButtonId_1 = bubbleActionButtonsId + "-clown";
             var args_1 = this.changeDieArgs;
             if (!this.dieFaceSelectors[die.id]) {
-                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die.value, args_1.inTokyo);
+                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die, args_1.inTokyo);
             }
             var dieFaceSelector_1 = this.dieFaceSelectors[die.id];
             if (creation) {
@@ -1700,7 +1745,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
             _this.dontPreloadImage("monster-board-" + i + ".png");
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });
@@ -1751,6 +1796,10 @@ var KingOfTokyo = /** @class */ (function () {
             this.tableTokyoTower = new TokyoTower('tokyo-tower-0', gamedatas.tokyoTowerLevels);
             var tooltip = formatTextIcons("\n            <h3>" + _("Tokyo Tower") + "</h3>\n            <p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1]") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>\n            ");
             this.addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
+        }
+        if (gamedatas.cybertoothExpansion) {
+            var tooltip = formatTextIcons("\n            <h3>" + _("Berserk mode") + "</h3>\n            <p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
+            this.addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCT check if healed by Healing Ray       
         }
         log("Ending game setup");
     };
@@ -1948,10 +1997,10 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
                 var _loop_2 = function (i) {
                     var id = "useRobot" + i + "_button";
-                    this_1.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this_1.cards.getCardName(210, 'text-only') })), function () { return _this.useRobot(i); });
+                    this_2.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this_2.cards.getCardName(210, 'text-only') })), function () { return _this.useRobot(i); });
                     dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
                 };
-                var this_1 = this;
+                var this_2 = this;
                 for (var i = args.damage; i > 0; i--) {
                     _loop_2(i);
                 }
@@ -2193,6 +2242,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.isKingkongExpansion = function () {
         return this.gamedatas.kingkongExpansion;
     };
+    KingOfTokyo.prototype.isCybertoothExpansion = function () {
+        return this.gamedatas.cybertoothExpansion;
+    };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return false; // TODODE
     };
@@ -2232,12 +2284,22 @@ var KingOfTokyo = /** @class */ (function () {
             var eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
             // health & energy counters
             dojo.place("<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>\n            </div>", "player_board_" + player.id);
-            if (gamedatas.kingkongExpansion) {
-                dojo.place("<div class=\"counters\">\n                    <div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon \"></div></div> \n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>\n                </div>", "player_board_" + player.id);
-                var tokyoTowerCounter = new ebg.counter();
-                tokyoTowerCounter.create("tokyo-tower-counter-" + player.id);
-                tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
-                _this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
+            if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion) {
+                var html = "<div class=\"counters\">";
+                if (gamedatas.kingkongExpansion) {
+                    html += "\n                    <div class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon\"></div></div>\n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>";
+                }
+                if (gamedatas.cybertoothExpansion) {
+                    html += "\n                    <div class=\"counter\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + " berserk-tooltip\"></div>\n                        </div>\n                    </div>";
+                }
+                html += "</div>";
+                dojo.place(html, "player_board_" + player.id);
+                if (gamedatas.kingkongExpansion) {
+                    var tokyoTowerCounter = new ebg.counter();
+                    tokyoTowerCounter.create("tokyo-tower-counter-" + player.id);
+                    tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
+                    _this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
+                }
             }
             var healthCounter = new ebg.counter();
             healthCounter.create("health-counter-" + player.id);
@@ -2456,27 +2518,27 @@ var KingOfTokyo = /** @class */ (function () {
         }
         var _loop_5 = function (i) {
             if (!document.getElementById(popinId + "_set" + i)) {
-                dojo.place("<button class=\"action-button bgabutton " + (this_2.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
+                dojo.place("<button class=\"action-button bgabutton " + (this_3.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_2 = this;
+        var this_3 = this;
         for (var i = 11; i <= maxHealth; i++) {
             _loop_5(i);
         }
         var _loop_6 = function (i) {
             if (!document.getElementById(popinId + "_setStay" + i)) {
-                dojo.place("<button class=\"action-button bgabutton " + (this_3.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_3.gamedatas.leaveTokyoUnder > 0 && i <= this_3.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
+                dojo.place("<button class=\"action-button bgabutton " + (this_4.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_4.gamedatas.leaveTokyoUnder > 0 && i <= this_4.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_3 = this;
+        var this_4 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
             _loop_6(i);
         }
@@ -2886,6 +2948,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
             ['kotPlayerEliminated', 1],
+            ['setPlayerBerserk', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -3132,6 +3195,10 @@ var KingOfTokyo = /** @class */ (function () {
         if (playerId != 0) {
             this.tokyoTowerCounters[playerId].toValue(newLevelTowerLevels.length);
         }
+    };
+    KingOfTokyo.prototype.notif_setPlayerBerserk = function (notif) {
+        this.getPlayerTable(notif.args.playerId).setBerserk(notif.args.berserk);
+        dojo.toggleClass("player-panel-berserk-" + notif.args.playerId, 'active', notif.args.berserk);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

@@ -49,7 +49,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     public setup(gamedatas: KingOfTokyoGamedatas) {
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1,2,3,4,5,6,7,8,9].filter(i => !players.some(player => Number(player.monster) === i)).forEach(i => {
+        [1,2,3,4,5,6,7,8,9,10].filter(i => !players.some(player => Number(player.monster) === i)).forEach(i => {
             (this as any).dontPreloadImage(`monster-board-${i}.png`);
             (this as any).dontPreloadImage(`monster-figure-${i}.png`);
         });
@@ -118,6 +118,14 @@ class KingOfTokyo implements KingOfTokyoGame {
             <p><strong>${_("Claiming the top level automatically wins the game.")}</strong></p>
             `);
             (this as any).addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
+        }
+
+        if (gamedatas.cybertoothExpansion) {
+            const tooltip = formatTextIcons(`
+            <h3>${_("Berserk mode")}</h3>
+            <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
+            <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
+            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCT check if healed by Healing Ray       
         }
 
         log( "Ending game setup" );
@@ -613,6 +621,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.kingkongExpansion;
     }
 
+    public isCybertoothExpansion(): boolean {
+        return this.gamedatas.cybertoothExpansion;
+    }
+
     public isDarkEdition(): boolean {
         return false; // TODODE
     }
@@ -680,18 +692,35 @@ class KingOfTokyo implements KingOfTokyoGame {
                 </div>
             </div>`, `player_board_${player.id}`);
 
-            if (gamedatas.kingkongExpansion) {
-                dojo.place(`<div class="counters">
-                    <div id="tokyo-tower-counter-wrapper-${player.id}" class="counter tokyo-tower-tooltip">
-                        <div class="tokyo-tower-icon-wrapper"><div class="tokyo-tower-icon "></div></div> 
-                        <span id="tokyo-tower-counter-${player.id}"></span>&nbsp;/&nbsp;3
-                    </div>
-                </div>`, `player_board_${player.id}`);
+            if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion) {
+                let html = `<div class="counters">`;
 
-                const tokyoTowerCounter = new ebg.counter();
-                tokyoTowerCounter.create(`tokyo-tower-counter-${player.id}`);
-                tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
-                this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
+                if (gamedatas.kingkongExpansion) {
+                    html += `
+                    <div class="counter tokyo-tower-tooltip">
+                        <div class="tokyo-tower-icon-wrapper"><div class="tokyo-tower-icon"></div></div>
+                        <span id="tokyo-tower-counter-${player.id}"></span>&nbsp;/&nbsp;3
+                    </div>`;
+                }
+
+                if (gamedatas.cybertoothExpansion) {
+                    html += `
+                    <div class="counter">
+                        <div class="berserk-icon-wrapper">
+                            <div id="player-panel-berserk-${player.id}" class="berserk icon ${player.berserk ? 'active' : ''} berserk-tooltip"></div>
+                        </div>
+                    </div>`;
+                }
+
+                html += `</div>`;
+                dojo.place(html, `player_board_${player.id}`);
+
+                if (gamedatas.kingkongExpansion) {
+                    const tokyoTowerCounter = new ebg.counter();
+                    tokyoTowerCounter.create(`tokyo-tower-counter-${player.id}`);
+                    tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
+                    this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
+                }
             }
 
             const healthCounter = new ebg.counter();
@@ -1465,6 +1494,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
             ['kotPlayerEliminated', 1],
+            ['setPlayerBerserk', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -1746,6 +1776,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (playerId != 0) {
             this.tokyoTowerCounters[playerId].toValue(newLevelTowerLevels.length);
         }
+    }
+
+    notif_setPlayerBerserk(notif: Notif<NotifSetPlayerBerserkArgs>) { 
+        this.getPlayerTable(notif.args.playerId).setBerserk(notif.args.berserk);
+        dojo.toggleClass(`player-panel-berserk-${notif.args.playerId}`, 'active', notif.args.berserk);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

@@ -73,6 +73,10 @@ class PlayerTable {
             dojo.place(`<div id="tokyo-tower-${player.id}" class="tokyo-tower-wrapper"></div>`, `player-table-${player.id}`);
             this.tokyoTower = new TokyoTower(`tokyo-tower-${player.id}`, player.tokyoTowerLevels);
         }
+
+        if (this.game.isCybertoothExpansion()) {
+            dojo.place(`<div id="berserk-token-${player.id}" class="berserk-token berserk-tooltip" data-visible="${player.berserk ? 'true' : 'false'}"></div>`, `monster-board-wrapper-${player.id}`);
+        }
     }
 
     public initPlacement() {
@@ -245,5 +249,9 @@ class PlayerTable {
     
     public getTokyoTower() {
         return this.tokyoTower;
+    }
+
+    public setBerserk(berserk: boolean) {
+        document.getElementById(`berserk-token-${this.playerId}`).dataset.visible = berserk ? 'true' : 'false';
     }
 }

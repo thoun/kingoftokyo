@@ -32,6 +32,7 @@ define('ST_RESOLVE_HEART_DICE', 32);
 define('ST_RESOLVE_HEART_DICE_ACTION', 33);
 define('ST_RESOLVE_ENERGY_DICE', 34);
 define('ST_RESOLVE_SMASH_DICE', 35);
+define('ST_RESOLVE_SKULL_DICE', 36);
 
 define('ST_MULTIPLAYER_CANCEL_DAMAGE', 38);
 
@@ -76,6 +77,7 @@ define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption'); // 120
 define('BONUS_MONSTERS_OPTION', 102);
 define('HALLOWEEN_EXPANSION_OPTION', 103);
 define('KINGKONG_EXPANSION_OPTION', 104);
+define('CYBERTOOTH_EXPANSION_OPTION', 105);
 
 /*
  * Variables
@@ -92,6 +94,7 @@ define('PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'PlayerBeforeFrenzyExt
 define('SKIP_BUY_PHASE', 'SkipBuyPhase');
 define('CLOWN_ACTIVATED', 'ClownActivated');
 define('CHEERLEADER_SUPPORT', 'CheerleaderSupport');
+define('STATE_AFTER_RESOLVE', 'stateAfterResolve');
 
 /*
  * Global variables

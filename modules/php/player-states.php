@@ -51,7 +51,7 @@ trait PlayerStateTrait {
         if ($this->getPlayerHealth($playerId) < 3) {
             $countNanobots = $this->countCardOfType($playerId, NANOBOTS_CARD);
             if ($countNanobots > 0) {
-                $this->applyGetHealth($playerId, 2 * $countNanobots, NANOBOTS_CARD);
+                $this->applyGetHealth($playerId, 2 * $countNanobots, NANOBOTS_CARD, $playerId);
             }
         }
 
@@ -60,7 +60,7 @@ trait PlayerStateTrait {
 
             foreach ($towerLevels as $level) {
                 if ($level == 1 || $level == 2) {
-                    $this->applyGetHealth($playerId, 1, -1);
+                    $this->applyGetHealth($playerId, 1, -1, $playerId);
 
                     self::notifyAllPlayers('health', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'), [
                         'playerId' => $playerId,

@@ -18,12 +18,12 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
+        //$this->debugSetPlayerInLocation(2343492, 1);
         $this->debugSetPlayerInLocation(2343493, 1);
-        //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetEnergy(20);
         //$this->debugSetPoints(18);
         //$this->debugSetHealth(1);
-        //$this->debugSetPlayerHealth(2343492, 1);
+        $this->debugSetPlayerHealth(2343492, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
@@ -44,14 +44,15 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343493);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
-        $this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343492);
+        //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
+        $this->debugSetCardInHand(WINGS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        $this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343492);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343492);
@@ -68,6 +69,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343493);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
+        $this->setPlayerBerserk(2343492, true);
 
         $this->gamestate->changeActivePlayer(2343492);
 
