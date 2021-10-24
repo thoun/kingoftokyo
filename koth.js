@@ -3507,7 +3507,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
-        this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
+        this.ajaxcall("/koth/koth/" + action + ".html", data, this, function () { });
     };
     KingOfTokyo.prototype.setFont = function (prefValue) {
         this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
@@ -4005,5 +4005,5 @@ define([
     "ebg/counter",
     "ebg/stock"
 ], function (dojo, declare) {
-    return declare("bgagame.kingoftokyo", ebg.core.gamegui, new KingOfTokyo());
+    return declare("bgagame.koth", ebg.core.gamegui, new KingOfTokyo());
 });
