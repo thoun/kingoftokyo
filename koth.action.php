@@ -17,19 +17,19 @@
  * user interface logic (javascript).
  *       
  * If you define a method "myAction" here, then you can call it from your javascript code with:
- * this.ajaxcall( "/kingoftokyo/kingoftokyo/myAction.html", ...)
+ * this.ajaxcall( "/koth/koth/myAction.html", ...)
  *
  */
   
   
-  class action_kingoftokyo extends APP_GameAction { 
+  class action_koth extends APP_GameAction { 
     // Constructor: please do not modify
    	public function __default() {
         if (self::isArg( 'notifwindow')) {
             $this->view = "common_notifwindow";
             $this->viewArgs['table'] = self::getArg( "table", AT_posint, true );
         } else {
-            $this->view = "kingoftokyo_kingoftokyo";
+            $this->view = "koth_koth";
             self::trace( "Complete reinitialization of board game" );
         }
   	} 
