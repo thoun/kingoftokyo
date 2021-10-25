@@ -16,6 +16,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
     private tokyoTowerCounters: Counter[] = [];
+    private cultistCounters: Counter[] = [];
     private diceManager: DiceManager;
     private visibleCards: Stock;
     private pickCard: Stock;
@@ -83,7 +84,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
     
         this.createPlayerPanels(gamedatas); 
-        this.diceManager = new DiceManager(this, gamedatas.dice);  
+        this.diceManager = new DiceManager(this);  
         this.createVisibleCards(gamedatas.visibleCards, gamedatas.topDeckCardBackType);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -96,7 +97,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (currentPlayer?.rapidHealing) {
             this.addRapidHealingButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
-        }        
+        }
+        if (currentPlayer?.cultists) {
+            this.addRapidCultistButtons(currentPlayer.health >= currentPlayer.maxHealth);
+        }
         if (currentPlayer?.location > 0) {
             this.addAutoLeaveUnderButton();
         }
@@ -125,7 +129,15 @@ class KingOfTokyo implements KingOfTokyoGame {
             <h3>${_("Berserk mode")}</h3>
             <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
-            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCT check if healed by Healing Ray       
+            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip);
+        }
+
+        if (gamedatas.cthulhuExpansion) {
+            const tooltip = formatTextIcons(`
+            <h3>${_("Cultists")}</h3>
+            <p>${_("After resolving your dice, if you rolled four identical faces, take a Cultist tile")}</p>
+            <p>${_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.")}</p>`);
+            (this as any).addTooltipHtmlToClass('cultist-tooltip', tooltip);     
         }
 
         log( "Ending game setup" );
@@ -141,17 +153,19 @@ class KingOfTokyo implements KingOfTokyoGame {
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
 
+        if (stateName !== 'pickMonster' && stateName !== 'pickMonsterNextPlayer') {
+            this.replaceMonsterChoiceByTable();
+        }
+
         switch (stateName) {
             case 'pickMonster':
                 dojo.addClass('kot-table', 'pickMonster');
                 this.onEnteringPickMonster(args.args);
                 break;
             case 'chooseInitialCard':
-                this.replaceMonsterChoiceByTable();
                 this.onEnteringChooseInitialCard(args.args);
                 break;
             case 'startGame':
-                this.replaceMonsterChoiceByTable();
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -159,7 +173,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
-                this.replaceMonsterChoiceByTable();
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -273,9 +286,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (args.hasSmokeCloud && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + ` (<span class="smoke-cloud token"></span>)`, () => this.useSmokeCloud());
             }
+
+            if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
+                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + ` (${_('Cultist')})`, () => this.useCultist());
+            }
         }
 
-        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.energyDrink?.hasCard) {
+        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.hasCultist && !args.energyDrink?.hasCard) {
             this.diceManager.disableDiceAction();
         }
     }
@@ -636,6 +653,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.mutantEvolutionVariant;
     }
 
+    public isCthulhuExpansion(): boolean {
+        return this.gamedatas.cthulhuExpansion;
+    }
+
     public isDarkEdition(): boolean {
         return false; // TODODE
     }
@@ -703,7 +724,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 </div>
             </div>`, `player_board_${player.id}`);
 
-            if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion) {
+            if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 let html = `<div class="counters">`;
 
                 if (gamedatas.kingkongExpansion) {
@@ -723,6 +744,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     </div>`;
                 }
 
+                if (gamedatas.cthulhuExpansion) {
+                    html += `
+                    <div class="counter cultist-tooltip">
+                        <div class="icon cultist"></div>
+                        <span id="cultist-counter-${player.id}"></span>
+                    </div>`;
+                }
+
                 html += `</div>`;
                 dojo.place(html, `player_board_${player.id}`);
 
@@ -731,6 +760,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                     tokyoTowerCounter.create(`tokyo-tower-counter-${player.id}`);
                     tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
                     this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
+                }
+
+                if (gamedatas.cthulhuExpansion) {
+                    const cultistCounter = new ebg.counter();
+                    cultistCounter.create(`cultist-counter-${player.id}`);
+                    cultistCounter.setValue(player.cultists);
+                    this.cultistCounters[playerId] = cultistCounter;
                 }
             }
 
@@ -797,6 +833,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             dojo.removeClass('kot-table', 'pickMonster');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
             this.visibleCards.updateDisplay();
+            this.playerTables.forEach(playerTable => playerTable.cards.updateDisplay());
         }
     }
 
@@ -872,6 +909,32 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private addRapidCultistButtons(isMaxHealth: boolean) {
+        if (!document.getElementById('rapidCultistButtons')) {
+            dojo.place(`<div id="rapidCultistButtons"><span>${dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') })} :</span></div>`, 'rapid-actions-wrapper');
+            this.createButton(
+                'rapidCultistButtons', 
+                'rapidCultistHealthButton', 
+                formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1})}`), 
+                () => this.useRapidCultist(4), 
+                isMaxHealth
+            );
+            
+            this.createButton(
+                'rapidCultistButtons', 
+                'rapidCultistEnergyButton', 
+                formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1})}`), 
+                () => this.useRapidCultist(5)
+            );
+        }
+    }
+
+    private removeRapidCultistButtons() {
+        if (document.getElementById('rapidCultistButtons')) {
+            dojo.destroy('rapidCultistButtons');
+        }
+    }
+
     private checkRapidHealingButtonState() {
         if (document.getElementById('rapidHealingButton')) {
             const playerId = this.getPlayerId();
@@ -879,6 +942,15 @@ class KingOfTokyo implements KingOfTokyoGame {
             const health = this.healthCounters[playerId].getValue();
             const maxHealth = this.gamedatas.players[playerId].maxHealth;
             dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
+        }
+    }
+
+    private checkHealthCultistButtonState() {
+        if (document.getElementById('rapidCultistHealthButton')) {
+            const playerId = this.getPlayerId();
+            const health = this.healthCounters[playerId].getValue();
+            const maxHealth = this.gamedatas.players[playerId].maxHealth;
+            dojo.toggleClass('rapidCultistHealthButton', 'disabled', health >= maxHealth);
         }
     }
 
@@ -1128,8 +1200,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public useCultist() {
+        const diceIds = this.diceManager.destroyFreeDice();
+        
+        this.takeAction('useCultist', {
+            diceIds: diceIds.join(',')
+        });
+    }
+
     public useRapidHealing() {
         this.takeAction('useRapidHealing');
+    }
+
+    public useRapidCultist(type: number) { // 4 for health, 5 for energy
+        this.takeAction('useRapidCultist', { type });
     }
 
     public setSkipBuyPhase(skipBuyPhase: boolean) {
@@ -1523,6 +1607,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['updateStayTokyoOver', 1],
             ['kotPlayerEliminated', 1],
             ['setPlayerBerserk', 1],
+            ['cultist', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -1816,6 +1901,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setEnergy(notif.args.playerId, notif.args.energy);
     }
 
+    notif_cultist(notif: Notif<NotifCultistArgs>) {
+        this.setCultists(notif.args.playerId, notif.args.cultists, notif.args.isMaxHealth);
+    }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
@@ -1826,11 +1914,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.healthCounters[playerId].toValue(health);
         this.getPlayerTable(playerId).setHealth(health, delay);
         this.checkRapidHealingButtonState();
+        this.checkHealthCultistButtonState();
     }
     
     private setMaxHealth(playerId: number, maxHealth: number) {
         this.gamedatas.players[playerId].maxHealth = maxHealth;
         this.checkRapidHealingButtonState();
+        this.checkHealthCultistButtonState();
         const popinId = `discussion_bubble_autoLeaveUnder`;
         if (document.getElementById(popinId)) {
             this.updateAutoLeavePopinButtons();
@@ -1863,6 +1953,17 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setPoisonTokens(playerId: number, tokens: number) {
         this.setPlayerTokens(playerId, tokens, 'poison');
         this.getPlayerTable(playerId)?.setPoisonTokens(tokens);
+    }
+    
+    private setCultists(playerId: number, cultists: number, isMaxHealth: boolean) {
+        this.cultistCounters[playerId].toValue(cultists);
+        this.getPlayerTable(playerId)?.setCultistTokens(cultists);
+
+        if (cultists > 0) {
+            this.addRapidCultistButtons(isMaxHealth);
+        } else {        
+            this.removeRapidCultistButtons();
+        }
     }
 
     public checkBuyEnergyDrinkState(energy: number = null) {

@@ -66,6 +66,12 @@ class TableManager {
         }
         
         const zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
+
+        if (!zoomWrapperWidth) {
+            setTimeout(() => this.setAutoZoomAndPlacePlayerTables(), 200);
+            return;
+        }
+
         let newZoom = this.zoom;
         while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth/newZoom < CENTER_TABLE_WIDTH) {
             newZoom = ZOOM_LEVELS[ZOOM_LEVELS.indexOf(newZoom) - 1];

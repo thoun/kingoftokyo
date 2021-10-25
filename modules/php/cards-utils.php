@@ -462,7 +462,7 @@ trait CardsUtilTrait {
             throw new \BgaUserException('No Rapid Healing card');
         }
 
-        $this->applyGetHealth($playerId, 1, RAPID_HEALING_CARD);
+        $this->applyGetHealth($playerId, 1, RAPID_HEALING_CARD, $playerId);
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0, $playerId);
     }
 

@@ -572,7 +572,7 @@ trait DiceUtilTrait {
                 $diceCounts[6] += 2;
                 break;
             case 6: 
-                $diceCounts[7] = 1; // TODOCT apply effect, check death by this roll / wings...
+                $diceCounts[7] = 1;
                 break;
         }
     }

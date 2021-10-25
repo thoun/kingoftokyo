@@ -91,6 +91,7 @@ class Koth extends Table {
             KINGKONG_EXPANSION_OPTION => KINGKONG_EXPANSION_OPTION,
             CYBERTOOTH_EXPANSION_OPTION => CYBERTOOTH_EXPANSION_OPTION,
             MUTANT_EVOLUTION_VARIANT_OPTION => MUTANT_EVOLUTION_VARIANT_OPTION,
+            CTHULHU_EXPANSION_OPTION => CTHULHU_EXPANSION_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -234,6 +235,7 @@ class Koth extends Table {
     protected function getAllDatas() {
         $isKingKongExpansion = $this->isKingKongExpansion();
         $isCybertoothExpansion = $this->isCybertoothExpansion();
+        $isCthulhuExpansion = $this->isCthulhuExpansion();
 
         $result = ['players' => []];
 
@@ -244,6 +246,9 @@ class Koth extends Table {
         $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead ";
         if ($isCybertoothExpansion) {
             $sql .= ", player_berserk berserk ";
+        }
+        if ($isCthulhuExpansion) {
+            $sql .= ", player_cultists cultists ";
         }
         $sql .= "FROM player order by player_no ";
         $result['players'] = self::getCollectionFromDb($sql);
@@ -283,6 +288,9 @@ class Koth extends Table {
             if ($isCybertoothExpansion) {
                 $playerDb['berserk'] = boolval($playerDb['berserk']);
             }
+            if ($isCthulhuExpansion) {
+                $playerDb['cultists'] = intval($playerDb['cultists']);
+            }
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();
@@ -295,6 +303,7 @@ class Koth extends Table {
         $result['kingkongExpansion'] = $isKingKongExpansion;
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
         $result['mutantEvolutionVariant'] = $this->isMutantEvolutionVariant();
+        $result['cthulhuExpansion'] = $isCthulhuExpansion;
 
         return $result;
     }

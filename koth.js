@@ -705,7 +705,11 @@ var PlayerTable = /** @class */ (function () {
             this.tokyoTower = new TokyoTower("tokyo-tower-" + player.id, player.tokyoTowerLevels);
         }
         if (this.game.isCybertoothExpansion()) {
-            dojo.place("<div id=\"berserk-token-" + player.id + "\" class=\"berserk-token berserk-tooltip\" data-visible=\"" + (player.berserk ? 'true' : 'false') + "\"></div>", "monster-board-wrapper-" + player.id);
+            dojo.place("<div id=\"berserk-token-" + player.id + "\" class=\"berserk-token berserk-tooltip\" data-visible=\"" + (player.berserk ? 'true' : 'false') + "\"></div>", "monster-board-" + player.id);
+        }
+        if (this.game.isCthulhuExpansion()) {
+            dojo.place("<div id=\"player-table-cultist-tokens-" + player.id + "\" class=\"cultist-tokens\"></div>", "monster-board-" + player.id);
+            this.setCultistTokens(player.cultists);
         }
     }
     PlayerTable.prototype.initPlacement = function () {
@@ -855,6 +859,16 @@ var PlayerTable = /** @class */ (function () {
         this.cards.removeFromStockById('' + card.id);
         this.cards.addToStockWithId(card.type + card.side, '' + card.id);
     };
+    PlayerTable.prototype.setCultistTokens = function (tokens) {
+        var containerId = "player-table-cultist-tokens-" + this.playerId;
+        var container = document.getElementById(containerId);
+        while (container.childElementCount > tokens) {
+            container.removeChild(container.lastChild);
+        }
+        for (var i = container.childElementCount; i < tokens; i++) {
+            dojo.place("<div class=\"cultist-token cultist-tooltip\"></div>", containerId);
+        }
+    };
     return PlayerTable;
 }());
 var __spreadArray = (this && this.__spreadArray) || function (to, from) {
@@ -915,10 +929,15 @@ var TableManager = /** @class */ (function () {
         }
     };
     TableManager.prototype.setAutoZoomAndPlacePlayerTables = function () {
+        var _this = this;
         if (dojo.hasClass('kot-table', 'pickMonster')) {
             return;
         }
         var zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
+        if (!zoomWrapperWidth) {
+            setTimeout(function () { return _this.setAutoZoomAndPlacePlayerTables(); }, 200);
+            return;
+        }
         var newZoom = this.zoom;
         while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth / newZoom < CENTER_TABLE_WIDTH) {
             newZoom = ZOOM_LEVELS[ZOOM_LEVELS.indexOf(newZoom) - 1];
@@ -1096,11 +1115,10 @@ var DieFaceSelector = /** @class */ (function () {
     return DieFaceSelector;
 }());
 var DiceManager = /** @class */ (function () {
-    function DiceManager(game, setupDice) {
+    function DiceManager(game) {
         this.game = game;
         this.dice = [];
         this.dieFaceSelectors = [];
-        // TODO use setupDice ?
     }
     DiceManager.prototype.hideLock = function () {
         dojo.addClass('locked-dice', 'hide-lock');
@@ -1781,6 +1799,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.healthCounters = [];
         this.energyCounters = [];
         this.tokyoTowerCounters = [];
+        this.cultistCounters = [];
         this.playerTables = [];
         this.towerLevelsOwners = [];
     }
@@ -1827,7 +1846,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);
-        this.diceManager = new DiceManager(this, gamedatas.dice);
+        this.diceManager = new DiceManager(this);
         this.createVisibleCards(gamedatas.visibleCards, gamedatas.topDeckCardBackType);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -1838,6 +1857,9 @@ var KingOfTokyo = /** @class */ (function () {
         var currentPlayer = players.find(function (player) { return Number(player.id) === playerId; });
         if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.rapidHealing) {
             this.addRapidHealingButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
+        }
+        if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.cultists) {
+            this.addRapidCultistButtons(currentPlayer.health >= currentPlayer.maxHealth);
         }
         if ((currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.location) > 0) {
             this.addAutoLeaveUnderButton();
@@ -1854,7 +1876,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
         if (gamedatas.cybertoothExpansion) {
             var tooltip = formatTextIcons("\n            <h3>" + _("Berserk mode") + "</h3>\n            <p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
-            this.addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCT check if healed by Healing Ray       
+            this.addTooltipHtmlToClass('berserk-tooltip', tooltip);
+        }
+        if (gamedatas.cthulhuExpansion) {
+            var tooltip = formatTextIcons("\n            <h3>" + _("Cultists") + "</h3>\n            <p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");
+            this.addTooltipHtmlToClass('cultist-tooltip', tooltip);
         }
         log("Ending game setup");
     };
@@ -1866,17 +1892,18 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringState = function (stateName, args) {
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
+        if (stateName !== 'pickMonster' && stateName !== 'pickMonsterNextPlayer') {
+            this.replaceMonsterChoiceByTable();
+        }
         switch (stateName) {
             case 'pickMonster':
                 dojo.addClass('kot-table', 'pickMonster');
                 this.onEnteringPickMonster(args.args);
                 break;
             case 'chooseInitialCard':
-                this.replaceMonsterChoiceByTable();
                 this.onEnteringChooseInitialCard(args.args);
                 break;
             case 'startGame':
-                this.replaceMonsterChoiceByTable();
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -1884,7 +1911,6 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
             case 'throwDice':
-                this.replaceMonsterChoiceByTable();
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringThrowDice(args.args);
                 break;
@@ -1976,8 +2002,11 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.hasSmokeCloud && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + " (<span class=\"smoke-cloud token\"></span>)", function () { return _this.useSmokeCloud(); });
             }
+            if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
+                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + (" (" + _('Cultist') + ")"), function () { return _this.useCultist(); });
+            }
         }
-        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !((_b = args.energyDrink) === null || _b === void 0 ? void 0 : _b.hasCard)) {
+        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.hasCultist && !((_b = args.energyDrink) === null || _b === void 0 ? void 0 : _b.hasCard)) {
             this.diceManager.disableDiceAction();
         }
     };
@@ -2309,6 +2338,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.isMutantEvolutionVariant = function () {
         return this.gamedatas.mutantEvolutionVariant;
     };
+    KingOfTokyo.prototype.isCthulhuExpansion = function () {
+        return this.gamedatas.cthulhuExpansion;
+    };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return false; // TODODE
     };
@@ -2348,13 +2380,16 @@ var KingOfTokyo = /** @class */ (function () {
             var eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
             // health & energy counters
             dojo.place("<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>\n            </div>", "player_board_" + player.id);
-            if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion) {
+            if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 var html = "<div class=\"counters\">";
                 if (gamedatas.kingkongExpansion) {
                     html += "\n                    <div class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon\"></div></div>\n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>";
                 }
                 if (gamedatas.cybertoothExpansion) {
                     html += "\n                    <div class=\"counter\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + " berserk-tooltip\"></div>\n                        </div>\n                    </div>";
+                }
+                if (gamedatas.cthulhuExpansion) {
+                    html += "\n                    <div class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
                 }
                 html += "</div>";
                 dojo.place(html, "player_board_" + player.id);
@@ -2363,6 +2398,12 @@ var KingOfTokyo = /** @class */ (function () {
                     tokyoTowerCounter.create("tokyo-tower-counter-" + player.id);
                     tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
                     _this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
+                }
+                if (gamedatas.cthulhuExpansion) {
+                    var cultistCounter = new ebg.counter();
+                    cultistCounter.create("cultist-counter-" + player.id);
+                    cultistCounter.setValue(player.cultists);
+                    _this.cultistCounters[playerId] = cultistCounter;
                 }
             }
             var healthCounter = new ebg.counter();
@@ -2414,6 +2455,7 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.removeClass('kot-table', 'pickMonster');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
             this.visibleCards.updateDisplay();
+            this.playerTables.forEach(function (playerTable) { return playerTable.cards.updateDisplay(); });
         }
     };
     KingOfTokyo.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType) {
@@ -2483,6 +2525,19 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.destroy('rapidHealingButton');
         }
     };
+    KingOfTokyo.prototype.addRapidCultistButtons = function (isMaxHealth) {
+        var _this = this;
+        if (!document.getElementById('rapidCultistButtons')) {
+            dojo.place("<div id=\"rapidCultistButtons\"><span>" + dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') }) + " :</span></div>", 'rapid-actions-wrapper');
+            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 })), function () { return _this.useRapidCultist(4); }, isMaxHealth);
+            this.createButton('rapidCultistButtons', 'rapidCultistEnergyButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1 })), function () { return _this.useRapidCultist(5); });
+        }
+    };
+    KingOfTokyo.prototype.removeRapidCultistButtons = function () {
+        if (document.getElementById('rapidCultistButtons')) {
+            dojo.destroy('rapidCultistButtons');
+        }
+    };
     KingOfTokyo.prototype.checkRapidHealingButtonState = function () {
         if (document.getElementById('rapidHealingButton')) {
             var playerId = this.getPlayerId();
@@ -2490,6 +2545,14 @@ var KingOfTokyo = /** @class */ (function () {
             var health = this.healthCounters[playerId].getValue();
             var maxHealth = this.gamedatas.players[playerId].maxHealth;
             dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
+        }
+    };
+    KingOfTokyo.prototype.checkHealthCultistButtonState = function () {
+        if (document.getElementById('rapidCultistHealthButton')) {
+            var playerId = this.getPlayerId();
+            var health = this.healthCounters[playerId].getValue();
+            var maxHealth = this.gamedatas.players[playerId].maxHealth;
+            dojo.toggleClass('rapidCultistHealthButton', 'disabled', health >= maxHealth);
         }
     };
     KingOfTokyo.prototype.addSkipBuyPhaseToggle = function (active) {
@@ -2701,8 +2764,17 @@ var KingOfTokyo = /** @class */ (function () {
             diceIds: diceIds.join(',')
         });
     };
+    KingOfTokyo.prototype.useCultist = function () {
+        var diceIds = this.diceManager.destroyFreeDice();
+        this.takeAction('useCultist', {
+            diceIds: diceIds.join(',')
+        });
+    };
     KingOfTokyo.prototype.useRapidHealing = function () {
         this.takeAction('useRapidHealing');
+    };
+    KingOfTokyo.prototype.useRapidCultist = function (type) {
+        this.takeAction('useRapidCultist', { type: type });
     };
     KingOfTokyo.prototype.setSkipBuyPhase = function (skipBuyPhase) {
         this.takeAction('setSkipBuyPhase', {
@@ -3026,6 +3098,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['updateStayTokyoOver', 1],
             ['kotPlayerEliminated', 1],
             ['setPlayerBerserk', 1],
+            ['cultist', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -3281,6 +3354,9 @@ var KingOfTokyo = /** @class */ (function () {
         this.getPlayerTable(notif.args.playerId).changeForm(notif.args.card);
         this.setEnergy(notif.args.playerId, notif.args.energy);
     };
+    KingOfTokyo.prototype.notif_cultist = function (notif) {
+        this.setCultists(notif.args.playerId, notif.args.cultists, notif.args.isMaxHealth);
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
         if (delay === void 0) { delay = 0; }
@@ -3292,10 +3368,12 @@ var KingOfTokyo = /** @class */ (function () {
         this.healthCounters[playerId].toValue(health);
         this.getPlayerTable(playerId).setHealth(health, delay);
         this.checkRapidHealingButtonState();
+        this.checkHealthCultistButtonState();
     };
     KingOfTokyo.prototype.setMaxHealth = function (playerId, maxHealth) {
         this.gamedatas.players[playerId].maxHealth = maxHealth;
         this.checkRapidHealingButtonState();
+        this.checkHealthCultistButtonState();
         var popinId = "discussion_bubble_autoLeaveUnder";
         if (document.getElementById(popinId)) {
             this.updateAutoLeavePopinButtons();
@@ -3327,6 +3405,17 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         this.setPlayerTokens(playerId, tokens, 'poison');
         (_a = this.getPlayerTable(playerId)) === null || _a === void 0 ? void 0 : _a.setPoisonTokens(tokens);
+    };
+    KingOfTokyo.prototype.setCultists = function (playerId, cultists, isMaxHealth) {
+        var _a;
+        this.cultistCounters[playerId].toValue(cultists);
+        (_a = this.getPlayerTable(playerId)) === null || _a === void 0 ? void 0 : _a.setCultistTokens(cultists);
+        if (cultists > 0) {
+            this.addRapidCultistButtons(isMaxHealth);
+        }
+        else {
+            this.removeRapidCultistButtons();
+        }
     };
     KingOfTokyo.prototype.checkBuyEnergyDrinkState = function (energy) {
         if (energy === void 0) { energy = null; }

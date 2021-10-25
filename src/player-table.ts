@@ -75,7 +75,12 @@ class PlayerTable {
         }
 
         if (this.game.isCybertoothExpansion()) {
-            dojo.place(`<div id="berserk-token-${player.id}" class="berserk-token berserk-tooltip" data-visible="${player.berserk ? 'true' : 'false'}"></div>`, `monster-board-wrapper-${player.id}`);
+            dojo.place(`<div id="berserk-token-${player.id}" class="berserk-token berserk-tooltip" data-visible="${player.berserk ? 'true' : 'false'}"></div>`, `monster-board-${player.id}`);
+        }
+
+        if (this.game.isCthulhuExpansion()) {
+            dojo.place(`<div id="player-table-cultist-tokens-${player.id}" class="cultist-tokens"></div>`, `monster-board-${player.id}`);
+            this.setCultistTokens(player.cultists);
         }
     }
 
@@ -258,5 +263,16 @@ class PlayerTable {
     public changeForm(card: Card) {
         this.cards.removeFromStockById(''+card.id);
         this.cards.addToStockWithId(card.type + card.side, ''+card.id);
+    }
+
+    public setCultistTokens(tokens: number) {
+        const containerId = `player-table-cultist-tokens-${this.playerId}`;
+        const container = document.getElementById(containerId);
+        while (container.childElementCount > tokens) {
+            container.removeChild(container.lastChild);
+        }
+        for (let i=container.childElementCount; i<tokens; i++) {
+            dojo.place(`<div class="cultist-token cultist-tooltip"></div>`, containerId);
+        }
     }
 }

@@ -86,6 +86,16 @@
         self::ajaxResponse();
     }
   	
+    public function useCultist() {
+        self::setAjaxMode();
+
+        $diceIds = self::getArg("diceIds", AT_numberlist, true);
+
+        $this->game->useCultist($diceIds);
+
+        self::ajaxResponse();
+    }
+  	
     public function useRapidHealing() {
         self::setAjaxMode();
 
@@ -98,6 +108,16 @@
         self::setAjaxMode();
 
         $this->game->useRapidHealingSync();
+
+        self::ajaxResponse();
+    }
+  	
+    public function useRapidCultist() {
+        self::setAjaxMode();
+
+        $type = self::getArg("type", AT_posint, true);
+
+        $this->game->useRapidCultist($type);
 
         self::ajaxResponse();
     }

@@ -41,6 +41,7 @@ interface KingOfTokyoPlayer extends Player {
     playerDead: number;
     tokyoTowerLevels?: number[];
     berserk?: boolean;
+    cultists: number;
 }
 
 interface KingOfTokyoGamedatas {
@@ -69,6 +70,7 @@ interface KingOfTokyoGamedatas {
     tokyoTowerLevels: number[];
     cybertoothExpansion: boolean;
     mutantEvolutionVariant: boolean;
+    cthulhuExpansion: boolean;
 }
 
 interface KingOfTokyoGame extends Game {
@@ -77,6 +79,7 @@ interface KingOfTokyoGame extends Game {
     isKingkongExpansion(): boolean;
     isCybertoothExpansion(): boolean;
     isMutantEvolutionVariant(): boolean;
+    isCthulhuExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
@@ -126,6 +129,7 @@ interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     rethrow3: Rethrow3;
     hasSmokeCloud: boolean;
     hasActions: boolean;
+    hasCultist: boolean;
 }
 
 interface EnteringPsychicProbeRollDieArgs extends EnteringDiceArgs {
@@ -353,4 +357,10 @@ interface NotifChangeFormArgs {
     playerId: number;
     card: Card;
     energy: number;    
+}
+
+interface NotifCultistArgs {
+    playerId: number;
+    cultists: number;
+    isMaxHealth: boolean;  
 }

@@ -6,8 +6,7 @@ class DiceManager {
     private action: DieClickAction;
     private changeDieArgs: EnteringChangeDieArgs;
 
-    constructor(private game: KingOfTokyoGame, setupDice: Dice[]) {
-        // TODO use setupDice ?
+    constructor(private game: KingOfTokyoGame) {
     }
 
     public hideLock() {

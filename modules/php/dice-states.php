@@ -155,6 +155,15 @@ trait DiceStateTrait {
                 }
             }
         }
+        
+        if ($this->isCthulhuExpansion()) {
+            for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+                // TODOCT TOCHECK check if it is possible to gain multiple cultists in same turn 1111 2222 or with added smashes
+                if ($diceCounts[$diceFace] >= 4) {
+                    $this->applyGetCultist($playerId, $diceFace);
+                }
+            }
+        }
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);

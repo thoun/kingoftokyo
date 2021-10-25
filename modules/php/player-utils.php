@@ -183,4 +183,62 @@ trait PlayerUtilTrait {
             'berserk' => $active,
         ]);
     }
+
+    function getPlayerCultists(int $playerId) {
+        return intval(self::getUniqueValueFromDB("SELECT player_cultists FROM `player` where `player_id` = $playerId"));
+    }
+    
+    function applyGetCultist(int $playerId, int $dieValue) {
+        self::DbQuery("UPDATE player SET `player_cultists` = `player_cultists` + 1 where `player_id` = $playerId");
+
+        $diceStr = $this->getDieFaceLogName($dieValue);
+
+        $message = clienttranslate('${player_name} gains 1 cultist with 4 or more ${dice}');
+        self::notifyAllPlayers('cultist', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'cultists' => $this->getPlayerCultists($playerId),
+            'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
+            'dice' => $diceStr,
+        ]);
+    }
+
+    function applyLoseCultist(int $playerId, string $message) {
+        self::DbQuery("UPDATE player SET `player_cultists` = `player_cultists` - 1 where `player_id` = $playerId");
+
+        self::notifyAllPlayers('cultist', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'cultists' => $this->getPlayerCultists($playerId),
+            'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
+        ]);
+    }
+
+    function useRapidCultist(int $type) {
+        $playerId = self::getCurrentPlayerId(); // current, not active !
+
+        if ($type != 4 && $type != 5) {
+            throw new \BgaUserException('Wrong type for cultist');
+        }
+
+        if ($this->getPlayerCultists($playerId) == 0) {
+            throw new \BgaUserException('No cultist');
+        }
+
+        if ($this->getPlayer($playerId)->eliminated) {
+            throw new \BgaUserException('You can\'t heal when you\'re dead');
+        }
+
+        if ($this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId)) {
+            throw new \BgaUserException('You can\'t heal when you\'re already at full life');
+        }
+
+        if ($type == 4) {
+            $this->applyGetHealth($playerId, 1, 0, $playerId);
+            $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1[Heart]'));
+        } else if ($type == 5) {
+            $this->applyGetEnergy($playerId, 1, 0);
+            $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1[Energy]'));
+        }
+    }
 }

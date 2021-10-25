@@ -79,6 +79,19 @@ $game_options = [
         'default' => 1,
     ],
 
+    CTHULHU_EXPANSION_OPTION => [
+        'name' => totranslate('Cthlhu event'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+            ],
+        ],
+        'default' => 1,
+    ],
+
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
         'name' => totranslate('Pick monster'),
