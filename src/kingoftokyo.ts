@@ -793,7 +793,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'rapid-actions-wrapper', 
                 'rapidHealingButton', 
-                formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 })} (2[Energy])`), 
+                dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (2[Energy])`), { card_name: this.cards.getCardName(37, 'text-only'), hearts: 1 }), 
                 () => this.useRapidHealing(), 
                 userEnergy < 2 || isMaxHealth
             );

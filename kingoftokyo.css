@@ -1132,6 +1132,7 @@ html, .mode_3d #game_play_area_background {
 }
 #rolled-dice-and-rapid-actions #rapid-actions-wrapper:not(:empty) {
   margin-right: 15px;
+  flex: 0;
 }
 #rolled-dice-and-rapid-actions #autoLeaveUnderButton {
   position: relative;
