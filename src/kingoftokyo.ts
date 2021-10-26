@@ -723,6 +723,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.tableManager.zoom;
     }
 
+    public getPreferencesManager(): PreferencesManager {
+        return this.preferencesManager;
+    }
+
     private replaceMonsterChoiceByTable() {
         if (document.getElementById('monster-pick')) {
             (this as any).fadeOutAndDestroy('monster-pick');

@@ -79,6 +79,7 @@ interface KingOfTokyoGame extends Game {
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
     getZoom(): number;
+    getPreferencesManager(): PreferencesManager;
     checkBuyEnergyDrinkState(): void;
     checkUseSmokeCloudState(): void;
     setFont(prefValue: number): void;

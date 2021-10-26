@@ -1168,7 +1168,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
         var dice = this.dice.filter(function (die) { return die.value === args.diceValue; });
-        this.game.displayScoring("dice" + (dice[1] || dice[0]).id, this.game.isHalloweenExpansion() ? '000000' : '96c93c', args.deltaPoints, 1500);
+        this.game.displayScoring("dice" + (dice[1] || dice[0]).id, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
         this.dice.filter(function (die) { return die.value === args.diceValue; }).forEach(function (die) { return _this.removeDice(die, 1000, 1500); });
     };
     DiceManager.prototype.resolveHealthDiceInTokyo = function () {
@@ -1647,6 +1647,9 @@ var PreferencesManager = /** @class */ (function () {
                 document.getElementsByTagName('html')[0].dataset.dice = '' + this.getGameVersionNumber(prefValue);
                 break;
         }
+    };
+    PreferencesManager.prototype.getDiceScoringColor = function () {
+        return this.getGameVersionNumber(this.game.prefs[205].value) == 2 ? '000000' : '96c93c';
     };
     return PreferencesManager;
 }());
@@ -2245,6 +2248,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.getZoom = function () {
         return this.tableManager.zoom;
+    };
+    KingOfTokyo.prototype.getPreferencesManager = function () {
+        return this.preferencesManager;
     };
     KingOfTokyo.prototype.replaceMonsterChoiceByTable = function () {
         if (document.getElementById('monster-pick')) {

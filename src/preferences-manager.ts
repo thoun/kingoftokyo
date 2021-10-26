@@ -55,4 +55,8 @@ class PreferencesManager {
                 break;
         }
     }
+    
+    public getDiceScoringColor(): any {
+        return this.getGameVersionNumber((this.game as any).prefs[205].value) == 2 ? '000000' : '96c93c';
+    }
 }

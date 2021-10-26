@@ -38,15 +38,6 @@ $game_options = [
             ],
         ],
         'default' => 1,
-        'startcondition' => [ // TODOHA
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => totranslate('Halloween event will be available from Friday, October 29th at 11:00'),
-                ] 
-            ],
-        ],
     ],
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
@@ -65,24 +56,6 @@ $game_options = [
             ],
         ],
         'default' => 1,
-
-        'fakeThing' => [
-            BONUS_MONSTERS_OPTION => [
-                'name' => totranslate('Bonus monsters'),
-                'values' => [
-                    1 => [
-                        'name' => totranslate('Disabled'),
-                        'description' => totranslate("Only monsters from game version")
-                    ],
-                    2 => [
-                        'name' => totranslate('Enabled'),
-                        'description' => totranslate("Include bonus/promo monsters"),
-                    ],
-                ],
-                'default' => 2,
-            ]
-        ],
-        
     ],
 
     BONUS_MONSTERS_OPTION => [
@@ -97,16 +70,7 @@ $game_options = [
                 'description' => totranslate("Include bonus/promo monsters"),
             ],
         ],
-        'default' => 1, //TODOHA,
-        'startcondition' => [ // TODOHA
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => totranslate('Halloween event will be available from Friday, October 29th at 11:00'),
-                ] 
-            ],
-        ],
+        'default' => 2,
     ],
 
     110 => [
@@ -154,31 +118,28 @@ $game_preferences = [
             2 => ['name' => totranslate('Disabled')],
         ],
         'default' => 1,
+    ],
+    
+    204 => [
+        'name' => totranslate('Background'),
+        'needReload' => false,
+        'values' => [
+            0 => ['name' => totranslate('Automatic')],
+            1 => ['name' => totranslate('Base game')],
+            2 => ['name' => totranslate('Halloween event')],
+        ],
+        'default' => 0
+    ],
 
-        
-        'fakeThing' => [
-            204 => [
-                'name' => totranslate('Background'),
-                'needReload' => false,
-                'values' => [
-                    0 => ['name' => totranslate('Automatic')],
-                    1 => ['name' => totranslate('Base game')],
-                    2 => ['name' => totranslate('Halloween event')],
-                ],
-                'default' => 0
-            ],
-
-            205 => [
-                'name' => totranslate('Dice'),
-                'needReload' => false,
-                'values' => [
-                    0 => ['name' => totranslate('Automatic')],
-                    1 => ['name' => totranslate('Base game')],
-                    2 => ['name' => totranslate('Halloween event')],
-                ],
-                'default' => 0
-            ],
-        ]
+    205 => [
+        'name' => totranslate('Dice'),
+        'needReload' => false,
+        'values' => [
+            0 => ['name' => totranslate('Automatic')],
+            1 => ['name' => totranslate('Base game')],
+            2 => ['name' => totranslate('Halloween event')],
+        ],
+        'default' => 0
     ],
 
     203 => [
