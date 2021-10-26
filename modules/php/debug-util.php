@@ -51,7 +51,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343492);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343492);
@@ -69,7 +69,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
 
-        $this->gamestate->changeActivePlayer(2343493);
+        $this->gamestate->changeActivePlayer(2343492);
 
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);

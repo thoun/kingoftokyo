@@ -68,11 +68,10 @@ trait PlayerActionTrait {
     }
 
     function setSkipBuyPhase(bool $skipBuyPhase) {
-        if (self::getCurrentPlayerId() != self::getActivePlayerId()) {
-            throw new \BgaUserException("You're not the active player");
+        if (self::getCurrentPlayerId() == self::getActivePlayerId()) {
+            self::setGameStateValue(SKIP_BUY_PHASE, $skipBuyPhase ? 1 : 0);
         }
-
-        self::setGameStateValue(SKIP_BUY_PHASE, $skipBuyPhase ? 1 : 0);
+        
         // dummy notif so player gets back hand
         self::notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
     }
