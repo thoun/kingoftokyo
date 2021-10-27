@@ -1791,7 +1791,7 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'sellCard':
                 this.setDiceSelectorVisibility(false);
-                this.onEnteringSellCard();
+                this.onEnteringSellCard(args.args);
                 break;
             case 'endTurn':
                 this.setDiceSelectorVisibility(false);
@@ -1977,10 +1977,11 @@ var KingOfTokyo = /** @class */ (function () {
             args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
-    KingOfTokyo.prototype.onEnteringSellCard = function () {
+    KingOfTokyo.prototype.onEnteringSellCard = function (args) {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
             this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -2052,6 +2053,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
             this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(0); });
+            dojo.query('.stockitem').removeClass('disabled');
         }
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the

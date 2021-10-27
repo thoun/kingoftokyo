@@ -139,6 +139,24 @@ trait CardsArgTrait {
         }
     }
 
+    function argSellCard() {
+        $playerId = self::getActivePlayerId();
+
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        
+        $disabledIds = [];
+        foreach ($cards as $card) {
+            if ($card->type > 100) {
+                $disabledIds[] = $card->id;
+            }
+        }
+    
+        return [
+            'disabledIds' => $disabledIds,
+        ];
+    }
+
+
     function argChangeMimickedCard() {
         return $this->argChooseMimickedCard(true);
     }
@@ -158,7 +176,7 @@ trait CardsArgTrait {
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             $disabledCardsOfPlayer = $canChange || !$limitToOneEnergy ? 
-                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || ($card->type >= 100 && $card->type < 200); })) :
+                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; })) :
                 $cardsOfPlayer;
             $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
             

@@ -370,6 +370,10 @@ trait CardsActionTrait {
         if ($card->location != 'hand' || $card->location_arg != $playerId) {
             throw new \BgaUserException("You can't sell cards that you don't own");
         }
+        
+        if ($card->type > 100) {
+            throw new \BgaUserException("You can only sell Keep cards");
+        }
 
         $fullCost = $this->CARD_COST[$card->type];
 
@@ -395,6 +399,11 @@ trait CardsActionTrait {
         $opportunist = $stateName === 'opportunistChooseMimicCard';
         $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
 
+        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
+        if ($card->type > 100 || $card->type == MIMIC_CARD) {
+            throw new \BgaUserException("You can only mimic Keep cards");
+        }
+
         $this->setMimickedCardId($playerId, $mimickedCardId);
 
         $this->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
@@ -404,6 +413,11 @@ trait CardsActionTrait {
         $this->checkAction('changeMimickedCard');
 
         $playerId = self::getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
+        if ($card->type > 100 || $card->type == MIMIC_CARD) {
+            throw new \BgaUserException("You can only mimic Keep cards");
+        }
 
         if ($this->getPlayerEnergy($playerId) < 1) {
             throw new \BgaUserException('Not enough energy');

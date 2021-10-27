@@ -469,6 +469,7 @@ $playerActionsGameStates = [
         "description" => clienttranslate('${actplayer} can sell a card'),
         "descriptionmyturn" => clienttranslate('${you} can sell a card'),
         "type" => "activeplayer",
+        "args" => "argSellCard",
         "action" => "stSellCard",
         "possibleactions" => [ "sellCard", "endTurn" ],
         "transitions" => [

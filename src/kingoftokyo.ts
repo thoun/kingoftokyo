@@ -177,7 +177,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'sellCard':
                 this.setDiceSelectorVisibility(false);
-                this.onEnteringSellCard();
+                this.onEnteringSellCard(args.args);
                 break;
 
             case 'endTurn':
@@ -386,9 +386,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private onEnteringSellCard() {
+    private onEnteringSellCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
 
@@ -465,6 +466,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onLeavingSellCard() {
         if ((this as any).isCurrentPlayerActive()) {
             this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(0));
+            dojo.query('.stockitem').removeClass('disabled');
         }
     }
 
