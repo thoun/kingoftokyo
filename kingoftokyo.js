@@ -1597,6 +1597,7 @@ var HeartActionSelector = /** @class */ (function () {
     };
     return HeartActionSelector;
 }());
+var HALLOWEEN_WEEK = true;
 var PreferencesManager = /** @class */ (function () {
     function PreferencesManager(game) {
         this.game = game;
@@ -1625,7 +1626,7 @@ var PreferencesManager = /** @class */ (function () {
             return versionNumber;
         }
         else {
-            return this.game.isHalloweenExpansion() ? 2 : 1;
+            return HALLOWEEN_WEEK || this.game.isHalloweenExpansion() ? 2 : 1;
         }
     };
     PreferencesManager.prototype.onPreferenceChange = function (prefId, prefValue) {
