@@ -60,6 +60,10 @@ trait UtilTrait {
         return intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
+    function isMutantEvolutionVariant() {
+        return intval(self::getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
+    }
+
     function isDarkEdition() {
         return false;
     }
@@ -144,7 +148,8 @@ trait UtilTrait {
         $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
         // energy drink
         $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS));
-        return 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls;
+        $beastForm = ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId)) ? 1 : 0;
+        return 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm;
     }
 
     function getPlayerMaxHealth(int $playerId) {

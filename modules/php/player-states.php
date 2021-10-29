@@ -200,6 +200,8 @@ trait PlayerStateTrait {
 
         if ($this->isHalloweenExpansion()) { 
             $this->gamestate->nextState('stealCostumeCard');
+        } else if ($this->isMutantEvolutionVariant()) { 
+            $this->gamestate->nextState('changeForm');
         } else {
             $this->gamestate->nextState('buyCard');
         }

@@ -44,6 +44,14 @@ trait CardsUtilTrait {
             $this->cards->createCards($cards, 'costumedeck');
             $this->cards->shuffle('costumedeck'); 
         }
+
+        if ($this->isMutantEvolutionVariant()) {            
+            $cards = [ // transformation
+                ['type' => 301, 'type_arg' => 0, 'nbr' => 6]
+            ];
+
+            $this->cards->createCards($cards, 'mutantdeck');
+        }
     }
 
     function getCardFromDb(array $dbCard) {
@@ -713,6 +721,20 @@ trait CardsUtilTrait {
             if ($playerScore >= 17) {
                 $this->applyGetPoints($playerId, MAX_POINT - $playerScore, ASTRONAUT_CARD);
             }
+        }
+    }
+
+    function getFormCard(int $playerId) {
+        $playerCards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $formCard = $this->array_find($playerCards, function($card) { return $card->type == 301; });
+        return $formCard;
+    }
+
+    function redirectAfterStealCostume() {
+        if ($this->isMutantEvolutionVariant()) { 
+            $this->gamestate->nextState('changeForm');
+        } else {
+            $this->gamestate->nextState('endStealCostume');
         }
     }
 }

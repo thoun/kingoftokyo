@@ -14,6 +14,7 @@ interface Dice {
 interface Card {
     id: number;
     type: number;
+    side: 0 | 1;
     cost: number;
     tokens: number;
     mimicType: number;
@@ -67,6 +68,7 @@ interface KingOfTokyoGamedatas {
     kingkongExpansion: boolean;
     tokyoTowerLevels: number[];
     cybertoothExpansion: boolean;
+    mutantEvolutionVariant: boolean;
 }
 
 interface KingOfTokyoGame extends Game {
@@ -74,6 +76,7 @@ interface KingOfTokyoGame extends Game {
     isHalloweenExpansion(): boolean;
     isKingkongExpansion(): boolean;
     isCybertoothExpansion(): boolean;
+    isMutantEvolutionVariant(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
@@ -156,6 +159,11 @@ interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
 interface EnteringStealCostumeCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
+}
+
+interface EnteringChangeFormArgs {
+    canChangeForm: boolean;
+    otherForm: string;
 }
 
 interface EnteringBuyCardArgs {
@@ -339,4 +347,10 @@ interface NotifChangeTokyoTowerOwnerArgs {
 interface NotifSetPlayerBerserkArgs {
     playerId: number;
     berserk: boolean;
+}
+
+interface NotifChangeFormArgs {
+    playerId: number;
+    card: Card;
+    energy: number;    
 }

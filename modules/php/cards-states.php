@@ -36,7 +36,7 @@ trait CardsStateTrait {
         }
 
         $args = $this->argBuyCard();
-        if (boolval(self::getGameStateValue(SKIP_BUY_PHASE)) || ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId)) {
+        if (boolval(self::getGameStateValue(SKIP_BUY_PHASE)) || ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId) || ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId))) {
             // skip state
             if ($args['canSell']) {
                 $this->goToSellCard(true);
@@ -120,14 +120,14 @@ trait CardsStateTrait {
 
         if ($diceCounts[6] < 3) {
             // skip state, can't steal cards (not enough smashes)
-            $this->gamestate->nextState('endStealCostume');
+            $this->redirectAfterStealCostume();
             return;
         }
         
         $args = $this->argStealCostumeCard();
         if ($this->autoSkipImpossibleActions() && !$args['canBuyFromPlayers']) {
             // skip state, can't buy cards
-            $this->gamestate->nextState('endStealCostume');
+            $this->redirectAfterStealCostume();
             return;
         }
     }

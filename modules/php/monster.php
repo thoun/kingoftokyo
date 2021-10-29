@@ -59,6 +59,17 @@ trait MonsterTrait {
         ]);
     }
 
+    function isBeastForm(int $playerId) {
+        $formCard = $this->getFormCard($playerId);
+        return $formCard != null && $formCard->side == 1;
+    }
+
+    function setBeastForm(int $playerId, bool $beast) {
+        $formCard = $this->getFormCard($playerId);
+        $side = $beast ? 1 : 0;
+        self::DbQuery("UPDATE `card` SET `card_type_arg` = $side where `card_id` = ".$formCard->id);
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -80,6 +91,44 @@ trait MonsterTrait {
         $this->gamestate->nextState('next');
     }
 
+    
+  	
+    public function changeForm() {
+        $this->checkAction('changeForm');
+
+        $playerId = self::getActivePlayerId();
+
+        if ($this->getPlayerEnergy($playerId) < 1) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        $isBeastForm = !$this->isBeastForm($playerId);
+        $this->setBeastForm($playerId, $isBeastForm);
+
+        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - 1 where `player_id` = $playerId");
+
+        $message = clienttranslate('${player_name} changes form to ${newForm}');
+        $newForm = $isBeastForm ? clienttranslate('Beast form') : clienttranslate('Biped form');
+        self::notifyAllPlayers('changeForm', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $this->getFormCard($playerId),
+            'energy' => $this->getPlayerEnergy($playerId),
+            'newForm' => $newForm,
+            'i18n' => ['newForm'],
+        ]);
+
+        $this->gamestate->nextState('buyCard');
+    }
+  	
+    public function skipChangeForm($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipChangeForm');
+        }
+
+        $this->gamestate->nextState('buyCard');
+    }
+
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
@@ -94,6 +143,20 @@ trait MonsterTrait {
     function argPickMonster() {
         return [
             'availableMonsters' => $this->getAvailableMonsters(),
+        ];
+    }
+
+    function argChangeForm() {
+        $playerId = self::getActivePlayerId();
+
+        $isBeastForm = $this->isBeastForm($playerId);
+        $otherForm = $isBeastForm ? clienttranslate('Biped form') : clienttranslate('Beast form');
+
+        $canChangeForm = $this->getPlayerEnergy($playerId) >= 1;
+
+        return [
+            'canChangeForm' => $canChangeForm,
+            'otherForm' => $otherForm,
         ];
     }
 
@@ -121,6 +184,17 @@ trait MonsterTrait {
         } else {
             $this->gamestate->nextState('nextPlayer');
         }
+    }
+
+    function stChangeForm() {
+        $playerId = self::getActivePlayerId();
+        
+        if ($this->autoSkipImpossibleActions() && $this->getPlayerEnergy($playerId) < 1) {
+            // skip state, can't change form
+            $this->gamestate->nextState('buyCard');
+            return;
+        }
+
     }
 
 }

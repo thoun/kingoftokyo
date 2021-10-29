@@ -114,7 +114,7 @@ trait CardsActionTrait {
     function endStealCostume() {
         $this->checkAction('endStealCostume');
      
-        $this->gamestate->nextState('endStealCostume');
+        $this->redirectAfterStealCostume();
     }
 
     function buyCard(int $id, int $from) {

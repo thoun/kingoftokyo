@@ -90,6 +90,7 @@ class Koth extends Table {
             HALLOWEEN_EXPANSION_OPTION => HALLOWEEN_EXPANSION_OPTION,
             KINGKONG_EXPANSION_OPTION => KINGKONG_EXPANSION_OPTION,
             CYBERTOOTH_EXPANSION_OPTION => CYBERTOOTH_EXPANSION_OPTION,
+            MUTANT_EVOLUTION_VARIANT_OPTION => MUTANT_EVOLUTION_VARIANT_OPTION,
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -205,6 +206,12 @@ class Koth extends Table {
         if ($this->isKingKongExpansion()) {
             self::DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
         }
+
+        if ($this->isMutantEvolutionVariant()) {
+            foreach (array_keys($players) as $playerId) {
+                $this->cards->pickCardForLocation('mutantdeck', 'hand', $playerId);
+            }
+        }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -287,6 +294,7 @@ class Koth extends Table {
         $result['halloweenExpansion'] = $this->isHalloweenExpansion();
         $result['kingkongExpansion'] = $isKingKongExpansion;
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
+        $result['mutantEvolutionVariant'] = $this->isMutantEvolutionVariant();
 
         return $result;
     }
@@ -323,7 +331,7 @@ class Koth extends Table {
 
         // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MONSTER_PETS_CARD);
         $cards = $this->placeNewCardsOnTable();
-        // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
+        // TODO TEMP self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
 
         self::notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,
