@@ -28,7 +28,7 @@ require_once("modules/constants.inc.php");
 $game_options = [
 
     HALLOWEEN_EXPANSION_OPTION => [
-        'name' => totranslate('Halloween event'),
+        'name' => totranslate('Halloween event (Costume cards)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
