@@ -57,7 +57,7 @@ trait DiceStateTrait {
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
         $playerInTokyo = $this->inTokyo($playerId);
-        $dice = $this->getDice($this->getDiceNumber($playerId));
+        $dice = $this->getPlayerRolledDice($playerId);
         $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
         sort($diceValues);
 
@@ -78,6 +78,7 @@ trait DiceStateTrait {
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
             $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
         }
+        $diceCounts[7] = 0;
 
         $detail = $this->addSmashesFromCards($playerId, $diceCounts, $playerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;
@@ -135,12 +136,12 @@ trait DiceStateTrait {
             }
         }
 
-        $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
-        $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
-
         if ($diceCounts[1] >= 4 && $this->isKingKongExpansion()) {
             $this->getNewTokyoTowerLevel($playerId);
         }
+
+        $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
+        $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
 
         $this->gamestate->nextState('next');
     }

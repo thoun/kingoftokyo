@@ -71,7 +71,7 @@ class DiceManager {
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
-            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${die.value}`);
+            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${this.getDieFace(die)}`);
             const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
@@ -91,7 +91,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${die.value}`);
+            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${this.getDieFace(die)}`);
             this.addDiceRollClass(die);
         });
     }
@@ -107,7 +107,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${die.value}`);
+            this.createAndPlaceDiceHtml(die, inTokyo, `locked-dice${this.getDieFace(die)}`);
             this.addDiceRollClass(die);
 
             if (isCurrentPlayerActive) {
@@ -135,7 +135,7 @@ class DiceManager {
                     rolled: roll
                 } as Dice);
             }
-            if (inTokyo) {
+            if (inTokyo && !die.type) {
                 if (die.value !== 4 && toValue === 4) {
                     dojo.place('<div class="icon forbidden"></div>', divId);
                 } else if (die.value === 4 && toValue !== 4) {
@@ -158,6 +158,7 @@ class DiceManager {
                 extra: false,
                 locked: false,
                 rolled: dieValue.rolled,
+                type: 0
             };
             this.createAndPlaceDiceHtml(die, false, `dice-selector`);
             this.addDiceRollClass(die);
@@ -165,7 +166,7 @@ class DiceManager {
     }
 
     private clearDiceHtml() {        
-        for (let i=1; i<=6; i++) {
+        for (let i=1; i<=7; i++) {
             document.getElementById(`locked-dice${i}`).innerHTML = '';
         }
         document.getElementById(`dice-selector`).innerHTML = '';
@@ -181,8 +182,39 @@ class DiceManager {
         this.dice.filter(die => die.value === 4).forEach(die => this.removeDice(die, 1000));
     }
 
+    private getDieFace(die: Dice) {
+        if (die.type === 1) {
+            if (die.value <= 2) {
+                return 5;
+            } else if (die.value <= 5) {
+                return 6;
+            } else {
+                return 7;
+            }
+        } else {
+            return die.value;
+        }
+    }
+
+    private getDiceShowingFace(face: number) {
+        const dice = this.dice.filter(die => !die.type && die.value === face && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+
+        if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
+            return dice;
+        } else {
+            const berserkDice = this.dice.filter(die => die.type === 1);
+            if (face == 5) { // energy
+                return berserkDice.filter(die => die.value >= 1 && die.value <= 2 && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+            } else if (face == 6) { // smash
+                return berserkDice.filter(die => die.value >= 3 && die.value <= 5 && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+            } else {
+                return [];
+            }
+        }
+    }
+
     private addDiceAnimation(diceValue: number, playerIds: number[], number?: number, targetToken?: TokenType) {
-        let dice = this.dice.filter(die => die.value === diceValue && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+        let dice = this.getDiceShowingFace(diceValue);
         if (number) {
             dice = dice.slice(0, number);
         }
@@ -241,9 +273,9 @@ class DiceManager {
             let dice = [];
             
             if (event.ctrlKey && event.altKey) { // move everything but die.value dice
-                dice = this.dice.filter(idie => idie.locked === die.locked && idie.value !== die.value);
+                dice = this.dice.filter(idie => idie.locked === die.locked && this.getDieFace(idie) !== this.getDieFace(die));
             } else if (event.ctrlKey) { // move everything with die.value dice
-                dice = this.dice.filter(idie => idie.locked === die.locked && idie.value === die.value);
+                dice = this.dice.filter(idie => idie.locked === die.locked && this.getDieFace(idie) === this.getDieFace(die));
             } else { // move everything but die
                 dice = this.dice.filter(idie => idie.locked === die.locked && idie.id !== die.id);
             }
@@ -257,7 +289,7 @@ class DiceManager {
         const dieDivId = `dice${die.id}`;
         const dieDiv = document.getElementById(dieDivId);
 
-        const destinationId = die.locked ? `locked-dice${die.value}` : `dice-selector`;
+        const destinationId = die.locked ? `locked-dice${this.getDieFace(die)}` : `dice-selector`;
         const tempDestinationId = `temp-destination-wrapper-${destinationId}-${die.id}`;
         const tempOriginId = `temp-origin-wrapper-${destinationId}-${die.id}`;
 
@@ -320,11 +352,12 @@ class DiceManager {
     private createAndPlaceDiceHtml(die: Dice, inTokyo: boolean, destinationId: string) {
         let html = `<div id="dice${die.id}" class="dice dice${die.value}" data-dice-id="${die.id}" data-dice-value="${die.value}">
         <ol class="die-list" data-roll="${die.value}">`;
+        const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (let dieFace=1; dieFace<=6; dieFace++) {
-            html += `<li class="die-item ${die.extra ? 'green' : 'black'} side${dieFace}" data-side="${dieFace}"></li>`;
+            html += `<li class="die-item ${colorClass} side${dieFace}" data-side="${dieFace}"></li>`;
         }
         html += `</ol>`;
-        if (die.value === 4 && inTokyo) {
+        if (!die.type && die.value === 4 && inTokyo) {
             html += `<div class="icon forbidden"></div>`;
         }
         html += `</div>`;
@@ -341,7 +374,7 @@ class DiceManager {
     }
 
     private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
-        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? `locked-dice${die.value}` : `dice-selector`);
+        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? `locked-dice${this.getDieFace(die)}` : `dice-selector`);
 
         const div = this.getDiceDiv(die);
         div.addEventListener('animationend', (e: AnimationEvent) => {
@@ -439,7 +472,7 @@ class DiceManager {
             const args = this.changeDieArgs;
 
             if (!this.dieFaceSelectors[die.id]) {
-                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die.value, args.inTokyo);
+                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die, args.inTokyo);
             }
             const dieFaceSelector = this.dieFaceSelectors[die.id];
 

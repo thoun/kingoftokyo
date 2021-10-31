@@ -25,10 +25,9 @@ trait CardsArgTrait {
 
     function argCheerleaderSupport() {
         $activePlayerId = self::getActivePlayerId();
-        $diceNumber = $this->getDiceNumber($activePlayerId);
 
         return [
-            'dice' => $this->getDice($diceNumber),
+            'dice' => $this->getPlayerRolledDice($activePlayerId),
             'inTokyo' => $this->inTokyo($activePlayerId),
         ];
     }

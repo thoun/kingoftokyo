@@ -50,7 +50,7 @@ trait DiceActionTrait {
         }
 
         $playerId = self::getActivePlayerId();
-        $die = $this->getFirst3Dice($this->getDiceNumber($playerId));
+        $die = $this->getFirst3Die($playerId);
 
         if ($die == null) {
             throw new \BgaUserException('No 3 die');
@@ -394,7 +394,7 @@ trait DiceActionTrait {
         }
 
         foreach ($healPlayer as $healPlayerId => $healNumber) {
-            $this->applyGetHealth($healPlayerId, $healNumber, 0);
+            $this->applyGetHealth($healPlayerId, $healNumber, 0, $playerId);
             
             $playerEnergy = $this->getPlayerEnergy($healPlayerId);
             $theoricalEnergyLoss = $healNumber * 2;

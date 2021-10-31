@@ -83,6 +83,7 @@ class KingOfTokyo extends Table {
             SKIP_BUY_PHASE => 24,
             CLOWN_ACTIVATED => 25,
             CHEERLEADER_SUPPORT => 26,
+            STATE_AFTER_RESOLVE => 27,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -168,6 +169,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(SKIP_BUY_PHASE, 0);
         self::setGameStateInitialValue(CLOWN_ACTIVATED, 0);
         self::setGameStateInitialValue(CHEERLEADER_SUPPORT, 0);
+        self::setGameStateInitialValue(STATE_AFTER_RESOLVE, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -229,24 +231,25 @@ class KingOfTokyo extends Table {
         _ when a player refreshes the game page (F5)
     */
     protected function getAllDatas() {
+        $isKingKongExpansion = $this->isKingKongExpansion();
+
         $result = ['players' => []];
 
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead FROM player order by player_no";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead ";
+        $sql .= "FROM player order by player_no ";
         $result['players'] = self::getCollectionFromDb($sql);
 
         // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
-        $result['dice'] = $activePlayerId ? $this->getDice($this->getDiceNumber($activePlayerId)) : [];
+        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
-
-        $isKingKongExpansion = $this->isKingKongExpansion();
 
         if ($isKingKongExpansion) {
             $result['tokyoTowerLevels'] = $this->getTokyoTowerLevels(0);

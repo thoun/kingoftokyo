@@ -8,6 +8,7 @@ interface Dice {
     extra: boolean;
     locked: boolean;
     rolled: boolean;
+    type: number;
 }
 
 interface Card {
@@ -37,7 +38,8 @@ interface KingOfTokyoPlayer extends Player {
     location: number;
     maxHealth: number;
     playerDead: number;
-    tokyoTowerLevels: number[];
+    tokyoTowerLevels?: number[];
+    berserk?: boolean;
 }
 
 interface KingOfTokyoGamedatas {
@@ -64,12 +66,14 @@ interface KingOfTokyoGamedatas {
     halloweenExpansion: boolean;
     kingkongExpansion: boolean;
     tokyoTowerLevels: number[];
+    cybertoothExpansion: boolean;
 }
 
 interface KingOfTokyoGame extends Game {
     isDarkEdition(): boolean;
     isHalloweenExpansion(): boolean;
     isKingkongExpansion(): boolean;
+    isCybertoothExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
@@ -330,4 +334,9 @@ interface NotifUpdateStayTokyoOverArgs {
 interface NotifChangeTokyoTowerOwnerArgs {
     playerId: number;
     level: number;
+}
+
+interface NotifSetPlayerBerserkArgs {
+    playerId: number;
+    berserk: boolean;
 }

@@ -24,8 +24,7 @@ trait DiceArgTrait {
 
     function argThrowDice() {
         $playerId = self::getActivePlayerId();
-        $diceNumber = $this->getDiceNumber($playerId);
-        $dice = $this->getDice($diceNumber);
+        $dice = $this->getPlayerRolledDice($playerId);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
         $maxThrowNumber = $this->getThrowNumber($playerId);
@@ -39,7 +38,7 @@ trait DiceArgTrait {
         $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
         $hasDice3 = null;
         if ($hasBackgroundDweller) {
-            $hasDice3 = $this->getFirst3Dice($diceNumber) != null;
+            $hasDice3 = $this->getFirst3Die($playerId) != null;
         }
 
         $smokeCloudsTokens = 0;
@@ -78,9 +77,8 @@ trait DiceArgTrait {
         $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
         $canRetrow3 = $hasBackgroundDweller && intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
 
-        $diceNumber = $this->getDiceNumber($playerId);
         $diceArg = [
-            'dice' => $this->getDice($diceNumber),
+            'dice' => $this->getPlayerRolledDice($playerId),
             'inTokyo' => $this->inTokyo($playerId),
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
@@ -122,9 +120,8 @@ trait DiceArgTrait {
             $hasDice3 = $intervention->lastRolledDie != null && $intervention->lastRolledDie->value == 3;
         }
 
-        $diceNumber = $this->getDiceNumber($activePlayerId);
         return [
-            'dice' => $this->getDice($diceNumber),
+            'dice' => $this->getPlayerRolledDice($activePlayerId),
             'inTokyo' => $this->inTokyo($activePlayerId),
             'canRoll' => $canRoll,
             'rethrow3' => [
@@ -140,10 +137,8 @@ trait DiceArgTrait {
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
         $diceCount = $diceCounts[4];
 
-        if ($diceCount > 0) {  
-
-            $diceNumber = $this->getDiceNumber($playerId);
-            $dice = $this->getDice($diceNumber);
+        if ($diceCount > 0) {
+            $dice = $this->getPlayerRolledDice($playerId);
     
             $selectHeartDiceUseArg = $this->getSelectHeartDiceUse($playerId);  
 

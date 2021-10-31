@@ -56,6 +56,10 @@ trait UtilTrait {
         return intval(self::getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
     }
 
+    function isCybertoothExpansion() {
+        return intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+    }
+
     function isDarkEdition() {
         return false;
     }
@@ -438,18 +442,18 @@ trait UtilTrait {
         }
     }
 
-    function applyGetHealth(int $playerId, int $health, int $cardType) {
+    function applyGetHealth(int $playerId, int $health, int $cardType, int $healerId) {
 
-        $this->applyGetHealthIgnoreCards($playerId, $health, $cardType);
+        $this->applyGetHealthIgnoreCards($playerId, $health, $cardType, $healerId);
         
         // regeneration
         $countRegeneration = $this->countCardOfType($playerId, REGENERATION_CARD);
         if ($countRegeneration > 0) {
-            $this->applyGetHealthIgnoreCards($playerId, $countRegeneration, REGENERATION_CARD);
+            $this->applyGetHealthIgnoreCards($playerId, $countRegeneration, REGENERATION_CARD, $playerId);
         }
     }
 
-    function applyGetHealthIgnoreCards(int $playerId, int $health, int $cardType) {
+    function applyGetHealthIgnoreCards(int $playerId, int $health, int $cardType, int $healerId) {
         $maxHealth = $this->getPlayerMaxHealth($playerId);
 
         $actualHealth = $this->getPlayerHealth($playerId);
