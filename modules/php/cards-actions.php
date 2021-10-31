@@ -37,20 +37,23 @@ trait CardsActionTrait {
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
     }
+
+    function applyDontSupport(int $playerId) {
+        self::notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to not support ${player_name2}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
+        ]);
+        
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
+    }
   	
     public function dontSupport() {
         $this->checkAction('dontSupport');
 
         $playerId = self::getCurrentPlayerId();
 
-        self::notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to not support ${player_name2}'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
-        ]);
-
-        $playerId = self::getCurrentPlayerId();
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
+        $this->applyDontSupport($playerId);
     }
     
     function stealCostumeCard(int $id) {

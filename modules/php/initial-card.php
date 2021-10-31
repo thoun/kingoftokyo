@@ -49,7 +49,7 @@ trait InitialCardTrait {
     }
 
     private function everyPlayerHasCostumeCard() {
-        $playersIds = $this->getPlayersIds();
+        $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             if (!$this->array_some($cardsOfPlayer, function ($card) { return $card->type > 200 && $card->type < 300; })) {

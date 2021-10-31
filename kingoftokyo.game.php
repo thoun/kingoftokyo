@@ -375,6 +375,9 @@ class KingOfTokyo extends Table {
                     $this->setMonster($active_player, $this->getAvailableMonsters()[0]);
                     $this->gamestate->nextState('next');
                     return;
+                case 'chooseInitialCard':
+                    $this->gamestate->nextState('next');
+                    return;
                 default:
                     $this->jumpToState(ST_NEXT_PLAYER);
                     //$this->gamestate->nextState( "zombiePass" );
@@ -386,6 +389,9 @@ class KingOfTokyo extends Table {
             switch ($statename) {
                 case 'psychicProbeRollDie':
                     $this->applyPsychicProbeSkip($active_player);
+                    return;
+                case 'cheerleaderSupport':
+                    $this->applyDontSupport($active_player);
                     return;
                 case 'cancelDamage':
                     $this->applySkipWings($active_player);
