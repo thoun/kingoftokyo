@@ -47,9 +47,26 @@
     
 */
 
+$monstersNames = [
+    1 => "Space Penguin", 
+    2 => "Alienoid", 
+    3 => "Cyber Kitty", 
+    4 => "The King", 
+    5 => "Gigazaur", 
+    6 => "Meka Dragon", 
+    7 => "Boogie Woogie", 
+    8 => "Pumpkin Jack", 
+];
+
+$commonStats = [
+    "monster" => ["id" => 100, "type" => "int", "name" => "Monster", "display" => "limited"],
+    "monsterAutomatic" => ["id" => 101, "type" => "int", "name" => totranslate("Monster (automatic)")],
+    "monsterPick" => ["id" => 102, "type" => "int", "name" => totranslate("Monster (chosen)")],
+];
+
 $stats_type = [
     // Statistics global to table
-    "table" => [
+    "table" => $commonStats + [
         "turnsNumber" => ["id" => 10, "type" => "int", "name" => totranslate("Number of turns")],
         "pointsWin" => ["id" => 11, "type" => "bool", "name" => totranslate("Won by points")],
         "eliminationWin" => ["id" => 12, "type" => "bool", "name" => totranslate("Won by elimination")],
@@ -57,7 +74,7 @@ $stats_type = [
     ],
     
     // Statistics existing for each player
-    "player" => [
+    "player" => $commonStats + [
         "turnsNumber" => ["id" => 10, "type" => "int", "name" => totranslate("Number of turns")],
         "pointsWin" => ["id" => 11, "type" => "bool", "name" => totranslate("Won by points")],
         "eliminationWin" => ["id" => 12, "type" => "bool", "name" => totranslate("Won by elimination")],
@@ -80,4 +97,10 @@ $stats_type = [
         "pointsWonWith2Dice" => ["id" => 44, "type" => "int", "name" => totranslate("Points won with 2 dice")],
         "pointsWonWith3Dice" => ["id" => 45, "type" => "int", "name" => totranslate("Points won with 3 dice")],
     ],
+
+    "value_labels" => [
+		100 => $monstersNames,
+		101 => $monstersNames,
+		102 => $monstersNames,
+    ]
 ];

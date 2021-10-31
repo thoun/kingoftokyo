@@ -47,6 +47,11 @@ trait MonsterTrait {
         ]);
     }
 
+    function saveMonsterStat(int $playerId, int $monsterId, bool $automatic) {
+        self::setStat($monsterId, 'monster', $playerId);
+        self::setStat($monsterId, $automatic ? 'monsterAutomatic': 'monsterPick', $playerId);
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -56,7 +61,7 @@ trait MonsterTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function pickMonster(int $monsterId, $skipActionCheck = false) {
+    function pickMonster(int $monsterId, $skipActionCheck = false, $automatic = false) {
         if (!$skipActionCheck) {
             $this->checkAction('pickMonster');
         }        
@@ -64,6 +69,7 @@ trait MonsterTrait {
         $playerId = self::getActivePlayerId();
 
         $this->setMonster($playerId, $monsterId);
+        $this->saveMonsterStat($playerId, $monsterId, $automatic);
 
         $this->gamestate->nextState('next');
     }
@@ -95,7 +101,7 @@ trait MonsterTrait {
         } else {
             $availableMonsters = $this->getAvailableMonsters();
             if (count($availableMonsters) == 1) {
-                $this->pickMonster($availableMonsters[0], true);
+                $this->pickMonster($availableMonsters[0], true, true);
             }
         }
     }

@@ -127,7 +127,7 @@ class KingOfTokyo extends Table {
 
         $monsters = $this->getGameMonsters();
 
-        foreach( $players as $player_id => $player ) {
+        foreach ($players as $playerId => $player) {
             $playerMonster = 0;
 
             if (!$this->canPickMonster()) {
@@ -135,14 +135,14 @@ class KingOfTokyo extends Table {
                 while (in_array($playerMonster, $affectedMonsters)) {
                     $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
                 }
-                $affectedMonsters[] = $playerMonster;
+                $affectedMonsters[$playerId] = $playerMonster;
             }
 
             $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
+            $values[] = "('".$playerId."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
         }
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
+        $sql .= implode($values, ',');
+        self::DbQuery($sql);
         self::reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
         self::reloadPlayersBasicInfos();
 
@@ -195,6 +195,12 @@ class KingOfTokyo extends Table {
         self::initStat('player', 'wonEnergyCubes', 0);
         self::initStat('player', 'endScore', 0);
         self::initStat('player', 'endHealth', 0);
+
+        if (!$this->canPickMonster()) {
+            foreach($affectedMonsters as $playerId => $monsterId) {
+                $this->saveMonsterStat($playerId, $monsterId, true);
+            }
+        }
 
         // setup the initial game situation here
         $this->initCards();
