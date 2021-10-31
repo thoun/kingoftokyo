@@ -601,6 +601,19 @@ var Cards = /** @class */ (function () {
     };
     return Cards;
 }());
+var TokyoTower = /** @class */ (function () {
+    function TokyoTower(divId, levels) {
+        this.divId = divId + "-tokyo-tower";
+        dojo.place("<div id=\"" + this.divId + "\" class=\"tokyo-tower tokyo-tower-tooltip\">\n            <div class=\"level level3\"></div>\n            <div class=\"level level2\"></div>\n            <div class=\"level level1\"></div>\n        </div>", divId);
+        this.setLevels(levels);
+    }
+    TokyoTower.prototype.setLevels = function (levels) {
+        for (var i = 1; i <= 3; i++) {
+            document.getElementById(this.divId).getElementsByClassName("level" + i)[0].dataset.owned = levels.includes(i) ? 'true' : 'false';
+        }
+    };
+    return TokyoTower;
+}());
 var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
 ;
 var log = isDebug ? console.log.bind(window.console) : function () { };
@@ -635,6 +648,10 @@ var PlayerTable = /** @class */ (function () {
             this.setEnergy(Number(player.energy));
             this.setPoisonTokens(Number(player.poisonTokens));
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+        }
+        if (this.game.isKingkongExpansion()) {
+            dojo.place("<div id=\"tokyo-tower-" + player.id + "\" class=\"tokyo-tower-wrapper\"></div>", "player-table-" + player.id);
+            this.tokyoTower = new TokyoTower("tokyo-tower-" + player.id, player.tokyoTowerLevels);
         }
     }
     PlayerTable.prototype.initPlacement = function () {
@@ -773,6 +790,9 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setShrinkRayTokens = function (tokens) {
         this.setTokens('shrink-ray', tokens);
+    };
+    PlayerTable.prototype.getTokyoTower = function () {
+        return this.tokyoTower;
     };
     return PlayerTable;
 }());
@@ -1660,7 +1680,9 @@ var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
         this.energyCounters = [];
+        this.tokyoTowerCounters = [];
         this.playerTables = [];
+        this.towerLevelsOwners = [];
     }
     /*
         setup:
@@ -1678,7 +1700,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1, 2, 3, 4, 5, 6, 7, 8].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
+        [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
             _this.dontPreloadImage("monster-board-" + i + ".png");
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });
@@ -1693,6 +1715,10 @@ var KingOfTokyo = /** @class */ (function () {
         log('gamedatas', gamedatas);
         if (gamedatas.halloweenExpansion) {
             document.body.classList.add('halloween');
+        }
+        if (gamedatas.kingkongExpansion) {
+            gamedatas.tokyoTowerLevels.forEach(function (level) { return _this.towerLevelsOwners[level] = 0; });
+            players.forEach(function (player) { return player.tokyoTowerLevels.forEach(function (level) { return _this.towerLevelsOwners[level] = Number(player.id); }); });
         }
         if (gamedatas.twoPlayersVariant) {
             this.addTwoPlayerVariantNotice(gamedatas);
@@ -1720,23 +1746,17 @@ var KingOfTokyo = /** @class */ (function () {
         this.preferencesManager = new PreferencesManager(this);
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
-        /*document.getElementById('test').addEventListener('click', () => this.notif_resolveSmashDice({
-            args: {
-                number: 3,
-                smashedPlayersIds: [2343492, 2343493]
-            }
-        } as any));
-        document.getElementById('test1').addEventListener('click', () => this.notif_playerEntersTokyo({
-            args: {
-                playerId: 2343492,
-                location: 1
-            }
-        } as any));
-        document.getElementById('test2').addEventListener('click', () => this.notif_leaveTokyo({
-            args: {
-                playerId: 2343492,
-            }
-        } as any));*/
+        if (gamedatas.kingkongExpansion) {
+            dojo.place("<div id=\"tokyo-tower-0\" class=\"tokyo-tower-wrapper\"></div>", 'board');
+            this.tableTokyoTower = new TokyoTower('tokyo-tower-0', gamedatas.tokyoTowerLevels);
+            /* TODOKK const tooltip = formatTextIcons(`
+            <h3>${_("Tokyo Tower")}</h3>
+            <p>${_("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1]")}</p>
+            <p>${_("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).")}</p>
+            <p><strong>${_("Claiming the top level automatically wins the game.")}</strong></p>
+            `);
+            (this as any).addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);*/
+        }
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
@@ -2175,6 +2195,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.isHalloweenExpansion = function () {
         return this.gamedatas.halloweenExpansion;
     };
+    KingOfTokyo.prototype.isKingkongExpansion = function () {
+        return this.gamedatas.kingkongExpansion;
+    };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return false; // TODODE
     };
@@ -2213,7 +2236,14 @@ var KingOfTokyo = /** @class */ (function () {
             var playerId = Number(player.id);
             var eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
             // health & energy counters
-            dojo.place("<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"health-counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"energy-counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>\n            </div>", "player_board_" + player.id);
+            dojo.place("<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>\n            </div>", "player_board_" + player.id);
+            if (gamedatas.kingkongExpansion) {
+                dojo.place("<div class=\"counters\">\n                    <div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon \"></div></div> \n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>\n                </div>", "player_board_" + player.id);
+                var tokyoTowerCounter = new ebg.counter();
+                tokyoTowerCounter.create("tokyo-tower-counter-" + player.id);
+                tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
+                _this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
+            }
             var healthCounter = new ebg.counter();
             healthCounter.create("health-counter-" + player.id);
             healthCounter.setValue(player.health);
@@ -2846,6 +2876,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['changeDie', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
             ['resolvePlayerDice', 500],
+            ['changeTokyoTowerOwner', 500],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -3079,6 +3110,32 @@ var KingOfTokyo = /** @class */ (function () {
         if (document.getElementById(popinId + "_setStay" + notif.args.over)) {
             dojo.removeClass(popinId + "_setStay" + notif.args.over, 'bgabutton_gray');
             dojo.addClass(popinId + "_setStay" + notif.args.over, 'bgabutton_blue');
+        }
+    };
+    KingOfTokyo.prototype.getTokyoTowerLevels = function (playerId) {
+        var levels = [];
+        for (var property in this.towerLevelsOwners) {
+            if (this.towerLevelsOwners[property] == playerId) {
+                levels.push(Number(property));
+            }
+        }
+        return levels;
+    };
+    KingOfTokyo.prototype.notif_changeTokyoTowerOwner = function (notif) {
+        var playerId = notif.args.playerId;
+        var previousOwner = this.towerLevelsOwners[notif.args.level];
+        this.towerLevelsOwners[notif.args.level] = playerId;
+        var previousOwnerTower = previousOwner == 0 ? this.tableTokyoTower : this.getPlayerTable(previousOwner).getTokyoTower();
+        var newLevelTower = playerId == 0 ? this.tableTokyoTower : this.getPlayerTable(playerId).getTokyoTower();
+        var previousOwnerTowerLevels = this.getTokyoTowerLevels(previousOwner);
+        var newLevelTowerLevels = this.getTokyoTowerLevels(playerId);
+        previousOwnerTower.setLevels(previousOwnerTowerLevels);
+        newLevelTower.setLevels(newLevelTowerLevels);
+        if (previousOwner != 0) {
+            this.tokyoTowerCounters[previousOwner].toValue(previousOwnerTowerLevels.length);
+        }
+        if (playerId != 0) {
+            this.tokyoTowerCounters[playerId].toValue(newLevelTowerLevels.length);
         }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {

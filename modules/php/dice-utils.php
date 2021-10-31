@@ -520,4 +520,26 @@ trait DiceUtilTrait {
         return $unusedCards;
     }
 
+    function getNewTokyoTowerLevel(int $playerId) {
+        $levels = $this->getTokyoTowerLevels($playerId);
+        $newLevel = 1;
+        for ($i=1; $i<3;$i++) {
+            if (in_array($newLevel, $levels)) {
+                $newLevel++;
+            }
+        }
+
+        $this->changeTokyoTowerOwner($playerId, $newLevel);
+
+        if ($newLevel === 3) {
+            $playerScore = $this->getPlayerScore($playerId);
+            $this->applyGetPoints($playerId, MAX_POINT - $playerScore, 0);
+            
+            self::notifyAllPlayers("fullTokyoTower", /*client TODOKK translate(*/'${player_name} claims Tokyo Tower top level and wins the game'/*)*/, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+            ]);
+        }
+    }
+
 }

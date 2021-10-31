@@ -35,3 +35,5 @@ Make sure ftp-sync.json and node_modules are in .gitignore
 # TODO
 add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
+
+TODOKK add stats

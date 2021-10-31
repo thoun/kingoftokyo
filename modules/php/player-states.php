@@ -55,6 +55,33 @@ trait PlayerStateTrait {
             }
         }
 
+        if ($this->isKingKongExpansion()) {
+            $towerLevels = $this->getTokyoTowerLevels($playerId);
+
+            foreach ($towerLevels as $level) {
+                if ($level == 1 || $level == 2) {
+                    $this->applyGetHealth($playerId, 1, -1);
+
+                    self::notifyAllPlayers('health', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'/*)*/, [
+                        'playerId' => $playerId,
+                        'player_name' => $this->getPlayerName($playerId),
+                        'health' => $this->getPlayerHealth($playerId),
+                        'level' => $level,
+                    ]);
+                }
+
+                if ($level == 2) {
+                    $this->applyGetEnergy($playerId, 1, -1);
+    
+                    self::notifyAllPlayers('energy', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'/*)*/, [
+                        'playerId' => $playerId,
+                        'player_name' => $this->getPlayerName($playerId),
+                        'level' => $level,
+                    ]);
+                }
+            }
+        }
+
         // apply in tokyo at start
         if ($this->inTokyo($playerId)) {
             // start turn in tokyo

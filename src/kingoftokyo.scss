@@ -8,6 +8,7 @@ $tokyoBlack: #211D1F;
 @import 'cards';
 @import 'table';
 @import 'halloween';
+@import 'tokyo-tower';
 
 @font-face {
     font-family: 'goodgirl';
@@ -98,7 +99,7 @@ html, .mode_3d #game_play_area_background {
   background-repeat: no-repeat;
   background-size: contain;
 
-  @for $i from 1 through 8 {
+  @for $i from 1 through 9 {
       &.monster#{$i} {
           background-image: url('img/monster-figure-#{$i}.png');
       }

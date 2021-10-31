@@ -11,6 +11,7 @@ class PlayerTable {
     public playerNo: number;
     private monster: number;
     private initialLocation: number;
+    private tokyoTower: TokyoTower;
 
     public cards: Stock;
 
@@ -66,6 +67,11 @@ class PlayerTable {
             this.setEnergy(Number(player.energy));
             this.setPoisonTokens(Number(player.poisonTokens));
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
+        }
+
+        if (this.game.isKingkongExpansion()) {
+            dojo.place(`<div id="tokyo-tower-${player.id}" class="tokyo-tower-wrapper"></div>`, `player-table-${player.id}`);
+            this.tokyoTower = new TokyoTower(`tokyo-tower-${player.id}`, player.tokyoTowerLevels);
         }
     }
 
@@ -235,5 +241,9 @@ class PlayerTable {
 
     public setShrinkRayTokens(tokens: number) {
         this.setTokens('shrink-ray', tokens);
+    }
+    
+    public getTokyoTower() {
+        return this.tokyoTower;
     }
 }

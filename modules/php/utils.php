@@ -52,6 +52,10 @@ trait UtilTrait {
         return intval(self::getGameStateValue(HALLOWEEN_EXPANSION_OPTION)) === 2;
     }
 
+    function isKingKongExpansion() {
+        return intval(self::getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
+    }
+
     function isDarkEdition() {
         return false;
     }
@@ -338,6 +342,14 @@ trait UtilTrait {
     }
 
     function eliminateAPlayer(object $player, int $currentTurnPlayerId) {
+        if ($this->isKingKongExpansion()) {
+            // Tokyo Tower levels go back to the table
+            $levels = $this->getTokyoTowerLevels($player->id);
+            foreach($levels as $level) {
+                $this->changeTokyoTowerOwner(0, $level);
+            }
+        }
+
         $state = $this->gamestate->state();
 
         // if player is killing himself
@@ -759,5 +771,21 @@ trait UtilTrait {
         }
 
         return $cards;
+    }
+
+    function getTokyoTowerLevels(int $playerId) {
+        $dbResults = self::getCollectionFromDB("SELECT `level` FROM `tokyo_tower` WHERE `owner` = $playerId order by `level`");
+        return array_map(function($dbResult) { return intval($dbResult['level']); }, array_values($dbResults));
+    }
+
+    function changeTokyoTowerOwner(int $playerId, int $level) {
+        self::DbQuery("UPDATE `tokyo_tower` SET  `owner` = $playerId where `level` = $level");
+
+        $message = $playerId == 0 ? '' : /* client TODOKK translate(*/'${player_name} claims Tokyo Tower level ${level}'/*)*/;
+        self::notifyAllPlayers("changeTokyoTowerOwner", $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'level' => $level,
+        ]);
     }
 }

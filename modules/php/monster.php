@@ -11,11 +11,19 @@ trait MonsterTrait {
 
     private function getGameMonsters() {
         global $g_config;
-        if (intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2 || $this->isHalloweenExpansion()) {
-            return [1,2,3,4,5,6,7,8];
-        } else {
-            return [1,2,3,4,5,6];
+        $bonusMonsters = intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
+
+        $monsters = [1,2,3,4,5,6];
+
+        if ($bonusMonsters || $this->isHalloweenExpansion()) {
+            $monsters = array_merge($monsters, [7,8]);
         }
+
+        /* TODOKK if ($bonusMonsters || $this->isKingKongExpansion()) {
+            $monsters = array_merge($monsters, [9]);
+        }*/
+        
+        return $monsters;
     }
 
     function canPickMonster() {
