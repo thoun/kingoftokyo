@@ -185,6 +185,10 @@ class KingOfTokyo extends Table {
         self::initStat('player', 'tokyoLeaves', 0);
         self::initStat('player', 'keepBoughtCards', 0);
         self::initStat('player', 'discardBoughtCards', 0);
+        if ($this->isHalloweenExpansion()) {
+            self::initStat('player', 'costumeBoughtCards', 0);
+            self::initStat('player', 'costumeStolenCards', 0);
+        }
         self::initStat('player', 'damageDealt', 0);
         self::initStat('player', 'damage', 0);
         self::initStat('player', 'heal', 0);

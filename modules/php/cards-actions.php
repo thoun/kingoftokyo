@@ -100,7 +100,7 @@ trait CardsActionTrait {
         // astronaut
         $this->applyAstronaut($playerId);
 
-        // TODO self::incStat(1, 'costumeStolenCards', $playerId);
+        self::incStat(1, 'costumeStolenCards', $playerId);
      
         // no damage to handle on costume cards
 
@@ -222,7 +222,7 @@ trait CardsActionTrait {
         } else if ($card->type < 200) {
             self::incStat(1, 'discardBoughtCards', $playerId);
         } else if ($card->type < 300) {
-            // TODO self::incStat(1, 'costumeBoughtCards', $playerId);
+            self::incStat(1, 'costumeBoughtCards', $playerId);
         }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);

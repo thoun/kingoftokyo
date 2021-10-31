@@ -67,6 +67,8 @@ $stats_type = [
         "tokyoLeaves" => ["id" => 33, "type" => "int", "name" => totranslate("Tokyo leaves")],
         "keepBoughtCards" => ["id" => 34, "type" => "int", "name" => totranslate("Bought cards (Keep)")],
         "discardBoughtCards" => ["id" => 35, "type" => "int", "name" => totranslate("Bought cards (Discard)")],
+        "costumeBoughtCards" => ["id" => 46, "type" => "int", "name" => totranslate("Bought cards (Costume)")],
+        "costumeStolenCards" => ["id" => 47, "type" => "int", "name" => totranslate("Stolen cards (Costume)")],
         "damageDealt" => ["id" => 36, "type" => "int", "name" => totranslate("Damage dealt")],
         "damage" => ["id" => 37, "type" => "int", "name" => totranslate("Life loss")],
         "heal" => ["id" => 38, "type" => "int", "name" => totranslate("Heal")],
