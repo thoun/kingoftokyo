@@ -17,6 +17,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private energyCounters: Counter[] = [];
     private tokyoTowerCounters: Counter[] = [];
     private diceManager: DiceManager;
+    private animationManager: AnimationManager;
     private visibleCards: Stock;
     private pickCard: Stock;
     private playerTables: PlayerTable[] = [];
@@ -83,7 +84,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
     
         this.createPlayerPanels(gamedatas); 
-        this.diceManager = new DiceManager(this, gamedatas.dice);  
+        this.diceManager = new DiceManager(this);
+        this.animationManager = new AnimationManager(this, this.diceManager);
         this.createVisibleCards(gamedatas.visibleCards, gamedatas.topDeckCardBackType);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -1506,6 +1508,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
         this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);
+        this.animationManager.resolveNumberDice(notif.args);
         this.diceManager.resolveNumberDice(notif.args);
     }
 

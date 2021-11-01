@@ -6,8 +6,7 @@ class DiceManager {
     private action: DieClickAction;
     private changeDieArgs: EnteringChangeDieArgs;
 
-    constructor(private game: KingOfTokyoGame, setupDice: Dice[]) {
-        // TODO use setupDice ?
+    constructor(private game: KingOfTokyoGame) {
     }
 
     public hideLock() {
@@ -15,6 +14,14 @@ class DiceManager {
     }
     public showLock() {
         dojo.removeClass('locked-dice', 'hide-lock');
+    }
+
+    public getDice() {
+        return this.dice;
+    }
+
+    public getBerserkDice() {
+        return this.dice.filter(die => die.type === 1);
     }
 
     public getLockedDice() {
@@ -173,8 +180,6 @@ class DiceManager {
     }
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {
-        const dice = this.dice.filter(die => die.value === args.diceValue);
-        (this.game as any).displayScoring( `dice${(dice[1] || dice[0]).id}`, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
         this.dice.filter(die => die.value === args.diceValue).forEach(die => this.removeDice(die, 1000, 1500));
     }
 

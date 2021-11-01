@@ -20,6 +20,7 @@
         "src/table-manager.ts",
         "src/die-face-selector.ts",
         "src/dice-manager.ts",
+        "src/animation-manager.ts",
         "src/heart-action-selector.ts",
         "src/preferences-manager.ts",
         "src/kingoftokyo.ts",
