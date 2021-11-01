@@ -323,6 +323,19 @@ $playerActionsGameStates = [
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
             "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             //"endGame" => ST_END_GAME,
+            // TODOCY remove all transitions top and let this one :
+            "next" => ST_RESOLVE_SKULL_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_SKULL_DICE => [
+        "name" => "resolveSkullDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveSkullDice",
+        "transitions" => [
+            "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
+            "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
         ],
     ],
 

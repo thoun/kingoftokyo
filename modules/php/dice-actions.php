@@ -263,8 +263,17 @@ trait DiceActionTrait {
                     $this->removeCard($playerId, $card, false, true);
 
                     if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe
-                        // in case we had a mimic player to play after current player, we clear array because he can't anymore 
-                        $intervention->remainingPlayersId = []; // intervention will be saved on setInterventionNextState
+
+                        $mimicCard = $this->array_find($intervention->cards, function ($card) { return $card->type == MIMIC_CARD; });
+                        $this->setUsedCard($mimicCard->id);
+
+                        if ($mimicCard != null && count(array_filter($intervention->cards, function ($card) use ($mimicCard) { return $card->location_arg == $mimicCard->location_arg; })) == 1) {
+                            // in case we had a mimic player to play after current player, we remove him from array because he can't anymore 
+                            // (if he only have mimic as card for this state)
+                            $intervention->remainingPlayersId = array_values(array_filter($intervention->remainingPlayersId, function($remainingId) use ($mimicCard) {
+                                return $remainingId != $mimicCard->location_arg;
+                            }));
+                        }
                     }
                 }                
             }
