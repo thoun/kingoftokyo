@@ -89,6 +89,11 @@ class KingOfTokyo extends Table {
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
             HALLOWEEN_EXPANSION_OPTION => HALLOWEEN_EXPANSION_OPTION,
             KINGKONG_EXPANSION_OPTION => KINGKONG_EXPANSION_OPTION,
+            CYBERTOOTH_EXPANSION_OPTION => CYBERTOOTH_EXPANSION_OPTION,
+            MUTANT_EVOLUTION_VARIANT_OPTION => MUTANT_EVOLUTION_VARIANT_OPTION,
+            CTHULHU_EXPANSION_OPTION => CTHULHU_EXPANSION_OPTION,
+            ANUBIS_EXPANSION_OPTION => ANUBIS_EXPANSION_OPTION,
+
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
@@ -151,6 +156,13 @@ class KingOfTokyo extends Table {
         // Create dice
         self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
         self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true), (0, true)");
+
+        if ($this->isCybertoothExpansion()) {
+            self::DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 1)");
+        }
+        if ($this->isAnubisExpansion()) {
+           self::DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 2)");
+        }
 
         /************ Start the game initialization *****/
 

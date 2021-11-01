@@ -38,8 +38,22 @@ trait DiceUtilTrait {
         return null;
     }
 
+    function getDiceByType(int $type) {
+        $sql = "SELECT * FROM dice WHERE `type` = $type";
+        $dbDices = self::getCollectionFromDB($sql);
+        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
+    }
+
     private function getPlayerRolledDice(int $playerId) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
+
+        if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
+            $dice = array_merge($dice, $this->getDiceByType(1));
+        }
+
+        if ($this->isAnubisExpansion()) {
+            $dice = array_merge($dice, $this->getDiceByType(2));
+        }
 
         return $dice;
     }
@@ -57,7 +71,8 @@ trait DiceUtilTrait {
             if ($dice->locked) {
                 $lockedDice[] = $dice->value;
             } else {
-                $dice->value = bga_rand(1, 6);
+                $facesNumber = $dice->type == 2 ? 1 : 6;
+                $dice->value = bga_rand(1, $facesNumber);
                 self::DbQuery( "UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id );
                 $rolledDiceStr .= $this->getDieFaceLogName($dice->value);
             }
