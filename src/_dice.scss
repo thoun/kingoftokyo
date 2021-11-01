@@ -74,8 +74,8 @@ $size: 0.25rem;
 .dice {
     display: inline-block;
     position: relative;
-    width: 33px;
-    height: 33px;
+    width: 40px;
+    height: 40px;
     margin: 3px;
     border-radius: 20%;
 
@@ -139,70 +139,6 @@ $size: 0.25rem;
             background-position: (($i - 1) * 20%) 100%;
         }
     }
-  }
-
-  [data-side="1"] .dot:nth-of-type(1) {
-    grid-area: five;
-  }
-  [data-side="2"] .dot:nth-of-type(1) {
-    grid-area: one;
-  }
-  [data-side="2"] .dot:nth-of-type(2) {
-    grid-area: nine;
-  }
-  [data-side="3"] .dot:nth-of-type(1) {
-    grid-area: one;
-  }
-  [data-side="3"] .dot:nth-of-type(2) {
-    grid-area: five;
-  }
-  [data-side="3"] .dot:nth-of-type(3) {
-    grid-area: nine;
-  }
-  [data-side="4"] .dot:nth-of-type(1) {
-    grid-area: one;
-  }
-  [data-side="4"] .dot:nth-of-type(2) {
-    grid-area: three;
-  }
-  [data-side="4"] .dot:nth-of-type(3) {
-    grid-area: seven;
-  }
-  [data-side="4"] .dot:nth-of-type(4) {
-    grid-area: nine;
-  }
-  [data-side="5"] .dot:nth-of-type(1) {
-    grid-area: one;
-  }
-  [data-side="5"] .dot:nth-of-type(2) {
-    grid-area: three;
-  }
-  [data-side="5"] .dot:nth-of-type(3) {
-    grid-area: five;
-  }
-  [data-side="5"] .dot:nth-of-type(4) {
-    grid-area: seven;
-  }
-  [data-side="5"] .dot:nth-of-type(5) {
-    grid-area: nine;
-  }
-  [data-side="6"] .dot:nth-of-type(1) {
-    grid-area: one;
-  }
-  [data-side="6"] .dot:nth-of-type(2) {
-    grid-area: three;
-  }
-  [data-side="6"] .dot:nth-of-type(3) {
-    grid-area: four;
-  }
-  [data-side="6"] .dot:nth-of-type(4) {
-    grid-area: six;
-  }
-  [data-side="6"] .dot:nth-of-type(5) {
-    grid-area: seven;
-  }
-  [data-side="6"] .dot:nth-of-type(6) {
-    grid-area: nine;
   }
 
   [data-roll-type="even"] {
@@ -317,8 +253,6 @@ $size: 0.25rem;
     height: 220px;
     background-image: url('img/animations.png');
     background-size: auto 100%;
-    top: -94px;
-    left: -94px;
     transform: scale(0.15);
     transition: transform 0.5s ease-out;
   
@@ -354,10 +288,11 @@ $size: 0.25rem;
 
       .dice-icon {
         position: relative;
-        width: 33px;
-        height: 33px;
+        width: 40px;
+        height: 40px;
         cursor: pointer;
         margin: 5px;
+        pointer-events: unset;
 
         &.selected {
           box-shadow: 0 0 3px 3px red;
@@ -399,8 +334,8 @@ $size: 0.25rem;
 
       .dice-icon {
         position: relative;
-        width: 33px;
-        height: 33px;
+        width: 40px;
+        height: 40px;
       }
     }
 

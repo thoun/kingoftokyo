@@ -996,7 +996,7 @@ var DieFaceSelector = /** @class */ (function () {
         var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         var _loop_1 = function (face) {
             var faceId = nodeId + "-face" + face;
-            var html = "<div id=\"" + faceId + "\" class=\"dice-icon dice" + face + " " + colorClass + " " + (this_1.dieValue == face ? 'disabled' : '') + "\">";
+            var html = "<div id=\"" + faceId + "\" class=\"die-item dice-icon dice" + face + " " + colorClass + " " + (this_1.dieValue == face ? 'disabled' : '') + "\">";
             if (!die.type && face === 4 && inTokyo) {
                 html += "<div class=\"icon forbidden\"></div>";
             }
@@ -1236,51 +1236,25 @@ var DiceManager = /** @class */ (function () {
             }
         }
     };
-    DiceManager.prototype.addDiceAnimation = function (diceValue, playerIds, number, targetToken) {
+    DiceManager.prototype.addDiceAnimation = function (diceValue, number) {
         var _this = this;
         var dice = this.getDiceShowingFace(diceValue);
         if (number) {
             dice = dice.slice(0, number);
         }
-        playerIds.forEach(function (playerId, playerIndex) {
-            var shift = targetToken ? 16 : 59;
-            dice.forEach(function (die, dieIndex) {
-                var dieDiv = document.getElementById("dice" + die.id);
-                dieDiv.dataset.animated = 'true';
-                var origin = dieDiv.getBoundingClientRect();
-                var animationId = "dice" + die.id + "-player" + playerId + "-animation";
-                dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\"></div>", "dice" + die.id);
-                setTimeout(function () {
-                    var middleIndex = dice.length - 1;
-                    var deltaX = (dieIndex - middleIndex) * 220;
-                    document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
-                }, 50);
-                setTimeout(function () {
-                    var targetId = "monster-figure-" + playerId;
-                    if (targetToken) {
-                        var tokensDivs = document.querySelectorAll("div[id^='token-wrapper-" + playerId + "-" + targetToken + "-token'");
-                        targetId = tokensDivs[tokensDivs.length - (dieIndex + 1)].id;
-                    }
-                    var destination = document.getElementById(targetId).getBoundingClientRect();
-                    var deltaX = destination.left - origin.left + shift * _this.game.getZoom();
-                    var deltaY = destination.top - origin.top + shift * _this.game.getZoom();
-                    document.getElementById(animationId).style.transition = "transform 0.5s ease-in";
-                    document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(" + 0.3 * _this.game.getZoom() + ")";
-                }, 1000);
-                if (playerIndex === playerIds.length - 1) {
-                    _this.removeDice(die, 500, 2500);
-                }
-            });
+        dice.forEach(function (die) {
+            document.getElementById("dice" + die.id).dataset.animated !== 'true';
+            _this.removeDice(die, 500, 2500);
         });
     };
-    DiceManager.prototype.resolveHealthDice = function (playerId, number, targetToken) {
-        this.addDiceAnimation(4, [playerId], number, targetToken);
+    DiceManager.prototype.resolveHealthDice = function (number) {
+        this.addDiceAnimation(4, number);
     };
-    DiceManager.prototype.resolveEnergyDice = function (args) {
-        this.addDiceAnimation(5, [args.playerId]);
+    DiceManager.prototype.resolveEnergyDice = function () {
+        this.addDiceAnimation(5);
     };
-    DiceManager.prototype.resolveSmashDice = function (args) {
-        this.addDiceAnimation(6, args.smashedPlayersIds);
+    DiceManager.prototype.resolveSmashDice = function () {
+        this.addDiceAnimation(6);
     };
     DiceManager.prototype.toggleLockDice = function (die, event, forcedLockValue) {
         var _this = this;
@@ -1540,6 +1514,8 @@ var DiceManager = /** @class */ (function () {
     };
     return DiceManager;
 }());
+var SPACE_BETWEEN_ANIMATION_AT_START = 43;
+var ANIMATION_FULL_SIZE = 220;
 var AnimationManager = /** @class */ (function () {
     function AnimationManager(game, diceManager) {
         this.game = game;
@@ -1547,15 +1523,15 @@ var AnimationManager = /** @class */ (function () {
     }
     AnimationManager.prototype.getDice = function (dieValue) {
         var dice = this.diceManager.getDice();
-        var filteredDice = dice.filter(function (die) { return die.value === dieValue; });
+        var filteredDice = this.getDiceShowingFace(dice, dieValue);
         return filteredDice.length ? filteredDice : dice;
     };
     AnimationManager.prototype.resolveNumberDice = function (args) {
         var dice = this.getDice(args.diceValue);
         this.game.displayScoring("dice" + (dice[Math.floor(dice.length / 2)] || dice[0]).id, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     };
-    AnimationManager.prototype.getDiceShowingFace = function (face) {
-        var dice = this.getDice(face).filter(function (die) { return !die.type && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+    AnimationManager.prototype.getDiceShowingFace = function (allDice, face) {
+        var dice = allDice.filter(function (die) { return !die.type && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
         }
@@ -1574,49 +1550,54 @@ var AnimationManager = /** @class */ (function () {
     };
     AnimationManager.prototype.addDiceAnimation = function (diceValue, playerIds, number, targetToken) {
         var _this = this;
-        var dice = this.getDiceShowingFace(diceValue);
-        if (number) {
-            dice = dice.slice(0, number);
-        }
-        playerIds.forEach(function (playerId, playerIndex) {
+        var dice = this.getDice(diceValue);
+        var originTop = document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector').getBoundingClientRect().top;
+        var leftDieBR = document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector').getBoundingClientRect();
+        var rightDieBR = document.getElementById(dice.length ? "dice" + dice[dice.length - 1].id : 'dice-selector').getBoundingClientRect();
+        var originCenter = (leftDieBR.left + rightDieBR.right) / 2;
+        playerIds.forEach(function (playerId) {
+            var maxSpaces = SPACE_BETWEEN_ANIMATION_AT_START * number;
+            var halfMaxSpaces = maxSpaces / 2;
             var shift = targetToken ? 16 : 59;
-            dice.forEach(function (die, dieIndex) {
-                var dieDiv = document.getElementById("dice" + die.id);
-                dieDiv.dataset.animated = 'true';
-                var origin = dieDiv.getBoundingClientRect();
-                var animationId = "dice" + die.id + "-player" + playerId + "-animation";
-                dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\"></div>", "dice" + die.id);
+            var _loop_2 = function (i) {
+                var originLeft = originCenter - halfMaxSpaces + SPACE_BETWEEN_ANIMATION_AT_START * i;
+                var animationId = "animation" + diceValue + "-" + i + "-player" + playerId + "-" + new Date().getTime();
+                dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\" style=\"left: " + (originLeft + window.scrollX - 94) + "px; top: " + (originTop + window.scrollY - 94) + "px;\"></div>", document.body);
+                var animationDiv = document.getElementById(animationId);
                 setTimeout(function () {
-                    var middleIndex = dice.length - 1;
-                    var deltaX = (dieIndex - middleIndex) * 220;
-                    document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
+                    var middleIndex = number / 2;
+                    var deltaX = (i - middleIndex) * ANIMATION_FULL_SIZE;
+                    animationDiv.style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
                 }, 50);
                 setTimeout(function () {
                     var targetId = "monster-figure-" + playerId;
                     if (targetToken) {
                         var tokensDivs = document.querySelectorAll("div[id^='token-wrapper-" + playerId + "-" + targetToken + "-token'");
-                        targetId = tokensDivs[tokensDivs.length - (dieIndex + 1)].id;
+                        targetId = tokensDivs[tokensDivs.length - (i + 1)].id;
                     }
                     var destination = document.getElementById(targetId).getBoundingClientRect();
-                    var deltaX = destination.left - origin.left + shift * _this.game.getZoom();
-                    var deltaY = destination.top - origin.top + shift * _this.game.getZoom();
-                    document.getElementById(animationId).style.transition = "transform 0.5s ease-in";
-                    document.getElementById(animationId).style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(" + 0.3 * _this.game.getZoom() + ")";
+                    var deltaX = destination.left - originLeft + shift * _this.game.getZoom();
+                    var deltaY = destination.top - originTop + shift * _this.game.getZoom();
+                    animationDiv.style.transition = "transform 0.5s ease-in";
+                    animationDiv.style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(" + 0.3 * _this.game.getZoom() + ")";
+                    animationDiv.addEventListener('transitionend', function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); });
+                    // security
+                    setTimeout(function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); }, 1050);
                 }, 1000);
-                if (playerIndex === playerIds.length - 1) {
-                    // TODO this.removeDice(die, 500, 2500);
-                }
-            });
+            };
+            for (var i = 0; i < number; i++) {
+                _loop_2(i);
+            }
         });
     };
     AnimationManager.prototype.resolveHealthDice = function (playerId, number, targetToken) {
         this.addDiceAnimation(4, [playerId], number, targetToken);
     };
     AnimationManager.prototype.resolveEnergyDice = function (args) {
-        this.addDiceAnimation(5, [args.playerId]);
+        this.addDiceAnimation(5, [args.playerId], args.deltaEnergy);
     };
     AnimationManager.prototype.resolveSmashDice = function (args) {
-        this.addDiceAnimation(6, args.smashedPlayersIds);
+        this.addDiceAnimation(6, args.smashedPlayersIds, args.number);
     };
     return AnimationManager;
 }());
@@ -2074,14 +2055,14 @@ var KingOfTokyo = /** @class */ (function () {
                 }
             }
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
-                var _loop_2 = function (i) {
+                var _loop_3 = function (i) {
                     var id = "useRobot" + i + "_button";
                     this_2.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this_2.cards.getCardName(210, 'text-only') })), function () { return _this.useRobot(i); });
                     dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
                 };
                 var this_2 = this;
                 for (var i = args.damage; i > 0; i--) {
-                    _loop_2(i);
+                    _loop_3(i);
                 }
             }
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
@@ -2553,23 +2534,23 @@ var KingOfTokyo = /** @class */ (function () {
             html += "<button class=\"action-button bgabutton " + (!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton disable\" id=\"" + popinId + "_setStay0\">" + _('Disabled') + "</button>";
             html += "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
-            var _loop_3 = function (i) {
+            var _loop_4 = function (i) {
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth; i > 0; i--) {
-                _loop_3(i);
+                _loop_4(i);
             }
-            var _loop_4 = function (i) {
+            var _loop_5 = function (i) {
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth + 1; i > 2; i--) {
-                _loop_4(i);
+                _loop_5(i);
             }
             document.getElementById(popinId + "_setStay0").addEventListener('click', function () {
                 _this.setStayTokyoOver(0);
@@ -2592,7 +2573,7 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.destroy(popinId + "_setStay" + i);
             }
         }
-        var _loop_5 = function (i) {
+        var _loop_6 = function (i) {
             if (!document.getElementById(popinId + "_set" + i)) {
                 dojo.place("<button class=\"action-button bgabutton " + (this_3.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
@@ -2603,9 +2584,9 @@ var KingOfTokyo = /** @class */ (function () {
         };
         var this_3 = this;
         for (var i = 11; i <= maxHealth; i++) {
-            _loop_5(i);
+            _loop_6(i);
         }
-        var _loop_6 = function (i) {
+        var _loop_7 = function (i) {
             if (!document.getElementById(popinId + "_setStay" + i)) {
                 dojo.place("<button class=\"action-button bgabutton " + (this_4.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_4.gamedatas.leaveTokyoUnder > 0 && i <= this_4.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
@@ -2616,7 +2597,7 @@ var KingOfTokyo = /** @class */ (function () {
         };
         var this_4 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
-            _loop_6(i);
+            _loop_7(i);
         }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
@@ -3053,20 +3034,24 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_resolveHealthDice = function (notif) {
         this.setHealth(notif.args.playerId, notif.args.health, ANIMATION_MS);
-        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
+        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
+        this.diceManager.resolveHealthDice(notif.args.deltaHealth);
     };
     KingOfTokyo.prototype.notif_resolveHealthDiceInTokyo = function (notif) {
         this.diceManager.resolveHealthDiceInTokyo();
     };
     KingOfTokyo.prototype.notif_resolveHealingRay = function (notif) {
-        this.diceManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
+        this.animationManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
+        this.diceManager.resolveHealthDice(notif.args.healNumber);
     };
     KingOfTokyo.prototype.notif_resolveEnergyDice = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy, ANIMATION_MS);
-        this.diceManager.resolveEnergyDice(notif.args);
+        this.animationManager.resolveEnergyDice(notif.args);
+        this.diceManager.resolveEnergyDice();
     };
     KingOfTokyo.prototype.notif_resolveSmashDice = function (notif) {
-        this.diceManager.resolveSmashDice(notif.args);
+        this.animationManager.resolveSmashDice(notif.args);
+        this.diceManager.resolveSmashDice();
         if (notif.args.smashedPlayersIds.length > 0) {
             for (var delayIndex = 0; delayIndex < notif.args.number; delayIndex++) {
                 setTimeout(function () { return playSound('kot-punch'); }, ANIMATION_MS - (PUNCH_SOUND_DURATION * delayIndex - 1));
@@ -3179,12 +3164,14 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_removeShrinkRayToken = function (notif) {
         var _this = this;
-        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
+        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
+        this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(function () { return _this.notif_shrinkRayToken(notif); }, ANIMATION_MS);
     };
     KingOfTokyo.prototype.notif_removePoisonToken = function (notif) {
         var _this = this;
-        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
+        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
+        this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(function () { return _this.notif_poisonToken(notif); }, ANIMATION_MS);
     };
     KingOfTokyo.prototype.notif_setCardTokens = function (notif) {

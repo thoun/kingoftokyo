@@ -1514,22 +1514,26 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
         this.setHealth(notif.args.playerId, notif.args.health, ANIMATION_MS);
-        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
+        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
+        this.diceManager.resolveHealthDice(notif.args.deltaHealth);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
         this.diceManager.resolveHealthDiceInTokyo();
     }
     notif_resolveHealingRay(notif: Notif<NotifResolveHealingRayArgs>) {
-        this.diceManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
+        this.animationManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
+        this.diceManager.resolveHealthDice(notif.args.healNumber);
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
         this.setEnergy(notif.args.playerId, notif.args.energy, ANIMATION_MS);
-        this.diceManager.resolveEnergyDice(notif.args);
+        this.animationManager.resolveEnergyDice(notif.args);
+        this.diceManager.resolveEnergyDice();
     }
 
     notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
-        this.diceManager.resolveSmashDice(notif.args);
+        this.animationManager.resolveSmashDice(notif.args);
+        this.diceManager.resolveSmashDice();
 
         if (notif.args.smashedPlayersIds.length > 0) {
             for (let delayIndex = 0; delayIndex < notif.args.number; delayIndex++) {
@@ -1659,12 +1663,14 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_removeShrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
+        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
+        this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(() => this.notif_shrinkRayToken(notif), ANIMATION_MS);
     }
 
     notif_removePoisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.diceManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
+        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
+        this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(() => this.notif_poisonToken(notif), ANIMATION_MS);
     }
 

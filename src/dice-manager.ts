@@ -218,59 +218,27 @@ class DiceManager {
         }
     }
 
-    private addDiceAnimation(diceValue: number, playerIds: number[], number?: number, targetToken?: TokenType) {
+    private addDiceAnimation(diceValue: number, number?: number) {
         let dice = this.getDiceShowingFace(diceValue);
         if (number) {
             dice = dice.slice(0, number);
         }
-
-        playerIds.forEach((playerId, playerIndex) => {
-
-            const shift = targetToken ? 16 : 59;
-            dice.forEach((die, dieIndex) => {
-                const dieDiv = document.getElementById(`dice${die.id}`);
-                dieDiv.dataset.animated = 'true';
-                const origin = dieDiv.getBoundingClientRect();
-                const animationId = `dice${die.id}-player${playerId}-animation`;
-                dojo.place(`<div id="${animationId}" class="animation animation${diceValue}"></div>`, `dice${die.id}`);
-                setTimeout(() => {
-                    const middleIndex = dice.length - 1;
-                    const deltaX = (dieIndex - middleIndex) * 220;
-                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, 100px) scale(1)`;
-                }, 50);
-
-                setTimeout(() => {
-                    let targetId = `monster-figure-${playerId}`;
-                    if (targetToken) {
-                        const tokensDivs = document.querySelectorAll(`div[id^='token-wrapper-${playerId}-${targetToken}-token'`);
-                        targetId = tokensDivs[tokensDivs.length - (dieIndex + 1)].id;
-                    }
-                    let destination = document.getElementById(targetId).getBoundingClientRect();
-
-                    const deltaX = destination.left - origin.left + shift * this.game.getZoom();
-                    const deltaY = destination.top - origin.top + shift * this.game.getZoom();
-
-                    document.getElementById(animationId).style.transition = `transform 0.5s ease-in`;
-                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${0.3 * this.game.getZoom()})`;
-                }, 1000);
-
-                if (playerIndex === playerIds.length - 1) {
-                    this.removeDice(die, 500, 2500);
-                }
-            });
+        dice.forEach(die => {
+            document.getElementById(`dice${die.id}`).dataset.animated !== 'true';
+            this.removeDice(die, 500, 2500);
         });
     }
 
-    public resolveHealthDice(playerId: number, number: number, targetToken?: TokenType) {
-        this.addDiceAnimation(4, [playerId], number, targetToken);
+    public resolveHealthDice(number: number) {
+        this.addDiceAnimation(4, number);
     }
 
-    public resolveEnergyDice(args: NotifResolveEnergyDiceArgs) {
-        this.addDiceAnimation(5, [args.playerId]);
+    public resolveEnergyDice() {
+        this.addDiceAnimation(5);
     }
 
-    public resolveSmashDice(args: NotifResolveSmashDiceArgs) {
-        this.addDiceAnimation(6, args.smashedPlayersIds);
+    public resolveSmashDice() {
+        this.addDiceAnimation(6);
     }
 
     private toggleLockDice(die: Dice, event: MouseEvent, forcedLockValue: boolean | null = null) {

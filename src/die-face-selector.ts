@@ -10,7 +10,7 @@ class DieFaceSelector {
         const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (let face=1; face<=6; face++) {
             const faceId = `${nodeId}-face${face}`;
-            let html = `<div id="${faceId}" class="dice-icon dice${face} ${colorClass} ${this.dieValue == face ? 'disabled' : ''}">`;
+            let html = `<div id="${faceId}" class="die-item dice-icon dice${face} ${colorClass} ${this.dieValue == face ? 'disabled' : ''}">`;
             if (!die.type && face === 4 && inTokyo) {            
                 html += `<div class="icon forbidden"></div>`;
             }

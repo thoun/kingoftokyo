@@ -1,3 +1,6 @@
+const SPACE_BETWEEN_ANIMATION_AT_START = 43;
+const ANIMATION_FULL_SIZE = 220;
+
 class AnimationManager {
 
     constructor(private game: KingOfTokyoGame, private diceManager: DiceManager) {
@@ -5,7 +8,7 @@ class AnimationManager {
 
     private getDice(dieValue: number) {
         const dice = this.diceManager.getDice();
-        const filteredDice = dice.filter(die => die.value === dieValue);
+        const filteredDice = this.getDiceShowingFace(dice, dieValue);
         return filteredDice.length ? filteredDice : dice;
     }
 
@@ -14,8 +17,8 @@ class AnimationManager {
         (this.game as any).displayScoring( `dice${(dice[Math.floor(dice.length / 2)] || dice[0]).id}`, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     }
 
-    private getDiceShowingFace(face: number) {
-        const dice = this.getDice(face).filter(die => !die.type && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+    private getDiceShowingFace(allDice: Dice[], face: number) {
+        const dice = allDice.filter(die => !die.type && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
 
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
@@ -31,46 +34,48 @@ class AnimationManager {
         }
     }
 
-    private addDiceAnimation(diceValue: number, playerIds: number[], number?: number, targetToken?: TokenType) {
-        let dice = this.getDiceShowingFace(diceValue);
-        if (number) {
-            dice = dice.slice(0, number);
-        }
+    private addDiceAnimation(diceValue: number, playerIds: number[], number: number, targetToken?: TokenType) {
+        let dice = this.getDice(diceValue);
 
-        playerIds.forEach((playerId, playerIndex) => {
+        const originTop = document.getElementById(dice[0] ? `dice${dice[0].id}` : 'dice-selector').getBoundingClientRect().top;
+        const leftDieBR = document.getElementById(dice[0] ? `dice${dice[0].id}` : 'dice-selector').getBoundingClientRect();
+        const rightDieBR = document.getElementById(dice.length ? `dice${dice[dice.length - 1].id}` : 'dice-selector').getBoundingClientRect();
+        const originCenter = (leftDieBR.left + rightDieBR.right) / 2;
+
+        playerIds.forEach(playerId => {
+            const maxSpaces = SPACE_BETWEEN_ANIMATION_AT_START * number;
+            const halfMaxSpaces = maxSpaces / 2;
 
             const shift = targetToken ? 16 : 59;
-            dice.forEach((die, dieIndex) => {
-                const dieDiv = document.getElementById(`dice${die.id}`);
-                dieDiv.dataset.animated = 'true';
-                const origin = dieDiv.getBoundingClientRect();
-                const animationId = `dice${die.id}-player${playerId}-animation`;
-                dojo.place(`<div id="${animationId}" class="animation animation${diceValue}"></div>`, `dice${die.id}`);
+            for (let i=0; i<number; i++) {
+                const originLeft = originCenter - halfMaxSpaces + SPACE_BETWEEN_ANIMATION_AT_START * i;
+                const animationId = `animation${diceValue}-${i}-player${playerId}-${new Date().getTime()}`;
+                dojo.place(`<div id="${animationId}" class="animation animation${diceValue}" style="left: ${originLeft + window.scrollX - 94}px; top: ${originTop + window.scrollY - 94}px;"></div>`, document.body);
+                const animationDiv = document.getElementById(animationId);
                 setTimeout(() => {
-                    const middleIndex = dice.length - 1;
-                    const deltaX = (dieIndex - middleIndex) * 220;
-                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, 100px) scale(1)`;
+                    const middleIndex = number / 2;
+                    const deltaX = (i - middleIndex) * ANIMATION_FULL_SIZE;
+                    animationDiv.style.transform = `translate(${deltaX}px, 100px) scale(1)`;
                 }, 50);
 
                 setTimeout(() => {
                     let targetId = `monster-figure-${playerId}`;
                     if (targetToken) {
                         const tokensDivs = document.querySelectorAll(`div[id^='token-wrapper-${playerId}-${targetToken}-token'`);
-                        targetId = tokensDivs[tokensDivs.length - (dieIndex + 1)].id;
+                        targetId = tokensDivs[tokensDivs.length - (i + 1)].id;
                     }
                     let destination = document.getElementById(targetId).getBoundingClientRect();
 
-                    const deltaX = destination.left - origin.left + shift * this.game.getZoom();
-                    const deltaY = destination.top - origin.top + shift * this.game.getZoom();
+                    const deltaX = destination.left - originLeft + shift * this.game.getZoom();
+                    const deltaY = destination.top - originTop + shift * this.game.getZoom();
 
-                    document.getElementById(animationId).style.transition = `transform 0.5s ease-in`;
-                    document.getElementById(animationId).style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${0.3 * this.game.getZoom()})`;
+                    animationDiv.style.transition = `transform 0.5s ease-in`;
+                    animationDiv.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${0.3 * this.game.getZoom()})`;
+                    animationDiv.addEventListener('transitionend', () => animationDiv?.parentElement?.removeChild(animationDiv));
+                    // security
+                    setTimeout(() => animationDiv?.parentElement?.removeChild(animationDiv), 1050);
                 }, 1000);
-
-                if (playerIndex === playerIds.length - 1) {
-                    // TODO this.removeDice(die, 500, 2500);
-                }
-            });
+            }
         });
     }
 
@@ -79,11 +84,11 @@ class AnimationManager {
     }
 
     public resolveEnergyDice(args: NotifResolveEnergyDiceArgs) {
-        this.addDiceAnimation(5, [args.playerId]);
+        this.addDiceAnimation(5, [args.playerId], args.deltaEnergy);
     }
 
     public resolveSmashDice(args: NotifResolveSmashDiceArgs) {
-        this.addDiceAnimation(6, args.smashedPlayersIds);
+        this.addDiceAnimation(6, args.smashedPlayersIds, args.number);
     }
 
 }
