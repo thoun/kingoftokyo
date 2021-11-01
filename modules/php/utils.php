@@ -60,6 +60,18 @@ trait UtilTrait {
         return intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
+    function isMutantEvolutionVariant() {
+        return intval(self::getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
+    }
+
+    function isCthulhuExpansion() {
+        return intval(self::getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
+    }
+
+    function isAnubisExpansion() {
+        return intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+    }
+
     function isDarkEdition() {
         return false;
     }
