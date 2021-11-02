@@ -50,7 +50,8 @@ trait InterventionTrait {
             $keep = CancelDamageIntervention::canDoIntervention($this, $playerId, $damage);
 
             // if player cannot cancel damage, we apply them
-            if (!$keep) {                
+            if (!$keep) {  
+                die('test2 '.$keep);              
                 foreach($intervention->damages as $d) {
                     if ($d->playerId == $playerId) {
                         $this->applyDamage($d->playerId, $d->damage, $d->damageDealerId, $d->cardType, self::getActivePlayerId(), $d->giveShrinkRayToken, $d->givePoisonSpitToken);

@@ -558,7 +558,7 @@ trait CardsActionTrait {
         }
     }
 
-    function useRapidHealingSync() {
+    function useRapidHealingSync(int $cultistCount, int $rapidHealingCount) {
         $this->checkAction('useRapidHealingSync');
 
         $playerId = self::getCurrentPlayerId();
@@ -574,7 +574,15 @@ trait CardsActionTrait {
         $playerHealth = $this->getPlayerHealth($playerId);
         $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $playerHealth);
 
-        for ($i=0; $i<$damageToCancelToSurvive; $i++) {
+        for ($i=0; $i<$cultistCount; $i++) {
+            if ($this->getPlayerCultists($playerId) >= 1) {
+                $this->applyUseRapidCultist($playerId, 4);
+                $remainingDamage--;
+            } else {
+                break;
+            }
+        }
+        for ($i=0; $i<$rapidHealingCount; $i++) {
             if ($this->getPlayerEnergy($playerId) >= 2) {
                 $this->applyRapidHealing($playerId);
                 $remainingDamage--;

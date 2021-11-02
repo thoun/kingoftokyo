@@ -188,6 +188,8 @@ interface EnteringCancelDamageArgs {
     dice: Dice[];
     rethrow3: Rethrow3;
     rapidHealingHearts: number;
+    rapidHealingCultists: number;
+    damageToCancelToSurvive: number;
     damage: number;
 }
 

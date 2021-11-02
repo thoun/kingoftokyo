@@ -1911,6 +1911,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.tokyoTowerCounters = [];
         this.cultistCounters = [];
         this.playerTables = [];
+        //private rapidHealingSyncHearts: number;
         this.towerLevelsOwners = [];
     }
     /*
@@ -2214,9 +2215,27 @@ var KingOfTokyo = /** @class */ (function () {
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), 'skipWings');
             }
-            if (args.rapidHealingHearts && !document.getElementById('rapidHealingSync_button')) {
-                this.rapidHealingSyncHearts = args.rapidHealingHearts;
-                this.addActionButton('rapidHealingSync_button', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (" + 2 * args.rapidHealingHearts + "[Energy])"), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': args.rapidHealingHearts }), 'useRapidHealingSync');
+            var rapidHealingSyncButtons = document.querySelectorAll("[id^='rapidHealingSync_button'");
+            rapidHealingSyncButtons.forEach(function (rapidHealingSyncButton) { return rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton); });
+            if (args.damageToCancelToSurvive) {
+                var _loop_4 = function (i) {
+                    var cultistCount = i;
+                    var rapidHealingCount = args.damageToCancelToSurvive - cultistCount;
+                    var cardsNames = [];
+                    if (cultistCount > 0) {
+                        cardsNames.push(/* TODOCT_(*/ 'Cultist' /*)*/);
+                    }
+                    if (rapidHealingCount > 0) {
+                        cardsNames.push(_(this_3.cards.getCardName(37, 'text-only')));
+                    }
+                    var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("" + _('Gain ${hearts}[Heart]') + (rapidHealingCount > 0 ? " (" + 2 * rapidHealingCount + "[Energy])" : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.damageToCancelToSurvive });
+                    this_3.addActionButton("rapidHealingSync_button_" + i, text, function () { return _this.useRapidHealingSync(cultistCount, rapidHealingCount); });
+                };
+                var this_3 = this;
+                //this.rapidHealingSyncHearts = args.rapidHealingHearts;
+                for (var i = Math.min(args.rapidHealingCultists, args.damageToCancelToSurvive); i >= 0; i--) {
+                    _loop_4(i);
+                }
             }
         }
     };
@@ -2648,23 +2667,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.addRapidCultistButtons = function (isMaxHealth) {
-        /* TODO if (!document.getElementById('rapidCultistButtons')) {
-            dojo.place(`<div id="rapidCultistButtons"><span>${dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') })} :</span></div>`, 'rapid-actions-wrapper');
-            this.createButton(
-                'rapidCultistButtons',
-                'rapidCultistHealthButton',
-                formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1})}`),
-                () => this.useRapidCultist(4),
-                isMaxHealth
-            );
-            
-            this.createButton(
-                'rapidCultistButtons',
-                'rapidCultistEnergyButton',
-                formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1})}`),
-                () => this.useRapidCultist(5)
-            );
-        }*/
+        var _this = this;
+        if (!document.getElementById('rapidCultistButtons')) {
+            dojo.place("<div id=\"rapidCultistButtons\"><span>" + dojo.string.substitute(_('Use ${card_name}'), { card_name: /* TODOCT_(*/ 'Cultist' /*)*/ }) + " :</span></div>", 'rapid-actions-wrapper');
+            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("" + dojo.string.substitute(/* TODOCT_(*/ 'Gain ${hearts}[Heart]' /*)*/, { hearts: 1 })), function () { return _this.useRapidCultist(4); }, isMaxHealth);
+            this.createButton('rapidCultistButtons', 'rapidCultistEnergyButton', formatTextIcons("" + dojo.string.substitute(/* TODOCT_(*/ 'Gain ${energy}[Energy]' /*)*/, { energy: 1 })), function () { return _this.useRapidCultist(5); });
+        }
     };
     KingOfTokyo.prototype.removeRapidCultistButtons = function () {
         if (document.getElementById('rapidCultistButtons')) {
@@ -2737,23 +2745,23 @@ var KingOfTokyo = /** @class */ (function () {
             html += "<button class=\"action-button bgabutton " + (!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton disable\" id=\"" + popinId + "_setStay0\">" + _('Disabled') + "</button>";
             html += "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
-            var _loop_4 = function (i) {
+            var _loop_5 = function (i) {
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth; i > 0; i--) {
-                _loop_4(i);
+                _loop_5(i);
             }
-            var _loop_5 = function (i) {
+            var _loop_6 = function (i) {
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth + 1; i > 2; i--) {
-                _loop_5(i);
+                _loop_6(i);
             }
             document.getElementById(popinId + "_setStay0").addEventListener('click', function () {
                 _this.setStayTokyoOver(0);
@@ -2776,31 +2784,31 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.destroy(popinId + "_setStay" + i);
             }
         }
-        var _loop_6 = function (i) {
+        var _loop_7 = function (i) {
             if (!document.getElementById(popinId + "_set" + i)) {
-                dojo.place("<button class=\"action-button bgabutton " + (this_3.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
+                dojo.place("<button class=\"action-button bgabutton " + (this_4.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_3 = this;
+        var this_4 = this;
         for (var i = 11; i <= maxHealth; i++) {
-            _loop_6(i);
+            _loop_7(i);
         }
-        var _loop_7 = function (i) {
+        var _loop_8 = function (i) {
             if (!document.getElementById(popinId + "_setStay" + i)) {
-                dojo.place("<button class=\"action-button bgabutton " + (this_4.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_4.gamedatas.leaveTokyoUnder > 0 && i <= this_4.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
+                dojo.place("<button class=\"action-button bgabutton " + (this_5.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_5.gamedatas.leaveTokyoUnder > 0 && i <= this_5.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             }
         };
-        var this_4 = this;
+        var this_5 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
-            _loop_7(i);
+            _loop_8(i);
         }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
@@ -3098,11 +3106,14 @@ var KingOfTokyo = /** @class */ (function () {
             energy: energy
         });
     };
-    KingOfTokyo.prototype.useRapidHealingSync = function () {
+    KingOfTokyo.prototype.useRapidHealingSync = function (cultistCount, rapidHealingCount) {
         if (!this.checkAction('useRapidHealingSync')) {
             return;
         }
-        this.takeAction('useRapidHealingSync');
+        this.takeAction('useRapidHealingSync', {
+            cultistCount: cultistCount,
+            rapidHealingCount: rapidHealingCount
+        });
     };
     KingOfTokyo.prototype.setLeaveTokyoUnder = function (under) {
         this.takeAction('setLeaveTokyoUnder', {
@@ -3370,11 +3381,11 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_health = function (notif) {
         this.setHealth(notif.args.playerId, notif.args.health);
-        var rapidHealingSyncButton = document.getElementById('rapidHealingSync_button');
+        /*const rapidHealingSyncButton = document.getElementById('rapidHealingSync_button');
         if (rapidHealingSyncButton && notif.args.playerId === this.getPlayerId()) {
             this.rapidHealingSyncHearts = Math.max(0, this.rapidHealingSyncHearts - notif.args.delta_health);
-            rapidHealingSyncButton.innerHTML = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (" + 2 * this.rapidHealingSyncHearts + "[Energy])"), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': this.rapidHealingSyncHearts });
-        }
+            rapidHealingSyncButton.innerHTML = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (${2*this.rapidHealingSyncHearts}[Energy])`), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': this.rapidHealingSyncHearts });
+        }*/
     };
     KingOfTokyo.prototype.notif_maxHealth = function (notif) {
         this.setMaxHealth(notif.args.playerId, notif.args.maxHealth);

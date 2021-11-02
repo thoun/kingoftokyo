@@ -25,7 +25,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private tableManager: TableManager;
     private preferencesManager: PreferencesManager;
     public cards: Cards;
-    private rapidHealingSyncHearts: number;
+    //private rapidHealingSyncHearts: number;
     public towerLevelsOwners = [];
     private tableTokyoTower: TokyoTower;
         
@@ -378,9 +378,24 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}) : _("Skip"), 'skipWings');
             }
 
-            if (args.rapidHealingHearts && !document.getElementById('rapidHealingSync_button')) {
-                this.rapidHealingSyncHearts = args.rapidHealingHearts;
-                (this as any).addActionButton('rapidHealingSync_button', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (${2*args.rapidHealingHearts}[Energy])`), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': args.rapidHealingHearts }), 'useRapidHealingSync');
+            const rapidHealingSyncButtons = document.querySelectorAll(`[id^='rapidHealingSync_button'`);
+            rapidHealingSyncButtons.forEach(rapidHealingSyncButton => rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton));
+            if (args.damageToCancelToSurvive) {
+                //this.rapidHealingSyncHearts = args.rapidHealingHearts;
+                
+                for (let i = Math.min(args.rapidHealingCultists, args.damageToCancelToSurvive); i >= 0; i--) {
+                    const cultistCount = i;
+                    const rapidHealingCount = args.damageToCancelToSurvive - cultistCount;
+                    const cardsNames = [];
+                    if (cultistCount > 0) {
+                        cardsNames.push(/* TODOCT_(*/'Cultist'/*)*/);
+                    }
+                    if (rapidHealingCount > 0) {
+                        cardsNames.push(_(this.cards.getCardName(37, 'text-only')));
+                    }
+                    const text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')}` + (rapidHealingCount > 0 ? ` (${2*rapidHealingCount}[Energy])` : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.damageToCancelToSurvive });
+                    (this as any).addActionButton(`rapidHealingSync_button_${i}`, text, () => this.useRapidHealingSync(cultistCount, rapidHealingCount));
+                }
             }
         }
     }
@@ -912,12 +927,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private addRapidCultistButtons(isMaxHealth: boolean) {
-        /* TODO if (!document.getElementById('rapidCultistButtons')) {
-            dojo.place(`<div id="rapidCultistButtons"><span>${dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') })} :</span></div>`, 'rapid-actions-wrapper');
+        if (!document.getElementById('rapidCultistButtons')) {
+            dojo.place(`<div id="rapidCultistButtons"><span>${dojo.string.substitute(_('Use ${card_name}'), { card_name: /* TODOCT_(*/'Cultist'/*)*/ })} :</span></div>`, 'rapid-actions-wrapper');
             this.createButton(
                 'rapidCultistButtons', 
                 'rapidCultistHealthButton', 
-                formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1})}`), 
+                formatTextIcons(`${dojo.string.substitute(/* TODOCT_(*/'Gain ${hearts}[Heart]'/*)*/, { hearts: 1})}`), 
                 () => this.useRapidCultist(4), 
                 isMaxHealth
             );
@@ -925,10 +940,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'rapidCultistButtons', 
                 'rapidCultistEnergyButton', 
-                formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1})}`), 
+                formatTextIcons(`${dojo.string.substitute(/* TODOCT_(*/'Gain ${energy}[Energy]'/*)*/, { energy: 1})}`), 
                 () => this.useRapidCultist(5)
             );
-        }*/
+        }
     }
 
     private removeRapidCultistButtons() {
@@ -1463,12 +1478,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public useRapidHealingSync() {
+    public useRapidHealingSync(cultistCount: number, rapidHealingCount: number) {
         if(!(this as any).checkAction('useRapidHealingSync')) {
             return;
         }
 
-        this.takeAction('useRapidHealingSync');
+        this.takeAction('useRapidHealingSync', {
+            cultistCount, 
+            rapidHealingCount
+        });
     }
 
     public setLeaveTokyoUnder(under: number) {
@@ -1769,11 +1787,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_health(notif: Notif<NotifHealthArgs>) {
         this.setHealth(notif.args.playerId, notif.args.health);
 
-        const rapidHealingSyncButton = document.getElementById('rapidHealingSync_button');
+        /*const rapidHealingSyncButton = document.getElementById('rapidHealingSync_button');
         if (rapidHealingSyncButton && notif.args.playerId === this.getPlayerId()) {
             this.rapidHealingSyncHearts = Math.max(0, this.rapidHealingSyncHearts - notif.args.delta_health);
             rapidHealingSyncButton.innerHTML = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (${2*this.rapidHealingSyncHearts}[Energy])`), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': this.rapidHealingSyncHearts });
-        }
+        }*/
     }
 
     notif_maxHealth(notif: Notif<NotifMaxHealthArgs>) {

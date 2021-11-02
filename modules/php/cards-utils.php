@@ -615,20 +615,17 @@ trait CardsUtilTrait {
         return $remainingDamage - $playerHealth + 1;
     }
 
-    function showRapidHealingOnDamage(int $playerId, int $remainingDamage) {
+    function cancellableDamageWithRapidHealing(int $playerId) {
         $hasRapidHealing = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
 
-        $playerHealth = $this->getPlayerHealth($playerId);
-        $canUseRapidHealing = $hasRapidHealing && $playerHealth <= $remainingDamage;
-        if ($canUseRapidHealing) {
-            $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $playerHealth);
-            if ($this->getPlayerEnergy($playerId) >= (2 * $damageToCancelToSurvive)) {
-                return $damageToCancelToSurvive;
-            } else {
-                return 0;
-            }
+        if ($hasRapidHealing) {
+            return floor($this->getPlayerEnergy($playerId) / 2);
         }
         return 0;
+    }
+
+    function cancellableDamageWithCultists(int $playerId) {
+        return $this->getPlayerCultists($playerId);
     }
 
     function isSureWin(int $playerId) {

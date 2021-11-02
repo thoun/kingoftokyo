@@ -107,7 +107,10 @@
     public function useRapidHealingSync() {
         self::setAjaxMode();
 
-        $this->game->useRapidHealingSync();
+        $cultistCount = self::getArg("cultistCount", AT_posint, true);
+        $rapidHealingCount = self::getArg("rapidHealingCount", AT_posint, true);
+
+        $this->game->useRapidHealingSync($cultistCount, $rapidHealingCount);
 
         self::ajaxResponse();
     }

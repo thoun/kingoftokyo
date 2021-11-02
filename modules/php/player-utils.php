@@ -218,6 +218,11 @@ trait PlayerUtilTrait {
     function useRapidCultist(int $type) {
         $playerId = self::getCurrentPlayerId(); // current, not active !
 
+        $this->applyUseRapidCultist($playerId, $type);
+    }
+
+    function applyUseRapidCultist(int $playerId, int $type) {
+
         if ($type != 4 && $type != 5) {
             throw new \BgaUserException('Wrong type for cultist');
         }
@@ -236,10 +241,10 @@ trait PlayerUtilTrait {
 
         if ($type == 4) {
             $this->applyGetHealth($playerId, 1, 0, $playerId);
-        $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1[Heart]'/*)*/);
+            $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1[Heart]'/*)*/);
         } else if ($type == 5) {
             $this->applyGetEnergy($playerId, 1, 0);
-        $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1[Energy]'/*)*/);
+            $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1[Energy]'/*)*/);
         }
     }
 }

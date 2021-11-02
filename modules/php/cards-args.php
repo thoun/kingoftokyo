@@ -212,13 +212,22 @@ trait CardsArgTrait {
 
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
 
-            $rapidHealingHearts = $this->showRapidHealingOnDamage($playerId, $remainingDamage);
+            $rapidHealingHearts = $this->cancellableDamageWithRapidHealing($playerId);
+            $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
+            $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $this->getPlayerHealth($playerId));
+            if (($rapidHealingHearts + $rapidHealingCultists) < $damageToCancelToSurvive) {
+                $rapidHealingHearts = 0;
+                $rapidHealingCultists = 0;
+                $damageToCancelToSurvive = 0;
+            }
 
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
                 'canUseRobot' => $canUseRobot,
                 'rapidHealingHearts' => $rapidHealingHearts,
+                'rapidHealingCultists' => $rapidHealingCultists,
+                'damageToCancelToSurvive' => $damageToCancelToSurvive,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
                 'damage' => $remainingDamage,

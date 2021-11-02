@@ -237,7 +237,6 @@ trait DiceActionTrait {
 
         $unusedCards = $this->getUnusedChangeActivePlayerDieCards($playerId);
         if (count($unusedCards) == 0) {
-            die('test '.json_encode($unusedCards));
             throw new \BgaUserException('No card allowing to throw a die from active player');
         }
         $usedCardOnThisTurn = $unusedCards[0];

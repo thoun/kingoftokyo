@@ -59,10 +59,18 @@ class CancelDamageIntervention extends PlayerIntervention {
     }
 
     public static function canDoIntervention(object $game, int $playerId, int $damage) {
-        return $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
-          $game->countCardOfType($playerId, ROBOT_CARD) > 0 || 
-          ($game->countCardOfType($playerId, WINGS_CARD) > 0 && !$game->isInvincible($playerId)) ||
-          $game->showRapidHealingOnDamage($playerId, $damage) > 0;
+        $canDo = $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
+            $game->countCardOfType($playerId, ROBOT_CARD) > 0 || 
+            ($game->countCardOfType($playerId, WINGS_CARD) > 0 && !$game->isInvincible($playerId));
+
+        if ($canDo) {
+            return true;
+        } else {
+            $rapidHealingHearts = $game->cancellableDamageWithRapidHealing($playerId);
+            $rapidHealingCultists = $game->isCthulhuExpansion() ? $game->cancellableDamageWithCultists($playerId) : 0;
+            $damageToCancelToSurvive = $game->getDamageToCancelToSurvive($damage, $game->getPlayerHealth($playerId));
+            return ($rapidHealingHearts + $rapidHealingCultists) >= $damageToCancelToSurvive;
+        }
     }
 }
 ?>

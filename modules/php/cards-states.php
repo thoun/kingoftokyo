@@ -107,7 +107,8 @@ trait CardsStateTrait {
             $canCancelWithCamouflage = $arg['canThrowDices'] || $arg['rethrow3']['hasDice3'];
             $canCancelWithWings = $arg['canUseWings'] && $arg['playerEnergy'] >= 2;
             $canCancelWithRobot = $arg['canUseRobot'] && $arg['playerEnergy'] >= 1;
-            if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot) {
+            $canCancelWithRapidHealing = $arg['damageToCancelToSurvive'] && $arg['damageToCancelToSurvive'] >= 1;
+            if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot && !$canCancelWithRapidHealing) {
                 $this->applySkipWings($playerId);
             }
         }
