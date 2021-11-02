@@ -669,6 +669,9 @@
 .stockitem .type-wrapper.costume .outline, #deck .type-wrapper.costume .outline {
   -webkit-text-stroke: 4px #f7941d;
 }
+.stockitem .type-wrapper.transformation .outline, #deck .type-wrapper.transformation .outline {
+  -webkit-text-stroke: 4px #13b48f;
+}
 .stockitem .type-wrapper .outline, #deck .type-wrapper .outline {
   position: absolute;
   left: 0;

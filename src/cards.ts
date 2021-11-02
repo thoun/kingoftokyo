@@ -23,12 +23,15 @@ const DISCARD_CARDS_LIST = {
 
 const COSTUME_CARDS_LIST = [1,2,3,4,5,6,7,8,9,10,11,12];
 
+const TRANSFORMATION_CARDS_LIST = [1,2];
+
 class Cards {
     constructor (private game: KingOfTokyoGame) {}
     
     public setupCards(stocks: Stock[]) {
         const version: 'base' | 'dark' = this.game.isDarkEdition() ? 'dark' : 'base';
         const costumes = this.game.isHalloweenExpansion();
+        const transformation = this.game.isMutantEvolutionVariant();
 
         stocks.forEach(stock => {
             const keepcardsurl = `${g_gamethemeurl}img/keep-cards.jpg`;
@@ -45,6 +48,13 @@ class Cards {
                 const costumecardsurl = `${g_gamethemeurl}img/costume-cards.jpg`;
                 COSTUME_CARDS_LIST.forEach((id, index) => {  // costume
                     stock.addItemType(200 + id, 200 + id, costumecardsurl, index);
+                });
+            }
+
+            if (transformation) {
+                const transformationcardsurl = `${g_gamethemeurl}img/transformation-cards.jpg`;
+                COSTUME_CARDS_LIST.forEach((id, index) => {  // costume
+                    stock.addItemType(300 + id, 300 + id, transformationcardsurl, index);
                 });
             }
         });
@@ -155,7 +165,7 @@ class Cards {
             return;
         }
 
-        cards.forEach(card => stock.addToStockWithId(card.type, `${card.id}`, from));
+        cards.forEach(card => stock.addToStockWithId(card.type + card.side, `${card.id}`, from));
         cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
     }
 
@@ -198,11 +208,13 @@ class Cards {
             case 115: return [0, 80];
             // COSTUME            
             case 209: return [15, 100];
+            // TRANSFORMATION   /* TODOME */         
+            case 301: case 302: return [10, 15];
         }
         return null;
     }
 
-    private getCardCost(cardTypeId: number) {
+    private getCardCost(cardTypeId: number): number | null {
         switch( cardTypeId ) {
             // KEEP
             case 1: return 6;
@@ -382,6 +394,10 @@ class Cards {
             case 210: return _("[146088]Robot");
             case 211: return _("[733010]Statue of liberty");
             case 212: return _("[2d4554]Clown");
+
+            // TRANSFORMATION
+            /* TODOME case 301: return _("[deaa26]Biped [72451c]Form");
+            case 302: return _("[982620]Beast [de6526]Form");*/
         }
         return null;
     }
@@ -490,16 +506,47 @@ class Cards {
             case 210: return _("You can choose to lose [Energy] instead of [Heart].");
             case 211: return _("You have an <strong>extra Roll.</strong>");
             case 212: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>");
+
+            // TRANSFORMATION
+            /* TODOME case 301: return _("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.");
+            case 302: return _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>");*/
         }
         return null;
     }
 
     private getTooltip(cardTypeId: number) {
+        const cost = this.getCardCost(cardTypeId);
         let tooltip = `<div class="card-tooltip">
-            <p><strong>${this.getCardName(cardTypeId, 'text-only')}</strong></p>
-            <p class="cost">${ dojo.string.substitute(_("Cost : ${cost}"), {'cost': this.getCardCost(cardTypeId)}) } <span class="icon energy"></span></p>
-            <p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
-        </div>`;
+            <p><strong>${this.getCardName(cardTypeId, 'text-only')}</strong></p>`;
+        if (cost !== null) {
+            tooltip += `<p class="cost">${ dojo.string.substitute(_("Cost : ${cost}"), {'cost': cost}) } <span class="icon energy"></span></p>`;
+        }
+        tooltip += `<p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>`;
+
+        /* TODOME if (cardTypeId == 301 || cardTypeId == 302) {
+            const otherSide = cardTypeId == 301 ? 302 : 301;
+
+            const tempDiv: HTMLDivElement = document.createElement('div');
+            tempDiv.classList.add('stockitem');
+            tempDiv.style.width = `${CARD_WIDTH}px`;
+            tempDiv.style.height = `${CARD_HEIGHT}px`;
+            tempDiv.style.position = `relative`;
+            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(otherSide)}-cards.jpg')`;
+            const imagePosition = (otherSide % 100) - 1;
+            const image_items_per_row = 10;
+            var row = Math.floor(imagePosition / image_items_per_row);
+            const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
+            const yBackgroundPercent = row * 100;
+            tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
+
+            document.body.appendChild(tempDiv);
+            this.setDivAsCard(tempDiv, otherSide);
+            document.body.removeChild(tempDiv);
+
+            tooltip += `<p>${_("Other side :")}<br>${tempDiv.outerHTML}</p>`;
+        }*/
+
+        tooltip += `</div>`;
         return tooltip;
     }
 
@@ -515,6 +562,8 @@ class Cards {
             return _('Discard');
         } else if (cardType < 300) {
             return _('Costume');
+        } else if (cardType < 400) {
+            return 'Transformation'; // TODOME 
         }
     }
 
@@ -525,6 +574,8 @@ class Cards {
             return 'discard';
         } else if (cardType < 300) {
             return 'costume';
+        } else if (cardType < 400) {
+            return 'transformation';
         }
     }
 
@@ -571,6 +622,8 @@ class Cards {
             return 'discard';
         } else if (cardType < 300) {
             return 'costume';
+        } else if (cardType < 400) {
+            return 'transformation';
         }
     }
 
@@ -583,7 +636,7 @@ class Cards {
             tempDiv.style.height = `${CARD_HEIGHT}px`;
             tempDiv.style.position = `relative`;
             tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(mimickedCard.type)}-cards.jpg')`;
-            const imagePosition = (mimickedCard.type % 100) - 1;
+            const imagePosition = ((mimickedCard.type + mimickedCard.side) % 100) - 1;
             const image_items_per_row = 10;
             var row = Math.floor(imagePosition / image_items_per_row);
             const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
@@ -591,7 +644,7 @@ class Cards {
             tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
 
             document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type);
+            this.setDivAsCard(tempDiv, mimickedCard.type + mimickedCard.side);
             document.body.removeChild(tempDiv);
 
             mimickedCardText = `<br>${tempDiv.outerHTML}`;

@@ -254,4 +254,9 @@ class PlayerTable {
     public setBerserk(berserk: boolean) {
         document.getElementById(`berserk-token-${this.playerId}`).dataset.visible = berserk ? 'true' : 'false';
     }
+    
+    public changeForm(card: Card) {
+        this.cards.removeFromStockById(''+card.id);
+        this.cards.addToStockWithId(card.type + card.side, ''+card.id);
+    }
 }

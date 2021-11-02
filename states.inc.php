@@ -397,6 +397,7 @@ $playerActionsGameStates = [
         "action" => "stEnterTokyo",
         "transitions" => [
             "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
+            "changeForm" => ST_PLAYER_CHANGE_FORM,
             "buyCard" => ST_PLAYER_BUY_CARD,
         ],
     ],
@@ -412,6 +413,20 @@ $playerActionsGameStates = [
         "transitions" => [
             "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
             "endStealCostume" => ST_PLAYER_BUY_CARD,
+            "changeForm" => ST_PLAYER_CHANGE_FORM,
+        ]
+    ],
+
+    ST_PLAYER_CHANGE_FORM => [
+        "name" => "changeForm",
+        "description" => '', // client TODOME translate('${actplayer} can change form'),
+        "descriptionmyturn" => '', // client TODOME translate('${you} can change form'),
+        "type" => "activeplayer",
+        "args" => "argChangeForm",
+        "action" => "stChangeForm",
+        "possibleactions" => [ "changeForm", "skipChangeForm" ],
+        "transitions" => [
+            "buyCard" => ST_PLAYER_BUY_CARD,
         ]
     ],
 

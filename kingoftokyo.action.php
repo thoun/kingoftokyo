@@ -386,7 +386,21 @@
 
         self::ajaxResponse();
     }
+  	
+    public function changeForm() {
+        self::setAjaxMode();
 
-  }
-  
+        $this->game->changeForm();
 
+        self::ajaxResponse();
+    }
+  	
+    public function skipChangeForm() {
+        self::setAjaxMode();
+
+        $this->game->skipChangeForm();
+
+        self::ajaxResponse();
+    }
+
+}

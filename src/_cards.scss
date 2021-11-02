@@ -72,6 +72,10 @@ $description-size: 7pt;
             -webkit-text-stroke: 4px #f7941d;
         }
 
+        &.transformation .outline { // teal
+            -webkit-text-stroke: 4px #13b48f;
+        }
+
         .outline {
             position: absolute;
             left: 0;

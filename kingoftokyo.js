@@ -66,6 +66,7 @@ var DISCARD_CARDS_LIST = {
     dark: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19],
 };
 var COSTUME_CARDS_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+var TRANSFORMATION_CARDS_LIST = [1, 2];
 var Cards = /** @class */ (function () {
     function Cards(game) {
         this.game = game;
@@ -73,6 +74,7 @@ var Cards = /** @class */ (function () {
     Cards.prototype.setupCards = function (stocks) {
         var version = this.game.isDarkEdition() ? 'dark' : 'base';
         var costumes = this.game.isHalloweenExpansion();
+        var transformation = this.game.isMutantEvolutionVariant();
         stocks.forEach(function (stock) {
             var keepcardsurl = g_gamethemeurl + "img/keep-cards.jpg";
             KEEP_CARDS_LIST[version].forEach(function (id, index) {
@@ -86,6 +88,12 @@ var Cards = /** @class */ (function () {
                 var costumecardsurl_1 = g_gamethemeurl + "img/costume-cards.jpg";
                 COSTUME_CARDS_LIST.forEach(function (id, index) {
                     stock.addItemType(200 + id, 200 + id, costumecardsurl_1, index);
+                });
+            }
+            if (transformation) {
+                var transformationcardsurl_1 = g_gamethemeurl + "img/transformation-cards.jpg";
+                COSTUME_CARDS_LIST.forEach(function (id, index) {
+                    stock.addItemType(300 + id, 300 + id, transformationcardsurl_1, index);
                 });
             }
         });
@@ -180,7 +188,7 @@ var Cards = /** @class */ (function () {
         if (!cards.length) {
             return;
         }
-        cards.forEach(function (card) { return stock.addToStockWithId(card.type, "" + card.id, from); });
+        cards.forEach(function (card) { return stock.addToStockWithId(card.type + card.side, "" + card.id, from); });
         cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(stock, card); });
     };
     Cards.prototype.moveToAnotherStock = function (sourceStock, destinationStock, card) {
@@ -222,6 +230,9 @@ var Cards = /** @class */ (function () {
             case 115: return [0, 80];
             // COSTUME            
             case 209: return [15, 100];
+            // TRANSFORMATION   /* TODOME */         
+            case 301:
+            case 302: return [10, 15];
         }
         return null;
     };
@@ -404,6 +415,9 @@ var Cards = /** @class */ (function () {
             case 210: return _("[146088]Robot");
             case 211: return _("[733010]Statue of liberty");
             case 212: return _("[2d4554]Clown");
+            // TRANSFORMATION
+            /* TODOME case 301: return _("[deaa26]Biped [72451c]Form");
+            case 302: return _("[982620]Beast [de6526]Form");*/
         }
         return null;
     };
@@ -512,11 +526,42 @@ var Cards = /** @class */ (function () {
             case 210: return _("You can choose to lose [Energy] instead of [Heart].");
             case 211: return _("You have an <strong>extra Roll.</strong>");
             case 212: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>");
+            // TRANSFORMATION
+            /* TODOME case 301: return _("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.");
+            case 302: return _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>");*/
         }
         return null;
     };
     Cards.prototype.getTooltip = function (cardTypeId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': this.getCardCost(cardTypeId) }) + " <span class=\"icon energy\"></span></p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        var cost = this.getCardCost(cardTypeId);
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>";
+        if (cost !== null) {
+            tooltip += "<p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': cost }) + " <span class=\"icon energy\"></span></p>";
+        }
+        tooltip += "<p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>";
+        /* TODOME if (cardTypeId == 301 || cardTypeId == 302) {
+            const otherSide = cardTypeId == 301 ? 302 : 301;
+
+            const tempDiv: HTMLDivElement = document.createElement('div');
+            tempDiv.classList.add('stockitem');
+            tempDiv.style.width = `${CARD_WIDTH}px`;
+            tempDiv.style.height = `${CARD_HEIGHT}px`;
+            tempDiv.style.position = `relative`;
+            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(otherSide)}-cards.jpg')`;
+            const imagePosition = (otherSide % 100) - 1;
+            const image_items_per_row = 10;
+            var row = Math.floor(imagePosition / image_items_per_row);
+            const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
+            const yBackgroundPercent = row * 100;
+            tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
+
+            document.body.appendChild(tempDiv);
+            this.setDivAsCard(tempDiv, otherSide);
+            document.body.removeChild(tempDiv);
+
+            tooltip += `<p>${_("Other side :")}<br>${tempDiv.outerHTML}</p>`;
+        }*/
+        tooltip += "</div>";
         return tooltip;
     };
     Cards.prototype.setupNewCard = function (cardDiv, cardType) {
@@ -533,6 +578,9 @@ var Cards = /** @class */ (function () {
         else if (cardType < 300) {
             return _('Costume');
         }
+        else if (cardType < 400) {
+            return 'Transformation'; // TODOME 
+        }
     };
     Cards.prototype.getCardTypeClass = function (cardType) {
         if (cardType < 100) {
@@ -543,6 +591,9 @@ var Cards = /** @class */ (function () {
         }
         else if (cardType < 300) {
             return 'costume';
+        }
+        else if (cardType < 400) {
+            return 'transformation';
         }
     };
     Cards.prototype.setDivAsCard = function (cardDiv, cardType) {
@@ -576,6 +627,9 @@ var Cards = /** @class */ (function () {
         else if (cardType < 300) {
             return 'costume';
         }
+        else if (cardType < 400) {
+            return 'transformation';
+        }
     };
     Cards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCard) {
         var mimickedCardText = '-';
@@ -586,14 +640,14 @@ var Cards = /** @class */ (function () {
             tempDiv.style.height = CARD_HEIGHT + "px";
             tempDiv.style.position = "relative";
             tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + this.getImageName(mimickedCard.type) + "-cards.jpg')";
-            var imagePosition = (mimickedCard.type % 100) - 1;
+            var imagePosition = ((mimickedCard.type + mimickedCard.side) % 100) - 1;
             var image_items_per_row = 10;
             var row = Math.floor(imagePosition / image_items_per_row);
             var xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
             var yBackgroundPercent = row * 100;
             tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% -" + yBackgroundPercent + "%";
             document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type);
+            this.setDivAsCard(tempDiv, mimickedCard.type + mimickedCard.side);
             document.body.removeChild(tempDiv);
             mimickedCardText = "<br>" + tempDiv.outerHTML;
         }
@@ -799,6 +853,10 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setBerserk = function (berserk) {
         document.getElementById("berserk-token-" + this.playerId).dataset.visible = berserk ? 'true' : 'false';
+    };
+    PlayerTable.prototype.changeForm = function (card) {
+        this.cards.removeFromStockById('' + card.id);
+        this.cards.addToStockWithId(card.type + card.side, '' + card.id);
     };
     return PlayerTable;
 }());
@@ -2312,6 +2370,12 @@ var KingOfTokyo = /** @class */ (function () {
                         this.startActionTimer('endStealCostume_button', 5);
                     }
                     break;
+                case 'changeForm':
+                    var argsChangeForm = args;
+                    this.addActionButton('changeForm_button', dojo.string.substitute(/* TODOME _(*/ "Change to ${otherForm}" /*)*/, { 'otherForm': _(argsChangeForm.otherForm) }) + formatTextIcons(" ( 1 [Energy])"), function () { return _this.changeForm(); });
+                    this.addActionButton('skipChangeForm_button', /* TODOME _(*/ "Don't change form" /*)*/, function () { return _this.skipChangeForm(); });
+                    dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
+                    break;
                 case 'buyCard':
                     var argsBuyCard = args;
                     this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(" ( 2 [Energy])"), 'onRenew');
@@ -2359,6 +2423,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.isCybertoothExpansion = function () {
         return this.gamedatas.cybertoothExpansion;
+    };
+    KingOfTokyo.prototype.isMutantEvolutionVariant = function () {
+        return this.gamedatas.mutantEvolutionVariant;
     };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return false; // TODODE
@@ -2831,6 +2898,18 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
+    KingOfTokyo.prototype.changeForm = function () {
+        if (!this.checkAction('changeForm')) {
+            return;
+        }
+        this.takeAction('changeForm');
+    };
+    KingOfTokyo.prototype.skipChangeForm = function () {
+        if (!this.checkAction('skipChangeForm')) {
+            return;
+        }
+        this.takeAction('skipChangeForm');
+    };
     KingOfTokyo.prototype.buyCard = function (id, from) {
         if (!this.checkAction('buyCard')) {
             return;
@@ -3049,6 +3128,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['rethrow3changeDie', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
+            ['changeForm', 500],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -3321,6 +3401,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_setPlayerBerserk = function (notif) {
         this.getPlayerTable(notif.args.playerId).setBerserk(notif.args.berserk);
         dojo.toggleClass("player-panel-berserk-" + notif.args.playerId, 'active', notif.args.berserk);
+    };
+    KingOfTokyo.prototype.notif_changeForm = function (notif) {
+        this.getPlayerTable(notif.args.playerId).changeForm(notif.args.card);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

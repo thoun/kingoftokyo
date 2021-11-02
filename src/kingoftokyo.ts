@@ -563,6 +563,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                         this.startActionTimer('endStealCostume_button', 5);
                     }
                     break;
+                case 'changeForm':
+                    const argsChangeForm = args as EnteringChangeFormArgs;
+
+                    (this as any).addActionButton('changeForm_button',   dojo.string.substitute(/* TODOME _(*/"Change to ${otherForm}"/*)*/, {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
+                    (this as any).addActionButton('skipChangeForm_button', /* TODOME _(*/"Don't change form"/*)*/, () => this.skipChangeForm());
+                    dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
+                    break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
 
@@ -625,6 +632,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public isCybertoothExpansion(): boolean {
         return this.gamedatas.cybertoothExpansion;
+    }
+
+    public isMutantEvolutionVariant(): boolean {
+        return this.gamedatas.mutantEvolutionVariant;
     }
 
     public isDarkEdition(): boolean {
@@ -1221,6 +1232,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public changeForm() {
+        if(!(this as any).checkAction('changeForm')) {
+            return;
+        }
+
+        this.takeAction('changeForm');
+    }
+
+    public skipChangeForm() {
+        if(!(this as any).checkAction('skipChangeForm')) {
+            return;
+        }
+
+        this.takeAction('skipChangeForm');
+    }
+
     public buyCard(id: number | string, from: number) {
         if(!(this as any).checkAction('buyCard')) {
             return;
@@ -1482,6 +1509,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['rethrow3changeDie', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
+            ['changeForm', 500],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -1791,6 +1819,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getPlayerTable(notif.args.playerId).setBerserk(notif.args.berserk);
         dojo.toggleClass(`player-panel-berserk-${notif.args.playerId}`, 'active', notif.args.berserk);
     }
+
+    notif_changeForm(notif: Notif<NotifChangeFormArgs>) { 
+        this.getPlayerTable(notif.args.playerId).changeForm(notif.args.card);
+        this.setEnergy(notif.args.playerId, notif.args.energy);
+    }
+
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
