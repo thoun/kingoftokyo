@@ -116,8 +116,33 @@ html, .mode_3d #game_play_area_background {
   flex-wrap: wrap;
   align-items: center;
 
-  #rapid-actions-wrapper:not(:empty) {
-    margin-right: 15px;
+  #rapid-actions-wrapper {
+    max-width: 380px;
+
+    &:not(:empty) {
+      margin-right: 15px;
+      margin-left: 10px;
+    }
+
+    .action-button {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    &>.action-button {
+      margin-left: 0;
+    }
+
+    #rapidCultistButtons {
+      display: flex;
+      align-items: center;
+
+      span {
+        color: white;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+    }
   }
 
   #autoLeaveUnderButton {

@@ -45,3 +45,5 @@ TODOCY confirm forbidden heal & heal on tokens shouldn't remove berserk
 TODOCY confirm rolling 4 claws & a heart still activate berserk
 TODOME add stats
 TODOME flip cards (remove 302)
+TODOCH : add rapidHealCulstistSync
+TODOCT TOCHECK check if it is possible to gain multiple cultists in same turn 1111 2222 or with added smashes

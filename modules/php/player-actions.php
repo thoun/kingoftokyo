@@ -76,5 +76,21 @@ trait PlayerActionTrait {
         self::notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
     }
 
+    function useCultist($diceIds) {
+        $this->checkAction('useCultist');
+
+        $playerId = self::getActivePlayerId();
+
+        if ($this->getPlayerCultists($playerId) == 0) {
+            throw new \BgaUserException('No cultist');
+        }
+        
+    $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1 extra roll'/*)*/);
+        
+        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS)) + 1;
+        self::setGameStateValue(EXTRA_ROLLS, $extraRolls);
+
+        $this->rethrowDice($diceIds);
+    }
 
 }

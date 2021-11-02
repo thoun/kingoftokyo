@@ -37,6 +37,9 @@
   display: flex;
   align-items: center;
 }
+.counters .counter span {
+  padding: 0 5px 0 5px;
+}
 .counters .counter .tokyo-tower-icon-wrapper {
   width: 32px;
   height: 32px;
@@ -66,6 +69,11 @@
 .counters .counter .berserk-icon-wrapper .icon.berserk.active {
   opacity: 1;
   box-shadow: 0 0 3px 1px red;
+}
+.counters .counter .icon.cultist {
+  background: url("img/cultist-tile.jpg");
+  background-size: contain;
+  border-radius: 3px;
 }
 
 .player-tokens {
@@ -1051,6 +1059,24 @@
 #table .player-table .berserk-token[data-visible=true] {
   display: initial;
 }
+#table .player-table .cultist-tokens {
+  position: absolute;
+  bottom: 0;
+  left: 60px;
+  width: 155px;
+  display: flex;
+  flex-wrap: wrap;
+}
+#table .player-table .cultist-tokens .cultist-token {
+  background: url("img/cultist-tile.jpg");
+  background-size: contain;
+  width: 64px;
+  height: 64px;
+  border-radius: 5px;
+  margin: 0 5px;
+  margin-left: -50px;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.7);
+}
 #table .monster-figure {
   position: relative;
 }
@@ -1273,8 +1299,28 @@ html, .mode_3d #game_play_area_background {
   flex-wrap: wrap;
   align-items: center;
 }
+#rolled-dice-and-rapid-actions #rapid-actions-wrapper {
+  max-width: 380px;
+}
 #rolled-dice-and-rapid-actions #rapid-actions-wrapper:not(:empty) {
   margin-right: 15px;
+  margin-left: 10px;
+}
+#rolled-dice-and-rapid-actions #rapid-actions-wrapper .action-button {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+#rolled-dice-and-rapid-actions #rapid-actions-wrapper > .action-button {
+  margin-left: 0;
+}
+#rolled-dice-and-rapid-actions #rapid-actions-wrapper #rapidCultistButtons {
+  display: flex;
+  align-items: center;
+}
+#rolled-dice-and-rapid-actions #rapid-actions-wrapper #rapidCultistButtons span {
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
 }
 #rolled-dice-and-rapid-actions #autoLeaveUnderButton {
   position: relative;

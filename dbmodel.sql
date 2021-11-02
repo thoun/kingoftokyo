@@ -53,6 +53,7 @@ ALTER TABLE `player` ADD `leave_tokyo_under` tinyint unsigned;
 ALTER TABLE `player` ADD `stay_tokyo_over` tinyint unsigned;
 ALTER TABLE `player` ADD `player_dead` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_berserk` tinyint UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_cultists` tinyint UNSIGNED NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS `global_variables` (
   `name` varchar(50) NOT NULL,

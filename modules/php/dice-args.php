@@ -47,8 +47,9 @@ trait DiceArgTrait {
             $smokeCloudsTokens += $smokeCloudCard->tokens;
         }
         $hasSmokeCloud = $smokeCloudsTokens > 0;
+        $hasCultist = $this->isCthulhuExpansion() && $this->getPlayerCultists($playerId) > 0;
 
-        $hasActions = $throwNumber < $maxThrowNumber || ($hasEnergyDrink && $playerEnergy >= 1) || $hasDice3 || $hasSmokeCloud;
+        $hasActions = $throwNumber < $maxThrowNumber || ($hasEnergyDrink && $playerEnergy >= 1) || $hasDice3 || $hasSmokeCloud || $hasCultist;
     
         // return values:
         return [
@@ -65,6 +66,7 @@ trait DiceArgTrait {
                 'hasDice3' => $hasDice3,
             ],
             'hasSmokeCloud' => $hasSmokeCloud,
+            'hasCultist' => $hasCultist,
             'hasActions' => $hasActions,
         ];
     }

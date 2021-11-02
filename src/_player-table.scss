@@ -197,6 +197,27 @@
             display: initial;
         }
     }
+
+    .cultist-tokens {
+        position: absolute;
+        bottom: 0;
+        left: 60px;
+        width: 155px;
+
+        display: flex;
+        flex-wrap: wrap;
+
+        .cultist-token {
+            background: url("img/cultist-tile.jpg");
+            background-size: contain;
+            width: 64px;
+            height: 64px;
+            border-radius: 5px;
+            margin: 0 5px;
+            margin-left: -50px;
+            box-shadow: 0 0 2px 1px rgba(0,0,0,0.7);
+        }
+    }
 }
 
 .monster-figure {
