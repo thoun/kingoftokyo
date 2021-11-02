@@ -9,8 +9,9 @@ trait DebugUtilTrait {
 ////////////
 
     function debugSetup() {
+        
         global $g_config;
-        if (!$g_config['debug_from_chat']) { 
+        if ($this->getBgaEnvironment() != 'studio') { 
             return;
         } 
 
