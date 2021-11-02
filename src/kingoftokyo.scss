@@ -99,7 +99,7 @@ html, .mode_3d #game_play_area_background {
   background-repeat: no-repeat;
   background-size: contain;
 
-  @for $i from 1 through 9 {
+  @for $i from 1 through 10 {
       &.monster#{$i} {
           background-image: url('img/monster-figure-#{$i}.png');
       }

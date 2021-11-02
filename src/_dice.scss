@@ -132,6 +132,12 @@ $size: 0.25em;
         background-image: url('img/green_dice.png');  
     }
 
+    &.berserk {
+        background-color: red; // TODOCT
+        border-color: red;
+        background-image: url('img/berserk_dice.png');
+    }
+
     background-size: auto 100%;
 
     @for $i from 1 through 6 {
@@ -302,6 +308,18 @@ $size: 0.25em;
           opacity: 0.5;
           cursor: not-allowed;
           pointer-events: none;
+        }
+
+        &.black {
+            background-image: url('img/black_dice.png');
+        }
+    
+        &.green {
+            background-image: url('img/green_dice.png');  
+        }
+    
+        &.berserk {
+            background-image: url('img/berserk_dice.png');
         }
       }
     }

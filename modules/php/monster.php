@@ -22,6 +22,10 @@ trait MonsterTrait {
         /* TODOKK if ($bonusMonsters || $this->isKingKongExpansion()) {
             $monsters = array_merge($monsters, [9]);
         }*/
+
+        /* TODOCY if ($bonusMonsters || $this->isCybertoothExpansion()) {
+            $monsters = array_merge($monsters, [10]);
+        }*/
         
         return $monsters;
     }

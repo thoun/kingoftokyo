@@ -170,4 +170,18 @@ trait PlayerUtilTrait {
 
         return $killActive;
     }
+
+    function isPlayerBerserk(int $playerId) {
+        return boolval(self::getUniqueValueFromDB("SELECT player_berserk FROM `player` where `player_id` = $playerId"));
+    }
+
+    function setPlayerBerserk(int $playerId, bool $active) {
+        self::DbQuery("UPDATE player SET `player_berserk` = ".intval($active)." where `player_id` = $playerId");
+
+        // TODOCY add a message to notif
+        self::notifyAllPlayers('setPlayerBerserk', '', [
+            'playerId' => $playerId,
+            'berserk' => $active,
+        ]);
+    }
 }

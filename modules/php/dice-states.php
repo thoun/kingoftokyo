@@ -140,6 +140,22 @@ trait DiceStateTrait {
             $this->getNewTokyoTowerLevel($playerId);
         }
 
+        if ($this->isCybertoothExpansion()) {
+            $berserk = $this->isPlayerBerserk($playerId);
+
+            if ($berserk) {
+                $dice = $this->getBerserkDice();
+
+                foreach ($dice as $die) {
+                    $this->applyBerserkDieToDieCounts($die, $diceCounts);
+                }
+            } else {
+                if ($diceCounts[6] >= 4) {
+                    $this->setPlayerBerserk($playerId, true);
+                }
+            }
+        }
+
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
 
@@ -204,6 +220,19 @@ trait DiceStateTrait {
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $diceCount = $diceCounts[6];
+        
+        /* TODOCY
+        $redirects = false;
+        if ($diceCount > 0) {
+            $playerId = self::getActivePlayerId();
+            $redirects = $this->resolveSmashDice($playerId, $diceCount);
+        } else {
+            self::setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
+        }
+
+        if (!$redirects) {    
+            $this->gamestate->nextState('next');
+        }*/
 
         $nextState = 'enterTokyo';
         $smashTokyo = false;
@@ -214,6 +243,22 @@ trait DiceStateTrait {
         
         if ($nextState != null) {
             $this->gamestate->nextState($nextState);
+        }
+    }
+
+    function stResolveSkullDice() {        
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+
+        $nextState = intval(self::getGameStateValue(STATE_AFTER_RESOLVE));
+        $redirects = false;
+        if ($this->isCybertoothExpansion() && $diceCounts[7] > 0) {
+            $playerId = self::getActivePlayerId();
+            $damages[] = new Damage($playerId, $diceCounts[7], $playerId, 0, false, 0, 0);
+            $redirects = $this->resolveDamages($damages, $nextState);
+        }
+        
+        if (!$redirects) {        
+            $this->gamestate->jumpToState($nextState);
         }
     }
 }

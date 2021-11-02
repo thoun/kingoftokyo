@@ -489,6 +489,10 @@ trait UtilTrait {
                 'card_name' => $cardType == 0 ? null : $cardType,
             ]);
         }
+
+        if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
+            $this->setPlayerBerserk($playerId, false);
+        }
     }
 
     private function logDamageBlocked(int $playerId, int $cardType) {

@@ -40,4 +40,7 @@ TODOKK add stats
 TODOCT add stats
 TODOAN add stats
 TODOCY add stats
+TODOCY check what happens if healed by Healing Ray
+TODOCY confirm forbidden heal & heal on tokens shouldn't remove berserk
+TODOCY confirm rolling 4 claws & a heart still activate berserk
 TODOME add stats & flip cards (remove 302)

@@ -41,7 +41,7 @@ $game_options = [
     ],
 
     /* TODOCT CTHULHU_EXPANSION_OPTION => [
-        'name' => totranslate('Cthlhu event'),
+        'name' => totranslate('Cthlhu event (Cultists)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
@@ -57,7 +57,7 @@ $game_options = [
     // TODO Wickedness game mechanics ?
 
     /* TODOKK KINGKONG_EXPANSION_OPTION => [
-        'name' => totranslate('King Kong event'),
+        'name' => totranslate('King Kong event (Tokyo Tower)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
@@ -70,7 +70,7 @@ $game_options = [
     ],*/
 
     /* TODOAN ANUBIS_EXPANSION_OPTION => [
-        'name' => totranslate('Anubis event'),
+        'name' => totranslate('Anubis event (Curse die)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
@@ -85,7 +85,7 @@ $game_options = [
     /* TODOCY 
 
     CYBERTOOTH_EXPANSION_OPTION => [
-        'name' => totranslate('Cybertooth event'),
+        'name' => totranslate('Cybertooth event (Berserk)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
@@ -98,7 +98,7 @@ $game_options = [
     ],
 
     MUTANT_EVOLUTION_VARIANT_OPTION => [
-        'name' => totranslate('Mutant Evolutions variant'),
+        'name' => totranslate('Mutant Evolutions variant (Transformation card)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),

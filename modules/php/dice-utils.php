@@ -182,7 +182,7 @@ trait DiceUtilTrait {
     }
 
     
-    function resolveSmashDice(int $playerId, int $diceCount) { // return nextState / null
+    function resolveSmashDice(int $playerId, int $diceCount) { // return nextState / null // TODOCY return redirects
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
 
@@ -278,6 +278,12 @@ trait DiceUtilTrait {
             }
         }
         return $nextState;
+
+        /* TODOCY $redirects = false;
+        if (count($damages) > 0) {
+            $redirects = $this->resolveDamages($damages, ST_RESOLVE_SKULL_DICE);
+        }
+        return $redirects;*/
     }
 
     function getChangeDieCards(int $playerId) {
@@ -562,6 +568,26 @@ trait DiceUtilTrait {
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
             ]);
+        }
+    }
+
+    function applyBerserkDieToDieCounts(object $die, array &$diceCounts) {
+        switch($die->value) {
+            case 1: 
+                $diceCounts[5] += 1;
+                break;
+            case 2: 
+                $diceCounts[5] += 2;
+                break;
+            case 3: case 4: 
+                $diceCounts[6] += 1;
+                break;
+            case 5: 
+                $diceCounts[6] += 2;
+                break;
+            case 6: 
+                $diceCounts[7] = 1;
+                break;
         }
     }
 }

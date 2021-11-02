@@ -57,6 +57,26 @@
         width: 9px;
       }
     }
+
+    .berserk-icon-wrapper {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+
+      .icon.berserk {
+        background: url("img/berserk-token.png") no-repeat;
+        background-size: contain;
+        opacity: 0.3;
+        width: 23px;
+        border-radius: 3px;
+
+        &.active {
+          opacity: 1;
+          box-shadow: 0 0 3px 1px red;
+        }
+      }
+    }
   }
 }
 

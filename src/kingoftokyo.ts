@@ -122,6 +122,14 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);*/
         }
 
+        /* TODOCY if (gamedatas.cybertoothExpansion) {
+            const tooltip = formatTextIcons(`
+            <h3>${_("Berserk mode")}</h3>
+            <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
+            <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
+            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCT check if healed by Healing Ray       
+        }*/
+
         log( "Ending game setup" );
     }
 
@@ -686,7 +694,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 </div>
             </div>`, `player_board_${player.id}`);
 
-            if (gamedatas.kingkongExpansion) {
+            if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion) {
                 let html = `<div class="counters">`;
 
                 if (gamedatas.kingkongExpansion) {
@@ -694,6 +702,15 @@ class KingOfTokyo implements KingOfTokyoGame {
                     <div class="counter tokyo-tower-tooltip">
                         <div class="tokyo-tower-icon-wrapper"><div class="tokyo-tower-icon"></div></div>
                         <span id="tokyo-tower-counter-${player.id}"></span>&nbsp;/&nbsp;3
+                    </div>`;
+                }
+
+                if (gamedatas.cybertoothExpansion) {
+                    html += `
+                    <div class="counter">
+                        <div class="berserk-icon-wrapper">
+                            <div id="player-panel-berserk-${player.id}" class="berserk icon ${player.berserk ? 'active' : ''} berserk-tooltip"></div>
+                        </div>
                     </div>`;
                 }
 
@@ -1479,6 +1496,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
             ['kotPlayerEliminated', 1],
+            ['setPlayerBerserk', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -1767,6 +1785,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (playerId != 0) {
             this.tokyoTowerCounters[playerId].toValue(newLevelTowerLevels.length);
         }
+    }
+
+    notif_setPlayerBerserk(notif: Notif<NotifSetPlayerBerserkArgs>) { 
+        this.getPlayerTable(notif.args.playerId).setBerserk(notif.args.berserk);
+        dojo.toggleClass(`player-panel-berserk-${notif.args.playerId}`, 'active', notif.args.berserk);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
