@@ -16,7 +16,7 @@
                 <div id="locked-dice5"></div>
                 <div id="locked-dice6"></div>
                 <div id="locked-dice7"></div>
-                <div id="locked-dice0"></div>
+                <div id="locked-dice10"></div>
             </div>
             <div id="dice-selector">
             </div>

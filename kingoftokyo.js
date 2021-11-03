@@ -1119,9 +1119,9 @@ var DieFaceSelector = /** @class */ (function () {
 }());
 var DIE4_ICONS = [
     null,
-    [1, 2, 3],
-    [1, 4, 2],
-    [1, 3, 4],
+    [1, 3, 2],
+    [1, 2, 4],
+    [1, 4, 3],
     [4, 3, 2],
 ];
 var DiceManager = /** @class */ (function () {
@@ -1173,7 +1173,7 @@ var DiceManager = /** @class */ (function () {
         this.action = undefined;
     };
     DiceManager.prototype.getLockedDiceId = function (die) {
-        return "locked-dice" + (die.type == 2 ? 0 : this.getDieFace(die));
+        return "locked-dice" + this.getDieFace(die);
     };
     DiceManager.prototype.setDiceForChangeDie = function (dice, args, inTokyo, isCurrentPlayerActive) {
         var _this = this;
@@ -1282,9 +1282,10 @@ var DiceManager = /** @class */ (function () {
         });
     };
     DiceManager.prototype.clearDiceHtml = function () {
-        for (var i = 0; i <= 7; i++) {
+        for (var i = 1; i <= 7; i++) {
             document.getElementById("locked-dice" + i).innerHTML = '';
         }
+        document.getElementById("locked-dice10").innerHTML = '';
         document.getElementById("dice-selector").innerHTML = '';
     };
     DiceManager.prototype.resolveNumberDice = function (args) {
@@ -1296,7 +1297,10 @@ var DiceManager = /** @class */ (function () {
         this.dice.filter(function (die) { return die.value === 4; }).forEach(function (die) { return _this.removeDice(die, 1000); });
     };
     DiceManager.prototype.getDieFace = function (die) {
-        if (die.type === 1) {
+        if (die.type === 2) {
+            return 10;
+        }
+        else if (die.type === 1) {
             if (die.value <= 2) {
                 return 5;
             }
@@ -1369,7 +1373,7 @@ var DiceManager = /** @class */ (function () {
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         var dieDivId = "dice" + die.id;
         var dieDiv = document.getElementById(dieDivId);
-        var destinationId = die.locked ? "locked-dice" + this.getDieFace(die) : "dice-selector";
+        var destinationId = die.locked ? this.getLockedDiceId(die) : "dice-selector";
         var tempDestinationId = "temp-destination-wrapper-" + destinationId + "-" + die.id;
         var tempOriginId = "temp-origin-wrapper-" + destinationId + "-" + die.id;
         if (document.getElementById(destinationId)) {
@@ -1424,7 +1428,7 @@ var DiceManager = /** @class */ (function () {
         return this.dice.some(function (die) { return !die.locked; });
     };
     DiceManager.prototype.createAndPlaceDie4Html = function (die, destinationId) {
-        var html = "\n        <div id=\"dice" + die.id + "\" class=\"die4\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n            <ol class=\"die4-container\" data-roll=\"" + die.value + "\">";
+        var html = "\n        <div id=\"dice" + die.id + "\" class=\"die4\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n            <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
         for (var dieFace = 1; dieFace <= 4; dieFace++) {
             html += "<li class=\"face\" data-side=\"" + dieFace + "\">";
             DIE4_ICONS[dieFace].forEach(function (icon) { return html += "<span class=\"number face" + icon + "\"><div class=\"anubis-icon anubis-icon" + icon + "\"></div></span>"; });
@@ -1476,7 +1480,7 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.createDice = function (die, selectable, inTokyo) {
         var _this = this;
-        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? "locked-dice" + this.getDieFace(die) : "dice-selector");
+        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? this.getLockedDiceId(die) : "dice-selector");
         var div = this.getDiceDiv(die);
         div.addEventListener('animationend', function (e) {
             if (e.animationName == 'rolled-dice') {
@@ -1515,7 +1519,7 @@ var DiceManager = /** @class */ (function () {
         var dieDiv = this.getDiceDiv(die);
         dieDiv.dataset.rolled = die.rolled ? 'true' : 'false';
         if (die.rolled) {
-            setTimeout(function () { return _this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd' : 'even'); }, 200);
+            setTimeout(function () { return _this.addRollToDiv(dieDiv, Math.random() < 0.5 && die.type != 2 ? 'odd' : 'even'); }, 200);
         }
         else {
             this.addRollToDiv(dieDiv, '-');

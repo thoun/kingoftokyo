@@ -89,7 +89,6 @@ $size: 0.25em;
           display: none;
         }
     }
-}
 
 @keyframes rolled-dice {
     100% { transform: initial; }
@@ -252,6 +251,8 @@ $size: 0.25em;
     transform: rotate3d(1, 0, 0, 180deg) translateZ(4*$size);
   }
 
+}
+
 .animation {
     position: absolute;
     z-index: 10;
@@ -308,18 +309,6 @@ $size: 0.25em;
           opacity: 0.5;
           cursor: not-allowed;
           pointer-events: none;
-        }
-
-        &.black {
-            background-image: url('img/black_dice.png');
-        }
-    
-        &.green {
-            background-image: url('img/green_dice.png');  
-        }
-    
-        &.berserk {
-            background-image: url('img/berserk_dice.png');
         }
       }
     }
@@ -407,40 +396,43 @@ $size: 0.25em;
 $die4size: 5em;
 $die4halfbase: $die4size / 2;
 $die4height: /*sqrt(3)*/1.73205080757 * $die4halfbase;
-$die4angle: (19.471221deg);
+$die4angle: 19.471221deg;
 $die4color: #dbb336;
+$distFromCenter: 1em;
 
 .die4 {
     position: relative;
     margin: 0 auto;
     height: $die4size;
     width: $die4size;
+    transform: translateZ($distFromCenter);
 
     &[data-rolled="true"] {
         animation: rolled-dice 1s forwards;
-        transform: translateY(-60vh);
+        transform: translateZ($distFromCenter) translateY(-60vh);
 
         .overlay {
           display: none;
         }
     }
 
-    .die4-container {
+    .die-list {
+      width: $die4size;
+      height: $die4size;
       transition: transform 1s ease-out;
       transform-style: preserve-3d;
       transform-origin: center center;
-      transform: translateZ(4em) rotateX(-90deg) rotateY(0deg) rotateZ(0deg);
     }
 
   .face {
       position: absolute;
-      height: 0;
-      width: 0;
-      transform-origin: center top;
-      transition: transform 1s ease-out;
-      border: $die4halfbase solid transparent;
-      border-top: 0;
-      border-bottom: $die4height solid transparent;
+      top: 0;
+      left: 0;
+      transform-origin: center 66.66667%;
+      //transition: transform 1s ease-out;
+      //border: $die4halfbase solid transparent;
+      //border-top: 0;
+      //border-bottom: $die4height solid transparent;
 
       background: url('img/anubis_die_background.png');
       border: 0;
@@ -462,18 +454,34 @@ $die4color: #dbb336;
   [data-roll-type="change"] {
     transition: transform 0.5s ease-in-out;
   }
+
+  [data-roll-type="even"][data-roll="1"] {
+    transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); // icon 1 eye
+  }
+  [data-roll-type="even"][data-roll="2"] {
+    transform: rotateX(300deg) rotateY(900deg) rotateZ(480deg); // icon 2 river
+  }
+  [data-roll-type="even"][data-roll="3"] {
+    transform: rotateX(412deg) rotateY(845deg) rotateZ(450deg); // icon 3 snake
+  }
+  [data-roll-type="even"][data-roll="4"] {
+    transform: rotateX(420deg) rotateY(955deg) rotateZ(510deg); // icon 4 ankh
+  }
   
   [data-side="1"] {
-    transform: translateZ(4*$size) rotateY(0deg) rotateX($die4angle);
+    //transform: translateZ(4*$size) rotateY(0deg) rotateX($die4angle);
+    transform: rotateX(-90deg + $die4angle) translateZ($distFromCenter);
   }
   [data-side="2"] {
-    transform: translateZ(4*$size) rotateY(120deg) rotateX($die4angle);
+    //transform: translateZ(4*$size) rotateY(120deg) rotateX($die4angle);
+    transform: rotateZ(120deg) rotateX(-90deg + $die4angle) translateZ($distFromCenter);
   }
   [data-side="3"] {
-    transform: translateZ(4*$size) rotateY(240deg) rotateX($die4angle);
+    //transform: translateZ(4*$size) rotateY(240deg) rotateX($die4angle);
+    transform: rotateZ(240deg) rotateX(-90deg + $die4angle) translateZ($distFromCenter);
   }
   [data-side="4"] {
-    transform: translateZ(4*$size) rotateX(-90deg) rotateZ(180deg) translateY(-$die4height *2 /3) translateZ($die4height - ($die4size - $die4height)/8*3);
+    transform: translateZ(-$distFromCenter); //translateZ(4*$size) rotateX(360deg - $die4angle) rotateZ(0deg) translateY(-$die4height *2 /3) translateZ($die4height - ($die4size - $die4height)/8*3);
   }
 
   /*.face:nth-child(1) {

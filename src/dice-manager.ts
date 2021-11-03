@@ -2,9 +2,9 @@ type DieClickAction = 'move' | 'change' | 'psychicProbeRoll';
 
 const DIE4_ICONS = [
     null,
-    [1, 2, 3],
-    [1, 4, 2],
-    [1, 3, 4],
+    [1, 3, 2],
+    [1, 2, 4],
+    [1, 4, 3],
     [4, 3, 2],
 ];
 
@@ -67,7 +67,7 @@ class DiceManager {
     }
 
     private getLockedDiceId(die: Dice) {
-        return `locked-dice${die.type == 2 ? 0 : this.getDieFace(die)}`;
+        return `locked-dice${this.getDieFace(die)}`;
     }
 
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
@@ -185,9 +185,10 @@ class DiceManager {
     }
 
     private clearDiceHtml() {        
-        for (let i=0; i<=7; i++) {
+        for (let i=1; i<=7; i++) {
             document.getElementById(`locked-dice${i}`).innerHTML = '';
         }
+        document.getElementById(`locked-dice10`).innerHTML = '';
         document.getElementById(`dice-selector`).innerHTML = '';
     }
 
@@ -200,7 +201,9 @@ class DiceManager {
     }
 
     private getDieFace(die: Dice) {
-        if (die.type === 1) {
+        if (die.type === 2) {
+            return 10;
+        } else if (die.type === 1) {
             if (die.value <= 2) {
                 return 5;
             } else if (die.value <= 5) {
@@ -274,7 +277,7 @@ class DiceManager {
         const dieDivId = `dice${die.id}`;
         const dieDiv = document.getElementById(dieDivId);
 
-        const destinationId = die.locked ? `locked-dice${this.getDieFace(die)}` : `dice-selector`;
+        const destinationId = die.locked ? this.getLockedDiceId(die) : `dice-selector`;
         const tempDestinationId = `temp-destination-wrapper-${destinationId}-${die.id}`;
         const tempOriginId = `temp-origin-wrapper-${destinationId}-${die.id}`;
 
@@ -337,7 +340,7 @@ class DiceManager {
     private createAndPlaceDie4Html(die: Dice, destinationId: string) {
         let html = `
         <div id="dice${die.id}" class="die4" data-dice-id="${die.id}" data-dice-value="${die.value}">
-            <ol class="die4-container" data-roll="${die.value}">`;
+            <ol class="die-list" data-roll="${die.value}">`;
             for (let dieFace=1; dieFace<=4; dieFace++) {
                 html += `<li class="face" data-side="${dieFace}">`;
                     DIE4_ICONS[dieFace].forEach(icon => html += `<span class="number face${icon}"><div class="anubis-icon anubis-icon${icon}"></div></span>`);
@@ -399,7 +402,7 @@ class DiceManager {
     }
 
     private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
-        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? `locked-dice${this.getDieFace(die)}` : `dice-selector`);
+        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? this.getLockedDiceId(die) : `dice-selector`);
 
         const div = this.getDiceDiv(die);
         div.addEventListener('animationend', (e: AnimationEvent) => {
@@ -439,7 +442,7 @@ class DiceManager {
 
         dieDiv.dataset.rolled = die.rolled ? 'true' : 'false';
         if (die.rolled) {            
-            setTimeout(() => this.addRollToDiv(dieDiv, Math.random() < 0.5 ? 'odd' : 'even'), 200); 
+            setTimeout(() => this.addRollToDiv(dieDiv, Math.random() < 0.5 && die.type != 2 ? 'odd' : 'even'), 200); 
         } else {
             this.addRollToDiv(dieDiv, '-');
         }

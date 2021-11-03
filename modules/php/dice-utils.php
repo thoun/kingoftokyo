@@ -71,7 +71,7 @@ trait DiceUtilTrait {
             if ($dice->locked) {
                 $lockedDice[] = $dice->value;
             } else {
-                $facesNumber = $dice->type == 2 ? 1 : 6;
+                $facesNumber = $dice->type == 2 ? 4 : 6;
                 $dice->value = bga_rand(1, $facesNumber);
                 self::DbQuery( "UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id );
                 $rolledDiceStr .= $this->getDieFaceLogName($dice->value);

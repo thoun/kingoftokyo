@@ -10,6 +10,23 @@ use KOT\Objects\Dice;
 use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\Damage;
 
+
+function getDieFace($die) {
+    if ($die->type === 2) {
+        return 10;
+    } else if ($die->type === 1) {
+        if ($die->value <= 2) {
+            return 5;
+        } else if ($die->value <= 5) {
+            return 6;
+        } else {
+            return 7;
+        }
+    } else {
+        return $die->value;
+    }
+}
+
 trait DiceStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -58,7 +75,9 @@ trait DiceStateTrait {
 
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getPlayerRolledDice($playerId);
-        $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
+        $diceValues = array_map(function($idie) { 
+            return $idie->value; 
+        }, $dice);
         sort($diceValues);
 
         $diceStr = '';
