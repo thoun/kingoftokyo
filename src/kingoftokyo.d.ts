@@ -89,7 +89,7 @@ interface KingOfTokyoGame extends Game {
     changeDie: (id: number, value: number, card: number) => void;
     psychicProbeRollDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
-    onVisibleCardClick: (stock: Stock, cardId: string, from: number) => void;
+    onVisibleCardClick: (stock: Stock, cardId: string, from?: number) => void;
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
     getZoom(): number;

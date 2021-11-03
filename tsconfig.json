@@ -23,6 +23,7 @@
         "src/animation-manager.ts",
         "src/heart-action-selector.ts",
         "src/preferences-manager.ts",
+        "src/table-center.ts",
         "src/kingoftokyo.ts",
         "src/define.ts"
     ]

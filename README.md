@@ -47,3 +47,5 @@ TODOME add stats
 TODOME flip cards (remove 302)
 TODOCH : add rapidHealCulstistSync
 TODOCT TOCHECK check if it is possible to gain multiple cultists in same turn 1111 2222 or with added smashes
+TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
+TODO automatic reroll of Background Dweller
