@@ -264,7 +264,9 @@ trait DiceActionTrait {
                     if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe
 
                         $mimicCard = $this->array_find($intervention->cards, function ($card) { return $card->type == MIMIC_CARD; });
-                        $this->setUsedCard($mimicCard->id);
+                        if ($mimicCard != null) {
+                            $this->setUsedCard($mimicCard->id);
+                        }
 
                         if ($mimicCard != null && count(array_filter($intervention->cards, function ($card) use ($mimicCard) { return $card->location_arg == $mimicCard->location_arg; })) == 1) {
                             // in case we had a mimic player to play after current player, we remove him from array because he can't anymore 
