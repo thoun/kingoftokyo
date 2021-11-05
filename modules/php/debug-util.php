@@ -9,8 +9,6 @@ trait DebugUtilTrait {
 ////////////
 
     function debugSetup() {
-        
-        global $g_config;
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         } 

@@ -10,7 +10,6 @@ trait MonsterTrait {
 
 
     private function getGameMonsters() {
-        global $g_config;
         $bonusMonsters = intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
 
         $monsters = [1,2,3,4,5,6];
