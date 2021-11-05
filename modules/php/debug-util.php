@@ -17,9 +17,9 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(20);
+        $this->debugSetEnergy(20);
         //$this->debugSetPoints(18);
         //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343493, 1);
@@ -30,7 +30,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
-        self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".WITCH_CARD);
+        //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".WITCH_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -60,13 +60,13 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343495);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
-        //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
+        $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493);
-        $this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
+        //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);

@@ -66,10 +66,16 @@ class CancelDamageIntervention extends PlayerIntervention {
         if ($canDo) {
             return true;
         } else {
-            $rapidHealingHearts = $game->cancellableDamageWithRapidHealing($playerId);
-            $rapidHealingCultists = $game->isCthulhuExpansion() ? $game->cancellableDamageWithCultists($playerId) : 0;
-            $damageToCancelToSurvive = $game->getDamageToCancelToSurvive($damage, $game->getPlayerHealth($playerId));
-            return ($rapidHealingHearts + $rapidHealingCultists) >= $damageToCancelToSurvive;
+            $playerHealth = $game->getPlayerHealth($playerId);
+            if ($playerHealth <= $damage) {
+                $rapidHealingHearts = $game->cancellableDamageWithRapidHealing($playerId);
+                $rapidHealingCultists = $game->isCthulhuExpansion() ? $game->cancellableDamageWithCultists($playerId) : 0;
+                $damageToCancelToSurvive = $game->getDamageToCancelToSurvive($damage, $playerHealth);
+                $canHeal = $rapidHealingHearts + $rapidHealingCultists;
+                return $canHeal > 0 && $canHeal >= $damageToCancelToSurvive;
+            } else {
+                return false;
+            }
         }
     }
 }
