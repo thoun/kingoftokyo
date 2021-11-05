@@ -57,6 +57,19 @@ trait PlayerUtilTrait {
         ]);
     }
 
+    function getLeaversWithBurrowing() {
+        return $this->getGlobalVariable(BURROWING_PLAYERS, true);
+    }
+
+    function addLeaverWithBurrowing(int $playerId) {
+        $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
+        if ($countBurrowing > 0) {
+            $playersIds = $this->getLeaversWithBurrowing();
+            $playersIds[] = $playerId;
+            $this->setGlobalVariable(BURROWING_PLAYERS, $playersIds);
+        }
+    }
+
     function autoLeave(int $playerId, int $health) {
         $leaveUnder = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));
 
@@ -68,12 +81,7 @@ trait PlayerUtilTrait {
 
         if ($leave) {
             $this->leaveTokyo($playerId);
-        
-            // burrowing
-            $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
-            if ($countBurrowing > 0) {
-                self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
-            }
+            $this->addLeaverWithBurrowing($playerId);
         }
 
         return $leave;

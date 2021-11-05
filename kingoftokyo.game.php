@@ -72,7 +72,6 @@ class KingOfTokyo extends Table {
             'throwNumber' => 10,
             FRENZY_EXTRA_TURN => 11,
             EXTRA_ROLLS => 13,
-            'loseHeartEnteringTokyo' => 14,
             FREEZE_TIME_MAX_TURNS => 15,
             FREEZE_TIME_CURRENT_TURN => 16,
             PSYCHIC_PROBE_ROLLED_A_3 => 19,
@@ -172,7 +171,6 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(FREEZE_TIME_MAX_TURNS, 0);
         self::setGameStateInitialValue(FREEZE_TIME_CURRENT_TURN, 0);
         self::setGameStateInitialValue(EXTRA_ROLLS, 0);
-        self::setGameStateInitialValue('loseHeartEnteringTokyo', 0);
         self::setGameStateInitialValue('newCardId', 0);
         self::setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 1);
@@ -228,7 +226,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        //$this->debugSetup();
+        $this->debugSetup();
 
         /************ End of the game initialization *****/
     }

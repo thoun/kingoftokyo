@@ -56,12 +56,7 @@ trait PlayerActionTrait {
 
     function applyActionLeaveTokyo(int $playerId) {
         $this->leaveTokyo($playerId);
-        
-        // burrowing
-        $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
-        if ($countBurrowing > 0) {
-            self::setGameStateValue('loseHeartEnteringTokyo', $countBurrowing);
-        }
+        $this->addLeaverWithBurrowing($playerId);
     
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");

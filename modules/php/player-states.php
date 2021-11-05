@@ -171,13 +171,20 @@ trait PlayerStateTrait {
 
         $redirects = false;
         // burrowing
-        $loseHeartForBurrowing = intval(self::getGameStateValue('loseHeartEnteringTokyo'));
-        if ($loseHeartForBurrowing > 0) {
-            $damage = new Damage($playerId, $loseHeartForBurrowing, 0, BURROWING_CARD);
-            $redirects = $this->resolveDamages([$damage], 'enterTokyoAfterBurrowing');
-
-            self::setGameStateValue('loseHeartEnteringTokyo', 0);
-        }        
+        $leaversWithBurrowing = $this->getLeaversWithBurrowing();  
+        $burrowingDamages = [];  
+        foreach($leaversWithBurrowing as $leaverWithBurrowingId) {
+            $countBurrowing = $this->countCardOfType($leaverWithBurrowingId, BURROWING_CARD);
+            if ($countBurrowing > 0) {
+                $burrowingDamages[] = new Damage($playerId, $countBurrowing, $leaverWithBurrowingId, BURROWING_CARD);
+            }
+        }
+        if (count($burrowingDamages) > 0) {
+            $redirects = $this->resolveDamages($burrowingDamages, 'enterTokyoAfterBurrowing');
+        }
+        
+        $this->setGlobalVariable(BURROWING_PLAYERS, []); 
+        
 
         if (!$redirects) {
             $this->gamestate->nextState('next');

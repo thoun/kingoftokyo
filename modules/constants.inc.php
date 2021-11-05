@@ -113,6 +113,7 @@ define('JETS_DAMAGES', 'JetsDamages');
 define('MIMICKED_CARD', 'MimickedCard');
 define('USED_WINGS', 'UsedWings');
 define('MADE_IN_A_LAB', 'MadeInALab');
+define('BURROWING_PLAYERS', 'BurrowingPlayers');
 
 /*
  * Cards
