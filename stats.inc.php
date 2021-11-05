@@ -56,6 +56,8 @@ $monstersNames = [
     6 => "Meka Dragon", 
     7 => "Boogie Woogie", 
     8 => "Pumpkin Jack", 
+    9 => "Cthulhu", 
+    10 => "Anubis", 
 ];
 
 $commonStats = [
@@ -96,6 +98,10 @@ $stats_type = [
         "pointsWonWith1Dice" => ["id" => 43, "type" => "int", "name" => totranslate("Points won with 1 dice")],
         "pointsWonWith2Dice" => ["id" => 44, "type" => "int", "name" => totranslate("Points won with 2 dice")],
         "pointsWonWith3Dice" => ["id" => 45, "type" => "int", "name" => totranslate("Points won with 3 dice")],
+        "gainedCultists" => ["id" => 48, "type" => "int", "name" => totranslate("Gained cultists")],
+        "cultistReroll" => ["id" => 49, "type" => "int", "name" => totranslate("Cultist used for reroll")],
+        "cultistHeal" => ["id" => 50, "type" => "int", "name" => totranslate("Cultist used for healing")],
+        "cultistEnergy" => ["id" => 51, "type" => "int", "name" => totranslate("Cultist used for energy")],
     ],
 
     "value_labels" => [

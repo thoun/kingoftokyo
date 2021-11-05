@@ -18,9 +18,9 @@ trait MonsterTrait {
             $monsters = array_merge($monsters, [7,8]);
         }
 
-        /*if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
+        if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
             $monsters = array_merge($monsters, [9, 10]);
-        }*/
+        }
 
         /* TODOKK/TODOCY if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
             $monsters = array_merge($monsters, [11, 12]);

@@ -988,7 +988,8 @@ var PlayerTable = /** @class */ (function () {
             container.removeChild(container.lastChild);
         }
         for (var i = container.childElementCount; i < tokens; i++) {
-            dojo.place("<div class=\"cultist-token cultist-tooltip\"></div>", containerId);
+            dojo.place("<div id=\"" + containerId + "-" + i + "\" class=\"cultist-token cultist-tooltip\"></div>", containerId);
+            this.game.addTooltipHtml(containerId + "-" + i, this.game.CULTIST_TOOLTIP);
         }
     };
     return PlayerTable;
@@ -2253,13 +2254,10 @@ var KingOfTokyo = /** @class */ (function () {
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
             (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCT check if healed by Healing Ray
         }*/
-        /* TODOCT if (gamedatas.cthulhuExpansion) {
-            const tooltip = formatTextIcons(`
-            <h3>${_("Cultists")}</h3>
-            <p>${_("After resolving your dice, if you rolled four identical faces, take a Cultist tile")}</p>
-            <p>${_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.")}</p>`);
-            (this as any).addTooltipHtmlToClass('cultist-tooltip', tooltip);
-        }*/
+        if (gamedatas.cthulhuExpansion) {
+            this.CULTIST_TOOLTIP = formatTextIcons("\n            <h3>" + _("Cultists") + "</h3>\n            <p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");
+            this.addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
+        }
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
@@ -2477,7 +2475,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var rapidHealingCount = args.damageToCancelToSurvive - cultistCount;
                     var cardsNames = [];
                     if (cultistCount > 0) {
-                        cardsNames.push(/* TODOCT_(*/ 'Cultist' /*)*/);
+                        cardsNames.push(_('Cultist'));
                     }
                     if (rapidHealingCount > 0) {
                         cardsNames.push(_(this_3.cards.getCardName(37, 'text-only')));
@@ -2782,13 +2780,13 @@ var KingOfTokyo = /** @class */ (function () {
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 var html = "<div class=\"counters\">";
                 if (gamedatas.kingkongExpansion) {
-                    html += "\n                    <div class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon\"></div></div>\n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>";
+                    html += "\n                    <div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon\"></div></div>\n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>";
                 }
                 if (gamedatas.cybertoothExpansion) {
-                    html += "\n                    <div class=\"counter\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + " berserk-tooltip\"></div>\n                        </div>\n                    </div>";
+                    html += "\n                    <div id=\"berserk-counter-wrapper-" + player.id + "\" class=\"counter berserk-tooltip\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + "\"></div>\n                        </div>\n                    </div>";
                 }
                 if (gamedatas.cthulhuExpansion) {
-                    html += "\n                    <div class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
+                    html += "\n                    <div id=\"cultist-counter-wrapper-" + player.id + "\" class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
                 }
                 html += "</div>";
                 dojo.place(html, "player_board_" + player.id);
@@ -2937,9 +2935,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addRapidCultistButtons = function (isMaxHealth) {
         var _this = this;
         if (!document.getElementById('rapidCultistButtons')) {
-            dojo.place("<div id=\"rapidCultistButtons\"><span>" + dojo.string.substitute(_('Use ${card_name}'), { card_name: /* TODOCT_(*/ 'Cultist' /*)*/ }) + " :</span></div>", 'rapid-actions-wrapper');
-            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("" + dojo.string.substitute(/* TODOCT_(*/ 'Gain ${hearts}[Heart]' /*)*/, { hearts: 1 })), function () { return _this.useRapidCultist(4); }, isMaxHealth);
-            this.createButton('rapidCultistButtons', 'rapidCultistEnergyButton', formatTextIcons("" + dojo.string.substitute(/* TODOCT_(*/ 'Gain ${energy}[Energy]' /*)*/, { energy: 1 })), function () { return _this.useRapidCultist(5); });
+            dojo.place("<div id=\"rapidCultistButtons\"><span>" + dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') }) + " :</span></div>", 'rapid-actions-wrapper');
+            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 })), function () { return _this.useRapidCultist(4); }, isMaxHealth);
+            this.createButton('rapidCultistButtons', 'rapidCultistEnergyButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1 })), function () { return _this.useRapidCultist(5); });
         }
     };
     KingOfTokyo.prototype.removeRapidCultistButtons = function () {
@@ -3798,11 +3796,13 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         this.cultistCounters[playerId].toValue(cultists);
         (_a = this.getPlayerTable(playerId)) === null || _a === void 0 ? void 0 : _a.setCultistTokens(cultists);
-        if (cultists > 0) {
-            this.addRapidCultistButtons(isMaxHealth);
-        }
-        else {
-            this.removeRapidCultistButtons();
+        if (playerId == this.getPlayerId()) {
+            if (cultists > 0) {
+                this.addRapidCultistButtons(isMaxHealth);
+            }
+            else {
+                this.removeRapidCultistButtons();
+            }
         }
     };
     KingOfTokyo.prototype.checkBuyEnergyDrinkState = function (energy) {

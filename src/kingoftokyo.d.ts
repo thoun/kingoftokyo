@@ -90,6 +90,7 @@ interface KingOfTokyoGame extends Game {
     curseCards: CurseCards;
     POISON_TOKEN_TOOLTIP: string;
     SHINK_RAY_TOKEN_TOOLTIP: string;
+    CULTIST_TOOLTIP: string;
 
     changeDie: (id: number, value: number, card: number) => void;
     psychicProbeRollDie: (id: number) => void;

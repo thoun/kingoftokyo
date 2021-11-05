@@ -275,7 +275,8 @@ class PlayerTable {
             container.removeChild(container.lastChild);
         }
         for (let i=container.childElementCount; i<tokens; i++) {
-            dojo.place(`<div class="cultist-token cultist-tooltip"></div>`, containerId);
+            dojo.place(`<div id="${containerId}-${i}" class="cultist-token cultist-tooltip"></div>`, containerId);
+            (this.game as any).addTooltipHtml(`${containerId}-${i}`, this.game.CULTIST_TOOLTIP);
         }
     }
 }

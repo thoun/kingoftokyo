@@ -213,6 +213,17 @@ class Koth extends Table {
         self::initStat('player', 'wonEnergyCubes', 0);
         self::initStat('player', 'endScore', 0);
         self::initStat('player', 'endHealth', 0);
+        self::initStat('player', 'rethrownDice', 0);
+        self::initStat('player', 'pointsWonWith1Dice', 0);
+        self::initStat('player', 'pointsWonWith2Dice', 0);
+        self::initStat('player', 'pointsWonWith3Dice', 0);
+
+        if ($this->isCthulhuExpansion()) {
+            self::initStat('player', 'gainedCultists', 0);
+            self::initStat('player', 'cultistReroll', 0);
+            self::initStat('player', 'cultistHeal', 0);
+            self::initStat('player', 'cultistEnergy', 0);
+        }
 
         if (!$this->canPickMonster()) {
             foreach($affectedMonsters as $playerId => $monsterId) {
@@ -239,7 +250,7 @@ class Koth extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup();
+        //$this->debugSetup();
 
         /************ End of the game initialization *****/
     }
