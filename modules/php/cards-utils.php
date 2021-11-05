@@ -689,6 +689,10 @@ trait CardsUtilTrait {
     function willBeWounded(int $playerId, int $activePlayerId) {
         $activePlayerInTokyo = $this->inTokyo($activePlayerId);
 
+        if ($playerId == $activePlayerId) {
+            return false; // active player won't smash himself, even if he got nova breath
+        }
+
         if ($this->countCardOfType($activePlayerId, NOVA_BREATH_CARD) == 0 && $this->inTokyo($playerId) == $activePlayerInTokyo) {
             return false; // same location & no Nova card for smashing player
         }
