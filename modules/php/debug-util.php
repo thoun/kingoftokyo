@@ -20,11 +20,11 @@ trait DebugUtilTrait {
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetEnergy(5);
-        $this->debugSetPoints(5);
-        $this->debugSetHealth(5);
-        //$this->debugSetPlayerHealth(2343492, 1);
+        //$this->debugSetPoints(5);
+        //$this->debugSetHealth(5);
+        $this->debugSetPlayerHealth(2343492, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
-        //self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343493");
+        self::DbQuery("UPDATE player SET `player_cultists` = 5 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
@@ -75,7 +75,7 @@ trait DebugUtilTrait {
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
 
-        $this->gamestate->changeActivePlayer(2343492);
+        $this->gamestate->changeActivePlayer(2343493);
 
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);
