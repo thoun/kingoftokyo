@@ -37,7 +37,7 @@ $game_options = [
                 'name' => totranslate('Enabled'),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
     ],
 
     /* TODOCT CTHULHU_EXPANSION_OPTION => [

@@ -1,5 +1,3 @@
-const HALLOWEEN_WEEK = true;
-
 class PreferencesManager {
 
     constructor(private game: KingOfTokyoGame) { 
@@ -33,7 +31,7 @@ class PreferencesManager {
         if (versionNumber > 0) {
             return versionNumber;
         } else {
-            return HALLOWEEN_WEEK || this.game.isHalloweenExpansion() ? 2 : 1;
+            return this.game.isHalloweenExpansion() ? 2 : 1;
         }
     }
       
