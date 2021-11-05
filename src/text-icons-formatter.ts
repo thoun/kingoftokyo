@@ -1,4 +1,7 @@
 function formatTextIcons(rawText: string) {
+    if (!rawText) {
+        return '';
+    }
     return rawText
         .replace(/\[Star\]/ig, '<span class="icon points"></span>')
         .replace(/\[Heart\]/ig, '<span class="icon health"></span>')

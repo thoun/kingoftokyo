@@ -405,10 +405,10 @@ class Cards {
     public getCardName(cardTypeId: number, state: 'text-only' | 'span') {
         const coloredCardName = this.getColoredCardName(cardTypeId);
         if (state == 'text-only') {
-            return coloredCardName.replace(/\[(\w+)\]/g, '');
+            return coloredCardName?.replace(/\[(\w+)\]/g, '');
         } else if (state == 'span') {
             let first = true;
-            return coloredCardName.replace(/\[(\w+)\]/g, (index, color) => {
+            return coloredCardName?.replace(/\[(\w+)\]/g, (index, color) => {
                 let span = `<span style="-webkit-text-stroke-color: #${color};">`;
                 if (first) {
                     first = false;
@@ -644,7 +644,7 @@ class Cards {
             tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
 
             document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type + mimickedCard.side);
+            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
             document.body.removeChild(tempDiv);
 
             mimickedCardText = `<br>${tempDiv.outerHTML}`;

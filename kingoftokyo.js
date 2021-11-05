@@ -43,6 +43,9 @@ function transitionToObjectAndAttach(object, destinationId, zoom) {
     });
 }
 function formatTextIcons(rawText) {
+    if (!rawText) {
+        return '';
+    }
     return rawText
         .replace(/\[Star\]/ig, '<span class="icon points"></span>')
         .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
@@ -424,11 +427,11 @@ var Cards = /** @class */ (function () {
     Cards.prototype.getCardName = function (cardTypeId, state) {
         var coloredCardName = this.getColoredCardName(cardTypeId);
         if (state == 'text-only') {
-            return coloredCardName.replace(/\[(\w+)\]/g, '');
+            return coloredCardName === null || coloredCardName === void 0 ? void 0 : coloredCardName.replace(/\[(\w+)\]/g, '');
         }
         else if (state == 'span') {
             var first_1 = true;
-            return coloredCardName.replace(/\[(\w+)\]/g, function (index, color) {
+            return (coloredCardName === null || coloredCardName === void 0 ? void 0 : coloredCardName.replace(/\[(\w+)\]/g, function (index, color) {
                 var span = "<span style=\"-webkit-text-stroke-color: #" + color + ";\">";
                 if (first_1) {
                     first_1 = false;
@@ -437,7 +440,7 @@ var Cards = /** @class */ (function () {
                     span = "</span>" + span;
                 }
                 return span;
-            }) + ("" + (first_1 ? '' : '</span>'));
+            })) + ("" + (first_1 ? '' : '</span>'));
         }
         return null;
     };
@@ -647,7 +650,7 @@ var Cards = /** @class */ (function () {
             var yBackgroundPercent = row * 100;
             tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% -" + yBackgroundPercent + "%";
             document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type + mimickedCard.side);
+            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
             document.body.removeChild(tempDiv);
             mimickedCardText = "<br>" + tempDiv.outerHTML;
         }
