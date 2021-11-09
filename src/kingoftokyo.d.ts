@@ -71,6 +71,9 @@ interface KingOfTokyoGamedatas {
     cybertoothExpansion: boolean;
     mutantEvolutionVariant: boolean;
     cthulhuExpansion: boolean;
+    anubisExpansion: boolean;
+    playerWithGoldenScarab?: number;
+    curseCard?: Card;
 }
 
 interface KingOfTokyoGame extends Game {
@@ -80,9 +83,11 @@ interface KingOfTokyoGame extends Game {
     isCybertoothExpansion(): boolean;
     isMutantEvolutionVariant(): boolean;
     isCthulhuExpansion(): boolean;
+    isAnubisExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
+    curseCards: CurseCards;
     POISON_TOKEN_TOOLTIP: string;
     SHINK_RAY_TOKEN_TOOLTIP: string;
 
@@ -365,4 +370,8 @@ interface NotifCultistArgs {
     playerId: number;
     cultists: number;
     isMaxHealth: boolean;  
+}
+
+interface NotifChangeCurseCardArgs {
+    card: Card;
 }

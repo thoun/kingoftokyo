@@ -83,6 +83,7 @@ class KingOfTokyo extends Table {
             CLOWN_ACTIVATED => 25,
             CHEERLEADER_SUPPORT => 26,
             STATE_AFTER_RESOLVE => 27,
+            PLAYER_WITH_GOLDEN_SCARAB => 28,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -100,6 +101,10 @@ class KingOfTokyo extends Table {
         $this->cards = self::getNew("module.common.deck");
         $this->cards->init("card");
         $this->cards->autoreshuffle = true;
+		
+        $this->curseCards = self::getNew("module.common.deck");
+        $this->curseCards->init("curse_card");
+        $this->curseCards->autoreshuffle = true;
 	}
 
     protected function getGameName() {
@@ -216,7 +221,15 @@ class KingOfTokyo extends Table {
         }
 
         // setup the initial game situation here
-        $this->initCards();
+        $isAnubisExpansion = $this->isAnubisExpansion();
+        $this->initCards($isAnubisExpansion);
+        if ($isAnubisExpansion) {
+            $lastPlayer = array_key_last($players);
+            self::setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);
+            $this->initCurseCards();
+            // init first curse card
+            $this->curseCards->pickCardForLocation('deck', 'table');
+        }
 
         if ($this->isKingKongExpansion()) {
             self::DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
@@ -265,7 +278,7 @@ class KingOfTokyo extends Table {
         // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
-        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId) : [];
+        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
@@ -313,6 +326,11 @@ class KingOfTokyo extends Table {
         $result['anubisExpansion'] = $isAnubisExpansion;
         $result['kingkongExpansion'] = $isKingKongExpansion;
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
+
+        if ($isAnubisExpansion) {
+            $result['playerWithGoldenScarab'] = intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+            $result['curseCard'] = $this->getCurseCard();
+        }
 
         return $result;
     }

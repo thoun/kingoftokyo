@@ -69,7 +69,7 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {

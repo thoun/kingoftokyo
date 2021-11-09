@@ -266,6 +266,17 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stResolveDice",
         "transitions" => [
+            "resolveDieOfFate" => ST_RESOLVE_DIE_OF_FATE,
+            "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_DIE_OF_FATE => [
+        "name" => "resolveDieOfFate",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveDieOfFate",
+        "transitions" => [
             "next" => ST_RESOLVE_NUMBER_DICE,
         ],
     ],

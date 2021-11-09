@@ -17,7 +17,7 @@ trait CardsUtilTrait {
     //////////// Utility functions
     ////////////
 
-    function initCards() {
+    function initCards(bool $isAnubisExpansion) {
         $cards = [];
 
         $gameVersion = $this->isDarkEdition() ? 'dark' : 'base';        
@@ -52,6 +52,13 @@ trait CardsUtilTrait {
 
             $this->cards->createCards($cards, 'mutantdeck');
         }
+    }
+
+    function initCurseCards() {
+        for($value=1; $value<=24; $value++) { // curse cards
+            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+        }
+        $this->curseCards->createCards($cards, 'deck');
     }
 
     function getCardFromDb(array $dbCard) {
@@ -697,7 +704,7 @@ trait CardsUtilTrait {
             return false; // same location & no Nova card for smashing player
         }
 
-        $dice = $this->getPlayerRolledDice($activePlayerId);
+        $dice = $this->getPlayerRolledDice($activePlayerId, false);
         $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
 
         $diceCounts = [];
@@ -737,5 +744,25 @@ trait CardsUtilTrait {
         } else {
             $this->gamestate->nextState('endStealCostume');
         }
+    }
+
+    function getCurseCard() {
+        return $this->getCardsFromDb($this->curseCards->getCardsInLocation('table'))[0];
+    }
+    
+    function changeCurseCard() {
+        $this->curseCards->moveAllCardsInLocation('table', 'discard');
+
+        $card = $this->getCardFromDb($this->curseCards->pickCardForLocation('deck', 'table'));
+
+        self::notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Curse card is changed'/*)*/, [
+            'card' => $card,
+        ]);
+    }
+
+    function changeGoldenScarabOwner(int $playerId) {
+        self::setGameStateValue(PLAYER_WITH_GOLDEN_SCARAB, $playerId);
+
+        // TODOAN notif
     }
 }

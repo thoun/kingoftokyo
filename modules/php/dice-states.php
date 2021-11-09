@@ -74,7 +74,7 @@ trait DiceStateTrait {
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
         $playerInTokyo = $this->inTokyo($playerId);
-        $dice = $this->getPlayerRolledDice($playerId);
+        $dice = $this->getPlayerRolledDice($playerId, false);
         $diceValues = array_map(function($idie) { 
             return $idie->value; 
         }, $dice);
@@ -186,6 +186,30 @@ trait DiceStateTrait {
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
+
+        if ($this->isAnubisExpansion()) {
+            $this->gamestate->nextState('resolveDieOfFate');
+        } else {
+            $this->gamestate->nextState('resolveNumberDice');
+        }
+    }
+
+    function stResolveDieOfFate() {
+        $playerId = self::getActivePlayerId();
+
+        $die = $this->getDiceByType(2)[0];
+
+        switch($die->value) {
+            case 1: 
+                $this->changeCurseCard();
+                break;
+            case 3:
+                $this->applySnakeEffect($playerId);
+                break;
+            case 4:
+                $this->applyAnkhEffect($playerId);
+                break;
+        }
 
         $this->gamestate->nextState('next');
     }

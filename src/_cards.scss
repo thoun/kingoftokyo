@@ -42,6 +42,10 @@ $description-size: 7pt;
             top: 0;
             -webkit-text-stroke: 4px $tokyoGreen;
             width: 100%;
+
+            &.curse {
+              -webkit-text-stroke: 4px #1c484f;  
+            }
         }
 
         .text {
@@ -106,6 +110,49 @@ $description-size: 7pt;
             height: 12px;
             margin-bottom: -2px;
         }
+    }
+
+    .effect-wrapper {
+        position: absolute;
+        text-overflow: ellipsis;
+        text-align: center;
+        font-size: $description-size;
+        display: flex;
+        align-items: center;
+
+        div {
+            flex: 1;
+        }
+
+        .icon {
+            width: 12px;
+            height: 12px;
+            margin-bottom: -2px;
+        }
+    }
+
+    .permanent-effect-wrapper {
+        left: 9px;
+        width: 116px;
+        top: 59px;
+        height: 38px;
+        color: white;
+    }
+
+    .ankh-effect-wrapper {
+        left: 6px;
+        width: 58px;
+        top: 124px;
+        height: 52px;
+        color: black;
+    }
+
+    .snake-effect-wrapper {
+        left: 68px;
+        width: 58px;
+        top: 124px;
+        height: 52px;
+        color: black;
     }
     
     &.disabled {

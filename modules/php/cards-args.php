@@ -27,7 +27,7 @@ trait CardsArgTrait {
         $activePlayerId = self::getActivePlayerId();
 
         return [
-            'dice' => $this->getPlayerRolledDice($activePlayerId),
+            'dice' => $this->getPlayerRolledDice($activePlayerId, true),
             'inTokyo' => $this->inTokyo($activePlayerId),
         ];
     }

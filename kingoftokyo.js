@@ -78,6 +78,7 @@ var Cards = /** @class */ (function () {
         var version = this.game.isDarkEdition() ? 'dark' : 'base';
         var costumes = this.game.isHalloweenExpansion();
         var transformation = this.game.isMutantEvolutionVariant();
+        var goldenscarab = this.game.isAnubisExpansion();
         stocks.forEach(function (stock) {
             var keepcardsurl = g_gamethemeurl + "img/keep-cards.jpg";
             KEEP_CARDS_LIST[version].forEach(function (id, index) {
@@ -98,6 +99,10 @@ var Cards = /** @class */ (function () {
                 COSTUME_CARDS_LIST.forEach(function (id, index) {
                     stock.addItemType(300 + id, 300 + id, transformationcardsurl_1, index);
                 });
+            }
+            if (goldenscarab) {
+                var anubiscardsurl = g_gamethemeurl + "img/anubis-cards.jpg";
+                stock.addItemType(999, 999, anubiscardsurl, 0);
             }
         });
     };
@@ -568,8 +573,10 @@ var Cards = /** @class */ (function () {
         return tooltip;
     };
     Cards.prototype.setupNewCard = function (cardDiv, cardType) {
-        this.setDivAsCard(cardDiv, cardType);
-        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        if (cardType !== 999) { // no text for golden scarab
+            this.setDivAsCard(cardDiv, cardType);
+            this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        }
     };
     Cards.prototype.getCardTypeName = function (cardType) {
         if (cardType < 100) {
@@ -658,6 +665,154 @@ var Cards = /** @class */ (function () {
     };
     return Cards;
 }());
+var CurseCards = /** @class */ (function () {
+    function CurseCards(game) {
+        this.game = game;
+    }
+    CurseCards.prototype.setupCards = function (stocks) {
+        stocks.forEach(function (stock) {
+            var anubiscardsurl = g_gamethemeurl + "img/anubis-cards.jpg";
+            for (var i = 1; i <= 24; i++) {
+                stock.addItemType(i, i, anubiscardsurl, 2);
+            }
+        });
+    };
+    CurseCards.prototype.getCardName = function (cardTypeId) {
+        switch (cardTypeId) {
+            // TODOAN
+            case 1: return "Pharaonic Ego";
+            case 2: return "Isis's Disgrace";
+            case 3: return "Thot's Blindness";
+            case 4: return "Tutankhamun's Curse";
+            case 5: return "Buried in Sand";
+            case 6: return "Raging Flood";
+            case 7: return "Hotep's Peace";
+            case 8: return "Set's Storm";
+            case 9: return "Builders' Uprising";
+            case 10: return "Inadequate offering";
+            case 11: return "Bow Before Ra";
+            case 12: return "Vengeance of Horus";
+            case 13: return "Ordeal of the Mighty";
+            case 14: return "Ordeal of the Wealthy";
+            case 15: return "Ordeal of the Spiritual";
+            case 16: return "Resurrection of Osiris";
+            case 17: return "Forbidden Library";
+            case 18: return "Confused Senses";
+            case 19: return "Pharaonic Skin";
+            case 20: return "Khepri's Rebellion";
+            case 21: return "Body, Spirit and Ka";
+            case 22: return "False Blessing";
+            case 23: return "Gaze of the Sphinx";
+            case 24: return "Scribe's Perserverance";
+        }
+        return null;
+    };
+    CurseCards.prototype.getPermanentEffect = function (cardTypeId) {
+        switch (cardTypeId) {
+            // TODOAN
+            case 1: return "Pharaonic Ego";
+            case 2: return "Isis's Disgrace";
+            case 3: return "Thot's Blindness";
+            case 4: return "Tutankhamun's Curse";
+            case 5: return "Buried in Sand";
+            case 6: return "Raging Flood";
+            case 7: return "Hotep's Peace";
+            case 8: return "Set's Storm";
+            case 9: return "Builders' Uprising";
+            case 10: return "Inadequate offering";
+            case 11: return "Bow Before Ra";
+            case 12: return "Vengeance of Horus";
+            case 13: return "Ordeal of the Mighty";
+            case 14: return "Ordeal of the Wealthy";
+            case 15: return "Ordeal of the Spiritual";
+            case 16: return "Resurrection of Osiris";
+            case 17: return "Forbidden Library";
+            case 18: return "Confused Senses";
+            case 19: return "Pharaonic Skin";
+            case 20: return "Khepri's Rebellion";
+            case 21: return "Body, Spirit and Ka";
+            case 22: return "False Blessing";
+            case 23: return "Gaze of the Sphinx";
+            case 24: return "Scribe's Perserverance";
+        }
+        return null;
+    };
+    CurseCards.prototype.getAnkhEffect = function (cardTypeId) {
+        switch (cardTypeId) {
+            // TODOAN
+            case 1: return "Pharaonic Ego";
+            case 2: return "Isis's Disgrace";
+            case 3: return "Thot's Blindness";
+            case 4: return "Tutankhamun's Curse";
+            case 5: return "Buried in Sand";
+            case 6: return "Raging Flood";
+            case 7: return "Hotep's Peace";
+            case 8: return "Set's Storm";
+            case 9: return "Builders' Uprising";
+            case 10: return "Inadequate offering";
+            case 11: return "Bow Before Ra";
+            case 12: return "Vengeance of Horus";
+            case 13: return "Ordeal of the Mighty";
+            case 14: return "Ordeal of the Wealthy";
+            case 15: return "Ordeal of the Spiritual";
+            case 16: return "Resurrection of Osiris";
+            case 17: return "Forbidden Library";
+            case 18: return "Confused Senses";
+            case 19: return "Pharaonic Skin";
+            case 20: return "Khepri's Rebellion";
+            case 21: return "Body, Spirit and Ka";
+            case 22: return "False Blessing";
+            case 23: return "Gaze of the Sphinx";
+            case 24: return "Scribe's Perserverance";
+        }
+        return null;
+    };
+    CurseCards.prototype.getSnakeEffect = function (cardTypeId) {
+        switch (cardTypeId) {
+            // TODOAN
+            case 1: return "Pharaonic Ego";
+            case 2: return "Isis's Disgrace";
+            case 3: return "Thot's Blindness";
+            case 4: return "Tutankhamun's Curse";
+            case 5: return "Buried in Sand";
+            case 6: return "Raging Flood";
+            case 7: return "Hotep's Peace";
+            case 8: return "Set's Storm";
+            case 9: return "Builders' Uprising";
+            case 10: return "Inadequate offering";
+            case 11: return "Bow Before Ra";
+            case 12: return "Vengeance of Horus";
+            case 13: return "Ordeal of the Mighty";
+            case 14: return "Ordeal of the Wealthy";
+            case 15: return "Ordeal of the Spiritual";
+            case 16: return "Resurrection of Osiris";
+            case 17: return "Forbidden Library";
+            case 18: return "Confused Senses";
+            case 19: return "Pharaonic Skin";
+            case 20: return "Khepri's Rebellion";
+            case 21: return "Body, Spirit and Ka";
+            case 22: return "False Blessing";
+            case 23: return "Gaze of the Sphinx";
+            case 24: return "Scribe's Perserverance";
+        }
+        return null;
+    };
+    CurseCards.prototype.getTooltip = function (cardTypeId) {
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p>" + "Permanent effect" + " : " + formatTextIcons(this.getPermanentEffect(cardTypeId)) + "</p>\n            <p>" + "Ankh effect" + " : " + formatTextIcons(this.getAnkhEffect(cardTypeId)) + "</p>\n            <p>" + "Snake effect" + " : " + formatTextIcons(this.getSnakeEffect(cardTypeId)) + "</p>\n        </div>";
+        return tooltip;
+    };
+    CurseCards.prototype.setupNewCard = function (cardDiv, cardType) {
+        this.setDivAsCard(cardDiv, cardType);
+        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+    };
+    CurseCards.prototype.setDivAsCard = function (cardDiv, cardType) {
+        var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
+        var ankhEffect = formatTextIcons(this.getPermanentEffect(cardType));
+        var snakeEffect = formatTextIcons(this.getPermanentEffect(cardType));
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div>" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div>" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div>" + snakeEffect + "</div></div>";
+    };
+    return CurseCards;
+}());
 var TokyoTower = /** @class */ (function () {
     function TokyoTower(divId, levels) {
         this.divId = divId + "-tokyo-tower";
@@ -678,7 +833,7 @@ var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 23
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, cards) {
+    function PlayerTable(game, player, cards, playerWithGoldenScarab) {
         var _this = this;
         this.game = game;
         this.player = player;
@@ -694,10 +849,13 @@ var PlayerTable = /** @class */ (function () {
         this.cards.setSelectionMode(0);
         this.cards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
         this.cards.image_items_per_row = 10;
-        this.cards.centerItems = true;
+        //this.cards.centerItems = true;
         dojo.connect(this.cards, 'onChangeSelection', this, function (_, itemId) { return _this.game.onVisibleCardClick(_this.cards, itemId, _this.playerId); });
         this.game.cards.setupCards([this.cards]);
         this.game.cards.addCardsToStock(this.cards, cards);
+        if (playerWithGoldenScarab) {
+            this.cards.addToStockWithId(999, 'goldenscarab');
+        }
         this.initialLocation = Number(player.location);
         this.setPoints(Number(player.score));
         this.setHealth(Number(player.health));
@@ -1551,6 +1709,11 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.toggleBubbleChangeDie = function (die) {
         var _this = this;
+        if (die.type === 2) {
+            // die of fate cannot be changed by power cards
+            // TODOAN make die cursor forbidden
+            return;
+        }
         var divId = "dice" + die.id;
         if (!document.getElementById("discussion_bubble_" + divId)) {
             dojo.place("<div id=\"discussion_bubble_" + divId + "\" class=\"discussion_bubble change-die-discussion_bubble\"></div>", divId);
@@ -1909,12 +2072,15 @@ var PreferencesManager = /** @class */ (function () {
     return PreferencesManager;
 }());
 var TableCenter = /** @class */ (function () {
-    function TableCenter(game, visibleCards, topDeckCardBackType, tokyoTowerLevels) {
+    function TableCenter(game, visibleCards, topDeckCardBackType, tokyoTowerLevels, curseCard) {
         this.game = game;
         this.createVisibleCards(visibleCards, topDeckCardBackType);
         if (game.isKingkongExpansion()) {
             dojo.place("<div id=\"tokyo-tower-0\" class=\"tokyo-tower-wrapper\"></div>", 'board');
             this.tokyoTower = new TokyoTower('tokyo-tower-0', tokyoTowerLevels);
+        }
+        if (game.isAnubisExpansion()) {
+            this.createCurseCard(curseCard);
         }
     }
     TableCenter.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType) {
@@ -1931,6 +2097,19 @@ var TableCenter = /** @class */ (function () {
         this.game.cards.setupCards([this.visibleCards]);
         this.setVisibleCards(visibleCards);
         this.setTopDeckCardBackType(topDeckCardBackType);
+    };
+    TableCenter.prototype.createCurseCard = function (curseCard) {
+        var _this = this;
+        dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'board', 'before');
+        this.curseCard = new ebg.stock();
+        this.curseCard.setSelectionAppearance('class');
+        this.curseCard.selectionClass = 'no-visible-selection';
+        this.curseCard.create(this.game, $('curse-card'), CARD_WIDTH, CARD_HEIGHT);
+        this.curseCard.setSelectionMode(0);
+        this.curseCard.centerItems = true;
+        this.curseCard.onItemCreate = function (card_div, card_type_id) { return _this.game.curseCards.setupNewCard(card_div, card_type_id); };
+        this.game.curseCards.setupCards([this.curseCard]);
+        this.curseCard.addToStockWithId(curseCard.type, '' + curseCard.id);
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
         this.visibleCards.setSelectionMode(mode);
@@ -2004,6 +2183,10 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.getTokyoTower = function () {
         return this.tokyoTower;
     };
+    TableCenter.prototype.changeCurseCard = function (card) {
+        this.curseCard.removeAll();
+        this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
+    };
     return TableCenter;
 }());
 var ANIMATION_MS = 1500;
@@ -2058,12 +2241,13 @@ var KingOfTokyo = /** @class */ (function () {
             this.addTwoPlayerVariantNotice(gamedatas);
         }
         this.cards = new Cards(this);
+        this.curseCards = new CurseCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.tokyoTowerLevels);
+        this.tableCenter = new TableCenter(this, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -2584,6 +2768,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.isCthulhuExpansion = function () {
         return this.gamedatas.cthulhuExpansion;
     };
+    KingOfTokyo.prototype.isAnubisExpansion = function () {
+        return this.gamedatas.anubisExpansion;
+    };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return false; // TODODE
     };
@@ -2675,7 +2862,11 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
-        this.playerTables = this.getOrderedPlayers().map(function (player) { return new PlayerTable(_this, player, gamedatas.playersCards[Number(player.id)]); });
+        this.playerTables = this.getOrderedPlayers().map(function (player) {
+            var playerId = Number(player.id);
+            var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
+            return new PlayerTable(_this, player, gamedatas.playersCards[playerId], playerWithGoldenScarab);
+        });
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
         return this.playerTables.find(function (playerTable) { return playerTable.playerId === Number(playerId); });
@@ -3266,6 +3457,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['useCamouflage', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
+            ['changeCurseCard', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -3547,6 +3739,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_cultist = function (notif) {
         this.setCultists(notif.args.playerId, notif.args.cultists, notif.args.isMaxHealth);
     };
+    KingOfTokyo.prototype.notif_changeCurseCard = function (notif) {
+        this.tableCenter.changeCurseCard(notif.args.card);
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
         if (delay === void 0) { delay = 0; }
@@ -3657,7 +3852,7 @@ var KingOfTokyo = /** @class */ (function () {
                         types = args.card_name.split(',').map(function (cardType) { return Number(cardType); });
                     }
                     if (types !== null) {
-                        var names = types.map(function (cardType) { return _this.cards.getCardName(cardType, 'text-only'); });
+                        var names = types.map(function (cardType) { return cardType >= 1000 ? _this.curseCards.getCardName(cardType) : _this.cards.getCardName(cardType, 'text-only'); });
                         args.card_name = "<strong>" + names.join(', ') + "</strong>";
                     }
                 }

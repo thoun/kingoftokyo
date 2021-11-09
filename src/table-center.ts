@@ -1,14 +1,19 @@
 class TableCenter {
     private visibleCards: Stock;
+    private curseCard: Stock;
     private pickCard: Stock;
     private tokyoTower: TokyoTower;
 
-    constructor(private game: KingOfTokyoGame, visibleCards: Card[], topDeckCardBackType: string, tokyoTowerLevels: number[]) {        
+    constructor(private game: KingOfTokyoGame, visibleCards: Card[], topDeckCardBackType: string, tokyoTowerLevels: number[], curseCard: Card) {        
         this.createVisibleCards(visibleCards, topDeckCardBackType);
 
         if (game.isKingkongExpansion()) {
             dojo.place(`<div id="tokyo-tower-0" class="tokyo-tower-wrapper"></div>`, 'board');
             this.tokyoTower = new TokyoTower('tokyo-tower-0', tokyoTowerLevels);
+        }
+
+        if (game.isAnubisExpansion()) {
+            this.createCurseCard(curseCard);
         }
     }
 
@@ -27,6 +32,24 @@ class TableCenter {
         this.setVisibleCards(visibleCards);
 
         this.setTopDeckCardBackType(topDeckCardBackType);
+    }
+
+    public createCurseCard(curseCard: Card) {
+        dojo.place(`<div id="curse-wrapper">
+            <div id="curse-deck"></div>
+            <div id="curse-card"></div>
+        </div>`, 'board', 'before');
+
+        this.curseCard = new ebg.stock() as Stock;
+        this.curseCard.setSelectionAppearance('class');
+        this.curseCard.selectionClass = 'no-visible-selection';
+        this.curseCard.create(this.game, $('curse-card'), CARD_WIDTH, CARD_HEIGHT);
+        this.curseCard.setSelectionMode(0);
+        this.curseCard.centerItems = true;
+        this.curseCard.onItemCreate = (card_div, card_type_id) => this.game.curseCards.setupNewCard(card_div, card_type_id); 
+
+        this.game.curseCards.setupCards([this.curseCard]);
+        this.curseCard.addToStockWithId(curseCard.type, '' + curseCard.id);
     }
 
     public setVisibleCardsSelectionMode(mode: number) {
@@ -111,5 +134,10 @@ class TableCenter {
     
     public getTokyoTower() {
         return this.tokyoTower;
+    }
+    
+    public changeCurseCard(card: Card) {
+        this.curseCard.removeAll();
+        this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
     }
 }

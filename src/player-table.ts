@@ -15,7 +15,7 @@ class PlayerTable {
 
     public cards: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[]) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -53,11 +53,14 @@ class PlayerTable {
         this.cards.setSelectionMode(0);
         this.cards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
         this.cards.image_items_per_row = 10;
-        this.cards.centerItems = true;
+        //this.cards.centerItems = true;
         dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.cards, itemId, this.playerId));
 
         this.game.cards.setupCards([this.cards]);
         this.game.cards.addCardsToStock(this.cards, cards);
+        if (playerWithGoldenScarab) {
+            this.cards.addToStockWithId(999, 'goldenscarab');
+        }
 
         this.initialLocation = Number(player.location);
 

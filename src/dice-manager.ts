@@ -472,7 +472,12 @@ class DiceManager {
     }
 
     private toggleBubbleChangeDie(die: Dice) {
-        const divId = `dice${die.id}`;    
+        if (die.type === 2) {
+            // die of fate cannot be changed by power cards
+            // TODOAN make die cursor forbidden
+            return;
+        }
+        const divId = `dice${die.id}`;
         if (!document.getElementById(`discussion_bubble_${divId}`)) { 
             dojo.place(`<div id="discussion_bubble_${divId}" class="discussion_bubble change-die-discussion_bubble"></div>`, divId);
         }

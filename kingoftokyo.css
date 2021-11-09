@@ -619,6 +619,9 @@
   -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
+.stockitem .name-wrapper .outline.curse, #deck .name-wrapper .outline.curse {
+  -webkit-text-stroke: 4px #1c484f;
+}
 .stockitem .name-wrapper .text, #deck .name-wrapper .text {
   position: absolute;
   left: 0;
@@ -671,6 +674,43 @@
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
+}
+.stockitem .effect-wrapper, #deck .effect-wrapper {
+  position: absolute;
+  text-overflow: ellipsis;
+  text-align: center;
+  font-size: 7pt;
+  display: flex;
+  align-items: center;
+}
+.stockitem .effect-wrapper div, #deck .effect-wrapper div {
+  flex: 1;
+}
+.stockitem .effect-wrapper .icon, #deck .effect-wrapper .icon {
+  width: 12px;
+  height: 12px;
+  margin-bottom: -2px;
+}
+.stockitem .permanent-effect-wrapper, #deck .permanent-effect-wrapper {
+  left: 9px;
+  width: 116px;
+  top: 59px;
+  height: 38px;
+  color: white;
+}
+.stockitem .ankh-effect-wrapper, #deck .ankh-effect-wrapper {
+  left: 6px;
+  width: 58px;
+  top: 124px;
+  height: 52px;
+  color: black;
+}
+.stockitem .snake-effect-wrapper, #deck .snake-effect-wrapper {
+  left: 68px;
+  width: 58px;
+  top: 124px;
+  height: 52px;
+  color: black;
 }
 .stockitem.disabled, #deck.disabled {
   filter: contrast(0.6);
@@ -775,6 +815,21 @@
 }
 #table #table-center #visible-cards {
   margin-bottom: 10px;
+}
+#table #table-center #curse-wrapper {
+  display: flex;
+  justify-content: center;
+}
+#table #table-center #curse-wrapper #curse-deck {
+  width: 132px;
+  height: 185px;
+  background: url("img/anubis-cards.jpg");
+  background-position: 50% 50%;
+  box-shadow: 4px 4px 0px 0px #333;
+  border-radius: 10px;
+}
+#table #table-center #curse-wrapper #curse-card {
+  width: 132px;
 }
 #table #table-center #board {
   margin-left: 10px;

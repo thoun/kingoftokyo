@@ -32,6 +32,7 @@ class Cards {
         const version: 'base' | 'dark' = this.game.isDarkEdition() ? 'dark' : 'base';
         const costumes = this.game.isHalloweenExpansion();
         const transformation = this.game.isMutantEvolutionVariant();
+        const goldenscarab = this.game.isAnubisExpansion();
 
         stocks.forEach(stock => {
             const keepcardsurl = `${g_gamethemeurl}img/keep-cards.jpg`;
@@ -56,6 +57,11 @@ class Cards {
                 COSTUME_CARDS_LIST.forEach((id, index) => {  // costume
                     stock.addItemType(300 + id, 300 + id, transformationcardsurl, index);
                 });
+            }
+
+            if (goldenscarab) {
+                const anubiscardsurl = `${g_gamethemeurl}img/anubis-cards.jpg`;
+                stock.addItemType(999, 999, anubiscardsurl, 0);
             }
         });
     }
@@ -551,8 +557,10 @@ class Cards {
     }
 
     public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
-        this.setDivAsCard(cardDiv, cardType); 
-        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        if (cardType !== 999) { // no text for golden scarab
+            this.setDivAsCard(cardDiv, cardType); 
+            (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+        }
     }
 
     private getCardTypeName(cardType: number) {

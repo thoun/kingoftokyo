@@ -24,7 +24,7 @@ trait DiceArgTrait {
 
     function argThrowDice() {
         $playerId = self::getActivePlayerId();
-        $dice = $this->getPlayerRolledDice($playerId);
+        $dice = $this->getPlayerRolledDice($playerId, true);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
         $maxThrowNumber = $this->getThrowNumber($playerId);
@@ -80,7 +80,7 @@ trait DiceArgTrait {
         $canRetrow3 = $hasBackgroundDweller && intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
 
         $diceArg = [
-            'dice' => $this->getPlayerRolledDice($playerId),
+            'dice' => $this->getPlayerRolledDice($playerId, true),
             'inTokyo' => $this->inTokyo($playerId),
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
@@ -123,7 +123,7 @@ trait DiceArgTrait {
         }
 
         return [
-            'dice' => $this->getPlayerRolledDice($activePlayerId),
+            'dice' => $this->getPlayerRolledDice($activePlayerId, true),
             'inTokyo' => $this->inTokyo($activePlayerId),
             'canRoll' => $canRoll,
             'rethrow3' => [
@@ -140,7 +140,7 @@ trait DiceArgTrait {
         $diceCount = $diceCounts[4];
 
         if ($diceCount > 0) {
-            $dice = $this->getPlayerRolledDice($playerId);
+            $dice = $this->getPlayerRolledDice($playerId, false);
     
             $selectHeartDiceUseArg = $this->getSelectHeartDiceUse($playerId);  
 

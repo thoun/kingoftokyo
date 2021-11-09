@@ -34,6 +34,24 @@
         #visible-cards {
             margin-bottom: 10px;
         }
+
+        #curse-wrapper {
+            display: flex;
+            justify-content: center;
+
+            #curse-deck {
+                width: 132px;
+                height: 185px;
+                background: url('img/anubis-cards.jpg');
+                background-position: 50% 50%;
+                box-shadow: 4px 4px 0px 0px #333;
+                border-radius: 10px;
+            }
+
+            #curse-card {
+                width: 132px;
+            }
+        }
     
         #board {
             margin-left: 10px;

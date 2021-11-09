@@ -17,7 +17,7 @@ trait DiceUtilTrait {
     ////////////
     
     function getDice(int $number) {
-        $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
+        $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
@@ -44,14 +44,14 @@ trait DiceUtilTrait {
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
-    private function getPlayerRolledDice(int $playerId) {
+    private function getPlayerRolledDice(int $playerId, bool $includeDieOfFate) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
         if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
             $dice = array_merge($dice, $this->getDiceByType(1));
         }
 
-        if ($this->isAnubisExpansion()) {
+        if ($includeDieOfFate && $this->isAnubisExpansion()) {
             $dice = array_merge($dice, $this->getDiceByType(2));
         }
 
@@ -59,7 +59,7 @@ trait DiceUtilTrait {
     }
 
     public function throwDice(int $playerId, bool $firstRoll) {
-        $dice = $this->getPlayerRolledDice($playerId);
+        $dice = $this->getPlayerRolledDice($playerId, true);
 
         self::DbQuery( "UPDATE dice SET `rolled` = false");
 
@@ -308,7 +308,7 @@ trait DiceUtilTrait {
         $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
-            $dice = $this->getPlayerRolledDice($playerId);
+            $dice = $this->getPlayerRolledDice($playerId, false);
             $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
             $diceCounts = [];
             for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
@@ -587,6 +587,47 @@ trait DiceUtilTrait {
                 break;
             case 6: 
                 $diceCounts[7] = 1;
+                break;
+        }
+    }
+
+    function applyAnkhEffect(int $playerId) {
+        $cardType = $this->getCurseCard()->type;
+        
+
+        switch($cardType) {
+            // TODOAN
+            case ISIS_S_DISGRACE: case THOT_S_BLINDNESS: case TUTANKHAMUN_S_CURSE: case FORBIDDEN_LIBRARY: case CONFUSED_SENSES: case PHARAONIC_SKIN:
+                $this->changeGoldenScarabOwner($playerId);
+                break;
+            case BOW_BEFORE_RA: case ORDEAL_OF_THE_MIGHTY:
+                $this->applyGetHealth($playerId, 2, 1000 + $cardType, $playerId);
+                break;
+            case ORDEAL_OF_THE_WEALTHY:
+                $this->applyGetPoints($playerId, 2, 1000 + $cardType);
+                break;
+            case ORDEAL_OF_THE_SPIRITUAL:
+                $this->applyGetEnergy($playerId, 2, 1000 + $cardType);
+                break;
+        }
+    }
+    
+    function applySnakeEffect(int $playerId) {
+        $cardType = $this->getCurseCard()->type;
+
+        switch($cardType) {
+            // TODOAN
+            case THOT_S_BLINDNESS: 
+                $this->applyLoseEnergy($playerId, 2, 1000 + $cardType);
+                break;
+            case TUTANKHAMUN_S_CURSE: 
+                $this->applyLosePoints($playerId, 2, 1000 + $cardType);
+                break;
+            case BUILDERS_UPRISING: 
+                $this->applyLosePoints($playerId, 2, 1000 + $cardType);
+                break;
+            case KHEPRI_S_REBELLION:
+                $this->changeGoldenScarabOwner($playerId);
                 break;
         }
     }

@@ -15,6 +15,7 @@
         "src/slide-utils.ts",
         "src/text-icons-formatter.ts",
         "src/cards.ts",
+        "src/curse-cards.ts",
         "src/tokyo-tower.ts",
         "src/player-table.ts",
         "src/table-manager.ts",

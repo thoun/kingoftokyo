@@ -23,6 +23,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private tableManager: TableManager;
     private preferencesManager: PreferencesManager;
     public cards: Cards;
+    public curseCards: CurseCards;
     //private rapidHealingSyncHearts: number;
     public towerLevelsOwners = [];
     private tableCenter: TableCenter;
@@ -79,13 +80,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.cards = new Cards(this);
+        this.curseCards = new CurseCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
     
         this.createPlayerPanels(gamedatas); 
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.tokyoTowerLevels);
+        this.tableCenter = new TableCenter(this, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -668,6 +670,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.cthulhuExpansion;
     }
 
+    public isAnubisExpansion(): boolean {
+        return this.gamedatas.anubisExpansion;
+    }
+
     public isDarkEdition(): boolean {
         return false; // TODODE
     }
@@ -816,7 +822,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
-        this.playerTables = this.getOrderedPlayers().map(player => new PlayerTable(this, player, gamedatas.playersCards[Number(player.id)]));
+        this.playerTables = this.getOrderedPlayers().map(player => {
+            const playerId = Number(player.id);
+            const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
+            return new PlayerTable(this, player, gamedatas.playersCards[playerId], playerWithGoldenScarab);
+        });
     }
 
     private getPlayerTable(playerId: number): PlayerTable {
@@ -1536,6 +1546,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['useCamouflage', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
+            ['changeCurseCard', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -1854,6 +1865,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_cultist(notif: Notif<NotifCultistArgs>) {
         this.setCultists(notif.args.playerId, notif.args.cultists, notif.args.isMaxHealth);
     }
+
+    notif_changeCurseCard(notif: Notif<NotifChangeCurseCardArgs>) {
+        this.tableCenter.changeCurseCard(notif.args.card);
+    }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
@@ -1968,7 +1983,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         types = args.card_name.split(',').map((cardType: string) => Number(cardType));
                     }
                     if (types !== null) {
-                        const names: string[] = types.map((cardType: number) => this.cards.getCardName(cardType, 'text-only'));
+                        const names: string[] = types.map((cardType: number) => cardType >= 1000 ? this.curseCards.getCardName(cardType) : this.cards.getCardName(cardType, 'text-only'));
                         args.card_name = `<strong>${names.join(', ')}</strong>`;
                     }
                 }

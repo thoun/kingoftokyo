@@ -33,6 +33,7 @@ define('ST_RESOLVE_HEART_DICE_ACTION', 33);
 define('ST_RESOLVE_ENERGY_DICE', 34);
 define('ST_RESOLVE_SMASH_DICE', 35);
 define('ST_RESOLVE_SKULL_DICE', 36);
+define('ST_RESOLVE_DIE_OF_FATE', 37);
 
 define('ST_MULTIPLAYER_CANCEL_DAMAGE', 38);
 
@@ -101,6 +102,7 @@ define('SKIP_BUY_PHASE', 'SkipBuyPhase');
 define('CLOWN_ACTIVATED', 'ClownActivated');
 define('CHEERLEADER_SUPPORT', 'CheerleaderSupport');
 define('STATE_AFTER_RESOLVE', 'stateAfterResolve');
+define('PLAYER_WITH_GOLDEN_SCARAB', 'PlayerWithGoldenScarab');
 
 /*
  * Global variables
@@ -211,4 +213,30 @@ define('CHEERLEADER_CARD', 209);
 define('ROBOT_CARD', 210);
 define('STATUE_OF_LIBERTY_CARD', 211);
 define('CLOWN_CARD', 212);
+
+// curse cards
+define("PHARAONIC_EGO", 1);
+define("ISIS_S_DISGRACE", 2);
+define("THOT_S_BLINDNESS", 3);
+define("TUTANKHAMUN_S_CURSE", 4);
+define("Buried in Sand", 5);
+define("Raging Flood", 6);
+define("Hotep's Peace", 7);
+define("Set's Storm", 8);
+define("BUILDERS_UPRISING", 9);
+define("Inadequate offering", 10);
+define("BOW_BEFORE_RA", 11);
+define("Vengeance of Horus", 12);
+define("ORDEAL_OF_THE_MIGHTY", 13);
+define("ORDEAL_OF_THE_WEALTHY", 14);
+define("ORDEAL_OF_THE_SPIRITUAL", 15);
+define("Resurrection of Osiris", 16);
+define("FORBIDDEN_LIBRARY", 17);
+define("CONFUSED_SENSES", 18);
+define("PHARAONIC_SKIN", 19);
+define("KHEPRI_S_REBELLION", 20);
+define("Body, Spirit and Ka", 21);
+define("False Blessing", 22);
+define("Gaze of the Sphinx", 23);
+define("Scribe's Perserverance", 24);
 ?>
