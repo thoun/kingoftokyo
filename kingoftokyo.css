@@ -71,7 +71,7 @@
   box-shadow: 0 0 3px 1px red;
 }
 .counters .counter .icon.cultist {
-  background: url("img/cultist-tile.jpg");
+  background: url("img/cultist-tile.png");
   background-size: contain;
   border-radius: 3px;
 }
@@ -1032,7 +1032,7 @@
   flex-wrap: wrap;
 }
 #table .player-table .cultist-tokens .cultist-token {
-  background: url("img/cultist-tile.jpg");
+  background: url("img/cultist-tile.png");
   background-size: contain;
   width: 64px;
   height: 64px;
