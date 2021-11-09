@@ -58,7 +58,8 @@ trait PlayerUtilTrait {
     }
 
     function getLeaversWithBurrowing() {
-        return $this->getGlobalVariable(BURROWING_PLAYERS, true);
+        $leaversWithBurrowing = $this->getGlobalVariable(BURROWING_PLAYERS, true);
+        return $leaversWithBurrowing !== null ? $leaversWithBurrowing : [];
     }
 
     function addLeaverWithBurrowing(int $playerId) {

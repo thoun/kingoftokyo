@@ -68,20 +68,12 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not a Costume card');
         }
 
-        // TOCHECK can player steal at reduced cost (alien origin) ? considered yes
         $cost = $this->getCardCost($playerId, $card->type);
         if (!$this->canBuyCard($playerId, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
 
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
-
-        // TOCHECK is stealing costume considered buying (media-friendly) ? considered yes
-        // media friendly
-        $countMediaFriendly = $this->countCardOfType($playerId, MEDIA_FRIENDLY_CARD);
-        if ($countMediaFriendly > 0) {
-            $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
-        }
 
         $this->removeCard($from, $card, true, false, true);
         $this->cards->moveCard($id, 'hand', $playerId);
