@@ -57,7 +57,7 @@ trait UtilTrait {
     }
 
     function isCybertoothExpansion() {
-        return intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        return true; //intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
     function isMutantEvolutionVariant() {

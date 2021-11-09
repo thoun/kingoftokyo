@@ -185,13 +185,13 @@
         position: absolute;
         right: -10px;
         top: -10px;
-        width: 67px;
-        height: 94px;
+        width: 52px;
+        height: 80px;
         background: url('img/berserk-token.png');
         z-index: 3;
         border-radius: 5px;
         display: none;
-        box-shadow: 0 0 5px 2px red;
+        //box-shadow: 0 0 5px 2px red;
 
         &[data-visible="true"] {
             display: initial;

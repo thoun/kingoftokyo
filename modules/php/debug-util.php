@@ -48,7 +48,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
@@ -71,7 +71,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
-        //$this->setPlayerBerserk(2343492, true);
+        $this->setPlayerBerserk(2343492, true);
 
         $this->gamestate->changeActivePlayer(2343492);
 
