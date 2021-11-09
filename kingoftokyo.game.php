@@ -244,6 +244,7 @@ class KingOfTokyo extends Table {
         $isCthulhuExpansion = $this->isCthulhuExpansion();
         $isKingKongExpansion = $this->isKingKongExpansion();
         $isCybertoothExpansion = $this->isCybertoothExpansion();
+        $isAnubisExpansion = $this->isAnubisExpansion();
 
         $result = ['players' => []];
 
@@ -309,6 +310,7 @@ class KingOfTokyo extends Table {
         $result['twoPlayersVariant'] = $this->isTwoPlayersVariant();
         $result['halloweenExpansion'] = $this->isHalloweenExpansion();
         $result['cthulhuExpansion'] = $isCthulhuExpansion;
+        $result['anubisExpansion'] = $isAnubisExpansion;
         $result['kingkongExpansion'] = $isKingKongExpansion;
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
 

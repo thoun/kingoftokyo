@@ -18,12 +18,12 @@ trait MonsterTrait {
             $monsters = array_merge($monsters, [7,8]);
         }
 
-        /* TODOKK if ($bonusMonsters || $this->isKingKongExpansion()) {
-            $monsters = array_merge($monsters, [9]);
+        /*if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
+            $monsters = array_merge($monsters, [9, 10]);
         }*/
 
-        /* TODOCY if ($bonusMonsters || $this->isCybertoothExpansion()) {
-            $monsters = array_merge($monsters, [10]);
+        /* TODOKK/TODOCY if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
+            $monsters = array_merge($monsters, [11, 12]);
         }*/
         
         return $monsters;
