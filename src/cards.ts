@@ -454,7 +454,7 @@ class Cards {
             case 29: return _("<strong>Your [diceSmash] damage all other Monsters.</strong>");
             case 30: return _("<strong>When you roll at least [dice1][dice2][dice3] gain 2[Star].</strong> You can also use these dice in other combinations.");
             case 31: return _("<strong>Whenever a Power card is revealed you have the option of buying it</strong> immediately.");
-            case 32: return _("<strong>You can buy Power cards from other monsters.</strong> Pay them the [Energy] cost.");
+            case 32: return _("<strong>You may buy [keep] cards from other monsters.</strong> Pay them the [Energy] cost.");
             case 33: return _("Before resolving your dice, you may <strong>change one die to any result</strong>. Discard when used.");
             case 34: return _("When you score [dice2][dice2][dice2] or more, <strong>add [diceSmash][diceSmash] to your Roll</strong>.");
             case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");

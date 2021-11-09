@@ -59,7 +59,7 @@ trait CardsArgTrait {
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
 
                 foreach ($cardsOfPlayer as $card) {
-                    if ($this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
+                    if ($card->type < 100 && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
                         $canBuyOrNenew = true;
                     } else {
                         $disabledIds[] = $card->id;

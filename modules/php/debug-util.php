@@ -41,13 +41,14 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343493, $this->debugSetCardInHand(JETS_CARD, 2343492));
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
-        $this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343492);
-        $this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
+        //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343492);
+        //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343493);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
+        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
