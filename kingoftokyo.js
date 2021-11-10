@@ -721,8 +721,8 @@ var CurseCards = /** @class */ (function () {
             case 4:
             case 17:
             case 18:
-            case 19:
-                return "Take the Golden Scarab.";
+            case 19: return "Take the Golden Scarab.";
+            case 8:
             case 11:
             case 13: return "+2[Heart]";
             case 14: return "+2[Star]";
@@ -738,6 +738,7 @@ var CurseCards = /** @class */ (function () {
             case 3: return "-2[Energy]";
             case 4:
             case 9: return "-2[Star]";
+            case 8: return "-1[Heart]";
             case 20:
                 return "Take the Golden Scarab.";
                 defaut: return "TODO"; // TODO an
@@ -982,14 +983,10 @@ var PlayerTable = /** @class */ (function () {
     };
     return PlayerTable;
 }());
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
@@ -1037,7 +1034,7 @@ var TableManager = /** @class */ (function () {
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
         if (playerIndex > 0) { // not spectator (or 0)            
-            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex), true), playerTablesOrdered.slice(0, playerIndex), true);
+            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
         }
         else { // spectator
             this.playerTables = playerTablesOrdered;
@@ -3809,7 +3806,7 @@ var KingOfTokyo = /** @class */ (function () {
                         types = args.card_name.split(',').map(function (cardType) { return Number(cardType); });
                     }
                     if (types !== null) {
-                        var names = types.map(function (cardType) { return cardType >= 1000 ? _this.curseCards.getCardName(cardType) : _this.cards.getCardName(cardType, 'text-only'); });
+                        var names = types.map(function (cardType) { return cardType >= 1000 ? _this.curseCards.getCardName(cardType - 1000) : _this.cards.getCardName(cardType, 'text-only'); });
                         args.card_name = "<strong>" + names.join(', ') + "</strong>";
                     }
                 }

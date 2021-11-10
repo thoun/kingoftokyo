@@ -200,20 +200,30 @@ trait DiceStateTrait {
         $die = $this->getDiceByType(2)[0];
 
         // TODO notif for each case
-
+        $damages = null;
         switch($die->value) {
             case 1: 
                 $this->changeCurseCard();
                 break;
+            case 2:
+                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], Curse card is kept (with no effect except permanent effect)'/*)*/, []);
             case 3:
-                $this->applySnakeEffect($playerId);
+                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateSnake], Snake effect is applied'/*)*/, []);
+                $damages = $this->applySnakeEffect($playerId);
                 break;
             case 4:
+                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateAnkh], Ankh effect is applied'/*)*/, []);
                 $this->applyAnkhEffect($playerId);
                 break;
         }
 
-        $this->gamestate->nextState('next');
+        if ($damages != null && count($damages) > 0) {
+            $redirects = $this->resolveDamages($damages, ST_RESOLVE_NUMBER_DICE);
+        }
+
+        if (!$redirects) {
+            $this->gamestate->nextState('next');
+        }
     }
 
     function stResolveNumberDice() {

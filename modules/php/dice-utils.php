@@ -605,6 +605,7 @@ trait DiceUtilTrait {
             case PHARAONIC_SKIN_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
+            case SET_S_STORM_CURSE_CARD:
             case BOW_BEFORE_RA_CURSE_CARD: 
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                 $this->applyGetHealth($playerId, 2, 1000 + $cardType, $playerId);
@@ -618,7 +619,7 @@ trait DiceUtilTrait {
         }
     }
     
-    function applySnakeEffect(int $playerId) {
+    function applySnakeEffect(int $playerId) { // return damages
         $cardType = $this->getCurseCard()->type;
 
         switch($cardType) {
@@ -629,6 +630,8 @@ trait DiceUtilTrait {
             case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, 1000 + $cardType);
                 break;
+            case SET_S_STORM_CURSE_CARD:
+                return [new Damage($playerId, 1, $playerId, 1000 + $cardType)];
             case BUILDERS_UPRISING_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, 1000 + $cardType);
                 break;
@@ -636,5 +639,7 @@ trait DiceUtilTrait {
                 $this->changeGoldenScarabOwner($playerId);
                 break;
         }
+
+        return null;
     }
 }

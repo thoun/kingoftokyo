@@ -755,7 +755,7 @@ trait CardsUtilTrait {
 
         $card = $this->getCardFromDb($this->curseCards->pickCardForLocation('deck', 'table'));
 
-        self::notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Curse card is changed'/*)*/, [
+        self::notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Die of fate is on [dieFateEye], Curse card is changed'/*)*/, [
             'card' => $card,
         ]);
     }

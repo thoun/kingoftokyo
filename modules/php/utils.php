@@ -53,19 +53,19 @@ trait UtilTrait {
     }
 
     function isKingKongExpansion() {
-        return intval(self::getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
     }
 
     function isCybertoothExpansion() {
-        return intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
     function isMutantEvolutionVariant() {
-        return intval(self::getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
     }
 
     function isCthulhuExpansion() {
-        return intval(self::getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
     }
 
     function isAnubisExpansion() {

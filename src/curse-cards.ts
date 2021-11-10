@@ -51,14 +51,8 @@ class CurseCards {
     private getAnkhEffect(cardTypeId: number): string {
         switch (cardTypeId) {
             // TODOAN
-            case 2: 
-            case 3:
-            case 4:
-            case 17:
-            case 18:
-            case 19:
-                return "Take the Golden Scarab.";
-            case 11: case 13: return "+2[Heart]";
+            case 2: case 3: case 4: case 17: case 18: case 19: return "Take the Golden Scarab.";                
+            case 8: case 11: case 13: return "+2[Heart]";
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
             defaut: return "TODO"; // TODO an
@@ -70,7 +64,8 @@ class CurseCards {
         switch (cardTypeId) {
             // TODOAN
             case 3: return "-2[Energy]";
-            case 4: case 9: return "-2[Star]";
+            case 4: case 9: return "-2[Star]";          
+            case 8: return "-1[Heart]";
             case 20: return "Take the Golden Scarab.";
             defaut: return "TODO"; // TODO an
         }

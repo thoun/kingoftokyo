@@ -1983,7 +1983,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         types = args.card_name.split(',').map((cardType: string) => Number(cardType));
                     }
                     if (types !== null) {
-                        const names: string[] = types.map((cardType: number) => cardType >= 1000 ? this.curseCards.getCardName(cardType) : this.cards.getCardName(cardType, 'text-only'));
+                        const names: string[] = types.map((cardType: number) => cardType >= 1000 ? this.curseCards.getCardName(cardType - 1000) : this.cards.getCardName(cardType, 'text-only'));
                         args.card_name = `<strong>${names.join(', ')}</strong>`;
                     }
                 }

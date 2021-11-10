@@ -19,9 +19,9 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(20);
-        //$this->debugSetPoints(18);
-        //$this->debugSetHealth(1);
+        $this->debugSetEnergy(5);
+        $this->debugSetPoints(5);
+        $this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343493");
@@ -46,10 +46,10 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343493);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343492);
+        $this->debugSetCardInHand(WINGS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
@@ -71,7 +71,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
-        $this->setPlayerBerserk(2343492, true);
+        //$this->setPlayerBerserk(2343492, true);
+        $this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
 
         $this->gamestate->changeActivePlayer(2343492);
 
@@ -117,6 +118,11 @@ trait DebugUtilTrait {
 
     private function debugSetPoints($points) {
         self::DbQuery("UPDATE player SET `player_score` = $points");
+    }
+
+    private function debugSetCurseCardInTable($cardType) {
+        $this->curseCards->moveAllCardsInLocation('table', 'discard');
+        $this->curseCards->moveCard($this->getCardFromDb(array_values($this->curseCards->getCardsOfType($cardType))[0])->id, 'table');
     }
 
     public function debugReplacePlayersIds() {
