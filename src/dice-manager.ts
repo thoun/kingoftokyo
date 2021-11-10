@@ -184,12 +184,18 @@ class DiceManager {
         });
     }
 
-    private clearDiceHtml() {        
+    private clearDiceHtml() {
+        const ids = [];      
         for (let i=1; i<=7; i++) {
-            document.getElementById(`locked-dice${i}`).innerHTML = '';
+            ids.push(`locked-dice${i}`);
         }
-        document.getElementById(`locked-dice10`).innerHTML = '';
-        document.getElementById(`dice-selector`).innerHTML = '';
+        ids.push(`locked-dice10`, `dice-selector`);
+        ids.forEach(id => {
+            const div = document.getElementById(id);
+            if (div) {
+                div.innerHTML = '';
+            }
+        });
     }
 
     public resolveNumberDice(args: NotifResolveNumberDiceArgs) {

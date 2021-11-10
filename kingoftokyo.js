@@ -1443,11 +1443,17 @@ var DiceManager = /** @class */ (function () {
         });
     };
     DiceManager.prototype.clearDiceHtml = function () {
+        var ids = [];
         for (var i = 1; i <= 7; i++) {
-            document.getElementById("locked-dice" + i).innerHTML = '';
+            ids.push("locked-dice" + i);
         }
-        document.getElementById("locked-dice10").innerHTML = '';
-        document.getElementById("dice-selector").innerHTML = '';
+        ids.push("locked-dice10", "dice-selector");
+        ids.forEach(function (id) {
+            var div = document.getElementById(id);
+            if (div) {
+                div.innerHTML = '';
+            }
+        });
     };
     DiceManager.prototype.resolveNumberDice = function (args) {
         var _this = this;
