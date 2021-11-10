@@ -710,90 +710,37 @@ var CurseCards = /** @class */ (function () {
     CurseCards.prototype.getPermanentEffect = function (cardTypeId) {
         switch (cardTypeId) {
             // TODOAN
-            case 1: return "Pharaonic Ego";
-            case 2: return "Isis's Disgrace";
-            case 3: return "Thot's Blindness";
-            case 4: return "Tutankhamun's Curse";
-            case 5: return "Buried in Sand";
-            case 6: return "Raging Flood";
-            case 7: return "Hotep's Peace";
-            case 8: return "Set's Storm";
-            case 9: return "Builders' Uprising";
-            case 10: return "Inadequate offering";
-            case 11: return "Bow Before Ra";
-            case 12: return "Vengeance of Horus";
-            case 13: return "Ordeal of the Mighty";
-            case 14: return "Ordeal of the Wealthy";
-            case 15: return "Ordeal of the Spiritual";
-            case 16: return "Resurrection of Osiris";
-            case 17: return "Forbidden Library";
-            case 18: return "Confused Senses";
-            case 19: return "Pharaonic Skin";
-            case 20: return "Khepri's Rebellion";
-            case 21: return "Body, Spirit and Ka";
-            case 22: return "False Blessing";
-            case 23: return "Gaze of the Sphinx";
-            case 24: return "Scribe's Perserverance";
         }
         return null;
     };
     CurseCards.prototype.getAnkhEffect = function (cardTypeId) {
         switch (cardTypeId) {
             // TODOAN
-            case 1: return "Pharaonic Ego";
-            case 2: return "Isis's Disgrace";
-            case 3: return "Thot's Blindness";
-            case 4: return "Tutankhamun's Curse";
-            case 5: return "Buried in Sand";
-            case 6: return "Raging Flood";
-            case 7: return "Hotep's Peace";
-            case 8: return "Set's Storm";
-            case 9: return "Builders' Uprising";
-            case 10: return "Inadequate offering";
-            case 11: return "Bow Before Ra";
-            case 12: return "Vengeance of Horus";
-            case 13: return "Ordeal of the Mighty";
-            case 14: return "Ordeal of the Wealthy";
-            case 15: return "Ordeal of the Spiritual";
-            case 16: return "Resurrection of Osiris";
-            case 17: return "Forbidden Library";
-            case 18: return "Confused Senses";
-            case 19: return "Pharaonic Skin";
-            case 20: return "Khepri's Rebellion";
-            case 21: return "Body, Spirit and Ka";
-            case 22: return "False Blessing";
-            case 23: return "Gaze of the Sphinx";
-            case 24: return "Scribe's Perserverance";
+            case 2:
+            case 3:
+            case 4:
+            case 17:
+            case 18:
+            case 19:
+                return "Take the Golden Scarab.";
+            case 11:
+            case 13: return "+2[Heart]";
+            case 14: return "+2[Star]";
+            case 15:
+                return "+2[Energy]";
+                defaut: return "TODO"; // TODO an
         }
         return null;
     };
     CurseCards.prototype.getSnakeEffect = function (cardTypeId) {
         switch (cardTypeId) {
             // TODOAN
-            case 1: return "Pharaonic Ego";
-            case 2: return "Isis's Disgrace";
-            case 3: return "Thot's Blindness";
-            case 4: return "Tutankhamun's Curse";
-            case 5: return "Buried in Sand";
-            case 6: return "Raging Flood";
-            case 7: return "Hotep's Peace";
-            case 8: return "Set's Storm";
-            case 9: return "Builders' Uprising";
-            case 10: return "Inadequate offering";
-            case 11: return "Bow Before Ra";
-            case 12: return "Vengeance of Horus";
-            case 13: return "Ordeal of the Mighty";
-            case 14: return "Ordeal of the Wealthy";
-            case 15: return "Ordeal of the Spiritual";
-            case 16: return "Resurrection of Osiris";
-            case 17: return "Forbidden Library";
-            case 18: return "Confused Senses";
-            case 19: return "Pharaonic Skin";
-            case 20: return "Khepri's Rebellion";
-            case 21: return "Body, Spirit and Ka";
-            case 22: return "False Blessing";
-            case 23: return "Gaze of the Sphinx";
-            case 24: return "Scribe's Perserverance";
+            case 3: return "-2[Energy]";
+            case 4:
+            case 9: return "-2[Star]";
+            case 20:
+                return "Take the Golden Scarab.";
+                defaut: return "TODO"; // TODO an
         }
         return null;
     };
@@ -807,8 +754,8 @@ var CurseCards = /** @class */ (function () {
     };
     CurseCards.prototype.setDivAsCard = function (cardDiv, cardType) {
         var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
-        var ankhEffect = formatTextIcons(this.getPermanentEffect(cardType));
-        var snakeEffect = formatTextIcons(this.getPermanentEffect(cardType));
+        var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
+        var snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));
         cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div>" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div>" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div>" + snakeEffect + "</div></div>";
     };
     return CurseCards;
@@ -849,7 +796,7 @@ var PlayerTable = /** @class */ (function () {
         this.cards.setSelectionMode(0);
         this.cards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
         this.cards.image_items_per_row = 10;
-        //this.cards.centerItems = true;
+        this.cards.centerItems = true;
         dojo.connect(this.cards, 'onChangeSelection', this, function (_, itemId) { return _this.game.onVisibleCardClick(_this.cards, itemId, _this.playerId); });
         this.game.cards.setupCards([this.cards]);
         this.game.cards.addCardsToStock(this.cards, cards);
@@ -1035,10 +982,14 @@ var PlayerTable = /** @class */ (function () {
     };
     return PlayerTable;
 }());
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
@@ -1086,7 +1037,7 @@ var TableManager = /** @class */ (function () {
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
         if (playerIndex > 0) { // not spectator (or 0)            
-            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
+            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex), true), playerTablesOrdered.slice(0, playerIndex), true);
         }
         else { // spectator
             this.playerTables = playerTablesOrdered;

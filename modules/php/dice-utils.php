@@ -597,16 +597,22 @@ trait DiceUtilTrait {
 
         switch($cardType) {
             // TODOAN
-            case ISIS_S_DISGRACE: case THOT_S_BLINDNESS: case TUTANKHAMUN_S_CURSE: case FORBIDDEN_LIBRARY: case CONFUSED_SENSES: case PHARAONIC_SKIN:
+            case ISIS_S_DISGRACE_CURSE_CARD: 
+            case THOT_S_BLINDNESS_CURSE_CARD: 
+            case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
+            case FORBIDDEN_LIBRARY_CURSE_CARD: 
+            case CONFUSED_SENSES_CURSE_CARD: 
+            case PHARAONIC_SKIN_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
-            case BOW_BEFORE_RA: case ORDEAL_OF_THE_MIGHTY:
+            case BOW_BEFORE_RA_CURSE_CARD: 
+            case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                 $this->applyGetHealth($playerId, 2, 1000 + $cardType, $playerId);
                 break;
-            case ORDEAL_OF_THE_WEALTHY:
+            case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
                 $this->applyGetPoints($playerId, 2, 1000 + $cardType);
                 break;
-            case ORDEAL_OF_THE_SPIRITUAL:
+            case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
                 $this->applyGetEnergy($playerId, 2, 1000 + $cardType);
                 break;
         }
@@ -617,16 +623,16 @@ trait DiceUtilTrait {
 
         switch($cardType) {
             // TODOAN
-            case THOT_S_BLINDNESS: 
+            case THOT_S_BLINDNESS_CURSE_CARD: 
                 $this->applyLoseEnergy($playerId, 2, 1000 + $cardType);
                 break;
-            case TUTANKHAMUN_S_CURSE: 
+            case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, 1000 + $cardType);
                 break;
-            case BUILDERS_UPRISING: 
+            case BUILDERS_UPRISING_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, 1000 + $cardType);
                 break;
-            case KHEPRI_S_REBELLION:
+            case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
         }

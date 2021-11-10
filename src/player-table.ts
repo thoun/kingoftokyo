@@ -53,7 +53,7 @@ class PlayerTable {
         this.cards.setSelectionMode(0);
         this.cards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
         this.cards.image_items_per_row = 10;
-        //this.cards.centerItems = true;
+        this.cards.centerItems = true;
         dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.cards, itemId, this.playerId));
 
         this.game.cards.setupCards([this.cards]);

@@ -199,6 +199,8 @@ trait DiceStateTrait {
 
         $die = $this->getDiceByType(2)[0];
 
+        // TODO notif for each case
+
         switch($die->value) {
             case 1: 
                 $this->changeCurseCard();
