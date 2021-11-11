@@ -3897,6 +3897,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.wickednessCounters[playerId].toValue(wickedness);
         this.tableCenter.setWickedness(playerId, wickedness);
     };
+    KingOfTokyo.prototype.setWickedness = function (playerId, wickedness) {
+        this.wickednessCounters[playerId].toValue(wickedness);
+        this.tableCenter.setWickedness(playerId, wickedness);
+    };
     KingOfTokyo.prototype.setPlayerTokens = function (playerId, tokens, tokenName) {
         var containerId = "player-board-" + tokenName + "-tokens-" + playerId;
         var container = document.getElementById(containerId);

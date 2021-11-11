@@ -1982,6 +1982,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.wickednessCounters[playerId].toValue(wickedness);
         this.tableCenter.setWickedness(playerId, wickedness);
     }
+    
+    private setWickedness(playerId: number, wickedness: number) {
+        this.wickednessCounters[playerId].toValue(wickedness);
+        this.tableCenter.setWickedness(playerId, wickedness);
+    }
 
     private setPlayerTokens(playerId: number, tokens: number, tokenName: string) {
         const containerId = `player-board-${tokenName}-tokens-${playerId}`;
