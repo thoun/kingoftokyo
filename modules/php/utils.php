@@ -72,6 +72,10 @@ trait UtilTrait {
         return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
+    function isWickednessExpansion() {
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
+    }
+
     function isDarkEdition() {
         return false;
     }

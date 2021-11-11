@@ -214,6 +214,11 @@ trait DiceUtilTrait {
                 }
                 
             }
+            
+
+            if (($number == 1 || $number == 2) && $this->isWickednessExpansion()) {
+                $this->applyGetWickedness($playerId, 3 - $number);
+            }
         }
     }
 

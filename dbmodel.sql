@@ -54,6 +54,7 @@ ALTER TABLE `player` ADD `stay_tokyo_over` tinyint unsigned;
 ALTER TABLE `player` ADD `player_dead` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_berserk` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_cultists` tinyint UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_wickedness` tinyint UNSIGNED NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS `global_variables` (
   `name` varchar(50) NOT NULL,
@@ -78,6 +79,15 @@ CREATE TABLE IF NOT EXISTS `curse_card` (
   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `card_type` smallint unsigned NOT NULL,
   `card_type_arg` tinyint unsigned NULL,
+  `card_location` varchar(16) NOT NULL,
+  `card_location_arg` INT(10) unsigned NOT NULL,
+  PRIMARY KEY (`card_id`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `wickedness_tile` (
+  `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `card_type` smallint unsigned NOT NULL,
+  `card_type_arg` tinyint unsigned NOT NULL,
   `card_location` varchar(16) NOT NULL,
   `card_location_arg` INT(10) unsigned NOT NULL,
   PRIMARY KEY (`card_id`)

@@ -455,4 +455,23 @@ trait PlayerUtilTrait {
         }
         return true;
     }
+
+    function getPlayerWickedness(int $playerId) {
+        return intval(self::getUniqueValueFromDB("SELECT player_wickedness FROM `player` where `player_id` = $playerId"));
+    }
+    
+    function applyGetWickedness(int $playerId, int $number) {
+        self::DbQuery("UPDATE player SET `player_wickedness` = `player_wickedness` + $number where `player_id` = $playerId");
+
+        /* TODOWI notif & stats $message = clienttranslate('${player_name} gains 1 cultist with 4 or more ${dice}');
+        self::notifyAllPlayers('cultist', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'cultists' => $this->getPlayerCultists($playerId),
+            'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
+            'dice' => $diceStr,
+        ]);
+
+        self::incStat(1, 'gainedCultists', $playerId);*/
+    }
 }

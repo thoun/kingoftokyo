@@ -55,8 +55,6 @@ $game_options = [
         'default' => 2,
     ],
 
-    // TODO Wickedness game mechanics ?
-
     /* TODOKK KINGKONG_EXPANSION_OPTION => [
         'name' => totranslate('King Kong event (Tokyo Tower)'),
         'values' => [
@@ -115,6 +113,25 @@ $game_options = [
             ],
             2 => [
                 'name' => totranslate('Enabled'),
+            ],
+        ],
+        'default' => 1,
+    ],*/
+
+    /* TODOWI WICKEDNESS_EXPANSION_OPTION => [
+        'name' => totranslate('Wickedness expansion'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled (orange side)'),
+            ],
+            3 => [
+                'name' => totranslate('Enabled (green side)'),
+            ],
+            4 => [
+                'name' => totranslate('Enabled (random mix)'),
             ],
         ],
         'default' => 1,

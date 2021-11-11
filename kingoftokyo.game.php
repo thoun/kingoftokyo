@@ -93,6 +93,7 @@ class KingOfTokyo extends Table {
             MUTANT_EVOLUTION_VARIANT_OPTION => MUTANT_EVOLUTION_VARIANT_OPTION,
             CTHULHU_EXPANSION_OPTION => CTHULHU_EXPANSION_OPTION,
             ANUBIS_EXPANSION_OPTION => ANUBIS_EXPANSION_OPTION,
+            WICKEDNESS_EXPANSION_OPTION => WICKEDNESS_EXPANSION_OPTION,
 
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
@@ -105,6 +106,9 @@ class KingOfTokyo extends Table {
         $this->curseCards = self::getNew("module.common.deck");
         $this->curseCards->init("curse_card");
         $this->curseCards->autoreshuffle = true;
+		
+        $this->wickednessTiles = self::getNew("module.common.deck");
+        $this->wickednessTiles->init("wickedness_tile");
 	}
 
     protected function getGameName() {
@@ -242,6 +246,10 @@ class KingOfTokyo extends Table {
             $this->curseCards->pickCardForLocation('deck', 'table');
             $this->applyCursePermanentEffectOnReveal();
         }
+        $wickednessExpansion = intval(self::getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
+        if ($wickednessExpansion > 1) {
+            $this->initWickednessTiles($wickednessExpansion);
+        }
 
         if ($this->isKingKongExpansion()) {
             self::DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
@@ -270,6 +278,7 @@ class KingOfTokyo extends Table {
         $isKingKongExpansion = $this->isKingKongExpansion();
         $isCybertoothExpansion = $this->isCybertoothExpansion();
         $isAnubisExpansion = $this->isAnubisExpansion();
+        $isWickednessExpansion = $this->isWickednessExpansion();
 
         $result = ['players' => []];
 
@@ -283,6 +292,9 @@ class KingOfTokyo extends Table {
         }
         if ($isCthulhuExpansion) {
             $sql .= ", player_cultists cultists ";
+        }
+        if ($isWickednessExpansion) {
+            $sql .= ", player_wickedness wickedness ";
         }
         $sql .= "FROM player order by player_no ";
         $result['players'] = self::getCollectionFromDb($sql);
@@ -325,6 +337,9 @@ class KingOfTokyo extends Table {
             if ($isCthulhuExpansion) {
                 $playerDb['cultists'] = intval($playerDb['cultists']);
             }
+            if ($isWickednessExpansion) {
+                $playerDb['wickedness'] = intval($playerDb['wickedness']);
+            }
         }
 
         $result['mimickedCard'] = $this->getMimickedCard();
@@ -338,10 +353,15 @@ class KingOfTokyo extends Table {
         $result['anubisExpansion'] = $isAnubisExpansion;
         $result['kingkongExpansion'] = $isKingKongExpansion;
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
+        $result['wickednessExpansion'] = $isWickednessExpansion;
 
         if ($isAnubisExpansion) {
             $result['playerWithGoldenScarab'] = intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
             $result['curseCard'] = $this->getCurseCard();
+        }
+
+        if ($isWickednessExpansion) {
+            $result['wickednessTiles'] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('table'));
         }
 
         return $result;

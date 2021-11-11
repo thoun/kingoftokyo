@@ -3,10 +3,12 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/objects/card.php');
+require_once(__DIR__.'/objects/wickedness-tile.php');
 require_once(__DIR__.'/objects/player-intervention.php');
 require_once(__DIR__.'/objects/damage.php');
 
 use KOT\Objects\Card;
+use KOT\Objects\WickednessTile;
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\Damage;
 use KOT\Objects\PlayersUsedDice;
@@ -61,6 +63,25 @@ trait CardsUtilTrait {
         $this->curseCards->createCards($cards, 'deck');
     }
 
+    function initWickednessTiles(int $side) {
+        for($value=1; $value<=10; $value++) { // curse cards
+            $cardSide = $side === 4 ? bga_rand(0, 1) : $side - 2;
+            $cards[] = ['type' => $value, 'type_arg' => $cardSide, 'nbr' => 1];
+        }
+        $this->wickednessTiles->createCards($cards, 'deck');
+
+        $allTiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('deck'));
+
+        foreach ([3, 6, 10] as $level) {
+            $levelTiles = array_values(array_filter($allTiles, function ($tile) use ($level) { 
+                $tileLevel = $tile->type > 8 ? 10 : ($tile->type > 4 ? 6 : 3);
+                return $tileLevel === $level; 
+            }));
+            $levelTilesIds = array_map(function ($tile) { return $tile->id; }, $levelTiles);
+            $this->wickednessTiles->moveCards($levelTilesIds, 'table', $level);
+        }
+    }
+
     function getCardFromDb(array $dbCard) {
         if (!$dbCard || !array_key_exists('id', $dbCard)) {
             throw new Error('card doesn\'t exists '.json_encode($dbCard));
@@ -73,6 +94,20 @@ trait CardsUtilTrait {
 
     function getCardsFromDb(array $dbCards) {
         return array_map(function($dbCard) { return $this->getCardFromDb($dbCard); }, array_values($dbCards));
+    }
+
+    function getWickednessTileFromDb(array $dbCard) {
+        if (!$dbCard || !array_key_exists('id', $dbCard)) {
+            throw new Error('card doesn\'t exists '.json_encode($dbCard));
+        }
+        if (!$dbCard || !array_key_exists('location', $dbCard)) {
+            throw new Error('location doesn\'t exists '.json_encode($dbCard));
+        }
+        return new WickednessTile($dbCard);
+    }
+
+    function getWickednessTilesFromDb(array $dbCards) {
+        return array_map(function($dbCard) { return $this->getWickednessTileFromDb($dbCard); }, array_values($dbCards));
     }
 
     function applyEffects(int $cardType, int $playerId, bool $opportunist) { // return $damages

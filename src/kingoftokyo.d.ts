@@ -19,6 +19,16 @@ interface Card {
     cost: number;
     tokens: number;
     mimicType: number;
+    location: string;
+    location_arg: number;
+}
+
+interface WickednessTile {
+    id: number;
+    type: number;
+    side: 0 | 1;
+    level: number;
+    location: string;
     location_arg: number;
 }
 
@@ -75,6 +85,7 @@ interface KingOfTokyoGamedatas {
     anubisExpansion: boolean;
     playerWithGoldenScarab?: number;
     curseCard?: Card;
+    wickednessTiles: WickednessTile[];
 }
 
 interface KingOfTokyoGame extends Game {
