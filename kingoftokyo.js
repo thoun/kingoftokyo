@@ -2243,6 +2243,9 @@ var TableCenter = /** @class */ (function () {
         this.curseCard.removeAll();
         this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
     };
+    TableCenter.prototype.setWickedness = function (playerId, wickedness) {
+        // TODOWI
+    };
     return TableCenter;
 }());
 var ANIMATION_MS = 1500;
@@ -2251,6 +2254,7 @@ var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
         this.energyCounters = [];
+        this.wickednessCounters = [];
         this.tokyoTowerCounters = [];
         this.cultistCounters = [];
         this.playerTables = [];
@@ -2833,6 +2837,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.isAnubisExpansion = function () {
         return this.gamedatas.anubisExpansion;
     };
+    KingOfTokyo.prototype.isWickednessExpansion = function () {
+        return this.gamedatas.wickednessExpansion;
+    };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return false; // TODODE
     };
@@ -2871,20 +2878,25 @@ var KingOfTokyo = /** @class */ (function () {
             var playerId = Number(player.id);
             var eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
             // health & energy counters
-            dojo.place("<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>\n            </div>", "player_board_" + player.id);
+            var html = "<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>";
+            if (gamedatas.wickednessExpansion) {
+                html += "\n                <div id=\"wickedness-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon wickedness\"></div> \n                    <span id=\"wickedness-counter-" + player.id + "\"></span>\n                </div>"; // TODOWI
+            }
+            html += "</div>";
+            dojo.place(html, "player_board_" + player.id);
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
-                var html = "<div class=\"counters\">";
+                var html_1 = "<div class=\"counters\">";
                 if (gamedatas.kingkongExpansion) {
-                    html += "\n                    <div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon\"></div></div>\n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>";
+                    html_1 += "\n                    <div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon\"></div></div>\n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>";
                 }
                 if (gamedatas.cybertoothExpansion) {
-                    html += "\n                    <div id=\"berserk-counter-wrapper-" + player.id + "\" class=\"counter berserk-tooltip\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + "\"></div>\n                        </div>\n                    </div>";
+                    html_1 += "\n                    <div id=\"berserk-counter-wrapper-" + player.id + "\" class=\"counter berserk-tooltip\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + "\"></div>\n                        </div>\n                    </div>";
                 }
                 if (gamedatas.cthulhuExpansion) {
-                    html += "\n                    <div id=\"cultist-counter-wrapper-" + player.id + "\" class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
+                    html_1 += "\n                    <div id=\"cultist-counter-wrapper-" + player.id + "\" class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
                 }
-                html += "</div>";
-                dojo.place(html, "player_board_" + player.id);
+                html_1 += "</div>";
+                dojo.place(html_1, "player_board_" + player.id);
                 if (gamedatas.kingkongExpansion) {
                     var tokyoTowerCounter = new ebg.counter();
                     tokyoTowerCounter.create("tokyo-tower-counter-" + player.id);
@@ -2906,6 +2918,12 @@ var KingOfTokyo = /** @class */ (function () {
             energyCounter.create("energy-counter-" + player.id);
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
+            if (gamedatas.wickednessExpansion) {
+                var wickednessCounter = new ebg.counter();
+                wickednessCounter.create("wickedness-counter-" + player.id);
+                wickednessCounter.setValue(player.wickedness);
+                _this.wickednessCounters[playerId] = wickednessCounter;
+            }
             dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
             if (!eliminated) {
                 _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
@@ -3560,6 +3578,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['health', 1],
             ['energy', 1],
             ['maxHealth', 1],
+            ['wickedness', 1],
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
             ['setCardTokens', 1],
@@ -3720,6 +3739,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_energy = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy);
     };
+    KingOfTokyo.prototype.notif_wickedness = function (notif) {
+        this.setWickedness(notif.args.playerId, notif.args.wickedness);
+    };
     KingOfTokyo.prototype.notif_shrinkRayToken = function (notif) {
         this.setShrinkRayTokens(notif.args.playerId, notif.args.tokens);
     };
@@ -3870,6 +3892,10 @@ var KingOfTokyo = /** @class */ (function () {
             var enableAtEnergy = Number(button.dataset.enableAtEnergy);
             dojo.toggleClass(button, 'disabled', energy < enableAtEnergy);
         });
+    };
+    KingOfTokyo.prototype.setWickedness = function (playerId, wickedness) {
+        this.wickednessCounters[playerId].toValue(wickedness);
+        this.tableCenter.setWickedness(playerId, wickedness);
     };
     KingOfTokyo.prototype.setPlayerTokens = function (playerId, tokens, tokenName) {
         var containerId = "player-board-" + tokenName + "-tokens-" + playerId;

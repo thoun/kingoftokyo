@@ -173,6 +173,7 @@ class KingOfTokyo extends Table {
         }
 
         /************ Start the game initialization *****/
+        $wickednessExpansion = intval(self::getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
 
         // Init global values with their initial values
         self::setGameStateInitialValue('throwNumber', 0);
@@ -221,12 +222,14 @@ class KingOfTokyo extends Table {
         self::initStat('player', 'pointsWonWith1Dice', 0);
         self::initStat('player', 'pointsWonWith2Dice', 0);
         self::initStat('player', 'pointsWonWith3Dice', 0);
-
         if ($this->isCthulhuExpansion()) {
             self::initStat('player', 'gainedCultists', 0);
             self::initStat('player', 'cultistReroll', 0);
             self::initStat('player', 'cultistHeal', 0);
             self::initStat('player', 'cultistEnergy', 0);
+        }
+        if ($wickednessExpansion > 1) {
+            self::initStat('player', 'gainedWickedness', 0);
         }
 
         if (!$this->canPickMonster()) {
@@ -246,7 +249,6 @@ class KingOfTokyo extends Table {
             $this->curseCards->pickCardForLocation('deck', 'table');
             $this->applyCursePermanentEffectOnReveal();
         }
-        $wickednessExpansion = intval(self::getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
         if ($wickednessExpansion > 1) {
             $this->initWickednessTiles($wickednessExpansion);
         }

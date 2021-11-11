@@ -461,17 +461,17 @@ trait PlayerUtilTrait {
     }
     
     function applyGetWickedness(int $playerId, int $number) {
-        self::DbQuery("UPDATE player SET `player_wickedness` = `player_wickedness` + $number where `player_id` = $playerId");
+        $newWickedness = min(10, $this->getPlayerWickedness($playerId) + $number);
 
-        /* TODOWI notif & stats $message = clienttranslate('${player_name} gains 1 cultist with 4 or more ${dice}');
-        self::notifyAllPlayers('cultist', $message, [
+        self::DbQuery("UPDATE player SET `player_wickedness` = $newWickedness where `player_id` = $playerId");
+
+        self::notifyAllPlayers('wickedness', ''/*client TODO translate('${player_name} gains ${delta_wickedness} wickedness points')*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'cultists' => $this->getPlayerCultists($playerId),
-            'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
-            'dice' => $diceStr,
+            'wickedness' => $newWickedness,
+            'delta_wickedness' => $number,
         ]);
 
-        self::incStat(1, 'gainedCultists', $playerId);*/
+        self::incStat($number, 'gainedWickedness', $playerId);
     }
 }

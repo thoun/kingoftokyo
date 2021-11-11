@@ -15,6 +15,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
     private energyCounters: Counter[] = [];
+    private wickednessCounters: Counter[] = [];
     private tokyoTowerCounters: Counter[] = [];
     private cultistCounters: Counter[] = [];
     private diceManager: DiceManager;
@@ -686,6 +687,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.anubisExpansion;
     }
 
+    public isWickednessExpansion(): boolean {
+        return this.gamedatas.wickednessExpansion;
+    }
+
     public isDarkEdition(): boolean {
         return false; // TODODE
     }
@@ -742,7 +747,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             const eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
 
             // health & energy counters
-            dojo.place(`<div class="counters">
+            let html = `<div class="counters">
                 <div id="health-counter-wrapper-${player.id}" class="counter">
                     <div class="icon health"></div> 
                     <span id="health-counter-${player.id}"></span>
@@ -750,8 +755,16 @@ class KingOfTokyo implements KingOfTokyoGame {
                 <div id="energy-counter-wrapper-${player.id}" class="counter">
                     <div class="icon energy"></div> 
                     <span id="energy-counter-${player.id}"></span>
-                </div>
-            </div>`, `player_board_${player.id}`);
+                </div>`;
+            if (gamedatas.wickednessExpansion) {
+                html += `
+                <div id="wickedness-counter-wrapper-${player.id}" class="counter">
+                    <div class="icon wickedness"></div> 
+                    <span id="wickedness-counter-${player.id}"></span>
+                </div>`; // TODOWI
+            }
+            html += `</div>`;
+            dojo.place(html, `player_board_${player.id}`);
 
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 let html = `<div class="counters">`;
@@ -808,6 +821,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             energyCounter.create(`energy-counter-${player.id}`);
             energyCounter.setValue(player.energy);
             this.energyCounters[playerId] = energyCounter;
+
+            if (gamedatas.wickednessExpansion) {
+                const wickednessCounter = new ebg.counter();
+                wickednessCounter.create(`wickedness-counter-${player.id}`);
+                wickednessCounter.setValue(player.wickedness);
+                this.wickednessCounters[playerId] = wickednessCounter;
+            }
 
             dojo.place(`<div class="player-tokens">
                 <div id="player-board-shrink-ray-tokens-${player.id}" class="player-token shrink-ray-tokens"></div>
@@ -1602,6 +1622,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['health', 1],
             ['energy', 1],
             ['maxHealth', 1],
+            ['wickedness', 1],
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
             ['setCardTokens', 1],
@@ -1785,6 +1806,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setEnergy(notif.args.playerId, notif.args.energy);
     }
 
+    notif_wickedness(notif: Notif<NotifWickednessArgs>) {
+        this.setWickedness(notif.args.playerId, notif.args.wickedness);
+    }
+
     notif_shrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
         this.setShrinkRayTokens(notif.args.playerId, notif.args.tokens);
     }
@@ -1951,6 +1976,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             const enableAtEnergy = Number(button.dataset.enableAtEnergy);
             dojo.toggleClass(button, 'disabled', energy < enableAtEnergy);
         });
+    }
+    
+    private setWickedness(playerId: number, wickedness: number) {
+        this.wickednessCounters[playerId].toValue(wickedness);
+        this.tableCenter.setWickedness(playerId, wickedness);
     }
 
     private setPlayerTokens(playerId: number, tokens: number, tokenName: string) {

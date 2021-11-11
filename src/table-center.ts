@@ -140,4 +140,8 @@ class TableCenter {
         this.curseCard.removeAll();
         this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
     }
+    
+    public setWickedness(playerId: number, wickedness: number) {
+        // TODOWI
+    }
 }

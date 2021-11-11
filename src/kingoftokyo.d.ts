@@ -53,6 +53,7 @@ interface KingOfTokyoPlayer extends Player {
     tokyoTowerLevels?: number[];
     berserk?: boolean;
     cultists: number;
+    wickedness?: number;
 }
 
 interface KingOfTokyoGamedatas {
@@ -83,6 +84,7 @@ interface KingOfTokyoGamedatas {
     mutantEvolutionVariant: boolean;
     cthulhuExpansion: boolean;
     anubisExpansion: boolean;
+    wickednessExpansion: boolean;
     playerWithGoldenScarab?: number;
     curseCard?: Card;
     wickednessTiles: WickednessTile[];
@@ -96,6 +98,7 @@ interface KingOfTokyoGame extends Game {
     isMutantEvolutionVariant(): boolean;
     isCthulhuExpansion(): boolean;
     isAnubisExpansion(): boolean;
+    isWickednessExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
@@ -327,6 +330,10 @@ interface NotifEnergyArgs extends NotifResolveArgs {
 
 interface NotifMaxHealthArgs extends NotifHealthArgs {
     maxHealth: number;
+}
+
+interface NotifWickednessArgs extends NotifResolveArgs {
+    wickedness: number;
 }
 
 interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
