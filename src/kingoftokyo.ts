@@ -25,6 +25,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private preferencesManager: PreferencesManager;
     public cards: Cards;
     public curseCards: CurseCards;
+    public wickednessTiles: WickednessTiles;
     //private rapidHealingSyncHearts: number;
     public towerLevelsOwners = [];
     private tableCenter: TableCenter;
@@ -83,6 +84,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.cards = new Cards(this);
         this.curseCards = new CurseCards(this);
+        this.wickednessTiles = new WickednessTiles(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
     
@@ -1615,6 +1617,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['changeDie', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
+            ['takeWickednessTile', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -1941,6 +1944,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_changeCurseCard(notif: Notif<NotifChangeCurseCardArgs>) {
         this.tableCenter.changeCurseCard(notif.args.card);
+    }
+
+    notif_takeWickednessTile(notif: Notif<NotifTakeWickednessTileArgs>) {
+        this.wickednessTiles.moveToAnotherStock(this.tableCenter.getWickednessTiles(notif.args.level), this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.tile);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

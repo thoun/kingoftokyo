@@ -36,6 +36,9 @@ require_once('modules/php/cards-utils.php');
 require_once('modules/php/cards-actions.php');
 require_once('modules/php/cards-args.php');
 require_once('modules/php/cards-states.php');
+require_once('modules/php/wickedness-tiles-utils.php');
+require_once('modules/php/wickedness-tiles-actions.php');
+require_once('modules/php/wickedness-tiles-args.php');
 require_once('modules/php/intervention.php');
 require_once('modules/php/debug-util.php');
 
@@ -55,6 +58,9 @@ class Koth extends Table {
     use KOT\States\CardsActionTrait;
     use KOT\States\CardsArgTrait;
     use KOT\States\CardsStateTrait;
+    use KOT\States\WickednessTilesUtilTrait;
+    use KOT\States\WickednessTilesActionTrait;
+    use KOT\States\WickednessTilesArgTrait;
     use KOT\States\InterventionTrait;
     use KOT\States\DebugUtilTrait;
 
@@ -230,6 +236,7 @@ class Koth extends Table {
         }
         if ($wickednessExpansion > 1) {
             self::initStat('player', 'gainedWickedness', 0);
+            self::initStat('player', 'wickednessTilesTaken', 0);
         }
 
         if (!$this->canPickMonster()) {

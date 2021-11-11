@@ -65,18 +65,6 @@ class Cards {
             }
         });
     }
-    
-    public getCardUniqueId(color: number, value: number) {
-        return color * 100 + value;
-    }
-    
-    public getCardWeight(color: number, value: number) {
-        let displayedNumber = value;
-        if (displayedNumber === 70 || displayedNumber === 90) {
-            displayedNumber /= 10;
-        }
-        return displayedNumber * 100 + color;
-    }
 
     private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);

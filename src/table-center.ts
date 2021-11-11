@@ -2,6 +2,7 @@ class TableCenter {
     private visibleCards: Stock;
     private curseCard: Stock;
     private pickCard: Stock;
+    private wickednessTiles: Stock[] = [];
     private tokyoTower: TokyoTower;
 
     constructor(private game: KingOfTokyoGame, visibleCards: Card[], topDeckCardBackType: string, tokyoTowerLevels: number[], curseCard: Card) {        
@@ -143,5 +144,9 @@ class TableCenter {
     
     public setWickedness(playerId: number, wickedness: number) {
         // TODOWI
+    }
+
+    getWickednessTiles(level: number): Stock {
+        return this.wickednessTiles[level];
     }
 }
