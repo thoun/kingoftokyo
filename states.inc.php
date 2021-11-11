@@ -287,8 +287,24 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stResolveNumberDice",
         "transitions" => [
+            "takeWickednessTile" => ST_PLAYER_TAKE_WICKEDNESS_TILE,
             "next" => ST_RESOLVE_HEART_DICE,
             "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
+        ],
+    ],
+
+    ST_PLAYER_TAKE_WICKEDNESS_TILE => [
+        "name" => "takeWickednessTile",
+        "description" => ''/* client TODOWI translate('${actplayer} can take a wickedness tile')*/,
+        "descriptionmyturn" => ''/* client TODOWI translate(''${you} can take a wickedness tile')*/,
+        "type" => "activeplayer",
+        "args" => "argTakeWickednessTile",
+        // TODOWI ? "action" => "stTakeWickednessTile",
+        "possibleactions" => [ "takeWickednessTile", "skipTakeWickednessTile" ],
+        "transitions" => [
+            "next" => ST_RESOLVE_HEART_DICE,
+            "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
+            // TODOWI mimick
         ],
     ],
 

@@ -105,6 +105,7 @@ $stats_type = [
         "cultistHeal" => ["id" => 50, "type" => "int", "name" => totranslate("Cultist used for healing")],
         "cultistEnergy" => ["id" => 51, "type" => "int", "name" => totranslate("Cultist used for energy")],
         // TODOWI change id !!! "gainedWickedness" => ["id" => x, "type" => "int", "name" => totranslate("Wickedness")],
+        // TODOWI change id !!! "wickednessTilesTaken" => ["id" => x, "type" => "int", "name" => totranslate("Wickedness tales taken")],
     ],
 
     "value_labels" => [

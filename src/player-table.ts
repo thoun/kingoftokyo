@@ -14,6 +14,7 @@ class PlayerTable {
     private tokyoTower: TokyoTower;
 
     public cards: Stock;
+    public wickednessTiles: Stock;
 
     constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);

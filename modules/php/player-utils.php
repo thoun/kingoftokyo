@@ -455,23 +455,4 @@ trait PlayerUtilTrait {
         }
         return true;
     }
-
-    function getPlayerWickedness(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_wickedness FROM `player` where `player_id` = $playerId"));
-    }
-    
-    function applyGetWickedness(int $playerId, int $number) {
-        $newWickedness = min(10, $this->getPlayerWickedness($playerId) + $number);
-
-        self::DbQuery("UPDATE player SET `player_wickedness` = $newWickedness where `player_id` = $playerId");
-
-        self::notifyAllPlayers('wickedness', ''/*client TODO translate('${player_name} gains ${delta_wickedness} wickedness points')*/, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'wickedness' => $newWickedness,
-            'delta_wickedness' => $number,
-        ]);
-
-        self::incStat($number, 'gainedWickedness', $playerId);
-    }
 }

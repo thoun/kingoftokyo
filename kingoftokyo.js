@@ -127,16 +127,6 @@ var Cards = /** @class */ (function () {
             }
         });
     };
-    Cards.prototype.getCardUniqueId = function (color, value) {
-        return color * 100 + value;
-    };
-    Cards.prototype.getCardWeight = function (color, value) {
-        var displayedNumber = value;
-        if (displayedNumber === 70 || displayedNumber === 90) {
-            displayedNumber /= 10;
-        }
-        return displayedNumber * 100 + color;
-    };
     Cards.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
@@ -836,6 +826,129 @@ var CurseCards = /** @class */ (function () {
         cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div>" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div>" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div>" + snakeEffect + "</div></div>";
     };
     return CurseCards;
+}());
+var WICKEDNESS_TILES_WIDTH = 132;
+var WICKEDNESS_TILES_HEIGHT = 82; // TODOWI
+var WickednessTiles = /** @class */ (function () {
+    function WickednessTiles(game) {
+        this.game = game;
+    }
+    WickednessTiles.prototype.setupCards = function (stocks) {
+        stocks.forEach(function (stock) {
+            var orangewickednesstilessurl = g_gamethemeurl + "img/orange-wickedness-tiles.jpg";
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(function (id, index) {
+                stock.addItemType(id, id, orangewickednesstilessurl, index);
+            });
+            var greenwickednesstilessurl = g_gamethemeurl + "img/green-wickedness-tiles.jpg";
+            [101, 102, 103, 104, 105, 106, 107, 108, 109, 110].forEach(function (id, index) {
+                stock.addItemType(id, id, greenwickednesstilessurl, index);
+            });
+        });
+    };
+    WickednessTiles.prototype.addCardsToStock = function (stock, cards, from) {
+        if (!cards.length) {
+            return;
+        }
+        cards.forEach(function (card) { return stock.addToStockWithId(card.type + card.side, "" + card.id, from); });
+    };
+    WickednessTiles.prototype.moveToAnotherStock = function (sourceStock, destinationStock, tile) {
+        if (sourceStock === destinationStock) {
+            return;
+        }
+        var sourceStockItemId = sourceStock.container_div.id + "_item_" + tile.id;
+        if (document.getElementById(sourceStockItemId)) {
+            this.addCardsToStock(destinationStock, [tile], sourceStockItemId);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
+            sourceStock.removeFromStockById("" + tile.id);
+        }
+        else {
+            console.warn(sourceStockItemId + " not found in ", sourceStock);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
+            this.addCardsToStock(destinationStock, [tile], sourceStock.container_div.id);
+        }
+    };
+    WickednessTiles.prototype.getCardLevel = function (cardTypeId) {
+        var id = cardTypeId % 100;
+        if (id > 8) {
+            return 10;
+        }
+        else if (id > 4) {
+            return 6;
+        }
+        else {
+            return 3;
+        }
+    };
+    WickednessTiles.prototype.getCardName = function (cardTypeId) {
+        switch (cardTypeId) {
+            // orange
+            case 1: return _("[724468]Acid [6E3F63]Attack");
+            case 2: return _("[442E70]Alien [57347E]Origin");
+            case 3: return _("[624A9E]Alpha Monster");
+            case 4: return _("[6FBA44]Armor Plating");
+            case 5: return _("[0068A1]Background [0070AA]Dweller");
+            case 6: return _("[5A6E79]Burrowing");
+            case 7: return _("[5DB1DD]Camouflage");
+            case 8: return _("[7C7269]Complete [958B7F]Destruction");
+            case 9: return _("[836380]Media-Friendly");
+            case 10: return _("[42B4B4]Eater of [25948B]the Dead");
+            // green
+            case 101: return _("[B180A0]Apartment [9F7595]Building");
+            case 102: return _("[496787]Commuter [415C7A]Train");
+            case 103: return _("[993422]Corner [5F6A70]Store");
+            case 104: return _("[5BB3E2]Death [45A2D6]From [CE542B]Above");
+            case 105: return _("[5D657F]Energize");
+            case 106:
+            case 107: return _("[7F2719]Evacuation [812819]Orders");
+            case 108: return _("[71200F]Flame [4E130B]Thrower");
+            case 109: return _("[B1624A]Frenzy");
+            case 110: return _("[645656]Gas [71625F]Refinery");
+        }
+        return null;
+    };
+    WickednessTiles.prototype.getCardDescription = function (cardTypeId) {
+        switch (cardTypeId) {
+            // orange
+            case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
+            case 2: return _("<strong>Buying cards costs you 1 less [Energy].</strong>");
+            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least one [diceSmash].");
+            case 4: return _("<strong>Do not lose [heart] when you lose exactly 1[heart].</strong>");
+            case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
+            case 6: return _("<strong>Add [diceSmash] to your Roll while you are in Tokyo. When you Yield Tokyo, the monster taking it loses 1[heart].</strong>");
+            case 7: return _("If you lose [heart], roll a die for each [heart] you lost. <strong>Each [diceHeart] reduces the loss by 1[heart].</strong>");
+            case 8: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy] <strong>gain 9[Star]</strong> in addition to the regular effects.");
+            case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
+            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
+            // green
+            case 101: return "<strong>+ 3[Star].</strong>";
+            case 102: return "<strong>+ 2[Star].</strong>";
+            case 103: return "<strong>+ 1[Star].</strong>";
+            case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it.");
+            case 105: return "<strong>+ 9[Energy].</strong>";
+            case 106:
+            case 107: return _("<strong>All other Monsters lose 5[Star].</strong>");
+            case 108: return _("<strong>All other Monsters lose 2[Heart].</strong>");
+            case 109: return _("<strong>Take another turn</strong> after this one");
+            case 110: return _("<strong>+ 2[Star] and all other monsters lose 3[Heart].</strong>");
+        }
+        return null;
+    };
+    WickednessTiles.prototype.getTooltip = function (cardTypeId) {
+        var level = this.getCardLevel(cardTypeId);
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        return tooltip;
+    };
+    WickednessTiles.prototype.setupNewCard = function (cardDiv, cardType) {
+        this.setDivAsCard(cardDiv, cardType);
+        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+    };
+    WickednessTiles.prototype.setDivAsCard = function (cardDiv, cardType) {
+        var name = this.getCardName(cardType);
+        var level = this.getCardLevel(cardType);
+        var description = formatTextIcons(this.getCardDescription(cardType));
+        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"level\" [data-level]=\"" + level + "\">" + level + "</div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+    };
+    return WickednessTiles;
 }());
 var TokyoTower = /** @class */ (function () {
     function TokyoTower(divId, levels) {
@@ -2130,6 +2243,7 @@ var PreferencesManager = /** @class */ (function () {
 var TableCenter = /** @class */ (function () {
     function TableCenter(game, visibleCards, topDeckCardBackType, tokyoTowerLevels, curseCard) {
         this.game = game;
+        this.wickednessTiles = [];
         this.createVisibleCards(visibleCards, topDeckCardBackType);
         if (game.isKingkongExpansion()) {
             dojo.place("<div id=\"tokyo-tower-0\" class=\"tokyo-tower-wrapper\"></div>", 'board');
@@ -2246,6 +2360,9 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.setWickedness = function (playerId, wickedness) {
         // TODOWI
     };
+    TableCenter.prototype.getWickednessTiles = function (level) {
+        return this.wickednessTiles[level];
+    };
     return TableCenter;
 }());
 var ANIMATION_MS = 1500;
@@ -2302,6 +2419,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.cards = new Cards(this);
         this.curseCards = new CurseCards(this);
+        this.wickednessTiles = new WickednessTiles(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);
@@ -3571,6 +3689,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['changeDie', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
+            ['takeWickednessTile', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -3858,6 +3977,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_changeCurseCard = function (notif) {
         this.tableCenter.changeCurseCard(notif.args.card);
+    };
+    KingOfTokyo.prototype.notif_takeWickednessTile = function (notif) {
+        this.wickednessTiles.moveToAnotherStock(this.tableCenter.getWickednessTiles(notif.args.level), this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.tile);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

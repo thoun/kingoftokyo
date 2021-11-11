@@ -218,6 +218,17 @@ trait DiceStateTrait {
             $this->resolveNumberDice($playerId, $diceFace, $diceCount);
         }
 
+        if ($this->isWickednessExpansion() && $this->canTakeWickednessTile($playerId) > 0) {
+            $this->gamestate->nextState('takeWickednessTile');
+        } else {
+            $this->redirectToResolveHeart();
+        }
+        
+    }
+
+    function redirectToResolveHeart() {
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+
         $canSelectHeartDiceUse = false;
         if ($diceCounts[4] > 0) {
             $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);

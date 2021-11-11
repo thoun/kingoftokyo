@@ -402,3 +402,10 @@ interface NotifCultistArgs {
 interface NotifChangeCurseCardArgs {
     card: Card;
 }
+
+interface NotifTakeWickednessTileArgs {
+    playerId: number;
+    player_name: string;
+    tile: WickednessTile;
+    level: number;
+}
