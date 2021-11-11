@@ -546,7 +546,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  padding: 0.625em 0 0;
+  padding: 1em 0 0;
   top: 0;
   bottom: 0;
   text-align: center;
@@ -556,8 +556,8 @@
 .die4 .number .anubis-icon {
   background: url("img/anubis_die_icons.png");
   background-size: auto 100%;
-  width: 1.75em;
-  height: 1.75em;
+  width: 1.5em;
+  height: 1.5em;
 }
 .die4 .number .anubis-icon1 {
   background-position: 0% 100%;

@@ -749,6 +749,10 @@ trait CardsUtilTrait {
     function getCurseCard() {
         return $this->getCardsFromDb($this->curseCards->getCardsInLocation('table'))[0];
     }
+
+    function getCurseCardType() {
+        return $this->getCurseCard()->type;
+    }
     
     function changeCurseCard() {
         $this->curseCards->moveAllCardsInLocation('table', 'discard');

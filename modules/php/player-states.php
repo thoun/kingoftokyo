@@ -115,17 +115,56 @@ trait PlayerStateTrait {
             }
         }
 
+        $damages = [];
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+            $logCardType = 1000 + $curseCardType;
+            switch($curseCardType) {
+                case SET_S_STORM_CURSE_CARD:
+                    $damages[] = new Damage($playerId, 1, $playerId, $logCardType); // TODOAN TOCHECK confirm the player is the damage dealer ? or 0 ?
+                    break;
+                case BUILDERS_UPRISING_CURSE_CARD: 
+                    $this->applyLosePoints($playerId, 2, $logCardType);
+                    break;
+                case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
+                    $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
+                    foreach ($playersIds as $pId) {
+                        $damages[] = new Damage($pId, 1, $playerId, $logCardType); // TODOAN TOCHECK confirm the player is the damage dealer ? or 0 ?
+                    }
+                    break;
+                case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
+                    $playersIds = $this->getPlayersIdsWithMaxColumn('player_score');
+                    foreach ($playersIds as $pId) {
+                        $this->applyLosePoints($pId, 1, $logCardType);
+                    }
+                    break;
+                case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
+                    $playersIds = $this->getPlayersIdsWithMaxColumn('player_energy');
+                    foreach ($playersIds as $pId) {
+                        $this->applyLoseEnergy($pId, 1, $logCardType);
+                    }
+                    break;
+            }
+        }
+
         // throw dice
 
         self::setGameStateValue('throwNumber', 1);
         self::DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true");
 
-        if ($this->canChangeMimickedCard()) {
-            $this->gamestate->nextState('changeMimickedCard');
-        } else {
+        $canChangeMimickedCard = $this->canChangeMimickedCard();
+        if (!$canChangeMimickedCard) {
             $this->throwDice($playerId, true);
+        }
 
-            $this->gamestate->nextState('throw');
+        $redirects = false;
+        $redirectAfterStartTurn = $canChangeMimickedCard ? ST_PLAYER_CHANGE_MIMICKED_CARD : ST_PLAYER_THROW_DICE;
+        if ($damages != null && count($damages) > 0) {
+            $redirects = $this->resolveDamages($damages, $redirectAfterStartTurn);
+        }
+
+        if (!$redirects) {
+            $this->jumpToState($redirectAfterStartTurn, $playerId);
         }
     }
 

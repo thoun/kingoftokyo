@@ -44,6 +44,12 @@ class CurseCards {
     private getPermanentEffect(cardTypeId: number): string {
         switch (cardTypeId) {
             // TODOAN
+            case 8: return "At the start of your turn, lose 1[Heart].";
+            case 9: return "At the start of your turn, lose 2[Star].";
+            case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
+            case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
+            case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
+            defaut: return "TODO"; // TODO an
         }
         return null;
     }
@@ -67,8 +73,8 @@ class CurseCards {
             case 4: case 9: return "-2[Star]";          
             case 8: return "-1[Heart]";
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";
-            case 13: return "The Monster(s) with the most [Star] lose 1[Star].";
-            case 13: return "The Monster(s) with the most [Energy] lose 1[Energy].";
+            case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
+            case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";
             case 20: return "Take the Golden Scarab.";
             defaut: return "TODO"; // TODO an
         }

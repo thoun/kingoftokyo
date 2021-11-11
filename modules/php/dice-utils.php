@@ -592,7 +592,7 @@ trait DiceUtilTrait {
     }
 
     function applyAnkhEffect(int $playerId) {
-        $cardType = $this->getCurseCard()->type;
+        $cardType = $this->getCurseCardType();
         $logCardType = 1000 + $cardType;
 
         switch($cardType) {
@@ -620,7 +620,7 @@ trait DiceUtilTrait {
     }
     
     function applySnakeEffect(int $playerId) { // return damages
-        $cardType = $this->getCurseCard()->type;
+        $cardType = $this->getCurseCardType();
         $logCardType = 1000 + $cardType;
 
         switch($cardType) {

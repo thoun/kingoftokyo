@@ -506,7 +506,7 @@ $distFromCenter: 1em;
       position: absolute;
       left: 0;
       right: 0;
-      padding: $die4size / 8 0 0;
+      padding: $die4size / 5 0 0;
       top: 0;
       bottom: 0;
       text-align: center;
@@ -517,8 +517,8 @@ $distFromCenter: 1em;
       .anubis-icon {
         background: url('img/anubis_die_icons.png');
         background-size: auto 100%;
-        width: $die4size * 0.35;
-        height: $die4size * 0.35;
+        width: $die4size * 0.3;
+        height: $die4size * 0.3;
       }
 
       @for $i from 1 through 4 {

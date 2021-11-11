@@ -217,6 +217,7 @@ trait DiceStateTrait {
                 break;
         }
 
+        $redirects = false;
         if ($damages != null && count($damages) > 0) {
             $redirects = $this->resolveDamages($damages, ST_RESOLVE_NUMBER_DICE);
         }

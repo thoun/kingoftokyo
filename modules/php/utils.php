@@ -758,7 +758,8 @@ trait UtilTrait {
         $state = $this->gamestate->state();
         // we redirect only if game is not ended, and player is still active (not redirected to next player)
         if ($state['name'] != 'gameEnd') {
-            $this->gamestate->jumpToState($stateId);
+            // TODOAN $isEliminated = $this->getPlayer($playerId)->eliminated;
+            $this->gamestate->jumpToState(/*$isEliminated ? ST_NEXT_PLAYER :*/ $stateId);
         }
     }
 
