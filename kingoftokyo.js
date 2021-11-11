@@ -2497,6 +2497,7 @@ var KingOfTokyo = /** @class */ (function () {
             if ((_b = (_a = args._private) === null || _a === void 0 ? void 0 : _a.pickCards) === null || _b === void 0 ? void 0 : _b.length) {
                 this.tableCenter.showPickStock(args._private.pickCards);
             }
+            this.setBuyDisabledCard(args);
             args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
@@ -2846,6 +2847,9 @@ var KingOfTokyo = /** @class */ (function () {
             this.playerTables.forEach(function (playerTable) { return playerTable.cards.updateDisplay(); });
         }
     };
+    KingOfTokyo.prototype.getStateName = function () {
+        return this.gamedatas.gamestate.name;
+    };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from) {
         if (from === void 0) { from = 0; }
         if (!cardId) {
@@ -2855,24 +2859,54 @@ var KingOfTokyo = /** @class */ (function () {
             stock.unselectItem(cardId);
             return;
         }
-        if (this.gamedatas.gamestate.name === 'chooseInitialCard') {
+        var stateName = this.getStateName();
+        if (stateName === 'chooseInitialCard') {
             this.chooseInitialCard(cardId);
         }
-        else if (this.gamedatas.gamestate.name === 'stealCostumeCard') {
+        else if (stateName === 'stealCostumeCard') {
             this.stealCostumeCard(cardId);
         }
-        else if (this.gamedatas.gamestate.name === 'sellCard') {
+        else if (stateName === 'sellCard') {
             this.sellCard(cardId);
         }
-        else if (this.gamedatas.gamestate.name === 'chooseMimickedCard' || this.gamedatas.gamestate.name === 'opportunistChooseMimicCard') {
+        else if (stateName === 'chooseMimickedCard' || stateName === 'opportunistChooseMimicCard') {
             this.chooseMimickedCard(cardId);
         }
-        else if (this.gamedatas.gamestate.name === 'changeMimickedCard') {
+        else if (stateName === 'changeMimickedCard') {
             this.changeMimickedCard(cardId);
         }
-        else {
+        else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             this.tableCenter.removeOtherCardsFromPick(cardId);
             this.buyCard(cardId, from);
+        }
+    };
+    KingOfTokyo.prototype.setBuyDisabledCard = function (args, playerEnergy) {
+        if (args === void 0) { args = null; }
+        if (playerEnergy === void 0) { playerEnergy = null; }
+        if (!this.isCurrentPlayerActive()) {
+            return;
+        }
+        var stateName = this.getStateName();
+        if (stateName !== 'buyCard' && stateName !== 'opportunistBuyCard') {
+            return;
+        }
+        if (args === null) {
+            args = this.gamedatas.gamestate.args;
+        }
+        if (playerEnergy === null) {
+            playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
+        }
+        Object.keys(args.cardsCosts).forEach(function (cardId) {
+            var id = Number(cardId);
+            var disabled = args.unbuyableIds.some(function (disabledId) { return disabledId == id; }) || args.cardsCosts[id] > playerEnergy;
+            var cardDiv = document.querySelector("div[id$=\"_item_" + id + "\"]"); // TODOAN will find curse card, and shouldn't
+            if (cardDiv) {
+                dojo.toggleClass(cardDiv, 'disabled', disabled);
+            }
+        });
+        // renew button
+        if (document.getElementById('renew_button')) {
+            dojo.toggleClass('renew_button', 'disabled', playerEnergy < 2);
         }
     };
     KingOfTokyo.prototype.addRapidHealingButton = function (userEnergy, isMaxHealth) {
@@ -3724,6 +3758,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.getPlayerTable(playerId).setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
+        this.setBuyDisabledCard(null, energy);
     };
     KingOfTokyo.prototype.setPlayerTokens = function (playerId, tokens, tokenName) {
         var containerId = "player-board-" + tokenName + "-tokens-" + playerId;

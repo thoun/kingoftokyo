@@ -183,6 +183,8 @@ interface EnteringBuyCardArgs {
     _private: {
         pickCards: Card[];
     };
+    cardsCosts: { [cardId: number]: number };
+    unbuyableIds: number[];
 }
 
 interface EnteringCancelDamageArgs {

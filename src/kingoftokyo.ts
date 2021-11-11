@@ -415,6 +415,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.tableCenter.showPickStock(args._private.pickCards);
             }
 
+            this.setBuyDisabledCard(args);
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
@@ -858,6 +859,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private getStateName() {
+        return this.gamedatas.gamestate.name;
+    }
+
     public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) { // from : player id
         if (!cardId) {
             return;
@@ -868,19 +873,51 @@ class KingOfTokyo implements KingOfTokyoGame {
             return;
         }
 
-        if (this.gamedatas.gamestate.name === 'chooseInitialCard') {
+        const stateName = this.getStateName();
+        if (stateName === 'chooseInitialCard') {
             this.chooseInitialCard(cardId);
-        } else if (this.gamedatas.gamestate.name === 'stealCostumeCard') {
+        } else if (stateName === 'stealCostumeCard') {
             this.stealCostumeCard(cardId);
-        } else if (this.gamedatas.gamestate.name === 'sellCard') {
+        } else if (stateName === 'sellCard') {
             this.sellCard(cardId);
-        } else if (this.gamedatas.gamestate.name === 'chooseMimickedCard' || this.gamedatas.gamestate.name === 'opportunistChooseMimicCard') {
+        } else if (stateName === 'chooseMimickedCard' || stateName === 'opportunistChooseMimicCard') {
             this.chooseMimickedCard(cardId);
-        } else if (this.gamedatas.gamestate.name === 'changeMimickedCard') {
+        } else if (stateName === 'changeMimickedCard') {
             this.changeMimickedCard(cardId);
-        } else {
+        } else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             this.tableCenter.removeOtherCardsFromPick(cardId);
             this.buyCard(cardId, from);
+        }
+    }
+
+    setBuyDisabledCard(args: EnteringBuyCardArgs = null, playerEnergy: number = null) {
+        if (!(this as any).isCurrentPlayerActive()) {
+            return;
+        }
+        
+        const stateName = this.getStateName();
+        if (stateName !== 'buyCard' && stateName !== 'opportunistBuyCard') {
+            return;
+        }
+        if (args === null) {
+            args = this.gamedatas.gamestate.args;
+        }
+        if (playerEnergy === null) {
+            playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
+        }
+
+        Object.keys(args.cardsCosts).forEach(cardId => {
+            const id = Number(cardId);
+            const disabled = args.unbuyableIds.some(disabledId => disabledId == id) || args.cardsCosts[id] > playerEnergy;
+            const cardDiv = document.querySelector(`div[id$="_item_${id}"]`) as HTMLElement; // TODOAN will find curse card, and shouldn't
+            if (cardDiv) {
+                dojo.toggleClass(cardDiv, 'disabled', disabled);
+            }
+        });
+
+        // renew button
+        if (document.getElementById('renew_button')) {
+            dojo.toggleClass('renew_button', 'disabled', playerEnergy < 2);
         }
     }
 
@@ -1897,6 +1934,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getPlayerTable(playerId).setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
+        this.setBuyDisabledCard(null, energy);
     }
 
     private setPlayerTokens(playerId: number, tokens: number, tokenName: string) {
