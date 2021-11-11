@@ -517,10 +517,5 @@ class KingOfTokyo extends Table {
             ) ENGINE=InnoDB;";
             self::applyDbUpgradeToAllDB($sql);
         }
- 
-        if ($from_version <= 2110312310) {
-            $sql = "ALTER TABLE `DBPREFIX_dice` ADD `type` TINYINT unsigned NOT NULL DEFAULT 0";
-            self::applyDbUpgradeToAllDB($sql);
-        }
     }
 }

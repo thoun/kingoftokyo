@@ -17,7 +17,8 @@ trait DiceUtilTrait {
     ////////////
     
     function getDice(int $number) {
-        $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
+        $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
+        // TODOAN TODOCY $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
         $dbDices = self::getCollectionFromDB($sql);
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
