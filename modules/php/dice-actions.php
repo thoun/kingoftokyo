@@ -259,7 +259,9 @@ trait DiceActionTrait {
 
                 // we remove Psychic Probe and Mimic if user mimicked it
                 foreach($currentPlayerCards as $card) {
-                    $this->removeCard($playerId, $card, false, true);
+                    if ($card->type == PSYCHIC_PROBE_CARD || $card->type == MIMIC_CARD) {
+                        $this->removeCard($playerId, $card, false, true);
+                    }
 
                     if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe
 
