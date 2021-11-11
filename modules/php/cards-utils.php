@@ -765,4 +765,10 @@ trait CardsUtilTrait {
 
         // TODOAN notif
     }
+
+    function getPlayersIdsWithoutGoldenScarab() {
+        $playerIds = $this->getPlayersIds();
+        $playerWithGoldenScarab = intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+        return array_values(array_filter($playerIds, function ($playerId) use ($playerWithGoldenScarab) { return $playerId != $playerWithGoldenScarab; }));
+    }
 }

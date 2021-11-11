@@ -809,4 +809,10 @@ trait UtilTrait {
             'level' => $level,
         ]);
     }
+
+    function getPlayersIdsWithMaxColumn(string $column) {
+        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select max(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
+        $dbResults = self::getCollectionFromDB($sql);
+        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+    }
 }

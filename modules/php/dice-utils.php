@@ -593,7 +593,7 @@ trait DiceUtilTrait {
 
     function applyAnkhEffect(int $playerId) {
         $cardType = $this->getCurseCard()->type;
-        
+        $logCardType = 1000 + $cardType;
 
         switch($cardType) {
             // TODOAN
@@ -608,32 +608,52 @@ trait DiceUtilTrait {
             case SET_S_STORM_CURSE_CARD:
             case BOW_BEFORE_RA_CURSE_CARD: 
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
-                $this->applyGetHealth($playerId, 2, 1000 + $cardType, $playerId);
+                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
             case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
-                $this->applyGetPoints($playerId, 2, 1000 + $cardType);
+                $this->applyGetPoints($playerId, 2, $logCardType);
                 break;
             case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
-                $this->applyGetEnergy($playerId, 2, 1000 + $cardType);
+                $this->applyGetEnergy($playerId, 2, $logCardType);
                 break;
         }
     }
     
     function applySnakeEffect(int $playerId) { // return damages
         $cardType = $this->getCurseCard()->type;
+        $logCardType = 1000 + $cardType;
 
         switch($cardType) {
             // TODOAN
             case THOT_S_BLINDNESS_CURSE_CARD: 
-                $this->applyLoseEnergy($playerId, 2, 1000 + $cardType);
+                $this->applyLoseEnergy($playerId, 2, $logCardType);
                 break;
             case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
-                $this->applyLosePoints($playerId, 2, 1000 + $cardType);
+                $this->applyLosePoints($playerId, 2, $logCardType);
                 break;
             case SET_S_STORM_CURSE_CARD:
-                return [new Damage($playerId, 1, $playerId, 1000 + $cardType)];
+                return [new Damage($playerId, 1, $playerId, $logCardType)];
             case BUILDERS_UPRISING_CURSE_CARD: 
-                $this->applyLosePoints($playerId, 2, 1000 + $cardType);
+                $this->applyLosePoints($playerId, 2, $logCardType);
+                break;
+            case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
+                $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
+                $damages = [];
+                foreach ($playersIds as $pId) {
+                    $damages[] = new Damage($pId, 1, $playerId, $logCardType); // TODOAN TOCHECK confirm the player is the damage dealer ? or 0 ?
+                }
+                return $damages;
+            case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
+                $playersIds = $this->getPlayersIdsWithMaxColumn('player_score');
+                foreach ($playersIds as $pId) {
+                    $this->applyLosePoints($pId, 1, $logCardType);
+                }
+                break;
+            case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
+                $playersIds = $this->getPlayersIdsWithMaxColumn('player_energy');
+                foreach ($playersIds as $pId) {
+                    $this->applyLoseEnergy($pId, 1, $logCardType);
+                }
                 break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
