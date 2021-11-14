@@ -58,7 +58,7 @@ class TableCenter {
     
     public showPickStock(cards: Card[]) {
         if (!this.pickCard) { 
-            dojo.place('<div id="pick-stock"></div>', 'deck-wrapper');
+            dojo.place('<div id="pick-stock" class="card-stock"></div>', 'deck-wrapper');
 
             this.pickCard = new ebg.stock() as Stock;
             this.pickCard.setSelectionAppearance('class');

@@ -42,7 +42,7 @@ class PlayerTable {
             </div> 
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
             <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>
-            <div id="cards-${player.id}" class="player-cards ${cards.length ? '' : 'empty'}"></div>      
+            <div id="cards-${player.id}" class="card-stock player-cards ${cards.length ? '' : 'empty'}"></div>      
         </div>
 
         `, 'table');

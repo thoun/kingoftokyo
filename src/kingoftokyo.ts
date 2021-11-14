@@ -896,7 +896,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
         
         const stateName = this.getStateName();
-        if (stateName !== 'buyCard' && stateName !== 'opportunistBuyCard') {
+        if (stateName !== 'buyCard' && stateName !== 'opportunistBuyCard' && stateName !== 'stealCostumeCard') {
             return;
         }
         if (args === null) {
@@ -909,8 +909,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         Object.keys(args.cardsCosts).forEach(cardId => {
             const id = Number(cardId);
             const disabled = args.unbuyableIds.some(disabledId => disabledId == id) || args.cardsCosts[id] > playerEnergy;
-            const cardDiv = document.querySelector(`div[id$="_item_${id}"]`) as HTMLElement; // TODOAN will find curse card, and shouldn't
-            if (cardDiv) {
+            const cardDiv = document.querySelector(`div[id$="_item_${id}"]`) as HTMLElement;
+            if (cardDiv && cardDiv.closest('.card-stock') !== null) {
                 dojo.toggleClass(cardDiv, 'disabled', disabled);
             }
         });

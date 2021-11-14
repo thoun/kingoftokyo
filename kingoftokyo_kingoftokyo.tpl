@@ -31,7 +31,7 @@
                 <div id="deck-wrapper">
                     <div id="deck"></div>
                 </div>
-                <div id="visible-cards">
+                <div id="visible-cards" class="card-stock">
                 </div>
 
                 <div id="board">

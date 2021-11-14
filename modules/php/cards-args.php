@@ -282,8 +282,15 @@ trait CardsArgTrait {
         $playerId = self::getActivePlayerId();
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
+        $potentialEnergy = $this->getPlayerEnergy($playerId);
+        if ($this->isCthulhuExpansion()) {
+            $potentialEnergy += $this->getPlayerCultists($playerId);
+        }
+
         $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(function ($card) { return $card->id; }, $tableCards); // can only take from other players, not table
+        $unbuyableIds = $disabledIds; // copy
+        $cardsCosts = [];
 
         $canBuyFromPlayers = false;
 
@@ -294,10 +301,18 @@ trait CardsArgTrait {
             $isWoundedPlayer = in_array($otherPlayerId, $woundedPlayersIds);
 
             foreach ($cardsOfPlayer as $card) {
-                if ($isWoundedPlayer && $card->type > 200 && $card->type < 300 && $this->canBuyCard($playerId, $this->getCardCost($playerId, $card->type))) {
-                    $canBuyFromPlayers = true;
+                if ($isWoundedPlayer && $card->type > 200 && $card->type < 300) {
+                    $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
+
+                    if ($cardsCosts[$card->id] <= $potentialEnergy) {
+                        $canBuyFromPlayers = true;
+                    }
+                    if (!$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+                        $disabledIds[] = $card->id;
+                    }
                 } else {
                     $disabledIds[] = $card->id;
+                        $unbuyableIds[] = $card->id;
                 }
             }
         }
@@ -305,6 +320,8 @@ trait CardsArgTrait {
         return [
             'disabledIds' => $disabledIds,
             'canBuyFromPlayers' => $canBuyFromPlayers,
+            'cardsCosts' => $cardsCosts,
+            'unbuyableIds' => $unbuyableIds,
         ];
     }
 
