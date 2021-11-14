@@ -521,9 +521,11 @@ trait UtilTrait {
             return;
         }
 
+        $actualHealth = $this->getPlayerHealth($playerId);
+
         $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId, $giveShrinkRayToken, $givePoisonSpitToken);
 
-        if ($newHealth == 0) {
+        if ($newHealth == 0 && $actualHealth > 0) {
             // eater of the dead 
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $pId) {
