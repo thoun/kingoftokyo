@@ -16,14 +16,14 @@ class PlayerTable {
     public cards: Stock;
     public wickednessTiles: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], playerWithGoldenScarab: boolean) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], wickednessTiles: WickednessTile[], playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
 
         const eliminated = Number(player.eliminated) > 0;
 
-        dojo.place(`
+        let html = `
         <div id="player-table-${player.id}" class="player-table whiteblock ${eliminated ? 'eliminated' : ''}">
             <div id="player-name-${player.id}" class="player-name ${game.isDefaultFont() ? 'standard' : 'goodgirl'}" style="color: #${player.color}">
                 <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
@@ -42,11 +42,14 @@ class PlayerTable {
                 <div id="token-wrapper-${this.playerId}-shrink-ray" class="token-wrapper shrink-ray"></div>
             </div> 
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
-            <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>
-            <div id="cards-${player.id}" class="card-stock player-cards ${cards.length ? '' : 'empty'}"></div>      
+            <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>`;
+        if (game.isWickednessExpansion()) {
+            html += `<div id="wickedness-tiles-${player.id}" class="wickedness-tile-stock player-wickedness-tiles ${wickednessTiles?.length ? '' : 'empty'}"></div>   `;
+        }
+        html += `    <div id="cards-${player.id}" class="card-stock player-cards ${cards.length ? '' : 'empty'}"></div>
         </div>
-
-        `, 'table');
+        `;
+        dojo.place(html, 'table');
         this.cards = new ebg.stock() as Stock;
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';

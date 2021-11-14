@@ -348,6 +348,7 @@ class Koth extends Table {
             }
             if ($isWickednessExpansion) {
                 $playerDb['wickedness'] = intval($playerDb['wickedness']);
+                $result['playersWickednessTiles'][$playerId] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
             }
         }
 

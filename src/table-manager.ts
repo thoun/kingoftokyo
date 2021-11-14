@@ -1,11 +1,9 @@
 const PLAYER_TABLE_WIDTH = 420;
 const PLAYER_BOARD_HEIGHT = 247;
 const CARDS_PER_ROW = 3;
-const CENTER_TABLE_WIDTH = 420;
 const TABLE_MARGIN = 20;
 const PLAYER_TABLE_WIDTH_MARGINS = PLAYER_TABLE_WIDTH + 2*TABLE_MARGIN;
 const PLAYER_BOARD_HEIGHT_MARGINS = PLAYER_BOARD_HEIGHT + 2*TABLE_MARGIN;
-const CENTER_TABLE_WIDTH_MARGINS = CENTER_TABLE_WIDTH + 2*TABLE_MARGIN;
 
 const DISPOSITION_1_COLUMN = [];
 const DISPOSITION_2_COLUMNS = [];
@@ -80,12 +78,24 @@ class TableManager {
             return;
         }
 
+        const centerTableWidth = document.getElementById('table-center').clientWidth;
+
         let newZoom = this.zoom;
-        while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth/newZoom < CENTER_TABLE_WIDTH) {
+        while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth/newZoom < centerTableWidth) {
             newZoom = ZOOM_LEVELS[ZOOM_LEVELS.indexOf(newZoom) - 1];
         }
         // zoom will also place player tables. we call setZoom even if this method didn't change it because it might have been changed by localStorage zoom
         this.setZoom(newZoom);
+    }
+
+    private getAvailableColumns(tableWidth: number, tableCenterWidth: number) {
+        if (tableWidth >= tableCenterWidth + 2*PLAYER_TABLE_WIDTH_MARGINS) {
+            return 3;
+        } else if (tableWidth >= tableCenterWidth + PLAYER_TABLE_WIDTH_MARGINS) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 
     public placePlayerTable() {
@@ -97,13 +107,14 @@ class TableManager {
         const zoomWrapper = document.getElementById('zoom-wrapper');
         const tableDiv = document.getElementById('table');
         let tableWidth = tableDiv.clientWidth;
+        const tableCenterDiv = document.getElementById('table-center');
 
         this.playerTables.forEach(playerTable => dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length))
         
-        const availableColumns = Math.max(1, Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS)));
+        const availableColumns = this.getAvailableColumns(tableWidth, tableCenterDiv.clientWidth);
 
-        const tableCenterDiv = document.getElementById('table-center');
-        tableCenterDiv.style.left = `${(tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2}px`;
+        const centerTableWidthMargins = tableCenterDiv.clientWidth + 2*TABLE_MARGIN;
+        tableCenterDiv.style.left = `${(tableWidth - centerTableWidthMargins) / 2}px`;
         tableCenterDiv.style.top = `0px`;
         let height = tableCenterDiv.clientHeight;
 
@@ -126,7 +137,7 @@ class TableManager {
         const centerColumnIndex = columns === 3 ? 1 : 0;
 
         if (columns === 2) {                
-            tableCenterDiv.style.left = `${tableCenter - CENTER_TABLE_WIDTH_MARGINS / 2}px`;
+            tableCenterDiv.style.left = `${tableCenter - tableCenterDiv.clientWidth / 2}px`;
         }
 
         // we always compute "center" column first
@@ -156,9 +167,9 @@ class TableManager {
                 if (centerColumn) {
                     playerTableDiv.style.left = `${tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2}px`;
                 } else if (rightColumn) {
-                    playerTableDiv.style.left = `${tableCenter + PLAYER_TABLE_WIDTH_MARGINS / 2}px`;
+                    playerTableDiv.style.left = `${tableCenter + tableCenterDiv.clientWidth / 2}px`;
                 } else if (leftColumn) {
-                    playerTableDiv.style.left = `${(tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2) - PLAYER_TABLE_WIDTH_MARGINS}px`;
+                    playerTableDiv.style.left = `${(tableCenter - centerTableWidthMargins / 2) - PLAYER_TABLE_WIDTH_MARGINS}px`;
                 }
                 playerTableDiv.style.top = `${top}px`;
                 top += playerInfos.height;

@@ -970,7 +970,7 @@ var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 23
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, cards, playerWithGoldenScarab) {
+    function PlayerTable(game, player, cards, wickednessTiles, playerWithGoldenScarab) {
         var _this = this;
         this.game = game;
         this.player = player;
@@ -978,7 +978,12 @@ var PlayerTable = /** @class */ (function () {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
-        dojo.place("\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>\n            <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (cards.length ? '' : 'empty') + "\"></div>      \n        </div>\n\n        ", 'table');
+        var html = "\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>";
+        if (game.isWickednessExpansion()) {
+            html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + ((wickednessTiles === null || wickednessTiles === void 0 ? void 0 : wickednessTiles.length) ? '' : 'empty') + "\"></div>   ";
+        }
+        html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (cards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
+        dojo.place(html, 'table');
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -1185,11 +1190,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
 var CARDS_PER_ROW = 3;
-var CENTER_TABLE_WIDTH = 420;
 var TABLE_MARGIN = 20;
 var PLAYER_TABLE_WIDTH_MARGINS = PLAYER_TABLE_WIDTH + 2 * TABLE_MARGIN;
 var PLAYER_BOARD_HEIGHT_MARGINS = PLAYER_BOARD_HEIGHT + 2 * TABLE_MARGIN;
-var CENTER_TABLE_WIDTH_MARGINS = CENTER_TABLE_WIDTH + 2 * TABLE_MARGIN;
 var DISPOSITION_1_COLUMN = [];
 var DISPOSITION_2_COLUMNS = [];
 var DISPOSITION_3_COLUMNS = [];
@@ -1251,12 +1254,24 @@ var TableManager = /** @class */ (function () {
             setTimeout(function () { return _this.setAutoZoomAndPlacePlayerTables(); }, 200);
             return;
         }
+        var centerTableWidth = document.getElementById('table-center').clientWidth;
         var newZoom = this.zoom;
-        while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth / newZoom < CENTER_TABLE_WIDTH) {
+        while (newZoom > ZOOM_LEVELS[0] && zoomWrapperWidth / newZoom < centerTableWidth) {
             newZoom = ZOOM_LEVELS[ZOOM_LEVELS.indexOf(newZoom) - 1];
         }
         // zoom will also place player tables. we call setZoom even if this method didn't change it because it might have been changed by localStorage zoom
         this.setZoom(newZoom);
+    };
+    TableManager.prototype.getAvailableColumns = function (tableWidth, tableCenterWidth) {
+        if (tableWidth >= tableCenterWidth + 2 * PLAYER_TABLE_WIDTH_MARGINS) {
+            return 3;
+        }
+        else if (tableWidth >= tableCenterWidth + PLAYER_TABLE_WIDTH_MARGINS) {
+            return 2;
+        }
+        else {
+            return 1;
+        }
     };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
@@ -1267,10 +1282,11 @@ var TableManager = /** @class */ (function () {
         var zoomWrapper = document.getElementById('zoom-wrapper');
         var tableDiv = document.getElementById('table');
         var tableWidth = tableDiv.clientWidth;
-        this.playerTables.forEach(function (playerTable) { return dojo.toggleClass("cards-" + playerTable.playerId, 'empty', !playerTable.cards.items.length); });
-        var availableColumns = Math.max(1, Math.min(3, Math.floor(tableWidth / PLAYER_TABLE_WIDTH_MARGINS)));
         var tableCenterDiv = document.getElementById('table-center');
-        tableCenterDiv.style.left = (tableWidth - CENTER_TABLE_WIDTH_MARGINS) / 2 + "px";
+        this.playerTables.forEach(function (playerTable) { return dojo.toggleClass("cards-" + playerTable.playerId, 'empty', !playerTable.cards.items.length); });
+        var availableColumns = this.getAvailableColumns(tableWidth, tableCenterDiv.clientWidth);
+        var centerTableWidthMargins = tableCenterDiv.clientWidth + 2 * TABLE_MARGIN;
+        tableCenterDiv.style.left = (tableWidth - centerTableWidthMargins) / 2 + "px";
         tableCenterDiv.style.top = "0px";
         var height = tableCenterDiv.clientHeight;
         var columns = Math.min(availableColumns, 3);
@@ -1292,7 +1308,7 @@ var TableManager = /** @class */ (function () {
         var tableCenter = (columns === 2 ? tableWidth - PLAYER_TABLE_WIDTH_MARGINS : tableWidth) / 2;
         var centerColumnIndex = columns === 3 ? 1 : 0;
         if (columns === 2) {
-            tableCenterDiv.style.left = tableCenter - CENTER_TABLE_WIDTH_MARGINS / 2 + "px";
+            tableCenterDiv.style.left = tableCenter - tableCenterDiv.clientWidth / 2 + "px";
         }
         // we always compute "center" column first
         var columnOrder;
@@ -1324,10 +1340,10 @@ var TableManager = /** @class */ (function () {
                     playerTableDiv.style.left = tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
                 }
                 else if (rightColumn) {
-                    playerTableDiv.style.left = tableCenter + PLAYER_TABLE_WIDTH_MARGINS / 2 + "px";
+                    playerTableDiv.style.left = tableCenter + tableCenterDiv.clientWidth / 2 + "px";
                 }
                 else if (leftColumn) {
-                    playerTableDiv.style.left = (tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2) - PLAYER_TABLE_WIDTH_MARGINS + "px";
+                    playerTableDiv.style.left = (tableCenter - centerTableWidthMargins / 2) - PLAYER_TABLE_WIDTH_MARGINS + "px";
                 }
                 playerTableDiv.style.top = top + "px";
                 top += playerInfos.height;
@@ -2245,6 +2261,10 @@ var TableCenter = /** @class */ (function () {
         this.game = game;
         this.wickednessTiles = [];
         this.createVisibleCards(visibleCards, topDeckCardBackType);
+        if (game.isWickednessExpansion()) {
+            dojo.place("<div id=\"wickedness-board\"></div>", 'full-board');
+            document.getElementById('table-center').style.width = '592px';
+        }
         if (game.isKingkongExpansion()) {
             dojo.place("<div id=\"tokyo-tower-0\" class=\"tokyo-tower-wrapper\"></div>", 'board');
             this.tokyoTower = new TokyoTower('tokyo-tower-0', tokyoTowerLevels);
@@ -3063,7 +3083,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables = this.getOrderedPlayers().map(function (player) {
             var playerId = Number(player.id);
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(_this, player, gamedatas.playersCards[playerId], playerWithGoldenScarab);
+            return new PlayerTable(_this, player, gamedatas.playersCards[playerId], gamedatas.playersWickednessTiles[playerId], playerWithGoldenScarab);
         });
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
