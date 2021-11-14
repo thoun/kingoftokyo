@@ -2001,6 +2001,10 @@ var PreferencesManager = /** @class */ (function () {
         dojo.query(".preference_control").connect("onchange", onchange);
         // Call onPreferenceChange() now
         dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
+        try {
+            document.getElementById('preference_control_203').closest(".preference_choice").style.display = 'none';
+        }
+        catch (e) { }
     };
     PreferencesManager.prototype.getGameVersionNumber = function (versionNumber) {
         if (versionNumber > 0) {

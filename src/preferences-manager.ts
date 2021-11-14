@@ -25,6 +25,10 @@ class PreferencesManager {
           dojo.query("#ingame_menu_content .preference_control"),
           el => onchange({ target: el })
         );
+
+        try {
+            (document.getElementById('preference_control_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
+        } catch (e) {}
     }
 
     private getGameVersionNumber(versionNumber: number) {
