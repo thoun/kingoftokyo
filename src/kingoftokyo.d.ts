@@ -168,6 +168,10 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     rethrow3: Rethrow3;
 }
 
+interface EnteringTakeWickednessTileArgs {
+    level: number;
+}
+
 interface HealablePlayer {
     id: number;
     name: string; 

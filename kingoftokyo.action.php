@@ -220,6 +220,24 @@
 
         self::ajaxResponse();
     }
+  	
+    public function takeWickednessTile() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->takeWickednessTile($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipTakeWickednessTile() {
+        self::setAjaxMode();
+
+        $this->game->skipTakeWickednessTile();
+
+        self::ajaxResponse();
+    }
 
     public function applyHeartDieChoices() {
         self::setAjaxMode();
