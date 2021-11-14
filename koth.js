@@ -2527,6 +2527,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
                 break;
+            case 'takeWickednessTile':
+                this.onEnteringTakeWickednessTile(args.args, this.isCurrentPlayerActive());
+                break;
             case 'resolveHeartDiceAction':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, this.isCurrentPlayerActive());
@@ -2641,6 +2644,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.createButton('dice-actions', 'rethrow3psychicProbe_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3psychicProbe(); }, !args.rethrow3.hasDice3);
             }
         }
+    };
+    KingOfTokyo.prototype.onEnteringTakeWickednessTile = function (args, isCurrentPlayerActive) {
+        // TODOWI
     };
     KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args, isCurrentPlayerActive) {
         var _a;
@@ -2787,6 +2793,9 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 this.diceManager.removeAllBubbles();
                 break;
+            case 'takeWickednessTile':
+                this.onLeavingTakeWickednessTile();
+                break;
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {
                     dojo.destroy('heart-action-selector');
@@ -2813,6 +2822,9 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 break;
         }
+    };
+    KingOfTokyo.prototype.onLeavingTakeWickednessTile = function () {
+        // TODOWI
     };
     KingOfTokyo.prototype.onLeavingBuyCard = function () {
         this.tableCenter.setVisibleCardsSelectionMode(0);
@@ -2892,6 +2904,8 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('dontSupport_button', _("Don't support"), function () { return _this.dontSupport(); });
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'takeWickednessTile':
+                    this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
                 case 'leaveTokyo':
                     var label = _("Stay in Tokyo");
                     var argsLeaveTokyo = args;
@@ -3480,6 +3494,20 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('dontSupport');
+    };
+    KingOfTokyo.prototype.takeWickednessTile = function (id) {
+        if (!this.checkAction('takeWickednessTile')) {
+            return;
+        }
+        this.takeAction('takeWickednessTile', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.skipTakeWickednessTile = function () {
+        if (!this.checkAction('skipTakeWickednessTile')) {
+            return;
+        }
+        this.takeAction('skipTakeWickednessTile');
     };
     KingOfTokyo.prototype.applyHeartActions = function (selections) {
         if (!this.checkAction('applyHeartDieChoices')) {

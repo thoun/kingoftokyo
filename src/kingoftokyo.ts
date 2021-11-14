@@ -187,6 +187,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
                 break;
+            case 'takeWickednessTile':
+                this.onEnteringTakeWickednessTile(args.args, (this as any).isCurrentPlayerActive());
+                break;
             case 'resolveHeartDiceAction':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, (this as any).isCurrentPlayerActive());
@@ -323,6 +326,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.createButton('dice-actions', 'rethrow3psychicProbe_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3psychicProbe(), !args.rethrow3.hasDice3);
             }
         }
+    }
+    
+    private onEnteringTakeWickednessTile(args: EnteringTakeWickednessTileArgs, isCurrentPlayerActive: boolean) {
+        // TODOWI
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs, isCurrentPlayerActive: boolean) {
@@ -473,6 +480,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 this.diceManager.removeAllBubbles();
                 break; 
+            case 'takeWickednessTile':
+                this.onLeavingTakeWickednessTile();
+                break;
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {
                     dojo.destroy('heart-action-selector');
@@ -500,6 +510,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
         }
+    }
+    
+    private onLeavingTakeWickednessTile() {
+        // TODOWI
     }
 
     private onLeavingBuyCard() {
@@ -583,6 +597,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('dontSupport_button', _("Don't support"), () => this.dontSupport());
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'takeWickednessTile':
+                    (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");
                     const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
@@ -1337,6 +1353,24 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('dontSupport');
+    }
+
+    public takeWickednessTile(id: number) {
+        if(!(this as any).checkAction('takeWickednessTile')) {
+            return;
+        }
+
+        this.takeAction('takeWickednessTile', {
+            id
+        });
+    }
+
+    public skipTakeWickednessTile() {
+        if(!(this as any).checkAction('skipTakeWickednessTile')) {
+            return;
+        }
+
+        this.takeAction('skipTakeWickednessTile');
     }
 
     public applyHeartActions(selections: HeartActionSelection[]) {
