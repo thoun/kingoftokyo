@@ -8,6 +8,11 @@ class TableCenter {
     constructor(private game: KingOfTokyoGame, visibleCards: Card[], topDeckCardBackType: string, tokyoTowerLevels: number[], curseCard: Card) {        
         this.createVisibleCards(visibleCards, topDeckCardBackType);
 
+        if (game.isWickednessExpansion()) {
+            dojo.place(`<div id="wickedness-board"></div>`, 'full-board');
+            document.getElementById('table-center').style.width = '592px';
+        }
+
         if (game.isKingkongExpansion()) {
             dojo.place(`<div id="tokyo-tower-0" class="tokyo-tower-wrapper"></div>`, 'board');
             this.tokyoTower = new TokyoTower('tokyo-tower-0', tokyoTowerLevels);

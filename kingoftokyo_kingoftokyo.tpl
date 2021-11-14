@@ -34,9 +34,11 @@
                 <div id="visible-cards" class="card-stock">
                 </div>
 
-                <div id="board">
-                    <div id="tokyo-city"></div>
-                    <div id="tokyo-bay"></div>
+                <div id="full-board">
+                    <div id="board">
+                        <div id="tokyo-city"></div>
+                        <div id="tokyo-bay"></div>
+                    </div>
                 </div>
             </div>
         </div>

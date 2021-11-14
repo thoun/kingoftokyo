@@ -53,65 +53,78 @@
             }
         }
     
-        #board {
-            margin-left: 10px;
-            position: relative;
-            width: 400px;
-            height: 400px;
-            background: url('img/tokyo.jpg');
-            background-size: cover;
-            box-shadow: 2px 2px 5px 2px black;
+        #full-board {
+            #board {
+                margin-left: 10px;
+                position: relative;
+                width: 400px;
+                height: 400px;
+                background: url('img/tokyo.jpg');
+                background-size: cover;
+                box-shadow: 2px 2px 5px 2px black;
+                display: inline-block;
 
-            &.twoPlayersVariant {
-            background: url('img/tokyo-2pvariant.jpg');                
-            }
-    
-            #tokyo-city {
-                position: absolute;
-                top: 72px;
-                left: -14px;
-                width: 200px;
-                height: 150px;
-            }
-    
-            #tokyo-bay {
-                position: absolute;
-                bottom: 11px;
-                right: -2px;
-                width: 200px;
-                height: 150px;
-            }
+                &.twoPlayersVariant {
+                background: url('img/tokyo-2pvariant.jpg');                
+                }
+        
+                #tokyo-city {
+                    position: absolute;
+                    top: 72px;
+                    left: -14px;
+                    width: 200px;
+                    height: 150px;
+                }
+        
+                #tokyo-bay {
+                    position: absolute;
+                    bottom: 11px;
+                    right: -2px;
+                    width: 200px;
+                    height: 150px;
+                }
 
-            #twoPlayersVariant-message {
-                position: absolute;
-                bottom: 50px;
-                left: 19px;
-                right: 19px;
-                background: #FFFFFFCC;
-                box-shadow: 0px 0px 5px 2px #FFFFFFCC;
-                padding: 5px;
+                #twoPlayersVariant-message {
+                    position: absolute;
+                    bottom: 50px;
+                    left: 19px;
+                    right: 19px;
+                    background: #FFFFFFCC;
+                    box-shadow: 0px 0px 5px 2px #FFFFFFCC;
+                    padding: 5px;
 
-                #hide-twoPlayersVariant-message {
-                    font-weight: bold;
-                    cursor: pointer;
+                    #hide-twoPlayersVariant-message {
+                        font-weight: bold;
+                        cursor: pointer;
+                    }
+                }
+
+                #board-corner-highlight {
+                    position: absolute;
+                    border: 3px solid #ffcf13;
+                    margin: -3px;
+                    box-shadow: 0px 0px 5px 2px #ffcf13;
+                    bottom: 13px;
+                    height: 26px;
+                    left: 22px;
+                    width: 83px;
+                }
+
+                .tokyo-tower-wrapper {
+                    position: absolute;
+                    right: 10px;
+                    top: 10px;
                 }
             }
 
-            #board-corner-highlight {
-                position: absolute;
-                border: 3px solid #ffcf13;
-                margin: -3px;
-                box-shadow: 0px 0px 5px 2px #ffcf13;
-                bottom: 13px;
-                height: 26px;
-                left: 22px;
-                width: 83px;
-            }
-
-            .tokyo-tower-wrapper {
-                position: absolute;
-                right: 10px;
-                top: 10px;
+            #wickedness-board {
+                position: relative;
+                width: 174px;
+                height: 400px;
+                background: url('img/wickedness-board.jpg');
+                background-size: cover;
+                box-shadow: 2px 2px 5px 2px black;
+                display: inline-block;
             }
         }
     }

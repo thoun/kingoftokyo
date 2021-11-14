@@ -859,7 +859,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables = this.getOrderedPlayers().map(player => {
             const playerId = Number(player.id);
             const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(this, player, gamedatas.playersCards[playerId], playerWithGoldenScarab);
+            return new PlayerTable(this, player, gamedatas.playersCards[playerId], gamedatas.playersWickednessTiles?.[playerId], playerWithGoldenScarab);
         });
     }
 

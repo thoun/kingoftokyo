@@ -73,6 +73,7 @@ interface KingOfTokyoGamedatas {
     visibleCards: Card[];
     topDeckCardBackType: string;
     playersCards: { [playerId: number]: Card[] };
+    playersWickednessTiles: { [playerId: number]: WickednessTile[] };
     mimickedCard: Card | null;
     leaveTokyoUnder: number;
     stayTokyoOver: number;

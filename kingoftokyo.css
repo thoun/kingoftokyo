@@ -857,7 +857,7 @@
 #table #table-center #curse-wrapper #curse-card {
   width: 132px;
 }
-#table #table-center #board {
+#table #table-center #full-board #board {
   margin-left: 10px;
   position: relative;
   width: 400px;
@@ -865,25 +865,26 @@
   background: url("img/tokyo.jpg");
   background-size: cover;
   box-shadow: 2px 2px 5px 2px black;
+  display: inline-block;
 }
-#table #table-center #board.twoPlayersVariant {
+#table #table-center #full-board #board.twoPlayersVariant {
   background: url("img/tokyo-2pvariant.jpg");
 }
-#table #table-center #board #tokyo-city {
+#table #table-center #full-board #board #tokyo-city {
   position: absolute;
   top: 72px;
   left: -14px;
   width: 200px;
   height: 150px;
 }
-#table #table-center #board #tokyo-bay {
+#table #table-center #full-board #board #tokyo-bay {
   position: absolute;
   bottom: 11px;
   right: -2px;
   width: 200px;
   height: 150px;
 }
-#table #table-center #board #twoPlayersVariant-message {
+#table #table-center #full-board #board #twoPlayersVariant-message {
   position: absolute;
   bottom: 50px;
   left: 19px;
@@ -892,11 +893,11 @@
   box-shadow: 0px 0px 5px 2px #FFFFFFCC;
   padding: 5px;
 }
-#table #table-center #board #twoPlayersVariant-message #hide-twoPlayersVariant-message {
+#table #table-center #full-board #board #twoPlayersVariant-message #hide-twoPlayersVariant-message {
   font-weight: bold;
   cursor: pointer;
 }
-#table #table-center #board #board-corner-highlight {
+#table #table-center #full-board #board #board-corner-highlight {
   position: absolute;
   border: 3px solid #ffcf13;
   margin: -3px;
@@ -906,10 +907,19 @@
   left: 22px;
   width: 83px;
 }
-#table #table-center #board .tokyo-tower-wrapper {
+#table #table-center #full-board #board .tokyo-tower-wrapper {
   position: absolute;
   right: 10px;
   top: 10px;
+}
+#table #table-center #full-board #wickedness-board {
+  position: relative;
+  width: 174px;
+  height: 400px;
+  background: url("img/wickedness-board.jpg");
+  background-size: cover;
+  box-shadow: 2px 2px 5px 2px black;
+  display: inline-block;
 }
 #table .player-table {
   width: 440px;
