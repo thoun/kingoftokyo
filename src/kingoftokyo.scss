@@ -93,11 +93,10 @@ html, .mode_3d #game_play_area_background {
 
 .monster-figure {    
   position: relative;
-  width: 150px;
+  width: 200px;
   height: 150px;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: contain;
 
   @for $i from 1 through 10 {
       &.monster#{$i} {

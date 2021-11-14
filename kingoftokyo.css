@@ -846,15 +846,15 @@
 #table #table-center #board #tokyo-city {
   position: absolute;
   top: 72px;
-  left: 11px;
-  width: 150px;
+  left: -14px;
+  width: 200px;
   height: 150px;
 }
 #table #table-center #board #tokyo-bay {
   position: absolute;
   bottom: 11px;
-  right: 23px;
-  width: 150px;
+  right: -2px;
+  width: 200px;
   height: 150px;
 }
 #table #table-center #board #twoPlayersVariant-message {
@@ -984,7 +984,7 @@
   z-index: 2;
 }
 #table .player-table .monster-board-wrapper .monster-board .monster-board-figure-wrapper {
-  width: 150px;
+  width: 200px;
   height: 150px;
 }
 #table .player-table .monster-board-wrapper .monster-board.monster1 {
@@ -1271,11 +1271,10 @@ html, .mode_3d #game_play_area_background {
 
 .monster-figure {
   position: relative;
-  width: 150px;
+  width: 200px;
   height: 150px;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: contain;
 }
 .monster-figure.monster1 {
   background-image: url("img/monster-figure-1.png");
