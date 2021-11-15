@@ -80,7 +80,16 @@ trait WickednessTilesUtilTrait {
         $tileType = $tile->type;
         $logTileType = 2000 + $tileType;
         switch($tileType) {
-            // TODOWI
+            case FULL_REGENERATION_WICKEDNESS_TILE:
+                $this->applyGetHealthIgnoreCards($playerId, $this->getPlayerMaxHealth($playerId), $logTileType, $playerId);
+                break;
+            case WIDESPREAD_PANIC_WICKEDNESS_TILE:
+                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                foreach ($otherPlayersIds as $otherPlayerId) {
+                    $this->applyLosePoints($otherPlayerId, 4, $logTileType);
+                }
+                $this->removeWickednessTile($playerId, $tile);
+                break;
             case FINAL_PUSH_WICKEDNESS_TILE:
                 $this->applyGetHealth($playerId, 2, $logTileType, $playerId);
                 $this->applyGetEnergy($playerId, 2, $logTileType);
