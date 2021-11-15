@@ -108,4 +108,8 @@ trait WickednessTilesUtilTrait {
 
         return count($tiles) > 0 ? $tiles[0] : null;
     }
+
+    function gotWickednessTile(int $playerId, int $cardType) {
+        return count($this->wickednessTiles->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId)) > 0;
+    }
 }

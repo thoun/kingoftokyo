@@ -25,7 +25,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
-        self::DbQuery("UPDATE player SET `player_cultists` = 5 where `player_id` = 2343493");
+        //self::DbQuery("UPDATE player SET `player_cultists` = 5 where `player_id` = 2343493");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
@@ -47,7 +47,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343493);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        $this->debugSetCardInHand(WINGS_CARD, 2343493);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
@@ -74,7 +74,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        //$this->debugSetCurseCardInTable(VENGEANCE_OF_HORUS_CURSE_CARD);
+        //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
+        //$this->debugSetWickednessTileInHand(SKYBEAM_WICKEDNESS_TILE, 2343492);
 
         $this->gamestate->changeActivePlayer(2343492);
 
@@ -82,6 +83,16 @@ trait DebugUtilTrait {
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
         //$this->eliminatePlayer(2343497);
+    }
+
+    private function debugSetWickednessTileInTable($cardType) {
+        $this->wickednessTiles->moveCard( $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0])->id, 'table');
+    }
+
+    private function debugSetWickednessTileInHand($cardType, $playerId) {
+        $card = $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0]);
+        $this->wickednessTiles->moveCard($card->id, 'hand', $playerId);
+        return $card;
     }
 
     private function debugSetCardInTable($cardType) {
