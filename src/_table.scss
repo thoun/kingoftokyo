@@ -125,6 +125,73 @@
                 background-size: cover;
                 box-shadow: 2px 2px 5px 2px black;
                 display: inline-block;
+
+                #wickedness-tiles-reduced-3 {
+                    top: 300px;
+                }
+                #wickedness-tiles-reduced-6 {
+                    top: 180px;
+                }
+                #wickedness-tiles-reduced-10 {
+                    top: 60px;
+                }
+
+                #wickedness-tiles-expanded-3 {
+                    bottom: 10px;
+                }
+                #wickedness-tiles-expanded-6 {
+                    //top: 120px;
+                    bottom: 10px;
+                }
+                #wickedness-tiles-expanded-10 {
+                    top: 10px;
+                }
+
+                .wickedness-tiles-reduced {
+                    position: absolute;
+                    left: 174px;
+                    width: 26px;
+                    height: 100px;
+
+                    .wickedness-tiles-reduced-tile {
+                        position: absolute;
+                        width: 26px;
+                        height: 100px;
+                        background: url('img/green-wickedness-tiles.jpg');
+                    }
+                }
+
+                .wickedness-tiles-expanded {
+                    position: absolute;
+                    left: 174px;
+                    width: 142px;
+                    background: white;
+                    border-radius: 8px;
+                    visibility: hidden;
+                    padding-bottom: 1px;
+                    z-index: 20;
+    
+                    &.visible {
+                        visibility: visible;
+                    }
+
+                    .close {
+                        cursor: pointer;
+                        text-align: right;
+                        padding-top: 5px;
+                        padding-right: 10px;
+                    }
+
+                    .wickedness-tile-stock {
+                        width: 132px;
+                    }
+
+                    &:not(.selectable) {
+                        .wickedness-tile-stock {
+                            pointer-events: none;
+                        }
+                    }
+                }
             }
         }
     }

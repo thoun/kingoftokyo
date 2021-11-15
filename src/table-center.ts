@@ -2,15 +2,17 @@ class TableCenter {
     private visibleCards: Stock;
     private curseCard: Stock;
     private pickCard: Stock;
-    private wickednessTiles: Stock[] = [];
+    private wickednessTiles: WickednessTile[][] = [];
+    private wickednessTilesStocks: Stock[] = [];
     private tokyoTower: TokyoTower;
 
-    constructor(private game: KingOfTokyoGame, visibleCards: Card[], topDeckCardBackType: string, tokyoTowerLevels: number[], curseCard: Card) {        
+    constructor(private game: KingOfTokyoGame, visibleCards: Card[], topDeckCardBackType: string, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card) {        
         this.createVisibleCards(visibleCards, topDeckCardBackType);
 
         if (game.isWickednessExpansion()) {
             dojo.place(`<div id="wickedness-board"></div>`, 'full-board');
-            document.getElementById('table-center').style.width = '592px';
+            document.getElementById('table-center').style.width = '622px';
+            this.createWickednessTiles(wickednessTiles);
         }
 
         if (game.isKingkongExpansion()) {
@@ -147,11 +149,75 @@ class TableCenter {
         this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
     }
     
+    private createWickednessTiles(wickednessTiles: WickednessTile[]) {
+        WICKEDNESS_LEVELS.forEach(level => {
+            this.wickednessTiles[level] = wickednessTiles.filter(tile => this.game.wickednessTiles.getCardLevel(tile.type) === level);
+
+            let html = `<div id="wickedness-tiles-reduced-${level}" class="wickedness-tiles-reduced"></div>
+            <div id="wickedness-tiles-expanded-${level}" class="wickedness-tiles-expanded">
+                <div id="wickedness-tiles-expanded-${level}-close" class="close">✖</div>
+                <div id="wickedness-tiles-expanded-${level}-stock" class="wickedness-tile-stock table-wickedness-tiles"></div>
+            </div>`;
+            dojo.place(html, 'wickedness-board');
+            this.setReducedWickednessTiles(level);
+
+            document.getElementById(`wickedness-tiles-reduced-${level}`).addEventListener('click', () => this.showWickednessTiles(level));
+
+            this.wickednessTilesStocks[level] = new ebg.stock() as Stock;
+            this.wickednessTilesStocks[level].setSelectionAppearance('class');
+            this.wickednessTilesStocks[level].selectionClass = 'no-visible-selection';
+            this.wickednessTilesStocks[level].create(this.game, $(`wickedness-tiles-expanded-${level}-stock`), WICKEDNESS_TILES_WIDTH, WICKEDNESS_TILES_HEIGHT);
+            this.wickednessTilesStocks[level].setSelectionMode(0);
+            this.wickednessTilesStocks[level].centerItems = true;
+            this.wickednessTilesStocks[level].onItemCreate = (card_div, card_type_id) => this.game.wickednessTiles.setupNewCard(card_div, card_type_id); 
+            dojo.connect(this.wickednessTilesStocks[level], 'onChangeSelection', this, (_, item_id: string) => this.game.takeWickednessTile(Number(item_id)));
+    
+            this.game.wickednessTiles.setupCards([this.wickednessTilesStocks[level]]);
+            this.wickednessTiles[level].forEach(tile => this.wickednessTilesStocks[level].addToStockWithId(tile.type, '' + tile.id));
+
+            document.getElementById(`wickedness-tiles-expanded-${level}`).addEventListener('click', () => dojo.removeClass(`wickedness-tiles-expanded-${level}`, 'visible'));
+        });
+    }
+    
     public setWickedness(playerId: number, wickedness: number) {
         // TODOWI
     }
 
-    getWickednessTiles(level: number): Stock {
-        return this.wickednessTiles[level];
+    public getWickednessTilesStock(level: number): Stock {
+        return this.wickednessTilesStocks[level];
+    }
+    
+    public showWickednessTiles(level: number) {
+        dojo.addClass(`wickedness-tiles-expanded-${level}`, 'visible');
+    }
+    
+    public setWickednessTilesSelectable(level: number, show: boolean, selectable: boolean) {
+        if (show) {
+            this.showWickednessTiles(level);
+        } else {
+            WICKEDNESS_LEVELS.forEach(level => dojo.removeClass(`wickedness-tiles-expanded-${level}`, 'visible'));
+        }
+
+        if (selectable) {
+            dojo.addClass(`wickedness-tiles-expanded-${level}`, 'selectable');
+            this.wickednessTilesStocks[level].setSelectionMode(1);
+        } else {
+            WICKEDNESS_LEVELS.forEach(level => {
+                this.wickednessTilesStocks[level].setSelectionMode(0);
+                dojo.removeClass(`wickedness-tiles-expanded-${level}`, 'selectable');
+            });
+        }
+    }
+
+    public setReducedWickednessTiles(level: number) {
+        document.getElementById(`wickedness-tiles-reduced-${level}`).innerHTML = '';
+        this.wickednessTiles[level].forEach((tile, index) => {
+            dojo.place(`<div id="wickedness-tiles-reduced-tile-${tile.id}" class="wickedness-tiles-reduced-tile" style="left: ${index*10}px; top: ${index*10}px;"></div>`, `wickedness-tiles-reduced-${level}`);
+        });
+    }
+
+    public removeReducedWickednessTile(level: number, removedTile: WickednessTile) {
+        this.wickednessTiles[level].splice(this.wickednessTiles[level].findIndex(tile => tile.id == removedTile.id), 1);
+        this.setReducedWickednessTiles(level);
     }
 }

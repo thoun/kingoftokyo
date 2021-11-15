@@ -1,5 +1,6 @@
 const WICKEDNESS_TILES_WIDTH = 132;
 const WICKEDNESS_TILES_HEIGHT = 82; // TODOWI
+const WICKEDNESS_LEVELS = [3, 6, 10];
 
 class WickednessTiles {
     constructor (private game: KingOfTokyoGame) {}
@@ -8,11 +9,11 @@ class WickednessTiles {
         stocks.forEach(stock => {
             const orangewickednesstilessurl = `${g_gamethemeurl}img/orange-wickedness-tiles.jpg`;
             [1,2,3,4,5,6,7,8,9,10].forEach((id, index) => {
-                stock.addItemType(id, id, orangewickednesstilessurl, index);
+                stock.addItemType(id, this.getCardLevel(id) * 100 + index, orangewickednesstilessurl, index);
             });
             const greenwickednesstilessurl = `${g_gamethemeurl}img/green-wickedness-tiles.jpg`;
             [101,102,103,104,105,106,107,108,109,110].forEach((id, index) => {
-                stock.addItemType(id, id, greenwickednesstilessurl, index);
+                stock.addItemType(id, this.getCardLevel(id) * 100 + index, greenwickednesstilessurl, index);
             });
         });
     }
@@ -42,7 +43,7 @@ class WickednessTiles {
         }
     }
 
-    private getCardLevel(cardTypeId: number): number {
+    public getCardLevel(cardTypeId: number): number {
         const id = cardTypeId % 100;
         if (id > 8) {
             return 10;

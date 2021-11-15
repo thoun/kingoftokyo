@@ -89,6 +89,20 @@ class PlayerTable {
             dojo.place(`<div id="player-table-cultist-tokens-${player.id}" class="cultist-tokens"></div>`, `monster-board-${player.id}`);
             this.setCultistTokens(player.cultists);
         }
+
+        if (this.game.isWickednessExpansion()) {
+            this.wickednessTiles = new ebg.stock() as Stock;
+            this.wickednessTiles.setSelectionAppearance('class');
+            this.wickednessTiles.selectionClass = 'no-visible-selection';
+            this.wickednessTiles.create(this.game, $(`wickedness-tiles-${player.id}`), WICKEDNESS_TILES_WIDTH, WICKEDNESS_TILES_HEIGHT);
+            this.wickednessTiles.setSelectionMode(0);
+            this.wickednessTiles.centerItems = true;
+            this.wickednessTiles.onItemCreate = (card_div, card_type_id) => this.game.wickednessTiles.setupNewCard(card_div, card_type_id); 
+    
+            this.game.wickednessTiles.setupCards([this.wickednessTiles]);
+            wickednessTiles.forEach(tile => this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id));
+
+        }
     }
 
     public initPlacement() {

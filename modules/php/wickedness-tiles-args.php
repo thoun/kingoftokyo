@@ -14,7 +14,9 @@ trait WickednessTilesArgTrait {
         game state.
     */
 
-    function argTakeWickednessTiles() {
+    function argTakeWickednessTile() {
+        $playerId = self::getActivePlayerId();
+        
         $level = $this->canTakeWickednessTile($playerId);
     
         return [

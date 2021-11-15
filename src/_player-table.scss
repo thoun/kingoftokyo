@@ -168,6 +168,12 @@
             }
         }
     }
+    
+    .player-wickedness-tiles {
+        &.empty {
+            max-height: 0px;
+        }
+    }
 
     .player-cards {
         width: 100%;

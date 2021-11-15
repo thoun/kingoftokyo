@@ -921,6 +921,61 @@
   box-shadow: 2px 2px 5px 2px black;
   display: inline-block;
 }
+#table #table-center #full-board #wickedness-board #wickedness-tiles-reduced-3 {
+  top: 300px;
+}
+#table #table-center #full-board #wickedness-board #wickedness-tiles-reduced-6 {
+  top: 180px;
+}
+#table #table-center #full-board #wickedness-board #wickedness-tiles-reduced-10 {
+  top: 60px;
+}
+#table #table-center #full-board #wickedness-board #wickedness-tiles-expanded-3 {
+  bottom: 10px;
+}
+#table #table-center #full-board #wickedness-board #wickedness-tiles-expanded-6 {
+  bottom: 10px;
+}
+#table #table-center #full-board #wickedness-board #wickedness-tiles-expanded-10 {
+  top: 10px;
+}
+#table #table-center #full-board #wickedness-board .wickedness-tiles-reduced {
+  position: absolute;
+  left: 174px;
+  width: 26px;
+  height: 100px;
+}
+#table #table-center #full-board #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile {
+  position: absolute;
+  width: 26px;
+  height: 100px;
+  background: url("img/green-wickedness-tiles.jpg");
+}
+#table #table-center #full-board #wickedness-board .wickedness-tiles-expanded {
+  position: absolute;
+  left: 174px;
+  width: 142px;
+  background: white;
+  border-radius: 8px;
+  visibility: hidden;
+  padding-bottom: 1px;
+  z-index: 20;
+}
+#table #table-center #full-board #wickedness-board .wickedness-tiles-expanded.visible {
+  visibility: visible;
+}
+#table #table-center #full-board #wickedness-board .wickedness-tiles-expanded .close {
+  cursor: pointer;
+  text-align: right;
+  padding-top: 5px;
+  padding-right: 10px;
+}
+#table #table-center #full-board #wickedness-board .wickedness-tiles-expanded .wickedness-tile-stock {
+  width: 132px;
+}
+#table #table-center #full-board #wickedness-board .wickedness-tiles-expanded:not(.selectable) .wickedness-tile-stock {
+  pointer-events: none;
+}
 #table .player-table {
   width: 440px;
   position: absolute;
@@ -1090,6 +1145,9 @@
 }
 #table .player-table .token-wrapper.shrink-ray .token {
   box-shadow: 0 0 4px 4px #d7e2a1;
+}
+#table .player-table .player-wickedness-tiles.empty {
+  max-height: 0px;
 }
 #table .player-table .player-cards {
   width: 100%;
