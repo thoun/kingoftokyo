@@ -322,6 +322,12 @@ interface NotifRemoveCardsArgs {
     delay: boolean;
 }
 
+interface NotifRemoveWickednessTilesArgs {
+    playerId: number;
+    player_name: string;
+    tiles: WickednessTile[];
+}
+
 interface NotifPointsArgs extends NotifResolveArgs {
     points: number;
 }

@@ -90,6 +90,7 @@ class KingOfTokyo extends Table {
             CHEERLEADER_SUPPORT => 26,
             STATE_AFTER_RESOLVE => 27,
             PLAYER_WITH_GOLDEN_SCARAB => 28,
+            FINAL_PUSH_EXTRA_TURN => 29,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -196,6 +197,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(CLOWN_ACTIVATED, 0);
         self::setGameStateInitialValue(CHEERLEADER_SUPPORT, 0);
         self::setGameStateInitialValue(STATE_AFTER_RESOLVE, 0);
+        self::setGameStateInitialValue(FINAL_PUSH_EXTRA_TURN, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

@@ -810,6 +810,27 @@
   z-index: 1;
 }
 
+.wickedness-tile-stock .stockitem .name-wrapper {
+  left: 0;
+  width: 100%;
+}
+.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side0 {
+  -webkit-text-stroke: 4px #8c1e10;
+}
+.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side1 {
+  -webkit-text-stroke: 4px #364e11;
+}
+.wickedness-tile-stock .stockitem .description-wrapper {
+  top: 33px;
+}
+.wickedness-tile-stock .stockitem .level {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  border-radius: 50%;
+  background: white;
+}
+
 #table {
   position: relative;
   transform-origin: left top;

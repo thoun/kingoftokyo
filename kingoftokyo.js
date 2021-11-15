@@ -884,54 +884,24 @@ var WickednessTiles = /** @class */ (function () {
     WickednessTiles.prototype.getCardName = function (cardTypeId) {
         switch (cardTypeId) {
             // orange
-            case 1: return _("[724468]Acid [6E3F63]Attack");
-            case 2: return _("[442E70]Alien [57347E]Origin");
-            case 3: return _("[624A9E]Alpha Monster");
-            case 4: return _("[6FBA44]Armor Plating");
-            case 5: return _("[0068A1]Background [0070AA]Dweller");
-            case 6: return _("[5A6E79]Burrowing");
-            case 7: return _("[5DB1DD]Camouflage");
-            case 8: return _("[7C7269]Complete [958B7F]Destruction");
-            case 9: return _("[836380]Media-Friendly");
-            case 10: return _("[42B4B4]Eater of [25948B]the Dead");
+            // TODOWI
+            case 9: return ("Antimatter Beam");
+            case 10: return ("Skybeam");
             // green
-            case 101: return _("[B180A0]Apartment [9F7595]Building");
-            case 102: return _("[496787]Commuter [415C7A]Train");
-            case 103: return _("[993422]Corner [5F6A70]Store");
-            case 104: return _("[5BB3E2]Death [45A2D6]From [CE542B]Above");
-            case 105: return _("[5D657F]Energize");
-            case 106:
-            case 107: return _("[7F2719]Evacuation [812819]Orders");
-            case 108: return _("[71200F]Flame [4E130B]Thrower");
-            case 109: return _("[B1624A]Frenzy");
-            case 110: return _("[645656]Gas [71625F]Refinery");
+            // TODOWI
+            case 109: return ("Final push");
+            case 110: return ("Starburst");
         }
         return null;
     };
     WickednessTiles.prototype.getCardDescription = function (cardTypeId) {
         switch (cardTypeId) {
             // orange
-            case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
-            case 2: return _("<strong>Buying cards costs you 1 less [Energy].</strong>");
-            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least one [diceSmash].");
-            case 4: return _("<strong>Do not lose [heart] when you lose exactly 1[heart].</strong>");
-            case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
-            case 6: return _("<strong>Add [diceSmash] to your Roll while you are in Tokyo. When you Yield Tokyo, the monster taking it loses 1[heart].</strong>");
-            case 7: return _("If you lose [heart], roll a die for each [heart] you lost. <strong>Each [diceHeart] reduces the loss by 1[heart].</strong>");
-            case 8: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy] <strong>gain 9[Star]</strong> in addition to the regular effects.");
-            case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
-            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
+            case 9: return ("<strong>Double all of your [diceSmash].</strong>");
+            case 10: return ("<strong>Gain 1 extra [Energy]</strong> for each [diceEnergy] and <strong>1 extra [Heart]</strong> for each [diceHeart]");
             // green
-            case 101: return "<strong>+ 3[Star].</strong>";
-            case 102: return "<strong>+ 2[Star].</strong>";
-            case 103: return "<strong>+ 1[Star].</strong>";
-            case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it.");
-            case 105: return "<strong>+ 9[Energy].</strong>";
-            case 106:
-            case 107: return _("<strong>All other Monsters lose 5[Star].</strong>");
-            case 108: return _("<strong>All other Monsters lose 2[Heart].</strong>");
-            case 109: return _("<strong>Take another turn</strong> after this one");
-            case 110: return _("<strong>+ 2[Star] and all other monsters lose 3[Heart].</strong>");
+            case 109: return ("<strong>+2[Heart] +2[Energy]</strong><br><br><strong>Take another turn after this one,</strong> then discard this tile.");
+            case 110: return ("<strong>+12[Energy]</strong> then discard this tile.");
         }
         return null;
     };
@@ -948,7 +918,7 @@ var WickednessTiles = /** @class */ (function () {
         var name = this.getCardName(cardType);
         var level = this.getCardLevel(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
-        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"level\" [data-level]=\"" + level + "\">" + level + "</div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"level\" [data-level]=\"" + level + "\">" + level + "</div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
     };
     return WickednessTiles;
 }());
@@ -1046,6 +1016,11 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         var cardsIds = cards.map(function (card) { return card.id; });
         cardsIds.forEach(function (id) { return _this.cards.removeFromStockById('' + id); });
+    };
+    PlayerTable.prototype.removeWickednessTiles = function (tiles) {
+        var _this = this;
+        var tilesIds = tiles.map(function (tile) { return tile.id; });
+        tilesIds.forEach(function (id) { return _this.wickednessTiles.removeFromStockById('' + id); });
     };
     PlayerTable.prototype.setPoints = function (points, delay) {
         var _this = this;
@@ -3807,6 +3782,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['kotPlayerEliminated', 1],
             ['setPlayerBerserk', 1],
             ['cultist', 1],
+            ['removeWickednessTiles', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -4080,6 +4056,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableCenter.removeReducedWickednessTile(notif.args.level, notif.args.tile);
         this.tableManager.placePlayerTable(); // adapt to new card
     };
+    KingOfTokyo.prototype.notif_removeWickednessTiles = function (notif) {
+        this.getPlayerTable(notif.args.playerId).removeWickednessTiles(notif.args.tiles);
+        this.tableManager.placePlayerTable(); // adapt after removed cards
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
         if (delay === void 0) { delay = 0; }
@@ -4184,6 +4164,17 @@ var KingOfTokyo = /** @class */ (function () {
         this.setShrinkRayTokens(playerId, 0);
         this.setPoisonTokens(playerId, 0);
     };
+    KingOfTokyo.prototype.getLogCardName = function (logType) {
+        if (logType >= 2000) {
+            return this.wickednessTiles.getCardName(logType - 2000);
+        }
+        if (logType >= 1000) {
+            return this.curseCards.getCardName(logType - 1000);
+        }
+        else {
+            return this.cards.getCardName(logType, 'text-only');
+        }
+    };
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
     KingOfTokyo.prototype.format_string_recursive = function (log, args) {
@@ -4201,7 +4192,7 @@ var KingOfTokyo = /** @class */ (function () {
                         types = args.card_name.split(',').map(function (cardType) { return Number(cardType); });
                     }
                     if (types !== null) {
-                        var names = types.map(function (cardType) { return cardType >= 1000 ? _this.curseCards.getCardName(cardType - 1000) : _this.cards.getCardName(cardType, 'text-only'); });
+                        var names = types.map(function (cardType) { return _this.getLogCardName(cardType); });
                         args.card_name = "<strong>" + names.join(', ') + "</strong>";
                     }
                 }

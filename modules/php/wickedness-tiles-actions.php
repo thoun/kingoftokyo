@@ -35,7 +35,20 @@ trait WickednessTilesActionTrait {
 
         self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
 
-        $this->redirectToResolveHeart();
+        $damages = $this->applyWickednessTileEffect($tile, $playerId);
+
+        // TODOWI mimic
+
+        $redirects = false;
+        $redirectAfterTakeTile = $this->getRedirectAfterResolveNumberDice();
+
+        if ($damages != null && count($damages) > 0) {
+            $redirects = $this->resolveDamages($damages, $redirectAfterTakeTile);
+        }
+
+        if (!$redirects) {
+            $this->jumpToState($redirectAfterTakeTile, $playerId);
+        }
     }
   	
     public function skipTakeWickednessTile() {
@@ -45,6 +58,6 @@ trait WickednessTilesActionTrait {
 
         self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
 
-        $this->redirectToResolveHeart();
+        $this->jumpToState($this->getRedirectAfterResolveNumberDice());
     }
 }

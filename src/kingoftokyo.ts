@@ -1673,6 +1673,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['kotPlayerEliminated', 1],
             ['setPlayerBerserk', 1],
             ['cultist', 1],
+            ['removeWickednessTiles', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -1987,6 +1988,11 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.tableManager.placePlayerTable(); // adapt to new card
     }
+
+    notif_removeWickednessTiles(notif: Notif<NotifRemoveWickednessTilesArgs>) {
+        this.getPlayerTable(notif.args.playerId).removeWickednessTiles(notif.args.tiles);
+        this.tableManager.placePlayerTable(); // adapt after removed cards
+    }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
@@ -2100,6 +2106,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setPoisonTokens(playerId, 0);
     }
 
+    private getLogCardName(logType: number) {
+        if (logType >= 2000) {
+            return this.wickednessTiles.getCardName(logType - 2000);
+        } if (logType >= 1000) {
+            return this.curseCards.getCardName(logType - 1000);
+        } else {
+            return this.cards.getCardName(logType, 'text-only');
+        }
+    }
+
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
     public format_string_recursive(log: string, args: any) {
@@ -2114,7 +2130,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         types = args.card_name.split(',').map((cardType: string) => Number(cardType));
                     }
                     if (types !== null) {
-                        const names: string[] = types.map((cardType: number) => cardType >= 1000 ? this.curseCards.getCardName(cardType - 1000) : this.cards.getCardName(cardType, 'text-only'));
+                        const names: string[] = types.map((cardType: number) => this.getLogCardName(cardType));
                         args.card_name = `<strong>${names.join(', ')}</strong>`;
                     }
                 }

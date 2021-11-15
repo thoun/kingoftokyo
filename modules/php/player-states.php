@@ -345,6 +345,7 @@ trait PlayerStateTrait {
             $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
             $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
             $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);
+            $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0);
 
             $playerId = $this->activateNextPlayer();
         } else {
@@ -361,8 +362,14 @@ trait PlayerStateTrait {
                 $this->incGameStateValue(FREEZE_TIME_CURRENT_TURN, 1);
             }
 
+            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FINAL_PUSH_EXTRA_TURN)) == 1) { // extra turn for current player
+                $anotherTimeWithCard = 2000 + FINAL_PUSH_WICKEDNESS_TILE; // Final push
+                $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0); 
+                $this->removeWickednessTile($playerId, $this->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE));
+            }
+
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 109; // Frenzy
+                $anotherTimeWithCard = FRENZY_CARD; // Frenzy
                 $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);            
             }
             
