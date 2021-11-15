@@ -76,22 +76,36 @@ trait WickednessTilesUtilTrait {
         return intval(self::getUniqueValueFromDB("SELECT player_take_wickedness_tile FROM `player` where `player_id` = $playerId"));
     }
 
-    function applyWickednessTileEffects(int $cardType, int $side, int $playerId) { // return $damages
-        switch($side) {
-            case 0: 
-                
-                switch($cardType) {
-                    // TODOWI
-                }
+    function applyWickednessTileEffect(object $tile, int $playerId) { // return $damages
+        $tileType = $tile->type;
+        $logTileType = 2000 + $tileType;
+        switch($tileType) {
+            // TODOWI
+            case FINAL_PUSH_WICKEDNESS_TILE:
+                $this->applyGetHealth($playerId, 2, $logTileType, $playerId);
+                $this->applyGetEnergy($playerId, 2, $logTileType);
+                $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 1);
                 break;
-
-            case 1: 
-                
-                switch($cardType) {
-                    // TODOWI
-                }
+            case STARBURST_WICKEDNESS_TILE:
+                $this->applyGetEnergy($playerId, 12, $logTileType);
+                $this->removeWickednessTile($playerId, $tile);
                 break;
-
         }
+    }
+
+    function removeWickednessTile(int $playerId, object $tile) {
+
+        $this->wickednessTiles->moveCard($tile->id, 'discard');
+
+        self::notifyAllPlayers("removeWickednessTiles", '', [
+            'playerId' => $playerId,
+            'tiles' => [$tile],
+        ]);
+    }
+
+    function getWickednessTileByType(int $playerId, int $cardType) {
+        $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+
+        return count($tiles) > 0 ? $tiles[0] : null;
     }
 }

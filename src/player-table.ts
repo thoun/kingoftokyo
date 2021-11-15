@@ -124,6 +124,11 @@ class PlayerTable {
         cardsIds.forEach(id => this.cards.removeFromStockById(''+id));
     }
 
+    public removeWickednessTiles(tiles: WickednessTile[]) {
+        const tilesIds = tiles.map(tile => tile.id);
+        tilesIds.forEach(id => this.wickednessTiles.removeFromStockById(''+id));
+    }
+
     public setPoints(points: number, delay: number = 0) {
         setTimeout(
             () => document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[Math.min(20, points)]}deg)`,

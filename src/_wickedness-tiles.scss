@@ -1,0 +1,31 @@
+.wickedness-tile-stock {
+
+    .stockitem {
+
+        .name-wrapper {
+            left: 0;
+            width: 100%;
+
+            .outline {
+                &.wickedness-tile-side0 {
+                    -webkit-text-stroke: 4px #8c1e10;  
+                }
+                &.wickedness-tile-side1 {
+                    -webkit-text-stroke: 4px #364e11;  
+                }
+            }
+        }
+
+        .description-wrapper {
+            top: 33px;
+        }
+
+        .level {
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            background: white;
+        }
+    }
+}

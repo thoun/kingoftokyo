@@ -97,6 +97,7 @@ define('EXTRA_ROLLS', 'ExtraRolls');
 define('FREEZE_TIME_MAX_TURNS', 'FreezeTimeMaxTurns');
 define('FREEZE_TIME_CURRENT_TURN', 'FreezeTimeCurrentTurn');
 define('FRENZY_EXTRA_TURN', 'FrenzyExtraTurn');
+define('FINAL_PUSH_EXTRA_TURN', 'FinalPushExtraTurn');
 define('PSYCHIC_PROBE_ROLLED_A_3', 'PsychicProbeRolledA3');
 define('KILL_PLAYERS_SCORE_AUX', 'KillPlayersScoreAux');
 define('FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'FrenzyExtraTurnForOpportunist');
@@ -242,4 +243,10 @@ define('BODY_SPIRIT_AND_KA_CURSE_CARD', 21); // TODOAN test
 define('FALSE_BLESSING_CURSE_CARD', 22); // TODOAN test
 define('GAZE_OF_THE_SPHINX_CURSE_CARD', 23); // TODOAN test
 define('SCRIBE_S_PERSEVERANCE_CURSE_CARD', 24); // TODOAN test
+
+// wickedness tiles
+define('ANTIMATTER_BEAM_WICKEDNESS_TILE', 109);
+define('SKYBEAM_WICKEDNESS_TILE', 110);
+define('FINAL_PUSH_WICKEDNESS_TILE', 109);
+define('STARBURST_WICKEDNESS_TILE', 110);
 ?>

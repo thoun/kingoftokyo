@@ -223,12 +223,12 @@ trait DiceStateTrait {
         if ($level > 0) {
             $this->gamestate->nextState('takeWickednessTile');
         } else {
-            $this->redirectToResolveHeart();
+            $this->jumpToState($this->getRedirectAfterResolveNumberDice());
         }
         
     }
 
-    function redirectToResolveHeart() {
+    function getRedirectAfterResolveNumberDice() {
         $playerId = self::getActivePlayerId();
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
@@ -243,9 +243,9 @@ trait DiceStateTrait {
         }
 
         if ($canSelectHeartDiceUse) {
-            $this->gamestate->nextState('nextAction');
+            return ST_RESOLVE_HEART_DICE_ACTION; 
         } else {
-            $this->gamestate->nextState('next');
+            return ST_RESOLVE_HEART_DICE;
         }
     }
 
