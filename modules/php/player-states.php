@@ -128,7 +128,7 @@ trait PlayerStateTrait {
             }
 
             if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-                $this->applyDefenderOfTOkyo($playerId);
+                $this->applyDefenderOfTokyo($playerId);
             }
         }
 

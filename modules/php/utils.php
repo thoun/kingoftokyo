@@ -245,7 +245,7 @@ trait UtilTrait {
         self::incStat(1, 'tokyoEnters', $playerId);
 
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-            $this->applyDefenderOfTOkyo($playerId);
+            $this->applyDefenderOfTokyo($playerId);
         }
     }
 
