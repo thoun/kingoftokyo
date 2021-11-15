@@ -297,11 +297,13 @@ trait CardsUtilTrait {
 
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
+        // evil lair
+        $countEvilLair = ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, EVIL_LAIR_WICKEDNESS_TILE)) ? 1 : 0;
 
         // inadequate offering
         $inadequateOffering = $this->isAnubisExpansion() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;
 
-        return max($cardCost + $inadequateOffering - $countAlienOrigin, 0);
+        return max($cardCost + $inadequateOffering - $countAlienOrigin - $countEvilLair, 0);
     }
 
     function canBuyCard(int $playerId, int $cost) {
