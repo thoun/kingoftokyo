@@ -598,6 +598,12 @@ trait DiceUtilTrait {
                     for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = URBAVORE_CARD; }
                 }
             }
+
+            // antimatter beam (must be last)
+            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, ANTIMATTER_BEAM_WICKEDNESS_TILE)) {
+                $addedSmashes += ($diceCounts[6] + $addedSmashes);
+                $cardsAddingSmashes[] = 2000 + ANTIMATTER_BEAM_WICKEDNESS_TILE;
+            }
         }
 
         $detail = new \stdClass();

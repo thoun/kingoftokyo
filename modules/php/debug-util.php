@@ -74,7 +74,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        //$this->debugSetCurseCardInTable(VENGEANCE_OF_HORUS_CURSE_CARD);
+        //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
+        $this->debugSetWickednessTileInHand(SKYBEAM_WICKEDNESS_TILE, 2343492);
 
         $this->gamestate->changeActivePlayer(2343492);
 
@@ -82,6 +83,16 @@ trait DebugUtilTrait {
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
         //$this->eliminatePlayer(2343497);
+    }
+
+    private function debugSetWickednessTileInTable($cardType) {
+        $this->wickednessTiles->moveCard( $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0])->id, 'table');
+    }
+
+    private function debugSetWickednessTileInHand($cardType, $playerId) {
+        $card = $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0]);
+        $this->wickednessTiles->moveCard($card->id, 'hand', $playerId);
+        return $card;
     }
 
     private function debugSetCardInTable($cardType) {
