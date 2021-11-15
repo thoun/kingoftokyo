@@ -292,10 +292,6 @@ trait CardsUtilTrait {
         return $cards;
     }
 
-    function countExtraHead($playerId) {
-        return $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
-    }
-
     function getCardCost(int $playerId, int $cardType) {
         $cardCost = $this->CARD_COST[$cardType];
 

@@ -50,6 +50,8 @@ TODOME add stats
 TODOME flip cards (remove 302)
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
 
+TODOWI TOCHECK have it all with costumes ? full regeneration with extra head ?
+
 remaining Anubis :
 
 After resolving the die of Fate,

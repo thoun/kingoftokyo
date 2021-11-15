@@ -164,9 +164,14 @@ trait DiceUtilTrait {
     }
 
     function getDiceNumber(int $playerId) {
+        $add = 0;
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
-        $add = $this->countExtraHead($playerId);
+        $add += $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
+        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, CYBERBRAIN_WICKEDNESS_TILE)) {
+            $add += 1;
+        }
+
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
 
@@ -213,6 +218,10 @@ trait DiceUtilTrait {
                     $this->incGameStateValue(FREEZE_TIME_MAX_TURNS, 1);
                 }
                 
+                // Skulking
+                if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, SKULKING_WICKEDNESS_TILE)) {
+                    $this->applyGetPoints($playerId, 1, 2000 + SKULKING_WICKEDNESS_TILE);
+                }
             }
             
 
@@ -284,6 +293,9 @@ trait DiceUtilTrait {
         $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
         // Poison Spit
         $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD);
+        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, POISON_SPIT_WICKEDNESS_TILE)) {
+            $givePoisonSpitToken += 1;
+        }
 
         $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 
@@ -597,6 +609,12 @@ trait DiceUtilTrait {
                 
                     for ($i=0; $i<$countUrbavore; $i++) { $cardsAddingSmashes[] = URBAVORE_CARD; }
                 }
+            }
+
+            // Barbs
+            if (($diceCounts[6] + $addedSmashes) >= 2 && $this->isWickednessExpansion() && $this->gotWickednessTile($playerId, BARBS_WICKEDNESS_TILE)) {
+                $addedSmashes += 1;
+                $cardsAddingSmashes[] = 2000 + BARBS_WICKEDNESS_TILE;
             }
 
             // antimatter beam (must be last)
