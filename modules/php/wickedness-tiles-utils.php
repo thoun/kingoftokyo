@@ -90,6 +90,11 @@ trait WickednessTilesUtilTrait {
                 }
                 $this->removeWickednessTile($playerId, $tile);
                 break;
+            case HAVE_IT_ALL_WICKEDNESS_TILE:
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+                $keepCardsCount = count(array_filter($cardsOfPlayer, function($card) { return $card->type < 100; }));
+                $this->applyGetPoints($playerId, $keepCardsCount, $logTileType);
+                break;
             case FINAL_PUSH_WICKEDNESS_TILE:
                 $this->applyGetHealth($playerId, 2, $logTileType, $playerId);
                 $this->applyGetEnergy($playerId, 2, $logTileType);

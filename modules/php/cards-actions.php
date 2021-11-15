@@ -146,6 +146,10 @@ trait CardsActionTrait {
         if ($countMediaFriendly > 0) {
             $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
         }
+        // have it all!
+        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, HAVE_IT_ALL_WICKEDNESS_TILE)) {
+            $this->applyGetPoints($playerId, 1, 2000 + HAVE_IT_ALL_WICKEDNESS_TILE);
+        }
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 

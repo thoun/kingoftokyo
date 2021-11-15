@@ -296,6 +296,13 @@ trait DiceUtilTrait {
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, POISON_SPIT_WICKEDNESS_TILE)) {
             $givePoisonSpitToken += 1;
         }
+        // Underdog
+        $underdog = false;
+        $playerScore = null;
+        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, UNDERDOG_WICKEDNESS_TILE)) {
+            $underdog = true;
+            $playerScore = $this->getPlayerScore($playerId);
+        }
 
         $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 
@@ -317,6 +324,12 @@ trait DiceUtilTrait {
                 $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken);
             } else {
                 $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken);
+            }
+
+            // Underdog
+            if ($underdog && $this->getPlayerScore($smashedPlayerId) > $playerScore) {
+                $this->applyLosePoints($smashedPlayerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
+                $this->applyGetPoints($playerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
             }
         }
 
