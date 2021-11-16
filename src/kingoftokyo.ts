@@ -172,6 +172,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
+            case 'changeMimickedCardWickednessTile':
+            case 'chooseMimickedCardWickednessTile':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
@@ -464,6 +466,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'opportunistChooseMimicCard':
+            case 'chooseMimickedCardWickednessTile':
+            case 'changeMimickedCardWickednessTile':
                 this.onLeavingChooseMimickedCard();
                 break;            
             case 'throwDice':
@@ -570,6 +574,13 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'changeMimickedCardWickednessTile':
+                    (this as any).addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), 'skipChangeMimickedCardWickednessTile');
+
+                    if (!args.canChange) {
+                        this.startActionTimer('skipChangeMimickedCardWickednessTile_button', 5);
+                    }
+                    break;
                 case 'changeMimickedCard':
                     (this as any).addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
 
@@ -876,7 +887,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables = this.getOrderedPlayers().map(player => {
             const playerId = Number(player.id);
             const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(this, player, gamedatas.playersCards[playerId], gamedatas.playersWickednessTiles[playerId], playerWithGoldenScarab);
+            return new PlayerTable(this, player, gamedatas.playersCards[playerId], gamedatas.playersWickednessTiles?.[playerId], playerWithGoldenScarab);
         });
     }
 
@@ -934,6 +945,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.chooseMimickedCard(cardId);
         } else if (stateName === 'changeMimickedCard') {
             this.changeMimickedCard(cardId);
+        } else if (stateName === 'chooseMimickedCardWickednessTile') {
+            this.chooseMimickedCardWickednessTile(cardId);
+        } else if (stateName === 'changeMimickedCardWickednessTile') {
+            this.changeMimickedCardWickednessTile(cardId);
         } else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             this.tableCenter.removeOtherCardsFromPick(cardId);
             this.buyCard(cardId, from);
@@ -1459,6 +1474,26 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public chooseMimickedCardWickednessTile(id: number | string) {
+        if(!(this as any).checkAction('chooseMimickedCardWickednessTile')) {
+            return;
+        }
+
+        this.takeAction('chooseMimickedCardWickednessTile', {
+            id
+        });
+    }
+
+    public changeMimickedCardWickednessTile(id: number | string) {
+        if(!(this as any).checkAction('changeMimickedCardWickednessTile')) {
+            return;
+        }
+
+        this.takeAction('changeMimickedCardWickednessTile', {
+            id
+        });
+    }
+
     public sellCard(id: number | string) {
         if(!(this as any).checkAction('sellCard')) {
             return;
@@ -1507,6 +1542,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipChangeMimickedCard');
+    }
+
+    public skipChangeMimickedCardWickednessTile() {
+        if(!(this as any).checkAction('skipChangeMimickedCardWickednessTile', true)) {
+            return;
+        }
+
+        this.takeAction('skipChangeMimickedCardWickednessTile');
     }
 
     public endStealCostume() {

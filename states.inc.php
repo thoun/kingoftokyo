@@ -174,6 +174,20 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE => [
+        "name" => "changeMimickedCardWickednessTile",
+        "description" => clienttranslate('${actplayer} can change mimicked card'),
+        "descriptionmyturn" => clienttranslate('${you} can change mimicked card'),
+        "type" => "activeplayer",
+        "action" => "stChooseMimickedCard",
+        "args" => "argChooseMimickedCard",
+        "possibleactions" => [ "changeMimickedCardWickednessTile", "skipChangeMimickedCardWickednessTile" ],
+        "transitions" => [
+            "next" => ST_PLAYER_THROW_DICE,
+            "changeMimickedCard" => ST_PLAYER_CHANGE_MIMICKED_CARD,
+        ]
+    ],
+
     ST_PLAYER_CHANGE_MIMICKED_CARD => [
         "name" => "changeMimickedCard",
         "description" => clienttranslate('${actplayer} can change mimicked card for 1[Energy]'),
@@ -299,13 +313,25 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} can take a wickedness tile'),
         "type" => "activeplayer",
         "args" => "argTakeWickednessTile",
-        // TODOWI ? "action" => "stTakeWickednessTile",
         "possibleactions" => [ "takeWickednessTile", "skipTakeWickednessTile" ],
         "transitions" => [
             "next" => ST_RESOLVE_HEART_DICE,
             "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
-            // TODOWI mimick
+            "chooseMimickedCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE,
         ],
+    ],
+
+    ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE => [
+        "name" => "chooseMimickedCardWickednessTile",
+        "description" => clienttranslate('${actplayer} must select a card to mimic'),
+        "descriptionmyturn" => clienttranslate('${you} must select a card to mimic'),
+        "type" => "activeplayer",
+        "args" => "argChooseMimickedCard",
+        "possibleactions" => [ "chooseMimickedCardWickednessTile" ],
+        "transitions" => [
+            "next" => ST_RESOLVE_HEART_DICE,
+            "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
+        ]
     ],
 
     ST_RESOLVE_HEART_DICE => [

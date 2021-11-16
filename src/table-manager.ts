@@ -110,7 +110,9 @@ class TableManager {
         const tableCenterDiv = document.getElementById('table-center');
 
         this.playerTables.forEach(playerTable => {
-            dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', !playerTable.wickednessTiles.items.length);
+            if (playerTable.wickednessTiles) {
+                dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', !playerTable.wickednessTiles.items.length);
+            }
             dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length);
         });
         
@@ -191,7 +193,7 @@ class TableManager {
     }
 
     private getPlayerTableHeight(playerTable: PlayerTable) {
-        const tilesRows = Math.ceil(playerTable.wickednessTiles.items.length / CARDS_PER_ROW);
+        const tilesRows = playerTable.wickednessTiles ? Math.ceil(playerTable.wickednessTiles.items.length / CARDS_PER_ROW) : 0;
         const tilesHeight = tilesRows === 0 ? 0 : ((WICKEDNESS_TILES_HEIGHT + 5) * tilesRows);
         const cardRows = Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW);
         const cardHeight = cardRows === 0 ? 20 : ((CARD_HEIGHT + 5) * cardRows);

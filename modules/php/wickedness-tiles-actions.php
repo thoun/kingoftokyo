@@ -37,8 +37,6 @@ trait WickednessTilesActionTrait {
 
         $damages = $this->applyWickednessTileEffect($tile, $playerId);
 
-        // TODOWI mimic
-
         $redirects = false;
         $redirectAfterTakeTile = $this->getRedirectAfterResolveNumberDice();
 
@@ -47,7 +45,11 @@ trait WickednessTilesActionTrait {
         }
 
         if (!$redirects) {
-            $this->jumpToState($redirectAfterTakeTile, $playerId);
+            if ($tile->type === FLUXLING_WICKEDNESS_TILE) {
+                $this->gamestate->nextState('chooseMimickedCard');
+            } else {
+                $this->jumpToState($redirectAfterTakeTile, $playerId);
+            }
         }
     }
   	
@@ -60,4 +62,60 @@ trait WickednessTilesActionTrait {
 
         $this->jumpToState($this->getRedirectAfterResolveNumberDice());
     }
+
+    function chooseMimickedCardWickednessTile(int $mimickedCardId) {
+        $this->checkAction('chooseMimickedCardWickednessTile');
+
+        $playerId = self::getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
+        if ($card->type > 100 || $card->type == MIMIC_CARD) { // TODOWI can we mimic mimic with tile ?
+            throw new \BgaUserException("You can only mimic Keep cards");
+        }
+
+        $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
+
+        $this->jumpToState($this->getRedirectAfterResolveNumberDice());
+    }
+
+    function changeMimickedCardWickednessTile(int $mimickedCardId) {
+        $this->checkAction('changeMimickedCardWickednessTile');
+
+        $playerId = self::getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
+        if ($card->type > 100 || $card->type == MIMIC_CARD) { // TODOWI can we mimic mimic with tile ?
+            throw new \BgaUserException("You can only mimic Keep cards");
+        }
+
+        $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
+
+        $canChangeMimickedCard = $this->canChangeMimickedCard();
+        if (!$canChangeMimickedCard) {
+            // we throw dices now, in case dice count has been changed by mimic
+            $this->throwDice($playerId, true);
+
+            $this->gamestate->nextState('next');
+        } else {
+            $this->gamestate->nextState('changeMimickedCard');
+        }
+    }
+
+    function skipChangeMimickedCardWickednessTile($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipChangeMimickedCardWickednessTile');
+        }
+
+        $playerId = self::getActivePlayerId();
+
+        $canChangeMimickedCard = $this->canChangeMimickedCard();
+        if (!$canChangeMimickedCard) {
+            // we throw dices now, in case dice count has been changed by mimic
+            $this->throwDice($playerId, true);
+
+            $this->gamestate->nextState('next');
+        } else {
+            $this->gamestate->nextState('changeMimickedCard');
+        }
+    }    
 }

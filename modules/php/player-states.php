@@ -169,13 +169,14 @@ trait PlayerStateTrait {
         self::setGameStateValue('throwNumber', 1);
         self::DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true");
 
-        $canChangeMimickedCard = $this->canChangeMimickedCard();
-        if (!$canChangeMimickedCard) {
+        $canChangeMimickedCardWickednessTile = $this->canChangeMimickedCardWickednessTile();
+        $canChangeMimickedCard = !$canChangeMimickedCardWickednessTile && $this->canChangeMimickedCard();
+        if (!$canChangeMimickedCardWickednessTile && !$canChangeMimickedCard) {
             $this->throwDice($playerId, true);
         }
 
         $redirects = false;
-        $redirectAfterStartTurn = $canChangeMimickedCard ? ST_PLAYER_CHANGE_MIMICKED_CARD : ST_PLAYER_THROW_DICE;
+        $redirectAfterStartTurn = $canChangeMimickedCardWickednessTile ? ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE : ($canChangeMimickedCard ? ST_PLAYER_CHANGE_MIMICKED_CARD : ST_PLAYER_THROW_DICE);
         if ($damages != null && count($damages) > 0) {
             $redirects = $this->resolveDamages($damages, $redirectAfterStartTurn);
         }

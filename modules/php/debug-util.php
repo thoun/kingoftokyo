@@ -14,9 +14,9 @@ trait DebugUtilTrait {
         } 
 
         //$mimickedCard = $this->getCardFromDb(array_values($this->cards->getCardsOfType(RAPID_HEALING_CARD))[0]);
-        //$this->setMimickedCard(2343492, $mimickedCard);
+        //$this->setMimickedCard(MIMIC_CARD, 2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
-        //$this->setMimickedCard(2343492, $this->debugSetCardInHand(31, 2343493));
+        //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetEnergy(5);
@@ -32,18 +32,18 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".ZOMBIE_CARD);
-        //$this->debugSetCardInTable(MIMIC_CARD);
+        $this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
-        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
-        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
-        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
-        //$this->setMimickedCard(2343493, $this->debugSetCardInHand(JETS_CARD, 2343492));
-        //$this->setMimickedCard(2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
-        //$this->setMimickedCard(2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
-        //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343492);
-        //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
+        //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
+        //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
+        //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
+        //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(JETS_CARD, 2343492));
+        //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
+        //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
+        $this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
+        $this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343493);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
@@ -75,7 +75,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
-        $this->debugSetWickednessTileInHand(SKYBEAM_WICKEDNESS_TILE, 2343492);
+        //$this->debugSetWickednessTileInHand(SKYBEAM_WICKEDNESS_TILE, 2343492);
 
         $this->gamestate->changeActivePlayer(2343492);
 

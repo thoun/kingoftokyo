@@ -155,7 +155,7 @@ trait CardsActionTrait {
 
         $mimickedCardId = null;
         if ($from > 0) {
-            $mimickedCardId = $this->getMimickedCardId();            
+            $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);            
             // If card bought from player, when having mimic token, keep mimic token ? Considered yes
             $this->removeCard($from, $card, true, false, true);
         }
@@ -407,7 +407,7 @@ trait CardsActionTrait {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
 
-        $this->setMimickedCardId($playerId, $mimickedCardId);
+        $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
 
         $this->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
     }
@@ -427,7 +427,7 @@ trait CardsActionTrait {
         }
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
 
-        $this->setMimickedCardId($playerId, $mimickedCardId);
+        $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
 
         // we throw dices now, in case dice count has been changed by mimic
         $this->throwDice($playerId, true);

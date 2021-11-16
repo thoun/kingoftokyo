@@ -197,21 +197,20 @@ trait CardsArgTrait {
 
     function argChooseMimickedCard($limitToOneEnergy = false) {
         $playerId = self::getActivePlayerId();
-        $playerEnergy = $this->getPlayerEnergy($playerId);
 
-        $canChange = $playerEnergy >= 1;
+        $canChange = $limitToOneEnergy ? $this->getPlayerEnergy($playerId) >= 1 : true;
 
         $playersIds = $this->getPlayersIds();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(function ($card) { return $card->id; }, $cards);
-        $mimickedCardId = $this->getMimickedCardId();
+        $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            $disabledCardsOfPlayer = $canChange || !$limitToOneEnergy ? 
+            $disabledCardsOfPlayer = $canChange ? 
                 array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; })) :
-                $cardsOfPlayer;
+                $cardsOfPlayer; // TODOWI ignore Mimic Tile ? for wickedness selection
             $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
             
             $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);

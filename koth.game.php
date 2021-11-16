@@ -328,7 +328,7 @@ class Koth extends Table {
 
             foreach($result['playersCards'][$playerId] as &$card) {
                 if ($card->type == MIMIC_CARD) {
-                    $card->mimicType = $this->getMimickedCardType();
+                    $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
                 }
             }
 
@@ -354,7 +354,7 @@ class Koth extends Table {
             }
         }
 
-        $result['mimickedCard'] = $this->getMimickedCard();
+        $result['mimickedCard'] = $this->getMimickedCard(MIMIC_CARD);
 
         $result['leaveTokyoUnder'] = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));
         $result['stayTokyoOver'] = intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $current_player_id"));
@@ -559,6 +559,11 @@ class Koth extends Table {
               `damages` TINYINT unsigned NOT NULL,
               PRIMARY KEY (`from`, `to`)
             ) ENGINE=InnoDB;";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+ 
+        if ($from_version <= 999999998) { // TODOWI
+            $sql = "UPDATE `DBPREFIX_global_variables` SET `name` = ".MIMICKED_CARD.MIMIC_CARD." WHERE `name` = ".MIMICKED_CARD;
             self::applyDbUpgradeToAllDB($sql);
         }
     }

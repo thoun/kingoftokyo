@@ -314,6 +314,42 @@
         self::ajaxResponse();
     }
   	
+    public function skipChangeMimickedCard() {
+        self::setAjaxMode();
+
+        $this->game->skipChangeMimickedCard();
+
+        self::ajaxResponse();
+    }
+
+    public function changeMimickedCardWickednessTile() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->changeMimickedCardWickednessTile($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipChangeMimickedCardWickednessTile() {
+        self::setAjaxMode();
+
+        $this->game->skipChangeMimickedCardWickednessTile();
+
+        self::ajaxResponse();
+    }
+  	
+    public function chooseMimickedCardWickednessTile() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->chooseMimickedCardWickednessTile($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function renew() {
         self::setAjaxMode();
 
@@ -334,14 +370,6 @@
         self::setAjaxMode();
 
         $this->game->opportunistSkip();
-
-        self::ajaxResponse();
-    }
-  	
-    public function skipChangeMimickedCard() {
-        self::setAjaxMode();
-
-        $this->game->skipChangeMimickedCard();
 
         self::ajaxResponse();
     }

@@ -133,4 +133,27 @@ trait WickednessTilesUtilTrait {
             $this->applyLosePoints($otherPlayerId, 1, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE);
         }
     }
+
+    function canChangeMimickedCardWickednessTile() {
+        $playerId = self::getActivePlayerId();
+
+        // check if player have mimic card
+        if (!$this->isWickednessExpansion() || !$this->gotWickednessTile($playerId, FLUXLING_WICKEDNESS_TILE)) {
+            return false;
+        }
+
+        $playersIds = $this->getPlayersIds();
+        $mimickedCardId = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
+
+        foreach($playersIds as $playerId) {
+            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            foreach($cardsOfPlayer as $card) {
+                if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) { // TODOWI can we mimic mimic with tile ?
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
 }

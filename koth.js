@@ -1028,7 +1028,7 @@ var PlayerTable = /** @class */ (function () {
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            wickednessTiles.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
+            wickednessTiles === null || wickednessTiles === void 0 ? void 0 : wickednessTiles.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
         }
     }
     PlayerTable.prototype.initPlacement = function () {
@@ -1302,7 +1302,9 @@ var TableManager = /** @class */ (function () {
         var tableWidth = tableDiv.clientWidth;
         var tableCenterDiv = document.getElementById('table-center');
         this.playerTables.forEach(function (playerTable) {
-            dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', !playerTable.wickednessTiles.items.length);
+            if (playerTable.wickednessTiles) {
+                dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', !playerTable.wickednessTiles.items.length);
+            }
             dojo.toggleClass("cards-" + playerTable.playerId, 'empty', !playerTable.cards.items.length);
         });
         var availableColumns = this.getAvailableColumns(tableWidth, tableCenterDiv.clientWidth);
@@ -1379,7 +1381,7 @@ var TableManager = /** @class */ (function () {
         zoomWrapper.style.height = height * this.zoom + "px";
     };
     TableManager.prototype.getPlayerTableHeight = function (playerTable) {
-        var tilesRows = Math.ceil(playerTable.wickednessTiles.items.length / CARDS_PER_ROW);
+        var tilesRows = playerTable.wickednessTiles ? Math.ceil(playerTable.wickednessTiles.items.length / CARDS_PER_ROW) : 0;
         var tilesHeight = tilesRows === 0 ? 0 : ((WICKEDNESS_TILES_HEIGHT + 5) * tilesRows);
         var cardRows = Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW);
         var cardHeight = cardRows === 0 ? 20 : ((CARD_HEIGHT + 5) * cardRows);
@@ -2590,6 +2592,8 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
+            case 'changeMimickedCardWickednessTile':
+            case 'chooseMimickedCardWickednessTile':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
@@ -2854,6 +2858,8 @@ var KingOfTokyo = /** @class */ (function () {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'opportunistChooseMimicCard':
+            case 'chooseMimickedCardWickednessTile':
+            case 'changeMimickedCardWickednessTile':
                 this.onLeavingChooseMimickedCard();
                 break;
             case 'throwDice':
@@ -2956,6 +2962,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'changeMimickedCardWickednessTile':
+                    this.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), 'skipChangeMimickedCardWickednessTile');
+                    if (!args.canChange) {
+                        this.startActionTimer('skipChangeMimickedCardWickednessTile_button', 5);
+                    }
+                    break;
                 case 'changeMimickedCard':
                     this.addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
                     if (!args.canChange) {
@@ -3174,9 +3186,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
         this.playerTables = this.getOrderedPlayers().map(function (player) {
+            var _a;
             var playerId = Number(player.id);
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(_this, player, gamedatas.playersCards[playerId], gamedatas.playersWickednessTiles[playerId], playerWithGoldenScarab);
+            return new PlayerTable(_this, player, gamedatas.playersCards[playerId], (_a = gamedatas.playersWickednessTiles) === null || _a === void 0 ? void 0 : _a[playerId], playerWithGoldenScarab);
         });
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
@@ -3230,6 +3243,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         else if (stateName === 'changeMimickedCard') {
             this.changeMimickedCard(cardId);
+        }
+        else if (stateName === 'chooseMimickedCardWickednessTile') {
+            this.chooseMimickedCardWickednessTile(cardId);
+        }
+        else if (stateName === 'changeMimickedCardWickednessTile') {
+            this.changeMimickedCardWickednessTile(cardId);
         }
         else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             this.tableCenter.removeOtherCardsFromPick(cardId);
@@ -3654,6 +3673,22 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
+    KingOfTokyo.prototype.chooseMimickedCardWickednessTile = function (id) {
+        if (!this.checkAction('chooseMimickedCardWickednessTile')) {
+            return;
+        }
+        this.takeAction('chooseMimickedCardWickednessTile', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.changeMimickedCardWickednessTile = function (id) {
+        if (!this.checkAction('changeMimickedCardWickednessTile')) {
+            return;
+        }
+        this.takeAction('changeMimickedCardWickednessTile', {
+            id: id
+        });
+    };
     KingOfTokyo.prototype.sellCard = function (id) {
         if (!this.checkAction('sellCard')) {
             return;
@@ -3691,6 +3726,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipChangeMimickedCard');
+    };
+    KingOfTokyo.prototype.skipChangeMimickedCardWickednessTile = function () {
+        if (!this.checkAction('skipChangeMimickedCardWickednessTile', true)) {
+            return;
+        }
+        this.takeAction('skipChangeMimickedCardWickednessTile');
     };
     KingOfTokyo.prototype.endStealCostume = function () {
         if (!this.checkAction('endStealCostume')) {
