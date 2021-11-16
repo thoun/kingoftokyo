@@ -140,4 +140,16 @@ class WickednessTiles {
         
         <div class="description-wrapper">${description}</div>`;
     }
+
+    private getImageName(cardType: number) {
+        if (cardType < 100) {
+            return 'orange';
+        } else if (cardType < 200) {
+            return 'green';
+        }
+    }
+
+    public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {
+        (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(106) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
+    }
 }

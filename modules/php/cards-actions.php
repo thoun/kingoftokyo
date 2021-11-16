@@ -235,6 +235,7 @@ trait CardsActionTrait {
 
             self::notifyAllPlayers("setMimicToken", '', [
                 'card' => $card,
+                'type' => $this->getMimicStringTypeFromMimicCardType($mimicCard), // TODOWI value $mimicCard
             ]);
         }
 

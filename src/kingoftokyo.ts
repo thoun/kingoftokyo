@@ -96,7 +96,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
-        this.setMimicToken(gamedatas.mimickedCard);
+        this.setMimicToken('card', gamedatas.mimickedCards.card);
+        this.setMimicToken('tile', gamedatas.mimickedCards.tile);
 
         const playerId = this.getPlayerId();
         const currentPlayer = players.find(player => Number(player.id) === playerId);
@@ -1188,22 +1189,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private setMimicToken(card: Card) {
+    private setMimicToken(type: 'card' | 'tile', card: Card) {
         if (!card) {
             return;
         }
 
         this.playerTables.forEach(playerTable => {
             if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
-                this.cards.placeMimicOnCard(playerTable.cards, card);
+                this.cards.placeMimicOnCard(type, playerTable.cards, card);
             }
         });
 
-        this.setMimicTooltip(card);
+        this.setMimicTooltip(type, card);
     }
 
-    private removeMimicToken(card: Card) {
-        this.setMimicTooltip(null);
+    private removeMimicToken(type: 'card' | 'tile', card: Card) {
+        this.setMimicTooltip(type, null);
 
         if (!card) {
             return;
@@ -1216,11 +1217,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    private setMimicTooltip(mimickedCard: Card) {
+    private setMimicTooltip(type: 'card' | 'tile', mimickedCard: Card) {
         this.playerTables.forEach(playerTable => {
-            const mimicCardItem = playerTable.cards.items.find(item => Number(item.type) == 27);
+            const stock = type === 'tile' ? playerTable.wickednessTiles : playerTable.cards;
+            const mimicCardId = type === 'tile' ? 106 : 27;
+            const mimicCardItem = stock.items.find(item => Number(item.type) == mimicCardId);
             if (mimicCardItem) {
-                this.cards.changeMimicTooltip(`cards-${playerTable.playerId}_item_${mimicCardItem.id}`, mimickedCard);
+                const cardManager = type === 'tile' ? this.wickednessTiles : this.cards;
+                cardManager.changeMimicTooltip(`${stock.container_div.id}_item_${mimicCardItem.id}`, this.cards.getMimickedCardText(mimickedCard));
             }
         });
     }
@@ -1852,11 +1856,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_setMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
-        this.setMimicToken(notif.args.card);
+        this.setMimicToken(notif.args.type, notif.args.card);
     }
 
     notif_removeMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
-        this.removeMimicToken(notif.args.card);
+        this.removeMimicToken(notif.args.type, notif.args.card);
     }
 
     notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {

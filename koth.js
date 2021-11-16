@@ -130,12 +130,12 @@ var Cards = /** @class */ (function () {
     Cards.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
-    Cards.prototype.placeMimicOnCard = function (stock, card) {
+    Cards.prototype.placeMimicOnCard = function (type, stock, card) {
         var divId = stock.container_div.id + "_item_" + card.id;
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
-        var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token mimic token\"></div>";
+        var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token mimic token\">" + type[0].toUpperCase() + "</div>"; // TODOWI
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
@@ -652,7 +652,7 @@ var Cards = /** @class */ (function () {
             return 'transformation';
         }
     };
-    Cards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCard) {
+    Cards.prototype.getMimickedCardText = function (mimickedCard) {
         var mimickedCardText = '-';
         if (mimickedCard) {
             var tempDiv = document.createElement('div');
@@ -672,6 +672,9 @@ var Cards = /** @class */ (function () {
             document.body.removeChild(tempDiv);
             mimickedCardText = "<br>" + tempDiv.outerHTML;
         }
+        return mimickedCardText;
+    };
+    Cards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
         this.game.addTooltipHtml(mimicCardId, this.getTooltip(27) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
     return Cards;
@@ -949,6 +952,17 @@ var WickednessTiles = /** @class */ (function () {
         var level = this.getCardLevel(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
         cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"level\" [data-level]=\"" + level + "\">" + level + "</div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+    };
+    WickednessTiles.prototype.getImageName = function (cardType) {
+        if (cardType < 100) {
+            return 'orange';
+        }
+        else if (cardType < 200) {
+            return 'green';
+        }
+    };
+    WickednessTiles.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
+        this.game.addTooltipHtml(mimicCardId, this.getTooltip(106) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
     return WickednessTiles;
 }());
@@ -2530,7 +2544,8 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
-        this.setMimicToken(gamedatas.mimickedCard);
+        this.setMimicToken('card', gamedatas.mimickedCards.card);
+        this.setMimicToken('tile', gamedatas.mimickedCards.tile);
         var playerId = this.getPlayerId();
         var currentPlayer = players.find(function (player) { return Number(player.id) === playerId; });
         if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.rapidHealing) {
@@ -3447,21 +3462,21 @@ var KingOfTokyo = /** @class */ (function () {
             bubble.dataset.visible = 'false';
         }
     };
-    KingOfTokyo.prototype.setMimicToken = function (card) {
+    KingOfTokyo.prototype.setMimicToken = function (type, card) {
         var _this = this;
         if (!card) {
             return;
         }
         this.playerTables.forEach(function (playerTable) {
             if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
-                _this.cards.placeMimicOnCard(playerTable.cards, card);
+                _this.cards.placeMimicOnCard(type, playerTable.cards, card);
             }
         });
-        this.setMimicTooltip(card);
+        this.setMimicTooltip(type, card);
     };
-    KingOfTokyo.prototype.removeMimicToken = function (card) {
+    KingOfTokyo.prototype.removeMimicToken = function (type, card) {
         var _this = this;
-        this.setMimicTooltip(null);
+        this.setMimicTooltip(type, null);
         if (!card) {
             return;
         }
@@ -3471,12 +3486,15 @@ var KingOfTokyo = /** @class */ (function () {
             }
         });
     };
-    KingOfTokyo.prototype.setMimicTooltip = function (mimickedCard) {
+    KingOfTokyo.prototype.setMimicTooltip = function (type, mimickedCard) {
         var _this = this;
         this.playerTables.forEach(function (playerTable) {
-            var mimicCardItem = playerTable.cards.items.find(function (item) { return Number(item.type) == 27; });
+            var stock = type === 'tile' ? playerTable.wickednessTiles : playerTable.cards;
+            var mimicCardId = type === 'tile' ? 106 : 27;
+            var mimicCardItem = stock.items.find(function (item) { return Number(item.type) == mimicCardId; });
             if (mimicCardItem) {
-                _this.cards.changeMimicTooltip("cards-" + playerTable.playerId + "_item_" + mimicCardItem.id, mimickedCard);
+                var cardManager = type === 'tile' ? _this.wickednessTiles : _this.cards;
+                cardManager.changeMimicTooltip(stock.container_div.id + "_item_" + mimicCardItem.id, _this.cards.getMimickedCardText(mimickedCard));
             }
         });
     };
@@ -4000,10 +4018,10 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.notif_setMimicToken = function (notif) {
-        this.setMimicToken(notif.args.card);
+        this.setMimicToken(notif.args.type, notif.args.card);
     };
     KingOfTokyo.prototype.notif_removeMimicToken = function (notif) {
-        this.removeMimicToken(notif.args.card);
+        this.removeMimicToken(notif.args.type, notif.args.card);
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy);
