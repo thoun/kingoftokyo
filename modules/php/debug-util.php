@@ -32,7 +32,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".ZOMBIE_CARD);
-        $this->debugSetCardInTable(MIMIC_CARD);
+        //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
@@ -75,7 +75,11 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
-        //$this->debugSetWickednessTileInHand(SKYBEAM_WICKEDNESS_TILE, 2343492);
+        //$this->initWickednessTiles(3);
+        //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
+        //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+        //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
+        $this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         $this->gamestate->changeActivePlayer(2343492);
 

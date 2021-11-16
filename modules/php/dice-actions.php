@@ -279,6 +279,8 @@ trait DiceActionTrait {
                                 return $remainingId != $mimicCard->location_arg;
                             }));
                         }
+
+                        // TODO mimicTile
                     }
                 }                
             }

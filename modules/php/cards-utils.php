@@ -177,20 +177,31 @@ trait CardsUtilTrait {
         }
     }
 
-    function removeMimicToken(int $mimicOwnerId) {
+    function removeMimicToken(int $mimicCardType, int $mimicOwnerId) {
         $countRapidHealingBefore = $this->countCardOfType($mimicOwnerId, RAPID_HEALING_CARD);
         
-        $card = $this->getMimickedCard(MIMIC_CARD);
+        $card = $this->getMimickedCard($mimicCardType);
         if ($card) {
-            $this->deleteGlobalVariable(MIMICKED_CARD);
+            $this->deleteGlobalVariable(MIMICKED_CARD.$mimicCardType);
             self::notifyAllPlayers("removeMimicToken", '', [
                 'card' => $card,
+                'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
             ]);
         }
 
-        $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
-        if ($mimicCard && $mimicCard->tokens > 0) {
-            $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
+        $mimicCard = null;
+        if ($mimicCardType == MIMIC_CARD) {
+            $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0]; // TODOWI if tile mimic mimic
+
+            if ($mimicCard && $mimicCard->tokens > 0) {
+                $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
+            }
+        } else if ($mimicCardType == FLUXLING_WICKEDNESS_TILE) {
+            $mimicCard = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsOfType(FLUXLING_WICKEDNESS_TILE))[0];
+
+            if ($mimicCard && $mimicCard->tokens > 0) {
+                $this->setTileTokens($mimicCard->location_arg, $mimicCard, 0);
+            }
         }
 
         if ($mimicCard && $card && $card->type == EVEN_BIGGER_CARD) {
@@ -205,19 +216,28 @@ trait CardsUtilTrait {
         $this->setMimickedCard($mimicCard, $mimicOwnerId, $card);
     }
 
-    function setMimickedCard(int $mimicCard, int $mimicOwnerId, object $card) {
+    function getMimicStringTypeFromMimicCardType(int $mimicCard) {
+        if ($mimicCard == MIMIC_CARD) {
+            return 'card';
+        } else if ($mimicCard == FLUXLING_WICKEDNESS_TILE) {
+            return 'tile';
+        }
+    }
+
+    function setMimickedCard(int $mimicCardType, int $mimicOwnerId, object $card) {
         $countRapidHealingBefore = $this->countCardOfType($mimicOwnerId, RAPID_HEALING_CARD);
 
-        $this->removeMimicToken($mimicOwnerId);
+        $this->removeMimicToken($mimicCardType, $mimicOwnerId);
 
         $mimickedCard = new \stdClass();
         $mimickedCard->card = $card;
         $mimickedCard->playerId = $card->location_arg;
-        $this->setGlobalVariable(MIMICKED_CARD . $mimicCard, $mimickedCard);
+        $this->setGlobalVariable(MIMICKED_CARD . $mimicCardType, $mimickedCard);
         self::notifyAllPlayers("setMimicToken", clienttranslate('${player_name} mimics ${card_name}'), [
             'card' => $card,
             'player_name' => $this->getPlayerName($mimicOwnerId),
             'card_name' => $card->type,
+            'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
         ]);
 
         // no need to check for damage return, no discard card can be mimicked
@@ -225,8 +245,13 @@ trait CardsUtilTrait {
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
-            $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
-            $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
+            if ($mimicCardType === MIMIC_CARD) {
+                $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
+                $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
+            } else if ($mimicCardType === FLUXLING_WICKEDNESS_TILE) {
+                $mimicCard = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsOfType(FLUXLING_WICKEDNESS_TILE))[0];
+                $this->setTileTokens($mimicOwnerId, $mimicCard, $tokens);
+            }
         }
         
         $this->toggleRapidHealing($mimicOwnerId, $countRapidHealingBefore);
@@ -285,8 +310,16 @@ trait CardsUtilTrait {
 
         if ($cardType < 100 && $includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself, nor discard/costume cards
             $mimickedCardType = $this->getMimickedCardType(MIMIC_CARD);
+            $mimickedCardTypeWickednessTile = $this->getMimickedCardType(FLUXLING_WICKEDNESS_TILE);
             if ($mimickedCardType == $cardType) {
                 $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, false)); // mimick
+            }
+            if ($mimickedCardTypeWickednessTile == $cardType) {
+                $tile = $this->getWickednessTileByType($playerId, FLUXLING_WICKEDNESS_TILE);
+                    if ($tile != null) {
+                    $tile->id = 2000 + $tile->id; // To avoid id conflict with cards 
+                    $cards = array_merge($cards, [$tile]);
+                }
             }
         }
 
@@ -349,11 +382,15 @@ trait CardsUtilTrait {
 
     function applyBatteryMonster(int $playerId, $card) {
         $energyOnBatteryMonster = $card->tokens - 2;
-        $this->setCardTokens($playerId, $card, $energyOnBatteryMonster);
+        if ($card->type == FLUXLING_WICKEDNESS_TILE) {
+            $this->setTileTokens($playerId, $card, $energyOnBatteryMonster);
+        } else { // mimic or battery monster
+            $this->setCardTokens($playerId, $card, $energyOnBatteryMonster);
+        }
 
         $this->applyGetEnergyIgnoreCards($playerId, 2, 28);
 
-        if ($energyOnBatteryMonster <= 0 && $card->type != MIMIC_CARD) {
+        if ($energyOnBatteryMonster <= 0 && $card->type == BATTERY_MONSTER_CARD) {
             $this->removeCard($playerId, $card);
         }
     }
@@ -367,9 +404,9 @@ trait CardsUtilTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
-        $cards = $this->getCardsOfType($playerId, ENERGY_DRINK_CARD);
+        $cardCount = $this->countCardOfType($playerId, ENERGY_DRINK_CARD);
 
-        if (count($cards) == 0) {
+        if ($cardCount == 0) {
             throw new \BgaUserException('No Energy Drink card');
         }
 
@@ -386,16 +423,16 @@ trait CardsUtilTrait {
 
         $playerId = self::getActivePlayerId();
 
-        $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
+        $cardCount = $this->countCardOfType($playerId, SMOKE_CLOUD_CARD);
 
-        if (count($cards) == 0) {
+        if ($cardCount == 0) {
             throw new \BgaUserException('No Smoke Cloud card');
         }
 
         // we choose mimic card first, if available
         $card = null;
         foreach($cards as $icard) {
-            if ($icard->type == MIMIC_CARD && $icard->tokens > 0) {
+            if (($icard->type == MIMIC_CARD || $icard->type == FLUXLING_WICKEDNESS_TILE) && $icard->tokens > 0) {
                 $card = $icard;
             }
         }
@@ -410,7 +447,7 @@ trait CardsUtilTrait {
         $tokensOnCard = $card->tokens - 1;
         $this->setCardTokens($playerId, $card, $tokensOnCard);
 
-        if ($tokensOnCard <= 0 && $card->type != MIMIC_CARD) {
+        if ($tokensOnCard <= 0 && $card->type != MIMIC_CARD && $card->type != FLUXLING_WICKEDNESS_TILE) {
             $this->removeCard($playerId, $card);
         }
         
@@ -450,18 +487,31 @@ trait CardsUtilTrait {
     }
 
     function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false, bool $ignoreMimicToken = false) {
+        if ($cards->id >= 2000) {
+            // trying to remove mimic tile, but tile isn't removed when mimicked card is removed
+            return;
+        }
+
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
         $changeMaxHealth = $card->type == EVEN_BIGGER_CARD;
         
         $removeMimickToken = false;
+        $mimicCardType = null;
         if ($card->type == MIMIC_CARD) { // Mimic
             $changeMaxHealth = $this->getMimickedCardType(MIMIC_CARD) == EVEN_BIGGER_CARD;
-            $this->removeMimicToken($playerId);
+            $this->removeMimicToken(MIMIC_CARD, $playerId);
             $removeMimickToken = true;
+            $mimicCardType = MIMIC_CARD;
         } else if ($card->id == $this->getMimickedCardId(MIMIC_CARD) && !$ignoreMimicToken) {
-            $this->removeMimicToken($playerId);
+            $this->removeMimicToken(MIMIC_CARD, $playerId);
             $removeMimickToken = true;
+            $mimicCardType = MIMIC_CARD;
+        }
+        if ($card->id == $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE) && !$ignoreMimicToken) {
+            $this->removeMimicToken(FLUXLING_WICKEDNESS_TILE, $playerId);
+            $removeMimickToken = true;
+            $mimicCardType = FLUXLING_WICKEDNESS_TILE;
         }
 
         $this->cards->moveCard($card->id, 'discard');
@@ -469,6 +519,7 @@ trait CardsUtilTrait {
         if ($removeMimickToken) {
             self::notifyAllPlayers("removeMimicToken", '', [
                 'card' => $card,
+                'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
             ]);
         }
 
@@ -507,6 +558,9 @@ trait CardsUtilTrait {
     }
 
     function removeCards(int $playerId, array $cards, bool $silent = false) {
+        // if trying to remove mimic tile, we stop, as tile isn't removed when mimicked card is removed
+        $cards = array_values(array_filter($cards, function ($card) { return $cards->id < 2000; }));
+
         foreach($cards as $card) {
             $this->removeCard($playerId, $card, true);
         }

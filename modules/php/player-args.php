@@ -23,7 +23,7 @@ trait PlayerArgTrait {
         $jetsPlayers = [];
 
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
-            if (count($this->getCardsOfType($smashedPlayerInTokyo, JETS_CARD)) > 0) {
+            if ($this->countCardOfType($smashedPlayerInTokyo, JETS_CARD) > 0) {
                 $jetsPlayers[] = $smashedPlayerInTokyo;
             }
         }

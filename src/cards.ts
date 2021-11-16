@@ -70,30 +70,47 @@ class Cards {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     }
 
-    public placeMimicOnCard(stock: Stock, card: Card) {
+    public placeMimicOnCard(type: 'card' | 'tile', stock: Stock, card: Card, wickednessTiles: WickednessTiles) {
         const divId = `${stock.container_div.id}_item_${card.id}`;
         const div = document.getElementById(divId);
-        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
-        
-        cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
 
-        let html = `<div id="${divId}-mimic-token" style="left: ${cardPlaced.mimicToken.x - 16}px; top: ${cardPlaced.mimicToken.y - 16}px;" class="card-token mimic token"></div>`;
-        dojo.place(html, divId);
+        if (type === 'tile') {
+            let html = `<div id="${divId}-mimic-token-tile" class="card-token mimic-tile stockitem"></div>`;
+            dojo.place(html, divId);
+            div.classList.add('wickedness-tile-stock');
+            wickednessTiles.setDivAsCard(document.getElementById(`${divId}-mimic-token-tile`) as HTMLDivElement, 106);
+        } else {
+            const div = document.getElementById(divId);
+            const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+            
+            cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
 
-        div.dataset.placed = JSON.stringify(cardPlaced);
+            let html = `<div id="${divId}-mimic-token" style="left: ${cardPlaced.mimicToken.x - 16}px; top: ${cardPlaced.mimicToken.y - 16}px;" class="card-token mimic token"></div>`;
+            dojo.place(html, divId);
+
+            div.dataset.placed = JSON.stringify(cardPlaced);
+        }
     }
 
-    public removeMimicOnCard(stock: Stock, card: Card) {        
+    public removeMimicOnCard(type: 'card' | 'tile', stock: Stock, card: Card) { 
         const divId = `${stock.container_div.id}_item_${card.id}`;
         const div = document.getElementById(divId);
-        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
-        cardPlaced.mimicToken = null;
+        
+        if (type === 'tile') {
+            if (document.getElementById(`${divId}-mimic-token-tile`)) {
+                (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token-tile`);
+            }
+            div.classList.remove('wickedness-tile-stock');
+        } else {       
+            const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+            cardPlaced.mimicToken = null;
 
-        if (document.getElementById(`${divId}-mimic-token`)) {
-            (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+            if (document.getElementById(`${divId}-mimic-token`)) {
+                (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+            }
+
+            div.dataset.placed = JSON.stringify(cardPlaced);
         }
-
-        div.dataset.placed = JSON.stringify(cardPlaced);
     }
 
     private getPlaceOnCard(cardPlaced: CardPlacedTokens): PlacedTokens {
@@ -623,7 +640,7 @@ class Cards {
         }
     }
 
-    public changeMimicTooltip(mimicCardId: string, mimickedCard: Card) {
+    public getMimickedCardText(mimickedCard: Card): string {
         let mimickedCardText = '-';
         if (mimickedCard) {
             const tempDiv: HTMLDivElement = document.createElement('div');
@@ -646,6 +663,10 @@ class Cards {
             mimickedCardText = `<br>${tempDiv.outerHTML}`;
         }
 
+        return mimickedCardText;
+    }
+
+    public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {
         (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(27) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
     }
 }

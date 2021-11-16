@@ -24,4 +24,14 @@ trait WickednessTilesArgTrait {
         ];
     }
 
+    function argChangeMimickedCardWickednessTile() {
+        $playerId = self::getActivePlayerId();
+        return $this->getArgChooseMimickedCard($playerId, FLUXLING_WICKEDNESS_TILE);
+    }
+
+    function argChooseMimickedCardWickednessTile() {
+        $playerId = self::getActivePlayerId();
+        return $this->getArgChooseMimickedCard($playerId, FLUXLING_WICKEDNESS_TILE);
+    }
+
 }

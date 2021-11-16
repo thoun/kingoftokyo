@@ -75,6 +75,8 @@ trait WickednessTilesActionTrait {
 
         $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
 
+        // TODOWI can add smashes !!! change smash count and complete destruction
+
         $this->jumpToState($this->getRedirectAfterResolveNumberDice());
     }
 

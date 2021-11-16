@@ -351,10 +351,19 @@ class KingOfTokyo extends Table {
             if ($isWickednessExpansion) {
                 $playerDb['wickedness'] = intval($playerDb['wickedness']);
                 $result['playersWickednessTiles'][$playerId] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
+
+                foreach($result['playersWickednessTiles'][$playerId] as &$card) {
+                    if ($card->type == FLUXLING_WICKEDNESS_TILE) {
+                        $card->mimicType = $this->getMimickedCardType(FLUXLING_WICKEDNESS_TILE);
+                    }
+                }
             }
         }
 
-        $result['mimickedCard'] = $this->getMimickedCard(MIMIC_CARD);
+        $result['mimickedCards'] = [
+            'card' => $this->getMimickedCard(MIMIC_CARD),
+            'tile' => $this->getMimickedCard(FLUXLING_WICKEDNESS_TILE),
+        ];
 
         $result['leaveTokyoUnder'] = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));
         $result['stayTokyoOver'] = intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $current_player_id"));

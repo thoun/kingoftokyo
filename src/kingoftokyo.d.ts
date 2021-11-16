@@ -74,7 +74,10 @@ interface KingOfTokyoGamedatas {
     topDeckCardBackType: string;
     playersCards: { [playerId: number]: Card[] };
     playersWickednessTiles: { [playerId: number]: WickednessTile[] };
-    mimickedCard: Card | null;
+    mimickedCards: {
+        card: Card | null;
+        tile: Card | null;
+    } 
     leaveTokyoUnder: number;
     stayTokyoOver: number;
     twoPlayersVariant: boolean;
@@ -357,6 +360,7 @@ interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
 interface NotifSetCardTokensArgs {
     playerId: number;
     card: Card;
+    type: 'card' | 'tile';
 }
 
 interface NotifToggleRapidHealingArgs {
