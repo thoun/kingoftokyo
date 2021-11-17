@@ -351,6 +351,12 @@ class Koth extends Table {
             if ($isWickednessExpansion) {
                 $playerDb['wickedness'] = intval($playerDb['wickedness']);
                 $result['playersWickednessTiles'][$playerId] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
+
+                foreach($result['playersWickednessTiles'][$playerId] as &$card) {
+                    if ($card->type == FLUXLING_WICKEDNESS_TILE) {
+                        $card->mimicType = $this->getMimickedCardType(FLUXLING_WICKEDNESS_TILE);
+                    }
+                }
             }
         }
 
@@ -565,9 +571,9 @@ class Koth extends Table {
             self::applyDbUpgradeToAllDB($sql);
         }
  
-        if ($from_version <= 999999998) { // TODOWI
+        /*if ($from_version <= 999999998) { // TODOWI check for legacy and add uncomment migration line
             $sql = "UPDATE `DBPREFIX_global_variables` SET `name` = ".MIMICKED_CARD.MIMIC_CARD." WHERE `name` = ".MIMICKED_CARD;
             self::applyDbUpgradeToAllDB($sql);
-        }
+        }*/
     }
 }

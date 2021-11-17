@@ -162,6 +162,23 @@ $description-size: 7pt;
 
     .card-token {
         position: absolute;
+        z-index: 12;
+
+        &.mimic {
+            z-index: 13;
+        }
+
+        &.mimic-tile {
+            z-index: 11;
+
+            left: 0;
+            top: 32px;
+            width: 132px;
+            height: 82px; // TODOWI
+            background-image: url("img/green-wickedness-tiles.jpg"); 
+            background-position: -500% 0%;
+            margin: 0;
+        }
     }
 }
 

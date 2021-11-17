@@ -156,4 +156,19 @@ trait WickednessTilesUtilTrait {
         
         return false;
     }
+
+    function setTileTokens(int $playerId, $card, int $tokens, bool $silent = false) {
+        $card->tokens = $tokens;
+        self::DbQuery("UPDATE `wickedness_tile` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
+
+        if (!$silent) {
+            if ($card->type == FLUXLING_WICKEDNESS_TILE) {
+                $card->mimicType = $this->getMimickedCardType(FLUXLING_WICKEDNESS_TILE);
+            }
+            self::notifyAllPlayers("setTileTokens", '', [
+                'playerId' => $playerId,
+                'card' => $card,
+            ]);
+        }
+    }
 }

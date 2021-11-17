@@ -154,9 +154,12 @@ trait CardsActionTrait {
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
         $mimickedCardId = null;
+        $mimickedCardIdTile = null;
         if ($from > 0) {
-            $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);            
-            // If card bought from player, when having mimic token, keep mimic token ? Considered yes
+            $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
+            $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
+            
+            // If card bought from player, when having mimic token, card keep mimic token
             $this->removeCard($from, $card, true, false, true);
         }
         $this->cards->moveCard($id, 'hand', $playerId);
@@ -230,12 +233,17 @@ trait CardsActionTrait {
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
+        // If card bought from player, we put back mimic token
         if ($from > 0 && $mimickedCardId == $card->id) {
-            // If card bought from player, we put back mimic token
-
             self::notifyAllPlayers("setMimicToken", '', [
                 'card' => $card,
-                'type' => $this->getMimicStringTypeFromMimicCardType($mimicCard), // TODOWI value $mimicCard
+                'type' => $this->getMimicStringTypeFromMimicCardType(MIMIC_CARD),
+            ]);
+        }
+        if ($from > 0 && $mimickedCardIdTile == $card->id) {
+            self::notifyAllPlayers("setMimicToken", '', [
+                'card' => $card,
+                'type' => $this->getMimicStringTypeFromMimicCardType(FLUXLING_WICKEDNESS_TILE),
             ]);
         }
 

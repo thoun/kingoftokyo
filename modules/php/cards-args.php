@@ -190,21 +190,14 @@ trait CardsArgTrait {
         ];
     }
 
-
-    function argChangeMimickedCard() {
-        return $this->argChooseMimickedCard(true);
-    }
-
-    function argChooseMimickedCard($limitToOneEnergy = false) {
-        $playerId = self::getActivePlayerId();
-
-        $canChange = $limitToOneEnergy ? $this->getPlayerEnergy($playerId) >= 1 : true;
+    function getArgChooseMimickedCard(int $playerId, int $mimicCardType, int $selectionCost = null) {
+        $canChange = $selectionCost !== null ? $this->getPlayerEnergy($playerId) >= $selectionCost : true;
 
         $playersIds = $this->getPlayersIds();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(function ($card) { return $card->id; }, $cards);
-        $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
+        $mimickedCardId = $this->getMimickedCardId($mimicCardType);
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
@@ -220,6 +213,16 @@ trait CardsArgTrait {
             'disabledIds' => $disabledIds,
             'canChange' => $canChange,
         ];
+    }
+
+    function argChangeMimickedCard() {
+        $playerId = self::getActivePlayerId();
+        return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD, 1);
+    }
+
+    function argChooseMimickedCard() {
+        $playerId = self::getActivePlayerId();
+        return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD);
     }
 
     function argCancelDamage($playerId = null, $hasDice3 = false) {

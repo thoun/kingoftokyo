@@ -662,8 +662,8 @@ trait UtilTrait {
         self::DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
 
         // pirate
-        $pirateCards = $this->getCardsOfType($damageDealerId, PIRATE_CARD);
-        if (count($pirateCards) > 0 && $this->getPlayerEnergy($playerId) >= 1) {
+        $pirateCardCount = $this->countCardOfType($damageDealerId, PIRATE_CARD);
+        if ($pirateCardCount > 0 && $this->getPlayerEnergy($playerId) >= 1) {
             $this->applyLoseEnergy($playerId, 1, PIRATE_CARD);
             $this->applyGetEnergy($damageDealerId, 1, PIRATE_CARD);
         }

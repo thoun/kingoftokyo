@@ -773,6 +773,20 @@
 }
 .stockitem .card-token, #deck .card-token {
   position: absolute;
+  z-index: 12;
+}
+.stockitem .card-token.mimic, #deck .card-token.mimic {
+  z-index: 13;
+}
+.stockitem .card-token.mimic-tile, #deck .card-token.mimic-tile {
+  z-index: 11;
+  left: 0;
+  top: 32px;
+  width: 132px;
+  height: 82px;
+  background-image: url("img/green-wickedness-tiles.jpg");
+  background-position: -500% 0%;
+  margin: 0;
 }
 
 .energy-cube {

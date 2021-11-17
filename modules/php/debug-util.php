@@ -76,9 +76,10 @@ trait DebugUtilTrait {
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
         $this->initWickednessTiles(3);
-        $this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-        self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
-        //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
+        //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
+        //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+        $this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
+        $this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         $this->gamestate->changeActivePlayer(2343492);
 

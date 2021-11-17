@@ -1196,7 +1196,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.playerTables.forEach(playerTable => {
             if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
-                this.cards.placeMimicOnCard(type, playerTable.cards, card);
+                this.cards.placeMimicOnCard(type, playerTable.cards, card, this.wickednessTiles);
             }
         });
 
@@ -1212,7 +1212,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.playerTables.forEach(playerTable => {
             if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
-                this.cards.removeMimicOnCard(playerTable.cards, card);
+                this.cards.removeMimicOnCard(type, playerTable.cards, card);
             }
         });
     }
@@ -1711,6 +1711,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
             ['setCardTokens', 1],
+            ['setTileTokens', 1],
             ['removeCards', 1],
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
@@ -1918,6 +1919,11 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {
         this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
+    }
+
+    notif_setTileTokens(notif: Notif<NotifSetCardTokensArgs>) {
+        this.wickednessTiles.placeTokensOnTile(this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.card, notif.args.playerId);
+        // TODOWI test with smoke cloud & battery monster
     }
 
     notif_toggleRapidHealing(notif: Notif<NotifToggleRapidHealingArgs>) {
