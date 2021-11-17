@@ -2360,16 +2360,29 @@ var PreferencesManager = /** @class */ (function () {
     };
     return PreferencesManager;
 }());
+var WICKEDNESS_MONSTER_ICON_POSITION = [
+    [2, 270],
+    [35, 321],
+    [87, 316],
+    // TODOWI
+];
 var TableCenter = /** @class */ (function () {
-    function TableCenter(game, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {
+    function TableCenter(game, players, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {
+        var _this = this;
         this.game = game;
         this.wickednessTiles = [];
         this.wickednessTilesStocks = [];
+        this.wickednessPoints = new Map();
         this.createVisibleCards(visibleCards, topDeckCardBackType);
         if (game.isWickednessExpansion()) {
             dojo.place("<div id=\"wickedness-board\"></div>", 'full-board');
             document.getElementById('table-center').style.width = '622px';
             this.createWickednessTiles(wickednessTiles);
+            players.forEach(function (player) {
+                dojo.place("<div id=\"monster-icon-" + player.id + "\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div>", 'wickedness-board');
+                _this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
+            });
+            this.moveWickednessPoints();
         }
         if (game.isKingkongExpansion()) {
             dojo.place("<div id=\"tokyo-tower-0\" class=\"tokyo-tower-wrapper\"></div>", 'board');
@@ -2504,8 +2517,26 @@ var TableCenter = /** @class */ (function () {
             document.getElementById("wickedness-tiles-expanded-" + level).addEventListener('click', function () { return dojo.removeClass("wickedness-tiles-expanded-" + level, 'visible'); });
         });
     };
+    TableCenter.prototype.moveWickednessPoints = function () {
+        var _this = this;
+        this.wickednessPoints.forEach(function (wickedness, playerId) {
+            var markerDiv = document.getElementById("monster-icon-" + playerId);
+            var position = WICKEDNESS_MONSTER_ICON_POSITION[wickedness];
+            var topShift = 0;
+            var leftShift = 0;
+            _this.wickednessPoints.forEach(function (iWickedness, iPlayerId) {
+                if (iWickedness === wickedness && iPlayerId < playerId) {
+                    topShift += 5;
+                    leftShift += 5;
+                }
+            });
+            markerDiv.style.left = position[0] + leftShift + "px";
+            markerDiv.style.top = position[1] + topShift + "px";
+        });
+    };
     TableCenter.prototype.setWickedness = function (playerId, wickedness) {
-        // TODOWI
+        this.wickednessPoints.set(playerId, wickedness);
+        this.moveWickednessPoints();
     };
     TableCenter.prototype.getWickednessTilesStock = function (level) {
         return this.wickednessTilesStocks[level];
@@ -2604,7 +2635,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.createPlayerPanels(gamedatas);
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
+        this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint

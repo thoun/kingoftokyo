@@ -1,3 +1,11 @@
+
+const WICKEDNESS_MONSTER_ICON_POSITION = [
+    [2, 270],
+    [35, 321],
+    [87, 316],
+    // TODOWI
+];
+
 class TableCenter {
     private visibleCards: Stock;
     private curseCard: Stock;
@@ -5,14 +13,21 @@ class TableCenter {
     private wickednessTiles: WickednessTile[][] = [];
     private wickednessTilesStocks: Stock[] = [];
     private tokyoTower: TokyoTower;
+    private wickednessPoints = new Map<number, number>();
 
-    constructor(private game: KingOfTokyoGame, visibleCards: Card[], topDeckCardBackType: string, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card) {        
+    constructor(private game: KingOfTokyoGame, players: KingOfTokyoPlayer[], visibleCards: Card[], topDeckCardBackType: string, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card) {        
         this.createVisibleCards(visibleCards, topDeckCardBackType);
 
         if (game.isWickednessExpansion()) {
             dojo.place(`<div id="wickedness-board"></div>`, 'full-board');
             document.getElementById('table-center').style.width = '622px';
             this.createWickednessTiles(wickednessTiles);
+
+            players.forEach(player => {
+                dojo.place(`<div id="monster-icon-${player.id}" class="monster-icon monster${player.monster}" style="background-color: #${player.color};"></div>`, 'wickedness-board');
+                this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
+            });
+            this.moveWickednessPoints();
         }
 
         if (game.isKingkongExpansion()) {
@@ -178,9 +193,30 @@ class TableCenter {
             document.getElementById(`wickedness-tiles-expanded-${level}`).addEventListener('click', () => dojo.removeClass(`wickedness-tiles-expanded-${level}`, 'visible'));
         });
     }
+
+    private moveWickednessPoints() {
+        this.wickednessPoints.forEach((wickedness, playerId) => {
+            const markerDiv = document.getElementById(`monster-icon-${playerId}`);
+
+            const position = WICKEDNESS_MONSTER_ICON_POSITION[wickedness];
+    
+            let topShift = 0;
+            let leftShift = 0;
+            this.wickednessPoints.forEach((iWickedness, iPlayerId) => {
+                if (iWickedness === wickedness && iPlayerId < playerId) {
+                    topShift += 5;
+                    leftShift += 5;
+                }
+            });
+    
+            markerDiv.style.left = `${position[0] + leftShift}px`;
+            markerDiv.style.top = `${position[1] + topShift}px`;
+        });
+    }
     
     public setWickedness(playerId: number, wickedness: number) {
-        // TODOWI
+        this.wickednessPoints.set(playerId, wickedness);
+        this.moveWickednessPoints();
     }
 
     public getWickednessTilesStock(level: number): Stock {
