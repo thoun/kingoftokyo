@@ -957,13 +957,13 @@
   display: inline-block;
 }
 #table #table-center #full-board #wickedness-board #wickedness-tiles-reduced-3 {
-  top: 300px;
+  top: 258px;
 }
 #table #table-center #full-board #wickedness-board #wickedness-tiles-reduced-6 {
-  top: 180px;
+  top: 141px;
 }
 #table #table-center #full-board #wickedness-board #wickedness-tiles-reduced-10 {
-  top: 60px;
+  top: 6px;
 }
 #table #table-center #full-board #wickedness-board #wickedness-tiles-expanded-3 {
   bottom: 10px;
@@ -978,13 +978,14 @@
   position: absolute;
   left: 174px;
   width: 26px;
-  height: 100px;
+  height: 80px;
 }
 #table #table-center #full-board #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile {
   position: absolute;
   width: 26px;
-  height: 100px;
+  height: 80px;
   background: url("img/green-wickedness-tiles.jpg");
+  border-radius: 10px;
 }
 #table #table-center #full-board #wickedness-board .wickedness-tiles-expanded {
   position: absolute;
