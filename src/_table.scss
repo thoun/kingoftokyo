@@ -138,13 +138,13 @@
                 display: inline-block;
 
                 #wickedness-tiles-reduced-3 {
-                    top: 300px;
+                    top: 258px;
                 }
                 #wickedness-tiles-reduced-6 {
-                    top: 180px;
+                    top: 141px;
                 }
                 #wickedness-tiles-reduced-10 {
-                    top: 60px;
+                    top: 6px;
                 }
 
                 #wickedness-tiles-expanded-3 {
@@ -162,13 +162,14 @@
                     position: absolute;
                     left: 174px;
                     width: 26px;
-                    height: 100px;
+                    height: 80px; // TODOWI
 
                     .wickedness-tiles-reduced-tile {
                         position: absolute;
                         width: 26px;
-                        height: 100px;
+                        height: 80px; // TODOWI
                         background: url('img/green-wickedness-tiles.jpg');
+                        border-radius: 10px;
                     }
                 }
 
