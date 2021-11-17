@@ -204,6 +204,23 @@
                         }
                     }
                 }
+
+                .monster-icon {
+                    position: absolute;
+                    width: 32px;
+                    height: 32px;
+                    background: url('img/monster-icons.png');
+                    background-size: auto 100%;
+                    border-radius: 50px;
+                    box-shadow: 0px 0px 3px 2px black;
+                    transition: left 0.5s, top 0.5s;
+
+                    @for $i from 1 through 13 {
+                        &.monster#{$i} {
+                            background-position: (($i - 1) * 100% / 12) 50%;
+                        }
+                    }
+                }
             }
         }
     }
