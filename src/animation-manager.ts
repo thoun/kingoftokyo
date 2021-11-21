@@ -35,6 +35,9 @@ class AnimationManager {
     }
 
     private addDiceAnimation(diceValue: number, playerIds: number[], number: number, targetToken?: TokenType) {
+        if (document.visibilityState === 'hidden' || (this.game as any).instantaneousMode) {
+            return;
+        }
         let dice = this.getDice(diceValue);
 
         const originTop = document.getElementById(dice[0] ? `dice${dice[0].id}` : 'dice-selector').getBoundingClientRect().top;

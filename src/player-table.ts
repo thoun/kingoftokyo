@@ -94,11 +94,11 @@ class PlayerTable {
     }
 
     public enterTokyo(location: number) {        
-        transitionToObjectAndAttach(document.getElementById(`monster-figure-${this.playerId}`), `tokyo-${location == 2 ? 'bay' : 'city'}`, this.game.getZoom());
+        transitionToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `tokyo-${location == 2 ? 'bay' : 'city'}`, this.game.getZoom());
     }
 
     public leaveTokyo() {  
-        transitionToObjectAndAttach(document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}-figure-wrapper`, this.game.getZoom());
+        transitionToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}-figure-wrapper`, this.game.getZoom());
     }
 
     public removeCards(cards: Card[]) {

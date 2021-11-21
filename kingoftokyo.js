@@ -5,41 +5,53 @@ function slideToObjectAndAttach(game, object, destinationId, posX, posY) {
         if (destination.contains(object)) {
             return resolve(false);
         }
-        object.style.zIndex = '10';
-        var animation = (posX || posY) ?
-            game.slideToObjectPos(object, destinationId, posX, posY) :
-            game.slideToObject(object, destinationId);
-        dojo.connect(animation, 'onEnd', dojo.hitch(_this, function () {
-            object.style.top = 'unset';
-            object.style.left = 'unset';
-            object.style.position = 'relative';
-            object.style.zIndex = 'unset';
+        if (document.visibilityState === 'hidden' || game.instantaneousMode) {
             destination.appendChild(object);
             resolve(true);
-        }));
-        animation.play();
+        }
+        else {
+            object.style.zIndex = '10';
+            var animation = (posX || posY) ?
+                game.slideToObjectPos(object, destinationId, posX, posY) :
+                game.slideToObject(object, destinationId);
+            dojo.connect(animation, 'onEnd', dojo.hitch(_this, function () {
+                object.style.top = 'unset';
+                object.style.left = 'unset';
+                object.style.position = 'relative';
+                object.style.zIndex = 'unset';
+                destination.appendChild(object);
+                resolve(true);
+            }));
+            animation.play();
+        }
     });
 }
-function transitionToObjectAndAttach(object, destinationId, zoom) {
+function transitionToObjectAndAttach(game, object, destinationId, zoom) {
     return new Promise(function (resolve) {
         var destination = document.getElementById(destinationId);
         if (destination.contains(object)) {
             return resolve(false);
         }
-        var destinationBR = document.getElementById(destinationId).getBoundingClientRect();
-        var originBR = object.getBoundingClientRect();
-        var deltaX = destinationBR.left - originBR.left;
-        var deltaY = destinationBR.top - originBR.top;
-        object.style.zIndex = '10';
-        object.style.transition = "transform 0.5s linear";
-        object.style.transform = "translate(" + deltaX / zoom + "px, " + deltaY / zoom + "px)";
-        setTimeout(function () {
-            object.style.zIndex = null;
-            object.style.transition = null;
-            object.style.transform = null;
+        if (document.visibilityState === 'hidden' || game.instantaneousMode) {
             destination.appendChild(object);
             resolve(true);
-        }, 500);
+        }
+        else {
+            var destinationBR = document.getElementById(destinationId).getBoundingClientRect();
+            var originBR = object.getBoundingClientRect();
+            var deltaX = destinationBR.left - originBR.left;
+            var deltaY = destinationBR.top - originBR.top;
+            object.style.zIndex = '10';
+            object.style.transition = "transform 0.5s linear";
+            object.style.transform = "translate(" + deltaX / zoom + "px, " + deltaY / zoom + "px)";
+            setTimeout(function () {
+                object.style.zIndex = null;
+                object.style.transition = null;
+                object.style.transform = null;
+                destination.appendChild(object);
+                resolve(true);
+            }, 500);
+        }
     });
 }
 function formatTextIcons(rawText) {
@@ -840,10 +852,10 @@ var PlayerTable = /** @class */ (function () {
         }
     };
     PlayerTable.prototype.enterTokyo = function (location) {
-        transitionToObjectAndAttach(document.getElementById("monster-figure-" + this.playerId), "tokyo-" + (location == 2 ? 'bay' : 'city'), this.game.getZoom());
+        transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "tokyo-" + (location == 2 ? 'bay' : 'city'), this.game.getZoom());
     };
     PlayerTable.prototype.leaveTokyo = function () {
-        transitionToObjectAndAttach(document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId + "-figure-wrapper", this.game.getZoom());
+        transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId + "-figure-wrapper", this.game.getZoom());
     };
     PlayerTable.prototype.removeCards = function (cards) {
         var _this = this;
@@ -1820,6 +1832,9 @@ var AnimationManager = /** @class */ (function () {
     };
     AnimationManager.prototype.addDiceAnimation = function (diceValue, playerIds, number, targetToken) {
         var _this = this;
+        if (document.visibilityState === 'hidden' || this.game.instantaneousMode) {
+            return;
+        }
         var dice = this.getDice(diceValue);
         var originTop = document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector').getBoundingClientRect().top;
         var leftDieBR = document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector').getBoundingClientRect();
