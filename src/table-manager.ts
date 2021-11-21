@@ -45,7 +45,15 @@ class TableManager {
 
         this.setPlayerTables(playerTables);
 
-        (this.game as any).onScreenWidthChange = () => this.setAutoZoomAndPlacePlayerTables();
+        (this.game as any).onScreenWidthChange = () => {
+            this.setAutoZoomAndPlacePlayerTables();
+
+            let backgroundPositionY = 0;
+            if (document.body.classList.contains('mobile_version')) {
+                backgroundPositionY = 62 + document.getElementById('right-side').getBoundingClientRect().height;
+            }
+            document.getElementsByTagName(('html'))[0].style.backgroundPositionY = `${backgroundPositionY}px`; 
+        };
     }
 
     private setPlayerTables(playerTables: PlayerTable[]) {
