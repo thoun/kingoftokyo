@@ -35,19 +35,21 @@ $game_options = [
             ],
             2 => [
                 'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Halloween event (Costume cards)'),
             ],
         ],
         'default' => 1,
     ],
 
     /* TODOCT CTHULHU_EXPANSION_OPTION => [
-        'name' => totranslate('Cthlhu event (Cultists)'),
+        'name' => totranslate('Cthulhu event (Cultists)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Cthulhu event (Cultists)'),
             ],
         ],
         'default' => 1,
@@ -133,7 +135,8 @@ $game_options = [
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
-                'description' => totranslate("Only monsters from game version")
+                'description' => totranslate("Only monsters from game version"),
+                'tmdisplay' => totranslate('Only monsters from game version'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
