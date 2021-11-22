@@ -30,6 +30,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         
     public SHINK_RAY_TOKEN_TOOLTIP: string;
     public POISON_TOKEN_TOOLTIP: string;
+    public CULTIST_TOOLTIP: string;
 
     constructor() {
     }
@@ -128,16 +129,16 @@ class KingOfTokyo implements KingOfTokyoGame {
             <h3>${_("Berserk mode")}</h3>
             <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
-            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCT check if healed by Healing Ray       
+            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCY check if healed by Healing Ray       
         }*/
 
-        /* TODOCT if (gamedatas.cthulhuExpansion) {
-            const tooltip = formatTextIcons(`
+        if (gamedatas.cthulhuExpansion) {
+            this.CULTIST_TOOLTIP = formatTextIcons(`
             <h3>${_("Cultists")}</h3>
             <p>${_("After resolving your dice, if you rolled four identical faces, take a Cultist tile")}</p>
             <p>${_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.")}</p>`);
-            (this as any).addTooltipHtmlToClass('cultist-tooltip', tooltip);     
-        }*/
+            (this as any).addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
+        }
 
         log( "Ending game setup" );
     }
@@ -384,7 +385,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     const rapidHealingCount = args.damageToCancelToSurvive - cultistCount;
                     const cardsNames = [];
                     if (cultistCount > 0) {
-                        cardsNames.push(/* TODOCT_(*/'Cultist'/*)*/);
+                        cardsNames.push(_('Cultist'));
                     }
                     if (rapidHealingCount > 0) {
                         cardsNames.push(_(this.cards.getCardName(37, 'text-only')));
@@ -747,7 +748,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                 if (gamedatas.kingkongExpansion) {
                     html += `
-                    <div class="counter tokyo-tower-tooltip">
+                    <div id="tokyo-tower-counter-wrapper-${player.id}" class="counter tokyo-tower-tooltip">
                         <div class="tokyo-tower-icon-wrapper"><div class="tokyo-tower-icon"></div></div>
                         <span id="tokyo-tower-counter-${player.id}"></span>&nbsp;/&nbsp;3
                     </div>`;
@@ -755,16 +756,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                 if (gamedatas.cybertoothExpansion) {
                     html += `
-                    <div class="counter">
+                    <div id="berserk-counter-wrapper-${player.id}" class="counter berserk-tooltip">
                         <div class="berserk-icon-wrapper">
-                            <div id="player-panel-berserk-${player.id}" class="berserk icon ${player.berserk ? 'active' : ''} berserk-tooltip"></div>
+                            <div id="player-panel-berserk-${player.id}" class="berserk icon ${player.berserk ? 'active' : ''}"></div>
                         </div>
                     </div>`;
                 }
 
                 if (gamedatas.cthulhuExpansion) {
                     html += `
-                    <div class="counter cultist-tooltip">
+                    <div id="cultist-counter-wrapper-${player.id}" class="counter cultist-tooltip">
                         <div class="icon cultist"></div>
                         <span id="cultist-counter-${player.id}"></span>
                     </div>`;
@@ -941,11 +942,11 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private addRapidCultistButtons(isMaxHealth: boolean) {
         if (!document.getElementById('rapidCultistButtons')) {
-            dojo.place(`<div id="rapidCultistButtons"><span>${dojo.string.substitute(_('Use ${card_name}'), { card_name: /* TODOCT_(*/'Cultist'/*)*/ })} :</span></div>`, 'rapid-actions-wrapper');
+            dojo.place(`<div id="rapidCultistButtons"><span>${dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') })} :</span></div>`, 'rapid-actions-wrapper');
             this.createButton(
                 'rapidCultistButtons', 
                 'rapidCultistHealthButton', 
-                formatTextIcons(`${dojo.string.substitute(/* TODOCT_(*/'Gain ${hearts}[Heart]'/*)*/, { hearts: 1})}`), 
+                formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1})}`), 
                 () => this.useRapidCultist(4), 
                 isMaxHealth
             );
@@ -953,7 +954,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'rapidCultistButtons', 
                 'rapidCultistEnergyButton', 
-                formatTextIcons(`${dojo.string.substitute(/* TODOCT_(*/'Gain ${energy}[Energy]'/*)*/, { energy: 1})}`), 
+                formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1})}`), 
                 () => this.useRapidCultist(5)
             );
         }
@@ -1962,10 +1963,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.cultistCounters[playerId].toValue(cultists);
         this.getPlayerTable(playerId)?.setCultistTokens(cultists);
 
-        if (cultists > 0) {
-            this.addRapidCultistButtons(isMaxHealth);
-        } else {        
-            this.removeRapidCultistButtons();
+        if (playerId == this.getPlayerId()) {
+            if (cultists > 0) {
+                this.addRapidCultistButtons(isMaxHealth);
+            } else {        
+                this.removeRapidCultistButtons();
+            }
         }
     }
 

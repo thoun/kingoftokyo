@@ -203,7 +203,7 @@ trait PlayerUtilTrait {
 
         $diceStr = $this->getDieFaceLogName($dieValue);
 
-        $message = ''; // TODOCT clienttranslate('${player_name} gains 1 cultist with 4 or more ${dice}');
+        $message = clienttranslate('${player_name} gains 1 cultist with 4 or more ${dice}');
         self::notifyAllPlayers('cultist', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
@@ -211,6 +211,8 @@ trait PlayerUtilTrait {
             'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
             'dice' => $diceStr,
         ]);
+
+        self::incStat(1, 'gainedCultists', $playerId);
     }
 
     function applyLoseCultist(int $playerId, string $message) {
@@ -244,16 +246,18 @@ trait PlayerUtilTrait {
             throw new \BgaUserException('You can\'t heal when you\'re dead');
         }
 
-        if ($this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId)) {
+        if ($type == 4 && $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId)) {
             throw new \BgaUserException('You can\'t heal when you\'re already at full life');
         }
 
         if ($type == 4) {
             $this->applyGetHealth($playerId, 1, 0, $playerId);
-            $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1[Heart]'/*)*/);
+            $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1[Heart]'));
+            self::incStat(1, 'cultistHeal', $playerId);
         } else if ($type == 5) {
             $this->applyGetEnergy($playerId, 1, 0);
-            $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1[Energy]'/*)*/);
+            $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1[Energy]'));
+            self::incStat(1, 'cultistEnergy', $playerId);
         }
     }
 }

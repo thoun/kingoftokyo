@@ -1035,9 +1035,11 @@
   z-index: 4;
   width: 65px;
   height: 170px;
+  pointer-events: none;
 }
 #table .player-table .token-wrapper .token {
   position: absolute;
+  pointer-events: all;
 }
 #table .player-table .token-wrapper.poison {
   left: -15px;
@@ -1084,7 +1086,7 @@
   left: 60px;
   width: 155px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
 }
 #table .player-table .cultist-tokens .cultist-token {
   background: url("img/cultist-tile.png");

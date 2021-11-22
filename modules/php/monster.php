@@ -12,16 +12,20 @@ trait MonsterTrait {
     private function getGameMonsters() {
         $bonusMonsters = intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
 
+        // Base game monsters : Space Penguin, Alienoid, Cyber Kitty, The King, Gigazaur, Meka Dragon
         $monsters = [1,2,3,4,5,6];
 
+        // Boogie Woogie, Pumpkin Jack
         if ($bonusMonsters || $this->isHalloweenExpansion()) {
             $monsters = array_merge($monsters, [7,8]);
         }
 
-        /*if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
+        // Cthulhu, Anubis
+        /* TODOCT if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
             $monsters = array_merge($monsters, [9, 10]);
         }*/
 
+        // King Kong,  Cybertooth
         /* TODOKK/TODOCY if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
             $monsters = array_merge($monsters, [11, 12]);
         }*/

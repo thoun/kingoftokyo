@@ -39,22 +39,25 @@ $game_options = [
             ],
         ],
         'default' => 1,
-    ],
 
-    /* TODOCT CTHULHU_EXPANSION_OPTION => [
-        'name' => totranslate('Cthulhu event (Cultists)'),
-        'values' => [
-            1 => [
-                'name' => totranslate('Disabled'),
+        'fake' => [
+
+            CTHULHU_EXPANSION_OPTION => [ // TODOCT
+                'name' => totranslate('Battle of the Gods (part I) event (Cultists)'), // 'Cthlhu event (Cultists)'
+                'values' => [
+                    1 => [
+                        'name' => totranslate('Disabled'),
+                    ],
+                    2 => [
+                        'name' => totranslate('Enabled'),
+                        'tmdisplay' => totranslate('Battle of the Gods (part I) event (Cultists)'),
+                    ],
+                ],
+                'default' => 1,
             ],
-            2 => [
-                'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('Cthulhu event (Cultists)'),
-            ],
-        ],
-        'default' => 1,
+
+        ]
     ],
-    */
 
     // TODO Wickedness game mechanics ?
 

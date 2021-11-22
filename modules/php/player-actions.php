@@ -80,7 +80,8 @@ trait PlayerActionTrait {
             throw new \BgaUserException('No cultist');
         }
         
-    $this->applyLoseCultist($playerId, /* TODOCT clienttranslate(*/'${player_name} use a Cultist to gain 1 extra roll'/*)*/);
+        $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1 extra roll'));
+        self::incStat(1, 'cultistReroll', $playerId);
         
         $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS)) + 1;
         self::setGameStateValue(EXTRA_ROLLS, $extraRolls);
