@@ -39,24 +39,29 @@ $game_options = [
             ],
         ],
         'default' => 1,
+    ],
 
-        'fake' => [
-
-            CTHULHU_EXPANSION_OPTION => [ // TODOCT
-                'name' => totranslate('Battle of the Gods (part I) event (Cultists)'), // 'Cthlhu event (Cultists)'
-                'values' => [
-                    1 => [
-                        'name' => totranslate('Disabled'),
-                    ],
-                    2 => [
-                        'name' => totranslate('Enabled'),
-                        'tmdisplay' => totranslate('Battle of the Gods (part I) event (Cultists)'),
-                    ],
-                ],
-                'default' => 1,
+    CTHULHU_EXPANSION_OPTION => [
+        'name' => totranslate('Battle of the Gods (part I) event (Cultists)'), // 'Cthlhu event (Cultists)'
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
             ],
-
-        ]
+            2 => [
+                'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Battle of the Gods (part I) event (Cultists)'),
+            ],
+        ],
+        'default' => 1,
+        'startcondition' => [ // TODOCT
+            2 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Battle of the Gods (part I) event will be available from Friday, Novmber 26th at 11:00',
+                ] 
+            ],
+        ],
     ],
 
     // TODO Wickedness game mechanics ?
