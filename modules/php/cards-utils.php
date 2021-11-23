@@ -328,7 +328,10 @@ trait CardsUtilTrait {
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
 
-        return max($cardCost - $countAlienOrigin, 0);
+        // inadequate offering
+        $inadequateOffering = $this->isAnubisExpansion() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;
+
+        return max($cardCost + $inadequateOffering - $countAlienOrigin, 0);
     }
 
     function canBuyCard($playerId, $cost) {
@@ -770,9 +773,13 @@ trait CardsUtilTrait {
         // TODOAN notif
     }
 
+    function getPlayerIdWithGoldenScarab() {
+        return intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+    }
+
     function getPlayersIdsWithoutGoldenScarab() {
         $playerIds = $this->getPlayersIds();
-        $playerWithGoldenScarab = intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+        $playerWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
         return array_values(array_filter($playerIds, function ($playerId) use ($playerWithGoldenScarab) { return $playerId != $playerWithGoldenScarab; }));
     }
 }

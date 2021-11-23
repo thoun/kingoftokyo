@@ -260,4 +260,54 @@ trait PlayerUtilTrait {
             self::incStat(1, 'cultistEnergy', $playerId);
         }
     }
+
+    function canGainHealth(int $playerId) {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == ISIS_S_DISGRACE_CURSE_CARD) {
+                if ($playerId != $this->getPlayerIdWithGoldenScarab()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function canGainEnergy(int $playerId) {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == THOT_S_BLINDNESS_CURSE_CARD) {
+                if ($playerId != $this->getPlayerIdWithGoldenScarab()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function canGainPoints(int $playerId) {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == TUTANKHAMUN_S_CURSE_CURSE_CARD) {
+                if ($playerId != $this->getPlayerIdWithGoldenScarab()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function canYieldTokyo() {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == PHARAONIC_EGO_CURSE_CARD) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

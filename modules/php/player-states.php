@@ -169,6 +169,11 @@ trait PlayerStateTrait {
     }
 
     function stLeaveTokyo() {
+        if ($this->autoSkipImpossibleActions() && !$this->argLeaveTokyo()['canYieldTokyo']) {
+            $this->gamestate->nextState('resume');
+            return;
+        }
+
         $smashedPlayersInTokyo = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
         $aliveSmashedPlayersInTokyo = [];
 

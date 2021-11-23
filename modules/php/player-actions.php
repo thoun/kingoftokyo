@@ -49,12 +49,18 @@ trait PlayerActionTrait {
     function actionLeaveTokyo() {
         $this->checkAction('leave');
 
+        if (!$this->canYieldTokyo()) {
+            throw new \BgaUserException('Impossible to yield Tokyo');
+        }
+
         $playerId = self::getCurrentPlayerId();
 
         $this->applyActionLeaveTokyo($playerId);
     }
 
     function applyActionLeaveTokyo(int $playerId) {
+
+
         $this->leaveTokyo($playerId);
         $this->addLeaverWithBurrowing($playerId);
     

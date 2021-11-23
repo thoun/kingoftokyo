@@ -209,6 +209,7 @@ interface EnteringLeaveTokyoArgs {
     _private?: {
         skipBuyPhase: boolean;
     };
+    canYieldTokyo: boolean;
 }
 
 interface NotifPickMonsterArgs {

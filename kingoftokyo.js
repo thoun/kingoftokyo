@@ -722,8 +722,13 @@ var CurseCards = /** @class */ (function () {
     CurseCards.prototype.getPermanentEffect = function (cardTypeId) {
         switch (cardTypeId) {
             // TODOAN
+            case 2: return "Monsters cannot Yield Tokyo/Manhattan."; // TODOAN keep manhattan ?
+            case 2: return "Monsters without the Golden Scarab cannot gain [Heart].";
+            case 3: return "Monsters without the Golden Scarab cannot gain [Energy].";
+            case 4: return "Monsters without the Golden Scarab cannot gain [Star].";
             case 8: return "At the start of your turn, lose 1[Heart].";
             case 9: return "At the start of your turn, lose 2[Star].";
+            case 10: return "Cards cost 2 extra [Energy].";
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15:
@@ -2693,6 +2698,10 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     this.addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
                     this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
+                    if (!argsLeaveTokyo.canYieldTokyo) {
+                        this.startActionTimer('stayInTokyo_button', 5);
+                        dojo.addClass('leaveTokyo_button', 'disabled');
+                    }
                     break;
                 case 'stealCostumeCard':
                     var argsStealCostumeCard = args;

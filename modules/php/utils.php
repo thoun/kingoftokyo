@@ -69,7 +69,7 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {
@@ -411,6 +411,10 @@ trait UtilTrait {
     // $cardType = -1 => no notification
 
     function applyGetPoints(int $playerId, int $points, int $cardType) {
+        if (!$this->canGainPoints($playerId)) {
+            return;
+        }
+
         $newPoints = $points;
 
         $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
@@ -456,6 +460,9 @@ trait UtilTrait {
     }
 
     function applyGetHealth(int $playerId, int $health, int $cardType, int $healerId) {
+        if (!$this->canGainHealth($playerId)) {
+            return;
+        }
 
         $this->applyGetHealthIgnoreCards($playerId, $health, $cardType, $healerId);
         
@@ -619,6 +626,10 @@ trait UtilTrait {
     }
 
     function applyGetEnergy(int $playerId, int $energy, int $cardType) {
+        if (!$this->canGainEnergy($playerId)) {
+            return;
+        }
+
         $this->applyGetEnergyIgnoreCards($playerId, $energy, $cardType);
 
         // friend of children

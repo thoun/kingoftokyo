@@ -582,6 +582,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
                     (this as any).addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
                     (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
+                    if (!argsLeaveTokyo.canYieldTokyo) {
+                        this.startActionTimer('stayInTokyo_button', 5);
+                        dojo.addClass('leaveTokyo_button', 'disabled');
+                    }
                     break;
 
                 case 'stealCostumeCard':

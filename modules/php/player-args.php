@@ -44,6 +44,7 @@ trait PlayerArgTrait {
                     'skipBuyPhase' => boolval(self::getGameStateValue(SKIP_BUY_PHASE)),
                 ]
             ],
+            'canYieldTokyo' => $this->canYieldTokyo(),
         ];
     }
 
