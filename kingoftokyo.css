@@ -986,20 +986,21 @@
 }
 #table #table-center #full-board #wickedness-board .wickedness-tiles-reduced {
   position: absolute;
-  left: 174px;
-  width: 26px;
+  left: 145px;
+  width: 132px;
   height: 80px;
 }
 #table #table-center #full-board #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile {
   position: absolute;
-  width: 26px;
+  margin: 0;
+  width: 132px;
   height: 80px;
   background: url("img/green-wickedness-tiles.jpg");
   border-radius: 10px;
 }
 #table #table-center #full-board #wickedness-board .wickedness-tiles-expanded {
   position: absolute;
-  left: 174px;
+  left: 145px;
   width: 142px;
   background: white;
   border-radius: 8px;
