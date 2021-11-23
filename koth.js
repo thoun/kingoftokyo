@@ -1275,14 +1275,10 @@ var PlayerTable = /** @class */ (function () {
     };
     return PlayerTable;
 }());
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
@@ -1335,7 +1331,7 @@ var TableManager = /** @class */ (function () {
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
         if (playerIndex > 0) { // not spectator (or 0)            
-            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex), true), playerTablesOrdered.slice(0, playerIndex), true);
+            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
         }
         else { // spectator
             this.playerTables = playerTablesOrdered;
@@ -2376,7 +2372,7 @@ var TableCenter = /** @class */ (function () {
         this.createVisibleCards(visibleCards, topDeckCardBackType);
         if (game.isWickednessExpansion()) {
             dojo.place("<div id=\"wickedness-board\"></div>", 'full-board');
-            document.getElementById('table-center').style.width = '622px';
+            document.getElementById('table-center').style.width = '700px';
             this.createWickednessTiles(wickednessTiles);
             players.forEach(function (player) {
                 dojo.place("<div id=\"monster-icon-" + player.id + "\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div>", 'wickedness-board');
@@ -2500,7 +2496,7 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         WICKEDNESS_LEVELS.forEach(function (level) {
             _this.wickednessTiles[level] = wickednessTiles.filter(function (tile) { return _this.game.wickednessTiles.getCardLevel(tile.type) === level; });
-            var html = "<div id=\"wickedness-tiles-reduced-" + level + "\" class=\"wickedness-tiles-reduced\"></div>\n            <div id=\"wickedness-tiles-expanded-" + level + "\" class=\"wickedness-tiles-expanded\">\n                <div id=\"wickedness-tiles-expanded-" + level + "-close\" class=\"close\">\u2716</div>\n                <div id=\"wickedness-tiles-expanded-" + level + "-stock\" class=\"wickedness-tile-stock table-wickedness-tiles\"></div>\n            </div>";
+            var html = "<div id=\"wickedness-tiles-reduced-" + level + "\" class=\"wickedness-tiles-reduced wickedness-tile-stock\"></div>\n            <div id=\"wickedness-tiles-expanded-" + level + "\" class=\"wickedness-tiles-expanded\">\n                <div id=\"wickedness-tiles-expanded-" + level + "-close\" class=\"close\">\u2716</div>\n                <div id=\"wickedness-tiles-expanded-" + level + "-stock\" class=\"wickedness-tile-stock table-wickedness-tiles\"></div>\n            </div>";
             dojo.place(html, 'wickedness-board');
             _this.setReducedWickednessTiles(level);
             document.getElementById("wickedness-tiles-reduced-" + level).addEventListener('click', function () { return _this.showWickednessTiles(level); });
@@ -2564,9 +2560,11 @@ var TableCenter = /** @class */ (function () {
         }
     };
     TableCenter.prototype.setReducedWickednessTiles = function (level) {
+        var _this = this;
         document.getElementById("wickedness-tiles-reduced-" + level).innerHTML = '';
         this.wickednessTiles[level].forEach(function (tile, index) {
-            dojo.place("<div id=\"wickedness-tiles-reduced-tile-" + tile.id + "\" class=\"wickedness-tiles-reduced-tile\" style=\"left: " + index * 10 + "px; top: " + index * 10 + "px;\"></div>", "wickedness-tiles-reduced-" + level);
+            dojo.place("<div id=\"wickedness-tiles-reduced-tile-" + tile.id + "\" class=\"stockitem wickedness-tiles-reduced-tile\" style=\"left: " + index * 5 + "px; top: " + index * 5 + "px;\"></div>", "wickedness-tiles-reduced-" + level);
+            _this.game.wickednessTiles.setDivAsCard(document.getElementById("wickedness-tiles-reduced-tile-" + tile.id), tile.type);
         });
     };
     TableCenter.prototype.removeReducedWickednessTile = function (level, removedTile) {

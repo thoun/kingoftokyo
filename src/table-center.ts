@@ -20,7 +20,7 @@ class TableCenter {
 
         if (game.isWickednessExpansion()) {
             dojo.place(`<div id="wickedness-board"></div>`, 'full-board');
-            document.getElementById('table-center').style.width = '622px';
+            document.getElementById('table-center').style.width = '700px';
             this.createWickednessTiles(wickednessTiles);
 
             players.forEach(player => {
@@ -168,7 +168,7 @@ class TableCenter {
         WICKEDNESS_LEVELS.forEach(level => {
             this.wickednessTiles[level] = wickednessTiles.filter(tile => this.game.wickednessTiles.getCardLevel(tile.type) === level);
 
-            let html = `<div id="wickedness-tiles-reduced-${level}" class="wickedness-tiles-reduced"></div>
+            let html = `<div id="wickedness-tiles-reduced-${level}" class="wickedness-tiles-reduced wickedness-tile-stock"></div>
             <div id="wickedness-tiles-expanded-${level}" class="wickedness-tiles-expanded">
                 <div id="wickedness-tiles-expanded-${level}-close" class="close">✖</div>
                 <div id="wickedness-tiles-expanded-${level}-stock" class="wickedness-tile-stock table-wickedness-tiles"></div>
@@ -248,7 +248,8 @@ class TableCenter {
     public setReducedWickednessTiles(level: number) {
         document.getElementById(`wickedness-tiles-reduced-${level}`).innerHTML = '';
         this.wickednessTiles[level].forEach((tile, index) => {
-            dojo.place(`<div id="wickedness-tiles-reduced-tile-${tile.id}" class="wickedness-tiles-reduced-tile" style="left: ${index*10}px; top: ${index*10}px;"></div>`, `wickedness-tiles-reduced-${level}`);
+            dojo.place(`<div id="wickedness-tiles-reduced-tile-${tile.id}" class="stockitem wickedness-tiles-reduced-tile" style="left: ${index*5}px; top: ${index*5}px;"></div>`, `wickedness-tiles-reduced-${level}`);
+            this.game.wickednessTiles.setDivAsCard(document.getElementById(`wickedness-tiles-reduced-tile-${tile.id}`) as HTMLDivElement, tile.type);
         });
     }
 
