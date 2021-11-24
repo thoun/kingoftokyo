@@ -722,7 +722,7 @@ var CurseCards = /** @class */ (function () {
     CurseCards.prototype.getPermanentEffect = function (cardTypeId) {
         switch (cardTypeId) {
             // TODOAN
-            case 2: return "Monsters cannot Yield Tokyo/Manhattan."; // TODOAN keep manhattan ?
+            case 1: return "Monsters cannot Yield Tokyo/Manhattan."; // TODOAN keep manhattan ?
             case 2: return "Monsters without the Golden Scarab cannot gain [Heart].";
             case 3: return "Monsters without the Golden Scarab cannot gain [Energy].";
             case 4: return "Monsters without the Golden Scarab cannot gain [Star].";
@@ -731,8 +731,9 @@ var CurseCards = /** @class */ (function () {
             case 10: return "Cards cost 2 extra [Energy].";
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
-            case 15:
-                return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
+            case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
+            case 16:
+                return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ?
                 defaut: return "TODO"; // TODO an
         }
         return null;

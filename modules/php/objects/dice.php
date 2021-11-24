@@ -3,7 +3,7 @@ namespace KOT\Objects;
 
 class Dice {
     public $id;
-    public $value;
+    public $value; // [1 2 3 heart energy smash] for die6, [eye river snake ankh] for die4
     public $extra;
     public $locked;
     public $rolled;

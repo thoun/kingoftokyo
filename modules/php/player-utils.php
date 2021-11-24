@@ -300,6 +300,27 @@ trait PlayerUtilTrait {
         return true;
     }
 
+    function canEnterTokyo() {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == PHARAONIC_EGO_CURSE_CARD) {
+                $dieOfFate = $this->getDiceByType(2)[0];
+                if ($dieOfFate->value == 4) {
+                    return false;
+                }
+            }
+
+            if ($curseCardType == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
+                $dieOfFate = $this->getDiceByType(2)[0];
+                if ($dieOfFate->value == 3) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     function canYieldTokyo() {
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
