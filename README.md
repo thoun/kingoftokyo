@@ -45,4 +45,31 @@ TODOCY confirm rolling 4 claws & a heart still activate berserk
 TODOME add stats
 TODOME flip cards (remove 302)
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
-TODO automatic reroll of Background Dweller
+
+TODOCT enable new game image
+
+Group message :
+Battle of the gods (part I) event for King of Tokyo is now activated !
+It adds Cultists and 2 bonus monsters !
+All details here : <todo lien forum>
+
+Forum post :
+[OFFICIAL] Battle of the gods (part I) event
+
+[b]Battle of the gods (part I) event is now available in King of Tokyo ![/b]
+
+This option adds Cultists. After resolving your dice, if you rolled four identical faces, take a Cultist tile. At any time, you can discard one of your Cultist tiles to gain either: 1 heart, 1 energy, or one extra Roll.
+
+[img]<TODO lien image>[/img]
+
+If you want to play with Battle of the gods (part I) event :
+[list]
+[b]Automatic mode :[/b] On the game settings (gear icon on the lobby), in "Battle of the gods (part I) event" section, set "Enabled" to "I'm okay playing with". [i]If you want to play only Battle of the gods (part I) Event, set "Disabled" to "I never want to play with". You can also pick intermediate values to play mostly with Battle of the gods (part I) Event.[/i]
+[/list]
+[list]
+[b]Manual mode :[/b] set "Battle of the gods (part I) event" to "Enabled" when creating the table.
+[/list]
+
+The 2 new monsters added with Battle of the gods (part I) event are also available even outside of Battle of the gods (part I) event ("Bonus monsters" option).
+
+Have fun !

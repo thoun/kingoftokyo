@@ -113,5 +113,12 @@ La version Halloween ajoute les cartes Costume. Les joueurs choississent une car
 
 Quand un joueur obtient 3 baffes ou plus, il peut voler des cartes Costume aux monstres qu'il vient de blesser (en lui payant le cout de la carte). Il peut voler plusieurs cartes, de plusieurs joueurs, pendant le même tour. Les dommages liés aux dés baffe sont appliqués même quand le joueur vole des cartes.
 
+= Cultistes =
+Combat Divin, partie I ajoute les Cultistes.
+
+Après avoir résolu vos dés, si vous aviez obtenu 4 faces identiques, vous récupérez une tuile Cultiste
+
+À n’importe quel moment, vous pouvez défausser une tuile Cultiste pour gagner, au choix : 1 coeur, 1 énergie ou un Lancer supplémentaire.
+
 = Combinations de cartes =
 Si vous avez des doutes sur les combinations de cartes, vous pouvez vérifier les réponses listées ici (en anglais) : https://docs.google.com/spreadsheets/d/1DbI4EongciNvCcjQBwsMHuXxpzKA1x3ZD_MMdPzBRtM.

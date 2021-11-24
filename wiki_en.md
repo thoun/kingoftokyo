@@ -121,5 +121,12 @@ Halloween version adds a new Costume cards. Players choose one costume card at t
 
 When a player rolls 3 smashes of more, he can steal Costume cards from players he damages (paying them the cost). He can steal several cards, from different players, at the same turn. Smash damage still apply when stealing cards is used.
 
+= Cultists =
+Battle of the gods (part I) adds Cultists.
+
+After resolving your dice, if you rolled four identical faces, take a Cultist tile.
+
+At any time, you can discard one of your Cultist tiles to gain either: 1 heart, 1 energy, or one extra Roll.
+
 = Cards combinations =
 If you have a doubt about some cards combinations, you can check answers listed here : https://docs.google.com/spreadsheets/d/1DbI4EongciNvCcjQBwsMHuXxpzKA1x3ZD_MMdPzBRtM.
