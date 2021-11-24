@@ -237,9 +237,9 @@ trait DiceUtilTrait {
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
             if ($countJets > 0 && $smashedPlayerIsInTokyo) {                
-                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, false, $giveShrinkRayToken, $givePoisonSpitToken);
+                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken);
             } else {
-                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, false, $giveShrinkRayToken, $givePoisonSpitToken);
+                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken);
             }
         }
 
@@ -278,7 +278,7 @@ trait DiceUtilTrait {
 
             // we add damage only if it's not already counted in smashed players (without tokens)
             if (!in_array($damagePlayerId, $smashedPlayersIds)) {
-                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0, false, 0, 0);
+                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0, 0, 0);
             }
         }
 
@@ -630,6 +630,9 @@ trait DiceUtilTrait {
             case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
                 $this->applyGetEnergy($playerId, 2, $logCardType);
                 break;
+            case GAZE_OF_THE_SPHINX_CURSE_CARD:
+                $this->applyGetEnergy($playerId, 3, $logCardType);
+                break;
         }
     }
     
@@ -672,6 +675,9 @@ trait DiceUtilTrait {
                 break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
+                break;
+            case GAZE_OF_THE_SPHINX_CURSE_CARD:
+                $this->applyLoseEnergy($playerId, 3, $logCardType);
                 break;
         }
 

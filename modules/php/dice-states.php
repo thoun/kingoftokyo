@@ -317,7 +317,7 @@ trait DiceStateTrait {
         $redirects = false;
         if ($this->isCybertoothExpansion() && $diceCounts[7] > 0) {
             $playerId = self::getActivePlayerId();
-            $damages[] = new Damage($playerId, $diceCounts[7], $playerId, 0, false, 0, 0);
+            $damages[] = new Damage($playerId, $diceCounts[7], $playerId, 0, 0, 0);
             $redirects = $this->resolveDamages($damages, $nextState);
         }
         

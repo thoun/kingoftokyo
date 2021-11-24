@@ -60,7 +60,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343492);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);

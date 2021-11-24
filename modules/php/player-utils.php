@@ -274,6 +274,19 @@ trait PlayerUtilTrait {
         return true;
     }
 
+    function canLoseHealth(int $playerId) {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == PHARAONIC_SKIN_CURSE_CARD) {
+                if ($playerId == $this->getPlayerIdWithGoldenScarab()) {
+                    return PHARAONIC_SKIN_CURSE_CARD;
+                }
+            }
+        }
+        return null;
+    }
+
     function canGainEnergy(int $playerId) {
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();

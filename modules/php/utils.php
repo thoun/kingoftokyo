@@ -530,7 +530,15 @@ trait UtilTrait {
     }
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
-        if ($this->isInvincible($playerId)) {
+        $canLoseHealth = $this->canLoseHealth($playerId);
+        if ($canLoseHealth !== null) {
+            $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+
+            $this->logDamageBlocked($playerId, $canLoseHealth);
+            return; // player has golden scarab and cannot lose hearts
+        }
+
+        if ($this->isInvincible($playerId)) { // TODO move to canLoseHealth ?
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
             $this->logDamageBlocked($playerId, WINGS_CARD);
@@ -539,7 +547,7 @@ trait UtilTrait {
 
         // Armor plating
         $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
-        if ($countArmorPlating > 0 && $health == 1) {
+        if ($countArmorPlating > 0 && $health == 1) { // TODO move to canLoseHealth ?
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
             $this->logDamageBlocked($playerId, ARMOR_PLATING_CARD);
@@ -765,11 +773,7 @@ trait UtilTrait {
                 }
             } else {
                 $activePlayerId = self::getActivePlayerId();
-                if ($damage->ignoreCards) {
-                    $this->applyDamageIgnoreCards($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
-                } else {
-                    $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
-                }
+                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             }
         }
 

@@ -305,7 +305,12 @@ trait CardsUtilTrait {
         return count($this->getCardsOfType($playerId, $cardType, $includeMimick));
     }
 
+     // TODOWI add parameter to count cards even if Gaze of the Sphinx is active, for Have it all
     function getCardsOfType($playerId, $cardType, $includeMimick = true) {
+        if ($cardType < 100 && !$this->keepAndEvolutionCardsHaveEffect()) {
+            return [];
+        }
+
         $cards = $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
 
         if ($cardType < 100 && $includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself, nor discard/costume cards
@@ -781,5 +786,17 @@ trait CardsUtilTrait {
         $playerIds = $this->getPlayersIds();
         $playerWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
         return array_values(array_filter($playerIds, function ($playerId) use ($playerWithGoldenScarab) { return $playerId != $playerWithGoldenScarab; }));
+    }
+
+    function keepAndEvolutionCardsHaveEffect() {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == GAZE_OF_THE_SPHINX_CURSE_CARD) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

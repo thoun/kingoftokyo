@@ -6,16 +6,14 @@ class Damage {
     public /*int*/ $damage;
     public /*int*/ $damageDealerId;
     public /*int*/ $cardType;
-    public /*bool*/ $ignoreCards;
     public /*int*/ $giveShrinkRayToken;
     public /*int*/ $givePoisonSpitToken;
 
-    public function __construct(int $playerId, int $damage, int $damageDealerId, int $cardType, bool $ignoreCards = false, int $giveShrinkRayToken = 0, int $givePoisonSpitToken = 0) {
+    public function __construct(int $playerId, int $damage, int $damageDealerId, int $cardType, int $giveShrinkRayToken = 0, int $givePoisonSpitToken = 0) {
         $this->playerId = $playerId;
         $this->damage = $damage;
         $this->damageDealerId = $damageDealerId;
         $this->cardType = $cardType;
-        $this->ignoreCards = $ignoreCards;
         $this->giveShrinkRayToken = $giveShrinkRayToken;
         $this->givePoisonSpitToken = $givePoisonSpitToken;
     }
