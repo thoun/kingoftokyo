@@ -157,7 +157,25 @@ trait UtilTrait {
         // energy drink
         $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS));
         $beastForm = ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId)) ? 1 : 0;
-        return 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm;
+
+        $removedDieByBuriedInSand = false;
+        if ($this->isAnubisExpansion()) {
+            $cardType = $this->getCurseCardType();
+
+            if ($cardType == BURIED_IN_SAND_CURSE_CARD) {
+                $dieOfFate = $this->getDieOfFate();
+
+                if ($dieOfFate->value != 4) {
+                    $removedDieByBuriedInSand = true;
+                }
+            }
+        }
+
+        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm;
+        if ($rollNumber > 1 && $removedDieByBuriedInSand) {
+            $rollNumber--;
+        }
+        return $rollNumber;
     }
 
     function getPlayerMaxHealth(int $playerId) {

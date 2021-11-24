@@ -196,11 +196,11 @@ trait DiceStateTrait {
     function stResolveDieOfFate() {
         $playerId = self::getActivePlayerId();
 
-        $die = $this->getDiceByType(2)[0];
+        $dieOfFate = $this->getDieOfFate();
 
         // TODO notif for each case
         $damages = null;
-        switch($die->value) {
+        switch($dieOfFate->value) {
             case 1: 
                 $this->changeCurseCard();
                 break;

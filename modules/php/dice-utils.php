@@ -110,6 +110,15 @@ trait DiceUtilTrait {
     function getDiceNumber(int $playerId) {
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == RAGING_FLOOD_CURSE_CARD) {
+                $remove++;
+            }
+        }
+
+
         return max(6 + $this->countExtraHead($playerId) - $remove, 0);
     }
 
@@ -592,6 +601,10 @@ trait DiceUtilTrait {
         }
     }
 
+    function getDieOfFate() {
+        return $this->getDiceByType(2)[0];
+    }
+
     function applyAnkhEffect(int $playerId) {
         $cardType = $this->getCurseCardType();
         $logCardType = 1000 + $cardType;
@@ -626,14 +639,15 @@ trait DiceUtilTrait {
 
         switch($cardType) {
             // TODOAN
+            case ISIS_S_DISGRACE_CURSE_CARD: 
+            case SET_S_STORM_CURSE_CARD:
+                return [new Damage($playerId, 1, $playerId, $logCardType)];
             case THOT_S_BLINDNESS_CURSE_CARD: 
                 $this->applyLoseEnergy($playerId, 2, $logCardType);
                 break;
             case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;
-            case SET_S_STORM_CURSE_CARD:
-                return [new Damage($playerId, 1, $playerId, $logCardType)];
             case BUILDERS_UPRISING_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;

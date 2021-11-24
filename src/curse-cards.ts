@@ -48,13 +48,18 @@ class CurseCards {
             case 2: return "Monsters without the Golden Scarab cannot gain [Heart].";
             case 3: return "Monsters without the Golden Scarab cannot gain [Energy].";
             case 4: return "Monsters without the Golden Scarab cannot gain [Star].";
+            case 5: return "Monsters have 1 less Roll (minimum 1 Roll).";
+            case 6: return "Monsters roll 1 less die.";
+            // TODOAN case 7
             case 8: return "At the start of your turn, lose 1[Heart].";
             case 9: return "At the start of your turn, lose 2[Star].";
-            case 10: return "Cards cost 2 extra [Energy].";
+            case 10: return "Cards cost 2 extra [Energy].";   
+            // TODOAN case 11 12   
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
-            case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ?
+            case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
+            // TODOAN case 17 18 19 21 22 23 24
             defaut: return "TODO"; // TODO an
         }
         return null;
@@ -62,11 +67,15 @@ class CurseCards {
 
     private getAnkhEffect(cardTypeId: number): string {
         switch (cardTypeId) {
-            // TODOAN
-            case 2: case 3: case 4: case 17: case 18: case 19: return "Take the Golden Scarab.";                
+            // TODOAN case 1
+            case 2: case 3: case 4: case 17: case 18: case 19: return "Take the Golden Scarab."; 
+            case 5: return "You have 1 extra die Roll.";
+            // TODOAN case 6 7               
             case 8: case 11: case 13: return "+2[Heart]";
+            // TODOAN case 10 12
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
+            // TODOAN case 16 17 18 19 21 22 23 24
             defaut: return "TODO"; // TODO an
         }
         return null;
@@ -74,14 +83,19 @@ class CurseCards {
 
     private getSnakeEffect(cardTypeId: number): string {
         switch (cardTypeId) {
-            // TODOAN
+            // TODOAN      
+            // TODOAN case 1
+            case 2: case 8: return "-1[Heart]";
             case 3: return "-2[Energy]";
-            case 4: case 9: return "-2[Star]";          
-            case 8: return "-1[Heart]";
+            case 4: case 9: return "-2[Star]";
+            // TODOAN case 5 6 7         
+            // TODOAN case 10 11 12      
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";
+            // TODOAN case 16 17 18 19
             case 20: return "Take the Golden Scarab.";
+            // TODOAN case 21 22 23 24
             defaut: return "TODO"; // TODO an
         }
         return null;

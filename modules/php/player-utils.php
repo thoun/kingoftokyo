@@ -305,14 +305,14 @@ trait PlayerUtilTrait {
             $curseCardType = $this->getCurseCardType();
 
             if ($curseCardType == PHARAONIC_EGO_CURSE_CARD) {
-                $dieOfFate = $this->getDiceByType(2)[0];
+                $dieOfFate = $this->getDieOfFate();
                 if ($dieOfFate->value == 4) {
                     return false;
                 }
             }
 
             if ($curseCardType == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
-                $dieOfFate = $this->getDiceByType(2)[0];
+                $dieOfFate = $this->getDieOfFate();
                 if ($dieOfFate->value == 3) {
                     return false;
                 }
