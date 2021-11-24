@@ -57,6 +57,7 @@ trait DiceArgTrait {
             'maxThrowNumber' => $maxThrowNumber,
             'dice' => $dice,
             'inTokyo' => $this->inTokyo($playerId),
+            'canHealWithDice' => $this->canHealWithDice($playerId),
             'energyDrink' => [
                 'hasCard' => $hasEnergyDrink,
                 'playerEnergy' => $playerEnergy,
@@ -82,6 +83,7 @@ trait DiceArgTrait {
         $diceArg = [
             'dice' => $this->getPlayerRolledDice($playerId, true),
             'inTokyo' => $this->inTokyo($playerId),
+            'canHealWithDice' => $this->canHealWithDice($playerId),
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $canRetrow3,
@@ -125,6 +127,7 @@ trait DiceArgTrait {
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true),
             'inTokyo' => $this->inTokyo($activePlayerId),
+            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
             'canRoll' => $canRoll,
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
@@ -151,6 +154,7 @@ trait DiceArgTrait {
             $diceArg = $canSelectHeartDiceUse ? [
                 'dice' => $dice,
                 'inTokyo' => $inTokyo,
+                'canHealWithDice' => $this->canHealWithDice($playerId),
             ] : [ 'skipped' => true ];
     
             return $selectHeartDiceUseArg + $diceArg;

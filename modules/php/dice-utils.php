@@ -149,7 +149,7 @@ trait DiceUtilTrait {
     }
 
     function resolveHealthDice(int $playerId, int $diceCount) {
-        if ($this->inTokyo($playerId)) {
+        if (!$this->canHealWithDice($playerId)) { // TODOAN change message
             self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} gains no [Heart] (player in Tokyo)'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),

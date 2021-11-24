@@ -204,7 +204,8 @@ trait DiceActionTrait {
             $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
         }
 
-        $inTokyo = $this->inTokyo(self::getActivePlayerId());
+        $activePlayerId = self::getActivePlayerId();
+        $inTokyo = $this->inTokyo($activePlayerId);
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         self::notifyAllPlayers("changeDie", $message, [
@@ -213,6 +214,7 @@ trait DiceActionTrait {
             'card_name' => $cardType,
             'dieId' => $die->id,
             'inTokyo' => $inTokyo,
+            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
             'toValue' => $value,
             'die_face_before' => $this->getDieFaceLogName($die->value),
             'die_face_after' => $this->getDieFaceLogName($value),

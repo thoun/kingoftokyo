@@ -310,4 +310,17 @@ trait PlayerUtilTrait {
         }
         return true;
     }
+
+    function canHealWithDice(int $playerId) {
+        $inTokyo = $this->inTokyo($playerId);
+
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
+                return $inTokyo;
+            }
+        }
+        return !$inTokyo;
+    }
 }

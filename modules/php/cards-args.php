@@ -29,6 +29,7 @@ trait CardsArgTrait {
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true),
             'inTokyo' => $this->inTokyo($activePlayerId),
+            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
         ];
     }
 

@@ -116,6 +116,7 @@ interface EnteringChooseInitialCardArgs {
 interface EnteringDiceArgs {
     dice: Dice[];
     inTokyo: boolean;
+    canHealWithDice: boolean;
 }
 
 interface EnergyDrink {
@@ -342,6 +343,7 @@ interface NotifUseCamouflageArgs {
 interface NotifChangeDieArgs {
     playerId: number;
     inTokyo: boolean;
+    canHealWithDice: boolean;
     dieId: number;
     toValue: number;
     roll?: boolean;
