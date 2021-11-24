@@ -736,9 +736,10 @@ var CurseCards = /** @class */ (function () {
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
-            case 16:
-                return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
-                // TODOAN case 17 18 19 21 22 23 24
+            case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
+            case 17:
+                return "Monsters without the Golden Scarab cannot buy Power cards.";
+                // TODOAN case 18 19 21 22 23 24
                 defaut: return "TODO"; // TODO an
         }
         return null;

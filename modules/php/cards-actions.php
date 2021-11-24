@@ -131,6 +131,10 @@ trait CardsActionTrait {
             throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
         }
 
+        if (!$this->canBuyPowerCard($playerId)) {
+            throw new \BgaUserException("You can't buy Power cards");
+        }
+
         $this->updateKillPlayersScoreAux();        
         
         $this->removeDiscardCards($playerId);

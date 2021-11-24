@@ -322,7 +322,7 @@ trait CardsUtilTrait {
         return $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
     }
 
-    function getCardCost($playerId, $cardType) {
+    function getCardCost(int $playerId, int $cardType) {
         $cardCost = $this->CARD_COST[$cardType];
 
         // alien origin
@@ -334,7 +334,7 @@ trait CardsUtilTrait {
         return max($cardCost + $inadequateOffering - $countAlienOrigin, 0);
     }
 
-    function canBuyCard($playerId, $cost) {
+    function canBuyCard(int $playerId, int $cost) {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 

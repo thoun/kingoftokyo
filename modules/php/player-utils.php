@@ -344,4 +344,12 @@ trait PlayerUtilTrait {
         }
         return !$inTokyo;
     }
+
+    function canBuyPowerCard(int $playerId) {
+        $canBuyCards = true;
+        if ($this->isAnubisExpansion() && $this->getCurseCardType() == FORBIDDEN_LIBRARY_CURSE_CARD) {
+            $canBuyCards = $playerId == $this->getPlayerIdWithGoldenScarab();
+        }
+        return $canBuyCards;
+    }
 }

@@ -42,6 +42,7 @@ trait CardsArgTrait {
             $potentialEnergy += $this->getPlayerCultists($playerId);
         }
 
+        $canBuyPowerCards = $this->canBuyPowerCard($playerId);
         $canBuyOrNenew = $potentialEnergy >= 2;
         $canSell = $this->countCardOfType($playerId, METAMORPH_CARD) > 0;
 
@@ -55,10 +56,10 @@ trait CardsArgTrait {
         $disabledIds = [];
         foreach ($cards as $card) {
             $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
-            if ($cardsCosts[$card->id] <= $potentialEnergy) {
+            if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                 $canBuyOrNenew = true;
             }
-            if (!$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+            if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
                 $disabledIds[] = $card->id;
             }
         }
@@ -70,14 +71,11 @@ trait CardsArgTrait {
 
                 foreach ($cardsOfPlayer as $card) {
                     $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
-                    if ($cardsCosts[$card->id] <= $potentialEnergy) {
+                    if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                         $canBuyOrNenew = true;
                     }
-                    if ($card->type > 100) {
+                    if (!$canBuyPowerCards || $card->type > 100) {
                         $unbuyableIds[] = $card->id;
-                    }
-                    if ($card->type > 100 || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
-                        $disabledIds[] = $card->id;
                     }
                 }
             }
@@ -93,10 +91,10 @@ trait CardsArgTrait {
 
             foreach ($pickCards as $card) {
                 $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
-                if ($cardsCosts[$card->id] <= $potentialEnergy) {
+                if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuyOrNenew = true;
                 }
-                if (!$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
                     $disabledIds[] = $card->id;
                 }
             }
@@ -125,6 +123,7 @@ trait CardsArgTrait {
         $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
         $revealedCardsIds = $opportunistIntervention ? $opportunistIntervention->revealedCardsIds : [];
         $canBuy = false;
+        $canBuyPowerCards = $this->canBuyPowerCard($playerId);
 
         $playerEnergy = $this->getPlayerEnergy($playerId);
 
@@ -141,10 +140,10 @@ trait CardsArgTrait {
         foreach ($cards as $card) {
             if (in_array($card->id, $revealedCardsIds)) {
                 $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
-                if ($cardsCosts[$card->id] <= $potentialEnergy) {
+                if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuy = true;
                 }
-                if (!$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
                     $disabledIds[] = $card->id;
                 }
             } else {
