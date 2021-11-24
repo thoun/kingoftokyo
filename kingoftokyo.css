@@ -1250,6 +1250,21 @@ html, .mode_3d #game_play_area_background {
 .icon.dead {
   background-position: 100% 0%;
 }
+.icon.die-of-fate {
+  background-image: url("img/anubis_die_icons.png");
+}
+.icon.die-of-fate.eye {
+  background-position: 0% 0%;
+}
+.icon.die-of-fate.river {
+  background-position: 33.33% 0%;
+}
+.icon.die-of-fate.snake {
+  background-position: 66.66% 0%;
+}
+.icon.die-of-fate.ankh {
+  background-position: 100% 0%;
+}
 
 #page-title .dice-icon, #page-title .icon {
   width: 20px;

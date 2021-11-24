@@ -63,6 +63,26 @@ html, .mode_3d #game_play_area_background {
     &.dead {
       background-position: 100% 0%;
     }
+
+    &.die-of-fate {
+      background-image: url('img/anubis_die_icons.png');
+  
+      &.eye {
+        background-position: 0% 0%;
+      }
+    
+      &.river {
+        background-position: 33.33% 0%;
+      }
+    
+      &.snake {
+        background-position: 66.66% 0%;
+      }
+    
+      &.ankh {
+        background-position: 100% 0%;
+      }
+    }
 }
 
 #page-title {

@@ -12,5 +12,9 @@ function formatTextIcons(rawText: string) {
         .replace(/\[diceHeart\]/ig, '<span class="dice-icon dice4"></span>')
         .replace(/\[diceEnergy\]/ig, '<span class="dice-icon dice5"></span>')
         .replace(/\[diceSmash\]/ig, '<span class="dice-icon dice6"></span>')
+        .replace(/\[dieFateEye\]/ig, '<span class="die-of-fate icon eye"></span>')
+        .replace(/\[dieFateRiver\]/ig, '<span class="die-of-fate icon river"></span>')
+        .replace(/\[dieFateSnake\]/ig, '<span class="die-of-fate icon snake"></span>')
+        .replace(/\[dieFateAnkh\]/ig, '<span class="die-of-fate icon ankh"></span>')
         .replace(/\[keep\]/ig, `<span class="card-keep-text"><span class="outline">${_('Keep')}</span><span class="text">${_('Keep')}</span></span>`);
 }
