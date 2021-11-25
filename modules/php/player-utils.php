@@ -409,8 +409,12 @@ trait PlayerUtilTrait {
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
 
-            if ($curseCardType == BURIED_IN_SAND_CURSE_CARD) {
-                return $symbol != 6;
+            if ($symbol == 6 && $curseCardType == BURIED_IN_SAND_CURSE_CARD) {
+                return false;
+            }
+
+            if ($symbol == 6 && $curseCardType == HOTEP_S_PEACE_CURSE_CARD) {
+                return $playerId == $this->getPlayerIdWithGoldenScarab();
             }
         }
         return true;

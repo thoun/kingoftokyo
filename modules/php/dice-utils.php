@@ -750,6 +750,12 @@ trait DiceUtilTrait {
             case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;
+            case HOTEP_S_PEACE_CURSE_CARD:
+                $dice = $this->getPlayerRolledDice($playerId, true, false);
+                $diceCounts = $this->getRolledDiceCounts($dice);
+                $rolledSmashes = $diceCounts[6];
+                $this->applyLoseEnergy($playerId, $rolledSmashes, $logCardType);
+                break;
             case BUILDERS_UPRISING_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;

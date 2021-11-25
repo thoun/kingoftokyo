@@ -737,7 +737,7 @@ var CurseCards = /** @class */ (function () {
             case 4: return "Monsters without the Golden Scarab cannot gain [Star].";
             case 5: return "Monsters have 1 less Roll (minimum 1 Roll).";
             case 6: return "Monsters roll 1 less die.";
-            // TODOAN case 7
+            case 7: return "Monsters without the Golden Scarab cannot use [diceSmash].";
             case 8: return "At the start of your turn, lose 1[Heart].";
             case 9: return "At the start of your turn, lose 2[Star].";
             case 10: return "Cards cost 2 extra [Energy].";
@@ -791,7 +791,8 @@ var CurseCards = /** @class */ (function () {
             case 4:
             case 9: return "-2[Star]";
             case 5: return "You cannot use your [diceSmash].";
-            // TODOAN case 5 6 7         
+            // TODOAN case 5 6     
+            case 7: return "Lose 1 for each [diceSmash] you rolled.";
             // TODOAN case 10 11 12      
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
