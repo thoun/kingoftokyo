@@ -62,7 +62,7 @@ class CurseCards {
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
             // TODOAN case 18 19 20
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
-            // TODOAN case 22
+            case 22: return "Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.";
             case 23: return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
             // TODOAN 24
             defaut: return "TODO"; // TODO an

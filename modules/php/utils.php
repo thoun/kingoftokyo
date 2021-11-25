@@ -149,7 +149,7 @@ trait UtilTrait {
         return intval(self::getUniqueValueFromDB("SELECT player_shrink_ray_tokens FROM player where `player_id` = $playerId"));
     }
 
-    function getThrowNumber(int $playerId) {
+    function getRollNumber(int $playerId) {
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
         // statue of libery
@@ -159,6 +159,7 @@ trait UtilTrait {
         $beastForm = ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId)) ? 1 : 0;
 
         $removedDieByBuriedInSand = false;
+        $falseBlessing = 0;
         if ($this->isAnubisExpansion()) {
             $cardType = $this->getCurseCardType();
 
@@ -169,9 +170,13 @@ trait UtilTrait {
                     $removedDieByBuriedInSand = true;
                 }
             }
+
+            if ($cardType == FALSE_BLESSING_CURSE_CARD) {
+                $falseBlessing = 1;
+            }
         }
 
-        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm;
+        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm + $falseBlessing;
         if ($rollNumber > 1 && $removedDieByBuriedInSand) {
             $rollNumber--;
         }

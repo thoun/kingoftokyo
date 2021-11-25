@@ -296,18 +296,43 @@ trait DiceStateTrait {
         }
     }
 
-    function stResolveSkullDice() {        
+    function stResolveSkullDice() {   
+        $playerId = self::getActivePlayerId();
+
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $nextState = intval(self::getGameStateValue(STATE_AFTER_RESOLVE));
         $redirects = false;
+
+        $damages = [];
+
         if ($this->isCybertoothExpansion() && $diceCounts[7] > 0) {
-            $playerId = self::getActivePlayerId();
             $damages[] = new Damage($playerId, $diceCounts[7], $playerId, 0, 0, 0);
+        }
+
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == FALSE_BLESSING_CURSE_CARD) {
+                $dice = $this->getPlayerRolledDice($playerId, true, false);
+                $diceFaces = [];        
+                foreach ($dice as $die) {
+                    if ($die->type === 0 || $die->type === 1) {
+                        $diceFaces[$this->getDiceFaceType($die)] = true; 
+                    }
+                }
+
+                $facesCount = count(array_keys($diceFaces));
+                
+                $damages[] = new Damage($playerId, $facesCount, $playerId, 2000 + FALSE_BLESSING_CURSE_CARD, 0, 0);
+            }
+        }
+
+        if (count($damages) > 0) {
             $redirects = $this->resolveDamages($damages, $nextState);
         }
         
-        if (!$redirects) {        
+        if (!$redirects) {
             $this->gamestate->jumpToState($nextState);
         }
     }

@@ -154,16 +154,20 @@ trait DiceUtilTrait {
     function getDiceNumber(int $playerId) {
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
+        $add = $this->countExtraHead($playerId);
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
 
             if ($curseCardType == RAGING_FLOOD_CURSE_CARD) {
                 $remove++;
             }
+    
+            if ($curseCardType == FALSE_BLESSING_CURSE_CARD) {
+                $add += 2;
+            }
         }
 
-
-        return max(6 + $this->countExtraHead($playerId) - $remove, 0);
+        return max(6 + $add - $remove, 0);
     }
 
     function resolveNumberDice(int $playerId, int $number, int $diceCount) {

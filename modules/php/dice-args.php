@@ -27,7 +27,7 @@ trait DiceArgTrait {
         $dice = $this->getPlayerRolledDice($playerId, true, true);
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
-        $maxThrowNumber = $this->getThrowNumber($playerId);
+        $maxThrowNumber = $this->getRollNumber($playerId);
 
         $hasEnergyDrink = $this->countCardOfType($playerId, ENERGY_DRINK_CARD) > 0; // Energy drink
         $playerEnergy = null;

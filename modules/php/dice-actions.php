@@ -27,7 +27,7 @@ trait DiceActionTrait {
         $playerId = self::getActivePlayerId();
 
         $throwNumber = intval(self::getGameStateValue('throwNumber'));
-        $maxThrowNumber = $this->getThrowNumber($playerId);
+        $maxThrowNumber = $this->getRollNumber($playerId);
 
         if ($throwNumber >= $maxThrowNumber) {
             throw new \BgaUserException("You can't throw dices (max throw)");
