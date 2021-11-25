@@ -403,4 +403,16 @@ trait PlayerUtilTrait {
     
         return $damages;
     }
+
+    function canUseSymbol(int $playerId, int $symbol) {
+
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == BURIED_IN_SAND_CURSE_CARD) {
+                return $symbol != 6;
+            }
+        }
+        return true;
+    }
 }

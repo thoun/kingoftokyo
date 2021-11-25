@@ -790,6 +790,7 @@ var CurseCards = /** @class */ (function () {
             case 3: return "-2[Energy]";
             case 4:
             case 9: return "-2[Star]";
+            case 5: return "You cannot use your [diceSmash].";
             // TODOAN case 5 6 7         
             // TODOAN case 10 11 12      
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";

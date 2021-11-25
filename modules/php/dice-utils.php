@@ -16,14 +16,17 @@ trait DiceUtilTrait {
     //////////// Utility functions
     ////////////
 
-    static function getDiceFaceType(object $die) {
+    static function getDiceFaceType(object $die) { // return face type * 10 + number of symbols on face
         if ($die->type == 0) {
-            return $die->value; 
+            return $die->value * 10 + 1; 
         } else if ($die->type == 1) {
             switch($die->value) {
-                case 1: case 2: return 5;
-                case 3: case 4: case 5: return 6;
-                case 6: return 7;
+                case 1: return 51; 
+                case 2: return 52;
+                case 3: return 61;
+                case 4: return 61;
+                case 5: return 62;
+                case 6: return 71;
             }
         }
         return null;
@@ -641,6 +644,7 @@ trait DiceUtilTrait {
 
     function getRolledDiceCounts(array $dice) {
         $diceCounts = [0,0,0,0,0,0,0];
+
         foreach($dice as $die) {
             if ($die->type === 0) {
                 $diceCounts[$die->value] += 1;
@@ -666,6 +670,28 @@ trait DiceUtilTrait {
         }
 
         return $diceCounts;
+    }
+
+    function getRolledDiceFaceCounts(array $dice) { // TODOAN for False Blessing
+        $diceFaceCounts = [
+            11 => 0,
+            21 => 0,
+            31 => 0,
+            41 => 0,
+            51 => 0,
+            52 => 0,
+            61 => 0,
+            62 => 0,
+            71 => 0
+        ];
+
+        foreach($dice as $die) {
+            if ($die->type === 0 || $die->type === 1) {
+                $diceFaceCounts[$this->getDiceFaceType($die)] += 1;
+            }
+        }
+
+        return $diceFaceCounts;
     }
 
     function getDieOfFate() {

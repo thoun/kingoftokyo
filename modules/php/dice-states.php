@@ -265,7 +265,11 @@ trait DiceStateTrait {
         
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
-        $diceCount = $diceCounts[6];
+        if ($this->canUseSymbol($playerId, 6)) {
+            $diceCount = $diceCounts[6];
+        } else {
+            $diceCount = 0;
+        }
         
         /* TODOCY
         $redirects = false;
