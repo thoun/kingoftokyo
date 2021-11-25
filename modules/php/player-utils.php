@@ -419,4 +419,24 @@ trait PlayerUtilTrait {
         }
         return true;
     }
+
+    function canUseFace(int $playerId, int $faceType) {
+
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == BODY_SPIRIT_AND_KA_CURSE_CARD) {
+                $dieOfFate = $this->getDieOfFate();
+                if ($dieOfFate->value == 3) {
+                    return !in_array($faceType, [41, 51, 61]);
+                } else if ($dieOfFate->value == 4) {
+                    return true;
+                } else {
+                    return in_array($faceType, [41, 51, 61]);
+                }
+
+            }
+        }
+        return true;
+    }
 }

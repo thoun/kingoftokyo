@@ -682,7 +682,7 @@ trait CardsUtilTrait {
         }
 
         $dice = $this->getPlayerRolledDice($activePlayerId, true, false); 
-        $diceCounts = $this->getRolledDiceCounts($dice);
+        $diceCounts = $this->getRolledDiceCounts($activePlayerId, $dice, false);
         $detail = $this->addSmashesFromCards($activePlayerId, $diceCounts, $activePlayerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;
 

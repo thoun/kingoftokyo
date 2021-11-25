@@ -90,7 +90,7 @@ trait DiceStateTrait {
 
         $smashTokyo = false;
 
-        $diceCounts = $this->getRolledDiceCounts($dice);
+        $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
 
         $detail = $this->addSmashesFromCards($playerId, $diceCounts, $playerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;

@@ -60,7 +60,9 @@ class CurseCards {
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
             case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
-            // TODOAN case 18 19 21 22
+            // TODOAN case 18 19 20
+            case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
+            // TODOAN case 22
             case 23: return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
             // TODOAN 24
             defaut: return "TODO"; // TODO an
@@ -79,7 +81,10 @@ class CurseCards {
             // TODOAN case 10 12
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
-            // TODOAN case 16 17 18 19 21 22
+            case 16: return "Take control of Tokyo.";
+            // TODOAN case 17 18 19 21 22
+            case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
+            // TODOAN case 22
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
             // TODOAN 24
             defaut: return "TODO"; // TODO an
@@ -103,7 +108,8 @@ class CurseCards {
             case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";
             // TODOAN case 16 17 18 19
             case 20: return "Take the Golden Scarab.";
-            // TODOAN case 21 22
+            case 21: return "Cancel the Curse effect.";
+            // TODOAN case 22
             case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."         
             // TODOAN 24
             defaut: return "TODO"; // TODO an

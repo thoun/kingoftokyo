@@ -642,56 +642,36 @@ trait DiceUtilTrait {
         }
     }
 
-    function getRolledDiceCounts(array $dice) {
+    function getRolledDiceCounts(int $playerId, array $dice, $ignoreCanUseFace = true) {
         $diceCounts = [0,0,0,0,0,0,0];
 
         foreach($dice as $die) {
-            if ($die->type === 0) {
-                $diceCounts[$die->value] += 1;
-            } else if ($die->type === 1) {
-                switch($die->value) {
-                    case 1: 
-                        $diceCounts[5] += 1;
-                        break;
-                    case 2: 
-                        $diceCounts[5] += 2;
-                        break;
-                    case 3: case 4: 
-                        $diceCounts[6] += 1;
-                        break;
-                    case 5: 
-                        $diceCounts[6] += 2;
-                        break;
-                    case 6: 
-                        $diceCounts[7] = 1;
-                        break;
+            if (($die->type === 0 || $die->type === 1) && ($ignoreCanUseFace || $this->canUseFace($playerId, $this->getDiceFaceType($die)))) {
+                if ($die->type === 0) {                
+                    $diceCounts[$die->value] += 1;
+                } else if ($die->type === 1) {
+                    switch($die->value) {
+                        case 1: 
+                            $diceCounts[5] += 1;
+                            break;
+                        case 2: 
+                            $diceCounts[5] += 2;
+                            break;
+                        case 3: case 4: 
+                            $diceCounts[6] += 1;
+                            break;
+                        case 5: 
+                            $diceCounts[6] += 2;
+                            break;
+                        case 6: 
+                            $diceCounts[7] = 1;
+                            break;
+                    }
                 }
             }
         }
 
         return $diceCounts;
-    }
-
-    function getRolledDiceFaceCounts(array $dice) { // TODOAN for False Blessing
-        $diceFaceCounts = [
-            11 => 0,
-            21 => 0,
-            31 => 0,
-            41 => 0,
-            51 => 0,
-            52 => 0,
-            61 => 0,
-            62 => 0,
-            71 => 0
-        ];
-
-        foreach($dice as $die) {
-            if ($die->type === 0 || $die->type === 1) {
-                $diceFaceCounts[$this->getDiceFaceType($die)] += 1;
-            }
-        }
-
-        return $diceFaceCounts;
     }
 
     function getDieOfFate() {
@@ -727,6 +707,8 @@ trait DiceUtilTrait {
             case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
                 $this->applyGetEnergy($playerId, 2, $logCardType);
                 break;
+            case RESURRECTION_OF_OSIRIS_CURSE_CARD:
+                return $this->replacePlayersInTokyo($playerId);
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
                 $this->applyGetEnergy($playerId, 3, $logCardType);
                 break;
@@ -752,7 +734,7 @@ trait DiceUtilTrait {
                 break;
             case HOTEP_S_PEACE_CURSE_CARD:
                 $dice = $this->getPlayerRolledDice($playerId, true, false);
-                $diceCounts = $this->getRolledDiceCounts($dice);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice);
                 $rolledSmashes = $diceCounts[6];
                 $this->applyLoseEnergy($playerId, $rolledSmashes, $logCardType);
                 break;
