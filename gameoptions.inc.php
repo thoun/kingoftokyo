@@ -52,16 +52,7 @@ $game_options = [
                 'tmdisplay' => totranslate('Battle of the Gods (part I) event (Cultists)'),
             ],
         ],
-        'default' => 1,
-        'startcondition' => [ // TODOCT
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => 'Battle of the Gods (part I) event will be available from Friday, Novmber 26th at 11:00',
-                ] 
-            ],
-        ],
+        'default' => 2,
     ],
 
     // TODO Wickedness game mechanics ?
@@ -77,6 +68,15 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'startcondition' => [ // TODOKK
+            2 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Battle of the Gods (part I) event will be available from Friday, Novmber 26th at 11:00',
+                ] 
+            ],
+        ],
     ],*/
 
     /* TODOAN ANUBIS_EXPANSION_OPTION => [

@@ -21,9 +21,9 @@ trait MonsterTrait {
         }
 
         // Cthulhu, Anubis
-        /* TODOCT if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
+        if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
             $monsters = array_merge($monsters, [9, 10]);
-        }*/
+        }
 
         // King Kong,  Cybertooth
         /* TODOKK/TODOCY if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
