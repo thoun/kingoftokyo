@@ -55,7 +55,7 @@ class CurseCards {
             case 9: return "At the start of your turn, lose 2[Star].";
             case 10: return "Cards cost 2 extra [Energy].";  
             case 11: return "Monsters’ maximum [Heart] is 8[Heart] (Monsters that have more than 8[Heart] go down to 8[Heart])." ;
-            // TODOAN case 12   
+            case 12: return "Monsters cannot reroll [diceSmash].";
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
@@ -65,7 +65,7 @@ class CurseCards {
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
             case 22: return "Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.";
             case 23: return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
-            // TODOAN 24
+            case 24: return "You cannot reroll your [dice1].";
             defaut: return "TODO"; // TODO an
         }
         return null;

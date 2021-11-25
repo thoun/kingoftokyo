@@ -8,6 +8,7 @@ class Dice {
     public $locked;
     public $rolled;
     public $type;
+    public $canReroll = true;
 
     public function __construct($dbDice) {
         $this->id = intval($dbDice['dice_id']);

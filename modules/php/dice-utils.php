@@ -66,9 +66,9 @@ trait DiceUtilTrait {
 
     function getFirst3Die(int $playerId) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
-        foreach ($dice as $dice) {
-            if ($dice->value === 3) {
-                return $dice;
+        foreach ($dice as $die) {
+            if ($die->value === 3) {
+                return $die;
             }
         }
         return null;
@@ -80,11 +80,18 @@ trait DiceUtilTrait {
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
-    private function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate) {
+    private function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate, bool $setCanReroll) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
         if ($includeBerserkDie && $this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
             $dice = array_merge($dice, $this->getDiceByType(1)); // type 1 at the end
+        }
+
+        if ($setCanReroll && $this->isAnubisExpansion()) {
+            foreach ($dice as &$die) {
+                $symbol = getDieFace($die);
+                $die->canReroll = $this->canRerollSymbol($playerId, $symbol);
+            }
         }
 
         if ($includeDieOfFate && $this->isAnubisExpansion()) {
@@ -95,22 +102,27 @@ trait DiceUtilTrait {
     }
 
     public function throwDice(int $playerId, bool $firstRoll) {
-        $dice = $this->getPlayerRolledDice($playerId, true, true);
+        $dice = $this->getPlayerRolledDice($playerId, true, true, true);
 
         self::DbQuery( "UPDATE dice SET `rolled` = false");
 
         $lockedDice = [];
         $rolledDice = [];
         
-        foreach ($dice as &$dice) {
-            if ($dice->locked) {
-                $lockedDice[] = $dice;
+        foreach ($dice as &$die) {
+            if ($die->locked) {
+                $lockedDice[] = $die;
             } else {
-                $facesNumber = $dice->type == 2 ? 4 : 6;
-                $dice->value = bga_rand(1, $facesNumber);
-                self::DbQuery( "UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id );
+                $facesNumber = $die->type == 2 ? 4 : 6;
+                $die->value = bga_rand(1, $facesNumber);
+                self::DbQuery( "UPDATE dice SET `dice_value` = ".$die->value.", `rolled` = true where `dice_id` = ".$die->id );
 
-                $rolledDice[] = $dice;
+                $rolledDice[] = $die;
+            }
+
+            if (!$this->canRerollSymbol($playerId, getDieFace($die))) {
+                $die->locked = true;
+                self::DbQuery( "UPDATE dice SET `locked` = true where `dice_id` = ".$die->id );
             }
         }
 
@@ -366,14 +378,8 @@ trait DiceUtilTrait {
         $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
-            $dice = $this->getPlayerRolledDice($playerId, true, false); // TODO use function
-            $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
-            $diceCounts = [];
-            for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-                $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
-            }
-            $diceCounts[7] = 0;
-            
+            $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
+            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
             if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
                 self::setGameStateValue(CLOWN_ACTIVATED, 1);
                 $hasClown = true;
@@ -706,8 +712,8 @@ trait DiceUtilTrait {
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
             case VENGEANCE_OF_HORUS_CURSE_CARD:
-                $dice = $this->getPlayerRolledDice($playerId, true, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice);
+                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
                 $rolledSmashes = $diceCounts[6];
                 $this->applyGetPoints($playerId, $rolledSmashes, $logCardType);
                 break;
@@ -743,8 +749,8 @@ trait DiceUtilTrait {
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;
             case HOTEP_S_PEACE_CURSE_CARD:
-                $dice = $this->getPlayerRolledDice($playerId, true, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice);
+                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
                 $rolledSmashes = $diceCounts[6];
                 $this->applyLoseEnergy($playerId, $rolledSmashes, $logCardType);
                 break;
@@ -754,8 +760,8 @@ trait DiceUtilTrait {
             case BOW_BEFORE_RA_CURSE_CARD:
                 return [new Damage($playerId, 2, $playerId, $logCardType)];
             case VENGEANCE_OF_HORUS_CURSE_CARD:
-                $dice = $this->getPlayerRolledDice($playerId, true, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice);
+                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
                 $rolledSmashes = $diceCounts[6];
                 return [new Damage($playerId, $rolledSmashes, $playerId, $logCardType)];
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:

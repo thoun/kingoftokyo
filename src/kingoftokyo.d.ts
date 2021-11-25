@@ -9,6 +9,7 @@ interface Dice {
     locked: boolean;
     rolled: boolean;
     type: number;
+    canReroll: boolean;
 }
 
 interface Card {

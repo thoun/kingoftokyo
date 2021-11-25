@@ -681,7 +681,7 @@ trait CardsUtilTrait {
             return false; // same location & no Nova card for smashing player
         }
 
-        $dice = $this->getPlayerRolledDice($activePlayerId, true, false); 
+        $dice = $this->getPlayerRolledDice($activePlayerId, true, false, false); 
         $diceCounts = $this->getRolledDiceCounts($activePlayerId, $dice, false);
         $detail = $this->addSmashesFromCards($activePlayerId, $diceCounts, $activePlayerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;

@@ -207,6 +207,12 @@
   right: -10px;
 }
 
+.icon.lock {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+}
+
 .dice {
   display: inline-block;
   position: relative;
@@ -1259,15 +1265,18 @@ html, .mode_3d #game_play_area_background {
   background-position: 0% 0%;
 }
 .icon.energy {
-  background-position: 25% 0%;
+  background-position: 20% 0%;
 }
 .icon.health {
-  background-position: 50% 0%;
+  background-position: 40% 0%;
 }
 .icon.forbidden {
-  background-position: 75% 0%;
+  background-position: 60% 0%;
 }
 .icon.dead {
+  background-position: 80% 0%;
+}
+.icon.lock {
   background-position: 100% 0%;
 }
 

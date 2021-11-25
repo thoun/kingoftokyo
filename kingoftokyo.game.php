@@ -251,7 +251,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        //$this->debugSetup();
+        $this->debugSetup();
 
         /************ End of the game initialization *****/
     }
@@ -290,7 +290,7 @@ class KingOfTokyo extends Table {
         // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
-        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true, true) : [];
+        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true, true, true) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();

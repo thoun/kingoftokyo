@@ -177,7 +177,8 @@ class DiceManager {
                 extra: false,
                 locked: false,
                 rolled: dieValue.rolled,
-                type: 0
+                type: 0,
+                canReroll: true,
             };
             this.createAndPlaceDiceHtml(die, false, `dice-selector`);
             this.addDiceRollClass(die);
@@ -278,6 +279,10 @@ class DiceManager {
             return;
         }
 
+        if (!die.canReroll) {
+            return;
+        }
+
 
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         const dieDivId = `dice${die.id}`;
@@ -374,7 +379,7 @@ class DiceManager {
         dojo.place(html, destinationId);
     }
 
-    private createAndPlaceDie6Html(die: Dice, inTokyo: boolean, destinationId: string) {
+    private createAndPlaceDie6Html(die: Dice, canHealWithDice: boolean, destinationId: string) {
         let html = `<div id="dice${die.id}" class="dice dice${die.value}" data-dice-id="${die.id}" data-dice-value="${die.value}">
         <ol class="die-list" data-roll="${die.value}">`;
         const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
@@ -382,8 +387,11 @@ class DiceManager {
             html += `<li class="die-item ${colorClass} side${dieFace}" data-side="${dieFace}"></li>`;
         }
         html += `</ol>`;
-        if (!die.type && die.value === 4 && inTokyo) {
+        if (!die.type && die.value === 4 && !canHealWithDice) {
             html += `<div class="icon forbidden"></div>`;
+        }
+        if (!die.canReroll) {
+            html += `<div class="icon lock"></div>`;
         }
         html += `</div>`;
 
@@ -399,7 +407,7 @@ class DiceManager {
         if (die.type == 2) {
             this.createAndPlaceDie4Html(die, destinationId);
         } else {
-            this.createAndPlaceDie6Html(die, inTokyo, destinationId);
+            this.createAndPlaceDie6Html(die, !inTokyo, destinationId);
         }
     }
 

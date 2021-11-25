@@ -74,7 +74,7 @@ trait DiceStateTrait {
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
         $playerInTokyo = $this->inTokyo($playerId);
-        $dice = $this->getPlayerRolledDice($playerId, true, true);
+        $dice = $this->getPlayerRolledDice($playerId, true, true, false);
         usort($dice, "static::sortDieFunction");
 
         $diceStr = '';
@@ -314,7 +314,7 @@ trait DiceStateTrait {
             $curseCardType = $this->getCurseCardType();
 
             if ($curseCardType == FALSE_BLESSING_CURSE_CARD) {
-                $dice = $this->getPlayerRolledDice($playerId, true, false);
+                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
                 $diceFaces = [];        
                 foreach ($dice as $die) {
                     if ($die->type === 0 || $die->type === 1) {

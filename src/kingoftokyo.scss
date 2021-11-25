@@ -45,23 +45,27 @@ html, .mode_3d #game_play_area_background {
     background-size: auto 100%;
   
     &.points {
-      background-position: 0% 0%;
+      background-position: #{0 * 100% / 5} 0%;
     }
   
     &.energy {
-      background-position: 25% 0%;
+      background-position: #{1 * 100% / 5} 0%;
     }
   
     &.health {
-      background-position: 50% 0%;
+      background-position: #{2 * 100% / 5} 0%;
     }
   
     &.forbidden {
-      background-position: 75% 0%;
+      background-position: #{3 * 100% / 5} 0%;
     }
   
     &.dead {
-      background-position: 100% 0%;
+      background-position: #{4 * 100% / 5} 0%;
+    }
+  
+    &.lock {
+      background-position: #{5 * 100% / 5} 0%;
     }
 }
 

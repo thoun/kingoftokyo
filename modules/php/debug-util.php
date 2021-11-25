@@ -73,7 +73,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
+        $this->debugSetCurseCardInTable(VENGEANCE_OF_HORUS_CURSE_CARD);
 
         $this->gamestate->changeActivePlayer(2343492);
 

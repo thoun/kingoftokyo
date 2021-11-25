@@ -742,7 +742,7 @@ var CurseCards = /** @class */ (function () {
             case 9: return "At the start of your turn, lose 2[Star].";
             case 10: return "Cards cost 2 extra [Energy].";
             case 11: return "Monsters’ maximum [Heart] is 8[Heart] (Monsters that have more than 8[Heart] go down to 8[Heart]).";
-            // TODOAN case 12   
+            case 12: return "Monsters cannot reroll [diceSmash].";
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
@@ -751,9 +751,9 @@ var CurseCards = /** @class */ (function () {
             // TODOAN case 18 19 20
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
             case 22: return "Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.";
-            case 23:
-                return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
-                // TODOAN 24
+            case 23: return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
+            case 24:
+                return "You cannot reroll your [dice1].";
                 defaut: return "TODO"; // TODO an
         }
         return null;
@@ -1468,7 +1468,8 @@ var DiceManager = /** @class */ (function () {
                 extra: false,
                 locked: false,
                 rolled: dieValue.rolled,
-                type: 0
+                type: 0,
+                canReroll: true,
             };
             _this.createAndPlaceDiceHtml(die, false, "dice-selector");
             _this.addDiceRollClass(die);
@@ -1569,6 +1570,9 @@ var DiceManager = /** @class */ (function () {
             dice.forEach(function (idie) { return _this.toggleLockDice(idie, null); });
             return;
         }
+        if (!die.canReroll) {
+            return;
+        }
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         var dieDivId = "dice" + die.id;
         var dieDiv = document.getElementById(dieDivId);
@@ -1650,15 +1654,18 @@ var DiceManager = /** @class */ (function () {
         //dieDiv?.parentNode.removeChild(dieDiv);
         dojo.place(html, destinationId);
     };
-    DiceManager.prototype.createAndPlaceDie6Html = function (die, inTokyo, destinationId) {
+    DiceManager.prototype.createAndPlaceDie6Html = function (die, canHealWithDice, destinationId) {
         var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
         var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (var dieFace = 1; dieFace <= 6; dieFace++) {
             html += "<li class=\"die-item " + colorClass + " side" + dieFace + "\" data-side=\"" + dieFace + "\"></li>";
         }
         html += "</ol>";
-        if (!die.type && die.value === 4 && inTokyo) {
+        if (!die.type && die.value === 4 && !canHealWithDice) {
             html += "<div class=\"icon forbidden\"></div>";
+        }
+        if (!die.canReroll) {
+            html += "<div class=\"icon lock\"></div>";
         }
         html += "</div>";
         // security to destroy pre-existing die with same id
@@ -1671,7 +1678,7 @@ var DiceManager = /** @class */ (function () {
             this.createAndPlaceDie4Html(die, destinationId);
         }
         else {
-            this.createAndPlaceDie6Html(die, inTokyo, destinationId);
+            this.createAndPlaceDie6Html(die, !inTokyo, destinationId);
         }
     };
     DiceManager.prototype.getDiceDiv = function (die) {

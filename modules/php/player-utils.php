@@ -439,4 +439,20 @@ trait PlayerUtilTrait {
         }
         return true;
     }
+
+    function canRerollSymbol(int $playerId, int $symbol) {
+
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($symbol == 6 && $curseCardType == VENGEANCE_OF_HORUS_CURSE_CARD) {
+                return false;
+            }
+
+            if ($symbol == 1 && $curseCardType == SCRIBE_S_PERSEVERANCE_CURSE_CARD) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
