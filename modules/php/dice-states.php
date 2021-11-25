@@ -74,7 +74,7 @@ trait DiceStateTrait {
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
         $playerInTokyo = $this->inTokyo($playerId);
-        $dice = $this->getPlayerRolledDice($playerId, false);
+        $dice = $this->getPlayerRolledDice($playerId, true, false);
         $diceValues = array_map(function($idie) { 
             return $idie->value; 
         }, $dice);

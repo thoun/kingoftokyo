@@ -681,7 +681,7 @@ trait CardsUtilTrait {
             return false; // same location & no Nova card for smashing player
         }
 
-        $dice = $this->getPlayerRolledDice($activePlayerId, false);
+        $dice = $this->getPlayerRolledDice($activePlayerId, true, false); // TODO use new function
         $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
 
         $diceCounts = [];

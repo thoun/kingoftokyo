@@ -45,10 +45,10 @@ trait DiceUtilTrait {
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
     }
 
-    private function getPlayerRolledDice(int $playerId, bool $includeDieOfFate) {
+    private function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
-        if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
+        if ($includeBerserkDie && $this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
             $dice = array_merge($dice, $this->getDiceByType(1));
         }
 
@@ -60,7 +60,7 @@ trait DiceUtilTrait {
     }
 
     public function throwDice(int $playerId, bool $firstRoll) {
-        $dice = $this->getPlayerRolledDice($playerId, true);
+        $dice = $this->getPlayerRolledDice($playerId, true, true);
 
         self::DbQuery( "UPDATE dice SET `rolled` = false");
 
@@ -318,7 +318,7 @@ trait DiceUtilTrait {
         $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
-            $dice = $this->getPlayerRolledDice($playerId, false);
+            $dice = $this->getPlayerRolledDice($playerId, true, false); // TODO use function
             $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
             $diceCounts = [];
             for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
@@ -581,6 +581,19 @@ trait DiceUtilTrait {
         }
     }
 
+    function getDiceFaceType(object $die) {
+        if ($die->type == 0) {
+            return $idie->value; 
+        } else if ($die->type == 1) {
+            switch($die->value) {
+                case 1: case 2: return 5;
+                case 3: case 4: case 5: return 6;
+                case 6: return 7;
+            }
+        }
+        return null;
+    }
+
     function applyBerserkDieToDieCounts(object $die, array &$diceCounts) {
         switch($die->value) {
             case 1: 
@@ -599,6 +612,46 @@ trait DiceUtilTrait {
                 $diceCounts[7] = 1;
                 break;
         }
+    }
+
+    function getRolledDiceCounts(int $playerId) {
+        $dice = $this->getPlayerRolledDice($playerId, true, false);
+        $diceValues = array_map(function($idie) { 
+            return $idie->value; 
+        }, $dice);
+        sort($diceValues);
+
+        $diceStr = '';
+        foreach($diceValues as $dieValue) {
+            $diceStr .= $this->getDieFaceLogName($dieValue);
+        }
+
+        self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolves dice ${dice}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'dice' => $diceStr,
+        ]);
+
+        $smashTokyo = false;
+
+        $diceCounts = [];
+        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+            $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
+        }
+        $diceCounts[7] = 0;
+
+
+        // dieFace should include berserk ? TODO check
+
+        if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
+            $dice = $this->getBerserkDice();
+
+            foreach ($dice as $die) {
+                $this->applyBerserkDieToDieCounts($die, $diceCounts);
+            }
+        }
+
+        return $diceCounts;
     }
 
     function getDieOfFate() {

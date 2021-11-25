@@ -289,7 +289,7 @@ class KingOfTokyo extends Table {
         // Gather all information about current game situation (visible by player $current_player_id).
 
         $activePlayerId = self::getActivePlayerId();
-        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true) : [];
+        $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true, true) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
