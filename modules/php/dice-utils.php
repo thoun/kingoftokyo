@@ -611,6 +611,10 @@ trait DiceUtilTrait {
 
         switch($cardType) {
             // TODOAN
+            case PHARAONIC_EGO_CURSE_CARD:
+                $this->leaveTokyo($playerId);
+                $this->addLeaverWithBurrowing($playerId);
+                break;
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case THOT_S_BLINDNESS_CURSE_CARD: 
             case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
@@ -642,6 +646,8 @@ trait DiceUtilTrait {
 
         switch($cardType) {
             // TODOAN
+            case PHARAONIC_EGO_CURSE_CARD:
+                return $this->replacePlayersInTokyo($playerId);
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case SET_S_STORM_CURSE_CARD:
                 return [new Damage($playerId, 1, $playerId, $logCardType)];

@@ -725,7 +725,7 @@ var CurseCards = /** @class */ (function () {
     };
     CurseCards.prototype.getPermanentEffect = function (cardTypeId) {
         switch (cardTypeId) {
-            // TODOAN
+            // TODOAN translate
             case 1: return "Monsters cannot Yield Tokyo/Manhattan."; // TODOAN keep manhattan ?
             case 2: return "Monsters without the Golden Scarab cannot gain [Heart].";
             case 3: return "Monsters without the Golden Scarab cannot gain [Energy].";
@@ -752,7 +752,8 @@ var CurseCards = /** @class */ (function () {
     };
     CurseCards.prototype.getAnkhEffect = function (cardTypeId) {
         switch (cardTypeId) {
-            // TODOAN case 1
+            // TODOAN translate
+            case 1: return "Yield Tokyo. You can’t enter Tokyo this turn.";
             case 2:
             case 3:
             case 4:
@@ -777,8 +778,8 @@ var CurseCards = /** @class */ (function () {
     };
     CurseCards.prototype.getSnakeEffect = function (cardTypeId) {
         switch (cardTypeId) {
-            // TODOAN      
-            // TODOAN case 1
+            // TODOAN translate
+            case 1: return "Take control of Tokyo.";
             case 2:
             case 8: return "-1[Heart]";
             case 3: return "-2[Energy]";

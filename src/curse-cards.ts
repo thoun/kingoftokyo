@@ -43,7 +43,7 @@ class CurseCards {
 
     private getPermanentEffect(cardTypeId: number): string {
         switch (cardTypeId) {
-            // TODOAN
+            // TODOAN translate
             case 1: return "Monsters cannot Yield Tokyo/Manhattan."; // TODOAN keep manhattan ?
             case 2: return "Monsters without the Golden Scarab cannot gain [Heart].";
             case 3: return "Monsters without the Golden Scarab cannot gain [Energy].";
@@ -70,7 +70,8 @@ class CurseCards {
 
     private getAnkhEffect(cardTypeId: number): string {
         switch (cardTypeId) {
-            // TODOAN case 1
+            // TODOAN translate
+            case 1: return "Yield Tokyo. You can’t enter Tokyo this turn.";
             case 2: case 3: case 4: case 17: case 18: case 19: return "Take the Golden Scarab."; 
             case 5: return "You have 1 extra die Roll.";
             // TODOAN case 6 7               
@@ -88,8 +89,8 @@ class CurseCards {
 
     private getSnakeEffect(cardTypeId: number): string {
         switch (cardTypeId) {
-            // TODOAN      
-            // TODOAN case 1
+            // TODOAN translate
+            case 1: return "Take control of Tokyo.";
             case 2: case 8: return "-1[Heart]";
             case 3: return "-2[Energy]";
             case 4: case 9: return "-2[Star]";

@@ -96,7 +96,7 @@ trait CardsUtilTrait {
                 break;
             case DEATH_FROM_ABOVE_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
-
+                return $this->replacePlayersInTokyo($playerId);
                 // remove other players in Tokyo
                 $damages = [];
                 $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
