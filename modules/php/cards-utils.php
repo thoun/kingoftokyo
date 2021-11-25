@@ -725,6 +725,8 @@ trait CardsUtilTrait {
     }
     
     function changeCurseCard() {
+        $this->removeCursePermanentEffectOnReplace();
+
         $this->curseCards->moveAllCardsInLocation('table', 'discard');
 
         $card = $this->getCardFromDb($this->curseCards->pickCardForLocation('deck', 'table'));
@@ -732,6 +734,8 @@ trait CardsUtilTrait {
         self::notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Die of fate is on [dieFateEye], Curse card is changed'/*)*/, [
             'card' => $card,
         ]);
+        
+        $this->applyCursePermanentEffectOnReveal();
     }
 
     function changeGoldenScarabOwner(int $playerId) {
@@ -760,5 +764,28 @@ trait CardsUtilTrait {
         }
 
         return true;
+    }
+
+    function changeAllPlayersMaxHealth() {
+        $playerIds = $this->getPlayersIds();
+        foreach($playerIds as $playerId) {
+            $this->changeMaxHealth($playerId);
+        }
+    }
+
+    function applyCursePermanentEffectOnReveal() {
+        $curseCardType = $this->getCurseCardType();
+
+        if ($curseCardType == BOW_BEFORE_RA_CURSE_CARD) {
+            $this->changeAllPlayersMaxHealth();
+        }
+    }
+
+    function removeCursePermanentEffectOnReplace() {
+        $curseCardType = $this->getCurseCardType();
+
+        if ($curseCardType == BOW_BEFORE_RA_CURSE_CARD) {
+            $this->changeAllPlayersMaxHealth();
+        }
     }
 }

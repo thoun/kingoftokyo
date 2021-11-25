@@ -184,9 +184,16 @@ trait UtilTrait {
     }
 
     function getPlayerMaxHealth(int $playerId) {
+        $add = 0;
+        $remove = 0;
         // even bigger
-        $countEvenBigger = $this->countCardOfType($playerId, EVEN_BIGGER_CARD);
-        return 10 + (2 * $countEvenBigger);
+        $add += 2 * $this->countCardOfType($playerId, EVEN_BIGGER_CARD);
+
+        if ($this->isAnubisExpansion() && $this->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
+            $remove += 2;
+        }
+
+        return 10 + $add - $remove;
     }
 
     function getRemainingPlayers() {

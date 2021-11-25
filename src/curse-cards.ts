@@ -53,8 +53,9 @@ class CurseCards {
             case 7: return "Monsters without the Golden Scarab cannot use [diceSmash]."
             case 8: return "At the start of your turn, lose 1[Heart].";
             case 9: return "At the start of your turn, lose 2[Star].";
-            case 10: return "Cards cost 2 extra [Energy].";   
-            // TODOAN case 11 12   
+            case 10: return "Cards cost 2 extra [Energy].";  
+            case 11: return "Monsters’ maximum [Heart] is 8[Heart] (Monsters that have more than 8[Heart] go down to 8[Heart])." ;
+            // TODOAN case 12   
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
@@ -102,7 +103,9 @@ class CurseCards {
             case 5: return "You cannot use your [diceSmash]."
             // TODOAN case 5 6     
             case 7: return "Lose 1 for each [diceSmash] you rolled." 
-            // TODOAN case 10 11 12      
+            // TODOAN case 10
+            case 11: return "-2[Heart]";
+            // TODOAN case 12
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";

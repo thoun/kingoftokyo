@@ -240,6 +240,7 @@ class KingOfTokyo extends Table {
             $this->initCurseCards();
             // init first curse card
             $this->curseCards->pickCardForLocation('deck', 'table');
+            $this->applyCursePermanentEffectOnReveal();
         }
 
         if ($this->isKingKongExpansion()) {

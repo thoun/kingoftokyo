@@ -745,6 +745,8 @@ trait DiceUtilTrait {
             case BUILDERS_UPRISING_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;
+            case BOW_BEFORE_RA_CURSE_CARD:
+                return [new Damage($playerId, 2, $playerId, $logCardType)];
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                 $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
                 $damages = [];
