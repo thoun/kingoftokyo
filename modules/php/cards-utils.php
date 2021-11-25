@@ -97,37 +97,6 @@ trait CardsUtilTrait {
             case DEATH_FROM_ABOVE_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
                 return $this->replacePlayersInTokyo($playerId);
-                // remove other players in Tokyo
-                $damages = [];
-                $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
-                $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
-                if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
-                    $this->leaveTokyo($playerInTokyoBay);
-        
-                    // burrowing
-                    $countBurrowing = $this->countCardOfType($playerInTokyoBay, BURROWING_CARD);
-                    if ($countBurrowing > 0) {
-                        $damages[] = new Damage($playerId, $countBurrowing, $playerInTokyoBay, BURROWING_CARD);
-                    }
-                }
-                if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
-                    $this->leaveTokyo($playerInTokyoCity);
-        
-                    // burrowing
-                    $countBurrowing = $this->countCardOfType($playerInTokyoCity, BURROWING_CARD);
-                    if ($countBurrowing > 0) {
-                        $damages[] = new Damage($playerId, $countBurrowing, $playerInTokyoCity, BURROWING_CARD);
-                    }
-                }
-
-                if ($playerInTokyoBay == $playerId) {
-                    $this->moveFromTokyoBayToCity($playerId);
-                } else if ($playerInTokyoCity != $playerId) {
-                    // take control of Tokyo
-                    $this->moveToTokyo($playerId, false);
-                }
-            
-                return $damages;
             case ENERGIZE_CARD:
                 $this->applyGetEnergy($playerId, 9, $cardType);
                 break;
