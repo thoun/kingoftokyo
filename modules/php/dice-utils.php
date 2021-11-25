@@ -705,6 +705,12 @@ trait DiceUtilTrait {
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
+            case VENGEANCE_OF_HORUS_CURSE_CARD:
+                $dice = $this->getPlayerRolledDice($playerId, true, false);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice);
+                $rolledSmashes = $diceCounts[6];
+                $this->applyGetPoints($playerId, $rolledSmashes, $logCardType);
+                break;
             case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
                 $this->applyGetPoints($playerId, 2, $logCardType);
                 break;
@@ -747,6 +753,11 @@ trait DiceUtilTrait {
                 break;
             case BOW_BEFORE_RA_CURSE_CARD:
                 return [new Damage($playerId, 2, $playerId, $logCardType)];
+            case VENGEANCE_OF_HORUS_CURSE_CARD:
+                $dice = $this->getPlayerRolledDice($playerId, true, false);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice);
+                $rolledSmashes = $diceCounts[6];
+                return [new Damage($playerId, $rolledSmashes, $playerId, $logCardType)];
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                 $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
                 $damages = [];

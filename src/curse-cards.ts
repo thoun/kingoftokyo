@@ -79,7 +79,8 @@ class CurseCards {
             case 5: return "You have 1 extra die Roll.";
             // TODOAN case 6 7               
             case 8: case 11: case 13: return "+2[Heart]";
-            // TODOAN case 10 12
+            // TODOAN case 10
+            case 12: return "Gain 1[Star] for each [diceSmash] you rolled.";
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
             case 16: return "Take control of Tokyo.";
@@ -105,7 +106,7 @@ class CurseCards {
             case 7: return "Lose 1 for each [diceSmash] you rolled." 
             // TODOAN case 10
             case 11: return "-2[Heart]";
-            // TODOAN case 12
+            case 12: return "Lose 1[Heart] for each [diceSmash] you rolled.";
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";
