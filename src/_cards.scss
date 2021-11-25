@@ -185,23 +185,6 @@ $description-size: 7pt;
     }
 }
 
-.dice-icon {
-    width: 14px;
-    height: 14px;
-    border-radius: 20%;
-    background-color: black;
-    background-image: url('img/black_dice.png');
-    background-size: auto 100%;
-    display: inline-block;
-    margin-bottom: -4px;
-
-    @for $i from 1 through 6 {
-        &.dice#{$i} {
-            background-position: (($i - 1) * 20%) 100%;
-        }
-    }
-}
-
 .card-keep-text {
     position: relative;
     color: white;

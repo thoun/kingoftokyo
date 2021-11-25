@@ -9,6 +9,7 @@
         <div id="rolled-dice" class="whiteblock">
             <div id="locked-dice" class="hide-lock">
                 <div id="lock"></div>
+                <div id="locked-dice10"></div>
                 <div id="locked-dice1"></div>
                 <div id="locked-dice2"></div>
                 <div id="locked-dice3"></div>
@@ -16,7 +17,6 @@
                 <div id="locked-dice5"></div>
                 <div id="locked-dice6"></div>
                 <div id="locked-dice7"></div>
-                <div id="locked-dice10"></div>
             </div>
             <div id="dice-selector">
             </div>

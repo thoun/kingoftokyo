@@ -1,3 +1,46 @@
+.dice-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 20%;
+  background-color: black;
+  background-image: url('img/black_dice.png');
+  background-size: auto 100%;
+  display: inline-block;
+  margin-bottom: -4px;
+
+  @for $i from 1 through 6 {
+      &.dice#{$i} {
+          background-position: (($i - 1) * 20%) 100%;
+      }
+  }
+
+  &.berserk {
+    background-color: #E55204;
+    background-image: url('img/berserk_dice.png');
+  }
+
+  &.die-of-fate {
+    background-color: #DAC971;
+    background-image: url('img/anubis_die_icons.png');
+
+    &.eye {
+      background-position: 0% 0%;
+    }
+  
+    &.river {
+      background-position: 33.33% 0%;
+    }
+  
+    &.snake {
+      background-position: 66.66% 0%;
+    }
+  
+    &.ankh {
+      background-position: 100% 0%;
+    }
+  }
+}
+
 #rolled-dice {
   display: flex;
   justify-content: center;
@@ -434,7 +477,7 @@ $distFromCenter: 1em;
       //border-top: 0;
       //border-bottom: $die4height solid transparent;
 
-      background: url('img/anubis_die_background.png');
+      background: url('img/anubis_die_background.jpg');
       border: 0;
       height: $die4height;
       width: $die4size;

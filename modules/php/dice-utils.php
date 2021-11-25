@@ -15,6 +15,38 @@ trait DiceUtilTrait {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
+
+    static function getDiceFaceType(object $die) {
+        if ($die->type == 0) {
+            return $die->value; 
+        } else if ($die->type == 1) {
+            switch($die->value) {
+                case 1: case 2: return 5;
+                case 3: case 4: case 5: return 6;
+                case 6: return 7;
+            }
+        }
+        return null;
+    }
+
+    static function sortDieFunction($a, $b) { 
+        $aFaceType = static::getDiceFaceType($a);
+        $bFaceType = static::getDiceFaceType($b);
+        
+        // if die type 2, always at the beginning of the array
+        if ($a->type == 2) {
+            return -1;
+        } else if ($b->type == 2) {
+            return 1;
+        }
+
+        // sort by face type
+        if ($aFaceType === $bFaceType) {
+            return $a->type - $b->type; // if same face type, die type 1 after die type 0
+        } else {
+            return $aFaceType - $bFaceType;
+        }
+    }
     
     function getDice(int $number) {
         $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
@@ -49,11 +81,11 @@ trait DiceUtilTrait {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
         if ($includeBerserkDie && $this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
-            $dice = array_merge($dice, $this->getDiceByType(1));
+            $dice = array_merge($dice, $this->getDiceByType(1)); // type 1 at the end
         }
 
         if ($includeDieOfFate && $this->isAnubisExpansion()) {
-            $dice = array_merge($dice, $this->getDiceByType(2));
+            $dice = array_merge($this->getDiceByType(2), $dice); // type 2 at the start
         }
 
         return $dice;
@@ -64,31 +96,40 @@ trait DiceUtilTrait {
 
         self::DbQuery( "UPDATE dice SET `rolled` = false");
 
-        $rolledDiceStr = '';
-        $lockedDiceStr = '';
         $lockedDice = [];
+        $rolledDice = [];
         
         foreach ($dice as &$dice) {
             if ($dice->locked) {
-                $lockedDice[] = $dice->value;
+                $lockedDice[] = $dice;
             } else {
                 $facesNumber = $dice->type == 2 ? 4 : 6;
                 $dice->value = bga_rand(1, $facesNumber);
                 self::DbQuery( "UPDATE dice SET `dice_value` = ".$dice->value.", `rolled` = true where `dice_id` = ".$dice->id );
-                $rolledDiceStr .= $this->getDieFaceLogName($dice->value);
+
+                $rolledDice[] = $dice;
             }
         }
 
         if (!$this->getPlayer($playerId)->eliminated) {
             $message = null;
+
+            $rolledDiceStr = '';
+            $lockedDiceStr = '';
+
+            usort($rolledDice, "static::sortDieFunction");
+            foreach ($rolledDice as $rolledDie) {
+                $rolledDiceStr .= $this->getDieFaceLogName($rolledDie->value, $rolledDie->type);
+            }
+
             if ($firstRoll) {
                 $message = clienttranslate('${player_name} rolls dice ${rolledDice}');
             } else if (count($lockedDice) == 0) {
                 $message = clienttranslate('${player_name} rerolls dice ${rolledDice}');
             } else {
-                sort($lockedDice);
+                usort($lockedDice, "static::sortDieFunction");
                 foreach ($lockedDice as $lockedDie) {
-                    $lockedDiceStr .= $this->getDieFaceLogName($lockedDie);
+                    $lockedDiceStr .= $this->getDieFaceLogName($lockedDie->value, $lockedDie->type);
                 }
 
                 $message = clienttranslate('${player_name} keeps ${lockedDice} and rerolls dice ${rolledDice}');
@@ -408,12 +449,29 @@ trait DiceUtilTrait {
         return $backToChangeDie ? 'endAndChangeDieAgain' : 'end';
     }
 
-    function getDieFaceLogName(int $number) {
-        switch($number) {
-            case 1: case 2: case 3: return "[dice$number]";
-            case 4: return "[diceHeart]";
-            case 5: return "[diceEnergy]";
-            case 6: return "[diceSmash]";
+    function getDieFaceLogName(int $face, int $type) {
+        if ($type == 0) {
+            switch($face) {
+                case 1: case 2: case 3: return "[dice$face]";
+                case 4: return "[diceHeart]";
+                case 5: return "[diceEnergy]";
+                case 6: return "[diceSmash]";
+            }
+        } else if ($type == 1) {
+            switch($face) {
+                case 1:  return "[berserkDieEnergy]";
+                case 2: return "[berserkDieDoubleEnergy]";
+                case 3: case 4: return "[berserkDieSmash]";
+                case 5: return "[berserkDieDoubleSmash]";
+                case 6: return "[berserkDieSkull]";
+            }
+        } else if ($type == 2) {
+            switch($face) {
+                case 1:  return "[dieFateEye]";
+                case 2: return "[dieFateRiver]";
+                case 3: return "[dieFateSnake]";
+                case 4: return "[dieFateAnkh]";
+            }
         }
     }
   	
@@ -581,73 +639,29 @@ trait DiceUtilTrait {
         }
     }
 
-    function getDiceFaceType(object $die) {
-        if ($die->type == 0) {
-            return $idie->value; 
-        } else if ($die->type == 1) {
-            switch($die->value) {
-                case 1: case 2: return 5;
-                case 3: case 4: case 5: return 6;
-                case 6: return 7;
-            }
-        }
-        return null;
-    }
-
-    function applyBerserkDieToDieCounts(object $die, array &$diceCounts) {
-        switch($die->value) {
-            case 1: 
-                $diceCounts[5] += 1;
-                break;
-            case 2: 
-                $diceCounts[5] += 2;
-                break;
-            case 3: case 4: 
-                $diceCounts[6] += 1;
-                break;
-            case 5: 
-                $diceCounts[6] += 2;
-                break;
-            case 6: 
-                $diceCounts[7] = 1;
-                break;
-        }
-    }
-
-    function getRolledDiceCounts(int $playerId) {
-        $dice = $this->getPlayerRolledDice($playerId, true, false);
-        $diceValues = array_map(function($idie) { 
-            return $idie->value; 
-        }, $dice);
-        sort($diceValues);
-
-        $diceStr = '';
-        foreach($diceValues as $dieValue) {
-            $diceStr .= $this->getDieFaceLogName($dieValue);
-        }
-
-        self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolves dice ${dice}'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'dice' => $diceStr,
-        ]);
-
-        $smashTokyo = false;
-
-        $diceCounts = [];
-        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-            $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
-        }
-        $diceCounts[7] = 0;
-
-
-        // dieFace should include berserk ? TODO check
-
-        if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
-            $dice = $this->getBerserkDice();
-
-            foreach ($dice as $die) {
-                $this->applyBerserkDieToDieCounts($die, $diceCounts);
+    function getRolledDiceCounts(array $dice) {
+        $diceCounts = [0,0,0,0,0,0,0];
+        foreach($dice as $die) {
+            if ($die->type === 0) {
+                $diceCounts[$die->value] += 1;
+            } else if ($die->type === 1) {
+                switch($die->value) {
+                    case 1: 
+                        $diceCounts[5] += 1;
+                        break;
+                    case 2: 
+                        $diceCounts[5] += 2;
+                        break;
+                    case 3: case 4: 
+                        $diceCounts[6] += 1;
+                        break;
+                    case 5: 
+                        $diceCounts[6] += 2;
+                        break;
+                    case 6: 
+                        $diceCounts[7] = 1;
+                        break;
+                }
             }
         }
 

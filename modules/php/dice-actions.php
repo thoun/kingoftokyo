@@ -66,8 +66,8 @@ trait DiceActionTrait {
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
             'dieId' => $die->id,
-            'die_face_before' => $this->getDieFaceLogName($die->value),
-            'die_face_after' => $this->getDieFaceLogName($newValue),
+            'die_face_before' => $this->getDieFaceLogName($die->value, 0),
+            'die_face_after' => $this->getDieFaceLogName($newValue, 0),
         ]);
 
         $this->gamestate->nextState('rethrow');
@@ -127,8 +127,8 @@ trait DiceActionTrait {
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
             'dieId' => $die->id,
-            'die_face_before' => $this->getDieFaceLogName($die->value),
-            'die_face_after' => $this->getDieFaceLogName($newValue),
+            'die_face_before' => $this->getDieFaceLogName($die->value, 0),
+            'die_face_after' => $this->getDieFaceLogName($newValue, 0),
         ]);
 
         $this->endChangeActivePlayerDie($intervention, $playerId, $die, BACKGROUND_DWELLER_CARD, $newValue);
@@ -156,8 +156,8 @@ trait DiceActionTrait {
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
             'dieId' => $dieId,
-            'die_face_before' => $this->getDieFaceLogName(3),
-            'die_face_after' => $this->getDieFaceLogName($newValue),
+            'die_face_before' => $this->getDieFaceLogName(3, 0),
+            'die_face_after' => $this->getDieFaceLogName($newValue, 0),
         ]);
 
         $changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);
@@ -216,8 +216,8 @@ trait DiceActionTrait {
             'inTokyo' => $inTokyo,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
             'toValue' => $value,
-            'die_face_before' => $this->getDieFaceLogName($die->value),
-            'die_face_after' => $this->getDieFaceLogName($value),
+            'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),
+            'die_face_after' => $this->getDieFaceLogName($value, $die->type),
         ]);
 
         // psychic probe should not be called after change die (or only after a Background Dweller roll ?)
@@ -306,8 +306,8 @@ trait DiceActionTrait {
             'dieId' => $die->id,
             'toValue' => $value,
             'roll' => true,
-            'die_face_before' => $this->getDieFaceLogName($oldValue),
-            'die_face_after' => $this->getDieFaceLogName($value),
+            'die_face_before' => $this->getDieFaceLogName($oldValue, $die->type),
+            'die_face_after' => $this->getDieFaceLogName($value, $die->type),
             'psychicProbeRollDieArgs' => $stayForRethrow3 ? $this->argChangeActivePlayerDie($intervention) : null,
         ]);
 

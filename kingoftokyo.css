@@ -102,6 +102,55 @@
   opacity: 1;
 }
 
+.dice-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 20%;
+  background-color: black;
+  background-image: url("img/black_dice.png");
+  background-size: auto 100%;
+  display: inline-block;
+  margin-bottom: -4px;
+}
+.dice-icon.dice1 {
+  background-position: 0% 100%;
+}
+.dice-icon.dice2 {
+  background-position: 20% 100%;
+}
+.dice-icon.dice3 {
+  background-position: 40% 100%;
+}
+.dice-icon.dice4 {
+  background-position: 60% 100%;
+}
+.dice-icon.dice5 {
+  background-position: 80% 100%;
+}
+.dice-icon.dice6 {
+  background-position: 100% 100%;
+}
+.dice-icon.berserk {
+  background-color: #E55204;
+  background-image: url("img/berserk_dice.png");
+}
+.dice-icon.die-of-fate {
+  background-color: #DAC971;
+  background-image: url("img/anubis_die_icons.png");
+}
+.dice-icon.die-of-fate.eye {
+  background-position: 0% 0%;
+}
+.dice-icon.die-of-fate.river {
+  background-position: 33.33% 0%;
+}
+.dice-icon.die-of-fate.snake {
+  background-position: 66.66% 0%;
+}
+.dice-icon.die-of-fate.ankh {
+  background-position: 100% 0%;
+}
+
 #rolled-dice {
   display: flex;
   justify-content: center;
@@ -498,7 +547,7 @@
   top: 0;
   left: 0;
   transform-origin: center 66.66667%;
-  background: url("img/anubis_die_background.png");
+  background: url("img/anubis_die_background.jpg");
   border: 0;
   height: 4.3301270189em;
   width: 5em;
@@ -735,35 +784,6 @@
 }
 .card-tooltip .cost {
   color: #a6c136;
-}
-
-.dice-icon {
-  width: 14px;
-  height: 14px;
-  border-radius: 20%;
-  background-color: black;
-  background-image: url("img/black_dice.png");
-  background-size: auto 100%;
-  display: inline-block;
-  margin-bottom: -4px;
-}
-.dice-icon.dice1 {
-  background-position: 0% 100%;
-}
-.dice-icon.dice2 {
-  background-position: 20% 100%;
-}
-.dice-icon.dice3 {
-  background-position: 40% 100%;
-}
-.dice-icon.dice4 {
-  background-position: 60% 100%;
-}
-.dice-icon.dice5 {
-  background-position: 80% 100%;
-}
-.dice-icon.dice6 {
-  background-position: 100% 100%;
 }
 
 .card-keep-text {
@@ -1165,10 +1185,10 @@ html[data-dice="2"] .die-item.black {
   border-color: #ff8200;
   background-image: url("img/orange_dice.png");
 }
-html[data-dice="2"] .log .dice-icon {
+html[data-dice="2"] .log .dice-icon:not(.berserk):not(.die-of-fate) {
   background-image: url("img/orange_dice.png");
 }
-html[data-dice="2"] .gamelogreview .dice-icon {
+html[data-dice="2"] .gamelogreview .dice-icon:not(.berserk):not(.die-of-fate) {
   background-image: url("img/orange_dice.png");
 }
 html[data-dice="2"] .animation {
@@ -1248,21 +1268,6 @@ html, .mode_3d #game_play_area_background {
   background-position: 75% 0%;
 }
 .icon.dead {
-  background-position: 100% 0%;
-}
-.icon.die-of-fate {
-  background-image: url("img/anubis_die_icons.png");
-}
-.icon.die-of-fate.eye {
-  background-position: 0% 0%;
-}
-.icon.die-of-fate.river {
-  background-position: 33.33% 0%;
-}
-.icon.die-of-fate.snake {
-  background-position: 66.66% 0%;
-}
-.icon.die-of-fate.ankh {
   background-position: 100% 0%;
 }
 

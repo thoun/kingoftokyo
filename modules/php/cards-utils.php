@@ -681,15 +681,8 @@ trait CardsUtilTrait {
             return false; // same location & no Nova card for smashing player
         }
 
-        $dice = $this->getPlayerRolledDice($activePlayerId, true, false); // TODO use new function
-        $diceValues = array_map(function($idie) { return $idie->value; }, $dice);
-
-        $diceCounts = [];
-        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-            $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
-        }
-        $diceCounts[7] = 0;
-
+        $dice = $this->getPlayerRolledDice($activePlayerId, true, false); 
+        $diceCounts = $this->getRolledDiceCounts($dice);
         $detail = $this->addSmashesFromCards($activePlayerId, $diceCounts, $activePlayerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;
 

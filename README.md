@@ -32,6 +32,9 @@ Also add one auto-FTP upload extension (for example https://marketplace.visualst
 ## Hint
 Make sure ftp-sync.json and node_modules are in .gitignore
 
+# How to start PHP unit test
+go on tests dir and start execute file, for example `php ./kingoftokyo.game.test-dice-sort.php`
+
 # TODO
 add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
@@ -42,6 +45,7 @@ TODOCY add stats
 TODOCY check what happens if healed by Healing Ray
 TODOCY confirm forbidden heal & heal on tokens shouldn't remove berserk
 TODOCY confirm rolling 4 claws & a heart still activate berserk
+TODOCY confirm double smash/double energy can be used to gain cultists
 TODOME add stats
 TODOME flip cards (remove 302)
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953

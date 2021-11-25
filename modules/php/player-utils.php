@@ -201,7 +201,7 @@ trait PlayerUtilTrait {
     function applyGetCultist(int $playerId, int $dieValue) {
         self::DbQuery("UPDATE player SET `player_cultists` = `player_cultists` + 1 where `player_id` = $playerId");
 
-        $diceStr = $this->getDieFaceLogName($dieValue);
+        $diceStr = $this->getDieFaceLogName($dieValue, 0);
 
         $message = clienttranslate('${player_name} gains 1 cultist with 4 or more ${dice}');
         self::notifyAllPlayers('cultist', $message, [
@@ -370,7 +370,7 @@ trait PlayerUtilTrait {
         if (!$this->canEnterTokyo()) {
             return;
         }
-        
+
         // remove other players in Tokyo
         $damages = [];
         $playerInTokyoCity = $this->getPlayerIdInTokyoCity();

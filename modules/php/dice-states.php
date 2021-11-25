@@ -74,15 +74,12 @@ trait DiceStateTrait {
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
         $playerInTokyo = $this->inTokyo($playerId);
-        $dice = $this->getPlayerRolledDice($playerId, true, false);
-        $diceValues = array_map(function($idie) { 
-            return $idie->value; 
-        }, $dice);
-        sort($diceValues);
+        $dice = $this->getPlayerRolledDice($playerId, true, true);
+        usort($dice, "static::sortDieFunction");
 
         $diceStr = '';
-        foreach($diceValues as $dieValue) {
-            $diceStr .= $this->getDieFaceLogName($dieValue);
+        foreach($dice as $die) {
+            $diceStr .= $this->getDieFaceLogName($die->value, $die->type);
         }
 
         self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolves dice ${dice}'), [
@@ -93,11 +90,7 @@ trait DiceStateTrait {
 
         $smashTokyo = false;
 
-        $diceCounts = [];
-        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-            $diceCounts[$diceFace] = count(array_values(array_filter($diceValues, function($dice) use ($diceFace) { return $dice == $diceFace; })));
-        }
-        $diceCounts[7] = 0;
+        $diceCounts = $this->getRolledDiceCounts($dice);
 
         $detail = $this->addSmashesFromCards($playerId, $diceCounts, $playerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;
@@ -105,7 +98,7 @@ trait DiceStateTrait {
         if ($detail->addedSmashes > 0) {
             $diceStr = '';
             for ($i=0; $i<$detail->addedSmashes; $i++) { 
-                $diceStr .= $this->getDieFaceLogName(6); 
+                $diceStr .= $this->getDieFaceLogName(6, 0); 
             }
             
             $cardNamesStr = implode(', ', $detail->cardsAddingSmashes);
@@ -159,20 +152,8 @@ trait DiceStateTrait {
             $this->getNewTokyoTowerLevel($playerId);
         }
 
-        if ($this->isCybertoothExpansion()) {
-            $berserk = $this->isPlayerBerserk($playerId);
-
-            if ($berserk) {
-                $dice = $this->getBerserkDice();
-
-                foreach ($dice as $die) {
-                    $this->applyBerserkDieToDieCounts($die, $diceCounts);
-                }
-            } else {
-                if ($diceCounts[6] >= 4) {
-                    $this->setPlayerBerserk($playerId, true);
-                }
-            }
+        if ($diceCounts[6] >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId)) {
+            $this->setPlayerBerserk($playerId, true);
         }
         
         if ($this->isCthulhuExpansion()) {
@@ -206,6 +187,7 @@ trait DiceStateTrait {
                 break;
             case 2:
                 self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], Curse card is kept (with no effect except permanent effect)'/*)*/, []);
+                break;
             case 3:
                 self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateSnake], Snake effect is applied'/*)*/, []);
                 $damages = $this->applySnakeEffect($playerId);

@@ -67,13 +67,13 @@ html[data-dice="2"] {
     }
 
     .log {        
-        .dice-icon {
+        .dice-icon:not(.berserk):not(.die-of-fate) {
             background-image: url('img/orange_dice.png');
         }
     }
 
     .gamelogreview {        
-        .dice-icon {
+        .dice-icon:not(.berserk):not(.die-of-fate) {
             background-image: url('img/orange_dice.png');
         }
     }

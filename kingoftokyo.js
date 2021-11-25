@@ -68,10 +68,15 @@ function formatTextIcons(rawText) {
         .replace(/\[diceHeart\]/ig, '<span class="dice-icon dice4"></span>')
         .replace(/\[diceEnergy\]/ig, '<span class="dice-icon dice5"></span>')
         .replace(/\[diceSmash\]/ig, '<span class="dice-icon dice6"></span>')
-        .replace(/\[dieFateEye\]/ig, '<span class="die-of-fate icon eye"></span>')
-        .replace(/\[dieFateRiver\]/ig, '<span class="die-of-fate icon river"></span>')
-        .replace(/\[dieFateSnake\]/ig, '<span class="die-of-fate icon snake"></span>')
-        .replace(/\[dieFateAnkh\]/ig, '<span class="die-of-fate icon ankh"></span>')
+        .replace(/\[dieFateEye\]/ig, '<span class="dice-icon die-of-fate eye"></span>')
+        .replace(/\[dieFateRiver\]/ig, '<span class="dice-icon die-of-fate river"></span>')
+        .replace(/\[dieFateSnake\]/ig, '<span class="dice-icon die-of-fate snake"></span>')
+        .replace(/\[dieFateAnkh\]/ig, '<span class="dice-icon die-of-fate ankh"></span>')
+        .replace(/\[berserkDieEnergy\]/ig, '<span class="dice-icon berserk dice1"></span>')
+        .replace(/\[berserkDieDoubleEnergy\]/ig, '<span class="dice-icon berserk dice2"></span>')
+        .replace(/\[berserkDieSmash\]/ig, '<span class="dice-icon berserk dice3"></span>')
+        .replace(/\[berserkDieDoubleSmash\]/ig, '<span class="dice-icon berserk dice5"></span>')
+        .replace(/\[berserkDieSkull\]/ig, '<span class="dice-icon berserk dice6"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
 var CARD_WIDTH = 132;
@@ -744,7 +749,7 @@ var CurseCards = /** @class */ (function () {
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
             // TODOAN case 18 19 21 22
             case 23:
-                return "Keep cards and Permanent Evolution cards have no effect."; // TODOAN keep Evolution ?            
+                return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
                 // TODOAN 24
                 defaut: return "TODO"; // TODO an
         }
@@ -770,7 +775,7 @@ var CurseCards = /** @class */ (function () {
             case 15: return "+2[Energy]";
             // TODOAN case 16 17 18 19 21 22
             case 23:
-                return "Draw an Evolution card or gain 3[Energy]."; // TODOAN keep Evolution ?            
+                return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
                 // TODOAN 24
                 defaut: return "TODO"; // TODO an
         }
@@ -794,7 +799,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return "Take the Golden Scarab.";
             // TODOAN case 21 22
             case 23:
-                return "Discard an Evolution card from your hand or in play or lose 3[Energy]."; // TODOAN keep Evolution ?            
+                return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."         
                 // TODOAN 24
                 defaut: return "TODO"; // TODO an
         }

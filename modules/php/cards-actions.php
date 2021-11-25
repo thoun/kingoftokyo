@@ -502,7 +502,7 @@ trait CardsActionTrait {
 
         $diceStr = '';
         foreach ($diceValues as $dieValue) {
-            $diceStr .= $this->getDieFaceLogName($dieValue);
+            $diceStr .= $this->getDieFaceLogName($dieValue, 0);
         }
 
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
