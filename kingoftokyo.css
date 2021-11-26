@@ -1358,6 +1358,7 @@ html, .mode_3d #game_play_area_background {
 #rolled-dice-and-rapid-actions #rapid-actions-wrapper .action-button {
   margin-top: 5px;
   margin-bottom: 5px;
+  text-overflow: unset;
 }
 #rolled-dice-and-rapid-actions #rapid-actions-wrapper > .action-button {
   margin-left: 0;

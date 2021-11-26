@@ -130,6 +130,7 @@ html, .mode_3d #game_play_area_background {
     .action-button {
       margin-top: 5px;
       margin-bottom: 5px;
+      text-overflow: unset;
     }
 
     &>.action-button {
