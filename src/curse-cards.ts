@@ -61,7 +61,9 @@ class CurseCards {
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
             case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
-            // TODOAN case 18 19 20
+            // TODOAN case 18 
+            case 19: return "The Monster with the Golden Scarab cannot lose [Heart].";
+            // TODOAN case 20
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
             case 22: return "Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.";
             case 23: return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
@@ -75,20 +77,20 @@ class CurseCards {
         switch (cardTypeId) {
             // TODOAN translate
             case 1: return "Yield Tokyo. You can’t enter Tokyo this turn.";
-            case 2: case 3: case 4: case 17: case 18: case 19: return "Take the Golden Scarab."; 
+            case 2: case 3: case 4: case 7: case 17: case 18: case 19: return "Take the Golden Scarab."; 
             case 5: return "You have 1 extra die Roll.";
-            // TODOAN case 6 7               
+            // TODOAN case 6               
             case 8: case 11: case 13: return "+2[Heart]";
             // TODOAN case 10
             case 12: return "Gain 1[Star] for each [diceSmash] you rolled.";
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
             case 16: return "Take control of Tokyo.";
-            // TODOAN case 17 18 19 21 22
+            // TODOAN case 20
             case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
             // TODOAN case 22
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
-            // TODOAN 24
+            case 24: return "Gain 1[Energy] for each [dice1] you rolled.";
             defaut: return "TODO"; // TODO an
         }
         return null;
@@ -101,16 +103,17 @@ class CurseCards {
             case 2: case 8: return "-1[Heart]";
             case 3: return "-2[Energy]";
             case 4: case 9: return "-2[Star]";
-            case 5: return "You cannot use your [diceSmash]."
-            // TODOAN case 5 6     
-            case 7: return "Lose 1 for each [diceSmash] you rolled." 
+            case 5: return "You cannot use your [diceSmash].";
+            // TODOAN case 6     
+            case 7: return "Lose 1[Energy] for each [diceSmash] you rolled.";
             // TODOAN case 10
             case 11: return "-2[Heart]";
             case 12: return "Lose 1[Heart] for each [diceSmash] you rolled.";
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";
-            // TODOAN case 16 17 18 19
+            case 16: return "Yield Tokyo. You can’t enter Tokyo this turn.";
+            // TODOAN case 17 18 19
             case 20: return "Take the Golden Scarab.";
             case 21: return "Cancel the Curse effect.";
             // TODOAN case 22

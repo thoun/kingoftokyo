@@ -728,6 +728,12 @@ trait DiceUtilTrait {
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
                 $this->applyGetEnergy($playerId, 3, $logCardType);
                 break;
+            case SCRIBE_S_PERSEVERANCE_CURSE_CARD:
+                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
+                $rolled1s = $diceCounts[1];
+                $this->applyGetEnergy($playerId, $rolled1s, $logCardType);
+                break;
         }
     }
     
@@ -782,6 +788,10 @@ trait DiceUtilTrait {
                 foreach ($playersIds as $pId) {
                     $this->applyLoseEnergy($pId, 1, $logCardType);
                 }
+                break;
+            case RESURRECTION_OF_OSIRIS_CURSE_CARD:
+                $this->leaveTokyo($playerId);
+                $this->addLeaverWithBurrowing($playerId);
                 break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
