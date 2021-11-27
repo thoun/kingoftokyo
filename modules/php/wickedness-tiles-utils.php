@@ -15,7 +15,7 @@ trait WickednessTilesUtilTrait {
     function initWickednessTiles(int $side) {
         for($value=1; $value<=10; $value++) { // curse cards
             $cardSide = $side === 4 ? bga_rand(0, 1) : $side - 2;
-            $cards[] = ['type' => $value + 100 * $side, 'type_arg' => 0, 'nbr' => 1];
+            $cards[] = ['type' => $value + 100 * $cardSide, 'type_arg' => 0, 'nbr' => 1];
         }
         $this->wickednessTiles->createCards($cards, 'deck');
 

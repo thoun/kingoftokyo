@@ -91,7 +91,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.createPlayerPanels(gamedatas); 
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
+        this.tableCenter = new TableCenter(this, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -329,7 +329,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private onEnteringTakeWickednessTile(args: EnteringTakeWickednessTileArgs, isCurrentPlayerActive: boolean) {
-        // TODOWI
+        this.tableCenter.setWickednessTilesSelectable(args.level, true, isCurrentPlayerActive);
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs, isCurrentPlayerActive: boolean) {
@@ -513,7 +513,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private onLeavingTakeWickednessTile() {
-        // TODOWI
+        this.tableCenter.setWickednessTilesSelectable(null, false, false);
     }
 
     private onLeavingBuyCard() {
@@ -599,6 +599,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
+                    break;
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");
                     const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
@@ -1981,7 +1982,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_takeWickednessTile(notif: Notif<NotifTakeWickednessTileArgs>) {
-        this.wickednessTiles.moveToAnotherStock(this.tableCenter.getWickednessTiles(notif.args.level), this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.tile);
+        this.wickednessTiles.moveToAnotherStock(this.tableCenter.getWickednessTilesStock(notif.args.level), this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.tile);
+        this.tableCenter.removeReducedWickednessTile(notif.args.level, notif.args.tile);
+
+        this.tableManager.placePlayerTable(); // adapt to new card
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

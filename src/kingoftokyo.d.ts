@@ -104,6 +104,7 @@ interface KingOfTokyoGame extends Game {
     
     cards: Cards;
     curseCards: CurseCards;
+    wickednessTiles: WickednessTiles;
     POISON_TOKEN_TOOLTIP: string;
     SHINK_RAY_TOKEN_TOOLTIP: string;
     CULTIST_TOOLTIP: string;
@@ -112,6 +113,7 @@ interface KingOfTokyoGame extends Game {
     psychicProbeRollDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
     onVisibleCardClick: (stock: Stock, cardId: string, from?: number) => void;
+    takeWickednessTile(id: number): void;
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
     getZoom(): number;

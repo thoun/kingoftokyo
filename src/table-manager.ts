@@ -160,7 +160,12 @@ class TableManager {
     }
 
     public tableHeightChange() {
-        this.playerTables.forEach(playerTable => dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length));
+        this.playerTables.forEach(playerTable => {
+            if (playerTable.wickednessTiles) {
+                dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', !playerTable.wickednessTiles.items.length);
+            }
+            dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length);
+        });
 
         const zoomWrapper = document.getElementById('zoom-wrapper');
         zoomWrapper.style.height = `${document.getElementById('table').clientHeight * this.zoom}px`;
