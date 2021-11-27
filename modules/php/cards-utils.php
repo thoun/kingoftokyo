@@ -180,7 +180,7 @@ trait CardsUtilTrait {
     function removeMimicToken(int $mimicOwnerId) {
         $countRapidHealingBefore = $this->countCardOfType($mimicOwnerId, RAPID_HEALING_CARD);
         
-        $card = $this->getMimickedCard();
+        $card = $this->getMimickedCard(MIMIC_CARD);
         if ($card) {
             $this->deleteGlobalVariable(MIMICKED_CARD);
             self::notifyAllPlayers("removeMimicToken", '', [
@@ -200,12 +200,12 @@ trait CardsUtilTrait {
         $this->toggleRapidHealing($mimicOwnerId, $countRapidHealingBefore);
     }
 
-    function setMimickedCardId(int $mimicOwnerId, int $cardId) {
+    function setMimickedCardId(int $mimicCard, int $mimicOwnerId, int $cardId) {
         $card = $this->getCardFromDb($this->cards->getCard($cardId));
-        $this->setMimickedCard($mimicOwnerId, $card);
+        $this->setMimickedCard($mimicCard, $mimicOwnerId, $card);
     }
 
-    function setMimickedCard(int $mimicOwnerId, object $card) {
+    function setMimickedCard(int $mimicCard, int $mimicOwnerId, object $card) {
         $countRapidHealingBefore = $this->countCardOfType($mimicOwnerId, RAPID_HEALING_CARD);
 
         $this->removeMimicToken($mimicOwnerId);
@@ -213,7 +213,7 @@ trait CardsUtilTrait {
         $mimickedCard = new \stdClass();
         $mimickedCard->card = $card;
         $mimickedCard->playerId = $card->location_arg;
-        $this->setGlobalVariable(MIMICKED_CARD, $mimickedCard);
+        $this->setGlobalVariable(MIMICKED_CARD . $mimicCard, $mimickedCard);
         self::notifyAllPlayers("setMimicToken", clienttranslate('${player_name} mimics ${card_name}'), [
             'card' => $card,
             'player_name' => $this->getPlayerName($mimicOwnerId),
@@ -232,24 +232,25 @@ trait CardsUtilTrait {
         $this->toggleRapidHealing($mimicOwnerId, $countRapidHealingBefore);
     }
 
-    function getMimickedCard() {
-        $mimickedCardObj = $this->getGlobalVariable(MIMICKED_CARD);
+    function getMimickedCard(int $mimicCard) {
+        $mimickedCardObj = $this->getGlobalVariable(MIMICKED_CARD . $mimicCard);
+
         if ($mimickedCardObj != null) {
             return $mimickedCardObj->card;
         }
         return null;
     }
 
-    function getMimickedCardId() {
-        $mimickedCard = $this->getMimickedCard();
+    function getMimickedCardId(int $mimicCard) {
+        $mimickedCard = $this->getMimickedCard($mimicCard);
         if ($mimickedCard != null) {
             return $mimickedCard->id;
         }
         return null;
     }
 
-    function getMimickedCardType() {
-        $mimickedCard = $this->getMimickedCard();
+    function getMimickedCardType(int $mimicCard) {
+        $mimickedCard = $this->getMimickedCard($mimicCard);
         if ($mimickedCard != null) {
             return $mimickedCard->type;
         }
@@ -283,7 +284,7 @@ trait CardsUtilTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
 
         if ($cardType < 100 && $includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself, nor discard/costume cards
-            $mimickedCardType = $this->getMimickedCardType();
+            $mimickedCardType = $this->getMimickedCardType(MIMIC_CARD);
             if ($mimickedCardType == $cardType) {
                 $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, false)); // mimick
             }
@@ -455,10 +456,10 @@ trait CardsUtilTrait {
         
         $removeMimickToken = false;
         if ($card->type == MIMIC_CARD) { // Mimic
-            $changeMaxHealth = $this->getMimickedCardType() == EVEN_BIGGER_CARD;
+            $changeMaxHealth = $this->getMimickedCardType(MIMIC_CARD) == EVEN_BIGGER_CARD;
             $this->removeMimicToken($playerId);
             $removeMimickToken = true;
-        } else if ($card->id == $this->getMimickedCardId() && !$ignoreMimicToken) {
+        } else if ($card->id == $this->getMimickedCardId(MIMIC_CARD) && !$ignoreMimicToken) {
             $this->removeMimicToken($playerId);
             $removeMimickToken = true;
         }
@@ -530,7 +531,7 @@ trait CardsUtilTrait {
 
         if (!$silent) {
             if ($card->type == MIMIC_CARD) {
-                $card->mimicType = $this->getMimickedCardType();
+                $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
             }
             self::notifyAllPlayers("setCardTokens", '', [
                 'playerId' => $playerId,
@@ -564,7 +565,7 @@ trait CardsUtilTrait {
         }
 
         $playersIds = $this->getPlayersIds();
-        $mimickedCardId = $this->getMimickedCardId();
+        $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));

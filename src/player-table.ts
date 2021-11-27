@@ -16,7 +16,7 @@ class PlayerTable {
     public cards: Stock;
     public wickednessTiles: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], wickednessTiles: WickednessTile[], playerWithGoldenScarab: boolean) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], wickednessTiles: WickednessTile[] | undefined, playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -100,7 +100,7 @@ class PlayerTable {
             this.wickednessTiles.onItemCreate = (card_div, card_type_id) => this.game.wickednessTiles.setupNewCard(card_div, card_type_id); 
     
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            wickednessTiles.forEach(tile => this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id));
+            wickednessTiles?.forEach(tile => this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id));
 
         }
     }

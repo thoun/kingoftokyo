@@ -1028,7 +1028,7 @@ var PlayerTable = /** @class */ (function () {
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            wickednessTiles.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
+            wickednessTiles === null || wickednessTiles === void 0 ? void 0 : wickednessTiles.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
         }
     }
     PlayerTable.prototype.initPlacement = function () {
@@ -2564,6 +2564,8 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
+            case 'changeMimickedCardWickednessTile':
+            case 'chooseMimickedCardWickednessTile':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringChooseMimickedCard(args.args);
                 break;
@@ -2828,6 +2830,8 @@ var KingOfTokyo = /** @class */ (function () {
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'opportunistChooseMimicCard':
+            case 'chooseMimickedCardWickednessTile':
+            case 'changeMimickedCardWickednessTile':
                 this.onLeavingChooseMimickedCard();
                 break;
             case 'throwDice':
@@ -2930,6 +2934,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'changeMimickedCardWickednessTile':
+                    this.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), 'skipChangeMimickedCardWickednessTile');
+                    if (!args.canChange) {
+                        this.startActionTimer('skipChangeMimickedCardWickednessTile_button', 5);
+                    }
+                    break;
                 case 'changeMimickedCard':
                     this.addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
                     if (!args.canChange) {
@@ -3205,6 +3215,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         else if (stateName === 'changeMimickedCard') {
             this.changeMimickedCard(cardId);
+        }
+        else if (stateName === 'chooseMimickedCardWickednessTile') {
+            this.chooseMimickedCardWickednessTile(cardId);
+        }
+        else if (stateName === 'changeMimickedCardWickednessTile') {
+            this.changeMimickedCardWickednessTile(cardId);
         }
         else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             this.tableCenter.removeOtherCardsFromPick(cardId);
@@ -3629,6 +3645,22 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
+    KingOfTokyo.prototype.chooseMimickedCardWickednessTile = function (id) {
+        if (!this.checkAction('chooseMimickedCardWickednessTile')) {
+            return;
+        }
+        this.takeAction('chooseMimickedCardWickednessTile', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.changeMimickedCardWickednessTile = function (id) {
+        if (!this.checkAction('changeMimickedCardWickednessTile')) {
+            return;
+        }
+        this.takeAction('changeMimickedCardWickednessTile', {
+            id: id
+        });
+    };
     KingOfTokyo.prototype.sellCard = function (id) {
         if (!this.checkAction('sellCard')) {
             return;
@@ -3666,6 +3698,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipChangeMimickedCard');
+    };
+    KingOfTokyo.prototype.skipChangeMimickedCardWickednessTile = function () {
+        if (!this.checkAction('skipChangeMimickedCardWickednessTile', true)) {
+            return;
+        }
+        this.takeAction('skipChangeMimickedCardWickednessTile');
     };
     KingOfTokyo.prototype.endStealCostume = function () {
         if (!this.checkAction('endStealCostume')) {
