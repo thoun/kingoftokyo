@@ -423,9 +423,9 @@ trait CardsUtilTrait {
 
         $playerId = self::getActivePlayerId();
 
-        $cardCount = $this->countCardOfType($playerId, SMOKE_CLOUD_CARD);
+        $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
 
-        if ($cardCount == 0) {
+        if (count($cards) == 0) {
             throw new \BgaUserException('No Smoke Cloud card');
         }
 

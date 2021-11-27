@@ -19,7 +19,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(5);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -29,7 +29,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
-        //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
+        $this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".ZOMBIE_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
@@ -42,8 +42,8 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(JETS_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
-        $this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
-        $this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
+        //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
+        //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343493);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
@@ -79,7 +79,7 @@ trait DebugUtilTrait {
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
         //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
-        $this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
+        //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         $this->gamestate->changeActivePlayer(2343492);
 
