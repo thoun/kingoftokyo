@@ -55,6 +55,19 @@ trait PlayerStateTrait {
             }
         }
 
+        // Sonic boomer
+        if ($this->isWickednessExpansion()) {
+            if ($this->gotWickednessTile($playerId, TIRELESS_WICKEDNESS_TILE)) {
+                $this->applyGetEnergy($playerId, 1, 2000 + TIRELESS_WICKEDNESS_TILE);
+            }
+            if ($this->gotWickednessTile($playerId, ETERNAL_WICKEDNESS_TILE)) {
+                $this->applyGetHealth($playerId, 1, 2000 + ETERNAL_WICKEDNESS_TILE, $playerId);
+            }
+            if ($this->gotWickednessTile($playerId, SONIC_BOOMER_WICKEDNESS_TILE)) {
+                $this->applyGetPoints($playerId, 1, 2000 + SONIC_BOOMER_WICKEDNESS_TILE);
+            }
+        }
+
         if ($this->isKingKongExpansion()) {
             $towerLevels = $this->getTokyoTowerLevels($playerId);
 
@@ -112,6 +125,10 @@ trait PlayerStateTrait {
             $countUrbavore = $this->countCardOfType($playerId, URBAVORE_CARD);
             if ($countUrbavore > 0) {
                 $this->applyGetPoints($playerId, $countUrbavore, URBAVORE_CARD);
+            }
+
+            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
+                $this->applyDefenderOfTOkyo($playerId);
             }
         }
 

@@ -112,4 +112,11 @@ trait WickednessTilesUtilTrait {
     function gotWickednessTile(int $playerId, int $cardType) {
         return count($this->wickednessTiles->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId)) > 0;
     }
+    
+    function applyDefenderOfTokyo(int $playerId) {
+        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+        foreach ($otherPlayersIds as $otherPlayerId) {
+            $this->applyLosePoints($otherPlayerId, 1, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE);
+        }
+    }
 }

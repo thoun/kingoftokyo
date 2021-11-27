@@ -161,6 +161,7 @@ trait UtilTrait {
         // energy drink
         $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS));
         $beastForm = ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId)) ? 1 : 0;
+        $deviousTile = ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEVIOUS_WICKEDNESS_TILE)) ? 1 : 0;
 
         $removedDieByBuriedInSand = false;
         $falseBlessing = 0;
@@ -180,7 +181,7 @@ trait UtilTrait {
             }
         }
 
-        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm + $falseBlessing;
+        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm + $deviousTile + $falseBlessing;
         if ($rollNumber > 1 && $removedDieByBuriedInSand) {
             $rollNumber--;
         }
@@ -240,6 +241,10 @@ trait UtilTrait {
         ]);
 
         self::incStat(1, 'tokyoEnters', $playerId);
+
+        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
+            $this->applyDefenderOfTOkyo($playerId);
+        }
     }
 
     function leaveTokyo(int $playerId) {
@@ -384,9 +389,15 @@ trait UtilTrait {
 
         foreach($orderedPlayers as $player) {
             if ($player->health == 0 && !$player->eliminated) {
-                $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);
-                if ($countZombie == 0) {
-                    $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                // Final Roar
+                if ($this->isWickednessExpansion() && $this->gotWickednessTile($player->id, FINAL_ROAR_WICKEDNESS_TILE) && $player->score >= 16) {
+                    $this->applyGetPoints($playerId, MAX_POINT - $player->score, 2000 + FINAL_ROAR_WICKEDNESS_TILE);
+                } else {
+                    // Zombie
+                    $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);
+                    if ($countZombie == 0) {
+                        $this->eliminateAPlayer($player, $currentTurnPlayerId);
+                    }
                 }
             }
         }
