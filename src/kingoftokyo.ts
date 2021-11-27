@@ -1759,7 +1759,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
 
-        this.tableManager.placePlayerTable(); // adapt to new card
+        this.tableManager.tableHeightChange(); // adapt to new card
     }
 
     notif_removeCards(notif: Notif<NotifRemoveCardsArgs>) {
@@ -1768,7 +1768,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             setTimeout(() => this.notif_removeCards(notif), ANIMATION_MS);
         } else {
             this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
-            this.tableManager.placePlayerTable(); // adapt after removed cards
+            this.tableManager.tableHeightChange(); // adapt after removed cards
         }
     }
 
@@ -2047,7 +2047,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.getPlayerTable(playerId).eliminatePlayer();
-        this.tableManager.placePlayerTable(); // because all player's card were removed
+        this.tableManager.tableHeightChange(); // because all player's card were removed
 
         if (document.getElementById(`player-board-monster-figure-${playerId}`)) {
             (this as any).fadeOutAndDestroy(`player-board-monster-figure-${playerId}`);

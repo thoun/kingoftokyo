@@ -813,9 +813,19 @@
 #table {
   position: relative;
   transform-origin: left top;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+#table .table-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
 }
 #table #table-center {
-  position: absolute;
+  position: relative;
   width: 420px;
 }
 #table #table-center #deck-wrapper {
@@ -923,7 +933,7 @@
 }
 #table .player-table {
   width: 440px;
-  position: absolute;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

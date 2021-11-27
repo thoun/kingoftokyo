@@ -227,6 +227,7 @@ trait DiceStateTrait {
     }
 
     function redirectToResolveHeart() {
+        $playerId = self::getActivePlayerId();
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $canSelectHeartDiceUse = false;

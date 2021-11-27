@@ -1,9 +1,20 @@
 #table {
     position: relative;
     transform-origin: left top;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+
+    .table-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+    }
 
     #table-center {
-        position: absolute;
+        position: relative;
         width: 420px;
 
         #deck-wrapper {

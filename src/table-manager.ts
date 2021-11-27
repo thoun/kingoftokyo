@@ -103,20 +103,11 @@ class TableManager {
             return;
         }
         const players = this.playerTables.length;
-
-        const zoomWrapper = document.getElementById('zoom-wrapper');
         const tableDiv = document.getElementById('table');
         let tableWidth = tableDiv.clientWidth;
         const tableCenterDiv = document.getElementById('table-center');
-
-        this.playerTables.forEach(playerTable => dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length))
         
         const availableColumns = this.getAvailableColumns(tableWidth, tableCenterDiv.clientWidth);
-
-        const centerTableWidthMargins = tableCenterDiv.clientWidth + 2*TABLE_MARGIN;
-        tableCenterDiv.style.left = `${(tableWidth - centerTableWidthMargins) / 2}px`;
-        tableCenterDiv.style.top = `0px`;
-        let height = tableCenterDiv.clientHeight;
 
         const columns = Math.min(availableColumns, 3);
 
@@ -129,16 +120,8 @@ class TableManager {
             dispositionModelColumn = DISPOSITION_3_COLUMNS;
         }
         const dispositionModel = dispositionModelColumn[players];
-        const disposition = dispositionModel.map(columnIndexes => columnIndexes.map(columnIndex => ({ 
-            id: this.playerTables[columnIndex].playerId,
-            height: this.getPlayerTableHeight(this.playerTables[columnIndex]),
-        })));
-        const tableCenter: number = (columns === 2 ? tableWidth - PLAYER_TABLE_WIDTH_MARGINS : tableWidth) / 2;
+        const disposition = dispositionModel.map(columnIndexes => columnIndexes.map(columnIndex => this.playerTables[columnIndex].playerId));
         const centerColumnIndex = columns === 3 ? 1 : 0;
-
-        if (columns === 2) {                
-            tableCenterDiv.style.left = `${tableCenter - tableCenterDiv.clientWidth / 2}px`;
-        }
 
         // we always compute "center" column first
         let columnOrder: number[];
@@ -154,43 +137,33 @@ class TableManager {
             const centerColumn = centerColumnIndex === columnIndex;
             const rightColumn = columnIndex > centerColumnIndex;
             const playerOverTable = centerColumn && disposition[columnIndex].length;
-            const dispositionColumn: { id: number, height: number }[] = disposition[columnIndex];
+            const dispositionColumn: number[] = disposition[columnIndex];
 
-            let top: number;
-            if (centerColumn) {
-                top = !playerOverTable ? tableCenterDiv.clientHeight + 20 : 0;
-            } else {
-                top = Math.max(0, (height - dispositionColumn.map(dc => dc.height).reduce((a, b) => a + b, 0)) / 2);
-            }
-            dispositionColumn.forEach((playerInfos, index) => {
-                const playerTableDiv = document.getElementById(`player-table-${playerInfos.id}`);
-                if (centerColumn) {
-                    playerTableDiv.style.left = `${tableCenter - PLAYER_TABLE_WIDTH_MARGINS / 2}px`;
-                } else if (rightColumn) {
-                    playerTableDiv.style.left = `${tableCenter + tableCenterDiv.clientWidth / 2}px`;
+            dispositionColumn.forEach((id, index) => {
+                const playerTableDiv = document.getElementById(`player-table-${id}`);
+
+                let columnId = 'center-column';
+                if (rightColumn) {
+                    columnId = 'right-column';
                 } else if (leftColumn) {
-                    playerTableDiv.style.left = `${(tableCenter - centerTableWidthMargins / 2) - PLAYER_TABLE_WIDTH_MARGINS}px`;
+                    columnId = 'left-column';
                 }
-                playerTableDiv.style.top = `${top}px`;
-                top += playerInfos.height;
+                document.getElementById(columnId).appendChild(playerTableDiv);
 
                 if (centerColumn && playerOverTable && index === 0) {
-                    tableCenterDiv.style.top = `${playerInfos.height}px`;
-                    top += tableCenterDiv.clientHeight + 20;
+                    playerTableDiv.after(tableCenterDiv);
                 }
-
-                height = Math.max(height, top);
             });
         });
 
-        tableDiv.style.height = `${height}px`;
-        zoomWrapper.style.height = `${height * this.zoom}px`;
+        this.tableHeightChange();
     }
 
-    private getPlayerTableHeight(playerTable: PlayerTable) {
-        const cardRows = Math.ceil(playerTable.cards.items.length / CARDS_PER_ROW);
-        const cardHeight = cardRows === 0 ? 20 : ((CARD_HEIGHT + 5) * cardRows);
-        return PLAYER_BOARD_HEIGHT_MARGINS + cardHeight;
+    public tableHeightChange() {
+        this.playerTables.forEach(playerTable => dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length));
+
+        const zoomWrapper = document.getElementById('zoom-wrapper');
+        zoomWrapper.style.height = `${document.getElementById('table').clientHeight * this.zoom}px`;
     }
 
     private setZoom(zoom: number = 1) {

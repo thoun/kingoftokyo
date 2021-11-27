@@ -27,20 +27,24 @@
 
     <div id="zoom-wrapper">
         <div id="table">
-            <div id="table-center" class="whiteblock">
-                <div id="deck-wrapper">
-                    <div id="deck"></div>
-                </div>
-                <div id="visible-cards" class="card-stock">
-                </div>
+            <div id="left-column" class="table-column"></div>
+            <div id="center-column" class="table-column">
+                <div id="table-center" class="whiteblock">
+                    <div id="deck-wrapper">
+                        <div id="deck"></div>
+                    </div>
+                    <div id="visible-cards" class="card-stock">
+                    </div>
 
-                <div id="full-board">
-                    <div id="board">
-                        <div id="tokyo-city"></div>
-                        <div id="tokyo-bay"></div>
+                    <div id="full-board">
+                        <div id="board">
+                            <div id="tokyo-city"></div>
+                            <div id="tokyo-bay"></div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div id="right-column" class="table-column"></div>
         </div>
         <div id="zoom-controls">
             <button id="zoom-out"></button>

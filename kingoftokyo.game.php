@@ -235,8 +235,8 @@ class KingOfTokyo extends Table {
             self::initStat('player', 'cultistEnergy', 0);
         }
         if ($wickednessExpansion > 1) {
-            self::initStat('player', 'gainedWickedness', 0);
-            self::initStat('player', 'wickednessTilesTaken', 0);
+            //self::initStat('player', 'gainedWickedness', 0);
+            //self::initStat('player', 'wickednessTilesTaken', 0);
         }
 
         if (!$this->canPickMonster()) {
