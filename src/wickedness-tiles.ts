@@ -112,7 +112,7 @@ class WickednessTiles {
         const level = this.getCardLevel(cardTypeId);
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId)}</strong></p>
-            <p class="level">${ dojo.string.substitute(_("Level : ${level}"), {'level': level}) }</p>
+            <p class="level">${ dojo.string.substitute(/* TODOWI _(*/"Level : ${level}"/*)*/, {'level': level}) }</p>
             <p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
         </div>`;
         return tooltip;

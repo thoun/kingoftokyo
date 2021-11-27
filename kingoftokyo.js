@@ -935,7 +935,7 @@ var WickednessTiles = /** @class */ (function () {
     };
     WickednessTiles.prototype.getTooltip = function (cardTypeId) {
         var level = this.getCardLevel(cardTypeId);
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(/* TODOWI _(*/ "Level : ${level}" /*)*/, { 'level': level }) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     WickednessTiles.prototype.setupNewCard = function (cardDiv, cardType) {
