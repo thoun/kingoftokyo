@@ -487,7 +487,7 @@ trait CardsUtilTrait {
     }
 
     function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false, bool $ignoreMimicToken = false) {
-        if ($cards->id >= 2000) {
+        if ($card->id >= 2000) {
             // trying to remove mimic tile, but tile isn't removed when mimicked card is removed
             return;
         }
@@ -559,7 +559,7 @@ trait CardsUtilTrait {
 
     function removeCards(int $playerId, array $cards, bool $silent = false) {
         // if trying to remove mimic tile, we stop, as tile isn't removed when mimicked card is removed
-        $cards = array_values(array_filter($cards, function ($card) { return $cards->id < 2000; }));
+        $cards = array_values(array_filter($cards, function ($card) { return $card->id < 2000; }));
 
         foreach($cards as $card) {
             $this->removeCard($playerId, $card, true);

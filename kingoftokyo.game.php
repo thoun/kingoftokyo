@@ -572,7 +572,7 @@ class KingOfTokyo extends Table {
         }
  
         if ($from_version <= 2111271657) {
-            $sql = "UPDATE `DBPREFIX_global_variables` SET `name` = ".MIMICKED_CARD.MIMIC_CARD." WHERE `name` = ".MIMICKED_CARD;
+            $sql = "UPDATE `DBPREFIX_global_variables` SET `name` = '".MIMICKED_CARD.MIMIC_CARD."' WHERE `name` = '".MIMICKED_CARD."'";
             self::applyDbUpgradeToAllDB($sql);
         }
     }
