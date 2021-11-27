@@ -358,6 +358,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             if (args.canUseWings && !document.getElementById('useWings_button')) {
                 (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only')})), 'useWings');
+                document.getElementById('useWings_button').dataset.enableAtEnergy = '2';
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
                 }
@@ -367,6 +368,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 for (let i=args.damage; i>0; i--) {
                     const id = `useRobot${i}_button`;
                     (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this.cards.getCardName(210, 'text-only')})), () => this.useRobot(i));
+                    document.getElementById(id).dataset.enableAtEnergy = ''+i;
                     dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
                 }
             }
@@ -1944,6 +1946,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
         this.setBuyDisabledCard(null, energy);
+        
+        (Array.from(document.querySelectorAll(`[data-enable-at-energy]`)) as HTMLElement[]).forEach(button => {
+            const enableAtEnergy = Number(button.dataset.enableAtEnergy);
+            dojo.toggleClass(button, 'disabled', energy < enableAtEnergy);
+        });
     }
 
     private setPlayerTokens(playerId: number, tokens: number, tokenName: string) {

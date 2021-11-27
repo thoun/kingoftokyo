@@ -105,8 +105,14 @@ trait CardsStateTrait {
             $arg = $this->argCancelDamage($playerId, $hasDice3);
 
             $canCancelWithCamouflage = $arg['canThrowDices'] || $arg['rethrow3']['hasDice3'];
-            $canCancelWithWings = $arg['canUseWings'] && $arg['playerEnergy'] >= 2;
-            $canCancelWithRobot = $arg['canUseRobot'] && $arg['playerEnergy'] >= 1;
+
+            $potentialEnergy = $this->getPlayerEnergy($playerId);
+            if ($this->isCthulhuExpansion()) {
+                $potentialEnergy += $this->getPlayerCultists($playerId);
+            }
+
+            $canCancelWithWings = $arg['canUseWings'] && $potentialEnergy >= 2;
+            $canCancelWithRobot = $arg['canUseRobot'] && $potentialEnergy >= 1;
             $canCancelWithRapidHealing = $arg['damageToCancelToSurvive'] && $arg['damageToCancelToSurvive'] >= 1;
             if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot && !$canCancelWithRapidHealing) {
                 $this->applySkipWings($playerId);

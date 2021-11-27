@@ -2536,6 +2536,7 @@ var KingOfTokyo = /** @class */ (function () {
             }
             if (args.canUseWings && !document.getElementById('useWings_button')) {
                 this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only') })), 'useWings');
+                document.getElementById('useWings_button').dataset.enableAtEnergy = '2';
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
                 }
@@ -2544,6 +2545,7 @@ var KingOfTokyo = /** @class */ (function () {
                 var _loop_3 = function (i) {
                     var id = "useRobot" + i + "_button";
                     this_2.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this_2.cards.getCardName(210, 'text-only') })), function () { return _this.useRobot(i); });
+                    document.getElementById(id).dataset.enableAtEnergy = '' + i;
                     dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
                 };
                 var this_2 = this;
@@ -3864,6 +3866,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
         this.setBuyDisabledCard(null, energy);
+        Array.from(document.querySelectorAll("[data-enable-at-energy]")).forEach(function (button) {
+            var enableAtEnergy = Number(button.dataset.enableAtEnergy);
+            dojo.toggleClass(button, 'disabled', energy < enableAtEnergy);
+        });
     };
     KingOfTokyo.prototype.setPlayerTokens = function (playerId, tokens, tokenName) {
         var containerId = "player-board-" + tokenName + "-tokens-" + playerId;
