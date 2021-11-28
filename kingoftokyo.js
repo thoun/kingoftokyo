@@ -1145,8 +1145,13 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         if (delay === void 0) { delay = 0; }
         setTimeout(function () {
-            _this.setEnergyOnSide('left', Math.min(energy, SPLIT_ENERGY_CUBES));
-            _this.setEnergyOnSide('right', Math.max(energy - SPLIT_ENERGY_CUBES, 0));
+            if (_this.game.isKingkongExpansion()) {
+                _this.setEnergyOnSide('left', energy);
+            }
+            else {
+                _this.setEnergyOnSide('left', Math.min(energy, SPLIT_ENERGY_CUBES));
+                _this.setEnergyOnSide('right', Math.max(energy - SPLIT_ENERGY_CUBES, 0));
+            }
         }, delay);
     };
     PlayerTable.prototype.eliminatePlayer = function () {
@@ -1275,10 +1280,14 @@ var PlayerTable = /** @class */ (function () {
     };
     return PlayerTable;
 }());
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
@@ -1331,7 +1340,7 @@ var TableManager = /** @class */ (function () {
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
         if (playerIndex > 0) { // not spectator (or 0)            
-            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
+            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex), true), playerTablesOrdered.slice(0, playerIndex), true);
         }
         else { // spectator
             this.playerTables = playerTablesOrdered;

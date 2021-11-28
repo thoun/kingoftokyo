@@ -292,7 +292,9 @@ trait PlayerStateTrait {
         if ($countEnergyHoarder > 0) {
             $playerEnergy = $this->getPlayerEnergy($playerId);
             $points = floor($playerEnergy / 6);
-            $this->applyGetPoints($playerId, $points * $countEnergyHoarder, ENERGY_HOARDER_CARD);
+            if ($points > 0) {
+                $this->applyGetPoints($playerId, $points * $countEnergyHoarder, ENERGY_HOARDER_CARD);
+            }
         }
 
         // herbivore

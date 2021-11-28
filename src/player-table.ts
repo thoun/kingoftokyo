@@ -146,8 +146,12 @@ class PlayerTable {
     public setEnergy(energy: number, delay: number = 0) {
         setTimeout(
             () => {
-                this.setEnergyOnSide('left', Math.min(energy, SPLIT_ENERGY_CUBES));
-                this.setEnergyOnSide('right', Math.max(energy - SPLIT_ENERGY_CUBES, 0));
+                if (this.game.isKingkongExpansion()) {
+                    this.setEnergyOnSide('left', energy);
+                } else {
+                    this.setEnergyOnSide('left', Math.min(energy, SPLIT_ENERGY_CUBES));
+                    this.setEnergyOnSide('right', Math.max(energy - SPLIT_ENERGY_CUBES, 0));
+                }
             },
             delay
         );
