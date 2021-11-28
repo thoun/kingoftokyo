@@ -99,6 +99,7 @@ define('FREEZE_TIME_MAX_TURNS', 'FreezeTimeMaxTurns');
 define('FREEZE_TIME_CURRENT_TURN', 'FreezeTimeCurrentTurn');
 define('FRENZY_EXTRA_TURN', 'FrenzyExtraTurn');
 define('FINAL_PUSH_EXTRA_TURN', 'FinalPushExtraTurn');
+define('BUILDERS_UPRISING_EXTRA_TURN', 'BuildersUprisingExtraTurn');
 define('PSYCHIC_PROBE_ROLLED_A_3', 'PsychicProbeRolledA3');
 define('KILL_PLAYERS_SCORE_AUX', 'KillPlayersScoreAux');
 define('FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'FrenzyExtraTurnForOpportunist');

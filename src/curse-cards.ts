@@ -81,6 +81,7 @@ class CurseCards {
             case 5: return "You have 1 extra die Roll.";
             // TODOAN case 6               
             case 8: case 11: case 13: return "+2[Heart]";
+            case 9: return "If you are not in Tokyo, play an extra turn after this one without the die of Fate.";
             case 10: return "Draw a Power card.";
             case 12: return "Gain 1[Star] for each [diceSmash] you rolled.";
             case 14: return "+2[Star]";

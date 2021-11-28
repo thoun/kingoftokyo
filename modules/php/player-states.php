@@ -367,6 +367,11 @@ trait PlayerStateTrait {
 
         $this->applyEndOfEachMonsterCards();
 
+        // end of the extra turn with Builders' uprising (without die of fate)
+        if (intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) {
+            $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
+        } 
+
         $killPlayer = $this->killDeadPlayers();
 
         if ($killPlayer) {
@@ -374,6 +379,7 @@ trait PlayerStateTrait {
             $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
             $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);
             $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0);
+            $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
 
             $playerId = $this->activateNextPlayer();
         } else {
@@ -382,7 +388,12 @@ trait PlayerStateTrait {
             $freezeTimeMaxTurns = intval($this->getGameStateValue(FREEZE_TIME_MAX_TURNS));
             $freezeTimeCurrentTurn = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
 
-            if ($freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
+            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 1) { // extra turn for current player
+                $anotherTimeWithCard = 1000 + BUILDERS_UPRISING_CURSE_CARD; // Builders' uprising
+                $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 2); 
+            }
+
+            if ($anotherTimeWithCard == 0 && $freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
                 $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
                 $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
             } if ($freezeTimeCurrentTurn < $freezeTimeMaxTurns) { // extra turn for current player with one less die

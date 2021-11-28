@@ -94,7 +94,7 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($includeDieOfFate && $this->isAnubisExpansion()) {
+        if ($includeDieOfFate && $this->isAnubisExpansion() && intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) != 2) {
             $dice = array_merge($this->getDiceByType(2), $dice); // type 2 at the start
         }
 
@@ -756,6 +756,11 @@ trait DiceUtilTrait {
             case BOW_BEFORE_RA_CURSE_CARD: 
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
+                break;
+            case BUILDERS_UPRISING_CURSE_CARD:
+                if (!$this->inTokyo($playerId)) {
+                    $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
+                }
                 break;
             case INADEQUATE_OFFERING_CURSE_CARD:
                 $this->drawCard($playerId, $logCardType);

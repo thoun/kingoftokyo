@@ -175,6 +175,11 @@ trait DiceStateTrait {
     }
 
     function stResolveDieOfFate() {
+        if (intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) { // no Die of Fate
+            $this->gamestate->nextState('next');
+            return;
+        }
+
         $playerId = self::getActivePlayerId();
 
         $dieOfFate = $this->getDieOfFate();
