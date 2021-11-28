@@ -1710,6 +1710,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
             ['takeWickednessTile', ANIMATION_MS],
+            ['changeGoldenScarabOwner', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -2049,12 +2050,17 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.wickednessTiles.moveToAnotherStock(this.tableCenter.getWickednessTilesStock(notif.args.level), this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.tile);
         this.tableCenter.removeReducedWickednessTile(notif.args.level, notif.args.tile);
 
-        this.tableManager.placePlayerTable(); // adapt to new card
+        this.tableManager.tableHeightChange(); // adapt to new card
     }
 
     notif_removeWickednessTiles(notif: Notif<NotifRemoveWickednessTilesArgs>) {
         this.getPlayerTable(notif.args.playerId).removeWickednessTiles(notif.args.tiles);
-        this.tableManager.placePlayerTable(); // adapt after removed cards
+        this.tableManager.tableHeightChange(); // adapt after removed cards
+    }
+
+    notif_changeGoldenScarabOwner(notif: Notif<NotifChangeGoldenScarabOwnerArgs>) {
+        this.getPlayerTable(notif.args.playerId).takeGoldenScarab(this.getPlayerTable(notif.args.previousOwner).cards);
+        this.tableManager.tableHeightChange(); // adapt after moved card
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

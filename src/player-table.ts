@@ -306,4 +306,10 @@ class PlayerTable {
             (this.game as any).addTooltipHtml(`${containerId}-${i}`, this.game.CULTIST_TOOLTIP);
         }
     }
+
+    public takeGoldenScarab(previousOwnerStock: Stock) {
+        const sourceStockItemId = `${previousOwnerStock.container_div.id}_item_goldenscarab`;
+        this.cards.addToStockWithId(999, 'goldenscarab', sourceStockItemId);
+        previousOwnerStock.removeFromStockById(`goldenscarab`);
+    }
 }

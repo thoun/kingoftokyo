@@ -74,7 +74,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        $this->debugSetCurseCardInTable(2);
+        $this->debugSetCurseCardInTable(ISIS_S_DISGRACE_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
@@ -89,57 +89,61 @@ trait DebugUtilTrait {
         //$this->eliminatePlayer(2343497);
     }
 
-    private function debugSetWickednessTileInTable($cardType) {
+    function debugSetWickednessTileInTable($cardType) {
         $this->wickednessTiles->moveCard( $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0])->id, 'table');
     }
 
-    private function debugSetWickednessTileInHand($cardType, $playerId) {
+    function debugSetWickednessTileInHand($cardType, $playerId) {
         $card = $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0]);
         $this->wickednessTiles->moveCard($card->id, 'hand', $playerId);
         return $card;
     }
 
-    private function debugSetCardInTable($cardType) {
+    function debugSetCardInTable($cardType) {
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0])->id, 'table');
     }
 
-    private function debugSetCardInHand($cardType, $playerId) {
+    function debugSetCardInHand($cardType, $playerId) {
         $card = $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0]);
         $this->cards->moveCard($card->id, 'hand', $playerId);
         return $card;
     }
 
-    private function debugSetPlayerInLocation($playerId, $location) {
+    function debugSetPlayerInLocation($playerId, $location) {
         self::DbQuery("UPDATE player SET `player_location` = $location where `player_id` = $playerId");
     }
 
-    private function debugSetHealth($health) {
+    function debugSetHealth($health) {
         self::DbQuery("UPDATE player SET `player_health` = $health");
     }
 
-    private function debugSetPlayerHealth($playerId, $health) {
+    function debugSetPlayerHealth($playerId, $health) {
         self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
     }
 
-    private function debugSetPlayerEnergy($playerId, $energy) {
+    function debugSetPlayerEnergy($playerId, $energy) {
         self::DbQuery("UPDATE player SET `player_energy` = $energy where `player_id` = $playerId");
     }
 
-    private function debugSetEnergy($energy) {
+    function debugSetEnergy($energy) {
         self::DbQuery("UPDATE player SET `player_energy` = $energy");
     }
 
-    private function debugSetPlayerPoints($playerId, $points) {
+    function debugSetPlayerPoints($playerId, $points) {
         self::DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
     }
 
-    private function debugSetPoints($points) {
+    function debugSetPoints($points) {
         self::DbQuery("UPDATE player SET `player_score` = $points");
     }
 
-    private function debugSetCurseCardInTable($cardType) {
+    function debugSetCurseCardInTable($cardType) {
         $this->curseCards->moveAllCardsInLocation('table', 'discard');
         $this->curseCards->moveCard($this->getCardFromDb(array_values($this->curseCards->getCardsOfType($cardType))[0])->id, 'table');
+    }
+
+    function debugSetDieOfFate($face) {
+        self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 2");
     }
 
     public function debugReplacePlayersIds() {

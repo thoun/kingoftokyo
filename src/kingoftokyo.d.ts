@@ -426,3 +426,9 @@ interface NotifTakeWickednessTileArgs {
     tile: WickednessTile;
     level: number;
 }
+
+interface NotifChangeGoldenScarabOwnerArgs {
+    playerId: number;
+    player_name: string;
+    previousOwner: number;
+}

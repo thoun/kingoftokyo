@@ -240,7 +240,7 @@ trait DiceUtilTrait {
         } else {
             $health = $this->getPlayerHealth($playerId);
             $maxHealth = $this->getPlayerMaxHealth($playerId);
-            if ($health < $maxHealth) {
+            if ($health < $maxHealth && $this->canGainHealth($playerId)) {
                 $this->applyGetHealth($playerId, $diceCount, -1, $playerId);
                 $newHealth = $this->getPlayerHealth($playerId);
 

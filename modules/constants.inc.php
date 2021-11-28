@@ -221,7 +221,7 @@ define('CLOWN_CARD', 212);
 
 // curse cards
 define('PHARAONIC_EGO_CURSE_CARD', 1);
-define('ISIS_S_DISGRACE_CURSE_CARD', 2); // TODOAN test
+define('ISIS_S_DISGRACE_CURSE_CARD', 2);
 define('THOT_S_BLINDNESS_CURSE_CARD', 3); // TODOAN test
 define('TUTANKHAMUN_S_CURSE_CURSE_CARD', 4); // TODOAN test
 define('BURIED_IN_SAND_CURSE_CARD', 5); // TODOAN test

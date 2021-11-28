@@ -792,9 +792,19 @@ trait CardsUtilTrait {
     }
 
     function changeGoldenScarabOwner(int $playerId) {
+        $previousOwner = $this->getPlayerIdWithGoldenScarab();
+
+        if ($previousOwner == $playerId) {
+            return;
+        }
+
         self::setGameStateValue(PLAYER_WITH_GOLDEN_SCARAB, $playerId);
 
-        // TODOAN notif
+        self::notifyAllPlayers('changeGoldenScarabOwner', /*client TODOAN translate(*/'${player_name} gets Golden Scarab'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'previousOwner' => $previousOwner,
+        ]);
     }
 
     function getPlayerIdWithGoldenScarab() {

@@ -1278,6 +1278,11 @@ var PlayerTable = /** @class */ (function () {
             this.game.addTooltipHtml(containerId + "-" + i, this.game.CULTIST_TOOLTIP);
         }
     };
+    PlayerTable.prototype.takeGoldenScarab = function (previousOwnerStock) {
+        var sourceStockItemId = previousOwnerStock.container_div.id + "_item_goldenscarab";
+        this.cards.addToStockWithId(999, 'goldenscarab', sourceStockItemId);
+        previousOwnerStock.removeFromStockById("goldenscarab");
+    };
     return PlayerTable;
 }());
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
@@ -1328,6 +1333,7 @@ var TableManager = /** @class */ (function () {
         this.setPlayerTables(playerTables);
         this.game.onScreenWidthChange = function () {
             _this.setAutoZoomAndPlacePlayerTables();
+            // shift background for mobile
             var backgroundPositionY = 0;
             if (document.body.classList.contains('mobile_version')) {
                 backgroundPositionY = 62 + document.getElementById('right-side').getBoundingClientRect().height;
@@ -3961,6 +3967,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
             ['takeWickednessTile', ANIMATION_MS],
+            ['changeGoldenScarabOwner', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -4258,11 +4265,15 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_takeWickednessTile = function (notif) {
         this.wickednessTiles.moveToAnotherStock(this.tableCenter.getWickednessTilesStock(notif.args.level), this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.tile);
         this.tableCenter.removeReducedWickednessTile(notif.args.level, notif.args.tile);
-        this.tableManager.placePlayerTable(); // adapt to new card
+        this.tableManager.tableHeightChange(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_removeWickednessTiles = function (notif) {
         this.getPlayerTable(notif.args.playerId).removeWickednessTiles(notif.args.tiles);
-        this.tableManager.placePlayerTable(); // adapt after removed cards
+        this.tableManager.tableHeightChange(); // adapt after removed cards
+    };
+    KingOfTokyo.prototype.notif_changeGoldenScarabOwner = function (notif) {
+        this.getPlayerTable(notif.args.playerId).takeGoldenScarab(this.getPlayerTable(notif.args.previousOwner).cards);
+        this.tableManager.tableHeightChange(); // adapt after moved card
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

@@ -46,6 +46,7 @@ class TableManager {
         (this.game as any).onScreenWidthChange = () => {
             this.setAutoZoomAndPlacePlayerTables();
 
+            // shift background for mobile
             let backgroundPositionY = 0;
             if (document.body.classList.contains('mobile_version')) {
                 backgroundPositionY = 62 + document.getElementById('right-side').getBoundingClientRect().height;
@@ -98,7 +99,7 @@ class TableManager {
         }
     }
 
-    public placePlayerTable() {
+    private placePlayerTable() {
         if (dojo.hasClass('kot-table', 'pickMonster')) {
             return;
         }
