@@ -600,7 +600,11 @@ trait CardsActionTrait {
             }
         }
         
-        $this->applyDamage($playerId, $intervention->damages[0]->damage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId(), $intervention->damages[0]->giveShrinkRayToken, $intervention->damages[0]->givePoisonSpitToken);
+        foreach($intervention->damages as $damage) {
+            if ($damage->playerId == $playerId) {
+                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, self::getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
+            }
+        }
 
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
@@ -651,14 +655,11 @@ trait CardsActionTrait {
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
-        $totalDamage = 0;
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $totalDamage += $damage->damage;
+                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, self::getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             }
         }
-
-        $this->applyDamage($playerId, $totalDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId(), $intervention->damages[0]->giveShrinkRayToken, $intervention->damages[0]->givePoisonSpitToken);
 
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
 
