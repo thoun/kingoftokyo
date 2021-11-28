@@ -280,6 +280,73 @@ trait CardsActionTrait {
         }
     }
 
+    function drawCard(int $playerId, int $logCardType) {        
+
+        $card = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
+
+        $this->updateKillPlayersScoreAux();        
+        
+        $this->removeDiscardCards($playerId);
+        
+        $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
+
+        $this->cards->moveCard($card->id, 'hand', $playerId);
+
+        $tokens = $this->getTokensByCardType($card->type);
+        if ($tokens > 0) {
+            $this->setCardTokens($playerId, $card, $tokens, true);
+        }
+        
+        // astronaut
+        $this->applyAstronaut($playerId);
+
+        $newCard = null;
+
+        $topDeckCardBackType = $this->getTopDeckCardBackType();
+
+        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $card,
+            'card_name' => $card->type,
+            'newCard' => $newCard,
+            'energy' => $this->getPlayerEnergy($playerId), 
+            'cost' => $cost,
+            'topDeckCardBackType' => $topDeckCardBackType,
+        ]);
+        
+        $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
+
+        $damages = $this->applyEffects($card->type, $playerId, $opportunist);
+
+        $mimic = false;
+        if ($card->type == MIMIC_CARD) {
+            $countAvailableCardsForMimic = 0;
+
+            $playersIds = $this->getPlayersIds();
+            foreach($playersIds as $playerId) {
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type != MIMIC_CARD && $card->type < 100; })));
+            }
+
+            $mimic = $countAvailableCardsForMimic > 0;
+        }
+
+        self::setGameStateValue('newCardId', 0);
+
+        $redirects = false;
+
+        $redirectAfterBuyCard = $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_RESOLVE_NUMBER_DICE; // TODO make ST_PLAYER_CHOOSE_MIMICKED_CARD go back to ST_RESOLVE_NUMBER_DICE after 
+
+        if ($damages != null && count($damages) > 0) {
+            $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard);
+        }
+
+        if (!$redirects) {
+            $this->jumpToState($redirectAfterBuyCard, $playerId);
+        }
+    }
+
     function redirectAfterBuyCard($playerId, $newCardId, $mimic) { // return whereToRedirect
         $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
         if ($opportunistIntervention) {

@@ -786,7 +786,7 @@ var CurseCards = /** @class */ (function () {
             case 8:
             case 11:
             case 13: return "+2[Heart]";
-            // TODOAN case 10
+            case 10: return "Draw a Power card.";
             case 12: return "Gain 1[Star] for each [diceSmash] you rolled.";
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
@@ -820,7 +820,9 @@ var CurseCards = /** @class */ (function () {
             case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";
             case 16: return "Yield Tokyo. You can’t enter Tokyo this turn.";
-            // TODOAN case 17 18 19
+            // TODOAN case 17
+            case 18: return "The Monster with the Golden Scarab, instead of you, gains all [Heart] and [Energy] that you should have gained this turn.";
+            // TODOAN case 19
             case 20: return "Take the Golden Scarab.";
             case 21: return "Cancel the Curse effect.";
             // TODOAN case 22

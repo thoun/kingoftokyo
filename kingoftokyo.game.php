@@ -377,7 +377,7 @@ class KingOfTokyo extends Table {
         $result['wickednessExpansion'] = $isWickednessExpansion;
 
         if ($isAnubisExpansion) {
-            $result['playerWithGoldenScarab'] = intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+            $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab();
             $result['curseCard'] = $this->getCurseCard();
         }
 

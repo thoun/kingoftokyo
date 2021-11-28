@@ -757,6 +757,9 @@ trait DiceUtilTrait {
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
+            case INADEQUATE_OFFERING_CURSE_CARD:
+                $this->drawCard($playerId, $logCardType);
+                break;
             case VENGEANCE_OF_HORUS_CURSE_CARD:
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);
                 $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);

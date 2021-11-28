@@ -522,13 +522,22 @@ trait UtilTrait {
         if (!$this->canGainHealth($playerId)) {
             return;
         }
+        
+        $playerGettingHealth = $playerId;
 
-        $this->applyGetHealthIgnoreCards($playerId, $health, $cardType, $healerId);
+        if ($this->isAnubisExpansion() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
+            $dieOfFate = $this->getDieOfFate();
+            if ($dieOfFate->value == 3) {
+                $playerGettingHealth = $this->getPlayerIdWithGoldenScarab();
+            }
+        }
+
+        $this->applyGetHealthIgnoreCards($playerGettingHealth, $health, $cardType, $healerId);
         
         // regeneration
         $countRegeneration = $this->countCardOfType($playerId, REGENERATION_CARD);
         if ($countRegeneration > 0) {
-            $this->applyGetHealthIgnoreCards($playerId, $countRegeneration, REGENERATION_CARD, $playerId);
+            $this->applyGetHealthIgnoreCards($playerGettingHealth, $countRegeneration, REGENERATION_CARD, $playerId);
         }
     }
 
@@ -697,12 +706,21 @@ trait UtilTrait {
             return;
         }
 
-        $this->applyGetEnergyIgnoreCards($playerId, $energy, $cardType);
+        $playerGettingEnergy = $playerId;
+
+        if ($this->isAnubisExpansion() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
+            $dieOfFate = $this->getDieOfFate();
+            if ($dieOfFate->value == 3) {
+                $playerGettingEnergy = $this->getPlayerIdWithGoldenScarab();
+            }
+        }
+
+        $this->applyGetEnergyIgnoreCards($playerGettingEnergy, $energy, $cardType);
 
         // friend of children
         $countFriendOfChildren = $this->countCardOfType($playerId, FRIEND_OF_CHILDREN_CARD);
         if ($countFriendOfChildren > 0) {
-            $this->applyGetEnergyIgnoreCards($playerId, $countFriendOfChildren, FRIEND_OF_CHILDREN_CARD);
+            $this->applyGetEnergyIgnoreCards($playerGettingEnergy, $countFriendOfChildren, FRIEND_OF_CHILDREN_CARD);
         }
     }
 

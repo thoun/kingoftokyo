@@ -52,52 +52,17 @@ TODO check psychic probe with Background Dweller allowing to reroll a 3 that's n
 
 remaining Anubis :
 
-After resolving the die of Fate,
-the Monster with the Golden Scarab
-can force you to reroll up to 2 dice
-of his choice.
+At the start of each turn, the Monster with the Golden Scarab must give 1 / / to the Monster whose turn it is.
 
-At the start of each turn,
-the Monster with the Golden Scarab
-must give 1 / / to the
-Monster whose turn it is.
-
-Take an extra die
-and put it on the
-face of your choice.
-
-Draw a Power card.
-
-Take the Golden
-Scarab and give it to
-the Monster of your
-choice.
-
-Choose up to 2 dice,
-you can reroll
-or discard each
-of these dice.
-
+After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.
+Take an extra die and put it on the face of your choice.
+Choose up to 2 dice, you can reroll or discard each of these dice.
 Discard 1 die.
+Discard 1 [dice1]
+The player on your left chooses two of your dice. Reroll these dice.
 
 Discard a Keep card. (x2)
 
-The Monster with
-the Golden Scarab,
-instead of you, gains
-all and that you
-should have gained
-this turn.
+Take the Golden Scarab and give it to the Monster of your choice.
 
-Give any
-combination
-of 2 / /
-to the Monster with
-the Golden Scarab.
-
-The player on your
-left chooses two
-of your dice.
-Reroll these dice.
-
-Discard 1 [dice1]
+Give any combination of 2 / / to the Monster with the Golden Scarab.
