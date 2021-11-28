@@ -73,24 +73,28 @@ trait PlayerStateTrait {
 
             foreach ($towerLevels as $level) {
                 if ($level == 1 || $level == 2) {
-                    $this->applyGetHealth($playerId, 1, -1, $playerId);
+                    if ($this->canGainHealth($playerId)) {
+                        $this->applyGetHealth($playerId, 1, -1, $playerId);
 
-                    self::notifyAllPlayers('health', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'/*)*/, [
-                        'playerId' => $playerId,
-                        'player_name' => $this->getPlayerName($playerId),
-                        'health' => $this->getPlayerHealth($playerId),
-                        'level' => $level,
-                    ]);
+                        self::notifyAllPlayers('health', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'/*)*/, [
+                            'playerId' => $playerId,
+                            'player_name' => $this->getPlayerName($playerId),
+                            'health' => $this->getPlayerHealth($playerId),
+                            'level' => $level,
+                        ]);
+                    }
                 }
 
                 if ($level == 2) {
-                    $this->applyGetEnergy($playerId, 1, -1);
-    
-                    self::notifyAllPlayers('energy', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'/*)*/, [
-                        'playerId' => $playerId,
-                        'player_name' => $this->getPlayerName($playerId),
-                        'level' => $level,
-                    ]);
+                    if ($this->canGainEnergy($playerId)) {
+                        $this->applyGetEnergy($playerId, 1, -1);
+        
+                        self::notifyAllPlayers('energy', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'/*)*/, [
+                            'playerId' => $playerId,
+                            'player_name' => $this->getPlayerName($playerId),
+                            'level' => $level,
+                        ]);
+                    }
                 }
             }
         }
@@ -100,25 +104,29 @@ trait PlayerStateTrait {
             // start turn in tokyo
 
             if ($this->isTwoPlayersVariant()) {
-                $incEnergy = 1;
-                $this->applyGetEnergy($playerId, $incEnergy, -1);
+                if ($this->canGainEnergy($playerId)) {
+                    $incEnergy = 1;
+                    $this->applyGetEnergy($playerId, $incEnergy, -1);
 
-                self::notifyAllPlayers('energy', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
-                    'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
-                    'energy' => $this->getPlayerEnergy($playerId),
-                    'deltaEnergy' => $incEnergy,
-                ]);
+                    self::notifyAllPlayers('energy', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
+                        'playerId' => $playerId,
+                        'player_name' => $this->getPlayerName($playerId),
+                        'energy' => $this->getPlayerEnergy($playerId),
+                        'deltaEnergy' => $incEnergy,
+                    ]);
+                }
             } else {
-                $incScore = 2;
-                $this->applyGetPoints($playerId, $incScore, -1);
+                if ($this->canGainPoints($playerId)) {
+                    $incScore = 2;
+                    $this->applyGetPoints($playerId, $incScore, -1);
 
-                self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
-                    'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
-                    'points' => $this->getPlayerScore($playerId),
-                    'deltaPoints' => $incScore,
-                ]);
+                    self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
+                        'playerId' => $playerId,
+                        'player_name' => $this->getPlayerName($playerId),
+                        'points' => $this->getPlayerScore($playerId),
+                        'deltaPoints' => $incScore,
+                    ]);
+                }
             }
 
             // urbavore

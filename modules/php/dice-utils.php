@@ -255,6 +255,10 @@ trait DiceUtilTrait {
     }
 
     function resolveEnergyDice(int $playerId, int $diceCount) {
+        if (!$this->canGainEnergy($playerId)) {
+            return;
+        }
+        
         $this->applyGetEnergy($playerId, $diceCount, -1);
 
         self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [

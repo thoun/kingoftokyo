@@ -227,13 +227,21 @@ trait UtilTrait {
         if ($this->isTwoPlayersVariant()) {
             $incEnergy = 1;
             self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
-            $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Energy]');
-            $this->applyGetEnergy($playerId, $incEnergy, -1);
+            if ($this->canGainEnergy($playerId)) {
+                $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Energy]');
+                $this->applyGetEnergy($playerId, $incEnergy, -1);
+            } else {
+                $message = clienttranslate('${player_name} enters ${locationName}');
+            }
         } else {
             $incScore = 1;
             self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
-            $this->applyGetPoints($playerId, $incScore, -1);
-            $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
+            if ($this->canGainPoints($playerId)) {
+                $this->applyGetPoints($playerId, $incScore, -1);
+                $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
+            } else {
+                $message = clienttranslate('${player_name} enters ${locationName}');
+            }
         }
 
         $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
