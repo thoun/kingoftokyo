@@ -69,7 +69,7 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isWickednessExpansion() {
@@ -218,6 +218,10 @@ trait UtilTrait {
     }
 
     function moveToTokyo(int $playerId, bool $bay) {
+        if (!$this->canEnterTokyo($playerId)) {
+            return;
+        }
+
         $location = $bay ? 2 : 1;
         $message = null;
         if ($this->isTwoPlayersVariant()) {

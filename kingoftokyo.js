@@ -2699,6 +2699,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
                 break;
+            case 'resolveNumberDice':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringResolveNumberDice(args.args);
+                break;
             case 'takeWickednessTile':
                 this.onEnteringTakeWickednessTile(args.args, this.isCurrentPlayerActive());
                 break;
@@ -2815,6 +2819,12 @@ var KingOfTokyo = /** @class */ (function () {
             else {
                 this.createButton('dice-actions', 'rethrow3psychicProbe_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3psychicProbe(); }, !args.rethrow3.hasDice3);
             }
+        }
+    };
+    KingOfTokyo.prototype.onEnteringResolveNumberDice = function (args) {
+        var _a;
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.inTokyo);
         }
     };
     KingOfTokyo.prototype.onEnteringTakeWickednessTile = function (args, isCurrentPlayerActive) {

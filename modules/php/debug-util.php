@@ -50,7 +50,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
@@ -60,7 +60,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343492);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
-        //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
+        //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
@@ -74,7 +74,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
+        $this->debugSetCurseCardInTable(2);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");

@@ -162,4 +162,14 @@ trait DiceArgTrait {
         return [ 'skipped' => true ];
     }
 
+    function argResolveNumberDice() {
+        $activePlayerId = self::getActivePlayerId();
+
+        return [
+            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
+            'inTokyo' => $this->inTokyo($activePlayerId),
+            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+        ];
+    }
+
 }

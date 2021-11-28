@@ -300,6 +300,7 @@ $playerActionsGameStates = [
         "description" => "",
         "type" => "game",
         "action" => "stResolveNumberDice",
+        "args" => "argResolveNumberDice",
         "transitions" => [
             "takeWickednessTile" => ST_PLAYER_TAKE_WICKEDNESS_TILE,
             "next" => ST_RESOLVE_HEART_DICE,

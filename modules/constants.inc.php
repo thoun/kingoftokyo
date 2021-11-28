@@ -220,7 +220,7 @@ define('STATUE_OF_LIBERTY_CARD', 211);
 define('CLOWN_CARD', 212);
 
 // curse cards
-define('PHARAONIC_EGO_CURSE_CARD', 1); // TODOAN test
+define('PHARAONIC_EGO_CURSE_CARD', 1);
 define('ISIS_S_DISGRACE_CURSE_CARD', 2); // TODOAN test
 define('THOT_S_BLINDNESS_CURSE_CARD', 3); // TODOAN test
 define('TUTANKHAMUN_S_CURSE_CURSE_CARD', 4); // TODOAN test
