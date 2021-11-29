@@ -69,7 +69,7 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isWickednessExpansion() {
@@ -200,7 +200,7 @@ trait UtilTrait {
             $remove += 2;
         }
 
-        return 10 + $add - $remove;
+        return min(12, 10 + $add - $remove);
     }
 
     function getRemainingPlayers() {
