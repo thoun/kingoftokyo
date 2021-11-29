@@ -227,9 +227,9 @@ define('THOT_S_BLINDNESS_CURSE_CARD', 3);
 define('TUTANKHAMUN_S_CURSE_CURSE_CARD', 4);
 define('BURIED_IN_SAND_CURSE_CARD', 5);
 define('RAGING_FLOOD_CURSE_CARD', 6); // TODOAN test
-define('HOTEP_S_PEACE_CURSE_CARD', 7); // TODOAN test
-define('SET_S_STORM_CURSE_CARD', 8); // TODOAN test
-define('BUILDERS_UPRISING_CURSE_CARD', 9); // TODOAN test
+define('HOTEP_S_PEACE_CURSE_CARD', 7);
+define('SET_S_STORM_CURSE_CARD', 8);
+define('BUILDERS_UPRISING_CURSE_CARD', 9);
 define('INADEQUATE_OFFERING_CURSE_CARD', 10); // TODOAN test draw power card : test drawing rapid healing, mimic
 define('BOW_BEFORE_RA_CURSE_CARD', 11); // TODOAN test
 define('VENGEANCE_OF_HORUS_CURSE_CARD', 12); // TODOAN test

@@ -426,8 +426,6 @@ trait UtilTrait {
             }
         }
 
-        $state = $this->gamestate->state();
-
         // if player is killing himself
         // in a game state, we can kill him, but else we have to wait the end of his turn
         $playerIsActivePlayer = in_array($player->id, $this->gamestate->getActivePlayerList());
@@ -852,8 +850,9 @@ trait UtilTrait {
         $state = $this->gamestate->state();
         // we redirect only if game is not ended, and player is still active (not redirected to next player)
         if ($state['name'] != 'gameEnd') {
-            // TODOAN $isEliminated = $this->getPlayer($playerId)->eliminated;
-            $this->gamestate->jumpToState(/*$isEliminated ? ST_NEXT_PLAYER :*/ $stateId);
+            $activePlayerId = $this->getActivePlayerId();
+            $isEliminated = $this->getPlayer($activePlayerId)->eliminated;
+            $this->gamestate->jumpToState($isEliminated ? ST_NEXT_PLAYER : $stateId);
         }
     }
 

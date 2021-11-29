@@ -186,10 +186,14 @@ trait PlayerStateTrait {
         $redirects = false;
         $redirectAfterStartTurn = $canChangeMimickedCardWickednessTile ? ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE : ($canChangeMimickedCard ? ST_PLAYER_CHANGE_MIMICKED_CARD : ST_PLAYER_THROW_DICE);
         if ($damages != null && count($damages) > 0) {
+            $this->updateKillPlayersScoreAux();
+            
             $redirects = $this->resolveDamages($damages, $redirectAfterStartTurn);
         }
 
         if (!$redirects) {
+            $this->eliminatePlayers($playerId);
+            
             $this->jumpToState($redirectAfterStartTurn, $playerId);
         }
     }

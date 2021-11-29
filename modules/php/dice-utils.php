@@ -742,7 +742,6 @@ trait DiceUtilTrait {
             // TODOAN
             case PHARAONIC_EGO_CURSE_CARD:
                 $this->leaveTokyo($playerId);
-                $this->addLeaverWithBurrowing($playerId);
                 break;
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case THOT_S_BLINDNESS_CURSE_CARD: 
@@ -759,7 +758,7 @@ trait DiceUtilTrait {
                 break;
             case BUILDERS_UPRISING_CURSE_CARD:
                 if (!$this->inTokyo($playerId)) {
-                    $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
+                    $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 1);
                 }
                 break;
             case INADEQUATE_OFFERING_CURSE_CARD:
@@ -845,7 +844,6 @@ trait DiceUtilTrait {
                 break;
             case RESURRECTION_OF_OSIRIS_CURSE_CARD:
                 $this->leaveTokyo($playerId);
-                $this->addLeaverWithBurrowing($playerId);
                 break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
