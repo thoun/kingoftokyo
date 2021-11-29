@@ -231,6 +231,7 @@ $game_preferences = [
             0 => ['name' => totranslate('Automatic')],
             1 => ['name' => totranslate('Base game')],
             2 => ['name' => totranslate('Halloween event')],
+            3 => ['name' => totranslate('Christmas event')],
         ],
         'default' => 0
     ],
@@ -242,6 +243,7 @@ $game_preferences = [
             0 => ['name' => totranslate('Automatic')],
             1 => ['name' => totranslate('Base game')],
             2 => ['name' => totranslate('Halloween event')],
+            3 => ['name' => totranslate('Christmas event')],
         ],
         'default' => 0
     ],

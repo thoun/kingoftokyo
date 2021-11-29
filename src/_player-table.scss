@@ -116,7 +116,7 @@
                 height: 150px;
             }
 
-            @for $i from 1 through 10 {
+            @for $i from 1 through 17 {
                 &.monster#{$i} {
                     background-image: url('img/monster-board-#{$i}.png');
                 }

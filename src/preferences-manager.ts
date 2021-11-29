@@ -35,13 +35,12 @@ class PreferencesManager {
         if (versionNumber > 0) {
             return versionNumber;
         } else {
-            return this.game.isHalloweenExpansion() ? 2 : 1;
+            return 3; // this.game.isHalloweenExpansion() ? 2 : 1;
         }
     }
       
     private onPreferenceChange(prefId: number, prefValue: number) {
         switch (prefId) {
-            // KEEP
             case 201: 
                 this.game.setFont(prefValue);
                 break;
@@ -61,6 +60,12 @@ class PreferencesManager {
     }
     
     public getDiceScoringColor(): any {
-        return this.getGameVersionNumber((this.game as any).prefs[205].value) == 2 ? '000000' : '96c93c';
+        const prefId = this.getGameVersionNumber((this.game as any).prefs[205].value);
+        switch (prefId) {
+            case 2: return '000000';
+            case 3: return '0096CC';
+        }
+        
+        return '96c93c';        
     }
 }

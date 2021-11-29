@@ -2373,12 +2373,11 @@ var PreferencesManager = /** @class */ (function () {
             return versionNumber;
         }
         else {
-            return this.game.isHalloweenExpansion() ? 2 : 1;
+            return 3; // this.game.isHalloweenExpansion() ? 2 : 1;
         }
     };
     PreferencesManager.prototype.onPreferenceChange = function (prefId, prefValue) {
         switch (prefId) {
-            // KEEP
             case 201:
                 this.game.setFont(prefValue);
                 break;
@@ -2397,7 +2396,12 @@ var PreferencesManager = /** @class */ (function () {
         }
     };
     PreferencesManager.prototype.getDiceScoringColor = function () {
-        return this.getGameVersionNumber(this.game.prefs[205].value) == 2 ? '000000' : '96c93c';
+        var prefId = this.getGameVersionNumber(this.game.prefs[205].value);
+        switch (prefId) {
+            case 2: return '000000';
+            case 3: return '0096CC';
+        }
+        return '96c93c';
     };
     return PreferencesManager;
 }());
@@ -2647,7 +2651,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
             _this.dontPreloadImage("monster-board-" + i + ".png");
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });

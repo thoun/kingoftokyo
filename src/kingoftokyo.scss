@@ -9,6 +9,7 @@ $tokyoBlack: #211D1F;
 @import 'wickedness-tiles';
 @import 'table';
 @import 'halloween';
+@import 'christmas';
 @import 'tokyo-tower';
 
 @font-face {
@@ -103,7 +104,7 @@ html, .mode_3d #game_play_area_background {
   background-position: center center;
   background-repeat: no-repeat;
 
-  @for $i from 1 through 10 {
+  @for $i from 1 through 17 {
       &.monster#{$i} {
           background-image: url('img/monster-figure-#{$i}.png');
       }

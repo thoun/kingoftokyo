@@ -29,6 +29,11 @@ trait MonsterTrait {
         /* TODOKK/TODOCY if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
             $monsters = array_merge($monsters, [11, 12]);
         }*/
+
+        // Kookie, X-Smash Tree
+        if ($bonusMonsters) {
+            $monsters = array_merge($monsters, [16, 17]);
+        }
         
         return $monsters;
     }

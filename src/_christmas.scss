@@ -1,0 +1,37 @@
+html[data-background="3"] {
+    background: url('img/background-christmas.jpg') #e6f5fc;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/background-christmas.jpg') #e6f5fc;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}
+
+html[data-dice="3"] {
+    .die-item {
+        &.black {
+            background-color: #6cc1e3;
+            border-color: #6cc1e3;
+            background-image: url('img/christmas_dice.png');
+        }
+    }
+
+    .log {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/christmas_dice.png');
+        }
+    }
+
+    .gamelogreview {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/christmas_dice.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/animations-christmas.png');
+    }
+}

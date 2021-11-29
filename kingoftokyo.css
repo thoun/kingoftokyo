@@ -1071,6 +1071,18 @@
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon {
   position: absolute;
 }
+#table #table-center #full-board #wickedness-board .monster-icon.monster14 {
+  background-position: 108.3333333333% 50%;
+}
+#table #table-center #full-board #wickedness-board .monster-icon.monster15 {
+  background-position: 116.6666666667% 50%;
+}
+#table #table-center #full-board #wickedness-board .monster-icon.monster16 {
+  background-position: 125% 50%;
+}
+#table #table-center #full-board #wickedness-board .monster-icon.monster17 {
+  background-position: 133.3333333333% 50%;
+}
 #table .player-table {
   width: 440px;
   position: relative;
@@ -1202,6 +1214,27 @@
 }
 #table .player-table .monster-board-wrapper .monster-board.monster10 {
   background-image: url("img/monster-board-10.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster11 {
+  background-image: url("img/monster-board-11.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster12 {
+  background-image: url("img/monster-board-12.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster13 {
+  background-image: url("img/monster-board-13.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster14 {
+  background-image: url("img/monster-board-14.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster15 {
+  background-image: url("img/monster-board-15.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster16 {
+  background-image: url("img/monster-board-16.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster17 {
+  background-image: url("img/monster-board-17.png");
 }
 #table .player-table .energy-wrapper {
   position: absolute;
@@ -1364,6 +1397,32 @@ html[data-dice="2"] .animation {
   background-image: url("img/animations-halloween.png");
 }
 
+html[data-background="3"] {
+  background: url("img/background-christmas.jpg") #e6f5fc;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+html[data-background="3"] .mode_3d #game_play_area_background {
+  background: url("img/background-christmas.jpg") #e6f5fc;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+
+html[data-dice="3"] .die-item.black {
+  background-color: #6cc1e3;
+  border-color: #6cc1e3;
+  background-image: url("img/christmas_dice.png");
+}
+html[data-dice="3"] .log .dice-icon:not(.berserk):not(.die-of-fate) {
+  background-image: url("img/christmas_dice.png");
+}
+html[data-dice="3"] .gamelogreview .dice-icon:not(.berserk):not(.die-of-fate) {
+  background-image: url("img/christmas_dice.png");
+}
+html[data-dice="3"] .animation {
+  background-image: url("img/animations-christmas.png");
+}
+
 .tokyo-tower {
   width: 70px;
   height: 260px;
@@ -1499,6 +1558,27 @@ html, .mode_3d #game_play_area_background {
 }
 .monster-figure.monster10 {
   background-image: url("img/monster-figure-10.png");
+}
+.monster-figure.monster11 {
+  background-image: url("img/monster-figure-11.png");
+}
+.monster-figure.monster12 {
+  background-image: url("img/monster-figure-12.png");
+}
+.monster-figure.monster13 {
+  background-image: url("img/monster-figure-13.png");
+}
+.monster-figure.monster14 {
+  background-image: url("img/monster-figure-14.png");
+}
+.monster-figure.monster15 {
+  background-image: url("img/monster-figure-15.png");
+}
+.monster-figure.monster16 {
+  background-image: url("img/monster-figure-16.png");
+}
+.monster-figure.monster17 {
+  background-image: url("img/monster-figure-17.png");
 }
 
 #kot-table.pickMonster {
