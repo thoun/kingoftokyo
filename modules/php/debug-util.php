@@ -27,6 +27,7 @@ trait DebugUtilTrait {
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //self::DbQuery("UPDATE player SET `player_cultists` = 1 where `player_id` = 2343494");
         //$this->debugSetCardInTable(FRENZY_CARD);
+        //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
@@ -36,7 +37,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        $this->debugSetCardInHand(MIMIC_CARD, 2343492);
+        //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
@@ -53,7 +54,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
-        //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343492);
+        $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
@@ -70,8 +71,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
-        $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
-        $this->debugSetPlayerHealth(2343492, 11);
+        //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
+        //$this->debugSetPlayerHealth(2343492, 11);
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);

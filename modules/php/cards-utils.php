@@ -601,7 +601,7 @@ trait CardsUtilTrait {
         foreach($orderedPlayers as $player) {
             if ($player->id != $playerId) {
                 $countOpportunist = $this->countCardOfType($player->id, OPPORTUNIST_CARD);
-                if ($countOpportunist > 0) {
+                if ($countOpportunist > 0 && $this->canBuyPowerCard($player->id)) {
                     $opportunistPlayerIds[] = $player->id;
                 }   
             }         
@@ -851,4 +851,21 @@ trait CardsUtilTrait {
             $this->changeAllPlayersMaxHealth();
         }
     }
+
+    function setWarningIcon(int $playerId, array &$warningIds, object $card) {
+        if (in_array($card->type, [HEAL_CARD])) {
+            if (!$this->canGainHealth($playerId) || $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId)) {
+                $warningIds[$card->id] = '[Heart]';
+            }
+        } else if (in_array($card->type, [ENERGIZE_CARD])) {
+            if (!$this->canGainEnergy($playerId)) {
+                $warningIds[$card->id] = '[Energy]';
+            }
+        } else if (in_array($card->type, [APPARTMENT_BUILDING_CARD, COMMUTER_TRAIN_CARD, CORNER_STORE_CARD, JET_FIGHTERS_CARD, NATIONAL_GUARD_CARD, NUCLEAR_POWER_PLANT_CARD, SKYSCRAPER_CARD, TANK_CARD])) {
+            if (!$this->canGainPoints($playerId)) {
+                $warningIds[$card->id] = '[Star]';
+            }
+        }
+    }    
+    
 }

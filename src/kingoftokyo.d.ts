@@ -214,6 +214,7 @@ interface EnteringBuyCardArgs {
     };
     cardsCosts: { [cardId: number]: number };
     unbuyableIds: number[];
+    warningIds: { [cardId: number]: string };
 }
 
 interface EnteringCancelDamageArgs {

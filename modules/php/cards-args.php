@@ -53,7 +53,8 @@ trait CardsArgTrait {
         $cardsCosts = [];
         
         $unbuyableIds = [];
-        $disabledIds = [];
+        $disabledIds = []; // TODO remove
+        $warningIds = [];
         foreach ($cards as $card) {
             $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
             if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
@@ -62,6 +63,11 @@ trait CardsArgTrait {
             if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
                 $disabledIds[] = $card->id;
             }
+            if (!$canBuyPowerCards) {
+                $unbuyableIds[] = $card->id;
+            }
+
+            $this->setWarningIcon($playerId, $warningIds, $card);
         }
 
         if ($canBuyFromPlayers) {
@@ -79,6 +85,8 @@ trait CardsArgTrait {
                     }
                 }
             }
+
+            $this->setWarningIcon($playerId, $warningIds, $card);
         }
 
         // made in a lab
@@ -97,6 +105,11 @@ trait CardsArgTrait {
                 if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
                     $disabledIds[] = $card->id;
                 }
+                if (!$canBuyPowerCards) {
+                    $unbuyableIds[] = $card->id;
+                }
+
+                $this->setWarningIcon($playerId, $warningIds, $card);
             }
 
             $pickArgs = [
@@ -116,6 +129,7 @@ trait CardsArgTrait {
             'canSell' => $canSell,
             'cardsCosts' => $cardsCosts,
             'unbuyableIds' => $unbuyableIds,
+            'warningIds' => $warningIds,
         ] + $pickArgs;
     }
 
@@ -136,7 +150,8 @@ trait CardsArgTrait {
         $cardsCosts = [];
         
         $unbuyableIds = [];
-        $disabledIds = [];
+        $disabledIds = []; // TODO remove
+        $warningIds = [];
         foreach ($cards as $card) {
             if (in_array($card->id, $revealedCardsIds)) {
                 $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
@@ -146,6 +161,11 @@ trait CardsArgTrait {
                 if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
                     $disabledIds[] = $card->id;
                 }
+                if (!$canBuyPowerCards) {
+                    $unbuyableIds[] = $card->id;
+                }
+
+                $this->setWarningIcon($playerId, $warningIds, $card);
             } else {
                 $disabledIds[] = $card->id;
                 $unbuyableIds[] = $card->id;
@@ -157,6 +177,7 @@ trait CardsArgTrait {
             'canBuy' => $canBuy,
             'cardsCosts' => $cardsCosts,
             'unbuyableIds' => $unbuyableIds,
+            'warningIds' => $warningIds,
         ];
     }
 

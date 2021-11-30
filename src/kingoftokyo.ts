@@ -935,7 +935,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.gamestate.name;
     }
 
-    public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0) { // from : player id
+    public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0, warningChecked: boolean = false) { // from : player id
         if (!cardId) {
             return;
         }
@@ -961,8 +961,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else if (stateName === 'changeMimickedCardWickednessTile') {
             this.changeMimickedCardWickednessTile(cardId);
         } else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
-            this.tableCenter.removeOtherCardsFromPick(cardId);
-            this.buyCard(cardId, from);
+            const warningIcon = !warningChecked && (this.gamedatas.gamestate.args as EnteringBuyCardArgs).warningIds[cardId];
+            if (warningIcon) {
+                (this as any).confirmationDialog(
+                    formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon})), 
+                    () => this.onVisibleCardClick(stock, cardId, from, true)
+                );
+            } else {
+                this.tableCenter.removeOtherCardsFromPick(cardId);
+                this.buyCard(cardId, from);
+            }
         }
     }
 

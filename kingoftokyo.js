@@ -3328,8 +3328,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.getStateName = function () {
         return this.gamedatas.gamestate.name;
     };
-    KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from) {
+    KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from, warningChecked) {
+        var _this = this;
         if (from === void 0) { from = 0; }
+        if (warningChecked === void 0) { warningChecked = false; }
         if (!cardId) {
             return;
         }
@@ -3360,8 +3362,14 @@ var KingOfTokyo = /** @class */ (function () {
             this.changeMimickedCardWickednessTile(cardId);
         }
         else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
-            this.tableCenter.removeOtherCardsFromPick(cardId);
-            this.buyCard(cardId, from);
+            var warningIcon = !warningChecked && this.gamedatas.gamestate.args.warningIds[cardId];
+            if (warningIcon) {
+                this.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, cardId, from, true); });
+            }
+            else {
+                this.tableCenter.removeOtherCardsFromPick(cardId);
+                this.buyCard(cardId, from);
+            }
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCard = function (args, playerEnergy) {
