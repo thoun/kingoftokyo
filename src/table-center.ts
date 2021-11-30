@@ -19,8 +19,10 @@ class TableCenter {
         this.createVisibleCards(visibleCards, topDeckCardBackType);
 
         if (game.isWickednessExpansion()) {
-            dojo.place(`<div id="wickedness-board"></div>`, 'full-board');
-            document.getElementById('table-center').style.width = '700px';
+            dojo.place(`
+            <div id="wickedness-board-wrapper">
+                <div id="wickedness-board"></div>
+            </div>`, 'full-board');
             this.createWickednessTiles(wickednessTiles);
 
             players.forEach(player => {
@@ -31,7 +33,7 @@ class TableCenter {
         }
 
         if (game.isKingkongExpansion()) {
-            dojo.place(`<div id="tokyo-tower-0" class="tokyo-tower-wrapper"></div>`, 'board');
+            dojo.place(`<div id="tokyo-tower-0" class="tokyo-tower-wrapper"></div>`, 'full-board');
             this.tokyoTower = new TokyoTower('tokyo-tower-0', tokyoTowerLevels);
         }
 

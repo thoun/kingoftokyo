@@ -15,7 +15,6 @@
 
     #table-center {
         position: relative;
-        width: 420px;
 
         #deck-wrapper {
             display: flex;
@@ -44,6 +43,7 @@
 
         #visible-cards {
             margin-bottom: 10px;
+            min-width: 420px;
         }
 
         #curse-wrapper {
@@ -65,6 +65,9 @@
         }
     
         #full-board {
+            display: flex;
+            align-items: flex-end;
+
             #board {
                 margin-left: 10px;
                 position: relative;
@@ -122,103 +125,107 @@
                 }
 
                 .tokyo-tower-wrapper {
-                    position: absolute;
-                    right: 10px;
-                    top: 10px;
+                    position: relative;
                 }
             }
 
-            #wickedness-board {
-                position: relative;
-                width: 174px;
+            #wickedness-board-wrapper {
+                width: 300px;
                 height: 400px;
-                background: url('img/wickedness-board.jpg');
-                background-size: cover;
-                box-shadow: 2px 2px 5px 2px black;
                 display: inline-block;
 
-                #wickedness-tiles-reduced-3 {
-                    top: 258px;
-                }
-                #wickedness-tiles-reduced-6 {
-                    top: 141px;
-                }
-                #wickedness-tiles-reduced-10 {
-                    top: 6px;
-                }
+                #wickedness-board {
+                    position: relative;
+                    width: 174px;
+                    height: 400px;
+                    background: url('img/wickedness-board.jpg');
+                    background-size: cover;
+                    box-shadow: 2px 2px 5px 2px black;
+                    display: inline-block;
 
-                #wickedness-tiles-expanded-3 {
-                    bottom: 10px;
-                }
-                #wickedness-tiles-expanded-6 {
-                    //top: 120px;
-                    bottom: 10px;
-                }
-                #wickedness-tiles-expanded-10 {
-                    top: 10px;
-                }
+                    #wickedness-tiles-reduced-3 {
+                        top: 258px;
+                    }
+                    #wickedness-tiles-reduced-6 {
+                        top: 141px;
+                    }
+                    #wickedness-tiles-reduced-10 {
+                        top: 6px;
+                    }
 
-                .wickedness-tiles-reduced {
-                    position: absolute;
-                    left: 145px;
-                    width: 132px;
-                    height: 80px; // TODOWI
+                    #wickedness-tiles-expanded-3 {
+                        bottom: 10px;
+                    }
+                    #wickedness-tiles-expanded-6 {
+                        //top: 120px;
+                        bottom: 10px;
+                    }
+                    #wickedness-tiles-expanded-10 {
+                        top: 10px;
+                    }
 
-                    .wickedness-tiles-reduced-tile {
+                    .wickedness-tiles-reduced {
                         position: absolute;
-                        margin: 0;
+                        left: 145px;
                         width: 132px;
                         height: 80px; // TODOWI
-                        background: url('img/green-wickedness-tiles.jpg');
-                        border-radius: 10px;
-                    }
-                }
 
-                .wickedness-tiles-expanded {
-                    position: absolute;
-                    left: 145px;
-                    width: 142px;
-                    background: white;
-                    border-radius: 8px;
-                    visibility: hidden;
-                    padding-bottom: 1px;
-                    z-index: 20;
-    
-                    &.visible {
-                        visibility: visible;
-                    }
-
-                    .close {
-                        cursor: pointer;
-                        text-align: right;
-                        padding-top: 5px;
-                        padding-right: 10px;
-                    }
-
-                    .wickedness-tile-stock {
-                        width: 132px;
-                    }
-
-                    &:not(.selectable) {
-                        .wickedness-tile-stock {
-                            pointer-events: none;
+                        .wickedness-tiles-reduced-tile {
+                            position: absolute;
+                            margin: 0;
+                            width: 132px;
+                            height: 80px; // TODOWI
+                            background: url('img/green-wickedness-tiles.jpg');
+                            border-radius: 10px;
                         }
                     }
-                }
 
-                .monster-icon {
-                    position: absolute;
-                    width: 32px;
-                    height: 32px;
-                    background: url('img/monster-icons.png');
-                    background-size: auto 100%;
-                    border-radius: 50px;
-                    box-shadow: 0px 0px 3px 2px black;
-                    transition: left 0.5s, top 0.5s;
+                    .wickedness-tiles-expanded {
+                        position: absolute;
+                        left: 145px;
+                        width: 142px;
+                        background: white;
+                        border-radius: 8px;
+                        visibility: hidden;
+                        padding-bottom: 1px;
+                        z-index: 20;
+        
+                        &.visible {
+                            visibility: visible;
+                        }
 
-                    @for $i from 1 through 13 {
-                        &.monster#{$i} {
-                            background-position: (($i - 1) * 100% / 12) 50%;
+                        .close {
+                            cursor: pointer;
+                            text-align: right;
+                            padding-top: 5px;
+                            padding-right: 10px;
+                        }
+
+                        .wickedness-tile-stock {
+                            width: 132px;
+                        }
+
+                        &:not(.selectable) {
+                            .wickedness-tile-stock {
+                                pointer-events: none;
+                            }
+                        }
+                    }
+
+                    .monster-icon {
+                        position: absolute;
+                        width: 32px;
+                        height: 32px;
+                        background: url('img/monster-icons.png');
+                        background-size: auto 100%;
+                        border-radius: 50px;
+                        box-shadow: 0px 0px 3px 2px black;
+                        transition: left 0.5s, top 0.5s;
+
+                        @for $i from 1 through 13 {
+                            &.monster#{$i} {
+                                background-position: (($i - 1) * 100% / 12) 50%;
+                            }
                         }
                     }
                 }

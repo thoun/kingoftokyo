@@ -2361,8 +2361,7 @@ var TableCenter = /** @class */ (function () {
         this.wickednessPoints = new Map();
         this.createVisibleCards(visibleCards, topDeckCardBackType);
         if (game.isWickednessExpansion()) {
-            dojo.place("<div id=\"wickedness-board\"></div>", 'full-board');
-            document.getElementById('table-center').style.width = '700px';
+            dojo.place("\n            <div id=\"wickedness-board-wrapper\">\n                <div id=\"wickedness-board\"></div>\n            </div>", 'full-board');
             this.createWickednessTiles(wickednessTiles);
             players.forEach(function (player) {
                 dojo.place("<div id=\"monster-icon-" + player.id + "\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div>", 'wickedness-board');
@@ -2371,7 +2370,7 @@ var TableCenter = /** @class */ (function () {
             this.moveWickednessPoints();
         }
         if (game.isKingkongExpansion()) {
-            dojo.place("<div id=\"tokyo-tower-0\" class=\"tokyo-tower-wrapper\"></div>", 'board');
+            dojo.place("<div id=\"tokyo-tower-0\" class=\"tokyo-tower-wrapper\"></div>", 'full-board');
             this.tokyoTower = new TokyoTower('tokyo-tower-0', tokyoTowerLevels);
         }
         if (game.isAnubisExpansion()) {
