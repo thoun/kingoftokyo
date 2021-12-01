@@ -8,6 +8,7 @@ class Dice {
     public $locked;
     public $rolled;
     public $type;
+    public $discarded;
     public $canReroll = true;
 
     public function __construct($dbDice) {
@@ -17,6 +18,7 @@ class Dice {
         $this->locked = boolval($dbDice['locked']);
         $this->rolled = boolval($dbDice['rolled']);
         $this->type = array_key_exists('type', $dbDice) ? intval($dbDice['type']) : 0;
+        $this->discarded = array_key_exists('discarded', $dbDice) ? boolval($dbDice['discarded']) : 0;
     } 
 }
 ?>

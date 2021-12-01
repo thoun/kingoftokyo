@@ -55,7 +55,8 @@ trait DiceUtilTrait {
         $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
         // TODOAN TODOCY $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
         $dbDices = self::getCollectionFromDB($sql);
-        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
+        $dice = array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
+        return array_values(array_filter($dice, function ($die) { return !$die->discarded; }));
     }
 
     function getDieById(int $id) {
@@ -64,14 +65,18 @@ trait DiceUtilTrait {
         return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices))[0];
     }
 
-    function getFirst3Die(int $playerId) {
+    function getFirstDieOfValue(int $playerId, int $value) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
         foreach ($dice as $die) {
-            if ($die->value === 3) {
+            if ($die->value === $value) {
                 return $die;
             }
         }
         return null;
+    }
+
+    function getFirst3Die(int $playerId) {
+        return $this->getFirstDieOfValue($playerId, 3);
     }
 
     function getDiceByType(int $type) {
@@ -728,131 +733,5 @@ trait DiceUtilTrait {
         }
 
         return $diceCounts;
-    }
-
-    function getDieOfFate() {
-        return $this->getDiceByType(2)[0];
-    }
-
-    function applyAnkhEffect(int $playerId) {
-        $cardType = $this->getCurseCardType();
-        $logCardType = 1000 + $cardType;
-
-        switch($cardType) {
-            // TODOAN
-            case PHARAONIC_EGO_CURSE_CARD:
-                $this->leaveTokyo($playerId);
-                break;
-            case ISIS_S_DISGRACE_CURSE_CARD: 
-            case THOT_S_BLINDNESS_CURSE_CARD: 
-            case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
-            case FORBIDDEN_LIBRARY_CURSE_CARD: 
-            case CONFUSED_SENSES_CURSE_CARD: 
-            case PHARAONIC_SKIN_CURSE_CARD:
-                $this->changeGoldenScarabOwner($playerId);
-                break;
-            case SET_S_STORM_CURSE_CARD:
-            case BOW_BEFORE_RA_CURSE_CARD: 
-            case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
-                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
-                break;
-            case BUILDERS_UPRISING_CURSE_CARD:
-                if (!$this->inTokyo($playerId)) {
-                    $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 1);
-                }
-                break;
-            case INADEQUATE_OFFERING_CURSE_CARD:
-                $this->drawCard($playerId, $logCardType);
-                break;
-            case VENGEANCE_OF_HORUS_CURSE_CARD:
-                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
-                $rolledSmashes = $diceCounts[6];
-                $this->applyGetPoints($playerId, $rolledSmashes, $logCardType);
-                break;
-            case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
-                $this->applyGetPoints($playerId, 2, $logCardType);
-                break;
-            case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
-                $this->applyGetEnergy($playerId, 2, $logCardType);
-                break;
-            case RESURRECTION_OF_OSIRIS_CURSE_CARD:
-                return $this->replacePlayersInTokyo($playerId);
-            case GAZE_OF_THE_SPHINX_CURSE_CARD:
-                $this->applyGetEnergy($playerId, 3, $logCardType);
-                break;
-            case SCRIBE_S_PERSEVERANCE_CURSE_CARD:
-                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
-                $rolled1s = $diceCounts[1];
-                $this->applyGetEnergy($playerId, $rolled1s, $logCardType);
-                break;
-        }
-    }
-    
-    function applySnakeEffect(int $playerId) { // return damages
-        $cardType = $this->getCurseCardType();
-        $logCardType = 1000 + $cardType;
-
-        switch($cardType) {
-            // TODOAN
-            case PHARAONIC_EGO_CURSE_CARD:
-                return $this->replacePlayersInTokyo($playerId);
-            case ISIS_S_DISGRACE_CURSE_CARD: 
-            case SET_S_STORM_CURSE_CARD:
-                return [new Damage($playerId, 1, $playerId, $logCardType)];
-            case THOT_S_BLINDNESS_CURSE_CARD: 
-                $this->applyLoseEnergy($playerId, 2, $logCardType);
-                break;
-            case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
-                $this->applyLosePoints($playerId, 2, $logCardType);
-                break;
-            case HOTEP_S_PEACE_CURSE_CARD:
-                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
-                $rolledSmashes = $diceCounts[6];
-                $this->applyLoseEnergy($playerId, $rolledSmashes, $logCardType);
-                break;
-            case BUILDERS_UPRISING_CURSE_CARD: 
-                $this->applyLosePoints($playerId, 2, $logCardType);
-                break;
-            case BOW_BEFORE_RA_CURSE_CARD:
-                return [new Damage($playerId, 2, $playerId, $logCardType)];
-            case VENGEANCE_OF_HORUS_CURSE_CARD:
-                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
-                $rolledSmashes = $diceCounts[6];
-                return [new Damage($playerId, $rolledSmashes, $playerId, $logCardType)];
-            case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
-                $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
-                $damages = [];
-                foreach ($playersIds as $pId) {
-                    $damages[] = new Damage($pId, 1, $playerId, $logCardType); // TODOAN TOCHECK confirm the player is the damage dealer ? or 0 ?
-                }
-                return $damages;
-            case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
-                $playersIds = $this->getPlayersIdsWithMaxColumn('player_score');
-                foreach ($playersIds as $pId) {
-                    $this->applyLosePoints($pId, 1, $logCardType);
-                }
-                break;
-            case ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD:
-                $playersIds = $this->getPlayersIdsWithMaxColumn('player_energy');
-                foreach ($playersIds as $pId) {
-                    $this->applyLoseEnergy($pId, 1, $logCardType);
-                }
-                break;
-            case RESURRECTION_OF_OSIRIS_CURSE_CARD:
-                $this->leaveTokyo($playerId);
-                break;
-            case KHEPRI_S_REBELLION_CURSE_CARD:
-                $this->changeGoldenScarabOwner($playerId);
-                break;
-            case GAZE_OF_THE_SPHINX_CURSE_CARD:
-                $this->applyLoseEnergy($playerId, 3, $logCardType);
-                break;
-        }
-
-        return null;
     }
 }

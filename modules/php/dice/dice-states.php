@@ -62,7 +62,6 @@ trait DiceStateTrait {
         } else {
             $this->gamestate->nextState('resolve');
         }
-        
     }
 
     function stResolveDice() {
@@ -167,15 +166,11 @@ trait DiceStateTrait {
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
 
-        if ($this->isAnubisExpansion()) {
-            $this->gamestate->nextState('resolveDieOfFate');
-        } else {
-            $this->gamestate->nextState('resolveNumberDice');
-        }
+        $this->gamestate->nextState('resolveNumberDice');
     }
 
     function stResolveDieOfFate() {
-        if (intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) { // no Die of Fate
+        if (!$this->isAnubisExpansion() || intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) { // no Die of Fate
             $this->gamestate->nextState('next');
             return;
         }
@@ -184,28 +179,38 @@ trait DiceStateTrait {
 
         $dieOfFate = $this->getDieOfFate();
 
-        // TODO notif for each case
         $damages = null;
+        $cardType = $dieOfFate->value > 1 ? $this->getCurseCardType() : null;
         switch($dieOfFate->value) {
             case 1: 
                 $this->changeCurseCard();
                 break;
             case 2:
-                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], Curse card is kept (with no effect except permanent effect)'/*)*/, []);
+                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'/*)*/, [
+                    'card_name' => 1000 + $cardType,
+                ]);
                 break;
             case 3:
-                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateSnake], Snake effect is applied'/*)*/, []);
-                $damages = $this->applySnakeEffect($playerId);
+                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateSnake], Snake effect of ${card_name} is applied'/*)*/, [
+                    'card_name' => 1000 + $cardType,
+                ]);
+                $damagesOrState = $this->applySnakeEffect($playerId, $cardType);
+                if (gettype($damagesOrState) === 'integer') {
+                    $this->jumpToState($damagesOrState);
+                    return;
+                }
                 break;
             case 4:
-                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateAnkh], Ankh effect is applied'/*)*/, []);
-                $this->applyAnkhEffect($playerId);
+                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'/*)*/, [
+                   'card_name' => 1000 + $cardType,
+                ]);
+                $this->applyAnkhEffect($playerId, $cardType);
                 break;
         }
 
         $redirects = false;
         if ($damages != null && count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, ST_RESOLVE_NUMBER_DICE);
+            $redirects = $this->resolveDamages($damages, ST_RESOLVE_DICE);
         }
 
         if (!$redirects) {

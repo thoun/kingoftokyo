@@ -764,9 +764,7 @@ var CurseCards = /** @class */ (function () {
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
             case 22: return "Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.";
             case 23: return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
-            case 24:
-                return "You cannot reroll your [dice1].";
-                defaut: return "TODO"; // TODO an
+            case 24: return "You cannot reroll your [dice1].";
         }
         return null;
     };
@@ -796,9 +794,7 @@ var CurseCards = /** @class */ (function () {
             case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
             // TODOAN case 22
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
-            case 24:
-                return "Gain 1[Energy] for each [dice1] you rolled.";
-                defaut: return "TODO"; // TODO an
+            case 24: return "Gain 1[Energy] for each [dice1] you rolled.";
         }
         return null;
     };
@@ -812,7 +808,7 @@ var CurseCards = /** @class */ (function () {
             case 4:
             case 9: return "-2[Star]";
             case 5: return "You cannot use your [diceSmash].";
-            // TODOAN case 6     
+            case 6: return "Discard 1 die.";
             case 7: return "Lose 1[Energy] for each [diceSmash] you rolled.";
             // TODOAN case 10
             case 11: return "-2[Heart]";
@@ -827,10 +823,8 @@ var CurseCards = /** @class */ (function () {
             case 20: return "Take the Golden Scarab.";
             case 21: return "Cancel the Curse effect.";
             // TODOAN case 22
-            case 23:
-                return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."         
-                // TODOAN 24
-                defaut: return "TODO"; // TODO an
+            case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
+            case 24: return "Discard 1[dice1]";
         }
         return null;
     };

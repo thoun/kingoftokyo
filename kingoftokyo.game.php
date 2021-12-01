@@ -39,6 +39,7 @@ require_once('modules/php/cards/cards-states.php');
 require_once('modules/php/wickedness-tiles/wickedness-tiles-utils.php');
 require_once('modules/php/wickedness-tiles/wickedness-tiles-actions.php');
 require_once('modules/php/wickedness-tiles/wickedness-tiles-args.php');
+require_once('modules/php/curse-cards/curse-cards-utils.php');
 require_once('modules/php/curse-cards/curse-cards-actions.php');
 require_once('modules/php/curse-cards/curse-cards-args.php');
 require_once('modules/php/curse-cards/curse-cards-states.php');
@@ -64,6 +65,7 @@ class KingOfTokyo extends Table {
     use KOT\States\WickednessTilesUtilTrait;
     use KOT\States\WickednessTilesActionTrait;
     use KOT\States\WickednessTilesArgTrait;
+    use KOT\States\CurseCardsUtilTrait;
     use KOT\States\CurseCardsActionTrait;
     use KOT\States\CurseCardsArgTrait;
     use KOT\States\CurseCardsStateTrait;
@@ -581,6 +583,11 @@ class KingOfTokyo extends Table {
  
         if ($from_version <= 2111271657) {
             $sql = "UPDATE `DBPREFIX_global_variables` SET `name` = '".MIMICKED_CARD.MIMIC_CARD."' WHERE `name` = '".MIMICKED_CARD."'";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+ 
+        if ($from_version <= 2112012135) {
+            $sql = "ALTER TABLE `DBPREFIX_dice` ADD `discarded` tinyint unsigned NOT NULL DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

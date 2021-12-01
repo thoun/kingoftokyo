@@ -280,7 +280,7 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stPrepareResolveDice",
         "transitions" => [
-            "resolve" => ST_RESOLVE_DICE,
+            "resolve" => ST_RESOLVE_DIE_OF_FATE,
             "askCheerleaderSupport" => ST_MULTIPLAYER_CHEERLEADER_SUPPORT,
         ],
     ],
@@ -294,7 +294,17 @@ $playerActionsGameStates = [
         "action" => "stCheerleaderSupport",
         "possibleactions" => [ "support", "dontSupport" ],
         "transitions" => [
-            "end" => ST_RESOLVE_DICE,
+            "end" => ST_RESOLVE_DIE_OF_FATE,
+        ],
+    ],
+
+    ST_RESOLVE_DIE_OF_FATE => [
+        "name" => "resolveDieOfFate",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveDieOfFate",
+        "transitions" => [
+            "next" => ST_RESOLVE_DICE,
         ],
     ],
 
@@ -304,16 +314,18 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stResolveDice",
         "transitions" => [
-            "resolveDieOfFate" => ST_RESOLVE_DIE_OF_FATE,
             "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE,
         ],
     ],
 
-    ST_RESOLVE_DIE_OF_FATE => [
-        "name" => "resolveDieOfFate",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveDieOfFate",
+    ST_PLAYER_DISCARD_DIE => [
+        "name" => "discardDie",
+        "description" => '',/*client TODOAN translate('${actplayer} must dicard a die'),*/
+        "descriptionmyturn" => '',/*client TODOAN translate('${you} must dicard a die (click on a die to discard it)'),*/
+        "type" => "activeplayer",
+        "action" => "stDiscardDie",
+        "args" => "argDiscardDie",
+        "possibleactions" => [ "discardDie" ],
         "transitions" => [
             "next" => ST_RESOLVE_NUMBER_DICE,
         ],

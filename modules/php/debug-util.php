@@ -19,9 +19,9 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(5);
+        //$this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
-        $this->debugSetHealth(1);
+        //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
@@ -33,7 +33,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
-        //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".ZOMBIE_CARD);
+        self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -78,7 +78,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(BUILDERS_UPRISING_CURSE_CARD);
-        $this->debugSetCurseCardInTable(KHEPRI_S_REBELLION_CURSE_CARD);
+        $this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
@@ -142,8 +142,10 @@ trait DebugUtilTrait {
     }
 
     function debugSetCurseCardInTable($cardType) {
-        $this->curseCards->moveAllCardsInLocation('table', 'discard');
-        $this->curseCards->moveCard($this->getCardFromDb(array_values($this->curseCards->getCardsOfType($cardType))[0])->id, 'table');
+        if ($this->isAnubisExpansion()) {
+            $this->curseCards->moveAllCardsInLocation('table', 'discard');
+            $this->curseCards->moveCard($this->getCardFromDb(array_values($this->curseCards->getCardsOfType($cardType))[0])->id, 'table');
+        }
     }
 
     function debugSetDieOfFate($face) {
