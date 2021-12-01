@@ -2,7 +2,7 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/objects/damage.php');
+require_once(__DIR__.'/../objects/damage.php');
 
 use KOT\Objects\Damage;
 
@@ -177,14 +177,9 @@ trait PlayerStateTrait {
         self::setGameStateValue('throwNumber', 1);
         self::DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true");
 
-        $canChangeMimickedCardWickednessTile = $this->canChangeMimickedCardWickednessTile();
-        $canChangeMimickedCard = !$canChangeMimickedCardWickednessTile && $this->canChangeMimickedCard();
-        if (!$canChangeMimickedCardWickednessTile && !$canChangeMimickedCard) {
-            $this->throwDice($playerId, true);
-        }
-
         $redirects = false;
-        $redirectAfterStartTurn = $canChangeMimickedCardWickednessTile ? ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE : ($canChangeMimickedCard ? ST_PLAYER_CHANGE_MIMICKED_CARD : ST_PLAYER_THROW_DICE);
+        $redirectAfterStartTurn = $this->redirectAfterStartTurn($playerId);
+
         if ($damages != null && count($damages) > 0) {
             $this->updateKillPlayersScoreAux();
             
@@ -196,6 +191,14 @@ trait PlayerStateTrait {
             
             $this->jumpToState($redirectAfterStartTurn, $playerId);
         }
+    }
+
+    function stInitialDiceRoll() {
+        $playerId = self::getActivePlayerId();
+
+        $this->throwDice($playerId, true);
+
+        $this->gamestate->nextState('');
     }
 
     function stLeaveTokyo() {

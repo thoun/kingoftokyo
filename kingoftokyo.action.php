@@ -56,6 +56,16 @@
         self::ajaxResponse();
     }
   	
+    public function giveSymbolToActivePlayer() {
+        self::setAjaxMode();
+
+        $symbol = self::getArg("symbol", AT_posint, true);
+
+        $this->game->giveSymbolToActivePlayer($symbol);
+
+        self::ajaxResponse();
+    }
+  	
     public function rethrow() {
         self::setAjaxMode();
 

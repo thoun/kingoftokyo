@@ -2,9 +2,9 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/objects/dice.php');
-require_once(__DIR__.'/objects/player-intervention.php');
-require_once(__DIR__.'/objects/damage.php');
+require_once(__DIR__.'/../objects/dice.php');
+require_once(__DIR__.'/../objects/player-intervention.php');
+require_once(__DIR__.'/../objects/damage.php');
 
 use KOT\Objects\Dice;
 use KOT\Objects\ChangeActivePlayerDieIntervention;

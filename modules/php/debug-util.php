@@ -19,13 +19,13 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(5);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
-        //$this->debugSetHealth(2);
-        $this->debugSetPlayerHealth(2343492, 1);
+        $this->debugSetHealth(1);
+        //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
-        self::DbQuery("UPDATE player SET `player_cultists` = 3 where `player_id` = 2343492");
+        //self::DbQuery("UPDATE player SET `player_cultists` = 3 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
@@ -63,7 +63,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343492);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
-        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
@@ -78,13 +78,14 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(BUILDERS_UPRISING_CURSE_CARD);
+        $this->debugSetCurseCardInTable(KHEPRI_S_REBELLION_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
         //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
-        $this->gamestate->changeActivePlayer(2343493);
+        $this->gamestate->changeActivePlayer(2343492);
 
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);

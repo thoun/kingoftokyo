@@ -170,7 +170,7 @@ $playerActionsGameStates = [
         "action" => "stStartTurn",
         "transitions" => [ 
             "changeMimickedCard" => ST_PLAYER_CHANGE_MIMICKED_CARD,
-            "throw" => ST_PLAYER_THROW_DICE,
+            "throw" => ST_INITIAL_DICE_ROLL,
         ],
     ],
 
@@ -183,7 +183,7 @@ $playerActionsGameStates = [
         "args" => "argChangeMimickedCardWickednessTile",
         "possibleactions" => [ "changeMimickedCardWickednessTile", "skipChangeMimickedCardWickednessTile" ],
         "transitions" => [
-            "next" => ST_PLAYER_THROW_DICE,
+            "next" => ST_INITIAL_DICE_ROLL,
             "changeMimickedCard" => ST_PLAYER_CHANGE_MIMICKED_CARD,
         ]
     ],
@@ -197,8 +197,32 @@ $playerActionsGameStates = [
         "args" => "argChangeMimickedCard",
         "possibleactions" => [ "changeMimickedCard", "skipChangeMimickedCard" ],
         "transitions" => [
-            "next" => ST_PLAYER_THROW_DICE,
+            "next" => ST_INITIAL_DICE_ROLL,
         ]
+    ],
+
+    ST_MULTIPLAYER_GIVE_SYMBOL_TO_ACTIVE_PLAYER => [
+        "name" => "giveSymbolToActivePlayer",
+        "description" => ''/* client TODOAN translate('Player with Golden Scarab must give 1[Heart]/[Energy]/[Star]')*/,
+        "descriptionmyturn" => ''/* client TODOAN translate('${you} must give 1[Heart]/[Energy]/[Star]')*/,
+        "type" => "multipleactiveplayer",
+        "args" => "argGiveSymbolToActivePlayer",
+        "action" => "stGiveSymbolToActivePlayer",
+        "possibleactions" => [ "giveSymbolToActivePlayer" ],
+        "transitions" => [
+            "" => ST_INITIAL_DICE_ROLL,
+            "stay" => ST_INITIAL_DICE_ROLL, // needed for elimination
+        ],
+    ],
+
+    ST_INITIAL_DICE_ROLL => [
+        "name" => "initialDiceRoll",
+        "description" => "",
+        "type" => "game",
+        "action" => "stInitialDiceRoll",
+        "transitions" => [ 
+            "" => ST_PLAYER_THROW_DICE,
+        ],
     ],
 
     ST_PLAYER_THROW_DICE => [

@@ -2,7 +2,7 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/objects/wickedness-tile.php');
+require_once(__DIR__.'/../objects/wickedness-tile.php');
 
 use KOT\Objects\WickednessTile;
 

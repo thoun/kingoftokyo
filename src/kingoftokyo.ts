@@ -599,6 +599,17 @@ class KingOfTokyo implements KingOfTokyoGame {
                         this.startActionTimer('skipChangeMimickedCard_button', 5);
                     }
                     break;
+                case 'giveSymbolToActivePlayer':
+                    const argsGiveSymbolToActivePlayer = args as EnteringGiveSymbolToActivePlayerArgs;
+                    const SYMBOL_AS_STRING = ['[Heart]', '[Energy]', '[Star]'];
+                    [4,5,0].forEach((symbol, symbolIndex) => {
+                        (this as any).addActionButton(`giveSymbolToActivePlayer_button${symbol}`, formatTextIcons(dojo.string.substitute(/*TODOAN_(*/"Give ${symbol}"/*)*/, { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbolToActivePlayer(symbol));
+                        if (!argsGiveSymbolToActivePlayer.canGive[symbol]) {
+                            dojo.addClass(`giveSymbolToActivePlayer_button${symbol}`, 'disabled');
+                        }
+                    });
+                    document.getElementById(`giveSymbolToActivePlayer_button5`).dataset.enableAtEnergy = '1';
+                    break;
                 case 'throwDice':
                     (this as any).addActionButton('goToChangeDie_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
 
@@ -647,7 +658,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'changeForm':
                     const argsChangeForm = args as EnteringChangeFormArgs;
-
+                    // TODOME
                     (this as any).addActionButton('changeForm_button',   dojo.string.substitute(/* TODOME _(*/"Change to ${otherForm}"/*)*/, {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
                     (this as any).addActionButton('skipChangeForm_button', /* TODOME _(*/"Don't change form"/*)*/, () => this.skipChangeForm());
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
@@ -1264,6 +1275,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('chooseInitialCard', {
             id
+        });
+    }
+
+    public giveSymbolToActivePlayer(symbol: number) {
+        if(!(this as any).checkAction('giveSymbolToActivePlayer')) {
+            return;
+        }
+
+        this.takeAction('giveSymbolToActivePlayer', {
+            symbol
         });
     }
 

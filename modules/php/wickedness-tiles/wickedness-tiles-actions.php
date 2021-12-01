@@ -92,15 +92,7 @@ trait WickednessTilesActionTrait {
 
         $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
 
-        $canChangeMimickedCard = $this->canChangeMimickedCard();
-        if (!$canChangeMimickedCard) {
-            // we throw dices now, in case dice count has been changed by mimic
-            $this->throwDice($playerId, true);
-
-            $this->gamestate->nextState('next');
-        } else {
-            $this->gamestate->nextState('changeMimickedCard');
-        }
+        $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));
     }
 
     function skipChangeMimickedCardWickednessTile($skipActionCheck = false) {
@@ -110,14 +102,6 @@ trait WickednessTilesActionTrait {
 
         $playerId = self::getActivePlayerId();
 
-        $canChangeMimickedCard = $this->canChangeMimickedCard();
-        if (!$canChangeMimickedCard) {
-            // we throw dices now, in case dice count has been changed by mimic
-            $this->throwDice($playerId, true);
-
-            $this->gamestate->nextState('next');
-        } else {
-            $this->gamestate->nextState('changeMimickedCard');
-        }
+        $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));
     }    
 }

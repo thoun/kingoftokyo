@@ -2,9 +2,9 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/objects/card.php');
-require_once(__DIR__.'/objects/player-intervention.php');
-require_once(__DIR__.'/objects/damage.php');
+require_once(__DIR__.'/../objects/card.php');
+require_once(__DIR__.'/../objects/player-intervention.php');
+require_once(__DIR__.'/../objects/damage.php');
 
 use KOT\Objects\Card;
 use KOT\Objects\OpportunistIntervention;
@@ -272,7 +272,7 @@ trait CardsActionTrait {
         $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
 
         if ($damages != null && count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard); // TODO apply opportunist checks like redirectAfterBuyCard
+            $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard);
         }
 
         if (!$redirects) {
@@ -505,10 +505,7 @@ trait CardsActionTrait {
 
         $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
 
-        // we throw dices now, in case dice count has been changed by mimic
-        $this->throwDice($playerId, true);
-
-        $this->gamestate->nextState('next');
+        $this->jumpToState($this->redirectAfterChangeMimick($playerId));
     }
 
     function skipChangeMimickedCard($skipActionCheck = false) {
@@ -518,10 +515,7 @@ trait CardsActionTrait {
 
         $playerId = self::getActivePlayerId();
 
-        // we throw dices now, in case dice count has been changed by mimic
-        $this->throwDice($playerId, true);
-
-        $this->gamestate->nextState('next');
+        $this->jumpToState($this->redirectAfterChangeMimick($playerId));
     }    
 
     function throwCamouflageDice() {

@@ -760,7 +760,7 @@ var CurseCards = /** @class */ (function () {
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
             // TODOAN case 18 
             case 19: return "The Monster with the Golden Scarab cannot lose [Heart].";
-            // TODOAN case 20
+            case 20: return "At the start of each turn, the Monster with the Golden Scarab must give 1[Heart]/[Energy]/[Star] to the Monster whose turn it is.";
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
             case 22: return "Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.";
             case 23: return "[Keep] cards have no effect."; // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
@@ -2396,7 +2396,7 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.createCurseCard = function (curseCard) {
         var _this = this;
-        dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'board', 'before');
+        dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'full-board', 'before');
         this.curseCard = new ebg.stock();
         this.curseCard.setSelectionAppearance('class');
         this.curseCard.selectionClass = 'no-visible-selection';
@@ -3084,6 +3084,17 @@ var KingOfTokyo = /** @class */ (function () {
                         this.startActionTimer('skipChangeMimickedCard_button', 5);
                     }
                     break;
+                case 'giveSymbolToActivePlayer':
+                    var argsGiveSymbolToActivePlayer_1 = args;
+                    var SYMBOL_AS_STRING_1 = ['[Heart]', '[Energy]', '[Star]'];
+                    [4, 5, 0].forEach(function (symbol, symbolIndex) {
+                        _this.addActionButton("giveSymbolToActivePlayer_button" + symbol, formatTextIcons(dojo.string.substitute(/*TODOAN_(*/ "Give ${symbol}" /*)*/, { symbol: SYMBOL_AS_STRING_1[symbolIndex] })), function () { return _this.giveSymbolToActivePlayer(symbol); });
+                        if (!argsGiveSymbolToActivePlayer_1.canGive[symbol]) {
+                            dojo.addClass("giveSymbolToActivePlayer_button" + symbol, 'disabled');
+                        }
+                    });
+                    document.getElementById("giveSymbolToActivePlayer_button5").dataset.enableAtEnergy = '1';
+                    break;
                 case 'throwDice':
                     this.addActionButton('goToChangeDie_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
                     var argsThrowDice = args;
@@ -3129,6 +3140,7 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'changeForm':
                     var argsChangeForm = args;
+                    // TODOME
                     this.addActionButton('changeForm_button', dojo.string.substitute(/* TODOME _(*/ "Change to ${otherForm}" /*)*/, { 'otherForm': _(argsChangeForm.otherForm) }) + formatTextIcons(" ( 1 [Energy])"), function () { return _this.changeForm(); });
                     this.addActionButton('skipChangeForm_button', /* TODOME _(*/ "Don't change form" /*)*/, function () { return _this.skipChangeForm(); });
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
@@ -3615,6 +3627,14 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('chooseInitialCard', {
             id: id
+        });
+    };
+    KingOfTokyo.prototype.giveSymbolToActivePlayer = function (symbol) {
+        if (!this.checkAction('giveSymbolToActivePlayer')) {
+            return;
+        }
+        this.takeAction('giveSymbolToActivePlayer', {
+            symbol: symbol
         });
     };
     KingOfTokyo.prototype.onRethrow = function () {

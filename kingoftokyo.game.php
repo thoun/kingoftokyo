@@ -24,21 +24,24 @@ require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
 require_once('modules/php/monster.php');
 require_once('modules/php/initial-card.php');
-require_once('modules/php/player-utils.php');
-require_once('modules/php/player-actions.php');
-require_once('modules/php/player-args.php');
-require_once('modules/php/player-states.php');
-require_once('modules/php/dice-utils.php');
-require_once('modules/php/dice-actions.php');
-require_once('modules/php/dice-args.php');
-require_once('modules/php/dice-states.php');
-require_once('modules/php/cards-utils.php');
-require_once('modules/php/cards-actions.php');
-require_once('modules/php/cards-args.php');
-require_once('modules/php/cards-states.php');
-require_once('modules/php/wickedness-tiles-utils.php');
-require_once('modules/php/wickedness-tiles-actions.php');
-require_once('modules/php/wickedness-tiles-args.php');
+require_once('modules/php/player/player-utils.php');
+require_once('modules/php/player/player-actions.php');
+require_once('modules/php/player/player-args.php');
+require_once('modules/php/player/player-states.php');
+require_once('modules/php/dice/dice-utils.php');
+require_once('modules/php/dice/dice-actions.php');
+require_once('modules/php/dice/dice-args.php');
+require_once('modules/php/dice/dice-states.php');
+require_once('modules/php/cards/cards-utils.php');
+require_once('modules/php/cards/cards-actions.php');
+require_once('modules/php/cards/cards-args.php');
+require_once('modules/php/cards/cards-states.php');
+require_once('modules/php/wickedness-tiles/wickedness-tiles-utils.php');
+require_once('modules/php/wickedness-tiles/wickedness-tiles-actions.php');
+require_once('modules/php/wickedness-tiles/wickedness-tiles-args.php');
+require_once('modules/php/curse-cards/curse-cards-actions.php');
+require_once('modules/php/curse-cards/curse-cards-args.php');
+require_once('modules/php/curse-cards/curse-cards-states.php');
 require_once('modules/php/intervention.php');
 require_once('modules/php/debug-util.php');
 
@@ -61,6 +64,9 @@ class KingOfTokyo extends Table {
     use KOT\States\WickednessTilesUtilTrait;
     use KOT\States\WickednessTilesActionTrait;
     use KOT\States\WickednessTilesArgTrait;
+    use KOT\States\CurseCardsActionTrait;
+    use KOT\States\CurseCardsArgTrait;
+    use KOT\States\CurseCardsStateTrait;
     use KOT\States\InterventionTrait;
     use KOT\States\DebugUtilTrait;
 
@@ -272,7 +278,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        //$this->debugSetup();
+        $this->debugSetup();
 
         /************ End of the game initialization *****/
     }

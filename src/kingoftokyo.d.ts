@@ -134,6 +134,10 @@ interface EnteringChooseInitialCardArgs {
     cards: Card[];
 }
 
+interface EnteringGiveSymbolToActivePlayerArgs {
+    canGive: { [symbol: number]: boolean };
+}
+
 interface EnteringDiceArgs {
     dice: Dice[];
     inTokyo: boolean;

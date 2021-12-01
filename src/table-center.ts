@@ -63,7 +63,7 @@ class TableCenter {
         dojo.place(`<div id="curse-wrapper">
             <div id="curse-deck"></div>
             <div id="curse-card"></div>
-        </div>`, 'board', 'before');
+        </div>`, 'full-board', 'before');
 
         this.curseCard = new ebg.stock() as Stock;
         this.curseCard.setSelectionAppearance('class');
