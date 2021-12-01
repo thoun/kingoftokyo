@@ -569,25 +569,24 @@ trait CardsActionTrait {
 
         $remainingDamage = count($dice) - $cancelledDamage;
 
-        $args = null;
-
-        // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
-        $stayOnState = false;
         $canRethrow3 = false;
         if ($remainingDamage > 0) {
             $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && in_array(3, $diceValues);
-            $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0 || $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
-                $canRethrow3 || ($playerUsedDice->rolls < $countCamouflage);
+        }
+
+        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+        $args = $this->argCancelDamage($playerId, $canRethrow3 ? in_array(3, $diceValues) : false);
+
+        // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
+        $stayOnState = false;
+        if ($remainingDamage > 0) {
+            $stayOnState = $args['canDoAction'];
         }
 
         $diceStr = '';
         foreach ($diceValues as $dieValue) {
             $diceStr .= $this->getDieFaceLogName($dieValue, 0);
         }
-
-        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-
-        $args = $this->argCancelDamage($playerId, $canRethrow3 ? in_array(3, $diceValues) : false);
 
         if ($canRethrow3) {
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
@@ -763,17 +762,15 @@ trait CardsActionTrait {
 
         $this->applyLoseEnergy($playerId, $energy, 0);
 
-        $args = null;
+        $args = $this->argCancelDamage($playerId, false);
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
         $stayOnState = false;
         if ($remainingDamage > 0) {
-            $stayOnState = $this->countCardOfType($playerId, WINGS_CARD) > 0/* || ($this->countCardOfType($playerId, ROBOT_CARD) > 0 && $this->getPlayerEnergy($playerId) > 0)*/;
+            $stayOnState = $args['canDoAction'];
         }
 
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-
-        $args = $this->argCancelDamage($playerId, false);
 
         if ($stayOnState) {
             $intervention->damages[0]->damage -= $energy;

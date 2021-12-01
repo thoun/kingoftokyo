@@ -279,6 +279,8 @@ trait CardsArgTrait {
                 $damageToCancelToSurvive = 0;
             }
 
+            $canDoAction = $canThrowDices || $canUseWings || $canUseRobot || $rapidHealingHearts || $rapidHealingCultists || $hasDice3;
+
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
@@ -293,6 +295,7 @@ trait CardsArgTrait {
                     'hasCard' => $hasBackgroundDweller,
                     'hasDice3' => $hasDice3,
                 ],
+                'canDoAction' => $canDoAction,
             ];
         } else {
             return [
