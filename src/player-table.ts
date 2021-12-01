@@ -87,7 +87,9 @@ class PlayerTable {
 
         if (this.game.isCthulhuExpansion()) {
             dojo.place(`<div id="player-table-cultist-tokens-${player.id}" class="cultist-tokens"></div>`, `monster-board-${player.id}`);
-            this.setCultistTokens(player.cultists);
+            if (!eliminated) {
+                this.setCultistTokens(player.cultists);
+            }
         }
 
         if (this.game.isWickednessExpansion()) {

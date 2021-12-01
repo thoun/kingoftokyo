@@ -1099,7 +1099,9 @@ var PlayerTable = /** @class */ (function () {
         }
         if (this.game.isCthulhuExpansion()) {
             dojo.place("<div id=\"player-table-cultist-tokens-" + player.id + "\" class=\"cultist-tokens\"></div>", "monster-board-" + player.id);
-            this.setCultistTokens(player.cultists);
+            if (!eliminated) {
+                this.setCultistTokens(player.cultists);
+            }
         }
         if (this.game.isWickednessExpansion()) {
             this.wickednessTiles = new ebg.stock();
@@ -4388,6 +4390,9 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.setShrinkRayTokens(playerId, 0);
         this.setPoisonTokens(playerId, 0);
+        if (this.isCthulhuExpansion()) {
+            this.setCultists(playerId, 0, false);
+        }
     };
     KingOfTokyo.prototype.getLogCardName = function (logType) {
         if (logType >= 2000) {

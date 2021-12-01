@@ -2181,6 +2181,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         
         this.setShrinkRayTokens(playerId, 0);
         this.setPoisonTokens(playerId, 0);
+        if (this.isCthulhuExpansion()) {
+            this.setCultists(playerId, 0, false);
+        }
     }
 
     private getLogCardName(logType: number) {
