@@ -280,7 +280,7 @@ trait PlayerUtilTrait {
 
             if ($curseCardType == PHARAONIC_SKIN_CURSE_CARD) {
                 if ($playerId == $this->getPlayerIdWithGoldenScarab()) {
-                    return PHARAONIC_SKIN_CURSE_CARD;
+                    return 1000 + PHARAONIC_SKIN_CURSE_CARD;
                 }
             }
         }

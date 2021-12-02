@@ -791,7 +791,7 @@ var CurseCards = /** @class */ (function () {
             case 15: return "+2[Energy]";
             case 16: return "Take control of Tokyo.";
             // TODOAN case 20
-            case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
+            case 21: return "Cancel the Curse effect.";
             // TODOAN case 22
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
             case 24: return "Gain 1[Energy] for each [dice1] you rolled.";
@@ -821,7 +821,7 @@ var CurseCards = /** @class */ (function () {
             case 18: return "The Monster with the Golden Scarab, instead of you, gains all [Heart] and [Energy] that you should have gained this turn.";
             // TODOAN case 19
             case 20: return "Take the Golden Scarab.";
-            case 21: return "Cancel the Curse effect.";
+            case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
             // TODOAN case 22
             case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
             case 24: return "Discard 1[dice1]";
