@@ -102,6 +102,9 @@ trait CurseCardsUtilTrait {
             case BUILDERS_UPRISING_CURSE_CARD: 
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;
+            case INADEQUATE_OFFERING_CURSE_CARD: 
+                $this->snakeEffectDiscardKeepCard($playerId);
+                break;
             case BOW_BEFORE_RA_CURSE_CARD:
                 return [new Damage($playerId, 2, $playerId, $logCardType)];
             case VENGEANCE_OF_HORUS_CURSE_CARD:
@@ -135,6 +138,9 @@ trait CurseCardsUtilTrait {
             case RESURRECTION_OF_OSIRIS_CURSE_CARD:
                 $this->leaveTokyo($playerId);
                 break;
+            case FORBIDDEN_LIBRARY_CURSE_CARD: 
+                $this->snakeEffectDiscardKeepCard($playerId);
+                break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
@@ -151,6 +157,17 @@ trait CurseCardsUtilTrait {
         }
 
         return null;
+    }
+
+    function snakeEffectDiscardKeepCard(int $playerId) {
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $keepCards = array_values(array_filter($cards, function($card) { return $card->type < 100; }));
+        $count = count($keepCards);
+        if ($count > 1) {
+            // TODO redirect to card selection
+        } else if ($count === 1) {
+            $this->removeCard($playerId, $keepCards[0]);
+        }
     }
 
     function applyDiscardDie(int $dieId) {

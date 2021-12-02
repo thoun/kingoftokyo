@@ -105,14 +105,14 @@ class CurseCards {
             case 5: return "You cannot use your [diceSmash].";
             case 6: return "Discard 1 die.";
             case 7: return "Lose 1[Energy] for each [diceSmash] you rolled.";
-            // TODOAN case 10
+            case 10: return "Discard a [Keep] card.";
             case 11: return "-2[Heart]";
             case 12: return "Lose 1[Heart] for each [diceSmash] you rolled.";
             case 13: return "The Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "The Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "The Monster(s) with the most [Energy] lose 1[Energy].";
             case 16: return "Yield Tokyo. You can’t enter Tokyo this turn.";
-            // TODOAN case 17
+            case 17: return "Discard a [Keep] card.";
             case 18: return "The Monster with the Golden Scarab, instead of you, gains all [Heart] and [Energy] that you should have gained this turn.";
             // TODOAN case 19
             case 20: return "Take the Golden Scarab.";
