@@ -56,7 +56,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494);
@@ -77,7 +77,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        $this->debugSetCurseCardInTable(FORBIDDEN_LIBRARY_CURSE_CARD);
+        $this->debugSetCurseCardInTable(RESURRECTION_OF_OSIRIS_CURSE_CARD);
+        //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".BOW_BEFORE_RA_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
@@ -147,6 +148,10 @@ trait DebugUtilTrait {
         }
     }
 
+    // debugSetDieOfFate(1)
+    // debugSetDieOfFate(2)
+    // debugSetDieOfFate(3)
+    // debugSetDieOfFate(4)
     function debugSetDieOfFate($face) {
         self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 2");
     }

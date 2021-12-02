@@ -48,7 +48,7 @@ class DiceManager {
         this.dice = [];
     }
 
-    public setDiceForThrowDice(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean) {
+    public setDiceForThrowDice(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean) {
         this.action = 'move';
         this.dice?.forEach(die => this.removeDice(die));
         this.clearDiceHtml();
@@ -56,7 +56,7 @@ class DiceManager {
 
         const selectable = isCurrentPlayerActive;
 
-        dice.forEach(die => this.createDice(die, selectable, inTokyo));
+        dice.forEach(die => this.createDice(die, selectable, canHealWithDice));
 
         dojo.toggleClass('rolled-dice', 'selectable', selectable);
     }
@@ -70,7 +70,7 @@ class DiceManager {
         return `locked-dice${this.getDieFace(die)}`;
     }
 
-    public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
+    public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, canHealWithDice: boolean, isCurrentPlayerActive: boolean) {
         this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown ? 'change' : null;
         this.changeDieArgs = args;
 
@@ -90,7 +90,7 @@ class DiceManager {
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(die => {
             const divId = `dice${die.id}`;
-            this.createAndPlaceDiceHtml(die, inTokyo, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
@@ -101,7 +101,7 @@ class DiceManager {
         });
     }
 
-    public setDiceForDiscardDie(dice: Dice[], args: EnteringDiceArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
+    public setDiceForDiscardDie(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean) {
         this.action = 'discard';
 
         if (this.dice.length) {
@@ -119,7 +119,7 @@ class DiceManager {
         
         dice.forEach(die => {
             const divId = `dice${die.id}`;
-            this.createAndPlaceDiceHtml(die, inTokyo, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             const selectable = isCurrentPlayerActive && this.action !== null;
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
@@ -130,7 +130,7 @@ class DiceManager {
         });
     }
 
-    public setDiceForSelectHeartAction(dice: Dice[], inTokyo: boolean) { 
+    public setDiceForSelectHeartAction(dice: Dice[], canHealWithDice: boolean) { 
         this.action = null;
         if (this.dice.length) {
             return;
@@ -139,12 +139,12 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, inTokyo, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
     }
 
-    setDiceForPsychicProbe(dice: Dice[], inTokyo: boolean, isCurrentPlayerActive: boolean = false) {
+    setDiceForPsychicProbe(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean = false) {
         this.action = 'psychicProbeRoll';
 
         /*if (this.dice.length) { if active, event are not reset and roll is not applied
@@ -155,7 +155,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, inTokyo, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
 
             if (isCurrentPlayerActive) {
@@ -167,7 +167,7 @@ class DiceManager {
         dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
     }
 
-    public changeDie(dieId: number, inTokyo: boolean, toValue: number, roll?: boolean) {
+    public changeDie(dieId: number, canHealWithDice: boolean, toValue: number, roll?: boolean) {
         const die = this.dice.find(die => die.id == dieId);
         const divId = `dice${dieId}`;
         const div = document.getElementById(divId);
@@ -183,7 +183,7 @@ class DiceManager {
                     rolled: roll
                 } as Dice);
             }
-            if (inTokyo && !die.type) {
+            if (!canHealWithDice && !die.type) {
                 if (die.value !== 4 && toValue === 4) {
                     dojo.place('<div class="icon forbidden"></div>', divId);
                 } else if (die.value === 4 && toValue !== 4) {
@@ -209,7 +209,7 @@ class DiceManager {
                 type: 0,
                 canReroll: true,
             };
-            this.createAndPlaceDiceHtml(die, false, `dice-selector`);
+            this.createAndPlaceDiceHtml(die, true, `dice-selector`);
             this.addDiceRollClass(die);
         });
     }
@@ -389,21 +389,6 @@ class DiceManager {
         html += `    </ol>
         </div>
         `;
-        /*let html = `<div id="dice${die.id}" class="dice dice${die.value}" data-dice-id="${die.id}" data-dice-value="${die.value}">
-        <ol class="die-list" data-roll="${die.value}">`;
-        const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
-        for (let dieFace=1; dieFace<=6; dieFace++) {
-            html += `<li class="die-item ${colorClass} side${dieFace}" data-side="${dieFace}"></li>`;
-        }
-        html += `</ol>`;
-        if (!die.type && die.value === 4 && inTokyo) {
-            html += `<div class="icon forbidden"></div>`;
-        }
-        html += `</div>`;*/
-
-        // security to destroy pre-existing die with same id
-        //const dieDiv = document.getElementById(`dice${die.id}`);
-        //dieDiv?.parentNode.removeChild(dieDiv);
 
         dojo.place(html, destinationId);
     }
@@ -432,11 +417,11 @@ class DiceManager {
     }
 
 
-    private createAndPlaceDiceHtml(die: Dice, inTokyo: boolean, destinationId: string) {
+    private createAndPlaceDiceHtml(die: Dice, canHealWithDice: boolean, destinationId: string) {
         if (die.type == 2) {
             this.createAndPlaceDie4Html(die, destinationId);
         } else {
-            this.createAndPlaceDie6Html(die, !inTokyo, destinationId);
+            this.createAndPlaceDie6Html(die, canHealWithDice, destinationId);
         }
     }
 
@@ -444,8 +429,8 @@ class DiceManager {
         return document.getElementById(`dice${die.id}`) as HTMLDivElement;
     }
 
-    private createDice(die: Dice, selectable: boolean, inTokyo: boolean) {
-        this.createAndPlaceDiceHtml(die, inTokyo, die.locked ? this.getLockedDiceId(die) : `dice-selector`);
+    private createDice(die: Dice, selectable: boolean, canHealWithDice: boolean) {
+        this.createAndPlaceDiceHtml(die, canHealWithDice, die.locked ? this.getLockedDiceId(die) : `dice-selector`);
 
         const div = this.getDiceDiv(die);
         div.addEventListener('animationend', (e: AnimationEvent) => {
@@ -550,7 +535,7 @@ class DiceManager {
             const args = this.changeDieArgs;
 
             if (!this.dieFaceSelectors[die.id]) {
-                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die, args.inTokyo);
+                this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die, args.canHealWithDice);
             }
             const dieFaceSelector = this.dieFaceSelectors[die.id];
 

@@ -27,7 +27,7 @@ class HeartActionSelector {
                 true
             );
                        
-            if (args.inTokyo) {
+            if (!args.canHealWithDice) {
                 const buttonDiv = document.getElementById(`${nodeId}-die${index}-heal`);
                 buttonDiv.style.position = 'relative';
                 buttonDiv.innerHTML += `<div class="icon forbidden"></div>`;
@@ -41,10 +41,10 @@ class HeartActionSelector {
                     `${nodeId}-die${index}-shrink-ray`, 
                     _('Remove Shrink Ray token'), 
                     () => this.shrinkRaySelected(index),
-                    args.inTokyo
+                    !args.canHealWithDice
                 );
                        
-                if (args.inTokyo) {
+                if (!args.canHealWithDice) {
                     const buttonDiv = document.getElementById(`${nodeId}-die${index}-shrink-ray`);
                     buttonDiv.style.position = 'relative';
                     buttonDiv.innerHTML += `<div class="icon forbidden"></div>`;
@@ -56,10 +56,10 @@ class HeartActionSelector {
                     `${nodeId}-die${index}-poison`, 
                     _('Remove Poison token'), 
                     () => this.poisonSelected(index),
-                    args.inTokyo
+                    !args.canHealWithDice
                 );
                        
-                if (args.inTokyo) {
+                if (!args.canHealWithDice) {
                     const buttonDiv = document.getElementById(`${nodeId}-die${index}-poison`);
                     buttonDiv.style.position = 'relative';
                     buttonDiv.innerHTML += `<div class="icon forbidden"></div>`;

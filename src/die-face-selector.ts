@@ -5,13 +5,13 @@ class DieFaceSelector {
     private value: number;
     private dieValue: number;
 
-    constructor(private nodeId: string, private die: Dice, inTokyo: boolean) {
+    constructor(private nodeId: string, die: Dice, canHealWithDice: boolean) {
         this.dieValue = die.value;
         const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (let face=1; face<=6; face++) {
             const faceId = `${nodeId}-face${face}`;
             let html = `<div id="${faceId}" class="die-item dice-icon dice${face} ${colorClass} ${this.dieValue == face ? 'disabled' : ''}">`;
-            if (!die.type && face === 4 && inTokyo) {            
+            if (!die.type && face === 4 && !canHealWithDice) {            
                 html += `<div class="icon forbidden"></div>`;
             }
             html += `</div>`;

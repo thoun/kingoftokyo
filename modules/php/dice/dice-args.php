@@ -56,7 +56,6 @@ trait DiceArgTrait {
             'throwNumber' => $throwNumber,
             'maxThrowNumber' => $maxThrowNumber,
             'dice' => $dice,
-            'inTokyo' => $this->inTokyo($playerId),
             'canHealWithDice' => $this->canHealWithDice($playerId),
             'energyDrink' => [
                 'hasCard' => $hasEnergyDrink,
@@ -82,7 +81,6 @@ trait DiceArgTrait {
 
         $diceArg = [
             'dice' => $this->getPlayerRolledDice($playerId, true, true, true),
-            'inTokyo' => $this->inTokyo($playerId),
             'canHealWithDice' => $this->canHealWithDice($playerId),
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
@@ -126,7 +124,6 @@ trait DiceArgTrait {
 
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, true),
-            'inTokyo' => $this->inTokyo($activePlayerId),
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
             'canRoll' => $canRoll,
             'rethrow3' => [
@@ -147,13 +144,12 @@ trait DiceArgTrait {
     
             $selectHeartDiceUseArg = $this->getSelectHeartDiceUse($playerId);  
 
-            $inTokyo = $this->inTokyo($playerId);
+            $canHealWithDice = $this->canHealWithDice($playerId);
 
-            $canSelectHeartDiceUse = $selectHeartDiceUseArg['hasHealingRay'] || (($selectHeartDiceUseArg['shrinkRayTokens'] > 0 || $selectHeartDiceUseArg['poisonTokens'] > 0) && !$inTokyo);
+            $canSelectHeartDiceUse = $selectHeartDiceUseArg['hasHealingRay'] || (($selectHeartDiceUseArg['shrinkRayTokens'] > 0 || $selectHeartDiceUseArg['poisonTokens'] > 0) && $canHealWithDice);
 
             $diceArg = $canSelectHeartDiceUse ? [
                 'dice' => $dice,
-                'inTokyo' => $inTokyo,
                 'canHealWithDice' => $this->canHealWithDice($playerId),
             ] : [ 'skipped' => true ];
     
@@ -167,7 +163,6 @@ trait DiceArgTrait {
 
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
-            'inTokyo' => $this->inTokyo($activePlayerId),
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
         ];
     }

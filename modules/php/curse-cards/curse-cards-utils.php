@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/../objects/damage.php');
+
+use KOT\Objects\Damage;
+
 trait CurseCardsUtilTrait {
 
     //////////////////////////////////////////////////////////////////////////////
@@ -167,6 +171,98 @@ trait CurseCardsUtilTrait {
             $this->jumpToState(ST_PLAYER_DISCARD_KEEP_CARD);
         } else if ($count === 1) {
             $this->applyDiscardKeepCard($playerId, $keepCards[0]);
+        }
+    }
+
+    function getCurseCard() {
+        return $this->getCardsFromDb($this->curseCards->getCardsInLocation('table'))[0];
+    }
+
+    function getCurseCardType() {
+        return $this->getCurseCard()->type;
+    }
+    
+    function changeCurseCard(int $playerId) {
+        $countRapidHealingBefore = 0;
+        if ($playerId > 0) {
+            $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
+        }        
+
+        $this->removeCursePermanentEffectOnReplace();
+
+        $this->curseCards->moveAllCardsInLocation('table', 'discard');
+
+        $card = $this->getCardFromDb($this->curseCards->pickCardForLocation('deck', 'table'));
+
+        self::notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Die of fate is on [dieFateEye], Curse card is changed'/*)*/, [
+            'card' => $card,
+        ]);
+        
+        $this->applyCursePermanentEffectOnReveal();
+        
+        if ($playerId > 0) {
+            $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
+        }
+    }
+
+    function changeGoldenScarabOwner(int $playerId) {
+        $previousOwner = $this->getPlayerIdWithGoldenScarab();
+
+        if ($previousOwner == $playerId) {
+            return;
+        }
+
+        self::setGameStateValue(PLAYER_WITH_GOLDEN_SCARAB, $playerId);
+
+        self::notifyAllPlayers('changeGoldenScarabOwner', /*client TODOAN translate(*/'${player_name} gets Golden Scarab'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'previousOwner' => $previousOwner,
+        ]);
+    }
+
+    function getPlayerIdWithGoldenScarab() {
+        return intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+    }
+
+    function getPlayersIdsWithoutGoldenScarab() {
+        $playerIds = $this->getPlayersIds();
+        $playerWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
+        return array_values(array_filter($playerIds, function ($playerId) use ($playerWithGoldenScarab) { return $playerId != $playerWithGoldenScarab; }));
+    }
+
+    function keepAndEvolutionCardsHaveEffect() {
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+
+            if ($curseCardType == GAZE_OF_THE_SPHINX_CURSE_CARD) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function changeAllPlayersMaxHealth() {
+        $playerIds = $this->getPlayersIds();
+        foreach($playerIds as $playerId) {
+            $this->changeMaxHealth($playerId);
+        }
+    }
+
+    function applyCursePermanentEffectOnReveal() {
+        $curseCardType = $this->getCurseCardType();
+
+        if ($curseCardType == BOW_BEFORE_RA_CURSE_CARD) {
+            $this->changeAllPlayersMaxHealth();
+        }
+    }
+
+    function removeCursePermanentEffectOnReplace() {
+        $curseCardType = $this->getCurseCardType();
+
+        if ($curseCardType == BOW_BEFORE_RA_CURSE_CARD) {
+            $this->changeAllPlayersMaxHealth();
         }
     }
 

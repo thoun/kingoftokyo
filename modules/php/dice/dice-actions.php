@@ -205,7 +205,6 @@ trait DiceActionTrait {
         }
 
         $activePlayerId = self::getActivePlayerId();
-        $inTokyo = $this->inTokyo($activePlayerId);
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         self::notifyAllPlayers("changeDie", $message, [
@@ -213,7 +212,6 @@ trait DiceActionTrait {
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $cardType,
             'dieId' => $die->id,
-            'inTokyo' => $inTokyo,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
             'toValue' => $value,
             'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),

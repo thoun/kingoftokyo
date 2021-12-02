@@ -35,7 +35,6 @@ trait CurseCardsArgTrait {
 
         return [
             'dice' => $this->getPlayerRolledDice($playerId, true, true, false),
-            'inTokyo' => $this->inTokyo($playerId),
             'canHealWithDice' => $this->canHealWithDice($playerId),
         ];
     }

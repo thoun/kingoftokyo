@@ -22,11 +22,11 @@ trait CurseCardsStateTrait {
 
         $dieOfFate = $this->getDieOfFate();
 
-        $damages = null;
+        $damagesOrState = null;
         $cardType = $dieOfFate->value > 1 ? $this->getCurseCardType() : null;
         switch($dieOfFate->value) {
             case 1: 
-                $this->changeCurseCard();
+                $this->changeCurseCard($playerId);
                 break;
             case 2:
                 self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'/*)*/, [
@@ -52,8 +52,8 @@ trait CurseCardsStateTrait {
         }
 
         $redirects = false;
-        if ($damages != null && count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, ST_RESOLVE_DICE);
+        if ($damagesOrState != null && count($damagesOrState) > 0) {
+            $redirects = $this->resolveDamages($damagesOrState, ST_RESOLVE_DICE);
         }
 
         if (!$redirects && $this->gamestate->state()['name'] === 'resolveDieOfFate') { // in case draw cards or other die of fate state already did redirection

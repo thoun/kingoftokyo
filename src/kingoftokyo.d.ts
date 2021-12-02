@@ -141,7 +141,6 @@ interface EnteringGiveSymbolToActivePlayerArgs {
 
 interface EnteringDiceArgs {
     dice: Dice[];
-    inTokyo: boolean;
     canHealWithDice: boolean;
 }
 
@@ -388,7 +387,6 @@ interface NotifUseCamouflageArgs {
 
 interface NotifChangeDieArgs {
     playerId: number;
-    inTokyo: boolean;
     canHealWithDice: boolean;
     dieId: number;
     toValue: number;
