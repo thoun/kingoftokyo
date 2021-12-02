@@ -69,7 +69,7 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isWickednessExpansion() {
@@ -537,6 +537,8 @@ trait UtilTrait {
         if ($countRegeneration > 0) {
             $this->applyGetHealthIgnoreCards($playerGettingHealth, $countRegeneration, REGENERATION_CARD, $playerId);
         }
+
+        return $playerGettingHealth;
     }
 
     function applyGetHealthIgnoreCards(int $playerId, int $health, int $cardType, int $healerId) {
@@ -720,21 +722,21 @@ trait UtilTrait {
         if ($countFriendOfChildren > 0) {
             $this->applyGetEnergyIgnoreCards($playerGettingEnergy, $countFriendOfChildren, FRIEND_OF_CHILDREN_CARD);
         }
+
+        return $playerGettingEnergy;
     }
 
     function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
 
-        if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
-            self::notifyAllPlayers('energy', $message, [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'energy' => $this->getPlayerEnergy($playerId),
-                'delta_energy' => $energy,
-                'card_name' => $cardType == 0 ? null : $cardType,
-            ]);
-        }
+        $message = $cardType <= 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
+        self::notifyAllPlayers('energy', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'energy' => $this->getPlayerEnergy($playerId),
+            'delta_energy' => $energy,
+            'card_name' => $cardType == 0 ? null : $cardType,
+        ]);
 
         self::incStat($energy, 'wonEnergyCubes', $playerId);
     }

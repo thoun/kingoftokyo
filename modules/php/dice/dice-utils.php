@@ -246,12 +246,12 @@ trait DiceUtilTrait {
             $health = $this->getPlayerHealth($playerId);
             $maxHealth = $this->getPlayerMaxHealth($playerId);
             if ($health < $maxHealth && $this->canGainHealth($playerId)) {
-                $this->applyGetHealth($playerId, $diceCount, -1, $playerId);
-                $newHealth = $this->getPlayerHealth($playerId);
+                $playerGettingHealth = $this->applyGetHealth($playerId, $diceCount, -1, $playerId);
+                $newHealth = $this->getPlayerHealth($playerGettingHealth);
 
                 self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} gains ${deltaHealth} [Heart]'), [
-                    'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
+                    'playerId' => $playerGettingHealth,
+                    'player_name' => $this->getPlayerName($playerGettingHealth),
                     'health' => $newHealth,
                     'deltaHealth' => $diceCount,
                 ]);
@@ -264,13 +264,13 @@ trait DiceUtilTrait {
             return;
         }
         
-        $this->applyGetEnergy($playerId, $diceCount, -1);
+        $playerGettingEnergy = $this->applyGetEnergy($playerId, $diceCount, -1);
 
         self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'playerId' => $playerGettingEnergy,
+            'player_name' => $this->getPlayerName($playerGettingEnergy),
             'deltaEnergy' => $diceCount,
-            'energy' => $this->getPlayerEnergy($playerId),
+            'energy' => $this->getPlayerEnergy($playerGettingEnergy),
         ]);
     }
 
