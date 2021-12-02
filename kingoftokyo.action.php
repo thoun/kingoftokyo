@@ -225,6 +225,16 @@
         self::ajaxResponse();
     }
   	
+    public function discardKeepCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->discardKeepCard($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function support() {
         self::setAjaxMode();
 

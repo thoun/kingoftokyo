@@ -321,6 +321,18 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_DISCARD_KEEP_CARD => [
+        "name" => "discardKeepCard",
+        "description" => '',/*client TODOAN translate('${actplayer} must dicard a [keep] card'),*/
+        "descriptionmyturn" => '',/*client TODOAN translate('${you} must dicard a [keep] card'),*/
+        "type" => "activeplayer",
+        "args" => "argDiscardKeepCard",
+        "possibleactions" => [ "discardKeepCard" ],
+        "transitions" => [
+            "next" => ST_RESOLVE_DICE,
+        ],
+    ],
+
     ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => "",

@@ -164,9 +164,9 @@ trait CurseCardsUtilTrait {
         $keepCards = array_values(array_filter($cards, function($card) { return $card->type < 100; }));
         $count = count($keepCards);
         if ($count > 1) {
-            // TODO redirect to card selection
+            $this->jumpToState(ST_PLAYER_DISCARD_KEEP_CARD);
         } else if ($count === 1) {
-            $this->removeCard($playerId, $keepCards[0]);
+            $this->applyDiscardKeepCard($playerId, $keepCards[0]);
         }
     }
 
@@ -179,5 +179,16 @@ trait CurseCardsUtilTrait {
             'die' => $die,
             'dieFace' => $this->getDieFaceLogName($die->value, $die->type),
         ]);
+    }
+
+    function applyDiscardKeepCard(int $playerId, object $card) {
+
+        self::notifyAllPlayers("discardedDie", /*client TODOAN translate(*/'${player_name} discards ${card_name}'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => $card->type,
+        ]);
+        
+        $this->removeCard($playerId, $card);
     }
 }

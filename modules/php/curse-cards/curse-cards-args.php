@@ -40,4 +40,22 @@ trait CurseCardsArgTrait {
         ];
     }
 
+    function argDiscardKeepCard() {
+        $playerId = self::getActivePlayerId();
+
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+
+        $disabledIds = [];         
+        foreach ($cards as $card) {
+            if ($card->type >= 100) {
+                $disabledIds[] = $card->id;
+            }
+        }
+
+        // return values:
+        return [
+            'disabledIds' => $disabledIds,
+        ];
+    }
+
 }

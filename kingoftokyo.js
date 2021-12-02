@@ -2732,6 +2732,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringDiscardDie(args.args, this.isCurrentPlayerActive());
                 break;
+            case 'discardKeepCard':
+                this.onEnteringDiscardKeepCard(args.args);
+                break;
             case 'resolveDice':
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
@@ -2862,6 +2865,13 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
+        }
+    };
+    KingOfTokyo.prototype.onEnteringDiscardKeepCard = function (args) {
+        var _this = this;
+        if (this.isCurrentPlayerActive()) {
+            this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringResolveNumberDice = function (args) {
@@ -3019,6 +3029,9 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.destroy('rethrow3changeDie_button');
                 }
                 this.diceManager.removeAllBubbles();
+                break;
+            case 'discardKeepCard':
+                this.onLeavingSellCard();
                 break;
             case 'takeWickednessTile':
                 this.onLeavingTakeWickednessTile();
@@ -3417,6 +3430,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.buyCard(cardId, from);
             }
         }
+        else if (stateName === 'discardKeepCard') {
+            this.discardKeepCard(cardId);
+        }
     };
     KingOfTokyo.prototype.setBuyDisabledCard = function (args, playerEnergy) {
         if (args === void 0) { args = null; }
@@ -3760,6 +3776,14 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('discardDie', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.discardKeepCard = function (id) {
+        if (!this.checkAction('discardKeepCard')) {
+            return;
+        }
+        this.takeAction('discardKeepCard', {
             id: id
         });
     };

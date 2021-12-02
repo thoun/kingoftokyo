@@ -190,6 +190,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringDiscardDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
+            case 'discardKeepCard':
+                this.onEnteringDiscardKeepCard(args.args);
+                break;
             case 'resolveDice': 
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
@@ -342,6 +345,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringDiscardDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
         if (args.dice?.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
+        }
+    }
+
+    private onEnteringDiscardKeepCard(args: EnteringDiscardKeepCardArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
 
@@ -505,6 +515,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 this.diceManager.removeAllBubbles();
                 break; 
+            case 'discardKeepCard':
+                this.onLeavingSellCard();
+                break;
             case 'takeWickednessTile':
                 this.onLeavingTakeWickednessTile();
                 break;
@@ -992,6 +1005,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.tableCenter.removeOtherCardsFromPick(cardId);
                 this.buyCard(cardId, from);
             }
+        } else if (stateName === 'discardKeepCard') {
+            this.discardKeepCard(cardId);
         }
     }
 
@@ -1414,6 +1429,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('discardDie', {
+            id
+        });
+    }
+
+    public discardKeepCard(id: number | string) {
+        if(!(this as any).checkAction('discardKeepCard')) {
+            return;
+        }
+
+        this.takeAction('discardKeepCard', {
             id
         });
     }

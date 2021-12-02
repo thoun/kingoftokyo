@@ -178,6 +178,10 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     rethrow3: Rethrow3;
 }
 
+interface EnteringDiscardKeepCardArgs {
+    disabledIds: number[];
+}
+
 interface EnteringTakeWickednessTileArgs {
     level: number;
 }

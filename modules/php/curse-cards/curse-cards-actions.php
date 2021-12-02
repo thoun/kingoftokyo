@@ -54,4 +54,14 @@ trait CurseCardsActionTrait {
 
         $this->gamestate->nextState('next');
     }
+
+    function discardKeepCard(int $cardId) {
+        $this->checkAction('discardKeepCard');   
+        $playerId = self::getActivePlayerId(); 
+
+        $card = $this->getCardFromDb($this->cards->getCard($cardId));
+        $this->applyDiscardKeepCard($playerId, $card);
+
+        $this->gamestate->nextState('next');
+    }
 }
