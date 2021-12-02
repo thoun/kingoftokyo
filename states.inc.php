@@ -308,16 +308,6 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_RESOLVE_DICE => [
-        "name" => "resolveDice",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveDice",
-        "transitions" => [
-            "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE,
-        ],
-    ],
-
     ST_PLAYER_DISCARD_DIE => [
         "name" => "discardDie",
         "description" => '',/*client TODOAN translate('${actplayer} must dicard a die'),*/
@@ -327,7 +317,17 @@ $playerActionsGameStates = [
         "args" => "argDiscardDie",
         "possibleactions" => [ "discardDie" ],
         "transitions" => [
-            "next" => ST_RESOLVE_NUMBER_DICE,
+            "next" => ST_RESOLVE_DICE,
+        ],
+    ],
+
+    ST_RESOLVE_DICE => [
+        "name" => "resolveDice",
+        "description" => "",
+        "type" => "game",
+        "action" => "stResolveDice",
+        "transitions" => [
+            "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE,
         ],
     ],
 

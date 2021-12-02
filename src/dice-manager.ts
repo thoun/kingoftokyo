@@ -1,4 +1,4 @@
-type DieClickAction = 'move' | 'change' | 'psychicProbeRoll';
+type DieClickAction = 'move' | 'change' | 'psychicProbeRoll' | 'discard';
 
 const DIE4_ICONS = [
     null,
@@ -92,6 +92,35 @@ class DiceManager {
             const divId = `dice${die.id}`;
             this.createAndPlaceDiceHtml(die, inTokyo, this.getLockedDiceId(die));
             const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
+            dojo.toggleClass(divId, 'selectable', selectable);
+            this.addDiceRollClass(die);
+
+            if (selectable) {
+                document.getElementById(divId).addEventListener('click', event => this.dieClick(die, event));
+            }
+        });
+    }
+
+    public setDiceForDiscardDie(dice: Dice[], args: EnteringDiceArgs, inTokyo: boolean, isCurrentPlayerActive: boolean) {
+        this.action = 'discard';
+
+        if (this.dice.length) {
+            dice.forEach(die => {
+                const divId = `dice${die.id}`;
+                const selectable = isCurrentPlayerActive && this.action !== null;
+                dojo.toggleClass(divId, 'selectable', selectable);
+            });
+            return;
+        }
+
+        this.dice?.forEach(die => this.removeDice(die));  
+        this.clearDiceHtml();
+        this.dice = dice;
+        
+        dice.forEach(die => {
+            const divId = `dice${die.id}`;
+            this.createAndPlaceDiceHtml(die, inTokyo, this.getLockedDiceId(die));
+            const selectable = isCurrentPlayerActive && this.action !== null;
             dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
 
@@ -439,6 +468,8 @@ class DiceManager {
             this.toggleBubbleChangeDie(die);
         } else if (this.action === 'psychicProbeRoll') {
             this.game.psychicProbeRollDie(die.id);
+        } else if (this.action === 'discard') {
+            this.game.discardDie(die.id);
         }
     }
 

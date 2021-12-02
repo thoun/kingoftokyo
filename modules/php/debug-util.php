@@ -52,8 +52,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
-        //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
+        $this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
@@ -77,8 +77,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        //$this->debugSetCurseCardInTable(BUILDERS_UPRISING_CURSE_CARD);
-        $this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
+        $this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");

@@ -186,6 +186,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringChangeDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
+            case 'discardDie': 
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringDiscardDie(args.args, (this as any).isCurrentPlayerActive());
+                break;
             case 'resolveDice': 
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
@@ -332,6 +336,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             } else {
                 this.createButton('dice-actions', 'rethrow3psychicProbe_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3psychicProbe(), !args.rethrow3.hasDice3);
             }
+        }
+    }
+
+    private onEnteringDiscardDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
+        if (args.dice?.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
         }
     }
 
@@ -1396,6 +1406,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('resolve');
+    }
+
+    public discardDie(id: number) {
+        if(!(this as any).checkAction('discardDie')) {
+            return;
+        }
+
+        this.takeAction('discardDie', {
+            id
+        });
     }
 
     public support() {

@@ -113,6 +113,7 @@ define('CLOWN_ACTIVATED', 'ClownActivated');
 define('CHEERLEADER_SUPPORT', 'CheerleaderSupport');
 define('STATE_AFTER_RESOLVE', 'stateAfterResolve');
 define('PLAYER_WITH_GOLDEN_SCARAB', 'PlayerWithGoldenScarab');
+define('STATE_AFTER_MIMIC_CHOOSE', 'StateAfterMimicChoose');
 
 /*
  * Global variables
@@ -230,11 +231,11 @@ define('ISIS_S_DISGRACE_CURSE_CARD', 2);
 define('THOT_S_BLINDNESS_CURSE_CARD', 3);
 define('TUTANKHAMUN_S_CURSE_CURSE_CARD', 4);
 define('BURIED_IN_SAND_CURSE_CARD', 5);
-define('RAGING_FLOOD_CURSE_CARD', 6); // TODOAN test
+define('RAGING_FLOOD_CURSE_CARD', 6); // TODOAN dev & test ankh
 define('HOTEP_S_PEACE_CURSE_CARD', 7);
 define('SET_S_STORM_CURSE_CARD', 8);
 define('BUILDERS_UPRISING_CURSE_CARD', 9);
-define('INADEQUATE_OFFERING_CURSE_CARD', 10); // TODOAN test draw power card : test drawing rapid healing, mimic
+define('INADEQUATE_OFFERING_CURSE_CARD', 10); // TODOAN test draw power card : test drawing rapid healing, mimic, jet figthers
 define('BOW_BEFORE_RA_CURSE_CARD', 11); // TODOAN test
 define('VENGEANCE_OF_HORUS_CURSE_CARD', 12); // TODOAN test
 define('ORDEAL_OF_THE_MIGHTY_CURSE_CARD', 13); // TODOAN test

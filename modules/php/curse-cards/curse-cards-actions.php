@@ -46,4 +46,12 @@ trait CurseCardsActionTrait {
             $this->eliminatePlayers($playerId);
         }
     }
+
+    function discardDie(int $dieId) {
+        $this->checkAction('discardDie');  
+
+        $this->applyDiscardDie($dieId);
+
+        $this->gamestate->nextState('next');
+    }
 }

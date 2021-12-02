@@ -114,6 +114,7 @@ interface KingOfTokyoGame extends Game {
 
     changeDie: (id: number, value: number, card: number) => void;
     psychicProbeRollDie: (id: number) => void;
+    discardDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
     onVisibleCardClick: (stock: Stock, cardId: string, from?: number) => void;
     takeWickednessTile(id: number): void;

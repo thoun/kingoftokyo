@@ -1615,6 +1615,32 @@ var DiceManager = /** @class */ (function () {
             }
         });
     };
+    DiceManager.prototype.setDiceForDiscardDie = function (dice, args, inTokyo, isCurrentPlayerActive) {
+        var _this = this;
+        var _a;
+        this.action = 'discard';
+        if (this.dice.length) {
+            dice.forEach(function (die) {
+                var divId = "dice" + die.id;
+                var selectable = isCurrentPlayerActive && _this.action !== null;
+                dojo.toggleClass(divId, 'selectable', selectable);
+            });
+            return;
+        }
+        (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
+        this.clearDiceHtml();
+        this.dice = dice;
+        dice.forEach(function (die) {
+            var divId = "dice" + die.id;
+            _this.createAndPlaceDiceHtml(die, inTokyo, _this.getLockedDiceId(die));
+            var selectable = isCurrentPlayerActive && _this.action !== null;
+            dojo.toggleClass(divId, 'selectable', selectable);
+            _this.addDiceRollClass(die);
+            if (selectable) {
+                document.getElementById(divId).addEventListener('click', function (event) { return _this.dieClick(die, event); });
+            }
+        });
+    };
     DiceManager.prototype.setDiceForSelectHeartAction = function (dice, inTokyo) {
         var _this = this;
         this.action = null;
@@ -1926,6 +1952,9 @@ var DiceManager = /** @class */ (function () {
         }
         else if (this.action === 'psychicProbeRoll') {
             this.game.psychicProbeRollDie(die.id);
+        }
+        else if (this.action === 'discard') {
+            this.game.discardDie(die.id);
         }
     };
     DiceManager.prototype.addRollToDiv = function (dieDiv, rollType, attempt) {
@@ -2699,6 +2728,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringChangeDie(args.args, this.isCurrentPlayerActive());
                 break;
+            case 'discardDie':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringDiscardDie(args.args, this.isCurrentPlayerActive());
+                break;
             case 'resolveDice':
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
@@ -2823,6 +2856,12 @@ var KingOfTokyo = /** @class */ (function () {
             else {
                 this.createButton('dice-actions', 'rethrow3psychicProbe_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3psychicProbe(); }, !args.rethrow3.hasDice3);
             }
+        }
+    };
+    KingOfTokyo.prototype.onEnteringDiscardDie = function (args, isCurrentPlayerActive) {
+        var _a;
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args, args.inTokyo, isCurrentPlayerActive);
         }
     };
     KingOfTokyo.prototype.onEnteringResolveNumberDice = function (args) {
@@ -3715,6 +3754,14 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('resolve');
+    };
+    KingOfTokyo.prototype.discardDie = function (id) {
+        if (!this.checkAction('discardDie')) {
+            return;
+        }
+        this.takeAction('discardDie', {
+            id: id
+        });
     };
     KingOfTokyo.prototype.support = function () {
         if (!this.checkAction('support')) {

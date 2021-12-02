@@ -153,12 +153,10 @@ trait CardsActionTrait {
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
-        $mimickedCardId = null;
-        $mimickedCardIdTile = null;
-        if ($from > 0) {
-            $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
-            $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
+        $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
+        $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
             
+        if ($from > 0) {
             // If card bought from player, when having mimic token, card keep mimic token
             $this->removeCard($from, $card, true, false, true);
         }
@@ -289,6 +287,8 @@ trait CardsActionTrait {
         $this->removeDiscardCards($playerId);
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
+        
+        $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
 
         $this->cards->moveCard($card->id, 'hand', $playerId);
 
@@ -304,20 +304,17 @@ trait CardsActionTrait {
 
         $topDeckCardBackType = $this->getTopDeckCardBackType();
 
-        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
+        self::notifyAllPlayers("buyCard", /*client TODOAN translate(*/'${player_name} draws ${card_name}'/*)*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,
             'card_name' => $card->type,
-            'newCard' => $newCard,
-            'energy' => $this->getPlayerEnergy($playerId), 
-            'cost' => $cost,
             'topDeckCardBackType' => $topDeckCardBackType,
         ]);
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
-        $damages = $this->applyEffects($card->type, $playerId, $opportunist);
+        $damages = $this->applyEffects($card->type, $playerId, false);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -336,7 +333,8 @@ trait CardsActionTrait {
 
         $redirects = false;
 
-        $redirectAfterBuyCard = $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_RESOLVE_NUMBER_DICE; // TODO make ST_PLAYER_CHOOSE_MIMICKED_CARD go back to ST_RESOLVE_NUMBER_DICE after 
+        $this->setGameStateValue(STATE_AFTER_MIMIC_CHOOSE, ST_RESOLVE_DICE);        
+        $redirectAfterBuyCard = $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_RESOLVE_DICE;
 
         if ($damages != null && count($damages) > 0) {
             $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard);
@@ -345,9 +343,11 @@ trait CardsActionTrait {
         if (!$redirects) {
             $this->jumpToState($redirectAfterBuyCard, $playerId);
         }
+
+        return $redirects;
     }
 
-    function redirectAfterBuyCard($playerId, $newCardId, $mimic) { // return whereToRedirect
+    function redirectAfterBuyCard(int $playerId, $newCardId, bool $mimic) { // return whereToRedirect
         $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
         if ($opportunistIntervention) {
             $opportunistIntervention->revealedCardsIds = [$newCardId];
@@ -357,6 +357,9 @@ trait CardsActionTrait {
             return $mimic ? ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
         } else {
             $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
+            if ($mimic) {
+                $this->setGameStateValue(STATE_AFTER_MIMIC_CHOOSE, 0);  
+            }
 
             if (count($playersWithOpportunist) > 0) {
                 $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCardId]);
@@ -485,7 +488,12 @@ trait CardsActionTrait {
 
         $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
 
-        $this->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
+        $forceStateAfter = intval($this->getGameStateValue(STATE_AFTER_MIMIC_CHOOSE));
+        if ($forceStateAfter) {
+            $this->jumpToState($forceStateAfter);
+        } else {
+            $this->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
+        }
     }
 
     function changeMimickedCard(int $mimickedCardId) {

@@ -215,6 +215,16 @@
         self::ajaxResponse();
     }
   	
+    public function discardDie() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->discardDie($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function support() {
         self::setAjaxMode();
 
