@@ -653,6 +653,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('dontSupport_button', _("Don't support"), () => this.dontSupport());
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'giveGoldenScarab':
+                    const argsGiveGoldenScarab = args as EnteringGiveGoldenScarabArgs;
+                    argsGiveGoldenScarab.playersIds.forEach(playerId => {
+                        const player = this.gamedatas.players[playerId];
+                        const label = `<div id="monster-icon-${player.id}" class="monster-icon monster${player.monster}" style="background-color: #${player.color};"></div> ${player.name}`;
+                        (this as any).addActionButton(`giveGoldenScarab_button_${playerId}`, label, () => this.giveGoldenScarab(playerId));
+                    });
+                    break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
                     break;
@@ -1423,6 +1431,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('resolve');
     }
 
+    public support() {
+        if(!(this as any).checkAction('support')) {
+            return;
+        }
+
+        this.takeAction('support');
+    }
+
+    public dontSupport() {
+        if(!(this as any).checkAction('dontSupport')) {
+            return;
+        }
+
+        this.takeAction('dontSupport');
+    }
+
     public discardDie(id: number) {
         if(!(this as any).checkAction('discardDie')) {
             return;
@@ -1443,20 +1467,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public support() {
-        if(!(this as any).checkAction('support')) {
+    public giveGoldenScarab(playerId: number) {
+        if(!(this as any).checkAction('giveGoldenScarab')) {
             return;
         }
 
-        this.takeAction('support');
-    }
-
-    public dontSupport() {
-        if(!(this as any).checkAction('dontSupport')) {
-            return;
-        }
-
-        this.takeAction('dontSupport');
+        this.takeAction('giveGoldenScarab', {
+            playerId
+        });
     }
 
     public takeWickednessTile(id: number) {

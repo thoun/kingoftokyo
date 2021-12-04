@@ -56,6 +56,7 @@ define('ST_PLAYER_SELL_CARD', 60);
 
 define('ST_PLAYER_DISCARD_DIE', 61);
 define('ST_PLAYER_DISCARD_KEEP_CARD', 62);
+define('ST_PLAYER_GIVE_GOLDEN_SCARAB', 63);
 
 define('ST_PLAYER_TAKE_WICKEDNESS_TILE', 70);
 define('ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE', 71);
@@ -228,8 +229,8 @@ define('CLOWN_CARD', 212);
 
 // curse cards
 define('PHARAONIC_EGO_CURSE_CARD', 1);
-define('ISIS_S_DISGRACE_CURSE_CARD', 2);
-define('THOT_S_BLINDNESS_CURSE_CARD', 3);
+define('ISIS_S_DISGRACE_CURSE_CARD', 2); // TODOAN block rapid healing & cultist
+define('THOT_S_BLINDNESS_CURSE_CARD', 3); // TODOAN block cultist
 define('TUTANKHAMUN_S_CURSE_CURSE_CARD', 4);
 define('BURIED_IN_SAND_CURSE_CARD', 5);
 define('RAGING_FLOOD_CURSE_CARD', 6); // TODOAN dev & test ankh
@@ -246,7 +247,7 @@ define('RESURRECTION_OF_OSIRIS_CURSE_CARD', 16); // TODO TOCHECK can we remove t
 define('FORBIDDEN_LIBRARY_CURSE_CARD', 17);
 define('CONFUSED_SENSES_CURSE_CARD', 18); // TODOAN dev & test permanent
 define('PHARAONIC_SKIN_CURSE_CARD', 19); // TODOAN dev & test snake
-define('KHEPRI_S_REBELLION_CURSE_CARD', 20); // TODOAN dev & test ankh
+define('KHEPRI_S_REBELLION_CURSE_CARD', 20);
 define('BODY_SPIRIT_AND_KA_CURSE_CARD', 21);
 define('FALSE_BLESSING_CURSE_CARD', 22); // TODOAN dev test
 define('GAZE_OF_THE_SPHINX_CURSE_CARD', 23);

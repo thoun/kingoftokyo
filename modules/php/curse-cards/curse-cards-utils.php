@@ -62,6 +62,9 @@ trait CurseCardsUtilTrait {
                 break;
             case RESURRECTION_OF_OSIRIS_CURSE_CARD:
                 return $this->replacePlayersInTokyo($playerId);
+            case KHEPRI_S_REBELLION_CURSE_CARD:
+                $this->jumpToState(ST_PLAYER_GIVE_GOLDEN_SCARAB);
+                break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
                 $this->applyGetEnergy($playerId, 3, $logCardType);
                 break;

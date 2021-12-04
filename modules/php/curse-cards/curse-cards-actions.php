@@ -64,4 +64,12 @@ trait CurseCardsActionTrait {
 
         $this->gamestate->nextState('next');
     }
+
+    function giveGoldenScarab(int $playerId) {
+        $this->checkAction('giveGoldenScarab');   
+        
+        $this->changeGoldenScarabOwner($playerId);
+
+        $this->gamestate->nextState('next');
+    }
 }

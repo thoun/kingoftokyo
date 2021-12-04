@@ -86,7 +86,7 @@ class CurseCards {
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
             case 16: return "Take control of Tokyo.";
-            // TODOAN case 20
+            case 20: return "Take the Golden Scarab and give it to the Monster of your choice.";
             case 21: return "Cancel the Curse effect.";
             // TODOAN case 22
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          

@@ -55,12 +55,6 @@ remaining Anubis :
 After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.
 Take an extra die and put it on the face of your choice.
 Choose up to 2 dice, you can reroll or discard each of these dice.
-Discard 1 die.
-Discard 1 [dice1]
 The player on your left chooses two of your dice. Reroll these dice.
-
-Discard a Keep card. (x2)
-
-Take the Golden Scarab and give it to the Monster of your choice.
 
 Give any combination of 2 / / to the Monster with the Golden Scarab.

@@ -51,9 +51,14 @@ trait CurseCardsArgTrait {
             }
         }
 
-        // return values:
         return [
             'disabledIds' => $disabledIds,
+        ];
+    }
+
+    function argGiveGoldenScarab() {
+        return [
+            'playersIds' => $this->getPlayersIds(),
         ];
     }
 

@@ -181,6 +181,10 @@ interface EnteringDiscardKeepCardArgs {
     disabledIds: number[];
 }
 
+interface EnteringGiveGoldenScarabArgs {
+    playersIds: number[];
+}
+
 interface EnteringTakeWickednessTileArgs {
     level: number;
 }

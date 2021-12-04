@@ -790,7 +790,7 @@ var CurseCards = /** @class */ (function () {
             case 14: return "+2[Star]";
             case 15: return "+2[Energy]";
             case 16: return "Take control of Tokyo.";
-            // TODOAN case 20
+            case 20: return "Take the Golden Scarab and give it to the Monster of your choice.";
             case 21: return "Cancel the Curse effect.";
             // TODOAN case 22
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
@@ -3146,6 +3146,14 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('dontSupport_button', _("Don't support"), function () { return _this.dontSupport(); });
                     this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'giveGoldenScarab':
+                    var argsGiveGoldenScarab = args;
+                    argsGiveGoldenScarab.playersIds.forEach(function (playerId) {
+                        var player = _this.gamedatas.players[playerId];
+                        var label = "<div id=\"monster-icon-" + player.id + "\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div> " + player.name;
+                        _this.addActionButton("giveGoldenScarab_button_" + playerId, label, function () { return _this.giveGoldenScarab(playerId); });
+                    });
+                    break;
                 case 'takeWickednessTile':
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
                     break;
@@ -3756,6 +3764,18 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('resolve');
     };
+    KingOfTokyo.prototype.support = function () {
+        if (!this.checkAction('support')) {
+            return;
+        }
+        this.takeAction('support');
+    };
+    KingOfTokyo.prototype.dontSupport = function () {
+        if (!this.checkAction('dontSupport')) {
+            return;
+        }
+        this.takeAction('dontSupport');
+    };
     KingOfTokyo.prototype.discardDie = function (id) {
         if (!this.checkAction('discardDie')) {
             return;
@@ -3772,17 +3792,13 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
-    KingOfTokyo.prototype.support = function () {
-        if (!this.checkAction('support')) {
+    KingOfTokyo.prototype.giveGoldenScarab = function (playerId) {
+        if (!this.checkAction('giveGoldenScarab')) {
             return;
         }
-        this.takeAction('support');
-    };
-    KingOfTokyo.prototype.dontSupport = function () {
-        if (!this.checkAction('dontSupport')) {
-            return;
-        }
-        this.takeAction('dontSupport');
+        this.takeAction('giveGoldenScarab', {
+            playerId: playerId
+        });
     };
     KingOfTokyo.prototype.takeWickednessTile = function (id) {
         if (!this.checkAction('takeWickednessTile')) {

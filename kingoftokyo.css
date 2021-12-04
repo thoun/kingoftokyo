@@ -1032,52 +1032,6 @@
 }
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon {
   position: absolute;
-  width: 32px;
-  height: 32px;
-  background: url("img/monster-icons.png");
-  background-size: auto 100%;
-  border-radius: 50px;
-  box-shadow: 0px 0px 3px 2px black;
-  transition: left 0.5s, top 0.5s;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster1 {
-  background-position: 0% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster2 {
-  background-position: 8.3333333333% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster3 {
-  background-position: 16.6666666667% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster4 {
-  background-position: 25% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster5 {
-  background-position: 33.3333333333% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster6 {
-  background-position: 41.6666666667% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster7 {
-  background-position: 50% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster8 {
-  background-position: 58.3333333333% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster9 {
-  background-position: 66.6666666667% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster10 {
-  background-position: 75% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster11 {
-  background-position: 83.3333333333% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster12 {
-  background-position: 91.6666666667% 50%;
-}
-#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon.monster13 {
-  background-position: 100% 50%;
 }
 #table .player-table {
   width: 440px;
@@ -1742,4 +1696,59 @@ button .icon, a .icon {
   color: white;
   font-weight: bold;
   margin-left: 5px;
+}
+
+.monster-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: url("img/monster-icons.png");
+  background-size: auto 100%;
+  border-radius: 50px;
+  box-shadow: 0px 0px 3px 2px black;
+  transition: left 0.5s, top 0.5s;
+}
+.monster-icon.monster1 {
+  background-position: 0% 50%;
+}
+.monster-icon.monster2 {
+  background-position: 8.3333333333% 50%;
+}
+.monster-icon.monster3 {
+  background-position: 16.6666666667% 50%;
+}
+.monster-icon.monster4 {
+  background-position: 25% 50%;
+}
+.monster-icon.monster5 {
+  background-position: 33.3333333333% 50%;
+}
+.monster-icon.monster6 {
+  background-position: 41.6666666667% 50%;
+}
+.monster-icon.monster7 {
+  background-position: 50% 50%;
+}
+.monster-icon.monster8 {
+  background-position: 58.3333333333% 50%;
+}
+.monster-icon.monster9 {
+  background-position: 66.6666666667% 50%;
+}
+.monster-icon.monster10 {
+  background-position: 75% 50%;
+}
+.monster-icon.monster11 {
+  background-position: 83.3333333333% 50%;
+}
+.monster-icon.monster12 {
+  background-position: 91.6666666667% 50%;
+}
+.monster-icon.monster13 {
+  background-position: 100% 50%;
+}
+
+#generalactions .monster-icon {
+  vertical-align: middle;
+  margin-right: 8px;
 }

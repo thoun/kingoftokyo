@@ -333,6 +333,18 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_GIVE_GOLDEN_SCARAB => [
+        "name" => "giveGoldenScarab",
+        "description" => '',/*client TODOAN translate('${actplayer} must give Golden Scarab'),*/
+        "descriptionmyturn" => '',/*client TODOAN translate('${you} must give Golden Scarab'),*/
+        "type" => "activeplayer",
+        "args" => "argGiveGoldenScarab",
+        "possibleactions" => [ "giveGoldenScarab" ],
+        "transitions" => [
+            "next" => ST_RESOLVE_DICE,
+        ],
+    ],
+
     ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => "",

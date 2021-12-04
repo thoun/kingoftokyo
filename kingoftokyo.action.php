@@ -225,6 +225,16 @@
         self::ajaxResponse();
     }
   	
+    public function giveGoldenScarab() {
+        self::setAjaxMode();
+
+        $playerId = self::getArg("playerId", AT_posint, true);
+
+        $this->game->giveGoldenScarab($playerId);
+
+        self::ajaxResponse();
+    }
+  	
     public function discardKeepCard() {
         self::setAjaxMode();
 
