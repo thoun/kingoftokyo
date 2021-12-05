@@ -153,5 +153,11 @@ class CurseCards {
         <div class="effect-wrapper permanent-effect-wrapper"><div>${permanentEffect}</div></div>
         <div class="effect-wrapper ankh-effect-wrapper"><div>${ankhEffect}</div></div>
         <div class="effect-wrapper snake-effect-wrapper"><div>${snakeEffect}</div></div>`;
+
+        (Array.from(cardDiv.getElementsByClassName('effect-wrapper')) as HTMLDivElement[]).forEach(wrapperDiv => {
+            if (wrapperDiv.children[0].clientHeight > wrapperDiv.clientHeight) {
+                wrapperDiv.style.fontSize = '6pt';
+            }
+        });
     }
 }

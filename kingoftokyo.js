@@ -841,6 +841,11 @@ var CurseCards = /** @class */ (function () {
         var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
         var snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));
         cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div>" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div>" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div>" + snakeEffect + "</div></div>";
+        Array.from(cardDiv.getElementsByClassName('effect-wrapper')).forEach(function (wrapperDiv) {
+            if (wrapperDiv.children[0].clientHeight > wrapperDiv.clientHeight) {
+                wrapperDiv.style.fontSize = '6pt';
+            }
+        });
     };
     return CurseCards;
 }());

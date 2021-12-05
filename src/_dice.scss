@@ -494,9 +494,6 @@ $distFromCenter: 1em;
   [data-roll-type="even"] {
     transition: transform 0.9s ease-out;
   }
-  [data-roll-type="odd"] {
-    transition: transform 1.1s ease-out;
-  }
   [data-roll-type="-"] {
     transition: transform 0;
   }
@@ -505,16 +502,16 @@ $distFromCenter: 1em;
   }
 
   [data-roll-type="even"][data-roll="1"] {
-    transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); // icon 1 eye
+    transform: translate(0px, 5px) rotateX(360deg) rotateY(720deg) rotateZ(360deg); // icon 1 eye
   }
   [data-roll-type="even"][data-roll="2"] {
-    transform: rotateX(300deg) rotateY(900deg) rotateZ(480deg); // icon 2 river
+    transform: translate(-5px, 8px) rotateX(300deg) rotateY(900deg) rotateZ(480deg); // icon 2 river
   }
   [data-roll-type="even"][data-roll="3"] {
-    transform: rotateX(412deg) rotateY(845deg) rotateZ(450deg); // icon 3 snake
+    transform: translate(-5px, 15px) rotateX(412deg) rotateY(845deg) rotateZ(450deg); // icon 3 snake
   }
   [data-roll-type="even"][data-roll="4"] {
-    transform: rotateX(420deg) rotateY(955deg) rotateZ(510deg); // icon 4 ankh
+    transform: translate(-2px, 8px) rotateX(420deg) rotateY(955deg) rotateZ(510deg); // icon 4 ankh
   }
   
   [data-side="1"] {
