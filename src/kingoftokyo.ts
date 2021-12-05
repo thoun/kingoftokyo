@@ -11,6 +11,8 @@ declare const board: HTMLDivElement;
 const ANIMATION_MS = 1500;
 const PUNCH_SOUND_DURATION = 250;
 
+type FalseBlessingAnkhAction = 'falseBlessingReroll' | 'falseBlessingDiscard';
+
 class KingOfTokyo implements KingOfTokyoGame {
     private gamedatas: KingOfTokyoGamedatas;
     private healthCounters: Counter[] = [];
@@ -29,6 +31,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     //private rapidHealingSyncHearts: number;
     public towerLevelsOwners = [];
     private tableCenter: TableCenter;
+    private falseBlessingAnkhAction: FalseBlessingAnkhAction = null;
         
     public SHINK_RAY_TOKEN_TOOLTIP: string;
     public POISON_TOKEN_TOOLTIP: string;
@@ -198,8 +201,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringDiscardKeepCard(args.args);
                 break;
             case 'resolveDice': 
+                this.falseBlessingAnkhAction = null;
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
+                break;
+            case 'rerollOrDiscardDie':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollOrDiscardDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
             case 'resolveNumberDice':
                 this.setDiceSelectorVisibility(true);
@@ -349,6 +357,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringDiscardDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
         if (args.dice?.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive);
+        }
+    }
+
+    private onEnteringRerollOrDiscardDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
+        if (args.dice?.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollOrDiscard');
         }
     }
 
@@ -678,6 +692,27 @@ class KingOfTokyo implements KingOfTokyoGame {
                     for (let face=1; face<=6; face++) {
                         (this as any).addActionButton(`selectExtraDie_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.selectExtraDie(face));
                     }
+                    break;
+                case 'rerollOrDiscardDie':
+                    (this as any).addActionButton('falseBlessingReroll_button', _("Reroll"), () => {
+                        /*dojo.addClass('falseBlessingReroll_button', 'bgabutton_blue');
+                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_gray');
+                        dojo.addClass('falseBlessingDiscard_button', 'bgabutton_gray');
+                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_blue');*/
+                        dojo.addClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
+                        dojo.removeClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
+                        this.falseBlessingAnkhAction = 'falseBlessingReroll';
+                    }, null, null, 'gray');
+                    (this as any).addActionButton('falseBlessingDiscard_button', _("Discard"), () => {
+                        /*dojo.addClass('falseBlessingDiscard_button', 'bgabutton_blue');
+                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_gray');
+                        dojo.addClass('falseBlessingReroll_button', 'bgabutton_gray');
+                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_blue');*/
+                        dojo.addClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
+                        dojo.removeClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
+                        this.falseBlessingAnkhAction = 'falseBlessingDiscard';
+                    }, null, null, 'gray');
+                    (this as any).addActionButton('falseBlessingSkip_button', _("Skip"), () => this.falseBlessingSkip());
                     break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
@@ -1475,6 +1510,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public rerollOrDiscardDie(id: number) {
+        if (!this.falseBlessingAnkhAction) {
+            return;
+        }
+
+        if(!(this as any).checkAction(this.falseBlessingAnkhAction)) {
+            return;
+        }
+
+        this.takeAction(this.falseBlessingAnkhAction, {
+            id
+        });
+    }
+
     public discardKeepCard(id: number | string) {
         if(!(this as any).checkAction('discardKeepCard')) {
             return;
@@ -1513,6 +1562,34 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('selectExtraDie', {
             face
         });
+    }
+
+    public falseBlessingReroll(id: number) {
+        if(!(this as any).checkAction('falseBlessingReroll')) {
+            return;
+        }
+
+        this.takeAction('falseBlessingReroll', {
+            id
+        });
+    }
+
+    public falseBlessingDiscard(id: number) {
+        if(!(this as any).checkAction('falseBlessingDiscard')) {
+            return;
+        }
+
+        this.takeAction('falseBlessingDiscard', {
+            id
+        });
+    }
+
+    public falseBlessingSkip() {
+        if(!(this as any).checkAction('falseBlessingSkip')) {
+            return;
+        }
+
+        this.takeAction('falseBlessingSkip');
     }
 
     public takeWickednessTile(id: number) {
@@ -1841,6 +1918,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['changeCurseCard', ANIMATION_MS],
             ['takeWickednessTile', ANIMATION_MS],
             ['changeGoldenScarabOwner', ANIMATION_MS],
+            ['discardedDie', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -2191,6 +2269,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_changeGoldenScarabOwner(notif: Notif<NotifChangeGoldenScarabOwnerArgs>) {
         this.getPlayerTable(notif.args.playerId).takeGoldenScarab(this.getPlayerTable(notif.args.previousOwner).cards);
         this.tableManager.tableHeightChange(); // adapt after moved card
+    }
+
+    notif_discardedDie(notif: Notif<NotifDiscardedDieArgs>) {
+        this.diceManager.discardDie(notif.args.die);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

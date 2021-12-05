@@ -69,6 +69,10 @@ trait CurseCardsUtilTrait {
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->jumpToState(ST_PLAYER_GIVE_GOLDEN_SCARAB);
                 break;
+            case FALSE_BLESSING_CURSE_CARD:
+                self::setGameStateValue(FALSE_BLESSING_USED_DIE, 0);
+                $this->jumpToState(ST_PLAYER_REROLL_OR_DISCARD_DICE);
+                break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
                 $this->applyGetEnergy($playerId, 3, $logCardType);
                 break;

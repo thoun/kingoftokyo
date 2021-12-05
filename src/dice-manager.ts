@@ -1,4 +1,4 @@
-type DieClickAction = 'move' | 'change' | 'psychicProbeRoll' | 'discard';
+type DieClickAction = 'move' | 'change' | 'psychicProbeRoll' | 'discard' | 'rerollOrDiscard';
 
 const DIE4_ICONS = [
     null,
@@ -70,6 +70,10 @@ class DiceManager {
         return `locked-dice${this.getDieFace(die)}`;
     }
 
+    public discardDie(die: Dice) {
+        this.removeDice(die, ANIMATION_MS);
+    }
+
     public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, canHealWithDice: boolean, isCurrentPlayerActive: boolean) {
         this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown ? 'change' : null;
         this.changeDieArgs = args;
@@ -101,8 +105,8 @@ class DiceManager {
         });
     }
 
-    public setDiceForDiscardDie(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean) {
-        this.action = 'discard';
+    public setDiceForDiscardDie(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean, action: 'discard' | 'rerollOrDiscard' = 'discard') {
+        this.action = action;
 
         if (this.dice.length) {
             dice.forEach(die => {
@@ -253,16 +257,16 @@ class DiceManager {
     }
 
     private getDiceShowingFace(face: number) {
-        const dice = this.dice.filter(die => !die.type && die.value === face && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+        const dice = this.dice.filter(die => !die.type && die.value === face && document.getElementById(`dice${die.id}`)?.dataset.animated !== 'true');
 
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
         } else {
             const berserkDice = this.dice.filter(die => die.type === 1);
             if (face == 5) { // energy
-                return berserkDice.filter(die => die.value >= 1 && die.value <= 2 && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+                return berserkDice.filter(die => die.value >= 1 && die.value <= 2 && document.getElementById(`dice${die.id}`)?.dataset.animated !== 'true');
             } else if (face == 6) { // smash
-                return berserkDice.filter(die => die.value >= 3 && die.value <= 5 && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+                return berserkDice.filter(die => die.value >= 3 && die.value <= 5 && document.getElementById(`dice${die.id}`)?.dataset.animated !== 'true');
             } else {
                 return [];
             }
@@ -455,6 +459,8 @@ class DiceManager {
             this.game.psychicProbeRollDie(die.id);
         } else if (this.action === 'discard') {
             this.game.discardDie(die.id);
+        } else if (this.action === 'rerollOrDiscard') {
+            this.game.rerollOrDiscardDie(die.id);
         }
     }
 
@@ -479,13 +485,13 @@ class DiceManager {
     }
 
     private removeDice(die: Dice, duration?: number, delay?: number) {
+        this.dice.splice(this.dice.findIndex(d => d.id == die.id), 1);
         if (duration) {
             (this.game as any).fadeOutAndDestroy(`dice${die.id}`, duration, delay);
         } else {
             const dieDiv = document.getElementById(`dice${die.id}`);
             dieDiv?.parentNode.removeChild(dieDiv);
         }
-        this.dice.splice(this.dice.indexOf(die), 1);
     }
 
     private hideBubble(dieId: number) {

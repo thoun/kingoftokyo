@@ -105,4 +105,13 @@ trait CurseCardsArgTrait {
         ];
     }
 
+    function argRerollOrDiscardDie() {
+        $activePlayerId = self::getActivePlayerId();
+        
+        return [
+            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
+            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+        ];
+    }
+
 }

@@ -18,16 +18,16 @@ class AnimationManager {
     }
 
     private getDiceShowingFace(allDice: Dice[], face: number) {
-        const dice = allDice.filter(die => !die.type && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+        const dice = allDice.filter(die => !die.type && document.getElementById(`dice${die.id}`)?.dataset.animated !== 'true');
 
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
         } else {
             const berserkDice = this.diceManager.getBerserkDice();
             if (face == 5) { // energy
-                return berserkDice.filter(die => die.value >= 1 && die.value <= 2 && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+                return berserkDice.filter(die => die.value >= 1 && die.value <= 2 && document.getElementById(`dice${die.id}`)?.dataset.animated !== 'true');
             } else if (face == 6) { // smash
-                return berserkDice.filter(die => die.value >= 3 && die.value <= 5 && document.getElementById(`dice${die.id}`).dataset.animated !== 'true');
+                return berserkDice.filter(die => die.value >= 3 && die.value <= 5 && document.getElementById(`dice${die.id}`)?.dataset.animated !== 'true');
             } else {
                 return [];
             }
@@ -40,9 +40,9 @@ class AnimationManager {
         }
         let dice = this.getDice(diceValue);
 
-        const originTop = document.getElementById(dice[0] ? `dice${dice[0].id}` : 'dice-selector').getBoundingClientRect().top;
-        const leftDieBR = document.getElementById(dice[0] ? `dice${dice[0].id}` : 'dice-selector').getBoundingClientRect();
-        const rightDieBR = document.getElementById(dice.length ? `dice${dice[dice.length - 1].id}` : 'dice-selector').getBoundingClientRect();
+        const originTop = (document.getElementById(dice[0] ? `dice${dice[0].id}` : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect().top;
+        const leftDieBR = (document.getElementById(dice[0] ? `dice${dice[0].id}` : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
+        const rightDieBR = (document.getElementById(dice.length ? `dice${dice[dice.length - 1].id}` : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
         const originCenter = (leftDieBR.left + rightDieBR.right) / 2;
 
         playerIds.forEach(playerId => {

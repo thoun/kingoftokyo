@@ -88,7 +88,7 @@ class CurseCards {
             case 16: return "Take control of Tokyo.";
             case 20: return "Take the Golden Scarab and give it to the Monster of your choice.";
             case 21: return "Cancel the Curse effect.";
-            // TODOAN case 22
+            case 22: return "Choose up to 2 dice, you can reroll or discard each of these dice.";
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
             case 24: return "Gain 1[Energy] for each [dice1] you rolled.";
         }

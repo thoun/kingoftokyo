@@ -243,7 +243,6 @@ trait DiceStateTrait {
             $diceCount = 0;
         }
         
-        /* TODOCY
         $redirects = false;
         if ($diceCount > 0) {
             $playerId = self::getActivePlayerId();
@@ -254,17 +253,6 @@ trait DiceStateTrait {
 
         if (!$redirects) {    
             $this->gamestate->nextState('next');
-        }*/
-
-        $nextState = 'enterTokyo';
-        $smashTokyo = false;
-
-        if ($diceCount > 0) {
-            $nextState = $this->resolveSmashDice($playerId, $diceCount);
-        }
-        
-        if ($nextState != null) {
-            $this->gamestate->nextState($nextState);
         }
     }
 
@@ -296,7 +284,7 @@ trait DiceStateTrait {
 
                 $facesCount = count(array_keys($diceFaces));
                 
-                $damages[] = new Damage($playerId, $facesCount, $playerId, 2000 + FALSE_BLESSING_CURSE_CARD, 0, 0);
+                $damages[] = new Damage($playerId, $facesCount, $playerId, 1000 + FALSE_BLESSING_CURSE_CARD, 0, 0);
             }
         }
 

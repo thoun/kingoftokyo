@@ -792,7 +792,7 @@ var CurseCards = /** @class */ (function () {
             case 16: return "Take control of Tokyo.";
             case 20: return "Take the Golden Scarab and give it to the Monster of your choice.";
             case 21: return "Cancel the Curse effect.";
-            // TODOAN case 22
+            case 22: return "Choose up to 2 dice, you can reroll or discard each of these dice.";
             case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
             case 24: return "Gain 1[Energy] for each [dice1] you rolled.";
         }
@@ -1591,6 +1591,9 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.getLockedDiceId = function (die) {
         return "locked-dice" + this.getDieFace(die);
     };
+    DiceManager.prototype.discardDie = function (die) {
+        this.removeDice(die, ANIMATION_MS);
+    };
     DiceManager.prototype.setDiceForChangeDie = function (dice, args, canHealWithDice, isCurrentPlayerActive) {
         var _this = this;
         var _a;
@@ -1619,10 +1622,11 @@ var DiceManager = /** @class */ (function () {
             }
         });
     };
-    DiceManager.prototype.setDiceForDiscardDie = function (dice, canHealWithDice, isCurrentPlayerActive) {
+    DiceManager.prototype.setDiceForDiscardDie = function (dice, canHealWithDice, isCurrentPlayerActive, action) {
         var _this = this;
         var _a;
-        this.action = 'discard';
+        if (action === void 0) { action = 'discard'; }
+        this.action = action;
         if (this.dice.length) {
             dice.forEach(function (die) {
                 var divId = "dice" + die.id;
@@ -1765,17 +1769,17 @@ var DiceManager = /** @class */ (function () {
         }
     };
     DiceManager.prototype.getDiceShowingFace = function (face) {
-        var dice = this.dice.filter(function (die) { return !die.type && die.value === face && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+        var dice = this.dice.filter(function (die) { var _a; return !die.type && die.value === face && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
         }
         else {
             var berserkDice = this.dice.filter(function (die) { return die.type === 1; });
             if (face == 5) { // energy
-                return berserkDice.filter(function (die) { return die.value >= 1 && die.value <= 2 && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 1 && die.value <= 2 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else if (face == 6) { // smash
-                return berserkDice.filter(function (die) { return die.value >= 3 && die.value <= 5 && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 3 && die.value <= 5 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else {
                 return [];
@@ -1946,6 +1950,9 @@ var DiceManager = /** @class */ (function () {
         else if (this.action === 'discard') {
             this.game.discardDie(die.id);
         }
+        else if (this.action === 'rerollOrDiscard') {
+            this.game.rerollOrDiscardDie(die.id);
+        }
     };
     DiceManager.prototype.addRollToDiv = function (dieDiv, rollType, attempt) {
         var _this = this;
@@ -1970,6 +1977,7 @@ var DiceManager = /** @class */ (function () {
         }
     };
     DiceManager.prototype.removeDice = function (die, duration, delay) {
+        this.dice.splice(this.dice.findIndex(function (d) { return d.id == die.id; }), 1);
         if (duration) {
             this.game.fadeOutAndDestroy("dice" + die.id, duration, delay);
         }
@@ -1977,7 +1985,6 @@ var DiceManager = /** @class */ (function () {
             var dieDiv = document.getElementById("dice" + die.id);
             dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
         }
-        this.dice.splice(this.dice.indexOf(die), 1);
     };
     DiceManager.prototype.hideBubble = function (dieId) {
         var bubble = document.getElementById("discussion_bubble_dice" + dieId);
@@ -2109,17 +2116,17 @@ var AnimationManager = /** @class */ (function () {
         this.game.displayScoring("dice" + (dice[Math.floor(dice.length / 2)] || dice[0]).id, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     };
     AnimationManager.prototype.getDiceShowingFace = function (allDice, face) {
-        var dice = allDice.filter(function (die) { return !die.type && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+        var dice = allDice.filter(function (die) { var _a; return !die.type && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
         }
         else {
             var berserkDice = this.diceManager.getBerserkDice();
             if (face == 5) { // energy
-                return berserkDice.filter(function (die) { return die.value >= 1 && die.value <= 2 && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 1 && die.value <= 2 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else if (face == 6) { // smash
-                return berserkDice.filter(function (die) { return die.value >= 3 && die.value <= 5 && document.getElementById("dice" + die.id).dataset.animated !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 3 && die.value <= 5 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else {
                 return [];
@@ -2132,9 +2139,9 @@ var AnimationManager = /** @class */ (function () {
             return;
         }
         var dice = this.getDice(diceValue);
-        var originTop = document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector').getBoundingClientRect().top;
-        var leftDieBR = document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector').getBoundingClientRect();
-        var rightDieBR = document.getElementById(dice.length ? "dice" + dice[dice.length - 1].id : 'dice-selector').getBoundingClientRect();
+        var originTop = (document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect().top;
+        var leftDieBR = (document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
+        var rightDieBR = (document.getElementById(dice.length ? "dice" + dice[dice.length - 1].id : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
         var originCenter = (leftDieBR.left + rightDieBR.right) / 2;
         playerIds.forEach(function (playerId) {
             var maxSpaces = SPACE_BETWEEN_ANIMATION_AT_START * number;
@@ -2589,6 +2596,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables = [];
         //private rapidHealingSyncHearts: number;
         this.towerLevelsOwners = [];
+        this.falseBlessingAnkhAction = null;
     }
     /*
         setup:
@@ -2729,8 +2737,13 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringDiscardKeepCard(args.args);
                 break;
             case 'resolveDice':
+                this.falseBlessingAnkhAction = null;
                 this.setDiceSelectorVisibility(true);
                 this.diceManager.hideLock();
+                break;
+            case 'rerollOrDiscardDie':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollOrDiscardDie(args.args, this.isCurrentPlayerActive());
                 break;
             case 'resolveNumberDice':
                 this.setDiceSelectorVisibility(true);
@@ -2858,6 +2871,12 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive);
+        }
+    };
+    KingOfTokyo.prototype.onEnteringRerollOrDiscardDie = function (args, isCurrentPlayerActive) {
+        var _a;
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollOrDiscard');
         }
     };
     KingOfTokyo.prototype.onEnteringDiscardKeepCard = function (args) {
@@ -3179,6 +3198,27 @@ var KingOfTokyo = /** @class */ (function () {
                     for (var face = 1; face <= 6; face++) {
                         _loop_5(face);
                     }
+                    break;
+                case 'rerollOrDiscardDie':
+                    this.addActionButton('falseBlessingReroll_button', _("Reroll"), function () {
+                        /*dojo.addClass('falseBlessingReroll_button', 'bgabutton_blue');
+                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_gray');
+                        dojo.addClass('falseBlessingDiscard_button', 'bgabutton_gray');
+                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_blue');*/
+                        dojo.addClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
+                        dojo.removeClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
+                        _this.falseBlessingAnkhAction = 'falseBlessingReroll';
+                    }, null, null, 'gray');
+                    this.addActionButton('falseBlessingDiscard_button', _("Discard"), function () {
+                        /*dojo.addClass('falseBlessingDiscard_button', 'bgabutton_blue');
+                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_gray');
+                        dojo.addClass('falseBlessingReroll_button', 'bgabutton_gray');
+                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_blue');*/
+                        dojo.addClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
+                        dojo.removeClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
+                        _this.falseBlessingAnkhAction = 'falseBlessingDiscard';
+                    }, null, null, 'gray');
+                    this.addActionButton('falseBlessingSkip_button', _("Skip"), function () { return _this.falseBlessingSkip(); });
                     break;
                 case 'takeWickednessTile':
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
@@ -3810,6 +3850,17 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
+    KingOfTokyo.prototype.rerollOrDiscardDie = function (id) {
+        if (!this.falseBlessingAnkhAction) {
+            return;
+        }
+        if (!this.checkAction(this.falseBlessingAnkhAction)) {
+            return;
+        }
+        this.takeAction(this.falseBlessingAnkhAction, {
+            id: id
+        });
+    };
     KingOfTokyo.prototype.discardKeepCard = function (id) {
         if (!this.checkAction('discardKeepCard')) {
             return;
@@ -3841,6 +3892,28 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('selectExtraDie', {
             face: face
         });
+    };
+    KingOfTokyo.prototype.falseBlessingReroll = function (id) {
+        if (!this.checkAction('falseBlessingReroll')) {
+            return;
+        }
+        this.takeAction('falseBlessingReroll', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.falseBlessingDiscard = function (id) {
+        if (!this.checkAction('falseBlessingDiscard')) {
+            return;
+        }
+        this.takeAction('falseBlessingDiscard', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.falseBlessingSkip = function () {
+        if (!this.checkAction('falseBlessingSkip')) {
+            return;
+        }
+        this.takeAction('falseBlessingSkip');
     };
     KingOfTokyo.prototype.takeWickednessTile = function (id) {
         if (!this.checkAction('takeWickednessTile')) {
@@ -4108,6 +4181,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['changeCurseCard', ANIMATION_MS],
             ['takeWickednessTile', ANIMATION_MS],
             ['changeGoldenScarabOwner', ANIMATION_MS],
+            ['discardedDie', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -4414,6 +4488,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_changeGoldenScarabOwner = function (notif) {
         this.getPlayerTable(notif.args.playerId).takeGoldenScarab(this.getPlayerTable(notif.args.previousOwner).cards);
         this.tableManager.tableHeightChange(); // adapt after moved card
+    };
+    KingOfTokyo.prototype.notif_discardedDie = function (notif) {
+        this.diceManager.discardDie(notif.args.die);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

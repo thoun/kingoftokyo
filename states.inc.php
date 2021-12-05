@@ -368,6 +368,18 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_REROLL_OR_DISCARD_DICE => [
+        "name" => "rerollOrDiscardDie",
+        "description" => ''/* client TODOAN translate('${actplayer} can reroll or discard a die')*/,
+        "descriptionmyturn" => ''/* client TODOAN translate('${you} can reroll or discard a die (select action then die)')*/,
+        "type" => "activeplayer",
+        "args" => "argRerollOrDiscardDie",
+        "possibleactions" => [ "falseBlessingReroll", "falseBlessingDiscard", "falseBlessingSkip" ],
+        "transitions" => [
+            "next" => ST_RESOLVE_DICE,
+        ],
+    ],
+
     ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => "",

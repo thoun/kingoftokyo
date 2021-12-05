@@ -1749,3 +1749,6 @@ button .icon, a .icon {
   vertical-align: middle;
   margin-right: 8px;
 }
+#generalactions .action-button-toggle-button-selected {
+  border: 3px solid #4871b6;
+}

@@ -274,14 +274,13 @@ trait DiceUtilTrait {
     }
 
     
-    function resolveSmashDice(int $playerId, int $diceCount) { // return nextState / null // TODOCY return redirects
+    function resolveSmashDice(int $playerId, int $diceCount) { // return redirects
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
 
         $message = null;
         $smashedPlayersIds = null;
         $inTokyo = $this->inTokyo($playerId);
-        $nextState = "enterTokyo";
         $nextStateId = ST_ENTER_TOKYO_APPLY_BURROWING;
 
         $damages = [];
@@ -343,7 +342,6 @@ trait DiceUtilTrait {
 
         if (count($smashedPlayersInTokyo) > 0) {
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $smashedPlayersInTokyo);
-            $nextState = "smashes";
             $nextStateId = ST_MULTIPLAYER_LEAVE_TOKYO;
         } else {
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
@@ -380,18 +378,11 @@ trait DiceUtilTrait {
             }
         }
 
-        if (count($damages) > 0) {
-            if ($this->resolveDamages($damages, $nextState)) {
-                return null; // no redirect on stResolveSmashDice, handled by resolveDamages
-            }
-        }
-        return $nextState;
-
-        /* TODOCY $redirects = false;
+        $redirects = false;
         if (count($damages) > 0) {
             $redirects = $this->resolveDamages($damages, ST_RESOLVE_SKULL_DICE);
         }
-        return $redirects;*/
+        return $redirects;
     }
 
     function getChangeDieCards(int $playerId) {

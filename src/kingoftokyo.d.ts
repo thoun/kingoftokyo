@@ -115,6 +115,7 @@ interface KingOfTokyoGame extends Game {
     changeDie: (id: number, value: number, card: number) => void;
     psychicProbeRollDie: (id: number) => void;
     discardDie: (id: number) => void;
+    rerollOrDiscardDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
     onVisibleCardClick: (stock: Stock, cardId: string, from?: number) => void;
     takeWickednessTile(id: number): void;
@@ -447,4 +448,8 @@ interface NotifChangeGoldenScarabOwnerArgs {
     playerId: number;
     player_name: string;
     previousOwner: number;
+}
+
+interface NotifDiscardedDieArgs {
+    die: Dice;
 }

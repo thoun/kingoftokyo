@@ -107,9 +107,66 @@ trait CurseCardsActionTrait {
 
         $playerId = self::getActivePlayerId(); 
 
-        $dice = $this->getPlayerRolledDice($playerId, false, false, false);       
+        $dice = $this->getPlayerRolledDice($playerId, false, false, false);
         $dieId = end($dice)->id; 
         self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE dice_id = $dieId");        
+
+        $this->gamestate->nextState('next');
+    }
+  	
+    public function falseBlessingReroll(int $dieId) {
+        $this->checkAction('falseBlessingReroll'); 
+
+        if ($dieId == intval(self::getGameStateValue(FALSE_BLESSING_USED_DIE))) {
+            throw new \BgaUserException(/* TODOAN self::_(*/'You already made an action for this die'/*)*/);
+        }
+
+        $playerId = self::getActivePlayerId(); 
+        
+        $die = $this->getDieById($dieId);
+        $value = bga_rand(1, 6);
+        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
+        self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$dieId);
+
+        $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+        $oldValue = $die->value;
+
+        self::notifyAllPlayers("changeDie", $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => 1000 + FALSE_BLESSING_CURSE_CARD,
+            'dieId' => $die->id,
+            'toValue' => $value,
+            'roll' => true,
+            'die_face_before' => $this->getDieFaceLogName($oldValue, $die->type),
+            'die_face_after' => $this->getDieFaceLogName($value, $die->type),
+        ]);
+
+        $this->endFalseBlessingAction($dieId);
+    }
+  	
+    public function falseBlessingDiscard(int $dieId) {
+        $this->checkAction('falseBlessingDiscard'); 
+
+        if ($dieId == intval(self::getGameStateValue(FALSE_BLESSING_USED_DIE))) {
+            throw new \BgaUserException(/* TODOAN self::_(*/'You already made an action for this die'/*)*/);
+        }
+
+        $this->applyDiscardDie($dieId);
+
+        $this->endFalseBlessingAction($dieId);
+    }
+
+    private function endFalseBlessingAction(int $dieId) {
+        if (!boolval(self::getGameStateValue(FALSE_BLESSING_USED_DIE))) {
+            self::setGameStateValue(FALSE_BLESSING_USED_DIE, $dieId);
+        } else {
+            $this->gamestate->nextState('next');
+        }
+    }
+  	
+    public function falseBlessingSkip() {
+        $this->checkAction('falseBlessingSkip'); 
 
         $this->gamestate->nextState('next');
     }

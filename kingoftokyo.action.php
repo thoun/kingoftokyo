@@ -265,6 +265,34 @@
         self::ajaxResponse();
     }
   	
+    public function falseBlessingReroll() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->falseBlessingReroll($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function falseBlessingDiscard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->falseBlessingDiscard($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function falseBlessingSkip() {
+        self::setAjaxMode();
+
+        $this->game->falseBlessingSkip();
+
+        self::ajaxResponse();
+    }
+  	
     public function support() {
         self::setAjaxMode();
 
