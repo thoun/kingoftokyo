@@ -250,6 +250,14 @@ trait PlayerUtilTrait {
             throw new \BgaUserException('You can\'t heal when you\'re already at full life');
         }
 
+        if ($type == 4 && !$this->canGainHealth($playerId)) {
+            throw new \BgaUserException(/* TODOAN self::_(*/'You cannot gain [Heart]'/*)*/);
+        }
+
+        if ($type == 5 && !$this->canGainEnergy($playerId)) {
+            throw new \BgaUserException(/* TODOAN self::_(*/'You cannot gain [Energy]'/*)*/);
+        }
+
         if ($type == 4) {
             $this->applyGetHealth($playerId, 1, 0, $playerId);
             $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1[Heart]'));

@@ -478,6 +478,10 @@ trait CardsUtilTrait {
             throw new \BgaUserException('You can\'t heal when you\'re already at full life');
         }
 
+        if (!$this->canGainHealth($playerId)) {
+            throw new \BgaUserException(/* TODOAN self::_(*/'You cannot gain [Heart]'/*)*/);
+        }
+
         if ($this->countCardOfType($playerId, RAPID_HEALING_CARD) == 0) {
             throw new \BgaUserException('No Rapid Healing card');
         }

@@ -144,6 +144,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
         }
 
+        // override to allow icons in messages
+        const oldShowMessage = (this as any).showMessage;
+        (this as any).showMessage = (msg, type) => oldShowMessage(formatTextIcons(msg), type);
+
         log( "Ending game setup" );
     }
 
