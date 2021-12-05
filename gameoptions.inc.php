@@ -148,7 +148,7 @@ $game_options = [
             ],
             2 => [
                 'name' => totranslate('Pick'), 
-                'description' => totranslate("Every player choose it's monster before playing"),
+                'description' => totranslate("Every player chooses its monster before playing"),
                 'tmdisplay' => totranslate('Players can pick a monster'),
             ],
         ],
