@@ -114,7 +114,7 @@ class CurseCards {
             case 16: return "Yield Tokyo. You can’t enter Tokyo this turn.";
             case 17: return "Discard a [Keep] card.";
             case 18: return "The Monster with the Golden Scarab, instead of you, gains all [Heart] and [Energy] that you should have gained this turn.";
-            // TODOAN case 19
+            case 19: return "Give any combination of 2[Heart]/[Energy]/[Star] to the Monster with the Golden Scarab.";
             case 20: return "Take the Golden Scarab.";
             case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
             // TODOAN case 22

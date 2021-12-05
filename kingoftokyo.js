@@ -819,7 +819,7 @@ var CurseCards = /** @class */ (function () {
             case 16: return "Yield Tokyo. You can’t enter Tokyo this turn.";
             case 17: return "Discard a [Keep] card.";
             case 18: return "The Monster with the Golden Scarab, instead of you, gains all [Heart] and [Energy] that you should have gained this turn.";
-            // TODOAN case 19
+            case 19: return "Give any combination of 2[Heart]/[Energy]/[Star] to the Monster with the Golden Scarab.";
             case 20: return "Take the Golden Scarab.";
             case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
             // TODOAN case 22
@@ -3162,6 +3162,14 @@ var KingOfTokyo = /** @class */ (function () {
                         _this.addActionButton("giveGoldenScarab_button_" + playerId, label, function () { return _this.giveGoldenScarab(playerId); });
                     });
                     break;
+                case 'giveSymbols':
+                    var argsGiveSymbols = args;
+                    var SYMBOL_AS_STRING_PADDED_1 = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
+                    argsGiveSymbols.combinations.forEach(function (combination, combinationIndex) {
+                        var symbols = SYMBOL_AS_STRING_PADDED_1[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED_1[combination[1]] : '');
+                        _this.addActionButton("giveSymbols_button" + combinationIndex, formatTextIcons(dojo.string.substitute(/*TODOAN_(*/ "Give ${symbol}" /*)*/, { symbol: symbols })), function () { return _this.giveSymbols(combination); });
+                    });
+                    break;
                 case 'takeWickednessTile':
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
                     break;
@@ -3806,6 +3814,14 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('giveGoldenScarab', {
             playerId: playerId
+        });
+    };
+    KingOfTokyo.prototype.giveSymbols = function (symbols) {
+        if (!this.checkAction('giveSymbols')) {
+            return;
+        }
+        this.takeAction('giveSymbols', {
+            symbols: symbols.join(',')
         });
     };
     KingOfTokyo.prototype.takeWickednessTile = function (id) {

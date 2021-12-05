@@ -235,6 +235,16 @@
         self::ajaxResponse();
     }
   	
+    public function giveSymbols() {
+        self::setAjaxMode();
+
+        $symbols = self::getArg("symbols", AT_numberlist, true);
+
+        $this->game->giveSymbols(array_map(function($idStr) { return intval($idStr); }, explode(',', $symbols)));
+
+        self::ajaxResponse();
+    }
+  	
     public function discardKeepCard() {
         self::setAjaxMode();
 

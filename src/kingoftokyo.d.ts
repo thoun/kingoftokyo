@@ -185,6 +185,10 @@ interface EnteringGiveGoldenScarabArgs {
     playersIds: number[];
 }
 
+interface EnteringGiveSymbolsArgs {
+    combinations: number[][];
+}
+
 interface EnteringTakeWickednessTileArgs {
     level: number;
 }

@@ -148,6 +148,11 @@ trait CurseCardsUtilTrait {
             case FORBIDDEN_LIBRARY_CURSE_CARD: 
                 $this->snakeEffectDiscardKeepCard($playerId);
                 break;
+            case PHARAONIC_SKIN_CURSE_CARD:
+                if ($playerId != $this->getPlayerIdWithGoldenScarab() && count($this->argGiveSymbols()['combinations']) > 0) {
+                    $this->jumpToState(ST_PLAYER_GIVE_SYMBOLS);
+                }
+                break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;

@@ -665,6 +665,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                         (this as any).addActionButton(`giveGoldenScarab_button_${playerId}`, label, () => this.giveGoldenScarab(playerId));
                     });
                     break;
+                case 'giveSymbols':
+                    const argsGiveSymbols = args as EnteringGiveSymbolsArgs;
+                    const SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
+                    argsGiveSymbols.combinations.forEach((combination, combinationIndex) => {
+                        const symbols = SYMBOL_AS_STRING_PADDED[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED[combination[1]] : '');
+                        (this as any).addActionButton(`giveSymbols_button${combinationIndex}`, formatTextIcons(dojo.string.substitute(/*TODOAN_(*/"Give ${symbol}"/*)*/, { symbol: symbols })), () => this.giveSymbols(combination));
+                    });
+                    break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
                     break;
@@ -1478,6 +1486,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('giveGoldenScarab', {
             playerId
+        });
+    }
+
+    public giveSymbols(symbols: number[]) {
+        if(!(this as any).checkAction('giveSymbols')) {
+            return;
+        }
+
+        this.takeAction('giveSymbols', {
+            symbols: symbols.join(',')
         });
     }
 

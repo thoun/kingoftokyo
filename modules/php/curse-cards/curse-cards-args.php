@@ -62,4 +62,47 @@ trait CurseCardsArgTrait {
         ];
     }
 
+    function argGiveSymbols() {
+        $playerId = self::getActivePlayerId();
+
+        $MAPPING = [
+            0 => 4,
+            1 => 5,
+            2 => 0,
+        ];
+
+        $resources = [
+            $this->getPlayerHealth($playerId),
+            $this->getPlayerEnergy($playerId),
+            $this->getPlayerScore($playerId),
+        ];
+
+        $combinations = [];
+
+        $sum = array_reduce($resources, function ($carry, $item) { return $carry + $item; });
+
+        // ($sum === 0) { => return empty array
+        if ($sum === 1) {
+            foreach($resources as $index => $resource) {
+                if ($resource > 0) {
+                    $combinations[] = [$MAPPING[$index]];
+                }
+            }
+        } else {
+            foreach ($resources as $index1 => $resource1) {
+                if ($resource1 > 0) {
+                    foreach($resources as $index2 => $resource2) {
+                        if (($index1 == $index2 && $resource2 >= 2) || ($index2 > $index1 && $resource2 > 0)) {
+                            $combinations[] = [$MAPPING[$index1], $MAPPING[$index2]];
+                        }
+                    }
+                }
+            }
+        }
+
+        return [
+            'combinations' => $combinations,
+        ];
+    }
+
 }

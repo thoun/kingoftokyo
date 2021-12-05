@@ -345,6 +345,18 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_GIVE_SYMBOLS => [
+        "name" => "giveSymbols",
+        "description" => ''/* client TODOAN translate('${actplayer} must give 2[Heart]/[Energy]/[Star]')*/,
+        "descriptionmyturn" => ''/* client TODOAN translate('${you} must give 2[Heart]/[Energy]/[Star]')*/,
+        "type" => "activeplayer",
+        "args" => "argGiveSymbols",
+        "possibleactions" => [ "giveSymbols" ],
+        "transitions" => [
+            "next" => ST_RESOLVE_DICE,
+        ],
+    ],
+
     ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => "",
