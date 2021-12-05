@@ -147,17 +147,17 @@ trait DiceStateTrait {
             }
         }
 
-        if ($diceCounts[1] >= 4 && $this->isKingKongExpansion()) {
+        if ($diceCounts[1] >= 4 && $this->isKingKongExpansion() && $this->canUseSymbol($playerId, 1) && $this->canUseFace($playerId, 1)) {
             $this->getNewTokyoTowerLevel($playerId);
         }
 
-        if ($diceCounts[6] >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId)) {
+        if ($diceCounts[6] >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseSymbol($playerId, 6) && $this->canUseFace($playerId, 6)) {
             $this->setPlayerBerserk($playerId, true);
         }
         
         if ($this->isCthulhuExpansion()) {
             for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-                if ($diceCounts[$diceFace] >= 4) {
+                if ($diceCounts[$diceFace] >= 4 && $this->canUseSymbol($playerId, $diceFace) && $this->canUseFace($playerId, $diceFace)) {
                     $this->applyGetCultist($playerId, $diceFace);
                 }
             }
@@ -193,9 +193,9 @@ trait DiceStateTrait {
         $canSelectHeartDiceUse = false;
         if ($diceCounts[4] > 0) {
             $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);
-            $inTokyo = $this->inTokyo($playerId);
+            $canHealWithDice = $this->canHealWithDice($playerId);
 
-            $canRemoveToken = ($selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0) && !$inTokyo;
+            $canRemoveToken = ($selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0) && $canHealWithDice;
 
             $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $canRemoveToken;
         }

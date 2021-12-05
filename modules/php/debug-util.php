@@ -25,7 +25,8 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
-        self::DbQuery("UPDATE player SET `player_cultists` = 3 where `player_id` = 2343492");
+        //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2");
+        //self::DbQuery("UPDATE player SET `player_cultists` = 3 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
@@ -33,7 +34,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
-        self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
+        //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -77,7 +78,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        $this->debugSetCurseCardInTable(THOT_S_BLINDNESS_CURSE_CARD);
+        $this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
         //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".BOW_BEFORE_RA_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
@@ -154,6 +155,12 @@ trait DebugUtilTrait {
     // debugSetDieOfFate(4)
     function debugSetDieOfFate($face) {
         self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 2");
+    }
+    
+    // debugSetDieFaces(1)
+    // debugSetDieFaces(6)
+    function debugSetDieFaces($face) {
+        self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0");
     }
 
     public function debugReplacePlayersIds() {

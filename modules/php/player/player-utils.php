@@ -418,7 +418,8 @@ trait PlayerUtilTrait {
             $curseCardType = $this->getCurseCardType();
 
             if ($symbol == 6 && $curseCardType == BURIED_IN_SAND_CURSE_CARD) {
-                return false;
+                $dieOfFate = $this->getDieOfFate();
+                return $dieOfFate->value != 3;
             }
 
             if ($symbol == 6 && $curseCardType == HOTEP_S_PEACE_CURSE_CARD) {

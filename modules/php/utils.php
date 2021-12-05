@@ -65,7 +65,7 @@ trait UtilTrait {
     }
 
     function isCthulhuExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
+        return intval(self::getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
     }
 
     function isAnubisExpansion() {
