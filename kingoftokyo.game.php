@@ -101,6 +101,7 @@ class KingOfTokyo extends Table {
             FINAL_PUSH_EXTRA_TURN => 29,
             BUILDERS_UPRISING_EXTRA_TURN => 30,
             STATE_AFTER_MIMIC_CHOOSE => 31,
+            RAGING_FLOOD_EXTRA_DIE => 32,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -210,6 +211,7 @@ class KingOfTokyo extends Table {
         self::setGameStateInitialValue(FINAL_PUSH_EXTRA_TURN, 0);
         self::setGameStateInitialValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
         self::setGameStateInitialValue(STATE_AFTER_MIMIC_CHOOSE, 0);
+        self::setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)

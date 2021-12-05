@@ -169,10 +169,9 @@ trait DiceUtilTrait {
     }
 
     function getDiceNumber(int $playerId) {
-        $add = 0;
+        $add = intval(self::getGameStateValue(RAGING_FLOOD_EXTRA_DIE)) + $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
-        $add += $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, CYBERBRAIN_WICKEDNESS_TILE)) {
             $add += 1;
         }

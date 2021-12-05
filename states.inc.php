@@ -357,6 +357,17 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_SELECT_EXTRA_DIE => [
+        "name" => "selectExtraDie",
+        "description" => ''/* client TODOAN translate('${actplayer} must select the face of the extra die')*/,
+        "descriptionmyturn" => ''/* client TODOAN translate('${you} must select the face of the extra die')*/,
+        "type" => "activeplayer",
+        "possibleactions" => [ "selectExtraDie" ],
+        "transitions" => [
+            "next" => ST_RESOLVE_DICE,
+        ],
+    ],
+
     ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => "",

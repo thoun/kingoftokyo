@@ -58,6 +58,7 @@ define('ST_PLAYER_DISCARD_DIE', 61);
 define('ST_PLAYER_DISCARD_KEEP_CARD', 62);
 define('ST_PLAYER_GIVE_GOLDEN_SCARAB', 63);
 define('ST_PLAYER_GIVE_SYMBOLS', 64);
+define('ST_PLAYER_SELECT_EXTRA_DIE', 65);
 
 define('ST_PLAYER_TAKE_WICKEDNESS_TILE', 70);
 define('ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE', 71);
@@ -117,6 +118,7 @@ define('CHEERLEADER_SUPPORT', 'CheerleaderSupport');
 define('STATE_AFTER_RESOLVE', 'stateAfterResolve');
 define('PLAYER_WITH_GOLDEN_SCARAB', 'PlayerWithGoldenScarab');
 define('STATE_AFTER_MIMIC_CHOOSE', 'StateAfterMimicChoose');
+define('RAGING_FLOOD_EXTRA_DIE', 'RagingFloodExtraDie');
 
 /*
  * Global variables
@@ -234,7 +236,7 @@ define('ISIS_S_DISGRACE_CURSE_CARD', 2);
 define('THOT_S_BLINDNESS_CURSE_CARD', 3);
 define('TUTANKHAMUN_S_CURSE_CURSE_CARD', 4);
 define('BURIED_IN_SAND_CURSE_CARD', 5);
-define('RAGING_FLOOD_CURSE_CARD', 6); // TODOAN dev & test ankh
+define('RAGING_FLOOD_CURSE_CARD', 6);
 define('HOTEP_S_PEACE_CURSE_CARD', 7);
 define('SET_S_STORM_CURSE_CARD', 8);
 define('BUILDERS_UPRISING_CURSE_CARD', 9);

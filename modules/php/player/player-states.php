@@ -29,6 +29,7 @@ trait PlayerStateTrait {
         self::setGameStateValue(SKIP_BUY_PHASE, 0);
         self::setGameStateValue(CLOWN_ACTIVATED, 0);
         self::setGameStateValue(CHEERLEADER_SUPPORT, 0);
+        self::setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);

@@ -245,6 +245,16 @@
         self::ajaxResponse();
     }
   	
+    public function selectExtraDie() {
+        self::setAjaxMode();
+
+        $face = self::getArg("face", AT_posint, true);
+
+        $this->game->selectExtraDie($face);
+
+        self::ajaxResponse();
+    }
+  	
     public function discardKeepCard() {
         self::setAjaxMode();
 

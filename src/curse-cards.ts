@@ -78,7 +78,7 @@ class CurseCards {
             case 1: return "Yield Tokyo. You can’t enter Tokyo this turn.";
             case 2: case 3: case 4: case 7: case 17: case 18: case 19: return "Take the Golden Scarab."; 
             case 5: return "You have 1 extra die Roll.";
-            // TODOAN case 6               
+            case 6: return "Take an extra die and put it on the face of your choice.";
             case 8: case 11: case 13: return "+2[Heart]";
             case 9: return "If you are not in Tokyo, play an extra turn after this one without the die of Fate.";
             case 10: return "Draw a Power card.";

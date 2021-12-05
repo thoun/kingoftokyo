@@ -673,6 +673,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                         (this as any).addActionButton(`giveSymbols_button${combinationIndex}`, formatTextIcons(dojo.string.substitute(/*TODOAN_(*/"Give ${symbol}"/*)*/, { symbol: symbols })), () => this.giveSymbols(combination));
                     });
                     break;
+                case 'selectExtraDie':
+                    const DICE_STRINGS = [null, '[dice1]', '[dice2]', '[dice3]', '[diceHeart]', '[diceEnergy]', '[diceSmash]'];
+                    for (let face=1; face<=6; face++) {
+                        (this as any).addActionButton(`selectExtraDie_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.selectExtraDie(face));
+                    }
+                    break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
                     break;
@@ -1496,6 +1502,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('giveSymbols', {
             symbols: symbols.join(',')
+        });
+    }
+
+    public selectExtraDie(face: number) {
+        if(!(this as any).checkAction('selectExtraDie')) {
+            return;
+        }
+
+        this.takeAction('selectExtraDie', {
+            face
         });
     }
 

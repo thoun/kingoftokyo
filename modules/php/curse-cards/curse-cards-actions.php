@@ -101,4 +101,16 @@ trait CurseCardsActionTrait {
 
         $this->gamestate->nextState('next');
     }
+
+    function selectExtraDie(int $face) {
+        $this->checkAction('selectExtraDie');  
+
+        $playerId = self::getActivePlayerId(); 
+
+        $dice = $this->getPlayerRolledDice($playerId, false, false, false);       
+        $dieId = end($dice)->id; 
+        self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE dice_id = $dieId");        
+
+        $this->gamestate->nextState('next');
+    }
 }

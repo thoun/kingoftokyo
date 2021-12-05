@@ -33,6 +33,10 @@ trait CurseCardsUtilTrait {
             case PHARAONIC_SKIN_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
+            case RAGING_FLOOD_CURSE_CARD:
+                self::setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 1);
+                $this->jumpToState(ST_PLAYER_SELECT_EXTRA_DIE);
+                break;
             case SET_S_STORM_CURSE_CARD:
             case BOW_BEFORE_RA_CURSE_CARD: 
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
