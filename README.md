@@ -53,5 +53,4 @@ TODO check psychic probe with Background Dweller allowing to reroll a 3 that's n
 remaining Anubis :
 
 After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.
-Choose up to 2 dice, you can reroll or discard each of these dice.
 The player on your left chooses two of your dice. Reroll these dice.

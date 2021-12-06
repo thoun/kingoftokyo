@@ -52,7 +52,7 @@ $game_options = [
                 'tmdisplay' => totranslate('Battle of the Gods (part I) event (Cultists)'),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
     ],
 
     /* TODOKK KINGKONG_EXPANSION_OPTION => [
