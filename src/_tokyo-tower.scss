@@ -8,8 +8,8 @@
   z-index: 8;
 
   .level {
+    height: 100%;
     background: url("img/tokyo-tower.png");
-    background-position-x: 100%;
 
     &.level3 {
       background-position-y: 0%;
@@ -20,13 +20,36 @@
     &.level1 {
       background-position-y: 100%;
     }
+  }
+}
 
-    &[data-owned="false"] {
-      opacity: 0.5; // TODOKK it could also be opacity 0 when false
-    }
+.mode_3d .tokyo-tower {
+  transform: translateY(-60px) rotateX(-90deg);
+  transform-origin: bottom;
+}
 
-    &[data-owned="true"] {
-      background-position-x: 0%;
-    }
+.tokyo-tower-icon {
+  height: 32px;
+  display: none;
+  background: url("img/tokyo-tower.png") no-repeat;
+
+  &.level3 {
+    background-position-y: 0%;
+    background-size: auto 390%;
+    width: 26px;
+  }
+  &.level2 {
+    background-position-y: 42%;
+    background-size: auto 280%;
+    width: 20px;
+  }
+  &.level1 {
+    background-position-y: 100%;
+    background-size: auto 250%;
+    width: 22px;
+  }
+
+  &[data-owned="true"] {
+    display: inline-block;
   }
 }

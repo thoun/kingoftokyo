@@ -256,8 +256,6 @@ trait DiceUtilTrait {
                     'playerId' => $playerGettingHealth,
                     'player_name' => $this->getPlayerName($playerGettingHealth),
                     'deltaHealth' => $diceCount,
-                    // TODOKK remove
-                    'health' => $this->getPlayerHealth($playerGettingHealth),
                 ]);
 
                 $this->applyGetHealth($playerGettingHealth, $diceCount, 0, $playerId);
@@ -276,8 +274,6 @@ trait DiceUtilTrait {
             'playerId' => $playerGettingEnergy,
             'player_name' => $this->getPlayerName($playerGettingEnergy),
             'deltaEnergy' => $diceCount,
-            // TODOKK remove
-            'energy' => $this->getPlayerEnergy($playerGettingEnergy),
         ]);
         
         $this->applyGetEnergy($playerId, $diceCount, 0);
@@ -710,7 +706,7 @@ trait DiceUtilTrait {
             $playerScore = $this->getPlayerScore($playerId);
             $this->applyGetPoints($playerId, MAX_POINT - $playerScore, 0);
             
-            self::notifyAllPlayers("fullTokyoTower", /*client TODOKK translate(*/'${player_name} claims Tokyo Tower top level and wins the game'/*)*/, [
+            self::notifyAllPlayers("fullTokyoTower", clienttranslate('${player_name} claims Tokyo Tower top level and wins the game'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
             ]);

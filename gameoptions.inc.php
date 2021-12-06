@@ -55,7 +55,7 @@ $game_options = [
         'default' => 1,
     ],
 
-    /* TODOKK KINGKONG_EXPANSION_OPTION => [
+    KINGKONG_EXPANSION_OPTION => [
         'name' => totranslate('“Nature vs. Machine, part I” event (Tokyo Tower)'),
         'values' => [
             1 => [
@@ -72,11 +72,11 @@ $game_options = [
                 [ 
                     'type' => 'minplayers',
                     'value' => 9,
-                    'message' => '“Nature vs. Machine, part I” event will be available from Friday, xxx at 11:00',
+                    'message' => '“Nature vs. Machine, part I” event will be available from Friday, 28th at 11:00',
                 ] 
             ],
         ],
-    ],*/
+    ],
 
     /* TODOAN ANUBIS_EXPANSION_OPTION => [
         'name' => totranslate('“Battle of the Gods: the Revenge!” event (Curse cards)'),

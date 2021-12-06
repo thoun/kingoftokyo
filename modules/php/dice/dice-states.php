@@ -140,7 +140,7 @@ trait DiceStateTrait {
             }
         }
 
-        if ($diceCounts[1] >= 4 && $this->isKingKongExpansion() && $this->canUseSymbol($playerId, 1) && $this->canUseFace($playerId, 1)) {
+        if ($diceCounts[1] >= 4 && $this->isKingKongExpansion() && $this->inTokyo($playerId) && $this->canUseSymbol($playerId, 1) && $this->canUseFace($playerId, 1)) {
             $this->getNewTokyoTowerLevel($playerId);
         }
         

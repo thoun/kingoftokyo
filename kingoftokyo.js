@@ -1036,14 +1036,17 @@ var WickednessTiles = /** @class */ (function () {
 var TokyoTower = /** @class */ (function () {
     function TokyoTower(divId, levels) {
         this.divId = divId + "-tokyo-tower";
-        dojo.place("<div id=\"" + this.divId + "\" class=\"tokyo-tower tokyo-tower-tooltip\">\n            <div class=\"level level3\"></div>\n            <div class=\"level level2\"></div>\n            <div class=\"level level1\"></div>\n        </div>", divId);
-        this.setLevels(levels);
-    }
-    TokyoTower.prototype.setLevels = function (levels) {
-        for (var i = 1; i <= 3; i++) {
-            document.getElementById(this.divId).getElementsByClassName("level" + i)[0].dataset.owned = levels.includes(i) ? 'true' : 'false';
+        var html = "\n        <div id=\"" + this.divId + "\" class=\"tokyo-tower tokyo-tower-tooltip\">";
+        for (var i = 3; i >= 1; i--) {
+            html += "<div id=\"" + this.divId + "-level" + i + "\">";
+            if (levels.includes(i)) {
+                html += "<div id=\"tokyo-tower-level" + i + "\" class=\"level level" + i + "\"></div>";
+            }
+            html += "</div>";
         }
-    };
+        html += "</div>";
+        dojo.place(html, divId);
+    }
     return TokyoTower;
 }());
 var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
@@ -2612,7 +2615,6 @@ var KingOfTokyo = /** @class */ (function () {
         this.healthCounters = [];
         this.energyCounters = [];
         this.wickednessCounters = [];
-        this.tokyoTowerCounters = [];
         this.cultistCounters = [];
         this.playerTables = [];
         //private rapidHealingSyncHearts: number;
@@ -2692,16 +2694,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.preferencesManager = new PreferencesManager(this);
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
-        /* TODOKK if (gamedatas.kingkongExpansion) {
-            const tooltip = formatTextIcons(`
-            <h3>${_("Tokyo Tower")}</h3>
-            <p>${_("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1]")}</p>
-            <p>${_("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).")}</p>
-            <p><strong>${_("Claiming the top level automatically wins the game.")}</strong></p>
-            `);
-            (this as any).addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
+        if (gamedatas.kingkongExpansion) {
+            var tooltip = formatTextIcons("\n            <h3>" + _("Tokyo Tower") + "</h3>\n            <p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>\n            ");
+            this.addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
         }
-
         /* TODOCY if (gamedatas.cybertoothExpansion) {
             const tooltip = formatTextIcons(`
             <h3>${_("Berserk mode")}</h3>
@@ -3392,23 +3388,21 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.place(html, "player_board_" + player.id);
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 var html_1 = "<div class=\"counters\">";
+                if (gamedatas.cthulhuExpansion) {
+                    html_1 += "\n                    <div id=\"cultist-counter-wrapper-" + player.id + "\" class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
+                }
                 if (gamedatas.kingkongExpansion) {
-                    html_1 += "\n                    <div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">\n                        <div class=\"tokyo-tower-icon-wrapper\"><div class=\"tokyo-tower-icon\"></div></div>\n                        <span id=\"tokyo-tower-counter-" + player.id + "\"></span>&nbsp;/&nbsp;3\n                    </div>";
+                    html_1 += "<div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">";
+                    for (var level = 1; level <= 3; level++) {
+                        html_1 += "<div id=\"tokyo-tower-icon-" + player.id + "-level-" + level + "\" class=\"tokyo-tower-icon level" + level + "\" data-owned=\"" + player.tokyoTowerLevels.includes(level).toString() + "\"></div>";
+                    }
+                    html_1 += "</div>";
                 }
                 if (gamedatas.cybertoothExpansion) {
                     html_1 += "\n                    <div id=\"berserk-counter-wrapper-" + player.id + "\" class=\"counter berserk-tooltip\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + "\"></div>\n                        </div>\n                    </div>";
                 }
-                if (gamedatas.cthulhuExpansion) {
-                    html_1 += "\n                    <div id=\"cultist-counter-wrapper-" + player.id + "\" class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
-                }
                 html_1 += "</div>";
                 dojo.place(html_1, "player_board_" + player.id);
-                if (gamedatas.kingkongExpansion) {
-                    var tokyoTowerCounter = new ebg.counter();
-                    tokyoTowerCounter.create("tokyo-tower-counter-" + player.id);
-                    tokyoTowerCounter.setValue(player.tokyoTowerLevels.length);
-                    _this.tokyoTowerCounters[playerId] = tokyoTowerCounter;
-                }
                 if (gamedatas.cthulhuExpansion) {
                     var cultistCounter = new ebg.counter();
                     cultistCounter.create("cultist-counter-" + player.id);
@@ -4486,30 +4480,17 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.addClass(popinId + "_setStay" + notif.args.over, 'bgabutton_blue');
         }
     };
-    KingOfTokyo.prototype.getTokyoTowerLevels = function (playerId) {
-        var levels = [];
-        for (var property in this.towerLevelsOwners) {
-            if (this.towerLevelsOwners[property] == playerId) {
-                levels.push(Number(property));
-            }
-        }
-        return levels;
-    };
     KingOfTokyo.prototype.notif_changeTokyoTowerOwner = function (notif) {
         var playerId = notif.args.playerId;
         var previousOwner = this.towerLevelsOwners[notif.args.level];
         this.towerLevelsOwners[notif.args.level] = playerId;
-        var previousOwnerTower = previousOwner == 0 ? this.tableCenter.getTokyoTower() : this.getPlayerTable(previousOwner).getTokyoTower();
         var newLevelTower = playerId == 0 ? this.tableCenter.getTokyoTower() : this.getPlayerTable(playerId).getTokyoTower();
-        var previousOwnerTowerLevels = this.getTokyoTowerLevels(previousOwner);
-        var newLevelTowerLevels = this.getTokyoTowerLevels(playerId);
-        previousOwnerTower.setLevels(previousOwnerTowerLevels);
-        newLevelTower.setLevels(newLevelTowerLevels);
+        transitionToObjectAndAttach(this, document.getElementById("tokyo-tower-level" + notif.args.level), newLevelTower.divId + "-level" + notif.args.level, this.getZoom());
         if (previousOwner != 0) {
-            this.tokyoTowerCounters[previousOwner].toValue(previousOwnerTowerLevels.length);
+            document.getElementById("tokyo-tower-icon-" + previousOwner + "-level-" + notif.args.level).dataset.owned = 'false';
         }
         if (playerId != 0) {
-            this.tokyoTowerCounters[playerId].toValue(newLevelTowerLevels.length);
+            document.getElementById("tokyo-tower-icon-" + playerId + "-level-" + notif.args.level).dataset.owned = 'true';
         }
     };
     KingOfTokyo.prototype.notif_setPlayerBerserk = function (notif) {

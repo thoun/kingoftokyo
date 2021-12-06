@@ -39,7 +39,6 @@ go on tests dir and start execute file, for example `php ./kingoftokyo.game.test
 add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 
-TODOKK add stats
 TODOAN activate stats
 TODOCY add stats
 TODOME add stats

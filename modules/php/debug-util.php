@@ -100,6 +100,8 @@ trait DebugUtilTrait {
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
         //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
+        //$this->changeTokyoTowerOwner(2343493, 1);
+        //$this->changeTokyoTowerOwner(2343493, 2);
 
         $this->gamestate->changeActivePlayer(2343492);
 

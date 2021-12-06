@@ -25,8 +25,8 @@ trait MonsterTrait {
             $monsters = array_merge($monsters, [9, 10]);
         }
 
-        // King Kong,  Cybertooth
-        /* TODOKK/TODOCY if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
+        // King Kong, Cybertooth
+        /* TODOKK if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
             $monsters = array_merge($monsters, [11, 12]);
         }*/
 

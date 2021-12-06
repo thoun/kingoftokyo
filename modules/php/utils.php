@@ -261,9 +261,6 @@ trait UtilTrait {
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
             'locationName' => $locationName,
-            // TODOKK remove
-            'points' => $this->getPlayerScore($playerId),
-            'energy' => $this->getPlayerEnergy($playerId),
         ]);
 
         if ($incEnergy > 0) {
@@ -315,9 +312,6 @@ trait UtilTrait {
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
             'locationName' => $locationName,
-            // TODOKK remove
-            'points' => $this->getPlayerScore($playerId),
-            'energy' => $this->getPlayerEnergy($playerId),
         ]);
     }
 
@@ -919,12 +913,16 @@ trait UtilTrait {
     function changeTokyoTowerOwner(int $playerId, int $level) {
         self::DbQuery("UPDATE `tokyo_tower` SET  `owner` = $playerId where `level` = $level");
 
-        $message = $playerId == 0 ? '' : /* client TODOKK translate(*/'${player_name} claims Tokyo Tower level ${level}'/*)*/;
+        $message = $playerId == 0 ? '' : clienttranslate('${player_name} claims Tokyo Tower level ${level}');
         self::notifyAllPlayers("changeTokyoTowerOwner", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'level' => $level,
         ]);
+
+        if ($playerId > 0) {
+            self::incStat(1, 'tokyoTowerLevel'.$level.'claimed', $playerId);
+        }
     }
 
     function getPlayersIdsWithMaxColumn(string $column) {

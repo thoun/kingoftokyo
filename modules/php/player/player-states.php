@@ -74,14 +74,19 @@ trait PlayerStateTrait {
 
             foreach ($towerLevels as $level) {
                 if ($level == 1 || $level == 2) {
-                    if ($this->canGainHealth($playerId)) {
-                        self::notifyAllPlayers('log', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'/*)*/, [
-                            'playerId' => $playerId,
-                            'player_name' => $this->getPlayerName($playerId),
-                            'level' => $level,
-                        ]);
+                    $playerGettingHearts = $this->getPlayerGettingEnergyOrHeart($playerId);
 
-                        $this->applyGetHealth($playerId, 1, 0, $playerId);
+                    if ($this->canGainHealth($playerGettingHearts)) {
+                        
+                        if ($playerId == $playerGettingHearts) {
+                            self::notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'), [
+                                'playerId' => $playerId,
+                                'player_name' => $this->getPlayerName($playerId),
+                                'level' => $level,
+                            ]);
+                        }
+
+                        $this->applyGetHealth($playerGettingHearts, 1, 0, $playerId);
                     }
                 }
 
@@ -91,7 +96,7 @@ trait PlayerStateTrait {
                     if ($this->canGainEnergy($playerGettingEnergy)) {
         
                         if ($playerId == $playerGettingEnergy) {
-                            self::notifyAllPlayers('log', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'/*)*/, [
+                            self::notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'), [
                                 'playerId' => $playerId,
                                 'player_name' => $this->getPlayerName($playerId),
                                 'level' => $level,
@@ -100,6 +105,13 @@ trait PlayerStateTrait {
 
                         $this->applyGetEnergy($playerGettingEnergy, 1, 0);
                     }
+                }
+
+                if ($level == 1) {
+                    self::incStat(1, 'bonusFromTokyoTowerLevel1applied', $playerId);
+                }
+                if ($level == 2) {
+                    self::incStat(1, 'bonusFromTokyoTowerLevel2applied', $playerId);
                 }
             }
         }

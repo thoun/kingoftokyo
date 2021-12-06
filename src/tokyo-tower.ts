@@ -1,19 +1,18 @@
 class TokyoTower {
-    private divId: string;
+    public divId: string;
 
     constructor(divId: string, levels: number[]) {
         this.divId = `${divId}-tokyo-tower`;
-        dojo.place(`<div id="${this.divId}" class="tokyo-tower tokyo-tower-tooltip">
-            <div class="level level3"></div>
-            <div class="level level2"></div>
-            <div class="level level1"></div>
-        </div>`, divId);
-        this.setLevels(levels);
-    }
-
-    public setLevels(levels: number[]) {
-        for (let i=1; i<=3; i++) {
-            (document.getElementById(this.divId).getElementsByClassName(`level${i}`)[0] as HTMLDivElement).dataset.owned = levels.includes(i) ? 'true' : 'false';
+        let html = `
+        <div id="${this.divId}" class="tokyo-tower tokyo-tower-tooltip">`;
+        for(let i=3; i>=1; i--) {
+            html += `<div id="${this.divId}-level${i}">`;
+            if (levels.includes(i)) {
+                html += `<div id="tokyo-tower-level${i}" class="level level${i}"></div>`;
+            }
+            html += `</div>`;
         }
+        html += `</div>`;
+        dojo.place(html, divId);
     }
 }

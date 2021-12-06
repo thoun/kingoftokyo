@@ -271,6 +271,14 @@ class KingOfTokyo extends Table {
             //self::initStat('player', 'wickednessTilesTaken', 0);
         }
 
+        if ($this->isKingKongExpansion()) {
+            self::initStat('player', 'tokyoTowerLevel1claimed', 0);
+            self::initStat('player', 'tokyoTowerLevel2claimed', 0);
+            self::initStat('player', 'tokyoTowerLevel3claimed', 0);
+            self::initStat('player', 'bonusFromTokyoTowerLevel1applied', 0);
+            self::initStat('player', 'bonusFromTokyoTowerLevel2applied', 0);   
+        }
+
         if (!$this->canPickMonster()) {
             foreach($affectedMonsters as $playerId => $monsterId) {
                 $this->saveMonsterStat($playerId, $monsterId, true);
@@ -300,7 +308,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup();
+        //$this->debugSetup();
 
         /************ End of the game initialization *****/
     }

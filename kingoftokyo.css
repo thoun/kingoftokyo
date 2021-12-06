@@ -1433,8 +1433,8 @@ html[data-dice="3"] .animation {
   z-index: 8;
 }
 .tokyo-tower .level {
+  height: 100%;
   background: url("img/tokyo-tower.png");
-  background-position-x: 100%;
 }
 .tokyo-tower .level.level3 {
   background-position-y: 0%;
@@ -1445,11 +1445,34 @@ html[data-dice="3"] .animation {
 .tokyo-tower .level.level1 {
   background-position-y: 100%;
 }
-.tokyo-tower .level[data-owned=false] {
-  opacity: 0.5;
+
+.mode_3d .tokyo-tower {
+  transform: translateY(-60px) rotateX(-90deg);
+  transform-origin: bottom;
 }
-.tokyo-tower .level[data-owned=true] {
-  background-position-x: 0%;
+
+.tokyo-tower-icon {
+  height: 32px;
+  display: none;
+  background: url("img/tokyo-tower.png") no-repeat;
+}
+.tokyo-tower-icon.level3 {
+  background-position-y: 0%;
+  background-size: auto 390%;
+  width: 26px;
+}
+.tokyo-tower-icon.level2 {
+  background-position-y: 42%;
+  background-size: auto 280%;
+  width: 20px;
+}
+.tokyo-tower-icon.level1 {
+  background-position-y: 100%;
+  background-size: auto 250%;
+  width: 22px;
+}
+.tokyo-tower-icon[data-owned=true] {
+  display: inline-block;
 }
 
 @font-face {
