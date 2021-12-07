@@ -28,41 +28,42 @@ require_once("modules/constants.inc.php");
 $game_options = [
 
     HALLOWEEN_EXPANSION_OPTION => [
-        'name' => totranslate('Halloween event (Costume cards)'),
+        'name' => totranslate('“Halloween” event (Costume cards)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('Halloween event (Costume cards)'),
+                'tmdisplay' => totranslate('“Halloween” event (Costume cards)'),
             ],
         ],
         'default' => 1,
     ],
 
     CTHULHU_EXPANSION_OPTION => [
-        'name' => totranslate('Battle of the Gods (part I) event (Cultists)'), // 'Cthlhu event (Cultists)'
+        'name' => totranslate('“Battle of the Gods, part I” event (Cultists)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('Battle of the Gods (part I) event (Cultists)'),
+                'tmdisplay' => totranslate('“Battle of the Gods, part I” event (Cultists)'),
             ],
         ],
         'default' => 1,
     ],
 
     /* TODOKK KINGKONG_EXPANSION_OPTION => [
-        'name' => totranslate('King Kong event (Tokyo Tower)'),
+        'name' => totranslate('“Nature vs. Machine, part I” event (Tokyo Tower)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('“Nature vs. Machine, part I” event (Tokyo Tower)'),
             ],
         ],
         'default' => 1,
@@ -71,20 +72,21 @@ $game_options = [
                 [ 
                     'type' => 'minplayers',
                     'value' => 9,
-                    'message' => 'Battle of the Gods (part I) event will be available from Friday, Novmber 26th at 11:00',
+                    'message' => '“Nature vs. Machine, part I” event will be available from Friday, xxx at 11:00',
                 ] 
             ],
         ],
     ],*/
 
     /* TODOAN ANUBIS_EXPANSION_OPTION => [
-        'name' => totranslate('Anubis event (Curse die)'),
+        'name' => totranslate('“Battle of the Gods: the Revenge!” event (Curse cards)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('“Battle of the Gods: the Revenge!” event (Curse cards)'),
             ],
         ],
         'default' => 1,
@@ -93,13 +95,14 @@ $game_options = [
     /* TODOCY 
 
     CYBERTOOTH_EXPANSION_OPTION => [
-        'name' => totranslate('Cybertooth event (Berserk)'),
+        'name' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
             ],
         ],
         'default' => 1,
@@ -119,19 +122,22 @@ $game_options = [
     ],*/
 
     /* TODOWI WICKEDNESS_EXPANSION_OPTION => [
-        'name' => totranslate('Wickedness expansion'),
+        'name' => totranslate('“Even more wicked!” event'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
-                'name' => totranslate('Enabled (orange side)'),
+                'name' => totranslate('Enabled') . ' ' . totranslate('(orange side)'),
+                'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(orange side)'),
             ],
             3 => [
-                'name' => totranslate('Enabled (green side)'),
+                'name' => totranslate('Enabled') . ' ' . totranslate('(green side)'),
+                'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(green side)'),
             ],
             4 => [
-                'name' => totranslate('Enabled (random mix)'),
+                'name' => totranslate('Enabled') . ' ' . totranslate('(random mix)'),
+                'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(random mix)'),
             ],
         ],
         'default' => 1,
