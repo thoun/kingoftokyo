@@ -1,4 +1,4 @@
-type DieClickAction = 'move' | 'change' | 'psychicProbeRoll' | 'discard' | 'rerollOrDiscard';
+type DieClickAction = 'move' | 'change' | 'psychicProbeRoll' | 'discard' | 'rerollOrDiscard' | 'rerollDice';
 
 const DIE4_ICONS = [
     null,
@@ -13,6 +13,7 @@ class DiceManager {
     private dieFaceSelectors: DieFaceSelector[] = [];
     private action: DieClickAction;
     private changeDieArgs: EnteringChangeDieArgs;
+    private selectedDice: Dice[];
 
     constructor(private game: KingOfTokyoGame) {
     }
@@ -105,8 +106,9 @@ class DiceManager {
         });
     }
 
-    public setDiceForDiscardDie(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean, action: 'discard' | 'rerollOrDiscard' = 'discard') {
+    public setDiceForDiscardDie(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean, action: 'discard' | 'rerollOrDiscard' | 'rerollDice' = 'discard') {
         this.action = action;
+        this.selectedDice = [];
 
         if (this.dice.length) {
             dice.forEach(die => {
@@ -461,7 +463,22 @@ class DiceManager {
             this.game.discardDie(die.id);
         } else if (this.action === 'rerollOrDiscard') {
             this.game.rerollOrDiscardDie(die.id);
+        } else if (this.action === 'rerollDice') {
+            if (die.type < 2) {
+                dojo.toggleClass(this.getDiceDiv(die), 'die-selected');
+                const selectedDieIndex = this.selectedDice.findIndex(d => d.id == die.id);
+                if (selectedDieIndex !== -1) {
+                    this.selectedDice.splice(selectedDieIndex, 1);
+                } else {
+                    this.selectedDice.push(die);
+                }
+                this.game.toggleRerollDiceButton();
+            }
         }
+    }
+
+    public getSelectedDiceIds() {
+        return this.selectedDice.map(die => die.id);
     }
 
     private addRollToDiv(dieDiv: HTMLDivElement, rollType: string, attempt: number = 0) {

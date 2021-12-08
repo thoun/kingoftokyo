@@ -164,6 +164,9 @@ trait CurseCardsUtilTrait {
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
+            case FALSE_BLESSING_CURSE_CARD:
+                $this->jumpToState(ST_MULTIPLAYER_REROLL_DICE);
+                break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
                 $this->applyLoseEnergy($playerId, 3, $logCardType);
                 break;
@@ -302,5 +305,20 @@ trait CurseCardsUtilTrait {
         ]);
         
         $this->removeCard($playerId, $card);
+    }
+
+    function getRerollDicePlayerId() {
+        if ($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
+            // player on the left
+            $playersIds = $this->getPlayersIds();
+            $playerIndex = array_search(self::getActivePlayerId(), $playersIds);
+            $playerCount = count($playersIds);
+            
+            $leftPlayerId = $playersIds[($playerIndex + 1) % $playerCount];
+            return $leftPlayerId;
+        } else {
+            // player with golden scarab
+            return $this->getPlayerIdWithGoldenScarab();
+        }
     }
 }

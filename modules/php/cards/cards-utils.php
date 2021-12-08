@@ -63,10 +63,10 @@ trait CardsUtilTrait {
 
     function getCardFromDb(array $dbCard) {
         if (!$dbCard || !array_key_exists('id', $dbCard)) {
-            throw new Error('card doesn\'t exists '.json_encode($dbCard));
+            throw new \Error('card doesn\'t exists '.json_encode($dbCard));
         }
         if (!$dbCard || !array_key_exists('location', $dbCard)) {
-            throw new Error('location doesn\'t exists '.json_encode($dbCard));
+            throw new \Error('location doesn\'t exists '.json_encode($dbCard));
         }
         return new Card($dbCard);
     }

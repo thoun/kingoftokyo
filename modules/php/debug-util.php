@@ -78,7 +78,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        $this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
+        $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
         //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".BOW_BEFORE_RA_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);

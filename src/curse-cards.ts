@@ -61,7 +61,7 @@ class CurseCards {
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
             case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
-            // TODOAN case 18 
+            case 18: return "After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.";
             case 19: return "The Monster with the Golden Scarab cannot lose [Heart].";
             case 20: return "At the start of each turn, the Monster with the Golden Scarab must give 1[Heart]/[Energy]/[Star] to the Monster whose turn it is."
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
@@ -117,7 +117,7 @@ class CurseCards {
             case 19: return "Give any combination of 2[Heart]/[Energy]/[Star] to the Monster with the Golden Scarab.";
             case 20: return "Take the Golden Scarab.";
             case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
-            // TODOAN case 22
+            case 22: return "The player on your left chooses two of your dice. Reroll these dice.";
             case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
             case 24: return "Discard 1[dice1]";
         }

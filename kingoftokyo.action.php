@@ -292,6 +292,16 @@
 
         self::ajaxResponse();
     }
+
+    public function rerollDice() {
+        self::setAjaxMode();
+
+        $ids = self::getArg("ids", AT_numberlist, true);
+
+        $this->game->rerollDice(array_map(function($idStr) { return intval($idStr); }, explode(',', $ids)));
+
+        self::ajaxResponse();
+    }
   	
     public function support() {
         self::setAjaxMode();

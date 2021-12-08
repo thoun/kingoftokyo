@@ -97,6 +97,7 @@ trait CardsStateTrait {
 
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
+            $diceValues = $dice != null ? array_map(function ($die) { return $die->value; }, $dice) : [];
 
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
 

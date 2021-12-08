@@ -51,13 +51,15 @@ trait CurseCardsStateTrait {
                 break;
         }
 
+        $nextState = $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD ? ST_MULTIPLAYER_REROLL_DICE : ST_RESOLVE_DICE;
+
         $redirects = false;
         if ($damagesOrState != null && count($damagesOrState) > 0) {
-            $redirects = $this->resolveDamages($damagesOrState, ST_RESOLVE_DICE);
+            $redirects = $this->resolveDamages($damagesOrState, $nextState);
         }
 
         if (!$redirects && $this->gamestate->state()['name'] === 'resolveDieOfFate') { // in case draw cards or other die of fate state already did redirection
-            $this->gamestate->nextState('next');
+            $this->jumpToState($nextState);
         }
     }
 
@@ -67,5 +69,11 @@ trait CurseCardsStateTrait {
         if (count($this->getPlayerRolledDice($playerId, true, false, false)) == 0) {
             $this->gamestate->nextState('next');
         }
+    }
+
+    function stRerollDice() {
+        $playerId = $this->getRerollDicePlayerId();
+
+        $this->gamestate->setPlayersMultiactive([$playerId], 'end', true);
     }
 }

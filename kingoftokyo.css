@@ -193,6 +193,9 @@
 #rolled-dice .dice.selectable, #rolled-dice .die4.selectable {
   cursor: pointer;
 }
+#rolled-dice .dice.die-selected {
+  box-shadow: 0 0 4px 4px red;
+}
 #rolled-dice #dice-actions button {
   width: auto;
 }

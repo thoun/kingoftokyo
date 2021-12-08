@@ -758,7 +758,7 @@ var CurseCards = /** @class */ (function () {
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
             case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
-            // TODOAN case 18 
+            case 18: return "After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.";
             case 19: return "The Monster with the Golden Scarab cannot lose [Heart].";
             case 20: return "At the start of each turn, the Monster with the Golden Scarab must give 1[Heart]/[Energy]/[Star] to the Monster whose turn it is.";
             case 21: return "Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.";
@@ -822,7 +822,7 @@ var CurseCards = /** @class */ (function () {
             case 19: return "Give any combination of 2[Heart]/[Energy]/[Star] to the Monster with the Golden Scarab.";
             case 20: return "Take the Golden Scarab.";
             case 21: return "Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.";
-            // TODOAN case 22
+            case 22: return "The player on your left chooses two of your dice. Reroll these dice.";
             case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
             case 24: return "Discard 1[dice1]";
         }
@@ -1627,6 +1627,7 @@ var DiceManager = /** @class */ (function () {
         var _a;
         if (action === void 0) { action = 'discard'; }
         this.action = action;
+        this.selectedDice = [];
         if (this.dice.length) {
             dice.forEach(function (die) {
                 var divId = "dice" + die.id;
@@ -1953,6 +1954,22 @@ var DiceManager = /** @class */ (function () {
         else if (this.action === 'rerollOrDiscard') {
             this.game.rerollOrDiscardDie(die.id);
         }
+        else if (this.action === 'rerollDice') {
+            if (die.type < 2) {
+                dojo.toggleClass(this.getDiceDiv(die), 'die-selected');
+                var selectedDieIndex = this.selectedDice.findIndex(function (d) { return d.id == die.id; });
+                if (selectedDieIndex !== -1) {
+                    this.selectedDice.splice(selectedDieIndex, 1);
+                }
+                else {
+                    this.selectedDice.push(die);
+                }
+                this.game.toggleRerollDiceButton();
+            }
+        }
+    };
+    DiceManager.prototype.getSelectedDiceIds = function () {
+        return this.selectedDice.map(function (die) { return die.id; });
     };
     DiceManager.prototype.addRollToDiv = function (dieDiv, rollType, attempt) {
         var _this = this;
@@ -2745,6 +2762,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringRerollOrDiscardDie(args.args, this.isCurrentPlayerActive());
                 break;
+            case 'rerollDice':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollDice(args.args, this.isCurrentPlayerActive());
+                break;
             case 'resolveNumberDice':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveNumberDice(args.args);
@@ -2877,6 +2898,12 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollOrDiscard');
+        }
+    };
+    KingOfTokyo.prototype.onEnteringRerollDice = function (args, isCurrentPlayerActive) {
+        var _a;
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollDice');
         }
     };
     KingOfTokyo.prototype.onEnteringDiscardKeepCard = function (args) {
@@ -3220,6 +3247,14 @@ var KingOfTokyo = /** @class */ (function () {
                     }, null, null, 'gray');
                     this.addActionButton('falseBlessingSkip_button', _("Skip"), function () { return _this.falseBlessingSkip(); });
                     break;
+                case 'rerollDice':
+                    var argsRerollDice = args;
+                    this.addActionButton('rerollDice_button', /*_( TODOAN */ "Reroll selected dice" /*)*/, function () { return _this.rerollDice(_this.diceManager.getSelectedDiceIds()); });
+                    dojo.addClass('rerollDice_button', 'disabled');
+                    if (argsRerollDice.min === 0) {
+                        this.addActionButton('skipRerollDice_button', _("Skip"), function () { return _this.rerollDice([]); });
+                    }
+                    break;
                 case 'takeWickednessTile':
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
                     break;
@@ -3445,6 +3480,12 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.getStateName = function () {
         return this.gamedatas.gamestate.name;
+    };
+    KingOfTokyo.prototype.toggleRerollDiceButton = function () {
+        var args = this.gamedatas.gamestate.args;
+        var selectedDiceCount = this.diceManager.getSelectedDiceIds().length;
+        var canReroll = selectedDiceCount >= args.min && selectedDiceCount <= args.max;
+        dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from, warningChecked) {
         var _this = this;
@@ -3914,6 +3955,14 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('falseBlessingSkip');
+    };
+    KingOfTokyo.prototype.rerollDice = function (diceIds) {
+        if (!this.checkAction('rerollDice')) {
+            return;
+        }
+        this.takeAction('rerollDice', {
+            ids: diceIds.join(',')
+        });
     };
     KingOfTokyo.prototype.takeWickednessTile = function (id) {
         if (!this.checkAction('takeWickednessTile')) {

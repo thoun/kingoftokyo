@@ -126,6 +126,7 @@ interface KingOfTokyoGame extends Game {
     checkBuyEnergyDrinkState(): void;
     checkUseSmokeCloudState(): void;
     setFont(prefValue: number): void;
+    toggleRerollDiceButton(): void;
 }
 
 interface EnteringPickMonsterArgs {
@@ -188,6 +189,11 @@ interface EnteringGiveGoldenScarabArgs {
 
 interface EnteringGiveSymbolsArgs {
     combinations: number[][];
+}
+
+interface EnteringRerollDiceArgs extends EnteringDiceArgs {
+    min: number;
+    max: number;
 }
 
 interface EnteringTakeWickednessTileArgs {

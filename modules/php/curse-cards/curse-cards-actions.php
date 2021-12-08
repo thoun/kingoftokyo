@@ -170,4 +170,36 @@ trait CurseCardsActionTrait {
 
         $this->gamestate->nextState('next');
     }
+
+    function rerollDice(array $diceIds) {
+        $this->checkAction('rerollDice'); 
+
+        $playerId = self::getCurrentPlayerId();
+        $activePlayerId = self::getActivePlayerId();
+
+        foreach($diceIds as $dieId) {
+            if ($dieId > 0) {
+                $die = $this->getDieById($dieId);
+                $value = bga_rand(1, 6);
+                self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
+                self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$dieId);
+
+                $message = /*client TODOAN translate(*/'${player_name} force ${player_name2} to reroll ${die_face_before} die and obtained ${die_face_after}'/*)*/;
+                $oldValue = $die->value;
+
+                self::notifyAllPlayers("changeDie", $message, [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'player_name2' => $this->getPlayerName($activePlayerId),
+                    'dieId' => $die->id,
+                    'toValue' => $value,
+                    'roll' => true,
+                    'die_face_before' => $this->getDieFaceLogName($oldValue, $die->type),
+                    'die_face_after' => $this->getDieFaceLogName($value, $die->type),
+                ]);
+            }
+        }
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, '');
+    }
 }

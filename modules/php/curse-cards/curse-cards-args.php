@@ -114,4 +114,30 @@ trait CurseCardsArgTrait {
         ];
     }
 
+    function argRerollDice() {
+        $activePlayerId = self::getActivePlayerId();
+        $activePlayerDice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
+
+        $playerId = $this->getRerollDicePlayerId();
+
+        $diceCount = count(array_filter($activePlayerDice, function ($die) { return $die->type < 2; }));
+
+        $min = min($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD ? 2 : 0, $diceCount);
+        $max = min(2, $diceCount);
+
+        if (gettype($activePlayerDice) !== 'array') {
+            $this->debug(gettype($activePlayerDice) !== 'array');
+            $this->debug([$activePlayerId, $activePlayerDice]);
+        }
+
+        return [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'dice' => $activePlayerDice,
+            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'min' => $min,
+            'max' => $max,
+        ];
+    }
+
 }

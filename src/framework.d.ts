@@ -29,7 +29,7 @@ interface Dojo {
     hasClass: (node: string | HTMLElement, className: string) => boolean;
     addClass: (node: string | HTMLElement, className: string) => void;
     removeClass: (node: string | HTMLElement, className?: string) => void;
-    toggleClass: (node: string | HTMLElement, className: string, forceValue: boolean) => void;
+    toggleClass: (node: string | HTMLElement, className: string, forceValue?: boolean) => void;
     connect: Function;
     query: (query: string) => any; //HTMLElement[]; with some more functions
     forEach: Function;

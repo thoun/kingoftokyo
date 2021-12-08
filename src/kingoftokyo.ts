@@ -209,6 +209,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringRerollOrDiscardDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
+            case 'rerollDice':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollDice(args.args, (this as any).isCurrentPlayerActive());
+                break;
             case 'resolveNumberDice':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveNumberDice(args.args);
@@ -363,6 +367,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringRerollOrDiscardDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
         if (args.dice?.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollOrDiscard');
+        }
+    }
+
+    private onEnteringRerollDice(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
+        if (args.dice?.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollDice');
         }
     }
 
@@ -714,6 +724,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }, null, null, 'gray');
                     (this as any).addActionButton('falseBlessingSkip_button', _("Skip"), () => this.falseBlessingSkip());
                     break;
+                case 'rerollDice':
+                    const argsRerollDice = args as EnteringRerollDiceArgs;
+                    (this as any).addActionButton('rerollDice_button', /*_( TODOAN */"Reroll selected dice"/*)*/, () => this.rerollDice(this.diceManager.getSelectedDiceIds()));
+                    dojo.addClass('rerollDice_button', 'disabled');
+                    if (argsRerollDice.min === 0) {
+                        (this as any).addActionButton('skipRerollDice_button', _("Skip"), () => this.rerollDice([]));
+                    }
+                    break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
                     break;
@@ -1028,6 +1046,13 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private getStateName() {
         return this.gamedatas.gamestate.name;
+    }
+
+    public toggleRerollDiceButton(): void {
+        const args = (this.gamedatas.gamestate.args as EnteringRerollDiceArgs);
+        const selectedDiceCount = this.diceManager.getSelectedDiceIds().length;
+        const canReroll = selectedDiceCount >= args.min && selectedDiceCount <= args.max;
+        dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
     }
 
     public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0, warningChecked: boolean = false) { // from : player id
@@ -1590,6 +1615,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('falseBlessingSkip');
+    }
+
+    public rerollDice(diceIds: number[]) {
+        if(!(this as any).checkAction('rerollDice')) {
+            return;
+        }
+
+        this.takeAction('rerollDice', {
+            ids: diceIds.join(',')
+        });
     }
 
     public takeWickednessTile(id: number) {

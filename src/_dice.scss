@@ -94,6 +94,10 @@
     cursor: pointer;
   }
 
+  .dice.die-selected {
+    box-shadow: 0 0 4px 4px red;
+  }
+
   #dice-actions {
     button {
       width: auto;
