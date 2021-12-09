@@ -517,6 +517,19 @@ $distFromCenter: 1em;
   [data-roll-type="even"][data-roll="4"] {
     transform: translate(-2px, 8px) rotateX(420deg) rotateY(955deg) rotateZ(510deg); // icon 4 ankh
   }
+
+  [data-roll-type="-"][data-roll="1"] {
+    transform: translate(0px, 5px) rotateX(360deg) rotateY(720deg) rotateZ(360deg); // icon 1 eye
+  }
+  [data-roll-type="-"][data-roll="2"] {
+    transform: translate(-5px, 8px) rotateX(300deg) rotateY(900deg) rotateZ(480deg); // icon 2 river
+  }
+  [data-roll-type="-"][data-roll="3"] {
+    transform: translate(-5px, 15px) rotateX(412deg) rotateY(845deg) rotateZ(450deg); // icon 3 snake
+  }
+  [data-roll-type="-"][data-roll="4"] {
+    transform: translate(-2px, 8px) rotateX(420deg) rotateY(955deg) rotateZ(510deg); // icon 4 ankh
+  }
   
   [data-side="1"] {
     //transform: translateZ(4*$size) rotateY(0deg) rotateX($die4angle);
@@ -581,6 +594,24 @@ $distFromCenter: 1em;
   @for $i from 1 through 3 {
     .number:nth-child(#{$i}) {
         transform: rotateZ(#{($i - 1) * 120}deg);
+    }
+  }
+
+  .dice-icon.die-of-fate {
+    transition: opacity 0.5s;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    margin-top: 50%;
+    margin-left: 50%;
+    left: -12px;
+    top: -12px;
+    box-shadow: 0 0 5px 5px #dac971;
+  }
+
+  &[data-rolled="true"] {
+    .dice-icon.die-of-fate {
+      opacity: 0;
     }
   }
 }

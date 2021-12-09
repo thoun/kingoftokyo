@@ -210,7 +210,6 @@ $playerActionsGameStates = [
         "action" => "stGiveSymbolToActivePlayer",
         "possibleactions" => [ "giveSymbolToActivePlayer" ],
         "transitions" => [
-            "" => ST_INITIAL_DICE_ROLL,
             "stay" => ST_INITIAL_DICE_ROLL, // needed for elimination
         ],
     ],

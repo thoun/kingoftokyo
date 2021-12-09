@@ -392,9 +392,11 @@ class DiceManager {
                     DIE4_ICONS[dieFace].forEach(icon => html += `<span class="number face${icon}"><div class="anubis-icon anubis-icon${icon}"></div></span>`);
                 html += `</li>`;
             }
-        html += `    </ol>
-        </div>
-        `;
+        html += `    </ol>`;
+        if (true) {
+            html += `<div class="dice-icon die-of-fate river"></div>`;
+        }
+        html += `</div>`;
 
         dojo.place(html, destinationId);
     }

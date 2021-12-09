@@ -584,6 +584,18 @@
 .die4 [data-roll-type=even][data-roll="4"] {
   transform: translate(-2px, 8px) rotateX(420deg) rotateY(955deg) rotateZ(510deg);
 }
+.die4 [data-roll-type="-"][data-roll="1"] {
+  transform: translate(0px, 5px) rotateX(360deg) rotateY(720deg) rotateZ(360deg);
+}
+.die4 [data-roll-type="-"][data-roll="2"] {
+  transform: translate(-5px, 8px) rotateX(300deg) rotateY(900deg) rotateZ(480deg);
+}
+.die4 [data-roll-type="-"][data-roll="3"] {
+  transform: translate(-5px, 15px) rotateX(412deg) rotateY(845deg) rotateZ(450deg);
+}
+.die4 [data-roll-type="-"][data-roll="4"] {
+  transform: translate(-2px, 8px) rotateX(420deg) rotateY(955deg) rotateZ(510deg);
+}
 .die4 [data-side="1"] {
   transform: rotateX(-70.528779deg) translateZ(1em);
 }
@@ -634,6 +646,20 @@
 }
 .die4 .number:nth-child(3) {
   transform: rotateZ(240deg);
+}
+.die4 .dice-icon.die-of-fate {
+  transition: opacity 0.5s;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  margin-top: 50%;
+  margin-left: 50%;
+  left: -12px;
+  top: -12px;
+  box-shadow: 0 0 5px 5px #dac971;
+}
+.die4[data-rolled=true] .dice-icon.die-of-fate {
+  opacity: 0;
 }
 
 .mode_3d .dice {

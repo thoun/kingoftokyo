@@ -21,7 +21,7 @@ trait CurseCardsActionTrait {
         
         $this->applyGiveSymbols([$symbol], $playerId, $activePlayerId, 1000 + KHEPRI_S_REBELLION_CURSE_CARD);
 
-        $this->gamestate->setPlayerNonMultiactive($playerId, '');
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
 
         if ($symbol == 4) {
             // if player gave its last heart
