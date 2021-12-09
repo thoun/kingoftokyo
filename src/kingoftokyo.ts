@@ -690,7 +690,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     const argsGiveSymbolToActivePlayer = args as EnteringGiveSymbolToActivePlayerArgs;
                     const SYMBOL_AS_STRING = ['[Heart]', '[Energy]', '[Star]'];
                     [4,5,0].forEach((symbol, symbolIndex) => {
-                        (this as any).addActionButton(`giveSymbolToActivePlayer_button${symbol}`, formatTextIcons(dojo.string.substitute(/*TODOAN_(*/"Give ${symbol}"/*)*/, { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbolToActivePlayer(symbol));
+                        (this as any).addActionButton(`giveSymbolToActivePlayer_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbolToActivePlayer(symbol));
                         if (!argsGiveSymbolToActivePlayer.canGive[symbol]) {
                             dojo.addClass(`giveSymbolToActivePlayer_button${symbol}`, 'disabled');
                         }
@@ -728,7 +728,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     const SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
                     argsGiveSymbols.combinations.forEach((combination, combinationIndex) => {
                         const symbols = SYMBOL_AS_STRING_PADDED[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED[combination[1]] : '');
-                        (this as any).addActionButton(`giveSymbols_button${combinationIndex}`, formatTextIcons(dojo.string.substitute(/*TODOAN_(*/"Give ${symbol}"/*)*/, { symbol: symbols })), () => this.giveSymbols(combination));
+                        (this as any).addActionButton(`giveSymbols_button${combinationIndex}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: symbols })), () => this.giveSymbols(combination));
                     });
                     break;
                 case 'selectExtraDie':
@@ -752,7 +752,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'rerollDice':
                     const argsRerollDice = args as EnteringRerollDiceArgs;
-                    (this as any).addActionButton('rerollDice_button', /*_( TODOAN */"Reroll selected dice"/*)*/, () => this.rerollDice(this.diceManager.getSelectedDiceIds()));
+                    (this as any).addActionButton('rerollDice_button', _("Reroll selected dice"), () => this.rerollDice(this.diceManager.getSelectedDiceIds()));
                     dojo.addClass('rerollDice_button', 'disabled');
                     if (argsRerollDice.min === 0) {
                         (this as any).addActionButton('skipRerollDice_button', _("Skip"), () => this.rerollDice([]));
@@ -1044,7 +1044,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables = this.getOrderedPlayers().map(player => {
             const playerId = Number(player.id);
             const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(this, player, gamedatas.playersCards[playerId], playerWithGoldenScarab); // TODOAN replace by player.cards
+            return new PlayerTable(this, player, playerWithGoldenScarab); // TODOAN replace by player.cards
         });
     }
 

@@ -220,7 +220,7 @@ trait CurseCardsUtilTrait {
 
         $card = $this->getCardFromDb($this->curseCards->pickCardForLocation('deck', 'table'));
 
-        $this->notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Die of fate is on [dieFateEye], Curse card is changed'/*)*/, [
+        $this->notifyAllPlayers('changeCurseCard', clienttranslate('Die of fate is on [dieFateEye], Curse card is changed'), [
             'card' => $card,
         ]);
         
@@ -240,7 +240,7 @@ trait CurseCardsUtilTrait {
 
         $this->setGameStateValue(PLAYER_WITH_GOLDEN_SCARAB, $playerId);
 
-        $this->notifyAllPlayers('changeGoldenScarabOwner', /*client TODOAN translate(*/'${player_name} gets Golden Scarab'/*)*/, [
+        $this->notifyAllPlayers('changeGoldenScarabOwner', clienttranslate('${player_name} gets Golden Scarab'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'previousOwner' => $previousOwner,
@@ -297,7 +297,7 @@ trait CurseCardsUtilTrait {
 
         $die = $this->getDieById($dieId);
 
-        $this->notifyAllPlayers("discardedDie", /*client TODOAN translate(*/'Die ${dieFace} is discarded'/*)*/, [
+        $this->notifyAllPlayers("discardedDie", clienttranslate('Die ${dieFace} is discarded'), [
             'die' => $die,
             'dieFace' => $this->getDieFaceLogName($die->value, $die->type),
         ]);
@@ -305,7 +305,7 @@ trait CurseCardsUtilTrait {
 
     function applyDiscardKeepCard(int $playerId, object $card) {
 
-        $this->notifyAllPlayers("discardedDie", /*client TODOAN translate(*/'${player_name} discards ${card_name}'/*)*/, [
+        $this->notifyAllPlayers("discardedDie", clienttranslate('${player_name} discards ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $card->type,

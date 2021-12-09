@@ -289,7 +289,7 @@ trait DiceStateTrait {
 
                 $facesCount = count(array_keys($diceFaces));
                 
-                $damages[] = new Damage($playerId, $facesCount, $playerId, 1000 + FALSE_BLESSING_CURSE_CARD, 0, 0);
+                $damages[] = new Damage($playerId, $facesCount, 0, 1000 + FALSE_BLESSING_CURSE_CARD, 0, 0);
             }
         }
 

@@ -573,7 +573,7 @@ class Cards {
 
     private getTooltip(cardTypeId: number, side: number = null) {
         if (cardTypeId === 999) {
-            return /* TODOAN _*/("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
+            return _("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
         }
         const cost = this.getCardCost(cardTypeId);
         let tooltip = `<div class="card-tooltip">

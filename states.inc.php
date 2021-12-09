@@ -203,8 +203,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_GIVE_SYMBOL_TO_ACTIVE_PLAYER => [
         "name" => "giveSymbolToActivePlayer",
-        "description" => ''/* client TODOAN translate('Player with Golden Scarab must give 1[Heart]/[Energy]/[Star]')*/,
-        "descriptionmyturn" => ''/* client TODOAN translate('${you} must give 1[Heart]/[Energy]/[Star]')*/,
+        "description" => clienttranslate('Player with Golden Scarab must give 1[Heart]/[Energy]/[Star]'),
+        "descriptionmyturn" => clienttranslate('${you} must give 1[Heart]/[Energy]/[Star]'),
         "type" => "multipleactiveplayer",
         "args" => "argGiveSymbolToActivePlayer",
         "action" => "stGiveSymbolToActivePlayer",
@@ -309,8 +309,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_DISCARD_DIE => [
         "name" => "discardDie",
-        "description" => '',/*client TODOAN translate('${actplayer} must dicard a die'),*/
-        "descriptionmyturn" => '',/*client TODOAN translate('${you} must dicard a die (click on a die to discard it)'),*/
+        "description" => clienttranslate('${actplayer} must dicard a die'),
+        "descriptionmyturn" => clienttranslate('${you} must dicard a die (click on a die to discard it)'),
         "type" => "activeplayer",
         "action" => "stDiscardDie",
         "args" => "argDiscardDie",
@@ -322,8 +322,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_DISCARD_KEEP_CARD => [
         "name" => "discardKeepCard",
-        "description" => '',/*client TODOAN translate('${actplayer} must dicard a [keep] card'),*/
-        "descriptionmyturn" => '',/*client TODOAN translate('${you} must dicard a [keep] card'),*/
+        "description" => clienttranslate('${actplayer} must dicard a [keep] card'),
+        "descriptionmyturn" => clienttranslate('${you} must dicard a [keep] card'),
         "type" => "activeplayer",
         "args" => "argDiscardKeepCard",
         "possibleactions" => [ "discardKeepCard" ],
@@ -334,8 +334,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_GIVE_GOLDEN_SCARAB => [
         "name" => "giveGoldenScarab",
-        "description" => '',/*client TODOAN translate('${actplayer} must give Golden Scarab'),*/
-        "descriptionmyturn" => '',/*client TODOAN translate('${you} must give Golden Scarab'),*/
+        "description" => clienttranslate('${actplayer} must give Golden Scarab'),
+        "descriptionmyturn" => clienttranslate('${you} must give Golden Scarab'),
         "type" => "activeplayer",
         "args" => "argGiveGoldenScarab",
         "possibleactions" => [ "giveGoldenScarab" ],
@@ -346,8 +346,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_GIVE_SYMBOLS => [
         "name" => "giveSymbols",
-        "description" => ''/* client TODOAN translate('${actplayer} must give 2[Heart]/[Energy]/[Star]')*/,
-        "descriptionmyturn" => ''/* client TODOAN translate('${you} must give 2[Heart]/[Energy]/[Star]')*/,
+        "description" => clienttranslate('${actplayer} must give 2[Heart]/[Energy]/[Star]'),
+        "descriptionmyturn" => clienttranslate('${you} must give 2[Heart]/[Energy]/[Star]'),
         "type" => "activeplayer",
         "args" => "argGiveSymbols",
         "possibleactions" => [ "giveSymbols" ],
@@ -358,8 +358,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_SELECT_EXTRA_DIE => [
         "name" => "selectExtraDie",
-        "description" => ''/* client TODOAN translate('${actplayer} must select the face of the extra die')*/,
-        "descriptionmyturn" => ''/* client TODOAN translate('${you} must select the face of the extra die')*/,
+        "description" => clienttranslate('${actplayer} must select the face of the extra die'),
+        "descriptionmyturn" => clienttranslate('${you} must select the face of the extra die'),
         "type" => "activeplayer",
         "possibleactions" => [ "selectExtraDie" ],
         "transitions" => [
@@ -369,8 +369,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_REROLL_OR_DISCARD_DICE => [
         "name" => "rerollOrDiscardDie",
-        "description" => ''/* client TODOAN translate('${actplayer} can reroll or discard a die')*/,
-        "descriptionmyturn" => ''/* client TODOAN translate('${you} can reroll or discard a die (select action then die)')*/,
+        "description" => clienttranslate('${actplayer} can reroll or discard a die'),
+        "descriptionmyturn" => clienttranslate('${you} can reroll or discard a die (select action then die)'),
         "type" => "activeplayer",
         "args" => "argRerollOrDiscardDie",
         "possibleactions" => [ "falseBlessingReroll", "falseBlessingDiscard", "falseBlessingSkip" ],
@@ -381,8 +381,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_REROLL_DICE => [
         "name" => "rerollDice",
-        "description" => ''/* client TODOAN translate('${player_name} can reroll two dice')*/,
-        "descriptionmyturn" => ''/* client TODOAN translate('${you} can reroll two dice')*/,
+        "description" => clienttranslate('${player_name} can reroll two dice'),
+        "descriptionmyturn" => clienttranslate('${you} can reroll two dice'),
         "type" => "multipleactiveplayer",
         "args" => "argRerollDice",
         "action" => "stRerollDice",
@@ -480,11 +480,6 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stResolveSmashDice",
         "transitions" => [
-            "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
-            "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
-            "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
-            //"endGame" => ST_END_GAME,
-            // TODOAN / TODOCY remove all transitions top and let this one :
             "next" => ST_RESOLVE_SKULL_DICE,
         ],
     ],

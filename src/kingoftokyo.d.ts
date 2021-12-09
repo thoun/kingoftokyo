@@ -63,6 +63,7 @@ interface KingOfTokyoPlayer extends Player {
     berserk?: boolean;
     cultists: number;
     wickedness?: number;
+    cards: Card[];
     wickednessTiles: WickednessTile[];
     visibleEvolutions?: EvolutionCard[];
     hiddenEvolutions?: EvolutionCard[]; // filled only for current player, else EvolutionCard contains only id
@@ -84,7 +85,6 @@ interface KingOfTokyoGamedatas {
     dice: Die[];
     visibleCards: Card[];
     topDeckCardBackType: string;
-    playersCards: { [playerId: number]: Card[] };
     mimickedCards: {
         card: Card | null;
         tile: Card | null;

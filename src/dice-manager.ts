@@ -378,11 +378,11 @@ class DiceManager {
         dojo.place(html, destinationId);
 
         (this.game as any).addTooltipHtml(`dice${die.id}`, `
-        <strong>${/* TODOAN _*/("Die of Fate effects")}</strong>
-        <div><div class="anubis-icon anubis-icon1"></div> ${/* TODOAN _*/("Change Curse: Discard the current Curse and reveal the next one.")}</div>
-        <div><div class="anubis-icon anubis-icon2"></div> ${/* TODOAN _*/("No effect. The card's permanent effect remains active, however.")}</div>
-        <div><div class="anubis-icon anubis-icon3"></div> ${/* TODOAN _*/("Suffer the Snake effect.")}</div>
-        <div><div class="anubis-icon anubis-icon4"></div> ${/* TODOAN _*/("Receive the blessing of the Ankh effect.")}</div>
+        <strong>${_("Die of Fate effects")}</strong>
+        <div><div class="anubis-icon anubis-icon1"></div> ${_("Change Curse: Discard the current Curse and reveal the next one.")}</div>
+        <div><div class="anubis-icon anubis-icon2"></div> ${_("No effect. The card's permanent effect remains active, however.")}</div>
+        <div><div class="anubis-icon anubis-icon3"></div> ${_("Suffer the Snake effect.")}</div>
+        <div><div class="anubis-icon anubis-icon4"></div> ${_("Receive the blessing of the Ankh effect.")}</div>
         `);
     }
 

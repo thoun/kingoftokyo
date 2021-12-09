@@ -541,7 +541,7 @@ trait CardsUtilTrait {
         }
 
         if (!$this->canGainHealth($playerId)) {
-            throw new \BgaUserException(/* TODOAN self::_(*/'You cannot gain [Heart]'/*)*/);
+            throw new \BgaUserException(self::_('You cannot gain [Heart]'));
         }
 
         if ($this->countCardOfType($playerId, RAPID_HEALING_CARD) == 0) {

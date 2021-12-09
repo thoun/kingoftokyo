@@ -296,7 +296,7 @@ trait CardsActionTrait {
 
         $topDeckCardBackType = $this->getTopDeckCardBackType();
 
-        $this->notifyAllPlayers("buyCard", /*client TODOAN translate(*/'${player_name} draws ${card_name}'/*)*/, [
+        $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} draws ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,

@@ -69,7 +69,7 @@ $game_options = [
         'default' => 2,
     ],
 
-    /* TODOAN ANUBIS_EXPANSION_OPTION => [
+    ANUBIS_EXPANSION_OPTION => [
         'name' => totranslate('“Battle of the Gods: the Revenge!” event (Curse cards)'),
         'values' => [
             1 => [
@@ -81,7 +81,7 @@ $game_options = [
             ],
         ],
         'default' => 1,
-        'startcondition' => [ // TODOAN
+        'startcondition' => [
             2 => [
                 [ 
                     'type' => 'minplayers',
@@ -90,7 +90,7 @@ $game_options = [
                 ] 
             ],
         ],
-    ],*/
+    ],
 
     /* TODOCY 
 

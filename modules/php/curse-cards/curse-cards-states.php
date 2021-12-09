@@ -28,21 +28,21 @@ trait CurseCardsStateTrait {
             case 1: 
                 $this->changeCurseCard($playerId);
 
-                // TODOAN $this->incStat(1, 'dieOfFateEye', $playerId);
+                $this->incStat(1, 'dieOfFateEye', $playerId);
                 break;
             case 2:
-                $this->notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'/*)*/, [
+                $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'), [
                     'card_name' => 1000 + $cardType,
                 ]);
 
-                // TODOAN $this->incStat(1, 'dieOfFateRiver', $playerId);
+                $this->incStat(1, 'dieOfFateRiver', $playerId);
                 break;
             case 3:
-                $this->notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateSnake], Snake effect of ${card_name} is applied'/*)*/, [
+                $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateSnake], Snake effect of ${card_name} is applied'), [
                     'card_name' => 1000 + $cardType,
                 ]);
 
-                // TODOAN $this->incStat(1, 'dieOfFateSnake', $playerId);
+                $this->incStat(1, 'dieOfFateSnake', $playerId);
 
                 $damagesOrState = $this->applySnakeEffect($playerId, $cardType);
                 if (gettype($damagesOrState) === 'integer') {
@@ -51,11 +51,11 @@ trait CurseCardsStateTrait {
                 }
                 break;
             case 4:
-                $this->notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'/*)*/, [
+                $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'), [
                    'card_name' => 1000 + $cardType,
                 ]);
 
-                // TODOAN $this->incStat(1, 'dieOfFateAnkh', $playerId);
+                $this->incStat(1, 'dieOfFateAnkh', $playerId);
 
                 $this->applyAnkhEffect($playerId, $cardType);
                 break;

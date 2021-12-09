@@ -52,8 +52,7 @@ trait DiceUtilTrait {
     }
     
     function getDice(int $number) {
-        $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
-        // TODOAN TODOCY $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
+        $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
         $dbDices = $this->getCollectionFromDb($sql);
         $dice = array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices));
         return array_values(array_filter($dice, fn($die) => !$die->discarded));
@@ -240,8 +239,13 @@ trait DiceUtilTrait {
     }
 
     function resolveHealthDice(int $playerId, int $diceCount) {
-        if (!$this->canHealWithDice($playerId)) { // TODOAN change message
-            $this->notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} gains no [Heart] (player in Tokyo)'), [
+        if (!$this->canHealWithDice($playerId)) {
+            $message = clienttranslate('${player_name} gains no [Heart] (player in Tokyo)');
+            if ($this->isAnubisExpansion() && $this->getCurseCardType() == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
+                $message = clienttranslate('${player_name} gains no [Heart] (player outside Tokyo)');
+            }
+
+            $this->notifyAllPlayers( "resolveHealthDiceInTokyo",$message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
             ]);

@@ -118,7 +118,7 @@ trait CurseCardsActionTrait {
         $this->checkAction('falseBlessingReroll'); 
 
         if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
-            throw new \BgaUserException(/* TODOAN self::_(*/'You already made an action for this die'/*)*/);
+            throw new \BgaUserException(self::_('You already made an action for this die'));
         }
 
         $playerId = $this->getActivePlayerId(); 
@@ -149,7 +149,7 @@ trait CurseCardsActionTrait {
         $this->checkAction('falseBlessingDiscard'); 
 
         if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
-            throw new \BgaUserException(/* TODOAN self::_(*/'You already made an action for this die'/*)*/);
+            throw new \BgaUserException(self::_('You already made an action for this die'));
         }
 
         $this->applyDiscardDie($dieId);
@@ -184,7 +184,7 @@ trait CurseCardsActionTrait {
                 $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
                 $this->DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$dieId);
 
-                $message = /*client TODOAN translate(*/'${player_name} force ${player_name2} to reroll ${die_face_before} die and obtained ${die_face_after}'/*)*/;
+                $message = clienttranslate('${player_name} force ${player_name2} to reroll ${die_face_before} die and obtained ${die_face_after}');
                 $oldValue = $die->value;
 
                 $this->notifyAllPlayers("changeDie", $message, [

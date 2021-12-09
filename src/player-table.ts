@@ -19,7 +19,7 @@ class PlayerTable {
     public hiddenEvolutionCards: Stock;
     public visibleEvolutionCards: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], playerWithGoldenScarab: boolean) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -55,12 +55,12 @@ class PlayerTable {
             <div id="visible-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.visibleEvolutions?.length ? '' : 'empty'}"></div>
             `;
         }
-        html += `    <div id="cards-${player.id}" class="card-stock player-cards ${cards.length ? '' : 'empty'}"></div>
+        html += `    <div id="cards-${player.id}" class="card-stock player-cards ${player.cards.length ? '' : 'empty'}"></div>
         </div>
         `;
         dojo.place(html, 'table');
 
-        this.setMonsterFigureBeastMode(cards.find(card => card.type === 301)?.side === 1);
+        this.setMonsterFigureBeastMode(player.cards.find(card => card.type === 301)?.side === 1);
 
         this.cards = new ebg.stock() as Stock;
         this.cards.setSelectionAppearance('class');
@@ -73,7 +73,7 @@ class PlayerTable {
         dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.cards, itemId, this.playerId));
 
         this.game.cards.setupCards([this.cards]);
-        this.game.cards.addCardsToStock(this.cards, cards);
+        this.game.cards.addCardsToStock(this.cards, player.cards);
         if (playerWithGoldenScarab) {
             this.cards.addToStockWithId(999, 'goldenscarab');
         }

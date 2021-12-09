@@ -268,19 +268,13 @@ class KingOfTokyo extends Table {
             $this->initStat('player', 'cultistEnergy', 0);
         }
         if ($this->isAnubisExpansion()) {
-            // TODOAN $this->initStat('player', 'dieOfFateEye', 0);
-            // TODOAN $this->initStat('player', 'dieOfFateRiver', 0);
-            // TODOAN $this->initStat('player', 'dieOfFateSnake', 0);
-            // TODOAN $this->initStat('player', 'dieOfFateAnkh', 0);
+            $this->initStat('player', 'dieOfFateEye', 0);
+            $this->initStat('player', 'dieOfFateRiver', 0);
+            $this->initStat('player', 'dieOfFateSnake', 0);
+            $this->initStat('player', 'dieOfFateAnkh', 0);
         }
 
-
-        // TODOAN "dieOfFateEye" => ["id" => 52, "type" => "int", "name" => totranslate("Changed card with die of fate")],
-        // TODOAN "dieOfFateRiver" => ["id" => 53, "type" => "int", "name" => totranslate("No effect with die of fate")],
-        // TODOAN "dieOfFateSnake" => ["id" => 54, "type" => "int", "name" => totranslate("Snake effect with die of fate")],
-        // TODOAN "dieOfFateAnkh" => ["id" => 55, "type" => "int", "name" => totranslate("Ankh effect with die of fate")],
-
-        if ($wickednessExpansion > 1) { // TODOWI
+        if ($wickednessExpansion > 1) {
             //$this->initStat('player', 'gainedWickedness', 0);
             //$this->initStat('player', 'wickednessTilesTaken', 0);
         }
@@ -386,17 +380,9 @@ class KingOfTokyo extends Table {
             $result['tokyoTowerLevels'] = $this->getTokyoTowerLevels(0);
         }
 
-        $result['playersCards'] = []; // TODOAN remove
         foreach ($result['players'] as $playerId => &$playerDb) {
-            $playerCards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            $result['playersCards'][$playerId] = $playerCards; // TODOAN remove
-            $playerDb['cards'] = $playerCards;
+            $playerDb['cards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
 
-            foreach($result['playersCards'][$playerId] as &$card) { // TODOAN remove
-                if ($card->type == MIMIC_CARD) {
-                    $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
-                }
-            }
             foreach($playerDb['cards'] as &$card) {
                 if ($card->type == MIMIC_CARD) {
                     $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);

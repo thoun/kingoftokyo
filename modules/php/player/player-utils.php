@@ -263,11 +263,11 @@ trait PlayerUtilTrait {
         }
 
         if ($type == 4 && !$this->canGainHealth($playerId)) {
-            throw new \BgaUserException(/* TODOAN self::_(*/'You cannot gain [Heart]'/*)*/);
+            throw new \BgaUserException(self::_('You cannot gain [Heart]'));
         }
 
         if ($type == 5 && !$this->canGainEnergy($playerId)) {
-            throw new \BgaUserException(/* TODOAN self::_(*/'You cannot gain [Energy]'/*)*/);
+            throw new \BgaUserException(self::_('You cannot gain [Energy]'));
         }
 
         if ($type == 4) {
