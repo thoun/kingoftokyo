@@ -597,6 +597,22 @@ $distFromCenter: 1em;
     }
   }
 
+  &[data-dice-value="1"] .dice-icon.die-of-fate {
+    background-position: 0% 0%;
+  }
+
+  &[data-dice-value="2"] .dice-icon.die-of-fate {
+    background-position: 33.33% 0%;
+  }
+
+  &[data-dice-value="3"] .dice-icon.die-of-fate {
+    background-position: 66.66% 0%;
+  }
+
+  &[data-dice-value="4"] .dice-icon.die-of-fate {
+    background-position: 100% 0%;
+  }
+
   .dice-icon.die-of-fate {
     transition: opacity 0.5s;
     width: 24px;

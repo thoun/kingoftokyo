@@ -394,7 +394,7 @@ class DiceManager {
             }
         html += `    </ol>`;
         if (true) {
-            html += `<div class="dice-icon die-of-fate river"></div>`;
+            html += `<div class="dice-icon die-of-fate"></div>`;
         }
         html += `</div>`;
 

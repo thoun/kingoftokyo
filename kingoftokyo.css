@@ -647,6 +647,18 @@
 .die4 .number:nth-child(3) {
   transform: rotateZ(240deg);
 }
+.die4[data-dice-value="1"] .dice-icon.die-of-fate {
+  background-position: 0% 0%;
+}
+.die4[data-dice-value="2"] .dice-icon.die-of-fate {
+  background-position: 33.33% 0%;
+}
+.die4[data-dice-value="3"] .dice-icon.die-of-fate {
+  background-position: 66.66% 0%;
+}
+.die4[data-dice-value="4"] .dice-icon.die-of-fate {
+  background-position: 100% 0%;
+}
 .die4 .dice-icon.die-of-fate {
   transition: opacity 0.5s;
   width: 24px;
