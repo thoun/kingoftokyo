@@ -122,7 +122,8 @@ trait CurseCardsArgTrait {
 
         $diceCount = count(array_filter($activePlayerDice, function ($die) { return $die->type < 2; }));
 
-        $min = min($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD ? 2 : 0, $diceCount);
+        $forceRerollTwoDice = $this->getCurseCardType() == FALSE_BLESSING_CURSE_CARD;
+        $min = min($forceRerollTwoDice ? 2 : 0, $diceCount);
         $max = min(2, $diceCount);
 
         if (gettype($activePlayerDice) !== 'array') {

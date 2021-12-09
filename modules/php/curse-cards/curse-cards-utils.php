@@ -21,7 +21,6 @@ trait CurseCardsUtilTrait {
         $logCardType = 1000 + $cardType;
 
         switch($cardType) {
-            // TODOAN
             case PHARAONIC_EGO_CURSE_CARD:
                 $this->leaveTokyo($playerId);
                 break;
@@ -91,7 +90,6 @@ trait CurseCardsUtilTrait {
         $logCardType = 1000 + $cardType;
 
         switch($cardType) {
-            // TODOAN
             case PHARAONIC_EGO_CURSE_CARD:
                 return $this->replacePlayersInTokyo($playerId);
             case ISIS_S_DISGRACE_CURSE_CARD: 
@@ -135,7 +133,7 @@ trait CurseCardsUtilTrait {
                 $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
                 $damages = [];
                 foreach ($playersIds as $pId) {
-                    $damages[] = new Damage($pId, 1, $playerId, $logCardType); // TODOAN TOCHECK confirm the player is the damage dealer ? or 0 ?
+                    $damages[] = new Damage($pId, 1, $playerId, $logCardType);
                 }
                 return $damages;
             case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
@@ -308,7 +306,7 @@ trait CurseCardsUtilTrait {
     }
 
     function getRerollDicePlayerId() {
-        if ($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
+        if ($this->getCurseCardType() == FALSE_BLESSING_CURSE_CARD) {
             // player on the left
             $playersIds = $this->getPlayersIds();
             $playerIndex = array_search(self::getActivePlayerId(), $playersIds);

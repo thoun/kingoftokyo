@@ -710,7 +710,7 @@ var CurseCards = /** @class */ (function () {
     };
     CurseCards.prototype.getCardName = function (cardTypeId) {
         switch (cardTypeId) {
-            // TODOAN
+            // TODOAN translate
             case 1: return "Pharaonic Ego";
             case 2: return "Isis's Disgrace";
             case 3: return "Thot's Blindness";
@@ -741,7 +741,7 @@ var CurseCards = /** @class */ (function () {
     CurseCards.prototype.getPermanentEffect = function (cardTypeId) {
         switch (cardTypeId) {
             // TODOAN translate
-            case 1: return "Monsters cannot Yield Tokyo/Manhattan."; // TODOAN keep manhattan ?
+            case 1: return "Monsters cannot Yield Tokyo.";
             case 2: return "Monsters without the Golden Scarab cannot gain [Heart].";
             case 3: return "Monsters without the Golden Scarab cannot gain [Energy].";
             case 4: return "Monsters without the Golden Scarab cannot gain [Star].";
@@ -756,7 +756,7 @@ var CurseCards = /** @class */ (function () {
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
-            case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
+            case 16: return "Monsters outside of Tokyo cannot use [diceHeart]. Monsters in Tokyo can use their [diceHeart].";
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
             case 18: return "After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.";
             case 19: return "The Monster with the Golden Scarab cannot lose [Heart].";
@@ -829,7 +829,7 @@ var CurseCards = /** @class */ (function () {
         return null;
     };
     CurseCards.prototype.getTooltip = function (cardTypeId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p>" + "Permanent effect" + " : " + formatTextIcons(this.getPermanentEffect(cardTypeId)) + "</p>\n            <p>" + "Ankh effect" + " : " + formatTextIcons(this.getAnkhEffect(cardTypeId)) + "</p>\n            <p>" + "Snake effect" + " : " + formatTextIcons(this.getSnakeEffect(cardTypeId)) + "</p>\n        </div>";
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p><strong>" + "Permanent effect" + " :</strong> " + formatTextIcons(this.getPermanentEffect(cardTypeId)) + "</p>\n            <p><strong>" + "Ankh effect" + " :</strong> " + formatTextIcons(this.getAnkhEffect(cardTypeId)) + "</p>\n            <p><strong>" + "Snake effect" + " :</strong> " + formatTextIcons(this.getSnakeEffect(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     CurseCards.prototype.setupNewCard = function (cardDiv, cardType) {
@@ -1628,14 +1628,14 @@ var DiceManager = /** @class */ (function () {
         if (action === void 0) { action = 'discard'; }
         this.action = action;
         this.selectedDice = [];
-        if (this.dice.length) {
-            dice.forEach(function (die) {
-                var divId = "dice" + die.id;
-                var selectable = isCurrentPlayerActive && _this.action !== null;
+        /*if (this.dice.length) { force die for event
+            dice.forEach(die => {
+                const divId = `dice${die.id}`;
+                const selectable = isCurrentPlayerActive && this.action !== null;
                 dojo.toggleClass(divId, 'selectable', selectable);
             });
             return;
-        }
+        }*/
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
@@ -1971,6 +1971,11 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.getSelectedDiceIds = function () {
         return this.selectedDice.map(function (die) { return die.id; });
     };
+    DiceManager.prototype.removeSelection = function () {
+        var _this = this;
+        this.selectedDice.forEach(function (die) { return dojo.removeClass(_this.getDiceDiv(die), 'die-selected'); });
+        this.selectedDice = [];
+    };
     DiceManager.prototype.addRollToDiv = function (dieDiv, rollType, attempt) {
         var _this = this;
         if (attempt === void 0) { attempt = 0; }
@@ -2018,7 +2023,6 @@ var DiceManager = /** @class */ (function () {
         var _this = this;
         if (die.type === 2) {
             // die of fate cannot be changed by power cards
-            // TODOAN make die cursor forbidden
             return;
         }
         var divId = "dice" + die.id;
@@ -3071,6 +3075,9 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'discardKeepCard':
                 this.onLeavingSellCard();
+                break;
+            case 'rerollDice':
+                this.diceManager.removeSelection();
                 break;
             case 'takeWickednessTile':
                 this.onLeavingTakeWickednessTile();

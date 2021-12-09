@@ -40,7 +40,7 @@ add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 
 TODOKK add stats
-TODOAN add stats
+TODOAN activate stats
 TODOCY add stats
 TODOCY check what happens if healed by Healing Ray
 TODOCY confirm forbidden heal & heal on tokens shouldn't remove berserk
@@ -49,8 +49,3 @@ TODOCY confirm double smash/double energy can be used to gain cultists
 TODOME add stats
 TODOME flip cards (remove 302)
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
-
-remaining Anubis :
-
-After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.
-The player on your left chooses two of your dice. Reroll these dice.

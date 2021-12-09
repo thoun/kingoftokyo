@@ -546,6 +546,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'discardKeepCard':
                 this.onLeavingSellCard();
                 break;
+            case 'rerollDice':
+                this.diceManager.removeSelection();
+                break;
             case 'takeWickednessTile':
                 this.onLeavingTakeWickednessTile();
                 break;

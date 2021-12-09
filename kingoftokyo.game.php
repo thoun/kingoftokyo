@@ -175,7 +175,7 @@ class KingOfTokyo extends Table {
             $color = array_shift( $default_colors );
             $values[] = "('".$playerId."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
         }
-        $sql .= implode($values, ',');
+        $sql .= implode(',', $values);
         self::DbQuery($sql);
         self::reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
         self::reloadPlayersBasicInfos();
@@ -252,6 +252,19 @@ class KingOfTokyo extends Table {
             self::initStat('player', 'cultistHeal', 0);
             self::initStat('player', 'cultistEnergy', 0);
         }
+        if ($this->isAnubisExpansion()) {
+            // TODOAN self::initStat('player', 'dieOfFateEye', 0);
+            // TODOAN self::initStat('player', 'dieOfFateRiver', 0);
+            // TODOAN self::initStat('player', 'dieOfFateSnake', 0);
+            // TODOAN self::initStat('player', 'dieOfFateAnkh', 0);
+        }
+
+
+        // TODOAN "dieOfFateEye" => ["id" => 52, "type" => "int", "name" => totranslate("Changed card with die of fate")],
+        // TODOAN "dieOfFateRiver" => ["id" => 53, "type" => "int", "name" => totranslate("No effect with die of fate")],
+        // TODOAN "dieOfFateSnake" => ["id" => 54, "type" => "int", "name" => totranslate("Snake effect with die of fate")],
+        // TODOAN "dieOfFateAnkh" => ["id" => 55, "type" => "int", "name" => totranslate("Ankh effect with die of fate")],
+
         if ($wickednessExpansion > 1) {
             //self::initStat('player', 'gainedWickedness', 0);
             //self::initStat('player', 'wickednessTilesTaken', 0);

@@ -110,14 +110,14 @@ class DiceManager {
         this.action = action;
         this.selectedDice = [];
 
-        if (this.dice.length) {
+        /*if (this.dice.length) { force die for event
             dice.forEach(die => {
                 const divId = `dice${die.id}`;
                 const selectable = isCurrentPlayerActive && this.action !== null;
                 dojo.toggleClass(divId, 'selectable', selectable);
             });
             return;
-        }
+        }*/
 
         this.dice?.forEach(die => this.removeDice(die));  
         this.clearDiceHtml();
@@ -480,6 +480,11 @@ class DiceManager {
     public getSelectedDiceIds() {
         return this.selectedDice.map(die => die.id);
     }
+    
+    public removeSelection() {
+        this.selectedDice.forEach(die => dojo.removeClass(this.getDiceDiv(die), 'die-selected'));
+        this.selectedDice = [];
+    }
 
     private addRollToDiv(dieDiv: HTMLDivElement, rollType: string, attempt: number = 0) {
         const dieList = (dieDiv.getElementsByClassName('die-list')[0] as HTMLDivElement);
@@ -527,7 +532,6 @@ class DiceManager {
     private toggleBubbleChangeDie(die: Dice) {
         if (die.type === 2) {
             // die of fate cannot be changed by power cards
-            // TODOAN make die cursor forbidden
             return;
         }
         const divId = `dice${die.id}`;

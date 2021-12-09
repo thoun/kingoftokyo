@@ -12,7 +12,7 @@ class CurseCards {
 
     public getCardName(cardTypeId: number): string {
         switch (cardTypeId) {
-            // TODOAN
+            // TODOAN translate
             case 1: return "Pharaonic Ego";
             case 2: return "Isis's Disgrace";
             case 3: return "Thot's Blindness";
@@ -44,7 +44,7 @@ class CurseCards {
     private getPermanentEffect(cardTypeId: number): string {
         switch (cardTypeId) {
             // TODOAN translate
-            case 1: return "Monsters cannot Yield Tokyo/Manhattan."; // TODOAN keep manhattan ?
+            case 1: return "Monsters cannot Yield Tokyo.";
             case 2: return "Monsters without the Golden Scarab cannot gain [Heart].";
             case 3: return "Monsters without the Golden Scarab cannot gain [Energy].";
             case 4: return "Monsters without the Golden Scarab cannot gain [Star].";
@@ -59,7 +59,7 @@ class CurseCards {
             case 13: return "At the start of each turn, the Monster(s) with the most [Heart] lose 1[Heart].";
             case 14: return "At the start of each turn, the Monster(s) with the most [Star] lose 1[Star].";
             case 15: return "At the start of each turn, the Monster(s) with the most [Energy] lose 1[Energy].";
-            case 16: return "Monsters outside of Tokyo/Manhattan cannot use [diceHeart]. Monsters in Tokyo/Manhattan can use their [diceHeart]."; // TODOAN keep manhattan ? TODOAN adapt front forbidden icon
+            case 16: return "Monsters outside of Tokyo cannot use [diceHeart]. Monsters in Tokyo can use their [diceHeart].";
             case 17: return "Monsters without the Golden Scarab cannot buy Power cards.";
             case 18: return "After resolving the die of Fate, the Monster with the Golden Scarab can force you to reroll up to 2 dice of his choice.";
             case 19: return "The Monster with the Golden Scarab cannot lose [Heart].";
@@ -127,9 +127,9 @@ class CurseCards {
     private getTooltip(cardTypeId: number) {
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId)}</strong></p>
-            <p>${/* TODOAN */ "Permanent effect"} : ${formatTextIcons(this.getPermanentEffect(cardTypeId))}</p>
-            <p>${/* TODOAN */ "Ankh effect"} : ${formatTextIcons(this.getAnkhEffect(cardTypeId))}</p>
-            <p>${/* TODOAN */ "Snake effect"} : ${formatTextIcons(this.getSnakeEffect(cardTypeId))}</p>
+            <p><strong>${/* TODOAN */ "Permanent effect"} :</strong> ${formatTextIcons(this.getPermanentEffect(cardTypeId))}</p>
+            <p><strong>${/* TODOAN */ "Ankh effect"} :</strong> ${formatTextIcons(this.getAnkhEffect(cardTypeId))}</p>
+            <p><strong>${/* TODOAN */ "Snake effect"} :</strong> ${formatTextIcons(this.getSnakeEffect(cardTypeId))}</p>
         </div>`;
         return tooltip;
     }

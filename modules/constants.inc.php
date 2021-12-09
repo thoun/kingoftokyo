@@ -251,7 +251,7 @@ define('ORDEAL_OF_THE_WEALTHY_CURSE_CARD', 14);
 define('ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD', 15);
 define('RESURRECTION_OF_OSIRIS_CURSE_CARD', 16);
 define('FORBIDDEN_LIBRARY_CURSE_CARD', 17);
-define('CONFUSED_SENSES_CURSE_CARD', 18); // TODO check if player with goden scarab can reroll / test if player roll ankh & got scarab during the turn
+define('CONFUSED_SENSES_CURSE_CARD', 18);
 define('PHARAONIC_SKIN_CURSE_CARD', 19);
 define('KHEPRI_S_REBELLION_CURSE_CARD', 20);
 define('BODY_SPIRIT_AND_KA_CURSE_CARD', 21);

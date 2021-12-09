@@ -147,7 +147,7 @@ trait PlayerStateTrait {
             $logCardType = 1000 + $curseCardType;
             switch($curseCardType) {
                 case SET_S_STORM_CURSE_CARD:
-                    $damages[] = new Damage($playerId, 1, $playerId, $logCardType); // TODOAN TOCHECK confirm the player is the damage dealer ? or 0 ?
+                    $damages[] = new Damage($playerId, 1, $playerId, $logCardType);
                     break;
                 case BUILDERS_UPRISING_CURSE_CARD: 
                     $this->applyLosePoints($playerId, 2, $logCardType);
@@ -155,7 +155,7 @@ trait PlayerStateTrait {
                 case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                     $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
                     foreach ($playersIds as $pId) {
-                        $damages[] = new Damage($pId, 1, $playerId, $logCardType); // TODOAN TOCHECK confirm the player is the damage dealer ? or 0 ?
+                        $damages[] = new Damage($pId, 1, $playerId, $logCardType);
                     }
                     break;
                 case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
