@@ -405,7 +405,7 @@ trait UtilTrait {
             if ($player->health == 0 && !$player->eliminated) {
                 // Final Roar
                 if ($this->isWickednessExpansion() && $this->gotWickednessTile($player->id, FINAL_ROAR_WICKEDNESS_TILE) && $player->score >= 16) {
-                    $this->applyGetPoints($playerId, MAX_POINT - $player->score, 2000 + FINAL_ROAR_WICKEDNESS_TILE);
+                    $this->applyGetPoints($player->id, MAX_POINT - $player->score, 2000 + FINAL_ROAR_WICKEDNESS_TILE);
                 } else {
                     // Zombie
                     $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);

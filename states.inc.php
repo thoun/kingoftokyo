@@ -382,8 +382,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_REROLL_DICE => [
         "name" => "rerollDice",
-        "description" => clienttranslate('${player_name} can reroll two dice'),
-        "descriptionmyturn" => clienttranslate('${you} can reroll two dice'),
+        "description" => ''/* client TODOAN translate('${player_name} can reroll two dice')*/,
+        "descriptionmyturn" => ''/* client TODOAN translate('${you} can reroll two dice')*/,
         "type" => "multipleactiveplayer",
         "args" => "argRerollDice",
         "action" => "stRerollDice",
