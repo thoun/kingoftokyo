@@ -59,6 +59,7 @@ trait CardsUtilTrait {
             $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
         }
         $this->curseCards->createCards($cards, 'deck');
+        $this->curseCards->shuffle('deck'); 
     }
 
     function getCardFromDb(array $dbCard) {
