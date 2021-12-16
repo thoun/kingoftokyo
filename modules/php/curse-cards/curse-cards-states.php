@@ -61,7 +61,10 @@ trait CurseCardsStateTrait {
                 break;
         }
 
-        $nextState = $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD ? ST_MULTIPLAYER_REROLL_DICE : ST_RESOLVE_DICE;
+        $nextState = ST_RESOLVE_DICE;
+        if ($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD && $playerId != $this->getPlayerIdWithGoldenScarab()) {
+            $nextState = ST_MULTIPLAYER_REROLL_DICE;
+        }
 
         $redirects = false;
         if ($damagesOrState != null && count($damagesOrState) > 0) {
