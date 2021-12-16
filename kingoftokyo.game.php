@@ -448,7 +448,9 @@ class KingOfTokyo extends Table {
         $this->cards->shuffle('deck'); 
 
         // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MIMIC_CARD);
+        // TODO $this->debugSetupBeforePlaceCard();
         $cards = $this->placeNewCardsOnTable();
+        // TODO $this->debugSetupAfterPlaceCard();
         // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".EVEN_BIGGER_CARD);
 
         self::notifyAllPlayers("setInitialCards", '', [

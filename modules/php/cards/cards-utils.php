@@ -77,6 +77,9 @@ trait CardsUtilTrait {
     }
 
     function applyEffects(int $cardType, int $playerId, bool $opportunist) { // return $damages
+        if ($cardType < 100 && !$this->keepAndEvolutionCardsHaveEffect()) {
+            return;
+        }
 
         switch($cardType) {
             // KEEP
