@@ -19,7 +19,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(5);
+        $this->debugSetEnergy(15);
         $this->debugSetPoints(5);
         $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -35,6 +35,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
         //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
+        $this->debugSetCardInTable(EXTRA_HEAD_1_CARD, 2343492);
         //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
@@ -79,8 +80,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
-        //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".BOW_BEFORE_RA_CURSE_CARD);
+        $this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
+        //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
         //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");

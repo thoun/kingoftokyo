@@ -197,6 +197,7 @@ trait PlayerStateTrait {
     function stInitialDiceRoll() {
         $playerId = self::getActivePlayerId();
 
+        self::setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
         $this->throwDice($playerId, true);
 
         $this->gamestate->nextState('');

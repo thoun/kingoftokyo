@@ -168,8 +168,12 @@ trait DiceUtilTrait {
         self::DbQuery( "UPDATE dice SET `rolled` = false");
     }
 
-    function getDiceNumber(int $playerId) {
-        $add = intval(self::getGameStateValue(RAGING_FLOOD_EXTRA_DIE)) + $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
+    function getDiceNumber(int $playerId, $compute = false) {
+        if (!$compute) {
+            return intval(self::getGameStateValue(DICE_NUMBER)) + intval(self::getGameStateValue(RAGING_FLOOD_EXTRA_DIE));
+        } 
+
+        $add = $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, CYBERBRAIN_WICKEDNESS_TILE)) {
