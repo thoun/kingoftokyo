@@ -127,6 +127,7 @@ interface KingOfTokyoGame extends Game {
     checkUseSmokeCloudState(): void;
     setFont(prefValue: number): void;
     toggleRerollDiceButton(): void;
+    getPlayerEnergy(playerId: number): number;
 }
 
 interface EnteringPickMonsterArgs {
@@ -172,6 +173,7 @@ interface EnteringPsychicProbeRollDieArgs extends EnteringDiceArgs {
 }
 
 interface EnteringChangeDieArgs extends EnteringDiceArgs {
+    playerId: number;
     hasHerdCuller: boolean;
     hasPlotTwist: boolean;
     hasStretchy: boolean;

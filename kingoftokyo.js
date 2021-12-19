@@ -2094,7 +2094,14 @@ var DiceManager = /** @class */ (function () {
                             dojo.toggleClass(plotTwistButtonId_1, 'disabled', value < 1);
                         }
                         if (args_1.hasStretchy) {
-                            dojo.toggleClass(stretchyButtonId_1, 'disabled', value < 1);
+                            var couldUseStretchy = value >= 1;
+                            dojo.toggleClass(stretchyButtonId_1, 'disabled', !couldUseStretchy || _this.game.getPlayerEnergy(args_1.playerId) < 2);
+                            if (couldUseStretchy) {
+                                document.getElementById(stretchyButtonId_1).dataset.enableAtEnergy = '2';
+                            }
+                            else {
+                                document.getElementById(stretchyButtonId_1).removeAttribute('data-enable-at-energy');
+                            }
                         }
                     }
                 };
@@ -4573,6 +4580,9 @@ var KingOfTokyo = /** @class */ (function () {
         if (document.getElementById(popinId)) {
             this.updateAutoLeavePopinButtons();
         }
+    };
+    KingOfTokyo.prototype.getPlayerEnergy = function (playerId) {
+        return this.energyCounters[playerId].getValue();
     };
     KingOfTokyo.prototype.setEnergy = function (playerId, energy, delay) {
         if (delay === void 0) { delay = 0; }

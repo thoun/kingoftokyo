@@ -2,14 +2,6 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/dice.php');
-require_once(__DIR__.'/../objects/player-intervention.php');
-require_once(__DIR__.'/../objects/damage.php');
-
-use KOT\Objects\Dice;
-use KOT\Objects\ChangeActivePlayerDieIntervention;
-use KOT\Objects\Damage;
-
 trait DiceArgTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,7 +64,7 @@ trait DiceArgTrait {
     }
 
     function argChangeDie() {
-        $playerId = self::getActivePlayerId();
+        $playerId = intval(self::getActivePlayerId());
 
         $cardsArg = $this->getChangeDieCards($playerId);
 
@@ -80,6 +72,7 @@ trait DiceArgTrait {
         $canRetrow3 = $hasBackgroundDweller && intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
 
         $diceArg = [
+            'playerId' => $playerId,
             'dice' => $this->getPlayerRolledDice($playerId, true, true, true),
             'canHealWithDice' => $this->canHealWithDice($playerId),
             'rethrow3' => [

@@ -633,7 +633,13 @@ class DiceManager {
                             dojo.toggleClass(plotTwistButtonId, 'disabled', value < 1);
                         }
                         if (args.hasStretchy) {
-                            dojo.toggleClass(stretchyButtonId, 'disabled', value < 1);
+                            const couldUseStretchy = value >= 1;
+                            dojo.toggleClass(stretchyButtonId, 'disabled', !couldUseStretchy || this.game.getPlayerEnergy(args.playerId) < 2);
+                            if (couldUseStretchy) {
+                                document.getElementById(stretchyButtonId).dataset.enableAtEnergy = '2';
+                            } else {
+                                document.getElementById(stretchyButtonId).removeAttribute('data-enable-at-energy');
+                            }
                         }
                     }
                 };

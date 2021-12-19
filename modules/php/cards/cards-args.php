@@ -305,7 +305,6 @@ trait CardsArgTrait {
 
     function argStealCostumeCard() {
         $playerId = self::getActivePlayerId();
-        $playerEnergy = $this->getPlayerEnergy($playerId);
 
         $potentialEnergy = $this->getPlayerEnergy($playerId);
         if ($this->isCthulhuExpansion()) {

@@ -406,7 +406,11 @@ trait DiceUtilTrait {
         // Plot Twist
         $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST_CARD) > 0;
         // Stretchy
-        $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $this->getPlayerEnergy($playerId) >= 2;
+        $potentialEnergy = $this->getPlayerEnergy($playerId);
+        if ($this->isCthulhuExpansion()) {
+            $potentialEnergy += $this->getPlayerCultists($playerId);
+        }
+        $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $potentialEnergy >= 2;
 
         $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
         // Clown

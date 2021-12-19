@@ -2334,6 +2334,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.updateAutoLeavePopinButtons();
         }
     }
+
+    public getPlayerEnergy(playerId: number): number {
+        return this.energyCounters[playerId].getValue();
+    }
     
     private setEnergy(playerId: number, energy: number, delay: number = 0) {
         this.energyCounters[playerId].toValue(energy);
