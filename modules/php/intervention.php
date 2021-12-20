@@ -39,15 +39,17 @@ trait InterventionTrait {
 
             $playerId = $intervention->remainingPlayersId[0];
 
+            $damageDealerId = 0;
             $damage = 0;
             foreach($intervention->damages as $d) {
                 if ($d->playerId == $playerId) {
                     $damage = $d->damage;
+                    $damageDealerId = $d->damageDealerId;
                     break;
                 }
             } 
 
-            $keep = CancelDamageIntervention::canDoIntervention($this, $playerId, $damage);
+            $keep = CancelDamageIntervention::canDoIntervention($this, $playerId, $damage, $damageDealerId);
 
             // if player cannot cancel damage, we apply them
             if (!$keep) {           

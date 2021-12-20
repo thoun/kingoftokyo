@@ -825,7 +825,7 @@ trait UtilTrait {
         $cancellableDamages = [];
         $playersIds = [];
         foreach ($damages as $damage) {
-            if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage)) {
+            if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId)) {
                 $cancellableDamages[] = $damage;
                 if (!in_array($damage->playerId, $playersIds)) {
                     $playersIds[] = $damage->playerId;

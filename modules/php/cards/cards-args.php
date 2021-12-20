@@ -264,6 +264,10 @@ trait CardsArgTrait {
             foreach($intervention->damages as $damage) {
                 if ($damage->playerId == $playerId) {
                     $remainingDamage += $damage->damage;
+
+                    if ($this->countCardOfType($damage->damageDealerId, DEVIL_CARD)) {
+                        $remainingDamage += 1;
+                    }
                 }
             }
 

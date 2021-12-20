@@ -22,11 +22,11 @@ trait DebugUtilTrait {
         //$this->debugSetEnergy(1);
         $this->debugSetPoints(5);
         //$this->debugSetHealth(1);
-        //$this->debugSetPlayerHealth(2343493, 1);
+        $this->debugSetPlayerHealth(2343493, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2");
-        //self::DbQuery("UPDATE player SET `player_cultists` = 2");
+        self::DbQuery("UPDATE player SET `player_cultists` = 2");
         //self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
@@ -67,8 +67,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343492);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
-        $this->debugSetCardInHand(BURROWING_CARD, 2343492);
-        $this->debugSetCardInHand(URBAVORE_CARD, 2343492);
+        //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
+        //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
+        $this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);

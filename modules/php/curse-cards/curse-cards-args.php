@@ -126,11 +126,6 @@ trait CurseCardsArgTrait {
         $min = min($forceRerollTwoDice ? 2 : 0, $diceCount);
         $max = min(2, $diceCount);
 
-        if (gettype($activePlayerDice) !== 'array') {
-            $this->debug(gettype($activePlayerDice) !== 'array');
-            $this->debug([$activePlayerId, $activePlayerDice]);
-        }
-
         return [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
