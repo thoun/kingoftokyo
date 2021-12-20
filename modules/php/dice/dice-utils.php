@@ -612,7 +612,7 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($diceCounts[6] >= 1) {
+        if ($diceCounts[6] + $addedSmashes >= 1) {
             // spiked tail
             $countSpikedTail = $this->countCardOfType($playerId, SPIKED_TAIL_CARD);
             if ($countSpikedTail > 0) {
