@@ -2995,10 +2995,10 @@ var KingOfTokyo = /** @class */ (function () {
             }
             var rapidHealingSyncButtons = document.querySelectorAll("[id^='rapidHealingSync_button'");
             rapidHealingSyncButtons.forEach(function (rapidHealingSyncButton) { return rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton); });
-            if (args.damageToCancelToSurvive) {
+            if (args.canHeal) {
                 var _loop_4 = function (i) {
                     var cultistCount = i;
-                    var rapidHealingCount = args.rapidHealingHearts > 0 ? args.damageToCancelToSurvive - cultistCount : 0;
+                    var rapidHealingCount = args.rapidHealingHearts > 0 ? args.canHeal - cultistCount : 0;
                     var cardsNames = [];
                     if (cultistCount > 0) {
                         cardsNames.push(_('Cultist'));
@@ -3006,14 +3006,14 @@ var KingOfTokyo = /** @class */ (function () {
                     if (rapidHealingCount > 0) {
                         cardsNames.push(_(this_3.cards.getCardName(37, 'text-only')));
                     }
-                    if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive) {
-                        var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("" + _('Gain ${hearts}[Heart]') + (rapidHealingCount > 0 ? " (" + 2 * rapidHealingCount + "[Energy])" : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.damageToCancelToSurvive });
+                    if (cultistCount + rapidHealingCount >= args.canHeal) {
+                        var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("" + _('Gain ${hearts}[Heart]') + (rapidHealingCount > 0 ? " (" + 2 * rapidHealingCount + "[Energy])" : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.canHeal });
                         this_3.addActionButton("rapidHealingSync_button_" + i, text, function () { return _this.useRapidHealingSync(cultistCount, rapidHealingCount); });
                     }
                 };
                 var this_3 = this;
                 //this.rapidHealingSyncHearts = args.rapidHealingHearts;
-                for (var i = Math.min(args.rapidHealingCultists, args.damageToCancelToSurvive); i >= 0; i--) {
+                for (var i = Math.min(args.rapidHealingCultists, args.canHeal); i >= 0; i--) {
                     _loop_4(i);
                 }
             }

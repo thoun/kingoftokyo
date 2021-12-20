@@ -272,7 +272,17 @@ trait CardsArgTrait {
             $rapidHealingHearts = $this->cancellableDamageWithRapidHealing($playerId);
             $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
             $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $this->getPlayerHealth($playerId));
-            if (($rapidHealingHearts + $rapidHealingCultists) < $damageToCancelToSurvive) {
+            $canHeal = $rapidHealingHearts + $rapidHealingCultists;
+            $gotRegeneration = $this->countCardOfType($playerId, REGENERATION_CARD) > 0;
+            $cancelHealWithEnergyCards = false;
+            if ($gotRegeneration) {
+                $cancelHealWithEnergyCards = $canHeal*2 < $damageToCancelToSurvive;
+            } else {
+                $cancelHealWithEnergyCards = $canHeal < $damageToCancelToSurvive;
+            }
+
+            if ($cancelHealWithEnergyCards) {
+                $canHeal = 0;
                 $rapidHealingHearts = 0;
                 $rapidHealingCultists = 0;
                 $damageToCancelToSurvive = 0;
@@ -287,6 +297,7 @@ trait CardsArgTrait {
                 'rapidHealingHearts' => $rapidHealingHearts,
                 'rapidHealingCultists' => $rapidHealingCultists,
                 'damageToCancelToSurvive' => $damageToCancelToSurvive,
+                'canHeal' => $canHeal,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
                 'damage' => $remainingDamage,

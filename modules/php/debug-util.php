@@ -21,12 +21,13 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetEnergy(1);
         $this->debugSetPoints(5);
-        $this->debugSetHealth(5);
-        //$this->debugSetPlayerHealth(2343492, 1);
+        //$this->debugSetHealth(1);
+        $this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2");
-        self::DbQuery("UPDATE player SET `player_cultists` = 3 where `player_id` = 2343492");
+        self::DbQuery("UPDATE player SET `player_cultists` = 2");
+        self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
@@ -59,7 +60,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        $this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494);

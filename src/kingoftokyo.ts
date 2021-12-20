@@ -450,12 +450,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             const rapidHealingSyncButtons = document.querySelectorAll(`[id^='rapidHealingSync_button'`);
             rapidHealingSyncButtons.forEach(rapidHealingSyncButton => rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton));
-            if (args.damageToCancelToSurvive) {
+            if (args.canHeal) {
                 //this.rapidHealingSyncHearts = args.rapidHealingHearts;
                 
-                for (let i = Math.min(args.rapidHealingCultists, args.damageToCancelToSurvive); i >= 0; i--) {
+                for (let i = Math.min(args.rapidHealingCultists, args.canHeal); i >= 0; i--) {
                     const cultistCount = i;
-                    const rapidHealingCount = args.rapidHealingHearts > 0 ? args.damageToCancelToSurvive - cultistCount : 0;
+                    const rapidHealingCount = args.rapidHealingHearts > 0 ? args.canHeal - cultistCount : 0;
                     const cardsNames = [];
 
                     if (cultistCount > 0) {
@@ -465,8 +465,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                         cardsNames.push(_(this.cards.getCardName(37, 'text-only')));
                     }
 
-                    if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive) {
-                        const text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')}` + (rapidHealingCount > 0 ? ` (${2*rapidHealingCount}[Energy])` : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.damageToCancelToSurvive });
+                    if (cultistCount + rapidHealingCount >= args.canHeal) {
+                        const text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')}` + (rapidHealingCount > 0 ? ` (${2*rapidHealingCount}[Energy])` : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.canHeal });
                         (this as any).addActionButton(`rapidHealingSync_button_${i}`, text, () => this.useRapidHealingSync(cultistCount, rapidHealingCount));
                     }
                 }

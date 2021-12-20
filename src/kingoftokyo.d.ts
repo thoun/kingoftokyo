@@ -252,6 +252,7 @@ interface EnteringCancelDamageArgs {
     rapidHealingHearts: number;
     rapidHealingCultists: number;
     damageToCancelToSurvive: number;
+    canHeal: number;
     damage: number;
 }
 

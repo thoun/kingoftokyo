@@ -649,7 +649,6 @@ trait CardsActionTrait {
         }
     
         $playerHealth = $this->getPlayerHealth($playerId);
-        $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $playerHealth);
 
         for ($i=0; $i<$cultistCount; $i++) {
             if ($this->getPlayerCultists($playerId) >= 1) {
