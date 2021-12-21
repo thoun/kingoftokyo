@@ -1461,15 +1461,15 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public useRapidHealing() {
-        this.takeAction('useRapidHealing');
+        this.takeNoLockAction('useRapidHealing');
     }
 
     public useRapidCultist(type: number) { // 4 for health, 5 for energy
-        this.takeAction('useRapidCultist', { type });
+        this.takeNoLockAction('useRapidCultist', { type });
     }
 
     public setSkipBuyPhase(skipBuyPhase: boolean) {
-        this.takeAction('setSkipBuyPhase', {
+        this.takeNoLockAction('setSkipBuyPhase', {
             skipBuyPhase
         });
     }
@@ -1873,18 +1873,24 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public setLeaveTokyoUnder(under: number) {
-        this.takeAction('setLeaveTokyoUnder', {
+        this.takeNoLockAction('setLeaveTokyoUnder', {
             under
         });
     }
 
     public setStayTokyoOver(over: number) {
-        this.takeAction('setStayTokyoOver', {
+        this.takeNoLockAction('setStayTokyoOver', {
             over
         });
     }
 
     public takeAction(action: string, data?: any) {
+        data = data || {};
+        data.lock = true;
+        (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
+    }
+
+    public takeNoLockAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
         (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});

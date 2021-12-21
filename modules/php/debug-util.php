@@ -17,11 +17,11 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
-        //$this->debugSetPlayerInLocation(2343492, 1);
-        $this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(3);
+        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343493, 2);
+        $this->debugSetEnergy(5);
         $this->debugSetPoints(5);
-        //$this->debugSetHealth(1);
+        $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343493, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
@@ -73,10 +73,10 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
-        //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
+        $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
-        $this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
+        //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
         //$this->debugSetPlayerHealth(2343492, 11);
@@ -84,7 +84,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
 
-        $this->debugSetCardInHand(PIRATE_CARD, 2343492);
+        //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
         //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);

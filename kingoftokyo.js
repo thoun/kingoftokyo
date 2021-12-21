@@ -3849,13 +3849,13 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.useRapidHealing = function () {
-        this.takeAction('useRapidHealing');
+        this.takeNoLockAction('useRapidHealing');
     };
     KingOfTokyo.prototype.useRapidCultist = function (type) {
-        this.takeAction('useRapidCultist', { type: type });
+        this.takeNoLockAction('useRapidCultist', { type: type });
     };
     KingOfTokyo.prototype.setSkipBuyPhase = function (skipBuyPhase) {
-        this.takeAction('setSkipBuyPhase', {
+        this.takeNoLockAction('setSkipBuyPhase', {
             skipBuyPhase: skipBuyPhase
         });
     };
@@ -4170,16 +4170,21 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.setLeaveTokyoUnder = function (under) {
-        this.takeAction('setLeaveTokyoUnder', {
+        this.takeNoLockAction('setLeaveTokyoUnder', {
             under: under
         });
     };
     KingOfTokyo.prototype.setStayTokyoOver = function (over) {
-        this.takeAction('setStayTokyoOver', {
+        this.takeNoLockAction('setStayTokyoOver', {
             over: over
         });
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
+        data = data || {};
+        data.lock = true;
+        this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
+    };
+    KingOfTokyo.prototype.takeNoLockAction = function (action, data) {
         data = data || {};
         data.lock = true;
         this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
