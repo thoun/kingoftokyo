@@ -378,7 +378,7 @@ trait DiceUtilTrait {
 
             // we add damage only if it's not already counted in smashed players (without tokens)
             if (!in_array($damagePlayerId, $smashedPlayersIds)) {
-                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $damagePlayerId, 0, 0, 0);
+                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $playerId, 0, 0, 0);
             }
         }
 
