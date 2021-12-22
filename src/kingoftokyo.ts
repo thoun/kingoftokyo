@@ -2412,6 +2412,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    public checkUseCultistState() {
+        if (document.getElementById('use_cultist_button')) {
+            dojo.toggleClass('use_cultist_button', 'disabled', !this.diceManager.canRethrow());
+        }
+    }
+
     private eliminatePlayer(playerId: number) {
         this.gamedatas.players[playerId].eliminated = 1;
         document.getElementById(`overall_player_board_${playerId}`).classList.add('eliminated-player');

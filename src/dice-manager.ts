@@ -367,6 +367,7 @@ class DiceManager {
         this.activateRethrowButton();
         this.game.checkBuyEnergyDrinkState();
         this.game.checkUseSmokeCloudState();
+        this.game.checkUseCultistState();
     }
 
     public lockAll() {

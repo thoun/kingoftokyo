@@ -1870,6 +1870,7 @@ var DiceManager = /** @class */ (function () {
         this.activateRethrowButton();
         this.game.checkBuyEnergyDrinkState();
         this.game.checkUseSmokeCloudState();
+        this.game.checkUseCultistState();
     };
     DiceManager.prototype.lockAll = function () {
         var _this = this;
@@ -4650,6 +4651,11 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.checkUseSmokeCloudState = function () {
         if (document.getElementById('use_smoke_cloud_button')) {
             dojo.toggleClass('use_smoke_cloud_button', 'disabled', !this.diceManager.canRethrow());
+        }
+    };
+    KingOfTokyo.prototype.checkUseCultistState = function () {
+        if (document.getElementById('use_cultist_button')) {
+            dojo.toggleClass('use_cultist_button', 'disabled', !this.diceManager.canRethrow());
         }
     };
     KingOfTokyo.prototype.eliminatePlayer = function (playerId) {

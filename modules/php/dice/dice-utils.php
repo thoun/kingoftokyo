@@ -526,6 +526,10 @@ trait DiceUtilTrait {
     }
   	
     function rethrowDice(string $diceIds) {
+        if ($diceIds == '') {
+            throw new \BgaUserException('No dice to reroll');
+        }
+
         $playerId = self::getActivePlayerId();
         self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
         self::DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN ($diceIds)");

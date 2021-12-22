@@ -125,6 +125,7 @@ interface KingOfTokyoGame extends Game {
     getPreferencesManager(): PreferencesManager;
     checkBuyEnergyDrinkState(): void;
     checkUseSmokeCloudState(): void;
+    checkUseCultistState(): void;
     setFont(prefValue: number): void;
     toggleRerollDiceButton(): void;
     getPlayerEnergy(playerId: number): number;
