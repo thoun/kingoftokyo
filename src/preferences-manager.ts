@@ -35,7 +35,7 @@ class PreferencesManager {
         if (versionNumber > 0) {
             return versionNumber;
         } else {
-            return 3; // this.game.isHalloweenExpansion() ? 2 : 1;
+            return this.game.isHalloweenExpansion() ? 2 : 1;
         }
     }
       

@@ -104,7 +104,7 @@ html, .mode_3d #game_play_area_background {
   background-position: center center;
   background-repeat: no-repeat;
 
-  @for $i from 1 through 17 {
+  @for $i from 1 through 18 {
       &.monster#{$i} {
           background-image: url('img/monster-figure-#{$i}.png');
       }

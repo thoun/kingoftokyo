@@ -1071,18 +1071,6 @@
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon {
   position: absolute;
 }
-#table #table-center #full-board #wickedness-board .monster-icon.monster14 {
-  background-position: 108.3333333333% 50%;
-}
-#table #table-center #full-board #wickedness-board .monster-icon.monster15 {
-  background-position: 116.6666666667% 50%;
-}
-#table #table-center #full-board #wickedness-board .monster-icon.monster16 {
-  background-position: 125% 50%;
-}
-#table #table-center #full-board #wickedness-board .monster-icon.monster17 {
-  background-position: 133.3333333333% 50%;
-}
 #table .player-table {
   width: 440px;
   position: relative;
@@ -1235,6 +1223,9 @@
 }
 #table .player-table .monster-board-wrapper .monster-board.monster17 {
   background-image: url("img/monster-board-17.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster18 {
+  background-image: url("img/monster-board-18.png");
 }
 #table .player-table .energy-wrapper {
   position: absolute;
@@ -1579,6 +1570,9 @@ html, .mode_3d #game_play_area_background {
 }
 .monster-figure.monster17 {
   background-image: url("img/monster-figure-17.png");
+}
+.monster-figure.monster18 {
+  background-image: url("img/monster-figure-18.png");
 }
 
 #kot-table.pickMonster {

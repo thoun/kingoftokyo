@@ -34,6 +34,11 @@ trait MonsterTrait {
         if ($bonusMonsters) {
             $monsters = array_merge($monsters, [16, 17]);
         }
+
+        // Baby Gigazaur
+        if ($bonusMonsters) {
+            $monsters = array_merge($monsters, [18]);
+        }
         
         return $monsters;
     }
