@@ -80,6 +80,13 @@ trait UtilTrait {
         return false;
     }
 
+    function releaseDatePassed(string $activationDateStr) {
+        $currentdate = new \DateTimeImmutable();
+        $activationdate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $activationDateStr.'+00:00')->sub(new \DateInterval('PT1H')); // "2021-12-30T21:41:00+00:00"
+        $diff = $currentdate->diff($activationdate);
+        return $diff->invert;
+    }
+
     function autoSkipImpossibleActions() {
         return $this->isTurnBased() || intval(self::getGameStateValue(AUTO_SKIP_OPTION)) === 2;
     }

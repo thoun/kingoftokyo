@@ -36,7 +36,7 @@ trait MonsterTrait {
         }
 
         // Baby Gigazaur
-        if ($bonusMonsters) {
+        if ($bonusMonsters/* && $this->releaseDatePassed("2021-12-31T11:00:00")*/) {
             $monsters = array_merge($monsters, [18]);
         }
         
