@@ -2658,6 +2658,10 @@ var KingOfTokyo = /** @class */ (function () {
         });
         this.dontPreloadImage("tokyo-2pvariant.jpg");
         this.dontPreloadImage("background-halloween.jpg");
+        this.dontPreloadImage("background-christmas.jpg");
+        this.dontPreloadImage("animations-halloween.jpg");
+        this.dontPreloadImage("animations-christmas.jpg");
+        this.dontPreloadImage("christmas_dice.png");
         if (!gamedatas.halloweenExpansion) {
             this.dontPreloadImage("costume-cards.jpg");
             this.dontPreloadImage("orange_dice.png");
@@ -4641,6 +4645,9 @@ var KingOfTokyo = /** @class */ (function () {
             }
             else {
                 this.removeRapidCultistButtons();
+                if (document.getElementById('use_cultist_button')) {
+                    dojo.addClass('use_cultist_button', 'disabled');
+                }
             }
         }
     };

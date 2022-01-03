@@ -62,6 +62,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
         (this as any).dontPreloadImage(`tokyo-2pvariant.jpg`);
         (this as any).dontPreloadImage(`background-halloween.jpg`);
+        (this as any).dontPreloadImage(`background-christmas.jpg`);
+        (this as any).dontPreloadImage(`animations-halloween.jpg`);
+        (this as any).dontPreloadImage(`animations-christmas.jpg`);
+        (this as any).dontPreloadImage(`christmas_dice.png`);
         if (!gamedatas.halloweenExpansion) {
             (this as any).dontPreloadImage(`costume-cards.jpg`);
             (this as any).dontPreloadImage(`orange_dice.png`);
@@ -2393,6 +2397,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.addRapidCultistButtons(isMaxHealth);
             } else {        
                 this.removeRapidCultistButtons();
+
+                if (document.getElementById('use_cultist_button')) {
+                    dojo.addClass('use_cultist_button', 'disabled');
+                }
             }
         }
     }
