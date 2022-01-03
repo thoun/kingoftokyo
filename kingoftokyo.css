@@ -560,6 +560,7 @@
   border: 0;
   height: 4.3301270189em;
   width: 5em;
+  -webkit-clip-path: polygon(50% 0, 100% 100%, 0 100%);
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   box-sizing: border-box;
 }
@@ -669,6 +670,7 @@
   left: -12px;
   top: -12px;
   box-shadow: 0 0 5px 5px #dac971;
+  transform: translateZ(50px);
 }
 .die4[data-rolled=true] .dice-icon.die-of-fate {
   opacity: 0;

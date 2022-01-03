@@ -1830,6 +1830,7 @@ var DiceManager = /** @class */ (function () {
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         var dieDivId = "dice" + die.id;
         var dieDiv = document.getElementById(dieDivId);
+        dieDiv.dataset.rolled = 'false';
         var destinationId = die.locked ? this.getLockedDiceId(die) : "dice-selector";
         var tempDestinationId = "temp-destination-wrapper-" + destinationId + "-" + die.id;
         var tempOriginId = "temp-origin-wrapper-" + destinationId + "-" + die.id;

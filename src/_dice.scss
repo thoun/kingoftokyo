@@ -491,6 +491,7 @@ $distFromCenter: 1em;
       border: 0;
       height: $die4height;
       width: $die4size;
+      -webkit-clip-path: polygon(50% 0, 100% 100%, 0 100%);
       clip-path: polygon(50% 0, 100% 100%, 0 100%);
       box-sizing: border-box;
   }
@@ -623,6 +624,7 @@ $distFromCenter: 1em;
     left: -12px;
     top: -12px;
     box-shadow: 0 0 5px 5px #dac971;
+    transform: translateZ(50px);
   }
 
   &[data-rolled="true"] {

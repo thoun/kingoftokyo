@@ -322,6 +322,7 @@ class DiceManager {
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
         const dieDivId = `dice${die.id}`;
         const dieDiv = document.getElementById(dieDivId);
+        dieDiv.dataset.rolled = 'false';
 
         const destinationId = die.locked ? this.getLockedDiceId(die) : `dice-selector`;
         const tempDestinationId = `temp-destination-wrapper-${destinationId}-${die.id}`;
