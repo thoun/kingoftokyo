@@ -267,14 +267,17 @@ trait DiceUtilTrait {
             return;
         }
         
-        $playerGettingEnergy = $this->applyGetEnergy($playerId, $diceCount, -1);
+        $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
         self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [
             'playerId' => $playerGettingEnergy,
             'player_name' => $this->getPlayerName($playerGettingEnergy),
             'deltaEnergy' => $diceCount,
+            // TODOKK remove
             'energy' => $this->getPlayerEnergy($playerGettingEnergy),
         ]);
+        
+        $this->applyGetEnergy($playerId, $diceCount, 0);
     }
 
     

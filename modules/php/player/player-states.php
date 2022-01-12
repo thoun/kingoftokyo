@@ -75,26 +75,30 @@ trait PlayerStateTrait {
             foreach ($towerLevels as $level) {
                 if ($level == 1 || $level == 2) {
                     if ($this->canGainHealth($playerId)) {
-                        $this->applyGetHealth($playerId, 1, -1, $playerId);
-
-                        self::notifyAllPlayers('health', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'/*)*/, [
+                        self::notifyAllPlayers('log', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'/*)*/, [
                             'playerId' => $playerId,
                             'player_name' => $this->getPlayerName($playerId),
-                            'health' => $this->getPlayerHealth($playerId),
                             'level' => $level,
                         ]);
+
+                        $this->applyGetHealth($playerId, 1, 0, $playerId);
                     }
                 }
 
                 if ($level == 2) {
-                    if ($this->canGainEnergy($playerId)) {
-                        $this->applyGetEnergy($playerId, 1, -1);
+                    $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
+
+                    if ($this->canGainEnergy($playerGettingEnergy)) {
         
-                        self::notifyAllPlayers('energy', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'/*)*/, [
-                            'playerId' => $playerId,
-                            'player_name' => $this->getPlayerName($playerId),
-                            'level' => $level,
-                        ]);
+                        if ($playerId == $playerGettingEnergy) {
+                            self::notifyAllPlayers('log', /*client TODOKK translate(*/'${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'/*)*/, [
+                                'playerId' => $playerId,
+                                'player_name' => $this->getPlayerName($playerId),
+                                'level' => $level,
+                            ]);
+                        }
+
+                        $this->applyGetEnergy($playerGettingEnergy, 1, 0);
                     }
                 }
             }
@@ -105,16 +109,19 @@ trait PlayerStateTrait {
             // start turn in tokyo
 
             if ($this->isTwoPlayersVariant()) {
-                if ($this->canGainEnergy($playerId)) {
-                    $incEnergy = 1;
-                    $this->applyGetEnergy($playerId, $incEnergy, -1);
+                $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
-                    self::notifyAllPlayers('energy', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
-                        'playerId' => $playerId,
-                        'player_name' => $this->getPlayerName($playerId),
-                        'energy' => $this->getPlayerEnergy($playerId),
-                        'deltaEnergy' => $incEnergy,
-                    ]);
+                if ($this->canGainEnergy($playerGettingEnergy)) {
+                    $incEnergy = 1;
+
+                    if ($playerId == $playerGettingEnergy) {
+                        self::notifyAllPlayers('log', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
+                            'playerId' => $playerId,
+                            'player_name' => $this->getPlayerName($playerId),
+                            'deltaEnergy' => $incEnergy,
+                        ]);
+                    }
+                    $this->applyGetEnergy($playerGettingEnergy, $incEnergy, 0);
                 }
             } else {
                 if ($this->canGainPoints($playerId)) {

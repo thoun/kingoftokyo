@@ -19,14 +19,14 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(5);
-        $this->debugSetPoints(5);
-        $this->debugSetHealth(5);
+        //$this->debugSetEnergy(5);
+        //$this->debugSetPoints(5);
+        //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343493, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2");
-        self::DbQuery("UPDATE player SET `player_cultists` = 2");
+        //self::DbQuery("UPDATE player SET `player_cultists` = 2");
         //self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
@@ -71,7 +71,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
-        $this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
+        //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
@@ -86,7 +86,7 @@ trait DebugUtilTrait {
 
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
         //$this->setPlayerBerserk(2343492, true);
-        //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
+        $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
         //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);

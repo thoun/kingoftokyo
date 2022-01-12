@@ -299,7 +299,6 @@ interface NotifResolveHealingRayArgs {
 }
 
 interface NotifResolveEnergyDiceArgs extends NotifResolveArgs {
-    energy: number;
     deltaEnergy: number;
 }
 
@@ -323,8 +322,6 @@ interface NotifPlayerEntersTokyoArgs {
     player_name: string;
     location: number;
     locationName: string;
-    points: number;
-    energy: number;
 }
 
 interface NotifBuyCardArgs {

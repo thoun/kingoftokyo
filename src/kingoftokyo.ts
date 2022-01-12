@@ -2036,7 +2036,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
-        this.setEnergy(notif.args.playerId, notif.args.energy, ANIMATION_MS);
         this.animationManager.resolveEnergyDice(notif.args);
         this.diceManager.resolveEnergyDice();
     }
@@ -2073,8 +2072,6 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
         this.getPlayerTable(notif.args.playerId).enterTokyo(notif.args.location);
-        this.setPoints(notif.args.playerId, notif.args.points);
-        this.setEnergy(notif.args.playerId, notif.args.energy);
         dojo.addClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
         dojo.addClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
         if (notif.args.playerId == this.getPlayerId()) {

@@ -231,20 +231,26 @@ trait UtilTrait {
 
         $location = $bay ? 2 : 1;
         $message = null;
+        $incEnergy = 0;
+        $incScore = 0;
+        $playerGettingEnergy = null;
         if ($this->isTwoPlayersVariant()) {
-            $incEnergy = 1;
             self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
-            if ($this->canGainEnergy($playerId)) {
-                $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Energy]');
-                $this->applyGetEnergy($playerId, $incEnergy, -1);
+
+            $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
+
+            if ($this->canGainEnergy($playerGettingEnergy)) {
+                $incEnergy = 1;
+                $message = $playerId == $playerGettingEnergy ?
+                    clienttranslate('${player_name} enters ${locationName} and gains 1 [Energy]') :
+                    clienttranslate('${player_name} enters ${locationName}');
             } else {
                 $message = clienttranslate('${player_name} enters ${locationName}');
             }
         } else {
-            $incScore = 1;
             self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
             if ($this->canGainPoints($playerId)) {
-                $this->applyGetPoints($playerId, $incScore, -1);
+                $incScore = 1;
                 $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
             } else {
                 $message = clienttranslate('${player_name} enters ${locationName}');
@@ -257,9 +263,17 @@ trait UtilTrait {
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
             'locationName' => $locationName,
+            // TODOKK remove
             'points' => $this->getPlayerScore($playerId),
             'energy' => $this->getPlayerEnergy($playerId),
         ]);
+
+        if ($incEnergy > 0) {
+            $this->applyGetEnergy($playerGettingEnergy, $incEnergy, 0);
+        }
+        if ($incScore > 0) {
+            $this->applyGetPoints($playerId, $incScore, 0);
+        }
 
         self::incStat(1, 'tokyoEnters', $playerId);
 
@@ -303,6 +317,7 @@ trait UtilTrait {
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
             'locationName' => $locationName,
+            // TODOKK remove
             'points' => $this->getPlayerScore($playerId),
             'energy' => $this->getPlayerEnergy($playerId),
         ]);
@@ -708,19 +723,25 @@ trait UtilTrait {
         return $newHealth;
     }
 
+    function getPlayerGettingEnergyOrHeart(int $playerId) {
+        $playerGettingEnergyOrHeart = $playerId;
+
+        if ($this->isAnubisExpansion() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
+            $dieOfFate = $this->getDieOfFate();
+            if ($dieOfFate->value == 3) {
+                $playerGettingEnergyOrHeart = $this->getPlayerIdWithGoldenScarab();
+            }
+        }
+
+        return $playerGettingEnergyOrHeart;
+    }
+
     function applyGetEnergy(int $playerId, int $energy, int $cardType) {
         if (!$this->canGainEnergy($playerId)) {
             return;
         }
 
-        $playerGettingEnergy = $playerId;
-
-        if ($this->isAnubisExpansion() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
-            $dieOfFate = $this->getDieOfFate();
-            if ($dieOfFate->value == 3) {
-                $playerGettingEnergy = $this->getPlayerIdWithGoldenScarab();
-            }
-        }
+        $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
         $this->applyGetEnergyIgnoreCards($playerGettingEnergy, $energy, $cardType);
 
@@ -735,15 +756,17 @@ trait UtilTrait {
 
     function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
         self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
-
-        $message = $cardType <= 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
-        self::notifyAllPlayers('energy', $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'energy' => $this->getPlayerEnergy($playerId),
-            'delta_energy' => $energy,
-            'card_name' => $cardType == 0 ? null : $cardType,
-        ]);
+        
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
+            self::notifyAllPlayers('energy', $message, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'energy' => $this->getPlayerEnergy($playerId),
+                'delta_energy' => $energy,
+                'card_name' => $cardType == 0 ? null : $cardType,
+            ]);
+        }
 
         self::incStat($energy, 'wonEnergyCubes', $playerId);
     }

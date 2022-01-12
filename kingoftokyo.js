@@ -4326,7 +4326,6 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.resolveHealthDice(notif.args.healNumber);
     };
     KingOfTokyo.prototype.notif_resolveEnergyDice = function (notif) {
-        this.setEnergy(notif.args.playerId, notif.args.energy, ANIMATION_MS);
         this.animationManager.resolveEnergyDice(notif.args);
         this.diceManager.resolveEnergyDice();
     };
@@ -4357,8 +4356,6 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         this.getPlayerTable(notif.args.playerId).enterTokyo(notif.args.location);
-        this.setPoints(notif.args.playerId, notif.args.points);
-        this.setEnergy(notif.args.playerId, notif.args.energy);
         dojo.addClass("overall_player_board_" + notif.args.playerId, 'intokyo');
         dojo.addClass("monster-board-wrapper-" + notif.args.playerId, 'intokyo');
         if (notif.args.playerId == this.getPlayerId()) {
