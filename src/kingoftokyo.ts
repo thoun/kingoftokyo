@@ -2023,7 +2023,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
-        this.setHealth(notif.args.playerId, notif.args.health, ANIMATION_MS);
         this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
         this.diceManager.resolveHealthDice(notif.args.deltaHealth);
     }

@@ -543,14 +543,7 @@ trait UtilTrait {
             return;
         }
         
-        $playerGettingHealth = $playerId;
-
-        if ($this->isAnubisExpansion() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
-            $dieOfFate = $this->getDieOfFate();
-            if ($dieOfFate->value == 3) {
-                $playerGettingHealth = $this->getPlayerIdWithGoldenScarab();
-            }
-        }
+        $playerGettingHealth = $this->getPlayerGettingEnergyOrHeart($playerId);
 
         $this->applyGetHealthIgnoreCards($playerGettingHealth, $health, $cardType, $healerId);
         

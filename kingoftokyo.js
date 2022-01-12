@@ -4314,7 +4314,6 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.resolveNumberDice(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveHealthDice = function (notif) {
-        this.setHealth(notif.args.playerId, notif.args.health, ANIMATION_MS);
         this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
         this.diceManager.resolveHealthDice(notif.args.deltaHealth);
     };
