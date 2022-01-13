@@ -742,4 +742,20 @@ trait DiceUtilTrait {
 
         return $diceCounts;
     }
+
+    function getSelectableDice(array $dice, bool $canReroll, bool $allowDieOfFate) {
+        return array_values(array_filter($dice, function ($die) use ($canReroll, $allowDieOfFate) {
+            $allowed = true;
+
+            if (!$canReroll && !$die->canReroll) {
+                $allowed = false;
+            }
+
+            if (!$allowDieOfFate && $die->type == 2) {
+                $allowed = false;
+            }
+
+            return $allowed;
+        }));
+    }
 }

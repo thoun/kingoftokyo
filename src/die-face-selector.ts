@@ -5,7 +5,7 @@ class DieFaceSelector {
     private value: number;
     private dieValue: number;
 
-    constructor(private nodeId: string, die: Dice, canHealWithDice: boolean) {
+    constructor(private nodeId: string, die: Die, canHealWithDice: boolean) {
         this.dieValue = die.value;
         const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (let face=1; face<=6; face++) {

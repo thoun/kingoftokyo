@@ -9,11 +9,11 @@ const DIE4_ICONS = [
 ];
 
 class DiceManager {
-    private dice: Dice[] = [];
+    private dice: Die[] = [];
     private dieFaceSelectors: DieFaceSelector[] = [];
     private action: DieClickAction;
     private changeDieArgs: EnteringChangeDieArgs;
-    private selectedDice: Dice[];
+    private selectedDice: Die[];
 
     constructor(private game: KingOfTokyoGame) {
     }
@@ -49,42 +49,35 @@ class DiceManager {
         this.dice = [];
     }
 
-    public setDiceForThrowDice(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean) {
+    public setDiceForThrowDice(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) {
         this.action = 'move';
         this.dice?.forEach(die => this.removeDice(die));
         this.clearDiceHtml();
         this.dice = dice;
 
-        const selectable = isCurrentPlayerActive;
-
-        dice.forEach(die => this.createDice(die, selectable, canHealWithDice));
-
-        dojo.toggleClass('rolled-dice', 'selectable', selectable);
+        dice.forEach(die => this.createDice(die, canHealWithDice));
+        this.setSelectableDice(selectableDice);
     }
 
     public disableDiceAction() {
-        dojo.removeClass('rolled-dice', 'selectable');
+        this.setSelectableDice();
         this.action = undefined;
     }
 
-    private getLockedDiceId(die: Dice) {
+    private getLockedDiceId(die: Die) {
         return `locked-dice${this.getDieFace(die)}`;
     }
 
-    public discardDie(die: Dice) {
+    public discardDie(die: Die) {
         this.removeDice(die, ANIMATION_MS);
     }
 
-    public setDiceForChangeDie(dice: Dice[], args: EnteringChangeDieArgs, canHealWithDice: boolean, isCurrentPlayerActive: boolean) {
+    public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean) {
         this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
-            dice.forEach(die => {
-                const divId = `dice${die.id}`;
-                const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
-                dojo.toggleClass(divId, 'selectable', selectable);
-            });
+            this.setSelectableDice(selectableDice);
             return;
         }
 
@@ -94,28 +87,18 @@ class DiceManager {
         
         const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(die => {
-            const divId = `dice${die.id}`;
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
-            const selectable = isCurrentPlayerActive && this.action !== null && (!onlyHerdCuller || die.value !== 1);
-            dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
-
-            if (selectable) {
-                document.getElementById(divId).addEventListener('click', event => this.dieClick(die, event));
-            }
         });
+        this.setSelectableDice(selectableDice);
     }
 
-    public setDiceForDiscardDie(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean, action: 'discard' | 'rerollOrDiscard' | 'rerollDice' = 'discard') {
+    public setDiceForDiscardDie(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, action: 'discard' | 'rerollOrDiscard' | 'rerollDice' = 'discard') {
         this.action = action;
         this.selectedDice = [];
 
         /*if (this.dice.length) { force die for event
-            dice.forEach(die => {
-                const divId = `dice${die.id}`;
-                const selectable = isCurrentPlayerActive && this.action !== null;
-                dojo.toggleClass(divId, 'selectable', selectable);
-            });
+            this.setSelectableDice(selectableDice);
             return;
         }*/
 
@@ -124,19 +107,14 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            const divId = `dice${die.id}`;
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
-            const selectable = isCurrentPlayerActive && this.action !== null;
-            dojo.toggleClass(divId, 'selectable', selectable);
             this.addDiceRollClass(die);
-
-            if (selectable) {
-                document.getElementById(divId).addEventListener('click', event => this.dieClick(die, event));
-            }
         });
+        this.setSelectableDice(selectableDice);
+        console.log(action, selectableDice);
     }
 
-    public setDiceForSelectHeartAction(dice: Dice[], canHealWithDice: boolean) { 
+    public setDiceForSelectHeartAction(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) { 
         this.action = null;
         if (this.dice.length) {
             return;
@@ -148,12 +126,14 @@ class DiceManager {
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
+        this.setSelectableDice(selectableDice);
     }
 
-    setDiceForPsychicProbe(dice: Dice[], canHealWithDice: boolean, isCurrentPlayerActive: boolean = false) {
+    setDiceForPsychicProbe(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) {
         this.action = 'psychicProbeRoll';
 
         /*if (this.dice.length) { if active, event are not reset and roll is not applied
+            this.setSelectableDice(selectableDice);
             return;
         }*/
 
@@ -163,14 +143,9 @@ class DiceManager {
         dice.forEach(die => {
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
-
-            if (isCurrentPlayerActive) {
-                const divId = `dice${die.id}`;
-                document.getElementById(divId).addEventListener('click', event => this.dieClick(die, event));
-            }
         });
 
-        dojo.toggleClass('rolled-dice', 'selectable', isCurrentPlayerActive);
+        this.setSelectableDice(selectableDice);
     }
 
     public changeDie(dieId: number, canHealWithDice: boolean, toValue: number, roll?: boolean) {
@@ -187,7 +162,7 @@ class DiceManager {
                 this.addDiceRollClass({
                     id: dieId,
                     rolled: roll
-                } as Dice);
+                } as Die);
             }
             if (!canHealWithDice && !die.type) {
                 if (die.value !== 4 && toValue === 4) {
@@ -203,10 +178,10 @@ class DiceManager {
         }
     }
 
-    showCamouflageRoll(dice: Dice[]) {
+    showCamouflageRoll(dice: Die[]) {
         this.clearDiceHtml();
         dice.forEach((dieValue, index) => {
-            const die: Dice = {
+            const die: Die = {
                 id: index,
                 value: dieValue.value,
                 extra: false,
@@ -242,7 +217,7 @@ class DiceManager {
         this.dice.filter(die => die.value === 4).forEach(die => this.removeDice(die, 1000));
     }
 
-    private getDieFace(die: Dice) {
+    private getDieFace(die: Die) {
         if (die.type === 2) {
             return 10;
         } else if (die.type === 1) {
@@ -298,7 +273,7 @@ class DiceManager {
         this.addDiceAnimation(6);
     }
 
-    private toggleLockDice(die: Dice, event: MouseEvent, forcedLockValue: boolean | null = null) {
+    private toggleLockDice(die: Die, event: MouseEvent, forcedLockValue: boolean | null = null) {
         if (event?.altKey || event?.ctrlKey) {
             let dice = [];
             
@@ -385,7 +360,7 @@ class DiceManager {
         return this.dice.some(die => !die.locked);
     }
 
-    private createAndPlaceDie4Html(die: Dice, destinationId: string) {
+    private createAndPlaceDie4Html(die: Die, destinationId: string) {
         let html = `
         <div id="dice${die.id}" class="die4" data-dice-id="${die.id}" data-dice-value="${die.value}">
             <ol class="die-list" data-roll="${die.value}">`;
@@ -403,7 +378,7 @@ class DiceManager {
         dojo.place(html, destinationId);
     }
 
-    private createAndPlaceDie6Html(die: Dice, canHealWithDice: boolean, destinationId: string) {
+    private createAndPlaceDie6Html(die: Die, canHealWithDice: boolean, destinationId: string) {
         let html = `<div id="dice${die.id}" class="dice dice${die.value}" data-dice-id="${die.id}" data-dice-value="${die.value}">
         <ol class="die-list" data-roll="${die.value}">`;
         const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
@@ -427,22 +402,24 @@ class DiceManager {
     }
 
 
-    private createAndPlaceDiceHtml(die: Dice, canHealWithDice: boolean, destinationId: string) {
+    private createAndPlaceDiceHtml(die: Die, canHealWithDice: boolean, destinationId: string) {
         if (die.type == 2) {
             this.createAndPlaceDie4Html(die, destinationId);
         } else {
             this.createAndPlaceDie6Html(die, canHealWithDice, destinationId);
         }
+
+        this.getDieDiv(die).addEventListener('click', event => this.dieClick(die, event));
     }
 
-    private getDiceDiv(die: Dice): HTMLDivElement {
+    private getDieDiv(die: Die): HTMLDivElement {
         return document.getElementById(`dice${die.id}`) as HTMLDivElement;
     }
 
-    private createDice(die: Dice, selectable: boolean, canHealWithDice: boolean) {
+    private createDice(die: Die, canHealWithDice: boolean) {
         this.createAndPlaceDiceHtml(die, canHealWithDice, die.locked ? this.getLockedDiceId(die) : `dice-selector`);
 
-        const div = this.getDiceDiv(die);
+        const div = this.getDieDiv(die);
         div.addEventListener('animationend', (e: AnimationEvent) => {
             if (e.animationName == 'rolled-dice') {
                 div.dataset.rolled = 'false';
@@ -450,13 +427,9 @@ class DiceManager {
         });
 
         this.addDiceRollClass(die);
-
-        if (selectable) {
-            div.addEventListener('click', event => this.dieClick(die, event));
-        }
     }
 
-    private dieClick(die: Dice, event: MouseEvent) {
+    private dieClick(die: Die, event: MouseEvent) {
         if (this.action === 'move') {
             this.toggleLockDice(die, event);
         } else if (this.action === 'change') {
@@ -469,7 +442,7 @@ class DiceManager {
             this.game.rerollOrDiscardDie(die.id);
         } else if (this.action === 'rerollDice') {
             if (die.type < 2) {
-                dojo.toggleClass(this.getDiceDiv(die), 'die-selected');
+                dojo.toggleClass(this.getDieDiv(die), 'die-selected');
                 const selectedDieIndex = this.selectedDice.findIndex(d => d.id == die.id);
                 if (selectedDieIndex !== -1) {
                     this.selectedDice.splice(selectedDieIndex, 1);
@@ -486,7 +459,7 @@ class DiceManager {
     }
     
     public removeSelection() {
-        this.selectedDice.forEach(die => dojo.removeClass(this.getDiceDiv(die), 'die-selected'));
+        this.selectedDice.forEach(die => dojo.removeClass(this.getDieDiv(die), 'die-selected'));
         this.selectedDice = [];
     }
 
@@ -499,8 +472,8 @@ class DiceManager {
         }
     }
 
-    private addDiceRollClass(die: Dice) {
-        const dieDiv = this.getDiceDiv(die);
+    private addDiceRollClass(die: Die) {
+        const dieDiv = this.getDieDiv(die);
 
         dieDiv.dataset.rolled = die.rolled ? 'true' : 'false';
         if (die.rolled) {            
@@ -510,7 +483,7 @@ class DiceManager {
         }
     }
 
-    private removeDice(die: Dice, duration?: number, delay?: number) {
+    private removeDice(die: Die, duration?: number, delay?: number) {
         this.dice.splice(this.dice.findIndex(d => d.id == die.id), 1);
         if (duration) {
             (this.game as any).fadeOutAndDestroy(`dice${die.id}`, duration, delay);
@@ -533,7 +506,7 @@ class DiceManager {
         Array.from(document.getElementsByClassName('change-die-discussion_bubble')).forEach(elem => elem.parentElement.removeChild(elem));
     }
 
-    private toggleBubbleChangeDie(die: Dice) {
+    private toggleBubbleChangeDie(die: Die) {
         if (die.type === 2) {
             // die of fate cannot be changed by power cards
             return;
@@ -673,6 +646,11 @@ class DiceManager {
             bubble.dataset.visible = 'true';
         }
         
+    }
+
+    private setSelectableDice(selectableDice: Die[] = null) {
+        const playerIsActive = (this.game as any).isCurrentPlayerActive();
+        this.dice.forEach(die => this.getDieDiv(die).classList.toggle('selectable', playerIsActive && selectableDice?.some(d => d.id == die.id)));
     }
 
 }

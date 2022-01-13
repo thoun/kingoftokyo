@@ -187,9 +187,6 @@
   display: flex;
   align-items: center;
 }
-#rolled-dice.selectable .dice, #rolled-dice.selectable .die4 {
-  cursor: pointer;
-}
 #rolled-dice .dice.selectable, #rolled-dice .die4.selectable {
   cursor: pointer;
 }
@@ -224,6 +221,11 @@
   margin: 3px;
   border-radius: 20%;
   box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+.dice.selectable {
+  pointer-events: all;
+  cursor: pointer;
 }
 .dice[data-rolled=true] {
   animation: rolled-dice 1s forwards;
@@ -520,6 +522,7 @@
   height: 5em;
   width: 5em;
   transform: translateZ(1em);
+  pointer-events: none;
   /*.face:nth-child(1) {
       transform: rotateY(0deg) rotateX($die4angle);
   }
@@ -536,6 +539,10 @@
       transform-origin: center top;
       transform: rotateX(-90deg) rotateZ(180deg) translateY(-$die4height *2 /3) translateZ($die4height - ($die4size - $die4height)/8*3);
   }*/
+}
+.die4.selectable {
+  pointer-events: all;
+  cursor: pointer;
 }
 .die4[data-rolled=true] {
   animation: rolled-dice 1s forwards;
@@ -1586,6 +1593,8 @@ html, .mode_3d #game_play_area_background {
   justify-content: flex-end;
   flex-wrap: wrap;
   align-items: center;
+  z-index: 9;
+  position: relative;
 }
 #rolled-dice-and-rapid-actions #rapid-actions-wrapper {
   max-width: 380px;

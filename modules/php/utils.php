@@ -7,8 +7,6 @@ require_once(__DIR__.'/objects/card.php');
 require_once(__DIR__.'/objects/player.php');
 require_once(__DIR__.'/objects/player-intervention.php');
 
-use KOT\Objects\Card;
-use KOT\Objects\Dice;
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 

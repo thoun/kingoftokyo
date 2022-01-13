@@ -117,6 +117,7 @@ trait CurseCardsArgTrait {
     function argRerollDice() {
         $activePlayerId = self::getActivePlayerId();
         $activePlayerDice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
+        $selectableDice = $this->getSelectableDice($activePlayerDice, false, false);
 
         $playerId = $this->getRerollDicePlayerId();
 
@@ -130,6 +131,7 @@ trait CurseCardsArgTrait {
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'dice' => $activePlayerDice,
+            'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
             'min' => $min,
             'max' => $max,

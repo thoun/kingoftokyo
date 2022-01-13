@@ -2,7 +2,7 @@
  * Your game interfaces
  */
 
-interface Dice {
+interface Die {
     id: number;
     value: number;
     extra: boolean;
@@ -69,7 +69,7 @@ interface KingOfTokyoGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
-    dice: Dice[];
+    dice: Die[];
     visibleCards: Card[];
     topDeckCardBackType: string;
     playersCards: { [playerId: number]: Card[] };
@@ -144,7 +144,8 @@ interface EnteringGiveSymbolToActivePlayerArgs {
 }
 
 interface EnteringDiceArgs {
-    dice: Dice[];
+    dice: Die[];
+    selectableDice: Die[];
     canHealWithDice: boolean;
 }
 
@@ -169,7 +170,6 @@ interface EnteringThrowDiceArgs extends EnteringDiceArgs {
 }
 
 interface EnteringPsychicProbeRollDieArgs extends EnteringDiceArgs {
-    canRoll: boolean;
     rethrow3: Rethrow3;
 }
 
@@ -248,7 +248,7 @@ interface EnteringCancelDamageArgs {
     canUseWings: boolean;
     canUseRobot: boolean;
     playerEnergy: number;
-    dice: Dice[];
+    dice: Die[];
     rethrow3: Rethrow3;
     rapidHealingHearts: number;
     rapidHealingCultists: number;
@@ -397,7 +397,7 @@ interface NotifToggleRapidHealingArgs {
 
 interface NotifUseCamouflageArgs {
     playerId: number;
-    diceValues: Dice[];
+    diceValues: Die[];
     cancelDamageArgs: EnteringCancelDamageArgs;
 }
 
@@ -458,5 +458,5 @@ interface NotifChangeGoldenScarabOwnerArgs {
 }
 
 interface NotifDiscardedDieArgs {
-    die: Dice;
+    die: Die;
 }

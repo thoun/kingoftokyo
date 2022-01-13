@@ -42,12 +42,15 @@ trait DiceArgTrait {
         $hasCultist = $this->isCthulhuExpansion() && $this->getPlayerCultists($playerId) > 0;
 
         $hasActions = $throwNumber < $maxThrowNumber || ($hasEnergyDrink && $playerEnergy >= 1) || $hasDice3 || $hasSmokeCloud || $hasCultist;
+
+        $selectableDice = $this->getSelectableDice($dice, false, true);
     
         // return values:
         return [
             'throwNumber' => $throwNumber,
             'maxThrowNumber' => $maxThrowNumber,
             'dice' => $dice,
+            'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($playerId),
             'energyDrink' => [
                 'hasCard' => $hasEnergyDrink,
@@ -71,9 +74,13 @@ trait DiceArgTrait {
         $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
         $canRetrow3 = $hasBackgroundDweller && intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
 
+        $dice = $this->getPlayerRolledDice($playerId, true, true, true);
+        $selectableDice = $this->getSelectableDice($dice, true, false);
+
         $diceArg = [
             'playerId' => $playerId,
-            'dice' => $this->getPlayerRolledDice($playerId, true, true, true),
+            'dice' => $dice,
+            'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($playerId),
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
@@ -115,10 +122,23 @@ trait DiceArgTrait {
             $hasDice3 = $intervention->lastRolledDie != null && $intervention->lastRolledDie->value == 3;
         }
 
+        $dice = $this->getPlayerRolledDice($activePlayerId, true, true, true);
+        $canReroll = false;
+        if ($this->isAnubisExpansion()) {
+            $curseCardType = $this->getCurseCardType();
+            if ($curseCardType === VENGEANCE_OF_HORUS_CURSE_CARD) {
+                $canReroll = false;
+            } else if ($curseCardType === SCRIBE_S_PERSEVERANCE_CURSE_CARD) {
+                $canReroll = true;
+            }
+        }
+        
+        $selectableDice = $canRoll ? $this->getSelectableDice($dice, $canReroll, false) : [];
+
         return [
-            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, true),
+            'dice' => $dice,
+            'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
-            'canRoll' => $canRoll,
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $hasDice3,

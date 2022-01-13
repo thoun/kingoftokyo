@@ -199,7 +199,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'discardDie': 
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringDiscardDie(args.args, (this as any).isCurrentPlayerActive());
+                this.onEnteringDiscardDie(args.args);
                 break;
             case 'discardKeepCard':
                 this.onEnteringDiscardKeepCard(args.args);
@@ -211,11 +211,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'rerollOrDiscardDie':
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringRerollOrDiscardDie(args.args, (this as any).isCurrentPlayerActive());
-                break;
-            case 'rerollDice':
-                this.setDiceSelectorVisibility(true);
-                this.onEnteringRerollDice(args.args, (this as any).isCurrentPlayerActive());
+                this.onEnteringRerollOrDiscardDie(args.args);
                 break;
             case 'resolveNumberDice':
                 this.setDiceSelectorVisibility(true);
@@ -297,10 +293,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.diceManager.showLock();
 
-        const dice = args.dice;
         const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
 
-        this.diceManager.setDiceForThrowDice(dice, args.canHealWithDice, isCurrentPlayerActive);
+        this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice);
         
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
@@ -338,7 +333,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringChangeDie(args: EnteringChangeDieArgs, isCurrentPlayerActive: boolean) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForChangeDie(args.dice, args, args.canHealWithDice, isCurrentPlayerActive);
+            this.diceManager.setDiceForChangeDie(args.dice, args.selectableDice, args, args.canHealWithDice);
         }
 
         if (isCurrentPlayerActive && args.dice && args.rethrow3?.hasCard) {
@@ -350,10 +345,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private onEnteringPsychicProbeRollDie(args: EnteringPsychicProbeRollDieArgs, isCurrentPlayerActive: boolean) {
-        this.diceManager.setDiceForPsychicProbe(args.dice, args.canHealWithDice, isCurrentPlayerActive && args.canRoll);
+    private onEnteringPsychicProbeRollDie(args: EnteringPsychicProbeRollDieArgs) {
+        this.diceManager.setDiceForPsychicProbe(args.dice, args.selectableDice, args.canHealWithDice);
 
-        if (args.dice && args.rethrow3?.hasCard) {
+        if (args.dice && args.rethrow3?.hasCard && (this as any).isCurrentPlayerActive()) {
             if (document.getElementById('rethrow3psychicProbe_button')) {
                 dojo.toggleClass('rethrow3psychicProbe_button', 'disabled', !args.rethrow3.hasDice3);
             } else {
@@ -362,21 +357,21 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
-    private onEnteringDiscardDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
+    private onEnteringDiscardDie(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive);
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
         }
     }
 
-    private onEnteringRerollOrDiscardDie(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
+    private onEnteringRerollOrDiscardDie(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollOrDiscard');
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, 'rerollOrDiscard');
         }
     }
 
-    private onEnteringRerollDice(args: EnteringDiceArgs, isCurrentPlayerActive: boolean) {
+    private onEnteringRerollDice(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.canHealWithDice, isCurrentPlayerActive, 'rerollDice');
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, 'rerollDice');
         }
     }
 
@@ -389,7 +384,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringResolveNumberDice(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
         }
     }
     
@@ -402,7 +397,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.removeGamestateDescription();
         }
         if (args.dice?.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
 
             if (isCurrentPlayerActive) {
                 dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice-and-rapid-actions', 'after');
@@ -614,12 +609,17 @@ class KingOfTokyo implements KingOfTokyoGame {
     public onUpdateActionButtons(stateName: string, args: any) {
 
         switch (stateName) {
-            case 'changeActivePlayerDie': case 'psychicProbeRollDie': // TODO remove
+            case 'changeActivePlayerDie': case 'psychicProbeRollDie':
                 this.setDiceSelectorVisibility(true);
+                this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
+                break;
+            case 'rerollDice':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollDice(args.args);
                 break;
             case 'cheerleaderSupport':
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringPsychicProbeRollDie(args, false); // because it's multiplayer, enter action must be set here
+                this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
@@ -679,14 +679,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'changeDie':
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
                     break;
-                    case 'changeActivePlayerDie': case 'psychicProbeRollDie': // TODO remove
+                case 'changeActivePlayerDie': case 'psychicProbeRollDie':
                     (this as any).addActionButton('changeActivePlayerDieSkip_button', _("Skip"), 'psychicProbeSkip');
-                    this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'cheerleaderSupport':
                     (this as any).addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), () => this.support());
                     (this as any).addActionButton('dontSupport_button', _("Don't support"), () => this.dontSupport());
-                    this.onEnteringPsychicProbeRollDie(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'giveGoldenScarab':
                     const argsGiveGoldenScarab = args as EnteringGiveGoldenScarabArgs;
@@ -730,14 +728,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                         this.falseBlessingAnkhAction = 'falseBlessingDiscard';
                     }, null, null, 'gray');
                     (this as any).addActionButton('falseBlessingSkip_button', _("Skip"), () => this.falseBlessingSkip());
-                    break;
-                case 'rerollDice':
-                    const argsRerollDice = args as EnteringRerollDiceArgs;
-                    (this as any).addActionButton('rerollDice_button', /*_( TODOAN */"Reroll selected dice"/*)*/, () => this.rerollDice(this.diceManager.getSelectedDiceIds()));
-                    dojo.addClass('rerollDice_button', 'disabled');
-                    if (argsRerollDice.min === 0) {
-                        (this as any).addActionButton('skipRerollDice_button', _("Skip"), () => this.rerollDice([]));
-                    }
                     break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
@@ -2209,8 +2199,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_changeDie(notif: Notif<NotifChangeDieArgs>) {
         if (notif.args.psychicProbeRollDieArgs) {
-            const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
-            this.onEnteringPsychicProbeRollDie(notif.args.psychicProbeRollDieArgs, isCurrentPlayerActive);
+            this.onEnteringPsychicProbeRollDie(notif.args.psychicProbeRollDieArgs);
         } else {
             this.diceManager.changeDie(notif.args.dieId, notif.args.canHealWithDice, notif.args.toValue, notif.args.roll);
         }

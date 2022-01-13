@@ -120,6 +120,8 @@ html, .mode_3d #game_play_area_background {
   justify-content: flex-end;
   flex-wrap: wrap;
   align-items: center;
+  z-index: 9;
+  position: relative;
 
   #rapid-actions-wrapper {
     max-width: 380px;

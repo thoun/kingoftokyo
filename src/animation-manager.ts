@@ -17,7 +17,7 @@ class AnimationManager {
         (this.game as any).displayScoring( `dice${(dice[Math.floor(dice.length / 2)] || dice[0]).id}`, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     }
 
-    private getDiceShowingFace(allDice: Dice[], face: number) {
+    private getDiceShowingFace(allDice: Die[], face: number) {
         const dice = allDice.filter(die => !die.type && document.getElementById(`dice${die.id}`)?.dataset.animated !== 'true');
 
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {

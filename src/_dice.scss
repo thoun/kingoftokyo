@@ -84,12 +84,6 @@
     align-items: center;
   }
 
-  &.selectable {
-      .dice, .die4 {
-          cursor: pointer;
-      }
-  }
-
   .dice.selectable, .die4.selectable {
     cursor: pointer;
   }
@@ -125,27 +119,33 @@
 $size: 0.25em;
 
 .dice {
-    display: inline-block;
-    position: relative;
-    width: 40px;
-    height: 40px;
-    margin: 3px;
-    border-radius: 20%;
+  display: inline-block;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: 3px;
+  border-radius: 20%;
 
-    box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.5);
+  box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.5);
 
-    &[data-rolled="true"] {
-        animation: rolled-dice 1s forwards;
-        transform: translateY(-40vh);
+  pointer-events: none;
+  &.selectable {
+    pointer-events: all;
+    cursor: pointer;
+  }
 
-        .icon.forbidden {
-          display: none;
-        }
-    }
+  &[data-rolled="true"] {
+      animation: rolled-dice 1s forwards;
+      transform: translateY(-40vh);
 
-@keyframes rolled-dice {
-    100% { transform: initial; }
-}
+      .icon.forbidden {
+        display: none;
+      }
+  }
+
+  @keyframes rolled-dice {
+      100% { transform: initial; }
+  }
 
   .die-list {
     pointer-events: none;
@@ -459,6 +459,12 @@ $distFromCenter: 1em;
     height: $die4size;
     width: $die4size;
     transform: translateZ($distFromCenter);
+
+    pointer-events: none;
+    &.selectable {
+      pointer-events: all;
+      cursor: pointer;
+    }
 
     &[data-rolled="true"] {
         animation: rolled-dice 1s forwards;
