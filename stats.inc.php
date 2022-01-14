@@ -124,6 +124,8 @@ $stats_type = [
         "dieOfFateRiver" => ["id" => 58, "type" => "int", "name" => totranslate("No effect with die of fate")],
         "dieOfFateSnake" => ["id" => 59, "type" => "int", "name" => totranslate("Snake effect with die of fate")],
         "dieOfFateAnkh" => ["id" => 60, "type" => "int", "name" => totranslate("Ankh effect with die of fate")],
+        "berserkActivated" => ["id" => 61, "type" => "int", "name" => totranslate("Berserk mode activated")],
+        "turnsInBerserk" => ["id" => 62, "type" => "int", "name" => totranslate("Turns in Berserk mode")],
         // TODOWI change id !!! "gainedWickedness" => ["id" => x, "type" => "int", "name" => totranslate("Wickedness")],
         // TODOWI change id !!! "wickednessTilesTaken" => ["id" => x, "type" => "int", "name" => totranslate("Wickedness tales taken")],
     ],

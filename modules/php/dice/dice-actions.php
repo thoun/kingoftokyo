@@ -267,7 +267,7 @@ trait DiceActionTrait {
     }
 
     public function endChangeActivePlayerDie(object $intervention, int $playerId, object $die, int $cardType, int $value) {
-        $discardBecauseOfHeart = $value == 4 && ($cardType == PSYCHIC_PROBE_CARD || $cardType == MIMIC_CARD);
+        $discardBecauseOfHeart = $die->type == 0 && $value == 4 && ($cardType == PSYCHIC_PROBE_CARD || $cardType == MIMIC_CARD);
 
         if ($discardBecauseOfHeart) {
             $currentPlayerCards = array_values(array_filter($intervention->cards, fn($card) => $card->location_arg == $playerId));

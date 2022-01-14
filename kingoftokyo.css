@@ -282,8 +282,8 @@
   background-image: url("img/green_dice.png");
 }
 .dice .die-item.berserk {
-  background-color: red;
-  border-color: red;
+  background-color: #E55204;
+  border-color: #E55204;
   background-image: url("img/berserk_dice.png");
 }
 .dice .die-item.side1 {

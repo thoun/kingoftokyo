@@ -127,6 +127,10 @@ trait PlayerStateTrait {
             }
         }
 
+        if ($this->isPlayerBerserk($playerId)) {
+            $this->incStat(1, 'turnsInBerserk', $playerId);
+        }
+
         if ($this->isPowerUpExpansion()) {
             $coldWaveCard = $this->getEvolutionOfType($playerId, COLD_WAVE_EVOLUTION);
             if ($coldWaveCard != null) {

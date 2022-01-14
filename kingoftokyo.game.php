@@ -284,6 +284,10 @@ class KingOfTokyo extends Table {
             $this->initStat('player', 'dieOfFateSnake', 0);
             $this->initStat('player', 'dieOfFateAnkh', 0);
         }
+        if ($this->isCybertoothExpansion()) {
+            $this->initStat('player', 'berserkActivated', 0);
+            $this->initStat('player', 'turnsInBerserk', 0);
+        }
 
         if ($wickednessExpansion > 1) {
             //$this->initStat('player', 'gainedWickedness', 0);

@@ -82,8 +82,6 @@ $game_options = [
         ],
         'default' => 1,
     ],
-
-    /* TODOCY 
     CYBERTOOTH_EXPANSION_OPTION => [
         'name' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
         'values' => [
@@ -106,6 +104,9 @@ $game_options = [
             ],
         ],
     ],
+
+    /* TODOME
+
 
     MUTANT_EVOLUTION_VARIANT_OPTION => [
         'name' => totranslate('Mutant Evolutions variant (Transformation card)'),

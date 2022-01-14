@@ -39,7 +39,6 @@ go on tests dir and start execute file, for example `php ./kingoftokyo.game.test
 add animation for smashes even if no smash dice (poison quills)
 slide energy cubes from battery monster
 
-TODOCY add stats
 TODOME add stats
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
 TODOWI find an icon for wickedness

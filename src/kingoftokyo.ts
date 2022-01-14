@@ -142,13 +142,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
         }
 
-        /* TODOCY if (gamedatas.cybertoothExpansion) {
+        if (gamedatas.cybertoothExpansion) {
             const tooltip = formatTextIcons(`
             <h3>${_("Berserk mode")}</h3>
             <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
             (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip);
-        }*/
+        }
 
         if (gamedatas.cthulhuExpansion) {
             this.CULTIST_TOOLTIP = formatTextIcons(`

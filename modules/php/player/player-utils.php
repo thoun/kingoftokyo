@@ -194,11 +194,17 @@ trait PlayerUtilTrait {
     function setPlayerBerserk(int $playerId, bool $active) {
         $this->DbQuery("UPDATE player SET `player_berserk` = ".intval($active)." where `player_id` = $playerId");
 
-        // TODOCY add a message to notif
-        $this->notifyAllPlayers('setPlayerBerserk', '', [
+        $message = $active ? 
+          clienttranslate('${player_name} is now in Berserk mode!') :
+          clienttranslate('${player_name} is no longer in Berserk mode');
+
+        $this->notifyAllPlayers('setPlayerBerserk', $message, [
             'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
             'berserk' => $active,
         ]);
+        
+        $this->incStat(1, 'berserkActivated', $playerId);
     }
 
     function getPlayerCultists(int $playerId) {
