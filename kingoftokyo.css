@@ -1825,49 +1825,61 @@ button .icon, a .icon {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background: url("img/monster-icons.png");
   background-size: auto 100%;
   border-radius: 50px;
   box-shadow: 0px 0px 3px 2px black;
   transition: left 0.5s, top 0.5s;
 }
 .monster-icon.monster1 {
+  background: url("img/monster-icons.png");
   background-position: 0% 50%;
 }
 .monster-icon.monster2 {
+  background: url("img/monster-icons.png");
   background-position: 8.3333333333% 50%;
 }
 .monster-icon.monster3 {
+  background: url("img/monster-icons.png");
   background-position: 16.6666666667% 50%;
 }
 .monster-icon.monster4 {
+  background: url("img/monster-icons.png");
   background-position: 25% 50%;
 }
 .monster-icon.monster5 {
+  background: url("img/monster-icons.png");
   background-position: 33.3333333333% 50%;
 }
 .monster-icon.monster6 {
+  background: url("img/monster-icons.png");
   background-position: 41.6666666667% 50%;
 }
 .monster-icon.monster7 {
+  background: url("img/monster-icons.png");
   background-position: 50% 50%;
 }
 .monster-icon.monster8 {
+  background: url("img/monster-icons.png");
   background-position: 58.3333333333% 50%;
 }
 .monster-icon.monster9 {
+  background: url("img/monster-icons.png");
   background-position: 66.6666666667% 50%;
 }
 .monster-icon.monster10 {
+  background: url("img/monster-icons.png");
   background-position: 75% 50%;
 }
 .monster-icon.monster11 {
+  background: url("img/monster-icons.png");
   background-position: 83.3333333333% 50%;
 }
 .monster-icon.monster12 {
+  background: url("img/monster-icons.png");
   background-position: 91.6666666667% 50%;
 }
 .monster-icon.monster13 {
+  background: url("img/monster-icons.png");
   background-position: 100% 50%;
 }
 
