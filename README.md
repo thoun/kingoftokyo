@@ -50,8 +50,4 @@ TODOME add stats
 TODOME flip cards (remove 302)
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
 
-rework die selection
-Pprobe can reroll die of fate ! ok for plot twist
-confused senses resolve with eye to change card, only 6 of 8 dice are counted
-fix False blessing (counting 2 unrolled die for different faces when revealed)
 log no energy/heart/points won

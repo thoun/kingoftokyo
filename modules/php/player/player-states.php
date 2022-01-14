@@ -154,7 +154,7 @@ trait PlayerStateTrait {
             $logCardType = 1000 + $curseCardType;
             switch($curseCardType) {
                 case SET_S_STORM_CURSE_CARD:
-                    $damages[] = new Damage($playerId, 1, $playerId, $logCardType);
+                    $damages[] = new Damage($playerId, 1, 0, $logCardType);
                     break;
                 case BUILDERS_UPRISING_CURSE_CARD: 
                     $this->applyLosePoints($playerId, 2, $logCardType);
@@ -162,7 +162,7 @@ trait PlayerStateTrait {
                 case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
                     $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
                     foreach ($playersIds as $pId) {
-                        $damages[] = new Damage($pId, 1, $playerId, $logCardType);
+                        $damages[] = new Damage($pId, 1, 0, $logCardType);
                     }
                     break;
                 case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:
