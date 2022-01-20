@@ -2707,7 +2707,7 @@ var KingOfTokyo = /** @class */ (function () {
             <h3>${_("Berserk mode")}</h3>
             <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
-            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCY check if healed by Healing Ray
+            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip);
         }*/
         if (gamedatas.cthulhuExpansion) {
             this.CULTIST_TOOLTIP = formatTextIcons("\n            <h3>" + _("Cultists") + "</h3>\n            <p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");

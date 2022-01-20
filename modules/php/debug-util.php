@@ -19,9 +19,9 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(5);
-        //$this->debugSetPoints(5);
-        //$this->debugSetHealth(5);
+        $this->debugSetEnergy(5);
+        $this->debugSetPoints(5);
+        $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343493, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
@@ -61,6 +61,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
+        //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
@@ -83,9 +85,11 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
+        //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
+        //$this->debugSetCardInHand(WITCH_CARD, 2343493);
 
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
-        //$this->setPlayerBerserk(2343492, true);
+        $this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
         //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->initWickednessTiles(3);

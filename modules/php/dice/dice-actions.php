@@ -2,14 +2,6 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/dice.php');
-require_once(__DIR__.'/../objects/player-intervention.php');
-require_once(__DIR__.'/../objects/damage.php');
-
-use KOT\Objects\Dice;
-use KOT\Objects\ChangeActivePlayerDieIntervention;
-use KOT\Objects\Damage;
-
 trait DiceActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -327,8 +319,6 @@ trait DiceActionTrait {
         }
 
         $playerId = self::getActivePlayerId();
-
-        $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
 
         $this->fixDices();
 

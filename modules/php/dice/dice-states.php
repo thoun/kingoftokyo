@@ -2,14 +2,9 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/dice.php');
-require_once(__DIR__.'/../objects/player-intervention.php');
 require_once(__DIR__.'/../objects/damage.php');
 
-use KOT\Objects\Dice;
-use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\Damage;
-
 
 function getDieFace($die) {
     if ($die->type === 2) {
@@ -87,8 +82,6 @@ trait DiceStateTrait {
             'dice' => $diceStr,
         ]);
 
-        $smashTokyo = false;
-
         $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
 
         $detail = $this->addSmashesFromCards($playerId, $diceCounts, $playerInTokyo);
@@ -149,10 +142,6 @@ trait DiceStateTrait {
 
         if ($diceCounts[1] >= 4 && $this->isKingKongExpansion() && $this->canUseSymbol($playerId, 1) && $this->canUseFace($playerId, 1)) {
             $this->getNewTokyoTowerLevel($playerId);
-        }
-
-        if ($diceCounts[6] >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseSymbol($playerId, 6) && $this->canUseFace($playerId, 6)) {
-            $this->setPlayerBerserk($playerId, true);
         }
         
         if ($this->isCthulhuExpansion()) {

@@ -579,7 +579,7 @@ trait UtilTrait {
             ]);
         }
 
-        if ($this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
+        if ($playerId == $healerId && $this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
             $this->setPlayerBerserk($playerId, false);
         }
     }

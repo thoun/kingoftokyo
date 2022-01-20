@@ -285,6 +285,12 @@ trait DiceUtilTrait {
 
     
     function resolveSmashDice(int $playerId, int $diceCount) { // return redirects
+
+        // ony here and not in stResolveDice, so player can heal and then activate Berserk
+        if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
+            $this->setPlayerBerserk($playerId, true);
+        }
+
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
 
@@ -422,7 +428,7 @@ trait DiceUtilTrait {
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
             $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
-            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
+            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
             if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
                 self::setGameStateValue(CLOWN_ACTIVATED, 1);
                 $hasClown = true;
@@ -712,7 +718,7 @@ trait DiceUtilTrait {
     }
 
     function getRolledDiceCounts(int $playerId, array $dice, $ignoreCanUseFace = true) {
-        $diceCounts = [0,0,0,0,0,0,0];
+        $diceCounts = [0,0,0,0,0,0,0,0];
 
         foreach($dice as $die) {
             if (($die->type === 0 || $die->type === 1) && ($ignoreCanUseFace || $this->canUseFace($playerId, $this->getDiceFaceType($die)))) {

@@ -140,7 +140,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             <h3>${_("Berserk mode")}</h3>
             <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
-            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip); // TODOCY check if healed by Healing Ray       
+            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip);
         }*/
 
         if (gamedatas.cthulhuExpansion) {
