@@ -21,12 +21,12 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetEnergy(5);
         $this->debugSetPoints(5);
-        //$this->debugSetHealth(5);
+        $this->debugSetHealth(2);
         //$this->debugSetPlayerHealth(2343493, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2");
-        self::DbQuery("UPDATE player SET `player_cultists` = 2");
+        //self::DbQuery("UPDATE player SET `player_cultists` = 2");
         //self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
@@ -85,12 +85,14 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
-        $this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        //$this->debugSetCardInHand(WITCH_CARD, 2343493);
-        $this->debugSetCardInHand(ROBOT_CARD, 2343493);
+        $this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
+        //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
+        $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+        $this->debugSetCardInHand(WITCH_CARD, 2343494);
+        $this->debugSetCardInHand(CLOWN_CARD, 2343495);
 
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
-        $this->setPlayerBerserk(2343492, true);
+        //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
         //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->initWickednessTiles(3);
@@ -102,8 +104,8 @@ trait DebugUtilTrait {
         $this->gamestate->changeActivePlayer(2343492);
 
         //$this->eliminatePlayer(2343493);
-        //$this->eliminatePlayer(2343494);
-        //$this->eliminatePlayer(2343495);
+        $this->eliminatePlayer(2343494);
+        $this->eliminatePlayer(2343495);
         //$this->eliminatePlayer(2343497);
     }
 

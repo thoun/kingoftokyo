@@ -381,7 +381,9 @@ trait PlayerStateTrait {
 
         $this->removeDiscardCards($playerId);
 
-        $this->applyEndOfEachMonsterCards();
+        if (!$this->getPlayer($playerId)->eliminated) {
+            $this->applyEndOfEachMonsterCards();
+        }
 
         // end of the extra turn with Builders' uprising (without die of fate)
         if (intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) {
