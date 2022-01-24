@@ -2,8 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/objects/damage.php');
 require_once(__DIR__.'/objects/player-intervention.php');
 
+use KOT\Objects\Damage;
 use KOT\Objects\CancelDamageIntervention;
 
 trait InterventionTrait {
@@ -73,5 +75,48 @@ trait InterventionTrait {
                 throw new \Error('Invalid endState');
             }
         }
+    }
+
+    function reduceInterventionDamages(int $playerId, array $damages, int $reduceBy): array {
+        $newDamages = [];
+
+        foreach($damages as $damage) {
+            if ($damage->playerId == $playerId && $reduceBy > 0) {
+                if ($reduceBy >= $damage->damage) {
+                    $reduceBy -= $damage->damage;
+                } else {
+                    $newDamage = Damage::clone($damage);
+                    $newDamage->damage -= $reduceBy;
+                    $newDamages[] = $newDamage;
+                    $reduceBy = 0;
+                }
+            } else {
+                $newDamages[] = $damage;
+            }
+        }
+        return $newDamages;
+    }
+
+    function createRemainingDamage(int $playerId, array $damages): ?Damage {
+        $damageNumber = 0;
+        $damageDealerId = 0;
+        $cardType = 0;
+        $giveShrinkRayToken = 0;
+        $givePoisonSpitToken = 0;
+
+        foreach($damages as $damage) {
+            if ($damage->playerId == $playerId) {
+                $damageNumber += $damage->damage;
+                if ($damageDealerId == 0) {
+                    $damageDealerId = $damage->damageDealerId;
+                }
+                if ($cardType == 0) {
+                    $cardType = $damage->cardType;
+                }
+                $giveShrinkRayToken += $damage->giveShrinkRayToken;
+                $givePoisonSpitToken += $damage->givePoisonSpitToken;
+            }
+        }
+        return $damageNumber == 0 ? null : new Damage($playerId, $damageNumber, $damageDealerId, $cardType, $giveShrinkRayToken, $givePoisonSpitToken);
     }
 }

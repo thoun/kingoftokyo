@@ -559,9 +559,11 @@ trait CardsActionTrait {
 
     function endThrowCamouflageDice(int $playerId, object $intervention, array $dice, bool $incCamouflageRolls) {
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
-        $diceValues = array_map(function ($die) { return $die->value; }, $dice);
+        $rolledDice = array_values(array_filter($dice, fn($d) => $d->rolled));
+        $diceValues = array_map(fn($die) => $die->value, $dice);
+        $rolledDiceValues = array_map(fn($die) => $die->value, $rolledDice);
 
-        $cancelledDamage = count(array_values(array_filter($diceValues, function($face) { return $face === 4; }))); // heart dices
+        $cancelledDamage = count(array_values(array_filter($rolledDiceValues, fn($face) => $face === 4))); // heart dices
 
         $playerUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : new PlayersUsedDice($dice, $countCamouflage);
         if ($incCamouflageRolls) {
@@ -569,15 +571,17 @@ trait CardsActionTrait {
         } 
         $intervention->playersUsedDice->{$playerId} = $playerUsedDice;
 
-        $remainingDamage = count($dice) - $cancelledDamage;
+        $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $cancelledDamage;
 
         $canRethrow3 = false;
         if ($remainingDamage > 0) {
             $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && in_array(3, $diceValues);
         }
 
+        $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $cancelledDamage);
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-        $args = $this->argCancelDamage($playerId, $canRethrow3 ? in_array(3, $diceValues) : false);
+
+        $args = $this->argCancelDamage($playerId, $canRethrow3);
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
         $stayOnState = false;
@@ -601,11 +605,6 @@ trait CardsActionTrait {
                 'dice' => $diceStr,
             ]);
         } else {
-            if ($stayOnState) {
-                $intervention->damages[0]->damage -= $cancelledDamage;
-                $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-            }
-
             self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and reduce [Heart] loss by ${cancelledDamage}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
@@ -620,8 +619,9 @@ trait CardsActionTrait {
         if (!$stayOnState) {
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
 
-            if ($remainingDamage > 0) {
-                $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId(), $intervention->damages[0]->giveShrinkRayToken, $intervention->damages[0]->givePoisonSpitToken);
+            $damage = $this->createRemainingDamage($playerId, $intervention->damages);
+            if ($damage != null) {
+                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }
@@ -647,8 +647,6 @@ trait CardsActionTrait {
                 $remainingDamage += $damage->damage;
             }
         }
-    
-        $playerHealth = $this->getPlayerHealth($playerId);
 
         for ($i=0; $i<$cultistCount; $i++) {
             if ($this->getPlayerCultists($playerId) >= 1) {
@@ -752,16 +750,12 @@ trait CardsActionTrait {
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
-        $totalDamage = 0;
-        foreach($intervention->damages as $damage) {
-            if ($damage->playerId == $playerId) {
-                $totalDamage += $damage->damage;
-            }
-        }
-
-        $remainingDamage = $totalDamage - $energy;
+        $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $energy;
 
         $this->applyLoseEnergy($playerId, $energy, 0);
+
+        $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $energy);
+        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
 
         $args = $this->argCancelDamage($playerId, false);
 
@@ -772,11 +766,6 @@ trait CardsActionTrait {
         }
 
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-
-        if ($stayOnState) {
-            $intervention->damages[0]->damage -= $energy;
-            $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-        }
 
         self::notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
@@ -789,8 +778,9 @@ trait CardsActionTrait {
         if (!$stayOnState) {
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
 
-            if ($remainingDamage > 0) {
-                $this->applyDamage($playerId, $remainingDamage, $intervention->damages[0]->damageDealerId, $intervention->damages[0]->cardType, self::getActivePlayerId(), $intervention->damages[0]->giveShrinkRayToken, $intervention->damages[0]->givePoisonSpitToken);
+            $damage = $this->createRemainingDamage($playerId, $intervention->damages);
+            if ($damage != null) {
+                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }
