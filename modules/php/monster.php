@@ -26,9 +26,9 @@ trait MonsterTrait {
         }
 
         // King Kong, Cybertooth
-        /* TODOKK if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
+        if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
             $monsters = array_merge($monsters, [11, 12]);
-        }*/
+        }
 
         // Kookie, X-Smash Tree
         if ($bonusMonsters) {

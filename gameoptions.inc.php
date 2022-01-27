@@ -66,16 +66,7 @@ $game_options = [
                 'tmdisplay' => totranslate('“Nature vs. Machine, part I” event (Tokyo Tower)'),
             ],
         ],
-        'default' => 1,
-        'startcondition' => [ // TODOKK
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => '“Nature vs. Machine, part I” event will be available from Friday, 28th at 11:00',
-                ] 
-            ],
-        ],
+        'default' => 2,
     ],
 
     /* TODOAN ANUBIS_EXPANSION_OPTION => [
@@ -90,6 +81,15 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'startcondition' => [ // TODOAN
+            2 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => '“Battle of the Gods: the Revenge!” event will be available from Friday, 25th at 11:00',
+                ] 
+            ],
+        ],
     ],*/
 
     /* TODOCY 
