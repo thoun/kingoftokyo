@@ -128,5 +128,13 @@ After resolving your dice, if you rolled four identical faces, take a Cultist ti
 
 At any time, you can discard one of your Cultist tiles to gain either: 1 heart, 1 energy, or one extra Roll.
 
+= Tokyo Tower =
+“Nature vs. Machine, part I” adds Tokyo Tower
+
+Claim a tower level by rolling at least "1""1""1""1" while in Tokyo.  
+
+Monsters who control one or more levels gain the bonuses at the beginning of their turn: 1 Heart for the bottom level, 1 Heart and 1 Energy for the middle level (the bonuses are cumulative).  
+Claiming the top level automatically wins the game.
+
 = Cards combinations =
 If you have a doubt about some cards combinations, you can check answers listed here : https://docs.google.com/spreadsheets/d/1DbI4EongciNvCcjQBwsMHuXxpzKA1x3ZD_MMdPzBRtM.

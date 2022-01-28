@@ -120,5 +120,13 @@ Après avoir résolu vos dés, si vous aviez obtenu 4 faces identiques, vous ré
 
 À n’importe quel moment, vous pouvez défausser une tuile Cultiste pour gagner, au choix : 1 coeur, 1 énergie ou un Lancer supplémentaire.
 
+= Tour de Tokyo =
+L'événement « Nature contre Machine, partie I » ajoute la Tour de Tokyo.
+
+Pour récupérer un étage de la Tour de Tokyo, un Monstre doit être dans Tokyo et obtenir au moins "1""1""1""1".
+
+Les Monstres qui possèdent un ou plusieurs étages bénéficient de leur bonus au début de leur tour : 1 coeur pour le premier étage, 1 coeur et 1 énergie pour le second (ces bonus sont cumulables).
+Récupérer le dernier étage fait automatiquement gagner la partie.
+
 = Combinations de cartes =
 Si vous avez des doutes sur les combinations de cartes, vous pouvez vérifier les réponses listées ici (en anglais) : https://docs.google.com/spreadsheets/d/1DbI4EongciNvCcjQBwsMHuXxpzKA1x3ZD_MMdPzBRtM.
