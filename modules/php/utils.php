@@ -294,7 +294,7 @@ trait UtilTrait {
 
         $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
         if ($jetsDamages != null) {
-            $jetsDamages = array_values(array_filter($jetsDamages, function($damage) use ($playerId) { return $damage->playerId != $playerId; }));
+            $jetsDamages = array_values(array_filter($jetsDamages, fn($damage) => $damage->playerId != $playerId));
             $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
         }
 
@@ -326,7 +326,7 @@ trait UtilTrait {
         $sign = $inside ? '>' : '=';
         $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+        return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getPlayerIdInTokyoCity() {
@@ -343,32 +343,28 @@ trait UtilTrait {
         return $this->getPlayersIdsFromLocation(true);
     }
 
-    /*function getPlayersIdsOutsideTokyo() {
-        return $this->getPlayersIdsFromLocation(false);
-    }*/
-
     function getPlayersIds() {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+        return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getOtherPlayersIds(int $playerId) {
         $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+        return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }  
 
     function getNonZombiePlayersIds() {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND player_zombie = 0 ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+        return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getPlayer(int $id) {
         $sql = "SELECT * FROM player WHERE player_id = $id";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return new Player($dbResult); }, array_values($dbResults))[0];
+        return array_map(fn($dbResult) => new Player($dbResult), array_values($dbResults))[0];
     }
 
     // get players    
@@ -379,7 +375,7 @@ trait UtilTrait {
         }
         $sql .= " ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return new Player($dbResult); }, array_values($dbResults));
+        return array_map(fn($dbResult) => new Player($dbResult), array_values($dbResults));
     }
 
     // get other players    
@@ -390,7 +386,7 @@ trait UtilTrait {
         }
         $sql .= " ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return new Player($dbResult); }, array_values($dbResults));
+        return array_map(fn($dbResult) => new Player($dbResult), array_values($dbResults));
     }
 
     function getOrderedPlayers(int $currentTurnPlayerId, bool $includeEliminated = false) {
@@ -472,7 +468,7 @@ trait UtilTrait {
         $playersIds = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
 
         if ($playersIds != null && in_array($playerId, $playersIds)) {
-            $playersIds = array_filter($playersIds, function ($id) use ($playerId) { return $id != $playerId; });
+            $playersIds = array_filter($playersIds, fn($id) => $id != $playerId);
 
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $playersIds);
         }
@@ -865,11 +861,9 @@ trait UtilTrait {
 
     function jumpToState(int $stateId) {
         $state = $this->gamestate->state();
-        // we redirect only if game is not ended, and player is still active (not redirected to next player)
+        // we redirect only if game is not ended
         if ($state['name'] != 'gameEnd') {
-            $activePlayerId = $this->getActivePlayerId();
-            $isEliminated = $this->getPlayer($activePlayerId)->eliminated;
-            $this->gamestate->jumpToState($isEliminated ? ST_NEXT_PLAYER : $stateId);
+            $this->gamestate->jumpToState($stateId);
         }
     }
 
@@ -892,7 +886,7 @@ trait UtilTrait {
 
     function playersWoundedByActivePlayerThisTurn(int $playerId) {
         $dbResults = self::getCollectionFromDB("SELECT `to` FROM `turn_damages` WHERE `from` = $playerId");
-        return array_map(function($dbResult) { return intval($dbResult['to']); }, array_values($dbResults));
+        return array_map(fn($dbResult) => intval($dbResult['to']), array_values($dbResults));
     }
 
     function placeNewCardsOnTable() {
@@ -907,7 +901,7 @@ trait UtilTrait {
 
     function getTokyoTowerLevels(int $playerId) {
         $dbResults = self::getCollectionFromDB("SELECT `level` FROM `tokyo_tower` WHERE `owner` = $playerId order by `level`");
-        return array_map(function($dbResult) { return intval($dbResult['level']); }, array_values($dbResults));
+        return array_map(fn($dbResult) => intval($dbResult['level']), array_values($dbResults));
     }
 
     function changeTokyoTowerOwner(int $playerId, int $level) {
@@ -928,6 +922,6 @@ trait UtilTrait {
     function getPlayersIdsWithMaxColumn(string $column) {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select max(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
         $dbResults = self::getCollectionFromDB($sql);
-        return array_map(function($dbResult) { return intval($dbResult['player_id']); }, array_values($dbResults));
+        return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 }

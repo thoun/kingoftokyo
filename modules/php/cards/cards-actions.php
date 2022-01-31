@@ -2,13 +2,9 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/card.php');
 require_once(__DIR__.'/../objects/player-intervention.php');
-require_once(__DIR__.'/../objects/damage.php');
 
-use KOT\Objects\Card;
 use KOT\Objects\OpportunistIntervention;
-use KOT\Objects\Damage;
 use KOT\Objects\PlayersUsedDice;
 
 trait CardsActionTrait {
@@ -254,7 +250,7 @@ trait CardsActionTrait {
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $playerId) {
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type != MIMIC_CARD && $card->type < 100; })));
+                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
             }
 
             $mimic = $countAvailableCardsForMimic > 0;
@@ -272,13 +268,13 @@ trait CardsActionTrait {
         if ($damages != null && count($damages) > 0) {
             $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard);
         }
-
+        
         if (!$redirects) {
             $this->jumpToState($redirectAfterBuyCard, $playerId);
         }
     }
 
-    function drawCard(int $playerId, int $logCardType) {        
+    function drawCard(int $playerId) {        
 
         $card = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
 
@@ -287,8 +283,6 @@ trait CardsActionTrait {
         $this->removeDiscardCards($playerId);
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
-        
-        $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
 
         $this->cards->moveCard($card->id, 'hand', $playerId);
 
@@ -299,8 +293,6 @@ trait CardsActionTrait {
         
         // astronaut
         $this->applyAstronaut($playerId);
-
-        $newCard = null;
 
         $topDeckCardBackType = $this->getTopDeckCardBackType();
 
@@ -323,7 +315,7 @@ trait CardsActionTrait {
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $playerId) {
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type != MIMIC_CARD && $card->type < 100; })));
+                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
             }
 
             $mimic = $countAvailableCardsForMimic > 0;
@@ -401,7 +393,7 @@ trait CardsActionTrait {
         $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
 
         if (count($playersWithOpportunist) > 0) {
-            $renewedCardsIds = array_map(function($card) { return $card->id; }, $cards);
+            $renewedCardsIds = array_map(fn($card) => $card->id, $cards);
             $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, $renewedCardsIds);
             $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
             $this->gamestate->nextState('opportunist');

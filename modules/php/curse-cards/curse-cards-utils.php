@@ -47,7 +47,7 @@ trait CurseCardsUtilTrait {
                 }
                 break;
             case INADEQUATE_OFFERING_CURSE_CARD:
-                $this->drawCard($playerId, $logCardType);
+                $this->drawCard($playerId);
                 break;
             case VENGEANCE_OF_HORUS_CURSE_CARD:
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);
@@ -182,7 +182,7 @@ trait CurseCardsUtilTrait {
 
     function snakeEffectDiscardKeepCard(int $playerId) {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $keepCards = array_values(array_filter($cards, function($card) { return $card->type < 100; }));
+        $keepCards = array_values(array_filter($cards, fn($card) => $card->type < 100));
         $count = count($keepCards);
         if ($count > 1) {
             $this->jumpToState(ST_PLAYER_DISCARD_KEEP_CARD);
@@ -245,7 +245,7 @@ trait CurseCardsUtilTrait {
     function getPlayersIdsWithoutGoldenScarab() {
         $playerIds = $this->getPlayersIds();
         $playerWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
-        return array_values(array_filter($playerIds, function ($playerId) use ($playerWithGoldenScarab) { return $playerId != $playerWithGoldenScarab; }));
+        return array_values(array_filter($playerIds, fn($playerId) => $playerId != $playerWithGoldenScarab));
     }
 
     function keepAndEvolutionCardsHaveEffect() {
