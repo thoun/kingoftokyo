@@ -2964,10 +2964,14 @@ var KingOfTokyo = /** @class */ (function () {
             }
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
                 var _loop_3 = function (i) {
-                    var id = "useRobot" + i + "_button";
-                    this_2.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this_2.cards.getCardName(210, 'text-only') })), function () { return _this.useRobot(i); });
-                    document.getElementById(id).dataset.enableAtEnergy = '' + i;
-                    dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
+                    var healthLoss = args.damage - i;
+                    var energyCost = (healthLoss === 0 && args.devilCard) ? i - 1 : i;
+                    var id = "useRobot" + energyCost + "_button";
+                    if (!document.getElementById(id)) {
+                        this_2.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this_2.cards.getCardName(210, 'text-only') })), function () { return _this.useRobot(energyCost); });
+                        document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
+                        dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
+                    }
                 };
                 var this_2 = this;
                 for (var i = args.damage; i > 0; i--) {

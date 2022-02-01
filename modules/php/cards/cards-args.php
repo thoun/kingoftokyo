@@ -259,12 +259,14 @@ trait CardsArgTrait {
             $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $remainingDamage = 0;
+            $devilCard = false;
             foreach($intervention->damages as $damage) {
                 if ($damage->playerId == $playerId) {
                     $remainingDamage += $damage->damage;
 
                     if ($this->countCardOfType($damage->damageDealerId, DEVIL_CARD)) {
                         $remainingDamage += 1;
+                        $devilCard = true;
                     }
                 }
             }
@@ -303,6 +305,7 @@ trait CardsArgTrait {
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
                 'damage' => $remainingDamage,
+                'devilCard' => $devilCard,
                 'rethrow3' => [
                     'hasCard' => $hasBackgroundDweller,
                     'hasDice3' => $hasDice3,

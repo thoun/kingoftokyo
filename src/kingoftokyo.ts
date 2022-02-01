@@ -435,10 +435,14 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
                 for (let i=args.damage; i>0; i--) {
-                    const id = `useRobot${i}_button`;
-                    (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': i, 'card_name': this.cards.getCardName(210, 'text-only')})), () => this.useRobot(i));
-                    document.getElementById(id).dataset.enableAtEnergy = ''+i;
-                    dojo.toggleClass(id, 'disabled', args.playerEnergy < i);
+                    let healthLoss = args.damage - i;
+                    const energyCost = (healthLoss === 0 && args.devilCard) ? i - 1 : i;
+                    const id = `useRobot${energyCost}_button`;
+                    if (!document.getElementById(id)) {
+                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(210, 'text-only')})), () => this.useRobot(energyCost));
+                        document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
+                        dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
+                    }
                 }
             }
 

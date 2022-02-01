@@ -19,14 +19,14 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(4);
+        $this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
-        $this->debugSetHealth(2);
+        //$this->debugSetHealth(2);
         //$this->debugSetPlayerHealth(2343492, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2");
-        self::DbQuery("UPDATE player SET `player_cultists` = 2");
+        //self::DbQuery("UPDATE player SET `player_cultists` = 2");
         //self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
@@ -56,7 +56,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
-        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
@@ -75,7 +75,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
-        $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
+        //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
@@ -85,13 +85,15 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
+
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
+        //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
         //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
         //$this->debugSetCardInHand(WITCH_CARD, 2343494);
         //$this->debugSetCardInHand(VAMPIRE_CARD, 2343495);
-
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
+
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
         //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);

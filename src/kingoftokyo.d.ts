@@ -255,6 +255,7 @@ interface EnteringCancelDamageArgs {
     damageToCancelToSurvive: number;
     canHeal: number;
     damage: number;
+    devilCard: boolean;
 }
 
 interface EnteringLeaveTokyoArgs {
