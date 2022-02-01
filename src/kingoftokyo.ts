@@ -463,7 +463,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         cardsNames.push(_(this.cards.getCardName(37, 'text-only')));
                     }
 
-                    if (cultistCount + rapidHealingCount >= args.canHeal) {
+                    if (cultistCount + rapidHealingCount >= args.canHeal && 2*rapidHealingCount <= args.playerEnergy) {
                         const text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')}` + (rapidHealingCount > 0 ? ` (${2*rapidHealingCount}[Energy])` : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.canHeal });
                         (this as any).addActionButton(`rapidHealingSync_button_${i}`, text, () => this.useRapidHealingSync(cultistCount, rapidHealingCount));
                     }
@@ -1878,7 +1878,6 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public takeNoLockAction(action: string, data?: any) {
         data = data || {};
-        data.lock = true;
         (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
     }
 

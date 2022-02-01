@@ -73,7 +73,7 @@ trait CardsUtilTrait {
     }
 
     function getCardsFromDb(array $dbCards) {
-        return array_map(function($dbCard) { return $this->getCardFromDb($dbCard); }, array_values($dbCards));
+        return array_map(fn($dbCard) => $this->getCardFromDb($dbCard), array_values($dbCards));
     }
 
     function applyEffects(int $cardType, int $playerId, bool $opportunist) { // return $damages
@@ -567,7 +567,7 @@ trait CardsUtilTrait {
 
     function removeCards(int $playerId, array $cards, bool $silent = false) {
         // if trying to remove mimic tile, we stop, as tile isn't removed when mimicked card is removed
-        $cards = array_values(array_filter($cards, function ($card) { return $card->id < 2000; }));
+        $cards = array_values(array_filter($cards, fn($card) => $card->id < 2000));
 
         foreach($cards as $card) {
             $this->removeCard($playerId, $card, true);
@@ -652,7 +652,7 @@ trait CardsUtilTrait {
     
     function removeDiscardCards(int $playerId) {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $discardCards = array_values(array_filter($cards, function($card) { return ($card->type >= 100 && $card->type < 200); }));
+        $discardCards = array_values(array_filter($cards, fn($card) => $card->type >= 100 && $card->type < 200));
         $this->removeCards($playerId, $discardCards);
     }
 
@@ -765,7 +765,7 @@ trait CardsUtilTrait {
 
     function getFormCard(int $playerId) {
         $playerCards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $formCard = $this->array_find($playerCards, function($card) { return $card->type == 301; });
+        $formCard = $this->array_find($playerCards, fn($card) => $card->type == 301);
         return $formCard;
     }
 

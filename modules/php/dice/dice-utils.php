@@ -55,14 +55,14 @@ trait DiceUtilTrait {
         $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
         // TODOAN TODOCY $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
         $dbDices = self::getCollectionFromDB($sql);
-        $dice = array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
-        return array_values(array_filter($dice, function ($die) { return !$die->discarded; }));
+        $dice = array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices));
+        return array_values(array_filter($dice, fn($die) => !$die->discarded));
     }
 
     function getDieById(int $id) {
         $sql = "SELECT * FROM dice WHERE `dice_id` = $id";
         $dbDices = self::getCollectionFromDB($sql);
-        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices))[0];
+        return array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices))[0];
     }
 
     function getFirstDieOfValue(int $playerId, int $value) {
@@ -82,7 +82,7 @@ trait DiceUtilTrait {
     function getDiceByType(int $type) {
         $sql = "SELECT * FROM dice WHERE `type` = $type";
         $dbDices = self::getCollectionFromDB($sql);
-        return array_map(function($dbDice) { return new Dice($dbDice); }, array_values($dbDices));
+        return array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices));
     }
 
     private function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate, bool $setCanReroll) {

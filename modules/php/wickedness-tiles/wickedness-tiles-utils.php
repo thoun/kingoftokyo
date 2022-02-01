@@ -26,7 +26,7 @@ trait WickednessTilesUtilTrait {
                 $tileLevel = $tile->type > 8 ? 10 : ($tile->type > 4 ? 6 : 3);
                 return $tileLevel === $level; 
             }));
-            $levelTilesIds = array_map(function ($tile) { return $tile->id; }, $levelTiles);
+            $levelTilesIds = array_map(fn($tile) => $tile->id, $levelTiles);
             $this->wickednessTiles->moveCards($levelTilesIds, 'table', $level);
         }
     }
@@ -42,7 +42,7 @@ trait WickednessTilesUtilTrait {
     }
 
     function getWickednessTilesFromDb(array $dbCards) {
-        return array_map(function($dbCard) { return $this->getWickednessTileFromDb($dbCard); }, array_values($dbCards));
+        return array_map(fn($dbCard) => $this->getWickednessTileFromDb($dbCard), array_values($dbCards));
     }
 
     function getPlayerWickedness(int $playerId) {
@@ -92,7 +92,7 @@ trait WickednessTilesUtilTrait {
                 break;
             case HAVE_IT_ALL_WICKEDNESS_TILE:
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-                $keepCardsCount = count(array_filter($cardsOfPlayer, function($card) { return $card->type < 100; }));
+                $keepCardsCount = count(array_filter($cardsOfPlayer, fn($card) => $card->type < 100));
                 $this->applyGetPoints($playerId, $keepCardsCount, $logTileType);
                 break;
             case FINAL_PUSH_WICKEDNESS_TILE:

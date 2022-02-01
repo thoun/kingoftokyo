@@ -246,7 +246,7 @@ trait DiceActionTrait {
         $discardBecauseOfHeart = $value == 4 && ($cardType == PSYCHIC_PROBE_CARD || $cardType == MIMIC_CARD);
 
         if ($discardBecauseOfHeart) {
-            $currentPlayerCards = array_values(array_filter($intervention->cards, function ($card) use ($playerId) { return $card->location_arg == $playerId; }));
+            $currentPlayerCards = array_values(array_filter($intervention->cards, fn($card) => $card->location_arg == $playerId));
             if (count($currentPlayerCards) > 0) {
 
                 // we remove Psychic Probe and Mimic if user mimicked it
@@ -257,17 +257,15 @@ trait DiceActionTrait {
 
                     if ($card->type == PSYCHIC_PROBE_CARD) { // real Psychic Probe
 
-                        $mimicCard = $this->array_find($intervention->cards, function ($card) { return $card->type == MIMIC_CARD; });
+                        $mimicCard = $this->array_find($intervention->cards, fn($card) => $card->type == MIMIC_CARD);
                         if ($mimicCard != null) {
                             $this->setUsedCard($mimicCard->id);
                         }
 
-                        if ($mimicCard != null && count(array_filter($intervention->cards, function ($card) use ($mimicCard) { return $card->location_arg == $mimicCard->location_arg; })) == 1) {
+                        if ($mimicCard != null && count(array_filter($intervention->cards, fn($card) => $card->location_arg == $mimicCard->location_arg)) == 1) {
                             // in case we had a mimic player to play after current player, we remove him from array because he can't anymore 
                             // (if he only have mimic as card for this state)
-                            $intervention->remainingPlayersId = array_values(array_filter($intervention->remainingPlayersId, function($remainingId) use ($mimicCard) {
-                                return $remainingId != $mimicCard->location_arg;
-                            }));
+                            $intervention->remainingPlayersId = array_values(array_filter($intervention->remainingPlayersId, fn($remainingId) => $remainingId != $mimicCard->location_arg));
                         }
 
                         // TODO mimicTile

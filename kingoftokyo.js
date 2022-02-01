@@ -2990,7 +2990,7 @@ var KingOfTokyo = /** @class */ (function () {
                     if (rapidHealingCount > 0) {
                         cardsNames.push(_(this_3.cards.getCardName(37, 'text-only')));
                     }
-                    if (cultistCount + rapidHealingCount >= args.canHeal) {
+                    if (cultistCount + rapidHealingCount >= args.canHeal && 2 * rapidHealingCount <= args.playerEnergy) {
                         var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("" + _('Gain ${hearts}[Heart]') + (rapidHealingCount > 0 ? " (" + 2 * rapidHealingCount + "[Energy])" : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.canHeal });
                         this_3.addActionButton("rapidHealingSync_button_" + i, text, function () { return _this.useRapidHealingSync(cultistCount, rapidHealingCount); });
                     }
@@ -4163,7 +4163,6 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.takeNoLockAction = function (action, data) {
         data = data || {};
-        data.lock = true;
         this.ajaxcall("/kingoftokyo/kingoftokyo/" + action + ".html", data, this, function () { });
     };
     KingOfTokyo.prototype.setFont = function (prefValue) {

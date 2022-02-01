@@ -49,7 +49,7 @@ trait MonsterTrait {
 
     function getAvailableMonsters() {
         $dbResults = self::getCollectionFromDB("SELECT distinct player_monster FROM player WHERE player_monster > 0");
-        $pickedMonsters = array_map(function($dbResult) { return intval($dbResult['player_monster']); }, array_values($dbResults));
+        $pickedMonsters = array_map(fn($dbResult) => intval($dbResult['player_monster']), array_values($dbResults));
 
         $availableMonsters = [];
 

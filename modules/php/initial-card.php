@@ -36,10 +36,10 @@ trait InitialCardTrait {
         $this->checkAction('chooseInitialCard');
 
         $topCards = $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck'));
-        if (!$this->array_some($topCards, function($topCard) use ($id) { return $topCard->id == $id; })) {
-            throw new \ErrBgaUserExceptionor('Card not available');
+        if (!$this->array_some($topCards, fn($topCard) => $topCard->id == $id)) {
+            throw new \BgaUserException('Card not available');
         }
-        $otherCard = $this->array_find($topCards, function($topCard) use ($id) { return $topCard->id != $id; });
+        $otherCard = $this->array_find($topCards, fn($topCard) => $topCard->id != $id);
 
         $playerId = self::getActivePlayerId();
 
@@ -52,7 +52,7 @@ trait InitialCardTrait {
         $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            if (!$this->array_some($cardsOfPlayer, function ($card) { return $card->type > 200 && $card->type < 300; })) {
+            if (!$this->array_some($cardsOfPlayer, fn($card) => $card->type > 200 && $card->type < 300)) {
                 return false;
             }
         }

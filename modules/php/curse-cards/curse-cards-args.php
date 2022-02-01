@@ -79,7 +79,7 @@ trait CurseCardsArgTrait {
 
         $combinations = [];
 
-        $sum = array_reduce($resources, function ($carry, $item) { return $carry + $item; });
+        $sum = array_reduce($resources, fn($carry, $item) => $carry + $item);
 
         // ($sum === 0) { => return empty array
         if ($sum === 1) {
@@ -121,7 +121,7 @@ trait CurseCardsArgTrait {
 
         $playerId = $this->getRerollDicePlayerId();
 
-        $diceCount = count(array_filter($activePlayerDice, function ($die) { return $die->type < 2; }));
+        $diceCount = count(array_filter($activePlayerDice, fn($die) => $die->type < 2));
 
         $forceRerollTwoDice = $this->getCurseCardType() == FALSE_BLESSING_CURSE_CARD;
         $min = min($forceRerollTwoDice ? 2 : 0, $diceCount);

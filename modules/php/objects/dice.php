@@ -2,14 +2,14 @@
 namespace KOT\Objects;
 
 class Dice {
-    public $id;
-    public $value; // [1 2 3 heart energy smash] for die6, [eye river snake ankh] for die4
-    public $extra;
-    public $locked;
-    public $rolled;
-    public $type;
-    public $discarded;
-    public $canReroll = true;
+    public int $id;
+    public int $value; // [1 2 3 heart energy smash] for die6, [eye river snake ankh] for die4
+    public bool $extra;
+    public bool $locked;
+    public bool $rolled;
+    public int $type;
+    public bool $discarded;
+    public bool $canReroll = true;
 
     public function __construct($dbDice) {
         $this->id = intval($dbDice['dice_id']);

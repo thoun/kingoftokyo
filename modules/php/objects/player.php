@@ -3,18 +3,18 @@ namespace KOT\Objects;
 
 
 class Player {
-    public $id;
-    public $name;
-    public $color;
-    public $no;
-    public $score;
-    public $health;
-    public $energy;
-    public $location;
-    public $eliminated;
-    public $shrinkRayTokens;
-    public $poisonTokens;
-    public $wickedness;
+    public int $id;
+    public string $name;
+    public string $color;
+    public int $no;
+    public int $score;
+    public int $health;
+    public int $energy;
+    public int $location;
+    public bool $eliminated;
+    public int $shrinkRayTokens;
+    public int $poisonTokens;
+    public int $wickedness;
 
     public function __construct($dbPlayer) {
         $this->id = intval($dbPlayer['player_id']);

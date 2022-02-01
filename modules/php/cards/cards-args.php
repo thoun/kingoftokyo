@@ -34,7 +34,6 @@ trait CardsArgTrait {
 
     function argBuyCard() {
         $playerId = self::getActivePlayerId();
-        $playerEnergy = $this->getPlayerEnergy($playerId);
 
         $potentialEnergy = $this->getPlayerEnergy($playerId);
         if ($this->isCthulhuExpansion()) {
@@ -92,9 +91,8 @@ trait CardsArgTrait {
         $canPick = $this->countCardOfType($playerId, MADE_IN_A_LAB_CARD);
         $pickArgs = [];
         if ($canPick > 0) {
-            $madeInALabCardIds = $this->getMadeInALabCardIds($playerId);
             $pickCards = $this->getCardsFromDb($this->cards->getCardsOnTop($canPick, 'deck'));
-            $this->setMadeInALabCardIds($playerId, array_map(function($card) { return $card->id; }, $pickCards));
+            $this->setMadeInALabCardIds($playerId, array_map(fn($card) => $card->id, $pickCards));
 
             foreach ($pickCards as $card) {
                 $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
@@ -216,15 +214,15 @@ trait CardsArgTrait {
         $playersIds = $this->getPlayersIds();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
-        $disabledIds = array_map(function ($card) { return $card->id; }, $cards);
+        $disabledIds = array_map(fn($card) => $card->id, $cards);
         $mimickedCardId = $this->getMimickedCardId($mimicCardType);
 
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             $disabledCardsOfPlayer = $canChange ? 
-                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId) { return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100; })) :
+                array_values(array_filter($cardsOfPlayer, fn($card) => $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100)) :
                 $cardsOfPlayer; // TODOWI ignore Mimic Tile ? for wickedness selection
-            $disabledIdsOfPlayer = array_map(function ($card) { return $card->id; }, $disabledCardsOfPlayer);
+            $disabledIdsOfPlayer = array_map(fn($card) => $card->id, $disabledCardsOfPlayer);
             
             $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
         }
@@ -327,7 +325,7 @@ trait CardsArgTrait {
         }
 
         $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
-        $disabledIds = array_map(function ($card) { return $card->id; }, $tableCards); // can only take from other players, not table
+        $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
         $unbuyableIds = $disabledIds; // copy
         $cardsCosts = [];
 
