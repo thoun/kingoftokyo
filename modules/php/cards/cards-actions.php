@@ -657,13 +657,13 @@ trait CardsActionTrait {
             }
         }
         
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention); // must be set before apply damage, in case this player die
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
                 $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, self::getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             }
         }
-
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+        
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
     

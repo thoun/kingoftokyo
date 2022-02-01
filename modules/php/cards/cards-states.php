@@ -97,7 +97,7 @@ trait CardsStateTrait {
 
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
-            $diceValues = $dice != null ? array_map(function ($die) { return $die->value; }, $dice) : [];
+            $diceValues = $dice != null ? array_map(fn($die) => $die->value, $dice) : [];
 
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
 
@@ -122,8 +122,6 @@ trait CardsStateTrait {
     }
 
     function stStealCostumeCard() {
-        $playerId = self::getActivePlayerId();
-
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         if ($diceCounts[6] < 3) {
