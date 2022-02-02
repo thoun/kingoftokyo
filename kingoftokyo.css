@@ -1435,6 +1435,9 @@ html[data-dice="3"] .animation {
 .tokyo-tower .level {
   height: 100%;
   background: url("img/tokyo-tower.png");
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .tokyo-tower .level.level3 {
   background-position-y: 0%;
@@ -1444,6 +1447,9 @@ html[data-dice="3"] .animation {
 }
 .tokyo-tower .level.level1 {
   background-position-y: 100%;
+}
+.tokyo-tower .level .icon {
+  margin: -5px;
 }
 
 .mode_3d .tokyo-tower {

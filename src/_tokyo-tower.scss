@@ -10,6 +10,9 @@
   .level {
     height: 100%;
     background: url("img/tokyo-tower.png");
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &.level3 {
       background-position-y: 0%;
@@ -19,6 +22,10 @@
     }
     &.level1 {
       background-position-y: 100%;
+    }
+
+    .icon {
+      margin: -5px;
     }
   }
 }
