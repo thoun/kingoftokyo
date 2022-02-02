@@ -1097,6 +1097,7 @@ var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, cards, wickednessTiles, playerWithGoldenScarab) {
         var _this = this;
+        var _a;
         this.game = game;
         this.player = player;
         this.playerId = Number(player.id);
@@ -1109,6 +1110,7 @@ var PlayerTable = /** @class */ (function () {
         }
         html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (cards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
         dojo.place(html, 'table');
+        this.setMonsterFigureBeastMode(((_a = cards.find(function (card) { return card.type === 301; })) === null || _a === void 0 ? void 0 : _a.side) === 1);
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -1313,6 +1315,12 @@ var PlayerTable = /** @class */ (function () {
         var cardDiv = document.getElementById(this.cards.container_div.id + "_item_" + card.id);
         cardDiv.dataset.side = '' + card.side;
         this.game.addTooltipHtml(cardDiv.id, this.game.cards.updateFlippableCardTooltip(cardDiv));
+        this.setMonsterFigureBeastMode(card.side === 1);
+    };
+    PlayerTable.prototype.setMonsterFigureBeastMode = function (beastMode) {
+        if (this.monster === 12) {
+            document.getElementById("monster-figure-" + this.playerId).classList.toggle('beast-mode', beastMode);
+        }
     };
     PlayerTable.prototype.setCultistTokens = function (tokens) {
         var containerId = "player-table-cultist-tokens-" + this.playerId;

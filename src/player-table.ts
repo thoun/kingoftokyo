@@ -50,6 +50,9 @@ class PlayerTable {
         </div>
         `;
         dojo.place(html, 'table');
+
+        this.setMonsterFigureBeastMode(cards.find(card => card.type === 301)?.side === 1);
+
         this.cards = new ebg.stock() as Stock;
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -296,6 +299,13 @@ class PlayerTable {
         const cardDiv = document.getElementById(`${this.cards.container_div.id}_item_${card.id}`) as HTMLDivElement;
         cardDiv.dataset.side = ''+card.side;
         (this.game as any).addTooltipHtml(cardDiv.id, this.game.cards.updateFlippableCardTooltip(cardDiv));
+        this.setMonsterFigureBeastMode(card.side === 1);
+    }
+
+    private setMonsterFigureBeastMode(beastMode: boolean) {
+        if (this.monster === 12) {
+            document.getElementById(`monster-figure-${this.playerId}`).classList.toggle('beast-mode', beastMode);
+        }
     }
 
     public setCultistTokens(tokens: number) {

@@ -109,6 +109,10 @@ html, .mode_3d #game_play_area_background {
           background-image: url('img/monster-figure-#{$i}.png');
       }
   }
+
+  &.monster12.beast-mode {
+    background-image: url('img/monster-figure-12-beast.png');
+  }
 }
 
 #kot-table.pickMonster {
