@@ -85,12 +85,12 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
-        $this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
+        //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
 
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        $this->debugSetCardInHand(DEVIL_CARD, 2343492);
+        //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-        $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+        //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
         //$this->debugSetCardInHand(WITCH_CARD, 2343494);
         //$this->debugSetCardInHand(VAMPIRE_CARD, 2343495);
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);

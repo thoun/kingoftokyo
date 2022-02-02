@@ -303,6 +303,12 @@ class KingOfTokyo extends Table {
         if ($this->isKingKongExpansion()) {
             $this->DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
         }
+
+        if ($this->isMutantEvolutionVariant()) {
+            foreach (array_keys($players) as $playerId) {
+                $this->cards->pickCardForLocation('mutantdeck', 'hand', $playerId);
+            }
+        }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -328,6 +334,7 @@ class KingOfTokyo extends Table {
         $isCybertoothExpansion = $this->isCybertoothExpansion();
         $isAnubisExpansion = $this->isAnubisExpansion();
         $isWickednessExpansion = $this->isWickednessExpansion();
+        $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();
 
         $result = ['players' => []];
 
@@ -413,6 +420,7 @@ class KingOfTokyo extends Table {
         $result['kingkongExpansion'] = $isKingKongExpansion;
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
         $result['wickednessExpansion'] = $isWickednessExpansion;
+        $result['mutantEvolutionVariant'] = $isMutantEvolutionVariant;
 
         if ($isAnubisExpansion) {
             $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab();

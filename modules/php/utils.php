@@ -51,7 +51,7 @@ trait UtilTrait {
     }
 
     function isKingKongExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
+        return intval($this->getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
     }
 
     function isCybertoothExpansion() {

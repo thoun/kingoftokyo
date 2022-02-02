@@ -23,7 +23,9 @@ const DISCARD_CARDS_LIST = {
 
 const COSTUME_CARDS_LIST = [1,2,3,4,5,6,7,8,9,10,11,12];
 
-const TRANSFORMATION_CARDS_LIST = [1,2];
+const TRANSFORMATION_CARDS_LIST = [1];
+
+const FLIPPABLE_CARDS = [301];
 
 class Cards {
     constructor (private game: KingOfTokyoGame) {}
@@ -176,7 +178,14 @@ class Cards {
             return;
         }
 
-        cards.forEach(card => stock.addToStockWithId(card.type + card.side, `${card.id}`, from));
+        cards.forEach(card => {
+            stock.addToStockWithId(card.type, `${card.id}`, from);
+            const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
+            cardDiv.dataset.side = ''+card.side;
+            if (card.side !== null) {
+                this.game.cards.updateFlippableCardTooltip(cardDiv)
+            }
+        });
         cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
     }
 
@@ -197,7 +206,7 @@ class Cards {
         }
     }
 
-    private getCardNamePosition(cardTypeId: number) {
+    private getCardNamePosition(cardTypeId: number, side: number = null) {
         switch( cardTypeId ) {
             // KEEP
             case 3: return [0, 90];
@@ -219,8 +228,11 @@ class Cards {
             case 115: return [0, 80];
             // COSTUME            
             case 209: return [15, 100];
-            // TRANSFORMATION   /* TODOME */         
-            case 301: case 302: return [10, 15];
+            // TRANSFORMATION
+            case 301: return {
+                0: [10, 15],
+                1: [10, 15],
+            }[side];;
         }
         return null;
     }
@@ -314,7 +326,7 @@ class Cards {
         return null;
     }
 
-    private getColoredCardName(cardTypeId: number): string {
+    private getColoredCardName(cardTypeId: number, side: number = null): string {
         switch( cardTypeId ) {
             // KEEP
             case 1: return _("[724468]Acid [6E3F63]Attack");
@@ -406,15 +418,17 @@ class Cards {
             case 211: return _("[733010]Statue of liberty");
             case 212: return _("[2d4554]Clown");
 
-            // TRANSFORMATION
-            /* TODOME case 301: return _("[deaa26]Biped [72451c]Form");
-            case 302: return _("[982620]Beast [de6526]Form");*/
+            // TRANSFORMATION TODOME
+            case 301: return {
+                0: ("[deaa26]Biped [72451c]Form"),
+                1: ("[982620]Beast [de6526]Form"),
+            }[side];
         }
         return null;
     }
 
-    public getCardName(cardTypeId: number, state: 'text-only' | 'span') {
-        const coloredCardName = this.getColoredCardName(cardTypeId);
+    public getCardName(cardTypeId: number, state: 'text-only' | 'span', side: number = null) {
+        const coloredCardName = this.getColoredCardName(cardTypeId, side);
         if (state == 'text-only') {
             return coloredCardName?.replace(/\[(\w+)\]/g, '');
         } else if (state == 'span') {
@@ -432,7 +446,7 @@ class Cards {
         return null;
     }
 
-    private getCardDescription(cardTypeId: number) {
+    private getCardDescription(cardTypeId: number, side: number = null) {
         switch( cardTypeId ) {
             // KEEP
             case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
@@ -518,51 +532,67 @@ class Cards {
             case 211: return _("You have an <strong>extra Roll.</strong>");
             case 212: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>");
 
-            // TRANSFORMATION
-            /* TODOME case 301: return _("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.");
-            case 302: return _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>");*/
+            // TRANSFORMATION TODOME 
+            case 301: return {
+                0: ("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card."),
+                1: ("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
+            }[side];
         }
         return null;
     }
 
-    private getTooltip(cardTypeId: number) {
+    public updateFlippableCardTooltip(cardDiv: HTMLDivElement) {
+        const type = Number(cardDiv.dataset.type);
+        if (!FLIPPABLE_CARDS.includes(type)) {
+            return;
+        }
+        
+        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(Number(cardDiv.dataset.type), Number(cardDiv.dataset.side)));
+    }
+
+    private getTooltip(cardTypeId: number, side: number = null) {
         const cost = this.getCardCost(cardTypeId);
         let tooltip = `<div class="card-tooltip">
-            <p><strong>${this.getCardName(cardTypeId, 'text-only')}</strong></p>`;
+            <p><strong>${this.getCardName(cardTypeId, 'text-only', side)}</strong></p>`;
         if (cost !== null) {
             tooltip += `<p class="cost">${ dojo.string.substitute(_("Cost : ${cost}"), {'cost': cost}) } <span class="icon energy"></span></p>`;
         }
-        tooltip += `<p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>`;
+        tooltip += `<p>${formatTextIcons(this.getCardDescription(cardTypeId, side))}</p>`;
 
-        /* TODOME if (cardTypeId == 301 || cardTypeId == 302) {
-            const otherSide = cardTypeId == 301 ? 302 : 301;
+        if (FLIPPABLE_CARDS.includes(cardTypeId) && side !== null) {
+            const otherSide = side == 1 ? 0 : 1;
 
             const tempDiv: HTMLDivElement = document.createElement('div');
             tempDiv.classList.add('stockitem');
             tempDiv.style.width = `${CARD_WIDTH}px`;
             tempDiv.style.height = `${CARD_HEIGHT}px`;
             tempDiv.style.position = `relative`;
-            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(otherSide)}-cards.jpg')`;
-            const imagePosition = (otherSide % 100) - 1;
-            const image_items_per_row = 10;
-            var row = Math.floor(imagePosition / image_items_per_row);
-            const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
-            const yBackgroundPercent = row * 100;
-            tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
+            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(cardTypeId)}-cards.jpg')`;
+            tempDiv.style.backgroundPosition = `-${otherSide*100}% 0%`;
 
             document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, otherSide);
+            this.setDivAsCard(tempDiv, cardTypeId, otherSide);
             document.body.removeChild(tempDiv);
 
-            tooltip += `<p>${_("Other side :")}<br>${tempDiv.outerHTML}</p>`;
-        }*/
+            // TODOME translate other side
+            tooltip += `<p>${("Other side :")}<br>${tempDiv.outerHTML}</p>`;
+        }
 
         tooltip += `</div>`;
         return tooltip;
     }
 
     public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
-        if (cardType !== 999) { // no text for golden scarab
+        if (FLIPPABLE_CARDS.includes(cardType)) {
+            cardDiv.dataset.type = ''+cardType;
+            cardDiv.classList.add('card-inner');
+            dojo.place(`
+                <div class="card-side front"></div>
+                <div class="card-side back"></div>
+            `, cardDiv);
+            this.setDivAsCard(cardDiv.getElementsByClassName('front')[0] as HTMLDivElement, 301, 0); 
+            this.setDivAsCard(cardDiv.getElementsByClassName('back')[0] as HTMLDivElement, 301, 1);
+        } else if (cardType !== 999) { // no text for golden scarab
             this.setDivAsCard(cardDiv, cardType); 
             (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
         }
@@ -592,15 +622,15 @@ class Cards {
         }
     }
 
-    public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
+    public setDivAsCard(cardDiv: HTMLDivElement, cardType: number, side: number = null) {
         const type = this.getCardTypeName(cardType);
-        const description = formatTextIcons(this.getCardDescription(cardType));
-        const position = this.getCardNamePosition(cardType);
+        const description = formatTextIcons(this.getCardDescription(cardType, side));
+        const position = this.getCardNamePosition(cardType, side);
 
         cardDiv.innerHTML = `<div class="bottom"></div>
         <div class="name-wrapper" ${position ? `style="left: ${position[0]}px; top: ${position[1]}px;"` : ''}>
-            <div class="outline">${this.getCardName(cardType, 'span')}</div>
-            <div class="text">${this.getCardName(cardType, 'text-only')}</div>
+            <div class="outline">${this.getCardName(cardType, 'span', side)}</div>
+            <div class="text">${this.getCardName(cardType, 'text-only', side)}</div>
         </div>
         <div class="type-wrapper ${this.getCardTypeClass(cardType)}">
             <div class="outline">${type}</div>

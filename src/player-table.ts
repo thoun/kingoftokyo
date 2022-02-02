@@ -293,8 +293,9 @@ class PlayerTable {
     }
     
     public changeForm(card: Card) {
-        this.cards.removeFromStockById(''+card.id);
-        this.cards.addToStockWithId(card.type + card.side, ''+card.id);
+        const cardDiv = document.getElementById(`${this.cards.container_div.id}_item_${card.id}`) as HTMLDivElement;
+        cardDiv.dataset.side = ''+card.side;
+        (this.game as any).addTooltipHtml(cardDiv.id, this.game.cards.updateFlippableCardTooltip(cardDiv));
     }
 
     public setCultistTokens(tokens: number) {

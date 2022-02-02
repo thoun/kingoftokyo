@@ -871,6 +871,50 @@
   z-index: 1;
 }
 
+.card-inner {
+  position: absolute;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+.card-inner[data-side="1"] {
+  transform: rotateY(180deg);
+}
+.card-inner[data-side="0"] .card-back {
+  display: none;
+}
+.card-inner[data-side] {
+  background: unset !important;
+  box-shadow: unset;
+  overflow: visible;
+}
+.card-inner[data-type="301"] .card-side {
+  background-image: url("img/transformation-cards.jpg");
+}
+.card-inner[data-type="301"] .card-side.front {
+  background-position: 0% 0%;
+}
+.card-inner[data-type="301"] .card-side.back {
+  background-position: 100% 0%;
+}
+.card-inner .card-side {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  /* Safari */
+  backface-visibility: hidden;
+}
+.card-inner .card-side.back {
+  transform: rotateY(180deg);
+}
+
 .wickedness-tile-stock .stockitem .name-wrapper {
   left: 0;
   width: 100%;
