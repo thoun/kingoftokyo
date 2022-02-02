@@ -21,11 +21,11 @@ trait CardsActionTrait {
   	
     public function support() {
         $this->checkAction('support');        
-        self::setGameStateValue(CHEERLEADER_SUPPORT, 1);
+        $this->setGameStateValue(CHEERLEADER_SUPPORT, 1);
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
-        self::notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to support ${player_name2} and adds [diceSmash]'), [
+        $this->notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to support ${player_name2} and adds [diceSmash]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
@@ -35,7 +35,7 @@ trait CardsActionTrait {
     }
 
     function applyDontSupport(int $playerId) {
-        self::notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to not support ${player_name2}'), [
+        $this->notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to not support ${player_name2}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
@@ -47,7 +47,7 @@ trait CardsActionTrait {
     public function dontSupport() {
         $this->checkAction('dontSupport');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $this->applyDontSupport($playerId);
     }
@@ -55,7 +55,7 @@ trait CardsActionTrait {
     function stealCostumeCard(int $id) {
         $this->checkAction('stealCostumeCard');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
         $from = $card->location_arg;
@@ -69,12 +69,12 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
-        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->removeCard($from, $card, true, false, true);
         $this->cards->moveCard($id, 'hand', $playerId);
 
-        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
+        $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,
@@ -91,7 +91,7 @@ trait CardsActionTrait {
         // astronaut
         $this->applyAstronaut($playerId);
 
-        self::incStat(1, 'costumeStolenCards', $playerId);
+        $this->incStat(1, 'costumeStolenCards', $playerId);
      
         // no damage to handle on costume cards
 
@@ -113,7 +113,7 @@ trait CardsActionTrait {
 
         $stateName = $this->gamestate->state()['name'];
         $opportunist = $stateName === 'opportunistBuyCard';
-        $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
+        $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
         $cardLocationArg = $card->location_arg;
@@ -135,7 +135,7 @@ trait CardsActionTrait {
         
         $this->removeDiscardCards($playerId);
 
-        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         // media friendly
         $countMediaFriendly = $this->countCardOfType($playerId, MEDIA_FRIENDLY_CARD);
@@ -169,7 +169,7 @@ trait CardsActionTrait {
         $newCard = null;
 
         if ($from > 0) {
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
+            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -186,7 +186,7 @@ trait CardsActionTrait {
         } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {
             $topDeckCardBackType = $this->getTopDeckCardBackType();
             
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
+            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -202,7 +202,7 @@ trait CardsActionTrait {
             $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
             $topDeckCardBackType = $this->getTopDeckCardBackType();
     
-            self::notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
+            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -218,24 +218,24 @@ trait CardsActionTrait {
         }
 
         if ($card->type < 100) {
-            self::incStat(1, 'keepBoughtCards', $playerId);
+            $this->incStat(1, 'keepBoughtCards', $playerId);
         } else if ($card->type < 200) {
-            self::incStat(1, 'discardBoughtCards', $playerId);
+            $this->incStat(1, 'discardBoughtCards', $playerId);
         } else if ($card->type < 300) {
-            self::incStat(1, 'costumeBoughtCards', $playerId);
+            $this->incStat(1, 'costumeBoughtCards', $playerId);
         }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
         // If card bought from player, we put back mimic token
         if ($from > 0 && $mimickedCardId == $card->id) {
-            self::notifyAllPlayers("setMimicToken", '', [
+            $this->notifyAllPlayers("setMimicToken", '', [
                 'card' => $card,
                 'type' => $this->getMimicStringTypeFromMimicCardType(MIMIC_CARD),
             ]);
         }
         if ($from > 0 && $mimickedCardIdTile == $card->id) {
-            self::notifyAllPlayers("setMimicToken", '', [
+            $this->notifyAllPlayers("setMimicToken", '', [
                 'card' => $card,
                 'type' => $this->getMimicStringTypeFromMimicCardType(FLUXLING_WICKEDNESS_TILE),
             ]);
@@ -260,7 +260,7 @@ trait CardsActionTrait {
         if ($newCard != null) {
             $newCardId = $newCard->id;
         }
-        self::setGameStateValue('newCardId', $newCardId);
+        $this->setGameStateValue('newCardId', $newCardId);
 
         $redirects = false;
         $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
@@ -296,7 +296,7 @@ trait CardsActionTrait {
 
         $topDeckCardBackType = $this->getTopDeckCardBackType();
 
-        self::notifyAllPlayers("buyCard", /*client TODOAN translate(*/'${player_name} draws ${card_name}'/*)*/, [
+        $this->notifyAllPlayers("buyCard", /*client TODOAN translate(*/'${player_name} draws ${card_name}'/*)*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,
@@ -321,7 +321,7 @@ trait CardsActionTrait {
             $mimic = $countAvailableCardsForMimic > 0;
         }
 
-        self::setGameStateValue('newCardId', 0);
+        $this->setGameStateValue('newCardId', 0);
 
         $redirects = false;
 
@@ -366,7 +366,7 @@ trait CardsActionTrait {
     function renewCards() {
         $this->checkAction('renew');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
             throw new \BgaUserException('Not enough energy');
@@ -375,14 +375,14 @@ trait CardsActionTrait {
         $this->removeDiscardCards($playerId);
 
         $cost = 2;
-        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->cards->moveAllCardsInLocation('table', 'discard');
         $cards = $this->placeNewCardsOnTable();
         
         $topDeckCardBackType = $this->getTopDeckCardBackType();
 
-        self::notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), [
+        $this->notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
@@ -405,7 +405,7 @@ trait CardsActionTrait {
     function opportunistSkip() {
         $this->checkAction('opportunistSkip');
    
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $this->applyOpportunistSkip($playerId);
     }
@@ -422,7 +422,7 @@ trait CardsActionTrait {
             $this->checkAction('goToSellCard');
         }
    
-        $playerId = self::getActivePlayerId();  
+        $playerId = $this->getActivePlayerId();  
            
         $this->removeDiscardCards($playerId);
 
@@ -433,7 +433,7 @@ trait CardsActionTrait {
     function sellCard(int $id) {
         $this->checkAction('sellCard');
    
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         
         if ($this->countCardOfType($playerId, METAMORPH_CARD) == 0) {
             throw new \BgaUserException("You can't sell cards without Metamorph");
@@ -453,7 +453,7 @@ trait CardsActionTrait {
 
         $this->removeCard($playerId, $card, true);
 
-        self::notifyAllPlayers("removeCards", clienttranslate('${player_name} sells ${card_name}'), [
+        $this->notifyAllPlayers("removeCards", clienttranslate('${player_name} sells ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => [$card],
@@ -471,7 +471,7 @@ trait CardsActionTrait {
 
         $stateName = $this->gamestate->state()['name'];
         $opportunist = $stateName === 'opportunistChooseMimicCard';
-        $playerId = $opportunist ? self::getCurrentPlayerId() : self::getActivePlayerId();
+        $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
@@ -484,14 +484,14 @@ trait CardsActionTrait {
         if ($forceStateAfter) {
             $this->jumpToState($forceStateAfter);
         } else {
-            $this->jumpToState($this->redirectAfterBuyCard($playerId, self::getGameStateValue('newCardId'), false));
+            $this->jumpToState($this->redirectAfterBuyCard($playerId, $this->getGameStateValue('newCardId'), false));
         }
     }
 
     function changeMimickedCard(int $mimickedCardId) {
         $this->checkAction('changeMimickedCard');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
@@ -513,7 +513,7 @@ trait CardsActionTrait {
             $this->checkAction('skipChangeMimickedCard');
         }
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $this->jumpToState($this->redirectAfterChangeMimick($playerId));
     }    
@@ -521,7 +521,7 @@ trait CardsActionTrait {
     function throwCamouflageDice() {
         $this->checkAction('throwCamouflageDice');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
         if ($countCamouflage == 0) {
@@ -588,7 +588,7 @@ trait CardsActionTrait {
 
         if ($canRethrow3) {
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
-            self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and can rethrow [dice3]'), [
+            $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and can rethrow [dice3]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => CAMOUFLAGE_CARD,
@@ -597,7 +597,7 @@ trait CardsActionTrait {
                 'dice' => $diceStr,
             ]);
         } else {
-            self::notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and reduce [Heart] loss by ${cancelledDamage}'), [
+            $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and reduce [Heart] loss by ${cancelledDamage}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => CAMOUFLAGE_CARD,
@@ -630,7 +630,7 @@ trait CardsActionTrait {
     function useRapidHealingSync(int $cultistCount, int $rapidHealingCount) {
         $this->checkAction('useRapidHealingSync');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
 
         $remainingDamage = 0;
@@ -660,7 +660,7 @@ trait CardsActionTrait {
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention); // must be set before apply damage, in case this player die
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, self::getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
+                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             }
         }
         
@@ -670,7 +670,7 @@ trait CardsActionTrait {
     function useWings() {
         $this->checkAction('useWings');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
             throw new \BgaUserException('Not enough energy');
@@ -689,7 +689,7 @@ trait CardsActionTrait {
 
         $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
-        self::notifyAllPlayers("useWings", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
+        $this->notifyAllPlayers("useWings", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => WINGS_CARD,
@@ -703,7 +703,7 @@ trait CardsActionTrait {
     function skipWings() {
         $this->checkAction('skipWings');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $this->applySkipWings($playerId);
     }
@@ -714,7 +714,7 @@ trait CardsActionTrait {
 
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, self::getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
+                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             }
         }
 
@@ -729,7 +729,7 @@ trait CardsActionTrait {
     function useRobot(int $energy) {        
         $this->checkAction('useRobot');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $countRobot = $this->countCardOfType($playerId, ROBOT_CARD);
         if ($countRobot == 0) {
@@ -759,7 +759,7 @@ trait CardsActionTrait {
 
         $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
 
-        self::notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
+        $this->notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => ROBOT_CARD,

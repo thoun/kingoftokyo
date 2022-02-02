@@ -40,8 +40,8 @@ trait PlayerArgTrait {
             'jetsPlayers' => $jetsPlayers,
             'jetsDamage' => $jetsDamage,
             '_private' => [ 
-                self::getActivePlayerId() => [       // not "active" as it actually means current
-                    'skipBuyPhase' => boolval(self::getGameStateValue(SKIP_BUY_PHASE)),
+                $this->getActivePlayerId() => [       // not "active" as it actually means current
+                    'skipBuyPhase' => boolval($this->getGameStateValue(SKIP_BUY_PHASE)),
                 ]
             ],
             'canYieldTokyo' => $this->canYieldTokyo(),

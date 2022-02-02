@@ -58,7 +58,7 @@ trait InterventionTrait {
             if (!$keep) {           
                 foreach($intervention->damages as $d) {
                     if ($d->playerId == $playerId) {
-                        $this->applyDamage($d->playerId, $d->damage, $d->damageDealerId, $d->cardType, self::getActivePlayerId(), $d->giveShrinkRayToken, $d->givePoisonSpitToken);
+                        $this->applyDamage($d->playerId, $d->damage, $d->damageDealerId, $d->cardType, $this->getActivePlayerId(), $d->giveShrinkRayToken, $d->givePoisonSpitToken);
                     }
                 } 
             }

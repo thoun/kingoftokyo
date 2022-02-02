@@ -16,9 +16,9 @@ trait DiceActionTrait {
     public function actionRethrowDice(string $diceIds) {
         $this->checkAction('rethrow');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
-        $throwNumber = intval(self::getGameStateValue('throwNumber'));
+        $throwNumber = intval($this->getGameStateValue('throwNumber'));
         $maxThrowNumber = $this->getRollNumber($playerId);
 
         if ($throwNumber >= $maxThrowNumber) {
@@ -35,13 +35,13 @@ trait DiceActionTrait {
         $this->checkAction('rethrow3');
 
         if ($diceIds !== null) {
-            self::DbQuery("UPDATE dice SET `locked` = false");
+            $this->DbQuery("UPDATE dice SET `locked` = false");
             if ($diceIds != '') {
-                self::DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN ($diceIds)");
+                $this->DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN ($diceIds)");
             }
         }
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         $die = $this->getFirst3Die($playerId);
 
         if ($die == null) {
@@ -49,11 +49,11 @@ trait DiceActionTrait {
         }
 
         $newValue = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$die->id);
-        self::DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$die->id);
+        $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$die->id);
+        $this->DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$die->id);
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        self::notifyAllPlayers('rethrow3', $message, [
+        $this->notifyAllPlayers('rethrow3', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
@@ -68,7 +68,7 @@ trait DiceActionTrait {
     public function rethrow3camouflage() {
         $this->checkAction('rethrow3camouflage');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
         if ($countBackgroundDweller == 0) {
@@ -95,7 +95,7 @@ trait DiceActionTrait {
     public function rethrow3changeActivePlayerDie() {
         $this->checkAction('rethrow3psychicProbe');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
         if ($countBackgroundDweller == 0) {
@@ -110,11 +110,11 @@ trait DiceActionTrait {
         }
 
         $newValue = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$die->id);
-        self::DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$die->id);
+        $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$die->id);
+        $this->DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$die->id);
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        self::notifyAllPlayers('rethrow3', $message, [
+        $this->notifyAllPlayers('rethrow3', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
@@ -129,21 +129,21 @@ trait DiceActionTrait {
     public function rethrow3changeDie() {
         $this->checkAction('rethrow3changeDie');
 
-        $playerId = self::getActivePlayerId();
-        $dieId = intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3));
+        $playerId = $this->getActivePlayerId();
+        $dieId = intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3));
 
         if ($dieId == 0) {
             throw new \BgaUserException('No 3 die');
         }
 
-        self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
+        $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
 
         $newValue = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
-        self::DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$dieId);
+        $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
+        $this->DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$dieId);
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        self::notifyAllPlayers('rethrow3changeDie', $message, [
+        $this->notifyAllPlayers('rethrow3changeDie', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
@@ -164,7 +164,7 @@ trait DiceActionTrait {
     public function changeDie(int $id, int $value, int $cardType) {
         $this->checkAction('changeDie');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $die = $this->getDieById($id);
 
@@ -172,7 +172,7 @@ trait DiceActionTrait {
             throw new \BgaUserException('No selected die');
         }
 
-        self::DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$value." where `dice_id` = ".$id);
+        $this->DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$value." where `dice_id` = ".$id);
 
         if ($cardType == HERD_CULLER_CARD) {
             $usedCards = $this->getUsedCard();
@@ -196,10 +196,10 @@ trait DiceActionTrait {
             $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
         }
 
-        $activePlayerId = self::getActivePlayerId();
+        $activePlayerId = $this->getActivePlayerId();
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        self::notifyAllPlayers("changeDie", $message, [
+        $this->notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $cardType,
@@ -235,8 +235,8 @@ trait DiceActionTrait {
 
         $die = $this->getDieById($id);
         $value = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
-        self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
+        $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$id);
+        $this->DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$id);
         $this->setUsedCard($usedCardOnThisTurn->id);
 
         $this->endChangeActivePlayerDie($intervention, $playerId, $die, $usedCardOnThisTurn->type, $value);
@@ -286,10 +286,10 @@ trait DiceActionTrait {
         $intervention->lastRolledDie = $die;
 
         if ($value == 3) {
-            self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, $die->id);
+            $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, $die->id);
         }
 
-        self::notifyAllPlayers("changeDie", $message, [
+        $this->notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $cardType,
@@ -316,7 +316,7 @@ trait DiceActionTrait {
             $this->checkAction('goToChangeDie');
         }
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $this->fixDices();
 
@@ -332,7 +332,7 @@ trait DiceActionTrait {
     function psychicProbeSkip() {
         $this->checkAction('psychicProbeSkip');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $this->applyPsychicProbeSkip($playerId);
     }
@@ -346,7 +346,7 @@ trait DiceActionTrait {
     function applyHeartDieChoices(array $heartDieChoices) {
         $this->checkAction('applyHeartDieChoices');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $heal = 0;
         $removeShrinkRayToken = 0;
@@ -405,7 +405,7 @@ trait DiceActionTrait {
             $this->applyLoseEnergy($healPlayerId, $energyLoss, 0);
             $this->applyGetEnergy($playerId, $energyLoss, 0);
 
-            self::notifyAllPlayers("resolveHealingRay", clienttranslate('${player_name2} gains ${healNumber} [Heart] with ${card_name} and pays ${player_name} ${energy} [Energy]'), [
+            $this->notifyAllPlayers("resolveHealingRay", clienttranslate('${player_name2} gains ${healNumber} [Heart] with ${card_name} and pays ${player_name} ${energy} [Energy]'), [
                 'player_name' => $this->getPlayerName($playerId),
                 'player_name2' => $this->getPlayerName($healPlayerId),
                 'energy' => $energyLoss,

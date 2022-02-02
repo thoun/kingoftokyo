@@ -13,23 +13,23 @@ trait PlayerStateTrait {
 ////////////
 
     function stStartTurn() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
-        self::incStat(1, 'turnsNumber');
-        self::incStat(1, 'turnsNumber', $playerId);
+        $this->incStat(1, 'turnsNumber');
+        $this->incStat(1, 'turnsNumber', $playerId);
 
         $idsInTokyo = $this->getPlayersIdsInTokyo();
         foreach($idsInTokyo as $id) {
-            self::incStat(1, 'turnsInTokyo', $id);
+            $this->incStat(1, 'turnsInTokyo', $id);
         }
 
-        self::DbQuery("DELETE FROM `turn_damages` WHERE 1");
-        self::setGameStateValue(EXTRA_ROLLS, 0);
-        self::setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
-        self::setGameStateValue(SKIP_BUY_PHASE, 0);
-        self::setGameStateValue(CLOWN_ACTIVATED, 0);
-        self::setGameStateValue(CHEERLEADER_SUPPORT, 0);
-        self::setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 0);
+        $this->DbQuery("DELETE FROM `turn_damages` WHERE 1");
+        $this->setGameStateValue(EXTRA_ROLLS, 0);
+        $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
+        $this->setGameStateValue(SKIP_BUY_PHASE, 0);
+        $this->setGameStateValue(CLOWN_ACTIVATED, 0);
+        $this->setGameStateValue(CHEERLEADER_SUPPORT, 0);
+        $this->setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);
@@ -79,7 +79,7 @@ trait PlayerStateTrait {
                     if ($this->canGainHealth($playerGettingHearts)) {
                         
                         if ($playerId == $playerGettingHearts) {
-                            self::notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'), [
+                            $this->notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'), [
                                 'playerId' => $playerId,
                                 'player_name' => $this->getPlayerName($playerId),
                                 'level' => $level,
@@ -96,7 +96,7 @@ trait PlayerStateTrait {
                     if ($this->canGainEnergy($playerGettingEnergy)) {
         
                         if ($playerId == $playerGettingEnergy) {
-                            self::notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'), [
+                            $this->notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'), [
                                 'playerId' => $playerId,
                                 'player_name' => $this->getPlayerName($playerId),
                                 'level' => $level,
@@ -108,10 +108,10 @@ trait PlayerStateTrait {
                 }
 
                 if ($level == 1) {
-                    self::incStat(1, 'bonusFromTokyoTowerLevel1applied', $playerId);
+                    $this->incStat(1, 'bonusFromTokyoTowerLevel1applied', $playerId);
                 }
                 if ($level == 2) {
-                    self::incStat(1, 'bonusFromTokyoTowerLevel2applied', $playerId);
+                    $this->incStat(1, 'bonusFromTokyoTowerLevel2applied', $playerId);
                 }
             }
         }
@@ -127,7 +127,7 @@ trait PlayerStateTrait {
                     $incEnergy = 1;
 
                     if ($playerId == $playerGettingEnergy) {
-                        self::notifyAllPlayers('log', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
+                        $this->notifyAllPlayers('log', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
                             'playerId' => $playerId,
                             'player_name' => $this->getPlayerName($playerId),
                             'deltaEnergy' => $incEnergy,
@@ -140,7 +140,7 @@ trait PlayerStateTrait {
                     $incScore = 2;
                     $this->applyGetPoints($playerId, $incScore, -1);
 
-                    self::notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
+                    $this->notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
                         'playerId' => $playerId,
                         'player_name' => $this->getPlayerName($playerId),
                         'points' => $this->getPlayerScore($playerId),
@@ -194,8 +194,8 @@ trait PlayerStateTrait {
 
         // throw dice
 
-        self::setGameStateValue('throwNumber', 1);
-        self::DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true, `discarded` = false");
+        $this->setGameStateValue('throwNumber', 1);
+        $this->DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true, `discarded` = false");
 
         $redirects = false;
         $redirectAfterStartTurn = $this->redirectAfterStartTurn($playerId);
@@ -214,9 +214,9 @@ trait PlayerStateTrait {
     }
 
     function stInitialDiceRoll() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
-        self::setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
+        $this->setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
         $this->throwDice($playerId, true);
 
         $this->gamestate->nextState('');
@@ -265,7 +265,7 @@ trait PlayerStateTrait {
     }
     
     function stEnterTokyoApplyBurrowing() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $redirects = false;
         // burrowing
@@ -293,7 +293,7 @@ trait PlayerStateTrait {
     function stEnterTokyo() {
         $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         if (!$this->getPlayer($playerId)->eliminated && !$this->inTokyo($playerId)) { // enter only if burrowing doesn't kill player
             if ($this->isTokyoEmpty(false)) {
@@ -313,7 +313,7 @@ trait PlayerStateTrait {
     }
 
     function stResolveEndTurn() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         // apply end of turn effects (after Selling Cards)
         
@@ -371,7 +371,7 @@ trait PlayerStateTrait {
             $playerId = $frenzyExtraTurnForOpportunist;
             $this->setGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
 
-            self::notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
+            $this->notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => FRENZY_CARD,
@@ -379,17 +379,17 @@ trait PlayerStateTrait {
 
         } else if ($playerBeforeFrenzyExtraTurnForOpportunist > 0) {
             $this->gamestate->changeActivePlayer($playerBeforeFrenzyExtraTurnForOpportunist);
-            $playerId = self::activeNextPlayer();
+            $playerId = $this->activeNextPlayer();
             $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         } else {
-            $playerId = self::activeNextPlayer();
+            $playerId = $this->activeNextPlayer();
         }
 
         return $playerId;
     }
 
     function stNextPlayer() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $this->removeDiscardCards($playerId);
 
@@ -443,7 +443,7 @@ trait PlayerStateTrait {
             }
             
             if ($anotherTimeWithCard > 0) {
-                self::notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
+                $this->notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
                     'playerId' => $playerId,
                     'player_name' => $this->getPlayerName($playerId),
                     'card_name' => $anotherTimeWithCard,
@@ -456,7 +456,7 @@ trait PlayerStateTrait {
         if ($this->getRemainingPlayers() <= 1 || $this->getMaxPlayerScore() >= MAX_POINT) {
             $this->jumpToState(ST_END_GAME);
         } else {
-            self::giveExtraTime($playerId);
+            $this->giveExtraTime($playerId);
 
             $this->gamestate->nextState('nextPlayer');
         }

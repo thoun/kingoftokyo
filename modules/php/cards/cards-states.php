@@ -27,7 +27,7 @@ trait CardsStateTrait {
     function stBuyCard() {
         $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
 
-        $playerId = intval(self::getActivePlayerId()); 
+        $playerId = intval($this->getActivePlayerId()); 
 
         // if player is dead async, he can't buy or sell
         if ($this->getPlayer($playerId)->eliminated) {
@@ -36,7 +36,7 @@ trait CardsStateTrait {
         }
 
         $args = $this->argBuyCard();
-        if (boolval(self::getGameStateValue(SKIP_BUY_PHASE)) || ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId) || ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId))) {
+        if (boolval($this->getGameStateValue(SKIP_BUY_PHASE)) || ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId) || ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId))) {
             // skip state
             if ($args['canSell']) {
                 $this->goToSellCard(true);
@@ -71,7 +71,7 @@ trait CardsStateTrait {
     }
 
     function stSellCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         // metamorph
         $countMetamorph = $this->countCardOfType($playerId, METAMORPH_CARD);
@@ -147,7 +147,7 @@ trait CardsStateTrait {
             if ( $cheerleaderCard->location == 'hand') {
                 $playerId = intval($cheerleaderCard->location_arg);
 
-                if ($playerId != intval(self::getActivePlayerId())) {
+                if ($playerId != intval($this->getActivePlayerId())) {
                     $cheerleaderSupportPlayerIds[] = $playerId;
                 }
             }

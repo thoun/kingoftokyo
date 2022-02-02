@@ -17,13 +17,13 @@ trait WickednessTilesActionTrait {
     public function takeWickednessTile(int $id) {
         $this->checkAction('takeWickednessTile');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $level = $this->canTakeWickednessTile($playerId);
         $tile = $this->getWickednessTileFromDb($this->wickednessTiles->getCard($id));
         $this->wickednessTiles->moveCard($id, 'hand', $playerId);
 
-        self::notifyAllPlayers("takeWickednessTile", clienttranslate('${player_name} takes ${card_name}'), [
+        $this->notifyAllPlayers("takeWickednessTile", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'tile' => $tile,
@@ -31,9 +31,9 @@ trait WickednessTilesActionTrait {
             'level' => $level,
         ]);
 
-        self::incStat(1, 'wickednessTilesTaken', $playerId);
+        $this->incStat(1, 'wickednessTilesTaken', $playerId);
 
-        self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
 
         $damages = $this->applyWickednessTileEffect($tile, $playerId);
 
@@ -56,9 +56,9 @@ trait WickednessTilesActionTrait {
     public function skipTakeWickednessTile() {
         $this->checkAction('skipTakeWickednessTile');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
-        self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
 
         $this->jumpToState($this->getRedirectAfterResolveNumberDice());
     }
@@ -66,7 +66,7 @@ trait WickednessTilesActionTrait {
     function chooseMimickedCardWickednessTile(int $mimickedCardId) {
         $this->checkAction('chooseMimickedCardWickednessTile');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
         if ($card->type > 100 || $card->type == MIMIC_CARD) { // TODOWI can we mimic mimic with tile ?
@@ -83,7 +83,7 @@ trait WickednessTilesActionTrait {
     function changeMimickedCardWickednessTile(int $mimickedCardId) {
         $this->checkAction('changeMimickedCardWickednessTile');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
         if ($card->type > 100 || $card->type == MIMIC_CARD) { // TODOWI can we mimic mimic with tile ?
@@ -100,7 +100,7 @@ trait WickednessTilesActionTrait {
             $this->checkAction('skipChangeMimickedCardWickednessTile');
         }
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));
     }    

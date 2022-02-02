@@ -18,7 +18,7 @@ trait CurseCardsStateTrait {
             return;
         }
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $dieOfFate = $this->getDieOfFate();
 
@@ -28,21 +28,21 @@ trait CurseCardsStateTrait {
             case 1: 
                 $this->changeCurseCard($playerId);
 
-                // TODOAN self::incStat(1, 'dieOfFateEye', $playerId);
+                // TODOAN $this->incStat(1, 'dieOfFateEye', $playerId);
                 break;
             case 2:
-                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'/*)*/, [
+                $this->notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'/*)*/, [
                     'card_name' => 1000 + $cardType,
                 ]);
 
-                // TODOAN self::incStat(1, 'dieOfFateRiver', $playerId);
+                // TODOAN $this->incStat(1, 'dieOfFateRiver', $playerId);
                 break;
             case 3:
-                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateSnake], Snake effect of ${card_name} is applied'/*)*/, [
+                $this->notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateSnake], Snake effect of ${card_name} is applied'/*)*/, [
                     'card_name' => 1000 + $cardType,
                 ]);
 
-                // TODOAN self::incStat(1, 'dieOfFateSnake', $playerId);
+                // TODOAN $this->incStat(1, 'dieOfFateSnake', $playerId);
 
                 $damagesOrState = $this->applySnakeEffect($playerId, $cardType);
                 if (gettype($damagesOrState) === 'integer') {
@@ -51,11 +51,11 @@ trait CurseCardsStateTrait {
                 }
                 break;
             case 4:
-                self::notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'/*)*/, [
+                $this->notifyAllPlayers('dieOfFateResolution', /*client TODOAN translate(*/'Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'/*)*/, [
                    'card_name' => 1000 + $cardType,
                 ]);
 
-                // TODOAN self::incStat(1, 'dieOfFateAnkh', $playerId);
+                // TODOAN $this->incStat(1, 'dieOfFateAnkh', $playerId);
 
                 $this->applyAnkhEffect($playerId, $cardType);
                 break;
@@ -77,7 +77,7 @@ trait CurseCardsStateTrait {
     }
 
     function stDiscardDie() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         
         if (count($this->getPlayerRolledDice($playerId, true, false, false)) == 0) {
             $this->gamestate->nextState('next');

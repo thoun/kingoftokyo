@@ -46,7 +46,7 @@ trait WickednessTilesUtilTrait {
     }
 
     function getPlayerWickedness(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_wickedness FROM `player` where `player_id` = $playerId"));
+        return intval($this->getUniqueValueFromDB("SELECT player_wickedness FROM `player` where `player_id` = $playerId"));
     }
     
     function applyGetWickedness(int $playerId, int $number) {
@@ -60,20 +60,20 @@ trait WickednessTilesUtilTrait {
             }
         }
 
-        self::DbQuery("UPDATE player SET `player_wickedness` = $newWickedness, player_take_wickedness_tile = $canTake where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_wickedness` = $newWickedness, player_take_wickedness_tile = $canTake where `player_id` = $playerId");
 
-        self::notifyAllPlayers('wickedness', ''/*client TODO translate('${player_name} gains ${delta_wickedness} wickedness points')*/, [
+        $this->notifyAllPlayers('wickedness', ''/*client TODO translate('${player_name} gains ${delta_wickedness} wickedness points')*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'wickedness' => $newWickedness,
             'delta_wickedness' => $number,
         ]);
 
-        self::incStat($number, 'gainedWickedness', $playerId);
+        $this->incStat($number, 'gainedWickedness', $playerId);
     }
 
     function canTakeWickednessTile(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_take_wickedness_tile FROM `player` where `player_id` = $playerId"));
+        return intval($this->getUniqueValueFromDB("SELECT player_take_wickedness_tile FROM `player` where `player_id` = $playerId"));
     }
 
     function applyWickednessTileEffect(object $tile, int $playerId) { // return $damages
@@ -111,7 +111,7 @@ trait WickednessTilesUtilTrait {
 
         $this->wickednessTiles->moveCard($tile->id, 'discard');
 
-        self::notifyAllPlayers("removeWickednessTiles", '', [
+        $this->notifyAllPlayers("removeWickednessTiles", '', [
             'playerId' => $playerId,
             'tiles' => [$tile],
         ]);
@@ -135,7 +135,7 @@ trait WickednessTilesUtilTrait {
     }
 
     function canChangeMimickedCardWickednessTile() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         // check if player have mimic card
         if (!$this->isWickednessExpansion() || !$this->gotWickednessTile($playerId, FLUXLING_WICKEDNESS_TILE)) {
@@ -159,13 +159,13 @@ trait WickednessTilesUtilTrait {
 
     function setTileTokens(int $playerId, $card, int $tokens, bool $silent = false) {
         $card->tokens = $tokens;
-        self::DbQuery("UPDATE `wickedness_tile` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
+        $this->DbQuery("UPDATE `wickedness_tile` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
 
         if (!$silent) {
             if ($card->type == FLUXLING_WICKEDNESS_TILE) {
                 $card->mimicType = $this->getMimickedCardType(FLUXLING_WICKEDNESS_TILE);
             }
-            self::notifyAllPlayers("setTileTokens", '', [
+            $this->notifyAllPlayers("setTileTokens", '', [
                 'playerId' => $playerId,
                 'card' => $card,
             ]);

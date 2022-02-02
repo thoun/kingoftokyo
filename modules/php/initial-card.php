@@ -14,7 +14,7 @@ trait InitialCardTrait {
         $this->cards->moveCard($id, 'hand', $playerId);
         $this->cards->moveCard($otherCard->id, 'costumediscard');
 
-        self::notifyAllPlayers("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
+        $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,
@@ -41,7 +41,7 @@ trait InitialCardTrait {
         }
         $otherCard = $this->array_find($topCards, fn($topCard) => $topCard->id != $id);
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $this->setInitialCard($playerId, $id, $otherCard);
 
@@ -87,8 +87,8 @@ trait InitialCardTrait {
     }
 
     function stChooseInitialCardNextPlayer() {
-        $playerId = self::activeNextPlayer();
-        self::giveExtraTime($playerId);
+        $playerId = $this->activeNextPlayer();
+        $this->giveExtraTime($playerId);
 
         if ($this->everyPlayerHasCostumeCard()) {
             $this->gamestate->nextState('start');

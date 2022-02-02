@@ -15,7 +15,7 @@ trait WickednessTilesArgTrait {
     */
 
     function argTakeWickednessTile() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         
         $level = $this->canTakeWickednessTile($playerId);
     
@@ -25,12 +25,12 @@ trait WickednessTilesArgTrait {
     }
 
     function argChangeMimickedCardWickednessTile() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         return $this->getArgChooseMimickedCard($playerId, FLUXLING_WICKEDNESS_TILE);
     }
 
     function argChooseMimickedCardWickednessTile() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         return $this->getArgChooseMimickedCard($playerId, FLUXLING_WICKEDNESS_TILE);
     }
 

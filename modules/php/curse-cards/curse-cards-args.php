@@ -31,7 +31,7 @@ trait CurseCardsArgTrait {
     }
 
     function argDiscardDie() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         return [
             'dice' => $this->getPlayerRolledDice($playerId, true, true, false),
@@ -40,7 +40,7 @@ trait CurseCardsArgTrait {
     }
 
     function argDiscardKeepCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
 
@@ -63,7 +63,7 @@ trait CurseCardsArgTrait {
     }
 
     function argGiveSymbols() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $MAPPING = [
             0 => 4,
@@ -106,7 +106,7 @@ trait CurseCardsArgTrait {
     }
 
     function argRerollOrDiscardDie() {
-        $activePlayerId = self::getActivePlayerId();
+        $activePlayerId = $this->getActivePlayerId();
         
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
@@ -115,7 +115,7 @@ trait CurseCardsArgTrait {
     }
 
     function argRerollDice() {
-        $activePlayerId = self::getActivePlayerId();
+        $activePlayerId = $this->getActivePlayerId();
         $activePlayerDice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
         $selectableDice = $this->getSelectableDice($activePlayerDice, false, false);
 

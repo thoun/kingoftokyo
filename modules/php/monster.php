@@ -10,7 +10,7 @@ trait MonsterTrait {
 
 
     private function getGameMonsters() {
-        $bonusMonsters = intval(self::getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
+        $bonusMonsters = intval($this->getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
 
         // Base game monsters : Space Penguin, Alienoid, Cyber Kitty, The King, Gigazaur, Meka Dragon
         $monsters = [1,2,3,4,5,6];
@@ -44,11 +44,11 @@ trait MonsterTrait {
     }
 
     function canPickMonster() {
-        return intval(self::getGameStateValue(PICK_MONSTER_OPTION)) === 2;
+        return intval($this->getGameStateValue(PICK_MONSTER_OPTION)) === 2;
     }
 
     function getAvailableMonsters() {
-        $dbResults = self::getCollectionFromDB("SELECT distinct player_monster FROM player WHERE player_monster > 0");
+        $dbResults = $this->getCollectionFromDb("SELECT distinct player_monster FROM player WHERE player_monster > 0");
         $pickedMonsters = array_map(fn($dbResult) => intval($dbResult['player_monster']), array_values($dbResults));
 
         $availableMonsters = [];
@@ -64,17 +64,17 @@ trait MonsterTrait {
     }
 
     function setMonster(int $playerId, int $monsterId) {
-        self::DbQuery("UPDATE player SET `player_monster` = $monsterId where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_monster` = $monsterId where `player_id` = $playerId");
 
-        self::notifyAllPlayers('pickMonster', '', [
+        $this->notifyAllPlayers('pickMonster', '', [
             'playerId' => $playerId,
             'monster' => $monsterId,
         ]);
     }
 
     function saveMonsterStat(int $playerId, int $monsterId, bool $automatic) {
-        self::setStat($monsterId, 'monster', $playerId);
-        self::setStat($monsterId, $automatic ? 'monsterAutomatic': 'monsterPick', $playerId);
+        $this->setStat($monsterId, 'monster', $playerId);
+        $this->setStat($monsterId, $automatic ? 'monsterAutomatic': 'monsterPick', $playerId);
     }
 
     function isBeastForm(int $playerId) {
@@ -85,7 +85,7 @@ trait MonsterTrait {
     function setBeastForm(int $playerId, bool $beast) {
         $formCard = $this->getFormCard($playerId);
         $side = $beast ? 1 : 0;
-        self::DbQuery("UPDATE `card` SET `card_type_arg` = $side where `card_id` = ".$formCard->id);
+        $this->DbQuery("UPDATE `card` SET `card_type_arg` = $side where `card_id` = ".$formCard->id);
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ trait MonsterTrait {
             $this->checkAction('pickMonster');
         }        
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $this->setMonster($playerId, $monsterId);
         $this->saveMonsterStat($playerId, $monsterId, $automatic);
@@ -115,7 +115,7 @@ trait MonsterTrait {
     public function changeForm() {
         $this->checkAction('changeForm');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
             throw new \BgaUserException('Not enough energy');
@@ -124,11 +124,11 @@ trait MonsterTrait {
         $isBeastForm = !$this->isBeastForm($playerId);
         $this->setBeastForm($playerId, $isBeastForm);
 
-        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` - 1 where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - 1 where `player_id` = $playerId");
 
         $message = /*client TODOME translate(*/'${player_name} changes form to ${newForm}'/*)*/;
         $newForm = $isBeastForm ? /*client TODOME translate(*/'Beast form'/*)*/ : /*client TODOME translate(*/'Biped form'/*)*/;
-        self::notifyAllPlayers('changeForm', $message, [
+        $this->notifyAllPlayers('changeForm', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $this->getFormCard($playerId),
@@ -166,7 +166,7 @@ trait MonsterTrait {
     }
 
     function argChangeForm() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $isBeastForm = $this->isBeastForm($playerId);
         $otherForm = $isBeastForm ? clienttranslate('Biped form') : clienttranslate('Beast form');
@@ -184,7 +184,7 @@ trait MonsterTrait {
 ////////////
 
     function stPickMonster() {
-        if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
+        if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
             $this->gamestate->nextState('start');
         } else {
             $availableMonsters = $this->getAvailableMonsters();
@@ -195,10 +195,10 @@ trait MonsterTrait {
     }
 
     function stPickMonsterNextPlayer() {
-        $playerId = self::activeNextPlayer();
-        self::giveExtraTime($playerId);
+        $playerId = $this->activeNextPlayer();
+        $this->giveExtraTime($playerId);
 
-        if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
+        if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
             $this->gamestate->nextState($this->isHalloweenExpansion() ? 'chooseInitialCard' : 'start');
         } else {
             $this->gamestate->nextState('nextPlayer');
@@ -206,7 +206,7 @@ trait MonsterTrait {
     }
 
     function stChangeForm() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         
         if ($this->autoSkipImpossibleActions() && $this->getPlayerEnergy($playerId) < 1) {
             // skip state, can't change form

@@ -22,14 +22,14 @@ trait PlayerActionTrait {
             $this->checkAction('endTurn');
         }
         
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         $this->removeDiscardCards($playerId);
    
         $this->gamestate->nextState('endTurn');
     }
 
     function notifStayInTokyo($playerId) {
-        self::notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
+        $this->notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
         ]);
@@ -38,7 +38,7 @@ trait PlayerActionTrait {
     function stayInTokyo() {
         $this->checkAction('stay');
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $this->notifStayInTokyo($playerId);
         
@@ -53,7 +53,7 @@ trait PlayerActionTrait {
             throw new \BgaUserException('Impossible to yield Tokyo');
         }
 
-        $playerId = self::getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
         $this->applyActionLeaveTokyo($playerId);
     }
@@ -69,28 +69,28 @@ trait PlayerActionTrait {
     }
 
     function setSkipBuyPhase(bool $skipBuyPhase) {
-        if (self::getCurrentPlayerId() == self::getActivePlayerId()) {
-            self::setGameStateValue(SKIP_BUY_PHASE, $skipBuyPhase ? 1 : 0);
+        if ($this->getCurrentPlayerId() == $this->getActivePlayerId()) {
+            $this->setGameStateValue(SKIP_BUY_PHASE, $skipBuyPhase ? 1 : 0);
         }
         
         // dummy notif so player gets back hand
-        self::notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
+        $this->notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
     }
 
     function useCultist($diceIds) {
         $this->checkAction('useCultist');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         if ($this->getPlayerCultists($playerId) == 0) {
             throw new \BgaUserException('No cultist');
         }
         
         $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1 extra roll'));
-        self::incStat(1, 'cultistReroll', $playerId);
+        $this->incStat(1, 'cultistReroll', $playerId);
         
-        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS)) + 1;
-        self::setGameStateValue(EXTRA_ROLLS, $extraRolls);
+        $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;
+        $this->setGameStateValue(EXTRA_ROLLS, $extraRolls);
 
         $this->rethrowDice($diceIds);
     }

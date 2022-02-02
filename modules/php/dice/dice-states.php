@@ -37,10 +37,10 @@ trait DiceStateTrait {
     }
 
     function stChangeDie() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $canChangeWithCards = $this->canChangeDie($this->getChangeDieCards($playerId));
-        $canRetrow3 = intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
+        $canRetrow3 = intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
         
         if (!$canChangeWithCards && !$canRetrow3) {
             $this->gamestate->nextState('resolve');
@@ -62,10 +62,10 @@ trait DiceStateTrait {
     function stResolveDice() {
         $this->updateKillPlayersScoreAux();
         
-        $playerId = self::getActivePlayerId();
-        self::giveExtraTime($playerId);
+        $playerId = $this->getActivePlayerId();
+        $this->giveExtraTime($playerId);
 
-        self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
+        $this->DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getPlayerRolledDice($playerId, true, true, false);
@@ -76,7 +76,7 @@ trait DiceStateTrait {
             $diceStr .= $this->getDieFaceLogName($die->value, $die->type);
         }
 
-        self::notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolves dice ${dice}'), [
+        $this->notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolves dice ${dice}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'dice' => $diceStr,
@@ -95,7 +95,7 @@ trait DiceStateTrait {
             
             $cardNamesStr = implode(', ', $detail->cardsAddingSmashes);
 
-            self::notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
+            $this->notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'dice' => $diceStr,
@@ -159,7 +159,7 @@ trait DiceStateTrait {
     }
 
     function stResolveNumberDice() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
@@ -176,7 +176,7 @@ trait DiceStateTrait {
     }
 
     function getRedirectAfterResolveNumberDice() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $canSelectHeartDiceUse = false;
@@ -197,7 +197,7 @@ trait DiceStateTrait {
     }
 
     function stResolveHeartDice() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
@@ -209,7 +209,7 @@ trait DiceStateTrait {
     }
 
     function stResolveEnergyDice() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
@@ -222,7 +222,7 @@ trait DiceStateTrait {
     }
 
     function stResolveSmashDice() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
@@ -234,10 +234,10 @@ trait DiceStateTrait {
         
         $redirects = false;
         if ($diceCount > 0) {
-            $playerId = self::getActivePlayerId();
+            $playerId = $this->getActivePlayerId();
             $redirects = $this->resolveSmashDice($playerId, $diceCount);
         } else {
-            self::setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
+            $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
         }
 
         if (!$redirects) {    
@@ -246,11 +246,11 @@ trait DiceStateTrait {
     }
 
     function stResolveSkullDice() {   
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
-        $nextState = intval(self::getGameStateValue(STATE_AFTER_RESOLVE));
+        $nextState = intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
         $redirects = false;
 
         $damages = [];

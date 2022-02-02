@@ -16,8 +16,8 @@ trait CurseCardsActionTrait {
     public function giveSymbolToActivePlayer(int $symbol) {
         $this->checkAction('giveSymbolToActivePlayer');  
 
-        $playerId = self::getCurrentPlayerId(); 
-        $activePlayerId = self::getActivePlayerId(); 
+        $playerId = $this->getCurrentPlayerId(); 
+        $activePlayerId = $this->getActivePlayerId(); 
         
         $this->applyGiveSymbols([$symbol], $playerId, $activePlayerId, 1000 + KHEPRI_S_REBELLION_CURSE_CARD);
 
@@ -40,7 +40,7 @@ trait CurseCardsActionTrait {
 
     function discardKeepCard(int $cardId) {
         $this->checkAction('discardKeepCard');   
-        $playerId = self::getActivePlayerId(); 
+        $playerId = $this->getActivePlayerId(); 
 
         $card = $this->getCardFromDb($this->cards->getCard($cardId));
         $this->applyDiscardKeepCard($playerId, $card);
@@ -88,7 +88,7 @@ trait CurseCardsActionTrait {
     function giveSymbols(array $symbols) {
         $this->checkAction('giveSymbols');  
 
-        $playerId = self::getActivePlayerId(); 
+        $playerId = $this->getActivePlayerId(); 
         $playerWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
 
         $this->applyGiveSymbols($symbols, $playerId, $playerWithGoldenScarab, 1000 + PHARAONIC_SKIN_CURSE_CARD);
@@ -105,11 +105,11 @@ trait CurseCardsActionTrait {
     function selectExtraDie(int $face) {
         $this->checkAction('selectExtraDie');  
 
-        $playerId = self::getActivePlayerId(); 
+        $playerId = $this->getActivePlayerId(); 
 
         $dice = $this->getPlayerRolledDice($playerId, false, false, false);
         $dieId = end($dice)->id; 
-        self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE dice_id = $dieId");        
+        $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE dice_id = $dieId");        
 
         $this->gamestate->nextState('next');
     }
@@ -117,21 +117,21 @@ trait CurseCardsActionTrait {
     public function falseBlessingReroll(int $dieId) {
         $this->checkAction('falseBlessingReroll'); 
 
-        if ($dieId == intval(self::getGameStateValue(FALSE_BLESSING_USED_DIE))) {
+        if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
             throw new \BgaUserException(/* TODOAN self::_(*/'You already made an action for this die'/*)*/);
         }
 
-        $playerId = self::getActivePlayerId(); 
+        $playerId = $this->getActivePlayerId(); 
         
         $die = $this->getDieById($dieId);
         $value = bga_rand(1, 6);
-        self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
-        self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$dieId);
+        $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
+        $this->DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$dieId);
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         $oldValue = $die->value;
 
-        self::notifyAllPlayers("changeDie", $message, [
+        $this->notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => 1000 + FALSE_BLESSING_CURSE_CARD,
@@ -148,7 +148,7 @@ trait CurseCardsActionTrait {
     public function falseBlessingDiscard(int $dieId) {
         $this->checkAction('falseBlessingDiscard'); 
 
-        if ($dieId == intval(self::getGameStateValue(FALSE_BLESSING_USED_DIE))) {
+        if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
             throw new \BgaUserException(/* TODOAN self::_(*/'You already made an action for this die'/*)*/);
         }
 
@@ -158,8 +158,8 @@ trait CurseCardsActionTrait {
     }
 
     private function endFalseBlessingAction(int $dieId) {
-        if (!boolval(self::getGameStateValue(FALSE_BLESSING_USED_DIE))) {
-            self::setGameStateValue(FALSE_BLESSING_USED_DIE, $dieId);
+        if (!boolval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
+            $this->setGameStateValue(FALSE_BLESSING_USED_DIE, $dieId);
         } else {
             $this->gamestate->nextState('next');
         }
@@ -174,20 +174,20 @@ trait CurseCardsActionTrait {
     function rerollDice(array $diceIds) {
         $this->checkAction('rerollDice'); 
 
-        $playerId = self::getCurrentPlayerId();
-        $activePlayerId = self::getActivePlayerId();
+        $playerId = $this->getCurrentPlayerId();
+        $activePlayerId = $this->getActivePlayerId();
 
         foreach($diceIds as $dieId) {
             if ($dieId > 0) {
                 $die = $this->getDieById($dieId);
                 $value = bga_rand(1, 6);
-                self::DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
-                self::DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$dieId);
+                $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
+                $this->DbQuery("UPDATE dice SET `dice_value` = ".$value.", `rolled` = true where `dice_id` = ".$dieId);
 
                 $message = /*client TODOAN translate(*/'${player_name} force ${player_name2} to reroll ${die_face_before} die and obtained ${die_face_after}'/*)*/;
                 $oldValue = $die->value;
 
-                self::notifyAllPlayers("changeDie", $message, [
+                $this->notifyAllPlayers("changeDie", $message, [
                     'playerId' => $playerId,
                     'player_name' => $this->getPlayerName($playerId),
                     'player_name2' => $this->getPlayerName($activePlayerId),

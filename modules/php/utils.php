@@ -39,7 +39,7 @@ trait UtilTrait {
     }
 
     function isTwoPlayersVariant() {
-        return intval(self::getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
+        return intval($this->getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
     }
 
     function isPowerUpExpansion() {
@@ -47,31 +47,31 @@ trait UtilTrait {
     }
 
     function isHalloweenExpansion() {
-        return intval(self::getGameStateValue(HALLOWEEN_EXPANSION_OPTION)) === 2;
+        return intval($this->getGameStateValue(HALLOWEEN_EXPANSION_OPTION)) === 2;
     }
 
     function isKingKongExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
     }
 
     function isCybertoothExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
     function isMutantEvolutionVariant() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
     }
 
     function isCthulhuExpansion() {
-        return intval(self::getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
+        return intval($this->getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
     }
 
     function isAnubisExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isWickednessExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval(self::getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
     }
 
     function isDarkEdition() {
@@ -86,7 +86,7 @@ trait UtilTrait {
     }
 
     function autoSkipImpossibleActions() {
-        return $this->isTurnBased() || intval(self::getGameStateValue(AUTO_SKIP_OPTION)) === 2;
+        return $this->isTurnBased() || intval($this->getGameStateValue(AUTO_SKIP_OPTION)) === 2;
     }
 
     function setGlobalVariable(string $name, /*object|array*/ $obj) {
@@ -94,11 +94,11 @@ trait UtilTrait {
             throw new \Error('Global Variable null');
         }*/
         $jsonObj = json_encode($obj);
-        self::DbQuery("INSERT INTO `global_variables`(`name`, `value`)  VALUES ('$name', '$jsonObj') ON DUPLICATE KEY UPDATE `value` = '$jsonObj'");
+        $this->DbQuery("INSERT INTO `global_variables`(`name`, `value`)  VALUES ('$name', '$jsonObj') ON DUPLICATE KEY UPDATE `value` = '$jsonObj'");
     }
 
     function getGlobalVariable(string $name, $asArray = null) {
-        $json_obj = self::getUniqueValueFromDB("SELECT `value` FROM `global_variables` where `name` = '$name'");
+        $json_obj = $this->getUniqueValueFromDB("SELECT `value` FROM `global_variables` where `name` = '$name'");
         if ($json_obj) {
             $object = json_decode($json_obj, $asArray);
             return $object;
@@ -127,35 +127,35 @@ trait UtilTrait {
     }
 
     function deleteGlobalVariable(string $name) {
-        self::DbQuery("DELETE FROM `global_variables` where `name` = '$name'");
+        $this->DbQuery("DELETE FROM `global_variables` where `name` = '$name'");
     }
 
     function getMaxPlayerScore() {
-        return intval(self::getUniqueValueFromDB("SELECT max(player_score) FROM player"));
+        return intval($this->getUniqueValueFromDB("SELECT max(player_score) FROM player"));
     }
 
     function getPlayerName(int $playerId) {
-        return self::getUniqueValueFromDb("SELECT player_name FROM player WHERE player_id = $playerId");
+        return $this->getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id = $playerId");
     }
 
     function getPlayerScore(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
+        return intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
     }
 
     function getPlayerHealth(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_health FROM player where `player_id` = $playerId"));
+        return intval($this->getUniqueValueFromDB("SELECT player_health FROM player where `player_id` = $playerId"));
     }
 
     function getPlayerEnergy(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_energy FROM player where `player_id` = $playerId"));
+        return intval($this->getUniqueValueFromDB("SELECT player_energy FROM player where `player_id` = $playerId"));
     }
 
     function getPlayerPoisonTokens(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_poison_tokens FROM player where `player_id` = $playerId"));
+        return intval($this->getUniqueValueFromDB("SELECT player_poison_tokens FROM player where `player_id` = $playerId"));
     }
 
     function getPlayerShrinkRayTokens(int $playerId) {
-        return intval(self::getUniqueValueFromDB("SELECT player_shrink_ray_tokens FROM player where `player_id` = $playerId"));
+        return intval($this->getUniqueValueFromDB("SELECT player_shrink_ray_tokens FROM player where `player_id` = $playerId"));
     }
 
     function getRollNumber(int $playerId) {
@@ -164,7 +164,7 @@ trait UtilTrait {
         // statue of libery
         $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
         // energy drink
-        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS));
+        $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS));
         $beastForm = ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId)) ? 1 : 0;
         $deviousTile = ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEVIOUS_WICKEDNESS_TILE)) ? 1 : 0;
 
@@ -209,7 +209,7 @@ trait UtilTrait {
     }
 
     function getRemainingPlayers() {
-        return intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
+        return intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
     }
 
     function tokyoBayUsed() {
@@ -218,7 +218,7 @@ trait UtilTrait {
 
     function isTokyoEmpty(bool $bay) {
         $location = $bay ? 2 : 1;
-        $players = intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_location = $location"));
+        $players = intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_location = $location"));
         return $players == 0;
     }
 
@@ -233,7 +233,7 @@ trait UtilTrait {
         $incScore = 0;
         $playerGettingEnergy = null;
         if ($this->isTwoPlayersVariant()) {
-            self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
+            $this->DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
 
             $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
@@ -246,7 +246,7 @@ trait UtilTrait {
                 $message = clienttranslate('${player_name} enters ${locationName}');
             }
         } else {
-            self::DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
+            $this->DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
             if ($this->canGainPoints($playerId)) {
                 $incScore = 1;
                 $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
@@ -256,7 +256,7 @@ trait UtilTrait {
         }
 
         $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
-        self::notifyAllPlayers("playerEntersTokyo", $message, [
+        $this->notifyAllPlayers("playerEntersTokyo", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
@@ -270,7 +270,7 @@ trait UtilTrait {
             $this->applyGetPoints($playerId, $incScore, 0);
         }
 
-        self::incStat(1, 'tokyoEnters', $playerId);
+        $this->incStat(1, 'tokyoEnters', $playerId);
 
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
             $this->applyDefenderOfTokyo($playerId);
@@ -279,16 +279,16 @@ trait UtilTrait {
 
     function leaveTokyo(int $playerId) {
 
-        self::DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null, `stay_tokyo_over` = null where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null, `stay_tokyo_over` = null where `player_id` = $playerId");
 
-        self::notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
+        $this->notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
         ]);
-        self::notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+        $this->notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
             'under' => 0,
         ]);
-        self::notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+        $this->notifyPlayer($playerId, 'updateStayTokyoOver', '', [
             'over' => 0,
         ]);
 
@@ -298,16 +298,16 @@ trait UtilTrait {
             $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
         }
 
-        self::incStat(1, 'tokyoLeaves', $playerId);
+        $this->incStat(1, 'tokyoLeaves', $playerId);
     }
 
     function moveFromTokyoBayToCity(int $playerId) {
         $location = 1;
 
-        self::DbQuery("UPDATE player SET player_location =  $location where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET player_location =  $location where `player_id` = $playerId");
 
         $locationName = _('Tokyo City');
-        self::notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} !'), [
+        $this->notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} !'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'location' => $location,
@@ -316,7 +316,7 @@ trait UtilTrait {
     }
 
     function inTokyo(int $playerId) {
-        $location = intval(self::getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
+        $location = intval($this->getUniqueValueFromDB( "SELECT player_location FROM player WHERE player_id = $playerId"));
         return $location > 0;
     }
 
@@ -325,18 +325,18 @@ trait UtilTrait {
     private function getPlayersIdsFromLocation(bool $inside) {
         $sign = $inside ? '>' : '=';
         $sql = "SELECT player_id FROM player WHERE player_location $sign 0 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getPlayerIdInTokyoCity() {
         $sql = "SELECT player_id FROM player WHERE player_location = 1 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
-        return intval(self::getUniqueValueFromDB($sql));
+        return intval($this->getUniqueValueFromDB($sql));
     }
 
     function getPlayerIdInTokyoBay() {
         $sql = "SELECT player_id FROM player WHERE player_location = 2 AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
-        return intval(self::getUniqueValueFromDB($sql));
+        return intval($this->getUniqueValueFromDB($sql));
     }
 
     function getPlayersIdsInTokyo() {
@@ -345,25 +345,25 @@ trait UtilTrait {
 
     function getPlayersIds() {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getOtherPlayersIds(int $playerId) {
         $sql = "SELECT player_id FROM player WHERE player_id <> $playerId AND player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }  
 
     function getNonZombiePlayersIds() {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND player_zombie = 0 ORDER BY player_no";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 
     function getPlayer(int $id) {
         $sql = "SELECT * FROM player WHERE player_id = $id";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => new Player($dbResult), array_values($dbResults))[0];
     }
 
@@ -374,7 +374,7 @@ trait UtilTrait {
             $sql .= " WHERE player_eliminated = 0 AND player_dead = 0";
         }
         $sql .= " ORDER BY player_no";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => new Player($dbResult), array_values($dbResults));
     }
 
@@ -385,7 +385,7 @@ trait UtilTrait {
             $sql .= " AND player_eliminated = 0 AND player_dead = 0";
         }
         $sql .= " ORDER BY player_no";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => new Player($dbResult), array_values($dbResults));
     }
 
@@ -442,9 +442,9 @@ trait UtilTrait {
         if ($player->id == $currentTurnPlayerId || $playerIsActivePlayer) {
             $this->asyncEliminatePlayer($player->id);
         } else {
-            $scoreAux = intval(self::getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
-            self::DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
-            self::eliminatePlayer($player->id); // no need for notif, framework does it
+            $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
+            $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
+            $this->eliminatePlayer($player->id); // no need for notif, framework does it
         }
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
@@ -495,11 +495,11 @@ trait UtilTrait {
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
         $actualScore = $this->getPlayerScore($playerId);
         $newScore = min(MAX_POINT, $actualScore + $points);
-        self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_points} [Star] with ${card_name}');
-            self::notifyAllPlayers('points', $message, [
+            $this->notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'points' => $newScore,
@@ -512,11 +512,11 @@ trait UtilTrait {
     function applyLosePoints(int $playerId, int $points, int $cardType) {
         $actualScore = $this->getPlayerScore($playerId);
         $newScore = max($actualScore - $points, 0);
-        self::DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_points} [Star] with ${card_name}');
-            self::notifyAllPlayers('points', $message, [
+            $this->notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'points' => $newScore,
@@ -554,13 +554,13 @@ trait UtilTrait {
             return; // already at full life, no need for notif
         }
 
-        self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
-        self::incStat($health, 'heal', $playerId);
+        $this->incStat($health, 'heal', $playerId);
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_health} [Heart] with ${card_name}');
-            self::notifyAllPlayers('health', $message, [
+            $this->notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'health' => $newHealth,
@@ -575,7 +575,7 @@ trait UtilTrait {
     }
 
     private function logDamageBlocked(int $playerId, int $cardType) {
-        self::notifyAllPlayers('damageBlockedLog', clienttranslate('${player_name} prevents damage with ${card_name}'), [
+        $this->notifyAllPlayers('damageBlockedLog', clienttranslate('${player_name} prevents damage with ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $cardType,
@@ -622,7 +622,7 @@ trait UtilTrait {
             }
         }
 
-        if ($health >= 2) {
+        if ($actualHealth - $newHealth >= 2) {
             // we're only making it stronger          
             $countWereOnlyMakingItStronger = $this->countCardOfType($playerId, WE_RE_ONLY_MAKING_IT_STRONGER_CARD);
             if ($countWereOnlyMakingItStronger > 0) {
@@ -634,7 +634,7 @@ trait UtilTrait {
     function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
-            return; // player has wings and cannot lose hearts
+            return null; // player has wings and cannot lose hearts
         }
 
         // devil
@@ -646,16 +646,16 @@ trait UtilTrait {
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = max($actualHealth - $health, 0);
 
-        self::DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if ($damageDealerId > 0) {
-            self::incStat($health, 'damageDealt', $damageDealerId);
+            $this->incStat($health, 'damageDealt', $damageDealerId);
         }
-        self::incStat($health, 'damage', $playerId);
+        $this->incStat($health, 'damage', $playerId);
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
-            self::notifyAllPlayers('health', $message, [
+            $this->notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'health' => $newHealth,
@@ -665,7 +665,7 @@ trait UtilTrait {
         }
 
         if ($devil) {
-            self::notifyAllPlayers('devilExtraDamage', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
+            $this->notifyAllPlayers('devilExtraDamage', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'delta_health' => 1,
@@ -683,7 +683,7 @@ trait UtilTrait {
             $this->applyGetPoisonToken($playerId, $givePoisonSpitToken);
         }
             
-        self::DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
+        $this->DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
 
         // pirate
         $pirateCardCount = $this->countCardOfType($damageDealerId, PIRATE_CARD);
@@ -736,11 +736,11 @@ trait UtilTrait {
     }
 
     function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
-        self::DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
         
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
-            self::notifyAllPlayers('energy', $message, [
+            $this->notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'energy' => $this->getPlayerEnergy($playerId),
@@ -749,7 +749,7 @@ trait UtilTrait {
             ]);
         }
 
-        self::incStat($energy, 'wonEnergyCubes', $playerId);
+        $this->incStat($energy, 'wonEnergyCubes', $playerId);
     }
 
     function applyLoseEnergy(int $playerId, int $energy, int $cardType) {
@@ -759,11 +759,11 @@ trait UtilTrait {
     function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
         $actualEnergy = $this->getPlayerEnergy($playerId);
         $newEnergy = max($actualEnergy - $energy, 0);
-        self::DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_energy} [Energy] with ${card_name}');
-            self::notifyAllPlayers('energy', $message, [
+            $this->notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'energy' => $newEnergy,
@@ -774,10 +774,10 @@ trait UtilTrait {
     }
 
     function applyGetShrinkRayToken(int $playerId, int $deltaTokens) {
-        self::DbQuery("UPDATE player SET `player_shrink_ray_tokens` = `player_shrink_ray_tokens` + $deltaTokens where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = `player_shrink_ray_tokens` + $deltaTokens where `player_id` = $playerId");
 
         $message = clienttranslate('${player_name} gets ${delta_tokens} Shrink Ray token with ${card_name}');
-        self::notifyAllPlayers('shrinkRayToken', $message, [
+        $this->notifyAllPlayers('shrinkRayToken', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'delta_tokens' => $deltaTokens,
@@ -787,10 +787,10 @@ trait UtilTrait {
     }
 
     function applyGetPoisonToken(int $playerId, int $deltaTokens) {
-        self::DbQuery("UPDATE player SET `player_poison_tokens` = `player_poison_tokens` + $deltaTokens where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_poison_tokens` = `player_poison_tokens` + $deltaTokens where `player_id` = $playerId");
 
         $message = clienttranslate('${player_name} gets ${delta_tokens} Poison token with ${card_name}');
-        self::notifyAllPlayers('poisonToken', $message, [
+        $this->notifyAllPlayers('poisonToken', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'delta_tokens' => $deltaTokens,
@@ -803,9 +803,9 @@ trait UtilTrait {
         $actualTokens = $this->getPlayerShrinkRayTokens($playerId);
         $newTokens = max($actualTokens - $deltaTokens, 0);
 
-        self::DbQuery("UPDATE player SET `player_shrink_ray_tokens` = $newTokens where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = $newTokens where `player_id` = $playerId");
 
-        self::notifyAllPlayers('removeShrinkRayToken', '', [
+        $this->notifyAllPlayers('removeShrinkRayToken', '', [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'deltaTokens' => $deltaTokens,
@@ -818,9 +818,9 @@ trait UtilTrait {
         $actualTokens = $this->getPlayerPoisonTokens($playerId);
         $newTokens = max($actualTokens - $deltaTokens, 0);
 
-        self::DbQuery("UPDATE player SET `player_poison_tokens` = $newTokens where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_poison_tokens` = $newTokens where `player_id` = $playerId");
 
-        self::notifyAllPlayers('removePoisonToken', '', [
+        $this->notifyAllPlayers('removePoisonToken', '', [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'deltaTokens' => $deltaTokens,
@@ -842,7 +842,7 @@ trait UtilTrait {
                     $playersIds[] = $damage->playerId;
                 }
             } else {
-                $activePlayerId = self::getActivePlayerId();
+                $activePlayerId = $this->getActivePlayerId();
                 $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
             }
         }
@@ -868,24 +868,24 @@ trait UtilTrait {
     }
 
     function updateKillPlayersScoreAux() {
-        $eliminatedPlayersCount = intval(self::getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead > 0"));
-        self::setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount + 1);
+        $eliminatedPlayersCount = intval($this->getUniqueValueFromDB("select count(*) from player where player_eliminated > 0 or player_dead > 0"));
+        $this->setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount + 1);
     }
 
     function isDamageTakenThisTurn(int $playerId) {
-        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `to` = $playerId")) > 0;
+        return intval($this->getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `to` = $playerId")) > 0;
     }
 
     function isDamageDealtThisTurn(int $playerId) {
-        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId")) > 0;
+        return intval($this->getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId")) > 0;
     }
 
     function isDamageDealtToOthersThisTurn(int $playerId) {
-        return intval(self::getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` <> $playerId")) > 0;
+        return intval($this->getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` <> $playerId")) > 0;
     }
 
     function playersWoundedByActivePlayerThisTurn(int $playerId) {
-        $dbResults = self::getCollectionFromDB("SELECT `to` FROM `turn_damages` WHERE `from` = $playerId");
+        $dbResults = $this->getCollectionFromDb("SELECT `to` FROM `turn_damages` WHERE `from` = $playerId");
         return array_map(fn($dbResult) => intval($dbResult['to']), array_values($dbResults));
     }
 
@@ -900,28 +900,28 @@ trait UtilTrait {
     }
 
     function getTokyoTowerLevels(int $playerId) {
-        $dbResults = self::getCollectionFromDB("SELECT `level` FROM `tokyo_tower` WHERE `owner` = $playerId order by `level`");
+        $dbResults = $this->getCollectionFromDb("SELECT `level` FROM `tokyo_tower` WHERE `owner` = $playerId order by `level`");
         return array_map(fn($dbResult) => intval($dbResult['level']), array_values($dbResults));
     }
 
     function changeTokyoTowerOwner(int $playerId, int $level) {
-        self::DbQuery("UPDATE `tokyo_tower` SET  `owner` = $playerId where `level` = $level");
+        $this->DbQuery("UPDATE `tokyo_tower` SET  `owner` = $playerId where `level` = $level");
 
         $message = $playerId == 0 ? '' : clienttranslate('${player_name} claims Tokyo Tower level ${level}');
-        self::notifyAllPlayers("changeTokyoTowerOwner", $message, [
+        $this->notifyAllPlayers("changeTokyoTowerOwner", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'level' => $level,
         ]);
 
         if ($playerId > 0) {
-            self::incStat(1, 'tokyoTowerLevel'.$level.'claimed', $playerId);
+            $this->incStat(1, 'tokyoTowerLevel'.$level.'claimed', $playerId);
         }
     }
 
     function getPlayersIdsWithMaxColumn(string $column) {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select max(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
-        $dbResults = self::getCollectionFromDB($sql);
+        $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
 }

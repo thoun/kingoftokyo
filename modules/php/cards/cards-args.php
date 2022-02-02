@@ -24,7 +24,7 @@ trait CardsArgTrait {
     */
 
     function argCheerleaderSupport() {
-        $activePlayerId = self::getActivePlayerId();
+        $activePlayerId = $this->getActivePlayerId();
 
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, true),
@@ -33,7 +33,7 @@ trait CardsArgTrait {
     }
 
     function argBuyCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $potentialEnergy = $this->getPlayerEnergy($playerId);
         if ($this->isCthulhuExpansion()) {
@@ -192,7 +192,7 @@ trait CardsArgTrait {
     }
 
     function argSellCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         
@@ -234,12 +234,12 @@ trait CardsArgTrait {
     }
 
     function argChangeMimickedCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD, 1);
     }
 
     function argChooseMimickedCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD);
     }
 
@@ -320,7 +320,7 @@ trait CardsArgTrait {
     }
 
     function argStealCostumeCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $potentialEnergy = $this->getPlayerEnergy($playerId);
         if ($this->isCthulhuExpansion()) {

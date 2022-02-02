@@ -54,14 +54,14 @@ trait DiceUtilTrait {
     function getDice(int $number) {
         $sql = "SELECT * FROM dice ORDER BY dice_id limit $number";
         // TODOAN TODOCY $sql = "SELECT * FROM dice where `type` = 0 ORDER BY dice_id limit $number";
-        $dbDices = self::getCollectionFromDB($sql);
+        $dbDices = $this->getCollectionFromDb($sql);
         $dice = array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices));
         return array_values(array_filter($dice, fn($die) => !$die->discarded));
     }
 
     function getDieById(int $id) {
         $sql = "SELECT * FROM dice WHERE `dice_id` = $id";
-        $dbDices = self::getCollectionFromDB($sql);
+        $dbDices = $this->getCollectionFromDb($sql);
         return array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices))[0];
     }
 
@@ -81,7 +81,7 @@ trait DiceUtilTrait {
 
     function getDiceByType(int $type) {
         $sql = "SELECT * FROM dice WHERE `type` = $type";
-        $dbDices = self::getCollectionFromDB($sql);
+        $dbDices = $this->getCollectionFromDb($sql);
         return array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices));
     }
 
@@ -109,7 +109,7 @@ trait DiceUtilTrait {
     public function throwDice(int $playerId, bool $firstRoll) {
         $dice = $this->getPlayerRolledDice($playerId, true, true, true);
 
-        self::DbQuery( "UPDATE dice SET `rolled` = false");
+        $this->DbQuery( "UPDATE dice SET `rolled` = false");
 
         $lockedDice = [];
         $rolledDice = [];
@@ -120,14 +120,14 @@ trait DiceUtilTrait {
             } else {
                 $facesNumber = $die->type == 2 ? 4 : 6;
                 $die->value = bga_rand(1, $facesNumber);
-                self::DbQuery( "UPDATE dice SET `dice_value` = ".$die->value.", `rolled` = true where `dice_id` = ".$die->id );
+                $this->DbQuery( "UPDATE dice SET `dice_value` = ".$die->value.", `rolled` = true where `dice_id` = ".$die->id );
 
                 $rolledDice[] = $die;
             }
 
             if (!$this->canRerollSymbol($playerId, getDieFace($die))) {
                 $die->locked = true;
-                self::DbQuery( "UPDATE dice SET `locked` = true where `dice_id` = ".$die->id );
+                $this->DbQuery( "UPDATE dice SET `locked` = true where `dice_id` = ".$die->id );
             }
         }
 
@@ -155,7 +155,7 @@ trait DiceUtilTrait {
                 $message = clienttranslate('${player_name} keeps ${lockedDice} and rerolls dice ${rolledDice}');
             }
 
-            self::notifyAllPlayers("diceLog", $message, [
+            $this->notifyAllPlayers("diceLog", $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'rolledDice' => $rolledDiceStr,
@@ -165,12 +165,12 @@ trait DiceUtilTrait {
     }
 
     function fixDices() {
-        self::DbQuery( "UPDATE dice SET `rolled` = false");
+        $this->DbQuery( "UPDATE dice SET `rolled` = false");
     }
 
     function getDiceNumber(int $playerId, $compute = false) {
         /*if (!$compute) {
-            return intval(self::getGameStateValue(DICE_NUMBER)) + intval(self::getGameStateValue(RAGING_FLOOD_EXTRA_DIE));
+            return intval($this->getGameStateValue(DICE_NUMBER)) + intval($this->getGameStateValue(RAGING_FLOOD_EXTRA_DIE));
         }*/
 
         $add = $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
@@ -202,9 +202,9 @@ trait DiceUtilTrait {
 
             $this->applyGetPoints($playerId, $points, -1);
 
-            self::incStat($points, 'pointsWonWith'.$number.'Dice', $playerId);
+            $this->incStat($points, 'pointsWonWith'.$number.'Dice', $playerId);
 
-            self::notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} gains ${deltaPoints}[Star] with ${dice_value} dice'), [
+            $this->notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} gains ${deltaPoints}[Star] with ${dice_value} dice'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'deltaPoints' => $points,
@@ -241,7 +241,7 @@ trait DiceUtilTrait {
 
     function resolveHealthDice(int $playerId, int $diceCount) {
         if (!$this->canHealWithDice($playerId)) { // TODOAN change message
-            self::notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} gains no [Heart] (player in Tokyo)'), [
+            $this->notifyAllPlayers( "resolveHealthDiceInTokyo", clienttranslate('${player_name} gains no [Heart] (player in Tokyo)'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
             ]);
@@ -252,7 +252,7 @@ trait DiceUtilTrait {
             if ($health < $maxHealth && $this->canGainHealth($playerId)) {
                 $playerGettingHealth = $this->getPlayerGettingEnergyOrHeart($playerId);
 
-                self::notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} gains ${deltaHealth} [Heart]'), [
+                $this->notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} gains ${deltaHealth} [Heart]'), [
                     'playerId' => $playerGettingHealth,
                     'player_name' => $this->getPlayerName($playerGettingHealth),
                     'deltaHealth' => $diceCount,
@@ -270,7 +270,7 @@ trait DiceUtilTrait {
         
         $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
-        self::notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [
+        $this->notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [
             'playerId' => $playerGettingEnergy,
             'player_name' => $this->getPlayerName($playerGettingEnergy),
             'deltaEnergy' => $diceCount,
@@ -360,9 +360,9 @@ trait DiceUtilTrait {
         }
 
         $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
-        self::setGameStateValue(STATE_AFTER_RESOLVE, $nextStateId);
+        $this->setGameStateValue(STATE_AFTER_RESOLVE, $nextStateId);
 
-        self::notifyAllPlayers("resolveSmashDice", $message, [
+        $this->notifyAllPlayers("resolveSmashDice", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'number' => $diceCount,
@@ -377,7 +377,7 @@ trait DiceUtilTrait {
 
         // fire breathing
         foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
-            self::notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+            $this->notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerName($damagePlayerId),
                 'number' => 1,
@@ -420,13 +420,13 @@ trait DiceUtilTrait {
         }
         $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $potentialEnergy >= 2;
 
-        $hasClown = intval(self::getGameStateValue(CLOWN_ACTIVATED)) == 1;
+        $hasClown = intval($this->getGameStateValue(CLOWN_ACTIVATED)) == 1;
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
             $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
             $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
             if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
-                self::setGameStateValue(CLOWN_ACTIVATED, 1);
+                $this->setGameStateValue(CLOWN_ACTIVATED, 1);
                 $hasClown = true;
             }
         }
@@ -502,7 +502,7 @@ trait DiceUtilTrait {
 
     function getPsychicProbeInterventionEndState($intervention) {
         $canChangeWithCards = $this->canChangeDie($this->getChangeDieCards($intervention->activePlayerId));
-        $canRetrow3 = intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($intervention->activePlayerId, BACKGROUND_DWELLER_CARD) > 0;
+        $canRetrow3 = intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($intervention->activePlayerId, BACKGROUND_DWELLER_CARD) > 0;
         $backToChangeDie = $canChangeWithCards || $canRetrow3;
         return $backToChangeDie ? 'endAndChangeDieAgain' : 'end';
     }
@@ -538,17 +538,17 @@ trait DiceUtilTrait {
             throw new \BgaUserException('No dice to reroll');
         }
 
-        $playerId = self::getActivePlayerId();
-        self::DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
-        self::DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN ($diceIds)");
+        $playerId = $this->getActivePlayerId();
+        $this->DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
+        $this->DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN ($diceIds)");
 
         $diceCount = count(explode(',', $diceIds));
-        self::incStat($diceCount, 'rethrownDice', $playerId);
+        $this->incStat($diceCount, 'rethrownDice', $playerId);
 
         $this->throwDice($playerId, false);
 
-        $throwNumber = intval(self::getGameStateValue('throwNumber')) + 1;
-        self::setGameStateValue('throwNumber', $throwNumber);
+        $throwNumber = intval($this->getGameStateValue('throwNumber')) + 1;
+        $this->setGameStateValue('throwNumber', $throwNumber);
 
         $this->gamestate->nextState('rethrow');
     }
@@ -591,7 +591,7 @@ trait DiceUtilTrait {
         $cardsAddingSmashes = [];
 
         // cheerleader
-        if (intval(self::getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
+        if (intval($this->getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
             $addedSmashes += 1;
             $cardsAddingSmashes[] = CHEERLEADER_CARD;
         }
@@ -706,7 +706,7 @@ trait DiceUtilTrait {
             $playerScore = $this->getPlayerScore($playerId);
             $this->applyGetPoints($playerId, MAX_POINT - $playerScore, 0);
             
-            self::notifyAllPlayers("fullTokyoTower", clienttranslate('${player_name} claims Tokyo Tower top level and wins the game'), [
+            $this->notifyAllPlayers("fullTokyoTower", clienttranslate('${player_name} claims Tokyo Tower top level and wins the game'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
             ]);

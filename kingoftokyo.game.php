@@ -82,7 +82,7 @@ class KingOfTokyo extends Table {
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
-        self::initGameStateLabels([
+        $this->initGameStateLabels([
             'throwNumber' => 10,
             FRENZY_EXTRA_TURN => 11,
             EXTRA_ROLLS => 13,
@@ -119,15 +119,15 @@ class KingOfTokyo extends Table {
             TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
 		
-        $this->cards = self::getNew("module.common.deck");
+        $this->cards = $this->getNew("module.common.deck");
         $this->cards->init("card");
         $this->cards->autoreshuffle = true;
 		
-        $this->curseCards = self::getNew("module.common.deck");
+        $this->curseCards = $this->getNew("module.common.deck");
         $this->curseCards->init("curse_card");
         $this->curseCards->autoreshuffle = true;
 		
-        $this->wickednessTiles = self::getNew("module.common.deck");
+        $this->wickednessTiles = $this->getNew("module.common.deck");
         $this->wickednessTiles->init("wickedness_tile");
 	}
 
@@ -145,12 +145,12 @@ class KingOfTokyo extends Table {
     protected function setupNewGame($players, $options = []) {
 
         $sql = "DELETE FROM player WHERE 1 ";
-        self::DbQuery( $sql );
+        $this->DbQuery( $sql );
 
         // Set the colors of the players with HTML color code
         // The default below is red/green/blue/orange/brown
         // The number of colors defined here must correspond to the maximum number of players allowed for the gams
-        $gameinfos = self::getGameinfos();
+        $gameinfos = $this->getGameinfos();
         $default_colors = $gameinfos['player_colors'];
 
         // Create players
@@ -177,87 +177,87 @@ class KingOfTokyo extends Table {
             $values[] = "('".$playerId."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."', $eliminationRank, $playerMonster)";
         }
         $sql .= implode(',', $values);
-        self::DbQuery($sql);
-        self::reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
-        self::reloadPlayersBasicInfos();
+        $this->DbQuery($sql);
+        $this->reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
+        $this->reloadPlayersBasicInfos();
 
         // Create dice
-        self::DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
-        self::DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true), (0, true)");
+        $this->DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
+        $this->DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true), (0, true)");
 
         if ($this->isCybertoothExpansion()) {
-            self::DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 1)");
+            $this->DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 1)");
         }
         if ($this->isAnubisExpansion()) {
-           self::DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 2)");
+           $this->DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 2)");
         }
 
         /************ Start the game initialization *****/
-        $wickednessExpansion = intval(self::getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
+        $wickednessExpansion = intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
 
         // Init global values with their initial values
-        self::setGameStateInitialValue('throwNumber', 0);
-        self::setGameStateInitialValue(FRENZY_EXTRA_TURN, 0);
-        self::setGameStateInitialValue(FREEZE_TIME_MAX_TURNS, 0);
-        self::setGameStateInitialValue(FREEZE_TIME_CURRENT_TURN, 0);
-        self::setGameStateInitialValue(EXTRA_ROLLS, 0);
-        self::setGameStateInitialValue('newCardId', 0);
-        self::setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
-        self::setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 1);
-        self::setGameStateInitialValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
-        self::setGameStateInitialValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
-        self::setGameStateInitialValue(SKIP_BUY_PHASE, 0);
-        self::setGameStateInitialValue(CLOWN_ACTIVATED, 0);
-        self::setGameStateInitialValue(CHEERLEADER_SUPPORT, 0);
-        self::setGameStateInitialValue(STATE_AFTER_RESOLVE, 0);
-        self::setGameStateInitialValue(FINAL_PUSH_EXTRA_TURN, 0);
-        self::setGameStateInitialValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
-        self::setGameStateInitialValue(STATE_AFTER_MIMIC_CHOOSE, 0);
-        self::setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE, 0);
-        self::setGameStateInitialValue(FALSE_BLESSING_USED_DIE, 0);
+        $this->setGameStateInitialValue('throwNumber', 0);
+        $this->setGameStateInitialValue(FRENZY_EXTRA_TURN, 0);
+        $this->setGameStateInitialValue(FREEZE_TIME_MAX_TURNS, 0);
+        $this->setGameStateInitialValue(FREEZE_TIME_CURRENT_TURN, 0);
+        $this->setGameStateInitialValue(EXTRA_ROLLS, 0);
+        $this->setGameStateInitialValue('newCardId', 0);
+        $this->setGameStateInitialValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
+        $this->setGameStateInitialValue(KILL_PLAYERS_SCORE_AUX, 1);
+        $this->setGameStateInitialValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
+        $this->setGameStateInitialValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
+        $this->setGameStateInitialValue(SKIP_BUY_PHASE, 0);
+        $this->setGameStateInitialValue(CLOWN_ACTIVATED, 0);
+        $this->setGameStateInitialValue(CHEERLEADER_SUPPORT, 0);
+        $this->setGameStateInitialValue(STATE_AFTER_RESOLVE, 0);
+        $this->setGameStateInitialValue(FINAL_PUSH_EXTRA_TURN, 0);
+        $this->setGameStateInitialValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
+        $this->setGameStateInitialValue(STATE_AFTER_MIMIC_CHOOSE, 0);
+        $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE, 0);
+        $this->setGameStateInitialValue(FALSE_BLESSING_USED_DIE, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
-        self::initStat('table', 'turnsNumber', 0);   // Init a table statistics
-        self::initStat('player', 'turnsNumber', 0);  // Init a player statistics (for all players)
-        self::initStat('table', 'pointsWin', 0);
-        self::initStat('player', 'pointsWin', 0);
-        self::initStat('table', 'eliminationWin', 0);
-        self::initStat('player', 'eliminationWin', 0);
+        $this->initStat('table', 'turnsNumber', 0);   // Init a table statistics
+        $this->initStat('player', 'turnsNumber', 0);  // Init a player statistics (for all players)
+        $this->initStat('table', 'pointsWin', 0);
+        $this->initStat('player', 'pointsWin', 0);
+        $this->initStat('table', 'eliminationWin', 0);
+        $this->initStat('player', 'eliminationWin', 0);
         
-        self::initStat('table', 'survivorRatio', 0);
+        $this->initStat('table', 'survivorRatio', 0);
 
-        self::initStat('player', 'survived', 0);
-        self::initStat('player', 'turnsInTokyo', 0);
-        self::initStat('player', 'tokyoEnters', 0);
-        self::initStat('player', 'tokyoLeaves', 0);
-        self::initStat('player', 'keepBoughtCards', 0);
-        self::initStat('player', 'discardBoughtCards', 0);
+        $this->initStat('player', 'survived', 0);
+        $this->initStat('player', 'turnsInTokyo', 0);
+        $this->initStat('player', 'tokyoEnters', 0);
+        $this->initStat('player', 'tokyoLeaves', 0);
+        $this->initStat('player', 'keepBoughtCards', 0);
+        $this->initStat('player', 'discardBoughtCards', 0);
         if ($this->isHalloweenExpansion()) {
-            self::initStat('player', 'costumeBoughtCards', 0);
-            self::initStat('player', 'costumeStolenCards', 0);
+            $this->initStat('player', 'costumeBoughtCards', 0);
+            $this->initStat('player', 'costumeStolenCards', 0);
         }
-        self::initStat('player', 'damageDealt', 0);
-        self::initStat('player', 'damage', 0);
-        self::initStat('player', 'heal', 0);
-        self::initStat('player', 'wonEnergyCubes', 0);
-        self::initStat('player', 'endScore', 0);
-        self::initStat('player', 'endHealth', 0);
-        self::initStat('player', 'rethrownDice', 0);
-        self::initStat('player', 'pointsWonWith1Dice', 0);
-        self::initStat('player', 'pointsWonWith2Dice', 0);
-        self::initStat('player', 'pointsWonWith3Dice', 0);
+        $this->initStat('player', 'damageDealt', 0);
+        $this->initStat('player', 'damage', 0);
+        $this->initStat('player', 'heal', 0);
+        $this->initStat('player', 'wonEnergyCubes', 0);
+        $this->initStat('player', 'endScore', 0);
+        $this->initStat('player', 'endHealth', 0);
+        $this->initStat('player', 'rethrownDice', 0);
+        $this->initStat('player', 'pointsWonWith1Dice', 0);
+        $this->initStat('player', 'pointsWonWith2Dice', 0);
+        $this->initStat('player', 'pointsWonWith3Dice', 0);
         if ($this->isCthulhuExpansion()) {
-            self::initStat('player', 'gainedCultists', 0);
-            self::initStat('player', 'cultistReroll', 0);
-            self::initStat('player', 'cultistHeal', 0);
-            self::initStat('player', 'cultistEnergy', 0);
+            $this->initStat('player', 'gainedCultists', 0);
+            $this->initStat('player', 'cultistReroll', 0);
+            $this->initStat('player', 'cultistHeal', 0);
+            $this->initStat('player', 'cultistEnergy', 0);
         }
         if ($this->isAnubisExpansion()) {
-            // TODOAN self::initStat('player', 'dieOfFateEye', 0);
-            // TODOAN self::initStat('player', 'dieOfFateRiver', 0);
-            // TODOAN self::initStat('player', 'dieOfFateSnake', 0);
-            // TODOAN self::initStat('player', 'dieOfFateAnkh', 0);
+            // TODOAN $this->initStat('player', 'dieOfFateEye', 0);
+            // TODOAN $this->initStat('player', 'dieOfFateRiver', 0);
+            // TODOAN $this->initStat('player', 'dieOfFateSnake', 0);
+            // TODOAN $this->initStat('player', 'dieOfFateAnkh', 0);
         }
 
 
@@ -267,16 +267,16 @@ class KingOfTokyo extends Table {
         // TODOAN "dieOfFateAnkh" => ["id" => 55, "type" => "int", "name" => totranslate("Ankh effect with die of fate")],
 
         if ($wickednessExpansion > 1) {
-            //self::initStat('player', 'gainedWickedness', 0);
-            //self::initStat('player', 'wickednessTilesTaken', 0);
+            //$this->initStat('player', 'gainedWickedness', 0);
+            //$this->initStat('player', 'wickednessTilesTaken', 0);
         }
 
         if ($this->isKingKongExpansion()) {
-            self::initStat('player', 'tokyoTowerLevel1claimed', 0);
-            self::initStat('player', 'tokyoTowerLevel2claimed', 0);
-            self::initStat('player', 'tokyoTowerLevel3claimed', 0);
-            self::initStat('player', 'bonusFromTokyoTowerLevel1applied', 0);
-            self::initStat('player', 'bonusFromTokyoTowerLevel2applied', 0);   
+            $this->initStat('player', 'tokyoTowerLevel1claimed', 0);
+            $this->initStat('player', 'tokyoTowerLevel2claimed', 0);
+            $this->initStat('player', 'tokyoTowerLevel3claimed', 0);
+            $this->initStat('player', 'bonusFromTokyoTowerLevel1applied', 0);
+            $this->initStat('player', 'bonusFromTokyoTowerLevel2applied', 0);   
         }
 
         if (!$this->canPickMonster()) {
@@ -290,7 +290,7 @@ class KingOfTokyo extends Table {
         $this->initCards($isAnubisExpansion);
         if ($isAnubisExpansion) {
             $lastPlayer = array_key_last($players);
-            self::setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);
+            $this->setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);
             $this->initCurseCards();
             // init first curse card
             $this->curseCards->pickCardForLocation('deck', 'table');
@@ -301,14 +301,14 @@ class KingOfTokyo extends Table {
         }
 
         if ($this->isKingKongExpansion()) {
-            self::DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
+            $this->DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
         }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        //$this->debugSetup();
+        $this->debugSetup();
 
         /************ End of the game initialization *****/
     }
@@ -331,7 +331,7 @@ class KingOfTokyo extends Table {
 
         $result = ['players' => []];
 
-        $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
+        $current_player_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
@@ -346,11 +346,11 @@ class KingOfTokyo extends Table {
             $sql .= ", player_wickedness wickedness ";
         }
         $sql .= "FROM player order by player_no ";
-        $result['players'] = self::getCollectionFromDb($sql);
+        $result['players'] = $this->getCollectionFromDb($sql);
 
         // Gather all information about current game situation (visible by player $current_player_id).
 
-        $activePlayerId = self::getActivePlayerId();
+        $activePlayerId = $this->getActivePlayerId();
         $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true, true, true) : [];
 
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
@@ -403,8 +403,8 @@ class KingOfTokyo extends Table {
             'tile' => $this->getMimickedCard(FLUXLING_WICKEDNESS_TILE),
         ];
 
-        $result['leaveTokyoUnder'] = intval(self::getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));
-        $result['stayTokyoOver'] = intval(self::getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $current_player_id"));
+        $result['leaveTokyoUnder'] = intval($this->getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));
+        $result['stayTokyoOver'] = intval($this->getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $current_player_id"));
 
         $result['twoPlayersVariant'] = $this->isTwoPlayersVariant();
         $result['halloweenExpansion'] = $this->isHalloweenExpansion();
@@ -456,13 +456,13 @@ class KingOfTokyo extends Table {
         }
         $this->cards->shuffle('deck'); 
 
-        // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MIMIC_CARD);
+        // TODO TEMP  $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MIMIC_CARD);
         // TODO $this->debugSetupBeforePlaceCard();
         $cards = $this->placeNewCardsOnTable();
         // TODO $this->debugSetupAfterPlaceCard();
-        // TODO TEMP  self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".EVEN_BIGGER_CARD);
+        // TODO TEMP  $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".EVEN_BIGGER_CARD);
 
-        self::notifyAllPlayers("setInitialCards", '', [
+        $this->notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,
         ]);
 
@@ -482,30 +482,30 @@ class KingOfTokyo extends Table {
 
         // in case everyone is dead, no ranking
         if ($remainingPlayers == 0) {
-            self::DbQuery("UPDATE player SET `player_score` = 0, `player_score_aux` = 0");
+            $this->DbQuery("UPDATE player SET `player_score` = 0, `player_score_aux` = 0");
         }
 
         $eliminationWin = $remainingPlayers == 1;
 
-        self::setStat($pointsWin ? 1 : 0, 'pointsWin');
-        self::setStat($eliminationWin ? 1 : 0, 'eliminationWin');
-        self::setStat($remainingPlayers / (float) $playerCount, 'survivorRatio');
+        $this->setStat($pointsWin ? 1 : 0, 'pointsWin');
+        $this->setStat($eliminationWin ? 1 : 0, 'eliminationWin');
+        $this->setStat($remainingPlayers / (float) $playerCount, 'survivorRatio');
 
         foreach($players as $player) {            
-            self::setStat($player->eliminated ? 0 : 1, 'survived', $player->id);
+            $this->setStat($player->eliminated ? 0 : 1, 'survived', $player->id);
 
             if (!$player->eliminated) {
                 if ($player->score >= MAX_POINT) {
-                    self::setStat(1, 'pointsWin', $player->id);
+                    $this->setStat(1, 'pointsWin', $player->id);
                 }
                 if ($eliminationWin) {
-                    self::setStat(1, 'eliminationWin', $player->id);
+                    $this->setStat(1, 'eliminationWin', $player->id);
                 }
 
                 if ($pointsWin) {
-                    self::setStat($player->score, 'endScore', $player->id);
+                    $this->setStat($player->score, 'endScore', $player->id);
                 }
-                self::setStat($player->health, 'endHealth', $player->id);
+                $this->setStat($player->health, 'endHealth', $player->id);
             }            
         }
 
@@ -568,7 +568,7 @@ class KingOfTokyo extends Table {
                         SET     player_is_multiactive = 0
                         WHERE   player_id = $active_player
                     ";
-                    self::DbQuery( $sql );
+                    $this->DbQuery( $sql );
 
                     $this->gamestate->updateMultiactiveOrNextState('end');
                     return;

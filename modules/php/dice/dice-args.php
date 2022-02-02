@@ -15,10 +15,10 @@ trait DiceArgTrait {
     */
 
     function argThrowDice() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
         $dice = $this->getPlayerRolledDice($playerId, true, true, true);
 
-        $throwNumber = intval(self::getGameStateValue('throwNumber'));
+        $throwNumber = intval($this->getGameStateValue('throwNumber'));
         $maxThrowNumber = $this->getRollNumber($playerId);
 
         $hasEnergyDrink = $this->countCardOfType($playerId, ENERGY_DRINK_CARD) > 0; // Energy drink
@@ -67,12 +67,12 @@ trait DiceArgTrait {
     }
 
     function argChangeDie() {
-        $playerId = intval(self::getActivePlayerId());
+        $playerId = intval($this->getActivePlayerId());
 
         $cardsArg = $this->getChangeDieCards($playerId);
 
         $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
-        $canRetrow3 = $hasBackgroundDweller && intval(self::getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
+        $canRetrow3 = $hasBackgroundDweller && intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
 
         $dice = $this->getPlayerRolledDice($playerId, true, true, true);
         $selectableDice = $this->getSelectableDice($dice, true, false);
@@ -147,7 +147,7 @@ trait DiceArgTrait {
     }
 
     function argResolveHeartDiceAction() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
         $diceCount = $diceCounts[4];
@@ -172,7 +172,7 @@ trait DiceArgTrait {
     }
 
     function argResolveNumberDice() {
-        $activePlayerId = self::getActivePlayerId();
+        $activePlayerId = $this->getActivePlayerId();
 
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),

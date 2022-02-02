@@ -27,13 +27,14 @@ trait CurseCardsUtilTrait {
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case THOT_S_BLINDNESS_CURSE_CARD: 
             case TUTANKHAMUN_S_CURSE_CURSE_CARD: 
+            case HOTEP_S_PEACE_CURSE_CARD:
             case FORBIDDEN_LIBRARY_CURSE_CARD: 
             case CONFUSED_SENSES_CURSE_CARD: 
             case PHARAONIC_SKIN_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
             case RAGING_FLOOD_CURSE_CARD:
-                self::setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 1);
+                $this->setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 1);
                 $this->jumpToState(ST_PLAYER_SELECT_EXTRA_DIE);
                 break;
             case SET_S_STORM_CURSE_CARD:
@@ -69,7 +70,7 @@ trait CurseCardsUtilTrait {
                 $this->jumpToState(ST_PLAYER_GIVE_GOLDEN_SCARAB);
                 break;
             case FALSE_BLESSING_CURSE_CARD:
-                self::setGameStateValue(FALSE_BLESSING_USED_DIE, 0);
+                $this->setGameStateValue(FALSE_BLESSING_USED_DIE, 0);
                 $this->jumpToState(ST_PLAYER_REROLL_OR_DISCARD_DICE);
                 break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
@@ -211,7 +212,7 @@ trait CurseCardsUtilTrait {
 
         $card = $this->getCardFromDb($this->curseCards->pickCardForLocation('deck', 'table'));
 
-        self::notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Die of fate is on [dieFateEye], Curse card is changed'/*)*/, [
+        $this->notifyAllPlayers('changeCurseCard', /*client TODOAN translate(*/'Die of fate is on [dieFateEye], Curse card is changed'/*)*/, [
             'card' => $card,
         ]);
         
@@ -229,9 +230,9 @@ trait CurseCardsUtilTrait {
             return;
         }
 
-        self::setGameStateValue(PLAYER_WITH_GOLDEN_SCARAB, $playerId);
+        $this->setGameStateValue(PLAYER_WITH_GOLDEN_SCARAB, $playerId);
 
-        self::notifyAllPlayers('changeGoldenScarabOwner', /*client TODOAN translate(*/'${player_name} gets Golden Scarab'/*)*/, [
+        $this->notifyAllPlayers('changeGoldenScarabOwner', /*client TODOAN translate(*/'${player_name} gets Golden Scarab'/*)*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'previousOwner' => $previousOwner,
@@ -239,7 +240,7 @@ trait CurseCardsUtilTrait {
     }
 
     function getPlayerIdWithGoldenScarab() {
-        return intval(self::getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+        return intval($this->getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
     }
 
     function getPlayersIdsWithoutGoldenScarab() {
@@ -284,11 +285,11 @@ trait CurseCardsUtilTrait {
     }
 
     function applyDiscardDie(int $dieId) {
-        self::DbQuery("UPDATE dice SET `discarded` = true WHERE `dice_id` = $dieId");
+        $this->DbQuery("UPDATE dice SET `discarded` = true WHERE `dice_id` = $dieId");
 
         $die = $this->getDieById($dieId);
 
-        self::notifyAllPlayers("discardedDie", /*client TODOAN translate(*/'Die ${dieFace} is discarded'/*)*/, [
+        $this->notifyAllPlayers("discardedDie", /*client TODOAN translate(*/'Die ${dieFace} is discarded'/*)*/, [
             'die' => $die,
             'dieFace' => $this->getDieFaceLogName($die->value, $die->type),
         ]);
@@ -296,7 +297,7 @@ trait CurseCardsUtilTrait {
 
     function applyDiscardKeepCard(int $playerId, object $card) {
 
-        self::notifyAllPlayers("discardedDie", /*client TODOAN translate(*/'${player_name} discards ${card_name}'/*)*/, [
+        $this->notifyAllPlayers("discardedDie", /*client TODOAN translate(*/'${player_name} discards ${card_name}'/*)*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $card->type,
@@ -309,7 +310,7 @@ trait CurseCardsUtilTrait {
         if ($this->getCurseCardType() == FALSE_BLESSING_CURSE_CARD) {
             // player on the left
             $playersIds = $this->getPlayersIds();
-            $playerIndex = array_search(self::getActivePlayerId(), $playersIds);
+            $playerIndex = array_search($this->getActivePlayerId(), $playersIds);
             $playerCount = count($playersIds);
             
             $leftPlayerId = $playersIds[($playerIndex + 1) % $playerCount];

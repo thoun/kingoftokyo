@@ -24,10 +24,10 @@ trait DebugUtilTrait {
         //$this->debugSetHealth(2);
         //$this->debugSetPlayerHealth(2343492, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
-        //self::DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
-        //self::DbQuery("UPDATE player SET `player_poison_tokens` = 2");
-        //self::DbQuery("UPDATE player SET `player_cultists` = 2");
-        //self::DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
+        //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
+        //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
+        //$this->DbQuery("UPDATE player SET `player_cultists` = 2");
+        //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
@@ -37,7 +37,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
         //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD, 2343492);
-        //self::DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
+        //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -85,21 +85,22 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
+        $this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
 
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
+        $this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-        //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+        $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
         //$this->debugSetCardInHand(WITCH_CARD, 2343494);
         //$this->debugSetCardInHand(VAMPIRE_CARD, 2343495);
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
 
         //$this->setPlayerBerserk(2343492, true);
         //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
-        //self::DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
+        //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-        //self::DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+        //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
         //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->changeTokyoTowerOwner(2343493, 1);
@@ -134,31 +135,31 @@ trait DebugUtilTrait {
     }
 
     function debugSetPlayerInLocation($playerId, $location) {
-        self::DbQuery("UPDATE player SET `player_location` = $location where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_location` = $location where `player_id` = $playerId");
     }
 
     function debugSetHealth($health) {
-        self::DbQuery("UPDATE player SET `player_health` = $health");
+        $this->DbQuery("UPDATE player SET `player_health` = $health");
     }
 
     function debugSetPlayerHealth($playerId, $health) {
-        self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
     }
 
     function debugSetPlayerEnergy($playerId, $energy) {
-        self::DbQuery("UPDATE player SET `player_energy` = $energy where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = $energy where `player_id` = $playerId");
     }
 
     function debugSetEnergy($energy) {
-        self::DbQuery("UPDATE player SET `player_energy` = $energy");
+        $this->DbQuery("UPDATE player SET `player_energy` = $energy");
     }
 
     function debugSetPlayerPoints($playerId, $points) {
-        self::DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
     }
 
     function debugSetPoints($points) {
-        self::DbQuery("UPDATE player SET `player_score` = $points");
+        $this->DbQuery("UPDATE player SET `player_score` = $points");
     }
 
     function debugSetCurseCardInTable($cardType) {
@@ -173,13 +174,13 @@ trait DebugUtilTrait {
     // debugSetDieOfFate(3)
     // debugSetDieOfFate(4)
     function debugSetDieOfFate($face) {
-        self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 2");
+        $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 2");
     }
     
     // debugSetDieFaces(1)
     // debugSetDieFaces(6, 5)
     function debugSetDieFaces($face, $limit = 99) {
-        self::DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
+        $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
     }
 
     public function debugReplacePlayersIds() {
@@ -200,13 +201,13 @@ trait DebugUtilTrait {
 		
 		foreach ($ids as $id) {
 			// basic tables
-			self::DbQuery("UPDATE player SET player_id=$sid WHERE player_id = $id" );
-			self::DbQuery("UPDATE global SET global_value=$sid WHERE global_value = $id" );
-			self::DbQuery("UPDATE stats SET stats_player_id=$sid WHERE stats_player_id = $id" );
+			$this->DbQuery("UPDATE player SET player_id=$sid WHERE player_id = $id" );
+			$this->DbQuery("UPDATE global SET global_value=$sid WHERE global_value = $id" );
+			$this->DbQuery("UPDATE stats SET stats_player_id=$sid WHERE stats_player_id = $id" );
 
 			// 'other' game specific tables. example:
 			// tables specific to your schema that use player_ids
-			self::DbQuery("UPDATE card SET card_location_arg=$sid WHERE card_location_arg = $id" );
+			$this->DbQuery("UPDATE card SET card_location_arg=$sid WHERE card_location_arg = $id" );
 			
 			++$sid;
 		}

@@ -120,7 +120,7 @@ trait CardsUtilTrait {
             case FRENZY_CARD: 
                 if ($opportunist) {
                     $this->setGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, $playerId);
-                    $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, self::getActivePlayerId());
+                    $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, $this->getActivePlayerId());
                 } else {
                     $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
                 }
@@ -187,7 +187,7 @@ trait CardsUtilTrait {
         $card = $this->getMimickedCard($mimicCardType);
         if ($card) {
             $this->deleteGlobalVariable(MIMICKED_CARD.$mimicCardType);
-            self::notifyAllPlayers("removeMimicToken", '', [
+            $this->notifyAllPlayers("removeMimicToken", '', [
                 'card' => $card,
                 'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
             ]);
@@ -237,7 +237,7 @@ trait CardsUtilTrait {
         $mimickedCard->card = $card;
         $mimickedCard->playerId = $card->location_arg;
         $this->setGlobalVariable(MIMICKED_CARD . $mimicCardType, $mimickedCard);
-        self::notifyAllPlayers("setMimicToken", clienttranslate('${player_name} mimics ${card_name}'), [
+        $this->notifyAllPlayers("setMimicToken", clienttranslate('${player_name} mimics ${card_name}'), [
             'card' => $card,
             'player_name' => $this->getPlayerName($mimicOwnerId),
             'card_name' => $card->type,
@@ -356,8 +356,8 @@ trait CardsUtilTrait {
 
         // lose all stars
         $points = 0;
-        self::DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
-        self::notifyAllPlayers('points','', [
+        $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+        $this->notifyAllPlayers('points','', [
             'playerId' => $playerId,
             'player_name' => $playerName,
             'points' => $points,
@@ -365,14 +365,14 @@ trait CardsUtilTrait {
 
         // get back to 10 heart
         $health = 10;
-        self::DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
-        self::notifyAllPlayers('health', '', [
+        $this->DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+        $this->notifyAllPlayers('health', '', [
             'playerId' => $playerId,
             'player_name' => $playerName,
             'health' => $health,
         ]);
 
-        self::notifyAllPlayers('applyItHasAChild', clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'), [
+        $this->notifyAllPlayers('applyItHasAChild', clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'), [
             'playerId' => $playerId,
             'player_name' => $playerName,
             'health' => $health,
@@ -402,7 +402,7 @@ trait CardsUtilTrait {
     function buyEnergyDrink($diceIds) {
         $this->checkAction('buyEnergyDrink');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
             throw new \BgaUserException('Not enough energy');
@@ -416,8 +416,8 @@ trait CardsUtilTrait {
 
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
         
-        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS)) + 1;
-        self::setGameStateValue(EXTRA_ROLLS, $extraRolls);
+        $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;
+        $this->setGameStateValue(EXTRA_ROLLS, $extraRolls);
 
         $this->rethrowDice($diceIds);    
     }
@@ -425,7 +425,7 @@ trait CardsUtilTrait {
     function useSmokeCloud($diceIds) {
         $this->checkAction('useSmokeCloud');
 
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
 
@@ -455,14 +455,14 @@ trait CardsUtilTrait {
             $this->removeCard($playerId, $card);
         }
         
-        $extraRolls = intval(self::getGameStateValue(EXTRA_ROLLS)) + 1;
-        self::setGameStateValue(EXTRA_ROLLS, $extraRolls);
+        $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;
+        $this->setGameStateValue(EXTRA_ROLLS, $extraRolls);
 
         $this->rethrowDice($diceIds);
     }
 
     function useRapidHealing() {
-        $playerId = self::getCurrentPlayerId(); // current, not active !
+        $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyRapidHealing($playerId);
     }
@@ -525,14 +525,14 @@ trait CardsUtilTrait {
         $this->cards->moveCard($card->id, 'discard');
 
         if ($removeMimickToken) {
-            self::notifyAllPlayers("removeMimicToken", '', [
+            $this->notifyAllPlayers("removeMimicToken", '', [
                 'card' => $card,
                 'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
             ]);
         }
 
         if (!$silent) {
-            self::notifyAllPlayers("removeCards", '', [
+            $this->notifyAllPlayers("removeCards", '', [
                 'playerId' => $playerId,
                 'cards' => [$card],
                 'delay' => $delay,
@@ -556,7 +556,7 @@ trait CardsUtilTrait {
                 $playerEnergy = $this->getPlayerEnergy($playerId);
             }            
 
-            self::notifyPlayer($playerId, 'toggleRapidHealing', '', [
+            $this->notifyPlayer($playerId, 'toggleRapidHealing', '', [
                 'playerId' => $playerId,
                 'active' => $active,
                 'playerEnergy' => $playerEnergy,
@@ -574,7 +574,7 @@ trait CardsUtilTrait {
         }
 
         if (!$silent && count($cards) > 0) {
-            self::notifyAllPlayers("removeCards", '', [
+            $this->notifyAllPlayers("removeCards", '', [
                 'playerId' => $playerId,
                 'cards' => $cards,
             ]);
@@ -589,13 +589,13 @@ trait CardsUtilTrait {
 
     function setCardTokens(int $playerId, $card, int $tokens, bool $silent = false) {
         $card->tokens = $tokens;
-        self::DbQuery("UPDATE `card` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
+        $this->DbQuery("UPDATE `card` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
 
         if (!$silent) {
             if ($card->type == MIMIC_CARD) {
                 $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
             }
-            self::notifyAllPlayers("setCardTokens", '', [
+            $this->notifyAllPlayers("setCardTokens", '', [
                 'playerId' => $playerId,
                 'card' => $card,
             ]);
@@ -619,7 +619,7 @@ trait CardsUtilTrait {
     }
 
     function canChangeMimickedCard() {
-        $playerId = self::getActivePlayerId();
+        $playerId = $this->getActivePlayerId();
 
         // check if player have mimic card
         if ($this->countCardOfType($playerId, MIMIC_CARD, false) == 0) {
@@ -686,7 +686,7 @@ trait CardsUtilTrait {
             return false;
         }
 
-        if (intval(self::getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_score >= ".MAX_POINT)) > 1) {
+        if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_score >= ".MAX_POINT)) > 1) {
             // can't skip, can try to eliminate other 20 points player to not share tie
             return false;
         }
