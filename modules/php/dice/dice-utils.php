@@ -261,6 +261,10 @@ trait DiceUtilTrait {
                 $this->applyGetHealth($playerGettingHealth, $diceCount, 0, $playerId);
             }
         }
+
+        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, SKYBEAM_WICKEDNESS_TILE)) {
+            $this->applyGetHealth($playerId, $diceCount, 2000 + SKYBEAM_WICKEDNESS_TILE, $playerId);
+        }
     }
 
     function resolveEnergyDice(int $playerId, int $diceCount) {
@@ -277,6 +281,10 @@ trait DiceUtilTrait {
         ]);
         
         $this->applyGetEnergy($playerId, $diceCount, 0);
+
+        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, SKYBEAM_WICKEDNESS_TILE)) {
+            $this->applyGetEnergy($playerId, $diceCount, 2000 + SKYBEAM_WICKEDNESS_TILE);
+        }
     }
 
     

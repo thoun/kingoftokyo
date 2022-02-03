@@ -266,7 +266,7 @@ class KingOfTokyo extends Table {
         // TODOAN "dieOfFateSnake" => ["id" => 54, "type" => "int", "name" => totranslate("Snake effect with die of fate")],
         // TODOAN "dieOfFateAnkh" => ["id" => 55, "type" => "int", "name" => totranslate("Ankh effect with die of fate")],
 
-        if ($wickednessExpansion > 1) {
+        if ($wickednessExpansion > 1) { // TODOWI
             //$this->initStat('player', 'gainedWickedness', 0);
             //$this->initStat('player', 'wickednessTilesTaken', 0);
         }

@@ -48,20 +48,25 @@
 */
 
 $monstersNames = [
+    // base game
     1 => "Space Penguin", 
     2 => "Alienoid", 
     3 => "Cyber Kitty", 
     4 => "The King", 
     5 => "Gigazaur", 
-    6 => "Meka Dragon", 
+    6 => "Meka Dragon",
+    // halloween 
     7 => "Boogie Woogie", 
     8 => "Pumpkin Jack", 
+    // monster packs
     9 => "Cthulhu", 
     10 => "Anubis", 
     11 => "King Kong", 
     12 => "Cybertooth", 
+    // power up
     13 => "Pandakaï", 
     // 14/15 kraken & cyberbunny
+    // promo
     16 => "Kookie", 
     17 => "X-Smash Tree", 
     18 => "Baby Gigazaur",

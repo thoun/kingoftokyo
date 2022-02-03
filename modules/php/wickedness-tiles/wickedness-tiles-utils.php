@@ -69,7 +69,7 @@ trait WickednessTilesUtilTrait {
             'delta_wickedness' => $number,
         ]);
 
-        $this->incStat($number, 'gainedWickedness', $playerId);
+        // TODOWI $this->incStat($number, 'gainedWickedness', $playerId);
     }
 
     function canTakeWickednessTile(int $playerId) {
@@ -81,7 +81,9 @@ trait WickednessTilesUtilTrait {
         $logTileType = 2000 + $tileType;
         switch($tileType) {
             case FULL_REGENERATION_WICKEDNESS_TILE:
-                $this->applyGetHealthIgnoreCards($playerId, $this->getPlayerMaxHealth($playerId), $logTileType, $playerId);
+                if ($this->canGainHealth($playerId)) {
+                    $this->applyGetHealthIgnoreCards($playerId, $this->getPlayerMaxHealth($playerId), $logTileType, $playerId);
+                }
                 break;
             case WIDESPREAD_PANIC_WICKEDNESS_TILE:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);

@@ -31,7 +31,7 @@ trait WickednessTilesActionTrait {
             'level' => $level,
         ]);
 
-        $this->incStat(1, 'wickednessTilesTaken', $playerId);
+        // TODOWI $this->incStat(1, 'wickednessTilesTaken', $playerId);
 
         $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
 

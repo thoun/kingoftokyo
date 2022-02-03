@@ -17,17 +17,15 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $mimickedCard);
         //$this->cards->moveCard( $mimickedCard->id, 'hand', 2343493);
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(31, 2343493));
-        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         $this->debugSetEnergy(8);
-        //$this->debugSetPoints(5);
-        //$this->debugSetHealth(2);
+        $this->debugSetPoints(5);
+        $this->debugSetHealth(2);
         //$this->debugSetPlayerHealth(2343492, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
-        //$this->DbQuery("UPDATE player SET `player_cultists` = 2");
-        //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
@@ -36,7 +34,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
         //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
-        //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD, 2343492);
+        //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
@@ -50,9 +48,9 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
-        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343493);
+        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
-        //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
+        $this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
@@ -63,7 +61,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
-        //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
+        $this->debugSetCardInHand(REGENERATION_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
@@ -87,6 +85,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
 
+        // halloween
+
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
@@ -95,16 +95,32 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(VAMPIRE_CARD, 2343495);
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
 
-        //$this->setPlayerBerserk(2343492, true);
-        //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
+        // cthulhu
+        //$this->DbQuery("UPDATE player SET `player_cultists` = 2");
+        //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
+
+        // anubis
+
+        //$this->debugSetCurseCardInTable(ISIS_S_DISGRACE_CURSE_CARD);
         //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
-        //$this->initWickednessTiles(3);
-        //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-        //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
-        //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
-        //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
+        //$this->changeGoldenScarabOwner(2343493);
+
+        // king kong
+
         //$this->changeTokyoTowerOwner(2343493, 1);
         //$this->changeTokyoTowerOwner(2343493, 2);
+
+        // cybertooth
+
+        //$this->setPlayerBerserk(2343492, true);
+
+        // wickedness
+
+        $this->initWickednessTiles(2);
+        //$this->debugSetWickednessTileInTable(FULL_REGENERATION_WICKEDNESS_TILE);
+        //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+        $this->debugSetWickednessTileInHand(SKYBEAM_WICKEDNESS_TILE, 2343492);
+        //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         $this->gamestate->changeActivePlayer(2343492);
 

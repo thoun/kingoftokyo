@@ -55,7 +55,7 @@ trait UtilTrait {
     }
 
     function isCybertoothExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
     function isMutantEvolutionVariant() {
@@ -71,7 +71,7 @@ trait UtilTrait {
     }
 
     function isWickednessExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
     }
 
     function isDarkEdition() {
