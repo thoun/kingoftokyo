@@ -44,5 +44,6 @@ TODOCY add stats
 TODOME add stats
 TODOME flip cards (remove 302)
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
+TODOWI find an icon for wickedness
 
 log no energy/heart/points won

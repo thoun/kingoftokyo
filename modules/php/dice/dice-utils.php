@@ -324,10 +324,8 @@ trait DiceUtilTrait {
             $givePoisonSpitToken += 1;
         }
         // Underdog
-        $underdog = false;
         $playerScore = null;
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, UNDERDOG_WICKEDNESS_TILE)) {
-            $underdog = true;
             $playerScore = $this->getPlayerScore($playerId);
         }
 
@@ -347,16 +345,11 @@ trait DiceUtilTrait {
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
 
-            if ($countJets > 0 && $smashedPlayerIsInTokyo) {                
-                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken);
-            } else {
-                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken);
-            }
 
-            // Underdog
-            if ($underdog && $this->getPlayerScore($smashedPlayerId) > $playerScore) {
-                $this->applyLosePoints($smashedPlayerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
-                $this->applyGetPoints($playerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
+            if ($countJets > 0 && $smashedPlayerIsInTokyo) {                
+                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
+            } else {
+                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
             }
         }
 

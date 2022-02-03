@@ -23,7 +23,7 @@ class WickednessTiles {
             return;
         }
 
-        cards.forEach(card => stock.addToStockWithId(card.type + card.side, `${card.id}`, from));
+        cards.forEach(card => stock.addToStockWithId(card.type, `${card.id}`, from));
     }
 
     public moveToAnotherStock(sourceStock: Stock, destinationStock: Stock, tile: WickednessTile) {

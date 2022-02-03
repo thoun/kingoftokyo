@@ -80,10 +80,10 @@
   display: flex;
   flex-wrap: wrap;
 }
-.player-tokens .player-token {
+.player-tokens .player-token:not(:empty) {
   margin: 0 5px;
 }
-.player-tokens .player-token > div:not(:first-child) {
+.player-tokens .player-token:not(:empty) > div:not(:first-child) {
   margin-left: -25px;
 }
 
@@ -868,7 +868,6 @@
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 1;
 }
 
 .card-inner {

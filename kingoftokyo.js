@@ -902,7 +902,7 @@ var WickednessTiles = /** @class */ (function () {
         if (!cards.length) {
             return;
         }
-        cards.forEach(function (card) { return stock.addToStockWithId(card.type + card.side, "" + card.id, from); });
+        cards.forEach(function (card) { return stock.addToStockWithId(card.type, "" + card.id, from); });
     };
     WickednessTiles.prototype.moveToAnotherStock = function (sourceStock, destinationStock, tile) {
         if (sourceStock === destinationStock) {
@@ -2444,7 +2444,14 @@ var WICKEDNESS_MONSTER_ICON_POSITION = [
     [2, 270],
     [35, 321],
     [87, 316],
-    // TODOWI
+    [129, 284],
+    [107, 237],
+    [86, 193],
+    [128, 165],
+    [86, 130],
+    [44, 96],
+    [88, 58],
+    [128, 31],
 ];
 var TableCenter = /** @class */ (function () {
     function TableCenter(game, players, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {

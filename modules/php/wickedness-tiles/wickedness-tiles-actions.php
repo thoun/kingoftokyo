@@ -45,7 +45,21 @@ trait WickednessTilesActionTrait {
         }
 
         if (!$redirects) {
+            $mimic = false;
             if ($tile->type === FLUXLING_WICKEDNESS_TILE) {
+                $countAvailableCardsForMimic = 0;
+    
+                $playersIds = $this->getPlayersIds();
+                foreach($playersIds as $playerId) {
+                    $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+                    $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
+                }
+    
+                $mimic = $countAvailableCardsForMimic > 0;
+            }
+
+
+            if ($mimic) {
                 $this->gamestate->nextState('chooseMimickedCard');
             } else {
                 $this->jumpToState($redirectAfterTakeTile, $playerId);

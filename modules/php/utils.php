@@ -416,6 +416,9 @@ trait UtilTrait {
                 // Final Roar
                 if ($this->isWickednessExpansion() && $this->gotWickednessTile($player->id, FINAL_ROAR_WICKEDNESS_TILE) && $player->score >= 16) {
                     $this->applyGetPoints($player->id, MAX_POINT - $player->score, 2000 + FINAL_ROAR_WICKEDNESS_TILE);
+                    if ($this->inTokyo($player->id)) {
+                        $this->leaveTokyo($player->id);
+                    }
                 } else {
                     // Zombie
                     $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);
@@ -481,8 +484,6 @@ trait UtilTrait {
         if (!$this->canGainPoints($playerId)) {
             return;
         }
-
-        $newPoints = $points;
 
         $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
 
@@ -582,7 +583,7 @@ trait UtilTrait {
         ]);
     }
 
-    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
+    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
         $canLoseHealth = $this->canLoseHealth($playerId);
         if ($canLoseHealth !== null) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
@@ -609,7 +610,7 @@ trait UtilTrait {
 
         $actualHealth = $this->getPlayerHealth($playerId);
 
-        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId, $giveShrinkRayToken, $givePoisonSpitToken);
+        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId, $giveShrinkRayToken, $givePoisonSpitToken,  $smasherPoints);
 
         if ($newHealth == 0 && $actualHealth > 0) {
             // eater of the dead 
@@ -631,7 +632,7 @@ trait UtilTrait {
         }
     }
 
-    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken) {
+    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
         if ($this->isInvincible($playerId)) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return null; // player has wings and cannot lose hearts
@@ -682,6 +683,11 @@ trait UtilTrait {
         if ($givePoisonSpitToken > 0) {
             $this->applyGetPoisonToken($playerId, $givePoisonSpitToken);
         }
+
+        if ($smasherPoints !== null && $this->isWickednessExpansion() && $this->gotWickednessTile($damageDealerId, UNDERDOG_WICKEDNESS_TILE) && $this->getPlayerScore($playerId) > $smasherPoints) {
+            $this->applyLosePoints($playerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
+            $this->applyGetPoints($damageDealerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
+        }
             
         $this->DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
 
@@ -694,9 +700,12 @@ trait UtilTrait {
 
         // must be done before player eliminations
         if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
-            // it has a child
-            $this->applyItHasAChild($playerId);
-            // TODO make notifs for this happen after dice notifs
+            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, FINAL_ROAR_WICKEDNESS_TILE) && $this->getPlayerScore($playerId) >= 16) {
+                // final roar will apply, ignore it has a child
+            } else {
+                // it has a child
+                $this->applyItHasAChild($playerId);
+            }
         }
 
         $this->eliminatePlayers($activePlayerId);
@@ -843,7 +852,7 @@ trait UtilTrait {
                 }
             } else {
                 $activePlayerId = $this->getActivePlayerId();
-                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
+                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
             }
         }
 

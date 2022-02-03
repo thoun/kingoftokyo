@@ -1,9 +1,16 @@
 
-const WICKEDNESS_MONSTER_ICON_POSITION = [
+const WICKEDNESS_MONSTER_ICON_POSITION = [ // TODOWI test with official image
     [2, 270],
     [35, 321],
     [87, 316],
-    // TODOWI
+    [129, 284],
+    [107, 237],
+    [86, 193],
+    [128, 165],
+    [86, 130],
+    [44, 96],
+    [88, 58],
+    [128, 31],
 ];
 
 class TableCenter {

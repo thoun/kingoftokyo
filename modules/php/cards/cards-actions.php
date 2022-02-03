@@ -660,7 +660,7 @@ trait CardsActionTrait {
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention); // must be set before apply damage, in case this player die
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
+                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
             }
         }
         
@@ -714,7 +714,7 @@ trait CardsActionTrait {
 
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
+                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
             }
         }
 
@@ -772,7 +772,7 @@ trait CardsActionTrait {
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
-                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken);
+                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }

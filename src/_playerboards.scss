@@ -94,7 +94,7 @@
   display: flex;
   flex-wrap: wrap;
 
-  .player-token {
+  .player-token:not(:empty) {
     margin: 0 5px;
     
     &>div:not(:first-child) {
