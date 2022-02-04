@@ -433,6 +433,19 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
             }
 
+            if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
+                for (let i=Math.min(args.damage, args.superJumpHearts); i>0; i--) {
+                    let healthLoss = args.damage - i;
+                    const energyCost = (healthLoss === 0 && args.devilCard) ? i - 1 : i;
+                    const id = `useSuperJump${energyCost}_button`;
+                    if (!document.getElementById(id)) {
+                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(53, 'text-only')})), () => this.useSuperJump(energyCost));
+                        document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
+                        dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
+                    }
+                }
+            }
+
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
                 for (let i=args.damage; i>0; i--) {
                     let healthLoss = args.damage - i;
@@ -1847,6 +1860,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('useRobot', {
+            energy
+        });
+    }
+
+    public useSuperJump(energy: number) {
+        if(!(this as any).checkAction('useSuperJump')) {
+            return;
+        }
+
+        this.takeAction('useSuperJump', {
             energy
         });
     }

@@ -382,13 +382,13 @@ class Cards {
             case 46: return _("[B795A5]Urbavore");
             case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
             case 48: return _("[443E56]Wings");
-            case 49: return "Hibernation"; // TODODE
-            case 50: return "Nanobots"; // TODODE
-            case 51: return "Natural Selection"; // TODODE
-            case 52: return "Reflective Hide"; // TODODE
-            case 53: return "Sumper Jump"; // TODODE
-            case 54: return "Unstable DNA"; // TODODE
-            case 55: return "Zombify"; // TODODE
+            case 49: return ("Hibernation"); // TODODE
+            case 50: return ("Nanobots"); // TODODE
+            case 51: return ("Natural Selection"); // TODODE
+            case 52: return ("Reflective Hide"); // TODODE
+            case 53: return ("Super Jump"); // TODODE
+            case 54: return ("Unstable DNA"); // TODODE
+            case 55: return ("Zombify"); // TODODE
             
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");

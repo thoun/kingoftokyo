@@ -799,4 +799,68 @@ trait CardsActionTrait {
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
         }
     }
+
+    function useSuperJump(int $energy) {        
+        $this->checkAction('useRobot');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $superJumpCards = $this->getUnusedCardOfType($playerId, SUPER_JUMP_CARD);
+        if (count($superJumpCards) < $energy) {
+            throw new \BgaUserException('No unused Super Jump');
+        }
+
+        if ($this->getPlayerEnergy($playerId) < $energy) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+
+        $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $energy;
+
+        $this->applyLoseEnergy($playerId, $energy, 0);
+
+        for ($i=0;$i<$energy;$i++) {
+            $this->setUsedCard($superJumpCards[$i]->id);
+        }
+
+        $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $energy);
+        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+
+        $args = $this->argCancelDamage($playerId, false);
+
+        // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
+        $stayOnState = false;
+        if ($remainingDamage > 0) {
+            $stayOnState = $args['canDoAction'];
+        }
+
+        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+
+        $this->notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => SUPER_JUMP_CARD,
+            'energy' => $energy,
+            'cancelDamageArgs' => $args,
+        ]);
+
+        if (!$stayOnState) {
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+
+            $damage = $this->createRemainingDamage($playerId, $intervention->damages);
+            if ($damage != null) {
+                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+            } else {
+                $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+            }
+
+            // we check we are still in cancelDamage (we could be redirected if camouflage roll kills player)
+            if ($this->gamestate->state()['name'] == 'cancelDamage') {
+                $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+            }
+        } else {            
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
+        }
+    }
 }

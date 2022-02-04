@@ -61,7 +61,8 @@ class CancelDamageIntervention extends PlayerIntervention {
     public static function canDoIntervention(object $game, int $playerId, int $damage, int $damageDealerId) {
         $canDo = $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
             $game->countCardOfType($playerId, ROBOT_CARD) > 0 || 
-            ($game->countCardOfType($playerId, WINGS_CARD) > 0 && !$game->isInvincible($playerId));
+            ($game->countCardOfType($playerId, WINGS_CARD) > 0 && !$game->isInvincible($playerId)) ||
+            $game->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
 
         if ($canDo) {
             return true;
@@ -75,12 +76,14 @@ class CancelDamageIntervention extends PlayerIntervention {
 
             if ($playerHealth <= $totalDamage) {
                 $rapidHealingHearts = $game->cancellableDamageWithRapidHealing($playerId);
+                $superJumpHearts = $game->cancellableDamageWithSuperJump($playerId);
                 $rapidHealingCultists = $game->isCthulhuExpansion() ? $game->cancellableDamageWithCultists($playerId) : 0;
                 $damageToCancelToSurvive = $game->getDamageToCancelToSurvive($totalDamage, $playerHealth);
-                $canHeal = $rapidHealingHearts + $rapidHealingCultists;
+                $canHeal = $rapidHealingHearts + $rapidHealingCultists + $superJumpHearts;
                 if ($game->countCardOfType($playerId, REGENERATION_CARD)) {
                     $canHeal *= 2;
                 }
+                $game->debug([$canHeal, $damageToCancelToSurvive]);
                 return $canHeal > 0 && $canHeal >= $damageToCancelToSurvive;
             } else {
                 return false;

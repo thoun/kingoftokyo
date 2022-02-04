@@ -114,8 +114,9 @@ trait CardsStateTrait {
 
             $canCancelWithWings = $arg['canUseWings'] && $potentialEnergy >= 2;
             $canCancelWithRobot = $arg['canUseRobot'] && $potentialEnergy >= 1;
+            $canCancelWithSuperJump = $arg['superJumpHearts'] > 0 && $potentialEnergy >= 1;
             $canCancelWithRapidHealing = $arg['damageToCancelToSurvive'] && $arg['damageToCancelToSurvive'] >= 1;
-            if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot && !$canCancelWithRapidHealing) {
+            if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot && !$canCancelWithRapidHealing && !$canCancelWithSuperJump) {
                 $this->applySkipWings($playerId);
             }
         }

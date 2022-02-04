@@ -252,6 +252,7 @@ interface EnteringCancelDamageArgs {
     dice: Die[];
     rethrow3: Rethrow3;
     rapidHealingHearts: number;
+    superJumpHearts: number;
     rapidHealingCultists: number;
     damageToCancelToSurvive: number;
     canHeal: number;

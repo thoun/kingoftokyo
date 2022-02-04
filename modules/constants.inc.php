@@ -194,7 +194,7 @@ define('HIBERNATION_CARD', 49); // TODODE ask other dice resolution, but when?
 define('NANOBOTS_CARD', 50);
 define('NATURAL_SELECTION_CARD', 51);
 define('REFLECTIVE_HIDE_CARD', 52);
-define('SUPER_JUMP_CARD', 53); // TODODE
+define('SUPER_JUMP_CARD', 53);
 define('UNSTABLE_DNA_CARD', 54); // TODODE
 define('ZOMBIFY_CARD', 55); // TODODE
 

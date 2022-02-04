@@ -524,6 +524,16 @@
         self::ajaxResponse();
     }
   	
+    public function useSuperJump() {
+        self::setAjaxMode();
+
+        $energy = self::getArg("energy", AT_posint, true);
+
+        $this->game->useSuperJump($energy);
+
+        self::ajaxResponse();
+    }
+  	
     public function setLeaveTokyoUnder() {
         self::setAjaxMode();
 

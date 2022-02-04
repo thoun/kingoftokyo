@@ -279,9 +279,10 @@ trait CardsArgTrait {
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
 
             $rapidHealingHearts = $this->cancellableDamageWithRapidHealing($playerId);
+            $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId);
             $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
             $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $this->getPlayerHealth($playerId));
-            $canHeal = $rapidHealingHearts + $rapidHealingCultists;
+            $canHeal = $rapidHealingHearts + $rapidHealingCultists + $superJumpHearts;
             $gotRegeneration = $this->countCardOfType($playerId, REGENERATION_CARD) > 0;
             $cancelHealWithEnergyCards = false;
             if ($gotRegeneration) {
@@ -297,13 +298,14 @@ trait CardsArgTrait {
                 $damageToCancelToSurvive = 0;
             }
 
-            $canDoAction = $canThrowDices || $canUseWings || $canUseRobot || $rapidHealingHearts || $rapidHealingCultists || $hasDice3;
+            $canDoAction = $canThrowDices || $canUseWings || $canUseRobot || $rapidHealingHearts || $superJumpHearts || $rapidHealingCultists || $hasDice3;
 
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
                 'canUseRobot' => $canUseRobot,
                 'rapidHealingHearts' => $rapidHealingHearts,
+                'superJumpHearts' => $superJumpHearts,
                 'rapidHealingCultists' => $rapidHealingCultists,
                 'damageToCancelToSurvive' => $damageToCancelToSurvive,
                 'canHeal' => $canHeal,

@@ -17,12 +17,12 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(5);
-        //$this->debugSetPoints(5);
-        //$this->debugSetHealth(5);
-        //$this->debugSetPlayerHealth(2343492, 1);
+        $this->debugSetEnergy(8);
+        //$this->debugSetPoints(8);
+        //$this->debugSetHealth(8);
+        $this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
-        //$this->debugSetPlayerPoints(2343493, 5);
+        //$this->debugSetPlayerPoints(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
         //$this->debugSetCardInTable(FRENZY_CARD);
@@ -87,7 +87,7 @@ trait DebugUtilTrait {
         // dark edition
 
         //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
-        //$this->debugSetCardInHand(REFLECTIVE_HIDE_CARD, 2343493);
+        $this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
 
         // halloween
 
@@ -106,7 +106,7 @@ trait DebugUtilTrait {
 
         // anubis
 
-        $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+        //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
         //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->changeGoldenScarabOwner(2343493);
 
@@ -216,7 +216,7 @@ trait DebugUtilTrait {
     }
     
     // debugSetDieFaces(1)
-    // debugSetDieFaces(6, 5)
+    // debugSetDieFaces(6, 2)
     function debugSetDieFaces($face, $limit = 99) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
     }

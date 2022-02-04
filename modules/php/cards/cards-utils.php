@@ -301,6 +301,10 @@ trait CardsUtilTrait {
         return count($this->getCardsOfType($playerId, $cardType, $includeMimick));
     }
 
+    function countUnusedCardOfType($playerId, $cardType, $includeMimick = true) {
+        return count($this->getUnusedCardOfType($playerId, $cardType, $includeMimick));
+    }
+
      // TODOWI add parameter to count cards even if Gaze of the Sphinx is active, for Have it all
     function getCardsOfType($playerId, $cardType, $includeMimick = true) {
         if ($cardType < 100 && !$this->keepAndEvolutionCardsHaveEffect()) {
@@ -325,6 +329,12 @@ trait CardsUtilTrait {
         }
 
         return $cards;
+    }
+
+    function getUnusedCardOfType($playerId, $cardType, $includeMimick = true) {
+        $cards = $this->getCardsOfType($playerId, $cardType, $includeMimick);
+        $usedCardsIds = $this->getUsedCard();
+        return array_values(array_filter($cards, fn($card) => !in_array($card->id, $usedCardsIds)));
     }
 
     function getCardCost(int $playerId, int $cardType) {
@@ -665,6 +675,15 @@ trait CardsUtilTrait {
 
         if ($hasRapidHealing) {
             return floor($this->getPlayerEnergy($playerId) / 2);
+        }
+        return 0;
+    }
+
+    function cancellableDamageWithSuperJump(int $playerId) {
+        $countSuperJump = $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD);
+
+        if ($countSuperJump > 0) {
+            return min($countSuperJump, $this->getPlayerEnergy($playerId));
         }
         return 0;
     }
