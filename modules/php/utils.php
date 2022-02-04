@@ -42,10 +42,6 @@ trait UtilTrait {
         return intval($this->getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
     }
 
-    function isPowerUpExpansion() {
-        return false;
-    }
-
     function isHalloweenExpansion() {
         return intval($this->getGameStateValue(HALLOWEEN_EXPANSION_OPTION)) === 2;
     }
@@ -71,11 +67,15 @@ trait UtilTrait {
     }
 
     function isWickednessExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
+    }
+
+    function isPowerUpExpansion() {
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {
-        return false;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) === 2;
     }
 
     function releaseDatePassed(string $activationDateStr) {
@@ -845,7 +845,9 @@ trait UtilTrait {
         $cancellableDamages = [];
         $playersIds = [];
         foreach ($damages as $damage) {
-            if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId)) {
+            if ($this->countCardOfType($damage->playerId, HIBERNATION_CARD) > 0) {
+                // if hibernation, player takes no damage
+            } else if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId)) {
                 $cancellableDamages[] = $damage;
                 if (!in_array($damage->playerId, $playersIds)) {
                     $playersIds[] = $damage->playerId;

@@ -161,6 +161,11 @@ trait DiceStateTrait {
     function stResolveNumberDice() {
         $playerId = $this->getActivePlayerId();
 
+        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
+            $this->jumpToState($this->getRedirectAfterResolveNumberDice());
+            return;
+        }
+
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         for ($diceFace = 1; $diceFace <= 3; $diceFace++) {
@@ -223,6 +228,12 @@ trait DiceStateTrait {
 
     function stResolveSmashDice() {
         $playerId = $this->getActivePlayerId();
+
+        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
+            $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
+            $this->gamestate->nextState('next');
+            return;
+        }
         
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
@@ -248,9 +259,14 @@ trait DiceStateTrait {
     function stResolveSkullDice() {   
         $playerId = $this->getActivePlayerId();
 
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
         $nextState = intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
+
+        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
+            $this->gamestate->jumpToState($nextState);
+            return;
+        }
+
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
         $redirects = false;
 
         $damages = [];

@@ -3,13 +3,10 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/../objects/card.php');
-require_once(__DIR__.'/../objects/player-intervention.php');
 require_once(__DIR__.'/../objects/damage.php');
 
 use KOT\Objects\Card;
-use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\Damage;
-use KOT\Objects\PlayersUsedDice;
 
 trait CardsUtilTrait {
 
@@ -17,7 +14,7 @@ trait CardsUtilTrait {
     //////////// Utility functions
     ////////////
 
-    function initCards(bool $isAnubisExpansion) {
+    function initCards() {
         $cards = [];
 
         $gameVersion = $this->isDarkEdition() ? 'dark' : 'base';        
@@ -344,7 +341,10 @@ trait CardsUtilTrait {
         return max($cardCost + $inadequateOffering - $countAlienOrigin - $countEvilLair, 0);
     }
 
-    function canBuyCard(int $playerId, int $cost) {
+    function canBuyCard(int $playerId, int $cardType, int $cost) {
+        if ($cardType === HIBERNATION_CARD && $this->inTokyo($playerId)) {
+            return false;
+        }
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 

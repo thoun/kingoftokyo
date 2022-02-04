@@ -288,6 +288,11 @@ class Cards {
             case 47: return 3;
             case 48: return 6;
             case 50: return 3;
+            case 51: return 2;
+            case 52: return 6;
+            case 53: return 4;
+            case 54: return 3;
+            case 55: return 4;
             
             // DISCARD
             case 101: return 5;

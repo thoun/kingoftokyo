@@ -292,6 +292,11 @@ trait PlayerUtilTrait {
                 }
             }
         }
+
+        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
+            return HIBERNATION_CARD;
+        }
+
         return null;
     }
 
@@ -321,7 +326,7 @@ trait PlayerUtilTrait {
         return true;
     }
 
-    function canEnterTokyo() {
+    function canEnterTokyo(int $playerId) {
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
 
@@ -339,6 +344,11 @@ trait PlayerUtilTrait {
                 }
             }
         }
+
+        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
+            return false;
+        }
+
         return true;
     }
 
@@ -375,7 +385,7 @@ trait PlayerUtilTrait {
     }
 
     function replacePlayersInTokyo(int $playerId) {
-        if (!$this->canEnterTokyo()) {
+        if (!$this->canEnterTokyo($playerId)) {
             return;
         }
 

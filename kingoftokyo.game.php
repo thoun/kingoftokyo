@@ -114,6 +114,8 @@ class KingOfTokyo extends Table {
             CTHULHU_EXPANSION_OPTION => CTHULHU_EXPANSION_OPTION,
             ANUBIS_EXPANSION_OPTION => ANUBIS_EXPANSION_OPTION,
             WICKEDNESS_EXPANSION_OPTION => WICKEDNESS_EXPANSION_OPTION,
+            POWERUP_EXPANSION_OPTION => POWERUP_EXPANSION_OPTION,
+            DARK_EDITION_OPTION => DARK_EDITION_OPTION,
 
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
@@ -286,9 +288,8 @@ class KingOfTokyo extends Table {
         }
 
         // setup the initial game situation here
-        $isAnubisExpansion = $this->isAnubisExpansion();
-        $this->initCards($isAnubisExpansion);
-        if ($isAnubisExpansion) {
+        $this->initCards();
+        if ($this->isAnubisExpansion()) {
             $lastPlayer = array_key_last($players);
             $this->setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);
             $this->initCurseCards();
@@ -335,6 +336,7 @@ class KingOfTokyo extends Table {
         $isAnubisExpansion = $this->isAnubisExpansion();
         $isWickednessExpansion = $this->isWickednessExpansion();
         $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();
+        $isDarkEdition = $this->isDarkEdition();
 
         $result = ['players' => []];
 
@@ -421,7 +423,7 @@ class KingOfTokyo extends Table {
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
         $result['wickednessExpansion'] = $isWickednessExpansion;
         $result['mutantEvolutionVariant'] = $isMutantEvolutionVariant;
-
+        $result['darkEdition'] = $isDarkEdition;
         if ($isAnubisExpansion) {
             $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab();
             $result['curseCard'] = $this->getCurseCard();
@@ -464,11 +466,9 @@ class KingOfTokyo extends Table {
         }
         $this->cards->shuffle('deck'); 
 
-        // TODO TEMP  $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MIMIC_CARD);
         // TODO $this->debugSetupBeforePlaceCard();
         $cards = $this->placeNewCardsOnTable();
         // TODO $this->debugSetupAfterPlaceCard();
-        // TODO TEMP  $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".EVEN_BIGGER_CARD);
 
         $this->notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,

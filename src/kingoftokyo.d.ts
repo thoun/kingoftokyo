@@ -89,6 +89,7 @@ interface KingOfTokyoGamedatas {
     cthulhuExpansion: boolean;
     anubisExpansion: boolean;
     wickednessExpansion: boolean;
+    darkEdition: boolean;
     playerWithGoldenScarab?: number;
     curseCard?: Card;
     wickednessTiles: WickednessTile[];

@@ -58,7 +58,7 @@ trait CardsArgTrait {
             if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                 $canBuyOrNenew = true;
             }
-            if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+            if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
                 $disabledIds[] = $card->id;
             }
             if (!$canBuyPowerCards) {
@@ -99,7 +99,7 @@ trait CardsArgTrait {
                 if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuyOrNenew = true;
                 }
-                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
                     $disabledIds[] = $card->id;
                 }
                 if (!$canBuyPowerCards) {
@@ -155,7 +155,7 @@ trait CardsArgTrait {
                 if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuy = true;
                 }
-                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
                     $disabledIds[] = $card->id;
                 }
                 if (!$canBuyPowerCards) {
@@ -217,11 +217,16 @@ trait CardsArgTrait {
         $disabledIds = array_map(fn($card) => $card->id, $cards);
         $mimickedCardId = $this->getMimickedCardId($mimicCardType);
 
-        foreach($playersIds as $playerId) {
-            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        foreach($playersIds as $iPlayerId) {
+            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $iPlayerId));
             $disabledCardsOfPlayer = $canChange ? 
-                array_values(array_filter($cardsOfPlayer, fn($card) => $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100)) :
-                $cardsOfPlayer; // TODOWI ignore Mimic Tile ? for wickedness selection
+                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId, $playerId) {
+                    if ($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) {
+                        return true;
+                    }
+                    return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100;
+                })) :
+                $cardsOfPlayer;
             $disabledIdsOfPlayer = array_map(fn($card) => $card->id, $disabledCardsOfPlayer);
             
             $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
@@ -347,7 +352,7 @@ trait CardsArgTrait {
                     if ($cardsCosts[$card->id] <= $potentialEnergy) {
                         $canBuyFromPlayers = true;
                     }
-                    if (!$this->canBuyCard($playerId, $cardsCosts[$card->id])) {
+                    if (!$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
                         $disabledIds[] = $card->id;
                     }
                 } else {

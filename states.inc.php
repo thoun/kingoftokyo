@@ -392,7 +392,7 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_RESOLVE_DICE => [
+    ST_RESOLVE_DICE => [ // TODODE if hibernation, ask if player wants to resolve other than heart/energy
         "name" => "resolveDice",
         "description" => "",
         "type" => "game",

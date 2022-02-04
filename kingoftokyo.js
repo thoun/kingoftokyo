@@ -337,6 +337,11 @@ var Cards = /** @class */ (function () {
             case 47: return 3;
             case 48: return 6;
             case 50: return 3;
+            case 51: return 2;
+            case 52: return 6;
+            case 53: return 4;
+            case 54: return 3;
+            case 55: return 4;
             // DISCARD
             case 101: return 5;
             case 102: return 4;
@@ -3402,7 +3407,7 @@ var KingOfTokyo = /** @class */ (function () {
         return this.gamedatas.wickednessExpansion;
     };
     KingOfTokyo.prototype.isDarkEdition = function () {
-        return false; // TODODE
+        return this.gamedatas.darkEdition;
     };
     KingOfTokyo.prototype.isDefaultFont = function () {
         return Number(this.prefs[201].value) == 1;

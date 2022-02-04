@@ -846,7 +846,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     public isDarkEdition(): boolean {
-        return false; // TODODE
+        return this.gamedatas.darkEdition;
     }
 
     public isDefaultFont(): boolean {

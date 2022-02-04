@@ -17,9 +17,9 @@ trait DebugUtilTrait {
 
         //$this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(5);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
-        //$this->debugSetHealth(5);
+        $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 2);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //$this->debugSetPlayerPoints(2343493, 5);
@@ -38,12 +38,12 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        $this->debugSetCardInHand(MIMIC_CARD, 2343492);
+        //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(JETS_CARD, 2343492));
-        $this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
+        //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
@@ -72,17 +72,22 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
-        $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
+        //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
-        $this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
+        //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
         //$this->debugSetPlayerHealth(2343492, 11);
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
+
+        // dark edition
+
+        //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
+        $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
 
         // halloween
 
@@ -100,7 +105,7 @@ trait DebugUtilTrait {
 
         // anubis
 
-        //$this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
+        //$this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
         //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->changeGoldenScarabOwner(2343493);
 
@@ -115,10 +120,10 @@ trait DebugUtilTrait {
 
         // wickedness
 
-        $this->initWickednessTiles(3);
-        $this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-        $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
-        //$this->debugSetWickednessTileInHand(FINAL_PUSH_WICKEDNESS_TILE, 2343492);
+        //$this->initWickednessTiles(3);
+        //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
+        //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+        //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343492);
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         // player order
@@ -128,6 +133,22 @@ trait DebugUtilTrait {
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
         //$this->eliminatePlayer(2343497);
+    }
+
+    function debugSetupBeforePlaceCard() {
+        if ($this->getBgaEnvironment() != 'studio') { 
+            return;
+        } 
+
+        $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
+    }
+
+    function debugSetupAfterPlaceCard() {
+        if ($this->getBgaEnvironment() != 'studio') { 
+            return;
+        } 
+
+        $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIBERNATION_CARD);
     }
 
     function debugSetWickednessTileInTable($cardType) {

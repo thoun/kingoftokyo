@@ -65,7 +65,7 @@ trait CardsActionTrait {
         }
 
         $cost = $this->getCardCost($playerId, $card->type);
-        if (!$this->canBuyCard($playerId, $cost)) {
+        if (!$this->canBuyCard($playerId, $card->type, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
 
@@ -119,7 +119,7 @@ trait CardsActionTrait {
         $cardLocationArg = $card->location_arg;
 
         $cost = $this->getCardCost($playerId, $card->type);
-        if (!$this->canBuyCard($playerId, $cost)) {
+        if (!$this->canBuyCard($playerId, $card->type, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
 
@@ -303,6 +303,20 @@ trait CardsActionTrait {
             'card_name' => $card->type,
             'topDeckCardBackType' => $topDeckCardBackType,
         ]);
+
+        if ($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) {
+
+            $this->notifyAllPlayers("drawCardHibernationInTokyo", /*client TODODE translate(*/'${player_name} draws ${card_name} while in Tokyo, the card is discarded'/*)*/, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card_name' => $card->type,
+            ]);
+
+            $this->removeCard($playerId, $card, false, true);
+
+            $this->jumpToState(ST_RESOLVE_DICE, $playerId);
+            return false;
+        }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
@@ -326,14 +340,14 @@ trait CardsActionTrait {
         $redirects = false;
 
         $this->setGameStateValue(STATE_AFTER_MIMIC_CHOOSE, ST_RESOLVE_DICE);        
-        $redirectAfterBuyCard = $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_RESOLVE_DICE;
+        $redirectAfterDrawCard = $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_RESOLVE_DICE;
 
         if ($damages != null && count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard);
+            $redirects = $this->resolveDamages($damages, $redirectAfterDrawCard);
         }
 
         if (!$redirects) {
-            $this->jumpToState($redirectAfterBuyCard, $playerId);
+            $this->jumpToState($redirectAfterDrawCard, $playerId);
         }
 
         return $redirects;

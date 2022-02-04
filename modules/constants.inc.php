@@ -89,7 +89,6 @@ define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
 define('PICK_MONSTER_OPTION', 'PickMonsterOption'); // 100
 define('AUTO_SKIP_OPTION', 'AutoSkipOption'); // 110
 define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption'); // 120
-//define('GAME_VERSION_OPTION', 101);
 define('BONUS_MONSTERS_OPTION', 102);
 define('HALLOWEEN_EXPANSION_OPTION', 103);
 define('KINGKONG_EXPANSION_OPTION', 104);
@@ -99,6 +98,7 @@ define('CTHULHU_EXPANSION_OPTION', 107);
 define('ANUBIS_EXPANSION_OPTION', 108);
 define('WICKEDNESS_EXPANSION_OPTION', 109);
 define('POWERUP_EXPANSION_OPTION', 111);
+define('DARK_EDITION_OPTION', 112);
 
 /*
  * Variables
@@ -190,8 +190,8 @@ define('URBAVORE_CARD', 46);
 define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
 define('WINGS_CARD', 48);
 //Dark edition :
-define('HIBERNATION_CARD', 49); // TODODE
-define('NANOBOTS_CARD', 50); // TODODE test
+define('HIBERNATION_CARD', 49); // TODODE ask other dice resolution, but when?
+define('NANOBOTS_CARD', 50);
 define('NATURAL_SELECTION_CARD', 51); // TODODE
 define('REFLECTIVE_HIDE_CARD', 52); // TODODE
 define('SUPER_JUMP_CARD', 53); // TODODE
