@@ -171,10 +171,10 @@ trait CardsUtilTrait {
                     $this->applyLosePoints($pId, 3, $cardType);
                 }
                 break;
-            /*case 120:
-                $count = $this->cards->countCardInLocation('hand', $player_id);
-                $this->applyGetPoints($playerId, $count, $cardType);
-                return [new Damage($playerId, $count, $playerId, $cardType)];*/
+            case NATURAL_SELECTION_CARD:
+                $this->applyGetEnergy($playerId, 4, $cardType);
+                $this->applyGetHealth($playerId, 4, $cardType, $playerId);
+                break;
         }
     }
 

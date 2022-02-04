@@ -218,6 +218,7 @@ class Cards {
             case 38: return [0, 100];
             case 43: return [35, 100];
             case 45: return [0, 85];
+            // TODODE
             // DISCARD
             case 102: return [30, 80];
             case 106: case 107: return [35, 65];
@@ -232,7 +233,7 @@ class Cards {
             case 301: return {
                 0: [10, 15],
                 1: [10, 15],
-            }[side];;
+            }[side];
         }
         return null;
     }
@@ -381,7 +382,7 @@ class Cards {
             case 46: return _("[B795A5]Urbavore");
             case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
             case 48: return _("[443E56]Wings");
-            case 59: return "Hibernation"; // TODODE
+            case 49: return "Hibernation"; // TODODE
             case 50: return "Nanobots"; // TODODE
             case 51: return "Natural Selection"; // TODODE
             case 52: return "Reflective Hide"; // TODODE
@@ -501,7 +502,9 @@ class Cards {
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
+            // TODODE
             case 50: return "At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>"; // TODODE
+            // TODODE
 
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";

@@ -345,6 +345,16 @@ trait PlayerStateTrait {
             $this->applyGetEnergy($playerId, $countSolarPowered, SOLAR_POWERED_CARD);
         }
 
+        // natural selection
+        $this->updateKillPlayersScoreAux();  
+        $countNaturalSelection = $this->countCardOfType($playerId, NATURAL_SELECTION_CARD);
+        if ($countNaturalSelection > 0) {
+            $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+            if ($diceCounts[3] > 0) {
+                $this->applyDamage($playerId, $this->getPlayerEnergy($playerId), $playerId, NATURAL_SELECTION_CARD, $playerId, 0, 0, null);
+            }
+        }
+
         // apply poison
         $this->updateKillPlayersScoreAux();   
         $redirects = false;

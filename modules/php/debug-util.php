@@ -87,14 +87,15 @@ trait DebugUtilTrait {
         // dark edition
 
         //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
-        $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
+        $this->debugSetCardInHand(NATURAL_SELECTION_CARD, 2343492);
 
         // halloween
 
+        $this->debugSetCardInHand(GHOST_CARD, 2343492);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-        //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+        $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
         //$this->debugSetCardInHand(WITCH_CARD, 2343494);
         //$this->debugSetCardInHand(VAMPIRE_CARD, 2343495);
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
