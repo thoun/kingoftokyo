@@ -618,7 +618,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'rerollDice':
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringRerollDice(args.args);
+                this.onEnteringRerollDice(args);
                 break;
             case 'cheerleaderSupport':
                 this.setDiceSelectorVisibility(true);
@@ -713,24 +713,24 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'rerollOrDiscardDie':
                     (this as any).addActionButton('falseBlessingReroll_button', _("Reroll"), () => {
-                        /*dojo.addClass('falseBlessingReroll_button', 'bgabutton_blue');
-                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_gray');
-                        dojo.addClass('falseBlessingDiscard_button', 'bgabutton_gray');
-                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_blue');*/
                         dojo.addClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
                         this.falseBlessingAnkhAction = 'falseBlessingReroll';
                     }, null, null, 'gray');
                     (this as any).addActionButton('falseBlessingDiscard_button', _("Discard"), () => {
-                        /*dojo.addClass('falseBlessingDiscard_button', 'bgabutton_blue');
-                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_gray');
-                        dojo.addClass('falseBlessingReroll_button', 'bgabutton_gray');
-                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_blue');*/
                         dojo.addClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
                         this.falseBlessingAnkhAction = 'falseBlessingDiscard';
                     }, null, null, 'gray');
                     (this as any).addActionButton('falseBlessingSkip_button', _("Skip"), () => this.falseBlessingSkip());
+                    break;
+                case 'rerollDice':
+                    const argsRerollDice = args as EnteringRerollDiceArgs;
+                    (this as any).addActionButton('rerollDice_button', /*_( TODOAN */"Reroll selected dice"/*)*/, () => this.rerollDice(this.diceManager.getSelectedDiceIds()));
+                    dojo.addClass('rerollDice_button', 'disabled');
+                    if (argsRerollDice.min === 0) {
+                        (this as any).addActionButton('skipRerollDice_button', _("Skip"), () => this.rerollDice([]));
+                    }
                     break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());

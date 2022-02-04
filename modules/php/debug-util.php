@@ -20,7 +20,7 @@ trait DebugUtilTrait {
         //$this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetHealth(5);
-        $this->debugSetPlayerHealth(2343492, 1);
+        //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //$this->debugSetPlayerPoints(2343493, 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
@@ -50,7 +50,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        $this->debugSetCardInHand(WINGS_CARD, 2343492);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494);
@@ -87,7 +87,7 @@ trait DebugUtilTrait {
         // dark edition
 
         //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
-        $this->debugSetCardInHand(REFLECTIVE_HIDE_CARD, 2343493);
+        //$this->debugSetCardInHand(REFLECTIVE_HIDE_CARD, 2343493);
 
         // halloween
 
@@ -106,7 +106,7 @@ trait DebugUtilTrait {
 
         // anubis
 
-        //$this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
+        $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
         //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->changeGoldenScarabOwner(2343493);
 

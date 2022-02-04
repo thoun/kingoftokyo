@@ -51,7 +51,7 @@ trait UtilTrait {
     }
 
     function isCybertoothExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
     function isMutantEvolutionVariant() {
@@ -63,7 +63,7 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isWickednessExpansion() {
@@ -75,7 +75,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) === 2;
     }
 
     function releaseDatePassed(string $activationDateStr) {

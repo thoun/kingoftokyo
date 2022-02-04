@@ -3203,7 +3203,7 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'rerollDice':
                 this.setDiceSelectorVisibility(true);
-                this.onEnteringRerollDice(args.args);
+                this.onEnteringRerollDice(args);
                 break;
             case 'cheerleaderSupport':
                 this.setDiceSelectorVisibility(true);
@@ -3298,24 +3298,24 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'rerollOrDiscardDie':
                     this.addActionButton('falseBlessingReroll_button', _("Reroll"), function () {
-                        /*dojo.addClass('falseBlessingReroll_button', 'bgabutton_blue');
-                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_gray');
-                        dojo.addClass('falseBlessingDiscard_button', 'bgabutton_gray');
-                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_blue');*/
                         dojo.addClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
                         _this.falseBlessingAnkhAction = 'falseBlessingReroll';
                     }, null, null, 'gray');
                     this.addActionButton('falseBlessingDiscard_button', _("Discard"), function () {
-                        /*dojo.addClass('falseBlessingDiscard_button', 'bgabutton_blue');
-                        dojo.removeClass('falseBlessingDiscard_button', 'bgabutton_gray');
-                        dojo.addClass('falseBlessingReroll_button', 'bgabutton_gray');
-                        dojo.removeClass('falseBlessingReroll_button', 'bgabutton_blue');*/
                         dojo.addClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
                         _this.falseBlessingAnkhAction = 'falseBlessingDiscard';
                     }, null, null, 'gray');
                     this.addActionButton('falseBlessingSkip_button', _("Skip"), function () { return _this.falseBlessingSkip(); });
+                    break;
+                case 'rerollDice':
+                    var argsRerollDice = args;
+                    this.addActionButton('rerollDice_button', /*_( TODOAN */ "Reroll selected dice" /*)*/, function () { return _this.rerollDice(_this.diceManager.getSelectedDiceIds()); });
+                    dojo.addClass('rerollDice_button', 'disabled');
+                    if (argsRerollDice.min === 0) {
+                        this.addActionButton('skipRerollDice_button', _("Skip"), function () { return _this.rerollDice([]); });
+                    }
                     break;
                 case 'takeWickednessTile':
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
