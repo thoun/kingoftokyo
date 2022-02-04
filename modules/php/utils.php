@@ -63,7 +63,7 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isWickednessExpansion() {
