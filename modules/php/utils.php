@@ -630,6 +630,11 @@ trait UtilTrait {
                 $this->applyGetEnergy($playerId, $countWereOnlyMakingItStronger, WE_RE_ONLY_MAKING_IT_STRONGER_CARD);
             }
         }
+
+        $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
+        if ($countReflectiveHide > 0) {
+            $this->applyDamage($damageDealerId, $countReflectiveHide, $playerId, REFLECTIVE_HIDE_CARD, $activePlayerId, 0, 0, null);
+        }
     }
 
     function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {

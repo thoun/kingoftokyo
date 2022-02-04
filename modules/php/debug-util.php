@@ -15,12 +15,12 @@ trait DebugUtilTrait {
 
         // base game
 
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(5);
+        //$this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
-        $this->debugSetHealth(5);
-        //$this->debugSetPlayerHealth(2343492, 2);
+        //$this->debugSetHealth(5);
+        $this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //$this->debugSetPlayerPoints(2343493, 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
@@ -50,7 +50,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
+        $this->debugSetCardInHand(WINGS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494);
@@ -76,7 +76,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
-        //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
+        //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343492);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
         //$this->debugSetPlayerHealth(2343492, 11);
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
@@ -87,15 +87,15 @@ trait DebugUtilTrait {
         // dark edition
 
         //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
-        $this->debugSetCardInHand(NATURAL_SELECTION_CARD, 2343492);
+        $this->debugSetCardInHand(REFLECTIVE_HIDE_CARD, 2343493);
 
         // halloween
 
-        $this->debugSetCardInHand(GHOST_CARD, 2343492);
+        //$this->debugSetCardInHand(GHOST_CARD, 2343492);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-        $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+        //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
         //$this->debugSetCardInHand(WITCH_CARD, 2343494);
         //$this->debugSetCardInHand(VAMPIRE_CARD, 2343495);
         //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
