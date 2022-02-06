@@ -41,6 +41,7 @@ define('ST_MULTIPLAYER_CANCEL_DAMAGE', 38);
 
 define('ST_MULTIPLAYER_LEAVE_TOKYO', 40);
 define('ST_LEAVE_TOKYO_APPLY_JETS', 41);
+define('ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD', 42);
 define('ST_ENTER_TOKYO_APPLY_BURROWING', 45);
 define('ST_ENTER_TOKYO', 46);
 
@@ -136,6 +137,7 @@ define('MIMICKED_CARD', 'MimickedCard');
 define('USED_WINGS', 'UsedWings');
 define('MADE_IN_A_LAB', 'MadeInALab');
 define('BURROWING_PLAYERS', 'BurrowingPlayers');
+define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
 
 /*
  * Cards

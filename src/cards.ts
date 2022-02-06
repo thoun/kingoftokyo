@@ -206,6 +206,19 @@ class Cards {
         }
     }
 
+    public exchangeCardFromStocks(sourceStock: Stock, destinationStock: Stock, cardOnSource: Card, cardOnDestination: Card) {
+        if (sourceStock === destinationStock) {
+            return;
+        }
+        
+        const sourceStockItemId = `${sourceStock.container_div.id}_item_${cardOnSource.id}`;
+        const destinationStockItemId = `${destinationStock.container_div.id}_item_${cardOnDestination.id}`;
+        this.addCardsToStock(destinationStock, [cardOnSource], sourceStockItemId);
+        this.addCardsToStock(sourceStock, [cardOnDestination], destinationStockItemId);
+        sourceStock.removeFromStockById(`${cardOnSource.id}`);
+        destinationStock.removeFromStockById(`${cardOnDestination.id}`);
+    }
+
     private getCardNamePosition(cardTypeId: number, side: number = null) {
         switch( cardTypeId ) {
             // KEEP

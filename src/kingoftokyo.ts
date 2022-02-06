@@ -229,6 +229,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringStealCostumeCard(args.args, (this as any).isCurrentPlayerActive());
                 break;
             
+            case 'leaveTokyoExchangeCard':
+                this.setDiceSelectorVisibility(false);
+                break;
+
             case 'buyCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringBuyCard(args.args, (this as any).isCurrentPlayerActive());
@@ -496,6 +500,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private onEnteringExchangeCard(args: EnteringExchangeCardArgs, isCurrentPlayerActive: boolean) {
+        if (isCurrentPlayerActive) {
+            this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
+        }
+    }
+
     private onEnteringBuyCard(args: EnteringBuyCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
             this.tableCenter.setVisibleCardsSelectionMode(1);
@@ -578,6 +589,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'leaveTokyo':
                 this.removeSkipBuyPhaseToggle();
                 break;
+            case 'leaveTokyoExchangeCard':
             case 'stealCostumeCard':
             case 'buyCard':
             case 'opportunistBuyCard':
@@ -777,6 +789,16 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('changeForm_button',   dojo.string.substitute(/* TODOME _(*/"Change to ${otherForm}"/*)*/, {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
                     (this as any).addActionButton('skipChangeForm_button', /* TODOME _(*/"Don't change form"/*)*/, () => this.skipChangeForm());
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
+                    break;
+                case 'leaveTokyoExchangeCard':
+                    const argsExchangeCard = args as EnteringExchangeCardArgs;
+                    (this as any).addActionButton('skipExchangeCard_button', _("Skip"), () => this.skipExchangeCard());
+
+                    if (!argsExchangeCard.canExchange) {
+                        this.startActionTimer('skipExchangeCard_button', 5);
+                    }
+
+                    this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
@@ -1099,6 +1121,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
         } else if (stateName === 'discardKeepCard') {
             this.discardKeepCard(cardId);
+        } else if (stateName === 'leaveTokyoExchangeCard') {
+            this.exchangeCard(cardId);
         }
     }
 
@@ -1896,6 +1920,24 @@ class KingOfTokyo implements KingOfTokyoGame {
             over
         });
     }
+    
+    public exchangeCard(id: number | string) {
+        if(!(this as any).checkAction('exchangeCard')) {
+            return;
+        }
+
+        this.takeAction('exchangeCard', {
+            id
+        });
+    }
+
+    public skipExchangeCard() {
+        if(!(this as any).checkAction('skipExchangeCard')) {
+            return;
+        }
+
+        this.takeAction('skipExchangeCard');
+    }
 
     public takeAction(action: string, data?: any) {
         data = data || {};
@@ -1975,6 +2017,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['takeWickednessTile', ANIMATION_MS],
             ['changeGoldenScarabOwner', ANIMATION_MS],
             ['discardedDie', ANIMATION_MS],
+            ['exchangeCard', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -2311,6 +2354,16 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_discardedDie(notif: Notif<NotifDiscardedDieArgs>) {
         this.diceManager.discardDie(notif.args.die);
     }
+
+    notif_exchangeCard(notif: Notif<NotifExchangeCardArgs>) {
+        console.log(notif.args);
+        this.cards.exchangeCardFromStocks(
+            this.getPlayerTable(notif.args.playerId).cards,
+            this.getPlayerTable(notif.args.previousOwner).cards,
+            notif.args.unstableDnaCard,
+            notif.args.exchangedCard,
+        );
+    }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
@@ -2457,18 +2510,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         try {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
-                if (args.card_name) {
-                    let types: number[] = null;
-                    if (typeof args.card_name == 'number') {
-                        types = [args.card_name];
-                    } else if (typeof args.card_name == 'string' && args.card_name[0] >= '0' && args.card_name[0] <= '9') {
-                        types = args.card_name.split(',').map((cardType: string) => Number(cardType));
+                ['card_name', 'card_name2'].forEach(cardArg => {
+                    if (args[cardArg]) {
+                        let types: number[] = null;
+                        if (typeof args[cardArg] == 'number') {
+                            types = [args[cardArg]];
+                        } else if (typeof args[cardArg] == 'string' && args[cardArg][0] >= '0' && args[cardArg][0] <= '9') {
+                            types = args[cardArg].split(',').map((cardType: string) => Number(cardType));
+                        }
+                        if (types !== null) {
+                            const names: string[] = types.map((cardType: number) => this.getLogCardName(cardType));
+                            args[cardArg] = `<strong>${names.join(', ')}</strong>`;
+                        }
                     }
-                    if (types !== null) {
-                        const names: string[] = types.map((cardType: number) => this.getLogCardName(cardType));
-                        args.card_name = `<strong>${names.join(', ')}</strong>`;
-                    }
-                }
+                });
 
                 for (const property in args) {
                     if (args[property]?.indexOf?.(']') > 0) {

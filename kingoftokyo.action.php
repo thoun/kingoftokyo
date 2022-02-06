@@ -579,5 +579,23 @@
 
         self::ajaxResponse();
     }
+  	
+    public function exchangeCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->exchangeCard($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipExchangeCard() {
+        self::setAjaxMode();
+
+        $this->game->skipExchangeCard();
+
+        self::ajaxResponse();
+    }
 
 }

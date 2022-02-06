@@ -62,7 +62,7 @@ trait WickednessTilesActionTrait {
             if ($mimic) {
                 $this->gamestate->nextState('chooseMimickedCard');
             } else {
-                $this->jumpToState($redirectAfterTakeTile, $playerId);
+                $this->jumpToState($redirectAfterTakeTile);
             }
         }
     }

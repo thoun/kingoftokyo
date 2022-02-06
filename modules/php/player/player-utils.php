@@ -62,12 +62,24 @@ trait PlayerUtilTrait {
         return $leaversWithBurrowing !== null ? $leaversWithBurrowing : [];
     }
 
-    function addLeaverWithBurrowing(int $playerId) {
+    function getLeaversWithUnstableDNA() {
+        $leaversWithUnstableDNA = $this->getGlobalVariable(UNSTABLE_DNA_PLAYERS, true);
+        return $leaversWithUnstableDNA !== null ? $leaversWithUnstableDNA : [];
+    }
+
+    function addLeaverWithBurrowingOrUnstableDNA(int $playerId) {
         $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
         if ($countBurrowing > 0) {
             $playersIds = $this->getLeaversWithBurrowing();
             $playersIds[] = $playerId;
             $this->setGlobalVariable(BURROWING_PLAYERS, $playersIds);
+        }
+
+        $countUnstableDNA = $this->countCardOfType($playerId, UNSTABLE_DNA_CARD, false); // TODODE check if unstable DNA can be mimicked somehow. If yes, remove false here, and create an intervention.
+        if ($countUnstableDNA > 0) {
+            $playersIds = $this->getLeaversWithBurrowing();
+            $playersIds[] = $playerId;
+            $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, $playersIds);
         }
     }
 
@@ -82,7 +94,7 @@ trait PlayerUtilTrait {
 
         if ($leave) {
             $this->leaveTokyo($playerId);
-            $this->addLeaverWithBurrowing($playerId);
+            $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
         }
 
         return $leave;

@@ -2,15 +2,6 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/card.php');
-require_once(__DIR__.'/../objects/player-intervention.php');
-require_once(__DIR__.'/../objects/damage.php');
-
-use KOT\Objects\Card;
-use KOT\Objects\OpportunistIntervention;
-use KOT\Objects\Damage;
-use KOT\Objects\PlayersUsedDice;
-
 trait CardsStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -159,5 +150,18 @@ trait CardsStateTrait {
         } else {
             $this->gamestate->nextState('end');
         }
+    }
+
+    function stLeaveTokyoExchangeCard() {
+        $args = $this->argLeaveTokyoExchangeCard();
+        if ($this->autoSkipImpossibleActions() && !$args['canExchange']) {
+            // skip state, can't exchange card
+            $this->gamestate->nextState('next');
+            return;
+        }
+
+        $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA(); 
+        
+        $this->gamestate->setPlayersMultiactive($leaversWithUnstableDNA, 'transitionError', true);
     }
 }

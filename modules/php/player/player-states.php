@@ -33,6 +33,7 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);
+        $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, []);
 
         // apply monster effects
 
@@ -209,7 +210,7 @@ trait PlayerStateTrait {
         if (!$redirects) {
             $this->eliminatePlayers($playerId);
             
-            $this->jumpToState($redirectAfterStartTurn, $playerId);
+            $this->jumpToState($redirectAfterStartTurn);
         }
     }
 
@@ -267,6 +268,9 @@ trait PlayerStateTrait {
     function stEnterTokyoApplyBurrowing() {
         $playerId = $this->getActivePlayerId();
 
+        $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA();  
+        $nextState = count($leaversWithUnstableDNA) >= 1 && $leaversWithUnstableDNA[0] != $playerId ? ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD : ST_ENTER_TOKYO;
+
         $redirects = false;
         // burrowing
         $leaversWithBurrowing = $this->getLeaversWithBurrowing();  
@@ -278,14 +282,14 @@ trait PlayerStateTrait {
             }
         }
         if (count($burrowingDamages) > 0) {
-            $redirects = $this->resolveDamages($burrowingDamages, 'enterTokyoAfterBurrowing');
+            $redirects = $this->resolveDamages($burrowingDamages, $nextState);
         }
         
         $this->setGlobalVariable(BURROWING_PLAYERS, []); 
         
 
         if (!$redirects) {
-            $this->gamestate->nextState('next');
+            $this->jumpToState($nextState);
         }
     }
 

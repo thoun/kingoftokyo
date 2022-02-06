@@ -231,6 +231,11 @@ interface EnteringChangeFormArgs {
     otherForm: string;
 }
 
+interface EnteringExchangeCardArgs {
+    disabledIds: number[];
+    canExchange: boolean;
+}
+
 interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
@@ -462,4 +467,17 @@ interface NotifChangeGoldenScarabOwnerArgs {
 
 interface NotifDiscardedDieArgs {
     die: Die;
+} 
+
+interface NotifChangeGoldenScarabOwnerArgs {
+    playerId: number;
+    player_name: string;
+    previousOwner: number;
+}
+
+interface NotifExchangeCardArgs {
+    playerId: number;
+    previousOwner: number;
+    unstableDnaCard: Card;
+    exchangedCard: Card;
 }

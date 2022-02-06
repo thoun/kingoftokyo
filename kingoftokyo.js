@@ -251,6 +251,17 @@ var Cards = /** @class */ (function () {
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
     };
+    Cards.prototype.exchangeCardFromStocks = function (sourceStock, destinationStock, cardOnSource, cardOnDestination) {
+        if (sourceStock === destinationStock) {
+            return;
+        }
+        var sourceStockItemId = sourceStock.container_div.id + "_item_" + cardOnSource.id;
+        var destinationStockItemId = destinationStock.container_div.id + "_item_" + cardOnDestination.id;
+        this.addCardsToStock(destinationStock, [cardOnSource], sourceStockItemId);
+        this.addCardsToStock(sourceStock, [cardOnDestination], destinationStockItemId);
+        sourceStock.removeFromStockById("" + cardOnSource.id);
+        destinationStock.removeFromStockById("" + cardOnDestination.id);
+    };
     Cards.prototype.getCardNamePosition = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
         switch (cardTypeId) {
@@ -2842,6 +2853,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringStealCostumeCard(args.args, this.isCurrentPlayerActive());
                 break;
+            case 'leaveTokyoExchangeCard':
+                this.setDiceSelectorVisibility(false);
+                break;
             case 'buyCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringBuyCard(args.args, this.isCurrentPlayerActive());
@@ -3091,6 +3105,13 @@ var KingOfTokyo = /** @class */ (function () {
             args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
+    KingOfTokyo.prototype.onEnteringExchangeCard = function (args, isCurrentPlayerActive) {
+        var _this = this;
+        if (isCurrentPlayerActive) {
+            this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
+        }
+    };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
         var _this = this;
         var _a, _b;
@@ -3169,6 +3190,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'leaveTokyo':
                 this.removeSkipBuyPhaseToggle();
                 break;
+            case 'leaveTokyoExchangeCard':
             case 'stealCostumeCard':
             case 'buyCard':
             case 'opportunistBuyCard':
@@ -3362,6 +3384,14 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('changeForm_button', dojo.string.substitute(/* TODOME _(*/ "Change to ${otherForm}" /*)*/, { 'otherForm': _(argsChangeForm.otherForm) }) + formatTextIcons(" ( 1 [Energy])"), function () { return _this.changeForm(); });
                     this.addActionButton('skipChangeForm_button', /* TODOME _(*/ "Don't change form" /*)*/, function () { return _this.skipChangeForm(); });
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
+                    break;
+                case 'leaveTokyoExchangeCard':
+                    var argsExchangeCard = args;
+                    this.addActionButton('skipExchangeCard_button', _("Skip"), function () { return _this.skipExchangeCard(); });
+                    if (!argsExchangeCard.canExchange) {
+                        this.startActionTimer('skipExchangeCard_button', 5);
+                    }
+                    this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'buyCard':
                     var argsBuyCard = args;
@@ -3608,6 +3638,9 @@ var KingOfTokyo = /** @class */ (function () {
         }
         else if (stateName === 'discardKeepCard') {
             this.discardKeepCard(cardId);
+        }
+        else if (stateName === 'leaveTokyoExchangeCard') {
+            this.exchangeCard(cardId);
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCard = function (args, playerEnergy) {
@@ -4245,6 +4278,20 @@ var KingOfTokyo = /** @class */ (function () {
             over: over
         });
     };
+    KingOfTokyo.prototype.exchangeCard = function (id) {
+        if (!this.checkAction('exchangeCard')) {
+            return;
+        }
+        this.takeAction('exchangeCard', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.skipExchangeCard = function () {
+        if (!this.checkAction('skipExchangeCard')) {
+            return;
+        }
+        this.takeAction('skipExchangeCard');
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -4319,6 +4366,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['takeWickednessTile', ANIMATION_MS],
             ['changeGoldenScarabOwner', ANIMATION_MS],
             ['discardedDie', ANIMATION_MS],
+            ['exchangeCard', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -4611,6 +4659,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_discardedDie = function (notif) {
         this.diceManager.discardDie(notif.args.die);
     };
+    KingOfTokyo.prototype.notif_exchangeCard = function (notif) {
+        console.log(notif.args);
+        this.cards.exchangeCardFromStocks(this.getPlayerTable(notif.args.playerId).cards, this.getPlayerTable(notif.args.previousOwner).cards, notif.args.unstableDnaCard, notif.args.exchangedCard);
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
         if (delay === void 0) { delay = 0; }
@@ -4748,19 +4800,21 @@ var KingOfTokyo = /** @class */ (function () {
         try {
             if (log && args && !args.processed) {
                 // Representation of the color of a card
-                if (args.card_name) {
-                    var types = null;
-                    if (typeof args.card_name == 'number') {
-                        types = [args.card_name];
+                ['card_name', 'card_name2'].forEach(function (cardArg) {
+                    if (args[cardArg]) {
+                        var types = null;
+                        if (typeof args[cardArg] == 'number') {
+                            types = [args[cardArg]];
+                        }
+                        else if (typeof args[cardArg] == 'string' && args[cardArg][0] >= '0' && args[cardArg][0] <= '9') {
+                            types = args[cardArg].split(',').map(function (cardType) { return Number(cardType); });
+                        }
+                        if (types !== null) {
+                            var names = types.map(function (cardType) { return _this.getLogCardName(cardType); });
+                            args[cardArg] = "<strong>" + names.join(', ') + "</strong>";
+                        }
                     }
-                    else if (typeof args.card_name == 'string' && args.card_name[0] >= '0' && args.card_name[0] <= '9') {
-                        types = args.card_name.split(',').map(function (cardType) { return Number(cardType); });
-                    }
-                    if (types !== null) {
-                        var names = types.map(function (cardType) { return _this.getLogCardName(cardType); });
-                        args.card_name = "<strong>" + names.join(', ') + "</strong>";
-                    }
-                }
+                });
                 for (var property in args) {
                     if (((_b = (_a = args[property]) === null || _a === void 0 ? void 0 : _a.indexOf) === null || _b === void 0 ? void 0 : _b.call(_a, ']')) > 0) {
                         args[property] = formatTextIcons(_(args[property]));

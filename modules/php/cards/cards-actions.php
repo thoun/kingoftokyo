@@ -270,7 +270,7 @@ trait CardsActionTrait {
         }
         
         if (!$redirects) {
-            $this->jumpToState($redirectAfterBuyCard, $playerId);
+            $this->jumpToState($redirectAfterBuyCard);
         }
     }
 
@@ -314,7 +314,7 @@ trait CardsActionTrait {
 
             $this->removeCard($playerId, $card, false, true);
 
-            $this->jumpToState(ST_RESOLVE_DICE, $playerId);
+            $this->jumpToState(ST_RESOLVE_DICE);
             return false;
         }
         
@@ -347,7 +347,7 @@ trait CardsActionTrait {
         }
 
         if (!$redirects) {
-            $this->jumpToState($redirectAfterDrawCard, $playerId);
+            $this->jumpToState($redirectAfterDrawCard);
         }
 
         return $redirects;
@@ -801,7 +801,7 @@ trait CardsActionTrait {
     }
 
     function useSuperJump(int $energy) {        
-        $this->checkAction('useRobot');
+        $this->checkAction('useSuperJump');
 
         $playerId = $this->getCurrentPlayerId();
 
@@ -863,4 +863,52 @@ trait CardsActionTrait {
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
         }
     }
+
+    function exchangeCard(int $exchangedCardId) {
+        $this->checkAction('exchangeCard');
+
+        $playerId = intval($this->getCurrentPlayerId());
+        
+        $unstableDnaCards = $this->getCardsOfType($playerId, UNSTABLE_DNA_CARD, false); // TODOWI check if unstable DNA can be mimicked somehow. If yes, remove false here, and create an intervention.
+        $unstableDnaCard = $unstableDnaCards[0];
+
+        $exchangedCard = $this->getCardFromDb($this->cards->getCard($exchangedCardId));
+        $exchangedCardOwner = $exchangedCard->location_arg;
+
+        if ($exchangedCard->type > 300) {
+            throw new \BgaUserException("You cannot exchange this card");
+        }
+
+        $this->cards->moveCard($unstableDnaCard->id, 'hand', $exchangedCardOwner);
+        $this->cards->moveCard($exchangedCard->id, 'hand', $playerId);
+
+        $this->notifyAllPlayers("exchangeCard", /*client TODODE translate(*/'${player_name} exchange ${card_name} with ${card_name2} taken from ${player_name2}'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'previousOwner' => $exchangedCardOwner,
+            'player_name2' => $this->getPlayerName($exchangedCardOwner),
+            'unstableDnaCard' => $unstableDnaCard,
+            'card_name' => UNSTABLE_DNA_CARD,
+            'exchangedCard' => $exchangedCard, 
+            'card_name2' => $exchangedCard->type,
+        ]);
+
+        // TODODE handle if it's exchanged with even bigger or rapid healing. check with smoke cloud/mimic/battery monster with tokens
+
+        $this->applySkipExchangeCard($playerId);
+    }
+
+    function applySkipExchangeCard(int $playerId) {        
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
+
+    function skipExchangeCard($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipExchangeCard');
+        }
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $this->applySkipExchangeCard($playerId);
+    } 
 }

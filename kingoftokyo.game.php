@@ -564,6 +564,8 @@ class KingOfTokyo extends Table {
                     return;
                 case 'leaveTokyo':
                     $this->applyActionLeaveTokyo($active_player);
+                case 'leaveTokyoExchangeCard':
+                    $this->applySkipExchangeCard($active_player);
                     return;
                 case 'opportunistBuyCard':
                     $this->applyOpportunistSkip($active_player);

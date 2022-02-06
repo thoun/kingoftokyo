@@ -359,7 +359,7 @@ trait CardsArgTrait {
                     }
                 } else {
                     $disabledIds[] = $card->id;
-                        $unbuyableIds[] = $card->id;
+                    $unbuyableIds[] = $card->id;
                 }
             }
         }
@@ -369,6 +369,37 @@ trait CardsArgTrait {
             'canBuyFromPlayers' => $canBuyFromPlayers,
             'cardsCosts' => $cardsCosts,
             'unbuyableIds' => $unbuyableIds,
+        ];
+    }
+
+    function argLeaveTokyoExchangeCard() {
+        $playerId = intval($this->getActivePlayerId());
+
+        $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA();  
+        $currentPlayerId = $leaversWithUnstableDNA[0];
+
+        $canExchange = false;
+        $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
+
+        $otherPlayersIds = $this->getOtherPlayersIds($currentPlayerId);
+        foreach($otherPlayersIds as $otherPlayerId) {
+            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+            $isSmashingPlayer = $playerId === $otherPlayerId; // TODODE check it's not currentPlayer, else skip (if player left Tokyo with anubis card)
+
+            foreach ($cardsOfPlayer as $card) {
+                if ($isSmashingPlayer && $card->type < 300) {
+                    // all cards can be stolen : keep, discard, costume. Ignore transformation & golden scarab
+                    $canExchange = true;
+                } else {
+                    $disabledIds[] = $card->id;
+                }
+            }
+        }
+
+        return [
+            'canExchange' => $canExchange,
+            'disabledIds' => $disabledIds,
         ];
     }
 

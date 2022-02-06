@@ -15,12 +15,12 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        $this->debugSetEnergy(8);
+        //$this->debugSetEnergy(8);
         //$this->debugSetPoints(8);
         //$this->debugSetHealth(8);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //$this->debugSetPlayerPoints(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
@@ -79,7 +79,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343492);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
         //$this->debugSetPlayerHealth(2343492, 11);
-        //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
+        $this->debugSetCardInHand(NOVA_BREATH_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
@@ -87,7 +87,8 @@ trait DebugUtilTrait {
         // dark edition
 
         //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
-        $this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
+        //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
+        //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
 
         // halloween
 

@@ -528,6 +528,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stay", "leave" ],
         "transitions" => [
             "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
+            "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
         ],
     ],
 
@@ -546,6 +547,20 @@ $playerActionsGameStates = [
         "description" => "",
         "type" => "game",
         "action" => "stEnterTokyoApplyBurrowing",
+        "transitions" => [
+            "next" => ST_ENTER_TOKYO,
+            "exchangeCard" => ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD,
+        ],
+    ],
+
+    ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD => [
+        "name" => "leaveTokyoExchangeCard",
+        "description" => '',/* client TODODE translate('Players with Unstable DNA can exchange this card'),*/
+        "descriptionmyturn" => '',/* client TODODE translate('${you} can exchange Unstable DNA'),*/
+        "type" => "multipleactiveplayer",
+        "action" => "stLeaveTokyoExchangeCard",
+        "args" => "argLeaveTokyoExchangeCard",
+        "possibleactions" => [ "exchangeCard", "skipExchangeCard" ],
         "transitions" => [
             "next" => ST_ENTER_TOKYO,
         ],
