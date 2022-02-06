@@ -198,7 +198,7 @@ define('NATURAL_SELECTION_CARD', 51);
 define('REFLECTIVE_HIDE_CARD', 52);
 define('SUPER_JUMP_CARD', 53);
 define('UNSTABLE_DNA_CARD', 54);
-define('ZOMBIFY_CARD', 55); // TODODE
+define('ZOMBIFY_CARD', 55);
 
 // discard
 define('APPARTMENT_BUILDING_CARD', 101);

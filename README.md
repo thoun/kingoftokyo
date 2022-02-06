@@ -42,12 +42,11 @@ slide energy cubes from battery monster
 TODOAN activate stats
 TODOCY add stats
 TODOME add stats
-TODOME flip cards (remove 302)
 TODO check psychic probe with Background Dweller allowing to reroll a 3 that's not PB die => /bug?id=51953
 TODOWI find an icon for wickedness
 TODODE add new images
 TODODE handle cards cost differences
 TODODE handle cards color/style differences
-TODODE handle it has a child text difference and apply it
+TODODE handle it has a child text difference
 
 log no energy/heart/points won

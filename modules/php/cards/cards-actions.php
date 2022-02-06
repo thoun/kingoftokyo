@@ -879,8 +879,18 @@ trait CardsActionTrait {
             throw new \BgaUserException("You cannot exchange this card");
         }
 
+        $countRapidHealingBeforeCurrentPlayer = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
+        $countRapidHealingBeforeOtherPlayer = $this->countCardOfType($exchangedCardOwner, RAPID_HEALING_CARD);
+        $countEvenBiggerBeforeOtherPlayer = $this->countCardOfType($exchangedCardOwner, EVEN_BIGGER_CARD);
+
         $this->cards->moveCard($unstableDnaCard->id, 'hand', $exchangedCardOwner);
         $this->cards->moveCard($exchangedCard->id, 'hand', $playerId);
+
+        $this->toggleRapidHealing($playerId, $countRapidHealingBeforeCurrentPlayer);
+        $this->toggleRapidHealing($exchangedCardOwner, $countRapidHealingBeforeOtherPlayer);
+        if ($countEvenBiggerBeforeOtherPlayer > 0) {
+            $this->changeMaxHealth($exchangedCardOwner);
+        }
 
         $this->notifyAllPlayers("exchangeCard", /*client TODODE translate(*/'${player_name} exchange ${card_name} with ${card_name2} taken from ${player_name2}'/*)*/, [
             'playerId' => $playerId,
@@ -892,8 +902,6 @@ trait CardsActionTrait {
             'exchangedCard' => $exchangedCard, 
             'card_name2' => $exchangedCard->type,
         ]);
-
-        // TODODE handle if it's exchanged with even bigger or rapid healing. check with smoke cloud/mimic/battery monster with tokens
 
         $this->applySkipExchangeCard($playerId);
     }
