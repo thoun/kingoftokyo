@@ -15,6 +15,7 @@ class Player {
     public int $shrinkRayTokens;
     public int $poisonTokens;
     public int $wickedness;
+    public int $zombified;
 
     public function __construct($dbPlayer) {
         $this->id = intval($dbPlayer['player_id']);
@@ -30,6 +31,9 @@ class Player {
         $this->poisonTokens = intval($dbPlayer['player_poison_tokens']);
         if (array_key_exists('player_wickedness', $dbPlayer)) {
             $this->wickedness = intval($dbPlayer['player_wickedness']);
+        }
+        if (array_key_exists('player_zombified', $dbPlayer)) {
+            $this->zombified = boolval($dbPlayer['player_zombified']);
         }
     } 
 }

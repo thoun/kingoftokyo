@@ -62,7 +62,7 @@ trait WickednessTilesUtilTrait {
 
         $this->DbQuery("UPDATE player SET `player_wickedness` = $newWickedness, player_take_wickedness_tile = $canTake where `player_id` = $playerId");
 
-        $this->notifyAllPlayers('wickedness', ''/*client TODO translate('${player_name} gains ${delta_wickedness} wickedness points')*/, [
+        $this->notifyAllPlayers('wickedness', ''/*client TODOWI translate('${player_name} gains ${delta_wickedness} wickedness points')*/, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'wickedness' => $newWickedness,
@@ -90,7 +90,7 @@ trait WickednessTilesUtilTrait {
                 foreach ($otherPlayersIds as $otherPlayerId) {
                     $this->applyLosePoints($otherPlayerId, 4, $logTileType);
                 }
-                $this->removeWickednessTile($playerId, $tile);
+                $this->removeWickednessTiles($playerId, [$tile]);
                 break;
             case HAVE_IT_ALL_WICKEDNESS_TILE:
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
@@ -104,18 +104,18 @@ trait WickednessTilesUtilTrait {
                 break;
             case STARBURST_WICKEDNESS_TILE:
                 $this->applyGetEnergy($playerId, 12, $logTileType);
-                $this->removeWickednessTile($playerId, $tile);
+                $this->removeWickednessTiles($playerId, [$tile]);
                 break;
         }
     }
 
-    function removeWickednessTile(int $playerId, object $tile) {
+    function removeWickednessTiles(int $playerId, array $tiles) {
 
-        $this->wickednessTiles->moveCard($tile->id, 'discard');
+        $this->wickednessTiles->moveCards(array_map(fn($tile) => $tile->id, $tiles), 'discard');
 
         $this->notifyAllPlayers("removeWickednessTiles", '', [
             'playerId' => $playerId,
-            'tiles' => [$tile],
+            'tiles' => $tiles,
         ]);
     }
 

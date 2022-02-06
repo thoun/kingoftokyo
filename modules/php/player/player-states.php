@@ -448,7 +448,7 @@ trait PlayerStateTrait {
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FINAL_PUSH_EXTRA_TURN)) == 1) { // extra turn for current player
                 $anotherTimeWithCard = 2000 + FINAL_PUSH_WICKEDNESS_TILE; // Final push
                 $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0); 
-                $this->removeWickednessTile($playerId, $this->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE));
+                $this->removeWickednessTiles($playerId, [$this->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE)]);
             }
 
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player

@@ -67,7 +67,7 @@ trait UtilTrait {
     }
 
     function isWickednessExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
     }
 
     function isPowerUpExpansion() {
@@ -75,7 +75,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr) {
@@ -200,12 +200,19 @@ trait UtilTrait {
             $add += 2;
         }
         $add += 2 * $this->countCardOfType($playerId, EVEN_BIGGER_CARD);
+        if ($this->isZombified($playerId)) {
+            $add += 2;
+        }
 
         if ($this->isAnubisExpansion() && $this->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
             $remove += 2;
         }
 
         return min(12, 10 + $add - $remove);
+    }
+
+    function isZombified(int $playerId) {
+        return $this->isDarkEdition() && boolval($this->getUniqueValueFromDB( "SELECT player_zombified FROM player WHERE player_id = $playerId"));
     }
 
     function getRemainingPlayers() {
@@ -704,6 +711,10 @@ trait UtilTrait {
         }
 
         // must be done before player eliminations
+        if ($this->countCardOfType($playerId, ZOMBIFY_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
+            $this->applyZombify($playerId);
+        }
+
         if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
             if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, FINAL_ROAR_WICKEDNESS_TILE) && $this->getPlayerScore($playerId) >= 16) {
                 // final roar will apply, ignore it has a child

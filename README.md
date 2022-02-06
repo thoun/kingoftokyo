@@ -48,5 +48,6 @@ TODOWI find an icon for wickedness
 TODODE add new images
 TODODE handle cards cost differences
 TODODE handle cards color/style differences
+TODODE handle it has a child text difference and apply it
 
 log no energy/heart/points won

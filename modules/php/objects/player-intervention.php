@@ -83,7 +83,7 @@ class CancelDamageIntervention extends PlayerIntervention {
                 if ($game->countCardOfType($playerId, REGENERATION_CARD)) {
                     $canHeal *= 2;
                 }
-                $game->debug([$canHeal, $damageToCancelToSurvive]);
+                
                 return $canHeal > 0 && $canHeal >= $damageToCancelToSurvive;
             } else {
                 return false;

@@ -358,7 +358,7 @@ trait CardsUtilTrait {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
-    function applyItHasAChild($playerId) {
+    function applyItHasAChild(int $playerId) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
@@ -387,6 +387,53 @@ trait CardsUtilTrait {
             'player_name' => $playerName,
             'health' => $health,
             'card_name' => IT_HAS_A_CHILD_CARD,
+        ]);
+
+        if ($this->inTokyo($playerId)) {
+            $this->leaveTokyo($playerId);
+        }
+    }
+
+    function applyZombify(int $playerId) {
+        $playerName = $this->getPlayerName($playerId);
+        // discard all cards
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $this->removeCards($playerId, $cards);
+        // discard all tiles
+        $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
+        $this->removeWickednessTiles($playerId, $tiles);
+
+        // reset wickedness
+        $this->DbQuery("UPDATE player SET `player_wickedness` = 0, player_take_wickedness_tile = 0 where `player_id` = $playerId");
+        $this->notifyAllPlayers('wickedness', '', [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'wickedness' => 0,
+        ]);
+
+        // lose all stars
+        $points = 0;
+        $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+        $this->notifyAllPlayers('points','', [
+            'playerId' => $playerId,
+            'player_name' => $playerName,
+            'points' => $points,
+        ]);
+
+        // get back to 12 heart & marj as zombie
+        $health = 12;
+        $this->DbQuery("UPDATE player SET `player_zombified` = 1, `player_health` = $health where `player_id` = $playerId");
+        $this->notifyAllPlayers('health', '', [
+            'playerId' => $playerId,
+            'player_name' => $playerName,
+            'health' => $health,
+        ]);
+
+        $this->notifyAllPlayers('applyZombify', /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $playerName,
+            'health' => $health,
+            'card_name' => ZOMBIFY_CARD,
         ]);
 
         if ($this->inTokyo($playerId)) {

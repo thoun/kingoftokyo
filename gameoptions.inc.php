@@ -150,7 +150,16 @@ $game_options = [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
-                'name' => totranslate('Enabled'),
+                'name' => totranslate('Enabled') . ' ' . totranslate('(red side)'),
+                'tmdisplay' => totranslate('Dark edition') . ' ' . totranslate('(red side)'),
+            ],
+            3 => [
+                'name' => totranslate('Enabled') . ' ' . totranslate('(green side)'),
+                'tmdisplay' => totranslate('Dark edition') . ' ' . totranslate('(green side)'),
+            ],
+            4 => [
+                'name' => totranslate('Enabled') . ' ' . totranslate('(random mix)'),
+                'tmdisplay' => totranslate('Dark edition') . ' ' . totranslate('(random mix)'),
             ],
         ],
         'default' => 1,

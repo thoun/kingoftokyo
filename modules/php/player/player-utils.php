@@ -385,6 +385,11 @@ trait PlayerUtilTrait {
                 return $inTokyo;
             }
         }
+
+        if ($this->isZombified($playerId)) {
+            return false;
+        }
+
         return !$inTokyo;
     }
 
@@ -448,6 +453,11 @@ trait PlayerUtilTrait {
                 return $playerId == $this->getPlayerIdWithGoldenScarab();
             }
         }
+
+        if ($symbol == 4 && $this->isZombified($playerId)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -468,6 +478,11 @@ trait PlayerUtilTrait {
 
             }
         }
+
+        if ($faceType == 4 && $this->isZombified($playerId)) {
+            return false;
+        }
+
         return true;
     }
 
