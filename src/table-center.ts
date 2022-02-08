@@ -170,7 +170,6 @@ class TableCenter {
     
     public changeCurseCard(card: Card) {
         this.curseCard.removeAll();
-        this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
     }
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {

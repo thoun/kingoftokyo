@@ -886,12 +886,17 @@ var CurseCards = /** @class */ (function () {
         var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
         var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
         var snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));
-        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div>" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div>" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div>" + snakeEffect + "</div></div>";
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div class=\"effect-text\">" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div>" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div>" + snakeEffect + "</div></div>";
         Array.from(cardDiv.getElementsByClassName('effect-wrapper')).forEach(function (wrapperDiv) {
             if (wrapperDiv.children[0].clientHeight > wrapperDiv.clientHeight) {
                 wrapperDiv.style.fontSize = '6pt';
             }
         });
+        var permanentEffectWrapper = cardDiv.getElementsByClassName('permanent-effect-wrapper')[0];
+        var permanentEffectText = permanentEffectWrapper.getElementsByClassName('effect-text')[0];
+        if (permanentEffectText.clientHeight > permanentEffectWrapper.clientHeight) {
+            permanentEffectText.classList.add('overflow');
+        }
     };
     return CurseCards;
 }());
@@ -2597,7 +2602,6 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.changeCurseCard = function (card) {
         this.curseCard.removeAll();
-        this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
     };
     TableCenter.prototype.createWickednessTiles = function (wickednessTiles) {
         var _this = this;
@@ -4660,7 +4664,6 @@ var KingOfTokyo = /** @class */ (function () {
         this.diceManager.discardDie(notif.args.die);
     };
     KingOfTokyo.prototype.notif_exchangeCard = function (notif) {
-        console.log(notif.args);
         this.cards.exchangeCardFromStocks(this.getPlayerTable(notif.args.playerId).cards, this.getPlayerTable(notif.args.previousOwner).cards, notif.args.unstableDnaCard, notif.args.exchangedCard);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {

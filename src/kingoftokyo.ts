@@ -2356,7 +2356,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_exchangeCard(notif: Notif<NotifExchangeCardArgs>) {
-        console.log(notif.args);
         this.cards.exchangeCardFromStocks(
             this.getPlayerTable(notif.args.playerId).cards,
             this.getPlayerTable(notif.args.previousOwner).cards,

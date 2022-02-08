@@ -20,7 +20,7 @@ trait DebugUtilTrait {
         //$this->debugSetEnergy(8);
         //$this->debugSetPoints(8);
         //$this->debugSetHealth(8);
-        $this->debugSetPlayerHealth(2343492, 12);
+        //$this->debugSetPlayerHealth(2343492, 12);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //$this->debugSetPlayerPoints(2343493, 1);
@@ -47,7 +47,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492), 4);
-        $this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
+        //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
@@ -91,7 +91,7 @@ trait DebugUtilTrait {
 
         //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
         //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
-        $this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
+        //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
         //$this->debugSetCardInHand(ZOMBIFY_CARD, 2343493);
 
         // halloween
@@ -111,7 +111,7 @@ trait DebugUtilTrait {
 
         // anubis
 
-        //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+        $this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
         //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->changeGoldenScarabOwner(2343493);
 
@@ -126,11 +126,11 @@ trait DebugUtilTrait {
 
         // wickedness
 
-        $this->initWickednessTiles(3);
+        //$this->initWickednessTiles(3);
         //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-        $this->DbQuery("UPDATE player SET `player_wickedness` = 4 where `player_id` = 2343493");
+        //$this->DbQuery("UPDATE player SET `player_wickedness` = 4 where `player_id` = 2343493");
         //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
-        $this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
+        //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         // player order

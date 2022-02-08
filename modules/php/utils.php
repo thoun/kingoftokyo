@@ -75,7 +75,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr) {

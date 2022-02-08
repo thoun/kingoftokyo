@@ -150,7 +150,7 @@ class CurseCards {
             <div class="text">${this.getCardName(cardType)}</div>
         </div>
         
-        <div class="effect-wrapper permanent-effect-wrapper"><div>${permanentEffect}</div></div>
+        <div class="effect-wrapper permanent-effect-wrapper"><div class="effect-text">${permanentEffect}</div></div>
         <div class="effect-wrapper ankh-effect-wrapper"><div>${ankhEffect}</div></div>
         <div class="effect-wrapper snake-effect-wrapper"><div>${snakeEffect}</div></div>`;
 
@@ -159,5 +159,11 @@ class CurseCards {
                 wrapperDiv.style.fontSize = '6pt';
             }
         });
+
+        const permanentEffectWrapper = cardDiv.getElementsByClassName('permanent-effect-wrapper')[0] as HTMLDivElement;
+        const permanentEffectText = permanentEffectWrapper.getElementsByClassName('effect-text')[0] as HTMLDivElement;
+        if (permanentEffectText.clientHeight > permanentEffectWrapper.clientHeight) {
+            permanentEffectText.classList.add('overflow');
+        }
     }
 }
