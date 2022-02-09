@@ -629,22 +629,8 @@
   justify-content: center;
 }
 .die4 .number .anubis-icon {
-  background: url("img/anubis_die_icons.png");
-  background-size: auto 100%;
   width: 1.5em;
   height: 1.5em;
-}
-.die4 .number .anubis-icon1 {
-  background-position: 0% 100%;
-}
-.die4 .number .anubis-icon2 {
-  background-position: 33.3333% 100%;
-}
-.die4 .number .anubis-icon3 {
-  background-position: 66.6666% 100%;
-}
-.die4 .number .anubis-icon4 {
-  background-position: 99.9999% 100%;
 }
 .die4 .number:nth-child(1) {
   transform: rotateZ(0deg);
@@ -1971,4 +1957,25 @@ button .icon, a .icon {
 }
 #generalactions .action-button-toggle-button-selected {
   border: 3px solid #4871b6;
+}
+
+.anubis-icon {
+  background: url("img/anubis_die_icons.png");
+  background-size: auto 100%;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.anubis-icon.anubis-icon1 {
+  background-position: 0% 100%;
+}
+.anubis-icon.anubis-icon2 {
+  background-position: 33.3333% 100%;
+}
+.anubis-icon.anubis-icon3 {
+  background-position: 66.6666% 100%;
+}
+.anubis-icon.anubis-icon4 {
+  background-position: 99.9999% 100%;
 }

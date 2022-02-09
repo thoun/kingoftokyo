@@ -614,6 +614,9 @@ var Cards = /** @class */ (function () {
     };
     Cards.prototype.getTooltip = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
+        if (cardTypeId === 999) {
+            return /* TODOAN _*/ ("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
+        }
         var cost = this.getCardCost(cardTypeId);
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only', side) + "</strong></p>";
         if (cost !== null) {
@@ -646,8 +649,10 @@ var Cards = /** @class */ (function () {
             this.setDivAsCard(cardDiv.getElementsByClassName('front')[0], 301, 0);
             this.setDivAsCard(cardDiv.getElementsByClassName('back')[0], 301, 1);
         }
-        else if (cardType !== 999) { // no text for golden scarab
-            this.setDivAsCard(cardDiv, cardType);
+        else {
+            if (cardType !== 999) { // no text for golden scarab
+                this.setDivAsCard(cardDiv, cardType);
+            }
             this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
         }
     };
@@ -1951,6 +1956,7 @@ var DiceManager = /** @class */ (function () {
         }
         html += "</div>";
         dojo.place(html, destinationId);
+        this.game.addTooltipHtml("dice" + die.id, "\n        <strong>" + ("Die of Fate effects") + "</strong>\n        <div><div class=\"anubis-icon anubis-icon1\"></div> " + ("Change Curse: Discard the current Curse and reveal the next one.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon2\"></div> " + ("No effect. The card's permanent effect remains active, however.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon3\"></div> " + ("Suffer the Snake effect.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon4\"></div> " + ("Receive the blessing of the Ankh effect.") + "</div>\n        ");
     };
     DiceManager.prototype.createAndPlaceDie6Html = function (die, canHealWithDice, destinationId) {
         var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
@@ -2527,6 +2533,7 @@ var TableCenter = /** @class */ (function () {
         this.curseCard.onItemCreate = function (card_div, card_type_id) { return _this.game.curseCards.setupNewCard(card_div, card_type_id); };
         this.game.curseCards.setupCards([this.curseCard]);
         this.curseCard.addToStockWithId(curseCard.type, '' + curseCard.id);
+        this.game.addTooltipHtml("curse-deck", "\n        <strong>" + ("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(/* TODOAN _*/ ("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
         this.visibleCards.setSelectionMode(mode);
@@ -2602,6 +2609,7 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.changeCurseCard = function (card) {
         this.curseCard.removeAll();
+        this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
     };
     TableCenter.prototype.createWickednessTiles = function (wickednessTiles) {
         var _this = this;

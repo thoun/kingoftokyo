@@ -572,6 +572,9 @@ class Cards {
     }
 
     private getTooltip(cardTypeId: number, side: number = null) {
+        if (cardTypeId === 999) {
+            return /* TODOAN _*/("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
+        }
         const cost = this.getCardCost(cardTypeId);
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId, 'text-only', side)}</strong></p>`;
@@ -613,8 +616,10 @@ class Cards {
             `, cardDiv);
             this.setDivAsCard(cardDiv.getElementsByClassName('front')[0] as HTMLDivElement, 301, 0); 
             this.setDivAsCard(cardDiv.getElementsByClassName('back')[0] as HTMLDivElement, 301, 1);
-        } else if (cardType !== 999) { // no text for golden scarab
-            this.setDivAsCard(cardDiv, cardType); 
+        } else {
+            if (cardType !== 999) { // no text for golden scarab
+                this.setDivAsCard(cardDiv, cardType); 
+            }
             (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
         }
     }

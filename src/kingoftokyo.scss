@@ -424,3 +424,18 @@ button, a {
     border: 3px solid #4871b6;
   }
 }
+
+.anubis-icon {
+  background: url('img/anubis_die_icons.png');
+  background-size: auto 100%;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  vertical-align: middle;
+
+  @for $i from 1 through 4 {
+      &.anubis-icon#{$i} {
+          background-position: (($i - 1) * 33.3333%) 100%;
+      }
+  }
+}
