@@ -133,6 +133,12 @@ trait DebugUtilTrait {
         //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
+        // power up
+
+        $this->debugSetEvolutionInHand(11, 2343492, true);
+        $this->debugSetEvolutionInHand(12, 2343492, false);
+        $this->debugSetEvolutionInHand(22, 2343493, false);
+
         // player order
 
         $this->gamestate->changeActivePlayer(2343492);
@@ -175,6 +181,12 @@ trait DebugUtilTrait {
     function debugSetCardInHand($cardType, $playerId) {
         $card = $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0]);
         $this->cards->moveCard($card->id, 'hand', $playerId);
+        return $card;
+    }
+
+    function debugSetEvolutionInHand(int $cardType, int $playerId, bool $visible) {
+        $card = $this->getEvolutionCardFromDb(array_values($this->evolutionCards->getCardsOfType($cardType))[0]);
+        $this->evolutionCards->moveCard($card->id, $visible ? 'table' : 'hand', $playerId);
         return $card;
     }
 

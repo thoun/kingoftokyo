@@ -13,6 +13,14 @@ trait CurseCardsUtilTrait {
     ////////////
 
 
+    function initCurseCards() {
+        for($value=1; $value<=24; $value++) { // curse cards
+            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+        }
+        $this->curseCards->createCards($cards, 'deck');
+        $this->curseCards->shuffle('deck'); 
+    }
+
     function getDieOfFate() {
         return $this->getDiceByType(2)[0];
     }

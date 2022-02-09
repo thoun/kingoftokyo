@@ -16,7 +16,7 @@ class PlayerTable {
     public cards: Stock;
     public wickednessTiles: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], wickednessTiles: WickednessTile[] | undefined, playerWithGoldenScarab: boolean) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -44,7 +44,7 @@ class PlayerTable {
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
             <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>`;
         if (game.isWickednessExpansion()) {
-            html += `<div id="wickedness-tiles-${player.id}" class="wickedness-tile-stock player-wickedness-tiles ${wickednessTiles?.length ? '' : 'empty'}"></div>   `;
+            html += `<div id="wickedness-tiles-${player.id}" class="wickedness-tile-stock player-wickedness-tiles ${player.wickednessTiles?.length ? '' : 'empty'}"></div>   `;
         }
         html += `    <div id="cards-${player.id}" class="card-stock player-cards ${cards.length ? '' : 'empty'}"></div>
         </div>
@@ -105,8 +105,7 @@ class PlayerTable {
             this.wickednessTiles.onItemCreate = (card_div, card_type_id) => this.game.wickednessTiles.setupNewCard(card_div, card_type_id); 
     
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            wickednessTiles?.forEach(tile => this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id));
-
+            player.wickednessTiles?.forEach(tile => this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id));
         }
     }
 

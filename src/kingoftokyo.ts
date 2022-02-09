@@ -880,6 +880,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.wickednessExpansion;
     }
 
+    public isPowerUpExpansion(): boolean {
+        return this.gamedatas.powerUpExpansion;
+    }
+
     public isDarkEdition(): boolean {
         return this.gamedatas.darkEdition;
     }
@@ -1039,7 +1043,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables = this.getOrderedPlayers().map(player => {
             const playerId = Number(player.id);
             const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(this, player, gamedatas.playersCards[playerId], gamedatas.playersWickednessTiles?.[playerId], playerWithGoldenScarab);
+            return new PlayerTable(this, player, gamedatas.playersCards[playerId], playerWithGoldenScarab); // TODOAN replace by player.cards
         });
     }
 

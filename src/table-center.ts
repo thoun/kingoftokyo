@@ -84,8 +84,8 @@ class TableCenter {
         this.curseCard.addToStockWithId(curseCard.type, '' + curseCard.id);
 
         (this.game as any).addTooltipHtml(`curse-deck`, `
-        <strong>${/* TODOAN _*/("Curse card pile.")}</strong>
-        <div> ${dojo.string.substitute(/* TODOAN _*/("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), {'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>'})}</div>
+        <strong>${_("Curse card pile.")}</strong>
+        <div> ${dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), {'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>'})}</div>
         `);
     }
 

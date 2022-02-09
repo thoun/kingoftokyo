@@ -1122,9 +1122,9 @@ var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 23
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, cards, wickednessTiles, playerWithGoldenScarab) {
+    function PlayerTable(game, player, cards, playerWithGoldenScarab) {
         var _this = this;
-        var _a;
+        var _a, _b, _c;
         this.game = game;
         this.player = player;
         this.playerId = Number(player.id);
@@ -1133,11 +1133,11 @@ var PlayerTable = /** @class */ (function () {
         var eliminated = Number(player.eliminated) > 0;
         var html = "\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>";
         if (game.isWickednessExpansion()) {
-            html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + ((wickednessTiles === null || wickednessTiles === void 0 ? void 0 : wickednessTiles.length) ? '' : 'empty') + "\"></div>   ";
+            html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_a = player.wickednessTiles) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>   ";
         }
         html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (cards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
         dojo.place(html, 'table');
-        this.setMonsterFigureBeastMode(((_a = cards.find(function (card) { return card.type === 301; })) === null || _a === void 0 ? void 0 : _a.side) === 1);
+        this.setMonsterFigureBeastMode(((_b = cards.find(function (card) { return card.type === 301; })) === null || _b === void 0 ? void 0 : _b.side) === 1);
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -1182,7 +1182,7 @@ var PlayerTable = /** @class */ (function () {
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            wickednessTiles === null || wickednessTiles === void 0 ? void 0 : wickednessTiles.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
+            (_c = player.wickednessTiles) === null || _c === void 0 ? void 0 : _c.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
         }
     }
     PlayerTable.prototype.initPlacement = function () {
@@ -2533,7 +2533,7 @@ var TableCenter = /** @class */ (function () {
         this.curseCard.onItemCreate = function (card_div, card_type_id) { return _this.game.curseCards.setupNewCard(card_div, card_type_id); };
         this.game.curseCards.setupCards([this.curseCard]);
         this.curseCard.addToStockWithId(curseCard.type, '' + curseCard.id);
-        this.game.addTooltipHtml("curse-deck", "\n        <strong>" + ("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(/* TODOAN _*/ ("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
+        this.game.addTooltipHtml("curse-deck", "\n        <strong>" + _("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
         this.visibleCards.setSelectionMode(mode);
@@ -3465,6 +3465,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.isWickednessExpansion = function () {
         return this.gamedatas.wickednessExpansion;
     };
+    KingOfTokyo.prototype.isPowerUpExpansion = function () {
+        return this.gamedatas.powerUpExpansion;
+    };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return this.gamedatas.darkEdition;
     };
@@ -3566,10 +3569,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
         this.playerTables = this.getOrderedPlayers().map(function (player) {
-            var _a;
             var playerId = Number(player.id);
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(_this, player, gamedatas.playersCards[playerId], (_a = gamedatas.playersWickednessTiles) === null || _a === void 0 ? void 0 : _a[playerId], playerWithGoldenScarab);
+            return new PlayerTable(_this, player, gamedatas.playersCards[playerId], playerWithGoldenScarab); // TODOAN replace by player.cards
         });
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {

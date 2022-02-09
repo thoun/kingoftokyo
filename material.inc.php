@@ -19,6 +19,15 @@
  *
  */
 
+$this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6]; // TODODE add cyberbunny & kraken [101,102,103,104,105,106]
+
+// 1 : permanent
+// 2 : temporary
+// 3 : gift
+$this->EVOLUTION_CARDS_TYPES = [
+    11 => 1, 12 => 1, 13 => 2, 14 => 2, 15 => 1, 16 => 2, 17 => 1, 18 => 1, // space penguin
+];
+
 $this->CARD_COST = [
     // KEEP
     1 => 6,

@@ -13,38 +13,42 @@ trait MonsterTrait {
         $bonusMonsters = intval($this->getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
 
         // Base game monsters : Space Penguin, Alienoid, Cyber Kitty, The King, Gigazaur, Meka Dragon
-        $monsters = [1,2,3,4,5,6];
+        $monsters = /* TODODE $this->isDarkEdition() ? [101,102,103,104,105,106] :*/ [1,2,3,4,5,6];
 
         // Boogie Woogie, Pumpkin Jack
         if ($bonusMonsters || $this->isHalloweenExpansion()) {
-            $monsters = array_merge($monsters, [7,8]);
+            $monsters = [...$monsters, 7, 8];
         }
 
         // Cthulhu, Anubis
         if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
-            $monsters = array_merge($monsters, [9, 10]);
+            $monsters = [...$monsters, 9, 10];
         }
 
         // King Kong, Cybertooth
         if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
-            $monsters = array_merge($monsters, [11, 12]);
+            $monsters = [...$monsters, 11, 12];
         }
 
         // Kookie, X-Smash Tree
         if ($bonusMonsters) {
-            $monsters = array_merge($monsters, [16, 17]);
+            $monsters = [...$monsters, 16, 17];
         }
 
         // Baby Gigazaur
         if ($bonusMonsters/* && $this->releaseDatePassed("2021-12-31T11:00:00")*/) {
-            $monsters = array_merge($monsters, [18]);
+            $monsters = [...$monsters, 18];
+        }
+
+        if ($this->isPowerUpExpansion()) {
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
         }
         
         return $monsters;
     }
 
     function canPickMonster() {
-        return intval($this->getGameStateValue(PICK_MONSTER_OPTION)) === 2;
+        return intval($this->getGameStateValue(PICK_MONSTER_OPTION)) === 2 || $this->isPowerUpExpansion();
     }
 
     function getAvailableMonsters() {

@@ -43,6 +43,10 @@ require_once('modules/php/curse-cards/curse-cards-utils.php');
 require_once('modules/php/curse-cards/curse-cards-actions.php');
 require_once('modules/php/curse-cards/curse-cards-args.php');
 require_once('modules/php/curse-cards/curse-cards-states.php');
+require_once('modules/php/evolution-cards/evolution-cards-utils.php');
+require_once('modules/php/evolution-cards/evolution-cards-actions.php');
+require_once('modules/php/evolution-cards/evolution-cards-args.php');
+require_once('modules/php/evolution-cards/evolution-cards-states.php');
 require_once('modules/php/intervention.php');
 require_once('modules/php/debug-util.php');
 
@@ -69,6 +73,10 @@ class KingOfTokyo extends Table {
     use KOT\States\CurseCardsActionTrait;
     use KOT\States\CurseCardsArgTrait;
     use KOT\States\CurseCardsStateTrait;
+    use KOT\States\EvolutionCardsUtilTrait;
+    use KOT\States\EvolutionCardsActionTrait;
+    use KOT\States\EvolutionCardsArgTrait;
+    use KOT\States\EvolutionCardsStateTrait;
     use KOT\States\InterventionTrait;
     use KOT\States\DebugUtilTrait;
 
@@ -131,6 +139,10 @@ class KingOfTokyo extends Table {
 		
         $this->wickednessTiles = $this->getNew("module.common.deck");
         $this->wickednessTiles->init("wickedness_tile");
+		
+        $this->evolutionCards = $this->getNew("module.common.deck");
+        $this->evolutionCards->init("evolution_card");
+        $this->evolutionCards->autoreshuffle = true;
 	}
 
     protected function getGameName() {
@@ -310,6 +322,10 @@ class KingOfTokyo extends Table {
                 $this->cards->pickCardForLocation('mutantdeck', 'hand', $playerId);
             }
         }
+
+        if ($this->isPowerUpExpansion()) {
+            $this->initEvolutionCards();
+        }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -336,6 +352,7 @@ class KingOfTokyo extends Table {
         $isAnubisExpansion = $this->isAnubisExpansion();
         $isWickednessExpansion = $this->isWickednessExpansion();
         $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
         $isDarkEdition = $this->isDarkEdition();
 
         $result = ['players' => []];
@@ -369,11 +386,18 @@ class KingOfTokyo extends Table {
             $result['tokyoTowerLevels'] = $this->getTokyoTowerLevels(0);
         }
 
-        $result['playersCards'] = [];
+        $result['playersCards'] = []; // TODOAN remove
         foreach ($result['players'] as $playerId => &$playerDb) {
-            $result['playersCards'][$playerId] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            $playerCards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            $result['playersCards'][$playerId] = $playerCards; // TODOAN remove
+            $playerDb['cards'] = $playerCards;
 
-            foreach($result['playersCards'][$playerId] as &$card) {
+            foreach($result['playersCards'][$playerId] as &$card) { // TODOAN remove
+                if ($card->type == MIMIC_CARD) {
+                    $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
+                }
+            }
+            foreach($playerDb['cards'] as &$card) {
                 if ($card->type == MIMIC_CARD) {
                     $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
                 }
@@ -397,13 +421,18 @@ class KingOfTokyo extends Table {
             }
             if ($isWickednessExpansion) {
                 $playerDb['wickedness'] = intval($playerDb['wickedness']);
-                $result['playersWickednessTiles'][$playerId] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
+                $playerDb['wickednessTiles'] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
 
-                foreach($result['playersWickednessTiles'][$playerId] as &$card) {
+                foreach($playerDb['wickednessTiles'] as &$card) {
                     if ($card->type == FLUXLING_WICKEDNESS_TILE) {
                         $card->mimicType = $this->getMimickedCardType(FLUXLING_WICKEDNESS_TILE);
                     }
                 }
+            }
+
+            if ($isPowerUpExpansion) {
+                $playerDb['visibleEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
+                $playerDb['hiddenEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('hand', $playerId));
             }
         }
 
@@ -423,6 +452,7 @@ class KingOfTokyo extends Table {
         $result['cybertoothExpansion'] = $isCybertoothExpansion;
         $result['wickednessExpansion'] = $isWickednessExpansion;
         $result['mutantEvolutionVariant'] = $isMutantEvolutionVariant;
+        $result['powerUpExpansion'] = $isPowerUpExpansion;
         $result['darkEdition'] = $isDarkEdition;
         if ($isAnubisExpansion) {
             $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab();

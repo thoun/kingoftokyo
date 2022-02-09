@@ -51,14 +51,6 @@ trait CardsUtilTrait {
         }
     }
 
-    function initCurseCards() {
-        for($value=1; $value<=24; $value++) { // curse cards
-            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
-        }
-        $this->curseCards->createCards($cards, 'deck');
-        $this->curseCards->shuffle('deck'); 
-    }
-
     function getCardFromDb(array $dbCard) {
         if (!$dbCard || !array_key_exists('id', $dbCard)) {
             throw new \Error('card doesn\'t exists '.json_encode($dbCard));

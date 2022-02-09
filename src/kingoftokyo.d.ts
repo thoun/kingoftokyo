@@ -32,6 +32,15 @@ interface WickednessTile {
     location_arg: number;
 }
 
+interface EvolutionCard {
+    id: number;
+    monster: number;
+    card: number;
+    type: number;
+    location: string;
+    location_arg: number;
+}
+
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
 
 interface HeartActionSelection {
@@ -54,6 +63,9 @@ interface KingOfTokyoPlayer extends Player {
     berserk?: boolean;
     cultists: number;
     wickedness?: number;
+    wickednessTiles: WickednessTile[];
+    visibleEvolutions?: EvolutionCard[];
+    hiddenEvolutions?: EvolutionCard[]; // filled only for current player, else EvolutionCard contains only id
 }
 
 interface KingOfTokyoGamedatas {
@@ -73,7 +85,6 @@ interface KingOfTokyoGamedatas {
     visibleCards: Card[];
     topDeckCardBackType: string;
     playersCards: { [playerId: number]: Card[] };
-    playersWickednessTiles: { [playerId: number]: WickednessTile[] };
     mimickedCards: {
         card: Card | null;
         tile: Card | null;
@@ -89,6 +100,7 @@ interface KingOfTokyoGamedatas {
     cthulhuExpansion: boolean;
     anubisExpansion: boolean;
     wickednessExpansion: boolean;
+    powerUpExpansion: boolean;
     darkEdition: boolean;
     playerWithGoldenScarab?: number;
     curseCard?: Card;
@@ -104,6 +116,7 @@ interface KingOfTokyoGame extends Game {
     isCthulhuExpansion(): boolean;
     isAnubisExpansion(): boolean;
     isWickednessExpansion(): boolean;
+    isPowerUpExpansion(): boolean;
     isDefaultFont(): boolean;
     
     cards: Cards;
