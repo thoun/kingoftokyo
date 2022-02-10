@@ -48,5 +48,6 @@ TODODE add new images
 TODODE handle cards cost differences
 TODODE handle cards color/style differences
 TODODE handle it has a child text difference
+TODOPU stats
 
 log no energy/heart/points won

@@ -122,6 +122,7 @@ interface KingOfTokyoGame extends Game {
     cards: Cards;
     curseCards: CurseCards;
     wickednessTiles: WickednessTiles;
+    evolutionCards: EvolutionCards;
     POISON_TOKEN_TOOLTIP: string;
     SHINK_RAY_TOKEN_TOOLTIP: string;
     CULTIST_TOOLTIP: string;

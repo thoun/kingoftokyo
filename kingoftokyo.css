@@ -907,6 +907,66 @@
   transform: rotateY(180deg);
 }
 
+.player-evolution-cards .stockitem .name-wrapper {
+  position: absolute;
+  top: 47px;
+  left: 14px;
+  font-size: 9pt;
+  color: white;
+  font-family: "goodgirl";
+  width: 104px;
+  text-align: center;
+}
+.player-evolution-cards .stockitem .name-wrapper .outline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-text-stroke: 4px #a6c136;
+  width: 100%;
+}
+.player-evolution-cards .stockitem .name-wrapper .outline.curse {
+  -webkit-text-stroke: 4px #1c484f;
+}
+.player-evolution-cards .stockitem .name-wrapper .text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+.player-evolution-cards .stockitem .evolution-type {
+  position: absolute;
+  font-size: 6pt;
+  left: 22px;
+  top: 36px;
+  width: 87px;
+  text-transform: uppercase;
+  color: white;
+  white-space: nowrap;
+  text-align: center;
+}
+.player-evolution-cards .stockitem .evolution-type strong {
+  color: #fff200;
+}
+.player-evolution-cards .stockitem .description-wrapper {
+  position: absolute;
+  left: 9px;
+  width: 108px;
+  top: 71px;
+  text-overflow: ellipsis;
+  text-align: center;
+  color: black;
+  font-size: 7pt;
+}
+.player-evolution-cards .stockitem .description-wrapper .icon {
+  width: 12px;
+  height: 12px;
+  margin-bottom: -2px;
+}
+.player-evolution-cards .stockitem.disabled {
+  filter: contrast(0.6);
+  cursor: not-allowed;
+}
+
 .wickedness-tile-stock .stockitem .name-wrapper {
   left: 0;
   width: 100%;
@@ -1318,6 +1378,12 @@
 }
 #table .player-table .player-cards.empty {
   max-height: 20px;
+}
+#table .player-table .player-evolution-cards {
+  width: 100%;
+}
+#table .player-table .player-evolution-cards.empty {
+  max-height: 0px;
 }
 #table .player-table .tokyo-tower-wrapper {
   position: absolute;

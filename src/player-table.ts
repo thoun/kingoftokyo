@@ -12,9 +12,12 @@ class PlayerTable {
     private monster: number;
     private initialLocation: number;
     private tokyoTower: TokyoTower;
+    private showHand: boolean = false;
 
     public cards: Stock;
     public wickednessTiles: Stock;
+    public hiddenEvolutionCards: Stock;
+    public visibleEvolutionCards: Stock;
 
     constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, cards: Card[], playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);
@@ -45,6 +48,12 @@ class PlayerTable {
             <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>`;
         if (game.isWickednessExpansion()) {
             html += `<div id="wickedness-tiles-${player.id}" class="wickedness-tile-stock player-wickedness-tiles ${player.wickednessTiles?.length ? '' : 'empty'}"></div>   `;
+        }
+        if (game.isPowerUpExpansion()) {
+            html += `
+            <div id="hidden-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.hiddenEvolutions?.length ? '' : 'empty'}"></div>
+            <div id="visible-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.visibleEvolutions?.length ? '' : 'empty'}"></div>
+            `;
         }
         html += `    <div id="cards-${player.id}" class="card-stock player-cards ${cards.length ? '' : 'empty'}"></div>
         </div>
@@ -106,6 +115,30 @@ class PlayerTable {
     
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
             player.wickednessTiles?.forEach(tile => this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id));
+        }
+
+        if (game.isPowerUpExpansion()) {
+            this.showHand = this.playerId == this.game.getPlayerId();
+
+            this.hiddenEvolutionCards = new ebg.stock() as Stock;
+            this.hiddenEvolutionCards.setSelectionAppearance('class');
+            this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
+            this.hiddenEvolutionCards.create(this.game, $(`hidden-evolution-cards-${player.id}`), CARD_WIDTH, CARD_WIDTH);
+            this.hiddenEvolutionCards.setSelectionMode(0);
+            this.hiddenEvolutionCards.centerItems = true;
+            this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+
+            this.visibleEvolutionCards = new ebg.stock() as Stock;
+            this.visibleEvolutionCards.setSelectionAppearance('class');
+            this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
+            this.visibleEvolutionCards.create(this.game, $(`visible-evolution-cards-${player.id}`), CARD_WIDTH, CARD_WIDTH);
+            this.visibleEvolutionCards.setSelectionMode(0);
+            this.visibleEvolutionCards.centerItems = true;
+            this.visibleEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+    
+            this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
+            player.hiddenEvolutions?.forEach(card => this.hiddenEvolutionCards.addToStockWithId(this.showHand ? card.type : 0, '' + card.id));
+            player.visibleEvolutions?.forEach(card => this.visibleEvolutionCards.addToStockWithId(card.type, '' + card.id));
         }
     }
 

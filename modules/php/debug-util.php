@@ -50,7 +50,7 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
-        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
+        $this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343492);
@@ -111,7 +111,7 @@ trait DebugUtilTrait {
 
         // anubis
 
-        $this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
+        //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
         //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
         //$this->changeGoldenScarabOwner(2343493);
 
@@ -138,6 +138,7 @@ trait DebugUtilTrait {
         $this->debugSetEvolutionInHand(11, 2343492, true);
         $this->debugSetEvolutionInHand(12, 2343492, false);
         $this->debugSetEvolutionInHand(22, 2343493, false);
+        $this->debugSetEvolutionInHand(24, 2343493, true);
 
         // player order
 

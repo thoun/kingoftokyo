@@ -26,7 +26,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     private preferencesManager: PreferencesManager;
     public cards: Cards;
     public curseCards: CurseCards;
-    public wickednessTiles: WickednessTiles;
+    public wickednessTiles: WickednessTiles;    
+    public evolutionCards: EvolutionCards;
     //private rapidHealingSyncHearts: number;
     public towerLevelsOwners = [];
     private tableCenter: TableCenter;
@@ -91,6 +92,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.cards = new Cards(this);
         this.curseCards = new CurseCards(this);
         this.wickednessTiles = new WickednessTiles(this);
+        this.evolutionCards = new EvolutionCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
     

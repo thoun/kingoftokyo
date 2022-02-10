@@ -905,6 +905,85 @@ var CurseCards = /** @class */ (function () {
     };
     return CurseCards;
 }());
+var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6];
+var EvolutionCards = /** @class */ (function () {
+    function EvolutionCards(game) {
+        this.game = game;
+    }
+    EvolutionCards.prototype.setupCards = function (stocks) {
+        stocks.forEach(function (stock) {
+            var keepcardsurl = g_gamethemeurl + "img/evolution-cards.jpg";
+            stock.addItemType(0, 0, keepcardsurl, 0);
+            MONSTERS_WITH_POWER_UP_CARDS.forEach(function (monster, index) {
+                for (var i = 1; i <= 8; i++) {
+                    var uniqueId = monster * 10 + i;
+                    stock.addItemType(uniqueId, uniqueId, keepcardsurl, index + 1);
+                }
+            });
+        });
+    };
+    EvolutionCards.prototype.getColoredCardName = function (cardTypeId) {
+        switch (cardTypeId) {
+            // KEEP
+            case 11: return /*_TODOPU*/ ("[0C4E4A]Energy [004C6E]Hoarder");
+        }
+        return null;
+    };
+    EvolutionCards.prototype.getCardName = function (cardTypeId, state) {
+        var coloredCardName = this.getColoredCardName(cardTypeId);
+        if (state == 'text-only') {
+            return coloredCardName === null || coloredCardName === void 0 ? void 0 : coloredCardName.replace(/\[(\w+)\]/g, '');
+        }
+        else if (state == 'span') {
+            var first_2 = true;
+            return (coloredCardName === null || coloredCardName === void 0 ? void 0 : coloredCardName.replace(/\[(\w+)\]/g, function (index, color) {
+                var span = "<span style=\"-webkit-text-stroke-color: #" + color + ";\">";
+                if (first_2) {
+                    first_2 = false;
+                }
+                else {
+                    span = "</span>" + span;
+                }
+                return span;
+            })) + ("" + (first_2 ? '' : '</span>'));
+        }
+        return null;
+    };
+    EvolutionCards.prototype.getCardDescription = function (cardTypeId) {
+        switch (cardTypeId) {
+            // KEEP
+            case 11: return /*_TODOPU*/ ("<strong>You gain 1[Star]</strong> for every 6[Energy] you have at the end of your turn.");
+        }
+        return null;
+    };
+    EvolutionCards.prototype.setDivAsCard = function (cardDiv, cardType) {
+        var type = this.getCardTypeName(cardType);
+        var description = formatTextIcons(this.getCardDescription(cardType));
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n        </div>\n        <div class=\"evolution-type\">" + type + "</div>        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
+        if (textHeight > 80) { // TODOPU check limit
+            cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';
+        }
+    };
+    EvolutionCards.prototype.getTooltip = function (cardTypeId, side) {
+        if (side === void 0) { side = null; }
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        return tooltip;
+    };
+    EvolutionCards.prototype.setupNewCard = function (cardDiv, cardType) {
+        if (cardType == 0) {
+            return;
+        }
+        this.setDivAsCard(cardDiv, cardType);
+        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
+    };
+    EvolutionCards.prototype.getCardTypeName = function (cardType) {
+        if (cardType < 100) {
+            return /*_ TODOPU */ ('<strong>Temporary</strong> evolution');
+        }
+    };
+    return EvolutionCards;
+}());
 var WICKEDNESS_TILES_WIDTH = 132;
 var WICKEDNESS_TILES_HEIGHT = 82; // TODOWI
 var WICKEDNESS_LEVELS = [3, 6, 10];
@@ -1124,9 +1203,10 @@ var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, cards, playerWithGoldenScarab) {
         var _this = this;
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g;
         this.game = game;
         this.player = player;
+        this.showHand = false;
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -1135,9 +1215,12 @@ var PlayerTable = /** @class */ (function () {
         if (game.isWickednessExpansion()) {
             html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_a = player.wickednessTiles) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>   ";
         }
+        if (game.isPowerUpExpansion()) {
+            html += "\n            <div id=\"hidden-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_b = player.hiddenEvolutions) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_c = player.visibleEvolutions) === null || _c === void 0 ? void 0 : _c.length) ? '' : 'empty') + "\"></div>\n            ";
+        }
         html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (cards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
         dojo.place(html, 'table');
-        this.setMonsterFigureBeastMode(((_b = cards.find(function (card) { return card.type === 301; })) === null || _b === void 0 ? void 0 : _b.side) === 1);
+        this.setMonsterFigureBeastMode(((_d = cards.find(function (card) { return card.type === 301; })) === null || _d === void 0 ? void 0 : _d.side) === 1);
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -1182,7 +1265,27 @@ var PlayerTable = /** @class */ (function () {
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            (_c = player.wickednessTiles) === null || _c === void 0 ? void 0 : _c.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
+            (_e = player.wickednessTiles) === null || _e === void 0 ? void 0 : _e.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
+        }
+        if (game.isPowerUpExpansion()) {
+            this.showHand = this.playerId == this.game.getPlayerId();
+            this.hiddenEvolutionCards = new ebg.stock();
+            this.hiddenEvolutionCards.setSelectionAppearance('class');
+            this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
+            this.hiddenEvolutionCards.create(this.game, $("hidden-evolution-cards-" + player.id), CARD_WIDTH, CARD_WIDTH);
+            this.hiddenEvolutionCards.setSelectionMode(0);
+            this.hiddenEvolutionCards.centerItems = true;
+            this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
+            this.visibleEvolutionCards = new ebg.stock();
+            this.visibleEvolutionCards.setSelectionAppearance('class');
+            this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
+            this.visibleEvolutionCards.create(this.game, $("visible-evolution-cards-" + player.id), CARD_WIDTH, CARD_WIDTH);
+            this.visibleEvolutionCards.setSelectionMode(0);
+            this.visibleEvolutionCards.centerItems = true;
+            this.visibleEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
+            this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
+            (_f = player.hiddenEvolutions) === null || _f === void 0 ? void 0 : _f.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
+            (_g = player.visibleEvolutions) === null || _g === void 0 ? void 0 : _g.forEach(function (card) { return _this.visibleEvolutionCards.addToStockWithId(card.type, '' + card.id); });
         }
     }
     PlayerTable.prototype.initPlacement = function () {
@@ -2751,6 +2854,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.cards = new Cards(this);
         this.curseCards = new CurseCards(this);
         this.wickednessTiles = new WickednessTiles(this);
+        this.evolutionCards = new EvolutionCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);

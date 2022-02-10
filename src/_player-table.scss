@@ -183,6 +183,14 @@
         }
     }
 
+    .player-evolution-cards {
+        width: 100%;
+
+        &.empty {
+            max-height: 0px;
+        }
+    }
+
     .tokyo-tower-wrapper {
         position: absolute;
         right: 10px;

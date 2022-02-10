@@ -1,0 +1,72 @@
+.player-evolution-cards {
+    .stockitem {
+
+        .name-wrapper {
+            position: absolute;
+            top: 47px;
+            left: 14px;
+            font-size: 9pt;
+            color: white;
+            font-family: 'goodgirl';
+            width: 104px;
+            text-align: center;
+
+            .outline {
+                position: absolute;
+                left: 0;
+                top: 0;
+                -webkit-text-stroke: 4px $tokyoGreen;
+                width: 100%;
+
+                &.curse {
+                -webkit-text-stroke: 4px #1c484f;  
+                }
+            }
+
+            .text {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        .evolution-type {
+            position: absolute;
+            font-size: 6pt;
+            left: 22px;
+            top: 36px;
+            width: 87px;
+            text-transform: uppercase;
+            color: white;
+            white-space: nowrap;
+            text-align: center;
+
+            strong {
+                color: #fff200;
+            }
+        }
+
+        .description-wrapper {
+            position: absolute;
+            left: 9px;
+            width: 108px;
+            top: 71px;
+            text-overflow: ellipsis;
+            text-align: center;
+            color: black;
+            font-size: $description-size;
+
+            .icon {
+                width: 12px;
+                height: 12px;
+                margin-bottom: -2px;
+            }
+        }
+        
+        &.disabled {
+            filter: contrast(0.6);
+            cursor: not-allowed;
+        }
+    }
+}

@@ -16,6 +16,7 @@
         "src/text-icons-formatter.ts",
         "src/cards.ts",
         "src/curse-cards.ts",
+        "src/evolution-cards.ts",
         "src/wickedness-tiles.ts",
         "src/tokyo-tower.ts",
         "src/player-table.ts",
