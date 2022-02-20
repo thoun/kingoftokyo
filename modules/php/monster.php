@@ -48,7 +48,7 @@ trait MonsterTrait {
     }
 
     function canPickMonster() {
-        return intval($this->getGameStateValue(PICK_MONSTER_OPTION)) === 2 || $this->isPowerUpExpansion();
+        return intval($this->getGameStateValue(PICK_MONSTER_OPTION)) === 2;
     }
 
     function getAvailableMonsters() {

@@ -39,7 +39,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
+        $this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
@@ -68,7 +68,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
-        //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
+        $this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
@@ -134,11 +134,12 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         // power up
-
-        $this->debugSetEvolutionInHand(11, 2343492, true);
-        $this->debugSetEvolutionInHand(12, 2343492, false);
-        $this->debugSetEvolutionInHand(22, 2343493, false);
-        $this->debugSetEvolutionInHand(24, 2343493, true);
+        if ($this->isPowerUpExpansion()) {
+            $this->debugSetEvolutionInHand(11, 2343492, true);
+            $this->debugSetEvolutionInHand(12, 2343492, false);
+            $this->debugSetEvolutionInHand(22, 2343493, false);
+            $this->debugSetEvolutionInHand(24, 2343493, true);
+        }
 
         // player order
 

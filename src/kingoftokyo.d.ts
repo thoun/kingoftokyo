@@ -259,7 +259,6 @@ interface EnteringBuyCardArgs {
         pickCards: Card[];
     };
     cardsCosts: { [cardId: number]: number };
-    unbuyableIds: number[];
     warningIds: { [cardId: number]: string };
 }
 

@@ -50,19 +50,15 @@ trait CardsArgTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $cardsCosts = [];
         
-        $unbuyableIds = [];
-        $disabledIds = []; // TODO remove
+        $disabledIds = [];
         $warningIds = [];
         foreach ($cards as $card) {
             $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
             if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                 $canBuyOrNenew = true;
             }
-            if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
-                $disabledIds[] = $card->id;
-            }
             if (!$canBuyPowerCards) {
-                $unbuyableIds[] = $card->id;
+                $disabledIds[] = $card->id;
             }
 
             $this->setWarningIcon($playerId, $warningIds, $card);
@@ -79,7 +75,7 @@ trait CardsArgTrait {
                         $canBuyOrNenew = true;
                     }
                     if (!$canBuyPowerCards || $card->type > 100) {
-                        $unbuyableIds[] = $card->id;
+                        $disabledIds[] = $card->id;
                     }
                 }
             }
@@ -99,11 +95,8 @@ trait CardsArgTrait {
                 if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuyOrNenew = true;
                 }
-                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
-                    $disabledIds[] = $card->id;
-                }
                 if (!$canBuyPowerCards) {
-                    $unbuyableIds[] = $card->id;
+                    $disabledIds[] = $card->id;
                 }
 
                 $this->setWarningIcon($playerId, $warningIds, $card);
@@ -125,7 +118,7 @@ trait CardsArgTrait {
             'canBuyOrNenew' => $canBuyOrNenew || $canPick, // if a player can see 1st deck card, we don't skip his turn or add a timer
             'canSell' => $canSell,
             'cardsCosts' => $cardsCosts,
-            'unbuyableIds' => $unbuyableIds,
+            'unbuyableIds' => $disabledIds, // TODO remove
             'warningIds' => $warningIds,
         ] + $pickArgs;
     }
@@ -136,8 +129,6 @@ trait CardsArgTrait {
         $canBuy = false;
         $canBuyPowerCards = $this->canBuyPowerCard($playerId);
 
-        $playerEnergy = $this->getPlayerEnergy($playerId);
-
         $potentialEnergy = $this->getPlayerEnergy($playerId);
         if ($this->isCthulhuExpansion()) {
             $potentialEnergy += $this->getPlayerCultists($playerId);
@@ -146,8 +137,7 @@ trait CardsArgTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $cardsCosts = [];
         
-        $unbuyableIds = [];
-        $disabledIds = []; // TODO remove
+        $disabledIds = [];
         $warningIds = [];
         foreach ($cards as $card) {
             if (in_array($card->id, $revealedCardsIds)) {
@@ -155,17 +145,13 @@ trait CardsArgTrait {
                 if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuy = true;
                 }
-                if (!$canBuyPowerCards || !$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
-                    $disabledIds[] = $card->id;
-                }
                 if (!$canBuyPowerCards) {
-                    $unbuyableIds[] = $card->id;
+                    $disabledIds[] = $card->id;
                 }
 
                 $this->setWarningIcon($playerId, $warningIds, $card);
             } else {
                 $disabledIds[] = $card->id;
-                $unbuyableIds[] = $card->id;
             }
         }
 
@@ -173,7 +159,7 @@ trait CardsArgTrait {
             'disabledIds' => $disabledIds,
             'canBuy' => $canBuy,
             'cardsCosts' => $cardsCosts,
-            'unbuyableIds' => $unbuyableIds,
+            'unbuyableIds' => $disabledIds, // TODO remove
             'warningIds' => $warningIds,
         ];
     }
@@ -208,31 +194,42 @@ trait CardsArgTrait {
         ];
     }
 
-    function getArgChooseMimickedCard(int $playerId, int $mimicCardType, int $selectionCost = null) {
-        $canChange = $selectionCost !== null ? $this->getPlayerEnergy($playerId) >= $selectionCost : true;
+    function getArgChooseMimickedCard(int $playerId, int $mimicCardType, int $selectionCost = 0) {
+        $potentialEnergy = 0;
+        if ($selectionCost > 0) {
+            $potentialEnergy = $this->getPlayerEnergy($playerId);
+            if ($this->isCthulhuExpansion()) {
+                $potentialEnergy += $this->getPlayerCultists($playerId);
+            }
+        }
+
+        $canChange = $potentialEnergy >= $selectionCost;
 
         $playersIds = $this->getPlayersIds();
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(fn($card) => $card->id, $cards);
         $mimickedCardId = $this->getMimickedCardId($mimicCardType);
+        $cardsCosts = [];
 
         foreach($playersIds as $iPlayerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $iPlayerId));
-            $disabledCardsOfPlayer = $canChange ? 
-                array_values(array_filter($cardsOfPlayer, function ($card) use ($mimickedCardId, $playerId) {
-                    if ($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) {
-                        return true;
-                    }
-                    return $card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100;
-                })) :
-                $cardsOfPlayer;
-            $disabledIdsOfPlayer = array_map(fn($card) => $card->id, $disabledCardsOfPlayer);
-            
-            $disabledIds = array_merge($disabledIds, $disabledIdsOfPlayer);
+            foreach($cardsOfPlayer as $card) {
+                $canMimickCard = false;
+                if ($canChange) {
+                    $canMimickCard = !($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) && !($card->type == MIMIC_CARD || $card->id == $mimickedCardId || $card->type >= 100);
+                }
+                
+                if ($canMimickCard) {
+                    $cardsCosts[$card->id] = $selectionCost;
+                } else {
+                    $disabledIds[] = $card->id;
+                }
+            }
         }
 
         return [
+            'cardsCosts' => $cardsCosts,
             'disabledIds' => $disabledIds,
             'canChange' => $canChange,
         ];
@@ -336,7 +333,7 @@ trait CardsArgTrait {
 
         $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
-        $unbuyableIds = $disabledIds; // copy
+        $disabledIds = $disabledIds; // copy
         $cardsCosts = [];
 
         $canBuyFromPlayers = false;
@@ -359,7 +356,7 @@ trait CardsArgTrait {
                     }
                 } else {
                     $disabledIds[] = $card->id;
-                    $unbuyableIds[] = $card->id;
+                    $disabledIds[] = $card->id;
                 }
             }
         }
@@ -368,7 +365,7 @@ trait CardsArgTrait {
             'disabledIds' => $disabledIds,
             'canBuyFromPlayers' => $canBuyFromPlayers,
             'cardsCosts' => $cardsCosts,
-            'unbuyableIds' => $unbuyableIds,
+            'unbuyableIds' => $disabledIds,
         ];
     }
 

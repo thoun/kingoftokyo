@@ -965,8 +965,7 @@ var EvolutionCards = /** @class */ (function () {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';
         }
     };
-    EvolutionCards.prototype.getTooltip = function (cardTypeId, side) {
-        if (side === void 0) { side = null; }
+    EvolutionCards.prototype.getTooltip = function (cardTypeId) {
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
@@ -3240,13 +3239,12 @@ var KingOfTokyo = /** @class */ (function () {
                 this.tableCenter.showPickStock(args._private.pickCards);
             }
             this.setBuyDisabledCard(args);
-            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringChooseMimickedCard = function (args) {
         if (this.isCurrentPlayerActive()) {
             this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
-            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
+            this.setBuyDisabledCard(args);
         }
     };
     KingOfTokyo.prototype.onEnteringSellCard = function (args) {
@@ -3761,6 +3759,18 @@ var KingOfTokyo = /** @class */ (function () {
             this.exchangeCard(cardId);
         }
     };
+    KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {
+        var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds, true), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }), true);
+        disabledCardsIds.forEach(function (id) {
+            var disabled = disabledIds.some(function (disabledId) { return disabledId == id; }) || cardsCosts[id] > playerEnergy;
+            var cardDiv = document.querySelector("div[id$=\"_item_" + id + "\"]");
+            console.log("div[id$=\"_item_" + id + "\"]", cardDiv, disabled);
+            if (cardDiv && cardDiv.closest('.card-stock') !== null) {
+                dojo.toggleClass(cardDiv, 'disabled', disabled);
+            }
+        });
+    };
+    // called on state enter and when energy number is changed
     KingOfTokyo.prototype.setBuyDisabledCard = function (args, playerEnergy) {
         if (args === void 0) { args = null; }
         if (playerEnergy === void 0) { playerEnergy = null; }
@@ -3768,7 +3778,9 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         var stateName = this.getStateName();
-        if (stateName !== 'buyCard' && stateName !== 'opportunistBuyCard' && stateName !== 'stealCostumeCard') {
+        var buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard';
+        var changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
+        if (!buyState && !changeMimicState) {
             return;
         }
         if (args === null) {
@@ -3777,16 +3789,9 @@ var KingOfTokyo = /** @class */ (function () {
         if (playerEnergy === null) {
             playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
         }
-        Object.keys(args.cardsCosts).forEach(function (cardId) {
-            var id = Number(cardId);
-            var disabled = args.unbuyableIds.some(function (disabledId) { return disabledId == id; }) || args.cardsCosts[id] > playerEnergy;
-            var cardDiv = document.querySelector("div[id$=\"_item_" + id + "\"]");
-            if (cardDiv && cardDiv.closest('.card-stock') !== null) {
-                dojo.toggleClass(cardDiv, 'disabled', disabled);
-            }
-        });
+        this.setBuyDisabledCardByCost(args.disabledIds, args.cardsCosts, playerEnergy);
         // renew button
-        if (document.getElementById('renew_button')) {
+        if (buyState && document.getElementById('renew_button')) {
             dojo.toggleClass('renew_button', 'disabled', playerEnergy < 2);
         }
     };

@@ -522,14 +522,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             this.setBuyDisabledCard(args);
-            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
 
     private onEnteringChooseMimickedCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(1));
-            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
+            this.setBuyDisabledCard(args);
         }
     }
 
@@ -1131,14 +1130,29 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.exchangeCard(cardId);
         }
     }
+    
+    private setBuyDisabledCardByCost(disabledIds: number[], cardsCosts: { [cardId: number]: number }, playerEnergy: number) {
+        const disabledCardsIds = [...disabledIds, ...Object.keys(cardsCosts).map(cardId => Number(cardId))];
+        disabledCardsIds.forEach(id => {
+            const disabled = disabledIds.some(disabledId => disabledId == id) || cardsCosts[id] > playerEnergy;
+            const cardDiv = document.querySelector(`div[id$="_item_${id}"]`) as HTMLElement;
+            console.log(`div[id$="_item_${id}"]`, cardDiv, disabled);
+            if (cardDiv && cardDiv.closest('.card-stock') !== null) {
+                dojo.toggleClass(cardDiv, 'disabled', disabled);
+            }
+        });
+    }
 
-    setBuyDisabledCard(args: EnteringBuyCardArgs = null, playerEnergy: number = null) {
+    // called on state enter and when energy number is changed
+    private setBuyDisabledCard(args: EnteringBuyCardArgs = null, playerEnergy: number = null) {
         if (!(this as any).isCurrentPlayerActive()) {
             return;
         }
         
         const stateName = this.getStateName();
-        if (stateName !== 'buyCard' && stateName !== 'opportunistBuyCard' && stateName !== 'stealCostumeCard') {
+        const buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard';
+        const changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
+        if (!buyState && !changeMimicState) {
             return;
         }
         if (args === null) {
@@ -1148,17 +1162,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
         }
 
-        Object.keys(args.cardsCosts).forEach(cardId => {
-            const id = Number(cardId);
-            const disabled = args.unbuyableIds.some(disabledId => disabledId == id) || args.cardsCosts[id] > playerEnergy;
-            const cardDiv = document.querySelector(`div[id$="_item_${id}"]`) as HTMLElement;
-            if (cardDiv && cardDiv.closest('.card-stock') !== null) {
-                dojo.toggleClass(cardDiv, 'disabled', disabled);
-            }
-        });
+        this.setBuyDisabledCardByCost(args.disabledIds, args.cardsCosts, playerEnergy);
 
         // renew button
-        if (document.getElementById('renew_button')) {
+        if (buyState && document.getElementById('renew_button')) {
             dojo.toggleClass('renew_button', 'disabled', playerEnergy < 2);
         }
     }
