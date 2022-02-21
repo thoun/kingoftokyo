@@ -86,7 +86,7 @@ trait PlayerUtilTrait {
     function autoLeave(int $playerId, int $health) {
         $leaveUnder = intval($this->getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));
 
-        if ($leaveUnder == 0) {
+        if ($leaveUnder <= 1) {
             return false;
         }
 
@@ -149,7 +149,7 @@ trait PlayerUtilTrait {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $leaveUnder = intval($this->getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));
-        if ($leaveUnder != 0 && $over <= $leaveUnder) {
+        if ($leaveUnder != 0 && $over != 0 && $over <= $leaveUnder) {
             throw new \BgaUserException("Can't set StayInTokyoOver less than LeaveTokyoUnder");
         }
 
