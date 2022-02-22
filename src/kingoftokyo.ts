@@ -498,7 +498,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringStealCostumeCard(args: EnteringStealCostumeCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
             this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
-            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
+            this.setBuyDisabledCard(args);
         }
     }
 
@@ -1144,7 +1144,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     // called on state enter and when energy number is changed
-    private setBuyDisabledCard(args: EnteringBuyCardArgs = null, playerEnergy: number = null) {
+    private setBuyDisabledCard(args: EnteringBuyCardArgs | EnteringStealCostumeCardArgs = null, playerEnergy: number = null) {
         if (!(this as any).isCurrentPlayerActive()) {
             return;
         }

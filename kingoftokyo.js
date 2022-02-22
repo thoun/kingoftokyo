@@ -3217,7 +3217,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         if (isCurrentPlayerActive) {
             this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
-            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
+            this.setBuyDisabledCard(args);
         }
     };
     KingOfTokyo.prototype.onEnteringExchangeCard = function (args, isCurrentPlayerActive) {

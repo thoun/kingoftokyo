@@ -237,7 +237,6 @@ interface EnteringStealCostumeCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
     cardsCosts: { [cardId: number]: number };
-    unbuyableIds: number[];
 }
 
 interface EnteringChangeFormArgs {

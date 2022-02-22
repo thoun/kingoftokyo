@@ -118,7 +118,6 @@ trait CardsArgTrait {
             'canBuyOrNenew' => $canBuyOrNenew || $canPick, // if a player can see 1st deck card, we don't skip his turn or add a timer
             'canSell' => $canSell,
             'cardsCosts' => $cardsCosts,
-            'unbuyableIds' => $disabledIds, // TODO remove
             'warningIds' => $warningIds,
         ] + $pickArgs;
     }
@@ -159,7 +158,6 @@ trait CardsArgTrait {
             'disabledIds' => $disabledIds,
             'canBuy' => $canBuy,
             'cardsCosts' => $cardsCosts,
-            'unbuyableIds' => $disabledIds, // TODO remove
             'warningIds' => $warningIds,
         ];
     }
@@ -333,7 +331,6 @@ trait CardsArgTrait {
 
         $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
-        $disabledIds = $disabledIds; // copy
         $cardsCosts = [];
 
         $canBuyFromPlayers = false;
@@ -351,11 +348,7 @@ trait CardsArgTrait {
                     if ($cardsCosts[$card->id] <= $potentialEnergy) {
                         $canBuyFromPlayers = true;
                     }
-                    if (!$this->canBuyCard($playerId, $card->type, $cardsCosts[$card->id])) {
-                        $disabledIds[] = $card->id;
-                    }
                 } else {
-                    $disabledIds[] = $card->id;
                     $disabledIds[] = $card->id;
                 }
             }
@@ -365,7 +358,6 @@ trait CardsArgTrait {
             'disabledIds' => $disabledIds,
             'canBuyFromPlayers' => $canBuyFromPlayers,
             'cardsCosts' => $cardsCosts,
-            'unbuyableIds' => $disabledIds,
         ];
     }
 

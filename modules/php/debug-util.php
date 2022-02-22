@@ -17,11 +17,11 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(8);
+        $this->debugSetEnergy(2);
         //$this->debugSetPoints(8);
         //$this->debugSetHealth(8);
         //$this->debugSetPlayerHealth(2343492, 12);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 1);
         //$this->debugSetPlayerPoints(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1 where `player_id` = 2343492");
@@ -107,7 +107,7 @@ trait DebugUtilTrait {
         }
 
         // cthulhu
-        //$this->DbQuery("UPDATE player SET `player_cultists` = 2");
+        $this->DbQuery("UPDATE player SET `player_cultists` = 10");
         //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
 
         // anubis
@@ -237,7 +237,7 @@ trait DebugUtilTrait {
     }
     
     // debugSetDieFaces(1)
-    // debugSetDieFaces(6, 2)
+    // debugSetDieFaces(6, 3)
     function debugSetDieFaces($face, $limit = 99) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
     }
