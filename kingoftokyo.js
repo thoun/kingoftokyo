@@ -831,17 +831,17 @@ var CurseCards = /** @class */ (function () {
             case 6: return _("Take an extra die and put it on the face of your choice.");
             case 8:
             case 11:
-            case 13: return _("+2[Heart]");
+            case 13: return "+2[Heart]";
             case 9: return _("If you are not in Tokyo, play an extra turn after this one without the die of Fate.");
             case 10: return _("Draw a Power card.");
             case 12: return _("Gain 1[Star] for each [diceSmash] you rolled.");
-            case 14: return _("+2[Star]");
-            case 15: return _("+2[Energy]");
+            case 14: return "+2[Star]";
+            case 15: return "+2[Energy]";
             case 16: return _("Take control of Tokyo.");
             case 20: return _("Take the Golden Scarab and give it to the Monster of your choice.");
             case 21: return _("Cancel the Curse effect.");
             case 22: return _("Choose up to 2 dice, you can reroll or discard each of these dice.");
-            case 23: return _("+3[Energy]."); // TODOPU "Draw an Evolution card or gain 3[Energy]."          
+            case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
             case 24: return _("Gain 1[Energy] for each [dice1] you rolled.");
         }
         return null;
@@ -850,15 +850,15 @@ var CurseCards = /** @class */ (function () {
         switch (cardTypeId) {
             case 1: return _("Take control of Tokyo.");
             case 2:
-            case 8: return _("-1[Heart]");
-            case 3: return _("-2[Energy]");
+            case 8: return "-1[Heart]";
+            case 3: return "-2[Energy]";
             case 4:
-            case 9: return _("-2[Star]");
+            case 9: return "-2[Star]";
             case 5: return _("You cannot use your [diceSmash].");
             case 6: return _("Discard 1 die.");
             case 7: return _("Lose 1[Energy] for each [diceSmash] you rolled.");
             case 10: return _("Discard a [Keep] card.");
-            case 11: return _("-2[Heart]");
+            case 11: return "-2[Heart]";
             case 12: return _("Lose 1[Heart] for each [diceSmash] you rolled.");
             case 13: return _("The Monster(s) with the most [Heart] lose 1[Heart].");
             case 14: return _("The Monster(s) with the most [Star] lose 1[Star].");
@@ -870,7 +870,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return _("Take the Golden Scarab.");
             case 21: return _("Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.");
             case 22: return _("The player on your left chooses two of your dice. Reroll these dice.");
-            case 23: return _("-3[Energy]."); // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
+            case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
             case 24: return _("Discard 1[dice1]");
         }
         return null;
