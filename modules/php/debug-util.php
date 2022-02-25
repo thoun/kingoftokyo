@@ -111,10 +111,11 @@ trait DebugUtilTrait {
         //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
 
         // anubis
-
-        //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
-        //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
-        //$this->changeGoldenScarabOwner(2343493);
+        if ($this->isAnubisExpansion()) {
+            $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+            //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
+            //$this->changeGoldenScarabOwner(2343493);
+        }
 
         // king kong
 

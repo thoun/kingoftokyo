@@ -119,12 +119,9 @@ $gameinfos = [
     // Short game presentation text that will appear on the game description page, structured as an array of paragraphs.
     // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
     // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
-    
-    // this presentation has been taken from website : https://iello.fr/co.uk/game/king-of-tokyo
     'presentation' => [
-        totranslate("Play mutant monsters, gigantic robots and other monstrous creatures, rampaging the city and vying for position as the one and only King of Tokyo!"),
-        totranslate("Combine your dice to gather energy, heal your monster or just slap the other monsters down! Spend your energy to trigger permanent or one-shot special powers: a second head, body armor, nova death ray..."),
-        totranslate("Stop at nothing to become the King of Tokyo... but that's when the real trouble begins for you!"),
+        totranslate("King of Tokyo is a game for 2 to 6 players where you play as mutant monsters, rampaging robots, or even abominable aliens battling in a fun, chaotic atmosphere. Roll dice and choose your strategy: Will you attack your enemies? Heal your wounds? Improve your Monster? Stomp your path to victory!"),
+        totranslate("You are a gigantic Monster willing to do anything to become King of Tokyo. Your rampage brings you glory in the form of Victory Points. To win, be the first Monster to gain 20 Victory Points. Or, get your claws out and eliminate your enemies. The last one standing claims victory!"),
     ],
 
     // Games categories
