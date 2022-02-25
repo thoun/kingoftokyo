@@ -887,17 +887,19 @@ var CurseCards = /** @class */ (function () {
         var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
         var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
         var snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));
-        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div class=\"effect-text\">" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div>" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div>" + snakeEffect + "</div></div>";
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div class=\"effect-text\">" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div class=\"effect-text\">" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div class=\"effect-text\">" + snakeEffect + "</div></div>";
         Array.from(cardDiv.getElementsByClassName('effect-wrapper')).forEach(function (wrapperDiv) {
             if (wrapperDiv.children[0].clientHeight > wrapperDiv.clientHeight) {
                 wrapperDiv.style.fontSize = '6pt';
             }
         });
-        var permanentEffectWrapper = cardDiv.getElementsByClassName('permanent-effect-wrapper')[0];
-        var permanentEffectText = permanentEffectWrapper.getElementsByClassName('effect-text')[0];
-        if (permanentEffectText.clientHeight > permanentEffectWrapper.clientHeight) {
-            permanentEffectText.classList.add('overflow');
-        }
+        ['permanent', 'ankh', 'snake'].forEach(function (effectType) {
+            var effectWrapper = cardDiv.getElementsByClassName(effectType + "-effect-wrapper")[0];
+            var effectText = effectWrapper.getElementsByClassName('effect-text')[0];
+            if (effectText.clientHeight > effectWrapper.clientHeight) {
+                effectText.classList.add('overflow', effectType);
+            }
+        });
     };
     return CurseCards;
 }());

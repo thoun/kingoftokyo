@@ -112,7 +112,7 @@ trait DebugUtilTrait {
 
         // anubis
         if ($this->isAnubisExpansion()) {
-            $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+            $this->debugSetCurseCardInTable(BUILDERS_UPRISING_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
             //$this->changeGoldenScarabOwner(2343493);
         }

@@ -132,11 +132,14 @@ $description-size: 7pt;
 
         .effect-text {
             &.overflow {
-                background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
-                border: 2px solid #42aad1;
+                background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
                 margin: -5px;
                 padding: 2px;
                 border-radius: 7px;
+                &.permanent {
+                    background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
+                    border: 2px solid #42aad1;
+                }
             }
         }
     }

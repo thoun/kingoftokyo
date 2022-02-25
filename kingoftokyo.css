@@ -780,11 +780,14 @@
   margin-bottom: -2px;
 }
 .stockitem .effect-wrapper .effect-text.overflow, #deck .effect-wrapper .effect-text.overflow {
-  background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
-  border: 2px solid #42aad1;
+  background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
   margin: -5px;
   padding: 2px;
   border-radius: 7px;
+}
+.stockitem .effect-wrapper .effect-text.overflow.permanent, #deck .effect-wrapper .effect-text.overflow.permanent {
+  background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
+  border: 2px solid #42aad1;
 }
 .stockitem .permanent-effect-wrapper, #deck .permanent-effect-wrapper {
   left: 9px;

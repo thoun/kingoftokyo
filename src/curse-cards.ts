@@ -147,8 +147,8 @@ class CurseCards {
         </div>
         
         <div class="effect-wrapper permanent-effect-wrapper"><div class="effect-text">${permanentEffect}</div></div>
-        <div class="effect-wrapper ankh-effect-wrapper"><div>${ankhEffect}</div></div>
-        <div class="effect-wrapper snake-effect-wrapper"><div>${snakeEffect}</div></div>`;
+        <div class="effect-wrapper ankh-effect-wrapper"><div class="effect-text">${ankhEffect}</div></div>
+        <div class="effect-wrapper snake-effect-wrapper"><div class="effect-text">${snakeEffect}</div></div>`;
 
         (Array.from(cardDiv.getElementsByClassName('effect-wrapper')) as HTMLDivElement[]).forEach(wrapperDiv => {
             if (wrapperDiv.children[0].clientHeight > wrapperDiv.clientHeight) {
@@ -156,10 +156,12 @@ class CurseCards {
             }
         });
 
-        const permanentEffectWrapper = cardDiv.getElementsByClassName('permanent-effect-wrapper')[0] as HTMLDivElement;
-        const permanentEffectText = permanentEffectWrapper.getElementsByClassName('effect-text')[0] as HTMLDivElement;
-        if (permanentEffectText.clientHeight > permanentEffectWrapper.clientHeight) {
-            permanentEffectText.classList.add('overflow');
-        }
+        ['permanent', 'ankh', 'snake'].forEach(effectType => {
+            const effectWrapper = cardDiv.getElementsByClassName(`${effectType}-effect-wrapper`)[0] as HTMLDivElement;
+            const effectText = effectWrapper.getElementsByClassName('effect-text')[0] as HTMLDivElement;
+            if (effectText.clientHeight > effectWrapper.clientHeight) {
+                effectText.classList.add('overflow', effectType);
+            }
+        });
     }
 }
