@@ -96,22 +96,16 @@ class DiceManager {
     public setDiceForDiscardDie(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, action: 'discard' | 'rerollOrDiscard' | 'rerollDice' = 'discard') {
         this.action = action;
         this.selectedDice = [];
-
-        /*if (this.dice.length) { force die for event
-            this.setSelectableDice(selectableDice);
-            return;
-        }*/
-
-        this.dice?.forEach(die => this.removeDice(die));  
+        
         this.clearDiceHtml();
         this.dice = dice;
         
         dice.forEach(die => {
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
+            console.log(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
-        console.log(action, selectableDice);
     }
 
     public setDiceForSelectHeartAction(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) { 

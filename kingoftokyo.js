@@ -1790,23 +1790,17 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.setDiceForDiscardDie = function (dice, selectableDice, canHealWithDice, action) {
         var _this = this;
-        var _a;
         if (action === void 0) { action = 'discard'; }
         this.action = action;
         this.selectedDice = [];
-        /*if (this.dice.length) { force die for event
-            this.setSelectableDice(selectableDice);
-            return;
-        }*/
-        (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
             _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
+            console.log(die, canHealWithDice, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
-        console.log(action, selectableDice);
     };
     DiceManager.prototype.setDiceForSelectHeartAction = function (dice, selectableDice, canHealWithDice) {
         var _this = this;
