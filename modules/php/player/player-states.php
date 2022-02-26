@@ -15,6 +15,8 @@ trait PlayerStateTrait {
     function stStartTurn() {
         $playerId = $this->getActivePlayerId();
 
+        // TODO skip turn here if player is dead
+
         $this->incStat(1, 'turnsNumber');
         $this->incStat(1, 'turnsNumber', $playerId);
 
@@ -377,6 +379,19 @@ trait PlayerStateTrait {
         $this->gamestate->nextState('nextPlayer');
     }
 
+    private function activeNextAlivePlayer() {
+        if ($this->getRemainingPlayers() < 1) { // to avoid infinite loop
+            return $this->getActivePlayerId();
+        }
+
+        $playerId = $this->activeNextPlayer();
+        while ($this->getPlayer($playerId)->eliminated) {
+            $playerId = $this->activeNextPlayer();
+        }
+
+        return $playerId;
+    }
+
     private function activateNextPlayer() {
         $frenzyExtraTurnForOpportunist = intval($this->getGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST));
         $playerBeforeFrenzyExtraTurnForOpportunist = intval($this->getGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST));
@@ -393,10 +408,10 @@ trait PlayerStateTrait {
 
         } else if ($playerBeforeFrenzyExtraTurnForOpportunist > 0) {
             $this->gamestate->changeActivePlayer($playerBeforeFrenzyExtraTurnForOpportunist);
-            $playerId = $this->activeNextPlayer();
+            $playerId = $this->activeNextAlivePlayer();
             $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
         } else {
-            $playerId = $this->activeNextPlayer();
+            $playerId = $this->activeNextAlivePlayer();
         }
 
         return $playerId;
