@@ -213,7 +213,11 @@ trait PlayerStateTrait {
         if (!$redirects) {
             $this->eliminatePlayers($playerId);
             
-            $this->jumpToState($redirectAfterStartTurn);
+            if (!$this->getPlayer($playerId)->eliminated) {
+                $this->jumpToState($redirectAfterStartTurn);
+            } else {
+                $this->jumpToState(ST_NEXT_PLAYER);
+            }
         }
     }
 
