@@ -3766,7 +3766,6 @@ var KingOfTokyo = /** @class */ (function () {
         disabledCardsIds.forEach(function (id) {
             var disabled = disabledIds.some(function (disabledId) { return disabledId == id; }) || cardsCosts[id] > playerEnergy;
             var cardDiv = document.querySelector("div[id$=\"_item_" + id + "\"]");
-            console.log("div[id$=\"_item_" + id + "\"]", cardDiv, disabled);
             if (cardDiv && cardDiv.closest('.card-stock') !== null) {
                 dojo.toggleClass(cardDiv, 'disabled', disabled);
             }

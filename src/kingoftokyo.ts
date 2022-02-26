@@ -1146,7 +1146,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         disabledCardsIds.forEach(id => {
             const disabled = disabledIds.some(disabledId => disabledId == id) || cardsCosts[id] > playerEnergy;
             const cardDiv = document.querySelector(`div[id$="_item_${id}"]`) as HTMLElement;
-            console.log(`div[id$="_item_${id}"]`, cardDiv, disabled);
             if (cardDiv && cardDiv.closest('.card-stock') !== null) {
                 dojo.toggleClass(cardDiv, 'disabled', disabled);
             }

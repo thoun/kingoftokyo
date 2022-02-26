@@ -251,7 +251,7 @@ trait CurseCardsUtilTrait {
     function getPlayerIdWithGoldenScarab() {
         $playerId = intval($this->getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
 
-        if ($this->getPlayer($playerId)->eliminated) {
+        if (!$playerId || $this->getPlayer($playerId)->eliminated) {
             return null;
         }
 

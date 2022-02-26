@@ -168,10 +168,11 @@ $description-size: 7pt;
         color: black;
     }
     
-    &.disabled {
-        filter: contrast(0.6);
-        cursor: not-allowed;
+    &[id$="goldenscarab"] {
+        pointer-events: none;
     }
+
+    &cards-2343493_item_goldenscarab
 
     .card-token {
         position: absolute;

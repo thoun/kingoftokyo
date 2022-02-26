@@ -15,12 +15,12 @@ trait DebugUtilTrait {
 
         // base game
 
-        //$this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
-        //$this->debugSetEnergy(3);
+        //$this->debugSetEnergy(5);
         //$this->debugSetPoints(8);
         //$this->debugSetHealth(8);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 2);
         //$this->debugSetPlayerPoints(2343493, 1);
@@ -100,8 +100,8 @@ trait DebugUtilTrait {
             $this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
             $this->debugSetCardInHand(GHOST_CARD, 2343492);
             //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-            $this->debugSetCardInHand(DEVIL_CARD, 2343493);
-            $this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
+            //$this->debugSetCardInHand(DEVIL_CARD, 2343493);
+            //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
             //$this->debugSetCardInHand(PRINCESS_CARD, 2343492);
             //$this->debugSetCardInHand(WITCH_CARD, 2343494);
@@ -115,9 +115,9 @@ trait DebugUtilTrait {
 
         // anubis
         if ($this->isAnubisExpansion()) {
-            $this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
-            //$this->changeGoldenScarabOwner(2343494);
+            $this->changeGoldenScarabOwner(2343493);
         }
 
         // king kong
