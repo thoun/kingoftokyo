@@ -164,7 +164,8 @@ trait CurseCardsUtilTrait {
                 $this->snakeEffectDiscardKeepCard($playerId);
                 break;
             case PHARAONIC_SKIN_CURSE_CARD:
-                if ($playerId != $this->getPlayerIdWithGoldenScarab() && count($this->argGiveSymbols()['combinations']) > 0) {
+                $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
+                if ($playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab && count($this->argGiveSymbols()['combinations']) > 0) {
                     $this->jumpToState(ST_PLAYER_GIVE_SYMBOLS);
                 }
                 break;
@@ -248,7 +249,13 @@ trait CurseCardsUtilTrait {
     }
 
     function getPlayerIdWithGoldenScarab() {
-        return intval($this->getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+        $playerId = intval($this->getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
+
+        if ($this->getPlayer($playerId)->eliminated) {
+            return null;
+        }
+
+        return $playerId;
     }
 
     function getPlayersIdsWithoutGoldenScarab() {

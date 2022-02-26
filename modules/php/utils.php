@@ -735,7 +735,10 @@ trait UtilTrait {
         if ($this->isAnubisExpansion() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
             $dieOfFate = $this->getDieOfFate();
             if ($dieOfFate->value == 3) {
-                $playerGettingEnergyOrHeart = $this->getPlayerIdWithGoldenScarab();
+                $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
+                if ($playerIdWithGoldenScarab != null) {
+                    $playerGettingEnergyOrHeart = $playerIdWithGoldenScarab;
+                }
             }
         }
 

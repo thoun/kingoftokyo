@@ -62,7 +62,8 @@ trait CurseCardsStateTrait {
         }
 
         $nextState = ST_RESOLVE_DICE;
-        if ($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD && $playerId != $this->getPlayerIdWithGoldenScarab()) {
+        $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
+        if ($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD && $playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab) {
             $nextState = ST_MULTIPLAYER_REROLL_DICE;
         }
 

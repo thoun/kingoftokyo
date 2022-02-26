@@ -3675,7 +3675,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables = this.getOrderedPlayers().map(function (player) {
             var playerId = Number(player.id);
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(_this, player, playerWithGoldenScarab); // TODOAN replace by player.cards
+            return new PlayerTable(_this, player, playerWithGoldenScarab);
         });
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
