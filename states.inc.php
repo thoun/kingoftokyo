@@ -361,6 +361,7 @@ $playerActionsGameStates = [
         "description" => clienttranslate('${actplayer} must select the face of the extra die'),
         "descriptionmyturn" => clienttranslate('${you} must select the face of the extra die'),
         "type" => "activeplayer",
+        "args" => "argSelectExtraDie",
         "possibleactions" => [ "selectExtraDie" ],
         "transitions" => [
             "next" => ST_RESOLVE_DICE,

@@ -111,7 +111,7 @@ class KingOfTokyo extends Table {
             STATE_AFTER_MIMIC_CHOOSE => 31,
             RAGING_FLOOD_EXTRA_DIE => 32,
             FALSE_BLESSING_USED_DIE => 33,
-            DICE_NUMBER => 34,
+            RAGING_FLOOD_EXTRA_DIE_SELECTED => 35,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -228,6 +228,7 @@ class KingOfTokyo extends Table {
         $this->setGameStateInitialValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
         $this->setGameStateInitialValue(STATE_AFTER_MIMIC_CHOOSE, 0);
         $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE, 0);
+        $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE_SELECTED, 0);
         $this->setGameStateInitialValue(FALSE_BLESSING_USED_DIE, 0);
 
         // Init game statistics

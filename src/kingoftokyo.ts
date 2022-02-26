@@ -202,6 +202,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringDiscardDie(args.args);
                 break;
+            case 'selectExtraDie': 
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringSelectExtraDie(args.args);
+                break;
             case 'discardKeepCard':
                 this.onEnteringDiscardKeepCard(args.args);
                 break;
@@ -363,6 +367,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringDiscardDie(args: EnteringDiceArgs) {
+        if (args.dice?.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
+        }
+    }
+
+    private onEnteringSelectExtraDie(args: EnteringDiceArgs) {
         if (args.dice?.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
         }

@@ -32,6 +32,7 @@ trait PlayerStateTrait {
         $this->setGameStateValue(CLOWN_ACTIVATED, 0);
         $this->setGameStateValue(CHEERLEADER_SUPPORT, 0);
         $this->setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 0);
+        $this->setGameStateValue(RAGING_FLOOD_EXTRA_DIE_SELECTED, 0);
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);
@@ -219,7 +220,6 @@ trait PlayerStateTrait {
     function stInitialDiceRoll() {
         $playerId = $this->getActivePlayerId();
 
-        $this->setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
         $this->throwDice($playerId, true);
 
         $this->gamestate->nextState('');

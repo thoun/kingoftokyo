@@ -167,11 +167,7 @@ trait DiceUtilTrait {
         $this->DbQuery( "UPDATE dice SET `rolled` = false");
     }
 
-    function getDiceNumber(int $playerId, $compute = false) {
-        /*if (!$compute) {
-            return intval($this->getGameStateValue(DICE_NUMBER)) + intval($this->getGameStateValue(RAGING_FLOOD_EXTRA_DIE));
-        }*/
-
+    function getDiceNumber(int $playerId) {
         $add = $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD);
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
@@ -188,6 +184,9 @@ trait DiceUtilTrait {
     
             if ($curseCardType == FALSE_BLESSING_CURSE_CARD) {
                 $add += 2;
+            }
+            if (boolval($this->getGameStateValue(RAGING_FLOOD_EXTRA_DIE_SELECTED))) {
+                $add += 1;
             }
         }
 

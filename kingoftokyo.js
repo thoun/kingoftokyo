@@ -2933,6 +2933,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringDiscardDie(args.args);
                 break;
+            case 'selectExtraDie':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringSelectExtraDie(args.args);
+                break;
             case 'discardKeepCard':
                 this.onEnteringDiscardKeepCard(args.args);
                 break;
@@ -3070,6 +3074,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringDiscardDie = function (args) {
+        var _a;
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
+        }
+    };
+    KingOfTokyo.prototype.onEnteringSelectExtraDie = function (args) {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);

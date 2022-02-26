@@ -112,9 +112,9 @@ trait DebugUtilTrait {
 
         // anubis
         if ($this->isAnubisExpansion()) {
-            $this->debugSetCurseCardInTable(KHEPRI_S_REBELLION_CURSE_CARD);
+            $this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".FALSE_BLESSING_CURSE_CARD);
-            $this->changeGoldenScarabOwner(2343493);
+            //$this->changeGoldenScarabOwner(2343493);
         }
 
         // king kong
@@ -147,7 +147,7 @@ trait DebugUtilTrait {
 
         $this->gamestate->changeActivePlayer(2343492);
         //$this->eliminatePlayer(2343493);
-        $this->eliminatePlayer(2343494);
+        //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
         //$this->eliminatePlayer(2343497);
     }

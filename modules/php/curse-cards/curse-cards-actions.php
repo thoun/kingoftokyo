@@ -107,9 +107,18 @@ trait CurseCardsActionTrait {
 
         $playerId = $this->getActivePlayerId(); 
 
+        $this->setGameStateValue(RAGING_FLOOD_EXTRA_DIE_SELECTED, 1);
+
         $dice = $this->getPlayerRolledDice($playerId, false, false, false);
-        $dieId = end($dice)->id; 
-        $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE dice_id = $dieId");        
+        $die = end($dice);
+        $dieId = $die->id; 
+        $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE dice_id = $dieId");
+
+        $this->notifyAllPlayers("selectExtraDie", clienttranslate('${player_name} choses ${die_face} as the extra die'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'die_face' => $this->getDieFaceLogName($face, $die->type),
+        ]);
 
         $this->gamestate->nextState('next');
     }

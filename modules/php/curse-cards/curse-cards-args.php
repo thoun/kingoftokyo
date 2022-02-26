@@ -39,6 +39,15 @@ trait CurseCardsArgTrait {
         ];
     }
 
+    function argSelectExtraDie() {
+        $playerId = $this->getActivePlayerId();
+
+        return [
+            'dice' => $this->getPlayerRolledDice($playerId, true, true, false),
+            'canHealWithDice' => $this->canHealWithDice($playerId),
+        ];
+    }
+
     function argDiscardKeepCard() {
         $playerId = $this->getActivePlayerId();
 
