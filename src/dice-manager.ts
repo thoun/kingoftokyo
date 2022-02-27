@@ -100,12 +100,12 @@ class DiceManager {
         this.clearDiceHtml();
         this.dice = dice.filter(die => die.value > 0);
         
-        // TODOAN temp
+        // TODOAN/TODOCY temp
         dice.filter(die => die.value > 0).forEach(die => {
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
-        });
-        this.setSelectableDice(selectableDice.filter(die => die.value > 0));
+        }); // TODOAN/TODOCY temp
+        this.setSelectableDice(selectableDice?.filter(die => die.value > 0));
     }
 
     public setDiceForSelectHeartAction(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) { 

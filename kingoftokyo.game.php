@@ -111,6 +111,7 @@ class KingOfTokyo extends Table {
             STATE_AFTER_MIMIC_CHOOSE => 31,
             RAGING_FLOOD_EXTRA_DIE => 32,
             FALSE_BLESSING_USED_DIE => 33,
+            DICE_NUMBER => 34,
             RAGING_FLOOD_EXTRA_DIE_SELECTED => 35,
 
             PICK_MONSTER_OPTION => 100,

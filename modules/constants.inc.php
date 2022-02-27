@@ -123,6 +123,7 @@ define('PLAYER_WITH_GOLDEN_SCARAB', 'PlayerWithGoldenScarab');
 define('STATE_AFTER_MIMIC_CHOOSE', 'StateAfterMimicChoose');
 define('RAGING_FLOOD_EXTRA_DIE', 'RagingFloodExtraDie');
 define('FALSE_BLESSING_USED_DIE', 'FalseBlessingUsedDie');
+define('DICE_NUMBER', 'DiceNumber');
 define('RAGING_FLOOD_EXTRA_DIE_SELECTED', 'RagingFloodExtraDieSelected');
 
 /*

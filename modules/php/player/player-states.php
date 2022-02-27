@@ -224,6 +224,7 @@ trait PlayerStateTrait {
     function stInitialDiceRoll() {
         $playerId = $this->getActivePlayerId();
 
+        $this->setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
         $this->throwDice($playerId, true);
 
         $this->gamestate->nextState('');
