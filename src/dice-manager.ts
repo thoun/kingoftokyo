@@ -98,14 +98,14 @@ class DiceManager {
         this.selectedDice = [];
         
         this.clearDiceHtml();
-        this.dice = dice;
+        this.dice = dice.filter(die => die.value > 0);
         
-        dice.forEach(die => {
+        // TODOAN temp
+        dice.filter(die => die.value > 0).forEach(die => {
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
-            console.log(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
-        this.setSelectableDice(selectableDice);
+        this.setSelectableDice(selectableDice.filter(die => die.value > 0));
     }
 
     public setDiceForSelectHeartAction(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) { 
@@ -400,6 +400,7 @@ class DiceManager {
         const dieDiv = document.getElementById(`dice${die.id}`);
         dieDiv?.parentNode.removeChild(dieDiv);
 
+        console.log(destinationId, $(destinationId));
         dojo.place(html, destinationId);
     }
 

@@ -1796,13 +1796,13 @@ var DiceManager = /** @class */ (function () {
         this.action = action;
         this.selectedDice = [];
         this.clearDiceHtml();
-        this.dice = dice;
-        dice.forEach(function (die) {
+        this.dice = dice.filter(function (die) { return die.value > 0; });
+        // TODOAN temp
+        dice.filter(function (die) { return die.value > 0; }).forEach(function (die) {
             _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
-            console.log(die, canHealWithDice, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
         });
-        this.setSelectableDice(selectableDice);
+        this.setSelectableDice(selectableDice.filter(function (die) { return die.value > 0; }));
     };
     DiceManager.prototype.setDiceForSelectHeartAction = function (dice, selectableDice, canHealWithDice) {
         var _this = this;
@@ -2069,6 +2069,7 @@ var DiceManager = /** @class */ (function () {
         // security to destroy pre-existing die with same id
         var dieDiv = document.getElementById("dice" + die.id);
         dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
+        console.log(destinationId, $(destinationId));
         dojo.place(html, destinationId);
     };
     DiceManager.prototype.createAndPlaceDiceHtml = function (die, canHealWithDice, destinationId) {
