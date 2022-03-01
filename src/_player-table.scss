@@ -8,7 +8,6 @@
     box-sizing: border-box;
 
     &.eliminated {
-        // opacity: 0.5;
         filter: grayscale(1);
     }
 

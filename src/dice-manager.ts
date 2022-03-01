@@ -400,7 +400,6 @@ class DiceManager {
         const dieDiv = document.getElementById(`dice${die.id}`);
         dieDiv?.parentNode.removeChild(dieDiv);
 
-        console.log(destinationId, $(destinationId));
         dojo.place(html, destinationId);
     }
 

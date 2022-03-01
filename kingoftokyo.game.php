@@ -443,7 +443,7 @@ class KingOfTokyo extends Table {
         $result['powerUpExpansion'] = $isPowerUpExpansion;
         $result['darkEdition'] = $isDarkEdition;
         if ($isAnubisExpansion) {
-            $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab();
+            $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab(true);
             $result['curseCard'] = $this->getCurseCard();
         }
 

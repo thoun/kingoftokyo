@@ -168,7 +168,7 @@ trait DiceUtilTrait {
     }
 
     function getDiceNumber(int $playerId, $compute = false) {
-        /*if (!$compute && $this->getGameStateValue(DICE_NUMBER) > 0) {
+        /*if (!$compute && $this->getGameStateValue(DICE_NUMBER) > 0) { // TODOAN/TODOCY remove second test
             return intval($this->getGameStateValue(DICE_NUMBER)) + intval($this->getGameStateValue(RAGING_FLOOD_EXTRA_DIE_SELECTED));
         }*/
 

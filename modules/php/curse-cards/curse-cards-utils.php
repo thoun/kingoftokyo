@@ -233,7 +233,7 @@ trait CurseCardsUtilTrait {
     }
 
     function changeGoldenScarabOwner(int $playerId) {
-        $previousOwner = $this->getPlayerIdWithGoldenScarab();
+        $previousOwner = $this->getPlayerIdWithGoldenScarab(true);
 
         if ($previousOwner == $playerId) {
             return;
@@ -248,10 +248,10 @@ trait CurseCardsUtilTrait {
         ]);
     }
 
-    function getPlayerIdWithGoldenScarab() {
+    function getPlayerIdWithGoldenScarab(bool $ignoreElimination = false) {
         $playerId = intval($this->getGameStateValue(PLAYER_WITH_GOLDEN_SCARAB));
 
-        if ($playerId == 0 || $this->getPlayer($playerId)->eliminated) {
+        if ($playerId == 0 || (!$ignoreElimination && $this->getPlayer($playerId)->eliminated)) {
             return null;
         }
 

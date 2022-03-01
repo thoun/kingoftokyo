@@ -1330,8 +1330,9 @@ var PlayerTable = /** @class */ (function () {
         }, delay);
     };
     PlayerTable.prototype.eliminatePlayer = function () {
+        var _this = this;
         this.setEnergy(0);
-        this.cards.removeAll();
+        this.cards.items.filter(function (item) { return item.id !== 'goldenscarab'; }).forEach(function (item) { return _this.cards.removeFromStockById(item.id); });
         if (document.getElementById("monster-figure-" + this.playerId)) {
             this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
         }
@@ -2069,7 +2070,6 @@ var DiceManager = /** @class */ (function () {
         // security to destroy pre-existing die with same id
         var dieDiv = document.getElementById("dice" + die.id);
         dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
-        console.log(destinationId, $(destinationId));
         dojo.place(html, destinationId);
     };
     DiceManager.prototype.createAndPlaceDiceHtml = function (die, canHealWithDice, destinationId) {

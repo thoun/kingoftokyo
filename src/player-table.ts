@@ -196,7 +196,7 @@ class PlayerTable {
 
     public eliminatePlayer() {
         this.setEnergy(0);
-        this.cards.removeAll();
+        this.cards.items.filter(item => item.id !== 'goldenscarab').forEach(item => this.cards.removeFromStockById(item.id));
         if (document.getElementById(`monster-figure-${this.playerId}`)) {
             (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);
         }
