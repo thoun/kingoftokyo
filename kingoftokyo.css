@@ -813,14 +813,18 @@
 .stockitem[id$=goldenscarab], #deck[id$=goldenscarab] {
   pointer-events: none;
 }
-.stockitemcards-2343493_item_goldenscarab .card-token, #deckcards-2343493_item_goldenscarab .card-token {
+.stockitem.disabled, #deck.disabled {
+  filter: contrast(0.6);
+  cursor: not-allowed;
+}
+.stockitem .card-token, #deck .card-token {
   position: absolute;
   z-index: 12;
 }
-.stockitemcards-2343493_item_goldenscarab .card-token.mimic, #deckcards-2343493_item_goldenscarab .card-token.mimic {
+.stockitem .card-token.mimic, #deck .card-token.mimic {
   z-index: 13;
 }
-.stockitemcards-2343493_item_goldenscarab .card-token.mimic-tile, #deckcards-2343493_item_goldenscarab .card-token.mimic-tile {
+.stockitem .card-token.mimic-tile, #deck .card-token.mimic-tile {
   z-index: 11;
   left: 0;
   top: 32px;

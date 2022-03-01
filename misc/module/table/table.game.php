@@ -310,7 +310,7 @@ abstract class Table extends APP_GameClass {
         if ($deck_definition == "module.common.deck" ) {
             echo 'getNew deck';
             $deck = new stdClass();
-            $deck->init = function () {};
+            $deck->init = function ($tableName) {};
             $deck->autoshuffle = false;
             return $deck;
         }
