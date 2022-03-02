@@ -1797,13 +1797,12 @@ var DiceManager = /** @class */ (function () {
         this.action = action;
         this.selectedDice = [];
         this.clearDiceHtml();
-        this.dice = dice.filter(function (die) { return die.value > 0; });
-        // TODOAN/TODOCY temp
-        dice.filter(function (die) { return die.value > 0; }).forEach(function (die) {
+        this.dice = dice;
+        dice.forEach(function (die) {
             _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
-        }); // TODOAN/TODOCY temp
-        this.setSelectableDice(selectableDice === null || selectableDice === void 0 ? void 0 : selectableDice.filter(function (die) { return die.value > 0; }));
+        });
+        this.setSelectableDice(selectableDice);
     };
     DiceManager.prototype.setDiceForSelectHeartAction = function (dice, selectableDice, canHealWithDice) {
         var _this = this;

@@ -98,14 +98,13 @@ class DiceManager {
         this.selectedDice = [];
         
         this.clearDiceHtml();
-        this.dice = dice.filter(die => die.value > 0);
+        this.dice = dice;
         
-        // TODOAN/TODOCY temp
-        dice.filter(die => die.value > 0).forEach(die => {
+        dice.forEach(die => {
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
-        }); // TODOAN/TODOCY temp
-        this.setSelectableDice(selectableDice?.filter(die => die.value > 0));
+        });
+        this.setSelectableDice(selectableDice);
     }
 
     public setDiceForSelectHeartAction(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) { 
