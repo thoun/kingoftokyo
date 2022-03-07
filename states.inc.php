@@ -141,7 +141,11 @@ $playerActionsGameStates = [
     ST_PLAYER_CHOOSE_INITIAL_CARD => [
         "name" => "chooseInitialCard",
         "description" => clienttranslate('${actplayer} must choose a Costume card'),
+        "descriptionevo" => '', /* client TODOPU translate('${actplayer} must choose an Evolution card'), */
+        "descriptionevocostume" => '', /* client TODOPU translate('${actplayer} must choose a Costume and an Evolution card'), */
         "descriptionmyturn" => clienttranslate('${you} must choose a Costume card'),
+        "descriptionmyturnevo" => '', /* client TODOPU translate('${you} must choose an Evolution card'), */
+        "descriptionmyturnevocostume" => '', /* client TODOPU translate('${you} must choose a Costume and an Evolution card'), */
         "type" => "activeplayer",
         "action" => "stChooseInitialCard",
         "args" => "argChooseInitialCard",
@@ -494,6 +498,16 @@ $playerActionsGameStates = [
             "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
             "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
         ],
+    ],
+
+    ST_CHOOSE_EVOLUTION_CARD => [
+        "name" => "chooseEvolutionCard",
+        "description" => '', /* client TODOPU translate('${actplayer} must choose an Evolution card'),*/
+        "descriptionmyturn" => '', /* client TODOPU translate('${you} must choose an Evolution card'),*/
+        "type" => "activeplayer",
+        "args" => "argChooseEvolutionCard",
+        "possibleactions" => [ "chooseEvolutionCard" ],
+        "transitions" => [],
     ],
 
     ST_MULTIPLAYER_CANCEL_DAMAGE => [

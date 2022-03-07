@@ -49,9 +49,11 @@
     public function chooseInitialCard() {
         self::setAjaxMode();
 
-        $id = self::getArg("id", AT_posint, true);
+        $costumeId = self::getArg("id", AT_posint, false);
+        $evolutionId = self::getArg("evolutionId", AT_posint, false);
 
-        $this->game->chooseInitialCard($id);
+
+        $this->game->chooseInitialCard($costumeId, $evolutionId);
 
         self::ajaxResponse();
     }
@@ -343,6 +345,16 @@
         $heartDieChoices = json_decode(base64_decode(self::getArg("selections", AT_base64, true)));
 
         $this->game->applyHeartDieChoices($heartDieChoices);
+
+        self::ajaxResponse();
+    }
+  	
+    public function chooseEvolutionCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->chooseEvolutionCard($id);
 
         self::ajaxResponse();
     }

@@ -185,8 +185,27 @@
     .player-evolution-cards {
         width: 100%;
 
-        &.empty {
+        &.empty:not(.hand) {
             max-height: 0px;
+        }
+
+        &.hand {
+            background: #FFFFFFCC;
+
+            &::before {
+                content: '';
+                width: 48px;
+                height: 48px;
+                background: url('img/hand.svg');
+                position: absolute;
+                top: 50%;
+                left: -20px;
+                margin-top: -24px;
+            }            
+
+            &.empty {
+                max-height: 48px;
+            }
         }
     }
 
@@ -232,6 +251,15 @@
             margin-left: -50px;
             box-shadow: 0 0 2px 1px rgba(0,0,0,0.7);
         }
+    }
+
+    .pick-evolution-cards {
+        position: absolute;
+        top: 42px;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
     }
 }
 

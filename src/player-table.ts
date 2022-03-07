@@ -18,6 +18,7 @@ class PlayerTable {
     public wickednessTiles: Stock;
     public hiddenEvolutionCards: Stock;
     public visibleEvolutionCards: Stock;
+    public pickEvolutionCards: Stock;
 
     constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, playerWithGoldenScarab: boolean) {
         this.playerId = Number(player.id);
@@ -51,7 +52,7 @@ class PlayerTable {
         }
         if (game.isPowerUpExpansion()) {
             html += `
-            <div id="hidden-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.hiddenEvolutions?.length ? '' : 'empty'}"></div>
+            <div id="hidden-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards hand ${player.hiddenEvolutions?.length ? '' : 'empty'}"></div>
             <div id="visible-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.visibleEvolutions?.length ? '' : 'empty'}"></div>
             `;
         }
@@ -154,6 +155,10 @@ class PlayerTable {
 
     public leaveTokyo() {  
         transitionToObjectAndAttach(this.game, document.getElementById(`monster-figure-${this.playerId}`), `monster-board-${this.playerId}-figure-wrapper`, this.game.getZoom());
+    }
+
+    public setVisibleCardsSelectionClass(visible: boolean) {
+        document.getElementById(`player-table-${this.playerId}`).classList.toggle('double-selection', visible);
     }
 
     public removeCards(cards: Card[]) {
@@ -356,5 +361,35 @@ class PlayerTable {
         const sourceStockItemId = `${previousOwnerStock.container_div.id}_item_goldenscarab`;
         this.cards.addToStockWithId(999, 'goldenscarab', sourceStockItemId);
         previousOwnerStock.removeFromStockById(`goldenscarab`);
+    }
+    
+    public showEvolutionPickStock(cards: EvolutionCard[]) {
+        if (!this.pickEvolutionCards) { 
+            dojo.place(`<div id="pick-evolution${this.playerId}" class="evolution-card-stock player-evolution-cards pick-evolution-cards"></div>`, `monster-board-wrapper-${this.playerId}`);
+
+            this.pickEvolutionCards = new ebg.stock() as Stock;
+            this.pickEvolutionCards.setSelectionAppearance('class');
+            this.pickEvolutionCards.selectionClass = 'no-visible-selection-except-double-selection';
+            this.pickEvolutionCards.create(this.game, $(`pick-evolution${this.playerId}`), CARD_WIDTH, CARD_WIDTH);
+            this.pickEvolutionCards.setSelectionMode(1);
+            this.pickEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+            this.pickEvolutionCards.image_items_per_row = 10;
+            this.pickEvolutionCards.centerItems = true;
+            dojo.connect(this.pickEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.chooseEvolutionCardClick(Number(item_id)));
+        } else {
+            document.getElementById(`pick-evolution${this.playerId}`).style.display = 'block';
+        }
+
+        this.game.evolutionCards.setupCards([this.pickEvolutionCards]);
+        //this.game.evolutionCards.addCardsToStock(this.pickEvolutionCards, cards);
+        cards.forEach(card => this.pickEvolutionCards.addToStockWithId(card.type, '' + card.id));
+    }
+
+    public hideEvolutionPickStock() {
+        const div = document.getElementById(`pick-evolution${this.playerId}`);
+        if (div) {
+            document.getElementById(`pick-evolution${this.playerId}`).style.display = 'none';
+            this.pickEvolutionCards.removeAll();
+        }
     }
 }

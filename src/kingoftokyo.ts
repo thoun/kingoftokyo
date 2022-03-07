@@ -230,6 +230,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringResolveHeartDice(args.args, (this as any).isCurrentPlayerActive());
                 break;
 
+            case 'chooseEvolutionCard':
+                this.onEnteringChooseEvolutionCard(args.args,  (this as any).isCurrentPlayerActive());
+                break;   
+
             case 'stealCostumeCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringStealCostumeCard(args.args, (this as any).isCurrentPlayerActive());
@@ -290,10 +294,25 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringChooseInitialCard(args: EnteringChooseInitialCardArgs) {
-        this.tableCenter.setInitialCards(args.cards);
+        let suffix = '';
+        if (args.chooseEvolution) {
+            suffix = args.chooseCostume ? 'evocostume' : 'evo';
+        }
+        this.setGamestateDescription(suffix);
+
+        if (args.chooseCostume) {
+            this.tableCenter.setInitialCards(args.cards);
+            this.tableCenter.setVisibleCardsSelectionClass(args.chooseEvolution);
+        }
 
         if ((this as any).isCurrentPlayerActive()) {
             this.tableCenter.setVisibleCardsSelectionMode(1);
+
+            if (args.chooseEvolution) {
+                const playerTable = this.getPlayerTable(this.getPlayerId());
+                playerTable.showEvolutionPickStock(args._private.evolutions);
+                playerTable.setVisibleCardsSelectionClass(args.chooseCostume);
+            }
         }
     }
 
@@ -505,6 +524,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private onEnteringChooseEvolutionCard(args: EnteringChooseEvolutionCardArgs, isCurrentPlayerActive: boolean) {
+        if (isCurrentPlayerActive) {
+            this.getPlayerTable(this.getPlayerId()).showEvolutionPickStock(args._private.evolutions);
+        }
+    }
+
     private onEnteringStealCostumeCard(args: EnteringStealCostumeCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
             this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
@@ -558,6 +583,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch (stateName) {
             case 'chooseInitialCard':                
                 this.tableCenter.setVisibleCardsSelectionMode(0);
+                this.tableCenter.setVisibleCardsSelectionClass(false);
+                this.playerTables.forEach(playerTable => {
+                    playerTable.hideEvolutionPickStock();
+                    playerTable.setVisibleCardsSelectionClass(false);
+                });
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -596,7 +626,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'resolveSmashDice':
                 this.diceManager.removeAllDice();
-                break;            
+                break;
+            case 'chooseEvolutionCard':
+                this.playerTables.forEach(playerTable => playerTable.hideEvolutionPickStock());
+                break;         
             case 'leaveTokyo':
                 this.removeSkipBuyPhaseToggle();
                 break;
@@ -682,6 +715,15 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'chooseInitialCard':
+                    if (this.isInitialCardDoubleSelection()) {
+                        (this as any).addActionButton('confirmInitialCards_button', _("Confirm"), () => this.chooseInitialCard(
+                            Number(this.tableCenter.getVisibleCards().getSelectedItems()[0]?.id),
+                            Number(this.getPlayerTable(this.getPlayerId()).pickEvolutionCards.getSelectedItems()[0]?.id),
+                        ));
+                        document.getElementById(`confirmInitialCards_button`).classList.add('disabled');
+                    }
+                    break;
                 case 'changeMimickedCardWickednessTile':
                     (this as any).addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), 'skipChangeMimickedCardWickednessTile');
 
@@ -1062,6 +1104,17 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.playerTables.find(playerTable => playerTable.playerId === Number(playerId));
     }
 
+    private isInitialCardDoubleSelection() {
+        const args = this.gamedatas.gamestate.args as EnteringChooseInitialCardArgs;
+        return args.chooseCostume && args.chooseEvolution;
+    }
+
+    private confirmDoubleSelectionCheckState() {
+        const costumeSelected = this.tableCenter.getVisibleCards()?.getSelectedItems().length === 1;
+        const evolutionSelected = this.getPlayerTable(this.getPlayerId())?.pickEvolutionCards.getSelectedItems().length === 1;
+        document.getElementById(`confirmInitialCards_button`)?.classList.toggle('disabled', !costumeSelected || !evolutionSelected);
+    }
+
     private setDiceSelectorVisibility(visible: boolean) {
         const div = document.getElementById('rolled-dice');
         div.style.display = visible ? 'flex' : 'none';
@@ -1110,7 +1163,11 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const stateName = this.getStateName();
         if (stateName === 'chooseInitialCard') {
-            this.chooseInitialCard(cardId);
+            if (!this.isInitialCardDoubleSelection()) {
+                this.chooseInitialCard(Number(cardId), null);
+            } else {
+                this.confirmDoubleSelectionCheckState();
+            }
         } else if (stateName === 'stealCostumeCard') {
             this.stealCostumeCard(cardId);
         } else if (stateName === 'sellCard') {
@@ -1138,6 +1195,19 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.discardKeepCard(cardId);
         } else if (stateName === 'leaveTokyoExchangeCard') {
             this.exchangeCard(cardId);
+        }
+    }
+
+    public chooseEvolutionCardClick(id: number) {
+        const stateName = this.getStateName();
+        if (stateName === 'chooseInitialCard') {
+            if (!this.isInitialCardDoubleSelection()) {
+                this.chooseInitialCard(null, id);
+            } else {
+                this.confirmDoubleSelectionCheckState();
+            }
+        } else if (stateName === 'chooseEvolutionCard') {
+            this.chooseEvolutionCard(id);
         }
     }
     
@@ -1431,13 +1501,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public chooseInitialCard(id: number | string) {
+    public chooseInitialCard(id: number | null, evolutionId: number | null) {
         if(!(this as any).checkAction('chooseInitialCard')) {
             return;
         }
 
         this.takeAction('chooseInitialCard', {
-            id
+            id,
+            evolutionId,
         });
     }
 
@@ -1708,6 +1779,16 @@ class KingOfTokyo implements KingOfTokyoGame {
             selections: base64
         });
 
+    }
+
+    public chooseEvolutionCard(id: number) {
+        if(!(this as any).checkAction('chooseEvolutionCard')) {
+            return;
+        }
+
+        this.takeAction('chooseEvolutionCard', {
+            id
+        });
     }
 
     public onStayInTokyo() {
@@ -2062,6 +2143,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['setPlayerBerserk', 1],
             ['cultist', 1],
             ['removeWickednessTiles', 1],
+            ['addEvolutionCardInHand', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -2386,6 +2468,21 @@ class KingOfTokyo implements KingOfTokyoGame {
         );
     }
     
+    notif_addEvolutionCardInHand(notif: Notif<NotifAddEvolutionCardInHandArgs>) {
+        const playerId = notif.args.playerId;
+        const card = notif.args.card;
+        const isCurrentPlayer = this.getPlayerId() === playerId;
+        if (isCurrentPlayer) {
+            if (card.type) {
+                this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
+            }
+        } else {
+            this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
+        }
+
+        this.tableManager.tableHeightChange(); // adapt to new card
+    }
+    
     private setPoints(playerId: number, points: number, delay: number = 0) {
         (this as any).scoreCtrl[playerId]?.toValue(points);
         this.getPlayerTable(playerId).setPoints(points, delay);
@@ -2516,9 +2613,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private getLogCardName(logType: number) {
-        if (logType >= 2000) {
+        if (logType >= 3000) {
+            return this.evolutionCards.getCardName(logType - 3000, 'text-only');
+        } else if (logType >= 2000) {
             return this.wickednessTiles.getCardName(logType - 2000);
-        } if (logType >= 1000) {
+        } else if (logType >= 1000) {
             return this.curseCards.getCardName(logType - 1000);
         } else {
             return this.cards.getCardName(logType, 'text-only');

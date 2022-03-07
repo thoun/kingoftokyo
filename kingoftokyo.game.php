@@ -173,19 +173,22 @@ class KingOfTokyo extends Table {
         $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar, player_score_aux, player_monster) VALUES ";
         $values = [];
         $affectedMonsters = [];
+        $affectedPlayersMonsters = [];
         $eliminationRank = count($players);
 
         $monsters = $this->getGameMonsters();
+        $pickMonster = $this->canPickMonster();
 
         foreach ($players as $playerId => $player) {
             $playerMonster = 0;
 
-            if (!$this->canPickMonster()) {
+            if (!$pickMonster) {
                 $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
                 while (in_array($playerMonster, $affectedMonsters)) {
                     $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
                 }
                 $affectedMonsters[$playerId] = $playerMonster;
+                $affectedPlayersMonsters[$playerMonster] = $playerId;
             }
 
             $color = array_shift( $default_colors );
@@ -320,7 +323,7 @@ class KingOfTokyo extends Table {
         }
 
         if ($this->isPowerUpExpansion()) {
-            $this->initEvolutionCards();
+            $this->initEvolutionCards($affectedPlayersMonsters);
         }
         
         // Activate first player (which is in general a good idea :) )
@@ -474,7 +477,11 @@ class KingOfTokyo extends Table {
     }
 
     function stStart() {
-        $this->gamestate->nextState($this->canPickMonster() ? 'pickMonster' : ($this->isHalloweenExpansion() ? 'chooseInitialCard' : 'start'));
+        if ($this->canPickMonster()) {
+            $this->gamestate->nextState('pickMonster');
+        } else {
+            $this->gamestate->nextState($this->isHalloweenExpansion() || $this->isPowerUpExpansion() ? 'chooseInitialCard' : 'start'); 
+        }
     }
 
     function stStartGame() {

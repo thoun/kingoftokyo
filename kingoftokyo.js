@@ -1213,7 +1213,7 @@ var PlayerTable = /** @class */ (function () {
             html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_a = player.wickednessTiles) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>   ";
         }
         if (game.isPowerUpExpansion()) {
-            html += "\n            <div id=\"hidden-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_b = player.hiddenEvolutions) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_c = player.visibleEvolutions) === null || _c === void 0 ? void 0 : _c.length) ? '' : 'empty') + "\"></div>\n            ";
+            html += "\n            <div id=\"hidden-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards hand " + (((_b = player.hiddenEvolutions) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_c = player.visibleEvolutions) === null || _c === void 0 ? void 0 : _c.length) ? '' : 'empty') + "\"></div>\n            ";
         }
         html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (player.cards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
         dojo.place(html, 'table');
@@ -1295,6 +1295,9 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.leaveTokyo = function () {
         transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId + "-figure-wrapper", this.game.getZoom());
+    };
+    PlayerTable.prototype.setVisibleCardsSelectionClass = function (visible) {
+        document.getElementById("player-table-" + this.playerId).classList.toggle('double-selection', visible);
     };
     PlayerTable.prototype.removeCards = function (cards) {
         var _this = this;
@@ -1466,6 +1469,34 @@ var PlayerTable = /** @class */ (function () {
         this.cards.addToStockWithId(999, 'goldenscarab', sourceStockItemId);
         previousOwnerStock.removeFromStockById("goldenscarab");
     };
+    PlayerTable.prototype.showEvolutionPickStock = function (cards) {
+        var _this = this;
+        if (!this.pickEvolutionCards) {
+            dojo.place("<div id=\"pick-evolution" + this.playerId + "\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>", "monster-board-wrapper-" + this.playerId);
+            this.pickEvolutionCards = new ebg.stock();
+            this.pickEvolutionCards.setSelectionAppearance('class');
+            this.pickEvolutionCards.selectionClass = 'no-visible-selection-except-double-selection';
+            this.pickEvolutionCards.create(this.game, $("pick-evolution" + this.playerId), CARD_WIDTH, CARD_WIDTH);
+            this.pickEvolutionCards.setSelectionMode(1);
+            this.pickEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
+            this.pickEvolutionCards.image_items_per_row = 10;
+            this.pickEvolutionCards.centerItems = true;
+            dojo.connect(this.pickEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.chooseEvolutionCardClick(Number(item_id)); });
+        }
+        else {
+            document.getElementById("pick-evolution" + this.playerId).style.display = 'block';
+        }
+        this.game.evolutionCards.setupCards([this.pickEvolutionCards]);
+        //this.game.evolutionCards.addCardsToStock(this.pickEvolutionCards, cards);
+        cards.forEach(function (card) { return _this.pickEvolutionCards.addToStockWithId(card.type, '' + card.id); });
+    };
+    PlayerTable.prototype.hideEvolutionPickStock = function () {
+        var div = document.getElementById("pick-evolution" + this.playerId);
+        if (div) {
+            document.getElementById("pick-evolution" + this.playerId).style.display = 'none';
+            this.pickEvolutionCards.removeAll();
+        }
+    };
     return PlayerTable;
 }());
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
@@ -1624,6 +1655,12 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.tableHeightChange = function () {
         this.playerTables.forEach(function (playerTable) {
+            if (playerTable.hiddenEvolutionCards) {
+                dojo.toggleClass("hidden-evolution-cards-" + playerTable.playerId, 'empty', !playerTable.hiddenEvolutionCards.items.length);
+            }
+            if (playerTable.visibleEvolutionCards) {
+                dojo.toggleClass("visible-evolution-cards-" + playerTable.playerId, 'empty', !playerTable.visibleEvolutionCards.items.length);
+            }
             if (playerTable.wickednessTiles) {
                 dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', !playerTable.wickednessTiles.items.length);
             }
@@ -2604,7 +2641,7 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         this.visibleCards = new ebg.stock();
         this.visibleCards.setSelectionAppearance('class');
-        this.visibleCards.selectionClass = 'no-visible-selection';
+        this.visibleCards.selectionClass = 'no-visible-selection-except-double-selection';
         this.visibleCards.create(this.game, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
@@ -2631,6 +2668,9 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
         this.visibleCards.setSelectionMode(mode);
+    };
+    TableCenter.prototype.setVisibleCardsSelectionClass = function (visible) {
+        document.getElementById('table-center').classList.toggle('double-selection', visible);
     };
     TableCenter.prototype.showPickStock = function (cards) {
         var _this = this;
@@ -2960,6 +3000,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, this.isCurrentPlayerActive());
                 break;
+            case 'chooseEvolutionCard':
+                this.onEnteringChooseEvolutionCard(args.args, this.isCurrentPlayerActive());
+                break;
             case 'stealCostumeCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringStealCostumeCard(args.args, this.isCurrentPlayerActive());
@@ -3010,9 +3053,22 @@ var KingOfTokyo = /** @class */ (function () {
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
     };
     KingOfTokyo.prototype.onEnteringChooseInitialCard = function (args) {
-        this.tableCenter.setInitialCards(args.cards);
+        var suffix = '';
+        if (args.chooseEvolution) {
+            suffix = args.chooseCostume ? 'evocostume' : 'evo';
+        }
+        this.setGamestateDescription(suffix);
+        if (args.chooseCostume) {
+            this.tableCenter.setInitialCards(args.cards);
+            this.tableCenter.setVisibleCardsSelectionClass(args.chooseEvolution);
+        }
         if (this.isCurrentPlayerActive()) {
             this.tableCenter.setVisibleCardsSelectionMode(1);
+            if (args.chooseEvolution) {
+                var playerTable = this.getPlayerTable(this.getPlayerId());
+                playerTable.showEvolutionPickStock(args._private.evolutions);
+                playerTable.setVisibleCardsSelectionClass(args.chooseCostume);
+            }
         }
     };
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
@@ -3215,6 +3271,11 @@ var KingOfTokyo = /** @class */ (function () {
             }
         }
     };
+    KingOfTokyo.prototype.onEnteringChooseEvolutionCard = function (args, isCurrentPlayerActive) {
+        if (isCurrentPlayerActive) {
+            this.getPlayerTable(this.getPlayerId()).showEvolutionPickStock(args._private.evolutions);
+        }
+    };
     KingOfTokyo.prototype.onEnteringStealCostumeCard = function (args, isCurrentPlayerActive) {
         var _this = this;
         if (isCurrentPlayerActive) {
@@ -3263,6 +3324,11 @@ var KingOfTokyo = /** @class */ (function () {
         switch (stateName) {
             case 'chooseInitialCard':
                 this.tableCenter.setVisibleCardsSelectionMode(0);
+                this.tableCenter.setVisibleCardsSelectionClass(false);
+                this.playerTables.forEach(function (playerTable) {
+                    playerTable.hideEvolutionPickStock();
+                    playerTable.setVisibleCardsSelectionClass(false);
+                });
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -3302,6 +3368,9 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'resolveSmashDice':
                 this.diceManager.removeAllDice();
+                break;
+            case 'chooseEvolutionCard':
+                this.playerTables.forEach(function (playerTable) { return playerTable.hideEvolutionPickStock(); });
                 break;
             case 'leaveTokyo':
                 this.removeSkipBuyPhaseToggle();
@@ -3383,6 +3452,15 @@ var KingOfTokyo = /** @class */ (function () {
         }
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'chooseInitialCard':
+                    if (this.isInitialCardDoubleSelection()) {
+                        this.addActionButton('confirmInitialCards_button', _("Confirm"), function () {
+                            var _a, _b;
+                            return _this.chooseInitialCard(Number((_a = _this.tableCenter.getVisibleCards().getSelectedItems()[0]) === null || _a === void 0 ? void 0 : _a.id), Number((_b = _this.getPlayerTable(_this.getPlayerId()).pickEvolutionCards.getSelectedItems()[0]) === null || _b === void 0 ? void 0 : _b.id));
+                        });
+                        document.getElementById("confirmInitialCards_button").classList.add('disabled');
+                    }
+                    break;
                 case 'changeMimickedCardWickednessTile':
                     this.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), 'skipChangeMimickedCardWickednessTile');
                     if (!args.canChange) {
@@ -3681,6 +3759,16 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
         return this.playerTables.find(function (playerTable) { return playerTable.playerId === Number(playerId); });
     };
+    KingOfTokyo.prototype.isInitialCardDoubleSelection = function () {
+        var args = this.gamedatas.gamestate.args;
+        return args.chooseCostume && args.chooseEvolution;
+    };
+    KingOfTokyo.prototype.confirmDoubleSelectionCheckState = function () {
+        var _a, _b, _c;
+        var costumeSelected = ((_a = this.tableCenter.getVisibleCards()) === null || _a === void 0 ? void 0 : _a.getSelectedItems().length) === 1;
+        var evolutionSelected = ((_b = this.getPlayerTable(this.getPlayerId())) === null || _b === void 0 ? void 0 : _b.pickEvolutionCards.getSelectedItems().length) === 1;
+        (_c = document.getElementById("confirmInitialCards_button")) === null || _c === void 0 ? void 0 : _c.classList.toggle('disabled', !costumeSelected || !evolutionSelected);
+    };
     KingOfTokyo.prototype.setDiceSelectorVisibility = function (visible) {
         var div = document.getElementById('rolled-dice');
         div.style.display = visible ? 'flex' : 'none';
@@ -3724,7 +3812,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         var stateName = this.getStateName();
         if (stateName === 'chooseInitialCard') {
-            this.chooseInitialCard(cardId);
+            if (!this.isInitialCardDoubleSelection()) {
+                this.chooseInitialCard(Number(cardId), null);
+            }
+            else {
+                this.confirmDoubleSelectionCheckState();
+            }
         }
         else if (stateName === 'stealCostumeCard') {
             this.stealCostumeCard(cardId);
@@ -3759,6 +3852,20 @@ var KingOfTokyo = /** @class */ (function () {
         }
         else if (stateName === 'leaveTokyoExchangeCard') {
             this.exchangeCard(cardId);
+        }
+    };
+    KingOfTokyo.prototype.chooseEvolutionCardClick = function (id) {
+        var stateName = this.getStateName();
+        if (stateName === 'chooseInitialCard') {
+            if (!this.isInitialCardDoubleSelection()) {
+                this.chooseInitialCard(null, id);
+            }
+            else {
+                this.confirmDoubleSelectionCheckState();
+            }
+        }
+        else if (stateName === 'chooseEvolutionCard') {
+            this.chooseEvolutionCard(id);
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {
@@ -4003,12 +4110,13 @@ var KingOfTokyo = /** @class */ (function () {
             monster: monster
         });
     };
-    KingOfTokyo.prototype.chooseInitialCard = function (id) {
+    KingOfTokyo.prototype.chooseInitialCard = function (id, evolutionId) {
         if (!this.checkAction('chooseInitialCard')) {
             return;
         }
         this.takeAction('chooseInitialCard', {
-            id: id
+            id: id,
+            evolutionId: evolutionId,
         });
     };
     KingOfTokyo.prototype.giveSymbolToActivePlayer = function (symbol) {
@@ -4218,6 +4326,14 @@ var KingOfTokyo = /** @class */ (function () {
         var base64 = btoa(JSON.stringify(selections));
         this.takeAction('applyHeartDieChoices', {
             selections: base64
+        });
+    };
+    KingOfTokyo.prototype.chooseEvolutionCard = function (id) {
+        if (!this.checkAction('chooseEvolutionCard')) {
+            return;
+        }
+        this.takeAction('chooseEvolutionCard', {
+            id: id
         });
     };
     KingOfTokyo.prototype.onStayInTokyo = function () {
@@ -4513,6 +4629,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['setPlayerBerserk', 1],
             ['cultist', 1],
             ['removeWickednessTiles', 1],
+            ['addEvolutionCardInHand', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -4786,6 +4903,20 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_exchangeCard = function (notif) {
         this.cards.exchangeCardFromStocks(this.getPlayerTable(notif.args.playerId).cards, this.getPlayerTable(notif.args.previousOwner).cards, notif.args.unstableDnaCard, notif.args.exchangedCard);
     };
+    KingOfTokyo.prototype.notif_addEvolutionCardInHand = function (notif) {
+        var playerId = notif.args.playerId;
+        var card = notif.args.card;
+        var isCurrentPlayer = this.getPlayerId() === playerId;
+        if (isCurrentPlayer) {
+            if (card.type) {
+                this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
+            }
+        }
+        else {
+            this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
+        }
+        this.tableManager.tableHeightChange(); // adapt to new card
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
         if (delay === void 0) { delay = 0; }
@@ -4905,10 +5036,13 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.getLogCardName = function (logType) {
-        if (logType >= 2000) {
+        if (logType >= 3000) {
+            return this.evolutionCards.getCardName(logType - 3000, 'text-only');
+        }
+        else if (logType >= 2000) {
             return this.wickednessTiles.getCardName(logType - 2000);
         }
-        if (logType >= 1000) {
+        else if (logType >= 1000) {
             return this.curseCards.getCardName(logType - 1000);
         }
         else {

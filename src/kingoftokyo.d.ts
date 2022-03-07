@@ -134,6 +134,7 @@ interface KingOfTokyoGame extends Game {
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
     onVisibleCardClick: (stock: Stock, cardId: string, from?: number) => void;
     takeWickednessTile(id: number): void;
+    chooseEvolutionCardClick(id: number): void;
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
     getZoom(): number;
@@ -151,7 +152,12 @@ interface EnteringPickMonsterArgs {
 }
 
 interface EnteringChooseInitialCardArgs {
-    cards: Card[];
+    chooseCostume: boolean;
+    chooseEvolution: boolean;
+    cards?: Card[];
+    _private?: {
+        evolutions: EvolutionCard[];
+    };
 }
 
 interface EnteringGiveSymbolToActivePlayerArgs {
@@ -284,6 +290,12 @@ interface EnteringLeaveTokyoArgs {
         skipBuyPhase: boolean;
     };
     canYieldTokyo: boolean;
+}
+
+interface EnteringChooseEvolutionCardArgs {
+    _private?: {
+        evolutions: EvolutionCard[];
+    };
 }
 
 interface NotifPickMonsterArgs {
@@ -492,4 +504,9 @@ interface NotifExchangeCardArgs {
     previousOwner: number;
     unstableDnaCard: Card;
     exchangedCard: Card;
+}
+
+interface NotifAddEvolutionCardInHandArgs {
+    playerId: number;
+    card?: EvolutionCard;
 }

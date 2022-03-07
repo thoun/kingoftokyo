@@ -52,7 +52,7 @@ class TableCenter {
     public createVisibleCards(visibleCards: Card[], topDeckCardBackType: string) {
         this.visibleCards = new ebg.stock() as Stock;
         this.visibleCards.setSelectionAppearance('class');
-        this.visibleCards.selectionClass = 'no-visible-selection';
+        this.visibleCards.selectionClass = 'no-visible-selection-except-double-selection';
         this.visibleCards.create(this.game, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
         this.visibleCards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id); 
@@ -91,6 +91,10 @@ class TableCenter {
 
     public setVisibleCardsSelectionMode(mode: number) {
         this.visibleCards.setSelectionMode(mode);
+    }
+
+    public setVisibleCardsSelectionClass(visible: boolean) {
+        document.getElementById('table-center').classList.toggle('double-selection', visible);
     }
     
     public showPickStock(cards: Card[]) {

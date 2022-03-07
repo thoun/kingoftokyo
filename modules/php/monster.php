@@ -74,6 +74,10 @@ trait MonsterTrait {
             'playerId' => $playerId,
             'monster' => $monsterId,
         ]);
+
+        if ($this->isPowerUpExpansion()) {
+            $this->evolutionCards->moveAllCardsInLocationKeepOrder('monster'.$monsterId, 'deck'.$playerId);
+        }
     }
 
     function saveMonsterStat(int $playerId, int $monsterId, bool $automatic) {
@@ -203,7 +207,7 @@ trait MonsterTrait {
         $this->giveExtraTime($playerId);
 
         if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
-            $this->gamestate->nextState($this->isHalloweenExpansion() ? 'chooseInitialCard' : 'start');
+            $this->gamestate->nextState($this->isHalloweenExpansion() || $this->isPowerUpExpansion() ? 'chooseInitialCard' : 'start');
         } else {
             $this->gamestate->nextState('nextPlayer');
         }

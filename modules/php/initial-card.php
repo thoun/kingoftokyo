@@ -8,7 +8,7 @@ trait InitialCardTrait {
 //////////// Utility functions
 ////////////
 
-    function setInitialCard(int $playerId, int $id, object $otherCard) {
+    function setInitialCostumeCard(int $playerId, int $id, object $otherCard) {
         $card = $this->getCardFromDb($this->cards->getCard($id));
         
         $this->cards->moveCard($id, 'hand', $playerId);
@@ -23,6 +23,10 @@ trait InitialCardTrait {
         ]);
     }
 
+    function isInitialCardDistributionComplete() {
+        return ($this->isHalloweenExpansion() && $this->everyPlayerHasCostumeCard()) || ($this->isPowerUpExpansion() && $this->everyPlayerHasEvolutionCard());
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 ////////////
@@ -32,18 +36,34 @@ trait InitialCardTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function chooseInitialCard(int $id) {
+    function chooseInitialCard(/*int | null*/ $costumeId, /*int | null*/ $evolutionId) {
         $this->checkAction('chooseInitialCard');
-
-        $topCards = $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck'));
-        if (!$this->array_some($topCards, fn($topCard) => $topCard->id == $id)) {
-            throw new \BgaUserException('Card not available');
-        }
-        $otherCard = $this->array_find($topCards, fn($topCard) => $topCard->id != $id);
 
         $playerId = $this->getActivePlayerId();
 
-        $this->setInitialCard($playerId, $id, $otherCard);
+        $args = $this->argChooseInitialCard();
+
+        if ($args['chooseCostume']) {
+            if ($costumeId == null || $costumeId == 0) {
+                throw new \BgaUserException('No selected Costume card');
+            }
+
+            $topCards = $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck'));
+            if (!$this->array_some($topCards, fn($topCard) => $topCard->id == $costumeId)) {
+                throw new \BgaUserException('Card not available');
+            }
+            $otherCard = $this->array_find($topCards, fn($topCard) => $topCard->id != $costumeId);
+
+            $this->setInitialCostumeCard($playerId, $costumeId, $otherCard);
+        }
+
+        if ($args['chooseEvolution']) {
+            if ($evolutionId == null || $evolutionId == 0) {
+                throw new \BgaUserException('No selected Evolution card');
+            }
+
+            $this->applyChooseEvolutionCard($playerId, $evolutionId);
+        }
 
         $this->gamestate->nextState('next');
     }
@@ -53,6 +73,16 @@ trait InitialCardTrait {
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             if (!$this->array_some($cardsOfPlayer, fn($card) => $card->type > 200 && $card->type < 300)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private function everyPlayerHasEvolutionCard() {
+        $playersIds = $this->getNonZombiePlayersIds();
+        foreach($playersIds as $playerId) {
+            if (intval($this->evolutionCards->countCardInLocation('hand', $playerId)) == 0) {
                 return false;
             }
         }
@@ -71,9 +101,29 @@ trait InitialCardTrait {
     */
 
     function argChooseInitialCard() {
-        return [
-            'cards' => $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck')),
+        $activePlayerId = $this->getActivePlayerId();
+
+        $chooseCostume = $this->isHalloweenExpansion();
+        $chooseEvolution = $this->isPowerUpExpansion();
+
+        $args = [
+            'chooseCostume' => $chooseCostume,
+            'chooseEvolution' => $chooseEvolution,
         ];
+
+        if ($chooseCostume) {
+            $args['cards'] = $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck'));
+        }
+
+        if ($chooseEvolution) {
+            $args['_private'] = [
+                $activePlayerId => [
+                    'evolutions' => $this->pickEvolutionCards($activePlayerId),
+                ]
+            ];
+        }
+
+        return $args;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,7 +131,7 @@ trait InitialCardTrait {
 ////////////
 
     function stChooseInitialCard() { 
-        if ($this->everyPlayerHasCostumeCard()) {
+        if ($this->isInitialCardDistributionComplete()) {
             $this->gamestate->nextState('start');
         }
     }
@@ -90,7 +140,7 @@ trait InitialCardTrait {
         $playerId = $this->activeNextPlayer();
         $this->giveExtraTime($playerId);
 
-        if ($this->everyPlayerHasCostumeCard()) {
+        if ($this->isInitialCardDistributionComplete()) {
             $this->gamestate->nextState('start');
         } else {
             $this->gamestate->nextState('nextPlayer');

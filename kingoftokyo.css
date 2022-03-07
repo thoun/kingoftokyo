@@ -1392,8 +1392,24 @@
 #table .player-table .player-evolution-cards {
   width: 100%;
 }
-#table .player-table .player-evolution-cards.empty {
+#table .player-table .player-evolution-cards.empty:not(.hand) {
   max-height: 0px;
+}
+#table .player-table .player-evolution-cards.hand {
+  background: #FFFFFFCC;
+}
+#table .player-table .player-evolution-cards.hand::before {
+  content: "";
+  width: 48px;
+  height: 48px;
+  background: url("img/hand.svg");
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  margin-top: -24px;
+}
+#table .player-table .player-evolution-cards.hand.empty {
+  max-height: 48px;
 }
 #table .player-table .tokyo-tower-wrapper {
   position: absolute;
@@ -1431,6 +1447,14 @@
   margin: 0 5px;
   margin-left: -50px;
   box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.7);
+}
+#table .player-table .pick-evolution-cards {
+  position: absolute;
+  top: 42px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
 }
 #table .monster-figure {
   position: relative;
@@ -1481,6 +1505,9 @@ body.halloween #table .player-table.active {
 }
 body.halloween .player-board.active {
   box-shadow: 0px 0px 2px 3px #ff8200;
+}
+body.halloween .double-selection .no-visible-selection-except-double-selection {
+  box-shadow: 0px 0px 5px 5px #ff8200;
 }
 
 html[data-background="2"] {
@@ -2054,4 +2081,8 @@ button .icon, a .icon {
 }
 .anubis-icon.anubis-icon4 {
   background-position: 99.9999% 100%;
+}
+
+.double-selection .no-visible-selection-except-double-selection {
+  box-shadow: 0px 0px 5px 5px #ffcf13;
 }

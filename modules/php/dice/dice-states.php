@@ -259,7 +259,14 @@ trait DiceStateTrait {
     function stResolveSkullDice() {   
         $playerId = $this->getActivePlayerId();
 
-        $nextState = intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
+        $pickEvolutionCards = false;        
+        if ($this->isPowerUpExpansion()) {
+            $dice = $this->getPlayerRolledDice($playerId, true, true, false);
+            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
+            $pickEvolutionCards = $diceCounts[4] >= 3;
+        } 
+
+        $nextState = $pickEvolutionCards ? ST_CHOOSE_EVOLUTION_CARD : intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
             $this->gamestate->jumpToState($nextState);

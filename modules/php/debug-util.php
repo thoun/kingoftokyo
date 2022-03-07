@@ -97,8 +97,8 @@ trait DebugUtilTrait {
 
         // halloween
         if ($this->isHalloweenExpansion()) {
-            $this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
-            $this->debugSetCardInHand(GHOST_CARD, 2343492);
+            //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
+            //$this->debugSetCardInHand(GHOST_CARD, 2343492);
             //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
             //$this->debugSetCardInHand(DEVIL_CARD, 2343493);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
@@ -115,8 +115,9 @@ trait DebugUtilTrait {
 
         // anubis
         if ($this->isAnubisExpansion()) {
-            $this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
             //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+            $this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             $this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             //$this->changeGoldenScarabOwner(2343493);
@@ -142,10 +143,10 @@ trait DebugUtilTrait {
 
         // power up
         if ($this->isPowerUpExpansion()) {
-            $this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(12, 2343492, false);
-            $this->debugSetEvolutionInHand(22, 2343493, false);
-            $this->debugSetEvolutionInHand(24, 2343493, true);
+            //$this->debugSetEvolutionInHand(11, 2343492, true);
+            //$this->debugSetEvolutionInHand(12, 2343492, false);
+            //$this->debugSetEvolutionInHand(22, 2343493, false);
+            //$this->debugSetEvolutionInHand(24, 2343493, true);
         }
 
         // player order
@@ -243,6 +244,7 @@ trait DebugUtilTrait {
     }
     
     // debugSetDieFaces(1)
+    // debugSetDieFaces(4, 3)
     // debugSetDieFaces(6, 3)
     function debugSetDieFaces($face, $limit = 99) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");

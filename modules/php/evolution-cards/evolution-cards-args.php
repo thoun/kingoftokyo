@@ -14,6 +14,16 @@ trait EvolutionCardsArgTrait {
         game state.
     */
 
-    
+    function argChooseEvolutionCard() {
+        $activePlayerId = $this->getActivePlayerId();
+
+        return [
+            '_private' => [
+                $activePlayerId => [
+                    'evolutions' => $this->pickEvolutionCards($activePlayerId),
+                ],
+            ],
+        ];
+    }
 
 }
