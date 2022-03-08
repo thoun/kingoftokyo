@@ -2357,9 +2357,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
             (this as any).updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs, (this as any).isCurrentPlayerActive());
-        } else {            
-            this.diceManager.showCamouflageRoll(notif.args.diceValues);
         }
+        this.diceManager.showCamouflageRoll(notif.args.diceValues);
     }
 
     notif_changeDie(notif: Notif<NotifChangeDieArgs>) {

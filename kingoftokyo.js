@@ -4816,9 +4816,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs, this.isCurrentPlayerActive());
         }
-        else {
-            this.diceManager.showCamouflageRoll(notif.args.diceValues);
-        }
+        this.diceManager.showCamouflageRoll(notif.args.diceValues);
     };
     KingOfTokyo.prototype.notif_changeDie = function (notif) {
         if (notif.args.psychicProbeRollDieArgs) {
