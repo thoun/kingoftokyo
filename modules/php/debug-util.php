@@ -152,6 +152,8 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(12, 2343492, false);
             //$this->debugSetEvolutionInHand(22, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
+            $this->debugSetEvolutionInHand(MOUSE_HUNTER_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(MEOW_MISSLE_EVOLUTION, 2343492, true);
         }
 
         // player order

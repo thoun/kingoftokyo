@@ -57,4 +57,32 @@ trait EvolutionCardsUtilTrait {
             'card' => EvolutionCard::createBackCard($card->id),
         ]);
     }
+
+    
+
+    function hasEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
+        return $this->getEvolutionOfType($playerId, $cardType, $fromTable, $fromHand) != null;
+    }
+
+    function getEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
+        if (!$this->keepAndEvolutionCardsHaveEffect()) {
+            return null;
+        }
+
+        if ($fromTable) {
+            $cards = $this->getCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'table', $playerId));
+            if (count($cards) > 0) {
+                return $cards[0];
+            }
+        }
+
+        if ($fromHand) {
+            $cards = $this->getCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+            if (count($cards) > 0) {
+                return $cards[0];
+            }
+        }
+
+        return null;
+    }
 }

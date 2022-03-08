@@ -243,6 +243,10 @@ trait DiceUtilTrait {
                 $this->applyGetWickedness($playerId, 3 - $number);
             }
         }
+
+        if ($diceCount >= 1 && $number == 1 && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, MOUSE_HUNTER_EVOLUTION)) {
+            $this->applyGetPoints($playerId, 1, 3000 + MOUSE_HUNTER_EVOLUTION);
+        }
     }
 
     function resolveHealthDice(int $playerId, int $diceCount) {
@@ -634,6 +638,12 @@ trait DiceUtilTrait {
                 
                 for ($i=0; $i<$countPoisonQuills; $i++) { $cardsAddingSmashes[] = POISON_QUILLS_CARD; }
             }
+        }
+
+        // Meow Missle
+        if ($diceCounts[1] >= 1 && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, MEOW_MISSLE_EVOLUTION)) {
+            $addedSmashes += 1;
+            $cardsAddingSmashes[] = 3000 + MEOW_MISSLE_EVOLUTION;
         }
 
         if ($diceCounts[6] + $addedSmashes >= 1) {

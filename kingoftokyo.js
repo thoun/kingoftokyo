@@ -922,8 +922,9 @@ var EvolutionCards = /** @class */ (function () {
     };
     EvolutionCards.prototype.getColoredCardName = function (cardTypeId) {
         switch (cardTypeId) {
-            // KEEP
-            case 11: return /*_TODOPU*/ ("[0C4E4A]Energy [004C6E]Hoarder");
+            // Cyber Kitty
+            case 37: return /*_TODOPU*/ ("[b67392]Mouse [ec008c]Hunter");
+            case 38: return /*_TODOPU*/ ("[b67392]Meow [ec008c]Missle");
         }
         return null;
     };
@@ -949,8 +950,9 @@ var EvolutionCards = /** @class */ (function () {
     };
     EvolutionCards.prototype.getCardDescription = function (cardTypeId) {
         switch (cardTypeId) {
-            // KEEP
-            case 11: return /*_TODOPU*/ ("<strong>You gain 1[Star]</strong> for every 6[Energy] you have at the end of your turn.");
+            // Cyber Kitty
+            case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
+            case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
         }
         return null;
     };
