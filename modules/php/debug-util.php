@@ -15,9 +15,9 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
-        $this->debugSetPlayerInLocation(2343494, 2);
-        //$this->debugSetEnergy(5);
+        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(8);
         //$this->debugSetHealth(8);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -56,7 +56,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(WINGS_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
@@ -67,10 +67,10 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
-        //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
-        //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
+        $this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
+        $this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
-        //$this->debugSetCardInHand(URBAVORE_CARD, 2343493);
+        $this->debugSetCardInHand(URBAVORE_CARD, 2343493);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
@@ -82,8 +82,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343492);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
         //$this->debugSetPlayerHealth(2343492, 11);
-        //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343493);
-        //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
+        $this->debugSetCardInHand(NOVA_BREATH_CARD, 2343493);
+        $this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
@@ -117,14 +117,14 @@ trait DebugUtilTrait {
         if ($this->isAnubisExpansion()) {
             //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+            $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
-            $this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
-            //$this->changeGoldenScarabOwner(2343493);
+            $this->changeGoldenScarabOwner(2343492);
         }
 
         // king kong
