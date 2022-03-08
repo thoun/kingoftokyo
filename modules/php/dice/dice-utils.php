@@ -725,7 +725,7 @@ trait DiceUtilTrait {
         $diceCounts = [0,0,0,0,0,0,0,0];
 
         foreach($dice as $die) {
-            if (($die->type === 0 || $die->type === 1) && ($ignoreCanUseFace || $this->canUseFace($playerId, $this->getDiceFaceType($die)))) {
+            if (($die->type === 0 || $die->type === 1) && ($ignoreCanUseFace || $die->type !== 0 || $this->canUseFace($playerId, $die->value))) {
                 if ($die->type === 0) {                
                     $diceCounts[$die->value] += 1;
                 } else if ($die->type === 1) {

@@ -103,9 +103,9 @@ trait DebugUtilTrait {
             //$this->debugSetCardInHand(DEVIL_CARD, 2343493);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-            //$this->debugSetCardInHand(PRINCESS_CARD, 2343492);
+            $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
             //$this->debugSetCardInHand(WITCH_CARD, 2343494);
-            //$this->debugSetCardInHand(VAMPIRE_CARD, 2343495);
+            $this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
             //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
         }
 
