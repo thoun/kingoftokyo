@@ -94,7 +94,11 @@ trait DiceUtilTrait {
         if ($setCanReroll && $this->isAnubisExpansion()) {
             foreach ($dice as &$die) {
                 $symbol = getDieFace($die);
-                $die->canReroll = $this->canRerollSymbol($playerId, $symbol);
+
+                $stateId = intval($this->gamestate->state_id());
+                $isChangeActivePlayerDie = $stateId == ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE;
+
+                $die->canReroll = $this->canRerollSymbol($playerId, $symbol, $isChangeActivePlayerDie);
             }
         }
 

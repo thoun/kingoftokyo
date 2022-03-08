@@ -486,7 +486,7 @@ trait PlayerUtilTrait {
         return true;
     }
 
-    function canRerollSymbol(int $playerId, int $symbol) {
+    function canRerollSymbol(int $playerId, int $symbol, bool $isChangeActivePlayerDie = false) {
 
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
@@ -495,7 +495,7 @@ trait PlayerUtilTrait {
                 return false;
             }
 
-            if ($symbol == 1 && $curseCardType == SCRIBE_S_PERSEVERANCE_CURSE_CARD) {
+            if ($symbol == 1 && $curseCardType == SCRIBE_S_PERSEVERANCE_CURSE_CARD && !$isChangeActivePlayerDie) {
                 return false;
             }
         }
