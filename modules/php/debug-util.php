@@ -66,7 +66,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
-        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
+        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
@@ -115,10 +115,11 @@ trait DebugUtilTrait {
 
         // anubis
         if ($this->isAnubisExpansion()) {
+            $this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
             //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
-            $this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             //$this->changeGoldenScarabOwner(2343493);

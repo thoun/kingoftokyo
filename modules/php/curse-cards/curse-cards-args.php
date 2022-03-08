@@ -116,10 +116,13 @@ trait CurseCardsArgTrait {
 
     function argRerollOrDiscardDie() {
         $activePlayerId = $this->getActivePlayerId();
+        $activePlayerDice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
+        $selectableDice = $this->getSelectableDice($activePlayerDice, false, false);
         
         return [
-            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
+            'dice' => $activePlayerDice,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'selectableDice' => $selectableDice,
         ];
     }
 
