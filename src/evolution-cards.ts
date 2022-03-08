@@ -20,9 +20,25 @@ class EvolutionCards {
 
     private getColoredCardName(cardTypeId: number): string {
         switch( cardTypeId ) {
-            // Cyber Kitty
+            // Space Penguin : blue 2384c6 grey 4c7c96
+            case 17: return /*_TODOPU*/("[2384c6]Black [4c7c96]Diamond");
+            // Alienoid : orange e39717 brown aa673d
+            // Cyber Kitty : soft b67392 strong ec008c
             case 37: return /*_TODOPU*/("[b67392]Mouse [ec008c]Hunter");
             case 38: return /*_TODOPU*/("[b67392]Meow [ec008c]Missle");
+            // The King : dark a2550b light ca6c39
+            // Gigazaur : dark 00a651 light bed62f
+            // Meka Dragon : gray a68d83 brown aa673d
+            // Boogie Woogie : dark 6c5b55 light a68d83
+            // Pumpkin Jack : dark de6428 light f7941d
+            // Cthulhu
+            // Anubis
+            // King Kong
+            // Cybertooth
+            // Pandakaï : light 6d6e71 dark 231f20
+            // cyberbunny : soft b67392 strong ec008c
+            // kraken : blue 2384c6 gray 4c7c96
+            // Baby Gigazaur : dark a5416f light f05a7d
         }
         return null;
     }
@@ -48,6 +64,8 @@ class EvolutionCards {
 
     private getCardDescription(cardTypeId: number) {
         switch( cardTypeId ) {
+            // Space Penguin
+            case 17: return /*_TODOPU*/("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
             // Cyber Kitty
             case 37: return /*_TODOPU*/("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/("If you roll at least one [dice1], add [diceSmash] to your roll.");

@@ -65,7 +65,8 @@ $monstersNames = [
     12 => "Cybertooth", 
     // power up
     13 => "Pandakaï", 
-    // 14/15 kraken & cyberbunny
+    // 14 cyberbunny
+    // 15 kraken
     // promo
     16 => "Kookie", 
     17 => "X-Smash Tree", 

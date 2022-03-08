@@ -282,6 +282,10 @@ trait UtilTrait {
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
             $this->applyDefenderOfTokyo($playerId);
         }
+
+        if ($this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION)) {
+            $this->applyGetPoints($playerId, 1, 3000 + BLACK_DIAMOND_EVOLUTION);
+        }
     }
 
     function leaveTokyo(int $playerId, bool $force) {
