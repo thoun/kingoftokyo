@@ -15,14 +15,14 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343493, 2);
         //$this->debugSetEnergy(5);
         //$this->debugSetPoints(8);
         //$this->debugSetHealth(8);
+        //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
-        //$this->debugSetPlayerHealth(2343493, 1);
-        //$this->debugSetPlayerEnergy(2343493, 2);
+        //$this->debugSetPlayerEnergy(2343493, 4);
         //$this->debugSetPlayerPoints(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
@@ -99,14 +99,14 @@ trait DebugUtilTrait {
         if ($this->isHalloweenExpansion()) {
             //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
             //$this->debugSetCardInHand(GHOST_CARD, 2343492);
-            //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
+            $this->debugSetCardInHand(CLOWN_CARD, 2343492);
             //$this->debugSetCardInHand(DEVIL_CARD, 2343493);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-            //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+            $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
             //$this->debugSetCardInHand(WITCH_CARD, 2343494);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
-            //$this->debugSetCardInHand(PIRATE_CARD, 2343492);
+            $this->debugSetCardInHand(PIRATE_CARD, 2343494);
         }
 
         // cthulhu
@@ -120,6 +120,7 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             //$this->changeGoldenScarabOwner(2343493);

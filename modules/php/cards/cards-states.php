@@ -116,8 +116,8 @@ trait CardsStateTrait {
     function stStealCostumeCard() {
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
-        if ($diceCounts[6] < 3) {
-            // skip state, can't steal cards (not enough smashes)
+        if ($diceCounts[6] < 3 || $this->getPlayer($this->getActivePlayerId())->eliminated) {
+            // skip state, can't steal cards (not enough smashes) or dead
             $this->redirectAfterStealCostume();
             return;
         }

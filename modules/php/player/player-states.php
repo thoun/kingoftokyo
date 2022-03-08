@@ -15,8 +15,6 @@ trait PlayerStateTrait {
     function stStartTurn() {
         $playerId = $this->getActivePlayerId();
 
-        // TODO skip turn here if player is dead
-
         $this->incStat(1, 'turnsNumber');
         $this->incStat(1, 'turnsNumber', $playerId);
 
