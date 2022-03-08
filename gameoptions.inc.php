@@ -80,7 +80,7 @@ $game_options = [
                 'tmdisplay' => totranslate('“Battle of the Gods: the Revenge!” event (Curse cards)'),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
     ],
 
     /* TODOCY 
