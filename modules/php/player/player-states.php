@@ -241,7 +241,7 @@ trait PlayerStateTrait {
             if ($this->inTokyo($smashedPlayerInTokyo)) { // we check if player is still in Tokyo, it could have left with It has a child!
                 $player = $this->getPlayer($smashedPlayerInTokyo);
                 if ($player->eliminated) {
-                    $this->leaveTokyo($smashedPlayerInTokyo);
+                    $this->leaveTokyo($smashedPlayerInTokyo, true);
                 } else {
                     if (!$this->autoLeave($smashedPlayerInTokyo, $player->health) && !$this->autoStay($smashedPlayerInTokyo, $player->health)) {
                         $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;

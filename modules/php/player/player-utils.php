@@ -92,8 +92,7 @@ trait PlayerUtilTrait {
 
         $leave = $health < $leaveUnder;
 
-        if ($leave) {
-            $this->leaveTokyo($playerId);
+        if ($leave && $this->leaveTokyo($playerId, false)) {
             $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
         }
 
@@ -411,7 +410,7 @@ trait PlayerUtilTrait {
         $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
         $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
         if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
-            $this->leaveTokyo($playerInTokyoBay);
+            $this->leaveTokyo($playerInTokyoBay, true);
 
             // burrowing
             $countBurrowing = $this->countCardOfType($playerInTokyoBay, BURROWING_CARD);
@@ -420,7 +419,7 @@ trait PlayerUtilTrait {
             }
         }
         if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
-            $this->leaveTokyo($playerInTokyoCity);
+            $this->leaveTokyo($playerInTokyoCity, true);
 
             // burrowing
             $countBurrowing = $this->countCardOfType($playerInTokyoCity, BURROWING_CARD);

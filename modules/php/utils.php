@@ -284,7 +284,10 @@ trait UtilTrait {
         }
     }
 
-    function leaveTokyo(int $playerId) {
+    function leaveTokyo(int $playerId, bool $force) {
+        if (!$force && !$this->canYieldTokyo()) {
+            return false;
+        }
 
         $this->DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null, `stay_tokyo_over` = null where `player_id` = $playerId");
 
@@ -306,6 +309,8 @@ trait UtilTrait {
         }
 
         $this->incStat(1, 'tokyoLeaves', $playerId);
+
+        return true;
     }
 
     function moveFromTokyoBayToCity(int $playerId) {
@@ -423,9 +428,6 @@ trait UtilTrait {
                 // Final Roar
                 if ($this->isWickednessExpansion() && $this->gotWickednessTile($player->id, FINAL_ROAR_WICKEDNESS_TILE) && $player->score >= 16) {
                     $this->applyGetPoints($player->id, MAX_POINT - $player->score, 2000 + FINAL_ROAR_WICKEDNESS_TILE);
-                    if ($this->inTokyo($player->id)) {
-                        $this->leaveTokyo($player->id);
-                    }
                 } else {
                     // Zombie
                     $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);
@@ -469,7 +471,7 @@ trait UtilTrait {
             if ($this->isTokyoEmpty(false)) {
                 $this->moveFromTokyoBayToCity($this->getPlayerIdInTokyoBay());
             } else {
-                $this->leaveTokyo($this->getPlayerIdInTokyoBay());
+                $this->leaveTokyo($this->getPlayerIdInTokyoBay(), true);
             }
         }
     }

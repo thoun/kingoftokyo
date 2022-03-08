@@ -400,7 +400,7 @@ trait CardsUtilTrait {
         ]);
 
         if ($this->inTokyo($playerId)) {
-            $this->leaveTokyo($playerId);
+            $this->leaveTokyo($playerId, true); // TODOAN check answer
         }
     }
 
@@ -438,7 +438,7 @@ trait CardsUtilTrait {
         ]);
 
         if ($this->inTokyo($playerId)) {
-            $this->leaveTokyo($playerId);
+            $this->leaveTokyo($playerId, true); // TODOAN check answer
         }
     }
 

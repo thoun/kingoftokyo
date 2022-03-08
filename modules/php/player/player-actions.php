@@ -61,8 +61,9 @@ trait PlayerActionTrait {
     function applyActionLeaveTokyo(int $playerId) {
 
 
-        $this->leaveTokyo($playerId);
-        $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
+        if ($this->leaveTokyo($playerId, false)) {
+            $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
+        }
     
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");

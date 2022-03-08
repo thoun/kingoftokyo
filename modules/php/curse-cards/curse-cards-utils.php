@@ -30,7 +30,7 @@ trait CurseCardsUtilTrait {
 
         switch($cardType) {
             case PHARAONIC_EGO_CURSE_CARD:
-                $this->leaveTokyo($playerId);
+                $this->leaveTokyo($playerId, true);
                 break;
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case THOT_S_BLINDNESS_CURSE_CARD: 
@@ -158,7 +158,7 @@ trait CurseCardsUtilTrait {
                 }
                 break;
             case RESURRECTION_OF_OSIRIS_CURSE_CARD:
-                $this->leaveTokyo($playerId);
+                $this->leaveTokyo($playerId, true);
                 break;
             case FORBIDDEN_LIBRARY_CURSE_CARD: 
                 $this->snakeEffectDiscardKeepCard($playerId);
