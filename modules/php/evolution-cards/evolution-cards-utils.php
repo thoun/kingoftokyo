@@ -46,6 +46,61 @@ trait EvolutionCardsUtilTrait {
         return $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop(2, 'deck'.$playerId));
     }
 
+    function applyEvolutionEffects(int $cardType, int $playerId) { // return $damages
+        if (!$this->keepAndEvolutionCardsHaveEffect()) {
+            return;
+        }
+
+        $logCardType = 3000 + $cardType;
+
+        switch($cardType) {
+            // Space Penguin
+            // Alienoid
+            case ALIEN_SCOURGE_EVOLUTION: 
+                $this->applyGetPoints($playerId, 2, $logCardType);
+                break;
+            // Cyber Kitty
+            // The King
+            case GIANT_BANANA_EVOLUTION:
+                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
+                break;
+            // Gigazaur
+            case RADIOACTIVE_WASTE_EVOLUTION:
+                $this->applyGetEnergy($playerId, 2, $logCardType);
+                $this->applyGetHealth($playerId, 1, $logCardType, $playerId);
+                break;
+            case PRIMAL_BELLOW_EVOLUTION:
+                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                foreach ($otherPlayersIds as $otherPlayerId) {
+                    $this->applyLosePoints($otherPlayerId, 2, $logCardType);
+                }
+                break;
+            // Meka Dragon
+            // Boogie Woogie
+            // Pumpkin Jack
+            // Cthulhu
+            // Anubis
+            // King Kong
+            // Cybertooth
+            // Pandakaï
+            case PANDA_MONIUM_EVOLUTION:
+                $this->applyGetEnergy($playerId, 6, $logCardType);
+                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                foreach ($otherPlayersIds as $otherPlayerId) {
+                    $this->applyGetEnergy($otherPlayerId, 3, $logCardType);
+                }
+                break;
+            case BEAR_NECESSITIES_EVOLUTION:
+                $this->applyLosePoints($playerId, 1, $logCardType);
+                $this->applyGetEnergy($playerId, 2, $logCardType);
+                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
+                break;
+            // cyberbunny
+            // kraken
+            // Baby Gigazaur
+        }
+    }
+
     function notifNewEvolutionCard(int $playerId, EvolutionCard $card) {
         $this->notifyPlayer($playerId, "addEvolutionCardInHand", '', [
             'playerId' => $playerId,

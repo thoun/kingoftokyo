@@ -782,4 +782,25 @@ trait DiceUtilTrait {
             return $allowed;
         }));
     }
+
+    function canLeaveHibernation(int $playerId, $dice = null) {
+        $countHibernation = $this->countCardOfType($playerId, HIBERNATION_CARD);
+        if ($countHibernation == 0) {
+            return false;
+        }
+
+        if ($dice == null) {
+            $dice = $this->getPlayerRolledDice($playerId, true, true, false);
+        }
+
+        $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
+
+        foreach($diceCounts as $face => $number) {
+            if ($face !== 4 && $face !== 5 && $number > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

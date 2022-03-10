@@ -30,6 +30,11 @@ trait MonsterTrait {
             $monsters = [...$monsters, 11, 12];
         }
 
+        // Pandakaï
+        if (/* TODOPU $bonusMonsters ||*/ $this->isPowerUpExpansion()) {
+            $monsters = [...$monsters, 13];
+        }
+
         // Kookie, X-Smash Tree
         if ($bonusMonsters) {
             $monsters = [...$monsters, 16, 17];

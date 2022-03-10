@@ -22,8 +22,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     private diceManager: DiceManager;
     private animationManager: AnimationManager;
     private playerTables: PlayerTable[] = [];
-    private tableManager: TableManager;
     private preferencesManager: PreferencesManager;
+    public tableManager: TableManager;
     public cards: Cards;
     public curseCards: CurseCards;
     public wickednessTiles: WickednessTiles;    
@@ -212,7 +212,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'resolveDice': 
                 this.falseBlessingAnkhAction = null;
                 this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollOrDiscardDie(args.args);
                 this.diceManager.hideLock();
+                const argsResolveDice = args.args as EnteringResolveDiceArgs;
+                if (argsResolveDice.canLeaveHibernation) {
+                    this.setGamestateDescription('Hibernation');
+                }
                 break;
             case 'rerollOrDiscardDie':
                 this.setDiceSelectorVisibility(true);
@@ -808,6 +813,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     dojo.addClass('rerollDice_button', 'disabled');
                     if (argsRerollDice.min === 0) {
                         (this as any).addActionButton('skipRerollDice_button', _("Skip"), () => this.rerollDice([]));
+                    }
+                    break;
+                
+                case 'resolveDice': 
+                    const argsResolveDice = args as EnteringResolveDiceArgs;
+                    if (argsResolveDice.canLeaveHibernation) {
+                        (this as any).addActionButton('stayInHibernation_button', /*_TODODE*/("Stay in Hibernation"), () => this.stayInHibernation());
+                        (this as any).addActionButton('leaveHibernation_button', /*_TODODE*/("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
                     }
                     break;
                 case 'takeWickednessTile':
@@ -2041,6 +2054,28 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('skipExchangeCard');
     }
+    
+    public stayInHibernation() {
+        if(!(this as any).checkAction('stayInHibernation')) {
+            return;
+        }
+
+        this.takeAction('stayInHibernation');
+    }
+    
+    public leaveHibernation() {
+        if(!(this as any).checkAction('leaveHibernation')) {
+            return;
+        }
+
+        this.takeAction('leaveHibernation');
+    }
+
+    public playEvolution(id: number) {
+        this.takeNoLockAction('playEvolution', {
+            id
+        });
+    }
 
     public takeAction(action: string, data?: any) {
         data = data || {};
@@ -2121,6 +2156,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['changeGoldenScarabOwner', ANIMATION_MS],
             ['discardedDie', ANIMATION_MS],
             ['exchangeCard', ANIMATION_MS],
+            ['playEvolution', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -2480,6 +2516,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.tableManager.tableHeightChange(); // adapt to new card
+    }
+    
+    notif_playEvolution(notif: Notif<NotifPlayEvolutionArgs>) {
+        this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

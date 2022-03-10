@@ -158,7 +158,17 @@ trait PlayerStateTrait {
             }
 
             if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-                $this->applyDefenderOfTokyo($playerId);
+                $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE);
+            }
+            if ($this->isPowerUpExpansion()) {
+                if ($this->hasEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION)) {
+                    $this->applyGetPoints($playerId, 1, 3000 + I_AM_THE_KING_EVOLUTION);
+                }
+                if ($this->hasEvolutionOfType($playerId, DEFENDER_OF_TOKYO_EVOLUTION)) {
+                    $this->applyDefenderOfTokyo($playerId, 3000 + DEFENDER_OF_TOKYO_EVOLUTION);
+                }
+
+                
             }
         }
 
@@ -207,6 +217,11 @@ trait PlayerStateTrait {
             
             $redirects = $this->resolveDamages($damages, $redirectAfterStartTurn);
         }
+
+        /* TODOPU ? if ($damages != null && count($damages) > 0) {
+            $this->updateKillPlayersScoreAux();
+        }
+        $this->goToState($damages, $redirectAfterStartTurn);*/
 
         if (!$redirects) {
             $this->eliminatePlayers($playerId);

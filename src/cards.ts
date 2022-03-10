@@ -301,6 +301,7 @@ class Cards {
             case 46: return 4;
             case 47: return 3;
             case 48: return 6;
+            case 49: return 4;
             case 50: return 3;
             case 51: return 2;
             case 52: return 6;
@@ -515,8 +516,8 @@ class Cards {
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
-            // TODODE
-            case 50: return "At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>"; // TODODE
+            case 49: return `<div><i>${/*_TODODE*/("You CANNOT buy this card while in TOKYO")}</i></div>` + /*_TODODE*/("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
+            case 50: return /*_TODODE*/("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
             // TODODE
 
             // DISCARD

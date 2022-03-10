@@ -22,6 +22,7 @@ require_once('modules/constants.inc.php');
 require_once('modules/php/objects/dice.php');
 require_once('modules/php/objects/card.php');
 require_once('modules/php/utils.php');
+require_once('modules/php/redirections.php');
 require_once('modules/php/monster.php');
 require_once('modules/php/initial-card.php');
 require_once('modules/php/player/player-utils.php');
@@ -52,6 +53,7 @@ require_once('modules/php/debug-util.php');
 
 class KingOfTokyo extends Table {
     use KOT\States\UtilTrait;
+    use KOT\States\RedirectionTrait;
     use KOT\States\MonsterTrait;
     use KOT\States\InitialCardTrait;
     use KOT\States\PlayerUtilTrait;
@@ -452,6 +454,11 @@ class KingOfTokyo extends Table {
 
         if ($isWickednessExpansion) {
             $result['wickednessTiles'] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('table'));
+        }
+
+        if ($isPowerUpExpansion) {
+            $result['EVOLUTION_CARDS_TYPES'] = $this->EVOLUTION_CARDS_TYPES;
+            $result['AUTO_DISCARDED_EVOLUTIONS'] = $this->AUTO_DISCARDED_EVOLUTIONS;
         }
 
         return $result;

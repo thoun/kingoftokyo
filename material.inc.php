@@ -19,7 +19,7 @@
  *
  */
 
-$this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6]; // TODODE add cyberbunny & kraken [101,102,103,104,105,106]
+$this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13]; // TODODE add cyberbunny & kraken [101,102,103,104,105,106]
 
 // 1 : permanent
 // 2 : temporary
@@ -31,6 +31,15 @@ $this->EVOLUTION_CARDS_TYPES = [
     41 => 2, 42 => 2, 43 => 2, 44 => 2, 45 => 1, 46 => 1, 47 => 1, 48 => 1, // The King
     51 => 2, 52 => 2, 53 => 2, 54 => 2, 55 => 1, 56 => 1, 57 => 1, 58 => 1, // Gigazaur
     61 => 2, 62 => 2, 63 => 1, 64 => 2, 65 => 1, 66 => 1, 67 => 1, 68 => 1, // Meka Dragon
+    131 => 2, 132 => 2, 133 => 2, 134 => 2, 135 => 1, 136 => 1, 137 => 1, 138 => 1, // Pandakaï
+];
+
+// remove the evolutions 5s after use
+$this->AUTO_DISCARDED_EVOLUTIONS = [
+    21, 
+    44, 
+    52, 53,
+    131, 134,
 ];
 
 $this->CARD_COST = [

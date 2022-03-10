@@ -71,11 +71,11 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr) {
@@ -280,11 +280,16 @@ trait UtilTrait {
         $this->incStat(1, 'tokyoEnters', $playerId);
 
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-            $this->applyDefenderOfTokyo($playerId);
+            $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE);
         }
 
-        if ($this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION)) {
-            $this->applyGetPoints($playerId, 1, 3000 + BLACK_DIAMOND_EVOLUTION);
+        if ($this->isPowerUpExpansion()) {
+            if ($this->hasEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION)) {
+                $this->applyGetPoints($playerId, 1, 3000 + BLACK_DIAMOND_EVOLUTION);
+            }
+            if ($this->hasEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION)) {
+                $this->applyGetPoints($playerId, 1, 3000 + I_AM_THE_KING_EVOLUTION);
+            }
         }
     }
 
@@ -627,11 +632,17 @@ trait UtilTrait {
 
         if ($newHealth == 0 && $actualHealth > 0) {
             // eater of the dead 
+            $isPowerUpExpansion = $this->isPowerUpExpansion();
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $pId) {
                 $countEaterOfTheDead = $this->countCardOfType($pId, EATER_OF_THE_DEAD_CARD);
                 if ($countEaterOfTheDead > 0) {
                     $this->applyGetPoints($pId, 3 * $countEaterOfTheDead, EATER_OF_THE_DEAD_CARD);
+                }
+
+                if ($isPowerUpExpansion && $this->hasEvolutionOfType($pId, PROGRAMMED_TO_DESTROY_EVOLUTION, true, true)) {
+                    $this->applyGetPoints($pId, 3, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
+                    $this->applyGetEnergy($pId, 2, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
                 }
             }
         }
@@ -644,9 +655,14 @@ trait UtilTrait {
             }
         }
 
+        // TODOPU confirm it doesn't apply on itself
+        if ($newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, HEAT_VISION_EVOLUTION)) {
+            $this->applyLosePoints($damageDealerId, 1, 3000 + HEAT_VISION_EVOLUTION);
+        }
+
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
         if ($countReflectiveHide > 0) {
-            $this->applyDamage($damageDealerId, $countReflectiveHide, $playerId, REFLECTIVE_HIDE_CARD, $activePlayerId, 0, 0, null);
+            $this->applyDamage($damageDealerId, $countReflectiveHide, $playerId, 2000 + REFLECTIVE_HIDE_CARD, $activePlayerId, 0, 0, null);
         }
     }
 
@@ -717,14 +733,21 @@ trait UtilTrait {
         }
 
         // must be done before player eliminations
-        if ($this->countCardOfType($playerId, ZOMBIFY_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
-            $this->applyZombify($playerId);
-        }
+        $finalRoarWillActivate = $this->getPlayerHealth($playerId) == 0 
+            && $this->isWickednessExpansion() 
+            && $this->gotWickednessTile($playerId, FINAL_ROAR_WICKEDNESS_TILE) 
+            && $this->getPlayerScore($playerId) >= 16;
 
-        if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
-            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, FINAL_ROAR_WICKEDNESS_TILE) && $this->getPlayerScore($playerId) >= 16) {
-                // final roar will apply, ignore it has a child
-            } else {
+        if (!$finalRoarWillActivate) {
+            if ($this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, NINE_LIVES_EVOLUTION, true, true)) {
+                $this->applyNineLives($playerId);
+            }
+
+            if ($this->countCardOfType($playerId, ZOMBIFY_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
+                $this->applyZombify($playerId);
+            }
+    
+            if ($this->countCardOfType($playerId, IT_HAS_A_CHILD_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
                 // it has a child
                 $this->applyItHasAChild($playerId);
             }

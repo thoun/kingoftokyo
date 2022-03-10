@@ -423,5 +423,28 @@ trait DiceActionTrait {
 
         $this->gamestate->nextState('resolve');
     }
+  	
+    public function stayInHibernation() {
+        $this->checkAction('stayInHibernation');
+        
+        $playerId = $this->getActivePlayerId();
+
+        $this->applyResolveDice($playerId);
+        
+        $this->goToState($this->redirectAfterResolveDice());
+    }
+  	
+    public function leaveHibernation() {
+        $this->checkAction('leaveHibernation');
+        
+        $playerId = $this->getActivePlayerId();
+
+        $cards = $this->getCardsFromDb($this->cards->getCardsOfType(HIBERNATION_CARD));
+        $this->removeCards($playerId, $cards);
+
+        $this->applyResolveDice($playerId);
+
+        $this->goToState($this->redirectAfterResolveDice());
+    }
 
 }

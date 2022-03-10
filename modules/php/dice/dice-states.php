@@ -59,14 +59,7 @@ trait DiceStateTrait {
         }
     }
 
-    function stResolveDice() {
-        $this->updateKillPlayersScoreAux();
-        
-        $playerId = $this->getActivePlayerId();
-        $this->giveExtraTime($playerId);
-
-        $this->DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
-
+    function applyResolveDice(int $playerId) {
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getPlayerRolledDice($playerId, true, true, false);
         usort($dice, "static::sortDieFunction");
@@ -154,8 +147,22 @@ trait DiceStateTrait {
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
+    }
 
-        $this->gamestate->nextState('resolveNumberDice');
+    function stResolveDice() {
+        $this->updateKillPlayersScoreAux();
+        
+        $playerId = $this->getActivePlayerId();
+        $this->giveExtraTime($playerId);
+
+        $this->DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
+
+        $countHibernation = $this->countCardOfType($playerId, HIBERNATION_CARD);
+        if ($countHibernation == 0) {
+            $this->applyResolveDice($playerId);
+            
+            $this->goToState($this->redirectAfterResolveDice());
+        }
     }
 
     function stResolveNumberDice() {

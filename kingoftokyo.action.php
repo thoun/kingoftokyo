@@ -609,5 +609,31 @@
 
         self::ajaxResponse();
     }
+  	
+    public function stayInHibernation() {
+        self::setAjaxMode();
+
+        $this->game->stayInHibernation();
+
+        self::ajaxResponse();
+    }
+  	
+    public function leaveHibernation() {
+        self::setAjaxMode();
+
+        $this->game->leaveHibernation();
+
+        self::ajaxResponse();
+    }
+  	
+    public function playEvolution() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->playEvolution($id);
+
+        self::ajaxResponse();
+    }
 
 }

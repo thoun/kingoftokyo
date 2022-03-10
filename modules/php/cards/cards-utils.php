@@ -364,13 +364,18 @@ trait CardsUtilTrait {
         ]);
     }
 
-    function applyItHasAChild(int $playerId) {
+    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickednessAndTiles, bool $removeEvolutions, int $newHearts) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $this->removeCards($playerId, $cards);
 
-        if ($this->isDarkEdition()) {
+        if ($removeEvolutions) {
+            //TODOPU remove Evolutions (all or visible ?)
+            // if it's only visible, also remove NINE_LIVES
+        }
+
+        if ($resetWickednessAndTiles) {
             $this->resetWickednessAndTiles($playerId);
         }
 
@@ -383,20 +388,19 @@ trait CardsUtilTrait {
             'points' => $points,
         ]);
 
-        // get back to 10 heart
-        $health = 10;
-        $this->DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
+        // get back to $newHearts heart
+        $this->DbQuery("UPDATE player SET `player_health` = $newHearts where `player_id` = $playerId");
         $this->notifyAllPlayers('health', '', [
             'playerId' => $playerId,
             'player_name' => $playerName,
-            'health' => $health,
+            'health' => $newHearts,
         ]);
 
-        $this->notifyAllPlayers('applyItHasAChild', clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'), [
+        $this->notifyAllPlayers('log', $message, [
             'playerId' => $playerId,
             'player_name' => $playerName,
-            'health' => $health,
-            'card_name' => IT_HAS_A_CHILD_CARD,
+            'health' => $newHearts,
+            'card_name' => $logCardType,
         ]);
 
         if ($this->inTokyo($playerId)) {
@@ -404,42 +408,45 @@ trait CardsUtilTrait {
         }
     }
 
-    function applyZombify(int $playerId) {
-        $playerName = $this->getPlayerName($playerId);
-        // discard all cards
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $this->removeCards($playerId, $cards);
-        
-        $this->resetWickednessAndTiles($playerId);
+    function applyItHasAChild(int $playerId) {
+        $this->applyResurrectCard(
+            $playerId, 
+            IT_HAS_A_CHILD_CARD, 
+            clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'),
+            $this->isDarkEdition(), 
+            false,
+            10
+        );
+    }
 
-        // lose all stars
-        $points = 0;
-        $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+    function applyZombify(int $playerId) {
+        $this->DbQuery("UPDATE player SET `player_zombified` = 1 where `player_id` = $playerId");
+
+        $this->applyResurrectCard(
+            $playerId, 
+            2000 + ZOMBIFY_CARD, 
+            /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/,
+            true, 
+            false,
+            12
+        );
+    }
+
+    function applyNineLives(int $playerId) {
+        $this->applyResurrectCard(
+            $playerId, 
+            3000 + NINE_LIVES_EVOLUTION, 
+            /*client TODOPU translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'/*)*/,
+            false, 
+            true,
+            9
+        );
+
         $this->notifyAllPlayers('points','', [
             'playerId' => $playerId,
-            'player_name' => $playerName,
-            'points' => $points,
+            'player_name' => $this->getPlayerName($playerId),
+            'points' => 9,
         ]);
-
-        // get back to 12 heart & marj as zombie
-        $health = 12;
-        $this->DbQuery("UPDATE player SET `player_zombified` = 1, `player_health` = $health where `player_id` = $playerId");
-        $this->notifyAllPlayers('health', '', [
-            'playerId' => $playerId,
-            'player_name' => $playerName,
-            'health' => $health,
-        ]);
-
-        $this->notifyAllPlayers('applyZombify', /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/, [
-            'playerId' => $playerId,
-            'player_name' => $playerName,
-            'health' => $health,
-            'card_name' => ZOMBIFY_CARD,
-        ]);
-
-        if ($this->inTokyo($playerId)) {
-            $this->leaveTokyo($playerId, true); // TODOAN check answer
-        }
     }
 
     function applyBatteryMonster(int $playerId, $card) {

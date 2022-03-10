@@ -125,9 +125,10 @@ class PlayerTable {
             this.hiddenEvolutionCards.setSelectionAppearance('class');
             this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
             this.hiddenEvolutionCards.create(this.game, $(`hidden-evolution-cards-${player.id}`), CARD_WIDTH, CARD_WIDTH);
-            this.hiddenEvolutionCards.setSelectionMode(0);
+            this.hiddenEvolutionCards.setSelectionMode(2);
             this.hiddenEvolutionCards.centerItems = true;
             this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.playEvolution(Number(item_id)));
 
             this.visibleEvolutionCards = new ebg.stock() as Stock;
             this.visibleEvolutionCards.setSelectionAppearance('class');
@@ -391,5 +392,11 @@ class PlayerTable {
             document.getElementById(`pick-evolution${this.playerId}`).style.display = 'none';
             this.pickEvolutionCards.removeAll();
         }
+    }
+    
+    public playEvolution(card: EvolutionCard) {
+        this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+
+        this.game.evolutionCards.removeAfterUseIfNecessary(this.visibleEvolutionCards, card);
     }
 }

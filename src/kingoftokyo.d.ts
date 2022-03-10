@@ -105,6 +105,8 @@ interface KingOfTokyoGamedatas {
     playerWithGoldenScarab?: number;
     curseCard?: Card;
     wickednessTiles: WickednessTile[];
+    EVOLUTION_CARDS_TYPES?: number[];
+    AUTO_DISCARDED_EVOLUTIONS?: number[];
 }
 
 interface KingOfTokyoGame extends Game {
@@ -119,6 +121,7 @@ interface KingOfTokyoGame extends Game {
     isPowerUpExpansion(): boolean;
     isDefaultFont(): boolean;
     
+    tableManager: TableManager;
     cards: Cards;
     curseCards: CurseCards;
     wickednessTiles: WickednessTiles;
@@ -145,6 +148,7 @@ interface KingOfTokyoGame extends Game {
     setFont(prefValue: number): void;
     toggleRerollDiceButton(): void;
     getPlayerEnergy(playerId: number): number;
+    playEvolution(id: number): void;
 }
 
 interface EnteringPickMonsterArgs {
@@ -310,6 +314,10 @@ interface NotifSetInitialCardsArgs {
 interface NotifResolveArgs {
     playerId: number;
     player_name: string;
+}
+
+interface EnteringResolveDiceArgs extends EnteringDiceArgs {
+    canLeaveHibernation: boolean;
 }
 
 interface NotifResolveNumberDiceArgs extends NotifResolveArgs {
@@ -509,4 +517,10 @@ interface NotifExchangeCardArgs {
 interface NotifAddEvolutionCardInHandArgs {
     playerId: number;
     card?: EvolutionCard;
+}
+
+interface NotifPlayEvolutionArgs {
+    playerId: number;
+    player_name: string;
+    card: EvolutionCard;
 }

@@ -180,4 +180,18 @@ trait DiceArgTrait {
         ];
     }
 
+    function argResolveDice() {
+        $activePlayerId = $this->getActivePlayerId();
+        $dice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
+
+        $canLeaveHibernation = $this->canLeaveHibernation($activePlayerId, $dice);
+
+        return [
+            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
+            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'selectableDice' => [],
+            'canLeaveHibernation' => $canLeaveHibernation,
+        ];
+    }
+
 }

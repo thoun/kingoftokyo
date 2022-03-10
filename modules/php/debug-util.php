@@ -18,8 +18,8 @@ trait DebugUtilTrait {
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         $this->debugSetEnergy(5);
-        //$this->debugSetPoints(8);
-        //$this->debugSetHealth(8);
+        $this->debugSetPoints(5);
+        $this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -54,7 +54,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        $this->debugSetCardInHand(WINGS_CARD, 2343493);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(JETS_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
@@ -91,6 +91,7 @@ trait DebugUtilTrait {
 
         // dark edition
 
+        $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
         //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
         //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
         //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
@@ -147,12 +148,13 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
 
         // power up
+
         if ($this->isPowerUpExpansion()) {
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            //$this->debugSetEvolutionInHand(12, 2343492, false);
-            //$this->debugSetEvolutionInHand(22, 2343493, false);
+            $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
-            $this->debugSetEvolutionInHand(BLACK_DIAMOND_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(PROGRAMMED_TO_DESTROY_EVOLUTION, 2343492, true);
         }
 
         // player order

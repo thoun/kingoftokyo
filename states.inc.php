@@ -397,13 +397,18 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_RESOLVE_DICE => [ // TODODE if hibernation, ask if player wants to resolve other than heart/energy
+    ST_RESOLVE_DICE => [
         "name" => "resolveDice",
-        "description" => "",
-        "type" => "game",
+        "description" => '',
+        "descriptionHibernation" => '',/*client TODODE translate('${actplayer} can leave Hibernation'),*/
+        "descriptionmyturn" => '',
+        "descriptionmyturnHibernation" => '',/*client TODODE translate('${you} can leave Hibernation'),*/
+        "type" => "activeplayer",
         "action" => "stResolveDice",
+        "args" => "argResolveDice",
+        "possibleactions" => [ "stayInHibernation", "leaveHibernation" ],
         "transitions" => [
-            "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE,
+            "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE, // TODOCY remove and test
         ],
     ],
 

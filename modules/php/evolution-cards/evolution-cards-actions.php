@@ -38,4 +38,29 @@ trait EvolutionCardsActionTrait {
         $nextState = intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
         $this->gamestate->jumpToState($nextState);
     }
+
+    function playEvolution(int $id) {
+        $playerId = $this->getCurrentPlayerId();
+
+        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
+
+        // TODOPU check if evolution can be played now
+
+        if (in_array($card->type, $this->AUTO_DISCARDED_EVOLUTIONS)) {
+            $this->evolutionCards->moveCard($card->id, 'dicard'.$playerId);
+        } else {
+            $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+        }
+        
+        $damages = $this->applyEvolutionEffects($card->type, $playerId);
+
+        $this->notifyAllPlayers("playEvolution", clienttranslate('${player_name} plays ${card_name}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $card,
+            'card_name' => 3000 + $card->type,
+        ]);
+
+        // TODOPU handle damages
+    }
 }

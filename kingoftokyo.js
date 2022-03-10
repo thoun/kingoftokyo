@@ -346,6 +346,7 @@ var Cards = /** @class */ (function () {
             case 46: return 4;
             case 47: return 3;
             case 48: return 6;
+            case 49: return 4;
             case 50: return 3;
             case 51: return 2;
             case 52: return 6;
@@ -561,8 +562,8 @@ var Cards = /** @class */ (function () {
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
-            // TODODE
-            case 50: return "At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>"; // TODODE
+            case 49: return "<div><i>" + ("You CANNOT buy this card while in TOKYO") + "</i></div>" + /*_TODODE*/ ("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
+            case 50: return /*_TODODE*/ ("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
             // TODODE
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
@@ -903,10 +904,12 @@ var CurseCards = /** @class */ (function () {
     };
     return CurseCards;
 }());
-var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6];
+var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 13];
 var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
         this.game = game;
+        this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
+        this.AUTO_DISCARDED_EVOLUTIONS = game.gamedatas.AUTO_DISCARDED_EVOLUTIONS;
     }
     EvolutionCards.prototype.setupCards = function (stocks) {
         stocks.forEach(function (stock) {
@@ -925,12 +928,21 @@ var EvolutionCards = /** @class */ (function () {
             // Space Penguin : blue 2384c6 grey 4c7c96
             case 17: return /*_TODOPU*/ ("[2384c6]Black [4c7c96]Diamond");
             // Alienoid : orange e39717 brown aa673d
+            case 21: return /*_TODOPU*/ ("[e39717]Alien [aa673d]Scourge");
             // Cyber Kitty : soft b67392 strong ec008c
+            case 31: return /*_TODOPU*/ ("[b67392]Nine [ec008c]Lives");
             case 37: return /*_TODOPU*/ ("[b67392]Mouse [ec008c]Hunter");
             case 38: return /*_TODOPU*/ ("[b67392]Meow [ec008c]Missle");
             // The King : dark a2550b light ca6c39
+            case 44: return /*_TODOPU*/ ("[a2550b]Giant [ca6c39]Banana");
+            case 47: return /*_TODOPU*/ ("[a2550b]I Am [ca6c39]the King!");
             // Gigazaur : dark 00a651 light bed62f
+            case 52: return /*_TODOPU*/ ("[00a651]Radioactive [bed62f]Waste");
+            case 53: return /*_TODOPU*/ ("[00a651]Primal [bed62f]Bellow");
+            case 55: return /*_TODOPU*/ ("[00a651]Defender [bed62f]Of Tokyo");
+            case 56: return /*_TODOPU*/ ("[00a651]Heat [bed62f]Vision");
             // Meka Dragon : gray a68d83 brown aa673d
+            case 63: return /*_TODOPU*/ ("[a68d83]Programmed [aa673d]To Destroy");
             // Boogie Woogie : dark 6c5b55 light a68d83
             // Pumpkin Jack : dark de6428 light f7941d
             // Cthulhu
@@ -938,6 +950,8 @@ var EvolutionCards = /** @class */ (function () {
             // King Kong
             // Cybertooth
             // Pandakaï : light 6d6e71 dark 231f20
+            case 131: return /*_TODOPU*/ ("[6d6e71]Panda[231f20]Monium");
+            case 134: return /*_TODOPU*/ ("[6d6e71]Bear [231f20]Necessities");
             // cyberbunny : soft b67392 strong ec008c
             // kraken : blue 2384c6 gray 4c7c96
             // Baby Gigazaur : dark a5416f light f05a7d
@@ -968,9 +982,25 @@ var EvolutionCards = /** @class */ (function () {
         switch (cardTypeId) {
             // Space Penguin
             case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
+            // Alienoid
+            case 21: return "+2[Star].";
             // Cyber Kitty
+            case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
+            // The King
+            case 44: return "+2[Heart].";
+            case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
+            // Gigazaur 
+            case 52: return "+2[Energy] +1[Heart]";
+            case 53: return /*_TODOPU*/ ("All other Monsters lose 2[Star].");
+            case 55: return /*_TODOPU*/ ("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
+            case 56: return /*_TODOPU*/ ("Monsters that wound you with their [diceSmash] ???TODOPU CONFIRM??? lose 1[Star].");
+            // Meka Dragon
+            case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time a Monster's health reaches 0[Heart].");
+            // Pandakaï
+            case 131: return /*_TODOPU*/ ("Gain 6[Energy]. All other Monsters gain 3[Energy].");
+            case 134: return "-1[Star] +2[Energy] +2[Heart]";
         }
         return null;
     };
@@ -995,8 +1025,48 @@ var EvolutionCards = /** @class */ (function () {
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     EvolutionCards.prototype.getCardTypeName = function (cardType) {
-        if (cardType < 100) {
-            return /*_ TODOPU */ ('<strong>Temporary</strong> evolution');
+        var type = this.EVOLUTION_CARDS_TYPES[cardType];
+        switch (type) {
+            case 1: return /*_ TODOPU */ ('<strong>Permanent</strong> evolution');
+            case 2: return /*_ TODOPU */ ('<strong>Temporary</strong> evolution');
+            case 3: return /*_ TODOPU */ ('<strong>Gift</strong> evolution');
+        }
+        return null;
+    };
+    EvolutionCards.prototype.addCardsToStock = function (stock, cards, from) {
+        if (!cards.length) {
+            return;
+        }
+        cards.forEach(function (card) {
+            stock.addToStockWithId(card.type, "" + card.id, from);
+            //const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
+        });
+        // TODOPU cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
+    };
+    EvolutionCards.prototype.moveToAnotherStock = function (sourceStock, destinationStock, card) {
+        if (sourceStock === destinationStock) {
+            return;
+        }
+        var sourceStockItemId = sourceStock.container_div.id + "_item_" + card.id;
+        if (document.getElementById(sourceStockItemId)) {
+            this.addCardsToStock(destinationStock, [card], sourceStockItemId);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
+            sourceStock.removeFromStockById("" + card.id);
+        }
+        else {
+            console.warn(sourceStockItemId + " not found in ", sourceStock);
+            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
+            this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
+        }
+        this.game.tableManager.tableHeightChange();
+    };
+    EvolutionCards.prototype.removeAfterUseIfNecessary = function (sourceStock, card) {
+        var _this = this;
+        if (this.AUTO_DISCARDED_EVOLUTIONS.includes(card.type)) {
+            setTimeout(function () {
+                sourceStock.removeFromStockById("" + card.id);
+                _this.game.tableManager.tableHeightChange();
+            }, 5000);
         }
     };
     return EvolutionCards;
@@ -1290,9 +1360,10 @@ var PlayerTable = /** @class */ (function () {
             this.hiddenEvolutionCards.setSelectionAppearance('class');
             this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
             this.hiddenEvolutionCards.create(this.game, $("hidden-evolution-cards-" + player.id), CARD_WIDTH, CARD_WIDTH);
-            this.hiddenEvolutionCards.setSelectionMode(0);
+            this.hiddenEvolutionCards.setSelectionMode(2);
             this.hiddenEvolutionCards.centerItems = true;
             this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
+            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.playEvolution(Number(item_id)); });
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
             this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
@@ -1516,6 +1587,10 @@ var PlayerTable = /** @class */ (function () {
             document.getElementById("pick-evolution" + this.playerId).style.display = 'none';
             this.pickEvolutionCards.removeAll();
         }
+    };
+    PlayerTable.prototype.playEvolution = function (card) {
+        this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+        this.game.evolutionCards.removeAfterUseIfNecessary(this.visibleEvolutionCards, card);
     };
     return PlayerTable;
 }());
@@ -3003,7 +3078,12 @@ var KingOfTokyo = /** @class */ (function () {
             case 'resolveDice':
                 this.falseBlessingAnkhAction = null;
                 this.setDiceSelectorVisibility(true);
+                this.onEnteringRerollOrDiscardDie(args.args);
                 this.diceManager.hideLock();
+                var argsResolveDice = args.args;
+                if (argsResolveDice.canLeaveHibernation) {
+                    this.setGamestateDescription('Hibernation');
+                }
                 break;
             case 'rerollOrDiscardDie':
                 this.setDiceSelectorVisibility(true);
@@ -3567,6 +3647,13 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.addClass('rerollDice_button', 'disabled');
                     if (argsRerollDice.min === 0) {
                         this.addActionButton('skipRerollDice_button', _("Skip"), function () { return _this.rerollDice([]); });
+                    }
+                    break;
+                case 'resolveDice':
+                    var argsResolveDice = args;
+                    if (argsResolveDice.canLeaveHibernation) {
+                        this.addActionButton('stayInHibernation_button', /*_TODODE*/ ("Stay in Hibernation"), function () { return _this.stayInHibernation(); });
+                        this.addActionButton('leaveHibernation_button', /*_TODODE*/ ("Leave Hibernation"), function () { return _this.leaveHibernation(); }, null, null, 'red');
                     }
                     break;
                 case 'takeWickednessTile':
@@ -4552,6 +4639,23 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipExchangeCard');
     };
+    KingOfTokyo.prototype.stayInHibernation = function () {
+        if (!this.checkAction('stayInHibernation')) {
+            return;
+        }
+        this.takeAction('stayInHibernation');
+    };
+    KingOfTokyo.prototype.leaveHibernation = function () {
+        if (!this.checkAction('leaveHibernation')) {
+            return;
+        }
+        this.takeAction('leaveHibernation');
+    };
+    KingOfTokyo.prototype.playEvolution = function (id) {
+        this.takeNoLockAction('playEvolution', {
+            id: id
+        });
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -4627,6 +4731,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['changeGoldenScarabOwner', ANIMATION_MS],
             ['discardedDie', ANIMATION_MS],
             ['exchangeCard', ANIMATION_MS],
+            ['playEvolution', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -4934,6 +5039,9 @@ var KingOfTokyo = /** @class */ (function () {
             this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
         this.tableManager.tableHeightChange(); // adapt to new card
+    };
+    KingOfTokyo.prototype.notif_playEvolution = function (notif) {
+        this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

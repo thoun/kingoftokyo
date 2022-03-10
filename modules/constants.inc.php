@@ -194,7 +194,7 @@ define('URBAVORE_CARD', 46);
 define('WE_RE_ONLY_MAKING_IT_STRONGER_CARD', 47);
 define('WINGS_CARD', 48);
 //Dark edition :
-define('HIBERNATION_CARD', 49); // TODODE ask other dice resolution, but when?
+define('HIBERNATION_CARD', 49);
 define('NANOBOTS_CARD', 50);
 define('NATURAL_SELECTION_CARD', 51);
 define('REFLECTIVE_HIDE_CARD', 52);
@@ -287,9 +287,26 @@ define('SONIC_BOOMER_WICKEDNESS_TILE', 108);
 define('FINAL_PUSH_WICKEDNESS_TILE', 109);
 define('STARBURST_WICKEDNESS_TILE', 110);
 
-// evolutions
+// evolutions : Space Penguin
 define('BLACK_DIAMOND_EVOLUTION', 17);
+// evolutions : Alienoid
+define('ALIEN_SCOURGE_EVOLUTION', 21);
+// evolutions : Cyber Kitty
+define('NINE_LIVES_EVOLUTION', 31);
 define('MOUSE_HUNTER_EVOLUTION', 37);
 define('MEOW_MISSLE_EVOLUTION', 38);
+// evolutions : The King
+define('GIANT_BANANA_EVOLUTION', 44);
+define('I_AM_THE_KING_EVOLUTION', 47);
+// evolutions : Gigazaur
+define('RADIOACTIVE_WASTE_EVOLUTION', 52);
+define('PRIMAL_BELLOW_EVOLUTION', 53);
+define('DEFENDER_OF_TOKYO_EVOLUTION', 55);
+define('HEAT_VISION_EVOLUTION', 56);
+// evolutions : Meka Dragon
+define('PROGRAMMED_TO_DESTROY_EVOLUTION', 63);
+// evolutions : Pandakaï
+define('PANDA_MONIUM_EVOLUTION', 131);
+define('BEAR_NECESSITIES_EVOLUTION', 134);
 
 ?>
