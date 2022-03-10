@@ -436,12 +436,12 @@ trait DiceUtilTrait {
         }
         $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $potentialEnergy >= 2;
 
-        $hasClown = intval($this->getGameStateValue(CLOWN_ACTIVATED)) == 1;
+        $hasClown = boolval($this->getGameStateValue(CLOWN_ACTIVATED));
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
-            $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
+            $dice = $this->getPlayerRolledDice($playerId, false, false, false); 
             $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
-            if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) { // dice 1-2-3 check with previous if
+            if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) {
                 $this->setGameStateValue(CLOWN_ACTIVATED, 1);
                 $hasClown = true;
             }
