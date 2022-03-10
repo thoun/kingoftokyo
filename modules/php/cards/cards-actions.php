@@ -869,7 +869,8 @@ trait CardsActionTrait {
 
         $playerId = intval($this->getCurrentPlayerId());
         
-        $unstableDnaCards = $this->getCardsOfType($playerId, UNSTABLE_DNA_CARD, false); // TODOWI check if unstable DNA can be mimicked somehow. If yes, remove false here, and create an intervention.
+        $unstableDnaCards = $this->getCardsOfType($playerId, UNSTABLE_DNA_CARD); // TODOWI unstable DNA can be mimicked. create an intervention for this.
+        $unstableDnaCards = array_values(array_filter($unstableDnaCards, fn($card) => $card->id < 2000)); // to remove mimic tile, as you can't exchange a cand with a tile
         $unstableDnaCard = $unstableDnaCards[0];
 
         $exchangedCard = $this->getCardFromDb($this->cards->getCard($exchangedCardId));
