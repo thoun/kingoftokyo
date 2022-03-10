@@ -426,6 +426,10 @@ class KingOfTokyo extends Table {
             if ($isPowerUpExpansion) {
                 $playerDb['visibleEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
                 $playerDb['hiddenEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('hand', $playerId));
+                
+                $card = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+                $playerDb['mothershipSupport'] = $card != null;
+                $playerDb['mothershipSupportUsed'] = $card != null && $this->isUsedCard(3000 + $card->id);
             }
         }
 
@@ -458,7 +462,6 @@ class KingOfTokyo extends Table {
 
         if ($isPowerUpExpansion) {
             $result['EVOLUTION_CARDS_TYPES'] = $this->EVOLUTION_CARDS_TYPES;
-            $result['AUTO_DISCARDED_EVOLUTIONS'] = $this->AUTO_DISCARDED_EVOLUTIONS;
         }
 
         return $result;

@@ -21,11 +21,14 @@ trait PlayerArgTrait {
     function argLeaveTokyo() {
         $smashedPlayersInTokyo = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
         $jetsPlayers = [];
+        $canYieldTokyo = [];
 
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
             if ($this->countCardOfType($smashedPlayerInTokyo, JETS_CARD) > 0) {
                 $jetsPlayers[] = $smashedPlayerInTokyo;
             }
+
+            $canYieldTokyo[$smashedPlayerInTokyo] = $this->canYieldTokyo($smashedPlayerInTokyo);
         }
 
         $jetsDamage = null;
@@ -44,7 +47,7 @@ trait PlayerArgTrait {
                     'skipBuyPhase' => boolval($this->getGameStateValue(SKIP_BUY_PHASE)),
                 ]
             ],
-            'canYieldTokyo' => $this->canYieldTokyo(),
+            'canYieldTokyo' => $canYieldTokyo,
         ];
     }
 

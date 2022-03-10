@@ -50,3 +50,39 @@ TODODE handle it has a child text difference
 TODOPU stats
 
 log no energy/heart/points won
+
+## PU Evolutions to play a timing :
+when reaching 0 :
+ - 25 Nine lives (Cyber Kitty)
+at start turn :
+ - 28 herbe à chat (Cyber Kitty) (before first roll?)
+ - 36 mise à jour (meka dragon)
+ - 70 réserve de bambous (pandakai)
+ - 87 épée énergétique (cyber bunny)
+ - 95 temple englouti (Kraken)
+before resolving :
+ - 92 grande marée (kraken)
+after resolving
+ - 34 analyse impitoyable (meka dragon) (or everytime ?)
+when smashing :
+ - 33 mecha blast (meka dragon) (can it also apply with bought cards or another evolution ?)
+when tokyo monster is damaged by this player
+ - 29 jouer avec sa nourriture (Cyber Kitty)
+during move phase (before leaving) :
+ - 58 débandade simiesque (The King)
+during move phase (after leaving, before entering) :
+ - 30 propulseur félin (Cyber Kitty)
+ - 57 ruée du grand singe (The King)
+after move phase active player turn :
+ - 59 gare au gorille (The King)
+ - 66 panda guerilla (Pandakai)
+ - 90 vague dévastatrice (Kraken)
+during buy phase
+ - 67 coup de bambou (Pandakai)
+at the end of active player turn :
+ - 44 vague de froid (space penguin) (or everytime ?)
+ - 45 pris dans la glace (space penguin) (or everytime ?)
+ - 46 blizzard (space penguin) (or everytime in player's turn ?)
+ - 51 convertisseur d'énergie (alienoid) (or everytime ?)
+ - 81 coup de génie (cyber bunny) (or everytime ?)
+ - 91 adorateurs cultistes (Kraken) (or everytime ?)

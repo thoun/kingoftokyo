@@ -288,9 +288,13 @@ define('FINAL_PUSH_WICKEDNESS_TILE', 109);
 define('STARBURST_WICKEDNESS_TILE', 110);
 
 // evolutions : Space Penguin
+define('COLD_WAVE_EVOLUTION', 14);
+define('BLIZZARD_EVOLUTION', 16);
 define('BLACK_DIAMOND_EVOLUTION', 17);
 // evolutions : Alienoid
 define('ALIEN_SCOURGE_EVOLUTION', 21);
+define('ANGER_BATTERIES_EVOLUTION', 23);
+define('MOTHERSHIP_SUPPORT_EVOLUTION', 27);
 // evolutions : Cyber Kitty
 define('NINE_LIVES_EVOLUTION', 31);
 define('MOUSE_HUNTER_EVOLUTION', 37);
@@ -304,6 +308,7 @@ define('PRIMAL_BELLOW_EVOLUTION', 53);
 define('DEFENDER_OF_TOKYO_EVOLUTION', 55);
 define('HEAT_VISION_EVOLUTION', 56);
 // evolutions : Meka Dragon
+define('DESTRUCTIVE_ANALYSIS_EVOLUTION', 62);
 define('PROGRAMMED_TO_DESTROY_EVOLUTION', 63);
 // evolutions : Pandakaï
 define('PANDA_MONIUM_EVOLUTION', 131);

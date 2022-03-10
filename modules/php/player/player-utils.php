@@ -363,13 +363,19 @@ trait PlayerUtilTrait {
         return true;
     }
 
-    function canYieldTokyo() {
+    function canYieldTokyo(int $playerId) {
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
 
             if ($curseCardType == PHARAONIC_EGO_CURSE_CARD) {
                 return false;
             }
+        }
+        if ($this->isPowerUpExpansion()) {
+            $blizzardOwner = $this->isEvolutionOnTable(BLIZZARD_EVOLUTION);
+            if ($blizzardOwner != null && $blizzardOwner != $playerId) {
+                return false;
+            } 
         }
         return true;
     }

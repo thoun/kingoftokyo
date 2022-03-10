@@ -532,16 +532,22 @@ trait CardsUtilTrait {
         $this->applyRapidHealing($playerId);
     }
 
+    function useMothershipSupport() {
+        $playerId = $this->getCurrentPlayerId(); // current, not active !
+
+        $this->applyMothershipSupport($playerId);
+    }
+
     function applyRapidHealing(int $playerId) {
         if ($this->getPlayerEnergy($playerId) < 2) {
             throw new \BgaUserException('Not enough energy');
         }
 
-        $health = $this->getPlayerHealth($playerId);
-
         if ($this->getPlayer($playerId)->eliminated) {
             throw new \BgaUserException('You can\'t heal when you\'re dead');
         }
+
+        $health = $this->getPlayerHealth($playerId);
 
         if ($health >= $this->getPlayerMaxHealth($playerId)) {
             throw new \BgaUserException('You can\'t heal when you\'re already at full life');
@@ -557,6 +563,47 @@ trait CardsUtilTrait {
 
         $this->applyGetHealth($playerId, 1, RAPID_HEALING_CARD, $playerId);
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0, $playerId);
+    }
+
+    function applyMothershipSupport(int $playerId) {
+        if ($playerId != $this->getActivePlayerId()) {
+            throw new \BgaUserException('This is not your turn');
+        }
+
+        if ($this->getPlayerEnergy($playerId) < 1) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        if ($this->getPlayer($playerId)->eliminated) {
+            throw new \BgaUserException('You can\'t heal when you\'re dead');
+        }
+
+        $health = $this->getPlayerHealth($playerId);
+
+        if ($health >= $this->getPlayerMaxHealth($playerId)) {
+            throw new \BgaUserException('You can\'t heal when you\'re already at full life');
+        }
+
+        if (!$this->canGainHealth($playerId)) {
+            throw new \BgaUserException(self::_('You cannot gain [Heart]'));
+        }
+
+        $card = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        if ($card == null) {
+            throw new \BgaUserException('No Mothership Support Evolution');
+        }
+        if ($this->isUsedCard(3000 + $card->id)) {
+            throw new \BgaUserException('You already used Mothership Support this turn');
+        }
+
+        $this->setUsedCard(3000 + $card->id);
+        $this->applyGetHealth($playerId, 1, 3000 + MOTHERSHIP_SUPPORT_EVOLUTION, $playerId);
+        $this->applyLoseEnergyIgnoreCards($playerId, 1, 0, $playerId);
+
+        $this->notifyPlayer($playerId, 'toggleMothershipSupportUsed', '', [
+            'playerId' => $playerId,
+            'used' => true,
+        ]);
     }
 
     function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false, bool $ignoreMimicToken = false) {
@@ -622,6 +669,26 @@ trait CardsUtilTrait {
             }            
 
             $this->notifyPlayer($playerId, 'toggleRapidHealing', '', [
+                'playerId' => $playerId,
+                'active' => $active,
+                'playerEnergy' => $playerEnergy,
+                'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
+            ]);
+        }
+    }
+
+    function toggleMothershipSupport(int $playerId, int $countMothershipSupportBefore) {
+        $countMothershipSupportAfter = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
+        
+        if ($countMothershipSupportBefore != $countMothershipSupportAfter) {
+            $active = $countMothershipSupportAfter > $countMothershipSupportBefore;
+
+            $playerEnergy = null;
+            if ($active) {
+                $playerEnergy = $this->getPlayerEnergy($playerId);
+            }            
+
+            $this->notifyPlayer($playerId, 'toggleMothershipSupport', '', [
                 'playerId' => $playerId,
                 'active' => $active,
                 'playerEnergy' => $playerEnergy,

@@ -198,6 +198,13 @@ trait DiceUtilTrait {
             }
         }
 
+        if ($this->isPowerUpExpansion()) {
+            $coldWaveOwner = $this->isEvolutionOnTable(COLD_WAVE_EVOLUTION);
+            if ($coldWaveOwner != null && $coldWaveOwner != $playerId) {
+                $remove++;
+            }          
+        }
+
         return max(6 + $add - $remove, 0);
     }
 

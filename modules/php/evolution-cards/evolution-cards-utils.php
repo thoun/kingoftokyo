@@ -59,6 +59,10 @@ trait EvolutionCardsUtilTrait {
             case ALIEN_SCOURGE_EVOLUTION: 
                 $this->applyGetPoints($playerId, 2, $logCardType);
                 break;
+            case ANGER_BATTERIES_EVOLUTION:
+                $damageCount = $this->getDamageTakenThisTurn($playerId);
+                $this->applyGetEnergy($playerId, $damageCount, $logCardType);
+                break;
             // Cyber Kitty
             // The King
             case GIANT_BANANA_EVOLUTION:
@@ -76,6 +80,14 @@ trait EvolutionCardsUtilTrait {
                 }
                 break;
             // Meka Dragon
+            case DESTRUCTIVE_ANALYSIS_EVOLUTION:
+                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
+                $rolledSmashes = $diceCounts[6];
+                if ($rolledSmashes > 0) {
+                    $this->applyGetEnergy($playerId, $rolledSmashes, $logCardType);
+                }
+                break;
             // Boogie Woogie
             // Pumpkin Jack
             // Cthulhu
@@ -139,5 +151,55 @@ trait EvolutionCardsUtilTrait {
         }
 
         return null;
+    }
+
+    function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
+        $changeMaxHealth = $card->type == EVEN_BIGGER_CARD; // TODOPU
+
+        $countMothershipSupportBefore = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
+        
+        $mimicCardType = null;
+        /*if ($card->type == MIMIC_CARD) { // Mimic
+            $changeMaxHealth = $this->getMimickedCardType(MIMIC_CARD) == EVEN_BIGGER_CARD;
+            $this->removeMimicToken(MIMIC_CARD, $playerId);
+            $removeMimickToken = true;
+            $mimicCardType = MIMIC_CARD;
+        } else if ($card->id == $this->getMimickedCardId(MIMIC_CARD) && !$ignoreMimicToken) {
+            $this->removeMimicToken(MIMIC_CARD, $playerId);
+            $removeMimickToken = true;
+            $mimicCardType = MIMIC_CARD;
+        }
+        if ($card->id == $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE) && !$ignoreMimicToken) {
+            $this->removeMimicToken(FLUXLING_WICKEDNESS_TILE, $playerId);
+            $removeMimickToken = true;
+            $mimicCardType = FLUXLING_WICKEDNESS_TILE;
+        }*/
+
+        $this->evolutionCards->moveCard($card->id, 'discard'.$playerId);
+
+        if (!$silent) {
+            $this->notifyAllPlayers("removeEvolutions", '', [
+                'playerId' => $playerId,
+                'cards' => [$card],
+                'delay' => $delay,
+            ]);
+        }
+        if ($changeMaxHealth) {
+            $this->changeMaxHealth($playerId);
+        }
+        
+        $this->toggleMothershipSupport($playerId, $countMothershipSupportBefore);
+    }
+
+    function isEvolutionOnTable(int $type) { // owner id | null
+        $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType($type));
+        if (count($cards) > 0) {
+            $card = $cards[0];
+        
+            if ($card->location == 'table') {
+                return $card->location_arg;
+            }
+        }  
+        return null;          
     }
 }

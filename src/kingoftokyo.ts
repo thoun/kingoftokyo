@@ -113,6 +113,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (currentPlayer?.rapidHealing) {
             this.addRapidHealingButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
         }
+        if (currentPlayer?.mothershipSupport) {
+            this.addMothershipSupportButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
+        }
         if (currentPlayer?.cultists) {
             this.addRapidCultistButtons(currentPlayer.health >= currentPlayer.maxHealth);
         }
@@ -834,7 +837,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
                     (this as any).addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
                     (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
-                    if (!argsLeaveTokyo.canYieldTokyo) {
+                    if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
                         this.startActionTimer('stayInTokyo_button', 5);
                         dojo.addClass('leaveTokyo_button', 'disabled');
                     }
@@ -1280,6 +1283,24 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private addMothershipSupportButton(userEnergy: number, isMaxHealth: boolean) {
+        if (!document.getElementById('mothershipSupportButton')) {
+            this.createButton(
+                'rapid-actions-wrapper', 
+                'mothershipSupportButton', 
+                dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (1[Energy])`), { card_name: this.evolutionCards.getCardName(27, 'text-only'), hearts: 1 }), 
+                () => this.useMothershipSupport(), 
+                this.gamedatas.players[this.getPlayerId()].mothershipSupportUsed || userEnergy < 1 || isMaxHealth
+            );
+        }
+    }
+
+    private removeMothershipSupportButton() {
+        if (document.getElementById('mothershipSupportButton')) {
+            dojo.destroy('mothershipSupportButton');
+        }
+    }
+
     private addRapidCultistButtons(isMaxHealth: boolean) {
         if (!document.getElementById('rapidCultistButtons')) {
             dojo.place(`<div id="rapidCultistButtons"><span>${dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') })} :</span></div>`, 'rapid-actions-wrapper');
@@ -1313,6 +1334,17 @@ class KingOfTokyo implements KingOfTokyoGame {
             const health = this.healthCounters[playerId].getValue();
             const maxHealth = this.gamedatas.players[playerId].maxHealth;
             dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
+        }
+    }
+
+    private checkMothershipSupportButtonState() {
+        if (document.getElementById('mothershipSupportButton')) {
+            const playerId = this.getPlayerId();
+            const userEnergy = this.energyCounters[playerId].getValue();
+            const health = this.healthCounters[playerId].getValue();
+            const maxHealth = this.gamedatas.players[playerId].maxHealth;
+            const used = this.gamedatas.players[playerId].mothershipSupportUsed;
+            dojo.toggleClass('mothershipSupportButton', 'disabled', used || userEnergy < 1 || health >= maxHealth);
         }
     }
 
@@ -1595,6 +1627,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public useRapidHealing() {
         this.takeNoLockAction('useRapidHealing');
+    }
+
+    public useMothershipSupport() {
+        this.takeNoLockAction('useMothershipSupport');
     }
 
     public useRapidCultist(type: number) { // 4 for health, 5 for energy
@@ -2170,9 +2206,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['setCardTokens', 1],
             ['setTileTokens', 1],
             ['removeCards', 1],
+            ['removeEvolutions', 1],
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
+            ['toggleMothershipSupport', 1],
+            ['toggleMothershipSupportUsed', 1],
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
             ['kotPlayerEliminated', 1],
@@ -2310,6 +2349,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    notif_removeEvolutions(notif: Notif<NotifRemoveEvolutionsArgs>) {
+        if (notif.args.delay) {
+            setTimeout(() => this.notif_removeEvolutions({
+                args: {
+                    ...notif.args,
+                    delay: 0,
+                }
+            } as Notif<NotifRemoveEvolutionsArgs>), notif.args.delay);
+        } else {
+            this.getPlayerTable(notif.args.playerId).removeEvolutions(notif.args.cards);
+            this.tableManager.tableHeightChange(); // adapt after removed cards
+        }
+    }
+
     notif_setMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
         this.setMimicToken(notif.args.type, notif.args.card);
     }
@@ -2386,6 +2439,19 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else {
             this.removeRapidHealingButton();
         }
+    }
+
+    notif_toggleMothershipSupport(notif: Notif<NotifToggleRapidHealingArgs>) {
+        if (notif.args.active) {
+            this.addMothershipSupportButton(notif.args.playerEnergy, notif.args.isMaxHealth);
+        } else {
+            this.removeMothershipSupportButton();
+        }
+    }
+
+    notif_toggleMothershipSupportUsed(notif: Notif<NotifToggleMothershipSupportUsedArgs>) {
+        this.gamedatas.players[notif.args.playerId].mothershipSupportUsed = notif.args.used;
+        this.checkMothershipSupportButtonState();
     }
 
     notif_useCamouflage(notif: Notif<NotifUseCamouflageArgs>) {
@@ -2531,12 +2597,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.healthCounters[playerId].toValue(health);
         this.getPlayerTable(playerId).setHealth(health, delay);
         this.checkRapidHealingButtonState();
+        this.checkMothershipSupportButtonState();
         this.checkHealthCultistButtonState();
     }
     
     private setMaxHealth(playerId: number, maxHealth: number) {
         this.gamedatas.players[playerId].maxHealth = maxHealth;
         this.checkRapidHealingButtonState();
+        this.checkMothershipSupportButtonState();
         this.checkHealthCultistButtonState();
         const popinId = `discussion_bubble_autoLeaveUnder`;
         if (document.getElementById(popinId)) {
@@ -2553,6 +2621,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.getPlayerTable(playerId).setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
+        this.checkMothershipSupportButtonState();
         this.setBuyDisabledCard(null, energy);
         
         (Array.from(document.querySelectorAll(`[data-enable-at-energy]`)) as HTMLElement[]).forEach(button => {

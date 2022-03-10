@@ -172,6 +172,14 @@ class PlayerTable {
         tilesIds.forEach(id => this.wickednessTiles.removeFromStockById(''+id));
     }
 
+    public removeEvolutions(cards: EvolutionCard[]) {
+        const cardsIds = cards.map(card => card.id);
+        cardsIds.forEach(id => {
+            this.hiddenEvolutionCards.removeFromStockById(''+id);
+            this.visibleEvolutionCards.removeFromStockById(''+id);
+        });
+    }
+
     public setPoints(points: number, delay: number = 0) {
         setTimeout(
             () => document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[Math.min(20, points)]}deg)`,
@@ -396,7 +404,5 @@ class PlayerTable {
     
     public playEvolution(card: EvolutionCard) {
         this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
-
-        this.game.evolutionCards.removeAfterUseIfNecessary(this.visibleEvolutionCards, card);
     }
 }

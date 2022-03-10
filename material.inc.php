@@ -36,9 +36,10 @@ $this->EVOLUTION_CARDS_TYPES = [
 
 // remove the evolutions 5s after use
 $this->AUTO_DISCARDED_EVOLUTIONS = [
-    21, 
+    21, 23,
     44, 
     52, 53,
+    62,
     131, 134,
 ];
 

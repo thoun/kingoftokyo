@@ -118,6 +118,26 @@ trait PlayerStateTrait {
             }
         }
 
+        if ($this->isPowerUpExpansion()) {
+            $coldWaveCard = $this->getEvolutionOfType($playerId, COLD_WAVE_EVOLUTION);
+            if ($coldWaveCard != null) {
+                $this->removeEvolution($playerId, $coldWaveCard);
+            }
+
+            $blizzardCard = $this->getEvolutionOfType($playerId, BLIZZARD_EVOLUTION);
+            if ($blizzardCard != null) {
+                $this->removeEvolution($playerId, $blizzardCard);
+            }    
+
+            $mothershipEvolutionCard = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+            if ($mothershipEvolutionCard != null) {
+                $this->notifyPlayer($playerId, 'toggleMothershipSupportUsed', '', [
+                    'playerId' => $playerId,
+                    'used' => false,
+                ]);
+            }
+        }
+
         // apply in tokyo at start
         if ($this->inTokyo($playerId)) {
             // start turn in tokyo
@@ -244,9 +264,13 @@ trait PlayerStateTrait {
     }
 
     function stLeaveTokyo() {
-        if ($this->autoSkipImpossibleActions() && !$this->argLeaveTokyo()['canYieldTokyo']) {
-            $this->gamestate->nextState('resume');
-            return;
+        if ($this->autoSkipImpossibleActions()) {
+            $canYieldTokyo = $this->argLeaveTokyo()['canYieldTokyo'];
+            $oneCanYield = $this->array_some($canYieldTokyo, fn($canYield) => $canYield);
+            if (!$oneCanYield) {
+                $this->gamestate->nextState('resume');
+                return;
+            }
         }
 
         $smashedPlayersInTokyo = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
@@ -254,12 +278,14 @@ trait PlayerStateTrait {
 
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
             if ($this->inTokyo($smashedPlayerInTokyo)) { // we check if player is still in Tokyo, it could have left with It has a child!
-                $player = $this->getPlayer($smashedPlayerInTokyo);
-                if ($player->eliminated) {
-                    $this->leaveTokyo($smashedPlayerInTokyo, true);
-                } else {
-                    if (!$this->autoLeave($smashedPlayerInTokyo, $player->health) && !$this->autoStay($smashedPlayerInTokyo, $player->health)) {
-                        $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
+                if ($this->canYieldTokyo($smashedPlayerInTokyo)) {
+                    $player = $this->getPlayer($smashedPlayerInTokyo);
+                    if ($player->eliminated) {
+                        $this->leaveTokyo($smashedPlayerInTokyo, true);
+                    } else {
+                        if (!$this->autoLeave($smashedPlayerInTokyo, $player->health) && !$this->autoStay($smashedPlayerInTokyo, $player->health)) {
+                            $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
+                        }
                     }
                 }
             }

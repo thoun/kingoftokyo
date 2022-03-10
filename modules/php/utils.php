@@ -75,7 +75,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr) {
@@ -107,7 +107,7 @@ trait UtilTrait {
         }
     }
 
-    function isUsedCard(int $cardId, $usedCards = null) {
+    function isUsedCard(int $cardId) {
         $cardsIds = $this->getUsedCard();
         return in_array($cardId, $cardsIds);
     }
@@ -159,6 +159,13 @@ trait UtilTrait {
     }
 
     function getRollNumber(int $playerId) {
+        if ($this->isPowerUpExpansion()) {
+            $blizzardOwner = $this->isEvolutionOnTable(BLIZZARD_EVOLUTION);
+            if ($blizzardOwner != null && $blizzardOwner != $playerId) {
+                return 1;
+            } 
+        }
+
         // giant brain
         $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
         // statue of libery
@@ -294,7 +301,7 @@ trait UtilTrait {
     }
 
     function leaveTokyo(int $playerId, bool $force) {
-        if (!$force && !$this->canYieldTokyo()) {
+        if (!$force && !$this->canYieldTokyo($playerId)) {
             return false;
         }
 
@@ -640,7 +647,7 @@ trait UtilTrait {
                     $this->applyGetPoints($pId, 3 * $countEaterOfTheDead, EATER_OF_THE_DEAD_CARD);
                 }
 
-                if ($isPowerUpExpansion && $this->hasEvolutionOfType($pId, PROGRAMMED_TO_DESTROY_EVOLUTION, true, true)) {
+                if ($playerId != $pId && $isPowerUpExpansion && $this->hasEvolutionOfType($pId, PROGRAMMED_TO_DESTROY_EVOLUTION, true, true)) {
                     $this->applyGetPoints($pId, 3, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
                     $this->applyGetEnergy($pId, 2, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
                 }
@@ -931,8 +938,12 @@ trait UtilTrait {
         $this->setGameStateValue(KILL_PLAYERS_SCORE_AUX, $eliminatedPlayersCount + 1);
     }
 
+    function getDamageTakenThisTurn(int $playerId) {
+        return intval($this->getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `to` = $playerId"));
+    }
+
     function isDamageTakenThisTurn(int $playerId) {
-        return intval($this->getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `to` = $playerId")) > 0;
+        return $this->getDamageTakenThisTurn($playerId) > 0;
     }
 
     function isDamageDealtThisTurn(int $playerId) {

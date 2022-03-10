@@ -909,7 +909,6 @@ var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
         this.game = game;
         this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
-        this.AUTO_DISCARDED_EVOLUTIONS = game.gamedatas.AUTO_DISCARDED_EVOLUTIONS;
     }
     EvolutionCards.prototype.setupCards = function (stocks) {
         stocks.forEach(function (stock) {
@@ -926,9 +925,13 @@ var EvolutionCards = /** @class */ (function () {
     EvolutionCards.prototype.getColoredCardName = function (cardTypeId) {
         switch (cardTypeId) {
             // Space Penguin : blue 2384c6 grey 4c7c96
+            case 14: return /*_TODOPU*/ ("[2384c6]Cold [4c7c96]Wave");
+            case 16: return /*_TODOPU*/ ("[2384c6]Blizzard");
             case 17: return /*_TODOPU*/ ("[2384c6]Black [4c7c96]Diamond");
             // Alienoid : orange e39717 brown aa673d
             case 21: return /*_TODOPU*/ ("[e39717]Alien [aa673d]Scourge");
+            case 23: return /*_TODOPU*/ ("[e39717]Anger [aa673d]Batteries");
+            case 27: return /*_TODOPU*/ ("[e39717]Mothership [aa673d]Support");
             // Cyber Kitty : soft b67392 strong ec008c
             case 31: return /*_TODOPU*/ ("[b67392]Nine [ec008c]Lives");
             case 37: return /*_TODOPU*/ ("[b67392]Mouse [ec008c]Hunter");
@@ -942,6 +945,7 @@ var EvolutionCards = /** @class */ (function () {
             case 55: return /*_TODOPU*/ ("[00a651]Defender [bed62f]Of Tokyo");
             case 56: return /*_TODOPU*/ ("[00a651]Heat [bed62f]Vision");
             // Meka Dragon : gray a68d83 brown aa673d
+            case 62: return /*_TODOPU*/ ("[a68d83]Destructive [aa673d]Analysis");
             case 63: return /*_TODOPU*/ ("[a68d83]Programmed [aa673d]To Destroy");
             // Boogie Woogie : dark 6c5b55 light a68d83
             // Pumpkin Jack : dark de6428 light f7941d
@@ -981,26 +985,31 @@ var EvolutionCards = /** @class */ (function () {
     EvolutionCards.prototype.getCardDescription = function (cardTypeId) {
         switch (cardTypeId) {
             // Space Penguin
+            case 14: return /*_TODOPU*/ ("Until your next turn, other Monsters roll with 1 fewer die.");
+            case 16: return /*_TODOPU*/ ("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
             // Alienoid
-            case 21: return "+2[Star].";
+            case 21: return /*_TODOPU*/ ("Gain 2[Star].");
+            case 23: return /*_TODOPU*/ ("Gain 1[Energy] for each [Heart] you lost this turn.");
+            case 27: return /*_TODOPU*/ ("Une fois lors de chacun de vos tours, vous pouvez dépenser 1[Energy] pour gagner 1[Heart].");
             // Cyber Kitty
             case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
             // The King
-            case 44: return "+2[Heart].";
+            case 44: return /*_TODOPU*/ ("Gain 2[Heart].");
             case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
             // Gigazaur 
-            case 52: return "+2[Energy] +1[Heart]";
+            case 52: return /*_TODOPU*/ ("Gain 2[Energy] and 1[Heart].");
             case 53: return /*_TODOPU*/ ("All other Monsters lose 2[Star].");
             case 55: return /*_TODOPU*/ ("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
-            case 56: return /*_TODOPU*/ ("Monsters that wound you with their [diceSmash] ???TODOPU CONFIRM??? lose 1[Star].");
+            case 56: return /*_TODOPU*/ ("Monsters that wound you lose 1[Star].");
             // Meka Dragon
-            case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time a Monster's health reaches 0[Heart].");
+            case 62: return /*_TODOPU*/ ("Gain 1[Energy] for each [diceSmash] you rolled this turn.");
+            case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
             // Pandakaï
             case 131: return /*_TODOPU*/ ("Gain 6[Energy]. All other Monsters gain 3[Energy].");
-            case 134: return "-1[Star] +2[Energy] +2[Heart]";
+            case 134: return /*_TODOPU*/ ("Lose 1[Star], gain 2[Energy] and 2[Heart].");
         }
         return null;
     };
@@ -1059,15 +1068,6 @@ var EvolutionCards = /** @class */ (function () {
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
         this.game.tableManager.tableHeightChange();
-    };
-    EvolutionCards.prototype.removeAfterUseIfNecessary = function (sourceStock, card) {
-        var _this = this;
-        if (this.AUTO_DISCARDED_EVOLUTIONS.includes(card.type)) {
-            setTimeout(function () {
-                sourceStock.removeFromStockById("" + card.id);
-                _this.game.tableManager.tableHeightChange();
-            }, 5000);
-        }
     };
     return EvolutionCards;
 }());
@@ -1400,6 +1400,14 @@ var PlayerTable = /** @class */ (function () {
         var tilesIds = tiles.map(function (tile) { return tile.id; });
         tilesIds.forEach(function (id) { return _this.wickednessTiles.removeFromStockById('' + id); });
     };
+    PlayerTable.prototype.removeEvolutions = function (cards) {
+        var _this = this;
+        var cardsIds = cards.map(function (card) { return card.id; });
+        cardsIds.forEach(function (id) {
+            _this.hiddenEvolutionCards.removeFromStockById('' + id);
+            _this.visibleEvolutionCards.removeFromStockById('' + id);
+        });
+    };
     PlayerTable.prototype.setPoints = function (points, delay) {
         var _this = this;
         if (delay === void 0) { delay = 0; }
@@ -1590,7 +1598,6 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.playEvolution = function (card) {
         this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
-        this.game.evolutionCards.removeAfterUseIfNecessary(this.visibleEvolutionCards, card);
     };
     return PlayerTable;
 }());
@@ -2921,6 +2928,17 @@ var TableCenter = /** @class */ (function () {
     };
     return TableCenter;
 }());
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
 var KingOfTokyo = /** @class */ (function () {
@@ -2997,6 +3015,9 @@ var KingOfTokyo = /** @class */ (function () {
         var currentPlayer = players.find(function (player) { return Number(player.id) === playerId; });
         if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.rapidHealing) {
             this.addRapidHealingButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
+        }
+        if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.mothershipSupport) {
+            this.addMothershipSupportButton(currentPlayer.energy, currentPlayer.health >= currentPlayer.maxHealth);
         }
         if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.cultists) {
             this.addRapidCultistButtons(currentPlayer.health >= currentPlayer.maxHealth);
@@ -3667,7 +3688,7 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     this.addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
                     this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
-                    if (!argsLeaveTokyo.canYieldTokyo) {
+                    if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
                         this.startActionTimer('stayInTokyo_button', 5);
                         dojo.addClass('leaveTokyo_button', 'disabled');
                     }
@@ -4021,6 +4042,17 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.destroy('rapidHealingButton');
         }
     };
+    KingOfTokyo.prototype.addMothershipSupportButton = function (userEnergy, isMaxHealth) {
+        var _this = this;
+        if (!document.getElementById('mothershipSupportButton')) {
+            this.createButton('rapid-actions-wrapper', 'mothershipSupportButton', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (1[Energy])"), { card_name: this.evolutionCards.getCardName(27, 'text-only'), hearts: 1 }), function () { return _this.useMothershipSupport(); }, this.gamedatas.players[this.getPlayerId()].mothershipSupportUsed || userEnergy < 1 || isMaxHealth);
+        }
+    };
+    KingOfTokyo.prototype.removeMothershipSupportButton = function () {
+        if (document.getElementById('mothershipSupportButton')) {
+            dojo.destroy('mothershipSupportButton');
+        }
+    };
     KingOfTokyo.prototype.addRapidCultistButtons = function (isMaxHealth) {
         var _this = this;
         if (!document.getElementById('rapidCultistButtons')) {
@@ -4041,6 +4073,16 @@ var KingOfTokyo = /** @class */ (function () {
             var health = this.healthCounters[playerId].getValue();
             var maxHealth = this.gamedatas.players[playerId].maxHealth;
             dojo.toggleClass('rapidHealingButton', 'disabled', userEnergy < 2 || health >= maxHealth);
+        }
+    };
+    KingOfTokyo.prototype.checkMothershipSupportButtonState = function () {
+        if (document.getElementById('mothershipSupportButton')) {
+            var playerId = this.getPlayerId();
+            var userEnergy = this.energyCounters[playerId].getValue();
+            var health = this.healthCounters[playerId].getValue();
+            var maxHealth = this.gamedatas.players[playerId].maxHealth;
+            var used = this.gamedatas.players[playerId].mothershipSupportUsed;
+            dojo.toggleClass('mothershipSupportButton', 'disabled', used || userEnergy < 1 || health >= maxHealth);
         }
     };
     KingOfTokyo.prototype.checkHealthCultistButtonState = function () {
@@ -4280,6 +4322,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.useRapidHealing = function () {
         this.takeNoLockAction('useRapidHealing');
+    };
+    KingOfTokyo.prototype.useMothershipSupport = function () {
+        this.takeNoLockAction('useMothershipSupport');
     };
     KingOfTokyo.prototype.useRapidCultist = function (type) {
         this.takeNoLockAction('useRapidCultist', { type: type });
@@ -4745,9 +4790,12 @@ var KingOfTokyo = /** @class */ (function () {
             ['setCardTokens', 1],
             ['setTileTokens', 1],
             ['removeCards', 1],
+            ['removeEvolutions', 1],
             ['setMimicToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
+            ['toggleMothershipSupport', 1],
+            ['toggleMothershipSupportUsed', 1],
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
             ['kotPlayerEliminated', 1],
@@ -4871,6 +4919,18 @@ var KingOfTokyo = /** @class */ (function () {
             this.tableManager.tableHeightChange(); // adapt after removed cards
         }
     };
+    KingOfTokyo.prototype.notif_removeEvolutions = function (notif) {
+        var _this = this;
+        if (notif.args.delay) {
+            setTimeout(function () { return _this.notif_removeEvolutions({
+                args: __assign(__assign({}, notif.args), { delay: 0 })
+            }); }, notif.args.delay);
+        }
+        else {
+            this.getPlayerTable(notif.args.playerId).removeEvolutions(notif.args.cards);
+            this.tableManager.tableHeightChange(); // adapt after removed cards
+        }
+    };
     KingOfTokyo.prototype.notif_setMimicToken = function (notif) {
         this.setMimicToken(notif.args.type, notif.args.card);
     };
@@ -4934,6 +4994,18 @@ var KingOfTokyo = /** @class */ (function () {
         else {
             this.removeRapidHealingButton();
         }
+    };
+    KingOfTokyo.prototype.notif_toggleMothershipSupport = function (notif) {
+        if (notif.args.active) {
+            this.addMothershipSupportButton(notif.args.playerEnergy, notif.args.isMaxHealth);
+        }
+        else {
+            this.removeMothershipSupportButton();
+        }
+    };
+    KingOfTokyo.prototype.notif_toggleMothershipSupportUsed = function (notif) {
+        this.gamedatas.players[notif.args.playerId].mothershipSupportUsed = notif.args.used;
+        this.checkMothershipSupportButtonState();
     };
     KingOfTokyo.prototype.notif_useCamouflage = function (notif) {
         if (notif.args.cancelDamageArgs) {
@@ -5054,11 +5126,13 @@ var KingOfTokyo = /** @class */ (function () {
         this.healthCounters[playerId].toValue(health);
         this.getPlayerTable(playerId).setHealth(health, delay);
         this.checkRapidHealingButtonState();
+        this.checkMothershipSupportButtonState();
         this.checkHealthCultistButtonState();
     };
     KingOfTokyo.prototype.setMaxHealth = function (playerId, maxHealth) {
         this.gamedatas.players[playerId].maxHealth = maxHealth;
         this.checkRapidHealingButtonState();
+        this.checkMothershipSupportButtonState();
         this.checkHealthCultistButtonState();
         var popinId = "discussion_bubble_autoLeaveUnder";
         if (document.getElementById(popinId)) {
@@ -5074,6 +5148,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.getPlayerTable(playerId).setEnergy(energy, delay);
         this.checkBuyEnergyDrinkState(energy); // disable button if energy gets down to 0
         this.checkRapidHealingButtonState();
+        this.checkMothershipSupportButtonState();
         this.setBuyDisabledCard(null, energy);
         Array.from(document.querySelectorAll("[data-enable-at-energy]")).forEach(function (button) {
             var enableAtEnergy = Number(button.dataset.enableAtEnergy);

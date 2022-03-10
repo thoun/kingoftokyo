@@ -53,6 +53,8 @@ interface KingOfTokyoPlayer extends Player {
     poisonTokens: number;
     shrinkRayTokens: number;
     rapidHealing: boolean;
+    mothershipSupport: boolean;
+    mothershipSupportUsed: boolean;
     health: number;
     energy: number;
     monster: number;
@@ -106,7 +108,6 @@ interface KingOfTokyoGamedatas {
     curseCard?: Card;
     wickednessTiles: WickednessTile[];
     EVOLUTION_CARDS_TYPES?: number[];
-    AUTO_DISCARDED_EVOLUTIONS?: number[];
 }
 
 interface KingOfTokyoGame extends Game {
@@ -293,7 +294,7 @@ interface EnteringLeaveTokyoArgs {
     _private?: {
         skipBuyPhase: boolean;
     };
-    canYieldTokyo: boolean;
+    canYieldTokyo: { [playerId: number]: boolean };
 }
 
 interface EnteringChooseEvolutionCardArgs {
@@ -396,6 +397,13 @@ interface NotifRemoveWickednessTilesArgs {
     tiles: WickednessTile[];
 }
 
+interface NotifRemoveEvolutionsArgs {
+    playerId: number;
+    player_name: string;
+    cards: EvolutionCard[];
+    delay: number;
+}
+
 interface NotifPointsArgs extends NotifResolveArgs {
     points: number;
 }
@@ -433,6 +441,11 @@ interface NotifToggleRapidHealingArgs {
     active: boolean;
     playerEnergy: number;
     isMaxHealth: boolean;
+}
+
+interface NotifToggleMothershipSupportUsedArgs {
+    playerId: number;
+    used: boolean;
 }
 
 interface NotifUseCamouflageArgs {

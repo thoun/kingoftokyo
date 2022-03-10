@@ -116,6 +116,14 @@
         self::ajaxResponse();
     }
   	
+    public function useMothershipSupport() {
+        self::setAjaxMode();
+
+        $this->game->useMothershipSupport();
+
+        self::ajaxResponse();
+    }
+  	
     public function useRapidHealingSync() {
         self::setAjaxMode();
 

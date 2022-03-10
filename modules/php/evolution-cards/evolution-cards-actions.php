@@ -46,11 +46,9 @@ trait EvolutionCardsActionTrait {
 
         // TODOPU check if evolution can be played now
 
-        if (in_array($card->type, $this->AUTO_DISCARDED_EVOLUTIONS)) {
-            $this->evolutionCards->moveCard($card->id, 'dicard'.$playerId);
-        } else {
-            $this->evolutionCards->moveCard($card->id, 'table', $playerId);
-        }
+        $countMothershipSupportBefore = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
+
+        $this->evolutionCards->moveCard($card->id, 'table', $playerId);
         
         $damages = $this->applyEvolutionEffects($card->type, $playerId);
 
@@ -60,6 +58,12 @@ trait EvolutionCardsActionTrait {
             'card' => $card,
             'card_name' => 3000 + $card->type,
         ]);
+        
+        if (in_array($card->type, $this->AUTO_DISCARDED_EVOLUTIONS)) {
+            $this->removeEvolution($playerId, $card, false, 5000);
+        }
+        
+        $this->toggleMothershipSupport($playerId, $countMothershipSupportBefore);
 
         // TODOPU handle damages
     }

@@ -53,11 +53,11 @@ trait PlayerActionTrait {
     function actionLeaveTokyo() {
         $this->checkAction('leave');
 
-        if (!$this->canYieldTokyo()) {
+        $playerId = $this->getCurrentPlayerId();
+
+        if (!$this->canYieldTokyo($playerId)) {
             throw new \BgaUserException('Impossible to yield Tokyo');
         }
-
-        $playerId = $this->getCurrentPlayerId();
 
         $this->applyActionLeaveTokyo($playerId);
     }

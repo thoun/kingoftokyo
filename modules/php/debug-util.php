@@ -15,11 +15,11 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         $this->debugSetEnergy(5);
         $this->debugSetPoints(5);
-        $this->debugSetHealth(1);
+        $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -91,11 +91,13 @@ trait DebugUtilTrait {
 
         // dark edition
 
-        $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
-        //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
-        //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
-        //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
-        //$this->debugSetCardInHand(ZOMBIFY_CARD, 2343493);
+        if ($this->isDarkEdition()) {
+            $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
+            //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
+            //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
+            //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
+            //$this->debugSetCardInHand(ZOMBIFY_CARD, 2343493);
+        }
 
         // halloween
         if ($this->isHalloweenExpansion()) {
@@ -154,7 +156,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
-            $this->debugSetEvolutionInHand(PROGRAMMED_TO_DESTROY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, false);
         }
 
         // player order
