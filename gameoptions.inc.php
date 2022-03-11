@@ -84,7 +84,6 @@ $game_options = [
     ],
 
     /* TODOCY 
-
     CYBERTOOTH_EXPANSION_OPTION => [
         'name' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
         'values' => [
@@ -119,9 +118,11 @@ $game_options = [
             ],
         ],
         'default' => 1,
-    ],*/
+    ],
+    */
 
-    /* TODOWI WICKEDNESS_EXPANSION_OPTION => [
+    /* TODOWI 
+    WICKEDNESS_EXPANSION_OPTION => [
         'name' => totranslate('“Even more wicked!” event'),
         'values' => [
             1 => [
@@ -141,9 +142,27 @@ $game_options = [
             ],
         ],
         'default' => 1,
-    ],*/
+    ],
+    */
 
-    /* TODODE DARK_EDITION_OPTION => [
+    /* TODOPU 
+    POWERUP_EXPANSION_OPTION => [
+        'name' => totranslate('Power-Up! (Evolutions)'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Power-Up! (Evolutions)'),
+            ],
+        ],
+        'default' => 1,
+    ],
+    */
+
+    /* TODODE 
+    DARK_EDITION_OPTION => [
         'name' => totranslate('Dark edition'),
         'values' => [
             1 => [
@@ -163,7 +182,8 @@ $game_options = [
             ],
         ],
         'default' => 1,
-    ],*/
+    ],
+    */
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
