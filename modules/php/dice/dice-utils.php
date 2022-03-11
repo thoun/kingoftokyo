@@ -427,18 +427,13 @@ trait DiceUtilTrait {
 
     function getChangeDieCards(int $playerId) {
         // Herd Culler
+        $hasHerdCuller = false;
         $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
-        $availableHerdCullers = 0;
-        $herdCullerCount = count($herdCullerCards);
-        if ($herdCullerCount > 0) {
+        if (count($herdCullerCards) > 0) {
             $usedCards = $this->getUsedCard();
-            foreach ($herdCullerCards as $herdCullerCard) {
-                if (!in_array($herdCullerCard->id, $usedCards)) {
-                    $availableHerdCullers++;
-                }
-            }
+            $availableHerdCullers = array_values(array_filter($herdCullerCards, fn($card) => !in_array($card->id, $usedCards)));
+            $hasHerdCuller = count($availableHerdCullers) > 0;
         }
-        $hasHerdCuller = $herdCullerCount > 0 && $availableHerdCullers > 0;
         // Plot Twist
         $hasPlotTwist = $this->countCardOfType($playerId, PLOT_TWIST_CARD) > 0;
         // Stretchy
@@ -461,6 +456,18 @@ trait DiceUtilTrait {
 
         $isPowerUpExpansion = $this->isPowerUpExpansion();
 
+        // Gamma Breath
+        $hasGammaBreath = false;
+        if ($isPowerUpExpansion) {
+            $gammaBreathCards = $this->getEvolutionsOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);            
+
+            if (count($gammaBreathCards) > 0) {
+                $usedCards = $this->getUsedCard();
+                $availableGammaBreath = array_values(array_filter($gammaBreathCards, fn($gammaBreathCard) => !in_array(3000 + $gammaBreathCard->id, $usedCards)));
+                $hasGammaBreath = count($availableGammaBreath) > 0;
+            }
+        }
+
         // Saurian Adaptability
         $hasSaurianAdaptability = $isPowerUpExpansion && $this->hasEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true);
 
@@ -473,12 +480,19 @@ trait DiceUtilTrait {
             'hasStretchy' => $hasStretchy,
             'hasClown' => $hasClown,
             'hasSaurianAdaptability' => $hasSaurianAdaptability,
+            'hasGammaBreath' => $hasGammaBreath,
             'hasYinYang' => $hasYinYang,
         ];
     }
 
     function canChangeDie(array $cards) {
-        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'] || $cards['hasClown'] || $cards['hasSaurianAdaptability'] || $cards['hasYinYang'];
+        return $cards['hasHerdCuller'] 
+            || $cards['hasPlotTwist'] 
+            || $cards['hasStretchy'] 
+            || $cards['hasClown'] 
+            || $cards['hasSaurianAdaptability'] 
+            || $cards['hasGammaBreath'] 
+            || $cards['hasYinYang'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        

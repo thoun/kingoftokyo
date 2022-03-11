@@ -48,6 +48,7 @@ class EvolutionCards {
             case 54: return /*_TODOPU*/("[00a651]Saurian [bed62f]Adaptability");
             case 55: return /*_TODOPU*/("[00a651]Defender [bed62f]Of Tokyo");
             case 56: return /*_TODOPU*/("[00a651]Heat [bed62f]Vision");
+            case 57: return /*_TODOPU*/("[00a651]Gamma [bed62f]Breath");
             // Meka Dragon : gray a68d83 brown aa673d
             case 62: return /*_TODOPU*/("[a68d83]Destructive [aa673d]Analysis");
             case 63: return /*_TODOPU*/("[a68d83]Programmed [aa673d]To Destroy");
@@ -116,6 +117,7 @@ class EvolutionCards {
             case 54: return /*_TODOPU*/("Choose a die face. Take all dice with this face and flip them to a (single) face of your choice.");
             case 55: return /*_TODOPU*/("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
             case 56: return /*_TODOPU*/("Monsters that wound you lose 1[Star].");
+            case 57: return /*_TODOPU*/("Once per turn, you can change one of the dice you rolled to [diceSmash].");
             // Meka Dragon
             case 62: return /*_TODOPU*/("Gain 1[Energy] for each [diceSmash] you rolled this turn.");
             case 63: return /*_TODOPU*/("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");

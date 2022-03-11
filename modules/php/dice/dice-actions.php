@@ -196,7 +196,13 @@ trait DiceActionTrait {
             $saurianAdaptabilityCard = $this->getEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true);
             $this->playEvolutionToTable($playerId, $saurianAdaptabilityCard, '');
             $this->removeEvolution($playerId, $saurianAdaptabilityCard, false, 5000);
-        }
+        } else if ($cardType == 3000 + GAMMA_BREATH_EVOLUTION) {
+            $gammaBreathCard = $this->getEvolutionOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);
+            if ($gammaBreathCard->location === 'hand') {
+                $this->playEvolutionToTable($playerId, $gammaBreathCard);
+            }
+            $this->setUsedCard(3000 + $gammaBreathCard->id);
+        } 
 
         $activePlayerId = $this->getActivePlayerId();
 

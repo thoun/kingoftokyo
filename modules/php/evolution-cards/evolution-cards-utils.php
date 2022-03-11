@@ -194,6 +194,16 @@ trait EvolutionCardsUtilTrait {
         return null;
     }
 
+    function getEvolutionsOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
+        $card = $this->getEvolutionOfType($playerId, $cardType, $fromTable, $fromHand);
+
+        if ($card != null) {
+            return [$card];
+        }
+        
+        return [];
+    }
+
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
         $changeMaxHealth = $card->type == EVEN_BIGGER_CARD; // TODOPU
 
