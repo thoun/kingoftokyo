@@ -401,7 +401,7 @@ trait PlayerStateTrait {
         if ($countNaturalSelection > 0) {
             $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
             if ($diceCounts[3] > 0) {
-                $this->applyDamage($playerId, $this->getPlayerEnergy($playerId), $playerId, NATURAL_SELECTION_CARD, $playerId, 0, 0, null);
+                $this->applyDamage($playerId, $this->getPlayerHealth($playerId), $playerId, NATURAL_SELECTION_CARD, $playerId, 0, 0, null);
             }
         }
 
@@ -420,6 +420,15 @@ trait PlayerStateTrait {
     }
 
     function stEndTurn() {
+        $playerId = $this->getActivePlayerId();
+
+        if ($this->isPowerUpExpansion()) {
+            $catNipCard = $this->getEvolutionOfType($playerId, CAT_NIP_EVOLUTION);
+            if ($catNipCard != null) {
+                $this->removeEvolution($playerId, $catNipCard);
+            }
+        }
+
         $this->gamestate->nextState('nextPlayer');
     }
 

@@ -736,15 +736,18 @@ class KingOfTokyo implements KingOfTokyoGame {
                         document.getElementById(`confirmInitialCards_button`).classList.add('disabled');
                     }
                     break;
+                case 'beforeStartTurn':
+                    (this as any).addActionButton('skipBeforeStartTurn_button', _("Skip"), () => this.skipBeforeStartTurn());
+                    break;
                 case 'changeMimickedCardWickednessTile':
-                    (this as any).addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), 'skipChangeMimickedCardWickednessTile');
+                    (this as any).addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"),  () => this.skipChangeMimickedCardWickednessTile());
 
                     if (!args.canChange) {
                         this.startActionTimer('skipChangeMimickedCardWickednessTile_button', 5);
                     }
                     break;
                 case 'changeMimickedCard':
-                    (this as any).addActionButton('skipChangeMimickedCard_button', _("Skip"), 'skipChangeMimickedCard');
+                    (this as any).addActionButton('skipChangeMimickedCard_button', _("Skip"), () => this.skipChangeMimickedCard());
 
                     if (!args.canChange) {
                         this.startActionTimer('skipChangeMimickedCard_button', 5);
@@ -1568,6 +1571,14 @@ class KingOfTokyo implements KingOfTokyoGame {
             id,
             evolutionId,
         });
+    }
+
+    public skipBeforeStartTurn() {
+        if(!(this as any).checkAction('skipBeforeStartTurn')) {
+            return;
+        }
+
+        this.takeAction('skipBeforeStartTurn');
     }
 
     public giveSymbolToActivePlayer(symbol: number) {

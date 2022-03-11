@@ -13,6 +13,12 @@ trait EvolutionCardsActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */  
 
+    function skipBeforeStartTurn() {
+        $this->checkAction('skipBeforeStartTurn');
+
+        $this->goToState(ST_START_TURN);
+    }
+
     function applyChooseEvolutionCard(int $playerId, int $id) {
         $topCards = $this->pickEvolutionCards($playerId);
         $card = $this->array_find($topCards, fn($topCard) => $topCard->id == $id);
@@ -52,7 +58,7 @@ trait EvolutionCardsActionTrait {
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
         
-        $damages = $this->applyEvolutionEffects($card->type, $playerId);
+        $damages = $this->applyEvolutionEffects($card, $playerId);
 
         $this->playEvolutionToTable($playerId, $card);
         

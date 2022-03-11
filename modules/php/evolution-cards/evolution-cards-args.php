@@ -14,6 +14,12 @@ trait EvolutionCardsArgTrait {
         game state.
     */
 
+    function argBeforeStartTurn() {
+        return [
+            'canPlayEvolution' => true, // TODOPU
+        ];
+    }
+    
     function argChooseEvolutionCard() {
         $activePlayerId = $this->getActivePlayerId();
 

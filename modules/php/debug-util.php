@@ -28,7 +28,7 @@ trait DebugUtilTrait {
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -157,7 +157,9 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(TAIL_SWEEP_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
         }
 
         // player order

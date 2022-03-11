@@ -48,14 +48,22 @@ trait EvolutionCardsUtilTrait {
     }
 
     function canPlayEvolution(int $cardType, int $playerId) {
+
+        // cards to player before starting turn
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_START) && intval($this->gamestate->state_id()) != ST_PLAYER_BEFORE_START_TURN) {
+            return false;
+        }
+
         switch($cardType) {
             case SIMIAN_SCAMPER_EVOLUTION:
             case DETACHABLE_TAIL_EVOLUTION:
                 return false;
             case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
-                return $this->inTokyo($playerId); // TODOPU use only when you enter
+                return $this->inTokyo($playerId); // TODOPU use only when you enter Tokyo
             case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
-                return $this->inTokyo($playerId); // TODOPU use only when you enter
+                return $this->inTokyo($playerId); // TODOPU use only when you enter Tokyo
+            case TUNE_UP_EVOLUTION:
+                return !$this->inTokyo($playerId);
         }
 
         return true;
@@ -76,11 +84,12 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
-    function applyEvolutionEffects(int $cardType, int $playerId) { // return $damages
+    function applyEvolutionEffects(EvolutionCard $card, int $playerId) { // return $damages
         if (!$this->keepAndEvolutionCardsHaveEffect()) {
             return;
         }
 
+        $cardType = $card->type;
         $logCardType = 3000 + $cardType;
 
         switch($cardType) {
@@ -118,6 +127,12 @@ trait EvolutionCardsUtilTrait {
                     $this->applyGetEnergy($playerId, $rolledSmashes, $logCardType);
                 }
                 break;
+            case TUNE_UP_EVOLUTION:
+                $this->applyGetHealth($playerId, 4, $logCardType, $playerId);
+                $this->applyGetEnergy($playerId, 2, $logCardType);
+                $this->removeCard($playerId, $card, false, 5000);
+                $this->goToState(ST_NEXT_PLAYER);
+                break;
             // Boogie Woogie
             // Pumpkin Jack
             // Cthulhu
@@ -147,6 +162,9 @@ trait EvolutionCardsUtilTrait {
                 $this->applyLosePoints($playerId, 1, $logCardType);
                 $this->applyGetEnergy($playerId, 2, $logCardType);
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
+                break;
+            case BAMBOO_SUPPLY_EVOLUTION:
+                // TODOPU $this->goToState(ST_START_TURN);
                 break;
             // cyberbunny
             // kraken

@@ -131,6 +131,7 @@ class EvolutionCards {
             case 27: return /*_TODOPU*/("Une fois lors de chacun de vos tours, vous pouvez dépenser 1[Energy] pour gagner 1[Heart].");
             // Cyber Kitty
             case 31: return /*_TODOPU*/("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
+            case 34: return /*_TODOPU*/("Play at the start of your turn. You only have one roll this turn. Double the result.");
             case 37: return /*_TODOPU*/("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/("If you roll at least one [dice1], add [diceSmash] to your roll.");
             // The King
@@ -150,11 +151,13 @@ class EvolutionCards {
             // Meka Dragon
             case 62: return /*_TODOPU*/("Gain 1[Energy] for each [diceSmash] you rolled this turn.");
             case 63: return /*_TODOPU*/("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
+            case 64: return /*_TODOPU*/("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");            
             // Pandakaï
             case 131: return /*_TODOPU*/("Gain 6[Energy]. All other Monsters gain 3[Energy].");  
             //case 132: return /*_TODOPU*/("Play when you take control of Tokyo. Make all Monsters outside of Tokyo lose 2[Heart]. Gain 1[Energy], then leave Tokyo. No Monster takes your place.");
             case 134: return /*_TODOPU*/("Lose 1[Star], gain 2[Energy] and 2[Heart].");
             case 135: return /*_TODOPU*/("Each time you roll at least [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], gain 2[Star] and take another turn.");
+            case 136: return /*_TODOPU*/("At the start of your turn, you can put 1[Energy] from the bank on this card OR take all of the [Energy] off this card.");
             case 137: return /*_TODOPU*/("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return /*_TODOPU*/("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + `<div>[dice1]↔[dice3] &nbsp; [dice2]↔[diceHeart] &nbsp; [diceSmash]↔[diceEnergy]</div>`;
         }

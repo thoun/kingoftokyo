@@ -71,7 +71,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {
@@ -163,7 +163,11 @@ trait UtilTrait {
             $blizzardOwner = $this->isEvolutionOnTable(BLIZZARD_EVOLUTION);
             if ($blizzardOwner != null && $blizzardOwner != $playerId) {
                 return 1;
-            } 
+            }
+
+            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+                return 1;
+            }
         }
 
         // giant brain

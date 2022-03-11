@@ -58,6 +58,14 @@
         self::ajaxResponse();
     }
   	
+    public function skipBeforeStartTurn() {
+        self::setAjaxMode();
+
+        $this->game->skipBeforeStartTurn();
+
+        self::ajaxResponse();
+    }
+  	
     public function giveSymbolToActivePlayer() {
         self::setAjaxMode();
 

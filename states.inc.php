@@ -104,7 +104,7 @@ $basicGameStates = [
         "action" => "stNextPlayer",
         "updateGameProgression" => true,
         "transitions" => [
-            "nextPlayer" => ST_START_TURN, 
+            "nextPlayer" => ST_PLAYER_BEFORE_START_TURN, 
             "endGame" => ST_END_GAME,
         ],
     ],
@@ -163,8 +163,20 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stStartGame",
         "transitions" => [ 
-            "start" => ST_START_TURN,
+            "start" => ST_PLAYER_BEFORE_START_TURN,
         ],
+    ],
+
+    ST_PLAYER_BEFORE_START_TURN => [
+        "name" => "beforeStartTurn",
+        "description" => '',/* client TODOPU translate('${actplayer} can activate an Evolution card'), */
+        "descriptionmyturn" => '', /* client TODOPU translate('${you} can activate an Evolution card'), */
+        "type" => "activeplayer",
+        "action" => "stBeforeStartTurn",
+        "args" => "argBeforeStartTurn",
+        "possibleactions" => [ "skipBeforeStartTurn" ],
+        "transitions" => [],
+
     ],
 
     ST_START_TURN => [

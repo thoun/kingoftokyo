@@ -43,6 +43,14 @@ $this->AUTO_DISCARDED_EVOLUTIONS = [
     131, 132, 134,
 ];
 
+$this->EVOLUTION_TO_PLAY_BEFORE_START = [
+    CAT_NIP_EVOLUTION,
+    TUNE_UP_EVOLUTION,
+    BAMBOO_SUPPLY_EVOLUTION,
+    //- 87 épée énergétique (cyber bunny)
+    //- 95 temple englouti (Kraken)
+];
+
 $this->CARD_COST = [
     // KEEP
     1 => 6,

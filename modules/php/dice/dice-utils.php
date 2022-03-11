@@ -809,6 +809,16 @@ trait DiceUtilTrait {
             }
         }
 
+        if ($this->isPowerUpExpansion()) {
+            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+                $newDiceCounts = [];
+                foreach ($diceCounts as $face => $value) {
+                    $newDiceCounts[$face] = $value * 2;
+                }
+                $diceCounts = $newDiceCounts;
+            }
+        }
+
         return $diceCounts;
     }
 
