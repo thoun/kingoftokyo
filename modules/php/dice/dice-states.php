@@ -109,6 +109,13 @@ trait DiceStateTrait {
                 if ($countCompleteDestruction > 0) {
                     $this->applyGetPoints($playerId, 9 * $countCompleteDestruction, COMPLETE_DESTRUCTION_CARD);
                 }
+
+                if ($this->isPowerUpExpansion()) {
+                    if ($this->hasEvolutionOfType($playerId, PANDA_EXPRESS_EVOLUTION)) {
+                        $this->applyGetPoints($playerId, 2, 3000 + PANDA_EXPRESS_EVOLUTION);
+                        $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 1);
+                    }
+                }
             }
         }
 

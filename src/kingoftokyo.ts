@@ -2385,6 +2385,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_points(notif: Notif<NotifPointsArgs>) {
+        console.log(notif);
         this.setPoints(notif.args.playerId, notif.args.points);
     }
 

@@ -54,7 +54,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
+        $this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
@@ -156,7 +156,8 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
-            $this->debugSetEvolutionInHand(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION, 2343492, true);
         }
 
         // player order
@@ -258,6 +259,12 @@ trait DebugUtilTrait {
     // debugSetDieFaces(6, 3)
     function debugSetDieFaces($face, $limit = 99) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
+    }
+
+    function debugClownRoll() {
+        for ($i=6;$i>0;$i--) {
+            $this->debugSetDieFaces($i, $i);
+        }
     }
 
     public function debugReplacePlayersIds() {

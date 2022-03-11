@@ -71,7 +71,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {
@@ -391,6 +391,10 @@ trait UtilTrait {
 
     function getPlayersIdsInTokyo() {
         return $this->getPlayersIdsFromLocation(true);
+    }
+
+    function getPlayersIdsOutsideTokyo() {
+        return $this->getPlayersIdsFromLocation(false);
     }
 
     function getPlayersIds() {

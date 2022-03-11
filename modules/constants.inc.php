@@ -112,6 +112,7 @@ define('FREEZE_TIME_CURRENT_TURN', 'FreezeTimeCurrentTurn');
 define('FRENZY_EXTRA_TURN', 'FrenzyExtraTurn');
 define('FINAL_PUSH_EXTRA_TURN', 'FinalPushExtraTurn');
 define('BUILDERS_UPRISING_EXTRA_TURN', 'BuildersUprisingExtraTurn');
+define('PANDA_EXPRESS_EXTRA_TURN', 'PandaExpressExtraTurn');
 define('PSYCHIC_PROBE_ROLLED_A_3', 'PsychicProbeRolledA3');
 define('KILL_PLAYERS_SCORE_AUX', 'KillPlayersScoreAux');
 define('FRENZY_EXTRA_TURN_FOR_OPPORTUNIST', 'FrenzyExtraTurnForOpportunist');
@@ -315,6 +316,8 @@ define('DESTRUCTIVE_ANALYSIS_EVOLUTION', 62);
 define('PROGRAMMED_TO_DESTROY_EVOLUTION', 63);
 // evolutions : Pandakaï
 define('PANDA_MONIUM_EVOLUTION', 131);
+define('EATS_SHOOTS_AND_LEAVES_EVOLUTION', 132);
 define('BEAR_NECESSITIES_EVOLUTION', 134);
+define('PANDA_EXPRESS_EVOLUTION', 135);
 
 ?>

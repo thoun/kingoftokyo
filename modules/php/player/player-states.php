@@ -523,7 +523,12 @@ trait PlayerStateTrait {
 
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
                 $anotherTimeWithCard = FRENZY_CARD; // Frenzy
-                $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);            
+                $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);
+            }
+
+            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(PANDA_EXPRESS_EXTRA_TURN)) == 1) { // extra turn for current player
+                $anotherTimeWithCard = 3000 + PANDA_EXPRESS_EVOLUTION;
+                $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 0);
             }
             
             if ($anotherTimeWithCard > 0) {

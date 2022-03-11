@@ -6,6 +6,7 @@ require_once(__DIR__.'/../objects/evolution-card.php');
 require_once(__DIR__.'/../objects/damage.php');
 
 use KOT\Objects\EvolutionCard;
+use KOT\Objects\Damage;
 
 trait EvolutionCardsUtilTrait {
 
@@ -47,11 +48,13 @@ trait EvolutionCardsUtilTrait {
     }
 
     function canPlayEvolution(int $cardType, int $playerId) {
-        if ($cardType == SIMIAN_SCAMPER_EVOLUTION) {
-            return false;
-        }
-        if ($cardType == TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION) {
-            return $this->inTokyo($playerId); // TODOPU use only when you enter
+        switch($cardType) {
+            case SIMIAN_SCAMPER_EVOLUTION:
+                return false;
+            case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
+                return $this->inTokyo($playerId); // TODOPU use only when you enter
+            case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
+                return $this->inTokyo($playerId); // TODOPU use only when you enter
         }
 
         return true;
@@ -113,6 +116,17 @@ trait EvolutionCardsUtilTrait {
                     $this->applyGetEnergy($otherPlayerId, 3, $logCardType);
                 }
                 break;
+            case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
+                $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
+                $damages = [];
+                foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
+                    $damages[] = new Damage($outsideTokyoPlayerId, 2, $playerId, $logCardType);
+                }
+
+                $this->applyGetEnergy($playerId, 1, $logCardType);
+                $this->leaveTokyo($playerId, false); // TODOPU confirm
+
+                return $damages;
             case BEAR_NECESSITIES_EVOLUTION:
                 $this->applyLosePoints($playerId, 1, $logCardType);
                 $this->applyGetEnergy($playerId, 2, $logCardType);

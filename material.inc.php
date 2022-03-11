@@ -40,7 +40,7 @@ $this->AUTO_DISCARDED_EVOLUTIONS = [
     44, 
     52, 53,
     62,
-    131, 134,
+    131, 132, 134,
 ];
 
 $this->CARD_COST = [
