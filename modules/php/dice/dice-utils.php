@@ -355,6 +355,7 @@ trait DiceUtilTrait {
 
         $jetsDamages = [];
         $smashedPlayersInTokyo = [];
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
         foreach($smashedPlayersIds as $smashedPlayerId) {
             $smashedPlayerIsInTokyo = $this->inTokyo($smashedPlayerId);
             if ($smashedPlayerIsInTokyo) {
@@ -366,12 +367,16 @@ trait DiceUtilTrait {
 
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
+            $countSimianScamper = 0;
+            if ($isPowerUpExpansion) {
+                $countSimianScamper = $this->hasEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true) ? 1 : 0;
+            }
 
-
-            if ($countJets > 0 && $smashedPlayerIsInTokyo) {                
-                $jetsDamages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
+            $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
+            if (($countJets > 0 || $countSimianScamper > 0) && $smashedPlayerIsInTokyo) {                
+                $jetsDamages[] = $newDamage;
             } else {
-                $damages[] = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
+                $damages[] = $newDamage;
             }
         }
 

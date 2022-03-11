@@ -427,9 +427,9 @@ class KingOfTokyo extends Table {
                 $playerDb['visibleEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
                 $playerDb['hiddenEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('hand', $playerId));
                 
-                $card = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
-                $playerDb['mothershipSupport'] = $card != null;
-                $playerDb['mothershipSupportUsed'] = $card != null && $this->isUsedCard(3000 + $card->id);
+                $mothershipSupportCard = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+                $playerDb['mothershipSupport'] = $mothershipSupportCard != null;
+                $playerDb['mothershipSupportUsed'] = $mothershipSupportCard != null && $this->isUsedCard(3000 + $mothershipSupportCard->id);
             }
         }
 
@@ -598,7 +598,7 @@ class KingOfTokyo extends Table {
                     $this->applySkipWings($active_player);
                     return;
                 case 'leaveTokyo':
-                    $this->applyActionLeaveTokyo($active_player);
+                    $this->applyActionLeaveTokyo($active_player, null);
                 case 'leaveTokyoExchangeCard':
                     $this->applySkipExchangeCard($active_player);
                     return;

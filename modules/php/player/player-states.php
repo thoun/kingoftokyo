@@ -34,6 +34,7 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(MADE_IN_A_LAB, []);
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);
+        $this->setGlobalVariable(USED_SIMIAN_SCAMPER, []);
         $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, []);
 
         // apply monster effects
@@ -420,6 +421,16 @@ trait PlayerStateTrait {
     }
 
     function stEndTurn() {
+        if ($this->isPowerUpExpansion()) {
+            $playerId = $this->getActivePlayerId();
+
+            $simianScamperCard = $this->getEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION);
+
+            if ($simianScamperCard != null) {
+                $this->removeEvolution($playerId, $simianScamperCard);
+            }
+        }
+
         $this->gamestate->nextState('nextPlayer');
     }
 

@@ -61,7 +61,7 @@ class CancelDamageIntervention extends PlayerIntervention {
     public static function canDoIntervention(object $game, int $playerId, int $damage, int $damageDealerId) {
         $canDo = $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
             $game->countCardOfType($playerId, ROBOT_CARD) > 0 || 
-            ($game->countCardOfType($playerId, WINGS_CARD) > 0 && !$game->isInvincible($playerId)) ||
+            ($game->countCardOfType($playerId, WINGS_CARD) > 0 && $game->canLoseHealth($playerId, $damage)) == null ||
             $game->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
 
         if ($canDo) {

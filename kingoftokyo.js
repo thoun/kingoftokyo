@@ -937,6 +937,7 @@ var EvolutionCards = /** @class */ (function () {
             case 37: return /*_TODOPU*/ ("[b67392]Mouse [ec008c]Hunter");
             case 38: return /*_TODOPU*/ ("[b67392]Meow [ec008c]Missle");
             // The King : dark a2550b light ca6c39
+            case 42: return /*_TODOPU*/ ("[a2550b]Simian [ca6c39]Scamper");
             case 44: return /*_TODOPU*/ ("[a2550b]Giant [ca6c39]Banana");
             case 47: return /*_TODOPU*/ ("[a2550b]I Am [ca6c39]the King!");
             // Gigazaur : dark 00a651 light bed62f
@@ -997,6 +998,7 @@ var EvolutionCards = /** @class */ (function () {
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
             // The King
+            case 42: return /*_TODOPU*/ ("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
             case 44: return /*_TODOPU*/ ("Gain 2[Heart].");
             case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
             // Gigazaur 
@@ -3538,7 +3540,7 @@ var KingOfTokyo = /** @class */ (function () {
     //
     KingOfTokyo.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
-        var _a;
+        var _a, _b;
         switch (stateName) {
             case 'changeActivePlayerDie':
             case 'psychicProbeRollDie':
@@ -3683,11 +3685,16 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'leaveTokyo':
                     var label = _("Stay in Tokyo");
                     var argsLeaveTokyo = args;
-                    if ((_a = argsLeaveTokyo.jetsPlayers) === null || _a === void 0 ? void 0 : _a.includes(this.getPlayerId())) {
+                    var playerHasJets_1 = (_a = argsLeaveTokyo.jetsPlayers) === null || _a === void 0 ? void 0 : _a.includes(this.getPlayerId());
+                    var playerHasSimianScamper = (_b = argsLeaveTokyo.simianScamperPlayers) === null || _b === void 0 ? void 0 : _b.includes(this.getPlayerId());
+                    if (playerHasJets_1 || playerHasSimianScamper) {
                         label += formatTextIcons(" (- " + argsLeaveTokyo.jetsDamage + " [heart])");
                     }
-                    this.addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
-                    this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
+                    this.addActionButton('stayInTokyo_button', label, function () { return _this.onStayInTokyo(); });
+                    this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), function () { return _this.onLeaveTokyo(playerHasJets_1 ? 24 : undefined); });
+                    if (playerHasSimianScamper) {
+                        this.addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(42, 'text-only') }), function () { return _this.onLeaveTokyo(3042); });
+                    }
                     if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
                         this.startActionTimer('stayInTokyo_button', 5);
                         dojo.addClass('leaveTokyo_button', 'disabled');
@@ -4494,11 +4501,13 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('stay');
     };
-    KingOfTokyo.prototype.onLeaveTokyo = function () {
+    KingOfTokyo.prototype.onLeaveTokyo = function (useCard) {
         if (!this.checkAction('leave')) {
             return;
         }
-        this.takeAction('leave');
+        this.takeAction('leave', {
+            useCard: useCard
+        });
     };
     KingOfTokyo.prototype.stealCostumeCard = function (id) {
         if (!this.checkAction('stealCostumeCard')) {

@@ -134,9 +134,10 @@ define('RAGING_FLOOD_EXTRA_DIE_SELECTED', 'RagingFloodExtraDieSelected');
 define('FIRE_BREATHING_DAMAGES', 'FireBreathingDamages');
 define('DICE_COUNTS', 'DiceCounts');
 define('USED_CARDS', 'UsedCards');
-define('JETS_DAMAGES', 'JetsDamages');
+define('JETS_DAMAGES', 'JetsDamages'); // also contains Simian Scamper damages
 define('MIMICKED_CARD', 'MimickedCard');
 define('USED_WINGS', 'UsedWings');
+define('USED_SIMIAN_SCAMPER', 'UsedSimianScamper');
 define('MADE_IN_A_LAB', 'MadeInALab');
 define('BURROWING_PLAYERS', 'BurrowingPlayers');
 define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
@@ -300,6 +301,7 @@ define('NINE_LIVES_EVOLUTION', 31);
 define('MOUSE_HUNTER_EVOLUTION', 37);
 define('MEOW_MISSLE_EVOLUTION', 38);
 // evolutions : The King
+define('SIMIAN_SCAMPER_EVOLUTION', 42);
 define('GIANT_BANANA_EVOLUTION', 44);
 define('I_AM_THE_KING_EVOLUTION', 47);
 // evolutions : Gigazaur

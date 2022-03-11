@@ -37,6 +37,7 @@ class EvolutionCards {
             case 37: return /*_TODOPU*/("[b67392]Mouse [ec008c]Hunter");
             case 38: return /*_TODOPU*/("[b67392]Meow [ec008c]Missle");
             // The King : dark a2550b light ca6c39
+            case 42: return /*_TODOPU*/("[a2550b]Simian [ca6c39]Scamper");
             case 44: return /*_TODOPU*/("[a2550b]Giant [ca6c39]Banana");
             case 47: return /*_TODOPU*/("[a2550b]I Am [ca6c39]the King!");
             // Gigazaur : dark 00a651 light bed62f
@@ -97,6 +98,7 @@ class EvolutionCards {
             case 37: return /*_TODOPU*/("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/("If you roll at least one [dice1], add [diceSmash] to your roll.");
             // The King
+            case 42: return /*_TODOPU*/("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
             case 44: return /*_TODOPU*/("Gain 2[Heart].");
             case 47: return /*_TODOPU*/("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
             // Gigazaur 

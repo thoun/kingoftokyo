@@ -50,7 +50,7 @@ trait PlayerActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
     }
 
-    function actionLeaveTokyo() {
+    function actionLeaveTokyo(/*int | null*/ $useCard) {
         $this->checkAction('leave');
 
         $playerId = $this->getCurrentPlayerId();
@@ -59,13 +59,12 @@ trait PlayerActionTrait {
             throw new \BgaUserException('Impossible to yield Tokyo');
         }
 
-        $this->applyActionLeaveTokyo($playerId);
+        $this->applyActionLeaveTokyo($playerId, $useCard);
     }
 
-    function applyActionLeaveTokyo(int $playerId) {
-
-
-        if ($this->leaveTokyo($playerId, false)) {
+    function applyActionLeaveTokyo(int $playerId, /*int | null*/ $useCard) {
+        
+        if ($this->leaveTokyo($playerId, false, $useCard)) {
             $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
         }
     

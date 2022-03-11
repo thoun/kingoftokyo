@@ -832,11 +832,16 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");
                     const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
-                    if (argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId())) {
+                    const playerHasJets = argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId());
+                    const playerHasSimianScamper = argsLeaveTokyo.simianScamperPlayers?.includes(this.getPlayerId());
+                    if (playerHasJets || playerHasSimianScamper) {
                         label += formatTextIcons(` (- ${argsLeaveTokyo.jetsDamage} [heart])`);
                     }
-                    (this as any).addActionButton('stayInTokyo_button', label, 'onStayInTokyo');
-                    (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), 'onLeaveTokyo');
+                    (this as any).addActionButton('stayInTokyo_button', label, () => this.onStayInTokyo());
+                    (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), () => this.onLeaveTokyo(playerHasJets ? 24 : undefined));
+                    if (playerHasSimianScamper) {
+                        (this as any).addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(42, 'text-only') }), () => this.onLeaveTokyo(3042));
+                    }
                     if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
                         this.startActionTimer('stayInTokyo_button', 5);
                         dojo.addClass('leaveTokyo_button', 'disabled');
@@ -1847,12 +1852,14 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('stay');
     }
-    public onLeaveTokyo() {
+    public onLeaveTokyo(useCard?: number) {
         if(!(this as any).checkAction('leave')) {
             return;
         }
 
-        this.takeAction('leave');
+        this.takeAction('leave', {
+            useCard
+        });
     }
 
     public stealCostumeCard(id: number | string) {

@@ -71,7 +71,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
     }
 
     function isDarkEdition() {
@@ -300,7 +300,7 @@ trait UtilTrait {
         }
     }
 
-    function leaveTokyo(int $playerId, bool $force) {
+    function leaveTokyo(int $playerId, bool $force, /*int | null*/ $useCard = null) {
         if (!$force && !$this->canYieldTokyo($playerId)) {
             return false;
         }
@@ -319,9 +319,24 @@ trait UtilTrait {
         ]);
 
         $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
-        if ($jetsDamages != null) {
+        if ($jetsDamages != null && $useCard != null && in_array($useCard, [24, 3042])) {
             $jetsDamages = array_values(array_filter($jetsDamages, fn($damage) => $damage->playerId != $playerId));
             $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
+
+            if ($useCard == 3042) {
+                $card = $this->getEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
+
+                $this->setInvincible($playerId, USED_SIMIAN_SCAMPER);
+
+                $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+
+                $this->notifyAllPlayers("playEvolution", clienttranslate('${player_name} plays ${card_name}'), [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'card' => $card,
+                    'card_name' => 3000 + $card->type,
+                ]);
+            }
         }
 
         $this->incStat(1, 'tokyoLeaves', $playerId);
@@ -609,28 +624,12 @@ trait UtilTrait {
     }
 
     function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
-        $canLoseHealth = $this->canLoseHealth($playerId);
-        if ($canLoseHealth !== null) {
+        $canLoseHealth = $this->canLoseHealth($playerId, $health);
+        if ($canLoseHealth != null) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
             $this->logDamageBlocked($playerId, $canLoseHealth);
             return; // player has golden scarab and cannot lose hearts
-        }
-
-        if ($this->isInvincible($playerId)) { // TODO move to canLoseHealth ?
-            $this->removePlayerFromSmashedPlayersInTokyo($playerId);
-
-            $this->logDamageBlocked($playerId, WINGS_CARD);
-            return; // player has wings and cannot lose hearts
-        }
-
-        // Armor plating
-        $countArmorPlating = $this->countCardOfType($playerId, ARMOR_PLATING_CARD);
-        if ($countArmorPlating > 0 && $health == 1) { // TODO move to canLoseHealth ?
-            $this->removePlayerFromSmashedPlayersInTokyo($playerId);
-
-            $this->logDamageBlocked($playerId, ARMOR_PLATING_CARD);
-            return;
         }
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -674,7 +673,7 @@ trait UtilTrait {
     }
 
     function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
-        if ($this->isInvincible($playerId)) {
+        if ($this->canLoseHealth($playerId, $health) != null) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return null; // player has wings and cannot lose hearts
         }

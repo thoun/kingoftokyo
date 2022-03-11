@@ -21,18 +21,24 @@ trait PlayerArgTrait {
     function argLeaveTokyo() {
         $smashedPlayersInTokyo = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
         $jetsPlayers = [];
+        $simianScamperPlayers = [];
         $canYieldTokyo = [];
 
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
             if ($this->countCardOfType($smashedPlayerInTokyo, JETS_CARD) > 0) {
                 $jetsPlayers[] = $smashedPlayerInTokyo;
+            }
+            
+            if ($isPowerUpExpansion && $this->hasEvolutionOfType($smashedPlayerInTokyo, SIMIAN_SCAMPER_EVOLUTION, true, true)) {
+                $simianScamperPlayers[] = $smashedPlayerInTokyo;
             }
 
             $canYieldTokyo[$smashedPlayerInTokyo] = $this->canYieldTokyo($smashedPlayerInTokyo);
         }
 
         $jetsDamage = null;
-        if (count($jetsPlayers) > 0) {
+        if (count($jetsPlayers) > 0 || count($simianScamperPlayers) > 0) {
             $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
             if (count($jetsDamages) > 0) {
                 $jetsDamage = $jetsDamages[0]->damage;
@@ -41,6 +47,7 @@ trait PlayerArgTrait {
 
         return [
             'jetsPlayers' => $jetsPlayers,
+            'simianScamperPlayers' => $simianScamperPlayers,
             'jetsDamage' => $jetsDamage,
             '_private' => [ 
                 $this->getActivePlayerId() => [       // not "active" as it actually means current

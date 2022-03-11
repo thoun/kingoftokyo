@@ -28,7 +28,7 @@ trait DebugUtilTrait {
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -55,7 +55,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
-        //$this->debugSetCardInHand(JETS_CARD, 2343492);
+        $this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
@@ -156,7 +156,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
-            $this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(SIMIAN_SCAMPER_EVOLUTION, 2343493, false);
         }
 
         // player order

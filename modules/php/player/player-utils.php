@@ -12,14 +12,10 @@ trait PlayerUtilTrait {
 //////////// Utility functions
 ////////////
 
-    function isInvincible(int $playerId) {
-        return in_array($playerId, $this->getGlobalVariable(USED_WINGS, true));
-    }
-
-    function setInvincible(int $playerId) {        
-        $usedWings = $this->getGlobalVariable(USED_WINGS, true);
+    function setInvincible(int $playerId, string $varName) {        
+        $usedWings = $this->getGlobalVariable($varName, true);
         $usedWings[] = $playerId;
-        $this->setGlobalVariable(USED_WINGS, $usedWings);
+        $this->setGlobalVariable($varName, $usedWings);
     }
 
     function isFewestStars(int $playerId) {
@@ -293,7 +289,7 @@ trait PlayerUtilTrait {
         return true;
     }
 
-    function canLoseHealth(int $playerId) {
+    function canLoseHealth(int $playerId, int $damage) {
         if ($this->isAnubisExpansion()) {
             $curseCardType = $this->getCurseCardType();
 
@@ -304,8 +300,21 @@ trait PlayerUtilTrait {
             }
         }
 
+        if (in_array($playerId, $this->getGlobalVariable(USED_WINGS, true))) {
+            return WINGS_CARD;
+        }
+        if (in_array($playerId, $this->getGlobalVariable(USED_SIMIAN_SCAMPER, true))) {
+            return 3000 + SIMIAN_SCAMPER_EVOLUTION;
+        }
+
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
             return HIBERNATION_CARD;
+        }
+
+        if ($damage == 1) {
+            if ($this->countCardOfType($playerId, ARMOR_PLATING_CARD) > 0) {
+                return ARMOR_PLATING_CARD;
+            }
         }
 
         return null;

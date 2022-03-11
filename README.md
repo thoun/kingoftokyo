@@ -68,8 +68,6 @@ when smashing :
  - 33 mecha blast (meka dragon) (can it also apply with bought cards or another evolution ?)
 when tokyo monster is damaged by this player
  - 29 jouer avec sa nourriture (Cyber Kitty)
-during move phase (before leaving) :
- - 58 débandade simiesque (The King)
 during move phase (after leaving, before entering) :
  - 30 propulseur félin (Cyber Kitty)
  - 57 ruée du grand singe (The King)

@@ -46,6 +46,14 @@ trait EvolutionCardsUtilTrait {
         return $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop(2, 'deck'.$playerId));
     }
 
+    function canPlayEvolution(int $cardType, int $playerId) {
+        if ($cardType == SIMIAN_SCAMPER_EVOLUTION) {
+            return false;
+        }
+
+        return true;
+    }
+
     function applyEvolutionEffects(int $cardType, int $playerId) { // return $damages
         if (!$this->keepAndEvolutionCardsHaveEffect()) {
             return;

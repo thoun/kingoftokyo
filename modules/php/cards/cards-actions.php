@@ -694,12 +694,12 @@ trait CardsActionTrait {
             throw new \BgaUserException('No Wings card');
         }
 
-        if ($this->isInvincible($playerId)) {
-            throw new \BgaUserException('You already used Wings in this turn');
+        if ($this->canLoseHealth($playerId, 999) != null) {
+            throw new \BgaUserException('You already invincible');
         }
 
         $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
-        $this->setInvincible($playerId);
+        $this->setInvincible($playerId, USED_WINGS);
 
         $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 

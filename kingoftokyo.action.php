@@ -377,8 +377,10 @@
   	
     public function leave() {
         self::setAjaxMode();
+        
+        $useCard = self::getArg("useCard", AT_posint, false);
 
-        $this->game->actionLeaveTokyo();
+        $this->game->actionLeaveTokyo($useCard);
 
         self::ajaxResponse();
     }

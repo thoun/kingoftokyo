@@ -44,7 +44,9 @@ trait EvolutionCardsActionTrait {
 
         $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
 
-        // TODOPU check if evolution can be played now
+        if (!$this->canPlayEvolution($card->type, $playerId)) {
+            throw new \BgaUserException("You can't play this Evolution.");
+        }
 
         $countMothershipSupportBefore = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
 
