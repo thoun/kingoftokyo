@@ -25,20 +25,39 @@ class EvolutionCards {
     private getColoredCardName(cardTypeId: number): string {
         switch( cardTypeId ) {
             // Space Penguin : blue 2384c6 grey 4c7c96
+            case 11: return /*_TODOPU*/("[2384c6]Freeze [4c7c96]Ray");
+            case 12: return /*_TODOPU*/("[2384c6]Miraculous [4c7c96]Catch");
+            case 13: return /*_TODOPU*/("[2384c6]Deep [4c7c96]Dive");
             case 14: return /*_TODOPU*/("[2384c6]Cold [4c7c96]Wave");
+            case 15: return /*_TODOPU*/("[2384c6]Encased [4c7c96]in Ice");
             case 16: return /*_TODOPU*/("[2384c6]Blizzard");
             case 17: return /*_TODOPU*/("[2384c6]Black [4c7c96]Diamond");
+            case 18: return /*_TODOPU*/("[2384c6]Icy [4c7c96]Reflection");
             // Alienoid : orange e39717 brown aa673d
             case 21: return /*_TODOPU*/("[e39717]Alien [aa673d]Scourge");
+            case 22: return /*_TODOPU*/("[e39717]Precision [aa673d]Field Support");
             case 23: return /*_TODOPU*/("[e39717]Anger [aa673d]Batteries");
+            case 24: return /*_TODOPU*/("[e39717]Adapting [aa673d]Technology");
+            case 25: return /*_TODOPU*/("[e39717]Funny Looking [aa673d]But Dangerous");
+            case 26: return /*_TODOPU*/("[e39717]Exotic [aa673d]Arms");
             case 27: return /*_TODOPU*/("[e39717]Mothership [aa673d]Support");
+            case 28: return /*_TODOPU*/("[e39717]Superior Alien [aa673d]Technology");
             // Cyber Kitty : soft b67392 strong ec008c
             case 31: return /*_TODOPU*/("[b67392]Nine [ec008c]Lives");
+            case 32: return /*_TODOPU*/("[b67392]Mega [ec008c]Purr");
+            case 33: return /*_TODOPU*/("[b67392]Electro- [ec008c]Scratch");
+            case 34: return /*_TODOPU*/("[b67392]Cat [ec008c]Nip");
+            case 35: return /*_TODOPU*/("[b67392]Play with your [ec008c]Food");
+            case 36: return /*_TODOPU*/("[b67392]Feline [ec008c]Motor");
             case 37: return /*_TODOPU*/("[b67392]Mouse [ec008c]Hunter");
             case 38: return /*_TODOPU*/("[b67392]Meow [ec008c]Missle");
             // The King : dark a2550b light ca6c39
+            case 41: return /*_TODOPU*/("[a2550b]Monkey [ca6c39]Rush")
             case 42: return /*_TODOPU*/("[a2550b]Simian [ca6c39]Scamper");
+            case 43: return /*_TODOPU*/("[a2550b]Jungle [ca6c39]Frenzy")
             case 44: return /*_TODOPU*/("[a2550b]Giant [ca6c39]Banana");
+            case 45: return /*_TODOPU*/("[a2550b]Chest [ca6c39]Thumping");
+            case 46: return /*_TODOPU*/("[a2550b]Alpha [ca6c39]Male");
             case 47: return /*_TODOPU*/("[a2550b]I Am [ca6c39]the King!");
             case 48: return /*_TODOPU*/("[a2550b]Twas Beauty [ca6c39]Killed the Beast");
             // Gigazaur : dark 00a651 light bed62f
@@ -51,8 +70,14 @@ class EvolutionCards {
             case 57: return /*_TODOPU*/("[00a651]Gamma [bed62f]Breath");
             case 58: return /*_TODOPU*/("[00a651]Tail [bed62f]Sweep");
             // Meka Dragon : gray a68d83 brown aa673d
+            case 61: return /*_TODOPU*/("[a68d83]Mecha [aa673d]Blast");
             case 62: return /*_TODOPU*/("[a68d83]Destructive [aa673d]Analysis");
             case 63: return /*_TODOPU*/("[a68d83]Programmed [aa673d]To Destroy");
+            case 64: return /*_TODOPU*/("[a68d83]Tune [aa673d]-Up");
+            case 65: return /*_TODOPU*/("[a68d83]Breath [aa673d]of Doom");
+            case 66: return /*_TODOPU*/("[a68d83]Lightning [aa673d]Armor");
+            case 67: return /*_TODOPU*/("[a68d83]Claws [aa673d]of Steel");
+            case 68: return /*_TODOPU*/("[a68d83]Target [aa673d]Acquired");
             // Boogie Woogie : dark 6c5b55 light a68d83
             // Pumpkin Jack : dark de6428 light f7941d
             // Cthulhu
@@ -62,8 +87,10 @@ class EvolutionCards {
             // Pandakaï : light 6d6e71 dark 231f20
             case 131: return /*_TODOPU*/("[6d6e71]Panda[231f20]Monium");
             case 132: return /*_TODOPU*/("[6d6e71]Eats, Shoots [231f20]and Leaves");
+            case 133: return /*_TODOPU*/("[6d6e71]Bam[231f20]Boozle");
             case 134: return /*_TODOPU*/("[6d6e71]Bear [231f20]Necessities");
             case 135: return /*_TODOPU*/("[6d6e71]Panda [231f20]Express");
+            case 136: return /*_TODOPU*/("[6d6e71]Bamboo [231f20]Supply");
             case 137: return /*_TODOPU*/("[6d6e71]Pandarwinism [231f20]Survival of the Cutest");
             case 138: return /*_TODOPU*/("[6d6e71]Yin [231f20]& Yang");
             // cyberbunny : soft b67392 strong ec008c
