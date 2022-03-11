@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/objects/question.php');
+
+use KOT\Objects\Question;
+
 trait RedirectionTrait {
     function goToState(int $nextStateId, /*Damage[] | null*/ $damages = null) {
         $redirects = false;
@@ -13,6 +17,28 @@ trait RedirectionTrait {
         if (!$redirects) {
             $this->jumpToState($nextStateId);
         }
+    }
+
+    function redirectAfterBeforeStartTurn(int $playerId) {
+        if ($this->isPowerUpExpansion()) {
+            $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
+            if ($unusedBambooSupplyCard != null) {
+                $question = new Question(
+                    'BambooSupply',
+                    /* client TODOPU translate(*/'${actplayer} can put or take [Energy]'/*)*/,
+                    /* client TODOPU translate(*/'${you} can put or take [Energy]'/*)*/,
+                    [$playerId],
+                    ST_START_TURN,
+                    [ 'canTake' => $unusedBambooSupplyCard->tokens > 0 ]
+                );
+                $this->setGlobalVariable(QUESTION, $question);
+                $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+                return ST_MULTIPLAYER_ANSWER_QUESTION;
+            }
+        }
+
+        return ST_START_TURN;
     }
 
     function redirectAfterStartTurn(int $playerId) {

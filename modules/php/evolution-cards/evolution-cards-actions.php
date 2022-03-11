@@ -16,7 +16,9 @@ trait EvolutionCardsActionTrait {
     function skipBeforeStartTurn() {
         $this->checkAction('skipBeforeStartTurn');
 
-        $this->goToState(ST_START_TURN);
+        $playerId = $this->getActivePlayerId();
+
+        $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
     }
 
     function applyChooseEvolutionCard(int $playerId, int $id) {
@@ -110,5 +112,36 @@ trait EvolutionCardsActionTrait {
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+    }
+  	
+    function putEnergyOnBambooSupply() {
+        $this->checkAction('putEnergyOnBambooSupply');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
+
+        $this->setEvolutionTokens($playerId, $unusedBambooSupplyCard, $unusedBambooSupplyCard->tokens + 1);
+
+        // TODOPU
+
+        $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
+
+        $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
+    }
+  	
+    function takeEnergyOnBambooSupply() {
+        $this->checkAction('takeEnergyOnBambooSupply');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
+
+        $this->applyGetEnergyIgnoreCards($playerId, $unusedBambooSupplyCard->tokens, 3000 + BAMBOO_SUPPLY_EVOLUTION);
+        $this->setEvolutionTokens($playerId, $unusedBambooSupplyCard, 0);
+
+        $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
+
+        $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
     }
 }

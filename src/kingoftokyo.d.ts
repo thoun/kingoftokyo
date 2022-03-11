@@ -48,6 +48,14 @@ interface HeartActionSelection {
     playerId?: number;
 }
 
+interface Question {
+    code: string;
+    description: string;
+    descriptionmyturn: string;
+    playersIds: number[];
+    args: any;
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
@@ -307,6 +315,10 @@ interface EnteringChooseEvolutionCardArgs {
     _private?: {
         evolutions: EvolutionCard[];
     };
+}
+
+interface EnteringAnswerQuestionArgs {
+    question: Question;
 }
 
 interface NotifPickMonsterArgs {

@@ -69,6 +69,9 @@ define('ST_PLAYER_TAKE_WICKEDNESS_TILE', 70);
 define('ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE', 71);
 define('ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE', 72);
 
+define('ST_MULTIPLAYER_ANSWER_QUESTION', 75);
+define('ST_AFTER_ANSWER_QUESTION', 76);
+
 define('ST_RESOLVE_END_TURN', 80);
 define('ST_END_TURN', 81);
 define('ST_NEXT_PLAYER', 90);
@@ -142,6 +145,7 @@ define('USED_WINGS', 'UsedWings');
 define('MADE_IN_A_LAB', 'MadeInALab');
 define('BURROWING_PLAYERS', 'BurrowingPlayers');
 define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
+define('QUESTION', 'Question');
 
 /*
  * Cards

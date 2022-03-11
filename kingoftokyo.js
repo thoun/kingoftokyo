@@ -1063,6 +1063,59 @@ var EvolutionCards = /** @class */ (function () {
         }
         return null;
     };
+    EvolutionCards.prototype.getDistance = function (p1, p2) {
+        return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+    };
+    EvolutionCards.prototype.getPlaceOnCard = function (cardPlaced) {
+        var _this = this;
+        var newPlace = {
+            x: Math.random() * 100 + 16,
+            y: Math.random() * 100 + 16,
+        };
+        var protection = 0;
+        var otherPlaces = cardPlaced.tokens.slice();
+        if (cardPlaced.mimicToken) {
+            otherPlaces.push(cardPlaced.mimicToken);
+        }
+        while (protection < 1000 && otherPlaces.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
+            newPlace.x = Math.random() * 100 + 16;
+            newPlace.y = Math.random() * 100 + 16;
+            protection++;
+        }
+        return newPlace;
+    };
+    EvolutionCards.prototype.placeTokensOnCard = function (stock, card, playerId) {
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        if (!div) {
+            return;
+        }
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        var placed = cardPlaced.tokens;
+        var cardType = card.mimicType || card.type;
+        // remove tokens
+        for (var i = card.tokens; i < placed.length; i++) {
+            if (cardType === 136 && playerId) {
+                this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
+            }
+            else {
+                this.game.fadeOutAndDestroy(divId + "-token" + i);
+            }
+        }
+        placed.splice(card.tokens, placed.length - card.tokens);
+        // add tokens
+        for (var i = placed.length; i < card.tokens; i++) {
+            var newPlace = this.getPlaceOnCard(cardPlaced);
+            placed.push(newPlace);
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
+            if (cardType === 136) {
+                html += "energy-cube";
+            }
+            html += "\"></div>";
+            dojo.place(html, divId);
+        }
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    };
     EvolutionCards.prototype.setDivAsCard = function (cardDiv, cardType) {
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
@@ -3232,6 +3285,9 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringSellCard(args.args);
                 break;
+            case 'answerQuestion':
+                this.onEnteringAnswerQuestion(args.args);
+                break;
             case 'endTurn':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
@@ -3534,6 +3590,12 @@ var KingOfTokyo = /** @class */ (function () {
             args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
+    KingOfTokyo.prototype.onEnteringAnswerQuestion = function (args) {
+        var question = args.question;
+        this.gamedatas.gamestate.description = question.description;
+        this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn;
+        this.updatePageTitle();
+    };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
     };
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
@@ -3666,6 +3728,8 @@ var KingOfTokyo = /** @class */ (function () {
                 var argsCancelDamage = args;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
                 break;
+            case 'answerQuestion':
+                this.onUpdateActionButtonsAnswerQuestion(args);
         }
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
@@ -3853,6 +3917,22 @@ var KingOfTokyo = /** @class */ (function () {
                     this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
             }
+        }
+    };
+    KingOfTokyo.prototype.onUpdateActionButtonsAnswerQuestion = function (args) {
+        var _this = this;
+        var question = args.question;
+        switch (question.code) {
+            case 'BambooSupply':
+                var substituteParams = { card_name: this.evolutionCards.getCardName(136, 'text-only') };
+                var putLabel = dojo.string.substitute(/*TODOPU_*/ ("Put 1[Energy] on ${card_name}"), substituteParams);
+                var takeLabel = dojo.string.substitute(/*TODOPU_*/ ("Take all [Energy] from ${card_name}"), substituteParams);
+                this.addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), function () { return _this.putEnergyOnBambooSupply(); });
+                this.addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), function () { return _this.takeEnergyOnBambooSupply(); });
+                if (!question.args.canTake) {
+                    dojo.addClass('takeEnergyOnBambooSupply_button', 'disabled');
+                }
+                break;
         }
     };
     ///////////////////////////////////////////////////
@@ -4828,6 +4908,18 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('useYinYang');
     };
+    KingOfTokyo.prototype.putEnergyOnBambooSupply = function () {
+        if (!this.checkAction('putEnergyOnBambooSupply')) {
+            return;
+        }
+        this.takeAction('putEnergyOnBambooSupply');
+    };
+    KingOfTokyo.prototype.takeEnergyOnBambooSupply = function () {
+        if (!this.checkAction('takeEnergyOnBambooSupply')) {
+            return;
+        }
+        this.takeAction('takeEnergyOnBambooSupply');
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -4915,6 +5007,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
             ['setCardTokens', 1],
+            ['setEvolutionTokens', 1],
             ['setTileTokens', 1],
             ['removeCards', 1],
             ['removeEvolutions', 1],
@@ -5109,6 +5202,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_setCardTokens = function (notif) {
         this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
+    };
+    KingOfTokyo.prototype.notif_setEvolutionTokens = function (notif) {
+        this.evolutionCards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_setTileTokens = function (notif) {
         this.wickednessTiles.placeTokensOnTile(this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.card, notif.args.playerId);

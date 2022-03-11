@@ -20,7 +20,7 @@ trait EvolutionCardsUtilTrait {
             $cards = [];
             for($card=1; $card<=8; $card++) {
                 $type = $monster * 10 + $card;
-                $cards[] = ['type' => $type, 'type_arg' => 1 /* TODOPU $this->EVOLUTION_CARDS_TYPES[$type]*/, 'nbr' => 1];
+                $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
             }
             $location = array_key_exists($monster, $affectedPlayersMonsters) ? 'deck'.$affectedPlayersMonsters[$monster] : 'monster'.$monster;
             $this->evolutionCards->createCards($cards, $location);
@@ -311,6 +311,28 @@ trait EvolutionCardsUtilTrait {
                 'toValue' => $otherFace,
                 'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),
                 'die_face_after' => $this->getDieFaceLogName($otherFace, $die->type),
+            ]);
+        }
+    }
+
+    function getFirstUnusedBambooSupply(int $playerId) {
+        $bambooSupplyCards = $this->getEvolutionsOfType($playerId, BAMBOO_SUPPLY_EVOLUTION);
+        $usedCards = $this->getUsedCard();
+        $unusedBambooSupplyCard = $this->array_find($bambooSupplyCards, fn($card) => !in_array(3000 + $card->id, $usedCards));
+        return $unusedBambooSupplyCard;
+    }
+
+    function setEvolutionTokens(int $playerId, $card, int $tokens, bool $silent = false) {
+        $card->tokens = $tokens;
+        $this->DbQuery("UPDATE `evolution_card` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
+
+        if (!$silent) {
+            /*TODOPU if ($card->type == MIMIC_CARD) {
+                $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
+            }*/
+            $this->notifyAllPlayers("setEvolutionTokens", '', [
+                'playerId' => $playerId,
+                'card' => $card,
             ]);
         }
     }

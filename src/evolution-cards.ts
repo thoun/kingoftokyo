@@ -164,6 +164,66 @@ class EvolutionCards {
         return null;
     }
 
+    private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {
+        return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+    }
+
+    private getPlaceOnCard(cardPlaced: CardPlacedTokens): PlacedTokens {
+        const newPlace = {
+            x: Math.random() * 100 + 16,
+            y: Math.random() * 100 + 16,
+        };
+        let protection = 0;
+        const otherPlaces = cardPlaced.tokens.slice();
+        if (cardPlaced.mimicToken) {
+            otherPlaces.push(cardPlaced.mimicToken);
+        }
+        while (protection < 1000 && otherPlaces.some(place => this.getDistance(newPlace, place) < 32)) {
+            newPlace.x = Math.random() * 100 + 16;
+            newPlace.y = Math.random() * 100 + 16;
+            protection++;
+        }
+
+        return newPlace;
+    }
+
+    public placeTokensOnCard(stock: Stock, card: Card, playerId?: number) {
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+        const div = document.getElementById(divId);
+        if (!div) {
+            return;
+        }
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        const placed: PlacedTokens[] = cardPlaced.tokens;
+
+        const cardType = card.mimicType || card.type;
+
+        // remove tokens
+        for (let i = card.tokens; i < placed.length; i++) {
+            if (cardType === 136 && playerId) {
+                (this.game as any).slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
+            } else {
+                (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
+            }
+        }
+        placed.splice(card.tokens, placed.length - card.tokens);
+
+        // add tokens
+        for (let i = placed.length; i < card.tokens; i++) {
+            const newPlace = this.getPlaceOnCard(cardPlaced);
+
+            placed.push(newPlace);
+            let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="card-token `;
+            if (cardType === 136) {
+                html += `energy-cube`;
+            }
+            html += `"></div>`;
+            dojo.place(html, divId);
+        }
+
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    }
+
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
         const type = this.getCardTypeName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType));

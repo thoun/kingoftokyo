@@ -12,11 +12,8 @@ trait PlayerStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stStartTurn() {
+    function stBeforeStartTurn() {        
         $playerId = $this->getActivePlayerId();
-
-        $this->incStat(1, 'turnsNumber');
-        $this->incStat(1, 'turnsNumber', $playerId);
 
         $idsInTokyo = $this->getPlayersIdsInTokyo();
         foreach($idsInTokyo as $id) {
@@ -35,6 +32,17 @@ trait PlayerStateTrait {
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);
         $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, []);
+
+        if (!$this->isPowerUpExpansion()) { // TODOPU Skip if no monster can have a card of this kind ? don't forget mutant evolution
+            $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
+        }
+    }
+
+    function stStartTurn() {
+        $playerId = $this->getActivePlayerId();
+
+        $this->incStat(1, 'turnsNumber');
+        $this->incStat(1, 'turnsNumber', $playerId);
 
         // apply monster effects
 

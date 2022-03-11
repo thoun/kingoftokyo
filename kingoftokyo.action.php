@@ -669,5 +669,21 @@
 
         self::ajaxResponse();
     }
+  	
+    public function putEnergyOnBambooSupply() {
+        self::setAjaxMode();
+
+        $this->game->putEnergyOnBambooSupply();
+
+        self::ajaxResponse();
+    }
+  	
+    public function takeEnergyOnBambooSupply() {
+        self::setAjaxMode();
+
+        $this->game->takeEnergyOnBambooSupply();
+
+        self::ajaxResponse();
+    }
 
 }

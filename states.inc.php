@@ -217,7 +217,7 @@ $playerActionsGameStates = [
         ]
     ],
 
-    ST_MULTIPLAYER_GIVE_SYMBOL_TO_ACTIVE_PLAYER => [
+    ST_MULTIPLAYER_GIVE_SYMBOL_TO_ACTIVE_PLAYER => [ // TODOPU move to answerQuestion ?
         "name" => "giveSymbolToActivePlayer",
         "description" => clienttranslate('Player with Golden Scarab must give 1[Heart]/[Energy]/[Star]'),
         "descriptionmyturn" => clienttranslate('${you} must give 1[Heart]/[Energy]/[Star]'),
@@ -348,7 +348,7 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_PLAYER_GIVE_GOLDEN_SCARAB => [
+    ST_PLAYER_GIVE_GOLDEN_SCARAB => [ // TODOPU move to answerQuestion ?
         "name" => "giveGoldenScarab",
         "description" => clienttranslate('${actplayer} must give Golden Scarab'),
         "descriptionmyturn" => clienttranslate('${you} must give Golden Scarab'),
@@ -360,7 +360,7 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_PLAYER_GIVE_SYMBOLS => [
+    ST_PLAYER_GIVE_SYMBOLS => [ // TODOPU move to answerQuestion ?
         "name" => "giveSymbols",
         "description" => clienttranslate('${actplayer} must give 2[Heart]/[Energy]/[Star]'),
         "descriptionmyturn" => clienttranslate('${you} must give 2[Heart]/[Energy]/[Star]'),
@@ -372,7 +372,7 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_PLAYER_SELECT_EXTRA_DIE => [
+    ST_PLAYER_SELECT_EXTRA_DIE => [ // TODOPU move to answerQuestion ?
         "name" => "selectExtraDie",
         "description" => clienttranslate('${actplayer} must select the face of the extra die'),
         "descriptionmyturn" => clienttranslate('${you} must select the face of the extra die'),
@@ -707,6 +707,28 @@ $playerActionsGameStates = [
             "sellCard" => ST_PLAYER_SELL_CARD,
             "endTurn" => ST_RESOLVE_END_TURN,
         ]
+    ],
+
+    ST_MULTIPLAYER_ANSWER_QUESTION => [
+        "name" => "answerQuestion",
+        "description" => '',
+        "descriptionmyturn" => '',
+        "type" => "multipleactiveplayer",
+        "args" => "argAnswerQuestion",
+        "possibleactions" => [ 
+            "putEnergyOnBambooSupply", "takeEnergyOnBambooSupply",
+        ],
+        "transitions" => [
+            "next" => ST_AFTER_ANSWER_QUESTION,
+        ],
+    ],
+
+    ST_AFTER_ANSWER_QUESTION => [
+        "name" => "afterAnswerQuestion",
+        "description" => "",
+        "type" => "game",
+        "action" => "stAfterAnswerQuestion",
+        "transitions" => [],
     ],
 
     ST_RESOLVE_END_TURN => [

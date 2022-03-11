@@ -32,4 +32,12 @@ trait EvolutionCardsArgTrait {
         ];
     }
 
+    function argAnswerQuestion() {
+        $question = $this->getGlobalVariable(QUESTION);
+
+        return [
+            'question' => $question,
+        ];
+    }
+
 }

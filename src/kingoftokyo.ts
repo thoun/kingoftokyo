@@ -260,6 +260,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringSellCard(args.args);
                 break;
 
+            case 'answerQuestion':
+                this.onEnteringAnswerQuestion(args.args);
+                break;
+
             case 'endTurn':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
@@ -586,6 +590,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private onEnteringAnswerQuestion(args: EnteringAnswerQuestionArgs) {
+        const question = args.question;
+        this.gamedatas.gamestate.description = question.description; 
+        this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn; 
+        (this as any).updatePageTitle();
+    }
+
     private onEnteringEndTurn() {
     }
 
@@ -723,6 +734,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const argsCancelDamage = args as EnteringCancelDamageArgs;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
                 break;
+            case 'answerQuestion':
+                this.onUpdateActionButtonsAnswerQuestion(args);
         }
 
         if((this as any).isCurrentPlayerActive()) {
@@ -925,6 +938,23 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         }
     } 
+
+    private onUpdateActionButtonsAnswerQuestion(args: EnteringAnswerQuestionArgs) {
+        const question = args.question;
+
+        switch(question.code) {
+            case 'BambooSupply':
+                const substituteParams = { card_name: this.evolutionCards.getCardName(136, 'text-only')};
+                const putLabel = dojo.string.substitute(/*TODOPU_*/("Put 1[Energy] on ${card_name}"), substituteParams);
+                const takeLabel = dojo.string.substitute(/*TODOPU_*/("Take all [Energy] from ${card_name}"), substituteParams);
+                (this as any).addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
+                (this as any).addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), () => this.takeEnergyOnBambooSupply());
+                if (!question.args.canTake) {
+                    dojo.addClass('takeEnergyOnBambooSupply_button', 'disabled');
+                }
+                break;
+        }
+    }
     
 
     ///////////////////////////////////////////////////
@@ -2154,6 +2184,22 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('useYinYang');
     }
+    
+    public putEnergyOnBambooSupply() {
+        if(!(this as any).checkAction('putEnergyOnBambooSupply')) {
+            return;
+        }
+
+        this.takeAction('putEnergyOnBambooSupply');
+    }
+    
+    public takeEnergyOnBambooSupply() {
+        if(!(this as any).checkAction('takeEnergyOnBambooSupply')) {
+            return;
+        }
+
+        this.takeAction('takeEnergyOnBambooSupply');
+    }
 
     public takeAction(action: string, data?: any) {
         data = data || {};
@@ -2246,6 +2292,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['shrinkRayToken', 1],
             ['poisonToken', 1],
             ['setCardTokens', 1],
+            ['setEvolutionTokens', 1],
             ['setTileTokens', 1],
             ['removeCards', 1],
             ['removeEvolutions', 1],
@@ -2468,6 +2515,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {
         this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
+    }
+
+    notif_setEvolutionTokens(notif: Notif<NotifSetCardTokensArgs>) {
+        this.evolutionCards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
     }
 
     notif_setTileTokens(notif: Notif<NotifSetCardTokensArgs>) {
