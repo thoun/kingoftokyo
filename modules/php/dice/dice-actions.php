@@ -202,7 +202,13 @@ trait DiceActionTrait {
                 $this->playEvolutionToTable($playerId, $gammaBreathCard);
             }
             $this->setUsedCard(3000 + $gammaBreathCard->id);
-        } 
+        }  else if ($cardType == 3000 + TAIL_SWEEP_EVOLUTION) {
+            $tailSweepCard = $this->getEvolutionOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
+            if ($tailSweepCard->location === 'hand') {
+                $this->playEvolutionToTable($playerId, $tailSweepCard);
+            }
+            $this->setUsedCard(3000 + $tailSweepCard->id);
+        }
 
         $activePlayerId = $this->getActivePlayerId();
 

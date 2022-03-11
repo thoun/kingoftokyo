@@ -75,7 +75,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -535,6 +535,7 @@ class DiceManager {
 
             const herdCullerButtonId = `${bubbleActionButtonsId}-herdCuller`;
             const gammaBreathButtonId = `${bubbleActionButtonsId}-gammaBreath`;
+            const tailSweepButtonId = `${bubbleActionButtonsId}-tailSweep`;
             const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
             const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
             const saurianAdaptabilityButtonId = `${bubbleActionButtonsId}-saurianAdaptability`;
@@ -587,6 +588,18 @@ class DiceManager {
                             true
                         );
                     }
+                    if (args.hasTailSweep) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            tailSweepButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCards.getCardName(58, 'text-only')}</strong>` }),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3058);
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
                     if (args.hasPlotTwist) {
                         this.game.createButton(
                             bubbleActionButtonsId, 
@@ -633,11 +646,14 @@ class DiceManager {
                     if (args.hasClown) {
                         dojo.toggleClass(clownButtonId, 'disabled', value < 1);
                     } else {
-                        if (args.hasHerdCuller && die.value > 1) {
+                        if (args.hasHerdCuller && die.value != 1) {
                             dojo.toggleClass(herdCullerButtonId, 'disabled', value != 1);
                         }
                         if (args.hasGammaBreath && die.value != 6) {
                             dojo.toggleClass(gammaBreathButtonId, 'disabled', value != 6);
+                        }
+                        if (args.hasTailSweep) {
+                            dojo.toggleClass(tailSweepButtonId, 'disabled', value != 1 && value != 2);
                         }
                         if (args.hasPlotTwist) {
                             dojo.toggleClass(plotTwistButtonId, 'disabled', value < 1);
@@ -671,6 +687,9 @@ class DiceManager {
                     }
                     if (args.hasGammaBreath) {
                         dojo.addClass(gammaBreathButtonId, 'disabled');
+                    }
+                    if (args.hasTailSweep) {
+                        dojo.addClass(tailSweepButtonId, 'disabled');
                     }
                     if (args.hasPlotTwist) {
                         dojo.addClass(plotTwistButtonId, 'disabled');

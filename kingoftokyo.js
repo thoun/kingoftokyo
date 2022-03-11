@@ -949,6 +949,7 @@ var EvolutionCards = /** @class */ (function () {
             case 55: return /*_TODOPU*/ ("[00a651]Defender [bed62f]Of Tokyo");
             case 56: return /*_TODOPU*/ ("[00a651]Heat [bed62f]Vision");
             case 57: return /*_TODOPU*/ ("[00a651]Gamma [bed62f]Breath");
+            case 58: return /*_TODOPU*/ ("[00a651]Tail [bed62f]Sweep");
             // Meka Dragon : gray a68d83 brown aa673d
             case 62: return /*_TODOPU*/ ("[a68d83]Destructive [aa673d]Analysis");
             case 63: return /*_TODOPU*/ ("[a68d83]Programmed [aa673d]To Destroy");
@@ -1018,6 +1019,7 @@ var EvolutionCards = /** @class */ (function () {
             case 55: return /*_TODOPU*/ ("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
             case 56: return /*_TODOPU*/ ("Monsters that wound you lose 1[Star].");
             case 57: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [diceSmash].");
+            case 58: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [dice1] or [dice2]."); // TODOPU check label
             // Meka Dragon
             case 62: return /*_TODOPU*/ ("Gain 1[Energy] for each [diceSmash] you rolled this turn.");
             case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
@@ -1933,7 +1935,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             this.setSelectableDice(selectableDice);
@@ -2356,6 +2358,7 @@ var DiceManager = /** @class */ (function () {
             }
             var herdCullerButtonId_1 = bubbleActionButtonsId + "-herdCuller";
             var gammaBreathButtonId_1 = bubbleActionButtonsId + "-gammaBreath";
+            var tailSweepButtonId_1 = bubbleActionButtonsId + "-tailSweep";
             var plotTwistButtonId_1 = bubbleActionButtonsId + "-plotTwist";
             var stretchyButtonId_1 = bubbleActionButtonsId + "-stretchy";
             var saurianAdaptabilityButtonId_1 = bubbleActionButtonsId + "-saurianAdaptability";
@@ -2383,6 +2386,12 @@ var DiceManager = /** @class */ (function () {
                     if (args_1.hasGammaBreath) {
                         this.game.createButton(bubbleActionButtonsId, gammaBreathButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.evolutionCards.getCardName(57, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3057);
+                            _this.toggleBubbleChangeDie(die);
+                        }, true);
+                    }
+                    if (args_1.hasTailSweep) {
+                        this.game.createButton(bubbleActionButtonsId, tailSweepButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.evolutionCards.getCardName(58, 'text-only') + "</strong>" }), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3058);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
@@ -2414,11 +2423,14 @@ var DiceManager = /** @class */ (function () {
                         dojo.toggleClass(clownButtonId_1, 'disabled', value < 1);
                     }
                     else {
-                        if (args_1.hasHerdCuller && die.value > 1) {
+                        if (args_1.hasHerdCuller && die.value != 1) {
                             dojo.toggleClass(herdCullerButtonId_1, 'disabled', value != 1);
                         }
                         if (args_1.hasGammaBreath && die.value != 6) {
                             dojo.toggleClass(gammaBreathButtonId_1, 'disabled', value != 6);
+                        }
+                        if (args_1.hasTailSweep) {
+                            dojo.toggleClass(tailSweepButtonId_1, 'disabled', value != 1 && value != 2);
                         }
                         if (args_1.hasPlotTwist) {
                             dojo.toggleClass(plotTwistButtonId_1, 'disabled', value < 1);
@@ -2451,6 +2463,9 @@ var DiceManager = /** @class */ (function () {
                     }
                     if (args_1.hasGammaBreath) {
                         dojo.addClass(gammaBreathButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasTailSweep) {
+                        dojo.addClass(tailSweepButtonId_1, 'disabled');
                     }
                     if (args_1.hasPlotTwist) {
                         dojo.addClass(plotTwistButtonId_1, 'disabled');

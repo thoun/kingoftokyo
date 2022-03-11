@@ -456,15 +456,22 @@ trait DiceUtilTrait {
 
         $isPowerUpExpansion = $this->isPowerUpExpansion();
 
-        // Gamma Breath
+        // Gamma Breath & Tail Sweep
         $hasGammaBreath = false;
+        $hasTailSweep = false;
         if ($isPowerUpExpansion) {
-            $gammaBreathCards = $this->getEvolutionsOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);            
-
+            $gammaBreathCards = $this->getEvolutionsOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);
             if (count($gammaBreathCards) > 0) {
                 $usedCards = $this->getUsedCard();
                 $availableGammaBreath = array_values(array_filter($gammaBreathCards, fn($gammaBreathCard) => !in_array(3000 + $gammaBreathCard->id, $usedCards)));
                 $hasGammaBreath = count($availableGammaBreath) > 0;
+            }
+
+            $tailSweepCards = $this->getEvolutionsOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
+            if (count($tailSweepCards) > 0) {
+                $usedCards = $this->getUsedCard();
+                $availableTailSweep = array_values(array_filter($tailSweepCards, fn($tailSweepCard) => !in_array(3000 + $tailSweepCard->id, $usedCards)));
+                $hasTailSweep = count($availableTailSweep) > 0;
             }
         }
 
@@ -481,6 +488,7 @@ trait DiceUtilTrait {
             'hasClown' => $hasClown,
             'hasSaurianAdaptability' => $hasSaurianAdaptability,
             'hasGammaBreath' => $hasGammaBreath,
+            'hasTailSweep' => $hasTailSweep,
             'hasYinYang' => $hasYinYang,
         ];
     }
@@ -492,6 +500,7 @@ trait DiceUtilTrait {
             || $cards['hasClown'] 
             || $cards['hasSaurianAdaptability'] 
             || $cards['hasGammaBreath'] 
+            || $cards['hasTailSweep'] 
             || $cards['hasYinYang'];
     }
 

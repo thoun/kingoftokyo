@@ -207,6 +207,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasClown: boolean;
     hasSaurianAdaptability: boolean;
     hasGammaBreath: boolean;
+    hasTailSweep: boolean;
     hasYinYang: boolean;
     rethrow3: Rethrow3;
 }
