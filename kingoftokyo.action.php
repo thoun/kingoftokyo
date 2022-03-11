@@ -645,5 +645,13 @@
 
         self::ajaxResponse();
     }
+  	
+    public function useYinYang() {
+        self::setAjaxMode();
+
+        $this->game->useYinYang();
+
+        self::ajaxResponse();
+    }
 
 }

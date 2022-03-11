@@ -961,6 +961,7 @@ var EvolutionCards = /** @class */ (function () {
             case 134: return /*_TODOPU*/ ("[6d6e71]Bear [231f20]Necessities");
             case 135: return /*_TODOPU*/ ("[6d6e71]Panda [231f20]Express");
             case 137: return /*_TODOPU*/ ("[6d6e71]Pandarwinism [231f20]Survival of the Cutest");
+            case 138: return /*_TODOPU*/ ("[6d6e71]Yin [231f20]& Yang");
             // cyberbunny : soft b67392 strong ec008c
             // kraken : blue 2384c6 gray 4c7c96
             // Baby Gigazaur : dark a5416f light f05a7d
@@ -1020,6 +1021,7 @@ var EvolutionCards = /** @class */ (function () {
             case 134: return /*_TODOPU*/ ("Lose 1[Star], gain 2[Energy] and 2[Heart].");
             case 135: return /*_TODOPU*/ ("Each time you roll at least [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], gain 2[Star] and take another turn.");
             case 137: return /*_TODOPU*/ ("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
+            case 138: return /*_TODOPU*/ ("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + "<div>[dice1]\u2194[dice3] &nbsp; [dice2]\u2194[diceHeart] &nbsp; [diceSmash]\u2194[diceEnergy]</div>";
         }
         return null;
     };
@@ -1933,7 +1935,6 @@ var DiceManager = /** @class */ (function () {
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
-        var onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(function (die) {
             _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
@@ -3623,7 +3624,11 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     break;
                 case 'changeDie':
-                    this.addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
+                    var argsChangeDie = args;
+                    if (argsChangeDie.hasYinYang) {
+                        this.addActionButton('useYinYang_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(138, 'text-only') }), function () { return _this.useYinYang(); });
+                    }
+                    this.addActionButton('resolve_button', _("Resolve dice"), function () { return _this.resolveDice(); }, null, null, 'red');
                     break;
                 case 'changeActivePlayerDie':
                 case 'psychicProbeRollDie':
@@ -4718,6 +4723,12 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
+    KingOfTokyo.prototype.useYinYang = function () {
+        if (!this.checkAction('useYinYang')) {
+            return;
+        }
+        this.takeAction('useYinYang');
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -4959,7 +4970,6 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableCenter.renewCards(notif.args.cards, notif.args.topDeckCardBackType);
     };
     KingOfTokyo.prototype.notif_points = function (notif) {
-        console.log(notif);
         this.setPoints(notif.args.playerId, notif.args.points);
     };
     KingOfTokyo.prototype.notif_health = function (notif) {

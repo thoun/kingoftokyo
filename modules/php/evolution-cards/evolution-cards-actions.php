@@ -69,4 +69,19 @@ trait EvolutionCardsActionTrait {
 
         // TODOPU handle damages
     }
+
+    function useYinYang() {
+        $this->checkAction('useYinYang');
+
+        $playerId = $this->getActivePlayerId();
+
+        $hasYinYang = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, YIN_YANG_EVOLUTION);
+        if (!$hasYinYang) {
+            throw new \BgaUserException("You can't play Yin & Yang without this Evolution.");
+        }
+
+        $this->applyYinYang($playerId);
+
+        $this->gamestate->nextState('changeDie');
+    }
 }

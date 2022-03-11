@@ -85,7 +85,6 @@ class DiceManager {
         this.clearDiceHtml();
         this.dice = dice;
         
-        const onlyHerdCuller = args.hasHerdCuller && !args.hasPlotTwist && !args.hasStretchy && !args.hasClown;
         dice.forEach(die => {
             this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
             this.addDiceRollClass(die);

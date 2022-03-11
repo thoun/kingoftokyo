@@ -458,17 +458,21 @@ trait DiceUtilTrait {
                 $hasClown = true;
             }
         }
+
+        // yin & yang
+        $hasYinYang = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, YIN_YANG_EVOLUTION);
         
         return [
             'hasHerdCuller' => $hasHerdCuller,
             'hasPlotTwist' => $hasPlotTwist,
             'hasStretchy' => $hasStretchy,
             'hasClown' => $hasClown,
+            'hasYinYang' => $hasYinYang,
         ];
     }
 
     function canChangeDie(array $cards) {
-        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'] || $cards['hasClown'];
+        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'] || $cards['hasClown'] || $cards['hasYinYang'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        

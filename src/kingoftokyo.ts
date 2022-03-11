@@ -766,7 +766,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
                     break;
                 case 'changeDie':
-                    (this as any).addActionButton('resolve_button', _("Resolve dice"), 'resolveDice', null, null, 'red');
+                    const argsChangeDie = args as EnteringChangeDieArgs;
+                    if (argsChangeDie.hasYinYang) {
+                        (this as any).addActionButton('useYinYang_button',dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(138, 'text-only') }), () => this.useYinYang());
+                    }
+
+                    (this as any).addActionButton('resolve_button', _("Resolve dice"), () => this.resolveDice(), null, null, 'red');
                     break;
                 case 'changeActivePlayerDie': case 'psychicProbeRollDie':
                     (this as any).addActionButton('changeActivePlayerDieSkip_button', _("Skip"), 'psychicProbeSkip');
@@ -2119,6 +2124,14 @@ class KingOfTokyo implements KingOfTokyoGame {
             id
         });
     }
+    
+    public useYinYang() {
+        if(!(this as any).checkAction('useYinYang')) {
+            return;
+        }
+
+        this.takeAction('useYinYang');
+    }
 
     public takeAction(action: string, data?: any) {
         data = data || {};
@@ -2385,7 +2398,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_points(notif: Notif<NotifPointsArgs>) {
-        console.log(notif);
         this.setPoints(notif.args.playerId, notif.args.points);
     }
 

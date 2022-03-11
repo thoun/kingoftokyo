@@ -241,4 +241,33 @@ trait EvolutionCardsUtilTrait {
             'card_name' => 3000 + TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION,
         ]);
     }
+
+    function applyYinYang(int $playerId) {
+        $dice = $this->getPlayerRolledDice($playerId, false, false, false);
+        $YIN_YANG_OTHER_FACE = [
+            1 => 3,
+            2 => 4,
+            3 => 1,
+            4 => 2,
+            5 => 6,
+            6 => 5,
+        ];
+
+        foreach ($dice as $die) {
+            $otherFace = $YIN_YANG_OTHER_FACE[$die->value];
+            $this->DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$otherFace." where `dice_id` = ".$die->id);
+
+            $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+            $this->notifyAllPlayers("changeDie", $message, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card_name' => 3000 + YIN_YANG_EVOLUTION,
+                'dieId' => $die->id,
+                'canHealWithDice' => $this->canHealWithDice($playerId),
+                'toValue' => $otherFace,
+                'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),
+                'die_face_after' => $this->getDieFaceLogName($otherFace, $die->type),
+            ]);
+        }
+    }
 }
