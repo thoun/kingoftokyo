@@ -945,6 +945,7 @@ var EvolutionCards = /** @class */ (function () {
             case 51: return /*_TODOPU*/ ("[00a651]Detachable [bed62f]Tail");
             case 52: return /*_TODOPU*/ ("[00a651]Radioactive [bed62f]Waste");
             case 53: return /*_TODOPU*/ ("[00a651]Primal [bed62f]Bellow");
+            case 54: return /*_TODOPU*/ ("[00a651]Saurian [bed62f]Adaptability");
             case 55: return /*_TODOPU*/ ("[00a651]Defender [bed62f]Of Tokyo");
             case 56: return /*_TODOPU*/ ("[00a651]Heat [bed62f]Vision");
             // Meka Dragon : gray a68d83 brown aa673d
@@ -1012,6 +1013,7 @@ var EvolutionCards = /** @class */ (function () {
             case 51: return /*_TODOPU*/ ("You can’t lose [Heart] this turn.");
             case 52: return /*_TODOPU*/ ("Gain 2[Energy] and 1[Heart].");
             case 53: return /*_TODOPU*/ ("All other Monsters lose 2[Star].");
+            case 54: return /*_TODOPU*/ ("Choose a die face. Take all dice with this face and flip them to a (single) face of your choice.");
             case 55: return /*_TODOPU*/ ("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
             case 56: return /*_TODOPU*/ ("Monsters that wound you lose 1[Star].");
             // Meka Dragon
@@ -1872,6 +1874,7 @@ var DIE4_ICONS = [
     [1, 4, 3],
     [4, 3, 2],
 ];
+var DICE_STRINGS = [null, '[dice1]', '[dice2]', '[dice3]', '[diceHeart]', '[diceEnergy]', '[diceSmash]'];
 var DiceManager = /** @class */ (function () {
     function DiceManager(game) {
         this.game = game;
@@ -1928,7 +1931,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             this.setSelectableDice(selectableDice);
@@ -2352,6 +2355,7 @@ var DiceManager = /** @class */ (function () {
             var herdCullerButtonId_1 = bubbleActionButtonsId + "-herdCuller";
             var plotTwistButtonId_1 = bubbleActionButtonsId + "-plotTwist";
             var stretchyButtonId_1 = bubbleActionButtonsId + "-stretchy";
+            var saurianAdaptabilityButtonId_1 = bubbleActionButtonsId + "-saurianAdaptability";
             var clownButtonId_1 = bubbleActionButtonsId + "-clown";
             var args_1 = this.changeDieArgs;
             if (!this.dieFaceSelectors[die.id]) {
@@ -2385,6 +2389,16 @@ var DiceManager = /** @class */ (function () {
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
+                    if (args_1.hasSaurianAdaptability) {
+                        var saurianAdaptabilityButtonLabel = dojo.string.substitute(/*TODOPU_*/ ("Change all ${die_face} with ${card_name}"), {
+                            'card_name': "<strong>" + this.game.evolutionCards.getCardName(54, 'text-only') + "</strong>",
+                            'die_face': formatTextIcons(DICE_STRINGS[die.value]),
+                        });
+                        this.game.createButton(bubbleActionButtonsId, saurianAdaptabilityButtonId_1, saurianAdaptabilityButtonLabel, function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3054),
+                                _this.toggleBubbleChangeDie(die);
+                        }, true);
+                    }
                 }
                 dieFaceSelector_1.onChange = function (value) {
                     if (args_1.hasClown) {
@@ -2407,6 +2421,9 @@ var DiceManager = /** @class */ (function () {
                                 document.getElementById(stretchyButtonId_1).removeAttribute('data-enable-at-energy');
                             }
                         }
+                        if (args_1.hasSaurianAdaptability) {
+                            dojo.removeClass(saurianAdaptabilityButtonId_1, 'disabled');
+                        }
                     }
                 };
                 bubble.addEventListener('click', function (event) { return event.stopImmediatePropagation(); });
@@ -2425,6 +2442,9 @@ var DiceManager = /** @class */ (function () {
                     }
                     if (args_1.hasStretchy) {
                         dojo.addClass(stretchyButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasSaurianAdaptability) {
+                        dojo.addClass(saurianAdaptabilityButtonId_1, 'disabled');
                     }
                 }
             }
@@ -3660,7 +3680,6 @@ var KingOfTokyo = /** @class */ (function () {
                     });
                     break;
                 case 'selectExtraDie':
-                    var DICE_STRINGS = [null, '[dice1]', '[dice2]', '[dice3]', '[diceHeart]', '[diceEnergy]', '[diceSmash]'];
                     var _loop_6 = function (face) {
                         this_5.addActionButton("selectExtraDie_button" + face, formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
                     };

@@ -166,13 +166,11 @@ trait DiceActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $die = $this->getDieById($id);
+        $selectedDie = $this->getDieById($id);
 
-        if ($die == null) {
+        if ($selectedDie == null) {
             throw new \BgaUserException('No selected die');
         }
-
-        $this->DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$value." where `dice_id` = ".$id);
 
         if ($cardType == HERD_CULLER_CARD) {
             $usedCards = $this->getUsedCard();
@@ -194,21 +192,35 @@ trait DiceActionTrait {
             $this->removeCards($playerId, $cards);
         } else if ($cardType == STRETCHY_CARD) {
             $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
+        } else if ($cardType == 3000 + SAURIAN_ADAPTABILITY_EVOLUTION) {
+            $saurianAdaptabilityCard = $this->getEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true);
+            $this->playEvolutionToTable($playerId, $saurianAdaptabilityCard, '');
+            $this->removeEvolution($playerId, $saurianAdaptabilityCard, false, 5000);
         }
 
         $activePlayerId = $this->getActivePlayerId();
 
-        $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        $this->notifyAllPlayers("changeDie", $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'card_name' => $cardType,
-            'dieId' => $die->id,
-            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
-            'toValue' => $value,
-            'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),
-            'die_face_after' => $this->getDieFaceLogName($value, $die->type),
-        ]);
+        $dice = [$selectedDie];
+        if ($cardType == 3000 + SAURIAN_ADAPTABILITY_EVOLUTION) {
+            $allDice = $this->getPlayerRolledDice($playerId, false, false, false);
+            $dice = array_values(array_filter($allDice, fn($d) => $d->value == $selectedDie->value));
+        }
+
+        foreach($dice as $die) {
+            $this->DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$value." where `dice_id` = ".$die->id);
+
+            $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+            $this->notifyAllPlayers("changeDie", $message, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card_name' => $cardType,
+                'dieId' => $die->id,
+                'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+                'toValue' => $value,
+                'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),
+                'die_face_after' => $this->getDieFaceLogName($value, $die->type),
+            ]);
+        }
 
         // psychic probe should not be called after change die (or only after a Background Dweller roll ?)
         /*$changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);

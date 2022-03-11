@@ -8,6 +8,8 @@ const DIE4_ICONS = [
     [4, 3, 2],
 ];
 
+const DICE_STRINGS = [null, '[dice1]', '[dice2]', '[dice3]', '[diceHeart]', '[diceEnergy]', '[diceSmash]'];
+
 class DiceManager {
     private dice: Die[] = [];
     private dieFaceSelectors: DieFaceSelector[] = [];
@@ -73,7 +75,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -534,6 +536,7 @@ class DiceManager {
             const herdCullerButtonId = `${bubbleActionButtonsId}-herdCuller`;
             const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
             const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
+            const saurianAdaptabilityButtonId = `${bubbleActionButtonsId}-saurianAdaptability`;
             const clownButtonId = `${bubbleActionButtonsId}-clown`;
 
             const args = this.changeDieArgs;
@@ -595,6 +598,22 @@ class DiceManager {
                             true
                         );
                     }
+                    if (args.hasSaurianAdaptability) {
+                        const saurianAdaptabilityButtonLabel = dojo.string.substitute(/*TODOPU_*/("Change all ${die_face} with ${card_name}"), {
+                            'card_name': `<strong>${this.game.evolutionCards.getCardName(54, 'text-only')}</strong>`, 
+                            'die_face': formatTextIcons(DICE_STRINGS[die.value]),
+                        });
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            saurianAdaptabilityButtonId, 
+                            saurianAdaptabilityButtonLabel,
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3054),
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
                 }
 
                 dieFaceSelector.onChange = value => {
@@ -616,6 +635,9 @@ class DiceManager {
                                 document.getElementById(stretchyButtonId).removeAttribute('data-enable-at-energy');
                             }
                         }
+                        if (args.hasSaurianAdaptability) {
+                            dojo.removeClass(saurianAdaptabilityButtonId, 'disabled');
+                        }
                     }
                 };
 
@@ -636,6 +658,9 @@ class DiceManager {
                     }
                     if (args.hasStretchy) {
                         dojo.addClass(stretchyButtonId, 'disabled');
+                    }
+                    if (args.hasSaurianAdaptability) {
+                        dojo.addClass(saurianAdaptabilityButtonId, 'disabled');
                     }
                 }
             }

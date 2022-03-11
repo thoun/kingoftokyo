@@ -459,20 +459,26 @@ trait DiceUtilTrait {
             }
         }
 
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        // Saurian Adaptability
+        $hasSaurianAdaptability = $isPowerUpExpansion && $this->hasEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true);
+
         // yin & yang
-        $hasYinYang = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, YIN_YANG_EVOLUTION);
+        $hasYinYang = $isPowerUpExpansion && $this->hasEvolutionOfType($playerId, YIN_YANG_EVOLUTION);
         
         return [
             'hasHerdCuller' => $hasHerdCuller,
             'hasPlotTwist' => $hasPlotTwist,
             'hasStretchy' => $hasStretchy,
             'hasClown' => $hasClown,
+            'hasSaurianAdaptability' => $hasSaurianAdaptability,
             'hasYinYang' => $hasYinYang,
         ];
     }
 
     function canChangeDie(array $cards) {
-        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'] || $cards['hasClown'] || $cards['hasYinYang'];
+        return $cards['hasHerdCuller'] || $cards['hasPlotTwist'] || $cards['hasStretchy'] || $cards['hasClown'] || $cards['hasSaurianAdaptability'] || $cards['hasYinYang'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        

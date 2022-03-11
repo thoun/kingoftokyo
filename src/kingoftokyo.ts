@@ -801,7 +801,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                     });
                     break;
                 case 'selectExtraDie':
-                    const DICE_STRINGS = [null, '[dice1]', '[dice2]', '[dice3]', '[diceHeart]', '[diceEnergy]', '[diceSmash]'];
                     for (let face=1; face<=6; face++) {
                         (this as any).addActionButton(`selectExtraDie_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.selectExtraDie(face));
                     }

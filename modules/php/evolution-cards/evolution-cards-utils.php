@@ -61,6 +61,21 @@ trait EvolutionCardsUtilTrait {
         return true;
     }
 
+    function playEvolutionToTable(int $playerId, EvolutionCard $card, /*string | null*/ $message = null) {
+        if ($message == null) {
+            $message = clienttranslate('${player_name} plays ${card_name}');
+        }
+
+        $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+
+        $this->notifyAllPlayers("playEvolution", $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $card,
+            'card_name' => 3000 + $card->type,
+        ]);
+    }
+
     function applyEvolutionEffects(int $cardType, int $playerId) { // return $damages
         if (!$this->keepAndEvolutionCardsHaveEffect()) {
             return;

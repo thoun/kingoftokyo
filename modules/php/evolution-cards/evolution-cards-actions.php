@@ -54,12 +54,7 @@ trait EvolutionCardsActionTrait {
         
         $damages = $this->applyEvolutionEffects($card->type, $playerId);
 
-        $this->notifyAllPlayers("playEvolution", clienttranslate('${player_name} plays ${card_name}'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'card' => $card,
-            'card_name' => 3000 + $card->type,
-        ]);
+        $this->playEvolutionToTable($playerId, $card);
         
         if (in_array($card->type, $this->AUTO_DISCARDED_EVOLUTIONS)) {
             $this->removeEvolution($playerId, $card, false, 5000);
@@ -104,12 +99,7 @@ trait EvolutionCardsActionTrait {
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
 
-        $this->notifyAllPlayers("playEvolution", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'card' => $card,
-            'card_name' => 3000 + $card->type,
-        ]);
+        $this->playEvolutionToTable($playerId, $card, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
         $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
