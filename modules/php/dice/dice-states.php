@@ -151,6 +151,12 @@ trait DiceStateTrait {
                 }
             }
         }
+        
+        if ($this->isPowerUpExpansion()) {
+            if ($diceCounts[4] >= 3 && $this->hasEvolutionOfType($playerId, PANDARWINISM_EVOLUTION)) {
+                $this->applyGetPoints($playerId, $diceCounts[4] - 2, 3000 + PANDARWINISM_EVOLUTION);
+            }
+        }
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
