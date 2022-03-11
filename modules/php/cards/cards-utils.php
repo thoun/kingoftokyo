@@ -860,6 +860,13 @@ trait CardsUtilTrait {
                 }
             }
         }
+        
+        $twasBeautyKilledTheBeastCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION));
+        foreach($twasBeautyKilledTheBeastCards as $twasBeautyKilledTheBeastCard) {
+            $playerId = intval($twasBeautyKilledTheBeastCard->location_arg);
+
+            $this->applyGetPoints($playerId, 1, 3000 + TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
+        }
     }
 
     function getTopDeckCardBackType() {

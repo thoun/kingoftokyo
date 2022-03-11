@@ -40,6 +40,7 @@ class EvolutionCards {
             case 42: return /*_TODOPU*/("[a2550b]Simian [ca6c39]Scamper");
             case 44: return /*_TODOPU*/("[a2550b]Giant [ca6c39]Banana");
             case 47: return /*_TODOPU*/("[a2550b]I Am [ca6c39]the King!");
+            case 48: return /*_TODOPU*/("[a2550b]Twas Beauty [ca6c39]Killed the Beast");
             // Gigazaur : dark 00a651 light bed62f
             case 52: return /*_TODOPU*/("[00a651]Radioactive [bed62f]Waste");
             case 53: return /*_TODOPU*/("[00a651]Primal [bed62f]Bellow");
@@ -101,6 +102,7 @@ class EvolutionCards {
             case 42: return /*_TODOPU*/("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
             case 44: return /*_TODOPU*/("Gain 2[Heart].");
             case 47: return /*_TODOPU*/("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
+            case 48: return /*_TODOPU*/("Play when you enter Tokyo. Gain 1[Star] at the end of each Monster’s turn (including yours). Discard this card and lose all your [Star] if you leave Tokyo.");
             // Gigazaur 
             case 52: return /*_TODOPU*/("Gain 2[Energy] and 1[Heart].");
             case 53: return /*_TODOPU*/("All other Monsters lose 2[Star].");

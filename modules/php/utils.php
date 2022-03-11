@@ -341,6 +341,13 @@ trait UtilTrait {
 
         $this->incStat(1, 'tokyoLeaves', $playerId);
 
+        if ($this->isPowerUpExpansion()) {
+            $twasBeautyKilledTheBeastCard = $this->getEvolutionOfType($playerId, TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
+            if ($twasBeautyKilledTheBeastCard != null && !$this->getPlayer($playerId)->eliminated) {
+                $this->applyLeaveWithTwasBeautyKilledTheBeast($playerId, $twasBeautyKilledTheBeastCard);
+            }
+        }
+
         return true;
     }
 

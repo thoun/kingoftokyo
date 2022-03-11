@@ -50,6 +50,9 @@ trait EvolutionCardsUtilTrait {
         if ($cardType == SIMIAN_SCAMPER_EVOLUTION) {
             return false;
         }
+        if ($cardType == TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION) {
+            return $this->inTokyo($playerId); // TODOPU use only when you enter
+        }
 
         return true;
     }
@@ -145,14 +148,14 @@ trait EvolutionCardsUtilTrait {
         }
 
         if ($fromTable) {
-            $cards = $this->getCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'table', $playerId));
+            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'table', $playerId));
             if (count($cards) > 0) {
                 return $cards[0];
             }
         }
 
         if ($fromHand) {
-            $cards = $this->getCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
             if (count($cards) > 0) {
                 return $cards[0];
             }
@@ -209,5 +212,19 @@ trait EvolutionCardsUtilTrait {
             }
         }  
         return null;          
+    }
+
+    function applyLeaveWithTwasBeautyKilledTheBeast(int $playerId, EvolutionCard $card) {
+        $this->removeEvolution($playerId, $card);
+
+        // lose all stars
+        $points = 0;
+        $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+        $this->notifyAllPlayers('points', /*client TODOPU translate(*/'${player_name} left Tokyo when ${card_name} is played, and loses all [Star].'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'points' => $points,
+            'card_name' => 3000 + TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION,
+        ]);
     }
 }
