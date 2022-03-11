@@ -84,4 +84,35 @@ trait EvolutionCardsActionTrait {
 
         $this->gamestate->nextState('changeDie');
     }
+    
+    function useDetachableTail() {
+        $this->checkAction('useDetachableTail');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        if (!$this->hasEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true)) {
+            throw new \BgaUserException('No Detachable Tail Evolution');
+        }
+
+        if ($this->canLoseHealth($playerId, 999) != null) {
+            throw new \BgaUserException('You already invincible');
+        }
+
+        $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+
+        $card = $this->getEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, true, true);
+
+        $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+
+        $this->notifyAllPlayers("playEvolution", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $card,
+            'card_name' => 3000 + $card->type,
+        ]);
+
+        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+    }
 }

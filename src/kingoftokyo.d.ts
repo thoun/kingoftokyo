@@ -276,6 +276,7 @@ interface EnteringBuyCardArgs {
 interface EnteringCancelDamageArgs {
     canThrowDices: boolean;
     canUseWings: boolean;
+    canUseDetachableTail: boolean;
     canUseRobot: boolean;
     playerEnergy: number;
     dice: Die[];

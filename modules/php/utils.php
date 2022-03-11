@@ -326,8 +326,6 @@ trait UtilTrait {
             if ($useCard == 3042) {
                 $card = $this->getEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
 
-                $this->setInvincible($playerId, USED_SIMIAN_SCAMPER);
-
                 $this->evolutionCards->moveCard($card->id, 'table', $playerId);
 
                 $this->notifyAllPlayers("playEvolution", clienttranslate('${player_name} plays ${card_name}'), [

@@ -870,6 +870,20 @@ trait CardsUtilTrait {
                     $this->applyGetPoints($playerId, 1, 3000 + TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
                 }
             }
+
+            $simianScamperCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(SIMIAN_SCAMPER_EVOLUTION));
+            foreach($simianScamperCards as $simianScamperCard) {
+                if ($simianScamperCard->location == 'table') {
+                    $this->removeEvolution($simianScamperCard->location_arg, $simianScamperCard);
+                }
+            }
+
+            $detachableTailCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(DETACHABLE_TAIL_EVOLUTION));
+            foreach($detachableTailCards as $detachableTailCard) {
+                if ($detachableTailCard->location == 'table') {
+                    $this->removeEvolution($detachableTailCard->location_arg, $detachableTailCard);
+                }
+            }
         }
     }
 

@@ -527,6 +527,14 @@
 
         self::ajaxResponse();
     }
+    
+    public function useDetachableTail() {
+        self::setAjaxMode();
+
+        $this->game->useDetachableTail();
+
+        self::ajaxResponse();
+    }
 
     public function skipWings() {
         self::setAjaxMode();

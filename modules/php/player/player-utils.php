@@ -303,8 +303,14 @@ trait PlayerUtilTrait {
         if (in_array($playerId, $this->getGlobalVariable(USED_WINGS, true))) {
             return WINGS_CARD;
         }
-        if (in_array($playerId, $this->getGlobalVariable(USED_SIMIAN_SCAMPER, true))) {
-            return 3000 + SIMIAN_SCAMPER_EVOLUTION;
+
+        if ($this->isPowerUpExpansion()) {
+            if ($this->hasEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION)) {
+                return 3000 + DETACHABLE_TAIL_EVOLUTION;
+            }
+            if ($this->hasEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION)) {
+                return 3000 + SIMIAN_SCAMPER_EVOLUTION;
+            }
         }
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {

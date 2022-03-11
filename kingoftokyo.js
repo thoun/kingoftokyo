@@ -942,6 +942,7 @@ var EvolutionCards = /** @class */ (function () {
             case 47: return /*_TODOPU*/ ("[a2550b]I Am [ca6c39]the King!");
             case 48: return /*_TODOPU*/ ("[a2550b]Twas Beauty [ca6c39]Killed the Beast");
             // Gigazaur : dark 00a651 light bed62f
+            case 51: return /*_TODOPU*/ ("[00a651]Detachable [bed62f]Tail");
             case 52: return /*_TODOPU*/ ("[00a651]Radioactive [bed62f]Waste");
             case 53: return /*_TODOPU*/ ("[00a651]Primal [bed62f]Bellow");
             case 55: return /*_TODOPU*/ ("[00a651]Defender [bed62f]Of Tokyo");
@@ -1008,6 +1009,7 @@ var EvolutionCards = /** @class */ (function () {
             case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
             case 48: return /*_TODOPU*/ ("Play when you enter Tokyo. Gain 1[Star] at the end of each Monster’s turn (including yours). Discard this card and lose all your [Star] if you leave Tokyo.");
             // Gigazaur 
+            case 51: return /*_TODOPU*/ ("You can’t lose [Heart] this turn.");
             case 52: return /*_TODOPU*/ ("Gain 2[Energy] and 1[Heart].");
             case 53: return /*_TODOPU*/ ("All other Monsters lose 2[Star].");
             case 55: return /*_TODOPU*/ ("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
@@ -3336,11 +3338,14 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.destroy('throwCamouflageDice_button');
             }
             if (args.canUseWings && !document.getElementById('useWings_button')) {
-                this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only') })), 'useWings');
+                this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only') })), function () { return _this.useWings(); });
                 document.getElementById('useWings_button').dataset.enableAtEnergy = '2';
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
                 }
+            }
+            if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
+                this.addActionButton('useDetachableTail_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only') })), function () { return _this.useDetachableTail(); });
             }
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
                 var _loop_3 = function (i) {
@@ -4650,6 +4655,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('useWings');
+    };
+    KingOfTokyo.prototype.useDetachableTail = function () {
+        if (!this.checkAction('useDetachableTail')) {
+            return;
+        }
+        this.takeAction('useDetachableTail');
     };
     KingOfTokyo.prototype.skipWings = function () {
         if (!this.checkAction('skipWings')) {

@@ -256,6 +256,7 @@ trait CardsArgTrait {
 
             $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
+            $canUseDetachableTail = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true);
             $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $remainingDamage = 0;
@@ -293,11 +294,12 @@ trait CardsArgTrait {
                 $damageToCancelToSurvive = 0;
             }
 
-            $canDoAction = $canThrowDices || $canUseWings || $canUseRobot || $rapidHealingHearts || $superJumpHearts || $rapidHealingCultists || $hasDice3;
+            $canDoAction = $canThrowDices || $canUseWings || $canUseDetachableTail || $canUseRobot || $rapidHealingHearts || $superJumpHearts || $rapidHealingCultists || $hasDice3;
 
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
+                'canUseDetachableTail' => $canUseDetachableTail,
                 'canUseRobot' => $canUseRobot,
                 'rapidHealingHearts' => $rapidHealingHearts,
                 'superJumpHearts' => $superJumpHearts,

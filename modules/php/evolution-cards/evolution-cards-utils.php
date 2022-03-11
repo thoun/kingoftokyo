@@ -50,6 +50,7 @@ trait EvolutionCardsUtilTrait {
     function canPlayEvolution(int $cardType, int $playerId) {
         switch($cardType) {
             case SIMIAN_SCAMPER_EVOLUTION:
+            case DETACHABLE_TAIL_EVOLUTION:
                 return false;
             case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
                 return $this->inTokyo($playerId); // TODOPU use only when you enter

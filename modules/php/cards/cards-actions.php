@@ -703,7 +703,7 @@ trait CardsActionTrait {
 
         $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
-        $this->notifyAllPlayers("useWings", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
+        $this->notifyAllPlayers("log", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => WINGS_CARD,

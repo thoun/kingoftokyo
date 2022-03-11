@@ -138,7 +138,6 @@ define('USED_CARDS', 'UsedCards');
 define('JETS_DAMAGES', 'JetsDamages'); // also contains Simian Scamper damages
 define('MIMICKED_CARD', 'MimickedCard');
 define('USED_WINGS', 'UsedWings');
-define('USED_SIMIAN_SCAMPER', 'UsedSimianScamper');
 define('MADE_IN_A_LAB', 'MadeInALab');
 define('BURROWING_PLAYERS', 'BurrowingPlayers');
 define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
@@ -307,6 +306,7 @@ define('GIANT_BANANA_EVOLUTION', 44);
 define('I_AM_THE_KING_EVOLUTION', 47);
 define('TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION', 48);
 // evolutions : Gigazaur
+define('DETACHABLE_TAIL_EVOLUTION', 51);
 define('RADIOACTIVE_WASTE_EVOLUTION', 52);
 define('PRIMAL_BELLOW_EVOLUTION', 53);
 define('DEFENDER_OF_TOKYO_EVOLUTION', 55);

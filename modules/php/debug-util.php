@@ -157,7 +157,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(YIN_YANG_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(DETACHABLE_TAIL_EVOLUTION, 2343492, false);
         }
 
         // player order

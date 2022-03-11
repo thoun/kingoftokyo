@@ -469,11 +469,15 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.canUseWings && !document.getElementById('useWings_button')) {
-                (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only')})), 'useWings');
+                (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only')})), () => this.useWings());
                 document.getElementById('useWings_button').dataset.enableAtEnergy = '2';
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
                 }
+            }
+
+            if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
+                (this as any).addActionButton('useDetachableTail_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only')})), () => this.useDetachableTail());
             }
 
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
@@ -2032,6 +2036,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('useWings');
+    }
+
+    public useDetachableTail() {
+        if(!(this as any).checkAction('useDetachableTail')) {
+            return;
+        }
+
+        this.takeAction('useDetachableTail');
     }
 
     public skipWings() {
