@@ -255,6 +255,11 @@ html, .mode_3d #game_play_area_background {
     color: #222;
     font-size: 80%;
   }
+
+  [data-log-type] {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+  }
 }
 
 .gamelogreview {

@@ -3097,6 +3097,7 @@ var KingOfTokyo = /** @class */ (function () {
         //private rapidHealingSyncHearts: number;
         this.towerLevelsOwners = [];
         this.falseBlessingAnkhAction = null;
+        this.cardLogId = 0;
     }
     /*
         setup:
@@ -5473,6 +5474,20 @@ var KingOfTokyo = /** @class */ (function () {
             return this.cards.getCardName(logType, 'text-only');
         }
     };
+    KingOfTokyo.prototype.getLogCardTooltip = function (logType) {
+        if (logType >= 3000) {
+            return this.evolutionCards.getTooltip(logType - 3000);
+        }
+        else if (logType >= 2000) {
+            return this.wickednessTiles.getTooltip(logType - 2000);
+        }
+        else if (logType >= 1000) {
+            return this.curseCards.getTooltip(logType - 1000);
+        }
+        else {
+            return this.cards.getTooltip(logType);
+        }
+    };
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
     KingOfTokyo.prototype.format_string_recursive = function (log, args) {
@@ -5491,8 +5506,12 @@ var KingOfTokyo = /** @class */ (function () {
                             types = args[cardArg].split(',').map(function (cardType) { return Number(cardType); });
                         }
                         if (types !== null) {
-                            var names = types.map(function (cardType) { return _this.getLogCardName(cardType); });
-                            args[cardArg] = "<strong>" + names.join(', ') + "</strong>";
+                            var tags = types.map(function (cardType) {
+                                var cardLogId = _this.cardLogId++;
+                                setTimeout(function () { return _this.addTooltipHtml("card-log-" + cardLogId, _this.getLogCardTooltip(cardType)); }, 500);
+                                return "<strong id=\"card-log-" + cardLogId + "\" data-log-type=\"" + cardType + "\">" + _this.getLogCardName(cardType) + "</strong>";
+                            });
+                            args[cardArg] = tags.join(', ');
                         }
                     }
                 });

@@ -120,7 +120,7 @@ class CurseCards {
         return null;
     }
 
-    private getTooltip(cardTypeId: number) {
+    public getTooltip(cardTypeId: number) {
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId)}</strong></p>
             <p><strong>${_("Permanent effect")} :</strong> ${formatTextIcons(this.getPermanentEffect(cardTypeId))}</p>

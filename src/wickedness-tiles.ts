@@ -111,7 +111,7 @@ class WickednessTiles {
         return null;
     }
 
-    private getTooltip(cardTypeId: number) {
+    public getTooltip(cardTypeId: number) {
         const level = this.getCardLevel(cardTypeId);
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId)}</strong></p>

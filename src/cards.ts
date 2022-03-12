@@ -572,7 +572,7 @@ class Cards {
         (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(Number(cardDiv.dataset.type), Number(cardDiv.dataset.side)));
     }
 
-    private getTooltip(cardTypeId: number, side: number = null) {
+    public getTooltip(cardTypeId: number, side: number = null) {
         if (cardTypeId === 999) {
             return _("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
         }

@@ -1874,6 +1874,10 @@ html, .mode_3d #game_play_area_background {
   color: #222;
   font-size: 80%;
 }
+.log [data-log-type] {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
 
 .gamelogreview .icon {
   width: 20px;

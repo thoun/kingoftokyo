@@ -243,7 +243,7 @@ class EvolutionCards {
         }
     }
 
-    private getTooltip(cardTypeId: number) {
+    public getTooltip(cardTypeId: number) {
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId, 'text-only')}</strong></p>
             <p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>

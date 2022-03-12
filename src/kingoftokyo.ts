@@ -2825,6 +2825,19 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    private getLogCardTooltip(logType: number) {
+        if (logType >= 3000) {
+            return this.evolutionCards.getTooltip(logType - 3000);
+        } else if (logType >= 2000) {
+            return this.wickednessTiles.getTooltip(logType - 2000);
+        } else if (logType >= 1000) {
+            return this.curseCards.getTooltip(logType - 1000);
+        } else {
+            return this.cards.getTooltip(logType);
+        }
+    }
+
+    private cardLogId = 0;
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
     public format_string_recursive(log: string, args: any) {
@@ -2840,8 +2853,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                             types = args[cardArg].split(',').map((cardType: string) => Number(cardType));
                         }
                         if (types !== null) {
-                            const names: string[] = types.map((cardType: number) => this.getLogCardName(cardType));
-                            args[cardArg] = `<strong>${names.join(', ')}</strong>`;
+                            const tags: string[] = types.map((cardType: number) => {
+                                const cardLogId = this.cardLogId++;
+
+                                setTimeout(() => (this as any).addTooltipHtml(`card-log-${cardLogId}`, this.getLogCardTooltip(cardType)), 500);
+
+                                return `<strong id="card-log-${cardLogId}" data-log-type="${cardType}">${this.getLogCardName(cardType)}</strong>`;
+                            });
+                            args[cardArg] = tags.join(', ');
                         }
                     }
                 });
