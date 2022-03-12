@@ -84,6 +84,17 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
+    function canPlayStepEvolution(int $playerId, array $stepCardsIds) {
+        $playersIds = $this->isPowerUpMutantEvolution() ? $this->getPlayersIds(true) : [$playerId];
+        $dbResults = $this->getCollectionFromDb("SELECT distinct player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
+        $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']), array_values($dbResults));
+
+        // TODOPU ignore cards on table, or on discard?
+        $stepCardsMonsters = array_values(array_unique(array_map(fn($cardId) => floor($cardId / 10), $stepCardsIds)));
+
+        return $this->array_some($monsters, fn($monster) => in_array($monster, $stepCardsMonsters));
+    }
+
     function applyEvolutionEffects(EvolutionCard $card, int $playerId) { // return $damages
         if (!$this->keepAndEvolutionCardsHaveEffect()) {
             return;

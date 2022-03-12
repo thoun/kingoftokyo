@@ -156,6 +156,10 @@ $game_options = [
                 'name' => totranslate('Enabled'),
                 'tmdisplay' => totranslate('Power-Up! (Evolutions)'),
             ],
+            3 => [
+                'name' => totranslate('Enabled, with Mutant Evolution variant'),
+                'tmdisplay' => totranslate('Power-Up! (Evolutions) with Mutant Evolution'),
+            ],
         ],
         'default' => 1,
     ],

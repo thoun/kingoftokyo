@@ -71,7 +71,11 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+    }
+
+    function isPowerUpMutantEvolution() {
+        /*return $this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 3;
     }
 
     function isDarkEdition() {
@@ -391,8 +395,12 @@ trait UtilTrait {
         return $this->getPlayersIdsFromLocation(false);
     }
 
-    function getPlayersIds() {
-        $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 ORDER BY player_no";
+    function getPlayersIds(bool $includeEliminated = false) {        
+        $sql = "SELECT player_id FROM player";
+        if (!$includeEliminated) {
+            $sql .= " WHERE player_eliminated = 0 AND player_dead = 0";
+        }
+        $sql .= " ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }

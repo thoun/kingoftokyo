@@ -15,11 +15,6 @@ trait PlayerStateTrait {
     function stBeforeStartTurn() {        
         $playerId = $this->getActivePlayerId();
 
-        $idsInTokyo = $this->getPlayersIdsInTokyo();
-        foreach($idsInTokyo as $id) {
-            $this->incStat(1, 'turnsInTokyo', $id);
-        }
-
         $this->DbQuery("DELETE FROM `turn_damages` WHERE 1");
         $this->setGameStateValue(EXTRA_ROLLS, 0);
         $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
@@ -33,13 +28,18 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(USED_WINGS, []);
         $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, []);
 
-        if (!$this->isPowerUpExpansion()) { // TODOPU Skip if no monster can have a card of this kind ? don't forget mutant evolution
+        if (!$this->isPowerUpExpansion() || !$this->canPlayStepEvolution($playerId, $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
             $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
         }
     }
 
     function stStartTurn() {
         $playerId = $this->getActivePlayerId();
+
+        $idsInTokyo = $this->getPlayersIdsInTokyo();
+        foreach($idsInTokyo as $id) {
+            $this->incStat(1, 'turnsInTokyo', $id);
+        }
 
         $this->incStat(1, 'turnsNumber');
         $this->incStat(1, 'turnsNumber', $playerId);
