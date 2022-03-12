@@ -2365,12 +2365,17 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['cultist', 1],
             ['removeWickednessTiles', 1],
             ['addEvolutionCardInHand', 1],
+            ['log500', 500]
         ];
     
         notifs.forEach((notif) => {
             dojo.subscribe(notif[0], this, `notif_${notif[0]}`);
             (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
         });
+    }
+
+    notif_log500() {
+        // nothing, it's just for the delay
     }
 
     notif_pickMonster(notif: Notif<NotifPickMonsterArgs>) {

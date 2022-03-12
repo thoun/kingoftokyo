@@ -300,7 +300,7 @@ trait CardsActionTrait {
         }
     }
 
-    function drawCard(int $playerId) {        
+    function drawCard(int $playerId, bool $redirectAfter = true) {        
 
         $card = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
 
@@ -340,7 +340,9 @@ trait CardsActionTrait {
 
             $this->removeCard($playerId, $card, false, true);
 
-            $this->jumpToState(ST_RESOLVE_DICE);
+            if ($redirectAfter) {
+                $this->jumpToState(ST_RESOLVE_DICE);
+            }
             return false;
         }
         
@@ -362,6 +364,10 @@ trait CardsActionTrait {
         }
 
         $this->setGameStateValue('newCardId', 0);
+
+        if (!$redirectAfter) {
+            return false;
+        }
 
         $redirects = false;
 

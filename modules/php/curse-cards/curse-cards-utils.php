@@ -56,7 +56,7 @@ trait CurseCardsUtilTrait {
                 }
                 break;
             case INADEQUATE_OFFERING_CURSE_CARD:
-                $this->drawCard($playerId);
+                $this->drawCard($playerId, true);
                 break;
             case VENGEANCE_OF_HORUS_CURSE_CARD:
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);

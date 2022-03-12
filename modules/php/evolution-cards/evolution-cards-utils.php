@@ -54,7 +54,7 @@ trait EvolutionCardsUtilTrait {
     function canPlayEvolution(int $cardType, int $playerId) {
         $stateId = intval($this->gamestate->state_id());
 
-        if ($stateId == ST_AFTER_ANSWER_QUESTION) {
+        if ($stateId < 17 || $stateId == ST_AFTER_ANSWER_QUESTION) {
             return false;
         }
 
@@ -126,6 +126,9 @@ trait EvolutionCardsUtilTrait {
             // Alienoid
             case ALIEN_SCOURGE_EVOLUTION: 
                 $this->applyGetPoints($playerId, 2, $logCardType);
+                break;
+            case PRECISION_FIELD_SUPPORT_EVOLUTION: 
+                $this->applyPrecisionFieldSupport($playerId);
                 break;
             case ANGER_BATTERIES_EVOLUTION:
                 $damageCount = $this->getDamageTakenThisTurn($playerId);
@@ -392,5 +395,34 @@ trait EvolutionCardsUtilTrait {
         $this->removeEvolution($playerId, $card);
 
         $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+    
+    function applyPrecisionFieldSupport(int $playerId) {
+        $topCard = $this->getCardsFromDb($this->cards->getCardsOnTop(1, 'deck'))[0];
+
+        if ($topCard->type > 100) {
+
+            $this->notifyAllPlayers('log500', /*client TODOPU translate(*/'${player_name} draws ${card_name}. This card is discarded as it is not a Keep card.'/*)*/, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card_name' => $topCard->type,
+            ]);
+            $this->cards->moveCard($topCard->id, 'discard');
+            $this->applyPrecisionFieldSupport($playerId);
+
+        } else if ($this->CARD_COST[$topCard->type] > 4) {
+
+            $this->notifyAllPlayers('log500', /*client TODOPU translate(*/'${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'/*)*/, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card_name' => $topCard->type,
+            ]);
+            $this->cards->moveCard($topCard->id, 'discard');
+            $this->applyPrecisionFieldSupport($playerId);
+
+        } else {
+            // TODOPU handle mimic
+            $this->drawCard($playerId, false);
+        }
     }
 }

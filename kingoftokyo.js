@@ -1027,8 +1027,9 @@ var EvolutionCards = /** @class */ (function () {
             case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
             // Alienoid
             case 21: return /*_TODOPU*/ ("Gain 2[Star].");
+            case 22: return /*_TODOPU*/ ("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
             case 23: return /*_TODOPU*/ ("Gain 1[Energy] for each [Heart] you lost this turn.");
-            case 27: return /*_TODOPU*/ ("Une fois lors de chacun de vos tours, vous pouvez dépenser 1[Energy] pour gagner 1[Heart].");
+            case 27: return /*_TODOPU*/ ("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             // Cyber Kitty
             case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
             case 34: return /*_TODOPU*/ ("Play at the start of your turn. You only have one roll this turn. Double the result.");
@@ -5069,11 +5070,15 @@ var KingOfTokyo = /** @class */ (function () {
             ['cultist', 1],
             ['removeWickednessTiles', 1],
             ['addEvolutionCardInHand', 1],
+            ['log500', 500]
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
             _this.notifqueue.setSynchronous(notif[0], notif[1]);
         });
+    };
+    KingOfTokyo.prototype.notif_log500 = function () {
+        // nothing, it's just for the delay
     };
     KingOfTokyo.prototype.notif_pickMonster = function (notif) {
         var _this = this;

@@ -26,7 +26,7 @@ $this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13]; // TODODE add cyberbunny
 // 3 : gift
 $this->EVOLUTION_CARDS_TYPES = [
     11 => 1, 12 => 1, 13 => 2, 14 => 2, 15 => 1, 16 => 2, 17 => 1, 18 => 1, // Space Penguin
-    21 => 1, 22 => 1, 23 => 2, 24 => 2, 25 => 1, 26 => 2, 27 => 1, 28 => 1, // Alienoid
+    21 => 2, 22 => 2, 23 => 2, 24 => 1, 25 => 1, 26 => 1, 27 => 1, 28 => 1, // Alienoid
     31 => 2, 32 => 2, 33 => 2, 34 => 2, 35 => 1, 36 => 1, 37 => 1, 38 => 1, // Cyber Kitty
     41 => 2, 42 => 2, 43 => 2, 44 => 2, 45 => 1, 46 => 1, 47 => 1, 48 => 1, // The King
     51 => 2, 52 => 2, 53 => 2, 54 => 2, 55 => 1, 56 => 1, 57 => 1, 58 => 1, // Gigazaur
@@ -36,7 +36,7 @@ $this->EVOLUTION_CARDS_TYPES = [
 
 // remove the evolutions 5s after use
 $this->AUTO_DISCARDED_EVOLUTIONS = [
-    21, 23,
+    21, 22, 23,
     44, 
     52, 53,
     62,

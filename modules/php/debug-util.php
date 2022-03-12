@@ -152,8 +152,8 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion()) {
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
-            $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493");
+            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
+            //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493");
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
@@ -162,7 +162,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
         }
 
         // player order
