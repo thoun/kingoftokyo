@@ -162,7 +162,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);
         }
 
         // player order

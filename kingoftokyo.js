@@ -1029,6 +1029,7 @@ var EvolutionCards = /** @class */ (function () {
             case 21: return /*_TODOPU*/ ("Gain 2[Star].");
             case 22: return /*_TODOPU*/ ("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
             case 23: return /*_TODOPU*/ ("Gain 1[Energy] for each [Heart] you lost this turn.");
+            case 24: return /*_TODOPU*/ ("Put 3TODOPU tokens on this card. On your turn, you can remove an TODOPU token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
             case 27: return /*_TODOPU*/ ("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             // Cyber Kitty
             case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
@@ -1094,7 +1095,7 @@ var EvolutionCards = /** @class */ (function () {
         }
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         var placed = cardPlaced.tokens;
-        var cardType = card.mimicType || card.type;
+        var cardType = /* TODOPU card.mimicType ||*/ card.type;
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
             if (cardType === 136 && playerId) {
@@ -1110,7 +1111,10 @@ var EvolutionCards = /** @class */ (function () {
             var newPlace = this.getPlaceOnCard(cardPlaced);
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
-            if (cardType === 136) {
+            if (cardType === 24) {
+                html += "adapting-technology token";
+            }
+            else if (cardType === 136) {
                 html += "energy-cube";
             }
             html += "\"></div>";
@@ -1148,6 +1152,7 @@ var EvolutionCards = /** @class */ (function () {
         return null;
     };
     EvolutionCards.prototype.addCardsToStock = function (stock, cards, from) {
+        var _this = this;
         if (!cards.length) {
             return;
         }
@@ -1155,7 +1160,7 @@ var EvolutionCards = /** @class */ (function () {
             stock.addToStockWithId(card.type, "" + card.id, from);
             //const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
         });
-        // TODOPU cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
+        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(stock, card); });
     };
     EvolutionCards.prototype.moveToAnotherStock = function (sourceStock, destinationStock, card) {
         if (sourceStock === destinationStock) {
@@ -1395,7 +1400,7 @@ var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, playerWithGoldenScarab) {
         var _this = this;
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f;
         this.game = game;
         this.player = player;
         this.showHand = false;
@@ -1478,7 +1483,9 @@ var PlayerTable = /** @class */ (function () {
             this.visibleEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
             this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
             (_f = player.hiddenEvolutions) === null || _f === void 0 ? void 0 : _f.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
-            (_g = player.visibleEvolutions) === null || _g === void 0 ? void 0 : _g.forEach(function (card) { return _this.visibleEvolutionCards.addToStockWithId(card.type, '' + card.id); });
+            if (player.visibleEvolutions) {
+                this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
+            }
         }
     }
     PlayerTable.prototype.initPlacement = function () {
@@ -3485,7 +3492,7 @@ var KingOfTokyo = /** @class */ (function () {
                 }
             }
             if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
-                this.addActionButton('useDetachableTail_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only') })), function () { return _this.useDetachableTail(); });
+                this.addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only') }), function () { return _this.useDetachableTail(); });
             }
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
                 var _loop_3 = function (i) {
@@ -3900,7 +3907,10 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'buyCard':
                     var argsBuyCard = args;
-                    this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(" ( 2 [Energy])"), 'onRenew');
+                    if (argsBuyCard.canUseAdaptingTechnology) {
+                        this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(24, 'text-only') }) + ')', function () { return _this.onRenew(3024); });
+                    }
+                    this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(" ( 2 [Energy])"), function () { return _this.onRenew(4); });
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
@@ -4805,11 +4815,13 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
-    KingOfTokyo.prototype.onRenew = function () {
+    KingOfTokyo.prototype.onRenew = function (cardType) {
         if (!this.checkAction('renew')) {
             return;
         }
-        this.takeAction('renew');
+        this.takeAction('renew', {
+            cardType: cardType
+        });
     };
     KingOfTokyo.prototype.skipCardIsBought = function () {
         if (!this.checkAction('skipCardIsBought')) {

@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/../objects/evolution-card.php');
+
+use KOT\Objects\EvolutionCard;
+
 trait EvolutionCardsActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,15 +51,7 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->jumpToState($nextState);
     }
 
-    function playEvolution(int $id) {
-        $playerId = $this->getCurrentPlayerId();
-
-        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
-
-        if (!$this->canPlayEvolution($card->type, $playerId)) {
-            throw new \BgaUserException("You can't play this Evolution.");
-        }
-
+    function applyPlayEvolution(int $playerId, EvolutionCard $card) {
         $countMothershipSupportBefore = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
@@ -71,6 +67,18 @@ trait EvolutionCardsActionTrait {
         $this->toggleMothershipSupport($playerId, $countMothershipSupportBefore);
 
         // TODOPU handle damages
+    }
+
+    function playEvolution(int $id) {
+        $playerId = $this->getCurrentPlayerId();
+
+        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
+
+        if (!$this->canPlayEvolution($card->type, $playerId)) {
+            throw new \BgaUserException("You can't play this Evolution.");
+        }
+
+        $this->applyPlayEvolution($playerId, $card);
     }
 
     function useYinYang() {
@@ -122,8 +130,6 @@ trait EvolutionCardsActionTrait {
         $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
 
         $this->setEvolutionTokens($playerId, $unusedBambooSupplyCard, $unusedBambooSupplyCard->tokens + 1);
-
-        // TODOPU
 
         $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
 

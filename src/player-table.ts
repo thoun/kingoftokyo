@@ -140,7 +140,9 @@ class PlayerTable {
     
             this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
             player.hiddenEvolutions?.forEach(card => this.hiddenEvolutionCards.addToStockWithId(this.showHand ? card.type : 0, '' + card.id));
-            player.visibleEvolutions?.forEach(card => this.visibleEvolutionCards.addToStockWithId(card.type, '' + card.id));
+            if (player.visibleEvolutions) {
+                this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
+            }
         }
     }
 

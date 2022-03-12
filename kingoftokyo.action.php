@@ -492,7 +492,9 @@
     public function renew() {
         self::setAjaxMode();
 
-        $this->game->renewCards();
+        $cardType = self::getArg("cardType", AT_posint, false);
+
+        $this->game->renewCards($cardType);
 
         self::ajaxResponse();
     }

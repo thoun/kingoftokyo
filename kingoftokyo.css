@@ -1955,6 +1955,10 @@ button .icon, a .icon {
     }
   }*/
 }
+.token.adapting-technology {
+  background-position: 66.66% 0%;
+  box-shadow: 0 0 4px 4px white;
+}
 
 #skipBuyPhaseWrapper {
   display: flex;

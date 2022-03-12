@@ -5,12 +5,10 @@ namespace KOT\States;
 require_once(__DIR__.'/../objects/evolution-card.php');
 require_once(__DIR__.'/../objects/damage.php');
 require_once(__DIR__.'/../objects/question.php');
-require_once(__DIR__.'/../objects/card-being-bought.php');
 
 use KOT\Objects\EvolutionCard;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
-use KOT\Objects\CardBeingBought;
 
 trait EvolutionCardsUtilTrait {
 
@@ -133,6 +131,9 @@ trait EvolutionCardsUtilTrait {
             case ANGER_BATTERIES_EVOLUTION:
                 $damageCount = $this->getDamageTakenThisTurn($playerId);
                 $this->applyGetEnergy($playerId, $damageCount, $logCardType);
+                break;
+            case ADAPTING_TECHNOLOGY_EVOLUTION:
+                $this->setEvolutionTokens($playerId, $card, 3);
                 break;
             // Cyber Kitty
             // The King

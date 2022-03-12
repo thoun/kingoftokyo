@@ -37,6 +37,7 @@ interface EvolutionCard {
     monster: number;
     card: number;
     type: number;
+    tokens: number;
     location: string;
     location_arg: number;
 }
@@ -290,6 +291,7 @@ interface EnteringBuyCardArgs {
     canBuyFromPlayers: boolean;
     canBuyOrNenew: boolean;
     canSell: boolean;
+    canUseAdaptingTechnology: boolean;
     _private: {
         pickCards: Card[];
     };

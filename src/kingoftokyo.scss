@@ -330,6 +330,11 @@ button, a {
       }
     }*/
   }
+
+  &.adapting-technology {
+    background-position: 66.66% 0%; // TODOPU
+    box-shadow: 0 0 4px 4px white;
+  }
 }
 
 #skipBuyPhaseWrapper {

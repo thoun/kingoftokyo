@@ -409,32 +409,51 @@ trait CardsActionTrait {
         }
     }
 
-    function renewCards() {
+    function renewCards($cardType) {
         $this->checkAction('renew');
 
         $playerId = $this->getActivePlayerId();
 
-        if ($this->getPlayerEnergy($playerId) < 2) {
-            throw new \BgaUserException('Not enough energy');
+        if ($cardType == 3024) {
+            $adaptiveTechnologyCard = $this->getEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
+            if ($adaptiveTechnologyCard->location === 'hand') {
+                $this->applyPlayEvolution($playerId, $adaptiveTechnologyCard);
+            }
+            $tokens = $adaptiveTechnologyCard->tokens - 1;
+            $this->setEvolutionTokens($playerId, $adaptiveTechnologyCard, $tokens);
+            if ($tokens == 0) {
+                $this->removeEvolution($playerId, $adaptiveTechnologyCard);
+            }
+        } else {
+            if ($this->getPlayerEnergy($playerId) < 2) {
+                throw new \BgaUserException('Not enough energy');
+            }
+
+            $cost = 2;
+            $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
         }
 
         $this->removeDiscardCards($playerId);
-
-        $cost = 2;
-        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->cards->moveAllCardsInLocation('table', 'discard');
         $cards = $this->placeNewCardsOnTable();
         
         $topDeckCardBackType = $this->getTopDeckCardBackType();
 
-        $this->notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), [
+        $notifArgs = [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
             'energy' => $this->getPlayerEnergy($playerId),
             'topDeckCardBackType' => $topDeckCardBackType,
-        ]);
+        ];        
+        if ($cardType == 3024) {
+            $this->notifyAllPlayers("renewCards", /*client TODOPUtranslate(*/'${player_name} renews visible cards using ${card_name}'/*)*/, 
+                array_merge($notifArgs, ['card_name' => 3000 + ADAPTING_TECHNOLOGY_EVOLUTION]));
+        } else {
+            $this->notifyAllPlayers("renewCards", clienttranslate('${player_name} renews visible cards'), 
+                $notifArgs);
+        }
 
         $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
 

@@ -129,6 +129,7 @@ class EvolutionCards {
             case 21: return /*_TODOPU*/("Gain 2[Star].");
             case 22: return /*_TODOPU*/("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
             case 23: return /*_TODOPU*/("Gain 1[Energy] for each [Heart] you lost this turn.");
+            case 24: return /*_TODOPU*/("Put 3TODOPU tokens on this card. On your turn, you can remove an TODOPU token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
             case 27: return /*_TODOPU*/("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             // Cyber Kitty
             case 31: return /*_TODOPU*/("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
@@ -189,7 +190,7 @@ class EvolutionCards {
         return newPlace;
     }
 
-    public placeTokensOnCard(stock: Stock, card: Card, playerId?: number) {
+    public placeTokensOnCard(stock: Stock, card: EvolutionCard, playerId?: number) {
         const divId = `${stock.container_div.id}_item_${card.id}`;
         const div = document.getElementById(divId);
         if (!div) {
@@ -198,7 +199,7 @@ class EvolutionCards {
         const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
         const placed: PlacedTokens[] = cardPlaced.tokens;
 
-        const cardType = card.mimicType || card.type;
+        const cardType = /* TODOPU card.mimicType ||*/ card.type;
 
         // remove tokens
         for (let i = card.tokens; i < placed.length; i++) {
@@ -216,7 +217,9 @@ class EvolutionCards {
 
             placed.push(newPlace);
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="card-token `;
-            if (cardType === 136) {
+            if (cardType === 24) {
+                html += `adapting-technology token`;
+            } else if (cardType === 136) {
                 html += `energy-cube`;
             }
             html += `"></div>`;
@@ -281,7 +284,7 @@ class EvolutionCards {
             stock.addToStockWithId(card.type, `${card.id}`, from);
             //const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
         });
-        // TODOPU cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
+        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
     }
 
     public moveToAnotherStock(sourceStock: Stock, destinationStock: Stock, card: EvolutionCard) {

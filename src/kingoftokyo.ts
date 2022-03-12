@@ -482,7 +482,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
-                (this as any).addActionButton('useDetachableTail_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only')})), () => this.useDetachableTail());
+                (this as any).addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only')}), () => this.useDetachableTail());
             }
 
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
@@ -911,8 +911,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
+                    if (argsBuyCard.canUseAdaptingTechnology) {
+                        (this as any).addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(24, 'text-only')}) + ')', () => this.onRenew(3024));
 
-                    (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), 'onRenew');
+                    }
+                    (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.onRenew(4));
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
@@ -2047,12 +2050,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public onRenew() {
+    public onRenew(cardType: number) {
         if(!(this as any).checkAction('renew')) {
             return;
         }
 
-        this.takeAction('renew');
+        this.takeAction('renew', {
+            cardType
+        });
     }
 
     public skipCardIsBought() {

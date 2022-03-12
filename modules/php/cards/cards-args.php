@@ -114,6 +114,8 @@ trait CardsArgTrait {
                 ],
             ];
         }
+
+        $canUseAdaptingTechnology = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
     
         // return values:
         return [
@@ -123,6 +125,7 @@ trait CardsArgTrait {
             'canSell' => $canSell,
             'cardsCosts' => $cardsCosts,
             'warningIds' => $warningIds,
+            'canUseAdaptingTechnology' => $canUseAdaptingTechnology,
         ] + $pickArgs;
     }
 
