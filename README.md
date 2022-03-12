@@ -57,6 +57,7 @@ when reaching 0 :
 at start turn :
  - 28 herbe à chat (Cyber Kitty) (before first roll?)
  - 36 mise à jour (meka dragon)
+ - 54 laser insatiable (alienoid)
  - 70 réserve de bambous (pandakai)
  - 87 épée énergétique (cyber bunny)
  - 95 temple englouti (Kraken)

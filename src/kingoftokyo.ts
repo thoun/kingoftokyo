@@ -595,6 +595,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.gamedatas.gamestate.description = question.description; 
         this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn; 
         (this as any).updatePageTitle();
+
+        if (question.code === 'Bamboozle') {
+            const bamboozleArgs = question.args as BamboozleQuestionArgs;
+            console.log(bamboozleArgs);
+            this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, (this as any).isCurrentPlayerActive());
+        }
     }
 
     private onEnteringEndTurn() {
@@ -671,6 +677,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (document.getElementById('rethrow3camouflage_button')) {
                     dojo.destroy('rethrow3camouflage_button');
                 }
+                break;
+
+            case 'answerQuestion':                
+                this.onLeavingBuyCard();
                 break;
         }
     }
@@ -927,6 +937,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'opportunistChooseMimicCard':
                     this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
                     break;
+                case 'cardIsBought':
+                    (this as any).addActionButton('skipCardIsBought_button', _("Skip"), () => this.skipCardIsBought());
+                    break;
                 case 'sellCard':
                     (this as any).addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
@@ -949,7 +962,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const takeLabel = dojo.string.substitute(/*TODOPU_*/("Take all [Energy] from ${card_name}"), substituteParams);
                 (this as any).addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
                 (this as any).addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), () => this.takeEnergyOnBambooSupply());
-                if (!question.args.canTake) {
+                const questionArgs = question.args as BambooSupplyQuestionArgs;
+                if (!questionArgs.canTake) {
                     dojo.addClass('takeEnergyOnBambooSupply_button', 'disabled');
                 }
                 break;
@@ -1257,6 +1271,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.discardKeepCard(cardId);
         } else if (stateName === 'leaveTokyoExchangeCard') {
             this.exchangeCard(cardId);
+        } else if (stateName === 'answerQuestion') {
+            const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
+            if (args.question.code === 'Bamboozle') {
+                this.buyCardBamboozle(cardId, from);
+            }
         }
     }
 
@@ -1291,13 +1310,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
         
         const stateName = this.getStateName();
-        const buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard';
+        const buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || stateName === 'answerQuestion';
         const changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
         if (!buyState && !changeMimicState) {
             return;
         }
         if (args === null) {
-            args = this.gamedatas.gamestate.args;
+            args = stateName === 'answerQuestion' ?
+                this.gamedatas.gamestate.args.question.args.buyCardArgs :
+                this.gamedatas.gamestate.args;
         }
         if (playerEnergy === null) {
             playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
@@ -1948,6 +1969,17 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public buyCardBamboozle(id: number | string, from: number) {
+        if(!(this as any).checkAction('buyCardBamboozle')) {
+            return;
+        }
+
+        this.takeAction('buyCardBamboozle', {
+            id,
+            from
+        });
+    }
+
     public chooseMimickedCard(id: number | string) {
         if(!(this as any).checkAction('chooseMimickedCard')) {
             return;
@@ -2004,6 +2036,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('renew');
+    }
+
+    public skipCardIsBought() {
+        if(!(this as any).checkAction('skipCardIsBought')) {
+            return;
+        }
+
+        this.takeAction('skipCardIsBought');
     }
 
     public goToSellCard() {

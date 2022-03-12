@@ -144,4 +144,32 @@ trait EvolutionCardsActionTrait {
 
         $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
     }
+
+    function skipCardIsBought() {
+        $this->checkAction('skipCardIsBought');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
+
+    function buyCardBamboozle(int $id, int $from) {
+        $currentPlayerId = $this->getCurrentPlayerId();
+        $activePlayerId = $this->getActivePlayerId();
+
+        $forcedCard = $this->getCardFromDb($this->cards->getCard($id));
+        $forbiddenCard = $this->getCardFromDb($this->cards->getCard($this->getGlobalVariable(CARD_BEING_BOUGHT)->cardId));
+
+        $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} force ${player_name2} to buy ${card_name} instead of ${card_name2}. ${player_name2} cannot buy ${card_name2} this turn'/*)*/, [
+            'player_name' => $this->getPlayerName($currentPlayerId),
+            'player_name2' => $this->getPlayerName($activePlayerId),
+            'card_name' => $forcedCard->type,
+            'card_name2' => $forbiddenCard->type,
+        ]);
+
+        $this->applyBuyCard($activePlayerId, $id, $from, false);
+
+        $this->goToState(ST_PLAYER_BUY_CARD);
+    }
 }

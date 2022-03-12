@@ -1054,7 +1054,8 @@ var EvolutionCards = /** @class */ (function () {
             case 64: return /*_TODOPU*/ ("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");
             // Pandakaï
             case 131: return /*_TODOPU*/ ("Gain 6[Energy]. All other Monsters gain 3[Energy].");
-            //case 132: return /*_TODOPU*/("Play when you take control of Tokyo. Make all Monsters outside of Tokyo lose 2[Heart]. Gain 1[Energy], then leave Tokyo. No Monster takes your place.");
+            case 132: return /*_TODOPU*/ ("Play when you take control of Tokyo. [TODOPU Make all Monsters outside of Tokyo lose 2[Heart] TODOPU]. Gain 1[Energy], then leave Tokyo. No Monster takes your place.");
+            case 133: return /*_TODOPU*/ ("Play when a player buys a Power card. They do not spend [Energy] and cannot buy that card this turn. Choose a different Power card they can afford to buy. They must purchase that card.");
             case 134: return /*_TODOPU*/ ("Lose 1[Star], gain 2[Energy] and 2[Heart].");
             case 135: return /*_TODOPU*/ ("Each time you roll at least [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], gain 2[Star] and take another turn.");
             case 136: return /*_TODOPU*/ ("At the start of your turn, you can put 1[Energy] from the bank on this card OR take all of the [Energy] off this card.");
@@ -3596,6 +3597,11 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.gamestate.description = question.description;
         this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn;
         this.updatePageTitle();
+        if (question.code === 'Bamboozle') {
+            var bamboozleArgs = question.args;
+            console.log(bamboozleArgs);
+            this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, this.isCurrentPlayerActive());
+        }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
     };
@@ -3669,6 +3675,9 @@ var KingOfTokyo = /** @class */ (function () {
                 if (document.getElementById('rethrow3camouflage_button')) {
                     dojo.destroy('rethrow3camouflage_button');
                 }
+                break;
+            case 'answerQuestion':
+                this.onLeavingBuyCard();
                 break;
         }
     };
@@ -3911,6 +3920,9 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'opportunistChooseMimicCard':
                     this.onEnteringChooseMimickedCard(args); // because it's multiplayer, enter action must be set here
                     break;
+                case 'cardIsBought':
+                    this.addActionButton('skipCardIsBought_button', _("Skip"), function () { return _this.skipCardIsBought(); });
+                    break;
                 case 'sellCard':
                     this.addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
                     break;
@@ -3930,7 +3942,8 @@ var KingOfTokyo = /** @class */ (function () {
                 var takeLabel = dojo.string.substitute(/*TODOPU_*/ ("Take all [Energy] from ${card_name}"), substituteParams);
                 this.addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), function () { return _this.putEnergyOnBambooSupply(); });
                 this.addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), function () { return _this.takeEnergyOnBambooSupply(); });
-                if (!question.args.canTake) {
+                var questionArgs = question.args;
+                if (!questionArgs.canTake) {
                     dojo.addClass('takeEnergyOnBambooSupply_button', 'disabled');
                 }
                 break;
@@ -4169,6 +4182,12 @@ var KingOfTokyo = /** @class */ (function () {
         else if (stateName === 'leaveTokyoExchangeCard') {
             this.exchangeCard(cardId);
         }
+        else if (stateName === 'answerQuestion') {
+            var args = this.gamedatas.gamestate.args;
+            if (args.question.code === 'Bamboozle') {
+                this.buyCardBamboozle(cardId, from);
+            }
+        }
     };
     KingOfTokyo.prototype.chooseEvolutionCardClick = function (id) {
         var stateName = this.getStateName();
@@ -4202,13 +4221,15 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         var stateName = this.getStateName();
-        var buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard';
+        var buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || stateName === 'answerQuestion';
         var changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
         if (!buyState && !changeMimicState) {
             return;
         }
         if (args === null) {
-            args = this.gamedatas.gamestate.args;
+            args = stateName === 'answerQuestion' ?
+                this.gamedatas.gamestate.args.question.args.buyCardArgs :
+                this.gamedatas.gamestate.args;
         }
         if (playerEnergy === null) {
             playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
@@ -4725,6 +4746,15 @@ var KingOfTokyo = /** @class */ (function () {
             from: from
         });
     };
+    KingOfTokyo.prototype.buyCardBamboozle = function (id, from) {
+        if (!this.checkAction('buyCardBamboozle')) {
+            return;
+        }
+        this.takeAction('buyCardBamboozle', {
+            id: id,
+            from: from
+        });
+    };
     KingOfTokyo.prototype.chooseMimickedCard = function (id) {
         if (!this.checkAction('chooseMimickedCard')) {
             return;
@@ -4770,6 +4800,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('renew');
+    };
+    KingOfTokyo.prototype.skipCardIsBought = function () {
+        if (!this.checkAction('skipCardIsBought')) {
+            return;
+        }
+        this.takeAction('skipCardIsBought');
     };
     KingOfTokyo.prototype.goToSellCard = function () {
         if (!this.checkAction('goToSellCard', true)) {

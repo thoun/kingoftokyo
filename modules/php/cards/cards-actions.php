@@ -3,9 +3,11 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/../objects/player-intervention.php');
+require_once(__DIR__.'/../objects/card-being-bought.php');
 
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\PlayersUsedDice;
+use KOT\Objects\CardBeingBought;
 
 trait CardsActionTrait {
 
@@ -108,28 +110,10 @@ trait CardsActionTrait {
         $this->redirectAfterStealCostume();
     }
 
-    function buyCard(int $id, int $from) {
-        $this->checkAction('buyCard');
-
-        $stateName = $this->gamestate->state()['name'];
-        $opportunist = $stateName === 'opportunistBuyCard';
-        $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
-
+    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist) {
         $card = $this->getCardFromDb($this->cards->getCard($id));
         $cardLocationArg = $card->location_arg;
-
         $cost = $this->getCardCost($playerId, $card->type);
-        if (!$this->canBuyCard($playerId, $card->type, $cost)) {
-            throw new \BgaUserException('Not enough energy');
-        }
-
-        if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
-            throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
-        }
-
-        if (!$this->canBuyPowerCard($playerId)) {
-            throw new \BgaUserException("You can't buy Power cards");
-        }
 
         $this->updateKillPlayersScoreAux();        
         
@@ -268,9 +252,51 @@ trait CardsActionTrait {
         if ($damages != null && count($damages) > 0) {
             $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard);
         }
+
+        return [$redirects, $redirectAfterBuyCard];
+    }
+
+    function buyCard(int $id, int $from) {
+        $this->checkAction('buyCard');
+
+        $stateName = $this->gamestate->state()['name'];
+        $opportunist = $stateName === 'opportunistBuyCard';
+        $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($id));
+
+        $cost = $this->getCardCost($playerId, $card->type);
+        if (!$this->canBuyCard($playerId, $card->type, $cost)) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
+            throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
+        }
+
+        if (!$this->canBuyPowerCard($playerId)) {
+            throw new \BgaUserException("You can't buy Power cards");
+        }
         
-        if (!$redirects) {
-            $this->jumpToState($redirectAfterBuyCard);
+        $canPreventBuying = !$opportunist && $this->isPowerUpExpansion()
+            && $this->canPlayStepEvolution($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT);
+
+        if ($canPreventBuying && $this->getGlobalVariable(CARD_BEING_BOUGHT) == null) { // To avoid ask twice in the same turn if it has been played on first
+            $this->notifyAllPlayers("log", /*clienttranslate(*/'${player_name} wants to buy ${card_name}'/*)*/, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card' => $card,
+                'card_name' => $card->type,
+            ]);
+            $this->setGlobalVariable(CARD_BEING_BOUGHT, new CardBeingBought($id, $playerId, $from));
+            $this->jumpToState(ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT);
+        } else {
+            $applyBuyCardResult = $this->applyBuyCard($playerId, $id, $from, $opportunist);
+            $redirects = $applyBuyCardResult[0];
+            if (!$redirects) {
+                $redirectAfterBuyCard = $applyBuyCardResult[1];
+                $this->jumpToState($redirectAfterBuyCard);
+            }
         }
     }
 

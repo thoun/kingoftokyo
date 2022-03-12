@@ -176,7 +176,6 @@ $playerActionsGameStates = [
         "args" => "argBeforeStartTurn",
         "possibleactions" => [ "skipBeforeStartTurn" ],
         "transitions" => [],
-
     ],
 
     ST_START_TURN => [
@@ -695,6 +694,27 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT => [ 
+        "name" => "cardIsBought",
+        "description" => '',/* client TODOPU translate('A player can activate an Evolution card'), */
+        "descriptionmyturn" => '', /* client TODOPU translate('${you} can activate an Evolution card'), */
+        "type" => "multipleactiveplayer",
+        "action" => "stCardIsBought",
+        "args" => "argCardIsBought",
+        "possibleactions" => [ "skipCardIsBought" ],
+        "transitions" => [
+            "next" => ST_AFTER_WHEN_CARD_IS_BOUGHT,
+        ],
+    ],
+
+    ST_AFTER_WHEN_CARD_IS_BOUGHT => [
+        "name" => "afterCardIsBought",
+        "description" => "",
+        "type" => "game",
+        "action" => "stAfterCardIsBought",
+        "transitions" => [],
+    ],
+
     ST_PLAYER_SELL_CARD => [
         "name" => "sellCard",
         "description" => clienttranslate('${actplayer} can sell a card'),
@@ -717,6 +737,7 @@ $playerActionsGameStates = [
         "args" => "argAnswerQuestion",
         "possibleactions" => [ 
             "putEnergyOnBambooSupply", "takeEnergyOnBambooSupply",
+            "buyCardBamboozle",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

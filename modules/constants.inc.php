@@ -54,6 +54,8 @@ define('ST_PLAYER_BUY_CARD', 50);
 define('ST_PLAYER_CHOOSE_MIMICKED_CARD', 51);
 define('ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD', 52);
 define('ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD', 53);
+define('ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT', 54);
+define('ST_AFTER_WHEN_CARD_IS_BOUGHT', 55);
 
 define('ST_PLAYER_SELL_CARD', 60);
 
@@ -146,6 +148,7 @@ define('MADE_IN_A_LAB', 'MadeInALab');
 define('BURROWING_PLAYERS', 'BurrowingPlayers');
 define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
 define('QUESTION', 'Question');
+define('CARD_BEING_BOUGHT', 'CardBeingBought');
 
 /*
  * Cards

@@ -56,6 +56,19 @@ interface Question {
     args: any;
 }
 
+interface BambooSupplyQuestionArgs {
+    canTake: boolean;
+}
+
+interface BamboozleQuestionArgs {
+    cardBeingBought: {
+        cardId: number;
+        playerId: number;
+        from: number;
+    }, 
+    buyCardArgs: EnteringBuyCardArgs;
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;

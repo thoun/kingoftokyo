@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(5);
+        $this->debugSetEnergy(15);
         $this->debugSetPoints(5);
         $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -152,14 +152,17 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion()) {
+            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493");
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
         }
 
         // player order

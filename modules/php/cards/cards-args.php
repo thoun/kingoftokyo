@@ -32,11 +32,9 @@ trait CardsArgTrait {
         ];
     }
 
-    function argBuyCard() {
-        $playerId = $this->getActivePlayerId();
-
+    function getArgBuyCard(int $playerId, bool $includeCultistsEnergy) {
         $potentialEnergy = $this->getPlayerEnergy($playerId);
-        if ($this->isCthulhuExpansion()) {
+        if ($includeCultistsEnergy && $this->isCthulhuExpansion()) {
             $potentialEnergy += $this->getPlayerCultists($playerId);
         }
 
@@ -51,6 +49,12 @@ trait CardsArgTrait {
         $cardsCosts = [];
         
         $disabledIds = [];
+
+        $cardBeingBought = $this->getGlobalVariable(CARD_BEING_BOUGHT);
+        if ($cardBeingBought != null && !$cardBeingBought->allowed) {
+            $disabledIds[] = $cardBeingBought->cardId;
+        }
+
         $warningIds = [];
         foreach ($cards as $card) {
             $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
@@ -120,6 +124,12 @@ trait CardsArgTrait {
             'cardsCosts' => $cardsCosts,
             'warningIds' => $warningIds,
         ] + $pickArgs;
+    }
+
+    function argBuyCard() {
+        $playerId = $this->getActivePlayerId();
+
+        return $this->getArgBuyCard($playerId, true);
     }
 
     function argOpportunistBuyCardWithPlayerId(int $playerId) {        

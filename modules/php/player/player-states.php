@@ -27,8 +27,9 @@ trait PlayerStateTrait {
         $this->resetUsedCards();
         $this->setGlobalVariable(USED_WINGS, []);
         $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, []);
+        $this->setGlobalVariable(CARD_BEING_BOUGHT, null);
 
-        if (!$this->isPowerUpExpansion() || !$this->canPlayStepEvolution($playerId, $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
+        if (!$this->isPowerUpExpansion() || !$this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
             $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
         }
     }

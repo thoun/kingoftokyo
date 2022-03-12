@@ -4,9 +4,13 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../objects/evolution-card.php');
 require_once(__DIR__.'/../objects/damage.php');
+require_once(__DIR__.'/../objects/question.php');
+require_once(__DIR__.'/../objects/card-being-bought.php');
 
 use KOT\Objects\EvolutionCard;
 use KOT\Objects\Damage;
+use KOT\Objects\Question;
+use KOT\Objects\CardBeingBought;
 
 trait EvolutionCardsUtilTrait {
 
@@ -48,9 +52,22 @@ trait EvolutionCardsUtilTrait {
     }
 
     function canPlayEvolution(int $cardType, int $playerId) {
+        $stateId = intval($this->gamestate->state_id());
+
+        if ($stateId == ST_AFTER_ANSWER_QUESTION) {
+            return false;
+        }
 
         // cards to player before starting turn
-        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_START) && intval($this->gamestate->state_id()) != ST_PLAYER_BEFORE_START_TURN) {
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_START) && $stateId != ST_PLAYER_BEFORE_START_TURN) {
+            return false;
+        }
+
+        // cards to player when card is bought
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) && $stateId != ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT) {
+            if ($cardType == BAMBOOZLE_EVOLUTION) {
+                return $playerId != intval($this->getActivePlayerId());
+            }
             return false;
         }
 
@@ -84,8 +101,8 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
-    function canPlayStepEvolution(int $playerId, array $stepCardsIds) {
-        $playersIds = $this->isPowerUpMutantEvolution() ? $this->getPlayersIds(true) : [$playerId];
+    function canPlayStepEvolution(array $playersIds, array $stepCardsIds) {
+        $playersIds = $this->isPowerUpMutantEvolution() ? $this->getPlayersIds(true) : $playersIds;
         $dbResults = $this->getCollectionFromDb("SELECT distinct player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
         $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']), array_values($dbResults));
 
@@ -169,6 +186,9 @@ trait EvolutionCardsUtilTrait {
                 $this->leaveTokyo($playerId, false); // TODOPU confirm
 
                 return $damages;
+            case BAMBOOZLE_EVOLUTION:
+                $this->playBamboozleEvolution($playerId, $card);
+                break;
             case BEAR_NECESSITIES_EVOLUTION:
                 $this->applyLosePoints($playerId, 1, $logCardType);
                 $this->applyGetEnergy($playerId, 2, $logCardType);
@@ -346,5 +366,31 @@ trait EvolutionCardsUtilTrait {
                 'card' => $card,
             ]);
         }
+    }
+
+    function playBamboozleEvolution(int $playerId, EvolutionCard $card) {
+        $cardBeingBought = $this->getGlobalVariable(CARD_BEING_BOUGHT);
+        $cardBeingBought->allowed = false;
+        $this->setGlobalVariable(CARD_BEING_BOUGHT, $cardBeingBought);
+
+        $buyCardArgs = $this->getArgBuyCard($cardBeingBought->playerId, false);
+        $buyCardArgs['disabledIds'] = [...$buyCardArgs['disabledIds'], $cardBeingBought->cardId];
+
+        $question = new Question(
+            'Bamboozle',
+            /* client TODOPU translate(*/'${actplayer} must choose another card'/*)*/,
+            /* client TODOPU translate(*/'${you} must choose another card'/*)*/,
+            [$playerId],
+            ST_PLAYER_BUY_CARD,
+            [ 
+                'cardBeingBought' => $cardBeingBought, 
+                'buyCardArgs' => $buyCardArgs,
+            ]
+        );
+        $this->setGlobalVariable(QUESTION, $question);
+        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+        $this->removeEvolution($playerId, $card);
+
+        $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 }

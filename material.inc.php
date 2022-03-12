@@ -51,6 +51,10 @@ $this->EVOLUTION_TO_PLAY_BEFORE_START = [
     //- 95 temple englouti (Kraken)
 ];
 
+$this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT = [
+    BAMBOOZLE_EVOLUTION,
+];
+
 $this->CARD_COST = [
     // KEEP
     1 => 6,

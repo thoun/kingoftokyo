@@ -17,6 +17,7 @@ trait EvolutionCardsArgTrait {
     function argBeforeStartTurn() {
         return [
             'canPlayEvolution' => true, // TODOPU
+            // TODOPU highlight possible cards
         ];
     }
     
@@ -30,6 +31,10 @@ trait EvolutionCardsArgTrait {
                 ],
             ],
         ];
+    }
+
+    function argCardIsBought() {
+        return []; // TODOPU highlight possible cards
     }
 
     function argAnswerQuestion() {

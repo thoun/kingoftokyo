@@ -72,6 +72,10 @@ trait MonsterTrait {
         return $availableMonsters;
     }
 
+    function getPlayerMonster(int $playerId) {
+        return intval($this->getUniqueValueFromDB("SELECT player_monster FROM player WHERE player_id = $playerId"));
+    }
+
     function setMonster(int $playerId, int $monsterId) {
         $this->DbQuery("UPDATE player SET `player_monster` = $monsterId where `player_id` = $playerId");
 
