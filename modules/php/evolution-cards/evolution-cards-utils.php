@@ -86,12 +86,13 @@ trait EvolutionCardsUtilTrait {
         return true;
     }
 
-    function playEvolutionToTable(int $playerId, EvolutionCard $card, /*string | null*/ $message = null) {
+    function playEvolutionToTable(int $playerId, EvolutionCard &$card, /*string | null*/ $message = null) {
         if ($message == null) {
             $message = clienttranslate('${player_name} plays ${card_name}');
         }
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+        $card->location = 'table';
 
         $this->notifyAllPlayers("playEvolution", $message, [
             'playerId' => $playerId,
@@ -209,9 +210,9 @@ trait EvolutionCardsUtilTrait {
             'card' => $card,
         ]);    
 
-        $this->notifyAllPlayers("addEvolutionCardInHand", '', [
+        $this->notifyAllPlayers("addEvolutionCardInHand", /*client TODOPU translate(*/'${player_name} ends his rolls with at least 3 [diceHeart] and takes a new Evolution card'/*)*/, [
             'playerId' => $playerId,
-            'card' => EvolutionCard::createBackCard($card->id),
+            'player_name' => $this->getPlayerName($playerId),
         ]);
     }
 
@@ -274,7 +275,6 @@ trait EvolutionCardsUtilTrait {
             $removeMimickToken = true;
             $mimicCardType = FLUXLING_WICKEDNESS_TILE;
         }*/
-
         $this->evolutionCards->moveCard($card->id, 'discard'.$playerId);
 
         if (!$silent) {

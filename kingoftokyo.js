@@ -3094,6 +3094,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.energyCounters = [];
         this.wickednessCounters = [];
         this.cultistCounters = [];
+        this.handCounters = [];
         this.playerTables = [];
         //private rapidHealingSyncHearts: number;
         this.towerLevelsOwners = [];
@@ -4060,6 +4061,14 @@ var KingOfTokyo = /** @class */ (function () {
                 wickednessCounter.create("wickedness-counter-" + player.id);
                 wickednessCounter.setValue(player.wickedness);
                 _this.wickednessCounters[playerId] = wickednessCounter;
+            }
+            if (gamedatas.powerUpExpansion) {
+                // hand cards counter
+                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-" + player.id + "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-" + player.id + "\"></span>\n                    </div>\n                </div>", "player_board_" + player.id);
+                var handCounter = new ebg.counter();
+                handCounter.create("playerhand-counter-" + playerId);
+                handCounter.setValue(player.hiddenEvolutions.length);
+                _this.handCounters[playerId] = handCounter;
             }
             dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
             if (!eliminated) {
@@ -5185,6 +5194,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         else {
             this.getPlayerTable(notif.args.playerId).removeEvolutions(notif.args.cards);
+            this.handCounters[notif.args.playerId].incValue(-notif.args.cards.filter(function (card) { return card.location === 'hand'; }).length);
             this.tableManager.tableHeightChange(); // adapt after removed cards
         }
     };
@@ -5370,9 +5380,13 @@ var KingOfTokyo = /** @class */ (function () {
         else {
             this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
+        if (!card.type) {
+            this.handCounters[playerId].incValue(1);
+        }
         this.tableManager.tableHeightChange(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_playEvolution = function (notif) {
+        this.handCounters[notif.args.playerId].incValue(-1);
         this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {

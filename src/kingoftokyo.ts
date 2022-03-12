@@ -19,6 +19,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private energyCounters: Counter[] = [];
     private wickednessCounters: Counter[] = [];
     private cultistCounters: Counter[] = [];
+    private handCounters: Counter[] = [];
     private diceManager: DiceManager;
     private animationManager: AnimationManager;
     private playerTables: PlayerTable[] = [];
@@ -1142,6 +1143,22 @@ class KingOfTokyo implements KingOfTokyoGame {
                 wickednessCounter.create(`wickedness-counter-${player.id}`);
                 wickednessCounter.setValue(player.wickedness);
                 this.wickednessCounters[playerId] = wickednessCounter;
+            }
+
+            if (gamedatas.powerUpExpansion) {
+                // hand cards counter
+                dojo.place(`<div class="counters">
+                    <div id="playerhand-counter-wrapper-${player.id}" class="playerhand-counter">
+                        <div class="player-evolution-card"></div>
+                        <div class="player-hand-card"></div> 
+                        <span id="playerhand-counter-${player.id}"></span>
+                    </div>
+                </div>`, `player_board_${player.id}`);
+
+                const handCounter = new ebg.counter();
+                handCounter.create(`playerhand-counter-${playerId}`);
+                handCounter.setValue(player.hiddenEvolutions.length);
+                this.handCounters[playerId] = handCounter;
             }
 
             dojo.place(`<div class="player-tokens">
@@ -2488,6 +2505,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             } as Notif<NotifRemoveEvolutionsArgs>), notif.args.delay);
         } else {
             this.getPlayerTable(notif.args.playerId).removeEvolutions(notif.args.cards);
+            this.handCounters[notif.args.playerId].incValue(-notif.args.cards.filter(card => card.location === 'hand').length);
             this.tableManager.tableHeightChange(); // adapt after removed cards
         }
     }
@@ -2713,11 +2731,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else {
             this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
+        if (!card.type) {
+            this.handCounters[playerId].incValue(1);
+        }
 
         this.tableManager.tableHeightChange(); // adapt to new card
     }
     
     notif_playEvolution(notif: Notif<NotifPlayEvolutionArgs>) {
+        this.handCounters[notif.args.playerId].incValue(-1);
         this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card);
     }
     
