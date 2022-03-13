@@ -70,6 +70,10 @@ interface BamboozleQuestionArgs {
     buyCardArgs: EnteringBuyCardArgs;
 }
 
+interface GazeOfTheSphinxSnakeQuestionArgs {
+    canLoseEnergy: boolean;
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
@@ -158,7 +162,7 @@ interface KingOfTokyoGame extends Game {
     discardDie: (id: number) => void;
     rerollOrDiscardDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
-    onVisibleCardClick: (stock: Stock, cardId: string, from?: number) => void;
+    onVisibleCardClick: (stock: Stock, cardId: number, from?: number) => void;
     takeWickednessTile(id: number): void;
     chooseEvolutionCardClick(id: number): void;
     getPlayerId: () => number;
@@ -171,7 +175,8 @@ interface KingOfTokyoGame extends Game {
     setFont(prefValue: number): void;
     toggleRerollDiceButton(): void;
     getPlayerEnergy(playerId: number): number;
-    playEvolution(id: number): void;
+    onHiddenEvolutionClick: (cardId: number) => void;
+    onVisibleEvolutionClick: (cardId: number) => void;
 }
 
 interface EnteringPickMonsterArgs {
@@ -467,6 +472,11 @@ interface NotifSetCardTokensArgs {
     playerId: number;
     card: Card;
     type: 'card' | 'tile';
+}
+
+interface NotifSetEvolutionTokensArgs {
+    playerId: number;
+    card: EvolutionCard;
 }
 
 interface NotifToggleRapidHealingArgs {

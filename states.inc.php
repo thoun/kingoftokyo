@@ -736,6 +736,8 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "args" => "argAnswerQuestion",
         "possibleactions" => [ 
+            'gazeOfTheSphinxDrawEvolution', 'gazeOfTheSphinxGainEnergy',
+            'gazeOfTheSphinxDiscardEvolution', 'gazeOfTheSphinxLoseEnergy',
             "putEnergyOnBambooSupply", "takeEnergyOnBambooSupply",
             "buyCardBamboozle",
         ],

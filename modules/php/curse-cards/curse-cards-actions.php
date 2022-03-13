@@ -211,4 +211,48 @@ trait CurseCardsActionTrait {
 
         $this->gamestate->setPlayerNonMultiactive($playerId, '');
     }
+
+    
+  	
+    public function gazeOfTheSphinxDrawEvolution() {
+        $this->checkAction('gazeOfTheSphinxDrawEvolution'); 
+
+        $playerId = $this->getActivePlayerId();
+
+        $this->drawEvolution($playerId);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
+  	
+    public function gazeOfTheSphinxGainEnergy() {
+        $this->checkAction('gazeOfTheSphinxGainEnergy'); 
+
+        $playerId = $this->getActivePlayerId();
+
+        $this->applyGetEnergy($playerId, 3, 1000 + GAZE_OF_THE_SPHINX_CURSE_CARD);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
+  	
+    public function gazeOfTheSphinxDiscardEvolution(int $id) {
+        $this->checkAction('gazeOfTheSphinxDiscardEvolution');
+
+        $playerId = $this->getActivePlayerId(); 
+
+        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
+
+        $this->removeEvolution($playerId, $card);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
+  	
+    public function gazeOfTheSphinxLoseEnergy() {
+        $this->checkAction('gazeOfTheSphinxLoseEnergy'); 
+
+        $playerId = $this->getActivePlayerId(); 
+
+        $this->applyLoseEnergy($playerId, 3, 1000 + GAZE_OF_THE_SPHINX_CURSE_CARD);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
 }

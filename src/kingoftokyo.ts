@@ -597,10 +597,17 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn; 
         (this as any).updatePageTitle();
 
-        if (question.code === 'Bamboozle') {
-            const bamboozleArgs = question.args as BamboozleQuestionArgs;
-            console.log(bamboozleArgs);
+        switch(question.code) {
+            case 'Bamboozle':
+                const bamboozleArgs = question.args as BamboozleQuestionArgs;
             this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, (this as any).isCurrentPlayerActive());
+                break;
+
+            case 'GazeOfTheSphinxSnake':
+                if ((this as any).isCurrentPlayerActive()) {
+                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(1);
+                }
+                break;
         }
     }
 
@@ -680,8 +687,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
 
-            case 'answerQuestion':                
-                this.onLeavingBuyCard();
+            case 'answerQuestion':
+                this.onLeavingAnswerQuestion();
+                if (this.gamedatas.gamestate.args.question.code === 'Bamboozle') {
+                    this.onLeavingBuyCard();
+                }
                 break;
         }
     }
@@ -706,6 +716,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         if ((this as any).isCurrentPlayerActive()) {
             this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(0));
             dojo.query('.stockitem').removeClass('disabled');
+        }
+    }
+    
+    private onLeavingAnswerQuestion() {
+        const question: Question = this.gamedatas.gamestate.args.question;
+
+        switch(question.code) {
+            case 'Bamboozle':
+                this.onLeavingBuyCard();
+                break;
+    
+            case 'GazeOfTheSphinxSnake':
+                if ((this as any).isCurrentPlayerActive()) {
+                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(0);
+                }
+                break;
         }
     }
 
@@ -966,9 +992,22 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const takeLabel = dojo.string.substitute(/*TODOPU_*/("Take all [Energy] from ${card_name}"), substituteParams);
                 (this as any).addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
                 (this as any).addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), () => this.takeEnergyOnBambooSupply());
-                const questionArgs = question.args as BambooSupplyQuestionArgs;
-                if (!questionArgs.canTake) {
+                const bambooSupplyQuestionArgs = question.args as BambooSupplyQuestionArgs;
+                if (!bambooSupplyQuestionArgs.canTake) {
                     dojo.addClass('takeEnergyOnBambooSupply_button', 'disabled');
+                }
+                break;
+
+            case 'GazeOfTheSphinxAnkh':
+                (this as any).addActionButton('gazeOfTheSphinxDrawEvolution_button', /*TODOPU_*/("Draw Evolution"), () => this.gazeOfTheSphinxDrawEvolution());
+                (this as any).addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3})}`), () => this.gazeOfTheSphinxGainEnergy());
+                break;
+
+            case 'GazeOfTheSphinxSnake':
+                (this as any).addActionButton('gazeOfTheSphinxLoseEnergy_button', formatTextIcons(`${dojo.string.substitute(_('Lose ${energy}[Energy]'), { energy: 3})}`), () => this.gazeOfTheSphinxLoseEnergy());
+                const gazeOfTheSphinxLoseEnergyQuestionArgs = question.args as GazeOfTheSphinxSnakeQuestionArgs;
+                if (!gazeOfTheSphinxLoseEnergyQuestionArgs.canLoseEnergy) {
+                    dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
                 }
                 break;
         }
@@ -1247,13 +1286,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
     }
 
-    public onVisibleCardClick(stock: Stock, cardId: string, from: number = 0, warningChecked: boolean = false) { // from : player id
+    public onVisibleCardClick(stock: Stock, cardId: number, from: number = 0, warningChecked: boolean = false) { // from : player id
         if (!cardId) {
             return;
         }
 
         if (dojo.hasClass(`${stock.container_div.id}_item_${cardId}`, 'disabled')) {
-            stock.unselectItem(cardId);
+            stock.unselectItem(''+cardId);
             return;
         }
 
@@ -1311,6 +1350,29 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.chooseEvolutionCard(id);
         }
     }
+
+    public onHiddenEvolutionClick(cardId: number) {
+        const stateName = this.getStateName();
+        if (stateName === 'answerQuestion') {
+            const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
+            if (args.question.code === 'GazeOfTheSphinxSnake') {
+                this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
+                return;
+            }
+        }
+        
+        this.playEvolution(cardId);
+    }
+
+    public onVisibleEvolutionClick(cardId: number) {
+        const stateName = this.getStateName();
+        if (stateName === 'answerQuestion') {
+            const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
+            if (args.question.code === 'GazeOfTheSphinxSnake') {
+                this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
+            }
+        }
+    }
     
     private setBuyDisabledCardByCost(disabledIds: number[], cardsCosts: { [cardId: number]: number }, playerEnergy: number) {
         const disabledCardsIds = [...disabledIds, ...Object.keys(cardsCosts).map(cardId => Number(cardId))];
@@ -1330,7 +1392,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
         
         const stateName = this.getStateName();
-        const buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || stateName === 'answerQuestion';
+        const buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || (stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle');
         const changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
         if (!buyState && !changeMimicState) {
             return;
@@ -1816,7 +1878,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public discardKeepCard(id: number | string) {
+    public discardKeepCard(id: number) {
         if(!(this as any).checkAction('discardKeepCard')) {
             return;
         }
@@ -1952,7 +2014,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public stealCostumeCard(id: number | string) {
+    public stealCostumeCard(id: number) {
         if(!(this as any).checkAction('stealCostumeCard')) {
             return;
         }
@@ -1978,7 +2040,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('skipChangeForm');
     }
 
-    public buyCard(id: number | string, from: number) {
+    public buyCard(id: number, from: number) {
         if(!(this as any).checkAction('buyCard')) {
             return;
         }
@@ -1989,7 +2051,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public buyCardBamboozle(id: number | string, from: number) {
+    public buyCardBamboozle(id: number, from: number) {
         if(!(this as any).checkAction('buyCardBamboozle')) {
             return;
         }
@@ -2000,7 +2062,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public chooseMimickedCard(id: number | string) {
+    public chooseMimickedCard(id: number) {
         if(!(this as any).checkAction('chooseMimickedCard')) {
             return;
         }
@@ -2010,7 +2072,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public changeMimickedCard(id: number | string) {
+    public changeMimickedCard(id: number) {
         if(!(this as any).checkAction('changeMimickedCard')) {
             return;
         }
@@ -2020,7 +2082,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public chooseMimickedCardWickednessTile(id: number | string) {
+    public chooseMimickedCardWickednessTile(id: number) {
         if(!(this as any).checkAction('chooseMimickedCardWickednessTile')) {
             return;
         }
@@ -2030,7 +2092,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public changeMimickedCardWickednessTile(id: number | string) {
+    public changeMimickedCardWickednessTile(id: number) {
         if(!(this as any).checkAction('changeMimickedCardWickednessTile')) {
             return;
         }
@@ -2040,7 +2102,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public sellCard(id: number | string) {
+    public sellCard(id: number) {
         if(!(this as any).checkAction('sellCard')) {
             return;
         }
@@ -2199,7 +2261,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
     
-    public exchangeCard(id: number | string) {
+    public exchangeCard(id: number) {
         if(!(this as any).checkAction('exchangeCard')) {
             return;
         }
@@ -2261,6 +2323,40 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('takeEnergyOnBambooSupply');
+    }
+    
+    public gazeOfTheSphinxDrawEvolution() {
+        if(!(this as any).checkAction('gazeOfTheSphinxDrawEvolution')) {
+            return;
+        }
+
+        this.takeAction('gazeOfTheSphinxDrawEvolution');
+    }
+    
+    public gazeOfTheSphinxGainEnergy() {
+        if(!(this as any).checkAction('gazeOfTheSphinxGainEnergy')) {
+            return;
+        }
+
+        this.takeAction('gazeOfTheSphinxGainEnergy');
+    }
+    
+    public gazeOfTheSphinxDiscardEvolution(id) {
+        if(!(this as any).checkAction('gazeOfTheSphinxDiscardEvolution')) {
+            return;
+        }
+
+        this.takeAction('gazeOfTheSphinxDiscardEvolution', {
+            id
+        });
+    }
+    
+    public gazeOfTheSphinxLoseEnergy() {
+        if(!(this as any).checkAction('gazeOfTheSphinxLoseEnergy')) {
+            return;
+        }
+
+        this.takeAction('gazeOfTheSphinxLoseEnergy');
     }
 
     public takeAction(action: string, data?: any) {
@@ -2585,7 +2681,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
     }
 
-    notif_setEvolutionTokens(notif: Notif<NotifSetCardTokensArgs>) {
+    notif_setEvolutionTokens(notif: Notif<NotifSetEvolutionTokensArgs>) {
         this.evolutionCards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
     }
 
@@ -2735,13 +2831,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         const card = notif.args.card;
         const isCurrentPlayer = this.getPlayerId() === playerId;
         if (isCurrentPlayer) {
-            if (card.type) {
+            if (card?.type) {
                 this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
             }
         } else {
             this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
-        if (!card.type) {
+        if (!card || !card.type) {
             this.handCounters[playerId].incValue(1);
         }
 

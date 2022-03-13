@@ -36,7 +36,7 @@ trait EvolutionCardsActionTrait {
         $this->evolutionCards->moveCard($id, 'hand', $playerId);
         $this->evolutionCards->moveCard($otherCard->id, 'dicard'.$playerId);
 
-        $this->notifNewEvolutionCard($playerId, $card);
+        $this->notifNewEvolutionCard($playerId, $card, /*client TODOPU translate(*/'${player_name} ends his rolls with at least 3 [diceHeart] and takes a new Evolution card'/*)*/);
         
     } 
 

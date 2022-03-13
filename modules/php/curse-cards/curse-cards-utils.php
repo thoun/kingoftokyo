@@ -3,8 +3,10 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/../objects/damage.php');
+require_once(__DIR__.'/../objects/question.php');
 
 use KOT\Objects\Damage;
+use KOT\Objects\Question;
 
 trait CurseCardsUtilTrait {
 
@@ -82,7 +84,21 @@ trait CurseCardsUtilTrait {
                 $this->jumpToState(ST_PLAYER_REROLL_OR_DISCARD_DICE);
                 break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
-                $this->applyGetEnergy($playerId, 3, $logCardType);
+                if ($this->isPowerUpExpansion()) {
+                    $question = new Question(
+                        'GazeOfTheSphinxAnkh',
+                        /* client TODOPU translate(*/'${actplayer} must choose to draw an Evolution card or gain 3[Energy]'/*)*/,
+                        /* client TODOPU translate(*/'${you} must choose to draw an Evolution card or gain 3[Energy]'/*)*/,
+                        [$playerId],
+                        ST_RESOLVE_DICE,
+                        []
+                    );
+                    $this->setGlobalVariable(QUESTION, $question);
+                    $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+                    $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                } else {
+                    $this->applyGetEnergy($playerId, 3, $logCardType);
+                }
                 break;
             case SCRIBE_S_PERSEVERANCE_CURSE_CARD:
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);
@@ -176,7 +192,23 @@ trait CurseCardsUtilTrait {
                 $this->jumpToState(ST_MULTIPLAYER_REROLL_DICE);
                 break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
-                $this->applyLoseEnergy($playerId, 3, $logCardType);
+                if ($this->isPowerUpExpansion()) {
+                    $question = new Question(
+                        'GazeOfTheSphinxSnake',
+                        /* client TODOPU translate(*/'${actplayer} must choose to discard an Evolution card (from its hand or in play) or lose 3[Energy]'/*)*/,
+                        /* client TODOPU translate(*/'Click on an Evolution card (from your hand or in play) to discard it or lose 3[Energy]'/*)*/,
+                        [$playerId],
+                        ST_RESOLVE_DICE,
+                        [
+                            'canLoseEnergy' => $this->getPlayerEnergy($playerId) > 0,
+                        ]
+                    );
+                    $this->setGlobalVariable(QUESTION, $question);
+                    $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+                    $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                } else {
+                    $this->applyLoseEnergy($playerId, 3, $logCardType);
+                }
                 break;
             case SCRIBE_S_PERSEVERANCE_CURSE_CARD:
                 $first1die = $this->getFirstDieOfValue($playerId, 1);

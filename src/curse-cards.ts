@@ -64,7 +64,7 @@ class CurseCards {
             case 20: return _("At the start of each turn, the Monster with the Golden Scarab must give 1[Heart]/[Energy]/[Star] to the Monster whose turn it is.");
             case 21: return _("Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.");
             case 22: return _("Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.");
-            case 23: return _("[Keep] cards have no effect."); // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
+            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/("[Keep] cards and Permanent Evolution cards have no effect.") : _("[Keep] cards have no effect.");
             case 24: return _("You cannot reroll your [dice1].");
         }
         return null;
@@ -86,7 +86,7 @@ class CurseCards {
             case 20: return _("Take the Golden Scarab and give it to the Monster of your choice.");
             case 21: return _("Cancel the Curse effect.");
             case 22: return _("Choose up to 2 dice, you can reroll or discard each of these dice.");
-            case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
+            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/("Draw an Evolution card or gain 3[Energy].") : "+3[Energy].";
             case 24: return _("Gain 1[Energy] for each [dice1] you rolled.");
         }
         return null;
@@ -114,7 +114,7 @@ class CurseCards {
             case 20: return _("Take the Golden Scarab.");
             case 21: return _("Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.");
             case 22: return _("The player on your left chooses two of your dice. Reroll these dice.");
-            case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
+            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/("Discard an Evolution card from your hand or in play or lose 3[Energy].") : "-3[Energy].";
             case 24: return _("Discard 1[dice1]");
         }
         return null;

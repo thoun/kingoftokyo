@@ -706,5 +706,39 @@
 
         self::ajaxResponse();
     }
+  	
+    public function gazeOfTheSphinxDrawEvolution() {
+        self::setAjaxMode();
+
+        $this->game->gazeOfTheSphinxDrawEvolution();
+
+        self::ajaxResponse();
+    }
+  	
+    public function gazeOfTheSphinxGainEnergy() {
+        self::setAjaxMode();
+
+        $this->game->gazeOfTheSphinxGainEnergy();
+
+        self::ajaxResponse();
+    }
+  	
+    public function gazeOfTheSphinxDiscardEvolution() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->gazeOfTheSphinxDiscardEvolution($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function gazeOfTheSphinxLoseEnergy() {
+        self::setAjaxMode();
+
+        $this->game->gazeOfTheSphinxLoseEnergy();
+
+        self::ajaxResponse();
+    }
 
 }

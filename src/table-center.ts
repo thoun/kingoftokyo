@@ -152,10 +152,10 @@ class TableCenter {
         this.game.cards.addCardsToStock(this.visibleCards, cards, 'deck');
     }
     
-    public removeOtherCardsFromPick(cardId: string) {        
+    public removeOtherCardsFromPick(cardId: number) {        
         const removeFromPickIds = this.pickCard?.items.map(item => Number(item.id));
         removeFromPickIds?.forEach(id => {
-            if (id !== Number(cardId)) {
+            if (id !== cardId) {
                 this.pickCard.removeFromStockById(''+id);
             }
         });

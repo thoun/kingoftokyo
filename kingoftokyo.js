@@ -813,7 +813,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return _("At the start of each turn, the Monster with the Golden Scarab must give 1[Heart]/[Energy]/[Star] to the Monster whose turn it is.");
             case 21: return _("Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.");
             case 22: return _("Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.");
-            case 23: return _("[Keep] cards have no effect."); // TODOPU "[Keep] cards and Permanent Evolution cards have no effect."
+            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/ ("[Keep] cards and Permanent Evolution cards have no effect.") : _("[Keep] cards have no effect.");
             case 24: return _("You cannot reroll your [dice1].");
         }
         return null;
@@ -842,7 +842,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return _("Take the Golden Scarab and give it to the Monster of your choice.");
             case 21: return _("Cancel the Curse effect.");
             case 22: return _("Choose up to 2 dice, you can reroll or discard each of these dice.");
-            case 23: return "+3[Energy]."; // TODOPU "Draw an Evolution card or gain 3[Energy]."          
+            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/ ("Draw an Evolution card or gain 3[Energy].") : "+3[Energy].";
             case 24: return _("Gain 1[Energy] for each [dice1] you rolled.");
         }
         return null;
@@ -871,7 +871,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return _("Take the Golden Scarab.");
             case 21: return _("Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.");
             case 22: return _("The player on your left chooses two of your dice. Reroll these dice.");
-            case 23: return "-3[Energy]."; // TODOPU "Discard an Evolution card from your hand or in play or lose 3[Energy]."
+            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/ ("Discard an Evolution card from your hand or in play or lose 3[Energy].") : "-3[Energy].";
             case 24: return _("Discard 1[dice1]");
         }
         return null;
@@ -1426,7 +1426,7 @@ var PlayerTable = /** @class */ (function () {
         this.cards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
         this.cards.image_items_per_row = 10;
         this.cards.centerItems = true;
-        dojo.connect(this.cards, 'onChangeSelection', this, function (_, itemId) { return _this.game.onVisibleCardClick(_this.cards, itemId, _this.playerId); });
+        dojo.connect(this.cards, 'onChangeSelection', this, function (_, itemId) { return _this.game.onVisibleCardClick(_this.cards, Number(itemId), _this.playerId); });
         this.game.cards.setupCards([this.cards]);
         this.game.cards.addCardsToStock(this.cards, player.cards);
         if (playerWithGoldenScarab) {
@@ -1473,7 +1473,7 @@ var PlayerTable = /** @class */ (function () {
             this.hiddenEvolutionCards.setSelectionMode(2);
             this.hiddenEvolutionCards.centerItems = true;
             this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
-            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.playEvolution(Number(item_id)); });
+            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
             this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
@@ -1481,6 +1481,7 @@ var PlayerTable = /** @class */ (function () {
             this.visibleEvolutionCards.setSelectionMode(0);
             this.visibleEvolutionCards.centerItems = true;
             this.visibleEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
+            dojo.connect(this.visibleEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleEvolutionClick(Number(item_id)); });
             this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
             (_f = player.hiddenEvolutions) === null || _f === void 0 ? void 0 : _f.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
             if (player.visibleEvolutions) {
@@ -2980,7 +2981,7 @@ var TableCenter = /** @class */ (function () {
         var _a;
         var removeFromPickIds = (_a = this.pickCard) === null || _a === void 0 ? void 0 : _a.items.map(function (item) { return Number(item.id); });
         removeFromPickIds === null || removeFromPickIds === void 0 ? void 0 : removeFromPickIds.forEach(function (id) {
-            if (id !== Number(cardId)) {
+            if (id !== cardId) {
                 _this.pickCard.removeFromStockById('' + id);
             }
         });
@@ -3606,10 +3607,16 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.gamestate.description = question.description;
         this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn;
         this.updatePageTitle();
-        if (question.code === 'Bamboozle') {
-            var bamboozleArgs = question.args;
-            console.log(bamboozleArgs);
-            this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, this.isCurrentPlayerActive());
+        switch (question.code) {
+            case 'Bamboozle':
+                var bamboozleArgs = question.args;
+                this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, this.isCurrentPlayerActive());
+                break;
+            case 'GazeOfTheSphinxSnake':
+                if (this.isCurrentPlayerActive()) {
+                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(1);
+                }
+                break;
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -3686,7 +3693,10 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 break;
             case 'answerQuestion':
-                this.onLeavingBuyCard();
+                this.onLeavingAnswerQuestion();
+                if (this.gamedatas.gamestate.args.question.code === 'Bamboozle') {
+                    this.onLeavingBuyCard();
+                }
                 break;
         }
     };
@@ -3708,6 +3718,19 @@ var KingOfTokyo = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(0); });
             dojo.query('.stockitem').removeClass('disabled');
+        }
+    };
+    KingOfTokyo.prototype.onLeavingAnswerQuestion = function () {
+        var question = this.gamedatas.gamestate.args.question;
+        switch (question.code) {
+            case 'Bamboozle':
+                this.onLeavingBuyCard();
+                break;
+            case 'GazeOfTheSphinxSnake':
+                if (this.isCurrentPlayerActive()) {
+                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(0);
+                }
+                break;
         }
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -3954,9 +3977,20 @@ var KingOfTokyo = /** @class */ (function () {
                 var takeLabel = dojo.string.substitute(/*TODOPU_*/ ("Take all [Energy] from ${card_name}"), substituteParams);
                 this.addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), function () { return _this.putEnergyOnBambooSupply(); });
                 this.addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), function () { return _this.takeEnergyOnBambooSupply(); });
-                var questionArgs = question.args;
-                if (!questionArgs.canTake) {
+                var bambooSupplyQuestionArgs = question.args;
+                if (!bambooSupplyQuestionArgs.canTake) {
                     dojo.addClass('takeEnergyOnBambooSupply_button', 'disabled');
+                }
+                break;
+            case 'GazeOfTheSphinxAnkh':
+                this.addActionButton('gazeOfTheSphinxDrawEvolution_button', /*TODOPU_*/ ("Draw Evolution"), function () { return _this.gazeOfTheSphinxDrawEvolution(); });
+                this.addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons("" + dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3 })), function () { return _this.gazeOfTheSphinxGainEnergy(); });
+                break;
+            case 'GazeOfTheSphinxSnake':
+                this.addActionButton('gazeOfTheSphinxLoseEnergy_button', formatTextIcons("" + dojo.string.substitute(_('Lose ${energy}[Energy]'), { energy: 3 })), function () { return _this.gazeOfTheSphinxLoseEnergy(); });
+                var gazeOfTheSphinxLoseEnergyQuestionArgs = question.args;
+                if (!gazeOfTheSphinxLoseEnergyQuestionArgs.canLoseEnergy) {
+                    dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
                 }
                 break;
         }
@@ -4156,7 +4190,7 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         if (dojo.hasClass(stock.container_div.id + "_item_" + cardId, 'disabled')) {
-            stock.unselectItem(cardId);
+            stock.unselectItem('' + cardId);
             return;
         }
         var stateName = this.getStateName();
@@ -4223,6 +4257,26 @@ var KingOfTokyo = /** @class */ (function () {
             this.chooseEvolutionCard(id);
         }
     };
+    KingOfTokyo.prototype.onHiddenEvolutionClick = function (cardId) {
+        var stateName = this.getStateName();
+        if (stateName === 'answerQuestion') {
+            var args = this.gamedatas.gamestate.args;
+            if (args.question.code === 'GazeOfTheSphinxSnake') {
+                this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
+                return;
+            }
+        }
+        this.playEvolution(cardId);
+    };
+    KingOfTokyo.prototype.onVisibleEvolutionClick = function (cardId) {
+        var stateName = this.getStateName();
+        if (stateName === 'answerQuestion') {
+            var args = this.gamedatas.gamestate.args;
+            if (args.question.code === 'GazeOfTheSphinxSnake') {
+                this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
+            }
+        }
+    };
     KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {
         var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds, true), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }), true);
         disabledCardsIds.forEach(function (id) {
@@ -4241,7 +4295,7 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         var stateName = this.getStateName();
-        var buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || stateName === 'answerQuestion';
+        var buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || (stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle');
         var changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
         if (!buyState && !changeMimicState) {
             return;
@@ -4979,6 +5033,32 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('takeEnergyOnBambooSupply');
     };
+    KingOfTokyo.prototype.gazeOfTheSphinxDrawEvolution = function () {
+        if (!this.checkAction('gazeOfTheSphinxDrawEvolution')) {
+            return;
+        }
+        this.takeAction('gazeOfTheSphinxDrawEvolution');
+    };
+    KingOfTokyo.prototype.gazeOfTheSphinxGainEnergy = function () {
+        if (!this.checkAction('gazeOfTheSphinxGainEnergy')) {
+            return;
+        }
+        this.takeAction('gazeOfTheSphinxGainEnergy');
+    };
+    KingOfTokyo.prototype.gazeOfTheSphinxDiscardEvolution = function (id) {
+        if (!this.checkAction('gazeOfTheSphinxDiscardEvolution')) {
+            return;
+        }
+        this.takeAction('gazeOfTheSphinxDiscardEvolution', {
+            id: id
+        });
+    };
+    KingOfTokyo.prototype.gazeOfTheSphinxLoseEnergy = function () {
+        if (!this.checkAction('gazeOfTheSphinxLoseEnergy')) {
+            return;
+        }
+        this.takeAction('gazeOfTheSphinxLoseEnergy');
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -5390,14 +5470,14 @@ var KingOfTokyo = /** @class */ (function () {
         var card = notif.args.card;
         var isCurrentPlayer = this.getPlayerId() === playerId;
         if (isCurrentPlayer) {
-            if (card.type) {
+            if (card === null || card === void 0 ? void 0 : card.type) {
                 this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
             }
         }
         else {
             this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
-        if (!card.type) {
+        if (!card || !card.type) {
             this.handCounters[playerId].incValue(1);
         }
         this.tableManager.tableHeightChange(); // adapt to new card

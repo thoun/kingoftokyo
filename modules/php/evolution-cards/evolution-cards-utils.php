@@ -44,9 +44,9 @@ trait EvolutionCardsUtilTrait {
         return array_map(fn($dbCard) => $this->getEvolutionCardFromDb($dbCard), array_values($dbCards));
     }
 
-    function pickEvolutionCards(int $playerId) {
+    function pickEvolutionCards(int $playerId, int $number = 2) {
         // TODOPU shuffle and use discard if necessary
-        return $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop(2, 'deck'.$playerId));
+        return $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($number, 'deck'.$playerId));
     }
 
     function canPlayEvolution(int $cardType, int $playerId) {
@@ -112,8 +112,8 @@ trait EvolutionCardsUtilTrait {
     }
 
     function applyEvolutionEffects(EvolutionCard $card, int $playerId) { // return $damages
-        if (!$this->keepAndEvolutionCardsHaveEffect()) {
-            return;
+        if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$card->type] == 1) {
+            return; // TODOPU test
         }
 
         $cardType = $card->type;
@@ -208,13 +208,13 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function notifNewEvolutionCard(int $playerId, EvolutionCard $card) {
+    function notifNewEvolutionCard(int $playerId, EvolutionCard $card, $message = '') {
         $this->notifyPlayer($playerId, "addEvolutionCardInHand", '', [
             'playerId' => $playerId,
             'card' => $card,
         ]);    
 
-        $this->notifyAllPlayers("addEvolutionCardInHand", /*client TODOPU translate(*/'${player_name} ends his rolls with at least 3 [diceHeart] and takes a new Evolution card'/*)*/, [
+        $this->notifyAllPlayers("addEvolutionCardInHand", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
         ]);
@@ -227,7 +227,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
-        if (!$this->keepAndEvolutionCardsHaveEffect()) {
+        if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1) {
             return null;
         }
 
@@ -425,5 +425,13 @@ trait EvolutionCardsUtilTrait {
             // TODOPU handle mimic
             $this->drawCard($playerId, false);
         }
+    }
+
+    function drawEvolution(int $playerId) {
+        $card = $this->pickEvolutionCards($playerId, 1)[0];
+
+        $this->evolutionCards->moveCard($card->id, 'hand', $playerId);
+
+        $this->notifNewEvolutionCard($playerId, $card);
     }
 }

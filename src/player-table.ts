@@ -71,7 +71,7 @@ class PlayerTable {
         this.cards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
         this.cards.image_items_per_row = 10;
         this.cards.centerItems = true;
-        dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.cards, itemId, this.playerId));
+        dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.cards, Number(itemId), this.playerId));
 
         this.game.cards.setupCards([this.cards]);
         this.game.cards.addCardsToStock(this.cards, player.cards);
@@ -128,7 +128,7 @@ class PlayerTable {
             this.hiddenEvolutionCards.setSelectionMode(2);
             this.hiddenEvolutionCards.centerItems = true;
             this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
-            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.playEvolution(Number(item_id)));
+            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onHiddenEvolutionClick(Number(item_id)));
 
             this.visibleEvolutionCards = new ebg.stock() as Stock;
             this.visibleEvolutionCards.setSelectionAppearance('class');
@@ -137,6 +137,7 @@ class PlayerTable {
             this.visibleEvolutionCards.setSelectionMode(0);
             this.visibleEvolutionCards.centerItems = true;
             this.visibleEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+            dojo.connect(this.visibleEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleEvolutionClick(Number(item_id)));
     
             this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
             player.hiddenEvolutions?.forEach(card => this.hiddenEvolutionCards.addToStockWithId(this.showHand ? card.type : 0, '' + card.id));
