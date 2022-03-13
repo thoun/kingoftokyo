@@ -434,4 +434,19 @@ trait EvolutionCardsUtilTrait {
 
         $this->notifNewEvolutionCard($playerId, $card);
     }
+
+    function getHighlightedEvolutions(array $stepCardsTypes) {
+        $cards = [];
+
+        foreach ($stepCardsTypes as $stepCardsType) {
+            $stepCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType($stepCardsType));
+            foreach ($stepCards as $stepCard) {
+                if ($stepCard->location == 'hand') {
+                    $cards[] = $stepCard;
+                }
+            }
+        }
+
+        return $cards;
+    }
 }

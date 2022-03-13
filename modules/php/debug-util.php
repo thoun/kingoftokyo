@@ -162,8 +162,9 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);
         }
 
         // player order

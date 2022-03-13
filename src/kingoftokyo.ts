@@ -187,6 +187,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'startGame':
                 break;
+            case 'beforeStartTurn':
+                this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'changeMimickedCardWickednessTile':
@@ -255,6 +257,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'buyCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringBuyCard(args.args, (this as any).isCurrentPlayerActive());
+                break;
+            case 'cardIsBought':
+                this.onEnteringStepEvolution(args.args);
                 break;
             case 'sellCard':
                 this.setDiceSelectorVisibility(false);
@@ -326,6 +331,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 playerTable.showEvolutionPickStock(args._private.evolutions);
                 playerTable.setVisibleCardsSelectionClass(args.chooseCostume);
             }
+        }
+    }
+    
+    private onEnteringStepEvolution(args: EnteringStepEvolutionArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            const playerId = this.getPlayerId();
+            this.getPlayerTable(playerId).highlightHiddenEvolutions(args.highlighted.filter(card => card.location_arg === playerId));
         }
     }
 
@@ -626,6 +638,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                     playerTable.setVisibleCardsSelectionClass(false);
                 });
                 break;
+            case 'beforeStartTurn':
+                this.onLeavingStepEvolution();
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'opportunistChooseMimicCard':
@@ -676,6 +691,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'opportunistBuyCard':
                 this.onLeavingBuyCard();
                 break;
+            case 'cardIsBought':
+                this.onLeavingStepEvolution();
+                break;
             case 'sellCard':
                 this.onLeavingSellCard();
                 break;
@@ -694,6 +712,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
         }
+    }
+    
+    private onLeavingStepEvolution() {
+            const playerId = this.getPlayerId();
+            this.getPlayerTable(playerId)?.unhighlightHiddenEvolutions();
     }
     
     private onLeavingTakeWickednessTile() {

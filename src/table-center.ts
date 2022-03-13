@@ -58,7 +58,7 @@ class TableCenter {
         this.visibleCards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id); 
         this.visibleCards.image_items_per_row = 10;
         this.visibleCards.centerItems = true;
-        dojo.connect(this.visibleCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.visibleCards, item_id));
+        dojo.connect(this.visibleCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.visibleCards, Number(item_id)));
 
         this.game.cards.setupCards([this.visibleCards]);
         this.setVisibleCards(visibleCards);
@@ -109,7 +109,7 @@ class TableCenter {
             this.pickCard.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id); 
             this.pickCard.image_items_per_row = 10;
             this.pickCard.centerItems = true;
-            dojo.connect(this.pickCard, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.pickCard, item_id));
+            dojo.connect(this.pickCard, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.pickCard, Number(item_id)));
         } else {
             document.getElementById('pick-stock').style.display = 'block';
         }

@@ -212,6 +212,10 @@ interface Rethrow3 {
     hasDice3: boolean;
 }
 
+interface EnteringStepEvolutionArgs {
+    highlighted: EvolutionCard[];
+}
+
 interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     throwNumber: number;
     maxThrowNumber: number;

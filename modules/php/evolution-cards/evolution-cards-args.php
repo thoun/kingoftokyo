@@ -17,7 +17,7 @@ trait EvolutionCardsArgTrait {
     function argBeforeStartTurn() {
         return [
             'canPlayEvolution' => true, // TODOPU
-            // TODOPU highlight possible cards
+            'highlighted' => $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START),
         ];
     }
     
@@ -34,7 +34,9 @@ trait EvolutionCardsArgTrait {
     }
 
     function argCardIsBought() {
-        return []; // TODOPU highlight possible cards
+        return [
+            'highlighted' => $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT),
+        ];
     }
 
     function argAnswerQuestion() {

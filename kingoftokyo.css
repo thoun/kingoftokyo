@@ -1529,6 +1529,9 @@ body.halloween .player-board.active {
 body.halloween .double-selection .no-visible-selection-except-double-selection {
   box-shadow: 0px 0px 5px 5px #ff8200;
 }
+body.halloween .highlight-evolution {
+  box-shadow: 0px 0px 5px 5px #ff8200;
+}
 
 html[data-background="2"] {
   background: url("img/background-halloween.jpg") #2e4d0a;
@@ -2112,5 +2115,9 @@ button .icon, a .icon {
 }
 
 .double-selection .no-visible-selection-except-double-selection {
+  box-shadow: 0px 0px 5px 5px #ffcf13;
+}
+
+.highlight-evolution {
   box-shadow: 0px 0px 5px 5px #ffcf13;
 }
