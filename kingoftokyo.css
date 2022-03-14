@@ -1767,7 +1767,7 @@ html, .mode_3d #game_play_area_background {
   background-image: url("img/monster-figure-12-beast.png");
 }
 
-#kot-table.pickMonster {
+#kot-table.pickMonsterOrEvolutionDeck {
   display: none;
 }
 

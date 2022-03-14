@@ -202,7 +202,7 @@ trait MonsterTrait {
 
     function stPickMonster() {
         if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
-            $this->gamestate->nextState('start');
+            $this->goToState($this->redirectAfterPickMonster());
         } else {
             $availableMonsters = $this->getAvailableMonsters();
             if (count($availableMonsters) == 1) {
@@ -216,7 +216,7 @@ trait MonsterTrait {
         $this->giveExtraTime($playerId);
 
         if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
-            $this->gamestate->nextState($this->isHalloweenExpansion() || $this->isPowerUpExpansion() ? 'chooseInitialCard' : 'start');
+            $this->goToState($this->redirectAfterPickMonster());
         } else {
             $this->gamestate->nextState('nextPlayer');
         }

@@ -116,6 +116,7 @@ class KingOfTokyo extends Table {
             DICE_NUMBER => 34,
             RAGING_FLOOD_EXTRA_DIE_SELECTED => 35,
             PANDA_EXPRESS_EXTRA_TURN => 36,
+            MUTANT_EVOLUTION_TURN => 37,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -238,6 +239,7 @@ class KingOfTokyo extends Table {
         $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE, 0);
         $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE_SELECTED, 0);
         $this->setGameStateInitialValue(FALSE_BLESSING_USED_DIE, 0);
+        $this->setGameStateInitialValue(MUTANT_EVOLUTION_TURN, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -489,11 +491,7 @@ class KingOfTokyo extends Table {
     }
 
     function stStart() {
-        if ($this->canPickMonster()) {
-            $this->gamestate->nextState('pickMonster');
-        } else {
-            $this->gamestate->nextState($this->isHalloweenExpansion() || $this->isPowerUpExpansion() ? 'chooseInitialCard' : 'start'); 
-        }
+        $this->goToState($this->redirectAfterStart());
     }
 
     function stStartGame() {
@@ -619,6 +617,9 @@ class KingOfTokyo extends Table {
 
                     $this->gamestate->updateMultiactiveOrNextState('end');
                     return;
+
+                    // TODO ST_MULTIPLAYER_PICK_EVOLUTION_DECK pick random evolution
+                    //answerQuestion : skip if possible
             }
         }
 

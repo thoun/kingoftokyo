@@ -3,6 +3,7 @@
 <button class="bgabutton bgabutton_red" id="test2">leave</button>-->
 
 <div id="monster-pick"></div>
+<div id="mutant-evolution-choice"></div>
 
 <div id="kot-table">
     <div id="rolled-dice-and-rapid-actions">

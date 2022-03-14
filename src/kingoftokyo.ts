@@ -33,6 +33,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     public towerLevelsOwners = [];
     private tableCenter: TableCenter;
     private falseBlessingAnkhAction: FalseBlessingAnkhAction = null;
+    private choseEvolutionInStock: Stock;
+    private inDeckEvolutionsStock: Stock;
         
     public SHINK_RAY_TOKEN_TOOLTIP: string;
     public POISON_TOKEN_TOOLTIP: string;
@@ -173,14 +175,25 @@ class KingOfTokyo implements KingOfTokyoGame {
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
 
-        if (stateName !== 'pickMonster' && stateName !== 'pickMonsterNextPlayer') {
-            this.replaceMonsterChoiceByTable();
+        const pickMonsterPhase = ['pickMonster', 'pickMonsterNextPlayer'].includes(stateName);
+        const pickEvolutionForDeckPhase = ['pickEvolutionForDeck', 'nextPickEvolutionForDeck'].includes(stateName)
+        
+        if (!pickMonsterPhase) {
+            this.removeMonsterChoice();
+        }
+        if (!pickMonsterPhase && !pickEvolutionForDeckPhase) {
+            this.removeMutantEvolutionChoice();
+            this.showMainTable();
         }
 
         switch (stateName) {
             case 'pickMonster':
-                dojo.addClass('kot-table', 'pickMonster');
+                dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
                 this.onEnteringPickMonster(args.args);
+                break;
+            case 'pickEvolutionForDeck':
+                dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
+                this.onEnteringPickEvolutionForDeck(args.args);
                 break;
             case 'chooseInitialCard':
                 this.onEnteringChooseInitialCard(args.args);
@@ -315,6 +328,45 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
+    }
+
+    private onEnteringPickEvolutionForDeck(args: EnteringPickEvolutionForDeckArgs) {
+        if (!document.getElementById('choose-evolution-in')) {
+            dojo.place(`
+                <div class="whiteblock">
+                    <h3>${/*TODOPU_*/("Choose an Evolution in")}</h3>
+                    <div id="choose-evolution-in" class="evolution-card-stock player-evolution-cards"></div>
+                </div>
+                <div class="whiteblock">
+                    <h3>${/*TODOPU_*/("Evolutions in your deck")}</h3>
+                    <div id="evolutions-in-deck" class="evolution-card-stock player-evolution-cards"></div>
+                </div>
+            `, 'mutant-evolution-choice');
+
+            this.choseEvolutionInStock = new ebg.stock() as Stock;
+            this.choseEvolutionInStock.setSelectionAppearance('class');
+            this.choseEvolutionInStock.selectionClass = 'no-visible-selection';
+            this.choseEvolutionInStock.create(this, $(`choose-evolution-in`), CARD_WIDTH, CARD_WIDTH);
+            this.choseEvolutionInStock.setSelectionMode(2);
+            this.choseEvolutionInStock.centerItems = true;
+            this.choseEvolutionInStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
+            dojo.connect(this.choseEvolutionInStock, 'onChangeSelection', this, (_, item_id: string) => this.pickEvolutionForDeck(Number(item_id)));
+            
+            this.inDeckEvolutionsStock = new ebg.stock() as Stock;
+            this.inDeckEvolutionsStock.setSelectionAppearance('class');
+            this.inDeckEvolutionsStock.selectionClass = 'no-visible-selection';
+            this.inDeckEvolutionsStock.create(this, $(`evolutions-in-deck`), CARD_WIDTH, CARD_WIDTH);
+            this.inDeckEvolutionsStock.setSelectionMode(0);
+            this.inDeckEvolutionsStock.centerItems = true;
+            this.inDeckEvolutionsStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
+
+            this.evolutionCards.setupCards([this.choseEvolutionInStock, this.inDeckEvolutionsStock]);
+        }
+
+        this.choseEvolutionInStock.removeAll();
+        args._private.chooseCardIn.forEach(card => this.choseEvolutionInStock.addToStockWithId(card.type, ''+card.id));
+        
+        args._private.inDeck.filter(card => !this.inDeckEvolutionsStock.items.some(item => Number(item.id) === card.id)).forEach(card => this.inDeckEvolutionsStock.addToStockWithId(card.type, ''+card.id));
     }
 
     private onEnteringChooseInitialCard(args: EnteringChooseInitialCardArgs) {
@@ -1292,12 +1344,21 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.preferencesManager;
     }
 
-    private replaceMonsterChoiceByTable() {
+    private removeMonsterChoice() {
         if (document.getElementById('monster-pick')) {
             (this as any).fadeOutAndDestroy('monster-pick');
         }
-        if (dojo.hasClass('kot-table', 'pickMonster')) {
-            dojo.removeClass('kot-table', 'pickMonster');
+    }
+
+    private removeMutantEvolutionChoice() {
+        if (document.getElementById('mutant-evolution-choice')) {
+            (this as any).fadeOutAndDestroy('mutant-evolution-choice');
+        }
+    }
+
+    private showMainTable() {
+        if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
+            dojo.removeClass('kot-table', 'pickMonsterOrEvolutionDeck');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
             this.tableCenter.getVisibleCards().updateDisplay();
             this.playerTables.forEach(playerTable => playerTable.cards.updateDisplay());
@@ -1756,6 +1817,16 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('pickMonster', {
             monster
+        });
+    }
+
+    public pickEvolutionForDeck(id: number) {
+        if(!(this as any).checkAction('pickEvolutionForDeck')) {
+            return;
+        }
+
+        this.takeAction('pickEvolutionForDeck', {
+            id
         });
     }
 
@@ -2506,6 +2577,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
+            ['evolutionPickedForDeck', 500],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -2556,6 +2628,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         animation.play();
 
         this.getPlayerTable(notif.args.playerId).setMonster(notif.args.monster);
+    }
+
+    notif_evolutionPickedForDeck(notif: Notif<any>) {
+        this.evolutionCards.moveToAnotherStock(this.choseEvolutionInStock, this.inDeckEvolutionsStock, notif.args.card);
     }
 
     notif_setInitialCards(notif: Notif<NotifSetInitialCardsArgs>) {
@@ -2898,7 +2974,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (card?.type) {
                 this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
             }
-        } else {
+        } else if (card?.id) {
             this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
         if (!card || !card.type) {

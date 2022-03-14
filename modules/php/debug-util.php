@@ -152,7 +152,7 @@ trait DebugUtilTrait {
 
         // power up
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493");
             //$this->debugSetEvolutionInHand(11, 2343492, true);

@@ -11,6 +11,8 @@ define('ST_START', 10);
 define('ST_PLAYER_PICK_MONSTER', 11);
 define('ST_PICK_MONSTER_NEXT_PLAYER', 12);
 
+define('ST_MULTIPLAYER_PICK_EVOLUTION_DECK', 13);
+define('ST_NEXT_PICK_EVOLUTION_DECK', 14);
 
 define('ST_PLAYER_CHOOSE_INITIAL_CARD', 15);
 define('ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER', 16);
@@ -133,6 +135,7 @@ define('RAGING_FLOOD_EXTRA_DIE', 'RagingFloodExtraDie');
 define('FALSE_BLESSING_USED_DIE', 'FalseBlessingUsedDie');
 define('DICE_NUMBER', 'DiceNumber');
 define('RAGING_FLOOD_EXTRA_DIE_SELECTED', 'RagingFloodExtraDieSelected');
+define('MUTANT_EVOLUTION_TURN', 'MutantEvolutionTurn');
 
 /*
  * Global variables

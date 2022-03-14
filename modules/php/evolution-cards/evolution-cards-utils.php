@@ -44,9 +44,24 @@ trait EvolutionCardsUtilTrait {
         return array_map(fn($dbCard) => $this->getEvolutionCardFromDb($dbCard), array_values($dbCards));
     }
 
+
+
     function pickEvolutionCards(int $playerId, int $number = 2) {
-        // TODOPU shuffle and use discard if necessary
-        return $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($number, 'deck'.$playerId));
+        $remainingInDeck = intval($this->evolutionCards->countCardInLocation('deck'.$playerId));
+        if ($remainingInDeck >= $number) {
+            return $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($number, 'deck'.$playerId));
+        } else {
+            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($remainingInDeck, 'deck'.$playerId));
+
+            $this->evolutionCards->moveAllCardsInLocation('discard'.$playerId, 'deck'.$playerId);
+            $this->evolutionCards->shuffle('deck'.$playerId);
+
+            $cards = array_merge(
+                $cards,
+                $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($number - $remainingInDeck, 'deck'.$playerId))
+            );
+            return $cards;
+        }
     }
 
     function canPlayEvolution(int $cardType, int $playerId) {

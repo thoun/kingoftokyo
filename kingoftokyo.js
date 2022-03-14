@@ -1716,12 +1716,13 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         cards.forEach(function (card) {
             var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
-            cardDiv.classList.add('highlight-evolution');
+            cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.add('highlight-evolution');
         });
     };
     PlayerTable.prototype.unhighlightHiddenEvolutions = function () {
         var _this = this;
-        this.hiddenEvolutionCards.items.forEach(function (card) {
+        var _a;
+        (_a = this.hiddenEvolutionCards) === null || _a === void 0 ? void 0 : _a.items.forEach(function (card) {
             var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
             cardDiv.classList.remove('highlight-evolution');
         });
@@ -1797,7 +1798,7 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.setAutoZoomAndPlacePlayerTables = function () {
         var _this = this;
-        if (dojo.hasClass('kot-table', 'pickMonster')) {
+        if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
             return;
         }
         var zoomWrapperWidth = document.getElementById('zoom-wrapper').clientWidth;
@@ -1826,7 +1827,7 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.placePlayerTable = function () {
         var _this = this;
-        if (dojo.hasClass('kot-table', 'pickMonster')) {
+        if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
             return;
         }
         var players = this.playerTables.length;
@@ -3229,13 +3230,23 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringState = function (stateName, args) {
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
-        if (stateName !== 'pickMonster' && stateName !== 'pickMonsterNextPlayer') {
-            this.replaceMonsterChoiceByTable();
+        var pickMonsterPhase = ['pickMonster', 'pickMonsterNextPlayer'].includes(stateName);
+        var pickEvolutionForDeckPhase = ['pickEvolutionForDeck', 'nextPickEvolutionForDeck'].includes(stateName);
+        if (!pickMonsterPhase) {
+            this.removeMonsterChoice();
+        }
+        if (!pickMonsterPhase && !pickEvolutionForDeckPhase) {
+            this.removeMutantEvolutionChoice();
+            this.showMainTable();
         }
         switch (stateName) {
             case 'pickMonster':
-                dojo.addClass('kot-table', 'pickMonster');
+                dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
                 this.onEnteringPickMonster(args.args);
+                break;
+            case 'pickEvolutionForDeck':
+                dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
+                this.onEnteringPickEvolutionForDeck(args.args);
                 break;
             case 'chooseInitialCard':
                 this.onEnteringChooseInitialCard(args.args);
@@ -3358,6 +3369,31 @@ var KingOfTokyo = /** @class */ (function () {
         });
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
+    };
+    KingOfTokyo.prototype.onEnteringPickEvolutionForDeck = function (args) {
+        var _this = this;
+        if (!document.getElementById('choose-evolution-in')) {
+            dojo.place("\n                <div class=\"whiteblock\">\n                    <h3>" + ("Choose an Evolution in") + "</h3>\n                    <div id=\"choose-evolution-in\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n                <div class=\"whiteblock\">\n                    <h3>" + ("Evolutions in your deck") + "</h3>\n                    <div id=\"evolutions-in-deck\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n            ", 'mutant-evolution-choice');
+            this.choseEvolutionInStock = new ebg.stock();
+            this.choseEvolutionInStock.setSelectionAppearance('class');
+            this.choseEvolutionInStock.selectionClass = 'no-visible-selection';
+            this.choseEvolutionInStock.create(this, $("choose-evolution-in"), CARD_WIDTH, CARD_WIDTH);
+            this.choseEvolutionInStock.setSelectionMode(2);
+            this.choseEvolutionInStock.centerItems = true;
+            this.choseEvolutionInStock.onItemCreate = function (card_div, card_type_id) { return _this.evolutionCards.setupNewCard(card_div, card_type_id); };
+            dojo.connect(this.choseEvolutionInStock, 'onChangeSelection', this, function (_, item_id) { return _this.pickEvolutionForDeck(Number(item_id)); });
+            this.inDeckEvolutionsStock = new ebg.stock();
+            this.inDeckEvolutionsStock.setSelectionAppearance('class');
+            this.inDeckEvolutionsStock.selectionClass = 'no-visible-selection';
+            this.inDeckEvolutionsStock.create(this, $("evolutions-in-deck"), CARD_WIDTH, CARD_WIDTH);
+            this.inDeckEvolutionsStock.setSelectionMode(0);
+            this.inDeckEvolutionsStock.centerItems = true;
+            this.inDeckEvolutionsStock.onItemCreate = function (card_div, card_type_id) { return _this.evolutionCards.setupNewCard(card_div, card_type_id); };
+            this.evolutionCards.setupCards([this.choseEvolutionInStock, this.inDeckEvolutionsStock]);
+        }
+        this.choseEvolutionInStock.removeAll();
+        args._private.chooseCardIn.forEach(function (card) { return _this.choseEvolutionInStock.addToStockWithId(card.type, '' + card.id); });
+        args._private.inDeck.filter(function (card) { return !_this.inDeckEvolutionsStock.items.some(function (item) { return Number(item.id) === card.id; }); }).forEach(function (card) { return _this.inDeckEvolutionsStock.addToStockWithId(card.type, '' + card.id); });
     };
     KingOfTokyo.prototype.onEnteringChooseInitialCard = function (args) {
         var suffix = '';
@@ -4204,12 +4240,19 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.getPreferencesManager = function () {
         return this.preferencesManager;
     };
-    KingOfTokyo.prototype.replaceMonsterChoiceByTable = function () {
+    KingOfTokyo.prototype.removeMonsterChoice = function () {
         if (document.getElementById('monster-pick')) {
             this.fadeOutAndDestroy('monster-pick');
         }
-        if (dojo.hasClass('kot-table', 'pickMonster')) {
-            dojo.removeClass('kot-table', 'pickMonster');
+    };
+    KingOfTokyo.prototype.removeMutantEvolutionChoice = function () {
+        if (document.getElementById('mutant-evolution-choice')) {
+            this.fadeOutAndDestroy('mutant-evolution-choice');
+        }
+    };
+    KingOfTokyo.prototype.showMainTable = function () {
+        if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
+            dojo.removeClass('kot-table', 'pickMonsterOrEvolutionDeck');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
             this.tableCenter.getVisibleCards().updateDisplay();
             this.playerTables.forEach(function (playerTable) { return playerTable.cards.updateDisplay(); });
@@ -4607,6 +4650,14 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('pickMonster', {
             monster: monster
+        });
+    };
+    KingOfTokyo.prototype.pickEvolutionForDeck = function (id) {
+        if (!this.checkAction('pickEvolutionForDeck')) {
+            return;
+        }
+        this.takeAction('pickEvolutionForDeck', {
+            id: id
         });
     };
     KingOfTokyo.prototype.chooseInitialCard = function (id, evolutionId) {
@@ -5205,6 +5256,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
+            ['evolutionPickedForDeck', 500],
             ['points', 1],
             ['health', 1],
             ['energy', 1],
@@ -5251,6 +5303,9 @@ var KingOfTokyo = /** @class */ (function () {
         }));
         animation.play();
         this.getPlayerTable(notif.args.playerId).setMonster(notif.args.monster);
+    };
+    KingOfTokyo.prototype.notif_evolutionPickedForDeck = function (notif) {
+        this.evolutionCards.moveToAnotherStock(this.choseEvolutionInStock, this.inDeckEvolutionsStock, notif.args.card);
     };
     KingOfTokyo.prototype.notif_setInitialCards = function (notif) {
         this.tableCenter.setInitialCards(notif.args.cards);
@@ -5541,7 +5596,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
             }
         }
-        else {
+        else if (card === null || card === void 0 ? void 0 : card.id) {
             this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
         if (!card || !card.type) {

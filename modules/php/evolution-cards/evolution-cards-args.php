@@ -14,6 +14,24 @@ trait EvolutionCardsArgTrait {
         game state.
     */
 
+    function argPickEvolutionForDeck() {
+        $turn = intval($this->getGameStateValue(MUTANT_EVOLUTION_TURN));
+        $playersIds = $this->getPlayersIds();
+        $privateArgs = [];
+        foreach($playersIds as $index => $playerId) {
+            $chooseCardIn = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('mutant'.(($index + $turn) % count($playersIds))));
+            $inDeck = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('deck'.$playerId));
+            $privateArgs[$playerId] = [
+                'chooseCardIn' => $chooseCardIn,
+                'inDeck' => $inDeck,
+            ];
+        }
+
+        return [
+            '_private' => $privateArgs,
+        ];
+    }
+
     function argBeforeStartTurn() {
         return [
             'canPlayEvolution' => true, // TODOPU

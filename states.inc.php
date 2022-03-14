@@ -67,11 +67,7 @@ $basicGameStates = [
         "description" => "",
         "type" => "game",
         "action" => "stStart",
-        "transitions" => [ 
-            "pickMonster" => ST_PLAYER_PICK_MONSTER,
-            "chooseInitialCard" => ST_PLAYER_CHOOSE_INITIAL_CARD,
-            "start" => ST_START_GAME,
-        ],
+        "transitions" => [],
     ],
 
     ST_PICK_MONSTER_NEXT_PLAYER => [
@@ -81,8 +77,6 @@ $basicGameStates = [
         "action" => "stPickMonsterNextPlayer",
         "transitions" => [
             "nextPlayer" => ST_PLAYER_PICK_MONSTER,
-            "chooseInitialCard" => ST_PLAYER_CHOOSE_INITIAL_CARD,
-            "start" => ST_START_GAME,
         ],
     ],
 
@@ -137,6 +131,30 @@ $playerActionsGameStates = [
         ],
 
     ],
+
+    ST_MULTIPLAYER_PICK_EVOLUTION_DECK => [
+        "name" => "pickEvolutionForDeck",
+        "description" => '',//client TODOPU translate('Players must pick an Evolution for their deck'),
+        "descriptionmyturn" => '',//client TODOPU translate('${you} must pick an Evolution for your deck'),
+        "type" => "multipleactiveplayer",
+        "args" => "argPickEvolutionForDeck",
+        //"action" => "stCheerleaderSupport",
+        "possibleactions" => [ "pickEvolutionForDeck" ],
+        "transitions" => [
+            "next" => ST_NEXT_PICK_EVOLUTION_DECK,
+        ],
+    ],
+
+    ST_NEXT_PICK_EVOLUTION_DECK => [
+        "name" => "nextPickEvolutionForDeck",
+        "description" => "",
+        "type" => "game",
+        "action" => "stNextPickEvolutionForDeck",
+        "transitions" => [ 
+            "nextPick" => ST_MULTIPLAYER_PICK_EVOLUTION_DECK,
+        ],
+    ],
+
 
     ST_PLAYER_CHOOSE_INITIAL_CARD => [
         "name" => "chooseInitialCard",

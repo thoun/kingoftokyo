@@ -212,6 +212,13 @@ interface Rethrow3 {
     hasDice3: boolean;
 }
 
+interface EnteringPickEvolutionForDeckArgs {
+    _private: {
+        chooseCardIn: EvolutionCard[];
+        inDeck: EvolutionCard[];
+    };
+}
+
 interface EnteringStepEvolutionArgs {
     highlighted: EvolutionCard[];
 }

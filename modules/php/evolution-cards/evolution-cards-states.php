@@ -8,6 +8,30 @@ trait EvolutionCardsStateTrait {
 //////////// Game state actions
 ////////////
 
+    function stNextPickEvolutionForDeck() {
+        $turn = intval($this->getGameStateValue(MUTANT_EVOLUTION_TURN));
+        if ($turn === 0) {
+            // give 8 random evolutions to each players mutant deck
+            $playersIds = $this->getPlayersIds();
+            foreach($playersIds as $playerId) {
+                $this->evolutionCards->moveAllCardsInLocation('deck'.$playerId, 'mutantdeck');
+            }
+            $this->evolutionCards->shuffle('mutantdeck');
+            foreach($playersIds as $index => $playerId) {
+                $this->evolutionCards->pickCardsForLocation(8, 'mutantdeck', 'mutant'.$index);
+            }
+        }
+
+        if ($turn >= 8) {
+            $this->goToState($this->redirectAfterPickEvolutionDeck());
+        } else {
+            $this->setGameStateValue(MUTANT_EVOLUTION_TURN, $turn + 1);
+
+            $this->gamestate->setAllPlayersMultiactive();
+            $this->goToState(ST_MULTIPLAYER_PICK_EVOLUTION_DECK);
+        }
+    }
+
     function stCardIsBought() {
         $otherPlayersIds = $this->getOtherPlayersIds($this->getActivePlayerId());
 

@@ -46,6 +46,16 @@
         self::ajaxResponse();
     }
   	
+    public function pickEvolutionForDeck() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->pickEvolutionForDeck($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function chooseInitialCard() {
         self::setAjaxMode();
 

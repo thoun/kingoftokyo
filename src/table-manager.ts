@@ -68,7 +68,7 @@ class TableManager {
     }
 
     public setAutoZoomAndPlacePlayerTables() {
-        if (dojo.hasClass('kot-table', 'pickMonster')) {
+        if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
             return;
         }
         
@@ -100,7 +100,7 @@ class TableManager {
     }
 
     private placePlayerTable() {
-        if (dojo.hasClass('kot-table', 'pickMonster')) {
+        if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
             return;
         }
         const players = this.playerTables.length;

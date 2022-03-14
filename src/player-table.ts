@@ -412,12 +412,12 @@ class PlayerTable {
     public highlightHiddenEvolutions(cards: EvolutionCard[]) {
         cards.forEach(card => {
             const cardDiv = document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
-            cardDiv.classList.add('highlight-evolution');
+            cardDiv?.classList.add('highlight-evolution');
         });
     }
     
     public unhighlightHiddenEvolutions() {
-        this.hiddenEvolutionCards.items.forEach(card => {
+        this.hiddenEvolutionCards?.items.forEach(card => {
             const cardDiv = document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
             cardDiv.classList.remove('highlight-evolution');
         });

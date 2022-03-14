@@ -19,6 +19,34 @@ trait RedirectionTrait {
         }
     }
 
+    function redirectAfterStart() {
+        if ($this->canPickMonster()) {
+            return ST_PLAYER_PICK_MONSTER; 
+        } else {
+            return $this->redirectAfterPickMonster();
+        }
+    }
+
+    function redirectAfterPickMonster() {
+        if ($this->isPowerUpMutantEvolution()) {
+            return ST_NEXT_PICK_EVOLUTION_DECK; 
+        } else {
+            return $this->redirectAfterPickEvolutionDeck();
+        }
+    }
+
+    function redirectAfterPickEvolutionDeck() {
+        if ($this->isHalloweenExpansion() || $this->isPowerUpExpansion()) {
+            return ST_PLAYER_CHOOSE_INITIAL_CARD; 
+        } else {
+            return $this->redirectAfterChooseInitialCard();
+        }
+    }
+
+    function redirectAfterChooseInitialCard() {
+        return ST_START_GAME; 
+    }
+
     function redirectAfterBeforeStartTurn(int $playerId) {
         if ($this->isPowerUpExpansion()) {
             $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
