@@ -26,17 +26,6 @@
   font-weight: bold;
   color: #6787c3;
 }
-.player-board .player-evolution-card {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-image: url("img/evolution-cards.jpg");
-  background-size: auto 100%;
-  background-repeat: no-repeat;
-  vertical-align: bottom;
-  box-shadow: 0 0 1px 1px #cccc;
-  border-radius: 2px;
-}
 .player-board .player-hand-card {
   display: inline-block;
   width: 32px;
@@ -2120,4 +2109,37 @@ button .icon, a .icon {
 
 .highlight-evolution {
   box-shadow: 0px 0px 5px 5px #ffcf13;
+}
+
+.player-evolution-card {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url("img/evolution-cards.jpg");
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  vertical-align: bottom;
+  box-shadow: 0 0 1px 1px #cccc;
+  border-radius: 2px;
+}
+
+.see-evolutions-button {
+  display: flex;
+  column-gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+}
+
+#popin_kotViewEvolutionsDialog #see-monster-evolutions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#popin_kotViewEvolutionsDialog #see-monster-evolutions .stockitem {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  background-image: url("img/evolution-cards.jpg");
 }

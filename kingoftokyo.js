@@ -3345,10 +3345,16 @@ var KingOfTokyo = /** @class */ (function () {
         // TODO clean only needed
         document.getElementById('monster-pick').innerHTML = '';
         args.availableMonsters.forEach(function (monster) {
-            dojo.place("\n            <div id=\"pick-monster-figure-" + monster + "\" class=\"monster-figure monster" + monster + "\"></div>\n            ", "monster-pick");
-            document.getElementById("pick-monster-figure-" + monster).addEventListener('click', function () {
-                _this.pickMonster(monster);
-            });
+            var html = "\n            <div id=\"pick-monster-figure-" + monster + "-wrapper\">\n                <div id=\"pick-monster-figure-" + monster + "\" class=\"monster-figure monster" + monster + "\"></div>";
+            if (_this.isPowerUpExpansion()) {
+                html += "<div><button id=\"see-monster-evolution-" + monster + "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>" + ('Show Evolutions') + "</button></div>";
+            }
+            html += "</div>";
+            dojo.place(html, "monster-pick");
+            document.getElementById("pick-monster-figure-" + monster).addEventListener('click', function () { return _this.pickMonster(monster); });
+            if (_this.isPowerUpExpansion()) {
+                document.getElementById("see-monster-evolution-" + monster).addEventListener('click', function () { return _this.showMonsterEvolutions(monster); });
+            }
         });
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
         dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
@@ -4568,6 +4574,31 @@ var KingOfTokyo = /** @class */ (function () {
                 var cardManager = type === 'tile' ? _this.wickednessTiles : _this.cards;
                 cardManager.changeMimicTooltip(stock.container_div.id + "_item_" + mimicCardItem.id, _this.cards.getMimickedCardText(mimickedCard));
             }
+        });
+    };
+    KingOfTokyo.prototype.showMonsterEvolutions = function (monster) {
+        var viewCardsDialog = new ebg.popindialog();
+        viewCardsDialog.create('kotViewEvolutionsDialog');
+        viewCardsDialog.setTitle(/*TODOPU_*/ ("Monster Evolutions"));
+        var html = "<div id=\"see-monster-evolutions\" class=\"evolution-card-stock player-evolution-cards\"></div>";
+        // Show the dialog
+        viewCardsDialog.setContent(html);
+        /*const monsterEvolutionsStock = new ebg.stock() as Stock;
+        monsterEvolutionsStock.create( this, $('see-monster-evolutions'), CARD_WIDTH, CARD_WIDTH);
+        monsterEvolutionsStock.setSelectionMode(0);
+        monsterEvolutionsStock.centerItems = true;
+        monsterEvolutionsStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id);
+        this.evolutionCards.setupCards([monsterEvolutionsStock]);*/
+        viewCardsDialog.show();
+        for (var i = 1; i <= 8; i++) {
+            //monsterEvolutionsStock.addToStockWithId(monster * 10 + i, ''+i);
+            dojo.place("\n                <div id=\"see-monster-evolutions_item_" + i + "\" class=\"stockitem stockitem_unselectable\" style=\"background-position: -" + (MONSTERS_WITH_POWER_UP_CARDS.indexOf(monster) + 1) * 100 + "% 0%;\"></div>\n            ", 'see-monster-evolutions');
+            this.evolutionCards.setupNewCard(document.getElementById("see-monster-evolutions_item_" + i), monster * 10 + i);
+        }
+        //setTimeout(() => monsterEvolutionsStock.updateDisplay(), 100);
+        // Replace the function call when it's clicked
+        viewCardsDialog.replaceCloseCallback(function () {
+            viewCardsDialog.destroy();
         });
     };
     KingOfTokyo.prototype.pickMonster = function (monster) {

@@ -298,13 +298,19 @@ class KingOfTokyo implements KingOfTokyoGame {
         // TODO clean only needed
         document.getElementById('monster-pick').innerHTML = '';
         args.availableMonsters.forEach(monster => {
-            dojo.place(`
-            <div id="pick-monster-figure-${monster}" class="monster-figure monster${monster}"></div>
-            `, `monster-pick`);
+            let html = `
+            <div id="pick-monster-figure-${monster}-wrapper">
+                <div id="pick-monster-figure-${monster}" class="monster-figure monster${monster}"></div>`;
+            if (this.isPowerUpExpansion()) {
+                html += `<div><button id="see-monster-evolution-${monster}" class="bgabutton bgabutton_blue see-evolutions-button"><div class="player-evolution-card"></div>${/*TODOPU_*/('Show Evolutions')}</button></div>`;
+            }
+            html += `</div>`;
+            dojo.place(html, `monster-pick`);
 
-            document.getElementById(`pick-monster-figure-${monster}`).addEventListener('click', () => {
-                this.pickMonster(monster);
-            })
+            document.getElementById(`pick-monster-figure-${monster}`).addEventListener('click', () => this.pickMonster(monster));
+            if (this.isPowerUpExpansion()) {
+                document.getElementById(`see-monster-evolution-${monster}`).addEventListener('click', () => this.showMonsterEvolutions(monster));
+            }
         });
 
         const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
@@ -1705,6 +1711,41 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const cardManager = type === 'tile' ? this.wickednessTiles : this.cards;
                 cardManager.changeMimicTooltip(`${stock.container_div.id}_item_${mimicCardItem.id}`, this.cards.getMimickedCardText(mimickedCard));
             }
+        });
+    }
+    
+    private showMonsterEvolutions(monster: number) {
+        
+        const viewCardsDialog = new ebg.popindialog();
+        viewCardsDialog.create('kotViewEvolutionsDialog');
+        viewCardsDialog.setTitle(/*TODOPU_*/("Monster Evolutions"));
+        
+        var html = `<div id="see-monster-evolutions" class="evolution-card-stock player-evolution-cards"></div>`;
+        
+        // Show the dialog
+        viewCardsDialog.setContent(html);
+
+        /*const monsterEvolutionsStock = new ebg.stock() as Stock;
+        monsterEvolutionsStock.create( this, $('see-monster-evolutions'), CARD_WIDTH, CARD_WIDTH);
+        monsterEvolutionsStock.setSelectionMode(0);
+        monsterEvolutionsStock.centerItems = true;
+        monsterEvolutionsStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
+        this.evolutionCards.setupCards([monsterEvolutionsStock]);*/
+
+        viewCardsDialog.show();
+        
+        for (let i=1; i<=8; i++) {
+            //monsterEvolutionsStock.addToStockWithId(monster * 10 + i, ''+i);
+            dojo.place(`
+                <div id="see-monster-evolutions_item_${i}" class="stockitem stockitem_unselectable" style="background-position: -${(MONSTERS_WITH_POWER_UP_CARDS.indexOf(monster) + 1) *100}% 0%;"></div>
+            `, 'see-monster-evolutions');
+            this.evolutionCards.setupNewCard(document.getElementById(`see-monster-evolutions_item_${i}`) as HTMLDivElement, monster * 10 + i);
+        }
+        //setTimeout(() => monsterEvolutionsStock.updateDisplay(), 100);
+
+        // Replace the function call when it's clicked
+        viewCardsDialog.replaceCloseCallback(() => {            
+            viewCardsDialog.destroy();
         });
     }
 
