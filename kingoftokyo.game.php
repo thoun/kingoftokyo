@@ -613,7 +613,7 @@ class KingOfTokyo extends Table {
                         SET     player_is_multiactive = 0
                         WHERE   player_id = $active_player
                     ";
-                    $this->DbQuery( $sql );
+                    $this->DbQuery($sql);
 
                     $this->gamestate->updateMultiactiveOrNextState('end');
                     return;

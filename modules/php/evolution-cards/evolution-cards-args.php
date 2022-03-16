@@ -39,7 +39,7 @@ trait EvolutionCardsArgTrait {
 
         return [
             'canPlayEvolution' => true, // TODOPU
-            'highlighted' => $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START),
+            'highlighted' => [], // TODOPU replace  $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START),
         ];
     }
     
