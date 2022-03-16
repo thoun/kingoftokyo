@@ -33,13 +33,11 @@ trait EvolutionCardsArgTrait {
     }
 
     function argBeforeStartTurn() {
-        if (!$this->isPowerUpExpansion()) { // TODOPU remove
-            return [];
-        }
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
 
         return [
-            'canPlayEvolution' => true, // TODOPU
-            'highlighted' => $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START),
+            'canPlayEvolution' => $isPowerUpExpansion, // TODOPU
+            'highlighted' => $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START) : [],
         ];
     }
     
