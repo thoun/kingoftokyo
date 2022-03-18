@@ -51,11 +51,11 @@ trait UtilTrait {
     }
 
     function isCybertoothExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        /*return $this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
     function isMutantEvolutionVariant() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
+        /*return $this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
     }
 
     function isCthulhuExpansion() {
@@ -180,7 +180,6 @@ trait UtilTrait {
         $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
         // energy drink
         $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS));
-        $beastForm = ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId)) ? 1 : 0;
         $deviousTile = ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEVIOUS_WICKEDNESS_TILE)) ? 1 : 0;
 
         $removedDieByBuriedInSand = false;
@@ -201,7 +200,7 @@ trait UtilTrait {
             }
         }
 
-        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $beastForm + $deviousTile + $falseBlessing;
+        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $deviousTile + $falseBlessing;
         if ($rollNumber > 1 && $removedDieByBuriedInSand) {
             $rollNumber--;
         }

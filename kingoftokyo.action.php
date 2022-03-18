@@ -196,6 +196,17 @@
 
         self::ajaxResponse();
     }
+
+    public function rerollDie() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+        $diceIds = self::getArg("diceIds", AT_numberlist, false);
+
+        $this->game->rerollDie($id, $diceIds);
+
+        self::ajaxResponse();
+    }
   	
     public function goToChangeDie() {
         self::setAjaxMode();

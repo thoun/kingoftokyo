@@ -420,7 +420,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.rethrow3.hasCard) {
-                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), () => this.rethrow3(), !args.rethrow3.hasDice3);
+                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' ('+this.cards.getCardName(5, 'text-only')+')', () => this.rethrow3(), !args.rethrow3.hasDice3);
             }
 
             if (args.energyDrink?.hasCard && args.throwNumber === args.maxThrowNumber) {
@@ -435,9 +435,25 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + ` (${_('Cultist')})`, () => this.useCultist());
             }
+
+            if (args.rerollDie.isBeastForm) {
+                dojo.place(`<div id="beast-form-dice-actions"></div>`, 'dice-actions');
+
+                const simpleFaces = [];
+                args.dice.filter(die => die.type < 2).forEach(die => {
+                    if (die.canReroll && (die.type > 0 || !simpleFaces.includes(die.value))) {
+                        const faceText = die.type == 1 ? BERSERK_DIE_STRINGS[die.value] : DICE_STRINGS[die.value];
+                        this.createButton('beast-form-dice-actions', `rerollDie${die.id}_button`, _("Reroll") + formatTextIcons(' ' + faceText) + ' ('+this.cards.getCardName(301, 'text-only', 1)+')', () => this.rerollDie(die.id), !args.rerollDie.canUseBeastForm);
+
+                        if (die.type == 0) {
+                            simpleFaces.push(die.value);
+                        }
+                    }
+                });
+            }
         }
 
-        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.hasCultist && !args.energyDrink?.hasCard) {
+        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.hasCultist && !args.energyDrink?.hasCard && (!args.rerollDie.isBeastForm || !args.rerollDie.canUseBeastForm)) {
             this.diceManager.disableDiceAction();
         }
     }
@@ -1001,9 +1017,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'changeForm':
                     const argsChangeForm = args as EnteringChangeFormArgs;
-                    // TODOME
-                    (this as any).addActionButton('changeForm_button',   dojo.string.substitute(/* TODOME _(*/"Change to ${otherForm}"/*)*/, {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
-                    (this as any).addActionButton('skipChangeForm_button', /* TODOME _(*/"Don't change form"/*)*/, () => this.skipChangeForm());
+                    (this as any).addActionButton('changeForm_button',   dojo.string.substitute(_("Change to ${otherForm}"), {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
+                    (this as any).addActionButton('skipChangeForm_button', _("Don't change form"), () => this.skipChangeForm());
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
                     break;
                 case 'leaveTokyoExchangeCard':
@@ -1877,6 +1892,15 @@ class KingOfTokyo implements KingOfTokyoGame {
         const lockedDice = this.diceManager.getLockedDice();
 
         this.takeAction('rethrow3', {
+            diceIds: lockedDice.map(die => die.id).join(',')
+        });
+    }
+
+    public rerollDie(id: number) {
+        const lockedDice = this.diceManager.getLockedDice();
+
+        this.takeAction('rerollDie', {
+            id,
             diceIds: lockedDice.map(die => die.id).join(',')
         });
     }

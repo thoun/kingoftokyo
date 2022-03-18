@@ -301,6 +301,11 @@ class KingOfTokyo extends Table {
             $this->initStat('player', 'bonusFromTokyoTowerLevel1applied', 0);
             $this->initStat('player', 'bonusFromTokyoTowerLevel2applied', 0);   
         }
+        if ($this->isMutantEvolutionVariant()) {
+            $this->initStat('player', 'formChanged', 0);
+            $this->initStat('player', 'turnsInBipedForm', 0);
+            $this->initStat('player', 'turnsInBeastForm', 0);
+        }
 
         if (!$this->canPickMonster()) {
             foreach($affectedMonsters as $playerId => $monsterId) {

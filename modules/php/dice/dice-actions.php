@@ -31,21 +31,12 @@ trait DiceActionTrait {
         $this->rethrowDice($diceIds);
     }
 
-    public function rethrow3(string $diceIds = null) {
-        $this->checkAction('rethrow3');
-
+    public function applyRerollDie(int $playerId, object $die, string $diceIds, int $cardName) {
         if ($diceIds !== null) {
             $this->DbQuery("UPDATE dice SET `locked` = false");
             if ($diceIds != '') {
                 $this->DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN ($diceIds)");
             }
-        }
-
-        $playerId = $this->getActivePlayerId();
-        $die = $this->getFirst3Die($playerId);
-
-        if ($die == null) {
-            throw new \BgaUserException('No 3 die');
         }
 
         $newValue = bga_rand(1, 6);
@@ -56,13 +47,43 @@ trait DiceActionTrait {
         $this->notifyAllPlayers('rethrow3', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'card_name' => BACKGROUND_DWELLER_CARD,
+            'card_name' => $cardName,
             'dieId' => $die->id,
             'die_face_before' => $this->getDieFaceLogName($die->value, 0),
             'die_face_after' => $this->getDieFaceLogName($newValue, 0),
         ]);
 
         $this->gamestate->nextState('rethrow');
+    }
+
+    public function rerollDie(int $id, string $diceIds) {
+        $this->checkAction('rerollDie');
+
+        $playerId = $this->getActivePlayerId();
+        $die = $this->getDieById($id);
+
+        if ($die == null) {
+            throw new \BgaUserException('No die');
+        }
+
+        $formCard = $this->getFormCard($playerId);
+        $this->setUsedCard($formCard->id);
+
+        $this->applyRerollDie($playerId, $die, $diceIds, FORM_CARD);
+
+    }
+
+    public function rethrow3(string $diceIds = null) {
+        $this->checkAction('rethrow3');
+
+        $playerId = $this->getActivePlayerId();
+        $die = $this->getFirst3Die($playerId);
+
+        if ($die == null) {
+            throw new \BgaUserException('No 3 die');
+        }
+
+        $this->applyRerollDie($playerId, $die, $diceIds, BACKGROUND_DWELLER_CARD);
     }
 
     public function rethrow3camouflage() {

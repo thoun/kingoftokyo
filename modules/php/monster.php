@@ -143,8 +143,8 @@ trait MonsterTrait {
 
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - 1 where `player_id` = $playerId");
 
-        $message = /*client TODOME translate(*/'${player_name} changes form to ${newForm}'/*)*/;
-        $newForm = $isBeastForm ? /*client TODOME translate(*/'Beast form'/*)*/ : /*client TODOME translate(*/'Biped form'/*)*/;
+        $message = clienttranslate('${player_name} changes form to ${newForm}');
+        $newForm = $isBeastForm ? clienttranslate('Beast form') : clienttranslate('Biped form');
         $this->notifyAllPlayers('changeForm', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
@@ -153,6 +153,8 @@ trait MonsterTrait {
             'newForm' => $newForm,
             'i18n' => ['newForm'],
         ]);
+
+        $this->incStat(1, 'formChanged', $playerId);
 
         $this->gamestate->nextState('buyCard');
     }

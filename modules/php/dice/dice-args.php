@@ -41,7 +41,18 @@ trait DiceArgTrait {
         $hasSmokeCloud = $smokeCloudsTokens > 0;
         $hasCultist = $this->isCthulhuExpansion() && $this->getPlayerCultists($playerId) > 0;
 
-        $hasActions = $throwNumber < $maxThrowNumber || ($hasEnergyDrink && $playerEnergy >= 1) || $hasDice3 || $hasSmokeCloud || $hasCultist;
+        $isBeastForm = $this->isMutantEvolutionVariant() && $this->isBeastForm($playerId);
+        $canUseBeastForm = false;
+        if ($isBeastForm) {
+            $canUseBeastForm = !$this->isUsedCard($this->getFormCard($playerId)->id);
+        }
+
+        $hasActions = $throwNumber < $maxThrowNumber 
+            || ($hasEnergyDrink && $playerEnergy >= 1) 
+            || $hasDice3 
+            || $hasSmokeCloud 
+            || $hasCultist
+            || ($isBeastForm && $canUseBeastForm);
 
         $selectableDice = $this->getSelectableDice($dice, false, true);
     
@@ -59,6 +70,10 @@ trait DiceArgTrait {
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $hasDice3,
+            ],
+            'rerollDie' => [
+                'isBeastForm' => $isBeastForm,
+                'canUseBeastForm' => $canUseBeastForm,
             ],
             'hasSmokeCloud' => $hasSmokeCloud,
             'hasCultist' => $hasCultist,

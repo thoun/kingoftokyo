@@ -438,10 +438,11 @@ class Cards {
             case 211: return _("[733010]Statue of liberty");
             case 212: return _("[2d4554]Clown");
 
-            // TRANSFORMATION TODOME
+            // TRANSFORMATION
             case 301: return {
-                0: ("[deaa26]Biped [72451c]Form"),
-                1: ("[982620]Beast [de6526]Form"),
+                0: _("[deaa26]Biped [72451c]Form"),
+                1: _("[982620]Beast [de6526]Form"),
+                null: _("[982620]Beast [de6526]Form"),
             }[side];
         }
         return null;
@@ -554,10 +555,10 @@ class Cards {
             case 211: return _("You have an <strong>extra Roll.</strong>");
             case 212: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>");
 
-            // TRANSFORMATION TODOME 
+            // TRANSFORMATION 
             case 301: return {
-                0: ("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card."),
-                1: ("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
+                0: _("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card."),
+                1: _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
             }[side];
         }
         return null;
@@ -599,8 +600,7 @@ class Cards {
             this.setDivAsCard(tempDiv, cardTypeId, otherSide);
             document.body.removeChild(tempDiv);
 
-            // TODOME translate other side
-            tooltip += `<p>${("Other side :")}<br>${tempDiv.outerHTML}</p>`;
+            tooltip += `<p>${_("Other side :")}<br>${tempDiv.outerHTML}</p>`;
         }
 
         tooltip += `</div>`;
@@ -633,7 +633,7 @@ class Cards {
         } else if (cardType < 300) {
             return _('Costume');
         } else if (cardType < 400) {
-            return 'Transformation'; // TODOME 
+            return _('Transformation');
         }
     }
 

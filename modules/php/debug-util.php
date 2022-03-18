@@ -52,8 +52,8 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
-        $this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
-        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
+        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
+        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
@@ -88,7 +88,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
-        $this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
+        //$this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
 
         // dark edition
@@ -125,10 +125,10 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
             //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
+            $this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
-            $this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             //$this->changeGoldenScarabOwner(2343492);
@@ -144,6 +144,12 @@ trait DebugUtilTrait {
         if ($this->isCybertoothExpansion()) {
             $this->setPlayerBerserk(2343492, true);
         }
+
+        // mutant evolution variant
+        if ($this->isMutantEvolutionVariant()) {
+            $this->setBeastForm(2343492, true);
+        }
+
 
         // wickedness
 

@@ -932,7 +932,7 @@ trait CardsUtilTrait {
 
     function getFormCard(int $playerId) {
         $playerCards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $formCard = $this->array_find($playerCards, fn($card) => $card->type == 301);
+        $formCard = $this->array_find($playerCards, fn($card) => $card->type == FORM_CARD);
         return $formCard;
     }
 

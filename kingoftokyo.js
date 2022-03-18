@@ -481,10 +481,11 @@ var Cards = /** @class */ (function () {
             case 210: return _("[146088]Robot");
             case 211: return _("[733010]Statue of liberty");
             case 212: return _("[2d4554]Clown");
-            // TRANSFORMATION TODOME
+            // TRANSFORMATION
             case 301: return {
-                0: ("[deaa26]Biped [72451c]Form"),
-                1: ("[982620]Beast [de6526]Form"),
+                0: _("[deaa26]Biped [72451c]Form"),
+                1: _("[982620]Beast [de6526]Form"),
+                null: _("[982620]Beast [de6526]Form"),
             }[side];
         }
         return null;
@@ -598,10 +599,10 @@ var Cards = /** @class */ (function () {
             case 210: return _("You can choose to lose [Energy] instead of [Heart].");
             case 211: return _("You have an <strong>extra Roll.</strong>");
             case 212: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], you can <strong>change the result for every die.</strong>");
-            // TRANSFORMATION TODOME 
+            // TRANSFORMATION 
             case 301: return {
-                0: ("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card."),
-                1: ("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
+                0: _("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card."),
+                1: _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
             }[side];
         }
         return null;
@@ -636,8 +637,7 @@ var Cards = /** @class */ (function () {
             document.body.appendChild(tempDiv);
             this.setDivAsCard(tempDiv, cardTypeId, otherSide);
             document.body.removeChild(tempDiv);
-            // TODOME translate other side
-            tooltip += "<p>" + ("Other side :") + "<br>" + tempDiv.outerHTML + "</p>";
+            tooltip += "<p>" + _("Other side :") + "<br>" + tempDiv.outerHTML + "</p>";
         }
         tooltip += "</div>";
         return tooltip;
@@ -668,7 +668,7 @@ var Cards = /** @class */ (function () {
             return _('Costume');
         }
         else if (cardType < 400) {
-            return 'Transformation'; // TODOME 
+            return _('Transformation');
         }
     };
     Cards.prototype.getCardTypeClass = function (cardType) {
@@ -1987,6 +1987,7 @@ var DIE4_ICONS = [
     [4, 3, 2],
 ];
 var DICE_STRINGS = [null, '[dice1]', '[dice2]', '[dice3]', '[diceHeart]', '[diceEnergy]', '[diceSmash]'];
+var BERSERK_DIE_STRINGS = [null, '[berserkDieEnergy]', '[berserkDieDoubleEnergy]', '[berserkDieSmash]', '[berserkDieSmash]', '[berserkDieDoubleSmash]', '[berserkDieSkull]'];
 var DiceManager = /** @class */ (function () {
     function DiceManager(game) {
         this.game = game;
@@ -3430,7 +3431,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to reroll the others"), _("Ctrl+click to move all dice with same value") + "<br>\n                    " + _("Alt+click to move all dice but clicked die"));
             }
             if (args.rethrow3.hasCard) {
-                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]'), function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
+                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' (' + this.cards.getCardName(5, 'text-only') + ')', function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
             }
             if (((_a = args.energyDrink) === null || _a === void 0 ? void 0 : _a.hasCard) && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(" ( 1[Energy])"), function () { return _this.buyEnergyDrink(); });
@@ -3442,8 +3443,21 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + (" (" + _('Cultist') + ")"), function () { return _this.useCultist(); });
             }
+            if (args.rerollDie.isBeastForm) {
+                dojo.place("<div id=\"beast-form-dice-actions\"></div>", 'dice-actions');
+                var simpleFaces_1 = [];
+                args.dice.filter(function (die) { return die.type < 2; }).forEach(function (die) {
+                    if (die.canReroll && (die.type > 0 || !simpleFaces_1.includes(die.value))) {
+                        var faceText = die.type == 1 ? BERSERK_DIE_STRINGS[die.value] : DICE_STRINGS[die.value];
+                        _this.createButton('beast-form-dice-actions', "rerollDie" + die.id + "_button", _("Reroll") + formatTextIcons(' ' + faceText) + ' (' + _this.cards.getCardName(301, 'text-only', 1) + ')', function () { return _this.rerollDie(die.id); }, !args.rerollDie.canUseBeastForm);
+                        if (die.type == 0) {
+                            simpleFaces_1.push(die.value);
+                        }
+                    }
+                });
+            }
         }
-        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.hasCultist && !((_b = args.energyDrink) === null || _b === void 0 ? void 0 : _b.hasCard)) {
+        if (args.throwNumber === args.maxThrowNumber && !args.hasSmokeCloud && !args.hasCultist && !((_b = args.energyDrink) === null || _b === void 0 ? void 0 : _b.hasCard) && (!args.rerollDie.isBeastForm || !args.rerollDie.canUseBeastForm)) {
             this.diceManager.disableDiceAction();
         }
     };
@@ -3990,9 +4004,8 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'changeForm':
                     var argsChangeForm = args;
-                    // TODOME
-                    this.addActionButton('changeForm_button', dojo.string.substitute(/* TODOME _(*/ "Change to ${otherForm}" /*)*/, { 'otherForm': _(argsChangeForm.otherForm) }) + formatTextIcons(" ( 1 [Energy])"), function () { return _this.changeForm(); });
-                    this.addActionButton('skipChangeForm_button', /* TODOME _(*/ "Don't change form" /*)*/, function () { return _this.skipChangeForm(); });
+                    this.addActionButton('changeForm_button', dojo.string.substitute(_("Change to ${otherForm}"), { 'otherForm': _(argsChangeForm.otherForm) }) + formatTextIcons(" ( 1 [Energy])"), function () { return _this.changeForm(); });
+                    this.addActionButton('skipChangeForm_button', _("Don't change form"), function () { return _this.skipChangeForm(); });
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
                     break;
                 case 'leaveTokyoExchangeCard':
@@ -4694,6 +4707,13 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.rethrow3 = function () {
         var lockedDice = this.diceManager.getLockedDice();
         this.takeAction('rethrow3', {
+            diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
+        });
+    };
+    KingOfTokyo.prototype.rerollDie = function (id) {
+        var lockedDice = this.diceManager.getLockedDice();
+        this.takeAction('rerollDie', {
+            id: id,
             diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
         });
     };

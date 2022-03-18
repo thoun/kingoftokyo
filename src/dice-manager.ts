@@ -9,6 +9,7 @@ const DIE4_ICONS = [
 ];
 
 const DICE_STRINGS = [null, '[dice1]', '[dice2]', '[dice3]', '[diceHeart]', '[diceEnergy]', '[diceSmash]'];
+const BERSERK_DIE_STRINGS = [null, '[berserkDieEnergy]', '[berserkDieDoubleEnergy]', '[berserkDieSmash]', '[berserkDieSmash]', '[berserkDieDoubleSmash]', '[berserkDieSkull]'];
 
 class DiceManager {
     private dice: Die[] = [];

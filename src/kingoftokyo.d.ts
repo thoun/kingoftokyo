@@ -212,6 +212,11 @@ interface Rethrow3 {
     hasDice3: boolean;
 }
 
+interface RerollDie {
+    isBeastForm: boolean;
+    canUseBeastForm: boolean;
+}
+
 interface EnteringPickEvolutionForDeckArgs {
     _private: {
         chooseCardIn: EvolutionCard[];
@@ -228,6 +233,7 @@ interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     maxThrowNumber: number;
     energyDrink: EnergyDrink;
     rethrow3: Rethrow3;
+    rerollDie: RerollDie;
     hasSmokeCloud: boolean;
     hasActions: boolean;
     hasCultist: boolean;

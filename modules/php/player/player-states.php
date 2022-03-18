@@ -273,6 +273,11 @@ trait PlayerStateTrait {
         $this->setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
         $this->throwDice($playerId, true);
 
+        if ($this->isMutantEvolutionVariant()) {
+            $isBeastForm = $this->isBeastForm($playerId);
+            $this->incStat(1, $isBeastForm ? 'turnsInBeastForm' : 'turnsInBipedForm', $playerId);
+        }
+
         $this->gamestate->nextState('');
     }
 

@@ -250,6 +250,9 @@ define('ROBOT_CARD', 210);
 define('STATUE_OF_LIBERTY_CARD', 211);
 define('CLOWN_CARD', 212);
 
+// transformation
+define('FORM_CARD', 301);
+
 // curse cards
 define('PHARAONIC_EGO_CURSE_CARD', 1);
 define('ISIS_S_DISGRACE_CURSE_CARD', 2);
