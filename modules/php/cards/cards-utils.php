@@ -371,8 +371,9 @@ trait CardsUtilTrait {
         $this->removeCards($playerId, $cards);
 
         if ($removeEvolutions) {
-            //TODOPU remove Evolutions (all or visible ?)
-            // if it's only visible, also remove NINE_LIVES
+            $visibleEvolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
+            $hiddenEvolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('hand', $playerId));
+            $this->removeEvolutions($playerId, array_merge($visibleEvolutions, $hiddenEvolutions));
         }
 
         if ($resetWickednessAndTiles) {

@@ -192,7 +192,12 @@ trait CurseCardsUtilTrait {
                 $this->jumpToState(ST_MULTIPLAYER_REROLL_DICE);
                 break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
+                $canLoseEvolution = false;
                 if ($this->isPowerUpExpansion()) {
+                    $canLoseEvolution = (intval($this->evolutionCards->countCardInLocation('table', $playerId)) + intval($this->evolutionCards->countCardInLocation('hand', $playerId))) > 0;
+                }
+                if ($canLoseEvolution) {
+                    $playerEnergy = $this->getPlayerEnergy($playerId);
                     $question = new Question(
                         'GazeOfTheSphinxSnake',
                         /* client TODOPU translate(*/'${actplayer} must choose to discard an Evolution card (from its hand or in play) or lose 3[Energy]'/*)*/,
@@ -200,7 +205,7 @@ trait CurseCardsUtilTrait {
                         [$playerId],
                         ST_RESOLVE_DICE,
                         [
-                            'canLoseEnergy' => $this->getPlayerEnergy($playerId) > 0,
+                            'canLoseEnergy' => $playerEnergy >= 3,
                         ]
                     );
                     $this->setGlobalVariable(QUESTION, $question);

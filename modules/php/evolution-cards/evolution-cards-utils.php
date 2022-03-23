@@ -310,6 +310,19 @@ trait EvolutionCardsUtilTrait {
         $this->toggleMothershipSupport($playerId, $countMothershipSupportBefore);
     }
 
+    function removeEvolutions(int $playerId, array $cards, bool $silent = false, int $delay = 0) {
+        foreach($cards as $card) {
+            $this->removeEvolution($playerId, $card, true);
+        }
+
+        if (!$silent && count($cards) > 0) {
+            $this->notifyAllPlayers("removeEvolutions", '', [
+                'playerId' => $playerId,
+                'cards' => $cards,
+            ]);
+        }
+    }
+
     function isEvolutionOnTable(int $type) { // owner id | null
         $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType($type));
         if (count($cards) > 0) {
