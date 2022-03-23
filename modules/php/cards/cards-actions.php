@@ -229,15 +229,7 @@ trait CardsActionTrait {
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
-            $countAvailableCardsForMimic = 0;
-
-            $playersIds = $this->getPlayersIds();
-            foreach($playersIds as $playerId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
-            }
-
-            $mimic = $countAvailableCardsForMimic > 0;
+            $mimic = $this->canChangeMimickedCard();
         }
 
         $newCardId = 0;

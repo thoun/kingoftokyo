@@ -3206,13 +3206,10 @@ var KingOfTokyo = /** @class */ (function () {
             var tooltip = formatTextIcons("\n            <h3>" + _("Tokyo Tower") + "</h3>\n            <p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>\n            ");
             this.addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
         }
-        /* TODOCY if (gamedatas.cybertoothExpansion) {
-            const tooltip = formatTextIcons(`
-            <h3>${_("Berserk mode")}</h3>
-            <p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
-            <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
-            (this as any).addTooltipHtmlToClass('berserk-tooltip', tooltip);
-        }*/
+        if (gamedatas.cybertoothExpansion) {
+            var tooltip = formatTextIcons("\n            <h3>" + _("Berserk mode") + "</h3>\n            <p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
+            this.addTooltipHtmlToClass('berserk-tooltip', tooltip);
+        }
         if (gamedatas.cthulhuExpansion) {
             this.CULTIST_TOOLTIP = formatTextIcons("\n            <h3>" + _("Cultists") + "</h3>\n            <p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");
             this.addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
