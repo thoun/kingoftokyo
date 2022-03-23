@@ -85,6 +85,7 @@ trait EvolutionCardsUtilTrait {
         }
 
         switch($cardType) {
+            case NINE_LIVES_EVOLUTION:
             case SIMIAN_SCAMPER_EVOLUTION:
             case DETACHABLE_TAIL_EVOLUTION:
                 return false;

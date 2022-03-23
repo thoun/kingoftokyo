@@ -105,7 +105,11 @@ trait DiceStateTrait {
 
             // complete destruction
             $rolledFaces = $this->getRolledDiceFaces($playerId, $dice, false);
-            if ($rolledFaces[41] >= 1 && $rolledFaces[51] >= 1 && $rolledFaces[61] >= 1) { // dice 1-2-3 check with previous if
+            if (
+                $rolledFaces[41] >= 1 
+                && $rolledFaces[51] >= 1 
+                && ($rolledFaces[61] >= 1 || $detail->addedSmashes > 0)
+            ) { // dice 1-2-3 check with previous if
                 $countCompleteDestruction = $this->countCardOfType($playerId, COMPLETE_DESTRUCTION_CARD);
                 if ($countCompleteDestruction > 0) {
                     $this->applyGetPoints($playerId, 9 * $countCompleteDestruction, COMPLETE_DESTRUCTION_CARD);

@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(10);
+        $this->debugSetEnergy(5);
         $this->debugSetPoints(5);
         $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -52,7 +52,7 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
-        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
+        $this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
@@ -88,7 +88,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
-        //$this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
+        $this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
 
         // dark edition
@@ -141,7 +141,9 @@ trait DebugUtilTrait {
 
         // cybertooth
 
-        $this->setPlayerBerserk(2343492, true);
+        if ($this->isCybertoothExpansion()) {
+            $this->setPlayerBerserk(2343492, true);
+        }
 
         // wickedness
 
@@ -155,17 +157,18 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
-            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
-            //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493");
+            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492");
+            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493");
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
-            //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
+            //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);
         }
 

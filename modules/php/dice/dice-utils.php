@@ -213,6 +213,12 @@ trait DiceUtilTrait {
         if ($diceCount >= 3) {
             $points = $number + $diceCount - 3;
 
+            if ($this->isPowerUpExpansion()) {
+                if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+                    $points *= 2;
+                }
+            }
+
             $this->applyGetPoints($playerId, $points, -1);
 
             $this->incStat($points, 'pointsWonWith'.$number.'Dice', $playerId);
@@ -256,7 +262,13 @@ trait DiceUtilTrait {
         }
     }
 
-    function resolveHealthDice(int $playerId, int $diceCount) {
+    function resolveHealthDice(int $playerId, int $diceCount) { 
+        if ($this->isPowerUpExpansion()) {
+            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+                $diceCount *= 2;
+            }
+        }
+
         if (!$this->canHealWithDice($playerId)) {
             $message = clienttranslate('${player_name} gains no [Heart] (player in Tokyo)');
             if ($this->isAnubisExpansion() && $this->getCurseCardType() == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
@@ -293,6 +305,12 @@ trait DiceUtilTrait {
         if (!$this->canGainEnergy($playerId)) {
             return;
         }
+
+        if ($this->isPowerUpExpansion()) {
+            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+                $diceCount *= 2;
+            }
+        }
         
         $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
@@ -315,6 +333,12 @@ trait DiceUtilTrait {
         // ony here and not in stResolveDice, so player can heal and then activate Berserk
         if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
             $this->setPlayerBerserk($playerId, true);
+        }
+        
+        if ($this->isPowerUpExpansion()) {
+            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+                $diceCount *= 2;
+            }
         }
 
         // Nova breath
@@ -447,8 +471,18 @@ trait DiceUtilTrait {
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
             $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
+            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
+            $detail = $this->addSmashesFromCards($playerId, $diceCounts, $this->inTokyo($playerId));
+
             $rolledFaces = $this->getRolledDiceFaces($playerId, $dice, true);
-            if ($rolledFaces[11] >= 1 && $rolledFaces[21] >= 1 && $rolledFaces[31] >= 1 && $rolledFaces[41] >= 1 && $rolledFaces[51] >= 1 && $rolledFaces[61] >= 1) { 
+            if (
+                $rolledFaces[11] >= 1 && 
+                $rolledFaces[21] >= 1 && 
+                $rolledFaces[31] >= 1 && 
+                $rolledFaces[41] >= 1 && 
+                $rolledFaces[51] >= 1 && 
+                ($rolledFaces[61] >= 1 || $detail->addedSmashes > 0)
+            ) { 
                 $this->setGameStateValue(CLOWN_ACTIVATED, 1);
                 $hasClown = true;
             }
@@ -806,16 +840,6 @@ trait DiceUtilTrait {
                             break;
                     }
                 }
-            }
-        }
-
-        if ($this->isPowerUpExpansion()) {
-            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
-                $newDiceCounts = [];
-                foreach ($diceCounts as $face => $value) {
-                    $newDiceCounts[$face] = $value * 2;
-                }
-                $diceCounts = $newDiceCounts;
             }
         }
 
