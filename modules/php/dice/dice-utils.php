@@ -446,9 +446,9 @@ trait DiceUtilTrait {
         $hasClown = boolval($this->getGameStateValue(CLOWN_ACTIVATED));
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
-            $dice = $this->getPlayerRolledDice($playerId, false, false, false); 
-            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
-            if ($diceCounts[1] >= 1 && $diceCounts[2] >= 1 && $diceCounts[3] >= 1 && $diceCounts[4] >= 1 && $diceCounts[5] >= 1 && $diceCounts[6] >= 1) {
+            $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
+            $rolledFaces = $this->getRolledDiceFaces($playerId, $dice, true);
+            if ($rolledFaces[11] >= 1 && $rolledFaces[21] >= 1 && $rolledFaces[31] >= 1 && $rolledFaces[41] >= 1 && $rolledFaces[51] >= 1 && $rolledFaces[61] >= 1) { 
                 $this->setGameStateValue(CLOWN_ACTIVATED, 1);
                 $hasClown = true;
             }
@@ -820,6 +820,43 @@ trait DiceUtilTrait {
         }
 
         return $diceCounts;
+    }    
+
+    function getRolledDiceFaces(int $playerId, array $dice, $ignoreCanUseFace = true) {
+        $diceFaces = [];
+        for ($symbolNumber=1; $symbolNumber<=2; $symbolNumber++) {
+            for ($i=1; $i<=7; $i++) {
+                $diceFaces[$i * 10 + $symbolNumber] = 0;
+            }
+        }
+
+        foreach($dice as $die) {
+            if (($die->type === 0 || $die->type === 1) && ($ignoreCanUseFace || $die->type !== 0 || $this->canUseFace($playerId, $die->value))) {
+                if ($die->type === 0) {                
+                    $diceFaces[10 * $die->value + 1] += 1;
+                } else if ($die->type === 1) {
+                    switch($die->value) {
+                        case 1: 
+                            $diceFaces[51] += 1;
+                            break;
+                        case 2: 
+                            $diceFaces[52] += 1;
+                            break;
+                        case 3: case 4: 
+                            $diceFaces[61] += 1;
+                            break;
+                        case 5: 
+                            $diceFaces[62] += 1;
+                            break;
+                        case 6: 
+                            $diceFaces[71] = 1;
+                            break;
+                    }
+                }
+            }
+        }
+
+        return $diceFaces;
     }
 
     function getSelectableDice(array $dice, bool $canReroll, bool $allowDieOfFate) {

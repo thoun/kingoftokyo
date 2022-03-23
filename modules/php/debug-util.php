@@ -39,7 +39,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        $this->debugSetCardInTable(MIMIC_CARD);
+        //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
@@ -50,8 +50,8 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492), 4);
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
-        $this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
-        $this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
+        //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
+        //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
@@ -88,6 +88,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
+        //$this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
 
         // dark edition
@@ -111,7 +112,7 @@ trait DebugUtilTrait {
             $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
             //$this->debugSetCardInHand(WITCH_CARD, 2343494);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
-            $this->debugSetCardInHand(PIRATE_CARD, 2343494);
+            //$this->debugSetCardInHand(PIRATE_CARD, 2343494);
         }
 
         // cthulhu
@@ -140,7 +141,7 @@ trait DebugUtilTrait {
 
         // cybertooth
 
-        //$this->setPlayerBerserk(2343492, true);
+        $this->setPlayerBerserk(2343492, true);
 
         // wickedness
 
@@ -273,6 +274,17 @@ trait DebugUtilTrait {
         for ($i=6;$i>0;$i--) {
             $this->debugSetDieFaces($i, $i);
         }
+    }
+
+    function debugAlmostClownRoll() {
+        for ($i=6;$i>0;$i--) {
+            $this->debugSetDieFaces(7-$i, $i);
+        }
+        $this->debugSetDieFaces(5, 2);
+    }
+
+    function debugSetBerserkDie($face) {
+        $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 1");
     }
 
     public function debugReplacePlayersIds() {
