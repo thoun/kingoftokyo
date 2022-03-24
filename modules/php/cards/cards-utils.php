@@ -460,7 +460,7 @@ trait CardsUtilTrait {
 
         $this->applyGetEnergyIgnoreCards($playerId, 2, BATTERY_MONSTER_CARD);
 
-        if ($energyOnBatteryMonster <= 0 && $card->type == BATTERY_MONSTER_CARD) {
+        if ($energyOnBatteryMonster <= 0 && ($card->type == BATTERY_MONSTER_CARD || $card->type == MIMIC_CARD)) {
             $this->removeCard($playerId, $card);
         }
     }
