@@ -83,3 +83,29 @@ at the end of active player turn :
  - 51 convertisseur d'énergie (alienoid) (or everytime ?)
  - 81 coup de génie (cyber bunny) (or everytime ?)
  - 91 adorateurs cultistes (Kraken) (or everytime ?)
+
+Demander à Jurica de figer en Arène :
+ Mutant Evolutions variant (Transformation card)
+
+Forum :
+[b]“Nature vs. Machine: the Comeback!” event is now available in King of Tokyo ![/b]
+
+This option adds the Berserk die, allowing you to play with an offensive extra die! Roll 4 or more claw to activate Berserk mode, and you will keep it until you heal yourself.
+
+[img]https://www.zicbook.com/cdn-bga/march.jpg[/img]
+
+If you want to play with “Nature vs. Machine: the Comeback!” event :
+[list]
+[b]Automatic mode :[/b] On the game settings (gear icon on the lobby), in “Nature vs. Machine: the Comeback!” Event section, set "Enabled" to "I'm okay playing with". [i]If you want to play only “Nature vs. Machine: the Comeback!” Event, set "Disabled" to "I never want to play with". You can also pick intermediate values to play mostly with “Nature vs. Machine: the Comeback!” Event.[/i]
+[/list]
+[list]
+[b]Manual mode :[/b] set “Nature vs. Machine: the Comeback!” Event to "Enabled" when creating the table.
+[/list]
+
+But thats not all! There is also the [b]Mutant Evolution variant[/b] from Cybertooth Monster Pack.
+Change to beast form to have one extra die roll, or stay in biped form to be able to buy Power cards.
+This one will not be activated by default, but you can activate it by following above instructions, but for "Mutant Evolution variant" option.
+
+As you can see in the picture, there will be more surprises for King of Tokyo! What do you think will be next?
+
+Have fun playing this new version of King of Tokyo!

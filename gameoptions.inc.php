@@ -94,16 +94,7 @@ $game_options = [
                 'tmdisplay' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
             ],
         ],
-        'default' => 1,
-        'startcondition' => [
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => '“Nature vs. Machine: the Comeback!” event will be available from Friday, 25th at 11:00',
-                ] 
-            ],
-        ],
+        'default' => 2
     ],
 
     MUTANT_EVOLUTION_VARIANT_OPTION => [
@@ -114,18 +105,10 @@ $game_options = [
             ],
             2 => [
                 'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Mutant Evolutions variant (Transformation card)'),
             ],
         ],
-        'default' => 1,
-        'startcondition' => [
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => '“Nature vs. Machine: the Comeback!” event will be available from Friday, 25th at 11:00',
-                ] 
-            ],
-        ],
+        'default' => 1
     ],
 
     /* TODOWI 
@@ -149,6 +132,15 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'startcondition' => [
+            2 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => '“Even more wicked!” event will be available from Friday, xxth at 11:00',
+                ] 
+            ],
+        ],
     ],
     */
 
