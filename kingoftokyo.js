@@ -612,7 +612,7 @@ var Cards = /** @class */ (function () {
         if (!FLIPPABLE_CARDS.includes(type)) {
             return;
         }
-        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(Number(cardDiv.dataset.type), Number(cardDiv.dataset.side)));
+        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
     };
     Cards.prototype.getTooltip = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
@@ -1657,7 +1657,7 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.changeForm = function (card) {
         var cardDiv = document.getElementById(this.cards.container_div.id + "_item_" + card.id);
         cardDiv.dataset.side = '' + card.side;
-        this.game.addTooltipHtml(cardDiv.id, this.game.cards.updateFlippableCardTooltip(cardDiv));
+        this.game.cards.updateFlippableCardTooltip(cardDiv);
         this.setMonsterFigureBeastMode(card.side === 1);
     };
     PlayerTable.prototype.setMonsterFigureBeastMode = function (beastMode) {

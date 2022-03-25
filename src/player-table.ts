@@ -347,7 +347,7 @@ class PlayerTable {
     public changeForm(card: Card) {
         const cardDiv = document.getElementById(`${this.cards.container_div.id}_item_${card.id}`) as HTMLDivElement;
         cardDiv.dataset.side = ''+card.side;
-        (this.game as any).addTooltipHtml(cardDiv.id, this.game.cards.updateFlippableCardTooltip(cardDiv));
+        this.game.cards.updateFlippableCardTooltip(cardDiv);
         this.setMonsterFigureBeastMode(card.side === 1);
     }
 

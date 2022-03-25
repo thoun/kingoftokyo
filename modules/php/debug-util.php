@@ -15,7 +15,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         $this->debugSetEnergy(5);
         $this->debugSetPoints(5);
@@ -53,7 +53,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
-        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
+        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
@@ -147,7 +147,8 @@ trait DebugUtilTrait {
 
         // mutant evolution variant
         if ($this->isMutantEvolutionVariant()) {
-            $this->setBeastForm(2343492, true);
+            $this->DbQuery("UPDATE player SET `player_monster` = 12 where `player_id` = 2343492");
+            //$this->setBeastForm(2343492, true);
         }
 
 

@@ -570,7 +570,7 @@ class Cards {
             return;
         }
         
-        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(Number(cardDiv.dataset.type), Number(cardDiv.dataset.side)));
+        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
     }
 
     public getTooltip(cardTypeId: number, side: number = null) {
