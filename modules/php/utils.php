@@ -51,11 +51,11 @@ trait UtilTrait {
     }
 
     function isCybertoothExpansion() {
-        /*return $this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        return intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
     }
 
     function isMutantEvolutionVariant() {
-        /*return $this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
+        return intval($this->getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
     }
 
     function isCthulhuExpansion() {
