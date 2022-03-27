@@ -1401,24 +1401,8 @@
 #table .player-table .player-evolution-cards {
   width: 100%;
 }
-#table .player-table .player-evolution-cards.empty:not(.hand) {
+#table .player-table .player-evolution-cards.empty {
   max-height: 0px;
-}
-#table .player-table .player-evolution-cards.hand {
-  background: #FFFFFFCC;
-}
-#table .player-table .player-evolution-cards.hand::before {
-  content: "";
-  width: 48px;
-  height: 48px;
-  background: url("img/hand.svg");
-  position: absolute;
-  top: 50%;
-  left: -20px;
-  margin-top: -24px;
-}
-#table .player-table .player-evolution-cards.hand.empty {
-  max-height: 48px;
 }
 #table .player-table .tokyo-tower-wrapper {
   position: absolute;

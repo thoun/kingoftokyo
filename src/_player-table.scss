@@ -185,27 +185,8 @@
     .player-evolution-cards {
         width: 100%;
 
-        &.empty:not(.hand) {
+        &.empty {
             max-height: 0px;
-        }
-
-        &.hand {
-            background: #FFFFFFCC;
-
-            &::before {
-                content: '';
-                width: 48px;
-                height: 48px;
-                background: url('img/hand.svg');
-                position: absolute;
-                top: 50%;
-                left: -20px;
-                margin-top: -24px;
-            }            
-
-            &.empty {
-                max-height: 48px;
-            }
         }
     }
 

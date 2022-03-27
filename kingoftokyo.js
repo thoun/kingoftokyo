@@ -1404,6 +1404,7 @@ var PlayerTable = /** @class */ (function () {
         this.game = game;
         this.player = player;
         this.showHand = false;
+        this.hiddenEvolutionCards = null;
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -1466,14 +1467,20 @@ var PlayerTable = /** @class */ (function () {
         }
         if (game.isPowerUpExpansion()) {
             this.showHand = this.playerId == this.game.getPlayerId();
-            this.hiddenEvolutionCards = new ebg.stock();
-            this.hiddenEvolutionCards.setSelectionAppearance('class');
-            this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
-            this.hiddenEvolutionCards.create(this.game, $("hidden-evolution-cards-" + player.id), CARD_WIDTH, CARD_WIDTH);
-            this.hiddenEvolutionCards.setSelectionMode(2);
-            this.hiddenEvolutionCards.centerItems = true;
-            this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
-            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
+            if (this.showHand) {
+                document.getElementById("hand-wrapper").classList.add('whiteblock');
+                dojo.place("<div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\"></div>", "hand-wrapper");
+                this.hiddenEvolutionCards = new ebg.stock();
+                this.hiddenEvolutionCards.setSelectionAppearance('class');
+                this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
+                this.hiddenEvolutionCards.create(this.game, $("hand-evolution-cards"), CARD_WIDTH, CARD_WIDTH);
+                this.hiddenEvolutionCards.setSelectionMode(2);
+                this.hiddenEvolutionCards.centerItems = true;
+                this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
+                dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
+                this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
+                (_f = player.hiddenEvolutions) === null || _f === void 0 ? void 0 : _f.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
+            }
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
             this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
@@ -1482,8 +1489,7 @@ var PlayerTable = /** @class */ (function () {
             this.visibleEvolutionCards.centerItems = true;
             this.visibleEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
             dojo.connect(this.visibleEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleEvolutionClick(Number(item_id)); });
-            this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
-            (_f = player.hiddenEvolutions) === null || _f === void 0 ? void 0 : _f.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
+            this.game.evolutionCards.setupCards([this.visibleEvolutionCards]);
             if (player.visibleEvolutions) {
                 this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
             }
@@ -1517,7 +1523,8 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         var cardsIds = cards.map(function (card) { return card.id; });
         cardsIds.forEach(function (id) {
-            _this.hiddenEvolutionCards.removeFromStockById('' + id);
+            var _a;
+            (_a = _this.hiddenEvolutionCards) === null || _a === void 0 ? void 0 : _a.removeFromStockById('' + id);
             _this.visibleEvolutionCards.removeFromStockById('' + id);
         });
     };
@@ -1710,10 +1717,18 @@ var PlayerTable = /** @class */ (function () {
         }
     };
     PlayerTable.prototype.playEvolution = function (card) {
-        this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+        if (this.hiddenEvolutionCards) {
+            this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+        }
+        else {
+            this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], "playerhand-counter-wrapper-" + this.playerId);
+        }
     };
     PlayerTable.prototype.highlightHiddenEvolutions = function (cards) {
         var _this = this;
+        if (!this.hiddenEvolutionCards) {
+            return;
+        }
         cards.forEach(function (card) {
             var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
             cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.add('highlight-evolution');
@@ -1722,6 +1737,9 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.unhighlightHiddenEvolutions = function () {
         var _this = this;
         var _a;
+        if (!this.hiddenEvolutionCards) {
+            return;
+        }
         (_a = this.hiddenEvolutionCards) === null || _a === void 0 ? void 0 : _a.items.forEach(function (card) {
             var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
             cardDiv.classList.remove('highlight-evolution');

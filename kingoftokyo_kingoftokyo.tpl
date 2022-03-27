@@ -1,11 +1,10 @@
 {OVERALL_GAME_HEADER}
-<!--<button class="bgabutton bgabutton_red" id="test1">enter</button>
-<button class="bgabutton bgabutton_red" id="test2">leave</button>-->
 
 <div id="monster-pick"></div>
 <div id="mutant-evolution-choice"></div>
 
 <div id="kot-table">
+    <div id="hand-wrapper"></div>
     <div id="rolled-dice-and-rapid-actions">
         <div id="rolled-dice" class="whiteblock">
             <div id="locked-dice" class="hide-lock">

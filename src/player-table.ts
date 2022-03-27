@@ -16,7 +16,7 @@ class PlayerTable {
 
     public cards: Stock;
     public wickednessTiles: Stock;
-    public hiddenEvolutionCards: Stock;
+    public hiddenEvolutionCards: Stock | null = null;
     public visibleEvolutionCards: Stock;
     public pickEvolutionCards: Stock;
 
@@ -121,14 +121,22 @@ class PlayerTable {
         if (game.isPowerUpExpansion()) {
             this.showHand = this.playerId == this.game.getPlayerId();
 
-            this.hiddenEvolutionCards = new ebg.stock() as Stock;
-            this.hiddenEvolutionCards.setSelectionAppearance('class');
-            this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
-            this.hiddenEvolutionCards.create(this.game, $(`hidden-evolution-cards-${player.id}`), CARD_WIDTH, CARD_WIDTH);
-            this.hiddenEvolutionCards.setSelectionMode(2);
-            this.hiddenEvolutionCards.centerItems = true;
-            this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
-            dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onHiddenEvolutionClick(Number(item_id)));
+            if (this.showHand) {
+                document.getElementById(`hand-wrapper`).classList.add('whiteblock');
+                dojo.place(`<div id="hand-evolution-cards" class="evolution-card-stock player-evolution-cards"></div>`, `hand-wrapper`);
+
+                this.hiddenEvolutionCards = new ebg.stock() as Stock;
+                this.hiddenEvolutionCards.setSelectionAppearance('class');
+                this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
+                this.hiddenEvolutionCards.create(this.game, $(`hand-evolution-cards`), CARD_WIDTH, CARD_WIDTH);
+                this.hiddenEvolutionCards.setSelectionMode(2);
+                this.hiddenEvolutionCards.centerItems = true;
+                this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+                dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onHiddenEvolutionClick(Number(item_id)));
+
+                this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
+                player.hiddenEvolutions?.forEach(card => this.hiddenEvolutionCards.addToStockWithId(this.showHand ? card.type : 0, '' + card.id));
+            }
 
             this.visibleEvolutionCards = new ebg.stock() as Stock;
             this.visibleEvolutionCards.setSelectionAppearance('class');
@@ -139,8 +147,7 @@ class PlayerTable {
             this.visibleEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
             dojo.connect(this.visibleEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleEvolutionClick(Number(item_id)));
     
-            this.game.evolutionCards.setupCards([this.hiddenEvolutionCards, this.visibleEvolutionCards]);
-            player.hiddenEvolutions?.forEach(card => this.hiddenEvolutionCards.addToStockWithId(this.showHand ? card.type : 0, '' + card.id));
+            this.game.evolutionCards.setupCards([this.visibleEvolutionCards]);
             if (player.visibleEvolutions) {
                 this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
             }
@@ -178,7 +185,7 @@ class PlayerTable {
     public removeEvolutions(cards: EvolutionCard[]) {
         const cardsIds = cards.map(card => card.id);
         cardsIds.forEach(id => {
-            this.hiddenEvolutionCards.removeFromStockById(''+id);
+            this.hiddenEvolutionCards?.removeFromStockById(''+id);
             this.visibleEvolutionCards.removeFromStockById(''+id);
         });
     }
@@ -406,10 +413,18 @@ class PlayerTable {
     }
     
     public playEvolution(card: EvolutionCard) {
-        this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+        if (this.hiddenEvolutionCards) {
+            this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+        } else {
+            this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], `playerhand-counter-wrapper-${this.playerId}`);
+        }
     }
     
     public highlightHiddenEvolutions(cards: EvolutionCard[]) {
+        if (!this.hiddenEvolutionCards) {
+            return;
+        }
+
         cards.forEach(card => {
             const cardDiv = document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
             cardDiv?.classList.add('highlight-evolution');
@@ -417,6 +432,10 @@ class PlayerTable {
     }
     
     public unhighlightHiddenEvolutions() {
+        if (!this.hiddenEvolutionCards) {
+            return;
+        }
+        
         this.hiddenEvolutionCards?.items.forEach(card => {
             const cardDiv = document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
             cardDiv.classList.remove('highlight-evolution');
