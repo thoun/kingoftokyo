@@ -71,7 +71,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -673,8 +673,8 @@ trait UtilTrait {
             }
         }
 
-        // TODOPU confirm it doesn't apply on itself
-        if ($newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, HEAT_VISION_EVOLUTION)) {
+        // only smashes
+        if ($cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, HEAT_VISION_EVOLUTION)) {
             $this->applyLosePoints($damageDealerId, 1, 3000 + HEAT_VISION_EVOLUTION);
         }
 
@@ -706,16 +706,14 @@ trait UtilTrait {
         }
         $this->incStat($health, 'damage', $playerId);
 
-        if ($cardType >= 0) {
-            $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
-            $this->notifyAllPlayers('health', $message, [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'health' => $newHealth,
-                'delta_health' => $health,
-                'card_name' => $cardType == 0 ? null : $cardType,
-            ]);
-        }
+        $message = $cardType <= 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
+        $this->notifyAllPlayers('health', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'health' => $newHealth,
+            'delta_health' => $health,
+            'card_name' => $cardType == 0 ? null : $cardType,
+        ]);
 
         if ($devil) {
             $this->notifyAllPlayers('devilExtraDamage', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [

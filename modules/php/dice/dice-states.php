@@ -304,7 +304,7 @@ trait DiceStateTrait {
         $damages = [];
 
         if ($this->isCybertoothExpansion() && $diceCounts[7] > 0) {
-            $damages[] = new Damage($playerId, $diceCounts[7], $playerId, 0, 0, 0);
+            $damages[] = new Damage($playerId, $diceCounts[7], $playerId, -1, 0, 0, null);
         }
 
         if ($this->isAnubisExpansion()) {

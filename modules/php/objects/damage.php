@@ -5,10 +5,10 @@ class Damage {
     public int $playerId;
     public int $damage;
     public int $damageDealerId;
-    public int $cardType;
+    public int $cardType; // 0 : smash, -1: skull dice, -card : unlogged card effect
     public int $giveShrinkRayToken;
     public int $givePoisonSpitToken;
-    public /*int|null*/ $smasherPoints;
+    public /*int|null*/ $smasherPoints; // only set when damage with smashes, null otherwise
 
     public function __construct(int $playerId, int $damage, int $damageDealerId, int $cardType, int $giveShrinkRayToken = 0, int $givePoisonSpitToken = 0, /*int|null*/ $smasherPoints = null) {
         $this->playerId = $playerId;

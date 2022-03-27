@@ -28,7 +28,7 @@ trait DebugUtilTrait {
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -164,11 +164,11 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
-            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492");
+            //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493");
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
+            /*$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             $this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
@@ -176,7 +176,8 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);*/
+            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, true);
         }
 
         // player order
