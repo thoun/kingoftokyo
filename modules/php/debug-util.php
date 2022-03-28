@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(5);
+        $this->debugSetEnergy(254);
         $this->debugSetPoints(5);
         $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);

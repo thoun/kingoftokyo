@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 -- player_location : 0 : outside tokyo, 1 : tokyo city, 2: tokyo bay
 ALTER TABLE `player` ADD `player_location` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_health` tinyint UNSIGNED NOT NULL DEFAULT 10;
-ALTER TABLE `player` ADD `player_energy` tinyint UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_energy` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_monster` tinyint unsigned NOT NULL;
 ALTER TABLE `player` ADD `player_poison_tokens` tinyint unsigned NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_shrink_ray_tokens` tinyint unsigned NOT NULL DEFAULT 0;
@@ -54,7 +54,7 @@ ALTER TABLE `player` ADD `leave_tokyo_under` tinyint unsigned;
 ALTER TABLE `player` ADD `stay_tokyo_over` tinyint unsigned;
 ALTER TABLE `player` ADD `player_dead` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_berserk` tinyint UNSIGNED NOT NULL DEFAULT 0;
-ALTER TABLE `player` ADD `player_cultists` tinyint UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_cultists` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_wickedness` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_take_wickedness_tile` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_zombified` tinyint UNSIGNED NOT NULL DEFAULT 0;

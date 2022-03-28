@@ -365,5 +365,27 @@ define('PANDA_EXPRESS_EVOLUTION', 135);
 define('BAMBOO_SUPPLY_EVOLUTION', 136);
 define('PANDARWINISM_EVOLUTION', 137);
 define('YIN_YANG_EVOLUTION', 138);
+// evolutions : Cyber Bunny
+/*
+Electric Carrot	Permanent Evolution
+Energy Sword (Bunny Power Blade)	Permanent Evolution
+King of the Gizmo (He Who Dies With The Most Toys Wins!)	Permanent Evolution
+Secret Laboratory (Rabbit Laboratory)	Permanent Evolution
+Heart of the Rabbit (Prince With 1000 Enemies) 	Temporary Evolution
+Rabbit's Foot (Decoy Bunny)	Temporary Evolution
+Emergency Battery (Hare Style)	Temporary Evolution
+Stroke of Genius (Fuzzy Logic)	Temporary Evolution
+*/
+// evolutions : Kraken
+/*
+Mandibles of Dread (Dread Maw)	Permanent Evolution
+Sunken Temple	Permanent Evolution
+Eater Of Souls	Permanent Evolution
+Terror Of The Deep	Permanent Evolution
+High Tide	Temporary Evolution
+ Cult Worshippers (Cult Following)	Temporary Evolution
+Destructive Wave (Wave Of Ruin)	Temporary Evolution
+Healing Rain	Temporary Evolution
+*/
 
 ?>

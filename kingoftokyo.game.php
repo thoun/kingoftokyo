@@ -677,5 +677,10 @@ class KingOfTokyo extends Table {
             $sql = "ALTER TABLE `DBPREFIX_dice` ADD `discarded` tinyint unsigned NOT NULL DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
+ 
+        if ($from_version <= 2203271836) {
+            $sql = "ALTER TABLE `DBPREFIX_player` MODIFY COLUMN `player_energy` SMALLINT";
+            self::applyDbUpgradeToAllDB($sql);
+        }
     }
 }
