@@ -501,3 +501,22 @@ button, a {
     }
   }
 }
+
+.pick-evolution-cards {
+  display: none;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+
+  &::before {
+      border-color: rgba(255, 255, 255, 0.8) transparent;
+      border-style: solid;
+      border-width: 30px 30px 0;
+      bottom: -25px;
+      content: "";
+      display: block;
+      left: calc(50% - 27px);
+      position: absolute;
+      width: 0;
+  }
+}

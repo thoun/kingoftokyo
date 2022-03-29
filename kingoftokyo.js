@@ -1400,11 +1400,12 @@ var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, playerWithGoldenScarab) {
         var _this = this;
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e;
         this.game = game;
         this.player = player;
         this.showHand = false;
         this.hiddenEvolutionCards = null;
+        this.pickEvolutionCards = null;
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -1414,11 +1415,11 @@ var PlayerTable = /** @class */ (function () {
             html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_a = player.wickednessTiles) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>   ";
         }
         if (game.isPowerUpExpansion()) {
-            html += "\n            <div id=\"hidden-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards hand " + (((_b = player.hiddenEvolutions) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_c = player.visibleEvolutions) === null || _c === void 0 ? void 0 : _c.length) ? '' : 'empty') + "\"></div>\n            ";
+            html += "\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_b = player.visibleEvolutions) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>\n            ";
         }
         html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (player.cards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
         dojo.place(html, 'table');
-        this.setMonsterFigureBeastMode(((_d = player.cards.find(function (card) { return card.type === 301; })) === null || _d === void 0 ? void 0 : _d.side) === 1);
+        this.setMonsterFigureBeastMode(((_c = player.cards.find(function (card) { return card.type === 301; })) === null || _c === void 0 ? void 0 : _c.side) === 1);
         this.cards = new ebg.stock();
         this.cards.setSelectionAppearance('class');
         this.cards.selectionClass = 'no-visible-selection';
@@ -1463,13 +1464,13 @@ var PlayerTable = /** @class */ (function () {
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            (_e = player.wickednessTiles) === null || _e === void 0 ? void 0 : _e.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
+            (_d = player.wickednessTiles) === null || _d === void 0 ? void 0 : _d.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
         }
         if (game.isPowerUpExpansion()) {
             this.showHand = this.playerId == this.game.getPlayerId();
             if (this.showHand) {
                 document.getElementById("hand-wrapper").classList.add('whiteblock');
-                dojo.place("<div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\"></div>", "hand-wrapper");
+                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                ", "hand-wrapper");
                 this.hiddenEvolutionCards = new ebg.stock();
                 this.hiddenEvolutionCards.setSelectionAppearance('class');
                 this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
@@ -1479,7 +1480,7 @@ var PlayerTable = /** @class */ (function () {
                 this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
                 this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
-                (_f = player.hiddenEvolutions) === null || _f === void 0 ? void 0 : _f.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
+                (_e = player.hiddenEvolutions) === null || _e === void 0 ? void 0 : _e.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
             }
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
@@ -1495,6 +1496,7 @@ var PlayerTable = /** @class */ (function () {
             }
         }
     }
+    ;
     PlayerTable.prototype.initPlacement = function () {
         if (this.initialLocation > 0) {
             this.enterTokyo(this.initialLocation);
@@ -1691,28 +1693,24 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.showEvolutionPickStock = function (cards) {
         var _this = this;
         if (!this.pickEvolutionCards) {
-            dojo.place("<div id=\"pick-evolution" + this.playerId + "\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>", "monster-board-wrapper-" + this.playerId);
             this.pickEvolutionCards = new ebg.stock();
             this.pickEvolutionCards.setSelectionAppearance('class');
             this.pickEvolutionCards.selectionClass = 'no-visible-selection-except-double-selection';
-            this.pickEvolutionCards.create(this.game, $("pick-evolution" + this.playerId), CARD_WIDTH, CARD_WIDTH);
+            this.pickEvolutionCards.create(this.game, $("pick-evolution"), CARD_WIDTH, CARD_WIDTH);
             this.pickEvolutionCards.setSelectionMode(1);
             this.pickEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
             this.pickEvolutionCards.image_items_per_row = 10;
             this.pickEvolutionCards.centerItems = true;
             dojo.connect(this.pickEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.chooseEvolutionCardClick(Number(item_id)); });
         }
-        else {
-            document.getElementById("pick-evolution" + this.playerId).style.display = 'block';
-        }
+        document.getElementById("pick-evolution").style.display = 'block';
         this.game.evolutionCards.setupCards([this.pickEvolutionCards]);
         //this.game.evolutionCards.addCardsToStock(this.pickEvolutionCards, cards);
         cards.forEach(function (card) { return _this.pickEvolutionCards.addToStockWithId(card.type, '' + card.id); });
     };
     PlayerTable.prototype.hideEvolutionPickStock = function () {
-        var div = document.getElementById("pick-evolution" + this.playerId);
-        if (div) {
-            document.getElementById("pick-evolution" + this.playerId).style.display = 'none';
+        if (this.pickEvolutionCards) {
+            document.getElementById("pick-evolution").style.display = 'none';
             this.pickEvolutionCards.removeAll();
         }
     };
@@ -1903,9 +1901,6 @@ var TableManager = /** @class */ (function () {
     };
     TableManager.prototype.tableHeightChange = function () {
         this.playerTables.forEach(function (playerTable) {
-            if (playerTable.hiddenEvolutionCards) {
-                dojo.toggleClass("hidden-evolution-cards-" + playerTable.playerId, 'empty', !playerTable.hiddenEvolutionCards.items.length);
-            }
             if (playerTable.visibleEvolutionCards) {
                 dojo.toggleClass("visible-evolution-cards-" + playerTable.playerId, 'empty', !playerTable.visibleEvolutionCards.items.length);
             }

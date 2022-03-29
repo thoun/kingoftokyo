@@ -1441,14 +1441,6 @@
   margin-left: -50px;
   box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.7);
 }
-#table .player-table .pick-evolution-cards {
-  position: absolute;
-  top: 42px;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-}
 #table .monster-figure {
   position: relative;
 }
@@ -2126,4 +2118,22 @@ button .icon, a .icon {
   width: 132px;
   height: 132px;
   background-image: url("img/evolution-cards.jpg");
+}
+
+.pick-evolution-cards {
+  display: none;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+}
+.pick-evolution-cards::before {
+  border-color: rgba(255, 255, 255, 0.8) transparent;
+  border-style: solid;
+  border-width: 30px 30px 0;
+  bottom: -25px;
+  content: "";
+  display: block;
+  left: calc(50% - 27px);
+  position: absolute;
+  width: 0;
 }

@@ -162,9 +162,6 @@ class TableManager {
 
     public tableHeightChange() {
         this.playerTables.forEach(playerTable => {
-            if (playerTable.hiddenEvolutionCards) {
-                dojo.toggleClass(`hidden-evolution-cards-${playerTable.playerId}`, 'empty', !playerTable.hiddenEvolutionCards.items.length);
-            }
             if (playerTable.visibleEvolutionCards) {
                 dojo.toggleClass(`visible-evolution-cards-${playerTable.playerId}`, 'empty', !playerTable.visibleEvolutionCards.items.length);
             }
