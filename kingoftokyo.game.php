@@ -440,9 +440,9 @@ class KingOfTokyo extends Table {
                 $playerDb['visibleEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
                 $playerDb['hiddenEvolutions'] = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('hand', $playerId));
                 
-                $mothershipSupportCard = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
-                $playerDb['mothershipSupport'] = $mothershipSupportCard != null;
-                $playerDb['mothershipSupportUsed'] = $mothershipSupportCard != null && $this->isUsedCard(3000 + $mothershipSupportCard->id);
+                $mothershipSupportCards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+                $playerDb['mothershipSupport'] = count($mothershipSupportCards) > 0;
+                $playerDb['mothershipSupportUsed'] = count($mothershipSupportCards) > 0 && $this->array_every($mothershipSupportCards, fn($card) => $this->isUsedCard(3000 + $card->id));
             }
         }
 

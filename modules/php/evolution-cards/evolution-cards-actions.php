@@ -72,7 +72,7 @@ trait EvolutionCardsActionTrait {
     }
 
     function applyPlayEvolution(int $playerId, EvolutionCard $card) {
-        $countMothershipSupportBefore = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
+        $countMothershipSupportBefore = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
         
@@ -106,7 +106,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $hasYinYang = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, YIN_YANG_EVOLUTION);
+        $hasYinYang = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
         if (!$hasYinYang) {
             throw new \BgaUserException("You can't play Yin & Yang without this Evolution.");
         }
@@ -121,7 +121,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        if (!$this->hasEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true)) {
+        if ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) == 0) {
             throw new \BgaUserException('No Detachable Tail Evolution');
         }
 
@@ -131,7 +131,7 @@ trait EvolutionCardsActionTrait {
 
         $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
-        $card = $this->getEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, true, true);
+        $card = $this->getEvolutionsOfType($playerId, DETACHABLE_TAIL_EVOLUTION, true, true)[0];
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
 

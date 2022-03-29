@@ -132,18 +132,18 @@ trait PlayerStateTrait {
         }
 
         if ($this->isPowerUpExpansion()) {
-            $coldWaveCard = $this->getEvolutionOfType($playerId, COLD_WAVE_EVOLUTION);
-            if ($coldWaveCard != null) {
-                $this->removeEvolution($playerId, $coldWaveCard);
+            $coldWaveCards = $this->getEvolutionsOfType($playerId, COLD_WAVE_EVOLUTION);
+            if (count($coldWaveCards) > 0) {
+                $this->removeEvolutions($playerId, $coldWaveCards);
             }
 
-            $blizzardCard = $this->getEvolutionOfType($playerId, BLIZZARD_EVOLUTION);
-            if ($blizzardCard != null) {
-                $this->removeEvolution($playerId, $blizzardCard);
+            $blizzardCards = $this->getEvolutionsOfType($playerId, BLIZZARD_EVOLUTION);
+            if (count($blizzardCards) > 0) {
+                $this->removeEvolutions($playerId, $blizzardCards);
             }    
 
-            $mothershipEvolutionCard = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
-            if ($mothershipEvolutionCard != null) {
+            $mothershipEvolutionCards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+            if (count($mothershipEvolutionCards) > 0) {
                 $this->notifyPlayer($playerId, 'toggleMothershipSupportUsed', '', [
                     'playerId' => $playerId,
                     'used' => false,
@@ -191,14 +191,16 @@ trait PlayerStateTrait {
             }
 
             if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-                $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE);
+                $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 1);
             }
             if ($this->isPowerUpExpansion()) {
-                if ($this->hasEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION)) {
-                    $this->applyGetPoints($playerId, 1, 3000 + I_AM_THE_KING_EVOLUTION);
+                $countIAmTheKing = $this->countEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION);
+                if ($countIAmTheKing > 0) {
+                    $this->applyGetPoints($playerId, $countIAmTheKing, 3000 + I_AM_THE_KING_EVOLUTION);
                 }
-                if ($this->hasEvolutionOfType($playerId, DEFENDER_OF_TOKYO_EVOLUTION)) {
-                    $this->applyDefenderOfTokyo($playerId, 3000 + DEFENDER_OF_TOKYO_EVOLUTION);
+                $countDefenderOfTokyo = $this->countEvolutionOfType($playerId, DEFENDER_OF_TOKYO_EVOLUTION);
+                if ($countDefenderOfTokyo > 0) {
+                    $this->applyDefenderOfTokyo($playerId, 3000 + DEFENDER_OF_TOKYO_EVOLUTION, $countDefenderOfTokyo);
                 }
 
                 
@@ -441,7 +443,7 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
 
         if ($this->isPowerUpExpansion()) {
-            $catNipCard = $this->getEvolutionOfType($playerId, CAT_NIP_EVOLUTION);
+            $catNipCard = $this->getEvolutionsOfType($playerId, CAT_NIP_EVOLUTION)[0];
             if ($catNipCard != null) {
                 $this->removeEvolution($playerId, $catNipCard);
             }

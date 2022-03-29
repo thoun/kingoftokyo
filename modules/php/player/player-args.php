@@ -30,7 +30,7 @@ trait PlayerArgTrait {
                 $jetsPlayers[] = $smashedPlayerInTokyo;
             }
             
-            if ($isPowerUpExpansion && $this->hasEvolutionOfType($smashedPlayerInTokyo, SIMIAN_SCAMPER_EVOLUTION, true, true)) {
+            if ($isPowerUpExpansion && $this->countEvolutionOfType($smashedPlayerInTokyo, SIMIAN_SCAMPER_EVOLUTION, true, true) > 0) {
                 $simianScamperPlayers[] = $smashedPlayerInTokyo;
             }
 

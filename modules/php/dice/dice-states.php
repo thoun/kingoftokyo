@@ -116,9 +116,10 @@ trait DiceStateTrait {
                 }
 
                 if ($this->isPowerUpExpansion()) {
-                    if ($this->hasEvolutionOfType($playerId, PANDA_EXPRESS_EVOLUTION)) {
-                        $this->applyGetPoints($playerId, 2, 3000 + PANDA_EXPRESS_EVOLUTION);
-                        $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 1);
+                    $countPandaExpress = $this->countEvolutionOfType($playerId, PANDA_EXPRESS_EVOLUTION);
+                    if ($countPandaExpress > 0) {
+                        $this->applyGetPoints($playerId, 2 * $countPandaExpress, 3000 + PANDA_EXPRESS_EVOLUTION);
+                        $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 1); // TODOPU make it 2 turns ? 
                     }
                 }
             }
@@ -158,8 +159,11 @@ trait DiceStateTrait {
         }
         
         if ($this->isPowerUpExpansion()) {
-            if ($diceCounts[4] >= 3 && $this->hasEvolutionOfType($playerId, PANDARWINISM_EVOLUTION)) {
-                $this->applyGetPoints($playerId, $diceCounts[4] - 2, 3000 + PANDARWINISM_EVOLUTION);
+            if ($diceCounts[4] >= 3) {
+                $countPandarwinism = $this->countEvolutionOfType($playerId, PANDARWINISM_EVOLUTION);
+                if ($countPandarwinism > 0) {
+                    $this->applyGetPoints($playerId, ($diceCounts[4] - 2) * $countPandarwinism, 3000 + PANDARWINISM_EVOLUTION);
+                }
             }
         }
 

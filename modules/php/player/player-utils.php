@@ -311,10 +311,10 @@ trait PlayerUtilTrait {
         }
 
         if ($this->isPowerUpExpansion()) {
-            if ($this->hasEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION)) {
+            if ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION) > 0) {
                 return 3000 + DETACHABLE_TAIL_EVOLUTION;
             }
-            if ($this->hasEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION)) {
+            if ($this->countEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION) > 0) {
                 return 3000 + SIMIAN_SCAMPER_EVOLUTION;
             }
         }

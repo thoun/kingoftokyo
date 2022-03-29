@@ -214,17 +214,31 @@ trait DiceActionTrait {
         } else if ($cardType == STRETCHY_CARD) {
             $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
         } else if ($cardType == 3000 + SAURIAN_ADAPTABILITY_EVOLUTION) {
-            $saurianAdaptabilityCard = $this->getEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true);
+            $saurianAdaptabilityCard = $this->getEvolutionsOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
             $this->playEvolutionToTable($playerId, $saurianAdaptabilityCard, '');
             $this->removeEvolution($playerId, $saurianAdaptabilityCard, false, 5000);
         } else if ($cardType == 3000 + GAMMA_BREATH_EVOLUTION) {
-            $gammaBreathCard = $this->getEvolutionOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);
+            $gammaBreathCards = $this->getEvolutionsOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);
+
+            // we use in priority Icy Reflection
+            $gammaBreathCard = $this->array_find($gammaBreathCards, fn($card) => $card->type == ICY_REFLECTION_EVOLUTION);
+            if ($gammaBreathCard === null) {
+                $gammaBreathCard = $gammaBreathCards[0];
+            }
+
             if ($gammaBreathCard->location === 'hand') {
                 $this->playEvolutionToTable($playerId, $gammaBreathCard);
             }
             $this->setUsedCard(3000 + $gammaBreathCard->id);
         }  else if ($cardType == 3000 + TAIL_SWEEP_EVOLUTION) {
-            $tailSweepCard = $this->getEvolutionOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
+            $tailSweepCards = $this->getEvolutionsOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
+
+            // we use in priority Icy Reflection
+            $tailSweepCard = $this->array_find($tailSweepCards, fn($card) => $card->type == ICY_REFLECTION_EVOLUTION);
+            if ($tailSweepCard === null) {
+                $tailSweepCard = $tailSweepCards[0];
+            }
+
             if ($tailSweepCard->location === 'hand') {
                 $this->playEvolutionToTable($playerId, $tailSweepCard);
             }

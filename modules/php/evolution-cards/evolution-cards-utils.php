@@ -238,46 +238,38 @@ trait EvolutionCardsUtilTrait {
 
     
 
-    function hasEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
-        return $this->getEvolutionOfType($playerId, $cardType, $fromTable, $fromHand) != null;
+    function countEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
+        return count($this->getEvolutionsOfType($playerId, $cardType, $fromTable, $fromHand));
     }
 
-    function getEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
+    function getEvolutionsOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
         if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1) {
-            return null;
+            return [];
         }
+
+        $evolutions = [];
 
         if ($fromTable) {
             $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'table', $playerId));
             if (count($cards) > 0) {
-                return $cards[0];
+                $evolutions = array_merge($evolutions, $cards);
             }
         }
 
         if ($fromHand) {
             $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
             if (count($cards) > 0) {
-                return $cards[0];
+                $evolutions = array_merge($evolutions, $cards);
             }
         }
 
-        return null;
-    }
-
-    function getEvolutionsOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
-        $card = $this->getEvolutionOfType($playerId, $cardType, $fromTable, $fromHand);
-
-        if ($card != null) {
-            return [$card];
-        }
-        
-        return [];
+        return $evolutions;
     }
 
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
         $changeMaxHealth = $card->type == EVEN_BIGGER_CARD; // TODOPU
 
-        $countMothershipSupportBefore = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
+        $countMothershipSupportBefore = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
         
         $mimicCardType = null;
         /*if ($card->type == MIMIC_CARD) { // Mimic
@@ -336,8 +328,8 @@ trait EvolutionCardsUtilTrait {
         return null;          
     }
 
-    function applyLeaveWithTwasBeautyKilledTheBeast(int $playerId, EvolutionCard $card) {
-        $this->removeEvolution($playerId, $card);
+    function applyLeaveWithTwasBeautyKilledTheBeast(int $playerId, array $cards) {
+        $this->removeEvolutions($playerId, $cards);
 
         // lose all stars
         $points = 0;

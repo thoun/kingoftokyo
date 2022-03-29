@@ -33,6 +33,15 @@ trait UtilTrait {
         }
         return false;
     }
+        
+    function array_every(array $array, callable $fn) {
+        foreach ($array as $value) {
+            if(!$fn($value)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     function isTurnBased() {
         return intval($this->gamestate->table_globals[200]) >= 10;
@@ -71,7 +80,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -169,7 +178,7 @@ trait UtilTrait {
                 return 1;
             }
 
-            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 return 1;
             }
         }
@@ -294,15 +303,17 @@ trait UtilTrait {
         $this->incStat(1, 'tokyoEnters', $playerId);
 
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-            $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE);
+            $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 1);
         }
 
         if ($this->isPowerUpExpansion()) {
-            if ($this->hasEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION)) {
-                $this->applyGetPoints($playerId, 1, 3000 + BLACK_DIAMOND_EVOLUTION);
+            $countBlackDiamond = $this->countEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION);
+            if ($countBlackDiamond > 0) {
+                $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
             }
-            if ($this->hasEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION)) {
-                $this->applyGetPoints($playerId, 1, 3000 + I_AM_THE_KING_EVOLUTION);
+            $countIAmTheKing = $this->countEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION);
+            if ($countIAmTheKing) {
+                $this->applyGetPoints($playerId, $countIAmTheKing, 3000 + I_AM_THE_KING_EVOLUTION);
             }
         }
     }
@@ -331,7 +342,7 @@ trait UtilTrait {
             $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
 
             if ($useCard == 3042) {
-                $card = $this->getEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
+                $card = $this->getEvolutionsOfType($playerId, SIMIAN_SCAMPER_EVOLUTION, true, true)[0];
                 $this->playEvolutionToTable($playerId, $card);
             }
         }
@@ -339,9 +350,9 @@ trait UtilTrait {
         $this->incStat(1, 'tokyoLeaves', $playerId);
 
         if ($this->isPowerUpExpansion()) {
-            $twasBeautyKilledTheBeastCard = $this->getEvolutionOfType($playerId, TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
-            if ($twasBeautyKilledTheBeastCard != null && !$this->getPlayer($playerId)->eliminated) {
-                $this->applyLeaveWithTwasBeautyKilledTheBeast($playerId, $twasBeautyKilledTheBeastCard);
+            $twasBeautyKilledTheBeastCards = $this->getEvolutionsOfType($playerId, TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
+            if (count($twasBeautyKilledTheBeastCards) > 0 && !$this->getPlayer($playerId)->eliminated) {
+                $this->applyLeaveWithTwasBeautyKilledTheBeast($playerId, $twasBeautyKilledTheBeastCards);
             }
         }
 
@@ -658,9 +669,12 @@ trait UtilTrait {
                     $this->applyGetPoints($pId, 3 * $countEaterOfTheDead, EATER_OF_THE_DEAD_CARD);
                 }
 
-                if ($playerId != $pId && $isPowerUpExpansion && $this->hasEvolutionOfType($pId, PROGRAMMED_TO_DESTROY_EVOLUTION, true, true)) {
-                    $this->applyGetPoints($pId, 3, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
-                    $this->applyGetEnergy($pId, 2, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
+                if ($playerId != $pId && $isPowerUpExpansion) {
+                    $countProgrammedToDestroy = $this->countEvolutionOfType($pId, PROGRAMMED_TO_DESTROY_EVOLUTION);
+                    if ($countProgrammedToDestroy > 0) {
+                        $this->applyGetPoints($pId, 3 * $countProgrammedToDestroy, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
+                        $this->applyGetEnergy($pId, 2 * $countProgrammedToDestroy, 3000 + PROGRAMMED_TO_DESTROY_EVOLUTION);
+                    }
                 }
             }
         }
@@ -674,8 +688,11 @@ trait UtilTrait {
         }
 
         // only smashes
-        if ($cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, HEAT_VISION_EVOLUTION)) {
-            $this->applyLosePoints($damageDealerId, 1, 3000 + HEAT_VISION_EVOLUTION);
+        if ($cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
+            $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
+            if ($countHeatVision > 0) {
+                $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
+            }
         }
 
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
@@ -755,7 +772,7 @@ trait UtilTrait {
             && $this->getPlayerScore($playerId) >= 16;
 
         if (!$finalRoarWillActivate) {
-            if ($this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, NINE_LIVES_EVOLUTION, true, true)) {
+            if ($this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, NINE_LIVES_EVOLUTION, true, true) > 0) {
                 $this->applyNineLives($playerId);
             }
 

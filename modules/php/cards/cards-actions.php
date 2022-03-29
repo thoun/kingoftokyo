@@ -407,7 +407,18 @@ trait CardsActionTrait {
         $playerId = $this->getActivePlayerId();
 
         if ($cardType == 3024) {
-            $adaptiveTechnologyCard = $this->getEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
+            $adaptiveTechnologyCards = $this->getEvolutionsOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
+
+            if (count($adaptiveTechnologyCards) == 0) {
+                throw new \BgaUserException('No matching card');
+            }
+
+            // we use in priority Icy Reflection
+            $adaptiveTechnologyCard = $this->array_find($adaptiveTechnologyCards, fn($card) => $card->type == ICY_REFLECTION_EVOLUTION);
+            if ($adaptiveTechnologyCard === null) {
+                $adaptiveTechnologyCard = $adaptiveTechnologyCards[0];
+            }
+
             if ($adaptiveTechnologyCard->location === 'hand') {
                 $this->applyPlayEvolution($playerId, $adaptiveTechnologyCard);
             }

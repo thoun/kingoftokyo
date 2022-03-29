@@ -214,7 +214,7 @@ trait DiceUtilTrait {
             $points = $number + $diceCount - 3;
 
             if ($this->isPowerUpExpansion()) {
-                if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+                if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $points *= 2;
                 }
             }
@@ -257,14 +257,17 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($diceCount >= 1 && $number == 1 && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, MOUSE_HUNTER_EVOLUTION)) {
-            $this->applyGetPoints($playerId, 1, 3000 + MOUSE_HUNTER_EVOLUTION);
+        if ($diceCount >= 1 && $number == 1 && $this->isPowerUpExpansion()) {
+            $countMouseHunter = $this->countEvolutionOfType($playerId, MOUSE_HUNTER_EVOLUTION);
+            if ($countMouseHunter > 0) {
+                $this->applyGetPoints($playerId, $countMouseHunter, 3000 + MOUSE_HUNTER_EVOLUTION);
+            }
         }
     }
 
     function resolveHealthDice(int $playerId, int $diceCount) { 
         if ($this->isPowerUpExpansion()) {
-            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
             }
         }
@@ -307,7 +310,7 @@ trait DiceUtilTrait {
         }
 
         if ($this->isPowerUpExpansion()) {
-            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
             }
         }
@@ -336,7 +339,7 @@ trait DiceUtilTrait {
         }
         
         if ($this->isPowerUpExpansion()) {
-            if ($this->hasEvolutionOfType($playerId, CAT_NIP_EVOLUTION)) {  
+            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
             }
         }
@@ -393,7 +396,7 @@ trait DiceUtilTrait {
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
             $countSimianScamper = 0;
             if ($isPowerUpExpansion) {
-                $countSimianScamper = $this->hasEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true) ? 1 : 0;
+                $countSimianScamper = $this->countEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
             }
 
             $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
@@ -510,10 +513,10 @@ trait DiceUtilTrait {
         }
 
         // Saurian Adaptability
-        $hasSaurianAdaptability = $isPowerUpExpansion && $this->hasEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true);
+        $hasSaurianAdaptability = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true) > 0;
 
         // yin & yang
-        $hasYinYang = $isPowerUpExpansion && $this->hasEvolutionOfType($playerId, YIN_YANG_EVOLUTION);
+        $hasYinYang = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
         
         return [
             'hasHerdCuller' => $hasHerdCuller,
@@ -720,9 +723,13 @@ trait DiceUtilTrait {
         }
 
         // Meow Missle
-        if ($diceCounts[1] >= 1 && $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, MEOW_MISSLE_EVOLUTION)) {
-            $addedSmashes += 1;
-            $cardsAddingSmashes[] = 3000 + MEOW_MISSLE_EVOLUTION;
+        if ($diceCounts[1] >= 1 && $this->isPowerUpExpansion()) {
+            $countMeowMissle = $this->countEvolutionOfType($playerId, MEOW_MISSLE_EVOLUTION);
+            if ($countMeowMissle > 0) {
+                $addedSmashes += $countMeowMissle;
+                
+                for ($i=0; $i<$countMeowMissle; $i++) { $cardsAddingSmashes[] = 3000 + MEOW_MISSLE_EVOLUTION; }
+            }
         }
 
         if ($diceCounts[6] + $addedSmashes >= 1) {

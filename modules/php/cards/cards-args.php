@@ -115,7 +115,7 @@ trait CardsArgTrait {
             ];
         }
 
-        $canUseAdaptingTechnology = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true);
+        $canUseAdaptingTechnology = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) > 0;
     
         // return values:
         return [
@@ -269,7 +269,7 @@ trait CardsArgTrait {
 
             $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
-            $canUseDetachableTail = $this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true);
+            $canUseDetachableTail = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0;
             $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $remainingDamage = 0;

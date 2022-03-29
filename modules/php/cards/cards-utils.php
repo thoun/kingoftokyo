@@ -589,7 +589,8 @@ trait CardsUtilTrait {
             throw new \BgaUserException(self::_('You cannot gain [Heart]'));
         }
 
-        $card = $this->getEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $cards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION); 
+        $card = $this->array_find($cards, fn($card) => !$this->isUsedCard(3000 + $card->id));
         if ($card == null) {
             throw new \BgaUserException('No Mothership Support Evolution');
         }
@@ -601,10 +602,12 @@ trait CardsUtilTrait {
         $this->applyGetHealth($playerId, 1, 3000 + MOTHERSHIP_SUPPORT_EVOLUTION, $playerId);
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0, $playerId);
 
-        $this->notifyPlayer($playerId, 'toggleMothershipSupportUsed', '', [
-            'playerId' => $playerId,
-            'used' => true,
-        ]);
+        if (count($cards) == 1) {
+            $this->notifyPlayer($playerId, 'toggleMothershipSupportUsed', '', [
+                'playerId' => $playerId,
+                'used' => true,
+            ]);
+        }
     }
 
     function removeCard(int $playerId, $card, bool $silent = false, bool $delay = false, bool $ignoreMimicToken = false) {
@@ -679,9 +682,9 @@ trait CardsUtilTrait {
     }
 
     function toggleMothershipSupport(int $playerId, int $countMothershipSupportBefore) {
-        $countMothershipSupportAfter = $this->hasEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION) ? 1 : 0;
+        $countMothershipSupportAfter = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
         
-        if ($countMothershipSupportBefore != $countMothershipSupportAfter) {
+        if (boolval($countMothershipSupportBefore) != boolval($countMothershipSupportAfter)) {
             $active = $countMothershipSupportAfter > $countMothershipSupportBefore;
 
             $playerEnergy = null;

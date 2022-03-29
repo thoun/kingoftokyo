@@ -42,8 +42,11 @@ trait PlayerActionTrait {
 
         $this->notifStayInTokyo($playerId);
 
-        if ($this->isPowerUpExpansion() && $this->hasEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION)) {
-            $this->applyGetPoints($playerId, 1, 3000 + BLACK_DIAMOND_EVOLUTION);
+        if ($this->isPowerUpExpansion()) {
+            $countBlackDiamond = $this->countEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION);
+            if ($countBlackDiamond > 0) {
+                $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
+            }
         }
         
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
