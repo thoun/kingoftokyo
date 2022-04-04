@@ -50,6 +50,11 @@ trait MonsterTrait {
             $monsters = [...$monsters, 19];
         }
 
+        // Rob
+        if ($bonusMonsters && $this->releaseDatePassed("2022-05-04T11:00:00", 2)) {
+            $monsters = [...$monsters, 21];
+        }
+
         if ($this->isPowerUpExpansion()) {
             $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
         }

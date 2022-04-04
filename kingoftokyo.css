@@ -1354,6 +1354,12 @@
 #table .player-table .monster-board-wrapper .monster-board.monster19 {
   background-image: url("img/monster-board-19.png");
 }
+#table .player-table .monster-board-wrapper .monster-board.monster20 {
+  background-image: url("img/monster-board-20.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster21 {
+  background-image: url("img/monster-board-21.png");
+}
 #table .player-table .energy-wrapper {
   position: absolute;
   z-index: 4;
@@ -1744,6 +1750,12 @@ html, .mode_3d #game_play_area_background {
 }
 .monster-figure.monster19 {
   background-image: url("img/monster-figure-19.png");
+}
+.monster-figure.monster20 {
+  background-image: url("img/monster-figure-20.png");
+}
+.monster-figure.monster21 {
+  background-image: url("img/monster-figure-21.png");
 }
 .monster-figure.monster12.beast-mode {
   background-image: url("img/monster-figure-12-beast.png");
