@@ -477,6 +477,10 @@ class KingOfTokyo extends Table {
             $result['EVOLUTION_CARDS_TYPES'] = $this->EVOLUTION_CARDS_TYPES;
         }
 
+        for ($h=12; $h<=18; $h++) {
+            $result[''.$h] = $this->releaseDatePassed("2022-04-04T$h:00:00", 2);
+        }        
+
         return $result;
     }
 

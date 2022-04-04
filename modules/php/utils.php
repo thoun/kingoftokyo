@@ -80,7 +80,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -91,9 +91,9 @@ trait UtilTrait {
         return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
-    function releaseDatePassed(string $activationDateStr) {
+    function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
         $currentdate = new \DateTimeImmutable();
-        $activationdate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $activationDateStr.'+00:00')->sub(new \DateInterval('PT1H')); // "2021-12-30T21:41:00+00:00"
+        $activationdate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $activationDateStr.'+00:00')->sub(new \DateInterval("PT${hourShift}H")); // "2021-12-30T21:41:00+00:00"
         $diff = $currentdate->diff($activationdate);
         return $diff->invert;
     }

@@ -41,8 +41,13 @@ trait MonsterTrait {
         }
 
         // Baby Gigazaur
-        if ($bonusMonsters/* && $this->releaseDatePassed("2021-12-31T11:00:00")*/) {
+        if ($bonusMonsters) {
             $monsters = [...$monsters, 18];
+        }
+
+        // Lollybot
+        if ($bonusMonsters && $this->releaseDatePassed("2022-04-17T11:00:00", 2)) {
+            $monsters = [...$monsters, 19];
         }
 
         if ($this->isPowerUpExpansion()) {

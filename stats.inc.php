@@ -71,6 +71,9 @@ $monstersNames = [
     16 => "Kookie", 
     17 => "X-Smash Tree", 
     18 => "Baby Gigazaur",
+    19 => "Lollybot",
+    // KONY
+    21 => "Rob",
 ];
 
 $commonStats = [
