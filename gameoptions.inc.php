@@ -94,7 +94,7 @@ $game_options = [
                 'tmdisplay' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
             ],
         ],
-        'default' => 2
+        'default' => 1
     ],
 
     MUTANT_EVOLUTION_VARIANT_OPTION => [

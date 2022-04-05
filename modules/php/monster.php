@@ -237,7 +237,7 @@ trait MonsterTrait {
     function stChangeForm() {
         $playerId = $this->getActivePlayerId();
         
-        if ($this->autoSkipImpossibleActions() && $this->getPlayerEnergy($playerId) < 1) {
+        if (($this->autoSkipImpossibleActions() && $this->getPlayerEnergy($playerId) < 1) || $this->isSureWin($playerId)) {
             // skip state, can't change form
             $this->gamestate->nextState('buyCard');
             return;
