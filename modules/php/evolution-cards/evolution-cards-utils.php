@@ -188,8 +188,12 @@ trait EvolutionCardsUtilTrait {
                 $this->applyMegaPurr($playerId);
                 break;
             case ELECTRO_SCRATCH_EVOLUTION:
-                $this->applyElectroScratch($playerId);
-                break;
+                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                $damages = [];
+                foreach ($otherPlayersIds as $otherPlayerId) {
+                    $damages[] = new Damage($otherPlayerId, 1, $playerId, 3000 + ELECTRO_SCRATCH_EVOLUTION);
+                }
+                return $damages;
             // The King
             case GIANT_BANANA_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
@@ -243,7 +247,6 @@ trait EvolutionCardsUtilTrait {
 
                 $this->applyGetEnergy($playerId, 1, $logCardType);
                 $this->leaveTokyo($playerId, false); // TODOPU confirm
-
                 return $damages;
             case BAMBOOZLE_EVOLUTION:
                 $this->playBamboozleEvolution($playerId, $card);
@@ -539,17 +542,5 @@ trait EvolutionCardsUtilTrait {
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
-
-    function applyElectroScratch(int $playerId) {
-        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-
-        $damages = [];
-        foreach ($otherPlayersIds as $otherPlayerId) {
-            $damages[] = new Damage($otherPlayerId, 1, $playerId, 3000 + ELECTRO_SCRATCH_EVOLUTION);
-        }
-
-        $this->addStackedState();
-        $this->goToState(-1, $damages);
     }
 }

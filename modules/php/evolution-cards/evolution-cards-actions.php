@@ -86,7 +86,10 @@ trait EvolutionCardsActionTrait {
         
         $this->toggleMothershipSupport($playerId, $countMothershipSupportBefore);
 
-        // TODOPU handle damages
+        if ($damages != null && count($damages) > 0) {
+            $this->addStackedState();
+            $this->goToState(-1, $damages);
+        }
     }
 
     function playEvolution(int $id) {

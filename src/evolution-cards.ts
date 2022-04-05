@@ -158,7 +158,7 @@ class EvolutionCards {
             case 64: return /*_TODOPU*/("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");            
             // Pandakaï
             case 131: return /*_TODOPU*/("Gain 6[Energy]. All other Monsters gain 3[Energy].");  
-            case 132: return /*_TODOPU*/("Play when you take control of Tokyo. [TODOPU Make all Monsters outside of Tokyo lose 2[Heart] TODOPU]. Gain 1[Energy], then leave Tokyo. No Monster takes your place.");
+            case 132: return /*_TODOPU*/("Play when you take control of Tokyo. Make all Monsters outside of Tokyo lose 2[Heart]. Gain 1[Energy], then leave Tokyo. No Monster takes your place.");
             case 133: return /*_TODOPU*/("Play when a player buys a Power card. They do not spend [Energy] and cannot buy that card this turn. Choose a different Power card they can afford to buy. They must purchase that card.");
             case 134: return /*_TODOPU*/("Lose 1[Star], gain 2[Energy] and 2[Heart].");
             case 135: return /*_TODOPU*/("Each time you roll at least [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], gain 2[Star] and take another turn.");
