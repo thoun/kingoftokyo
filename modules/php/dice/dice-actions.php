@@ -103,7 +103,7 @@ trait DiceActionTrait {
             throw new \BgaUserException('No Background Dweller card');
         }
 
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $intervention = $this->getDamageIntervention();
 
         $dice = $intervention->playersUsedDice->{$playerId}->dice;
         $rethrown = false;

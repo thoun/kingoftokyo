@@ -15,7 +15,11 @@ trait RedirectionTrait {
         }
 
         if (!$redirects) {
-            $this->jumpToState($nextStateId);
+            if ($nextStateId == -1) {
+                $this->removeStackedStateAndRedirect();
+            } else {
+                $this->jumpToState($nextStateId);
+            }
         }
 
         return $redirects;

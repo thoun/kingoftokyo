@@ -407,9 +407,9 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
 
         if ($this->isPowerUpExpansion()) {
-            $catNipCard = $this->getEvolutionsOfType($playerId, CAT_NIP_EVOLUTION)[0];
-            if ($catNipCard != null) {
-                $this->removeEvolution($playerId, $catNipCard);
+            $catNipCards = $this->getEvolutionsOfType($playerId, CAT_NIP_EVOLUTION)[0];
+            if (count($catNipCards) > 0) {
+                $this->removeEvolutions($playerId, $catNipCards);
             }
         }
 

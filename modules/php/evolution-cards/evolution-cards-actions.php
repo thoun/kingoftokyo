@@ -137,8 +137,8 @@ trait EvolutionCardsActionTrait {
 
         $this->playEvolutionToTable($playerId, $card, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+        $intervention = $this->getDamageIntervention();
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
   	

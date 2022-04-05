@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        //$this->debugSetEnergy(5);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -55,7 +55,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
+        $this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
@@ -168,7 +168,7 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493");
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(MEGA_PURR_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(ELECTRO_SCRATCH_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343494, false);
             /*$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);

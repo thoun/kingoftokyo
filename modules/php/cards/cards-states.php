@@ -73,11 +73,11 @@ trait CardsStateTrait {
     }
 
     function stCancelDamage() {
-        $this->stIntervention(CANCEL_DAMAGE_INTERVENTION);
+        $this->stIntervention(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
 
         if ($this->autoSkipImpossibleActions()) {
             
-            $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+            $intervention = $this->getDamageIntervention();
             
             $playerId = null;
             if ($intervention != null && $intervention->remainingPlayersId != null && count($intervention->remainingPlayersId) > 0) {

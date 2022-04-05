@@ -1034,6 +1034,7 @@ var EvolutionCards = /** @class */ (function () {
             // Cyber Kitty
             case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
             case 32: return /*_TODOPU*/ ("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
+            case 33: return /*_TODOPU*/ ("All other Monsters lose 1[Heart].");
             case 34: return /*_TODOPU*/ ("Play at the start of your turn. You only have one roll this turn. Double the result.");
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");

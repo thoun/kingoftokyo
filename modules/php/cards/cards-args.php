@@ -257,7 +257,7 @@ trait CardsArgTrait {
     }
 
     function argCancelDamage($playerId = null, $hasDice3 = false) {
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $intervention = $this->getDamageIntervention();
 
         if ($playerId == null) {
             $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;

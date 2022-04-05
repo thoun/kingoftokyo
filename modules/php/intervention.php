@@ -37,7 +37,7 @@ trait InterventionTrait {
             && count($intervention->remainingPlayersId) > 0
             && !$this->getPlayer($intervention->remainingPlayersId[0])->eliminated;
             
-        if ($keep && $interventionName === CANCEL_DAMAGE_INTERVENTION) {
+        if ($keep && strpos($interventionName, CANCEL_DAMAGE_INTERVENTION) == 0) {
             // we check if player still ca do intervention (in case player got mimic, and mimicked camouflage player dies before mimic player intervention)
 
             $playerId = $intervention->remainingPlayersId[0];
@@ -71,7 +71,7 @@ trait InterventionTrait {
             if (gettype($intervention->endState) == 'string') {
                 $this->gamestate->nextState($intervention->endState);
             } else if (gettype($intervention->endState) == 'integer') {
-                $this->jumpToState($intervention->endState);
+                $this->goToState($intervention->endState);
             } else {
                 throw new \Error('Invalid endState');
             }
@@ -123,5 +123,13 @@ trait InterventionTrait {
             }
         }
         return $damageNumber == 0 ? null : new Damage($playerId, $damageNumber, $damageDealerId, $cardType, $giveShrinkRayToken, $givePoisonSpitToken, $smasherPoints);
+    }
+
+    function getDamageIntervention() {
+        return $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
+    }
+
+    function setDamageIntervention($intervention) {
+        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), $intervention);
     }
 }

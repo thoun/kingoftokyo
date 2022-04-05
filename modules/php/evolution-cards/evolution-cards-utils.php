@@ -187,6 +187,9 @@ trait EvolutionCardsUtilTrait {
             case MEGA_PURR_EVOLUTION:
                 $this->applyMegaPurr($playerId);
                 break;
+            case ELECTRO_SCRATCH_EVOLUTION:
+                $this->applyElectroScratch($playerId);
+                break;
             // The King
             case GIANT_BANANA_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
@@ -536,5 +539,17 @@ trait EvolutionCardsUtilTrait {
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function applyElectroScratch(int $playerId) {
+        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+
+        $damages = [];
+        foreach ($otherPlayersIds as $otherPlayerId) {
+            $damages[] = new Damage($otherPlayerId, 1, $playerId, 3000 + ELECTRO_SCRATCH_EVOLUTION);
+        }
+
+        $this->addStackedState();
+        $this->goToState(-1, $damages);
     }
 }

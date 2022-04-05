@@ -577,7 +577,7 @@ trait CardsActionTrait {
             throw new \BgaUserException('No Camouflage card');
         }
 
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $intervention = $this->getDamageIntervention();
 
         $diceNumber = 0;
         foreach($intervention->damages as $damage) {
@@ -620,7 +620,7 @@ trait CardsActionTrait {
         }
 
         $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $cancelledDamage);
-        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+        $this->setDamageIntervention($intervention);
 
         $args = $this->argCancelDamage($playerId, $canRethrow3);
 
@@ -636,7 +636,7 @@ trait CardsActionTrait {
         }
 
         if ($canRethrow3) {
-            $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+            $this->setDamageIntervention($intervention);
             $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and can rethrow [dice3]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
@@ -658,7 +658,7 @@ trait CardsActionTrait {
         }
 
         if (!$stayOnState) {
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
@@ -672,7 +672,7 @@ trait CardsActionTrait {
                 $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
             }
         } else {            
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'stay', null, $intervention);
         }
     }
 
@@ -680,7 +680,7 @@ trait CardsActionTrait {
         $this->checkAction('useRapidHealingSync');
 
         $playerId = $this->getCurrentPlayerId();
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $intervention = $this->getDamageIntervention();
 
         $remainingDamage = 0;
         foreach($intervention->damages as $damage) {
@@ -706,7 +706,7 @@ trait CardsActionTrait {
             }
         }
         
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention); // must be set before apply damage, in case this player die
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention); // must be set before apply damage, in case this player die
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
                 $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
@@ -744,8 +744,8 @@ trait CardsActionTrait {
             'card_name' => WINGS_CARD,
         ]);
 
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+        $intervention = $this->getDamageIntervention();
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
@@ -759,7 +759,7 @@ trait CardsActionTrait {
 
     function applySkipWings(int $playerId) {
 
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $intervention = $this->getDamageIntervention();
 
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
@@ -767,7 +767,7 @@ trait CardsActionTrait {
             }
         }
 
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
 
         // we check we are still in cancelDamage (we could be redirected if player is eliminated)
         if ($this->gamestate->state()['name'] == 'cancelDamage') {
@@ -789,14 +789,14 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $intervention = $this->getDamageIntervention();
 
         $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $energy;
 
         $this->applyLoseEnergy($playerId, $energy, 0);
 
         $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $energy);
-        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+        $this->setDamageIntervention($intervention);
 
         $args = $this->argCancelDamage($playerId, false);
 
@@ -806,7 +806,7 @@ trait CardsActionTrait {
             $stayOnState = $args['canDoAction'];
         }
 
-        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+        $this->setDamageIntervention($intervention);
 
         $this->notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
@@ -817,7 +817,7 @@ trait CardsActionTrait {
         ]);
 
         if (!$stayOnState) {
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
@@ -831,7 +831,7 @@ trait CardsActionTrait {
                 $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
             }
         } else {            
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'stay', null, $intervention);
         }
     }
 
@@ -849,7 +849,7 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
-        $intervention = $this->getGlobalVariable(CANCEL_DAMAGE_INTERVENTION);
+        $intervention = $this->getDamageIntervention();
 
         $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $energy;
 
@@ -860,7 +860,7 @@ trait CardsActionTrait {
         }
 
         $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $energy);
-        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+        $this->setDamageIntervention($intervention);
 
         $args = $this->argCancelDamage($playerId, false);
 
@@ -870,7 +870,7 @@ trait CardsActionTrait {
             $stayOnState = $args['canDoAction'];
         }
 
-        $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION, $intervention);
+        $this->setDamageIntervention($intervention);
 
         $this->notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
@@ -881,7 +881,7 @@ trait CardsActionTrait {
         ]);
 
         if (!$stayOnState) {
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'next', null, $intervention);
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
@@ -895,7 +895,7 @@ trait CardsActionTrait {
                 $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
             }
         } else {            
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION, 'stay', null, $intervention);
+            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'stay', null, $intervention);
         }
     }
 
