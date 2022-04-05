@@ -272,16 +272,12 @@ trait DiceStateTrait {
             $diceCount = 0;
         }
         
-        $redirects = false;
         if ($diceCount > 0) {
             $playerId = $this->getActivePlayerId();
-            $redirects = $this->resolveSmashDice($playerId, $diceCount);
+            $this->resolveSmashDice($playerId, $diceCount);
         } else {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
-        }
-
-        if (!$redirects) {    
-            $this->gamestate->nextState('next');
+            $this->goToState(ST_RESOLVE_SKULL_DICE);
         }
     }
 
@@ -329,12 +325,6 @@ trait DiceStateTrait {
             }
         }
 
-        if (count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, $nextState);
-        }
-        
-        if (!$redirects) {
-            $this->gamestate->jumpToState($nextState);
-        }
+        $this->goToState($nextState, $damages);
     }
 }

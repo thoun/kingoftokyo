@@ -331,7 +331,7 @@ trait DiceUtilTrait {
     }
 
     
-    function resolveSmashDice(int $playerId, int $diceCount) { // return redirects
+    function resolveSmashDice(int $playerId, int $diceCount) {
 
         // ony here and not in stResolveDice, so player can heal and then activate Berserk
         if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
@@ -445,11 +445,7 @@ trait DiceUtilTrait {
             }
         }
 
-        $redirects = false;
-        if (count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, ST_RESOLVE_SKULL_DICE);
-        }
-        return $redirects;
+        $this->goToState(ST_RESOLVE_SKULL_DICE, $damages);
     }
 
     function getChangeDieCards(int $playerId) {

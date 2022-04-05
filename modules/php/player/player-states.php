@@ -244,29 +244,9 @@ trait PlayerStateTrait {
         $this->setGameStateValue('throwNumber', 1);
         $this->DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true, `discarded` = false");
 
-        $redirects = false;
         $redirectAfterStartTurn = $this->redirectAfterStartTurn($playerId);
 
-        if ($damages != null && count($damages) > 0) {
-            $this->updateKillPlayersScoreAux();
-            
-            $redirects = $this->resolveDamages($damages, $redirectAfterStartTurn);
-        }
-
-        /* TODOPU ? if ($damages != null && count($damages) > 0) {
-            $this->updateKillPlayersScoreAux();
-        }
-        $this->goToState($damages, $redirectAfterStartTurn);*/
-
-        if (!$redirects) {
-            $this->eliminatePlayers($playerId);
-            
-            if (!$this->getPlayer($playerId)->eliminated) {
-                $this->jumpToState($redirectAfterStartTurn);
-            } else {
-                $this->jumpToState(ST_NEXT_PLAYER);
-            }
-        }
+        $this->goToState($redirectAfterStartTurn, $damages);
     }
 
     function stInitialDiceRoll() {
@@ -321,14 +301,7 @@ trait PlayerStateTrait {
     function stLeaveTokyoApplyJets() {
         $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
         
-        $redirects = false;
-        if (count($jetsDamages) > 0) {
-            $redirects = $this->resolveDamages($jetsDamages, ST_ENTER_TOKYO_APPLY_BURROWING);
-        }
-
-        if (!$redirects) {
-            $this->gamestate->nextState('next');
-        }
+        $this->goToState(ST_ENTER_TOKYO_APPLY_BURROWING, $jetsDamages);
     }
     
     function stEnterTokyoApplyBurrowing() {
@@ -337,7 +310,6 @@ trait PlayerStateTrait {
         $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA();  
         $nextState = count($leaversWithUnstableDNA) >= 1 && $leaversWithUnstableDNA[0] != $playerId ? ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD : ST_ENTER_TOKYO;
 
-        $redirects = false;
         // burrowing
         $leaversWithBurrowing = $this->getLeaversWithBurrowing();  
         $burrowingDamages = [];  
@@ -347,16 +319,10 @@ trait PlayerStateTrait {
                 $burrowingDamages[] = new Damage($playerId, $countBurrowing, $leaverWithBurrowingId, BURROWING_CARD);
             }
         }
-        if (count($burrowingDamages) > 0) {
-            $redirects = $this->resolveDamages($burrowingDamages, $nextState);
-        }
         
         $this->setGlobalVariable(BURROWING_PLAYERS, []); 
-        
 
-        if (!$redirects) {
-            $this->jumpToState($nextState);
-        }
+        $this->goToState($nextState, $burrowingDamages);
     }
 
         
@@ -427,16 +393,14 @@ trait PlayerStateTrait {
 
         // apply poison
         $this->updateKillPlayersScoreAux();   
-        $redirects = false;
+        
         $countPoison = $this->getPlayerPoisonTokens($playerId);
+        $damages = [];
         if ($countPoison > 0) {
-            $damage = new Damage($playerId, $countPoison, 0, POISON_SPIT_CARD);
-            $redirects = $this->resolveDamages([$damage], 'endTurn');
+            $damages[] = new Damage($playerId, $countPoison, 0, POISON_SPIT_CARD);
         }
 
-        if (!$redirects) {
-            $this->gamestate->nextState('endTurn');
-        }
+        $this->goToState(ST_END_TURN, $damages);
     }
 
     function stEndTurn() {

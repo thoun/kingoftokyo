@@ -238,14 +238,9 @@ trait CardsActionTrait {
         }
         $this->setGameStateValue('newCardId', $newCardId);
 
-        $redirects = false;
         $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
 
-        if ($damages != null && count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, $redirectAfterBuyCard);
-        }
-
-        return [$redirects, $redirectAfterBuyCard];
+        $this->goToState($redirectAfterBuyCard, $damages);
     }
 
     function buyCard(int $id, int $from) {
@@ -283,12 +278,8 @@ trait CardsActionTrait {
             $this->setGlobalVariable(CARD_BEING_BOUGHT, new CardBeingBought($id, $playerId, $from));
             $this->jumpToState(ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT);
         } else {
-            $applyBuyCardResult = $this->applyBuyCard($playerId, $id, $from, $opportunist);
-            $redirects = $applyBuyCardResult[0];
-            if (!$redirects) {
-                $redirectAfterBuyCard = $applyBuyCardResult[1];
-                $this->jumpToState($redirectAfterBuyCard);
-            }
+            // applyBuyCard do the redirection
+            $this->applyBuyCard($playerId, $id, $from, $opportunist);
         }
     }
 
@@ -361,20 +352,10 @@ trait CardsActionTrait {
             return false;
         }
 
-        $redirects = false;
-
         $this->setGameStateValue(STATE_AFTER_MIMIC_CHOOSE, ST_RESOLVE_DICE);        
         $redirectAfterDrawCard = $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_RESOLVE_DICE;
 
-        if ($damages != null && count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, $redirectAfterDrawCard);
-        }
-
-        if (!$redirects) {
-            $this->jumpToState($redirectAfterDrawCard);
-        }
-
-        return $redirects;
+        $this->goToState($redirectAfterDrawCard, $damages);
     }
 
     function redirectAfterBuyCard(int $playerId, $newCardId, bool $mimic) { // return whereToRedirect

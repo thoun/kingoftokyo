@@ -519,7 +519,10 @@ trait UtilTrait {
         // if player is playing in multipleactiveplayer
         if ($playerIsActivePlayer) {
             $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
-        }        
+        }
+        if ($player->id == $currentTurnPlayerId || $playerIsActivePlayer) {
+            $this->goToState(ST_NEXT_PLAYER);
+        } 
 
         if (!$this->isTokyoEmpty(true) && !$this->tokyoBayUsed()) { // 5 players to 4, Tokyo Bay got a player but it shouldn't, so player is moved
             if ($this->isTokyoEmpty(false)) {

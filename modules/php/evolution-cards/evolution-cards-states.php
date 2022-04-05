@@ -52,10 +52,11 @@ trait EvolutionCardsStateTrait {
         $cardBeingBought = $this->getGlobalVariable(CARD_BEING_BOUGHT);
 
         if ($cardBeingBought->allowed) {
+            // applyBuyCard do the redirection
             $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, false);
+        } else {
+            $this->goToState(ST_PLAYER_BUY_CARD);
         }
-
-        $this->goToState(ST_PLAYER_BUY_CARD);
     }
     
 }

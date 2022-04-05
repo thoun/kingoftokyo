@@ -194,8 +194,7 @@ trait EvolutionCardsActionTrait {
             'card_name2' => $forbiddenCard->type,
         ]);
 
+        // applyBuyCard do the redirection
         $this->applyBuyCard($activePlayerId, $id, $from, false);
-
-        $this->goToState(ST_PLAYER_BUY_CARD);
     }
 }

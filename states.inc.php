@@ -464,7 +464,6 @@ $playerActionsGameStates = [
         "transitions" => [
             "next" => ST_RESOLVE_HEART_DICE,
             "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
-            "chooseMimickedCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE,
         ],
     ],
 

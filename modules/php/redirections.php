@@ -17,6 +17,8 @@ trait RedirectionTrait {
         if (!$redirects) {
             $this->jumpToState($nextStateId);
         }
+
+        return $redirects;
     }
 
     function redirectAfterStart() {
