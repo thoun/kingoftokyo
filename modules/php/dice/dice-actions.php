@@ -39,9 +39,16 @@ trait DiceActionTrait {
             }
         }
 
+        $oldValue = $die->value;
         $newValue = bga_rand(1, 6);
+        $die->value = $newValue;
         $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$die->id);
         $this->DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$die->id);
+
+        if (!$this->canRerollSymbol($playerId, getDieFace($die))) {
+            $die->locked = true;
+            $this->DbQuery( "UPDATE dice SET `locked` = true where `dice_id` = ".$die->id );
+        }
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         $this->notifyAllPlayers('rethrow3', $message, [
@@ -49,7 +56,7 @@ trait DiceActionTrait {
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $cardName,
             'dieId' => $die->id,
-            'die_face_before' => $this->getDieFaceLogName($die->value, 0),
+            'die_face_before' => $this->getDieFaceLogName($oldValue, 0),
             'die_face_after' => $this->getDieFaceLogName($newValue, 0),
         ]);
 
