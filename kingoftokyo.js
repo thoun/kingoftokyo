@@ -1033,6 +1033,7 @@ var EvolutionCards = /** @class */ (function () {
             case 27: return /*_TODOPU*/ ("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             // Cyber Kitty
             case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
+            case 32: return /*_TODOPU*/ ("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
             case 34: return /*_TODOPU*/ ("Play at the start of your turn. You only have one roll this turn. Double the result.");
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
@@ -3872,8 +3873,6 @@ var KingOfTokyo = /** @class */ (function () {
                 var argsCancelDamage = args;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
                 break;
-            case 'answerQuestion':
-                this.onUpdateActionButtonsAnswerQuestion(args);
         }
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
@@ -4065,6 +4064,8 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'cancelDamage':
                     this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'answerQuestion':
+                    this.onUpdateActionButtonsAnswerQuestion(args);
             }
         }
     };
@@ -4094,6 +4095,15 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
                 }
                 break;
+            case 'MegaPurr':
+                var playerId_2 = this.getPlayerId();
+                var SYMBOL_AS_STRING_2 = ['[Energy]', '[Star]'];
+                [5, 0].forEach(function (symbol, symbolIndex) {
+                    _this.addActionButton("giveSymbol_button" + symbol, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_2[symbolIndex] })), function () { return _this.giveSymbol(symbol); });
+                    if (symbol == 5 && !question.args["canGive" + symbol].includes(playerId_2)) {
+                        dojo.addClass("giveSymbol_button" + symbol, 'disabled');
+                    }
+                });
         }
     };
     ///////////////////////////////////////////////////
@@ -4703,6 +4713,14 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('giveSymbolToActivePlayer', {
+            symbol: symbol
+        });
+    };
+    KingOfTokyo.prototype.giveSymbol = function (symbol) {
+        if (!this.checkAction('giveSymbol')) {
+            return;
+        }
+        this.takeAction('giveSymbol', {
             symbol: symbol
         });
     };

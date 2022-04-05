@@ -197,4 +197,17 @@ trait EvolutionCardsActionTrait {
         // applyBuyCard do the redirection
         $this->applyBuyCard($activePlayerId, $id, $from, false);
     }
+  	
+    public function giveSymbol(int $symbol) {
+        $this->checkAction('giveSymbol');  
+
+        $playerId = $this->getCurrentPlayerId(); 
+
+        $question = $this->getQuestion();
+        $evolutionPlayerId = $question->args->playerId;
+        
+        $this->applyGiveSymbols([$symbol], $playerId, $evolutionPlayerId, 3000 + MEGA_PURR_EVOLUTION);
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
 }

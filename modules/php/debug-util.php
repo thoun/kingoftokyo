@@ -17,15 +17,15 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(5);
-        $this->debugSetPoints(5);
-        $this->debugSetHealth(5);
+        //$this->debugSetEnergy(5);
+        //$this->debugSetPoints(5);
+        //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
         //$this->debugSetPlayerPoints(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
-        //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2");
+        //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
@@ -103,13 +103,13 @@ trait DebugUtilTrait {
 
         // halloween
         if ($this->isHalloweenExpansion()) {
-            //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
+            $this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
             //$this->debugSetCardInHand(GHOST_CARD, 2343492);
             $this->debugSetCardInHand(CLOWN_CARD, 2343492);
             //$this->debugSetCardInHand(DEVIL_CARD, 2343493);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-            $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+            $this->debugSetCardInHand(PRINCESS_CARD, 2343494);
             //$this->debugSetCardInHand(WITCH_CARD, 2343494);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
             //$this->debugSetCardInHand(PIRATE_CARD, 2343494);
@@ -125,7 +125,7 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
             //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
-            $this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
@@ -168,7 +168,8 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493");
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(MEGA_PURR_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343494, false);
             /*$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
@@ -178,7 +179,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);*/
-            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
         }
 
         // player order
@@ -187,7 +188,7 @@ trait DebugUtilTrait {
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
-        //$this->eliminatePlayer(2343497);
+        //$this->eliminatePlayer(2343496);
     }
 
     function debugSetupBeforePlaceCard() {

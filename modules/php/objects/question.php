@@ -8,7 +8,7 @@ class Question {
     public string $descriptionmyturn;
     public array $playersIds;
     public int $stateIdAfter;
-    public $args;
+    public $args; // if special array key "_args" is set, it's given to state args
 
     public function __construct(
         string $code,

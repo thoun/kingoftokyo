@@ -60,11 +60,17 @@ trait EvolutionCardsArgTrait {
     }
 
     function argAnswerQuestion() {
-        $question = $this->getGlobalVariable(QUESTION);
+        $question = $this->getQuestion();
 
-        return [
+        $args = [
             'question' => $question,
         ];
+
+        if ($question->args->{'_args'}) {
+            $args = array_merge($args, (array)$question->args->{'_args'});
+        }
+
+        return $args;
     }
 
 }

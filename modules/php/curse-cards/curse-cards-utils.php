@@ -93,7 +93,7 @@ trait CurseCardsUtilTrait {
                         ST_RESOLVE_DICE,
                         []
                     );
-                    $this->setGlobalVariable(QUESTION, $question);
+                    $this->setQuestion($question);
                     $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
                     $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
                 } else {
@@ -208,7 +208,7 @@ trait CurseCardsUtilTrait {
                             'canLoseEnergy' => $playerEnergy >= 3,
                         ]
                     );
-                    $this->setGlobalVariable(QUESTION, $question);
+                    $this->setQuestion($question);
                     $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
                     $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
                 } else {

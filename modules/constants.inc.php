@@ -1,4 +1,7 @@
 <?php
+
+if(!defined('MAX_POINT')) {
+
 define('MAX_POINT', 20);
 define('START_LIFE', 10);
 
@@ -152,6 +155,7 @@ define('BURROWING_PLAYERS', 'BurrowingPlayers');
 define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
 define('QUESTION', 'Question');
 define('CARD_BEING_BOUGHT', 'CardBeingBought');
+define('STACKED_STATES', 'StackedStates');
 
 /*
  * Cards
@@ -388,4 +392,5 @@ Destructive Wave (Wave Of Ruin)	Temporary Evolution
 Healing Rain	Temporary Evolution
 */
 
+}
 ?>

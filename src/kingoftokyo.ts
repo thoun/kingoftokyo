@@ -868,8 +868,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const argsCancelDamage = args as EnteringCancelDamageArgs;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
                 break;
-            case 'answerQuestion':
-                this.onUpdateActionButtonsAnswerQuestion(args);
         }
 
         if((this as any).isCurrentPlayerActive()) {
@@ -1073,6 +1071,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'cancelDamage':
                     this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
+
+                case 'answerQuestion':
+                    this.onUpdateActionButtonsAnswerQuestion(args);
             }
 
         }
@@ -1106,6 +1107,16 @@ class KingOfTokyo implements KingOfTokyoGame {
                     dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
                 }
                 break;
+
+            case 'MegaPurr':
+                const playerId = this.getPlayerId();
+                const SYMBOL_AS_STRING = ['[Energy]', '[Star]'];
+                [5,0].forEach((symbol, symbolIndex) => {
+                    (this as any).addActionButton(`giveSymbol_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbol(symbol));
+                    if (symbol == 5 && !question.args[`canGive${symbol}`].includes(playerId)) {
+                        dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
+                    }
+                });
         }
     }
     
@@ -1870,6 +1881,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('giveSymbolToActivePlayer', {
+            symbol
+        });
+    }
+
+    public giveSymbol(symbol: number) {
+        if(!(this as any).checkAction('giveSymbol')) {
+            return;
+        }
+
+        this.takeAction('giveSymbol', {
             symbol
         });
     }

@@ -58,5 +58,15 @@ trait EvolutionCardsStateTrait {
             $this->goToState(ST_PLAYER_BUY_CARD);
         }
     }
+
+    function stAfterAnswerQuestion() {
+        $question = $this->getQuestion();
+
+        if ($question->code === 'MegaPurr') {
+            $this->removeStackedStateAndRedirect();
+        } else {
+            throw new \BgaVisibleSystemException("Question code not handled: ".$question->code);
+        }
+    }
     
 }

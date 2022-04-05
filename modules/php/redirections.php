@@ -61,7 +61,7 @@ trait RedirectionTrait {
                     ST_START_TURN,
                     [ 'canTake' => $unusedBambooSupplyCard->tokens > 0 ]
                 );
-                $this->setGlobalVariable(QUESTION, $question);
+                $this->setQuestion($question);
                 $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
 
                 return ST_MULTIPLAYER_ANSWER_QUESTION;

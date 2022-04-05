@@ -16,6 +16,38 @@ trait EvolutionCardsUtilTrait {
     //////////// Utility functions
     ////////////
 
+    function getStackedStates() {
+        $states = $this->getGlobalVariable(STACKED_STATES, true);
+        return $states == null ? [] : $states;
+    }
+
+    function addStackedState() {
+        $states = $this->getStackedStates();
+        $states[] = $this->gamestate->state_id();
+        $this->setGlobalVariable(STACKED_STATES, $states);
+    }
+
+    function removeStackedStateAndRedirect() {
+        $states = $this->getStackedStates();
+        if (count($states) < 1) {
+            throw new \Exception('No stacked state to remove');
+        }
+        $this->goToState(array_pop($states));
+        $this->setGlobalVariable(STACKED_STATES, $states);
+    }
+
+    function getStackedStateSuffix() {
+        $states = $this->getStackedStates();
+        return count($states) > 0 ? ''.count($states) : '';
+    }
+
+    function getQuestion() {
+        return $this->getGlobalVariable(QUESTION.$this->getStackedStateSuffix());
+    }
+
+    function setQuestion(Question $question) {
+        $this->setGlobalVariable(QUESTION.$this->getStackedStateSuffix(), $question);
+    }
 
     function initEvolutionCards(array $affectedPlayersMonsters) {
         foreach($this->MONSTERS_WITH_POWER_UP_CARDS as $monster) {
@@ -152,6 +184,9 @@ trait EvolutionCardsUtilTrait {
                 $this->setEvolutionTokens($playerId, $card, 3);
                 break;
             // Cyber Kitty
+            case MEGA_PURR_EVOLUTION:
+                $this->applyMegaPurr($playerId);
+                break;
             // The King
             case GIANT_BANANA_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
@@ -412,7 +447,7 @@ trait EvolutionCardsUtilTrait {
                 'buyCardArgs' => $buyCardArgs,
             ]
         );
-        $this->setGlobalVariable(QUESTION, $question);
+        $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
         $this->removeEvolution($playerId, $card);
 
@@ -469,5 +504,37 @@ trait EvolutionCardsUtilTrait {
         }
 
         return $cards;
+    }
+
+    function applyMegaPurr(int $playerId) {
+        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->score > 0);
+
+        if (count($otherPlayers) == 0) {
+            return;
+        }
+
+        $otherPlayersIds = array_map(fn($player) => $player->id, $otherPlayers);
+
+        $canGiveEnergy = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->energy > 0)));
+        $canGiveStar = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->score > 0)));
+
+        $question = new Question(
+            'MegaPurr',
+            /* client TODOPU translate(*/'Other monsters must give [Energy] or [Star] to ${player_name}'/*)*/,
+            /* client TODOPU translate(*/'${you} must give [Energy] or [Star] to ${player_name}'/*)*/,
+            [$otherPlayersIds],
+            ST_AFTER_ANSWER_QUESTION,
+            [ 
+                'playerId' => $playerId,
+                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
+                'canGive5' => $canGiveEnergy,
+                'canGive0' => $canGiveStar,
+            ]
+        );
+
+        $this->addStackedState();
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 }
