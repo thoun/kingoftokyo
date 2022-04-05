@@ -100,5 +100,9 @@ trait RedirectionTrait {
     function redirectAfterResolveDice() {
         return ST_RESOLVE_NUMBER_DICE;
     }
+
+    function redirectAfterHalfMovePhase() {
+        return ST_ENTER_TOKYO;
+    }
     
 }

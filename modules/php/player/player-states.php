@@ -303,12 +303,29 @@ trait PlayerStateTrait {
         
         $this->goToState(ST_ENTER_TOKYO_APPLY_BURROWING, $jetsDamages);
     }
+
+    function stHalfMovePhase() {
+        if (!$this->isPowerUpExpansion()) {
+            $this->goToState($this->redirectAfterHalfMovePhase());
+            return;
+        }
+
+        $playerId = $this->getActivePlayerId();
+        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+        $couldPlay = array_values(array_filter($otherPlayersIds, fn($playerId) => $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE)));
+
+        if (count($couldPlay) > 0) {
+            $this->gamestate->setPlayersMultiactive($couldPlay, 'next');
+        } else {
+            $this->goToState($this->redirectAfterHalfMovePhase());
+        }
+    }
     
     function stEnterTokyoApplyBurrowing() {
         $playerId = $this->getActivePlayerId();
 
         $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA();  
-        $nextState = count($leaversWithUnstableDNA) >= 1 && $leaversWithUnstableDNA[0] != $playerId ? ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD : ST_ENTER_TOKYO;
+        $nextState = count($leaversWithUnstableDNA) >= 1 && $leaversWithUnstableDNA[0] != $playerId ? ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD : ST_MULTIPLAYER_HALF_MOVE_PHASE;
 
         // burrowing
         $leaversWithBurrowing = $this->getLeaversWithBurrowing();  
@@ -331,12 +348,12 @@ trait PlayerStateTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        if (!$this->getPlayer($playerId)->eliminated && !$this->inTokyo($playerId)) { // enter only if burrowing doesn't kill player
-            if ($this->isTokyoEmpty(false)) {
-                $this->moveToTokyo($playerId, false);
-            } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
-                $this->moveToTokyo($playerId, true);
-            }
+        $preventEnterTokyo = boolval($this->getGameStateValue(PREVENT_ENTER_TOKYO));
+        if (!$this->getPlayer($playerId)->eliminated && !$this->inTokyo($playerId) && !$preventEnterTokyo) { // enter only if burrowing doesn't kill player
+            $this->moveToTokyoFreeSpot($playerId);
+        }        
+        if ($preventEnterTokyo) {
+            $this->setGameStateValue(PREVENT_ENTER_TOKYO, 0);
         }
 
         if ($this->isHalloweenExpansion()) { 

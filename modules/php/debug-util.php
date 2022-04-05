@@ -165,11 +165,11 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
-            //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492");
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493");
+            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(EATS_SHOOTS_AND_LEAVES_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343494, false);
+            $this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             /*$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);

@@ -49,6 +49,7 @@ define('ST_MULTIPLAYER_CANCEL_DAMAGE', 38);
 define('ST_MULTIPLAYER_LEAVE_TOKYO', 40);
 define('ST_LEAVE_TOKYO_APPLY_JETS', 41);
 define('ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD', 42);
+define('ST_MULTIPLAYER_HALF_MOVE_PHASE', 43);
 define('ST_ENTER_TOKYO_APPLY_BURROWING', 45);
 define('ST_ENTER_TOKYO', 46);
 
@@ -139,6 +140,7 @@ define('FALSE_BLESSING_USED_DIE', 'FalseBlessingUsedDie');
 define('DICE_NUMBER', 'DiceNumber');
 define('RAGING_FLOOD_EXTRA_DIE_SELECTED', 'RagingFloodExtraDieSelected');
 define('MUTANT_EVOLUTION_TURN', 'MutantEvolutionTurn');
+define('PREVENT_ENTER_TOKYO', 'PreventEnterTokyo');
 
 /*
  * Global variables

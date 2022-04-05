@@ -108,6 +108,10 @@ trait EvolutionCardsUtilTrait {
             return false;
         }
 
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE) && $stateId != ST_MULTIPLAYER_HALF_MOVE_PHASE) {
+            return false;
+        }
+
         // cards to player when card is bought
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) && $stateId != ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT) {
             if ($cardType == BAMBOOZLE_EVOLUTION) {
@@ -194,7 +198,14 @@ trait EvolutionCardsUtilTrait {
                     $damages[] = new Damage($otherPlayerId, 1, $playerId, 3000 + ELECTRO_SCRATCH_EVOLUTION);
                 }
                 return $damages;
+            case FELINE_MOTOR_EVOLUTION:
+                $this->moveToTokyoFreeSpot($playerId);
+                $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
+                break;
             // The King
+            case MONKEY_RUSH_EVOLUTION:
+                $this->moveToTokyoFreeSpot($playerId);
+                break;
             case GIANT_BANANA_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;

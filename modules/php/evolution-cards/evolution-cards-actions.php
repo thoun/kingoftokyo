@@ -45,6 +45,14 @@ trait EvolutionCardsActionTrait {
         $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
     }
 
+    function skipHalfMovePhase() {
+        $this->checkAction('skipHalfMovePhase');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
+
     function applyChooseEvolutionCard(int $playerId, int $id) {
         $topCards = $this->pickEvolutionCards($playerId);
         $card = $this->array_find($topCards, fn($topCard) => $topCard->id == $id);

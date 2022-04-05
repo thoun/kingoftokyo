@@ -117,6 +117,7 @@ class KingOfTokyo extends Table {
             RAGING_FLOOD_EXTRA_DIE_SELECTED => 35,
             PANDA_EXPRESS_EXTRA_TURN => 36,
             MUTANT_EVOLUTION_TURN => 37,
+            PREVENT_ENTER_TOKYO => 38,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -475,11 +476,7 @@ class KingOfTokyo extends Table {
 
         if ($isPowerUpExpansion) {
             $result['EVOLUTION_CARDS_TYPES'] = $this->EVOLUTION_CARDS_TYPES;
-        }
-
-        for ($h=12; $h<=18; $h++) {
-            $result[''.$h] = $this->releaseDatePassed("2022-04-04T$h:00:00", 2);
-        }        
+        }      
 
         return $result;
     }

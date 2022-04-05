@@ -1036,9 +1036,11 @@ var EvolutionCards = /** @class */ (function () {
             case 32: return /*_TODOPU*/ ("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
             case 33: return /*_TODOPU*/ ("All other Monsters lose 1[Heart].");
             case 34: return /*_TODOPU*/ ("Play at the start of your turn. You only have one roll this turn. Double the result.");
+            case 36: return /*_TODOPU*/ ("During other Monsters' movement phases, if Tokyo is empty, you can take control of it instead of the Monster whose turn it is.");
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
             // The King
+            case 41: return /*_TODOPU*/ ("Play when a Monster who controls Tokyo leaves or is eliminated. Take control of Tokyo.");
             case 42: return /*_TODOPU*/ ("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
             case 44: return /*_TODOPU*/ ("Gain 2[Heart].");
             case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");

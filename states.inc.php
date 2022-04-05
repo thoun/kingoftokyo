@@ -590,10 +590,7 @@ $playerActionsGameStates = [
         "description" => "",
         "type" => "game",
         "action" => "stEnterTokyoApplyBurrowing",
-        "transitions" => [
-            "next" => ST_ENTER_TOKYO,
-            "exchangeCard" => ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD,
-        ],
+        "transitions" => [],
     ],
 
     ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD => [
@@ -605,8 +602,20 @@ $playerActionsGameStates = [
         "args" => "argLeaveTokyoExchangeCard",
         "possibleactions" => [ "exchangeCard", "skipExchangeCard" ],
         "transitions" => [
-            "next" => ST_ENTER_TOKYO,
+            "next" => ST_MULTIPLAYER_HALF_MOVE_PHASE,
         ],
+    ],
+
+    ST_MULTIPLAYER_HALF_MOVE_PHASE => [
+        "name" => "halfMovePhase",
+        "description" => '',/* client TODOPU translate('Some players can activate an Evolution card'), */
+        "descriptionmyturn" => '', /* client TODOPU translate('${you} can activate an Evolution card'), */
+        "type" => "multipleactiveplayer",
+        "action" => "stHalfMovePhase",
+        "possibleactions" => [ "skipHalfMovePhase" ],
+        "transitions" => [
+            'next' => ST_ENTER_TOKYO,
+        ],        
     ],
 
     ST_ENTER_TOKYO => [

@@ -318,6 +318,14 @@ trait UtilTrait {
         }
     }
 
+    function moveToTokyoFreeSpot(int $playerId) {
+        if ($this->isTokyoEmpty(false)) {
+            $this->moveToTokyo($playerId, false);
+        } else if ($this->tokyoBayUsed() && $this->isTokyoEmpty(true)) {
+            $this->moveToTokyo($playerId, true);
+        }
+    }
+
     function leaveTokyo(int $playerId, bool $force, /*int | null*/ $useCard = null) {
         if (!$force && !$this->canYieldTokyo($playerId)) {
             return false;
