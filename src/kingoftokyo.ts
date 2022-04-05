@@ -1028,6 +1028,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
 
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
+                    break;                
+                case 'halfMovePhase':
+                    (this as any).addActionButton('skipHalfMovePhase_button', _("Skip"), () => this.skipHalfMovePhase());
                     break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
@@ -1873,6 +1876,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipBeforeStartTurn');
+    }
+
+    public skipHalfMovePhase() {
+        if(!(this as any).checkAction('skipHalfMovePhase')) {
+            return;
+        }
+
+        this.takeAction('skipHalfMovePhase');
     }
 
     public giveSymbolToActivePlayer(symbol: number) {

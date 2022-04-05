@@ -4031,6 +4031,9 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
+                case 'halfMovePhase':
+                    this.addActionButton('skipHalfMovePhase_button', _("Skip"), function () { return _this.skipHalfMovePhase(); });
+                    break;
                 case 'buyCard':
                     var argsBuyCard = args;
                     if (argsBuyCard.canUseAdaptingTechnology) {
@@ -4710,6 +4713,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipBeforeStartTurn');
+    };
+    KingOfTokyo.prototype.skipHalfMovePhase = function () {
+        if (!this.checkAction('skipHalfMovePhase')) {
+            return;
+        }
+        this.takeAction('skipHalfMovePhase');
     };
     KingOfTokyo.prototype.giveSymbolToActivePlayer = function (symbol) {
         if (!this.checkAction('giveSymbolToActivePlayer')) {

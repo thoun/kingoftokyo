@@ -12,8 +12,8 @@ trait PlayerStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stBeforeStartTurn() {        
-        $playerId = $this->getActivePlayerId();
+    function stBeforeStartTurn() {
+        $playerId = $this->getActivePlayerId();        
 
         $this->DbQuery("DELETE FROM `turn_damages` WHERE 1");
         $this->setGameStateValue(EXTRA_ROLLS, 0);
@@ -28,6 +28,7 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(USED_WINGS, []);
         $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, []);
         $this->setGlobalVariable(CARD_BEING_BOUGHT, null);
+        $this->setGlobalVariable(STARTED_TURN_IN_TOKYO, $this->getPlayersIdsInTokyo());
 
         if (!$this->isPowerUpExpansion() || !$this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
             $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
@@ -424,7 +425,7 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
 
         if ($this->isPowerUpExpansion()) {
-            $catNipCards = $this->getEvolutionsOfType($playerId, CAT_NIP_EVOLUTION)[0];
+            $catNipCards = $this->getEvolutionsOfType($playerId, CAT_NIP_EVOLUTION);
             if (count($catNipCards) > 0) {
                 $this->removeEvolutions($playerId, $catNipCards);
             }

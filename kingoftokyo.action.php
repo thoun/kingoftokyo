@@ -76,6 +76,14 @@
         self::ajaxResponse();
     }
   	
+    public function skipHalfMovePhase() {
+        self::setAjaxMode();
+
+        $this->game->skipHalfMovePhase();
+
+        self::ajaxResponse();
+    }
+  	
     public function giveSymbolToActivePlayer() {
         self::setAjaxMode();
 

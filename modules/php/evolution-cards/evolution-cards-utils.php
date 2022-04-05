@@ -125,6 +125,12 @@ trait EvolutionCardsUtilTrait {
             case SIMIAN_SCAMPER_EVOLUTION:
             case DETACHABLE_TAIL_EVOLUTION:
                 return false;
+            case FELINE_MOTOR_EVOLUTION:
+                $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
+                if (in_array($playerId, $startedTurnInTokyo)) {
+                    throw new \BgaUserException(self::_("You started your turn in Tokyo"));
+                }
+                break;
             case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
                 return $this->inTokyo($playerId); // TODOPU use only when you enter Tokyo
             case EATS_SHOOTS_AND_LEAVES_EVOLUTION:

@@ -158,6 +158,7 @@ define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
 define('QUESTION', 'Question');
 define('CARD_BEING_BOUGHT', 'CardBeingBought');
 define('STACKED_STATES', 'StackedStates');
+define('STARTED_TURN_IN_TOKYO', 'StartedTurnInTokyo');
 
 /*
  * Cards
