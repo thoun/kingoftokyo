@@ -293,6 +293,14 @@ trait PlayerStateTrait {
         }
 
         if (count($aliveSmashedPlayersInTokyo) > 0) {
+            if ($this->isPowerUpExpansion()) {
+                $playerId = $this->getActivePlayerId();
+                $countChestThumping = $this->countEvolutionOfType($playerId, CHEST_THUMPING_EVOLUTION);
+                if ($countChestThumping > 0) {
+                    $aliveSmashedPlayersInTokyo[] = $playerId;
+                }
+            }
+
             $this->gamestate->setPlayersMultiactive($aliveSmashedPlayersInTokyo, 'resume', true);
         } else {
             $this->gamestate->nextState('resume');

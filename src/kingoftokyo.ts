@@ -1012,19 +1012,29 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");
                     const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
-                    const playerHasJets = argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId());
-                    const playerHasSimianScamper = argsLeaveTokyo.simianScamperPlayers?.includes(this.getPlayerId());
-                    if (playerHasJets || playerHasSimianScamper) {
-                        label += formatTextIcons(` (- ${argsLeaveTokyo.jetsDamage} [heart])`);
-                    }
-                    (this as any).addActionButton('stayInTokyo_button', label, () => this.onStayInTokyo());
-                    (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), () => this.onLeaveTokyo(playerHasJets ? 24 : undefined));
-                    if (playerHasSimianScamper) {
-                        (this as any).addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(42, 'text-only') }), () => this.onLeaveTokyo(3042));
-                    }
-                    if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
-                        this.startActionTimer('stayInTokyo_button', 5);
-                        dojo.addClass('leaveTokyo_button', 'disabled');
+                    if (argsLeaveTokyo.activePlayerId == this.getPlayerId()) {
+                        if (argsLeaveTokyo.smashedPlayersInTokyo) {
+                            argsLeaveTokyo.smashedPlayersInTokyo.forEach(playerId => {
+                                const player = this.gamedatas.players[playerId];
+                                (this as any).addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(/*TODOPU_*/("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
+                            });
+                            (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only')}), () => this.skipChestThumping());
+                        }
+                    } else {
+                        const playerHasJets = argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId());
+                        const playerHasSimianScamper = argsLeaveTokyo.simianScamperPlayers?.includes(this.getPlayerId());
+                        if (playerHasJets || playerHasSimianScamper) {
+                            label += formatTextIcons(` (- ${argsLeaveTokyo.jetsDamage} [heart])`);
+                        }
+                        (this as any).addActionButton('stayInTokyo_button', label, () => this.onStayInTokyo());
+                        (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), () => this.onLeaveTokyo(playerHasJets ? 24 : undefined));
+                        if (playerHasSimianScamper) {
+                            (this as any).addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(42, 'text-only') }), () => this.onLeaveTokyo(3042));
+                        }
+                        if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
+                            this.startActionTimer('stayInTokyo_button', 5);
+                            dojo.addClass('leaveTokyo_button', 'disabled');
+                        }
                     }
                     break;
 
@@ -2608,7 +2618,25 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.takeAction('gazeOfTheSphinxLoseEnergy');
     }
+    
+    public useChestThumping(id: number) {
+        if(!(this as any).checkAction('useChestThumping')) {
+            return;
+        }
 
+        this.takeAction('useChestThumping', {
+            id
+        });
+    }
+    
+    public skipChestThumping() {
+        if(!(this as any).checkAction('skipChestThumping')) {
+            return;
+        }
+
+        this.takeAction('skipChestThumping');
+    }
+    
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
@@ -2804,7 +2832,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         dojo.removeClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
         if (notif.args.playerId == this.getPlayerId()) {
             this.removeAutoLeaveUnderButton();
-        }        
+        }
+
+        if (this.getStateName() == 'leaveTokyo') {
+            const leaveTokyoArgs = this.gamedatas.gamestate.args as EnteringLeaveTokyoArgs;
+            leaveTokyoArgs.smashedPlayersInTokyo = leaveTokyoArgs.smashedPlayersInTokyo.filter(playerId => playerId != notif.args.playerId);
+        }
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {

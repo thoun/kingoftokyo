@@ -45,17 +45,30 @@ trait PlayerArgTrait {
             }
         }
 
-        return [
+        $activePlayerId = $this->getActivePlayerId();
+        $args = [
             'jetsPlayers' => $jetsPlayers,
             'simianScamperPlayers' => $simianScamperPlayers,
             'jetsDamage' => $jetsDamage,
             '_private' => [ 
-                $this->getActivePlayerId() => [       // not "active" as it actually means current
+                $this->getActivePlayerId() => [
                     'skipBuyPhase' => boolval($this->getGameStateValue(SKIP_BUY_PHASE)),
                 ]
             ],
             'canYieldTokyo' => $canYieldTokyo,
+            'activePlayerId' => $activePlayerId,
         ];
+
+        if ($isPowerUpExpansion) {
+            $countChestThumping = $this->countEvolutionOfType($activePlayerId, CHEST_THUMPING_EVOLUTION);
+            if ($countChestThumping > 0) {
+                $args = array_merge($args, [
+                    'smashedPlayersInTokyo' => $smashedPlayersInTokyo,
+                ]);
+            }
+        }
+
+        return $args;
     }
 
 }

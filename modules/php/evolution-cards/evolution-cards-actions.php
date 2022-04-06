@@ -236,4 +236,21 @@ trait EvolutionCardsActionTrait {
 
         $this->goToState(-1);
     }
+  	
+    public function useChestThumping(int $playerId) {
+        $this->checkAction('useChestThumping');
+
+        $this->applyActionLeaveTokyo($playerId, null, true);
+        $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+
+        $this->goToState(ST_MULTIPLAYER_LEAVE_TOKYO);
+    }
+  	
+    public function skipChestThumping() {
+        $this->checkAction('skipChestThumping');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'resume');
+    }
 }

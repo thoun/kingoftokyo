@@ -789,5 +789,23 @@
 
         self::ajaxResponse();
     }
+  	
+    public function useChestThumping() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->useChestThumping($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipChestThumping() {
+        self::setAjaxMode();
+
+        $this->game->skipChestThumping();
+
+        self::ajaxResponse();
+    }
 
 }

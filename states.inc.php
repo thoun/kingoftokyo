@@ -568,9 +568,8 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stLeaveTokyo",
         "args" => "argLeaveTokyo",
-        "possibleactions" => [ "stay", "leave" ],
+        "possibleactions" => [ "stay", "leave", "useChestThumping", "skipChestThumping" ],
         "transitions" => [
-            "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
             "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
         ],
     ],

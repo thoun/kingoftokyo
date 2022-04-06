@@ -65,9 +65,9 @@ trait PlayerActionTrait {
         $this->applyActionLeaveTokyo($playerId, $useCard);
     }
 
-    function applyActionLeaveTokyo(int $playerId, /*int | null*/ $useCard) {
+    function applyActionLeaveTokyo(int $playerId, /*int | null*/ $useCard, $force = false) {
         
-        if ($this->leaveTokyo($playerId, false, $useCard)) {
+        if ($this->leaveTokyo($playerId, $force, $useCard)) {
             $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
         }
     

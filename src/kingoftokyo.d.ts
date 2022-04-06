@@ -352,6 +352,8 @@ interface EnteringLeaveTokyoArgs {
         skipBuyPhase: boolean;
     };
     canYieldTokyo: { [playerId: number]: boolean };
+    smashedPlayersInTokyo: number[];
+    activePlayerId: number;
 }
 
 interface EnteringChooseEvolutionCardArgs {

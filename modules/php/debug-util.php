@@ -15,11 +15,11 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
-        //$this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
-        $this->debugSetHealth(5);
+        //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -175,16 +175,16 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
-            /*$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
-            $this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
-            $this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
+            //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);*/
+            //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
+            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(ALPHA_MALE_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(CHEST_THUMPING_EVOLUTION, 2343492, true);
         }
 
         // player order
