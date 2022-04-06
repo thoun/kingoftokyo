@@ -144,6 +144,7 @@ class EvolutionCards {
             case 41: return /*_TODOPU*/("Play when a Monster who controls Tokyo leaves or is eliminated. Take control of Tokyo.");
             case 42: return /*_TODOPU*/("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
             case 44: return /*_TODOPU*/("Gain 2[Heart].");
+            case 46: return /*_TODOPU*/("If you wound at least one Monster with your [diceSmash], gain 1[Star].");
             case 47: return /*_TODOPU*/("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
             case 48: return /*_TODOPU*/("Play when you enter Tokyo. Gain 1[Star] at the end of each Monster’s turn (including yours). Discard this card and lose all your [Star] if you leave Tokyo.");
             // Gigazaur 

@@ -709,6 +709,11 @@ trait UtilTrait {
             if ($countHeatVision > 0) {
                 $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
             }
+            $alphaMaleEvolutions = $this->getEvolutionsOfType($damageDealerId, ALPHA_MALE_EVOLUTION);
+            if (count($alphaMaleEvolutions) > 0 && !$this->isUsedCard(3000 + $alphaMaleEvolutions[0]->id)) {
+                $this->applyGetPoints($damageDealerId, count($alphaMaleEvolutions), 3000 + ALPHA_MALE_EVOLUTION);
+                $this->setUsedCard(3000 + $alphaMaleEvolutions[0]->id);
+            }
         }
 
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
