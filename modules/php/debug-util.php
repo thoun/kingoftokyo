@@ -172,18 +172,18 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(JUNGLE_FRENZY_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
+            //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
-            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
-            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
+            //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
+            //$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(CHEST_THUMPING_EVOLUTION, 2343492, true);
         }
 
