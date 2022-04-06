@@ -916,6 +916,18 @@ trait CardsUtilTrait {
             return false; // same location & no Nova card for smashing player
         }
 
+        if (!$this->canUseSymbol($activePlayerId, 6)) {
+            $willBeAbleToSmashBecauseOfAnkh = false;
+            if ($this->isHalloweenExpansion()) {
+                $dieOfFate = $this->getDieOfFate();
+                $willBeAbleToSmashBecauseOfAnkh = $dieOfFate->value == 4;                
+            }
+
+            if (!$willBeAbleToSmashBecauseOfAnkh) {
+                return false; // curse card preventing smashes from activePlayerId
+            }
+        }
+
         $dice = $this->getPlayerRolledDice($activePlayerId, true, false, false); 
         $diceCounts = $this->getRolledDiceCounts($activePlayerId, $dice, false);
         $detail = $this->addSmashesFromCards($activePlayerId, $diceCounts, $activePlayerInTokyo);
