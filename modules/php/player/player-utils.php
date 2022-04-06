@@ -243,6 +243,8 @@ trait PlayerUtilTrait {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyUseRapidCultist($playerId, $type);
+
+        $this->updateCancelDamageIfNeeded($playerId);
     }
 
     function applyUseRapidCultist(int $playerId, int $type) {
@@ -526,5 +528,17 @@ trait PlayerUtilTrait {
             }
         }
         return true;
+    }
+
+    function updateCancelDamageIfNeeded(int $rapidActionPlayerId) {
+        if ($this->gamestate->state_id() == ST_MULTIPLAYER_CANCEL_DAMAGE) {
+            $intervention = $this->getDamageIntervention();
+
+            $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
+
+            if ($playerId == $rapidActionPlayerId) {
+                $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // to update args based on new health
+            }
+        }
     }
 }

@@ -531,12 +531,16 @@ trait CardsUtilTrait {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyRapidHealing($playerId);
+
+        $this->updateCancelDamageIfNeeded($playerId);
     }
 
     function useMothershipSupport() {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyMothershipSupport($playerId);
+
+        $this->updateCancelDamageIfNeeded($playerId);
     }
 
     function applyRapidHealing(int $playerId) {

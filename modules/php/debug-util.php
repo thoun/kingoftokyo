@@ -17,9 +17,9 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        //$this->debugSetEnergy(5);
+        //$this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
-        //$this->debugSetHealth(5);
+        //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -74,7 +74,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343493);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343492);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
@@ -116,8 +116,10 @@ trait DebugUtilTrait {
         }
 
         // cthulhu
-        //$this->DbQuery("UPDATE player SET `player_cultists` = 10");
-        //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
+        if ($this->isCthulhuExpansion()) {
+            $this->DbQuery("UPDATE player SET `player_cultists` = 5");
+            //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
+        }
 
         // anubis
         if ($this->isAnubisExpansion()) {

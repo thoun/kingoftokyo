@@ -533,7 +533,7 @@ trait UtilTrait {
         if ($playerIsActivePlayer) {
             $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
         }
-        if ($player->id == $currentTurnPlayerId || $playerIsActivePlayer) {
+        if ($player->id == $currentTurnPlayerId) {
             $this->goToState(ST_NEXT_PLAYER);
         } 
 
