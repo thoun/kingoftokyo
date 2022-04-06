@@ -593,8 +593,9 @@ trait CardsUtilTrait {
             throw new \BgaUserException(self::_('You cannot gain [Heart]'));
         }
 
-        $cards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION); 
-        $card = $this->array_find($cards, fn($card) => !$this->isUsedCard(3000 + $card->id));
+        $cards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        $unusedCards = array_values(array_filter($cards, fn($card) => !$this->isUsedCard(3000 + $card->id)));
+        $card = count($unusedCards) > 0 ? $unusedCards[0] : null;
         if ($card == null) {
             throw new \BgaUserException('No Mothership Support Evolution');
         }
@@ -606,7 +607,7 @@ trait CardsUtilTrait {
         $this->applyGetHealth($playerId, 1, 3000 + MOTHERSHIP_SUPPORT_EVOLUTION, $playerId);
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0, $playerId);
 
-        if (count($cards) == 1) {
+        if (count($unusedCards) == 1) {
             $this->notifyPlayer($playerId, 'toggleMothershipSupportUsed', '', [
                 'playerId' => $playerId,
                 'used' => true,

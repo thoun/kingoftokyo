@@ -767,7 +767,8 @@ $playerActionsGameStates = [
             'gazeOfTheSphinxDiscardEvolution', 'gazeOfTheSphinxLoseEnergy',
             "putEnergyOnBambooSupply", "takeEnergyOnBambooSupply",
             "buyCardBamboozle",
-            "giveSymbol"
+            "giveSymbol",
+            "chooseMimickedEvolution",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

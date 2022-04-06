@@ -1025,6 +1025,7 @@ var EvolutionCards = /** @class */ (function () {
             case 14: return /*_TODOPU*/ ("Until your next turn, other Monsters roll with 1 fewer die.");
             case 16: return /*_TODOPU*/ ("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
+            case 18: return /*_TODOPU*/ ("Choose an Evolution Card in front of a Monster and put a Snowflake Token on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");
             // Alienoid
             case 21: return /*_TODOPU*/ ("Gain 2[Star].");
             case 22: return /*_TODOPU*/ ("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
@@ -1072,6 +1073,16 @@ var EvolutionCards = /** @class */ (function () {
     };
     EvolutionCards.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+    };
+    EvolutionCards.prototype.placeMimicOnCard = function (stock, card) {
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
+        // TODOPU set icy reflection icon
+        var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token mimic token\"></div>";
+        dojo.place(html, divId);
+        div.dataset.placed = JSON.stringify(cardPlaced);
     };
     EvolutionCards.prototype.getPlaceOnCard = function (cardPlaced) {
         var _this = this;
@@ -1182,6 +1193,28 @@ var EvolutionCards = /** @class */ (function () {
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
         this.game.tableManager.tableHeightChange();
+    };
+    EvolutionCards.prototype.getMimickedCardText = function (mimickedCard) {
+        var mimickedCardText = '-';
+        if (mimickedCard) {
+            var tempDiv = document.createElement('div');
+            tempDiv.classList.add('stockitem');
+            tempDiv.style.width = CARD_WIDTH + "px";
+            tempDiv.style.height = CARD_WIDTH + "px";
+            tempDiv.style.position = "relative";
+            tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/evolution-cards.jpg')";
+            var imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(mimickedCard.type / 10)) + 1;
+            var xBackgroundPercent = imagePosition * 100;
+            tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% 0%";
+            document.body.appendChild(tempDiv);
+            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
+            document.body.removeChild(tempDiv);
+            mimickedCardText = "<br>" + tempDiv.outerHTML;
+        }
+        return mimickedCardText;
+    };
+    EvolutionCards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
+        this.game.addTooltipHtml(mimicCardId, this.getTooltip(18) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
     return EvolutionCards;
 }());
@@ -3203,6 +3236,7 @@ var KingOfTokyo = /** @class */ (function () {
         setTimeout(function () { return _this.playerTables.forEach(function (playerTable) { return playerTable.initPlacement(); }); }, 200);
         this.setMimicToken('card', gamedatas.mimickedCards.card);
         this.setMimicToken('tile', gamedatas.mimickedCards.tile);
+        this.setMimicEvolutionToken(gamedatas.mimickedCards.evolution);
         var playerId = this.getPlayerId();
         var currentPlayer = players.find(function (player) { return Number(player.id) === playerId; });
         if (currentPlayer === null || currentPlayer === void 0 ? void 0 : currentPlayer.rapidHealing) {
@@ -3715,6 +3749,18 @@ var KingOfTokyo = /** @class */ (function () {
                     this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(1);
                 }
                 break;
+            case 'IcyReflection':
+                if (this.isCurrentPlayerActive()) {
+                    var icyReflectionArgs = question.args;
+                    this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode(1); });
+                    icyReflectionArgs.disabledEvolutions.forEach(function (evolution) {
+                        var cardDiv = document.querySelector("div[id$=\"_item_" + evolution.id + "\"]");
+                        if (cardDiv && cardDiv.closest('.player-evolution-cards') !== null) {
+                            dojo.addClass(cardDiv, 'disabled');
+                        }
+                    });
+                }
+                break;
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -3839,6 +3885,12 @@ var KingOfTokyo = /** @class */ (function () {
             case 'GazeOfTheSphinxSnake':
                 if (this.isCurrentPlayerActive()) {
                     this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(0);
+                }
+                break;
+            case 'IcyReflection':
+                if (this.isCurrentPlayerActive()) {
+                    this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode(0); });
+                    dojo.query('.stockitem').removeClass('disabled');
                 }
                 break;
         }
@@ -4403,6 +4455,9 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.question.code === 'GazeOfTheSphinxSnake') {
                 this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
             }
+            else if (args.question.code === 'IcyReflection') {
+                this.chooseMimickedEvolution(Number(cardId));
+            }
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {
@@ -4650,6 +4705,18 @@ var KingOfTokyo = /** @class */ (function () {
             }
         });
     };
+    KingOfTokyo.prototype.setMimicEvolutionToken = function (card) {
+        var _this = this;
+        if (!card) {
+            return;
+        }
+        this.playerTables.forEach(function (playerTable) {
+            if (playerTable.visibleEvolutionCards.items.some(function (item) { return Number(item.id) == card.id; })) {
+                _this.evolutionCards.placeMimicOnCard(playerTable.visibleEvolutionCards, card);
+            }
+        });
+        this.setMimicEvolutionTooltip(card);
+    };
     KingOfTokyo.prototype.setMimicTooltip = function (type, mimickedCard) {
         var _this = this;
         this.playerTables.forEach(function (playerTable) {
@@ -4659,6 +4726,15 @@ var KingOfTokyo = /** @class */ (function () {
             if (mimicCardItem) {
                 var cardManager = type === 'tile' ? _this.wickednessTiles : _this.cards;
                 cardManager.changeMimicTooltip(stock.container_div.id + "_item_" + mimicCardItem.id, _this.cards.getMimickedCardText(mimickedCard));
+            }
+        });
+    };
+    KingOfTokyo.prototype.setMimicEvolutionTooltip = function (mimickedCard) {
+        var _this = this;
+        this.playerTables.forEach(function (playerTable) {
+            var mimicCardItem = playerTable.visibleEvolutionCards.items.find(function (item) { return Number(item.type) == 18; });
+            if (mimicCardItem) {
+                _this.evolutionCards.changeMimicTooltip(playerTable.visibleEvolutionCards.container_div.id + "_item_" + mimicCardItem.id, _this.evolutionCards.getMimickedCardText(mimickedCard));
             }
         });
     };
@@ -5019,6 +5095,14 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
+    KingOfTokyo.prototype.chooseMimickedEvolution = function (id) {
+        if (!this.checkAction('chooseMimickedEvolution')) {
+            return;
+        }
+        this.takeAction('chooseMimickedEvolution', {
+            id: id
+        });
+    };
     KingOfTokyo.prototype.changeMimickedCard = function (id) {
         if (!this.checkAction('changeMimickedCard')) {
             return;
@@ -5334,6 +5418,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['removeCards', 1],
             ['removeEvolutions', 1],
             ['setMimicToken', 1],
+            ['setMimicEvolutionToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
             ['toggleMothershipSupport', 1],
@@ -5486,6 +5571,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_removeMimicToken = function (notif) {
         this.removeMimicToken(notif.args.type, notif.args.card);
+    };
+    KingOfTokyo.prototype.notif_setMimicEvolutionToken = function (notif) {
+        this.setMimicEvolutionToken(notif.args.card);
     };
     KingOfTokyo.prototype.notif_renewCards = function (notif) {
         this.setEnergy(notif.args.playerId, notif.args.energy);

@@ -481,6 +481,16 @@
 
         self::ajaxResponse();
     }
+  	
+    public function chooseMimickedEvolution() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->chooseMimickedEvolution($id);
+
+        self::ajaxResponse();
+    }
 
     public function changeMimickedCard() {
         self::setAjaxMode();

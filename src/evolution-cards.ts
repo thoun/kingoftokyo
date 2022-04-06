@@ -125,6 +125,7 @@ class EvolutionCards {
             case 14: return /*_TODOPU*/("Until your next turn, other Monsters roll with 1 fewer die.");
             case 16: return /*_TODOPU*/("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
+            case 18: return /*_TODOPU*/("Choose an Evolution Card in front of a Monster and put a Snowflake Token on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");
             // Alienoid
             case 21: return /*_TODOPU*/("Gain 2[Star].");
             case 22: return /*_TODOPU*/("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
@@ -173,6 +174,21 @@ class EvolutionCards {
 
     private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+    }
+
+    public placeMimicOnCard(stock: Stock, card: Card) {
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+        const div = document.getElementById(divId);
+
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        
+        cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
+
+        // TODOPU set icy reflection icon
+        let html = `<div id="${divId}-mimic-token" style="left: ${cardPlaced.mimicToken.x - 16}px; top: ${cardPlaced.mimicToken.y - 16}px;" class="card-token mimic token"></div>`;
+        dojo.place(html, divId);
+
+        div.dataset.placed = JSON.stringify(cardPlaced);
     }
 
     private getPlaceOnCard(cardPlaced: CardPlacedTokens): PlacedTokens {
@@ -308,5 +324,32 @@ class EvolutionCards {
         }
 
         this.game.tableManager.tableHeightChange();
+    }
+
+    public getMimickedCardText(mimickedCard: Card): string {
+        let mimickedCardText = '-';
+        if (mimickedCard) {
+            const tempDiv: HTMLDivElement = document.createElement('div');
+            tempDiv.classList.add('stockitem');
+            tempDiv.style.width = `${CARD_WIDTH}px`;
+            tempDiv.style.height = `${CARD_WIDTH}px`;
+            tempDiv.style.position = `relative`;
+            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/evolution-cards.jpg')`;
+            const imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(mimickedCard.type / 10)) + 1;
+            const xBackgroundPercent = imagePosition * 100;
+            tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% 0%`;
+
+            document.body.appendChild(tempDiv);
+            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
+            document.body.removeChild(tempDiv);
+
+            mimickedCardText = `<br>${tempDiv.outerHTML}`;
+        }
+
+        return mimickedCardText;
+    }
+
+    public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {
+        (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(18) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
     }
 }

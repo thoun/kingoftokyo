@@ -221,4 +221,19 @@ trait EvolutionCardsActionTrait {
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
+
+    function chooseMimickedEvolution(int $mimickedEvolutionId) {
+        $this->checkAction('chooseMimickedEvolution');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($mimickedEvolutionId));        
+        if ($this->EVOLUTION_CARDS_TYPES[$card->type] != 1) {
+            throw new \BgaUserException("You can only mimic Permanent evolutions");
+        }
+
+        $this->setMimickedEvolution($playerId, $card);
+
+        $this->goToState(-1);
+    }
 }

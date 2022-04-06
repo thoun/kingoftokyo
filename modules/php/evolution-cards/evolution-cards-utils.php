@@ -76,8 +76,6 @@ trait EvolutionCardsUtilTrait {
         return array_map(fn($dbCard) => $this->getEvolutionCardFromDb($dbCard), array_values($dbCards));
     }
 
-
-
     function pickEvolutionCards(int $playerId, int $number = 2) {
         $remainingInDeck = intval($this->evolutionCards->countCardInLocation('deck'.$playerId));
         if ($remainingInDeck >= $number) {
@@ -99,7 +97,7 @@ trait EvolutionCardsUtilTrait {
     function canPlayEvolution(int $cardType, int $playerId) {
         $stateId = intval($this->gamestate->state_id());
 
-        if ($stateId < 17 || $stateId == ST_AFTER_ANSWER_QUESTION) {
+        if ($stateId < 17) {
             return false;
         }
 
@@ -137,6 +135,15 @@ trait EvolutionCardsUtilTrait {
                 return $this->inTokyo($playerId); // TODOPU use only when you enter Tokyo
             case TUNE_UP_EVOLUTION:
                 return !$this->inTokyo($playerId);
+            case ICY_REFLECTION_EVOLUTION:
+                $playersIds = $this->getPlayersIds();
+                foreach($playersIds as $playerId) {
+                    $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
+                    if ($this->array_some($evolutions, fn($evolution) => $evolution->type != ICY_REFLECTION_EVOLUTION && $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 1)) {
+                        return true; // if there is a permanent evolution card in table
+                    }
+                }
+                return false;
         }
 
         return true;
@@ -179,6 +186,9 @@ trait EvolutionCardsUtilTrait {
 
         switch($cardType) {
             // Space Penguin
+            case ICY_REFLECTION_EVOLUTION:
+                $this->applyIcyReflection($playerId);
+                break;
             // Alienoid
             case ALIEN_SCOURGE_EVOLUTION: 
                 $this->applyGetPoints($playerId, 2, $logCardType);
@@ -191,7 +201,7 @@ trait EvolutionCardsUtilTrait {
                 $this->applyGetEnergy($playerId, $damageCount, $logCardType);
                 break;
             case ADAPTING_TECHNOLOGY_EVOLUTION:
-                $this->setEvolutionTokens($playerId, $card, 3);
+                $this->setEvolutionTokens($playerId, $card, $this->getTokensByEvolutionType(ADAPTING_TECHNOLOGY_EVOLUTION));
                 break;
             // Cyber Kitty
             case MEGA_PURR_EVOLUTION:
@@ -294,10 +304,21 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
-    
-
     function countEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
         return count($this->getEvolutionsOfType($playerId, $cardType, $fromTable, $fromHand));
+    }
+
+    function getEvolutionsOfTypeInLocation(int $playerId, int $cardType, string $location) {
+        $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, $location, $playerId));
+        
+        if ($this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
+            $mimickedCardType = $this->getMimickedEvolutionType();
+            if ($mimickedCardType == $cardType) {
+                $evolutions = array_merge($evolutions, $this->getEvolutionsOfTypeInLocation($playerId, ICY_REFLECTION_EVOLUTION, 'table')); // mimick
+            }
+        }
+
+        return $evolutions;
     }
 
     function getEvolutionsOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
@@ -308,14 +329,14 @@ trait EvolutionCardsUtilTrait {
         $evolutions = [];
 
         if ($fromTable) {
-            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'table', $playerId));
+            $cards = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'table');
             if (count($cards) > 0) {
                 $evolutions = array_merge($evolutions, $cards);
             }
         }
 
         if ($fromHand) {
-            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+            $cards = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'hand');
             if (count($cards) > 0) {
                 $evolutions = array_merge($evolutions, $cards);
             }
@@ -559,5 +580,96 @@ trait EvolutionCardsUtilTrait {
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function applyIcyReflection(int $playerId) {
+        $enabledEvolutions = [];
+        $disabledEvolutions = [];
+        $playersIds = $this->getPlayersIds();
+        foreach($playersIds as $pId) {
+            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $pId));
+            foreach($evolutions as $evolution) {
+                if ($evolution->type != ICY_REFLECTION_EVOLUTION && $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 1) {
+                    $enabledEvolutions[] = $evolution;
+                } else {
+                    $disabledEvolutions[] = $evolution;
+                }
+            }
+        }
+        
+        $question = new Question(
+            'IcyReflection',
+            /* client TODOPU translate(*/'${player_name} must choose an Evolution card to copy'/*)*/,
+            /* client TODOPU translate(*/'${you} must choose an Evolution card to copy'/*)*/,
+            [$playerId],
+            ST_AFTER_ANSWER_QUESTION,
+            [ 
+                'playerId' => $playerId,
+                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
+                'enabledEvolutions' => $enabledEvolutions,
+                'disabledEvolutions' => $disabledEvolutions,
+            ]
+        );
+
+        $this->addStackedState();
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function setMimickedEvolution(int $mimicOwnerId, object $card) {
+        $countMothershipSupportBefore = $this->countEvolutionOfType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+
+        $mimickedCard = new \stdClass();
+        $mimickedCard->card = $card;
+        $mimickedCard->playerId = $card->location_arg;
+        $this->setGlobalVariable(MIMICKED_CARD . ICY_REFLECTION_EVOLUTION, $mimickedCard);
+        $this->notifyAllPlayers("setMimicEvolutionToken", clienttranslate('${player_name} mimics ${card_name}'), [
+            'card' => $card,
+            'player_name' => $this->getPlayerName($mimicOwnerId),
+            'card_name' => 3000 + $card->type,
+        ]);
+
+        // $this->applyEvolutionEffects($card, $mimicOwnerId, false);
+
+        $tokens = $this->getTokensByEvolutionType($card->type);
+        if ($tokens > 0) {
+            $mimicCard = $this->getEvolutionsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0];
+            $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
+        }
+        
+        $this->toggleMothershipSupport($mimicOwnerId, $countMothershipSupportBefore);
+    }
+
+    function getMimickedEvolution() {
+        $mimickedCardObj = $this->getGlobalVariable(MIMICKED_CARD . ICY_REFLECTION_EVOLUTION);
+
+        if ($mimickedCardObj != null) {
+            return $mimickedCardObj->card;
+        }
+        return null;
+    }
+
+    function getMimickedEvolutionId() {
+        $mimickedCard = $this->getMimickedEvolution();
+        if ($mimickedCard != null) {
+            return $mimickedCard->id;
+        }
+        return null;
+    }
+
+    function getMimickedEvolutionType() {
+        $mimickedCard = $this->getMimickedEvolution();
+        if ($mimickedCard != null) {
+            return $mimickedCard->type;
+        }
+        return null;
+    }
+
+    function getTokensByEvolutionType(int $cardType) {
+        switch($cardType) {
+            case ADAPTING_TECHNOLOGY_EVOLUTION: return 3;
+            default: return 0;
+        }
     }
 }

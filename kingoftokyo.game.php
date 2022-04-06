@@ -450,6 +450,7 @@ class KingOfTokyo extends Table {
         $result['mimickedCards'] = [
             'card' => $this->getMimickedCard(MIMIC_CARD),
             'tile' => $this->getMimickedCard(FLUXLING_WICKEDNESS_TILE),
+            'evolution' => $this->getMimickedEvolution(),
         ];
 
         $result['leaveTokyoUnder'] = intval($this->getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $current_player_id"));

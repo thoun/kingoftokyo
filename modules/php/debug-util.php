@@ -19,7 +19,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
-        //$this->debugSetHealth(1);
+        $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -168,12 +168,12 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
-            $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
+            //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
             /*$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
@@ -183,7 +183,8 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);*/
-            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343494, false);
+            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
         }
 
         // player order

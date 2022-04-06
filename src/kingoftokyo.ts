@@ -109,6 +109,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         setTimeout(() => this.playerTables.forEach(playerTable => playerTable.initPlacement()), 200);
         this.setMimicToken('card', gamedatas.mimickedCards.card);
         this.setMimicToken('tile', gamedatas.mimickedCards.tile);
+        this.setMimicEvolutionToken(gamedatas.mimickedCards.evolution);
 
         const playerId = this.getPlayerId();
         const currentPlayer = players.find(player => Number(player.id) === playerId);
@@ -688,12 +689,25 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch(question.code) {
             case 'Bamboozle':
                 const bamboozleArgs = question.args as BamboozleQuestionArgs;
-            this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, (this as any).isCurrentPlayerActive());
+                this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, (this as any).isCurrentPlayerActive());
                 break;
 
             case 'GazeOfTheSphinxSnake':
                 if ((this as any).isCurrentPlayerActive()) {
                     this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(1);
+                }
+                break;
+
+            case 'IcyReflection':
+                if ((this as any).isCurrentPlayerActive()) {
+                    const icyReflectionArgs = question.args as IcyReflectionQuestionArgs;
+                    this.playerTables.forEach(playerTable => playerTable.visibleEvolutionCards.setSelectionMode(1));
+                    icyReflectionArgs.disabledEvolutions.forEach(evolution => {
+                        const cardDiv = document.querySelector(`div[id$="_item_${evolution.id}"]`) as HTMLElement;
+                        if (cardDiv && cardDiv.closest('.player-evolution-cards') !== null) {
+                            dojo.addClass(cardDiv, 'disabled');
+                        }
+                    });
                 }
                 break;
         }
@@ -830,6 +844,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'GazeOfTheSphinxSnake':
                 if ((this as any).isCurrentPlayerActive()) {
                     this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(0);
+                }
+                break;
+
+            case 'IcyReflection':
+                if ((this as any).isCurrentPlayerActive()) {
+                    this.playerTables.forEach(playerTable => playerTable.visibleEvolutionCards.setSelectionMode(0));
+                    dojo.query('.stockitem').removeClass('disabled');
                 }
                 break;
         }
@@ -1492,6 +1513,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
             if (args.question.code === 'GazeOfTheSphinxSnake') {
                 this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
+            } else if (args.question.code === 'IcyReflection') {
+                this.chooseMimickedEvolution(Number(cardId));
             }
         }
     }
@@ -1795,6 +1818,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    private setMimicEvolutionToken(card: Card) {
+        if (!card) {
+            return;
+        }
+
+        this.playerTables.forEach(playerTable => {
+            if (playerTable.visibleEvolutionCards.items.some(item => Number(item.id) == card.id)) {
+                this.evolutionCards.placeMimicOnCard(playerTable.visibleEvolutionCards, card);
+            }
+        });
+
+        this.setMimicEvolutionTooltip(card);
+    }
+
     private setMimicTooltip(type: 'card' | 'tile', mimickedCard: Card) {
         this.playerTables.forEach(playerTable => {
             const stock = type === 'tile' ? playerTable.wickednessTiles : playerTable.cards;
@@ -1803,6 +1840,15 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (mimicCardItem) {
                 const cardManager = type === 'tile' ? this.wickednessTiles : this.cards;
                 cardManager.changeMimicTooltip(`${stock.container_div.id}_item_${mimicCardItem.id}`, this.cards.getMimickedCardText(mimickedCard));
+            }
+        });
+    }
+
+    private setMimicEvolutionTooltip(mimickedCard: Card) {
+        this.playerTables.forEach(playerTable => {
+            const mimicCardItem = playerTable.visibleEvolutionCards.items.find(item => Number(item.type) == 18);
+            if (mimicCardItem) {
+                this.evolutionCards.changeMimicTooltip(`${playerTable.visibleEvolutionCards.container_div.id}_item_${mimicCardItem.id}`, this.evolutionCards.getMimickedCardText(mimickedCard));
             }
         });
     }
@@ -2266,6 +2312,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
+    public chooseMimickedEvolution(id: number) {
+        if(!(this as any).checkAction('chooseMimickedEvolution')) {
+            return;
+        }
+
+        this.takeAction('chooseMimickedEvolution', {
+            id
+        });
+    }
+
     public changeMimickedCard(id: number) {
         if(!(this as any).checkAction('changeMimickedCard')) {
             return;
@@ -2650,6 +2706,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['removeCards', 1],
             ['removeEvolutions', 1],
             ['setMimicToken', 1],
+            ['setMimicEvolutionToken', 1],
             ['removeMimicToken', 1],
             ['toggleRapidHealing', 1],
             ['toggleMothershipSupport', 1],
@@ -2821,6 +2878,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_removeMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
         this.removeMimicToken(notif.args.type, notif.args.card);
+    }
+
+    notif_setMimicEvolutionToken(notif: Notif<NotifSetCardTokensArgs>) {
+        this.setMimicEvolutionToken(notif.args.card);
     }
 
     notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {

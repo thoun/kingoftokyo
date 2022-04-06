@@ -74,6 +74,11 @@ interface GazeOfTheSphinxSnakeQuestionArgs {
     canLoseEnergy: boolean;
 }
 
+interface IcyReflectionQuestionArgs {
+    enabledEvolutions: EvolutionCard[];
+    disabledEvolutions: EvolutionCard[];
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
@@ -116,6 +121,7 @@ interface KingOfTokyoGamedatas {
     mimickedCards: {
         card: Card | null;
         tile: Card | null;
+        evolution: Card | null;
     } 
     leaveTokyoUnder: number;
     stayTokyoOver: number;
