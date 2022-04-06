@@ -143,6 +143,7 @@ class EvolutionCards {
             // The King
             case 41: return /*_TODOPU*/("Play when a Monster who controls Tokyo leaves or is eliminated. Take control of Tokyo.");
             case 42: return /*_TODOPU*/("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
+            case 43: return /*_TODOPU*/("Play at the end of your movement phase, if you wounded a Monster who controls Tokyo with [diceSmash] and you didn't take control of Tokyo. Take an extra turn.");
             case 44: return /*_TODOPU*/("Gain 2[Heart].");
             case 45: return /*_TODOPU*/("You can force Monsters you wound with your [diceSmash] to Yield Tokyo.");
             case 46: return /*_TODOPU*/("If you wound at least one Monster with your [diceSmash], gain 1[Star].");

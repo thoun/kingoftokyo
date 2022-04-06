@@ -35,6 +35,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private falseBlessingAnkhAction: FalseBlessingAnkhAction = null;
     private choseEvolutionInStock: Stock;
     private inDeckEvolutionsStock: Stock;
+    private smashedPlayersStillInTokyo: number[];
         
     public SHINK_RAY_TOKEN_TOOLTIP: string;
     public POISON_TOKEN_TOOLTIP: string;
@@ -1013,13 +1014,15 @@ class KingOfTokyo implements KingOfTokyoGame {
                     let label = _("Stay in Tokyo");
                     const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
                     if (argsLeaveTokyo.activePlayerId == this.getPlayerId()) {
-                        if (argsLeaveTokyo.smashedPlayersInTokyo) {
-                            argsLeaveTokyo.smashedPlayersInTokyo.forEach(playerId => {
-                                const player = this.gamedatas.players[playerId];
-                                (this as any).addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(/*TODOPU_*/("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
-                            });
-                            (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only')}), () => this.skipChestThumping());
+                        if (!this.smashedPlayersStillInTokyo) {
+                            this.smashedPlayersStillInTokyo = argsLeaveTokyo.smashedPlayersInTokyo;
                         }
+                         
+                        this.smashedPlayersStillInTokyo.forEach(playerId => {
+                            const player = this.gamedatas.players[playerId];
+                            (this as any).addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(/*TODOPU_*/("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
+                        });
+                        (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only')}), () => this.skipChestThumping());
                     } else {
                         const playerHasJets = argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId());
                         const playerHasSimianScamper = argsLeaveTokyo.simianScamperPlayers?.includes(this.getPlayerId());
@@ -2834,10 +2837,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.removeAutoLeaveUnderButton();
         }
 
-        if (this.getStateName() == 'leaveTokyo') {
-            const leaveTokyoArgs = this.gamedatas.gamestate.args as EnteringLeaveTokyoArgs;
-            leaveTokyoArgs.smashedPlayersInTokyo = leaveTokyoArgs.smashedPlayersInTokyo.filter(playerId => playerId != notif.args.playerId);
+        if (this.smashedPlayersStillInTokyo) {
+            this.smashedPlayersStillInTokyo = this.smashedPlayersStillInTokyo.filter((playerId) => playerId != notif.args.playerId);
         }
+
+        const useChestThumpingButton = document.getElementById(`useChestThumping_button${notif.args.playerId}`);
+        useChestThumpingButton?.parentElement.removeChild(useChestThumpingButton);
     }
 
     notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {

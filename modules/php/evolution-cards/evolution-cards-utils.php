@@ -133,6 +133,8 @@ trait EvolutionCardsUtilTrait {
                 return $this->inTokyo($playerId); // TODOPU use only when you enter Tokyo
             case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
                 return $this->inTokyo($playerId); // TODOPU use only when you enter Tokyo
+            case JUNGLE_FRENZY_EVOLUTION: // TODOPU use only after move to Tokyo if you didn't enter
+                return $playerId == intval($this->getActivePlayerId()) && !$this->inTokyo($playerId) && $this->isDamageDealtThisTurn($playerId);
             case TUNE_UP_EVOLUTION:
                 return !$this->inTokyo($playerId);
             case ICY_REFLECTION_EVOLUTION:
@@ -221,6 +223,9 @@ trait EvolutionCardsUtilTrait {
             // The King
             case MONKEY_RUSH_EVOLUTION:
                 $this->moveToTokyoFreeSpot($playerId);
+                break;
+            case JUNGLE_FRENZY_EVOLUTION:
+                $this->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 1);
                 break;
             case GIANT_BANANA_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);

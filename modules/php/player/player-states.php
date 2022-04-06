@@ -538,6 +538,11 @@ trait PlayerStateTrait {
                 $anotherTimeWithCard = 3000 + PANDA_EXPRESS_EVOLUTION;
                 $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 0);
             }
+
+            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(JUNGLE_FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
+                $anotherTimeWithCard = 3000 + JUNGLE_FRENZY_EVOLUTION;
+                $this->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 0);
+            }
             
             if ($anotherTimeWithCard > 0) {
                 $this->notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [

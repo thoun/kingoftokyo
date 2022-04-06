@@ -241,7 +241,6 @@ trait EvolutionCardsActionTrait {
         $this->checkAction('useChestThumping');
 
         $this->applyActionLeaveTokyo($playerId, null, true);
-        $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
         $this->goToState(ST_MULTIPLAYER_LEAVE_TOKYO);
     }

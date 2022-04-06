@@ -1043,6 +1043,7 @@ var EvolutionCards = /** @class */ (function () {
             // The King
             case 41: return /*_TODOPU*/ ("Play when a Monster who controls Tokyo leaves or is eliminated. Take control of Tokyo.");
             case 42: return /*_TODOPU*/ ("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
+            case 43: return /*_TODOPU*/ ("Play at the end of your movement phase, if you wounded a Monster who controls Tokyo with [diceSmash] and you didn't take control of Tokyo. Take an extra turn.");
             case 44: return /*_TODOPU*/ ("Gain 2[Heart].");
             case 45: return /*_TODOPU*/ ("You can force Monsters you wound with your [diceSmash] to Yield Tokyo.");
             case 46: return /*_TODOPU*/ ("If you wound at least one Monster with your [diceSmash], gain 1[Star].");
@@ -4054,13 +4055,14 @@ var KingOfTokyo = /** @class */ (function () {
                     var label = _("Stay in Tokyo");
                     var argsLeaveTokyo = args;
                     if (argsLeaveTokyo.activePlayerId == this.getPlayerId()) {
-                        if (argsLeaveTokyo.smashedPlayersInTokyo) {
-                            argsLeaveTokyo.smashedPlayersInTokyo.forEach(function (playerId) {
-                                var player = _this.gamedatas.players[playerId];
-                                _this.addActionButton("useChestThumping_button" + playerId, dojo.string.substitute(/*TODOPU_*/ ("Force ${player_name} to Yield Tokyo"), { 'player_name': "<span style=\"color: #" + player.color + "\">" + player.name + "</span>" }), function () { return _this.useChestThumping(playerId); });
-                            });
-                            this.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only') }), function () { return _this.skipChestThumping(); });
+                        if (!this.smashedPlayersStillInTokyo) {
+                            this.smashedPlayersStillInTokyo = argsLeaveTokyo.smashedPlayersInTokyo;
                         }
+                        this.smashedPlayersStillInTokyo.forEach(function (playerId) {
+                            var player = _this.gamedatas.players[playerId];
+                            _this.addActionButton("useChestThumping_button" + playerId, dojo.string.substitute(/*TODOPU_*/ ("Force ${player_name} to Yield Tokyo"), { 'player_name': "<span style=\"color: #" + player.color + "\">" + player.name + "</span>" }), function () { return _this.useChestThumping(playerId); });
+                        });
+                        this.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only') }), function () { return _this.skipChestThumping(); });
                     }
                     else {
                         var playerHasJets_1 = (_a = argsLeaveTokyo.jetsPlayers) === null || _a === void 0 ? void 0 : _a.includes(this.getPlayerId());
@@ -5530,10 +5532,11 @@ var KingOfTokyo = /** @class */ (function () {
         if (notif.args.playerId == this.getPlayerId()) {
             this.removeAutoLeaveUnderButton();
         }
-        if (this.getStateName() == 'leaveTokyo') {
-            var leaveTokyoArgs = this.gamedatas.gamestate.args;
-            leaveTokyoArgs.smashedPlayersInTokyo = leaveTokyoArgs.smashedPlayersInTokyo.filter(function (playerId) { return playerId != notif.args.playerId; });
+        if (this.smashedPlayersStillInTokyo) {
+            this.smashedPlayersStillInTokyo = this.smashedPlayersStillInTokyo.filter(function (playerId) { return playerId != notif.args.playerId; });
         }
+        var useChestThumpingButton = document.getElementById("useChestThumping_button" + notif.args.playerId);
+        useChestThumpingButton === null || useChestThumpingButton === void 0 ? void 0 : useChestThumpingButton.parentElement.removeChild(useChestThumpingButton);
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (notif) {
         this.getPlayerTable(notif.args.playerId).enterTokyo(notif.args.location);

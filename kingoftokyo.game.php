@@ -118,6 +118,7 @@ class KingOfTokyo extends Table {
             PANDA_EXPRESS_EXTRA_TURN => 36,
             MUTANT_EVOLUTION_TURN => 37,
             PREVENT_ENTER_TOKYO => 38,
+            JUNGLE_FRENZY_EXTRA_TURN => 39,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -236,6 +237,7 @@ class KingOfTokyo extends Table {
         $this->setGameStateInitialValue(FINAL_PUSH_EXTRA_TURN, 0);
         $this->setGameStateInitialValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
         $this->setGameStateInitialValue(PANDA_EXPRESS_EXTRA_TURN, 0);
+        $this->setGameStateInitialValue(JUNGLE_FRENZY_EXTRA_TURN, 0);
         $this->setGameStateInitialValue(STATE_AFTER_MIMIC_CHOOSE, 0);
         $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE, 0);
         $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE_SELECTED, 0);
