@@ -40,6 +40,15 @@ trait EvolutionCardsArgTrait {
             'highlighted' => $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START) : [],
         ];
     }
+
+    function argHalfMovePhase() {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        return [
+            'canPlayEvolution' => $isPowerUpExpansion, // TODOPU
+            'highlighted' => $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE) : [],
+        ];
+    }
     
     function argChooseEvolutionCard() {
         $activePlayerId = $this->getActivePlayerId();

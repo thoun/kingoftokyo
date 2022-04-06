@@ -306,7 +306,7 @@ trait PlayerStateTrait {
     }
 
     function stHalfMovePhase() {
-        if (!$this->isPowerUpExpansion()) {
+        if (!$this->isPowerUpExpansion() || !$this->tokyoHasFreeSpot()) {
             $this->goToState($this->redirectAfterHalfMovePhase());
             return;
         }

@@ -251,6 +251,11 @@ trait UtilTrait {
         $players = intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_location = $location"));
         return $players == 0;
     }
+        
+    function tokyoHasFreeSpot() {
+        return $this->isTokyoEmpty(false) || ($this->tokyoBayUsed() && $this->isTokyoEmpty(true));
+    }
+
 
     function moveToTokyo(int $playerId, bool $bay) {
         if (!$this->canEnterTokyo($playerId)) {

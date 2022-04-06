@@ -1732,6 +1732,7 @@ var PlayerTable = /** @class */ (function () {
             return;
         }
         cards.forEach(function (card) {
+            console.log(card, document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id));
             var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
             cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.add('highlight-evolution');
         });
@@ -3269,6 +3270,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'startGame':
                 break;
             case 'beforeStartTurn':
+            case 'halfMovePhase':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -3430,6 +3432,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringStepEvolution = function (args) {
+        console.log('onEnteringStepEvolution', args);
         if (this.isCurrentPlayerActive()) {
             var playerId_1 = this.getPlayerId();
             this.getPlayerTable(playerId_1).highlightHiddenEvolutions(args.highlighted.filter(function (card) { return card.location_arg === playerId_1; }));
@@ -3728,6 +3731,7 @@ var KingOfTokyo = /** @class */ (function () {
                 });
                 break;
             case 'beforeStartTurn':
+            case 'halfMovePhase':
                 this.onLeavingStepEvolution();
                 break;
             case 'changeMimickedCard':

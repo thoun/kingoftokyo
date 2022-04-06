@@ -425,6 +425,7 @@ class PlayerTable {
         }
 
         cards.forEach(card => {
+            console.log(card, document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`));
             const cardDiv = document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
             cardDiv?.classList.add('highlight-evolution');
         });

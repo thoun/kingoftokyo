@@ -612,6 +612,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => '', /* client TODOPU translate('${you} can activate an Evolution card'), */
         "type" => "multipleactiveplayer",
         "action" => "stHalfMovePhase",
+        "args" => "argHalfMovePhase",
         "possibleactions" => [ "skipHalfMovePhase" ],
         "transitions" => [
             'next' => ST_ENTER_TOKYO,

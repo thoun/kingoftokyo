@@ -68,7 +68,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
-        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
+        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
@@ -165,10 +165,11 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
-            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493");
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
+            //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
+            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
             /*$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
@@ -179,7 +180,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);*/
-            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343494, false);
         }
 
         // player order
