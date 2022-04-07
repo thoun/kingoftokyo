@@ -1022,6 +1022,7 @@ var EvolutionCards = /** @class */ (function () {
     EvolutionCards.prototype.getCardDescription = function (cardTypeId) {
         switch (cardTypeId) {
             // Space Penguin
+            case 11: return /*_TODOPU*/ ("When you wound a Monster in Tokyo, give them this card. At the start of their turn, choose a die face. That face has no effect this turn. Take this card back at the end of their turn.");
             case 14: return /*_TODOPU*/ ("Until your next turn, other Monsters roll with 1 fewer die.");
             case 16: return /*_TODOPU*/ ("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
@@ -1086,6 +1087,16 @@ var EvolutionCards = /** @class */ (function () {
         // TODOPU set icy reflection icon
         var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token mimic token\"></div>";
         dojo.place(html, divId);
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    };
+    EvolutionCards.prototype.removeMimicOnCard = function (stock, card) {
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        cardPlaced.mimicToken = null;
+        if (document.getElementById(divId + "-mimic-token")) {
+            this.game.fadeOutAndDestroy(divId + "-mimic-token");
+        }
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
     EvolutionCards.prototype.getPlaceOnCard = function (cardPlaced) {
@@ -1755,12 +1766,17 @@ var PlayerTable = /** @class */ (function () {
             this.pickEvolutionCards.removeAll();
         }
     };
-    PlayerTable.prototype.playEvolution = function (card) {
+    PlayerTable.prototype.playEvolution = function (card, fromStock) {
         if (this.hiddenEvolutionCards) {
             this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
         }
         else {
-            this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], "playerhand-counter-wrapper-" + this.playerId);
+            if (fromStock) {
+                this.game.evolutionCards.moveToAnotherStock(fromStock, this.visibleEvolutionCards, card);
+            }
+            else {
+                this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], "playerhand-counter-wrapper-" + this.playerId);
+            }
         }
     };
     PlayerTable.prototype.highlightHiddenEvolutions = function (cards) {
@@ -4123,7 +4139,7 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'leaveTokyo':
                     var label = _("Stay in Tokyo");
                     var argsLeaveTokyo = args;
-                    if (argsLeaveTokyo.activePlayerId == this.getPlayerId()) {
+                    if (argsLeaveTokyo.canUseChestThumping && argsLeaveTokyo.activePlayerId == this.getPlayerId()) {
                         if (!this.smashedPlayersStillInTokyo) {
                             this.smashedPlayersStillInTokyo = argsLeaveTokyo.smashedPlayersInTokyo;
                         }
@@ -4822,6 +4838,18 @@ var KingOfTokyo = /** @class */ (function () {
             var mimicCardItem = playerTable.visibleEvolutionCards.items.find(function (item) { return Number(item.type) == 18; });
             if (mimicCardItem) {
                 _this.evolutionCards.changeMimicTooltip(playerTable.visibleEvolutionCards.container_div.id + "_item_" + mimicCardItem.id, _this.evolutionCards.getMimickedCardText(mimickedCard));
+            }
+        });
+    };
+    KingOfTokyo.prototype.removeMimicEvolutionToken = function (card) {
+        var _this = this;
+        this.setMimicEvolutionTooltip(null);
+        if (!card) {
+            return;
+        }
+        this.playerTables.forEach(function (playerTable) {
+            if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
+                _this.evolutionCards.removeMimicOnCard(playerTable.cards, card);
             }
         });
     };
@@ -5530,6 +5558,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['setMimicToken', 1],
             ['setMimicEvolutionToken', 1],
             ['removeMimicToken', 1],
+            ['removeMimicEvolutionToken', 1],
             ['toggleRapidHealing', 1],
             ['toggleMothershipSupport', 1],
             ['toggleMothershipSupportUsed', 1],
@@ -5686,6 +5715,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_removeMimicToken = function (notif) {
         this.removeMimicToken(notif.args.type, notif.args.card);
+    };
+    KingOfTokyo.prototype.notif_removeMimicEvolutionToken = function (notif) {
+        this.removeMimicEvolutionToken(notif.args.card);
     };
     KingOfTokyo.prototype.notif_setMimicEvolutionToken = function (notif) {
         this.setMimicEvolutionToken(notif.args.card);
@@ -5873,7 +5905,11 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_playEvolution = function (notif) {
         this.handCounters[notif.args.playerId].incValue(-1);
-        this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card);
+        var fromStock = null;
+        if (notif.args.fromPlayerId) {
+            fromStock = this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards;
+        }
+        this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card, fromStock);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

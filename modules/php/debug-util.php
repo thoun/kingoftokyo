@@ -64,7 +64,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
-        $this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
+        //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
@@ -184,7 +184,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             //$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
-            //$this->debugSetEvolutionInHand(CHEST_THUMPING_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
         }
 
         // player order
@@ -312,11 +312,11 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
 		$ids = [
-			85470488,
-            85658807,
-            85757364,
-            86215779,
-            91766237,
+			88502882,
+            91906480,
+            86175279,
+            84639460,
+            90335134,
 		];
 
 		// Id of the first player in BGA Studio

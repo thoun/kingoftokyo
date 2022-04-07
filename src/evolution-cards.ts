@@ -122,6 +122,7 @@ class EvolutionCards {
     private getCardDescription(cardTypeId: number) {
         switch( cardTypeId ) {
             // Space Penguin
+            case 11: return /*_TODOPU*/("When you wound a Monster in Tokyo, give them this card. At the start of their turn, choose a die face. That face has no effect this turn. Take this card back at the end of their turn.");
             case 14: return /*_TODOPU*/("Until your next turn, other Monsters roll with 1 fewer die.");
             case 16: return /*_TODOPU*/("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
@@ -191,6 +192,20 @@ class EvolutionCards {
         // TODOPU set icy reflection icon
         let html = `<div id="${divId}-mimic-token" style="left: ${cardPlaced.mimicToken.x - 16}px; top: ${cardPlaced.mimicToken.y - 16}px;" class="card-token mimic token"></div>`;
         dojo.place(html, divId);
+
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    }
+
+    public removeMimicOnCard(stock: Stock, card: Card) { 
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+        const div = document.getElementById(divId);
+
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        cardPlaced.mimicToken = null;
+
+        if (document.getElementById(`${divId}-mimic-token`)) {
+            (this.game as any).fadeOutAndDestroy(`${divId}-mimic-token`);
+        }
 
         div.dataset.placed = JSON.stringify(cardPlaced);
     }

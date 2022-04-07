@@ -514,6 +514,10 @@ class KingOfTokyo extends Table {
         }
         $this->cards->shuffle('deck'); 
 
+        if ($this->isPowerUpExpansion()) {
+            $this->setOwnerIdForAllEvolutions();
+        }
+
         // TODO $this->debugSetupBeforePlaceCard();
         $cards = $this->placeNewCardsOnTable();
         // TODO $this->debugSetupAfterPlaceCard();

@@ -1036,7 +1036,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");
                     const argsLeaveTokyo = args as EnteringLeaveTokyoArgs;
-                    if (argsLeaveTokyo.activePlayerId == this.getPlayerId()) {
+                    if (argsLeaveTokyo.canUseChestThumping && argsLeaveTokyo.activePlayerId == this.getPlayerId()) {
                         if (!this.smashedPlayersStillInTokyo) {
                             this.smashedPlayersStillInTokyo = argsLeaveTokyo.smashedPlayersInTokyo;
                         }
@@ -1889,6 +1889,20 @@ class KingOfTokyo implements KingOfTokyoGame {
             const mimicCardItem = playerTable.visibleEvolutionCards.items.find(item => Number(item.type) == 18);
             if (mimicCardItem) {
                 this.evolutionCards.changeMimicTooltip(`${playerTable.visibleEvolutionCards.container_div.id}_item_${mimicCardItem.id}`, this.evolutionCards.getMimickedCardText(mimickedCard));
+            }
+        });
+    }
+
+    private removeMimicEvolutionToken(card: Card) {
+        this.setMimicEvolutionTooltip(null);
+
+        if (!card) {
+            return;
+        }
+
+        this.playerTables.forEach(playerTable => {
+            if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
+                this.evolutionCards.removeMimicOnCard(playerTable.cards, card);
             }
         });
     }
@@ -2777,6 +2791,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['setMimicToken', 1],
             ['setMimicEvolutionToken', 1],
             ['removeMimicToken', 1],
+            ['removeMimicEvolutionToken', 1],
             ['toggleRapidHealing', 1],
             ['toggleMothershipSupport', 1],
             ['toggleMothershipSupportUsed', 1],
@@ -2954,6 +2969,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_removeMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
         this.removeMimicToken(notif.args.type, notif.args.card);
+    }
+
+    notif_removeMimicEvolutionToken(notif: Notif<NotifSetCardTokensArgs>) {
+        this.removeMimicEvolutionToken(notif.args.card);
     }
 
     notif_setMimicEvolutionToken(notif: Notif<NotifSetCardTokensArgs>) {
@@ -3182,7 +3201,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     
     notif_playEvolution(notif: Notif<NotifPlayEvolutionArgs>) {
         this.handCounters[notif.args.playerId].incValue(-1);
-        this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card);
+        let fromStock = null;
+        if (notif.args.fromPlayerId) {
+            fromStock = this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards;
+        }
+        this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card, fromStock);
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

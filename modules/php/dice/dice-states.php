@@ -237,6 +237,7 @@ trait DiceStateTrait {
 
     function stResolveSmashDice($playersSmashesWithReducedDamage = []) {
         $playerId = $this->getActivePlayerId();
+        
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);

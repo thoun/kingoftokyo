@@ -63,6 +63,7 @@ trait PlayerArgTrait {
             $countChestThumping = $this->countEvolutionOfType($activePlayerId, CHEST_THUMPING_EVOLUTION);
             if ($countChestThumping > 0) {
                 $args = array_merge($args, [
+                    'canUseChestThumping' => true,
                     'smashedPlayersInTokyo' => $smashedPlayersInTokyo,
                 ]);
             }

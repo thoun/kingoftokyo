@@ -363,6 +363,7 @@ interface EnteringLeaveTokyoArgs {
     canYieldTokyo: { [playerId: number]: boolean };
     smashedPlayersInTokyo: number[];
     activePlayerId: number;
+    canUseChestThumping: boolean;
 }
 
 interface EnteringChooseEvolutionCardArgs {
@@ -613,4 +614,5 @@ interface NotifPlayEvolutionArgs {
     playerId: number;
     player_name: string;
     card: EvolutionCard;
+    fromPlayerId?: number;
 }

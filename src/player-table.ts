@@ -411,11 +411,15 @@ class PlayerTable {
         }
     }
     
-    public playEvolution(card: EvolutionCard) {
+    public playEvolution(card: EvolutionCard, fromStock?: Stock) {
         if (this.hiddenEvolutionCards) {
             this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
         } else {
-            this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], `playerhand-counter-wrapper-${this.playerId}`);
+            if (fromStock) {
+                this.game.evolutionCards.moveToAnotherStock(fromStock, this.visibleEvolutionCards, card);
+            } else {
+                this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], `playerhand-counter-wrapper-${this.playerId}`);
+            }
         }
     }
     

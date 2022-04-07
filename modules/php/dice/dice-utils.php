@@ -418,6 +418,13 @@ trait DiceUtilTrait {
         if (count($smashedPlayersInTokyo) > 0) {
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $smashedPlayersInTokyo);
             $nextStateId = ST_MULTIPLAYER_LEAVE_TOKYO;
+
+            if (count($smashedPlayersInTokyo) === 1 && $isPowerUpExpansion) {
+                $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+                if (count($freezeRayEvolutions) > 0) {
+                    $this->giveFreezeRay($playerId, $smashedPlayersInTokyo[0]);
+                }
+            }
         } else {
             $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
         }

@@ -485,6 +485,13 @@ trait PlayerStateTrait {
 
         $this->removeDiscardCards($playerId);
 
+        if ($this->isPowerUpExpansion()) {
+            $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+            foreach ($freezeRayEvolutions as $freezeRayEvolution) {
+                $this->giveBackFreezeRay($playerId, $freezeRayEvolution);
+            }
+        }
+
         if (!$this->getPlayer($playerId)->eliminated) {
             $this->applyEndOfEachMonsterCards();
         }

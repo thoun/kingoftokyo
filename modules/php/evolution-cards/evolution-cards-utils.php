@@ -151,19 +151,21 @@ trait EvolutionCardsUtilTrait {
         return true;
     }
 
-    function playEvolutionToTable(int $playerId, EvolutionCard &$card, /*string | null*/ $message = null) {
-        if ($message == null) {
+    function playEvolutionToTable(int $playerId, EvolutionCard &$card, /*string | null*/ $message = null, $fromPlayerId = null) {
+        if ($message === null) {
             $message = clienttranslate('${player_name} plays ${card_name}');
         }
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
         $card->location = 'table';
 
+        $this->debug([$playerId, $card, $message, $fromPlayerId]);
         $this->notifyAllPlayers("playEvolution", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,
             'card_name' => 3000 + $card->type,
+            'fromPlayerId' => $fromPlayerId,
         ]);
     }
 
@@ -355,22 +357,12 @@ trait EvolutionCardsUtilTrait {
 
         $countMothershipSupportBefore = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
         
-        $mimicCardType = null;
-        /*if ($card->type == MIMIC_CARD) { // Mimic
-            $changeMaxHealth = $this->getMimickedCardType(MIMIC_CARD) == EVEN_BIGGER_CARD;
-            $this->removeMimicToken(MIMIC_CARD, $playerId);
-            $removeMimickToken = true;
-            $mimicCardType = MIMIC_CARD;
-        } else if ($card->id == $this->getMimickedCardId(MIMIC_CARD) && !$ignoreMimicToken) {
-            $this->removeMimicToken(MIMIC_CARD, $playerId);
-            $removeMimickToken = true;
-            $mimicCardType = MIMIC_CARD;
+        if ($card->type == ICY_REFLECTION_EVOLUTION) { // Mimic
+            $changeMaxHealth = false;// TODOPU $this->getMimickedEvolutionType() == EATER_OF_SOULS_EVOLUTION;
+            $this->removeMimicEvolutionToken($playerId);
+        } else if ($card->id == $this->getMimickedEvolutionId() && !$ignoreMimicToken) {
+            $this->removeMimicEvolutionToken($playerId);
         }
-        if ($card->id == $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE) && !$ignoreMimicToken) {
-            $this->removeMimicToken(FLUXLING_WICKEDNESS_TILE, $playerId);
-            $removeMimickToken = true;
-            $mimicCardType = FLUXLING_WICKEDNESS_TILE;
-        }*/
         $this->evolutionCards->moveCard($card->id, 'discard'.$playerId);
 
         if (!$silent) {
@@ -639,10 +631,34 @@ trait EvolutionCardsUtilTrait {
 
         $tokens = $this->getTokensByEvolutionType($card->type);
         if ($tokens > 0) {
-            $mimicCard = $this->getEvolutionsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0];
+            $mimicCard = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0];
             $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
         }
         
+        $this->toggleMothershipSupport($mimicOwnerId, $countMothershipSupportBefore);
+    }
+
+    function removeMimicEvolutionToken(int $mimicOwnerId) {
+        $countMothershipSupportBefore = $this->countEvolutionOfType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+        
+        $card = $this->getMimickedEvolution();
+        if ($card) {
+            $this->deleteGlobalVariable(MIMICKED_CARD.ICY_REFLECTION_EVOLUTION);
+            $this->notifyAllPlayers("removeMimicEvolutionToken", '', [
+                'card' => $card,
+            ]);
+        }
+
+        $mimicCard = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0]; // TODOWI if tile mimic mimic
+
+        if ($mimicCard && $mimicCard->tokens > 0) {
+            $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
+        }
+
+        /* TODOPU if ($mimicCard && $card && $card->type == EATER_OF_SOULS_EVOLUTION) {
+            $this->changeMaxHealth($mimicCard->location_arg);
+        } */
+    
         $this->toggleMothershipSupport($mimicOwnerId, $countMothershipSupportBefore);
     }
 
@@ -675,6 +691,37 @@ trait EvolutionCardsUtilTrait {
         switch($cardType) {
             case ADAPTING_TECHNOLOGY_EVOLUTION: return 3;
             default: return 0;
+        }
+    }
+
+    function setOwnerIdForAllEvolutions() {
+        $playersIds = $this->getPlayersIds();
+        foreach($playersIds as $playerId) {
+            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('deck'.$playerId));
+            $ids = array_map(fn($evolution) => $evolution->id, $evolutions);
+            if(count($ids) > 0) {
+                $this->DbQuery("UPDATE `evolution_card` SET `owner_id` = $playerId where `card_id` IN (" . implode(',', $ids) . ")");
+            }
+        }
+    }
+
+    function getEvolutionOwnerId(EvolutionCard $evolution) {
+        return intval($this->getUniqueValueFromDB("SELECT `owner_id` FROM `evolution_card` WHERE `card_id` = $evolution->id"));
+    }
+
+    function giveFreezeRay(int $fromPlayerId, int $toPlayerId) {
+        $evolution = $this->getEvolutionsOfType($fromPlayerId, FREEZE_RAY_EVOLUTION)[0];
+        $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
+        $this->evolutionCards->moveCard($evolution->id, 'table', $toPlayerId);
+        $this->playEvolutionToTable($toPlayerId, $evolution, '', $fromPlayerId);
+    }
+
+    function giveBackFreezeRay(int $activePlayerId, EvolutionCard $evolution) {
+        $ownerId = $this->getEvolutionOwnerId($evolution);
+        if ($ownerId != $activePlayerId) {
+            $this->removeEvolution($activePlayerId, $evolution, true, false, true);
+            $this->evolutionCards->moveCard($evolution->id, 'table', $ownerId);
+            $this->playEvolutionToTable($ownerId, $evolution, '', $activePlayerId);
         }
     }
 }

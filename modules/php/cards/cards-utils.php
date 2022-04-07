@@ -625,32 +625,21 @@ trait CardsUtilTrait {
 
         $changeMaxHealth = $card->type == EVEN_BIGGER_CARD;
         
-        $removeMimickToken = false;
         $mimicCardType = null;
         if ($card->type == MIMIC_CARD) { // Mimic
             $changeMaxHealth = $this->getMimickedCardType(MIMIC_CARD) == EVEN_BIGGER_CARD;
             $this->removeMimicToken(MIMIC_CARD, $playerId);
-            $removeMimickToken = true;
             $mimicCardType = MIMIC_CARD;
         } else if ($card->id == $this->getMimickedCardId(MIMIC_CARD) && !$ignoreMimicToken) {
             $this->removeMimicToken(MIMIC_CARD, $playerId);
-            $removeMimickToken = true;
             $mimicCardType = MIMIC_CARD;
         }
         if ($card->id == $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE) && !$ignoreMimicToken) {
             $this->removeMimicToken(FLUXLING_WICKEDNESS_TILE, $playerId);
-            $removeMimickToken = true;
             $mimicCardType = FLUXLING_WICKEDNESS_TILE;
         }
 
         $this->cards->moveCard($card->id, 'discard');
-
-        if ($removeMimickToken) {
-            $this->notifyAllPlayers("removeMimicToken", '', [
-                'card' => $card,
-                'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
-            ]);
-        }
 
         if (!$silent) {
             $this->notifyAllPlayers("removeCards", '', [
