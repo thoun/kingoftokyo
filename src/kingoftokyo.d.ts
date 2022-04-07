@@ -80,6 +80,11 @@ interface IcyReflectionQuestionArgs {
     disabledEvolutions: EvolutionCard[];
 }
 
+interface MiraculousCatchQuestionArgs {
+    card: Card;
+    cost: number;
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
@@ -329,6 +334,8 @@ interface EnteringBuyCardArgs {
     canBuyOrNenew: boolean;
     canSell: boolean;
     canUseAdaptingTechnology: boolean;
+    canUseMiraculousCatch: boolean;
+    unusedMiraculousCatch: boolean;
     _private: {
         pickCards: Card[];
     };

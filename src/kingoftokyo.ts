@@ -729,6 +729,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                     });
                 }
                 break;
+            case 'MiraculousCatch':
+                const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
+                const card = this.cards.generateCardDiv(miraculousCatchArgs.card);
+                dojo.place(`<div id="card-MiraculousCatch-wrapper">${card.outerHTML}</div>`, `maintitlebar_content`);
+                break;
         }
     }
 
@@ -876,6 +881,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                     this.playerTables.forEach(playerTable => playerTable.visibleEvolutionCards.setSelectionMode(0));
                     dojo.query('.stockitem').removeClass('disabled');
                 }
+                break;
+            case 'MiraculousCatch':
+                const card = document.getElementById(`card-MiraculousCatch-wrapper`);
+                card?.parentElement?.removeChild(card);
                 break;
         }
     }
@@ -1094,9 +1103,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
+                    if (argsBuyCard.canUseMiraculousCatch) {
+                        (this as any).addActionButton('useMiraculousCatch_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(12, 'text-only')}), () => this.useMiraculousCatch());
+                        if (!argsBuyCard.unusedMiraculousCatch) {
+                            dojo.addClass('useMiraculousCatch_button', 'disabled');
+                        }
+                    }
                     if (argsBuyCard.canUseAdaptingTechnology) {
                         (this as any).addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(24, 'text-only')}) + ')', () => this.onRenew(3024));
-
                     }
                     (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.onRenew(4));
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
@@ -1185,6 +1199,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                 for (let face=1; face<=6; face++) {
                     (this as any).addActionButton(`selectFrozenDieFace_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.chooseFreezeRayDieFace(face));
                 }
+                break;
+            case 'MiraculousCatch':
+                const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
+                (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch());
+                (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
+                
+                document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = ''+miraculousCatchArgs.cost;
+                dojo.toggleClass('buyCardMiraculousCatch_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < miraculousCatchArgs.cost);
                 break;
         }
     }
@@ -2706,6 +2728,30 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('chooseFreezeRayDieFace', {
             symbol
         });
+    }
+    
+    public useMiraculousCatch() {
+        if(!(this as any).checkAction('useMiraculousCatch')) {
+            return;
+        }
+
+        this.takeAction('useMiraculousCatch');
+    }
+    
+    public buyCardMiraculousCatch() {
+        if(!(this as any).checkAction('buyCardMiraculousCatch')) {
+            return;
+        }
+
+        this.takeAction('buyCardMiraculousCatch');
+    }
+    
+    public skipMiraculousCatch() {
+        if(!(this as any).checkAction('skipMiraculousCatch')) {
+            return;
+        }
+
+        this.takeAction('skipMiraculousCatch');
     }
     
     public takeAction(action: string, data?: any) {

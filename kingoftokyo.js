@@ -721,24 +721,28 @@ var Cards = /** @class */ (function () {
             return 'transformation';
         }
     };
+    Cards.prototype.generateCardDiv = function (card) {
+        var tempDiv = document.createElement('div');
+        tempDiv.classList.add('stockitem');
+        tempDiv.style.width = CARD_WIDTH + "px";
+        tempDiv.style.height = CARD_HEIGHT + "px";
+        tempDiv.style.position = "relative";
+        tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + this.getImageName(card.type) + "-cards.jpg')";
+        var imagePosition = ((card.type + card.side) % 100) - 1;
+        var image_items_per_row = 10;
+        var row = Math.floor(imagePosition / image_items_per_row);
+        var xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
+        var yBackgroundPercent = row * 100;
+        tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% -" + yBackgroundPercent + "%";
+        document.body.appendChild(tempDiv);
+        this.setDivAsCard(tempDiv, card.type + (card.side || 0));
+        document.body.removeChild(tempDiv);
+        return tempDiv;
+    };
     Cards.prototype.getMimickedCardText = function (mimickedCard) {
         var mimickedCardText = '-';
         if (mimickedCard) {
-            var tempDiv = document.createElement('div');
-            tempDiv.classList.add('stockitem');
-            tempDiv.style.width = CARD_WIDTH + "px";
-            tempDiv.style.height = CARD_HEIGHT + "px";
-            tempDiv.style.position = "relative";
-            tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + this.getImageName(mimickedCard.type) + "-cards.jpg')";
-            var imagePosition = ((mimickedCard.type + mimickedCard.side) % 100) - 1;
-            var image_items_per_row = 10;
-            var row = Math.floor(imagePosition / image_items_per_row);
-            var xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
-            var yBackgroundPercent = row * 100;
-            tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% -" + yBackgroundPercent + "%";
-            document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
-            document.body.removeChild(tempDiv);
+            var tempDiv = this.generateCardDiv(mimickedCard);
             mimickedCardText = "<br>" + tempDiv.outerHTML;
         }
         return mimickedCardText;
@@ -1023,6 +1027,7 @@ var EvolutionCards = /** @class */ (function () {
         switch (cardTypeId) {
             // Space Penguin
             case 11: return /*_TODOPU*/ ("When you wound a Monster in Tokyo, give them this card. At the start of their turn, choose a die face. That face has no effect this turn. Take this card back at the end of their turn.");
+            case 12: return /*_TODOPU*/ ("Once per turn, during the Buy Power Cards phase, you can shuffle the discard pile and reveal one card randomly. You can buy this card for 1[Energy] less than the normal price or discard it. Put back the rest of the discard pile.");
             case 14: return /*_TODOPU*/ ("Until your next turn, other Monsters roll with 1 fewer die.");
             case 16: return /*_TODOPU*/ ("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
@@ -3844,6 +3849,11 @@ var KingOfTokyo = /** @class */ (function () {
                     });
                 }
                 break;
+            case 'MiraculousCatch':
+                var miraculousCatchArgs = question.args;
+                var card = this.cards.generateCardDiv(miraculousCatchArgs.card);
+                dojo.place("<div id=\"card-MiraculousCatch-wrapper\">" + card.outerHTML + "</div>", "maintitlebar_content");
+                break;
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -3965,6 +3975,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onLeavingAnswerQuestion = function () {
+        var _a;
         var question = this.gamedatas.gamestate.args.question;
         switch (question.code) {
             case 'Bamboozle':
@@ -3980,6 +3991,10 @@ var KingOfTokyo = /** @class */ (function () {
                     this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode(0); });
                     dojo.query('.stockitem').removeClass('disabled');
                 }
+                break;
+            case 'MiraculousCatch':
+                var card = document.getElementById("card-MiraculousCatch-wrapper");
+                (_a = card === null || card === void 0 ? void 0 : card.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(card);
                 break;
         }
     };
@@ -4192,6 +4207,12 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'buyCard':
                     var argsBuyCard = args;
+                    if (argsBuyCard.canUseMiraculousCatch) {
+                        this.addActionButton('useMiraculousCatch_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(12, 'text-only') }), function () { return _this.useMiraculousCatch(); });
+                        if (!argsBuyCard.unusedMiraculousCatch) {
+                            dojo.addClass('useMiraculousCatch_button', 'disabled');
+                        }
+                    }
                     if (argsBuyCard.canUseAdaptingTechnology) {
                         this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(24, 'text-only') }) + ')', function () { return _this.onRenew(3024); });
                     }
@@ -4274,6 +4295,13 @@ var KingOfTokyo = /** @class */ (function () {
                 for (var face = 1; face <= 6; face++) {
                     _loop_7(face);
                 }
+                break;
+            case 'MiraculousCatch':
+                var miraculousCatchArgs = question.args;
+                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), function () { return _this.buyCardMiraculousCatch(); });
+                this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), function () { return _this.skipMiraculousCatch(); });
+                document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = '' + miraculousCatchArgs.cost;
+                dojo.toggleClass('buyCardMiraculousCatch_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < miraculousCatchArgs.cost);
                 break;
         }
     };
@@ -5479,6 +5507,24 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('chooseFreezeRayDieFace', {
             symbol: symbol
         });
+    };
+    KingOfTokyo.prototype.useMiraculousCatch = function () {
+        if (!this.checkAction('useMiraculousCatch')) {
+            return;
+        }
+        this.takeAction('useMiraculousCatch');
+    };
+    KingOfTokyo.prototype.buyCardMiraculousCatch = function () {
+        if (!this.checkAction('buyCardMiraculousCatch')) {
+            return;
+        }
+        this.takeAction('buyCardMiraculousCatch');
+    };
+    KingOfTokyo.prototype.skipMiraculousCatch = function () {
+        if (!this.checkAction('skipMiraculousCatch')) {
+            return;
+        }
+        this.takeAction('skipMiraculousCatch');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

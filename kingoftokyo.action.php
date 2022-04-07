@@ -827,5 +827,29 @@
 
         self::ajaxResponse();
     }
+  	
+    public function useMiraculousCatch() {
+        self::setAjaxMode();
+
+        $this->game->useMiraculousCatch();
+
+        self::ajaxResponse();
+    }
+  	
+    public function buyCardMiraculousCatch() {
+        self::setAjaxMode();
+
+        $this->game->buyCardMiraculousCatch();
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipMiraculousCatch() {
+        self::setAjaxMode();
+
+        $this->game->skipMiraculousCatch();
+
+        self::ajaxResponse();
+    }
 
 }

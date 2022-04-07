@@ -697,25 +697,31 @@ class Cards {
         }
     }
 
+    public generateCardDiv(card: Card): HTMLDivElement {
+        const tempDiv: HTMLDivElement = document.createElement('div');
+        tempDiv.classList.add('stockitem');
+        tempDiv.style.width = `${CARD_WIDTH}px`;
+        tempDiv.style.height = `${CARD_HEIGHT}px`;
+        tempDiv.style.position = `relative`;
+        tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(card.type)}-cards.jpg')`;
+        const imagePosition = ((card.type + card.side) % 100) - 1;
+        const image_items_per_row = 10;
+        var row = Math.floor(imagePosition / image_items_per_row);
+        const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
+        const yBackgroundPercent = row * 100;
+        tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
+
+        document.body.appendChild(tempDiv);
+        this.setDivAsCard(tempDiv, card.type + (card.side || 0));
+        document.body.removeChild(tempDiv);
+            
+        return tempDiv;
+    }
+
     public getMimickedCardText(mimickedCard: Card): string {
         let mimickedCardText = '-';
         if (mimickedCard) {
-            const tempDiv: HTMLDivElement = document.createElement('div');
-            tempDiv.classList.add('stockitem');
-            tempDiv.style.width = `${CARD_WIDTH}px`;
-            tempDiv.style.height = `${CARD_HEIGHT}px`;
-            tempDiv.style.position = `relative`;
-            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/${this.getImageName(mimickedCard.type)}-cards.jpg')`;
-            const imagePosition = ((mimickedCard.type + mimickedCard.side) % 100) - 1;
-            const image_items_per_row = 10;
-            var row = Math.floor(imagePosition / image_items_per_row);
-            const xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
-            const yBackgroundPercent = row * 100;
-            tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% -${yBackgroundPercent}%`;
-
-            document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
-            document.body.removeChild(tempDiv);
+            const tempDiv = this.generateCardDiv(mimickedCard);
 
             mimickedCardText = `<br>${tempDiv.outerHTML}`;
         }

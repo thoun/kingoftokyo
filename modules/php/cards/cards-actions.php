@@ -110,10 +110,10 @@ trait CardsActionTrait {
         $this->redirectAfterStealCostume();
     }
 
-    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist) {
+    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist, $buyCost = null) {
         $card = $this->getCardFromDb($this->cards->getCard($id));
         $cardLocationArg = $card->location_arg;
-        $cost = $this->getCardCost($playerId, $card->type);
+        $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
 
         $this->updateKillPlayersScoreAux();        
         
@@ -237,10 +237,7 @@ trait CardsActionTrait {
             $newCardId = $newCard->id;
         }
         $this->setGameStateValue('newCardId', $newCardId);
-
-        $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
-
-        $this->goToState($redirectAfterBuyCard, $damages);
+        return [$newCardId, $damages, $mimic];
     }
 
     function buyCard(int $id, int $from) {

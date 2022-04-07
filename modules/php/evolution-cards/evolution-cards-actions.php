@@ -3,8 +3,10 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/../objects/evolution-card.php');
+require_once(__DIR__.'/../objects/question.php');
 
 use KOT\Objects\EvolutionCard;
+use KOT\Objects\Question;
 
 trait EvolutionCardsActionTrait {
 
@@ -39,8 +41,6 @@ trait EvolutionCardsActionTrait {
 
     function skipBeforeStartTurn() {
         // TODOPU find why it blocks $this->checkAction('skipBeforeStartTurn');
-
-        $playerId = $this->getActivePlayerId();
 
         $this->goToState($this->redirectAfterBeforeStartTurn());
     }
@@ -158,7 +158,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
+        $unusedBambooSupplyCard = $this->getFirstUnusedEvolution($playerId, BAMBOO_SUPPLY_EVOLUTION);
 
         $this->setEvolutionTokens($playerId, $unusedBambooSupplyCard, $unusedBambooSupplyCard->tokens + 1);
 
@@ -172,7 +172,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
+        $unusedBambooSupplyCard = $this->getFirstUnusedEvolution($playerId, BAMBOO_SUPPLY_EVOLUTION);
 
         $this->applyGetEnergyIgnoreCards($playerId, $unusedBambooSupplyCard->tokens, 3000 + BAMBOO_SUPPLY_EVOLUTION);
         $this->setEvolutionTokens($playerId, $unusedBambooSupplyCard, 0);
@@ -268,5 +268,80 @@ trait EvolutionCardsActionTrait {
         ]);
 
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
+    }
+  	
+    public function useMiraculousCatch() {
+        $this->checkAction('useMiraculousCatch');
+
+        $playerId = $this->getActivePlayerId();
+
+        $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
+        if ($evolution === null) {
+            throw new \BgaUserException("No unused Miraculous catch");
+        }
+        if (intval($this->cards->countCardInLocation('discard')) === 0) {
+            throw new \BgaUserException("No cards in discard pile");
+        }
+        
+        if ($evolution->location === 'hand') {
+            $this->applyPlayEvolution($playerId, $evolution);
+        }
+
+        $this->cards->shuffle('discard');
+        $card = $this->getCardFromDb($this->cards->getCardOnTop('discard'));
+
+        $question = new Question(
+            'MiraculousCatch',
+            /* client TODOPU translate(*/'${actplayer} can buy ${card_name} from the discard pile for 1[Energy] less'/*)*/,
+            /* client TODOPU translate(*/'${you} can buy ${card_name} from the discard pile for 1[Energy] less'/*)*/,
+            [$playerId],
+            ST_QUESTIONS_BEFORE_START_TURN,
+            [
+                'card' => $card,
+                'cost' => $this->getCardCost($playerId, $card->type) - 1,
+                '_args' => [
+                    'card_name' => $card->type,
+                ],
+            ]
+        );
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    public function buyCardMiraculousCatch() {
+        $this->checkAction('buyCardMiraculousCatch');
+
+        $playerId = $this->getActivePlayerId();
+        $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
+
+        $card = $this->getCardFromDb($this->cards->getCardOnTop('discard'));
+
+        $this->setUsedCard(3000 + $evolution->id);
+        $this->cards->shuffle('discard');
+
+        $playerId = $this->getActivePlayerId();
+        $this->applyBuyCard(
+            $playerId,
+            $card->id,
+            0,
+            false,
+            $this->getCardCost($playerId, $card->type) - 1
+        );
+
+        $this->goToState(ST_PLAYER_BUY_CARD);
+    }
+
+    public function skipMiraculousCatch() {
+        $this->checkAction('skipMiraculousCatch');
+
+        $playerId = $this->getActivePlayerId();
+        $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
+
+        $this->setUsedCard(3000 + $evolution->id);
+        $this->cards->shuffle('discard');
+
+        $this->goToState(ST_PLAYER_BUY_CARD);
     }
 }

@@ -682,7 +682,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argBuyCard",
         "action" => "stBuyCard",
-        "possibleactions" => [ "buyCard", "goToSellCard", "endTurn", "renew" ],
+        "possibleactions" => [ "buyCard", "goToSellCard", "endTurn", "renew", "useMiraculousCatch" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
             "buyMimicCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD,
@@ -786,6 +786,7 @@ $playerActionsGameStates = [
             "giveSymbol",
             "chooseMimickedEvolution",
             "chooseFreezeRayDieFace",
+            "buyCardMiraculousCatch", "skipMiraculousCatch",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

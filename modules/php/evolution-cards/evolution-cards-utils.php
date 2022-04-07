@@ -446,11 +446,10 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function getFirstUnusedBambooSupply(int $playerId) {
-        $bambooSupplyCards = $this->getEvolutionsOfType($playerId, BAMBOO_SUPPLY_EVOLUTION);
+    function getFirstUnusedEvolution(int $playerId, int $evolutionType, bool $fromTable = true, bool $fromHand = false) /* returns first unused evolution, null if none */ {
+        $evolutions = $this->getEvolutionsOfType($playerId, $evolutionType, $fromTable, $fromHand);
         $usedCards = $this->getUsedCard();
-        $unusedBambooSupplyCard = $this->array_find($bambooSupplyCards, fn($card) => !in_array(3000 + $card->id, $usedCards));
-        return $unusedBambooSupplyCard;
+        return $this->array_find($evolutions, fn($card) => !in_array(3000 + $card->id, $usedCards));
     }
 
     function getFirstUnsetFreezeRay(int $playerId) {

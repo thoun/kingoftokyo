@@ -39,7 +39,7 @@ trait EvolutionCardsStateTrait {
     function stQuestionsBeforeStartTurn() {
         $playerId = $this->getActivePlayerId();
 
-        $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
+        $unusedBambooSupplyCard = $this->getFirstUnusedEvolution($playerId, BAMBOO_SUPPLY_EVOLUTION);
         if ($unusedBambooSupplyCard != null) {
             $question = new Question(
                 'BambooSupply',

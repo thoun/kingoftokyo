@@ -115,7 +115,10 @@ trait CardsArgTrait {
             ];
         }
 
-        $canUseAdaptingTechnology = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) > 0;
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $canUseAdaptingTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) > 0;
+        $canUseMiraculousCatch = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true) > 0;
+        $unusedMiraculousCatch = $canUseMiraculousCatch && $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true) != null;
     
         // return values:
         return [
@@ -126,6 +129,8 @@ trait CardsArgTrait {
             'cardsCosts' => $cardsCosts,
             'warningIds' => $warningIds,
             'canUseAdaptingTechnology' => $canUseAdaptingTechnology,
+            'canUseMiraculousCatch' => $canUseMiraculousCatch,
+            'unusedMiraculousCatch' => $unusedMiraculousCatch,
         ] + $pickArgs;
     }
 

@@ -15,9 +15,9 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
-        $this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(8);
+        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetEnergy(1);
         //$this->debugSetPoints(5);
         $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -185,7 +185,8 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             //$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
+            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
         }
 
         // player order
