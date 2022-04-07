@@ -38,11 +38,11 @@ trait EvolutionCardsActionTrait {
     }
 
     function skipBeforeStartTurn() {
-        $this->checkAction('skipBeforeStartTurn');
+        // TODOPU find why it blocks $this->checkAction('skipBeforeStartTurn');
 
         $playerId = $this->getActivePlayerId();
 
-        $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
+        $this->goToState($this->redirectAfterBeforeStartTurn());
     }
 
     function skipHalfMovePhase() {
@@ -164,7 +164,7 @@ trait EvolutionCardsActionTrait {
 
         $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
 
-        $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
+        $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
   	
     function takeEnergyOnBambooSupply() {
@@ -179,7 +179,7 @@ trait EvolutionCardsActionTrait {
 
         $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
 
-        $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
+        $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
 
     function skipCardIsBought() {
@@ -251,5 +251,22 @@ trait EvolutionCardsActionTrait {
         $playerId = $this->getCurrentPlayerId();
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'resume');
+    }
+  	
+    public function chooseFreezeRayDieFace(int $symbol) {
+        $this->checkAction('chooseFreezeRayDieFace');
+
+        $question = $this->getQuestion();
+        $evolutionId = $question->args->card->id;
+        $evolution = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($evolutionId));
+        $this->setEvolutionTokens($this->getActivePlayerId(), $evolution, $symbol, true);
+
+        $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} choses that ${die_face} will have no effect this turn'/*)*/, [
+            'player_name' => $this->getPlayerName($this->getCurrentPlayerId()),
+            'die_face' => $this->getDieFaceLogName($symbol, 0),
+
+        ]);
+
+        $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
 }

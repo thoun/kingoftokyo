@@ -817,5 +817,15 @@
 
         self::ajaxResponse();
     }
+  	
+    public function chooseFreezeRayDieFace() {
+        self::setAjaxMode();
+
+        $symbol = self::getArg("symbol", AT_posint, true);
+
+        $this->game->chooseFreezeRayDieFace($symbol);
+
+        self::ajaxResponse();
+    }
 
 }

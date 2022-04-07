@@ -75,7 +75,7 @@ trait EvolutionCardsArgTrait {
             'question' => $question,
         ];
 
-        if ($question->args->{'_args'}) {
+        if (property_exists($question->args, '_args')) {
             $args = array_merge($args, (array)$question->args->{'_args'});
         }
 

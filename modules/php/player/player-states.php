@@ -31,7 +31,7 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(STARTED_TURN_IN_TOKYO, $this->getPlayersIdsInTokyo());
 
         if (!$this->isPowerUpExpansion() || !$this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
-            $this->goToState($this->redirectAfterBeforeStartTurn($playerId));
+            $this->goToState($this->redirectAfterBeforeStartTurn());
         }
     }
 

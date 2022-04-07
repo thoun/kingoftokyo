@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/../objects/question.php');
+
+use KOT\Objects\Question;
+
 trait EvolutionCardsStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -30,6 +34,49 @@ trait EvolutionCardsStateTrait {
             $this->gamestate->setAllPlayersMultiactive();
             $this->goToState(ST_MULTIPLAYER_PICK_EVOLUTION_DECK);
         }
+    }
+
+    function stQuestionsBeforeStartTurn() {
+        $playerId = $this->getActivePlayerId();
+
+        $unusedBambooSupplyCard = $this->getFirstUnusedBambooSupply($playerId);
+        if ($unusedBambooSupplyCard != null) {
+            $question = new Question(
+                'BambooSupply',
+                /* client TODOPU translate(*/'${actplayer} can put or take [Energy]'/*)*/,
+                /* client TODOPU translate(*/'${you} can put or take [Energy]'/*)*/,
+                [$playerId],
+                ST_QUESTIONS_BEFORE_START_TURN,
+                [ 'canTake' => $unusedBambooSupplyCard->tokens > 0 ]
+            );
+            $this->setQuestion($question);
+            $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+            $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+            return;
+        }
+
+        $unsetFreezeRayCard = $this->getFirstUnsetFreezeRay($playerId);
+        if ($unsetFreezeRayCard != null) {
+            $ownerId = $this->getEvolutionOwnerId($unsetFreezeRayCard);
+            if ($playerId != $ownerId) {
+                $question = new Question(
+                    'FreezeRay',
+                    /* client TODOPU translate(*/'${actplayer} must choose a die face that will have no effect that turn'/*)*/,
+                    /* client TODOPU translate(*/'${you} must choose a die face that will have no effect that turn'/*)*/,
+                    [$ownerId],
+                    ST_QUESTIONS_BEFORE_START_TURN,
+                    [ 'card' => $unsetFreezeRayCard ]
+                );
+                $this->setQuestion($question);
+                $this->gamestate->setPlayersMultiactive([$ownerId], 'next', true);
+
+                $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                return;
+            }
+        }
+
+        $this->goToState(ST_START_TURN);
     }
 
     function stCardIsBought() {

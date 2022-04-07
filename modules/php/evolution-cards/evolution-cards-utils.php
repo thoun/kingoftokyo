@@ -159,7 +159,6 @@ trait EvolutionCardsUtilTrait {
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
         $card->location = 'table';
 
-        $this->debug([$playerId, $card, $message, $fromPlayerId]);
         $this->notifyAllPlayers("playEvolution", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
@@ -454,6 +453,12 @@ trait EvolutionCardsUtilTrait {
         return $unusedBambooSupplyCard;
     }
 
+    function getFirstUnsetFreezeRay(int $playerId) {
+        $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+        $unsetFreezeRayCard = $this->array_find($freezeRayCards, fn($card) => $card->tokens == 0);
+        return $unsetFreezeRayCard;
+    }
+
     function setEvolutionTokens(int $playerId, $card, int $tokens, bool $silent = false) {
         $card->tokens = $tokens;
         $this->DbQuery("UPDATE `evolution_card` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
@@ -722,6 +727,9 @@ trait EvolutionCardsUtilTrait {
             $this->removeEvolution($activePlayerId, $evolution, true, false, true);
             $this->evolutionCards->moveCard($evolution->id, 'table', $ownerId);
             $this->playEvolutionToTable($ownerId, $evolution, '', $activePlayerId);
+
+            // reset freeze ray disabled symbol
+            $this->setEvolutionTokens($ownerId, $evolution, 0, true);
         }
     }
 }

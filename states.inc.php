@@ -196,6 +196,15 @@ $playerActionsGameStates = [
         "transitions" => [],
     ],
 
+    ST_QUESTIONS_BEFORE_START_TURN => [
+        "name" => "questionsBeforeStartTurn",
+        "description" => "",
+        "type" => "game",
+        "action" => "stQuestionsBeforeStartTurn",
+        "transitions" => [
+        ],
+    ],
+
     ST_START_TURN => [
         "name" => "startTurn",
         "description" => "",
@@ -776,6 +785,7 @@ $playerActionsGameStates = [
             "buyCardBamboozle",
             "giveSymbol",
             "chooseMimickedEvolution",
+            "chooseFreezeRayDieFace",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

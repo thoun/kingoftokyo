@@ -497,11 +497,13 @@ trait PlayerUtilTrait {
             if ($curseCardType == BODY_SPIRIT_AND_KA_CURSE_CARD) {
                 $dieOfFate = $this->getDieOfFate();
                 if ($dieOfFate->value == 3) {
-                    return !in_array($face, [4, 5, 6]);
-                } else if ($dieOfFate->value == 4) {
-                    return true;
-                } else {
-                    return in_array($face, [4, 5, 6]);
+                    if (!in_array($face, [4, 5, 6])) {
+                        return false;
+                    }
+                } else if ($dieOfFate->value != 4) {
+                    if (in_array($face, [4, 5, 6])) {
+                        return false;
+                    }
                 }
 
             }
@@ -509,6 +511,15 @@ trait PlayerUtilTrait {
 
         if ($face == 4 && $this->isZombified($playerId)) {
             return false;
+        }
+
+        if ($this->isPowerUpExpansion()) {
+            $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+            foreach ($freezeRayCards as $freezeRayCard) {
+                if ($freezeRayCard->tokens == $face) {
+                    return false;
+                }
+            }
         }
 
         return true;
