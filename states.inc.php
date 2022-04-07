@@ -787,6 +787,7 @@ $playerActionsGameStates = [
             "chooseMimickedEvolution",
             "chooseFreezeRayDieFace",
             "buyCardMiraculousCatch", "skipMiraculousCatch",
+            "playCardDeepDive"
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

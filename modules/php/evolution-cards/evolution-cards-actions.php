@@ -344,4 +344,15 @@ trait EvolutionCardsActionTrait {
 
         $this->goToState(ST_PLAYER_BUY_CARD);
     }
+
+    public function playCardDeepDive(int $id) {
+        $this->checkAction('playCardDeepDive');
+
+        $playerId = $this->getActivePlayerId();
+        $card = $this->getCardFromDb($this->cards->getCard($id));
+
+        $damages = $this->applyPlayCard($playerId, $card);
+
+        $this->goToState(-1, $damages);
+    }
 }

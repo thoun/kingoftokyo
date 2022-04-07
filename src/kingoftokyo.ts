@@ -732,7 +732,18 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'MiraculousCatch':
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
                 const card = this.cards.generateCardDiv(miraculousCatchArgs.card);
-                dojo.place(`<div id="card-MiraculousCatch-wrapper">${card.outerHTML}</div>`, `maintitlebar_content`);
+                card.id = `miraculousCatch-card-${miraculousCatchArgs.card.id}`;
+                dojo.place(`<div id="card-MiraculousCatch-wrapper" class="card-in-title-wrapper">${card.outerHTML}</div>`, `maintitlebar_content`);
+                break;
+            case 'DeepDive':
+                const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
+                dojo.place(`<div id="card-DeepDive-wrapper" class="card-in-title-wrapper">${
+                    deepDiveCatchArgs.cards.map(card => {
+                        const cardDiv = this.cards.generateCardDiv(card);
+                        cardDiv.id = `deepDive-card-${card.id}`;
+                        return cardDiv.outerHTML;
+                    }).join('')
+                }</div>`, `maintitlebar_content`);
                 break;
         }
     }
@@ -885,6 +896,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'MiraculousCatch':
                 const card = document.getElementById(`card-MiraculousCatch-wrapper`);
                 card?.parentElement?.removeChild(card);
+                break;
+            case 'DeepDive':
+                const cards = document.getElementById(`card-DeepDive-wrapper`);
+                cards?.parentElement?.removeChild(cards);
                 break;
         }
     }
@@ -1204,13 +1219,20 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
                 (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch());
                 (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
-                
+                setTimeout(() => document.getElementById(`miraculousCatch-card-${miraculousCatchArgs.card.id}`)?.addEventListener('click', () => this.buyCardMiraculousCatch()), 250);
+
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = ''+miraculousCatchArgs.cost;
                 dojo.toggleClass('buyCardMiraculousCatch_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < miraculousCatchArgs.cost);
                 break;
+            case 'DeepDive':
+                const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
+                deepDiveCatchArgs.cards.forEach(card => {
+                    (this as any).addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Play ${card_name}'), { card_name: this.cards.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
+                    setTimeout(() => document.getElementById(`deepDive-card-${card.id}`)?.addEventListener('click', () => this.playCardDeepDive(card.id)), 250);
+                });
+                break;
         }
     }
-    
 
     ///////////////////////////////////////////////////
     //// Utility methods
@@ -2752,6 +2774,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipMiraculousCatch');
+    }
+    
+    public playCardDeepDive(id: number) {
+        if(!(this as any).checkAction('playCardDeepDive')) {
+            return;
+        }
+
+        this.takeAction('playCardDeepDive', {
+            id
+        });
     }
     
     public takeAction(action: string, data?: any) {

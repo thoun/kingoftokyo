@@ -189,6 +189,9 @@ trait EvolutionCardsUtilTrait {
 
         switch($cardType) {
             // Space Penguin
+            case DEEP_DIVE_EVOLUTION:
+                $this->applyDeepDive($playerId);
+                break;
             case ICY_REFLECTION_EVOLUTION:
                 $this->applyIcyReflection($playerId);
                 break;
@@ -580,6 +583,31 @@ trait EvolutionCardsUtilTrait {
         $this->addStackedState();
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function applyDeepDive(int $playerId) {
+        if (intval($this->cards->countCardInLocation('deck')) === 0) {
+            throw new \BgaUserException("No cards in deck pile");
+        }
+
+        $this->cards->shuffle('discard');
+        $cards = $this->getCardsFromDb(array_slice($this->cards->getCardsInLocation('deck', null, 'location_arg'), 0, 3));
+
+        $question = new Question(
+            'DeepDive',
+            /* client TODOPU translate(*/'${actplayer} can play a card from the bottom of the deck for free'/*)*/,
+            /* client TODOPU translate(*/'${you} can play a card from the bottom of the deck for free'/*)*/,
+            [$playerId],
+            -1,
+            [
+                'cards' => $cards,
+            ]
+        );
+        $this->addStackedState();
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 

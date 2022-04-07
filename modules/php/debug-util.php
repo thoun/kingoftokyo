@@ -173,7 +173,7 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(PLAY_WITH_YOUR_FOOD_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
@@ -186,7 +186,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             //$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
         }
 
         // player order

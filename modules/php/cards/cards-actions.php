@@ -280,10 +280,7 @@ trait CardsActionTrait {
         }
     }
 
-    function drawCard(int $playerId, bool $redirectAfter = true) {        
-
-        $card = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
-
+    function applyPlayCard(int $playerId, object $card) {
         $this->updateKillPlayersScoreAux();        
         
         $this->removeDiscardCards($playerId);
@@ -320,15 +317,22 @@ trait CardsActionTrait {
 
             $this->removeCard($playerId, $card, false, true);
 
-            if ($redirectAfter) {
-                $this->jumpToState(ST_RESOLVE_DICE);
-            }
-            return false;
+            return null;
         }
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
         $damages = $this->applyEffects($card->type, $playerId, false);
+
+        $this->setGameStateValue('newCardId', 0);
+
+        return $damages;
+    }
+
+    function drawCard(int $playerId, bool $redirectAfter = true) {
+        $card = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
+
+        $damages = $this->applyPlayCard($playerId, $card);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -342,8 +346,6 @@ trait CardsActionTrait {
 
             $mimic = $countAvailableCardsForMimic > 0;
         }
-
-        $this->setGameStateValue('newCardId', 0);
 
         if (!$redirectAfter) {
             return false;

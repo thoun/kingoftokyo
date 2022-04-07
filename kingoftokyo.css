@@ -2186,7 +2186,7 @@ button .icon, a .icon {
     bottom: -25px;
   }
 }
-#card-MiraculousCatch-wrapper {
+.card-in-title-wrapper {
   display: flex;
   justify-content: center;
   line-height: normal;

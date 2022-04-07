@@ -85,6 +85,10 @@ interface MiraculousCatchQuestionArgs {
     cost: number;
 }
 
+interface DeepDiveQuestionArgs {
+    cards: Card[];
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
