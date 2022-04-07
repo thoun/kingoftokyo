@@ -403,6 +403,16 @@
 
         self::ajaxResponse();
     }
+
+    public function applySmashDieChoices() {
+        self::setAjaxMode();
+
+        $smashDieChoices = json_decode(base64_decode(self::getArg("selections", AT_base64, true)), true);
+
+        $this->game->applySmashDieChoices($smashDieChoices);
+
+        self::ajaxResponse();
+    }
   	
     public function chooseEvolutionCard() {
         self::setAjaxMode();

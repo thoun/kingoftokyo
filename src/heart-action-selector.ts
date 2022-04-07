@@ -4,14 +4,14 @@ class HeartActionSelector {
 
     constructor(private game: KingOfTokyoGame, private nodeId: string, private args: EnteringResolveHeartDiceArgs) {
         this.createToggleButtons(nodeId, args);
-        dojo.place(`<div id="${nodeId}-apply-wrapper"><button class="bgabutton bgabutton_blue" id="${nodeId}-apply">${_('Apply')}</button></div>`, nodeId);
+        dojo.place(`<div id="${nodeId}-apply-wrapper" class="action-selector-apply-wrapper"><button class="bgabutton bgabutton_blue action-selector-apply" id="${nodeId}-apply">${_('Apply')}</button></div>`, nodeId);
         document.getElementById(`${nodeId}-apply`).addEventListener('click', () => this.game.applyHeartActions(this.selections));
     }
 
     private createToggleButtons(nodeId: string, args: EnteringResolveHeartDiceArgs) {
         args.dice.filter(die => die.value === 4).forEach((die, index) => {
-            let html = `<div class="die">
-                <div class="die-face">
+            let html = `<div class="row">
+                <div class="legend">
                     <div class="dice-icon dice4"></div>
                 </div>
                 <div id="${nodeId}-die${index}" class="toggle-buttons"></div>

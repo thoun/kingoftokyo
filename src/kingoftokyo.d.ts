@@ -43,6 +43,7 @@ interface EvolutionCard {
 }
 
 type HeartAction = 'heal' | 'shrink-ray' | 'poison' | 'heal-player';
+type SmashAction = 'smash' | 'steal';
 
 interface HeartActionSelection {
     action: HeartAction;
@@ -173,6 +174,7 @@ interface KingOfTokyoGame extends Game {
     chooseEvolutionCardClick(id: number): void;
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
+    applySmashActions: (selections: SmashAction[]) => void;
     getZoom(): number;
     getPreferencesManager(): PreferencesManager;
     checkBuyEnergyDrinkState(): void;
@@ -180,6 +182,7 @@ interface KingOfTokyoGame extends Game {
     checkUseCultistState(): void;
     setFont(prefValue: number): void;
     toggleRerollDiceButton(): void;
+    getPlayer(playerId: number): KingOfTokyoPlayer;
     getPlayerEnergy(playerId: number): number;
     onHiddenEvolutionClick: (cardId: number) => void;
     onVisibleEvolutionClick: (cardId: number) => void;
@@ -295,6 +298,12 @@ interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
     healablePlayers: HealablePlayer[];
     poisonTokens: number;
     shrinkRayTokens: number;
+    skipped: boolean;
+}
+
+interface EnteringResolveSmashDiceArgs extends EnteringDiceArgs {    
+    canUsePlayWithYourFood: boolean;
+    willBeWoundedIds: number[];
     skipped: boolean;
 }
 

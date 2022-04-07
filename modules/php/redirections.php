@@ -101,6 +101,40 @@ trait RedirectionTrait {
         return ST_RESOLVE_NUMBER_DICE;
     }
 
+    function redirectAfterResolveNumberDice() {
+        $playerId = $this->getActivePlayerId();
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+
+        $canSelectHeartDiceUse = false;
+        if ($diceCounts[4] > 0) {
+            $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);
+            $canHealWithDice = $this->canHealWithDice($playerId);
+
+            $canRemoveToken = ($selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0) && $canHealWithDice;
+
+            $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $canRemoveToken;
+        }
+
+        if ($canSelectHeartDiceUse) {
+            return ST_RESOLVE_HEART_DICE_ACTION; 
+        } else {
+            return ST_RESOLVE_HEART_DICE;
+        }
+    }
+
+    function redirectAfterResolveEnergyDice() {
+        $playerId = $this->getActivePlayerId();
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+
+        $canUsePlayWithYourFood = $this->canUsePlayWithYourFood($playerId, $diceCounts);
+
+        if ($canUsePlayWithYourFood !== null) {
+            return ST_RESOLVE_SMASH_DICE_ACTION; 
+        } else {
+            return ST_RESOLVE_SMASH_DICE;
+        }
+    }
+
     function redirectAfterHalfMovePhase() {
         return ST_ENTER_TOKYO;
     }

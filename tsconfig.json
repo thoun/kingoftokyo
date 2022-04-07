@@ -25,6 +25,7 @@
         "src/dice-manager.ts",
         "src/animation-manager.ts",
         "src/heart-action-selector.ts",
+        "src/smash-action-selector.ts",
         "src/preferences-manager.ts",
         "src/table-center.ts",
         "src/kingoftokyo.ts",

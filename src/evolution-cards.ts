@@ -137,6 +137,7 @@ class EvolutionCards {
             case 32: return /*_TODOPU*/("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
             case 33: return /*_TODOPU*/("All other Monsters lose 1[Heart].");
             case 34: return /*_TODOPU*/("Play at the start of your turn. You only have one roll this turn. Double the result.");
+            case 35: return /*_TODOPU*/("When a Monster in Tokyo must lose at least 2[Heart] from your [diceSmash], you can make them lose 2[Heart] fewer and steal 1[Star] and 1[Energy] from them instead.");
             case 36: return /*_TODOPU*/("During other Monsters' movement phases, if Tokyo is empty, you can take control of it instead of the Monster whose turn it is.");
             case 37: return /*_TODOPU*/("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/("If you roll at least one [dice1], add [diceSmash] to your roll.");

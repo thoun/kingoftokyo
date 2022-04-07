@@ -191,7 +191,7 @@ trait DiceStateTrait {
         $playerId = $this->getActivePlayerId();
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
-            $this->jumpToState($this->getRedirectAfterResolveNumberDice());
+            $this->jumpToState($this->redirectAfterResolveNumberDice());
             return;
         }
 
@@ -205,29 +205,8 @@ trait DiceStateTrait {
         if ($this->isWickednessExpansion() && $this->canTakeWickednessTile($playerId) > 0) {
             $this->gamestate->nextState('takeWickednessTile');
         } else {
-            $this->jumpToState($this->getRedirectAfterResolveNumberDice());
+            $this->jumpToState($this->redirectAfterResolveNumberDice());
         }        
-    }
-
-    function getRedirectAfterResolveNumberDice() {
-        $playerId = $this->getActivePlayerId();
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
-        $canSelectHeartDiceUse = false;
-        if ($diceCounts[4] > 0) {
-            $selectHeartDiceUse = $this->getSelectHeartDiceUse($playerId);
-            $canHealWithDice = $this->canHealWithDice($playerId);
-
-            $canRemoveToken = ($selectHeartDiceUse['shrinkRayTokens'] > 0 || $selectHeartDiceUse['poisonTokens'] > 0) && $canHealWithDice;
-
-            $canSelectHeartDiceUse = ($selectHeartDiceUse['hasHealingRay'] && count($selectHeartDiceUse['healablePlayers']) > 0) || $canRemoveToken;
-        }
-
-        if ($canSelectHeartDiceUse) {
-            return ST_RESOLVE_HEART_DICE_ACTION; 
-        } else {
-            return ST_RESOLVE_HEART_DICE;
-        }
     }
 
     function stResolveHeartDice() {
@@ -252,15 +231,16 @@ trait DiceStateTrait {
             $this->resolveEnergyDice($playerId, $diceCount);
         }
 
-        $this->gamestate->nextState('next');
+        $this->goToState($this->redirectAfterResolveEnergyDice());
     }
+    
 
-    function stResolveSmashDice() {
+    function stResolveSmashDice($playersSmashesWithReducedDamage = []) {
         $playerId = $this->getActivePlayerId();
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
-            $this->gamestate->nextState('next');
+            $this->goToState(ST_RESOLVE_SKULL_DICE);
             return;
         }
         
@@ -274,7 +254,7 @@ trait DiceStateTrait {
         
         if ($diceCount > 0) {
             $playerId = $this->getActivePlayerId();
-            $this->resolveSmashDice($playerId, $diceCount);
+            $this->resolveSmashDice($playerId, $diceCount, $playersSmashesWithReducedDamage);
         } else {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
             $this->goToState(ST_RESOLVE_SKULL_DICE);

@@ -19,7 +19,7 @@ trait DebugUtilTrait {
         $this->debugSetPlayerInLocation(2343494, 2);
         $this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
-        //$this->debugSetHealth(5);
+        $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -64,7 +64,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
-        //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
+        $this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
@@ -172,8 +172,8 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            //$this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(JUNGLE_FRENZY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(PLAY_WITH_YOUR_FOOD_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(24, 2343493, true);

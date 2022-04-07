@@ -484,6 +484,23 @@ trait DiceActionTrait {
         $this->gamestate->nextState('next');
     }
 
+    function applySmashDieChoices(array $smashDieChoices) {
+        $this->checkAction('applySmashDieChoices');
+
+        $activePlayerId = $this->getActivePlayerId();
+
+        $playersSmashesWithReducedDamage = [];
+
+        foreach($smashDieChoices as $playerId => $smashDieChoice) {
+            if ($smashDieChoice == 'steal') {
+                $this->applyGiveSymbols([0, 5], $playerId, $activePlayerId, PLAY_WITH_YOUR_FOOD_EVOLUTION);
+                $playersSmashesWithReducedDamage[$playerId] = 2;
+            }
+        }
+
+        $this->stResolveSmashDice($playersSmashesWithReducedDamage);
+    }
+
     public function resolveDice() {
         $this->checkAction('resolve');
 

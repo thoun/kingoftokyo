@@ -256,6 +256,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, (this as any).isCurrentPlayerActive());
                 break;
+            case 'resolveSmashDiceAction':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringResolveSmashDice(args.args, (this as any).isCurrentPlayerActive());
+                break;
 
             case 'chooseEvolutionCard':
                 this.onEnteringChooseEvolutionCard(args.args,  (this as any).isCurrentPlayerActive());
@@ -537,8 +541,22 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
 
             if (isCurrentPlayerActive) {
-                dojo.place(`<div id="heart-action-selector" class="whiteblock"></div>`, 'rolled-dice-and-rapid-actions', 'after');
+                dojo.place(`<div id="heart-action-selector" class="whiteblock action-selector"></div>`, 'rolled-dice-and-rapid-actions', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
+            }
+        }
+    }
+
+    private onEnteringResolveSmashDice(args: EnteringResolveSmashDiceArgs, isCurrentPlayerActive: boolean) {
+        if (args.skipped) {
+            this.removeGamestateDescription();
+        }
+        if (args.dice?.length) {
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+
+            if (isCurrentPlayerActive) {
+                dojo.place(`<div id="smash-action-selector" class="whiteblock action-selector"></div>`, 'rolled-dice-and-rapid-actions', 'after');
+                new SmashActionSelector(this, 'smash-action-selector', args);
             }
         }
     }
@@ -766,6 +784,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {
                     dojo.destroy('heart-action-selector');
+                }
+                break;
+            case 'resolveSmashDiceAction':
+                if (document.getElementById('smash-action-selector')) {
+                    dojo.destroy('smash-action-selector');
                 }
                 break;
             case 'resolveSmashDice':
@@ -1209,6 +1232,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public isDefaultFont(): boolean {
         return Number((this as any).prefs[201].value) == 1;
+    }
+
+    public getPlayer(playerId: number): KingOfTokyoPlayer {
+        return this.gamedatas.players[playerId];
     }
 
     public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false) {
@@ -2237,7 +2264,18 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('applyHeartDieChoices', {
             selections: base64
         });
+    }
 
+    public applySmashActions(selections: SmashAction[]) {
+        if(!(this as any).checkAction('applySmashDieChoices')) {
+            return;
+        }
+
+        const base64 = btoa(JSON.stringify({ ...selections }));
+
+        this.takeAction('applySmashDieChoices', {
+            selections: base64
+        });
     }
 
     public chooseEvolutionCard(id: number) {

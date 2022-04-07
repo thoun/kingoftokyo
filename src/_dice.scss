@@ -377,17 +377,17 @@ $size: 0.25em;
     }
 }
 
-#heart-action-selector {
+.action-selector {
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  .die {
+  .row {
     display: flex;
     align-items: center;
     margin: 5px;
 
-    .die-face {
+    .legend {
       display: flex;
       justify-content: center;
       width: 80px;
@@ -398,51 +398,76 @@ $size: 0.25em;
         height: 40px;
       }
     }
+  }
 
-    .toggle-buttons {
-      display: flex;
+  .toggle-buttons {
+    display: flex;
 
-      .toggle-button {
-        user-select: none;
-        background: #FFFFFFAA;
-        //display: inline-block;
-        padding: 10px 15px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-    
-        &.disabled {
-          background: #AAAAAA;
-          cursor: not-allowed;
-          pointer-events: none;
-        }
-    
-        &.selected {
-          box-shadow: 0 0 3px 3px red;
-          z-index: 1; // so shadow goes over next button
-        }
-    
-        
-        &:first-child {
-          border-radius: 5px 0 0 5px;
-        }
-        &:last-child {
-            border-radius: 0 5px 5px 0;
-        }
-        &:not(:last-child) {
-            border-right: 1px solid #DDDDDD;
-        }
+    .toggle-button {
+      user-select: none;
+      background: #FFFFFFAA;
+      //display: inline-block;
+      padding: 10px 15px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+  
+      &.disabled {
+        background: #AAAAAA;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+  
+      &.selected {
+        box-shadow: 0 0 3px 3px red;
+        z-index: 1; // so shadow goes over next button
+      }  
+      
+      &:first-child {
+        border-radius: 5px 0 0 5px;
+      }
+      &:last-child {
+          border-radius: 0 5px 5px 0;
+      }
+      &:not(:last-child) {
+          border-right: 1px solid #DDDDDD;
       }
     }
   }
 
-  #heart-action-selector-apply-wrapper {
+  .action-selector-apply-wrapper {
     display: flex;
     justify-content: center;
 
-    #heart-action-selector-apply {
+    .action-selector-apply {
       width: 120px;
     }
+  }
+}
+
+#heart-action-selector {
+  .row {
+    .legend {
+      width: 80px;
+
+      .dice-icon {
+        position: relative;
+        width: 40px;
+        height: 40px;
+      }
+    }
+  }
+}
+
+#smash-action-selector {
+  .legend {
+    font-weight: bold;
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin: -5px 0;
   }
 }
 

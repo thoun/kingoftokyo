@@ -331,7 +331,7 @@ trait DiceUtilTrait {
     }
 
     
-    function resolveSmashDice(int $playerId, int $diceCount) {
+    function resolveSmashDice(int $playerId, int $diceCount, array $playersSmashesWithReducedDamage) {
 
         // ony here and not in stResolveDice, so player can heal and then activate Berserk
         if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
@@ -385,12 +385,20 @@ trait DiceUtilTrait {
         $isPowerUpExpansion = $this->isPowerUpExpansion();
         foreach($smashedPlayersIds as $smashedPlayerId) {
             $smashedPlayerIsInTokyo = $this->inTokyo($smashedPlayerId);
-            if ($smashedPlayerIsInTokyo) {
-                $smashedPlayersInTokyo[] = $smashedPlayerId;
-            }
 
             $fireBreathingDamage = array_key_exists($smashedPlayerId, $fireBreathingDamages) ? $fireBreathingDamages[$smashedPlayerId] : 0;
             $damageAmount = $diceCount + $fireBreathingDamage;
+
+            if (array_key_exists($smashedPlayerId, $playersSmashesWithReducedDamage)) {
+                $damageAmount -= $playersSmashesWithReducedDamage[$smashedPlayerId];
+            }
+            if ($damageAmount <= 0) {
+                continue;
+            }
+
+            if ($smashedPlayerIsInTokyo) {
+                $smashedPlayersInTokyo[] = $smashedPlayerId;
+            }
 
             // Jets
             $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
@@ -921,5 +929,25 @@ trait DiceUtilTrait {
         }
 
         return false;
+    }
+
+    function canUsePlayWithYourFood(int $playerId, array $diceCounts) { // players concerned by the effect, null if can't be used
+        if ($diceCounts[6] >= 2 && $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, PLAY_WITH_YOUR_FOOD_EVOLUTION) > 0) {
+            $otherPlayersIds = $this->getPlayersIds();
+            $willBeWoundedIds = [];
+            foreach ($otherPlayersIds as $otherPlayerId) {
+                if ($this->inTokyo($otherPlayerId) && $this->willBeWounded($otherPlayerId, $playerId)) {
+                    $willBeWoundedIds[] = $otherPlayerId;
+                }
+            }
+
+            if (count($willBeWoundedIds) > 0) {
+                return $willBeWoundedIds;
+            } else {
+                return null;
+            }
+        }
+
+        return null;
     }
 }

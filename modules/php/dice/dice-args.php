@@ -178,7 +178,7 @@ trait DiceArgTrait {
 
             $diceArg = $canSelectHeartDiceUse ? [
                 'dice' => $dice,
-                'canHealWithDice' => $this->canHealWithDice($playerId),
+                'canHealWithDice' => $canHealWithDice,
             ] : [ 'skipped' => true ];
     
             return $selectHeartDiceUseArg + $diceArg;
@@ -207,6 +207,28 @@ trait DiceArgTrait {
             'selectableDice' => [],
             'canLeaveHibernation' => $canLeaveHibernation,
         ];
+    }
+
+    function argResolveSmashDiceAction() {
+        $playerId = $this->getActivePlayerId();
+
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+        $canUsePlayWithYourFood = $this->canUsePlayWithYourFood($playerId, $diceCounts);
+
+        if ($canUsePlayWithYourFood !== null) {
+            $dice = $this->getPlayerRolledDice($playerId, false, false, false);
+            $canHealWithDice = $this->canHealWithDice($playerId);
+
+            $diceArg = $canUsePlayWithYourFood ? [
+                'dice' => $dice,
+                'canHealWithDice' => $canHealWithDice,
+                'canUsePlayWithYourFood' => true,
+                'willBeWoundedIds' => $canUsePlayWithYourFood,
+            ] : [ 'skipped' => true ];
+    
+            return $diceArg;
+        }
+        return [ 'skipped' => true ];
     }
 
 }

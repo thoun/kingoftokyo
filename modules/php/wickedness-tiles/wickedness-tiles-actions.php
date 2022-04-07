@@ -37,8 +37,7 @@ trait WickednessTilesActionTrait {
 
         $damages = $this->applyWickednessTileEffect($tile, $playerId);
 
-        $redirects = false;
-        $redirectAfterTakeTile = $this->getRedirectAfterResolveNumberDice();
+        $redirectAfterTakeTile = $this->redirectAfterResolveNumberDice();
 
         if ($tile->type === FLUXLING_WICKEDNESS_TILE) {
             $countAvailableCardsForMimic = 0;
@@ -54,7 +53,7 @@ trait WickednessTilesActionTrait {
             }
         }
 
-        $this->goToState($redirectAfterTakeTile, $damages );
+        $this->goToState($redirectAfterTakeTile, $damages);
     }
   	
     public function skipTakeWickednessTile() {
@@ -64,7 +63,7 @@ trait WickednessTilesActionTrait {
 
         $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
 
-        $this->jumpToState($this->getRedirectAfterResolveNumberDice());
+        $this->goToState($this->redirectAfterResolveNumberDice());
     }
 
     function chooseMimickedCardWickednessTile(int $mimickedCardId) {
@@ -81,7 +80,7 @@ trait WickednessTilesActionTrait {
 
         // TODOWI can add smashes !!! change smash count and complete destruction
 
-        $this->jumpToState($this->getRedirectAfterResolveNumberDice());
+        $this->goToState($this->redirectAfterResolveNumberDice());
     }
 
     function changeMimickedCardWickednessTile(int $mimickedCardId) {

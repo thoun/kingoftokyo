@@ -517,9 +517,17 @@ $playerActionsGameStates = [
         "description" => "",
         "type" => "game",
         "action" => "stResolveSmashDice",
-        "transitions" => [
-            "next" => ST_RESOLVE_SKULL_DICE,
-        ],
+        "transitions" => [],
+    ],
+
+    ST_RESOLVE_SMASH_DICE_ACTION => [
+        "name" => "resolveSmashDiceAction",
+        "description" => /*clienttranslate(*/'${actplayer} can select effect of [diceSmash] dice'/*)*/,
+        "descriptionmyturn" => /*clienttranslate(*/'${you} can select effect of [diceSmash] dice'/*)*/,
+        "type" => "activeplayer",
+        "args" => "argResolveSmashDiceAction",
+        "possibleactions" => [ "applySmashDieChoices" ],
+        "transitions" => [],
     ],
 
     ST_RESOLVE_SKULL_DICE => [

@@ -1037,6 +1037,7 @@ var EvolutionCards = /** @class */ (function () {
             case 32: return /*_TODOPU*/ ("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
             case 33: return /*_TODOPU*/ ("All other Monsters lose 1[Heart].");
             case 34: return /*_TODOPU*/ ("Play at the start of your turn. You only have one roll this turn. Double the result.");
+            case 35: return /*_TODOPU*/ ("When a Monster in Tokyo must lose at least 2[Heart] from your [diceSmash], you can make them lose 2[Heart] fewer and steal 1[Star] and 1[Energy] from them instead.");
             case 36: return /*_TODOPU*/ ("During other Monsters' movement phases, if Tokyo is empty, you can take control of it instead of the Monster whose turn it is.");
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
@@ -2752,13 +2753,13 @@ var HeartActionSelector = /** @class */ (function () {
         this.args = args;
         this.selections = [];
         this.createToggleButtons(nodeId, args);
-        dojo.place("<div id=\"" + nodeId + "-apply-wrapper\"><button class=\"bgabutton bgabutton_blue\" id=\"" + nodeId + "-apply\">" + _('Apply') + "</button></div>", nodeId);
+        dojo.place("<div id=\"" + nodeId + "-apply-wrapper\" class=\"action-selector-apply-wrapper\"><button class=\"bgabutton bgabutton_blue action-selector-apply\" id=\"" + nodeId + "-apply\">" + _('Apply') + "</button></div>", nodeId);
         document.getElementById(nodeId + "-apply").addEventListener('click', function () { return _this.game.applyHeartActions(_this.selections); });
     }
     HeartActionSelector.prototype.createToggleButtons = function (nodeId, args) {
         var _this = this;
         args.dice.filter(function (die) { return die.value === 4; }).forEach(function (die, index) {
-            var html = "<div class=\"die\">\n                <div class=\"die-face\">\n                    <div class=\"dice-icon dice4\"></div>\n                </div>\n                <div id=\"" + nodeId + "-die" + index + "\" class=\"toggle-buttons\"></div>\n            </div>";
+            var html = "<div class=\"row\">\n                <div class=\"legend\">\n                    <div class=\"dice-icon dice4\"></div>\n                </div>\n                <div id=\"" + nodeId + "-die" + index + "\" class=\"toggle-buttons\"></div>\n            </div>";
             dojo.place(html, nodeId);
             _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-heal", _('Heal'), function () { return _this.healSelected(index); }, false, true);
             if (!args.canHealWithDice) {
@@ -2862,6 +2863,52 @@ var HeartActionSelector = /** @class */ (function () {
         });
     };
     return HeartActionSelector;
+}());
+var SmashActionSelector = /** @class */ (function () {
+    function SmashActionSelector(game, nodeId, args) {
+        var _this = this;
+        this.game = game;
+        this.nodeId = nodeId;
+        this.args = args;
+        this.selections = [];
+        this.createToggleButtons(nodeId, args);
+        dojo.place("<div id=\"" + nodeId + "-apply-wrapper\" class=\"action-selector-apply-wrapper\"><button class=\"bgabutton bgabutton_blue action-selector-apply\" id=\"" + nodeId + "-apply\">" + _('Apply') + "</button></div>", nodeId);
+        document.getElementById(nodeId + "-apply").addEventListener('click', function () { return _this.game.applySmashActions(_this.selections); });
+    }
+    SmashActionSelector.prototype.createToggleButtons = function (nodeId, args) {
+        var _this = this;
+        args.willBeWoundedIds.forEach(function (playerId) {
+            var player = _this.game.getPlayer(playerId);
+            var html = "<div class=\"row\">\n                <div class=\"legend\" style=\"color: #" + player.color + "\">\n                    " + player.name + "\n                </div>\n                <div id=\"" + nodeId + "-player" + playerId + "\" class=\"toggle-buttons\"></div>\n            </div>";
+            dojo.place(html, nodeId);
+            _this.selections[playerId] = 'smash';
+            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-smash", 
+            /*_TODOPU*/ ("Don't steal"), function () { return _this.setSelectedAction(playerId, 'smash'); }, true);
+            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-steal", formatTextIcons(/*_TODOPU*/ ('Steal 1[Star] and 1[Energy]')), function () { return _this.setSelectedAction(playerId, 'steal'); });
+        });
+    };
+    SmashActionSelector.prototype.createToggleButton = function (destinationId, id, text, callback, selected) {
+        if (selected === void 0) { selected = false; }
+        var html = "<div class=\"toggle-button\" id=\"" + id + "\">\n            " + text + "\n        </button>";
+        dojo.place(html, destinationId);
+        if (selected) {
+            dojo.addClass(id, 'selected');
+        }
+        document.getElementById(id).addEventListener('click', function () { return callback(); });
+    };
+    SmashActionSelector.prototype.removeOldSelection = function (playerId) {
+        var oldSelectionId = this.nodeId + "-player" + playerId + "-" + this.selections[playerId];
+        dojo.removeClass(oldSelectionId, 'selected');
+    };
+    SmashActionSelector.prototype.setSelectedAction = function (playerId, action) {
+        if (this.selections[playerId] == action) {
+            return;
+        }
+        this.removeOldSelection(playerId);
+        this.selections[playerId] = action;
+        dojo.addClass(this.nodeId + "-player" + playerId + "-" + action, 'selected');
+    };
+    return SmashActionSelector;
 }());
 var PreferencesManager = /** @class */ (function () {
     function PreferencesManager(game) {
@@ -3360,6 +3407,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringResolveHeartDice(args.args, this.isCurrentPlayerActive());
                 break;
+            case 'resolveSmashDiceAction':
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringResolveSmashDice(args.args, this.isCurrentPlayerActive());
+                break;
             case 'chooseEvolutionCard':
                 this.onEnteringChooseEvolutionCard(args.args, this.isCurrentPlayerActive());
                 break;
@@ -3594,8 +3645,21 @@ var KingOfTokyo = /** @class */ (function () {
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
             if (isCurrentPlayerActive) {
-                dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock\"></div>", 'rolled-dice-and-rapid-actions', 'after');
+                dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock action-selector\"></div>", 'rolled-dice-and-rapid-actions', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
+            }
+        }
+    };
+    KingOfTokyo.prototype.onEnteringResolveSmashDice = function (args, isCurrentPlayerActive) {
+        var _a;
+        if (args.skipped) {
+            this.removeGamestateDescription();
+        }
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            if (isCurrentPlayerActive) {
+                dojo.place("<div id=\"smash-action-selector\" class=\"whiteblock action-selector\"></div>", 'rolled-dice-and-rapid-actions', 'after');
+                new SmashActionSelector(this, 'smash-action-selector', args);
             }
         }
     };
@@ -3817,6 +3881,11 @@ var KingOfTokyo = /** @class */ (function () {
             case 'resolveHeartDiceAction':
                 if (document.getElementById('heart-action-selector')) {
                     dojo.destroy('heart-action-selector');
+                }
+                break;
+            case 'resolveSmashDiceAction':
+                if (document.getElementById('smash-action-selector')) {
+                    dojo.destroy('smash-action-selector');
                 }
                 break;
             case 'resolveSmashDice':
@@ -4218,6 +4287,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.isDefaultFont = function () {
         return Number(this.prefs[201].value) == 1;
+    };
+    KingOfTokyo.prototype.getPlayer = function (playerId) {
+        return this.gamedatas.players[playerId];
     };
     KingOfTokyo.prototype.createButton = function (destinationId, id, text, callback, disabled) {
         if (disabled === void 0) { disabled = false; }
@@ -5039,6 +5111,15 @@ var KingOfTokyo = /** @class */ (function () {
         }
         var base64 = btoa(JSON.stringify(selections));
         this.takeAction('applyHeartDieChoices', {
+            selections: base64
+        });
+    };
+    KingOfTokyo.prototype.applySmashActions = function (selections) {
+        if (!this.checkAction('applySmashDieChoices')) {
+            return;
+        }
+        var base64 = btoa(JSON.stringify(__assign({}, selections)));
+        this.takeAction('applySmashDieChoices', {
             selections: base64
         });
     };
