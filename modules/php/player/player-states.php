@@ -150,6 +150,11 @@ trait PlayerStateTrait {
                     'used' => false,
                 ]);
             }
+
+            $encasedInIceCards = $this->getEvolutionsOfType($playerId, ENCASED_IN_ICE_EVOLUTION);
+            if (count($encasedInIceCards) > 0 && intval($this->getGameStateValue(ENCASED_IN_ICE_DIE_ID)) > 0) {
+                $this->setGameStateValue(ENCASED_IN_ICE_DIE_ID, 0);
+            }
         }
 
         // apply in tokyo at start
@@ -243,7 +248,11 @@ trait PlayerStateTrait {
         // throw dice
 
         $this->setGameStateValue('throwNumber', 1);
-        $this->DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true, `discarded` = false");
+
+
+
+        $encaseInIceDieId = intval($this->getGameStateValue(ENCASED_IN_ICE_DIE_ID));
+        $this->DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true, `discarded` = false WHERE `dice_id` <> $encaseInIceDieId");
 
         $redirectAfterStartTurn = $this->redirectAfterStartTurn($playerId);
 

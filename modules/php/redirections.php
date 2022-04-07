@@ -124,5 +124,13 @@ trait RedirectionTrait {
     function redirectAfterHalfMovePhase() {
         return ST_ENTER_TOKYO;
     }
+
+    function redirectAfterPrepareResolveDice() {
+        if ($this->isHalloweenExpansion()) {
+            return ST_MULTIPLAYER_CHEERLEADER_SUPPORT;
+        } else {
+            return ST_RESOLVE_DIE_OF_FATE;
+        }
+    }
     
 }

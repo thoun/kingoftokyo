@@ -52,10 +52,22 @@ trait DiceStateTrait {
     }
 
     function stPrepareResolveDice() {
-        if ($this->isHalloweenExpansion()) {
-            $this->gamestate->nextState('askCheerleaderSupport');
-        } else {
-            $this->gamestate->nextState('resolve');
+        $playerId = $this->getActivePlayerId();
+        $hasEncasedInIce = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
+
+        if ($hasEncasedInIce) {
+            $potentialEnergy = $this->getPlayerEnergy($playerId);
+            if ($this->isCthulhuExpansion()) {
+                $potentialEnergy += $this->getPlayerCultists($playerId);
+            }
+
+            if ($potentialEnergy < 1) {
+                $hasEncasedInIce = false;
+            }
+        }
+
+        if (!$hasEncasedInIce) {
+            $this->goToState($this->redirectAfterPrepareResolveDice());
         }
     }
 

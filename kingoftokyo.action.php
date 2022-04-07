@@ -861,5 +861,23 @@
 
         self::ajaxResponse();
     }
+  	
+    public function freezeDie() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->freezeDie($id);
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipFreezeDie() {
+        self::setAjaxMode();
+
+        $this->game->skipFreezeDie();
+
+        self::ajaxResponse();
+    }
 
 }

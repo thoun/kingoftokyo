@@ -137,6 +137,11 @@ trait EvolutionCardsUtilTrait {
                 return $playerId == intval($this->getActivePlayerId()) && !$this->inTokyo($playerId) && $this->isDamageDealtThisTurn($playerId);
             case TUNE_UP_EVOLUTION:
                 return !$this->inTokyo($playerId);
+            case BLIZZARD_EVOLUTION:
+                if ($playerId != intval($this->getActivePlayerId())) {
+                    throw new \BgaUserException(self::_("You must play this Evolution during your turn"));
+                }
+                break;
             case ICY_REFLECTION_EVOLUTION:
                 $playersIds = $this->getPlayersIds();
                 foreach($playersIds as $playerId) {

@@ -53,7 +53,7 @@ log no energy/heart/points won
 when reaching 0 :
  - 25 Nine lives (Cyber Kitty)
 at start turn :
- - 28 herbe à chat (Cyber Kitty) (before first roll?)
+ - 28 herbe à chat (Cyber Kitty)
  - 36 mise à jour (meka dragon)
  - 54 laser insatiable (alienoid)
  - 70 réserve de bambous (pandakai)

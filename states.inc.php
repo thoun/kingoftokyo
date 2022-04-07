@@ -318,12 +318,14 @@ $playerActionsGameStates = [
     ST_PREPARE_RESOLVE_DICE => [
         "name" => "prepareResolveDice",
         "description" => "",
-        "type" => "game",
+        "descriptionmyturn" => "",
+        "descriptionEncasedInIce" => /* client TODOPU translate(*/'${actplayer} can freeze a die'/*)*/,
+        "descriptionmyturnEncasedInIce" => /* client TODOPU translate(*/'${you} can freeze a die'/*)*/,
+        "type" => "activeplayer",
         "action" => "stPrepareResolveDice",
-        "transitions" => [
-            "resolve" => ST_RESOLVE_DIE_OF_FATE,
-            "askCheerleaderSupport" => ST_MULTIPLAYER_CHEERLEADER_SUPPORT,
-        ],
+        "args" => "argPrepareResolveDice",
+        "possibleactions" => [ "freezeDie", "skipFreezeDie" ],
+        "transitions" => [],
     ],
 
     ST_MULTIPLAYER_CHEERLEADER_SUPPORT => [

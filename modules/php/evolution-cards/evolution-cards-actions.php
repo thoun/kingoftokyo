@@ -264,7 +264,6 @@ trait EvolutionCardsActionTrait {
         $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} choses that ${die_face} will have no effect this turn'/*)*/, [
             'player_name' => $this->getPlayerName($this->getCurrentPlayerId()),
             'die_face' => $this->getDieFaceLogName($symbol, 0),
-
         ]);
 
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
@@ -354,5 +353,32 @@ trait EvolutionCardsActionTrait {
         $damages = $this->applyPlayCard($playerId, $card);
 
         $this->goToState(-1, $damages);
+    }
+  	
+    public function freezeDie(int $id) {
+        $this->checkAction('freezeDie');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        if ($this->getPlayerEnergy($playerId) < 1) {
+            throw new \BgaUserException("Not enough energy");
+        }
+        $this->applyLoseEnergy($playerId, 1, 0);
+
+        $this->setGameStateValue(ENCASED_IN_ICE_DIE_ID, $id);
+
+        $die = $this->getDieById($id);
+        $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} freeze die ${die_face}'/*)*/, [
+            'player_name' => $this->getPlayerName($playerId),
+            'die_face' => $this->getDieFaceLogName($die->value, $die->type),
+        ]);
+
+        $this->goToState($this->redirectAfterPrepareResolveDice());
+    }
+  	
+    public function skipFreezeDie() {
+        $this->checkAction('skipFreezeDie');
+        
+        $this->goToState($this->redirectAfterPrepareResolveDice());
     }
 }

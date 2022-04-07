@@ -1,4 +1,4 @@
-type DieClickAction = 'move' | 'change' | 'psychicProbeRoll' | 'discard' | 'rerollOrDiscard' | 'rerollDice';
+type DieClickAction = 'move' | 'change' | 'psychicProbeRoll' | 'discard' | 'rerollOrDiscard' | 'rerollDice' | 'freezeDie';
 
 const DIE4_ICONS = [
     null,
@@ -95,7 +95,7 @@ class DiceManager {
         this.setSelectableDice(selectableDice);
     }
 
-    public setDiceForDiscardDie(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, action: 'discard' | 'rerollOrDiscard' | 'rerollDice' = 'discard') {
+    public setDiceForDiscardDie(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, action: DieClickAction = 'discard') {
         this.action = action;
         this.selectedDice = [];
         
@@ -454,6 +454,8 @@ class DiceManager {
                 }
                 this.game.toggleRerollDiceButton();
             }
+        } else if (this.action === 'freezeDie') {
+            this.game.freezeDie(die.id);
         }
     }
 

@@ -220,6 +220,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringChangeDie(args.args, (this as any).isCurrentPlayerActive());
                 break;
+            case 'prepareResolveDice': 
+                this.setDiceSelectorVisibility(true);
+                this.onEnteringPrepareResolveDice(args.args, (this as any).isCurrentPlayerActive());
+                break;
             case 'discardDie': 
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringDiscardDie(args.args);
@@ -513,6 +517,15 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onEnteringRerollDice(args: EnteringDiceArgs) {
         if (args.dice?.length) {
             this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, 'rerollDice');
+        }
+    }
+
+    private onEnteringPrepareResolveDice(args: EnteringPrepareResolveDiceArgs, isCurrentPlayerActive: boolean) {
+        if (args.hasEncasedInIce) {            
+            this.setGamestateDescription('EncasedInIce');
+        }
+        if (args.dice?.length) {
+            this.diceManager.setDiceForDiscardDie(args.dice, isCurrentPlayerActive ? args.selectableDice : [], args.canHealWithDice, 'freezeDie');
         }
     }
 
@@ -1052,6 +1065,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                     if (argsResolveDice.canLeaveHibernation) {
                         (this as any).addActionButton('stayInHibernation_button', /*_TODODE*/("Stay in Hibernation"), () => this.stayInHibernation());
                         (this as any).addActionButton('leaveHibernation_button', /*_TODODE*/("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
+                    }
+                    break;
+                case 'prepareResolveDice':
+                    const argsPrepareResolveDice = args as EnteringPrepareResolveDiceArgs;
+                    if (argsPrepareResolveDice.hasEncasedInIce) {
+                        (this as any).addActionButton('skipFreezeDie_button', _("Skip"), () => this.skipFreezeDie());
                     }
                     break;
                 case 'takeWickednessTile':
@@ -2220,6 +2239,24 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction(this.falseBlessingAnkhAction, {
             id
         });
+    }
+
+    public freezeDie(id: number) {
+        if(!(this as any).checkAction('freezeDie')) {
+            return;
+        }
+
+        this.takeAction('freezeDie', {
+            id
+        });
+    }
+
+    public skipFreezeDie() {
+        if(!(this as any).checkAction('skipFreezeDie')) {
+            return;
+        }
+
+        this.takeAction('skipFreezeDie');
     }
 
     public discardKeepCard(id: number) {

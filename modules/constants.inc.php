@@ -144,6 +144,8 @@ define('DICE_NUMBER', 'DiceNumber');
 define('RAGING_FLOOD_EXTRA_DIE_SELECTED', 'RagingFloodExtraDieSelected');
 define('MUTANT_EVOLUTION_TURN', 'MutantEvolutionTurn');
 define('PREVENT_ENTER_TOKYO', 'PreventEnterTokyo');
+define('ENCASED_IN_ICE_DIE_ID', 'EncasedInIceDieId');
+
 
 /*
  * Global variables

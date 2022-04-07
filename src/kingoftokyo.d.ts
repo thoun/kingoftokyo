@@ -177,6 +177,7 @@ interface KingOfTokyoGame extends Game {
     psychicProbeRollDie: (id: number) => void;
     discardDie: (id: number) => void;
     rerollOrDiscardDie: (id: number) => void;
+    freezeDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
     onVisibleCardClick: (stock: Stock, cardId: number, from?: number) => void;
     takeWickednessTile(id: number): void;
@@ -291,6 +292,9 @@ interface EnteringRerollDiceArgs extends EnteringDiceArgs {
     max: number;
 }
 
+interface EnteringPrepareResolveDiceArgs extends EnteringDiceArgs {
+    hasEncasedInIce: boolean;
+}
 interface EnteringTakeWickednessTileArgs {
     level: number;
 }

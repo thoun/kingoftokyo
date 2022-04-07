@@ -102,6 +102,15 @@ trait DiceUtilTrait {
             }
         }
 
+        if ($setCanReroll) {
+            $encaseInIceDieId = intval($this->getGameStateValue(ENCASED_IN_ICE_DIE_ID));
+            foreach ($dice as &$die) { // TODOPU filter if cannot lock berserk
+                if ($die->id == $encaseInIceDieId) {
+                    $die->canReroll = false;
+                }
+            }
+        }
+
         if ($includeDieOfFate && $this->isAnubisExpansion() && intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) != 2) {
             $dice = array_merge($this->getDiceByType(2), $dice); // type 2 at the start
         }
@@ -116,9 +125,11 @@ trait DiceUtilTrait {
 
         $lockedDice = [];
         $rolledDice = [];
+
+        $encaseInIceDieId = intval($this->getGameStateValue(ENCASED_IN_ICE_DIE_ID));
         
         foreach ($dice as &$die) {
-            if ($die->locked) {
+            if ($die->locked || $die->id == $encaseInIceDieId) {
                 $lockedDice[] = $die;
             } else {
                 $facesNumber = $die->type == 2 ? 4 : 6;
@@ -128,7 +139,7 @@ trait DiceUtilTrait {
                 $rolledDice[] = $die;
             }
 
-            if (!$this->canRerollSymbol($playerId, getDieFace($die))) {
+            if (!$this->canRerollSymbol($playerId, getDieFace($die)) || $die->id == $encaseInIceDieId) {
                 $die->locked = true;
                 $this->DbQuery( "UPDATE dice SET `locked` = true where `dice_id` = ".$die->id );
             }

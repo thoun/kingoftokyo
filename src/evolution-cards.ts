@@ -126,6 +126,7 @@ class EvolutionCards {
             case 12: return /*_TODOPU*/("Once per turn, during the Buy Power Cards phase, you can shuffle the discard pile and reveal one card randomly. You can buy this card for 1[Energy] less than the normal price or discard it. Put back the rest of the discard pile.");
             case 13: return /*_TODOPU*/("Look at the top 3 Power cards of the deck. Choose one and play it in front of you for free. Put the other Power cards on the bottom of the deck.");
             case 14: return /*_TODOPU*/("Until your next turn, other Monsters roll with 1 fewer die.");
+            case 15: return /*_TODOPU*/("Spend 1[Energy] to choose one of the dice you rolled. This die is frozen until the beginning of your next turn: it cannot be changed and is used normally by Monsters during the Resolve Dice phase.");
             case 16: return /*_TODOPU*/("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
             case 18: return /*_TODOPU*/("Choose an Evolution Card in front of a Monster and put a Snowflake Token on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");

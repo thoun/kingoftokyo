@@ -119,6 +119,7 @@ class KingOfTokyo extends Table {
             MUTANT_EVOLUTION_TURN => 37,
             PREVENT_ENTER_TOKYO => 38,
             JUNGLE_FRENZY_EXTRA_TURN => 39,
+            ENCASED_IN_ICE_DIE_ID => 40,
 
             PICK_MONSTER_OPTION => 100,
             BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
@@ -243,6 +244,7 @@ class KingOfTokyo extends Table {
         $this->setGameStateInitialValue(RAGING_FLOOD_EXTRA_DIE_SELECTED, 0);
         $this->setGameStateInitialValue(FALSE_BLESSING_USED_DIE, 0);
         $this->setGameStateInitialValue(MUTANT_EVOLUTION_TURN, 0);
+        $this->setGameStateInitialValue(ENCASED_IN_ICE_DIE_ID, 0);
 
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
