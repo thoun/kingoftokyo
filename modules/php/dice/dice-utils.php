@@ -346,7 +346,7 @@ trait DiceUtilTrait {
         $funnyLookingButDangerousDamages = $this->getGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, true);
         $exoticArmsDamages = [];
         $smashedPlayersIds = [];
-        
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
 
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
@@ -368,7 +368,7 @@ trait DiceUtilTrait {
             $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($isPowerUpExpansion) {
             $exoticArmsEvolutions = $this->getEvolutionsOfType($playerId, EXOTIC_ARMS_EVOLUTION);
             $usedExoticArms = array_values(array_filter($exoticArmsEvolutions, fn($evolution) => $evolution->tokens > 0));
             $countExoticArms = count($usedExoticArms);
@@ -395,10 +395,24 @@ trait DiceUtilTrait {
             if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
                 $this->setPlayerBerserk($playerId, true);
             }
+
+            $mechaBlastEvolutions = [];
+            $extraDamageFromMechaBlast = 0;
             
-            if ($this->isPowerUpExpansion()) {
+            if ($isPowerUpExpansion) {
                 if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $diceCount *= 2;
+                }
+                $mechaBlastEvolutions = $this->getEvolutionsOfType($playerId, MECHA_BLAST_EVOLUTION);
+                $extraDamageFromMechaBlast = count($mechaBlastEvolutions) * 2; // TODOPU move this to applyDamage ?
+
+                if ($extraDamageFromMechaBlast > 0) {
+                    $this->notifyAllPlayers("log", /*client TODOPU translate(*/'Monsters smashed by ${player_name} loses ${number} extra [Heart] with ${card_name}'/*)*/, [
+                        'playerId' => $playerId,
+                        'player_name' => $this->getPlayerName($playerId),
+                        'number' => $extraDamageFromMechaBlast,
+                        'card_name' => 3000 + MECHA_BLAST_EVOLUTION,
+                    ]);
                 }
             }
 
@@ -419,16 +433,17 @@ trait DiceUtilTrait {
 
             $jetsDamages = [];
             $smashedPlayersInTokyo = [];
-            $isPowerUpExpansion = $this->isPowerUpExpansion();
             foreach($smashedPlayersIds as $smashedPlayerId) {
                 $smashedPlayerIsInTokyo = $this->inTokyo($smashedPlayerId);
 
+                $damageAmount = $diceCount + $extraDamageFromMechaBlast;
+
                 $fireBreathingDamage = array_key_exists($smashedPlayerId, $fireBreathingDamages) ? $fireBreathingDamages[$smashedPlayerId] : 0;
-                $damageAmount = $diceCount + $fireBreathingDamage;
+                $damageAmount += $fireBreathingDamage;
                 $funnyLookingButDangerousDamage = array_key_exists($smashedPlayerId, $funnyLookingButDangerousDamages) ? $funnyLookingButDangerousDamages[$smashedPlayerId] : 0;
-                $damageAmount = $diceCount + $funnyLookingButDangerousDamage;
+                $damageAmount += $funnyLookingButDangerousDamage;
                 $exoticArmsDamage = array_key_exists($smashedPlayerId, $exoticArmsDamages) ? $exoticArmsDamages[$smashedPlayerId] : 0;
-                $damageAmount = $diceCount + $exoticArmsDamage;
+                $damageAmount += $exoticArmsDamage;
 
                 if (array_key_exists($smashedPlayerId, $playersSmashesWithReducedDamage)) {
                     $damageAmount -= $playersSmashesWithReducedDamage[$smashedPlayerId];
@@ -488,7 +503,7 @@ trait DiceUtilTrait {
 
             // fire breathing
             foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
-                $this->notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+                $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                     'playerId' => $damagePlayerId,
                     'player_name' => $this->getPlayerName($damagePlayerId),
                     'number' => $fireBreathingDamage,
@@ -500,13 +515,17 @@ trait DiceUtilTrait {
                     $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $playerId, -FIRE_BREATHING_CARD, 0, 0, null);
                 }
             }
+
+            if (count($mechaBlastEvolutions) > 0) {
+                $this->removeEvolutions($playerId, $mechaBlastEvolutions);
+            }
         } else {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
         }
 
         // funny looking but dangerous
         foreach ($funnyLookingButDangerousDamages as $damagePlayerId => $funnyLookingButDangerousDamage) {
-            $this->notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+            $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerName($damagePlayerId),
                 'number' => $funnyLookingButDangerousDamage,
@@ -521,7 +540,7 @@ trait DiceUtilTrait {
 
         // exotic arms
         foreach ($exoticArmsDamages as $damagePlayerId => $exoticArmsDamage) {
-            $this->notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+            $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerName($damagePlayerId),
                 'number' => $exoticArmsDamage,

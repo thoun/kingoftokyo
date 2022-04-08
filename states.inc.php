@@ -452,6 +452,17 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_BEFORE_RESOLVE_DICE => [
+        "name" => "beforeResolveDice",
+        "description" => /* client TODOPU translate(*/'${actplayer} can activate an Evolution card'/*)*/,
+        "descriptionmyturn" => /* client TODOPU translate(*/'${you} can activate an Evolution card'/*)*/,
+        "type" => "activeplayer",
+        "action" => "stBeforeResolveDice",
+        "args" => "argBeforeResolveDice",
+        "possibleactions" => [ "skipBeforeResolveDice" ],
+        "transitions" => [],
+    ],
+
     ST_RESOLVE_NUMBER_DICE => [
         "name" => "resolveNumberDice",
         "description" => "",

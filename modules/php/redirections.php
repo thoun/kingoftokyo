@@ -84,6 +84,14 @@ trait RedirectionTrait {
     }
 
     function redirectAfterResolveDice() {
+        if ($this->isPowerUpExpansion()) {
+            return ST_PLAYER_BEFORE_RESOLVE_DICE;
+        } else {
+            return ST_RESOLVE_NUMBER_DICE;
+        }
+    }
+
+    function redirectAfterBeforeResolveDice() {
         return ST_RESOLVE_NUMBER_DICE;
     }
 

@@ -203,6 +203,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'startGame':
                 break;
             case 'beforeStartTurn':
+            case 'beforeResolveDice':
             case 'halfMovePhase':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
@@ -777,6 +778,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 });
                 break;
             case 'beforeStartTurn':
+            case 'beforeResolveDice':
             case 'halfMovePhase':
                 this.onLeavingStepEvolution();
                 break;
@@ -1072,6 +1074,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                     if (argsPrepareResolveDice.hasEncasedInIce) {
                         (this as any).addActionButton('skipFreezeDie_button', _("Skip"), () => this.skipFreezeDie());
                     }
+                    break;
+                case 'beforeResolveDice':
+                    (this as any).addActionButton('skipBeforeResolveDice_button', _("Skip"), () => this.skipBeforeResolveDice());
                     break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
@@ -2872,6 +2877,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipExoticArms');
+    }
+    
+    public skipBeforeResolveDice() {
+        if(!(this as any).checkAction('skipBeforeResolveDice')) {
+            return;
+        }
+
+        this.takeAction('skipBeforeResolveDice');
     }
     
     public takeAction(action: string, data?: any) {

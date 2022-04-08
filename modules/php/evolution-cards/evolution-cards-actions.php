@@ -105,9 +105,7 @@ trait EvolutionCardsActionTrait {
 
         $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
 
-        if (!$this->canPlayEvolution($card->type, $playerId)) {
-            throw new \BgaUserException("You can't play this Evolution.");
-        }
+        $this->checkCanPlayEvolution($card->type, $playerId);
 
         $this->applyPlayEvolution($playerId, $card);
     }
@@ -411,5 +409,11 @@ trait EvolutionCardsActionTrait {
 
         $this->setUsedCard(3000 + $evolutionId);
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
+    }
+  	
+    public function skipBeforeResolveDice() {
+        $this->checkAction('skipBeforeResolveDice');
+
+        $this->goToState($this->redirectAfterBeforeResolveDice());
     }
 }

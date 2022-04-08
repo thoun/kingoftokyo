@@ -117,8 +117,8 @@ trait EvolutionCardsStateTrait {
                 $remove = $dieFace == 6;
 
                 $message = $remove ? 
-                    clienttranslate('${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and must remove it') :
-                    clienttranslate('${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and keeps it');
+                    /*clienttranslate(*/'${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and must remove it'/*)*/ :
+                    /*clienttranslate(*/'${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and keeps it'/*)*/;
 
                 $this->notifyAllPlayers('log', $message, [
                     'playerId' => $playerId,
@@ -182,6 +182,23 @@ trait EvolutionCardsStateTrait {
             $this->removeStackedStateAndRedirect();
         } else {
             throw new \BgaVisibleSystemException("Question code not handled: ".$question->code);
+        }
+    }
+
+    function stBeforeResolveDice() {
+        if (!$this->isPowerUpExpansion()) {
+            $this->goToState($this->redirectAfterBeforeResolveDice());
+            return;
+        }
+
+        $playerId = $this->getActivePlayerId();
+        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+        $couldPlay = array_values(array_filter($otherPlayersIds, fn($playerId) => $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE)));
+
+        if (count($couldPlay) > 0) {
+            $this->gamestate->setPlayersMultiactive($couldPlay, 'next');
+        } else {
+            $this->goToState($this->redirectAfterBeforeResolveDice());
         }
     }
     

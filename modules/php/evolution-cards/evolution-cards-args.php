@@ -41,6 +41,15 @@ trait EvolutionCardsArgTrait {
         ];
     }
 
+    function argBeforeResolveDice() {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        return [
+            'canPlayEvolution' => $isPowerUpExpansion, // TODOPU
+            'highlighted' => $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) : [],
+        ];
+    }
+
     function argHalfMovePhase() {
         $isPowerUpExpansion = $this->isPowerUpExpansion();
 

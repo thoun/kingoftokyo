@@ -94,39 +94,43 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function canPlayEvolution(int $cardType, int $playerId) {
+    function checkCanPlayEvolution(int $cardType, int $playerId) {
         $stateId = intval($this->gamestate->state_id());
 
         if ($stateId < 17) {
-            return false;
+            throw new \BgaUserException(/*self::_TODOPU*/("You can only play evolution cards when the game is started"));
         }
 
         // cards to player before starting turn
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_START) && $stateId != ST_PLAYER_BEFORE_START_TURN) {
-            return false;
+            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card before starting turn"));
+        }
+
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) && $stateId != ST_PLAYER_BEFORE_RESOLVE_DICE) {
+            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card when resolving dice"));
         }
 
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE) && $stateId != ST_MULTIPLAYER_HALF_MOVE_PHASE) {
-            return false;
+            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card before entering Tokyo"));
         }
 
         // cards to player when card is bought
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) && $stateId != ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT) {
-            if ($cardType == BAMBOOZLE_EVOLUTION) {
-                return $playerId != intval($this->getActivePlayerId());
+            $canPlay = $cardType == BAMBOOZLE_EVOLUTION && $playerId != intval($this->getActivePlayerId());
+            if (!$canPlay) {
+                throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card when another player is buying a card"));
             }
-            return false;
         }
 
         switch($cardType) {
             case NINE_LIVES_EVOLUTION:
             case SIMIAN_SCAMPER_EVOLUTION:
             case DETACHABLE_TAIL_EVOLUTION:
-                return false;
+                throw new \BgaUserException(/*self::_TODOPU*/("You can't play this Evolution now"));
             case FELINE_MOTOR_EVOLUTION:
                 $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
                 if (in_array($playerId, $startedTurnInTokyo)) {
-                    throw new \BgaUserException(self::_("You started your turn in Tokyo"));
+                    throw new \BgaUserException(/*self::_TODOPU*/("You started your turn in Tokyo"));
                 }
                 break;
             case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
@@ -139,18 +143,21 @@ trait EvolutionCardsUtilTrait {
                 return !$this->inTokyo($playerId);
             case BLIZZARD_EVOLUTION:
                 if ($playerId != intval($this->getActivePlayerId())) {
-                    throw new \BgaUserException(self::_("You must play this Evolution during your turn"));
+                    throw new \BgaUserException(/*self::_TODOPU*/("You must play this Evolution during your turn"));
                 }
                 break;
             case ICY_REFLECTION_EVOLUTION:
                 $playersIds = $this->getPlayersIds();
+                $canPlayIcyReflection = false;
                 foreach($playersIds as $playerId) {
                     $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
                     if ($this->array_some($evolutions, fn($evolution) => $evolution->type != ICY_REFLECTION_EVOLUTION && $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 1)) {
-                        return true; // if there is a permanent evolution card in table
+                        $canPlayIcyReflection = true; // if there is a permanent evolution card in table
                     }
                 }
-                return false;
+                if (!$canPlayIcyReflection) {
+                    throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card when there is another permanent Evolution on the table"));
+                }
         }
 
         return true;
@@ -175,6 +182,10 @@ trait EvolutionCardsUtilTrait {
 
     function canPlayStepEvolution(array $playersIds, array $stepCardsIds) {
         $playersIds = $this->isPowerUpMutantEvolution() ? $this->getPlayersIds(true) : $playersIds;
+
+        // ignore a player if its hand is empty
+        $playersIds = array_values(array_filter($playersIds, fn($playerId) => intval($this->evolutionCards->countCardInLocation('hand', $playerId)) > 0));
+
         $dbResults = $this->getCollectionFromDb("SELECT distinct player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
         $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']), array_values($dbResults));
 

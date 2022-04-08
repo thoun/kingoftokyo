@@ -167,6 +167,7 @@ class EvolutionCards {
             case 57: return /*_TODOPU*/("Once per turn, you can change one of the dice you rolled to [diceSmash].");
             case 58: return /*_TODOPU*/("Once per turn, you can change one of the dice you rolled to [dice1] or [dice2]."); // TODOPU check label
             // Meka Dragon
+            case 61: return /*_TODOPU*/("Each Monster you make lose [Heart] with your [diceSmash] loses 2 extra [Heart].");
             case 62: return /*_TODOPU*/("Gain 1[Energy] for each [diceSmash] you rolled this turn.");
             case 63: return /*_TODOPU*/("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
             case 64: return /*_TODOPU*/("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");            

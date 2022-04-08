@@ -168,13 +168,14 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
-            $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
+            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
-            $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(EXOTIC_ARMS_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(DESTRUCTIVE_ANALYSIS_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(EXOTIC_ARMS_EVOLUTION, 2343492, true);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);

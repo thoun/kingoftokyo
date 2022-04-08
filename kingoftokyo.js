@@ -1096,6 +1096,7 @@ var EvolutionCards = /** @class */ (function () {
             case 57: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [diceSmash].");
             case 58: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [dice1] or [dice2]."); // TODOPU check label
             // Meka Dragon
+            case 61: return /*_TODOPU*/ ("Each Monster you make lose [Heart] with your [diceSmash] loses 2 extra [Heart].");
             case 62: return /*_TODOPU*/ ("Gain 1[Energy] for each [diceSmash] you rolled this turn.");
             case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
             case 64: return /*_TODOPU*/ ("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");
@@ -3410,6 +3411,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'startGame':
                 break;
             case 'beforeStartTurn':
+            case 'beforeResolveDice':
             case 'halfMovePhase':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
@@ -3928,6 +3930,7 @@ var KingOfTokyo = /** @class */ (function () {
                 });
                 break;
             case 'beforeStartTurn':
+            case 'beforeResolveDice':
             case 'halfMovePhase':
                 this.onLeavingStepEvolution();
                 break;
@@ -4215,6 +4218,9 @@ var KingOfTokyo = /** @class */ (function () {
                     if (argsPrepareResolveDice.hasEncasedInIce) {
                         this.addActionButton('skipFreezeDie_button', _("Skip"), function () { return _this.skipFreezeDie(); });
                     }
+                    break;
+                case 'beforeResolveDice':
+                    this.addActionButton('skipBeforeResolveDice_button', _("Skip"), function () { return _this.skipBeforeResolveDice(); });
                     break;
                 case 'takeWickednessTile':
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
@@ -5666,6 +5672,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipExoticArms');
+    };
+    KingOfTokyo.prototype.skipBeforeResolveDice = function () {
+        if (!this.checkAction('skipBeforeResolveDice')) {
+            return;
+        }
+        this.takeAction('skipBeforeResolveDice');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

@@ -60,11 +60,10 @@ at start turn :
  - 87 épée énergétique (cyber bunny)
  - 95 temple englouti (Kraken)
 before resolving :
+ - 33 mecha blast (meka dragon)
  - 92 grande marée (kraken)
 after resolving
  - 34 analyse impitoyable (meka dragon) (or everytime ?)
-when smashing :
- - 33 mecha blast (meka dragon) (can it also apply with bought cards or another evolution ?)
 when tokyo monster is damaged by this player
  - 29 jouer avec sa nourriture (Cyber Kitty)
 during move phase (after leaving, before entering) :

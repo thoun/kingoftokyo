@@ -896,5 +896,13 @@
 
         self::ajaxResponse();
     }
+  	
+    public function skipBeforeResolveDice() {
+        self::setAjaxMode();
+
+        $this->game->skipBeforeResolveDice();
+
+        self::ajaxResponse();
+    }
 
 }
