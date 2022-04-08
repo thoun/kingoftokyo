@@ -174,6 +174,7 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION, 2343492, true);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
@@ -284,6 +285,7 @@ trait DebugUtilTrait {
     }
     
     // debugSetDieFaces(1)
+    // debugSetDieFaces(2, 3)
     // debugSetDieFaces(4, 3)
     // debugSetDieFaces(6, 3)
     function debugSetDieFaces($face, $limit = 99) {

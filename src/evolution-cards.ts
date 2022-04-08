@@ -135,6 +135,7 @@ class EvolutionCards {
             case 22: return /*_TODOPU*/("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
             case 23: return /*_TODOPU*/("Gain 1[Energy] for each [Heart] you lost this turn.");
             case 24: return /*_TODOPU*/("Put 3 [alienoidToken] tokens on this card. On your turn, you can remove an [alienoidToken] token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
+            case 25: return /*_TODOPU*/("If you roll at least [dice2][dice2][dice2] each other Monster loses 1[Heart].");
             case 27: return /*_TODOPU*/("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             case 28: return /*_TODOPU*/("You can buy [keep] cards by paying half of their cost (rounding up). When you do so, place a [UfoToken] on it. At the start of you turn, roll a die for each of your [keep] cards with a [UfoToken]. Discard each [keep] card for which you rolled a [diceSmash]. You cannot have more than 3 [keep] cards with [UfoToken] at a time.");
             // Cyber Kitty

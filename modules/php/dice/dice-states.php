@@ -170,6 +170,7 @@ trait DiceStateTrait {
             }
         }
         
+        $funnyLookingButDangerousDamages = [];
         if ($this->isPowerUpExpansion()) {
             if ($diceCounts[4] >= 3) {
                 $countPandarwinism = $this->countEvolutionOfType($playerId, PANDARWINISM_EVOLUTION);
@@ -177,9 +178,20 @@ trait DiceStateTrait {
                     $this->applyGetPoints($playerId, ($diceCounts[4] - 2) * $countPandarwinism, 3000 + PANDARWINISM_EVOLUTION);
                 }
             }
+
+            if ($diceCounts[2] >= 3) {
+                $countFunnyLookingButDangerous = $this->countEvolutionOfType($playerId, FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION);
+                if ($countFunnyLookingButDangerous > 0) {
+                    $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                    foreach ($otherPlayersIds as $otherPlayerId) {
+                        $funnyLookingButDangerousDamages[$otherPlayerId] = $countFunnyLookingButDangerous;
+                    }
+                }
+            }
         }
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
+        $this->setGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, $funnyLookingButDangerousDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
     }
 
@@ -265,13 +277,8 @@ trait DiceStateTrait {
             $diceCount = 0;
         }
         
-        if ($diceCount > 0) {
-            $playerId = $this->getActivePlayerId();
-            $this->resolveSmashDice($playerId, $diceCount, $playersSmashesWithReducedDamage);
-        } else {
-            $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
-            $this->goToState(ST_RESOLVE_SKULL_DICE);
-        }
+        $playerId = $this->getActivePlayerId();
+        $this->resolveSmashDice($playerId, $diceCount, $playersSmashesWithReducedDamage);
     }
 
     function stResolveSkullDice() {   

@@ -152,6 +152,7 @@ define('ENCASED_IN_ICE_DIE_ID', 'EncasedInIceDieId');
  */
 
 define('FIRE_BREATHING_DAMAGES', 'FireBreathingDamages');
+define('FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES', 'FunnyLookingButDangerousDamages');
 define('DICE_COUNTS', 'DiceCounts');
 define('USED_CARDS', 'UsedCards');
 define('JETS_DAMAGES', 'JetsDamages'); // also contains Simian Scamper damages

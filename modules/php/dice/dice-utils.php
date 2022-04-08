@@ -343,131 +343,153 @@ trait DiceUtilTrait {
 
     
     function resolveSmashDice(int $playerId, int $diceCount, array $playersSmashesWithReducedDamage) {
+        $funnyLookingButDangerousDamages = $this->getGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, true);
+        $smashedPlayersIds = [];
 
-        // ony here and not in stResolveDice, so player can heal and then activate Berserk
-        if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
-            $this->setPlayerBerserk($playerId, true);
-        }
-        
-        if ($this->isPowerUpExpansion()) {
-            if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
-                $diceCount *= 2;
+        if ($diceCount > 0) {
+            // ony here and not in stResolveDice, so player can heal and then activate Berserk
+            if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
+                $this->setPlayerBerserk($playerId, true);
             }
-        }
-
-        // Nova breath
-        $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
-
-        $message = null;
-        $smashedPlayersIds = null;
-        $inTokyo = $this->inTokyo($playerId);
-        $nextStateId = ST_ENTER_TOKYO_APPLY_BURROWING;
-
-        $damages = [];
-
-        if ($countNovaBreath) {
-            $message = clienttranslate('${player_name} smashes all other Monsters with ${number} [diceSmash]');
-            $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
-        } else {
-            $smashTokyo = !$inTokyo;
-            $message = $smashTokyo ? 
-                clienttranslate('${player_name} smashes Monsters in Tokyo with ${number} [diceSmash]') :
-                clienttranslate('${player_name} smashes Monsters outside Tokyo with ${number} [diceSmash]');
-            $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
-        }
-
-        // Shrink Ray
-        $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
-        // Poison Spit
-        $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD);
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, POISON_SPIT_WICKEDNESS_TILE)) {
-            $givePoisonSpitToken += 1;
-        }
-        // Underdog
-        $playerScore = null;
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, UNDERDOG_WICKEDNESS_TILE)) {
-            $playerScore = $this->getPlayerScore($playerId);
-        }
-
-        $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
-
-        $jetsDamages = [];
-        $smashedPlayersInTokyo = [];
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
-        foreach($smashedPlayersIds as $smashedPlayerId) {
-            $smashedPlayerIsInTokyo = $this->inTokyo($smashedPlayerId);
-
-            $fireBreathingDamage = array_key_exists($smashedPlayerId, $fireBreathingDamages) ? $fireBreathingDamages[$smashedPlayerId] : 0;
-            $damageAmount = $diceCount + $fireBreathingDamage;
-
-            if (array_key_exists($smashedPlayerId, $playersSmashesWithReducedDamage)) {
-                $damageAmount -= $playersSmashesWithReducedDamage[$smashedPlayerId];
-            }
-            if ($damageAmount <= 0) {
-                continue;
+            
+            if ($this->isPowerUpExpansion()) {
+                if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
+                    $diceCount *= 2;
+                }
             }
 
-            if ($smashedPlayerIsInTokyo) {
-                $smashedPlayersInTokyo[] = $smashedPlayerId;
-            }
+            // Nova breath
+            $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
 
-            // Jets
-            $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
-            $countSimianScamper = 0;
-            if ($isPowerUpExpansion) {
-                $countSimianScamper = $this->countEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
-            }
+            $message = null;
+            $inTokyo = $this->inTokyo($playerId);
+            $nextStateId = ST_ENTER_TOKYO_APPLY_BURROWING;
 
-            $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
-            if (($countJets > 0 || $countSimianScamper > 0) && $smashedPlayerIsInTokyo) {                
-                $jetsDamages[] = $newDamage;
+            $damages = [];
+
+            if ($countNovaBreath) {
+                $message = clienttranslate('${player_name} smashes all other Monsters with ${number} [diceSmash]');
+                $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
             } else {
-                $damages[] = $newDamage;
+                $smashTokyo = !$inTokyo;
+                $message = $smashTokyo ? 
+                    clienttranslate('${player_name} smashes Monsters in Tokyo with ${number} [diceSmash]') :
+                    clienttranslate('${player_name} smashes Monsters outside Tokyo with ${number} [diceSmash]');
+                $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
             }
-        }
 
-        if (count($smashedPlayersInTokyo) > 0) {
-            $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $smashedPlayersInTokyo);
-            $nextStateId = ST_MULTIPLAYER_LEAVE_TOKYO;
+            // Shrink Ray
+            $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
+            // Poison Spit
+            $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD);
+            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, POISON_SPIT_WICKEDNESS_TILE)) {
+                $givePoisonSpitToken += 1;
+            }
+            // Underdog
+            $playerScore = null;
+            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, UNDERDOG_WICKEDNESS_TILE)) {
+                $playerScore = $this->getPlayerScore($playerId);
+            }
 
-            if (count($smashedPlayersInTokyo) === 1 && $isPowerUpExpansion) {
-                $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
-                if (count($freezeRayEvolutions) > 0) {
-                    $this->giveFreezeRay($playerId, $smashedPlayersInTokyo[0]);
+            $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
+
+            $jetsDamages = [];
+            $smashedPlayersInTokyo = [];
+            $isPowerUpExpansion = $this->isPowerUpExpansion();
+            foreach($smashedPlayersIds as $smashedPlayerId) {
+                $smashedPlayerIsInTokyo = $this->inTokyo($smashedPlayerId);
+
+                $fireBreathingDamage = array_key_exists($smashedPlayerId, $fireBreathingDamages) ? $fireBreathingDamages[$smashedPlayerId] : 0;
+                $damageAmount = $diceCount + $fireBreathingDamage;
+                $funnyLookingButDangerousDamage = array_key_exists($smashedPlayerId, $funnyLookingButDangerousDamages) ? $funnyLookingButDangerousDamages[$smashedPlayerId] : 0;
+                $damageAmount = $diceCount + $funnyLookingButDangerousDamage;
+
+                if (array_key_exists($smashedPlayerId, $playersSmashesWithReducedDamage)) {
+                    $damageAmount -= $playersSmashesWithReducedDamage[$smashedPlayerId];
+                }
+                if ($damageAmount <= 0) {
+                    continue;
+                }
+
+                if ($smashedPlayerIsInTokyo) {
+                    $smashedPlayersInTokyo[] = $smashedPlayerId;
+                }
+
+                // Jets
+                $countJets = $this->countCardOfType($smashedPlayerId, JETS_CARD);
+                $countSimianScamper = 0;
+                if ($isPowerUpExpansion) {
+                    $countSimianScamper = $this->countEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
+                }
+
+                $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
+                if (($countJets > 0 || $countSimianScamper > 0) && $smashedPlayerIsInTokyo) {                
+                    $jetsDamages[] = $newDamage;
+                } else {
+                    $damages[] = $newDamage;
+                }
+            }
+
+            if (count($smashedPlayersInTokyo) > 0) {
+                $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, $smashedPlayersInTokyo);
+                $nextStateId = ST_MULTIPLAYER_LEAVE_TOKYO;
+
+                if (count($smashedPlayersInTokyo) === 1 && $isPowerUpExpansion) {
+                    $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+                    if (count($freezeRayEvolutions) > 0) {
+                        $this->giveFreezeRay($playerId, $smashedPlayersInTokyo[0]);
+                    }
+                }
+            } else {
+                $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
+            }
+
+            $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
+            $this->setGameStateValue(STATE_AFTER_RESOLVE, $nextStateId);
+
+            $this->notifyAllPlayers("resolveSmashDice", $message, [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'number' => $diceCount,
+                'smashedPlayersIds' => $smashedPlayersIds,
+            ]);
+
+            // Alpha Monster
+            $countAlphaMonster = $this->countCardOfType($playerId, ALPHA_MONSTER_CARD);
+            if ($countAlphaMonster > 0) {
+                $this->applyGetPoints($playerId, $countAlphaMonster, ALPHA_MONSTER_CARD);
+            }
+
+            // fire breathing
+            foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
+                $this->notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+                    'playerId' => $damagePlayerId,
+                    'player_name' => $this->getPlayerName($damagePlayerId),
+                    'number' => $fireBreathingDamage,
+                    'card_name' => FIRE_BREATHING_CARD,
+                ]);
+
+                // we add damage only if it's not already counted in smashed players (without tokens)
+                if (!in_array($damagePlayerId, $smashedPlayersIds)) {
+                    $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $playerId, -FIRE_BREATHING_CARD, 0, 0, null);
                 }
             }
         } else {
-            $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
+            $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
         }
 
-        $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
-        $this->setGameStateValue(STATE_AFTER_RESOLVE, $nextStateId);
-
-        $this->notifyAllPlayers("resolveSmashDice", $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'number' => $diceCount,
-            'smashedPlayersIds' => $smashedPlayersIds,
-        ]);
-
-        // Alpha Monster
-        $countAlphaMonster = $this->countCardOfType($playerId, ALPHA_MONSTER_CARD);
-        if ($countAlphaMonster > 0) {
-            $this->applyGetPoints($playerId, $countAlphaMonster, ALPHA_MONSTER_CARD);
-        }
-
-        // fire breathing
-        foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
+        // funny looking but dangerous
+        foreach ($funnyLookingButDangerousDamages as $damagePlayerId => $funnyLookingButDangerousDamage) {
             $this->notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerName($damagePlayerId),
-                'number' => 1,
-                'card_name' => FIRE_BREATHING_CARD,
+                'number' => $funnyLookingButDangerousDamage,
+                'card_name' => 3000 + FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION,
             ]);
 
             // we add damage only if it's not already counted in smashed players (without tokens)
             if (!in_array($damagePlayerId, $smashedPlayersIds)) {
-                $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $playerId, -FIRE_BREATHING_CARD, 0, 0, null);
+                $damages[] = new Damage($damagePlayerId, $funnyLookingButDangerousDamage, $playerId, -(3000 + FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION), 0, 0, null);
             }
         }
 
