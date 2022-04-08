@@ -675,9 +675,10 @@ trait UtilTrait {
 
         $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId, $giveShrinkRayToken, $givePoisonSpitToken,  $smasherPoints);
 
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
         if ($newHealth == 0 && $actualHealth > 0) {
             // eater of the dead 
-            $isPowerUpExpansion = $this->isPowerUpExpansion();
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $pId) {
                 $countEaterOfTheDead = $this->countCardOfType($pId, EATER_OF_THE_DEAD_CARD);
@@ -719,6 +720,18 @@ trait UtilTrait {
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
         if ($countReflectiveHide > 0) {
             $this->applyDamage($damageDealerId, $countReflectiveHide, $playerId, 2000 + REFLECTIVE_HIDE_CARD, $activePlayerId, 0, 0, null);
+        }
+
+        if ($isPowerUpExpansion && $this->inTokyo($playerId)) {
+            $countBreathOfDoom = $this->countEvolutionOfType($damageDealerId, BREATH_OF_DOOM_EVOLUTION);
+            if ($countBreathOfDoom > 0) {
+                $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
+                foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
+                    if ($outsideTokyoPlayerId != $damageDealerId) {
+                        $this->applyDamage($outsideTokyoPlayerId, $countBreathOfDoom, $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION, $damageDealerId, 0, 0, null);
+                    }
+                }
+            }            
         }
     }
 
