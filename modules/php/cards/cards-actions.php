@@ -237,7 +237,10 @@ trait CardsActionTrait {
             $newCardId = $newCard->id;
         }
         $this->setGameStateValue('newCardId', $newCardId);
-        return [$newCardId, $damages, $mimic];
+
+        $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
+
+        $this->goToState($redirectAfterBuyCard, $damages);
     }
 
     function buyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false) {
