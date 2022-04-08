@@ -880,5 +880,21 @@
 
         self::ajaxResponse();
     }
+  	
+    public function useExoticArms() {
+        self::setAjaxMode();
+
+        $this->game->useExoticArms();
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipExoticArms() {
+        self::setAjaxMode();
+
+        $this->game->skipExoticArms();
+
+        self::ajaxResponse();
+    }
 
 }

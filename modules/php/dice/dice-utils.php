@@ -344,7 +344,51 @@ trait DiceUtilTrait {
     
     function resolveSmashDice(int $playerId, int $diceCount, array $playersSmashesWithReducedDamage) {
         $funnyLookingButDangerousDamages = $this->getGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, true);
+        $exoticArmsDamages = [];
         $smashedPlayersIds = [];
+        
+
+        // Nova breath
+        $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
+
+        $message = null;
+        $inTokyo = $this->inTokyo($playerId);
+        $nextStateId = ST_ENTER_TOKYO_APPLY_BURROWING;
+
+        $damages = [];
+
+        if ($countNovaBreath) {
+            $message = clienttranslate('${player_name} smashes all other Monsters with ${number} [diceSmash]');
+            $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
+        } else {
+            $smashTokyo = !$inTokyo;
+            $message = $smashTokyo ? 
+                clienttranslate('${player_name} smashes Monsters in Tokyo with ${number} [diceSmash]') :
+                clienttranslate('${player_name} smashes Monsters outside Tokyo with ${number} [diceSmash]');
+            $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
+        }
+
+        if ($this->isPowerUpExpansion()) {
+            $exoticArmsEvolutions = $this->getEvolutionsOfType($playerId, EXOTIC_ARMS_EVOLUTION);
+            $usedExoticArms = array_values(array_filter($exoticArmsEvolutions, fn($evolution) => $evolution->tokens > 0));
+            $countExoticArms = count($usedExoticArms);
+            if ($countExoticArms > 0) {
+                $extraDamage = $diceCount >= 3;
+
+                foreach ($usedExoticArms as $exoticArmsEvolution) {
+                    $this->setEvolutionTokens($playerId, $exoticArmsEvolution, 0);
+                }
+
+                if ($extraDamage) {
+                    $this->applyGetEnergy($playerId, 2 * $countExoticArms, 0);
+                    foreach ($smashedPlayersIds as $smashedPlayerId) {
+                        $exoticArmsDamages[$smashedPlayerId] = 2 * $countExoticArms;
+                    }
+                } else {
+                    $exoticArmsDamages[$playerId] = 2 * $countExoticArms;
+                }
+            }
+        }
 
         if ($diceCount > 0) {
             // ony here and not in stResolveDice, so player can heal and then activate Berserk
@@ -356,26 +400,6 @@ trait DiceUtilTrait {
                 if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $diceCount *= 2;
                 }
-            }
-
-            // Nova breath
-            $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
-
-            $message = null;
-            $inTokyo = $this->inTokyo($playerId);
-            $nextStateId = ST_ENTER_TOKYO_APPLY_BURROWING;
-
-            $damages = [];
-
-            if ($countNovaBreath) {
-                $message = clienttranslate('${player_name} smashes all other Monsters with ${number} [diceSmash]');
-                $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
-            } else {
-                $smashTokyo = !$inTokyo;
-                $message = $smashTokyo ? 
-                    clienttranslate('${player_name} smashes Monsters in Tokyo with ${number} [diceSmash]') :
-                    clienttranslate('${player_name} smashes Monsters outside Tokyo with ${number} [diceSmash]');
-                $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
             }
 
             // Shrink Ray
@@ -403,6 +427,8 @@ trait DiceUtilTrait {
                 $damageAmount = $diceCount + $fireBreathingDamage;
                 $funnyLookingButDangerousDamage = array_key_exists($smashedPlayerId, $funnyLookingButDangerousDamages) ? $funnyLookingButDangerousDamages[$smashedPlayerId] : 0;
                 $damageAmount = $diceCount + $funnyLookingButDangerousDamage;
+                $exoticArmsDamage = array_key_exists($smashedPlayerId, $exoticArmsDamages) ? $exoticArmsDamages[$smashedPlayerId] : 0;
+                $damageAmount = $diceCount + $exoticArmsDamage;
 
                 if (array_key_exists($smashedPlayerId, $playersSmashesWithReducedDamage)) {
                     $damageAmount -= $playersSmashesWithReducedDamage[$smashedPlayerId];
@@ -490,6 +516,21 @@ trait DiceUtilTrait {
             // we add damage only if it's not already counted in smashed players (without tokens)
             if (!in_array($damagePlayerId, $smashedPlayersIds)) {
                 $damages[] = new Damage($damagePlayerId, $funnyLookingButDangerousDamage, $playerId, -(3000 + FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION), 0, 0, null);
+            }
+        }
+
+        // exotic arms
+        foreach ($exoticArmsDamages as $damagePlayerId => $exoticArmsDamage) {
+            $this->notifyAllPlayers("fireBreathingExtraDamage", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+                'playerId' => $damagePlayerId,
+                'player_name' => $this->getPlayerName($damagePlayerId),
+                'number' => $exoticArmsDamage,
+                'card_name' => 3000 + EXOTIC_ARMS_EVOLUTION,
+            ]);
+
+            // we add damage only if it's not already counted in smashed players (without tokens)
+            if (!in_array($damagePlayerId, $smashedPlayersIds)) {
+                $damages[] = new Damage($damagePlayerId, $exoticArmsDamage, $playerId, -(3000 + EXOTIC_ARMS_EVOLUTION), 0, 0, null);
             }
         }
 

@@ -60,7 +60,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     public setup(gamedatas: KingOfTokyoGamedatas) {
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18/*,19,21*/].filter(i => !players.some(player => Number(player.monster) === i)).forEach(i => {
+        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21].filter(i => !players.some(player => Number(player.monster) === i)).forEach(i => {
             (this as any).dontPreloadImage(`monster-board-${i}.png`);
             (this as any).dontPreloadImage(`monster-figure-${i}.png`);
         });
@@ -1196,7 +1196,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch(question.code) {
             case 'BambooSupply':
                 const substituteParams = { card_name: this.evolutionCards.getCardName(136, 'text-only')};
-                const putLabel = dojo.string.substitute(/*TODOPU_*/("Put 1[Energy] on ${card_name}"), substituteParams);
+                const putLabel = dojo.string.substitute(/*TODOPU_*/("Put ${number}[Energy] on ${card_name}"), {...substituteParams, number: 1});
                 const takeLabel = dojo.string.substitute(/*TODOPU_*/("Take all [Energy] from ${card_name}"), substituteParams);
                 (this as any).addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
                 (this as any).addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), () => this.takeEnergyOnBambooSupply());
@@ -1249,6 +1249,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Play ${card_name}'), { card_name: this.cards.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
                     setTimeout(() => document.getElementById(`deepDive-card-${card.id}`)?.addEventListener('click', () => this.playCardDeepDive(card.id)), 250);
                 });
+                break;
+            case 'ExoticArms':
+                const useExoticArmsLabel = dojo.string.substitute(/*TODOPU_*/("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCards.getCardName(26, 'text-only'), number: 2 });
+                
+                (this as any).addActionButton('useExoticArms_button', formatTextIcons(useExoticArmsLabel), () => this.useExoticArms());
+                (this as any).addActionButton('skipExoticArms_button', _('Skip'), () => this.skipExoticArms());
+                dojo.toggleClass('useExoticArms_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
+                document.getElementById('useExoticArms_button').dataset.enableAtEnergy = '2';
                 break;
         }
     }
@@ -2848,6 +2856,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('playCardDeepDive', {
             id
         });
+    }
+    
+    public useExoticArms() {
+        if(!(this as any).checkAction('useExoticArms')) {
+            return;
+        }
+
+        this.takeAction('useExoticArms');
+    }
+    
+    public skipExoticArms() {
+        if(!(this as any).checkAction('skipExoticArms')) {
+            return;
+        }
+
+        this.takeAction('skipExoticArms');
     }
     
     public takeAction(action: string, data?: any) {

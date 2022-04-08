@@ -381,4 +381,35 @@ trait EvolutionCardsActionTrait {
         
         $this->goToState($this->redirectAfterPrepareResolveDice());
     }
+
+    
+  	
+    public function useExoticArms() {
+        $this->checkAction('useExoticArms');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        if ($this->getPlayerEnergy($playerId) < 2) {
+            throw new \BgaUserException("Not enough energy");
+        }
+        $this->applyLoseEnergy($playerId, 2, 0);
+
+        $question = $this->getQuestion();
+        $evolutionId = $question->args->card->id;
+        $evolution = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($evolutionId));
+        $this->setEvolutionTokens($this->getActivePlayerId(), $evolution, 2);
+
+        $this->setUsedCard(3000 + $evolutionId);
+        $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
+    }
+  	
+    public function skipExoticArms() {
+        $this->checkAction('skipExoticArms');
+
+        $question = $this->getQuestion();
+        $evolutionId = $question->args->card->id;
+
+        $this->setUsedCard(3000 + $evolutionId);
+        $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
+    }
 }

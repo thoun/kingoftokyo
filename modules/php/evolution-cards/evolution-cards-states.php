@@ -76,6 +76,36 @@ trait EvolutionCardsStateTrait {
             }
         }
 
+        $unusedExoticArmsCard = $this->getFirstUnusedEvolution($playerId, EXOTIC_ARMS_EVOLUTION);
+        if ($unusedExoticArmsCard != null) {
+
+            $potentialEnergy = $this->getPlayerEnergy($playerId);
+            if ($this->isCthulhuExpansion()) {
+                $potentialEnergy += $this->getPlayerCultists($playerId);
+            }
+
+            if ($potentialEnergy >= 2) {
+                $question = new Question(
+                    'ExoticArms',
+                    /* client TODOPU translate(*/'${actplayer} can put 2[Energy] on ${card_name}'/*)*/,
+                    /* client TODOPU translate(*/'${you} can put 2[Energy] on ${card_name}'/*)*/,
+                    [$playerId],
+                    ST_QUESTIONS_BEFORE_START_TURN,
+                    [ 
+                        'card' => $unusedExoticArmsCard,
+                        '_args' => [
+                            'card_name' => 3000 + EXOTIC_ARMS_EVOLUTION,
+                        ],                        
+                    ]
+                );
+                $this->setQuestion($question);
+                $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+                $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                return;
+            }
+        }
+
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens();
         $cardsWithSuperiorAlienTechnologyTokens = array_values(array_filter($cards, fn($card) => in_array($card->id, $superiorAlienTechnologyTokens)));

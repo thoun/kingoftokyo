@@ -136,6 +136,7 @@ class EvolutionCards {
             case 23: return /*_TODOPU*/("Gain 1[Energy] for each [Heart] you lost this turn.");
             case 24: return /*_TODOPU*/("Put 3 [alienoidToken] tokens on this card. On your turn, you can remove an [alienoidToken] token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
             case 25: return /*_TODOPU*/("If you roll at least [dice2][dice2][dice2] each other Monster loses 1[Heart].");
+            case 26: return /*_TODOPU*/("Before you roll, you can put 2[Energy] on this card. If you do, and roll at least [diceSmash][diceSmash][diceSmash], you can take back your two [Energy] and make the Monsters you wound lose 2 extra [Heart]. Otherwise you lose your 2[Energy] and lose 2[Heart].");
             case 27: return /*_TODOPU*/("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             case 28: return /*_TODOPU*/("You can buy [keep] cards by paying half of their cost (rounding up). When you do so, place a [UfoToken] on it. At the start of you turn, roll a die for each of your [keep] cards with a [UfoToken]. Discard each [keep] card for which you rolled a [diceSmash]. You cannot have more than 3 [keep] cards with [UfoToken] at a time.");
             // Cyber Kitty
@@ -262,7 +263,7 @@ class EvolutionCards {
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="card-token `;
             if (cardType === 24) {
                 html += `ufo token`;
-            } else if (cardType === 136) {
+            } else if (cardType === 26 || cardType === 136) {
                 html += `energy-cube`;
             }
             html += `"></div>`;

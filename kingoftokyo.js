@@ -1065,6 +1065,7 @@ var EvolutionCards = /** @class */ (function () {
             case 23: return /*_TODOPU*/ ("Gain 1[Energy] for each [Heart] you lost this turn.");
             case 24: return /*_TODOPU*/ ("Put 3 [alienoidToken] tokens on this card. On your turn, you can remove an [alienoidToken] token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
             case 25: return /*_TODOPU*/ ("If you roll at least [dice2][dice2][dice2] each other Monster loses 1[Heart].");
+            case 26: return /*_TODOPU*/ ("Before you roll, you can put 2[Energy] on this card. If you do, and roll at least [diceSmash][diceSmash][diceSmash], you can take back your two [Energy] and make the Monsters you wound lose 2 extra [Heart]. Otherwise you lose your 2[Energy] and lose 2[Heart].");
             case 27: return /*_TODOPU*/ ("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             case 28: return /*_TODOPU*/ ("You can buy [keep] cards by paying half of their cost (rounding up). When you do so, place a [UfoToken] on it. At the start of you turn, roll a die for each of your [keep] cards with a [UfoToken]. Discard each [keep] card for which you rolled a [diceSmash]. You cannot have more than 3 [keep] cards with [UfoToken] at a time.");
             // Cyber Kitty
@@ -1177,7 +1178,7 @@ var EvolutionCards = /** @class */ (function () {
             if (cardType === 24) {
                 html += "ufo token";
             }
-            else if (cardType === 136) {
+            else if (cardType === 26 || cardType === 136) {
                 html += "energy-cube";
             }
             html += "\"></div>";
@@ -3298,7 +3299,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 /*,19,21*/].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
             _this.dontPreloadImage("monster-board-" + i + ".png");
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });
@@ -4325,7 +4326,7 @@ var KingOfTokyo = /** @class */ (function () {
         switch (question.code) {
             case 'BambooSupply':
                 var substituteParams = { card_name: this.evolutionCards.getCardName(136, 'text-only') };
-                var putLabel = dojo.string.substitute(/*TODOPU_*/ ("Put 1[Energy] on ${card_name}"), substituteParams);
+                var putLabel = dojo.string.substitute(/*TODOPU_*/ ("Put ${number}[Energy] on ${card_name}"), __assign(__assign({}, substituteParams), { number: 1 }));
                 var takeLabel = dojo.string.substitute(/*TODOPU_*/ ("Take all [Energy] from ${card_name}"), substituteParams);
                 this.addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), function () { return _this.putEnergyOnBambooSupply(); });
                 this.addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), function () { return _this.takeEnergyOnBambooSupply(); });
@@ -4377,6 +4378,13 @@ var KingOfTokyo = /** @class */ (function () {
                     _this.addActionButton("playCardDeepDive_button" + card.id, formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Play ${card_name}'), { card_name: _this.cards.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
                     setTimeout(function () { var _a; return (_a = document.getElementById("deepDive-card-" + card.id)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return _this.playCardDeepDive(card.id); }); }, 250);
                 });
+                break;
+            case 'ExoticArms':
+                var useExoticArmsLabel = dojo.string.substitute(/*TODOPU_*/ ("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCards.getCardName(26, 'text-only'), number: 2 });
+                this.addActionButton('useExoticArms_button', formatTextIcons(useExoticArmsLabel), function () { return _this.useExoticArms(); });
+                this.addActionButton('skipExoticArms_button', _('Skip'), function () { return _this.skipExoticArms(); });
+                dojo.toggleClass('useExoticArms_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
+                document.getElementById('useExoticArms_button').dataset.enableAtEnergy = '2';
                 break;
         }
     };
@@ -5646,6 +5654,18 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('playCardDeepDive', {
             id: id
         });
+    };
+    KingOfTokyo.prototype.useExoticArms = function () {
+        if (!this.checkAction('useExoticArms')) {
+            return;
+        }
+        this.takeAction('useExoticArms');
+    };
+    KingOfTokyo.prototype.skipExoticArms = function () {
+        if (!this.checkAction('skipExoticArms')) {
+            return;
+        }
+        this.takeAction('skipExoticArms');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
