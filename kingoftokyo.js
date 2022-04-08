@@ -79,7 +79,8 @@ function formatTextIcons(rawText) {
         .replace(/\[berserkDieSkull\]/ig, '<span class="dice-icon berserk dice6"></span>')
         .replace(/\[snowflakeToken\]/ig, '<span class="icy-reflection token"></span>')
         .replace(/\[ufoToken\]/ig, '<span class="ufo token"></span>')
-        .replace(/\[[alienoidToken]\]/ig, '<span class="alienoid token"></span>')
+        .replace(/\[alienoidToken\]/ig, '<span class="alienoid token"></span>')
+        .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
 var CARD_WIDTH = 132;
@@ -1101,6 +1102,7 @@ var EvolutionCards = /** @class */ (function () {
             case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
             case 64: return /*_TODOPU*/ ("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");
             case 65: return /*_TODOPU*/ ("When you make Monsters in Tokyo lose at least 1[Heart], Monsters who aren't in Tokyo also lose 1[Heart] (except you).");
+            case 68: return /*_TODOPU*/ ("When a Monster makes you lose [Heart] with [diceSmash], you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
             // Pandakaï
             case 131: return /*_TODOPU*/ ("Gain 6[Energy]. All other Monsters gain 3[Energy].");
             case 132: return /*_TODOPU*/ ("Play when you take control of Tokyo. Make all Monsters outside of Tokyo lose 2[Heart]. Gain 1[Energy], then leave Tokyo. No Monster takes your place.");
@@ -1839,6 +1841,14 @@ var PlayerTable = /** @class */ (function () {
             var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
             cardDiv.classList.remove('highlight-evolution');
         });
+    };
+    PlayerTable.prototype.removeTarget = function () {
+        var _a;
+        var target = document.getElementById("player-table" + this.playerId + "-target");
+        (_a = target === null || target === void 0 ? void 0 : target.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(target);
+    };
+    PlayerTable.prototype.giveTarget = function () {
+        dojo.place("<div id=\"player-table" + this.playerId + "-target\" class=\"target token\"></div>", "monster-board-" + this.playerId);
     };
     return PlayerTable;
 }());
@@ -4393,6 +4403,11 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.toggleClass('useExoticArms_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
                 document.getElementById('useExoticArms_button').dataset.enableAtEnergy = '2';
                 break;
+            case 'TargetAcquired':
+                var targetAcquiredCatchArgs = question.args;
+                this.addActionButton('giveTarget_button', dojo.string.substitute(/*TODOPU_*/ ("Give target to ${player_name}"), { 'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name }), function () { return _this.giveTarget(); });
+                this.addActionButton('skipGiveTarget_button', _('Skip'), function () { return _this.skipGiveTarget(); });
+                break;
         }
     };
     ///////////////////////////////////////////////////
@@ -4541,6 +4556,9 @@ var KingOfTokyo = /** @class */ (function () {
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
             return new PlayerTable(_this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens);
         });
+        if (gamedatas.targetedPlayer) {
+            this.getPlayerTable(gamedatas.targetedPlayer).giveTarget();
+        }
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
         return this.playerTables.find(function (playerTable) { return playerTable.playerId === Number(playerId); });
@@ -5680,6 +5698,18 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipBeforeResolveDice');
     };
+    KingOfTokyo.prototype.giveTarget = function () {
+        if (!this.checkAction('giveTarget')) {
+            return;
+        }
+        this.takeAction('giveTarget');
+    };
+    KingOfTokyo.prototype.skipGiveTarget = function () {
+        if (!this.checkAction('skipGiveTarget')) {
+            return;
+        }
+        this.takeAction('skipGiveTarget');
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -5788,6 +5818,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['addEvolutionCardInHand', 1],
             ['addSuperiorAlienTechnologyToken', 1],
             ['removeSuperiorAlienTechnologyToken', 1],
+            ['giveTarget', 1],
             ['log500', 500]
         ];
         notifs.forEach(function (notif) {
@@ -6137,6 +6168,12 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_removeSuperiorAlienTechnologyToken = function (notif) {
         var stock = this.getPlayerTable(notif.args.playerId).cards;
         this.cards.removeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
+    };
+    KingOfTokyo.prototype.notif_giveTarget = function (notif) {
+        if (notif.args.previousOwner) {
+            this.getPlayerTable(notif.args.previousOwner).removeTarget();
+        }
+        this.getPlayerTable(notif.args.playerId).giveTarget();
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

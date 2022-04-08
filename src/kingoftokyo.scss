@@ -348,6 +348,11 @@ button, a {
     background-position: 33.33% 0%; // TODOPU
     box-shadow: 0 0 4px 4px white; // TODOPU
   }
+
+  &.target {
+    background-position: 66.66% 0%; // TODOPU
+    box-shadow: 0 0 4px 4px white; // TODOPU
+  }
 }
 
 #skipBuyPhaseWrapper {

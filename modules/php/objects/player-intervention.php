@@ -48,13 +48,15 @@ class PlayersUsedDice {
 }
 
 class CancelDamageIntervention extends PlayerIntervention {
-    public $damage;
+    public $damages;
+    public $allDamages;
     public $playersUsedDice; // store playerId => PlayersUsedDice
 
-    public function __construct(array $remainingPlayersId, array $damages) {
+    public function __construct(array $remainingPlayersId, array $damages, array $allDamages) {
         parent::__construct(ST_MULTIPLAYER_CANCEL_DAMAGE, $remainingPlayersId);
 
         $this->damages = $damages;
+        $this->allDamages = $allDamages;
         $this->playersUsedDice = new \stdClass();
     }
 

@@ -120,6 +120,13 @@
                     background-image: url('img/monster-board-#{$i}.png');
                 }
             }
+
+            .target.token {
+                position: absolute;
+                top: -15px;
+                left: 27px;
+                z-index: 2;
+            }
         }
     }
 

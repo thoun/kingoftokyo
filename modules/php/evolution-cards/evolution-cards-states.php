@@ -180,6 +180,8 @@ trait EvolutionCardsStateTrait {
 
         if ($question->code === 'MegaPurr') {
             $this->removeStackedStateAndRedirect();
+        } else if ($question->code === 'TargetAcquired') {
+            $this->goToState($question->stateIdAfter);
         } else {
             throw new \BgaVisibleSystemException("Question code not handled: ".$question->code);
         }

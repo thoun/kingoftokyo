@@ -15,13 +15,13 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343494, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
         //$this->debugSetPlayerPoints(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
@@ -178,7 +178,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
-            //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);

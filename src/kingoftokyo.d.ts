@@ -89,6 +89,10 @@ interface DeepDiveQuestionArgs {
     cards: Card[];
 }
 
+interface TargetAcquiredQuestionArgs {
+    playerId: number;
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
@@ -151,6 +155,7 @@ interface KingOfTokyoGamedatas {
     wickednessTiles: WickednessTile[];
     EVOLUTION_CARDS_TYPES?: number[];
     superiorAlienTechnologyTokens?: number[];
+    targetedPlayer?: number;
 }
 
 interface KingOfTokyoGame extends Game {
@@ -638,4 +643,9 @@ interface NotifPlayEvolutionArgs {
 interface NotifAddSuperiorAlienTechnologyTokenArgs {
     playerId: number;
     card: Card;
+}
+
+interface NotifGiveTargetArgs {
+    playerId: number;
+    previousOwner: number;
 }

@@ -759,6 +759,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }).join('')
                 }</div>`, `maintitlebar_content`);
                 break;
+
         }
     }
 
@@ -1263,6 +1264,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 dojo.toggleClass('useExoticArms_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
                 document.getElementById('useExoticArms_button').dataset.enableAtEnergy = '2';
                 break;
+            case 'TargetAcquired':
+                const targetAcquiredCatchArgs = question.args as TargetAcquiredQuestionArgs;
+                (this as any).addActionButton('giveTarget_button', dojo.string.substitute(/*TODOPU_*/("Give target to ${player_name}"), {'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name}), () => this.giveTarget());
+                (this as any).addActionButton('skipGiveTarget_button', _('Skip'), () => this.skipGiveTarget());
+                break;
         }
     }
 
@@ -1489,6 +1495,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
             return new PlayerTable(this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens);
         });
+
+        if (gamedatas.targetedPlayer) {
+            this.getPlayerTable(gamedatas.targetedPlayer).giveTarget();
+        }
     }
 
     private getPlayerTable(playerId: number): PlayerTable {
@@ -2887,6 +2897,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('skipBeforeResolveDice');
     }
     
+    public giveTarget() {
+        if(!(this as any).checkAction('giveTarget')) {
+            return;
+        }
+
+        this.takeAction('giveTarget');
+    }
+    
+    public skipGiveTarget() {
+        if(!(this as any).checkAction('skipGiveTarget')) {
+            return;
+        }
+
+        this.takeAction('skipGiveTarget');
+    }
+    
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
@@ -2997,8 +3023,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['cultist', 1],
             ['removeWickednessTiles', 1],
             ['addEvolutionCardInHand', 1],
-            ['addSuperiorAlienTechnologyToken', 1],            
+            ['addSuperiorAlienTechnologyToken', 1],
             ['removeSuperiorAlienTechnologyToken', 1],
+            ['giveTarget', 1],
             ['log500', 500]
         ];
     
@@ -3413,6 +3440,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_removeSuperiorAlienTechnologyToken(notif: Notif<NotifAddSuperiorAlienTechnologyTokenArgs>) {
         const stock = this.getPlayerTable(notif.args.playerId).cards;
         this.cards.removeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
+    }
+    
+    notif_giveTarget(notif: Notif<NotifGiveTargetArgs>) {
+        if (notif.args.previousOwner) {
+            this.getPlayerTable(notif.args.previousOwner).removeTarget();
+        }
+        this.getPlayerTable(notif.args.playerId).giveTarget();
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

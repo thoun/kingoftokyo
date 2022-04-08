@@ -415,5 +415,30 @@ trait EvolutionCardsActionTrait {
         $this->checkAction('skipBeforeResolveDice');
 
         $this->goToState($this->redirectAfterBeforeResolveDice());
+    }    
+  	
+    public function giveTarget() {
+        $this->checkAction('giveTarget');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $question = $this->getQuestion();
+        $this->notifyAllPlayers('giveTarget', /*client TODOPU translate(*/'${player_name} gives target to ${player_name2}'/*)*/, [
+            'playerId' => $question->args->playerId,
+            'previousOwner' => intval($this->getGameStateValue(TARGETED_PLAYER)),
+            'player_name' => $this->getPlayerName($playerId),
+            'player_name2' => $this->getPlayerName($question->args->playerId),
+        ]);
+        $this->setGameStateValue(TARGETED_PLAYER, $question->args->playerId);
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
+  	
+    public function skipGiveTarget() {
+        $this->checkAction('skipGiveTarget');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 }

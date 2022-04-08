@@ -1378,6 +1378,12 @@
 #table .player-table .monster-board-wrapper .monster-board.monster21 {
   background-image: url("img/monster-board-21.png");
 }
+#table .player-table .monster-board-wrapper .monster-board .target.token {
+  position: absolute;
+  top: -15px;
+  left: 27px;
+  z-index: 2;
+}
 #table .player-table .energy-wrapper {
   position: absolute;
   z-index: 4;
@@ -1970,6 +1976,10 @@ button .icon, a .icon {
 }
 .token.alienoid {
   background-position: 33.33% 0%;
+  box-shadow: 0 0 4px 4px white;
+}
+.token.target {
+  background-position: 66.66% 0%;
   box-shadow: 0 0 4px 4px white;
 }
 

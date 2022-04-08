@@ -80,7 +80,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -744,6 +744,12 @@ trait UtilTrait {
             $health++;
         }
 
+        $countTargetAcquired = 0;
+        if ($playerId == intval($this->getGameStateValue(TARGETED_PLAYER)) && $this->isPowerUpExpansion()) {
+            $countTargetAcquired = $this->countEvolutionOfType($damageDealerId, TARGET_ACQUIRED_EVOLUTION);
+            $health += $countTargetAcquired;
+        }
+
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = max($actualHealth - $health, 0);
 
@@ -764,11 +770,19 @@ trait UtilTrait {
         ]);
 
         if ($devil) {
-            $this->notifyAllPlayers('devilExtraDamage', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
+            $this->notifyAllPlayers('log', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'delta_health' => 1,
                 'card_name' => DEVIL_CARD,
+            ]);
+        }
+        if ($countTargetAcquired) {
+            $this->notifyAllPlayers('log', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'delta_health' => $countTargetAcquired,
+                'card_name' => 3000 + TARGET_ACQUIRED_EVOLUTION,
             ]);
         }
 
@@ -949,11 +963,7 @@ trait UtilTrait {
         ]);
     }
 
-    function resolveDamages(array $damages, /* string|int|function */ $endStateOrTransition) { // bool redirect to cancelDamage
-        if ($endStateOrTransition == null || (gettype($endStateOrTransition) != 'string' && gettype($endStateOrTransition) != 'integer')) {
-            throw new \Error('resolveDamages : endStateOrTransition wrong '); 
-        }
-
+    function resolveDamages(array $damages, int $endStateId) { // bool redirect to cancelDamage
         $cancellableDamages = [];
         $playersIds = [];
         foreach ($damages as $damage) {
@@ -971,14 +981,16 @@ trait UtilTrait {
         }
 
         if (count($cancellableDamages) > 0) {
-            $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages);
-            $cancelDamageIntervention->endState = $endStateOrTransition;
+            $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages, $damages);
+            $cancelDamageIntervention->endState = $endStateId;
             $this->setDamageIntervention($cancelDamageIntervention);
             $this->jumpToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
 
             return true;
         } else {
-            return false;
+            $redirects = $this->isPowerUpExpansion() && $this->askTargetAcquired($damages, $endStateId);
+
+            return $redirects;
         }
     }
 

@@ -792,4 +792,36 @@ trait EvolutionCardsUtilTrait {
             'card' => $card,
         ]);
     }
+
+    function askTargetAcquired(array $allDamages, int $nextStateId) {
+        $activePlayerId = intval($this->getActivePlayerId());
+        // if damages is a smash from active player
+        if ($allDamages[0]->cardType == 0 && $allDamages[0]->damageDealerId == $activePlayerId && intval($this->getGameStateValue(TARGETED_PLAYER)) != $activePlayerId) {
+            $playersIds = array_unique(array_map(fn($damage) => $damage->playerId, $allDamages));
+            $playersWithTargetAcquired = array_values(array_filter($playersIds, fn($playerId) => $this->countEvolutionOfType($playerId, TARGET_ACQUIRED_EVOLUTION) > 0));
+
+            if (count($playersWithTargetAcquired) > 0) {
+                $question = new Question(
+                    'TargetAcquired',
+                    /* client TODOPU translate(*/'Player with ${card_name} can give target to ${player_name}'/*)*/,
+                    /* client TODOPU translate(*/'${you} can give target to ${player_name}'/*)*/,
+                    $playersWithTargetAcquired,
+                    $nextStateId,
+                    [ 
+                        'playerId' => $activePlayerId,
+                        '_args' => [ 
+                            'player_name' => $this->getPlayerName($activePlayerId), 
+                            'card_name' => 3000 + TARGET_ACQUIRED_EVOLUTION,
+                        ],
+                    ]
+                );
+
+                $this->setQuestion($question);
+                $this->gamestate->setPlayersMultiactive($playersWithTargetAcquired, 'next', true);
+                $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                return true;
+            }
+        }
+        return false;
+    }
 }

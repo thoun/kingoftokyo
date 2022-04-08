@@ -904,5 +904,21 @@
 
         self::ajaxResponse();
     }
+  	
+    public function giveTarget() {
+        self::setAjaxMode();
+
+        $this->game->giveTarget();
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipGiveTarget() {
+        self::setAjaxMode();
+
+        $this->game->skipGiveTarget();
+
+        self::ajaxResponse();
+    }
 
 }

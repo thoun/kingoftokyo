@@ -23,7 +23,8 @@ function formatTextIcons(rawText: string) {
         .replace(/\[berserkDieSkull\]/ig, '<span class="dice-icon berserk dice6"></span>')
         .replace(/\[snowflakeToken\]/ig, '<span class="icy-reflection token"></span>')
         .replace(/\[ufoToken\]/ig, '<span class="ufo token"></span>')
-        .replace(/\[[alienoidToken]\]/ig, '<span class="alienoid token"></span>')
+        .replace(/\[alienoidToken\]/ig, '<span class="alienoid token"></span>')
+        .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
 
         .replace(/\[keep\]/ig, `<span class="card-keep-text"><span class="outline">${_('Keep')}</span><span class="text">${_('Keep')}</span></span>`);
 }

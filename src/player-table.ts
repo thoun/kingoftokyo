@@ -448,4 +448,13 @@ class PlayerTable {
             cardDiv.classList.remove('highlight-evolution');
         });
     }
+
+    public removeTarget() {
+        const target = document.getElementById(`player-table${this.playerId}-target`);
+        target?.parentElement?.removeChild(target);
+    }
+
+    public giveTarget() {
+        dojo.place(`<div id="player-table${this.playerId}-target" class="target token"></div>`, `monster-board-${this.playerId}`);
+    }
 }

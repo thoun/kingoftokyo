@@ -802,6 +802,7 @@ $playerActionsGameStates = [
             "buyCardMiraculousCatch", "skipMiraculousCatch",
             "playCardDeepDive",
             "useExoticArms", "skipExoticArms",
+            "giveTarget", "skipGiveTarget",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,
