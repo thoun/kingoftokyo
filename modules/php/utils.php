@@ -738,6 +738,8 @@ trait UtilTrait {
             return null; // player has wings and cannot lose hearts
         }
 
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
         // devil
         $devil = $activePlayerId == $damageDealerId && $playerId != $damageDealerId && $this->countCardOfType($damageDealerId, DEVIL_CARD) > 0;
         if ($devil) {
@@ -745,9 +747,14 @@ trait UtilTrait {
         }
 
         $countTargetAcquired = 0;
-        if ($playerId == intval($this->getGameStateValue(TARGETED_PLAYER)) && $this->isPowerUpExpansion()) {
+        if ($isPowerUpExpansion && $playerId == intval($this->getGameStateValue(TARGETED_PLAYER))) {
             $countTargetAcquired = $this->countEvolutionOfType($damageDealerId, TARGET_ACQUIRED_EVOLUTION);
             $health += $countTargetAcquired;
+        }
+        $countClawsOfSteel = 0;
+        if ($isPowerUpExpansion && $health >= 3) {
+            $countClawsOfSteel = $this->countEvolutionOfType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
+            $health += $countClawsOfSteel;
         }
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -783,6 +790,14 @@ trait UtilTrait {
                 'player_name' => $this->getPlayerName($playerId),
                 'delta_health' => $countTargetAcquired,
                 'card_name' => 3000 + TARGET_ACQUIRED_EVOLUTION,
+            ]);
+        }
+        if ($countClawsOfSteel) {
+            $this->notifyAllPlayers('log', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'delta_health' => $countClawsOfSteel,
+                'card_name' => 3000 + CLAWS_OF_STEEL_EVOLUTION,
             ]);
         }
 
