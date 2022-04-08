@@ -299,7 +299,6 @@ trait DiceStateTrait {
         }
 
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-        $redirects = false;
 
         $damages = [];
 

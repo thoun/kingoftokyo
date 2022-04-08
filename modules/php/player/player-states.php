@@ -262,6 +262,11 @@ trait PlayerStateTrait {
     function stInitialDiceRoll() {
         $playerId = $this->getActivePlayerId();
 
+        if ($this->getPlayer($this->getActivePlayerId())->eliminated) {
+            $this->goToState(ST_PLAYER_BUY_CARD);
+            return;
+        }
+
         $this->setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
         $this->throwDice($playerId, true);
 

@@ -2,10 +2,6 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/objects/question.php');
-
-use KOT\Objects\Question;
-
 trait RedirectionTrait {
     function goToState(int $nextStateId, /*Damage[] | null*/ $damages = null) {
         $redirects = false;

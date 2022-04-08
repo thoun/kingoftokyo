@@ -9,7 +9,7 @@ trait CardsStateTrait {
 ////////////
 
     function stChooseMimickedCard() {
-        if ($this->autoSkipImpossibleActions() && !$this->argChooseMimickedCard(true)['canChange']) {
+        if (($this->autoSkipImpossibleActions() && !$this->argChooseMimickedCard(true)['canChange']) || $this->getPlayer($this->getActivePlayerId())->eliminated) {
             // skip state
             $this->skipChangeMimickedCard(true);
         }

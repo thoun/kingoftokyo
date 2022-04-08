@@ -80,7 +80,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -533,9 +533,6 @@ trait UtilTrait {
         if ($playerIsActivePlayer) {
             $this->gamestate->setPlayerNonMultiactive($player->id, 'stay');
         }
-        if ($player->id == $currentTurnPlayerId) {
-            $this->goToState(ST_NEXT_PLAYER);
-        } 
 
         if (!$this->isTokyoEmpty(true) && !$this->tokyoBayUsed()) { // 5 players to 4, Tokyo Bay got a player but it shouldn't, so player is moved
             if ($this->isTokyoEmpty(false)) {

@@ -9,6 +9,11 @@ trait CurseCardsStateTrait {
 ////////////
 
     function stGiveSymbolToActivePlayer() {
+        if ($this->getPlayer($this->getActivePlayerId())->eliminated) {
+            $this->goToState(ST_INITIAL_DICE_ROLL);
+            return;
+        }
+
         $this->gamestate->setPlayersMultiactive([$this->getPlayerIdWithGoldenScarab()], '', true);
     }
 
