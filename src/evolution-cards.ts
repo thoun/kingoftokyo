@@ -129,13 +129,14 @@ class EvolutionCards {
             case 15: return /*_TODOPU*/("Spend 1[Energy] to choose one of the dice you rolled. This die is frozen until the beginning of your next turn: it cannot be changed and is used normally by Monsters during the Resolve Dice phase.");
             case 16: return /*_TODOPU*/("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
-            case 18: return /*_TODOPU*/("Choose an Evolution Card in front of a Monster and put a Snowflake Token on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");
+            case 18: return /*_TODOPU*/("Choose an Evolution Card in front of a Monster and put a [snowflakeToken] on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");
             // Alienoid
             case 21: return /*_TODOPU*/("Gain 2[Star].");
             case 22: return /*_TODOPU*/("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
             case 23: return /*_TODOPU*/("Gain 1[Energy] for each [Heart] you lost this turn.");
-            case 24: return /*_TODOPU*/("Put 3TODOPU tokens on this card. On your turn, you can remove an TODOPU token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
+            case 24: return /*_TODOPU*/("Put 3 [alienoidToken] tokens on this card. On your turn, you can remove an [alienoidToken] token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
             case 27: return /*_TODOPU*/("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
+            case 28: return /*_TODOPU*/("You can buy [keep] cards by paying half of their cost (rounding up). When you do so, place a [UfoToken] on it. At the start of you turn, roll a die for each of your [keep] cards with a [UfoToken]. Discard each [keep] card for which you rolled a [diceSmash]. You cannot have more than 3 [keep] cards with [UfoToken] at a time.");
             // Cyber Kitty
             case 31: return /*_TODOPU*/("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
             case 32: return /*_TODOPU*/("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
@@ -192,8 +193,7 @@ class EvolutionCards {
         
         cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
 
-        // TODOPU set icy reflection icon
-        let html = `<div id="${divId}-mimic-token" style="left: ${cardPlaced.mimicToken.x - 16}px; top: ${cardPlaced.mimicToken.y - 16}px;" class="card-token mimic token"></div>`;
+        let html = `<div id="${divId}-mimic-token" style="left: ${cardPlaced.mimicToken.x - 16}px; top: ${cardPlaced.mimicToken.y - 16}px;" class="card-token icy-reflection token"></div>`;
         dojo.place(html, divId);
 
         div.dataset.placed = JSON.stringify(cardPlaced);
@@ -260,7 +260,7 @@ class EvolutionCards {
             placed.push(newPlace);
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="card-token `;
             if (cardType === 24) {
-                html += `adapting-technology token`;
+                html += `ufo token`;
             } else if (cardType === 136) {
                 html += `energy-cube`;
             }

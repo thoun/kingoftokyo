@@ -76,6 +76,42 @@ trait EvolutionCardsStateTrait {
             }
         }
 
+        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens();
+        $cardsWithSuperiorAlienTechnologyTokens = array_values(array_filter($cards, fn($card) => in_array($card->id, $superiorAlienTechnologyTokens)));
+
+        if (count($cardsWithSuperiorAlienTechnologyTokens) > 0) {
+            foreach($cardsWithSuperiorAlienTechnologyTokens as $card) {
+                $dieFace = bga_rand(1, 6);
+
+                $remove = $dieFace == 6;
+
+                $message = $remove ? 
+                    clienttranslate('${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and must remove it') :
+                    clienttranslate('${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and keeps it');
+
+                $this->notifyAllPlayers('log', $message, [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'card_name' => $card->type,
+                    'die_face' => $this->getDieFaceLogName($dieFace, 0),
+                ]);
+
+                if ($remove) {
+                    $this->removeCard($playerId, $card);
+                } else {
+                    $this->notifyAllPlayers("removeSuperiorAlienTechnologyToken", '', [
+                        'playerId' => $playerId,
+                        'card' => $card,
+                    ]);
+                }
+
+                $superiorAlienTechnologyTokens = array_values(array_filter($superiorAlienTechnologyTokens, fn($token) => $token != $card->id));
+            }
+
+            $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, $superiorAlienTechnologyTokens);
+        }
+
         $this->goToState(ST_START_TURN);
     }
 
@@ -100,7 +136,10 @@ trait EvolutionCardsStateTrait {
 
         if ($cardBeingBought->allowed) {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, false);
+            $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, false, $cardBeingBought->cost);            
+            if ($cardBeingBought->useSuperiorAlienTechnology) {
+                $this->addSuperiorAlienTechnologyToken($cardBeingBought->playerId, $cardBeingBought->cardId);
+            }
         } else {
             $this->goToState(ST_PLAYER_BUY_CARD);
         }

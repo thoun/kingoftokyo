@@ -164,6 +164,7 @@ define('QUESTION', 'Question');
 define('CARD_BEING_BOUGHT', 'CardBeingBought');
 define('STACKED_STATES', 'StackedStates');
 define('STARTED_TURN_IN_TOKYO', 'StartedTurnInTokyo');
+define('SUPERIOR_ALIEN_TECHNOLOGY_TOKENS', 'SuperiorAlienTechnologyTokens');
 
 /*
  * Cards

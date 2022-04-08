@@ -9,6 +9,7 @@ interface PlacedTokens {
 interface CardPlacedTokens {
     tokens: PlacedTokens[];
     mimicToken: PlacedTokens;
+    superiorAlienTechnologyToken: PlacedTokens;
 }
 
 const KEEP_CARDS_LIST = {
@@ -124,6 +125,9 @@ class Cards {
         const otherPlaces = cardPlaced.tokens.slice();
         if (cardPlaced.mimicToken) {
             otherPlaces.push(cardPlaced.mimicToken);
+        }
+        if (cardPlaced.superiorAlienTechnologyToken) {
+            otherPlaces.push(cardPlaced.superiorAlienTechnologyToken);
         }
         while (protection < 1000 && otherPlaces.some(place => this.getDistance(newPlace, place) < 32)) {
             newPlace.x = Math.random() * 100 + 16;
@@ -731,5 +735,34 @@ class Cards {
 
     public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {
         (this.game as any).addTooltipHtml(mimicCardId, this.getTooltip(27) + `<br>${_('Mimicked card:')} ${mimickedCardText}`);
+    }
+
+    
+    public placeSuperiorAlienTechnologyTokenOnCard(stock: Stock, card: Card) {
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+
+        const div = document.getElementById(divId);
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        
+        cardPlaced.superiorAlienTechnologyToken = this.getPlaceOnCard(cardPlaced);
+
+        let html = `<div id="${divId}-superior-alien-technology-token" style="left: ${cardPlaced.superiorAlienTechnologyToken.x - 16}px; top: ${cardPlaced.superiorAlienTechnologyToken.y - 16}px;" class="card-token superior-alien-technology token"></div>`;
+        dojo.place(html, divId);
+
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    }
+
+    public removeSuperiorAlienTechnologyTokenOnCard(stock: Stock, card: Card) { 
+        const divId = `${stock.container_div.id}_item_${card.id}`;
+        const div = document.getElementById(divId);
+              
+        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
+        cardPlaced.superiorAlienTechnologyToken = null;
+
+        if (document.getElementById(`${divId}-superior-alien-technology-token`)) {
+            (this.game as any).fadeOutAndDestroy(`${divId}-superior-alien-technology-token`);
+        }
+
+        div.dataset.placed = JSON.stringify(cardPlaced);
     }
 }

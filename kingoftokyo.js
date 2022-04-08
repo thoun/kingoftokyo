@@ -77,6 +77,9 @@ function formatTextIcons(rawText) {
         .replace(/\[berserkDieSmash\]/ig, '<span class="dice-icon berserk dice3"></span>')
         .replace(/\[berserkDieDoubleSmash\]/ig, '<span class="dice-icon berserk dice5"></span>')
         .replace(/\[berserkDieSkull\]/ig, '<span class="dice-icon berserk dice6"></span>')
+        .replace(/\[snowflakeToken\]/ig, '<span class="icy-reflection token"></span>')
+        .replace(/\[ufoToken\]/ig, '<span class="ufo token"></span>')
+        .replace(/\[[alienoidToken]\]/ig, '<span class="alienoid token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
 var CARD_WIDTH = 132;
@@ -177,6 +180,9 @@ var Cards = /** @class */ (function () {
         var otherPlaces = cardPlaced.tokens.slice();
         if (cardPlaced.mimicToken) {
             otherPlaces.push(cardPlaced.mimicToken);
+        }
+        if (cardPlaced.superiorAlienTechnologyToken) {
+            otherPlaces.push(cardPlaced.superiorAlienTechnologyToken);
         }
         while (protection < 1000 && otherPlaces.some(function (place) { return _this.getDistance(newPlace, place) < 32; })) {
             newPlace.x = Math.random() * 100 + 16;
@@ -750,6 +756,25 @@ var Cards = /** @class */ (function () {
     Cards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
         this.game.addTooltipHtml(mimicCardId, this.getTooltip(27) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
+    Cards.prototype.placeSuperiorAlienTechnologyTokenOnCard = function (stock, card) {
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        cardPlaced.superiorAlienTechnologyToken = this.getPlaceOnCard(cardPlaced);
+        var html = "<div id=\"" + divId + "-superior-alien-technology-token\" style=\"left: " + (cardPlaced.superiorAlienTechnologyToken.x - 16) + "px; top: " + (cardPlaced.superiorAlienTechnologyToken.y - 16) + "px;\" class=\"card-token superior-alien-technology token\"></div>";
+        dojo.place(html, divId);
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    };
+    Cards.prototype.removeSuperiorAlienTechnologyTokenOnCard = function (stock, card) {
+        var divId = stock.container_div.id + "_item_" + card.id;
+        var div = document.getElementById(divId);
+        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
+        cardPlaced.superiorAlienTechnologyToken = null;
+        if (document.getElementById(divId + "-superior-alien-technology-token")) {
+            this.game.fadeOutAndDestroy(divId + "-superior-alien-technology-token");
+        }
+        div.dataset.placed = JSON.stringify(cardPlaced);
+    };
     return Cards;
 }());
 var CurseCards = /** @class */ (function () {
@@ -1033,13 +1058,14 @@ var EvolutionCards = /** @class */ (function () {
             case 15: return /*_TODOPU*/ ("Spend 1[Energy] to choose one of the dice you rolled. This die is frozen until the beginning of your next turn: it cannot be changed and is used normally by Monsters during the Resolve Dice phase.");
             case 16: return /*_TODOPU*/ ("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
             case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
-            case 18: return /*_TODOPU*/ ("Choose an Evolution Card in front of a Monster and put a Snowflake Token on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");
+            case 18: return /*_TODOPU*/ ("Choose an Evolution Card in front of a Monster and put a [snowflakeToken] on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");
             // Alienoid
             case 21: return /*_TODOPU*/ ("Gain 2[Star].");
             case 22: return /*_TODOPU*/ ("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
             case 23: return /*_TODOPU*/ ("Gain 1[Energy] for each [Heart] you lost this turn.");
-            case 24: return /*_TODOPU*/ ("Put 3TODOPU tokens on this card. On your turn, you can remove an TODOPU token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
+            case 24: return /*_TODOPU*/ ("Put 3 [alienoidToken] tokens on this card. On your turn, you can remove an [alienoidToken] token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
             case 27: return /*_TODOPU*/ ("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
+            case 28: return /*_TODOPU*/ ("You can buy [keep] cards by paying half of their cost (rounding up). When you do so, place a [UfoToken] on it. At the start of you turn, roll a die for each of your [keep] cards with a [UfoToken]. Discard each [keep] card for which you rolled a [diceSmash]. You cannot have more than 3 [keep] cards with [UfoToken] at a time.");
             // Cyber Kitty
             case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
             case 32: return /*_TODOPU*/ ("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
@@ -1091,8 +1117,7 @@ var EvolutionCards = /** @class */ (function () {
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
-        // TODOPU set icy reflection icon
-        var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token mimic token\"></div>";
+        var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token icy-reflection token\"></div>";
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
@@ -1149,7 +1174,7 @@ var EvolutionCards = /** @class */ (function () {
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
             if (cardType === 24) {
-                html += "adapting-technology token";
+                html += "ufo token";
             }
             else if (cardType === 136) {
                 html += "energy-cube";
@@ -1457,7 +1482,7 @@ var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 23
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, playerWithGoldenScarab) {
+    function PlayerTable(game, player, playerWithGoldenScarab, superiorAlienTechnologyTokens) {
         var _this = this;
         var _a, _b, _c, _d, _e;
         this.game = game;
@@ -1492,6 +1517,9 @@ var PlayerTable = /** @class */ (function () {
         this.game.cards.addCardsToStock(this.cards, player.cards);
         if (playerWithGoldenScarab) {
             this.cards.addToStockWithId(999, 'goldenscarab');
+        }
+        if (superiorAlienTechnologyTokens) {
+            player.cards.filter(function (card) { return superiorAlienTechnologyTokens.includes(card.id); }).forEach(function (card) { return _this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(_this.cards, card); });
         }
         this.initialLocation = Number(player.location);
         this.setPoints(Number(player.score));
@@ -4495,7 +4523,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables = this.getOrderedPlayers().map(function (player) {
             var playerId = Number(player.id);
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(_this, player, playerWithGoldenScarab);
+            return new PlayerTable(_this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens);
         });
     };
     KingOfTokyo.prototype.getPlayerTable = function (playerId) {
@@ -4550,6 +4578,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from, warningChecked) {
         var _this = this;
+        var _a;
         if (from === void 0) { from = 0; }
         if (warningChecked === void 0) { warningChecked = false; }
         if (!cardId) {
@@ -4592,8 +4621,25 @@ var KingOfTokyo = /** @class */ (function () {
                 this.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, cardId, from, true); });
             }
             else {
-                this.tableCenter.removeOtherCardsFromPick(cardId);
-                this.buyCard(cardId, from);
+                var cardCostSuperiorAlienTechnology = (_a = this.gamedatas.gamestate.args.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[cardId];
+                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined) {
+                    var keys = [
+                        formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })),
+                        formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: this.gamedatas.gamestate.args.cardsCosts[cardId] })),
+                        _('Cancel')
+                    ];
+                    this.multipleChoiceDialog(dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCards.getCardName(28, 'text-only') }), keys, function (choice) {
+                        var choiceIndex = Number(choice);
+                        if (choiceIndex < 2) {
+                            _this.tableCenter.removeOtherCardsFromPick(cardId);
+                            _this.buyCard(cardId, from, choiceIndex === 0);
+                        }
+                    });
+                }
+                else {
+                    this.tableCenter.removeOtherCardsFromPick(cardId);
+                    this.buyCard(cardId, from);
+                }
             }
         }
         else if (stateName === 'discardKeepCard') {
@@ -4677,7 +4723,11 @@ var KingOfTokyo = /** @class */ (function () {
         if (playerEnergy === null) {
             playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
         }
-        this.setBuyDisabledCardByCost(args.disabledIds, args.cardsCosts, playerEnergy);
+        var cardsCosts = args.cardsCosts;
+        if (args.canUseSuperiorAlienTechnology) {
+            cardsCosts = __assign(__assign({}, cardsCosts), args.cardsCostsSuperiorAlienTechnology);
+        }
+        this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
         // renew button
         if (buyState && document.getElementById('renew_button')) {
             dojo.toggleClass('renew_button', 'disabled', playerEnergy < 2);
@@ -5290,13 +5340,15 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipChangeForm');
     };
-    KingOfTokyo.prototype.buyCard = function (id, from) {
+    KingOfTokyo.prototype.buyCard = function (id, from, useSuperiorAlienTechnology) {
+        if (useSuperiorAlienTechnology === void 0) { useSuperiorAlienTechnology = false; }
         if (!this.checkAction('buyCard')) {
             return;
         }
         this.takeAction('buyCard', {
             id: id,
-            from: from
+            from: from,
+            useSuperiorAlienTechnology: useSuperiorAlienTechnology
         });
     };
     KingOfTokyo.prototype.buyCardBamboozle = function (id, from) {
@@ -5700,6 +5752,8 @@ var KingOfTokyo = /** @class */ (function () {
             ['cultist', 1],
             ['removeWickednessTiles', 1],
             ['addEvolutionCardInHand', 1],
+            ['addSuperiorAlienTechnologyToken', 1],
+            ['removeSuperiorAlienTechnologyToken', 1],
             ['log500', 500]
         ];
         notifs.forEach(function (notif) {
@@ -6041,6 +6095,14 @@ var KingOfTokyo = /** @class */ (function () {
             fromStock = this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards;
         }
         this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card, fromStock);
+    };
+    KingOfTokyo.prototype.notif_addSuperiorAlienTechnologyToken = function (notif) {
+        var stock = this.getPlayerTable(notif.args.playerId).cards;
+        this.cards.placeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
+    };
+    KingOfTokyo.prototype.notif_removeSuperiorAlienTechnologyToken = function (notif) {
+        var stock = this.getPlayerTable(notif.args.playerId).cards;
+        this.cards.removeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

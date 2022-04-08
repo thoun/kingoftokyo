@@ -242,6 +242,12 @@ html, .mode_3d #game_play_area_background {
     height: 16px;
     margin-bottom: -2px;
   }
+  
+  .token {
+    width: 16px;
+    height: 16px;
+    margin-bottom: -2px;
+  }
 
   .dice-icon {
     width: 20px;
@@ -317,23 +323,30 @@ button, a {
     box-shadow: 0 0 4px 4px white;
   }
 
+  &.superior-alien-technology {
+    background-position: 66.66% 0%; // TODOPU
+    box-shadow: 0 0 4px 4px white; // TODOPU
+  }
+
+  &.icy-reflection {
+    background-position: 100% 0%; // TODOPU
+    box-shadow: 0 0 4px 4px #9cc060; // TODOPU
+  }
+
   &.mimic {
     background-position: 100% 0%;
 
     box-shadow: 0 0 4px 4px #9cc060;
-    /*
-    box-shadow: 0 0 4px 2px #9cc060;
-    animation: mimic-highlight-animation 3s alternate infinite ease-in-out;
-    @keyframes mimic-highlight-animation {
-      50% { 
-          box-shadow: 0 0 8px 4px #9cc060;
-      }
-    }*/
   }
 
-  &.adapting-technology {
+  &.ufo {
     background-position: 66.66% 0%; // TODOPU
-    box-shadow: 0 0 4px 4px white;
+    box-shadow: 0 0 4px 4px white; // TODOPU
+  }
+
+  &.alienoid {
+    background-position: 33.33% 0%; // TODOPU
+    box-shadow: 0 0 4px 4px white; // TODOPU
   }
 }
 
@@ -529,4 +542,13 @@ button, a {
   justify-content: center;
   line-height: normal;
   font-weight: normal;
+}
+
+#popin_multipleChoice_dialog_contents {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
 }

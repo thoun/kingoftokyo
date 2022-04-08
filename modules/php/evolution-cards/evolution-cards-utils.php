@@ -764,4 +764,21 @@ trait EvolutionCardsUtilTrait {
             $this->setEvolutionTokens($ownerId, $evolution, 0, true);
         }
     }
+
+    function getSuperiorAlienTechnologyTokens() {
+        $cardsIds = $this->getGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, true);
+        return $cardsIds == null ? [] : $cardsIds;
+    }
+
+    function addSuperiorAlienTechnologyToken(int $playerId, int $cardId) {
+        $cardsIds = $this->getSuperiorAlienTechnologyTokens();
+        $cardsIds[] = $cardId;
+        $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, $cardsIds);
+
+        $card = $this->cards->getCard($cardId);
+        $this->notifyAllPlayers("addSuperiorAlienTechnologyToken", '', [
+            'playerId' => $playerId,
+            'card' => $card,
+        ]);
+    }
 }

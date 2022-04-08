@@ -150,6 +150,7 @@ interface KingOfTokyoGamedatas {
     curseCard?: Card;
     wickednessTiles: WickednessTile[];
     EVOLUTION_CARDS_TYPES?: number[];
+    superiorAlienTechnologyTokens?: number[];
 }
 
 interface KingOfTokyoGame extends Game {
@@ -344,11 +345,13 @@ interface EnteringBuyCardArgs {
     canUseAdaptingTechnology: boolean;
     canUseMiraculousCatch: boolean;
     unusedMiraculousCatch: boolean;
+    canUseSuperiorAlienTechnology: boolean;
     _private: {
         pickCards: Card[];
     };
     cardsCosts: { [cardId: number]: number };
     warningIds: { [cardId: number]: string };
+    cardsCostsSuperiorAlienTechnology: { [cardId: number]: number };
 }
 
 interface EnteringCancelDamageArgs {
@@ -630,4 +633,9 @@ interface NotifPlayEvolutionArgs {
     player_name: string;
     card: EvolutionCard;
     fromPlayerId?: number;
+}
+
+interface NotifAddSuperiorAlienTechnologyTokenArgs {
+    playerId: number;
+    card: Card;
 }

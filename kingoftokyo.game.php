@@ -481,6 +481,7 @@ class KingOfTokyo extends Table {
 
         if ($isPowerUpExpansion) {
             $result['EVOLUTION_CARDS_TYPES'] = $this->EVOLUTION_CARDS_TYPES;
+            $result['superiorAlienTechnologyTokens'] = $this->getSuperiorAlienTechnologyTokens();
         }      
 
         return $result;

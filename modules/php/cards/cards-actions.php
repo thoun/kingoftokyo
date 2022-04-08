@@ -240,7 +240,7 @@ trait CardsActionTrait {
         return [$newCardId, $damages, $mimic];
     }
 
-    function buyCard(int $id, int $from) {
+    function buyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false) {
         $this->checkAction('buyCard');
 
         $stateName = $this->gamestate->state()['name'];
@@ -250,6 +250,10 @@ trait CardsActionTrait {
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
         $cost = $this->getCardCost($playerId, $card->type);
+        if ($useSuperiorAlienTechnology) {
+            $cost = ceil($cost / 2);
+        }
+
         if (!$this->canBuyCard($playerId, $card->type, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
@@ -272,11 +276,14 @@ trait CardsActionTrait {
                 'card' => $card,
                 'card_name' => $card->type,
             ]);
-            $this->setGlobalVariable(CARD_BEING_BOUGHT, new CardBeingBought($id, $playerId, $from));
+            $this->setGlobalVariable(CARD_BEING_BOUGHT, new CardBeingBought($id, $playerId, $from, $cost, $useSuperiorAlienTechnology));
             $this->jumpToState(ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT);
         } else {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($playerId, $id, $from, $opportunist);
+            $this->applyBuyCard($playerId, $id, $from, $opportunist, $cost);
+            if ($useSuperiorAlienTechnology) {
+                $this->addSuperiorAlienTechnologyToken($playerId, $id);
+            }
         }
     }
 

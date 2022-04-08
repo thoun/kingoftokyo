@@ -2,15 +2,6 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/card.php');
-require_once(__DIR__.'/../objects/player-intervention.php');
-require_once(__DIR__.'/../objects/damage.php');
-
-use KOT\Objects\Card;
-use KOT\Objects\OpportunistIntervention;
-use KOT\Objects\Damage;
-use KOT\Objects\PlayersUsedDice;
-
 trait CardsArgTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -45,8 +36,13 @@ trait CardsArgTrait {
         // parasitic tentacles
         $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) > 0;
 
+        // superior alien technology
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $canUseSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
+
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $cardsCosts = [];
+        $cardsCostsSuperiorAlienTechnology = [];
         
         $disabledIds = [];
 
@@ -60,6 +56,13 @@ trait CardsArgTrait {
             $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
             if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                 $canBuyOrNenew = true;
+            }
+            if ($canUseSuperiorAlienTechnology && $card->type < 100) {
+                $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
+
+                if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
+                    $canBuyOrNenew = true;
+                }
             }
             if (!$canBuyPowerCards) {
                 $disabledIds[] = $card->id;
@@ -77,6 +80,13 @@ trait CardsArgTrait {
                     $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
                     if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                         $canBuyOrNenew = true;
+                    }
+                    if ($canUseSuperiorAlienTechnology && $card->type < 100) {
+                        $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
+        
+                        if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
+                            $canBuyOrNenew = true;
+                        }
                     }
                     if (!$canBuyPowerCards || $card->type > 100) {
                         $disabledIds[] = $card->id;
@@ -99,6 +109,13 @@ trait CardsArgTrait {
                 if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuyOrNenew = true;
                 }
+                if ($canUseSuperiorAlienTechnology && $card->type < 100) {
+                    $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
+    
+                    if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
+                        $canBuyOrNenew = true;
+                    }
+                }
                 if (!$canBuyPowerCards) {
                     $disabledIds[] = $card->id;
                 }
@@ -115,7 +132,6 @@ trait CardsArgTrait {
             ];
         }
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
         $canUseAdaptingTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) > 0;
         $canUseMiraculousCatch = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true) > 0;
         $unusedMiraculousCatch = $canUseMiraculousCatch && $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true) != null;
@@ -127,10 +143,12 @@ trait CardsArgTrait {
             'canBuyOrNenew' => $canBuyOrNenew || $canPick, // if a player can see 1st deck card, we don't skip his turn or add a timer
             'canSell' => $canSell,
             'cardsCosts' => $cardsCosts,
+            'cardsCostsSuperiorAlienTechnology' => $cardsCostsSuperiorAlienTechnology,
             'warningIds' => $warningIds,
             'canUseAdaptingTechnology' => $canUseAdaptingTechnology,
             'canUseMiraculousCatch' => $canUseMiraculousCatch,
             'unusedMiraculousCatch' => $unusedMiraculousCatch,
+            'canUseSuperiorAlienTechnology' => $canUseSuperiorAlienTechnology,
         ] + $pickArgs;
     }
 
