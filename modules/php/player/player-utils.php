@@ -497,11 +497,11 @@ trait PlayerUtilTrait {
             if ($curseCardType == BODY_SPIRIT_AND_KA_CURSE_CARD) {
                 $dieOfFate = $this->getDieOfFate();
                 if ($dieOfFate->value == 3) {
-                    if (!in_array($face, [4, 5, 6])) {
+                    if (in_array($face, [4, 5, 6])) {
                         return false;
                     }
                 } else if ($dieOfFate->value != 4) {
-                    if (in_array($face, [4, 5, 6])) {
+                    if (!in_array($face, [4, 5, 6])) {
                         return false;
                     }
                 }
