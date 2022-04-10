@@ -19,7 +19,7 @@
  *
  */
 
-$this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13]; // TODODE add cyberbunny & kraken [101,102,103,104,105,106]
+$this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13,14,15]; // TODODE add cyberbunny & kraken [101,102,103,104,105,106]
 
 // 1 : permanent
 // 2 : temporary

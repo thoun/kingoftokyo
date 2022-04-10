@@ -15,7 +15,8 @@ trait PlayerStateTrait {
     function stBeforeStartTurn() {
         $playerId = $this->getActivePlayerId();        
 
-        $this->DbQuery("DELETE FROM `turn_damages` WHERE 1");
+        $this->DbQuery("DELETE FROM `turn_damages`");
+        $this->DbQuery("UPDATE `player` SET `player_turn_energy` = 0");
         $this->setGameStateValue(EXTRA_ROLLS, 0);
         $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         $this->setGameStateValue(SKIP_BUY_PHASE, 0);

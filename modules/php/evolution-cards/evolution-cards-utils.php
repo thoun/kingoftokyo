@@ -312,6 +312,12 @@ trait EvolutionCardsUtilTrait {
                 // TODOPU $this->goToState(ST_START_TURN);
                 break;
             // cyberbunny
+            case CYBER_BUNNY_1_EVOLUTION:
+                $this->applyGetEnergy($playerId, $this->getPlayer($playerId)->turnEnergy, $logCardType);
+                break;
+            case CYBER_BUNNY_2_EVOLUTION:
+                $this->applyGetEnergy($playerId, 3, $logCardType);
+                break;
             // kraken
             // Baby Gigazaur
         }
@@ -826,7 +832,6 @@ trait EvolutionCardsUtilTrait {
     }
 
     function askLightningArmor(array $allDamages) {
-        // TODOPU
         $activePlayerId = intval($this->getActivePlayerId());
         $playersIds = array_unique(array_map(fn($damage) => $damage->playerId, $allDamages));
         $playersWithLightningArmor = array_values(array_filter($playersIds, fn($playerId) => $this->countEvolutionOfType($playerId, LIGHTNING_ARMOR_EVOLUTION) > 0));

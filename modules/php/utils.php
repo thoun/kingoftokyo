@@ -80,7 +80,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -890,7 +890,7 @@ trait UtilTrait {
     }
 
     function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
-        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy, `player_turn_energy` = `player_turn_energy` + $energy where `player_id` = $playerId");
         
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');

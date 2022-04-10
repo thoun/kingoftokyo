@@ -1,4 +1,4 @@
-const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13];
+const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13,14,15];
 
 class EvolutionCards {
     EVOLUTION_CARDS_TYPES: number[];
@@ -184,6 +184,8 @@ class EvolutionCards {
             case 136: return /*_TODOPU*/("At the start of your turn, you can put 1[Energy] from the bank on this card OR take all of the [Energy] off this card.");
             case 137: return /*_TODOPU*/("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return /*_TODOPU*/("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + `<div>[dice1]↔[dice3] &nbsp; [dice2]↔[diceHeart] &nbsp; [diceSmash]↔[diceEnergy]</div>`;
+            // Cyber Kitty
+            case 141: return /*_TODOPU*/("Gain 1[Energy] for each [Energy] you already gained this turn.");
         }
         return null;
     }

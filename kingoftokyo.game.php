@@ -700,5 +700,10 @@ class KingOfTokyo extends Table {
             $sql = "ALTER TABLE `DBPREFIX_player` MODIFY COLUMN `player_energy` SMALLINT";
             self::applyDbUpgradeToAllDB($sql);
         }
+
+        if ($from_version <= 2204102300) {
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_turn_energy` tinyint unsigned NOT NULL DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
     }
 }

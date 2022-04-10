@@ -383,27 +383,23 @@ define('BAMBOO_SUPPLY_EVOLUTION', 136);
 define('PANDARWINISM_EVOLUTION', 137);
 define('YIN_YANG_EVOLUTION', 138);
 // evolutions : Cyber Bunny
-/*
-Electric Carrot	Permanent Evolution
-Energy Sword (Bunny Power Blade)	Permanent Evolution
-King of the Gizmo (He Who Dies With The Most Toys Wins!)	Permanent Evolution
-Secret Laboratory (Rabbit Laboratory)	Permanent Evolution
-Heart of the Rabbit (Prince With 1000 Enemies) 	Temporary Evolution
-Rabbit's Foot (Decoy Bunny)	Temporary Evolution
-Emergency Battery (Hare Style)	Temporary Evolution
-Stroke of Genius (Fuzzy Logic)	Temporary Evolution
-*/
+define('CYBER_BUNNY_1_EVOLUTION', 141);
+define('CYBER_BUNNY_2_EVOLUTION', 142);
+define('CYBER_BUNNY_3_EVOLUTION', 143);
+define('CYBER_BUNNY_4_EVOLUTION', 144);
+define('CYBER_BUNNY_5_EVOLUTION', 145);
+define('CYBER_BUNNY_6_EVOLUTION', 146);
+define('CYBER_BUNNY_7_EVOLUTION', 147);
+define('CYBER_BUNNY_8_EVOLUTION', 148);
 // evolutions : Kraken
-/*
-Mandibles of Dread (Dread Maw)	Permanent Evolution
-Sunken Temple	Permanent Evolution
-Eater Of Souls	Permanent Evolution
-Terror Of The Deep	Permanent Evolution
-High Tide	Temporary Evolution
- Cult Worshippers (Cult Following)	Temporary Evolution
-Destructive Wave (Wave Of Ruin)	Temporary Evolution
-Healing Rain	Temporary Evolution
-*/
+define('KRAKEN_1_EVOLUTION', 151);
+define('KRAKEN_2_EVOLUTION', 152);
+define('KRAKEN_3_EVOLUTION', 153);
+define('KRAKEN_4_EVOLUTION', 154);
+define('KRAKEN_5_EVOLUTION', 155);
+define('KRAKEN_6_EVOLUTION', 156);
+define('KRAKEN_7_EVOLUTION', 157);
+define('KRAKEN_8_EVOLUTION', 158);
 
 }
 ?>

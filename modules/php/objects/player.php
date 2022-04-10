@@ -10,6 +10,7 @@ class Player {
     public int $score;
     public int $health;
     public int $energy;
+    public int $turnEnergy;
     public int $location;
     public bool $eliminated;
     public int $shrinkRayTokens;
@@ -25,6 +26,7 @@ class Player {
         $this->score = intval($dbPlayer['player_score']);
         $this->health = intval($dbPlayer['player_health']);
         $this->energy = intval($dbPlayer['player_energy']);
+        $this->turnEnergy = intval($dbPlayer['player_turn_energy']);
         $this->location = intval($dbPlayer['player_location']);
         $this->eliminated = boolval($dbPlayer['player_eliminated']) || (intval($dbPlayer['player_dead']) > 0);
         $this->shrinkRayTokens = intval($dbPlayer['player_shrink_ray_tokens']);

@@ -934,7 +934,7 @@ var CurseCards = /** @class */ (function () {
     };
     return CurseCards;
 }());
-var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 13];
+var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 13, 14, 15];
 var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
         this.game = game;
@@ -1114,6 +1114,8 @@ var EvolutionCards = /** @class */ (function () {
             case 136: return /*_TODOPU*/ ("At the start of your turn, you can put 1[Energy] from the bank on this card OR take all of the [Energy] off this card.");
             case 137: return /*_TODOPU*/ ("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return /*_TODOPU*/ ("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + "<div>[dice1]\u2194[dice3] &nbsp; [dice2]\u2194[diceHeart] &nbsp; [diceSmash]\u2194[diceEnergy]</div>";
+            // Cyber Kitty
+            case 141: return /*_TODOPU*/ ("Gain 1[Energy] for each [Energy] you already gained this turn.");
         }
         return null;
     };
