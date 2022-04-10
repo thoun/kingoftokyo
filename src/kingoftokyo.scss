@@ -437,7 +437,7 @@ button, a {
 
     @for $i from 1 through 13 {
         &.monster#{$i} {
-          background: url('img/monster-icons.png'); // here and not in .monster-icon, so monsters with no icon will get the background-color set in JS instead of first monster icon
+          background-image: url('img/monster-icons.png'); // here and not in .monster-icon, so monsters with no icon will get the background-color set in JS instead of first monster icon
           background-position: (($i - 1) * 100% / 12) 50%;
         }
     }
