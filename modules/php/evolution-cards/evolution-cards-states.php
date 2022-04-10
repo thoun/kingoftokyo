@@ -180,8 +180,8 @@ trait EvolutionCardsStateTrait {
 
         if ($question->code === 'MegaPurr') {
             $this->removeStackedStateAndRedirect();
-        } else if ($question->code === 'TargetAcquired') {
-            $this->goToState($question->stateIdAfter);
+        } else if ($question->code === 'TargetAcquired' || $question->code === 'LightningArmor') {
+            $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
         } else {
             throw new \BgaVisibleSystemException("Question code not handled: ".$question->code);
         }
@@ -202,6 +202,34 @@ trait EvolutionCardsStateTrait {
         } else {
             $this->goToState($this->redirectAfterBeforeResolveDice());
         }
+    }
+
+    function stAfterResolveDamage() {
+        $intervention = $this->getDamageIntervention();
+
+        if (!$intervention->targetAcquiredAsked) {
+            $askTargetAcquired = $this->askTargetAcquired($intervention->allDamages); // TODOPU when damage fully cancel, remove it from allDamages too
+
+            $intervention->targetAcquiredAsked = true;
+            $this->setDamageIntervention($intervention);
+
+            if ($askTargetAcquired) {
+                return;
+            }
+        }
+
+        if (!$intervention->lightningArmorAsked) {
+            $askLightningArmor = $this->askLightningArmor($intervention->allDamages); // TODOPU when damage fully cancel, remove it from allDamages too
+
+            $intervention->lightningArmorAsked = true;
+            $this->setDamageIntervention($intervention);
+
+            if ($askLightningArmor) {
+                return;
+            }
+        }
+
+        $this->goToState($intervention->endState);
     }
     
 }

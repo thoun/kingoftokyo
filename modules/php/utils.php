@@ -528,6 +528,10 @@ trait UtilTrait {
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
+        if ($this->isPowerUpExpansion()) {            
+            $cards = $this->getEvolutionsFromDb($this->evolutionCards->getCardsInLocation('table', $player->id));
+            $this->removeEvolutions($player->id, $cards, true);
+        }
         
         // if player is playing in multipleactiveplayer
         if ($playerIsActivePlayer) {
@@ -978,7 +982,7 @@ trait UtilTrait {
         ]);
     }
 
-    function resolveDamages(array $damages, int $endStateId) { // bool redirect to cancelDamage
+    function resolveDamages(array $damages, int $endStateId) {
         $cancellableDamages = [];
         $playersIds = [];
         foreach ($damages as $damage) {
@@ -999,13 +1003,16 @@ trait UtilTrait {
             $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages, $damages);
             $cancelDamageIntervention->endState = $endStateId;
             $this->setDamageIntervention($cancelDamageIntervention);
-            $this->jumpToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
-
-            return true;
+            $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
         } else {
-            $redirects = $this->isPowerUpExpansion() && $this->askTargetAcquired($damages, $endStateId);
-
-            return $redirects;
+            if ($this->isPowerUpExpansion()) {
+                $cancelDamageIntervention = new CancelDamageIntervention([], [], $damages);
+                $cancelDamageIntervention->endState = $endStateId;
+                $this->setDamageIntervention($cancelDamageIntervention);
+                $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
+            } else {
+                $this->goToState($endStateId);
+            }
         }
     }
 

@@ -591,6 +591,16 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE => [
+        "name" => "afterResolveDamage",
+        "description" => '',
+        "descriptionmyturn" => '',
+        "type" => "multipleactiveplayer",
+        "action" => "stAfterResolveDamage",
+        "possibleactions" => [],
+        "transitions" => [],
+    ],
+
     ST_MULTIPLAYER_LEAVE_TOKYO => [
         "name" => "leaveTokyo",
         "description" => clienttranslate('Players in Tokyo must choose to stay or leave Tokyo'),
@@ -803,6 +813,7 @@ $playerActionsGameStates = [
             "playCardDeepDive",
             "useExoticArms", "skipExoticArms",
             "giveTarget", "skipGiveTarget",
+            "useLightningArmor", "skipLightningArmor",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

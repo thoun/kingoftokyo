@@ -1269,6 +1269,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('giveTarget_button', dojo.string.substitute(/*TODOPU_*/("Give target to ${player_name}"), {'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name}), () => this.giveTarget());
                 (this as any).addActionButton('skipGiveTarget_button', _('Skip'), () => this.skipGiveTarget());
                 break;
+            case 'LightningArmor':
+                (this as any).addActionButton('useLightningArmor_button', _("Throw dice"), () => this.useLightningArmor());
+                (this as any).addActionButton('skipLightningArmor_button', _('Skip'), () => this.skipLightningArmor());
+                break;
         }
     }
 
@@ -2913,6 +2917,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('skipGiveTarget');
     }
     
+    public useLightningArmor() {
+        if(!(this as any).checkAction('useLightningArmor')) {
+            return;
+        }
+
+        this.takeAction('useLightningArmor');
+    }
+    
+    public skipLightningArmor() {
+        if(!(this as any).checkAction('skipLightningArmor')) {
+            return;
+        }
+
+        this.takeAction('skipLightningArmor');
+    }
+    
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
@@ -2985,6 +3005,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
+            ['useLightningArmor', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
@@ -3296,6 +3317,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs, (this as any).isCurrentPlayerActive());
         }
+        this.diceManager.showCamouflageRoll(notif.args.diceValues);
+    }
+
+    notif_useLightningArmor(notif: Notif<NotifUseCamouflageArgs>) {
         this.diceManager.showCamouflageRoll(notif.args.diceValues);
     }
 

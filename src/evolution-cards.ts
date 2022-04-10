@@ -172,6 +172,7 @@ class EvolutionCards {
             case 63: return /*_TODOPU*/("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
             case 64: return /*_TODOPU*/("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");
             case 65: return /*_TODOPU*/("When you make Monsters in Tokyo lose at least 1[Heart], Monsters who aren't in Tokyo also lose 1[Heart] (except you).");
+            case 66: return /*_TODOPU*/("When you lose [Heart], you can roll a die for each [Heart] lost. For each [diceSmash] rolled this way, the Monster whose turn it is loses 1[Heart].");
             case 67: return /*_TODOPU*/("On your turn, if you make another Monster lose at least 3[Heart], they lose 1 extra [Heart].");
             case 68: return /*_TODOPU*/("When a Monster makes you lose [Heart] with [diceSmash], you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
             // Pandakaï

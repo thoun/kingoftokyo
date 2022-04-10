@@ -50,10 +50,6 @@ trait CurseCardsStateTrait {
                 $this->incStat(1, 'dieOfFateSnake', $playerId);
 
                 $damagesOrState = $this->applySnakeEffect($playerId, $cardType);
-                if (gettype($damagesOrState) === 'integer') {
-                    $this->jumpToState($damagesOrState);
-                    return;
-                }
                 break;
             case 4:
                 $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'), [
@@ -62,8 +58,13 @@ trait CurseCardsStateTrait {
 
                 $this->incStat(1, 'dieOfFateAnkh', $playerId);
 
-                $this->applyAnkhEffect($playerId, $cardType);
+                $damagesOrState = $this->applyAnkhEffect($playerId, $cardType);
                 break;
+        }
+
+        if (gettype($damagesOrState) === 'integer') {
+            $this->goToState($damagesOrState);
+            return;
         }
 
         $nextState = ST_RESOLVE_DICE;
@@ -72,14 +73,7 @@ trait CurseCardsStateTrait {
             $nextState = ST_MULTIPLAYER_REROLL_DICE;
         }
 
-        $redirects = false;
-        if ($damagesOrState != null && count($damagesOrState) > 0) {
-            $redirects = $this->resolveDamages($damagesOrState, $nextState);
-        }
-
-        if (!$redirects && $this->gamestate->state()['name'] === 'resolveDieOfFate') { // in case draw cards or other die of fate state already did redirection
-            $this->jumpToState($nextState);
-        }
+        $this->goToState($nextState, $damagesOrState);
     }
 
     function stDiscardDie() {

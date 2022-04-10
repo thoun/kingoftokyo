@@ -226,8 +226,12 @@ class PlayerTable {
     public eliminatePlayer() {
         this.setEnergy(0);
         this.cards.items.filter(item => item.id !== 'goldenscarab').forEach(item => this.cards.removeFromStockById(item.id));
+        this.visibleEvolutionCards?.removeAll();
         if (document.getElementById(`monster-figure-${this.playerId}`)) {
             (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);
+        }
+        if (this.game.isCybertoothExpansion()) {
+            this.setBerserk(false);
         }
         dojo.addClass(`player-table-${this.playerId}`, 'eliminated');
     }

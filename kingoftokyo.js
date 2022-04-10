@@ -1102,6 +1102,7 @@ var EvolutionCards = /** @class */ (function () {
             case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
             case 64: return /*_TODOPU*/ ("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");
             case 65: return /*_TODOPU*/ ("When you make Monsters in Tokyo lose at least 1[Heart], Monsters who aren't in Tokyo also lose 1[Heart] (except you).");
+            case 66: return /*_TODOPU*/ ("When you lose [Heart], you can roll a die for each [Heart] lost. For each [diceSmash] rolled this way, the Monster whose turn it is loses 1[Heart].");
             case 67: return /*_TODOPU*/ ("On your turn, if you make another Monster lose at least 3[Heart], they lose 1 extra [Heart].");
             case 68: return /*_TODOPU*/ ("When a Monster makes you lose [Heart] with [diceSmash], you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
             // Pandakaï
@@ -1649,10 +1650,15 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.eliminatePlayer = function () {
         var _this = this;
+        var _a;
         this.setEnergy(0);
         this.cards.items.filter(function (item) { return item.id !== 'goldenscarab'; }).forEach(function (item) { return _this.cards.removeFromStockById(item.id); });
+        (_a = this.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.removeAll();
         if (document.getElementById("monster-figure-" + this.playerId)) {
             this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
+        }
+        if (this.game.isCybertoothExpansion()) {
+            this.setBerserk(false);
         }
         dojo.addClass("player-table-" + this.playerId, 'eliminated');
     };
@@ -4409,6 +4415,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.addActionButton('giveTarget_button', dojo.string.substitute(/*TODOPU_*/ ("Give target to ${player_name}"), { 'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name }), function () { return _this.giveTarget(); });
                 this.addActionButton('skipGiveTarget_button', _('Skip'), function () { return _this.skipGiveTarget(); });
                 break;
+            case 'LightningArmor':
+                this.addActionButton('useLightningArmor_button', _("Throw dice"), function () { return _this.useLightningArmor(); });
+                this.addActionButton('skipLightningArmor_button', _('Skip'), function () { return _this.skipLightningArmor(); });
+                break;
         }
     };
     ///////////////////////////////////////////////////
@@ -5711,6 +5721,18 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipGiveTarget');
     };
+    KingOfTokyo.prototype.useLightningArmor = function () {
+        if (!this.checkAction('useLightningArmor')) {
+            return;
+        }
+        this.takeAction('useLightningArmor');
+    };
+    KingOfTokyo.prototype.skipLightningArmor = function () {
+        if (!this.checkAction('skipLightningArmor')) {
+            return;
+        }
+        this.takeAction('skipLightningArmor');
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -5779,6 +5801,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['buyCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
+            ['useLightningArmor', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
@@ -6052,6 +6075,9 @@ var KingOfTokyo = /** @class */ (function () {
             this.updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs, this.isCurrentPlayerActive());
         }
+        this.diceManager.showCamouflageRoll(notif.args.diceValues);
+    };
+    KingOfTokyo.prototype.notif_useLightningArmor = function (notif) {
         this.diceManager.showCamouflageRoll(notif.args.diceValues);
     };
     KingOfTokyo.prototype.notif_changeDie = function (notif) {

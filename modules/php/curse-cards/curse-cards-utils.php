@@ -45,8 +45,7 @@ trait CurseCardsUtilTrait {
                 break;
             case RAGING_FLOOD_CURSE_CARD:
                 $this->setGameStateValue(RAGING_FLOOD_EXTRA_DIE, 1);
-                $this->jumpToState(ST_PLAYER_SELECT_EXTRA_DIE);
-                break;
+                return ST_PLAYER_SELECT_EXTRA_DIE;
             case SET_S_STORM_CURSE_CARD:
             case BOW_BEFORE_RA_CURSE_CARD: 
             case ORDEAL_OF_THE_MIGHTY_CURSE_CARD:
@@ -77,12 +76,10 @@ trait CurseCardsUtilTrait {
             case RESURRECTION_OF_OSIRIS_CURSE_CARD:
                 return $this->replacePlayersInTokyo($playerId);
             case KHEPRI_S_REBELLION_CURSE_CARD:
-                $this->jumpToState(ST_PLAYER_GIVE_GOLDEN_SCARAB);
-                break;
+                return ST_PLAYER_GIVE_GOLDEN_SCARAB;
             case FALSE_BLESSING_CURSE_CARD:
                 $this->setGameStateValue(FALSE_BLESSING_USED_DIE, 0);
-                $this->jumpToState(ST_PLAYER_REROLL_OR_DISCARD_DICE);
-                break;
+                return ST_PLAYER_REROLL_OR_DISCARD_DICE;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
                 if ($this->isPowerUpExpansion()) {
                     $question = new Question(
@@ -95,7 +92,7 @@ trait CurseCardsUtilTrait {
                     );
                     $this->setQuestion($question);
                     $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-                    $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                    return ST_MULTIPLAYER_ANSWER_QUESTION;
                 } else {
                     $this->applyGetEnergy($playerId, 3, $logCardType);
                 }
@@ -182,14 +179,14 @@ trait CurseCardsUtilTrait {
             case PHARAONIC_SKIN_CURSE_CARD:
                 $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
                 if ($playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab && count($this->argGiveSymbols()['combinations']) > 0) {
-                    $this->jumpToState(ST_PLAYER_GIVE_SYMBOLS);
+                    return ST_PLAYER_GIVE_SYMBOLS;
                 }
                 break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 $this->changeGoldenScarabOwner($playerId);
                 break;
             case FALSE_BLESSING_CURSE_CARD:
-                $this->jumpToState(ST_MULTIPLAYER_REROLL_DICE);
+                return ST_MULTIPLAYER_REROLL_DICE;
                 break;
             case GAZE_OF_THE_SPHINX_CURSE_CARD:
                 $canLoseEvolution = false;
@@ -210,7 +207,7 @@ trait CurseCardsUtilTrait {
                     );
                     $this->setQuestion($question);
                     $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-                    $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                    return ST_MULTIPLAYER_ANSWER_QUESTION;
                 } else {
                     $this->applyLoseEnergy($playerId, 3, $logCardType);
                 }

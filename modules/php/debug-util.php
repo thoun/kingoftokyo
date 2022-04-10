@@ -175,10 +175,10 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             $this->debugSetEvolutionInHand(DESTRUCTIVE_ANALYSIS_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
+            //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
-            $this->debugSetEvolutionInHand(CLAWS_OF_STEEL_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);

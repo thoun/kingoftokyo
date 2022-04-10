@@ -4,21 +4,13 @@ namespace KOT\States;
 
 trait RedirectionTrait {
     function goToState(int $nextStateId, /*Damage[] | null*/ $damages = null) {
-        $redirects = false;
-        
         if ($damages != null && count($damages) > 0) {
-            $redirects = $this->resolveDamages($damages, $nextStateId);
+            $this->resolveDamages($damages, $nextStateId);
+        } else if ($nextStateId == -1) {
+            $this->removeStackedStateAndRedirect();
+        } else {
+            $this->jumpToState($nextStateId);
         }
-
-        if (!$redirects) {
-            if ($nextStateId == -1) {
-                $this->removeStackedStateAndRedirect();
-            } else {
-                $this->jumpToState($nextStateId);
-            }
-        }
-
-        return $redirects;
     }
 
     function redirectAfterStart() {

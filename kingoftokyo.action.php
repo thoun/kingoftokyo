@@ -920,5 +920,21 @@
 
         self::ajaxResponse();
     }
+  	
+    public function useLightningArmor() {
+        self::setAjaxMode();
+
+        $this->game->useLightningArmor();
+
+        self::ajaxResponse();
+    }
+  	
+    public function skipLightningArmor() {
+        self::setAjaxMode();
+
+        $this->game->skipLightningArmor();
+
+        self::ajaxResponse();
+    }
 
 }

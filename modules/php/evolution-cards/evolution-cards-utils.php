@@ -793,7 +793,7 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
-    function askTargetAcquired(array $allDamages, int $nextStateId) {
+    function askTargetAcquired(array $allDamages) {
         $activePlayerId = intval($this->getActivePlayerId());
         // if damages is a smash from active player
         if ($allDamages[0]->cardType == 0 && $allDamages[0]->damageDealerId == $activePlayerId && intval($this->getGameStateValue(TARGETED_PLAYER)) != $activePlayerId) {
@@ -806,7 +806,7 @@ trait EvolutionCardsUtilTrait {
                     /* client TODOPU translate(*/'Player with ${card_name} can give target to ${player_name}'/*)*/,
                     /* client TODOPU translate(*/'${you} can give target to ${player_name}'/*)*/,
                     $playersWithTargetAcquired,
-                    $nextStateId,
+                    ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
                     [ 
                         'playerId' => $activePlayerId,
                         '_args' => [ 
@@ -821,6 +821,52 @@ trait EvolutionCardsUtilTrait {
                 $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
                 return true;
             }
+        }
+        return false;
+    }
+
+    function askLightningArmor(array $allDamages) {
+        // TODOPU
+        $activePlayerId = intval($this->getActivePlayerId());
+        $playersIds = array_unique(array_map(fn($damage) => $damage->playerId, $allDamages));
+        $playersWithLightningArmor = array_values(array_filter($playersIds, fn($playerId) => $this->countEvolutionOfType($playerId, LIGHTNING_ARMOR_EVOLUTION) > 0));
+
+        if (count($playersWithLightningArmor) > 0) {
+
+            $damageAmountByPlayer = [];
+
+            foreach($playersWithLightningArmor as $playerId) {
+                $damageAmountByPlayer[$playerId] = 0;
+                $damageDealerIdByPlayer[$playerId] = 0;
+                foreach($allDamages as $damage) {
+                    if ($damage->playerId == $playerId) {
+                        $damageAmountByPlayer[$playerId] += $damage->damage;
+                        $damageDealerIdByPlayer[$playerId] += $damage->damageDealerId;
+                    }
+                }
+            }
+
+            $question = new Question(
+                'LightningArmor',
+                /* client TODOPU translate(*/'Player with ${card_name} can throw dice to backfire damage'/*)*/,
+                /* client TODOPU translate(*/'${you} can throw dice to backfire damage'/*)*/,
+                $playersWithLightningArmor,
+                ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
+                [ 
+                    'damageAmountByPlayer' => $damageAmountByPlayer,
+                    'damageDealerIdByPlayer' => $damageDealerIdByPlayer,
+                    'playerId' => $activePlayerId,
+                    '_args' => [ 
+                        'player_name' => $this->getPlayerName($activePlayerId), 
+                        'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
+                    ],
+                ]
+            );
+
+            $this->setQuestion($question);
+            $this->gamestate->setPlayersMultiactive($playersWithLightningArmor, 'next', true);
+            $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+            return true;
         }
         return false;
     }

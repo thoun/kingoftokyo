@@ -441,4 +441,53 @@ trait EvolutionCardsActionTrait {
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
+  	
+    public function useLightningArmor() {
+        $this->checkAction('useLightningArmor');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $question = $this->getQuestion();
+        $damageAmountForPlayer = ((array)$question->args->damageAmountByPlayer)[$playerId];
+        $damageDealerIdForPlayer = ((array)$question->args->damageDealerIdByPlayer)[$playerId];
+        
+        $dice = [];
+        for ($i=0; $i<$damageAmountForPlayer; $i++) {
+            $face = bga_rand(1, 6);
+            $newDie = new \stdClass(); // Dice-like
+            $newDie->value = $face;
+            $newDie->rolled = true;
+            $dice[] = $newDie;
+        }
+        $rolledDiceValues = array_map(fn($die) => $die->value, $dice);
+        $smashCount = count(array_values(array_filter($rolledDiceValues, fn($face) => $face === 6)));
+
+        $diceStr = '';
+        foreach ($rolledDiceValues as $dieValue) {
+            $diceStr .= $this->getDieFaceLogName($dieValue, 0);
+        }
+
+        $this->notifyAllPlayers("useLightningArmor", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and make ${player_name2} lose ${damage}[Heart]'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'player_name2' => $this->getPlayerName($damageDealerIdForPlayer),
+            'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
+            'damage' => $smashCount,
+            'diceValues' => $dice,
+            'dice' => $diceStr,
+        ]);
+        if ($smashCount > 0) {
+            $this->applyDamage($damageDealerIdForPlayer, $smashCount, $playerId, 3000 + LIGHTNING_ARMOR_EVOLUTION, $playerId, 0, 0, null);
+        }
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
+  	
+    public function skipLightningArmor() {
+        $this->checkAction('skipLightningArmor');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
 }
