@@ -604,7 +604,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
-                (this as any).addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only')}), () => this.useDetachableTail());
+                (this as any).addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only')}), () => this.useInvincibleEvolution(51));
+            }
+
+            if (args.canUseCYBER_BUNNY_3_EVOLUTION && !document.getElementById('useCYBER_BUNNY_3_EVOLUTION_button')) {
+                (this as any).addActionButton('useCYBER_BUNNY_3_EVOLUTION_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
             }
 
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
@@ -2658,12 +2662,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('useWings');
     }
 
-    public useDetachableTail() {
-        if(!(this as any).checkAction('useDetachableTail')) {
+    public useInvincibleEvolution(evolutionType: number) {
+        if(!(this as any).checkAction('useInvincibleEvolution')) {
             return;
         }
 
-        this.takeAction('useDetachableTail');
+        this.takeAction('useInvincibleEvolution', {
+            evolutionType
+        });
     }
 
     public skipWings() {

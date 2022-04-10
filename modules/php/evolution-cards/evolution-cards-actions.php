@@ -125,13 +125,13 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->nextState('changeDie');
     }
     
-    function useDetachableTail() {
-        $this->checkAction('useDetachableTail');
+    function useInvincibleEvolution(int $evolutionType) {
+        $this->checkAction('useInvincibleEvolution');
 
         $playerId = $this->getCurrentPlayerId();
 
-        if ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) == 0) {
-            throw new \BgaUserException('No Detachable Tail Evolution');
+        if (!in_array($evolutionType, [DETACHABLE_TAIL_EVOLUTION, CYBER_BUNNY_3_EVOLUTION]) || $this->countEvolutionOfType($playerId, $evolutionType, false, true) == 0) {
+            throw new \BgaUserException('No Detachable Tail / CYBER_BUNNY_3_EVOLUTION Evolution');
         }
 
         if ($this->canLoseHealth($playerId, 999) != null) {
@@ -140,7 +140,7 @@ trait EvolutionCardsActionTrait {
 
         $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
-        $card = $this->getEvolutionsOfType($playerId, DETACHABLE_TAIL_EVOLUTION, true, true)[0];
+        $card = $this->getEvolutionsOfType($playerId, $evolutionType, true, true)[0];
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
 

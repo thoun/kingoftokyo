@@ -609,10 +609,11 @@
         self::ajaxResponse();
     }
     
-    public function useDetachableTail() {
+    public function useInvincibleEvolution() {
         self::setAjaxMode();
 
-        $this->game->useDetachableTail();
+        $evolutionType = self::getArg("evolutionType", AT_posint, true);
+        $this->game->useInvincibleEvolution($evolutionType);
 
         self::ajaxResponse();
     }

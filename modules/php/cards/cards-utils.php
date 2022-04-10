@@ -336,11 +336,12 @@ trait CardsUtilTrait {
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
         // evil lair
         $countEvilLair = ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, EVIL_LAIR_WICKEDNESS_TILE)) ? 1 : 0;
-
         // inadequate offering
-        $inadequateOffering = $this->isAnubisExpansion() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;
+        $inadequateOffering = $this->isAnubisExpansion() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
+        // CYBER_BUNNY_5_EVOLUTION
+        $countCYBER_BUNNY_5_EVOLUTION = $this->countEvolutionOfType($playerId, CYBER_BUNNY_5_EVOLUTION);
 
-        return max($cardCost + $inadequateOffering - $countAlienOrigin - $countEvilLair, 0);
+        return max($cardCost + $inadequateOffering - $countAlienOrigin - $countEvilLair - $countCYBER_BUNNY_5_EVOLUTION, 0);
     }
 
     function canBuyCard(int $playerId, int $cardType, int $cost) {
@@ -877,6 +878,13 @@ trait CardsUtilTrait {
             }
 
             $detachableTailCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(DETACHABLE_TAIL_EVOLUTION));
+            foreach($detachableTailCards as $detachableTailCard) {
+                if ($detachableTailCard->location == 'table') {
+                    $this->removeEvolution($detachableTailCard->location_arg, $detachableTailCard);
+                }
+            }
+
+            $detachableTailCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(CYBER_BUNNY_3_EVOLUTION));
             foreach($detachableTailCards as $detachableTailCard) {
                 if ($detachableTailCard->location == 'table') {
                     $this->removeEvolution($detachableTailCard->location_arg, $detachableTailCard);

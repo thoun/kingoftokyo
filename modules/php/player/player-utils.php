@@ -316,6 +316,9 @@ trait PlayerUtilTrait {
             if ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION) > 0) {
                 return 3000 + DETACHABLE_TAIL_EVOLUTION;
             }
+            if ($this->countEvolutionOfType($playerId, CYBER_BUNNY_3_EVOLUTION) > 0) {
+                return 3000 + CYBER_BUNNY_3_EVOLUTION;
+            }
             if ($this->countEvolutionOfType($playerId, SIMIAN_SCAMPER_EVOLUTION) > 0) {
                 return 3000 + SIMIAN_SCAMPER_EVOLUTION;
             }

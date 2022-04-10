@@ -126,6 +126,7 @@ trait EvolutionCardsUtilTrait {
             case NINE_LIVES_EVOLUTION:
             case SIMIAN_SCAMPER_EVOLUTION:
             case DETACHABLE_TAIL_EVOLUTION:
+            case CYBER_BUNNY_3_EVOLUTION:
                 throw new \BgaUserException(/*self::_TODOPU*/("You can't play this Evolution now"));
             case FELINE_MOTOR_EVOLUTION:
                 $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
@@ -319,6 +320,9 @@ trait EvolutionCardsUtilTrait {
                 $this->applyGetEnergy($playerId, 3, $logCardType);
                 break;
             // kraken
+            case KRAKEN_1_EVOLUTION:
+                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
+                break;
             // Baby Gigazaur
         }
     }

@@ -1024,7 +1024,23 @@ var EvolutionCards = /** @class */ (function () {
             case 137: return /*_TODOPU*/ ("[6d6e71]Pandarwinism [231f20]Survival of the Cutest");
             case 138: return /*_TODOPU*/ ("[6d6e71]Yin [231f20]& Yang");
             // cyberbunny : soft b67392 strong ec008c
+            case 141: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 1");
+            case 142: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 2");
+            case 143: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 3");
+            case 144: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 4");
+            case 145: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 5");
+            case 146: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 6");
+            case 147: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 7");
+            case 148: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 8");
             // kraken : blue 2384c6 gray 4c7c96
+            case 151: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]1");
+            case 152: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]2");
+            case 153: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]3");
+            case 154: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]4");
+            case 155: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]5");
+            case 156: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]6");
+            case 157: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]7");
+            case 158: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]8");
             // Baby Gigazaur : dark a5416f light f05a7d
         }
         return null;
@@ -1088,7 +1104,8 @@ var EvolutionCards = /** @class */ (function () {
             case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
             case 48: return /*_TODOPU*/ ("Play when you enter Tokyo. Gain 1[Star] at the end of each Monster’s turn (including yours). Discard this card and lose all your [Star] if you leave Tokyo.");
             // Gigazaur 
-            case 51: return /*_TODOPU*/ ("You can’t lose [Heart] this turn.");
+            case 51:
+            case 143: return /*_TODOPU*/ ("You can’t lose [Heart] this turn.");
             case 52: return /*_TODOPU*/ ("Gain 2[Energy] and 1[Heart].");
             case 53: return /*_TODOPU*/ ("All other Monsters lose 2[Star].");
             case 54: return /*_TODOPU*/ ("Choose a die face. Take all dice with this face and flip them to a (single) face of your choice.");
@@ -1115,7 +1132,15 @@ var EvolutionCards = /** @class */ (function () {
             case 137: return /*_TODOPU*/ ("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return /*_TODOPU*/ ("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + "<div>[dice1]\u2194[dice3] &nbsp; [dice2]\u2194[diceHeart] &nbsp; [diceSmash]\u2194[diceEnergy]</div>";
             // Cyber Kitty
-            case 141: return /*_TODOPU*/ ("Gain 1[Energy] for each [Energy] you already gained this turn.");
+            case 141: return /*_TODODE*/ ("Gain 1[Energy] for each [Energy] you already gained this turn.");
+            case 142: return "+3[Energy]";
+            // 143 same as 51
+            // TODODE 144
+            case 145: return /*_TODODE*/ ("The price of Power cards you buy is reduced by 1[Energy].");
+            case 146: return /*_TODODE*/ ("Gain 1[Star] each time you buy a Power card.");
+            // TODODE 147/148
+            // Kraken
+            case 151: return "+2[Heart]";
         }
         return null;
     };
@@ -3783,7 +3808,10 @@ var KingOfTokyo = /** @class */ (function () {
                 }
             }
             if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
-                this.addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only') }), function () { return _this.useDetachableTail(); });
+                this.addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only') }), function () { return _this.useInvincibleEvolution(51); });
+            }
+            if (args.canUseCYBER_BUNNY_3_EVOLUTION && !document.getElementById('useCYBER_BUNNY_3_EVOLUTION_button')) {
+                this.addActionButton('useCYBER_BUNNY_3_EVOLUTION_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only') }), function () { return _this.useInvincibleEvolution(143); });
             }
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
                 var _loop_3 = function (i) {
@@ -5523,11 +5551,13 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('useWings');
     };
-    KingOfTokyo.prototype.useDetachableTail = function () {
-        if (!this.checkAction('useDetachableTail')) {
+    KingOfTokyo.prototype.useInvincibleEvolution = function (evolutionType) {
+        if (!this.checkAction('useInvincibleEvolution')) {
             return;
         }
-        this.takeAction('useDetachableTail');
+        this.takeAction('useInvincibleEvolution', {
+            evolutionType: evolutionType
+        });
     };
     KingOfTokyo.prototype.skipWings = function () {
         if (!this.checkAction('skipWings')) {
