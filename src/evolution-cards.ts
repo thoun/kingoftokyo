@@ -6,6 +6,27 @@ class EvolutionCards {
     constructor (private game: KingOfTokyoGame) {
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
     }
+
+    debugSeeAllCards() {
+        let html = `<div id="all-evolution-cards" class="evolution-card-stock player-evolution-cards">`;
+        MONSTERS_WITH_POWER_UP_CARDS.forEach(monster => 
+            html += `<div id="all-evolution-cards-${monster}" style="display: flex; flex-wrap: nowrap;"></div>`
+        );
+        html += `</div>`;
+        dojo.place(html, 'kot-table', 'before');
+
+        MONSTERS_WITH_POWER_UP_CARDS.forEach(monster => {
+            const evolutionRow = document.getElementById(`all-evolution-cards-${monster}`);
+            for (let i = 1; i <= 8; i++) {
+                const tempDiv = this.generateCardDiv({
+                    type: monster * 10 + i
+                } as Card);
+                tempDiv.id = `all-evolution-cards-${monster}-${i}`;
+                evolutionRow.appendChild(tempDiv);
+                (this.game as any).addTooltipHtml(tempDiv.id, this.getTooltip(monster * 10 + i));
+            }
+        })
+    }
     
     public setupCards(stocks: Stock[]) {
 
@@ -179,7 +200,7 @@ class EvolutionCards {
             case 53: return /*_TODOPU*/("All other Monsters lose 2[Star].");
             case 54: return /*_TODOPU*/("Choose a die face. Take all dice with this face and flip them to a (single) face of your choice.");
             case 55: return /*_TODOPU*/("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
-            case 56: return /*_TODOPU*/("Monsters that wound you lose 1[Star].");
+            case 56: case 158: return /*_TODOPU*/("Monsters that wound you lose 1[Star].");
             case 57: return /*_TODOPU*/("Once per turn, you can change one of the dice you rolled to [diceSmash].");
             case 58: return /*_TODOPU*/("Once per turn, you can change one of the dice you rolled to [dice1] or [dice2]."); // TODOPU check label
             // Meka Dragon
@@ -210,6 +231,9 @@ class EvolutionCards {
             // TODODE 147/148
             // Kraken
             case 151: return "+2[Heart]";
+            case 156: return /*_TODODE*/("Gain 1[Heart] each time you take control of Tokyo. You can have up to 12[Heart] as long as you own this card.");
+            case 157: return /*_TODOPU*/("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 3[Heart] and 3[Energy].");
+            // 158 same as 56
         }
         return null;
     }
@@ -381,22 +405,28 @@ class EvolutionCards {
         this.game.tableManager.tableHeightChange();
     }
 
+    public generateCardDiv(card: Card): HTMLDivElement {
+        const tempDiv: HTMLDivElement = document.createElement('div');
+        tempDiv.classList.add('stockitem');
+        tempDiv.style.width = `${CARD_WIDTH}px`;
+        tempDiv.style.height = `${CARD_WIDTH}px`;
+        tempDiv.style.position = `relative`;
+        tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/evolution-cards.jpg')`;
+        const imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1;
+        const xBackgroundPercent = imagePosition * 100;
+        tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% 0%`;
+
+        document.body.appendChild(tempDiv);
+        this.setDivAsCard(tempDiv, card.type);
+        document.body.removeChild(tempDiv);
+            
+        return tempDiv;
+    }
+
     public getMimickedCardText(mimickedCard: Card): string {
         let mimickedCardText = '-';
         if (mimickedCard) {
-            const tempDiv: HTMLDivElement = document.createElement('div');
-            tempDiv.classList.add('stockitem');
-            tempDiv.style.width = `${CARD_WIDTH}px`;
-            tempDiv.style.height = `${CARD_WIDTH}px`;
-            tempDiv.style.position = `relative`;
-            tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/evolution-cards.jpg')`;
-            const imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(mimickedCard.type / 10)) + 1;
-            const xBackgroundPercent = imagePosition * 100;
-            tempDiv.style.backgroundPosition = `-${xBackgroundPercent}% 0%`;
-
-            document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
-            document.body.removeChild(tempDiv);
+            const tempDiv = this.generateCardDiv(mimickedCard);
 
             mimickedCardText = `<br>${tempDiv.outerHTML}`;
         }

@@ -141,6 +141,7 @@ trait EvolutionCardsUtilTrait {
             case JUNGLE_FRENZY_EVOLUTION: // TODOPU use only after move to Tokyo if you didn't enter
                 return $playerId == intval($this->getActivePlayerId()) && !$this->inTokyo($playerId) && $this->isDamageDealtThisTurn($playerId);
             case TUNE_UP_EVOLUTION:
+            case KRAKEN_7_EVOLUTION:
                 return !$this->inTokyo($playerId);
             case BLIZZARD_EVOLUTION:
                 if ($playerId != intval($this->getActivePlayerId())) {
@@ -323,6 +324,12 @@ trait EvolutionCardsUtilTrait {
             case KRAKEN_1_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
+            case KRAKEN_7_EVOLUTION:
+                $this->applyGetHealth($playerId, 3, $logCardType, $playerId);
+                $this->applyGetEnergy($playerId, 3, $logCardType);
+                $this->removeCard($playerId, $card, false, 5000);
+                $this->goToState(ST_NEXT_PLAYER);
+                break;
             // Baby Gigazaur
         }
     }
@@ -381,12 +388,12 @@ trait EvolutionCardsUtilTrait {
     }
 
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
-        $changeMaxHealth = $card->type == EVEN_BIGGER_CARD; // TODOPU
+        $changeMaxHealth = $card->type == KRAKEN_6_EVOLUTION;
 
         $countMothershipSupportBefore = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
         
         if ($card->type == ICY_REFLECTION_EVOLUTION) { // Mimic
-            $changeMaxHealth = false;// TODOPU $this->getMimickedEvolutionType() == EATER_OF_SOULS_EVOLUTION;
+            $changeMaxHealth = $this->getMimickedEvolutionType() == KRAKEN_6_EVOLUTION;
             $this->removeMimicEvolutionToken($playerId);
         } else if ($card->id == $this->getMimickedEvolutionId() && !$ignoreMimicToken) {
             $this->removeMimicEvolutionToken($playerId);

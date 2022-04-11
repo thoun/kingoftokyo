@@ -995,6 +995,12 @@
   height: 12px;
   margin-bottom: -2px;
 }
+.player-evolution-cards .stockitem .description-wrapper .token {
+  width: 12px;
+  height: 12px;
+  margin-bottom: -2px;
+  box-shadow: none;
+}
 .player-evolution-cards .stockitem.disabled {
   filter: contrast(0.6);
   cursor: not-allowed;
@@ -1936,6 +1942,12 @@ button .icon, a .icon {
   width: 16px;
   height: 16px;
   margin-bottom: -2px;
+}
+.dijitTooltipContents .token {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -2px;
+  box-shadow: none !important;
 }
 
 .token {

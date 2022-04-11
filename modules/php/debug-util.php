@@ -15,11 +15,11 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343494, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(5);
+        $this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
-        //$this->debugSetHealth(5);
+        $this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -28,7 +28,7 @@ trait DebugUtilTrait {
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);

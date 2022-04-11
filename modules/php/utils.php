@@ -80,7 +80,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -222,9 +222,14 @@ trait UtilTrait {
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, FULL_REGENERATION_WICKEDNESS_TILE)) {
             $add += 2;
         }
+        
         $add += 2 * $this->countCardOfType($playerId, EVEN_BIGGER_CARD);
+
         if ($this->isZombified($playerId)) {
             $add += 2;
+        }
+        if ($this->isPowerUpExpansion()) {
+            $add += 2 * $this->countEvolutionOfType($playerId, KRAKEN_6_EVOLUTION);
         }
 
         if ($this->isAnubisExpansion() && $this->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
@@ -319,6 +324,10 @@ trait UtilTrait {
             $countIAmTheKing = $this->countEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION);
             if ($countIAmTheKing) {
                 $this->applyGetPoints($playerId, $countIAmTheKing, 3000 + I_AM_THE_KING_EVOLUTION);
+            }
+            $countKRAKEN_6_EVOLUTION = $this->countEvolutionOfType($playerId, KRAKEN_6_EVOLUTION);
+            if ($countKRAKEN_6_EVOLUTION) {
+                $this->applyGetHealth($playerId, $countKRAKEN_6_EVOLUTION, 3000 + KRAKEN_6_EVOLUTION, $playerId);
             }
         }
     }
@@ -523,7 +532,16 @@ trait UtilTrait {
         } else {
             $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
             $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
-            $this->eliminatePlayer($player->id); // no need for notif, framework does it
+            if ($this->getRemainingPlayers() > 1) {
+                $this->eliminatePlayer($player->id); // no need for notif, framework does it
+            } else {
+                // if last player, we make a notification same as elimination
+                // but we don't really eliminate him as the framework don't like it and game will end anyway
+                $this->notifyAllPlayers('playerEliminated', '', [
+                    'who_quits' => $player->id,
+                    'player_name' => $this->getPlayerName($player->id),
+                ]);
+            }
         }
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
@@ -710,6 +728,10 @@ trait UtilTrait {
             $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
             if ($countHeatVision > 0) {
                 $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
+            }
+            $countKRAKEN_8_EVOLUTION = $this->countEvolutionOfType($playerId, KRAKEN_8_EVOLUTION);
+            if ($countKRAKEN_8_EVOLUTION > 0) {
+                $this->applyLosePoints($damageDealerId, $countKRAKEN_8_EVOLUTION, 3000 + KRAKEN_8_EVOLUTION);
             }
             $alphaMaleEvolutions = $this->getEvolutionsOfType($damageDealerId, ALPHA_MALE_EVOLUTION);
             if (count($alphaMaleEvolutions) > 0 && !$this->isUsedCard(3000 + $alphaMaleEvolutions[0]->id)) {

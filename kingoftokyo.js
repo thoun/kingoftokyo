@@ -940,6 +940,26 @@ var EvolutionCards = /** @class */ (function () {
         this.game = game;
         this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
     }
+    EvolutionCards.prototype.debugSeeAllCards = function () {
+        var _this = this;
+        var html = "<div id=\"all-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">";
+        MONSTERS_WITH_POWER_UP_CARDS.forEach(function (monster) {
+            return html += "<div id=\"all-evolution-cards-" + monster + "\" style=\"display: flex; flex-wrap: nowrap;\"></div>";
+        });
+        html += "</div>";
+        dojo.place(html, 'kot-table', 'before');
+        MONSTERS_WITH_POWER_UP_CARDS.forEach(function (monster) {
+            var evolutionRow = document.getElementById("all-evolution-cards-" + monster);
+            for (var i = 1; i <= 8; i++) {
+                var tempDiv = _this.generateCardDiv({
+                    type: monster * 10 + i
+                });
+                tempDiv.id = "all-evolution-cards-" + monster + "-" + i;
+                evolutionRow.appendChild(tempDiv);
+                _this.game.addTooltipHtml(tempDiv.id, _this.getTooltip(monster * 10 + i));
+            }
+        });
+    };
     EvolutionCards.prototype.setupCards = function (stocks) {
         stocks.forEach(function (stock) {
             var keepcardsurl = g_gamethemeurl + "img/evolution-cards.jpg";
@@ -1110,7 +1130,8 @@ var EvolutionCards = /** @class */ (function () {
             case 53: return /*_TODOPU*/ ("All other Monsters lose 2[Star].");
             case 54: return /*_TODOPU*/ ("Choose a die face. Take all dice with this face and flip them to a (single) face of your choice.");
             case 55: return /*_TODOPU*/ ("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
-            case 56: return /*_TODOPU*/ ("Monsters that wound you lose 1[Star].");
+            case 56:
+            case 158: return /*_TODOPU*/ ("Monsters that wound you lose 1[Star].");
             case 57: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [diceSmash].");
             case 58: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [dice1] or [dice2]."); // TODOPU check label
             // Meka Dragon
@@ -1141,6 +1162,9 @@ var EvolutionCards = /** @class */ (function () {
             // TODODE 147/148
             // Kraken
             case 151: return "+2[Heart]";
+            case 156: return /*_TODODE*/ ("Gain 1[Heart] each time you take control of Tokyo. You can have up to 12[Heart] as long as you own this card.");
+            case 157: return /*_TODOPU*/ ("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 3[Heart] and 3[Energy].");
+            // 158 same as 56
         }
         return null;
     };
@@ -1276,21 +1300,25 @@ var EvolutionCards = /** @class */ (function () {
         }
         this.game.tableManager.tableHeightChange();
     };
+    EvolutionCards.prototype.generateCardDiv = function (card) {
+        var tempDiv = document.createElement('div');
+        tempDiv.classList.add('stockitem');
+        tempDiv.style.width = CARD_WIDTH + "px";
+        tempDiv.style.height = CARD_WIDTH + "px";
+        tempDiv.style.position = "relative";
+        tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/evolution-cards.jpg')";
+        var imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1;
+        var xBackgroundPercent = imagePosition * 100;
+        tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% 0%";
+        document.body.appendChild(tempDiv);
+        this.setDivAsCard(tempDiv, card.type);
+        document.body.removeChild(tempDiv);
+        return tempDiv;
+    };
     EvolutionCards.prototype.getMimickedCardText = function (mimickedCard) {
         var mimickedCardText = '-';
         if (mimickedCard) {
-            var tempDiv = document.createElement('div');
-            tempDiv.classList.add('stockitem');
-            tempDiv.style.width = CARD_WIDTH + "px";
-            tempDiv.style.height = CARD_WIDTH + "px";
-            tempDiv.style.position = "relative";
-            tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/evolution-cards.jpg')";
-            var imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(mimickedCard.type / 10)) + 1;
-            var xBackgroundPercent = imagePosition * 100;
-            tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% 0%";
-            document.body.appendChild(tempDiv);
-            this.setDivAsCard(tempDiv, mimickedCard.type + (mimickedCard.side || 0));
-            document.body.removeChild(tempDiv);
+            var tempDiv = this.generateCardDiv(mimickedCard);
             mimickedCardText = "<br>" + tempDiv.outerHTML;
         }
         return mimickedCardText;
@@ -3423,6 +3451,9 @@ var KingOfTokyo = /** @class */ (function () {
         var oldShowMessage = this.showMessage;
         this.showMessage = function (msg, type) { return oldShowMessage(formatTextIcons(msg), type); };
         log("Ending game setup");
+        if (window.location.host == 'studio.boardgamearena.com' && this.isPowerUpExpansion()) {
+            this.evolutionCards.debugSeeAllCards();
+        }
     };
     ///////////////////////////////////////////////////
     //// Game & client states

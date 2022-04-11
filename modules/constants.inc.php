@@ -400,6 +400,7 @@ define('KRAKEN_5_EVOLUTION', 155);
 define('KRAKEN_6_EVOLUTION', 156);
 define('KRAKEN_7_EVOLUTION', 157);
 define('KRAKEN_8_EVOLUTION', 158);
+// evolutions : Baby Gigazaur
 
 }
 ?>

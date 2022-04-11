@@ -165,6 +165,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         (this as any).showMessage = (msg, type) => oldShowMessage(formatTextIcons(msg), type);
 
         log( "Ending game setup" );
+
+        if (window.location.host == 'studio.boardgamearena.com' && this.isPowerUpExpansion()) {
+            this.evolutionCards.debugSeeAllCards();
+        }
     }
 
     ///////////////////////////////////////////////////
