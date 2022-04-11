@@ -128,5 +128,13 @@ trait RedirectionTrait {
             return ST_RESOLVE_DIE_OF_FATE;
         }
     }
+
+    function redirectAfterStealCostume(int $playerId) {
+        if ($this->isMutantEvolutionVariant() && $this->getFormCard($playerId) != null) { 
+            return ST_PLAYER_CHANGE_FORM;
+        } else {
+            return ST_PLAYER_BUY_CARD;
+        }
+    }
     
 }

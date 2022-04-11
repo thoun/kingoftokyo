@@ -15,20 +15,20 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343494, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(8);
+        $this->debugSetEnergy(1);
         //$this->debugSetPoints(5);
-        $this->debugSetHealth(1);
+        //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 1);
-        //$this->debugSetPlayerHealth(2343493, 1);
+        $this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerEnergy(2343493, 4);
         //$this->debugSetPlayerPoints(2343493, 1);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -69,7 +69,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
-        //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
+        $this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343493);
@@ -106,18 +106,18 @@ trait DebugUtilTrait {
             //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
             //$this->debugSetCardInHand(GHOST_CARD, 2343492);
             $this->debugSetCardInHand(CLOWN_CARD, 2343492);
-            //$this->debugSetCardInHand(DEVIL_CARD, 2343493);
+            $this->debugSetCardInHand(DEVIL_CARD, 2343492);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
-            //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
+            $this->debugSetCardInHand(ROBOT_CARD, 2343493);
             //$this->debugSetCardInHand(PRINCESS_CARD, 2343494);
-            $this->debugSetCardInHand(WITCH_CARD, 2343493);
+            //$this->debugSetCardInHand(WITCH_CARD, 2343493);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
             //$this->debugSetCardInHand(PIRATE_CARD, 2343494);
         }
 
         // cthulhu
         if ($this->isCthulhuExpansion()) {
-            $this->DbQuery("UPDATE player SET `player_cultists` = 5");
+            $this->DbQuery("UPDATE player SET `player_cultists` = 1");
             //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
         }
 
@@ -290,6 +290,7 @@ trait DebugUtilTrait {
     // debugSetDieFaces(2, 3)
     // debugSetDieFaces(4, 3)
     // debugSetDieFaces(6, 3)
+    // debugSetDieFaces(6)
     function debugSetDieFaces($face, $limit = 99) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
     }

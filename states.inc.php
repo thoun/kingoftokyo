@@ -665,7 +665,6 @@ $playerActionsGameStates = [
         "action" => "stEnterTokyo",
         "transitions" => [
             "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
-            "changeForm" => ST_PLAYER_CHANGE_FORM,
             "buyCard" => ST_PLAYER_BUY_CARD,
         ],
     ],
@@ -680,8 +679,6 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stealCostumeCard", "endStealCostume" ],
         "transitions" => [
             "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
-            "endStealCostume" => ST_PLAYER_BUY_CARD,
-            "changeForm" => ST_PLAYER_CHANGE_FORM,
         ]
     ],
 

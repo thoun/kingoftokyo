@@ -106,8 +106,10 @@ trait CardsActionTrait {
 
     function endStealCostume() {
         $this->checkAction('endStealCostume');
+
+        $playerId = $this->getActivePlayerId();
      
-        $this->redirectAfterStealCostume();
+        $this->goToState($this->redirectAfterStealCostume($playerId));
     }
 
     function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist, $buyCost = null) {

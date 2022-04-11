@@ -953,14 +953,6 @@ trait CardsUtilTrait {
         return $formCard;
     }
 
-    function redirectAfterStealCostume() {
-        if ($this->isMutantEvolutionVariant()) { 
-            $this->gamestate->nextState('changeForm');
-        } else {
-            $this->gamestate->nextState('endStealCostume');
-        }
-    }
-
     function setWarningIcon(int $playerId, array &$warningIds, object $card) {
         if (in_array($card->type, [HEAL_CARD])) {
             if (!$this->canGainHealth($playerId) || $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId)) {
