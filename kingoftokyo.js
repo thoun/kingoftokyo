@@ -1246,14 +1246,23 @@ var EvolutionCards = /** @class */ (function () {
     EvolutionCards.prototype.setDivAsCard = function (cardDiv, cardType) {
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
-        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n        </div>\n        <div class=\"evolution-type\">" + type + "</div>        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        cardDiv.innerHTML = "\n        <div class=\"evolution-type\">" + type + "</div>\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n                    <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n                </div>\n            </div>\n            <div>\n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        </div>      \n        ";
         var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
-        if (textHeight > 80) { // TODOPU check limit
+        if (textHeight > 50) {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';
+        }
+        textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
+        var nameHeight = cardDiv.getElementsByClassName('outline')[0].clientHeight;
+        if (77 - textHeight < nameHeight) {
+            cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '8pt';
+        }
+        nameHeight = cardDiv.getElementsByClassName('outline')[0].clientHeight;
+        if (77 - textHeight < nameHeight) {
+            cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '7pt';
         }
     };
     EvolutionCards.prototype.getTooltip = function (cardTypeId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + this.getCardTypeName(cardTypeId) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     EvolutionCards.prototype.setupNewCard = function (cardDiv, cardType) {
@@ -3451,9 +3460,9 @@ var KingOfTokyo = /** @class */ (function () {
         var oldShowMessage = this.showMessage;
         this.showMessage = function (msg, type) { return oldShowMessage(formatTextIcons(msg), type); };
         log("Ending game setup");
-        if (window.location.host == 'studio.boardgamearena.com' && this.isPowerUpExpansion()) {
+        /*if (window.location.host == 'studio.boardgamearena.com' && this.isPowerUpExpansion()) {
             this.evolutionCards.debugSeeAllCards();
-        }
+        }*/
     };
     ///////////////////////////////////////////////////
     //// Game & client states

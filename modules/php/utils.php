@@ -80,7 +80,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -329,6 +329,13 @@ trait UtilTrait {
             if ($countKRAKEN_6_EVOLUTION) {
                 $this->applyGetHealth($playerId, $countKRAKEN_6_EVOLUTION, 3000 + KRAKEN_6_EVOLUTION, $playerId);
             }
+
+            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation(CYBER_BUNNY_4_EVOLUTION, null, 'discard'.$playerId));
+            if (count($evolutions) > 0) {
+                foreach($evolutions as $evolution) {
+                    $this->getEvolutionFromDiscard($playerId, $evolution->id);
+                }
+            }
         }
     }
 
@@ -547,7 +554,7 @@ trait UtilTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         if ($this->isPowerUpExpansion()) {            
-            $cards = $this->getEvolutionsFromDb($this->evolutionCards->getCardsInLocation('table', $player->id));
+            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $player->id));
             $this->removeEvolutions($player->id, $cards, true);
         }
         

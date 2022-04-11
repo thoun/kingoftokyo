@@ -116,7 +116,7 @@ trait CurseCardsUtilTrait {
                 return $this->replacePlayersInTokyo($playerId);
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case SET_S_STORM_CURSE_CARD:
-                return [new Damage($playerId, 1, $playerId, $logCardType)];
+                return [new Damage($playerId, 1, 0, $logCardType)];
             case THOT_S_BLINDNESS_CURSE_CARD: 
                 $this->applyLoseEnergy($playerId, 2, $logCardType);
                 break;
@@ -141,13 +141,13 @@ trait CurseCardsUtilTrait {
                 $this->snakeEffectDiscardKeepCard($playerId);
                 break;
             case BOW_BEFORE_RA_CURSE_CARD:
-                return [new Damage($playerId, 2, $playerId, $logCardType)];
+                return [new Damage($playerId, 2, 0, $logCardType)];
             case VENGEANCE_OF_HORUS_CURSE_CARD:
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);
                 $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
                 $rolledSmashes = $diceCounts[6];
                 if ($rolledSmashes > 0) {
-                    return [new Damage($playerId, $rolledSmashes, $playerId, $logCardType)];
+                    return [new Damage($playerId, $rolledSmashes, 0, $logCardType)];
                 } else {
                     return null;
                 }
@@ -155,7 +155,7 @@ trait CurseCardsUtilTrait {
                 $playersIds = $this->getPlayersIdsWithMaxColumn('player_health');
                 $damages = [];
                 foreach ($playersIds as $pId) {
-                    $damages[] = new Damage($pId, 1, $playerId, $logCardType);
+                    $damages[] = new Damage($pId, 1, 0, $logCardType);
                 }
                 return $damages;
             case ORDEAL_OF_THE_WEALTHY_CURSE_CARD:

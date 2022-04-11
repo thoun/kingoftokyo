@@ -53,7 +53,7 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function applyChooseEvolutionCard(int $playerId, int $id) {
+    function applyChooseEvolutionCard(int $playerId, int $id, bool $init) {
         $topCards = $this->pickEvolutionCards($playerId);
         $card = $this->array_find($topCards, fn($topCard) => $topCard->id == $id);
         if ($card == null) {
@@ -64,7 +64,8 @@ trait EvolutionCardsActionTrait {
         $this->evolutionCards->moveCard($id, 'hand', $playerId);
         $this->evolutionCards->moveCard($otherCard->id, 'dicard'.$playerId);
 
-        $this->notifNewEvolutionCard($playerId, $card, /*client TODOPU translate(*/'${player_name} ends his rolls with at least 3 [diceHeart] and takes a new Evolution card'/*)*/);
+        $message = $init ? '' : /*client TODOPU translate(*/'${player_name} ends his rolls with at least 3 [diceHeart] and takes a new Evolution card'/*)*/;
+        $this->notifNewEvolutionCard($playerId, $card, $message);
         
     } 
 
@@ -73,7 +74,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $this->applyChooseEvolutionCard($playerId, $id);
+        $this->applyChooseEvolutionCard($playerId, $id, false);
 
         $nextState = intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
         $this->gamestate->jumpToState($nextState);
@@ -146,7 +147,8 @@ trait EvolutionCardsActionTrait {
 
         $this->playEvolutionToTable($playerId, $card, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
-        $intervention = $this->getDamageIntervention();
+        $intervention = $this->getDamageIntervention();        
+        $this->reduceInterventionDamages($playerId, $intervention, -1);
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }

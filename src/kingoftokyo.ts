@@ -166,9 +166,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         log( "Ending game setup" );
 
-        if (window.location.host == 'studio.boardgamearena.com' && this.isPowerUpExpansion()) {
+        /*if (window.location.host == 'studio.boardgamearena.com' && this.isPowerUpExpansion()) {
             this.evolutionCards.debugSeeAllCards();
-        }
+        }*/
     }
 
     ///////////////////////////////////////////////////

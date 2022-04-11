@@ -940,14 +940,32 @@
   transform: rotateY(180deg);
 }
 
-.player-evolution-cards .stockitem .name-wrapper {
+.player-evolution-cards .stockitem .name-and-description {
   position: absolute;
-  top: 47px;
+  top: 37px;
   left: 14px;
+  width: 104px;
+  height: 79px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-content: center;
+}
+.player-evolution-cards .stockitem .name-and-description > div {
+  flex: 1;
+  width: 104px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.player-evolution-cards .stockitem .name-wrapper {
+  position: relative;
+  top: unset;
+  left: unset;
+  width: unset;
   font-size: 9pt;
   color: white;
   font-family: "goodgirl";
-  width: 104px;
   text-align: center;
 }
 .player-evolution-cards .stockitem .name-wrapper .outline {
@@ -961,7 +979,7 @@
   -webkit-text-stroke: 4px #1c484f;
 }
 .player-evolution-cards .stockitem .name-wrapper .text {
-  position: absolute;
+  position: relative;
   left: 0;
   top: 0;
   width: 100%;
@@ -970,7 +988,7 @@
   position: absolute;
   font-size: 6pt;
   left: 22px;
-  top: 36px;
+  top: 26px;
   width: 87px;
   text-transform: uppercase;
   color: white;
@@ -981,10 +999,10 @@
   color: #fff200;
 }
 .player-evolution-cards .stockitem .description-wrapper {
-  position: absolute;
-  left: 9px;
-  width: 108px;
-  top: 71px;
+  position: relative;
+  top: unset;
+  left: unset;
+  width: unset;
   text-overflow: ellipsis;
   text-align: center;
   color: black;

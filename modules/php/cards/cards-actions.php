@@ -635,8 +635,7 @@ trait CardsActionTrait {
             $canRethrow3 = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0 && in_array(3, $diceValues);
         }
 
-        $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $cancelledDamage);
-        $this->setDamageIntervention($intervention);
+        $this->reduceInterventionDamages($playerId, $intervention, $cancelledDamage);
 
         $args = $this->argCancelDamage($playerId, $canRethrow3);
 
@@ -761,6 +760,7 @@ trait CardsActionTrait {
         ]);
 
         $intervention = $this->getDamageIntervention();
+        $this->reduceInterventionDamages($playerId, $intervention, -1);
         $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
@@ -811,8 +811,7 @@ trait CardsActionTrait {
 
         $this->applyLoseEnergy($playerId, $energy, 0);
 
-        $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $energy);
-        $this->setDamageIntervention($intervention);
+        $this->reduceInterventionDamages($playerId, $intervention, $energy);
 
         $args = $this->argCancelDamage($playerId, false);
 
@@ -875,8 +874,7 @@ trait CardsActionTrait {
             $this->setUsedCard($superJumpCards[$i]->id);
         }
 
-        $intervention->damages = $this->reduceInterventionDamages($playerId, $intervention->damages, $energy);
-        $this->setDamageIntervention($intervention);
+        $this->reduceInterventionDamages($playerId, $intervention, $energy);
 
         $args = $this->argCancelDamage($playerId, false);
 

@@ -62,7 +62,7 @@ trait InitialCardTrait {
                 throw new \BgaUserException('No selected Evolution card');
             }
 
-            $this->applyChooseEvolutionCard($playerId, $evolutionId);
+            $this->applyChooseEvolutionCard($playerId, $evolutionId, true);
         }
 
         $this->gamestate->nextState('next');

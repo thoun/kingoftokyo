@@ -36,8 +36,10 @@ trait InterventionTrait {
         $keep = ($intervention->nextState === 'keep' || $intervention->nextState === 'next') 
             && count($intervention->remainingPlayersId) > 0
             && !$this->getPlayer($intervention->remainingPlayersId[0])->eliminated;
+
+        $isCancelDamage = strpos($interventionName, CANCEL_DAMAGE_INTERVENTION) === 0;
             
-        if ($keep && strpos($interventionName, CANCEL_DAMAGE_INTERVENTION) === 0) {
+        if ($keep && $isCancelDamage) {
             // we check if player still ca do intervention (in case player got mimic, and mimicked camouflage player dies before mimic player intervention)
 
             $playerId = $intervention->remainingPlayersId[0];
@@ -67,6 +69,11 @@ trait InterventionTrait {
         if ($keep) { // current player continues / next (intervention player) / or leaving transition
             $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
         } else { // leaving transition
+            if ($isCancelDamage && $this->isPowerUpExpansion()) {
+                $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
+                return;
+            }
+
             $this->deleteGlobalVariable($interventionName);
             if (gettype($intervention->endState) == 'string') {
                 $this->gamestate->nextState($intervention->endState);
@@ -78,7 +85,23 @@ trait InterventionTrait {
         }
     }
 
-    function reduceInterventionDamages(int $playerId, array $damages, int $reduceBy): array {
+    function reduceInterventionDamages(int $playerId, $intervention, int $reduceBy /* -1 for remove all for player*/) {
+        if ($reduceBy === -1) {
+            $intervention->damages = array_values(array_filter($intervention->damages, fn($d) => $d->playerId != $playerId));
+            if ($intervention->allDamages) { // TODOPU remove this if
+                $intervention->allDamages = array_values(array_filter($intervention->allDamages, fn($d) => $d->playerId != $playerId));
+            }
+        } else {
+            $intervention->damages = $this->reduceInterventionDamagesForArray($playerId, $intervention->damages, $reduceBy);
+            if ($intervention->allDamages) { // TODOPU remove this if
+                $intervention->allDamages = $this->reduceInterventionDamagesForArray($playerId, $intervention->allDamages, $reduceBy);
+            }
+        }
+        
+        $this->setDamageIntervention($intervention);
+    }
+
+    function reduceInterventionDamagesForArray(int $playerId, array $damages, int $reduceBy): array {
         $newDamages = [];
 
         foreach($damages as $damage) {

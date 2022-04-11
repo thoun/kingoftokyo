@@ -572,6 +572,14 @@ trait EvolutionCardsUtilTrait {
         $this->notifNewEvolutionCard($playerId, $card);
     }
 
+    function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
+        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($evolutionId));
+
+        $this->evolutionCards->moveCard($card->id, 'hand', $playerId);
+
+        $this->notifNewEvolutionCard($playerId, $card);
+    }
+
     function getHighlightedEvolutions(array $stepCardsTypes) {
         $cards = [];
 

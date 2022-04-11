@@ -333,23 +333,44 @@ class EvolutionCards {
         const description = formatTextIcons(this.getCardDescription(cardType));
 
         cardDiv.innerHTML = `
-        <div class="name-wrapper">
-            <div class="outline">${this.getCardName(cardType, 'span')}</div>
-            <div class="text">${this.getCardName(cardType, 'text-only')}</div>
-        </div>
-        <div class="evolution-type">${type}</div>        
-        <div class="description-wrapper">${description}</div>`;
-
+        <div class="evolution-type">${type}</div>
+        <div class="name-and-description">
+            <div>
+                <div class="name-wrapper">
+                    <div class="outline">${this.getCardName(cardType, 'span')}</div>
+                    <div class="text">${this.getCardName(cardType, 'text-only')}</div>
+                </div>
+            </div>
+            <div>
+                <div class="description-wrapper">${description}</div>
+            </div>
+        </div>      
+        `;
         let textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
 
-        if (textHeight > 80) { // TODOPU check limit
+        if (textHeight > 50) {
             (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).style.fontSize = '6pt';
         }
+        textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+
+        let nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
+
+        if (77 - textHeight < nameHeight) {
+            (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '8pt';
+        }
+
+        nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
+
+        if (77 - textHeight < nameHeight) {
+            (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '7pt';
+        }
+
     }
 
     public getTooltip(cardTypeId: number) {
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId, 'text-only')}</strong></p>
+            <p>${this.getCardTypeName(cardTypeId)}</p>
             <p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
         </div>`;
         return tooltip;
