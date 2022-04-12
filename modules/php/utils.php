@@ -229,7 +229,7 @@ trait UtilTrait {
             $add += 2;
         }
         if ($this->isPowerUpExpansion()) {
-            $add += 2 * $this->countEvolutionOfType($playerId, KRAKEN_6_EVOLUTION);
+            $add += 2 * $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
         }
 
         if ($this->isAnubisExpansion() && $this->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
@@ -325,12 +325,12 @@ trait UtilTrait {
             if ($countIAmTheKing) {
                 $this->applyGetPoints($playerId, $countIAmTheKing, 3000 + I_AM_THE_KING_EVOLUTION);
             }
-            $countKRAKEN_6_EVOLUTION = $this->countEvolutionOfType($playerId, KRAKEN_6_EVOLUTION);
-            if ($countKRAKEN_6_EVOLUTION) {
-                $this->applyGetHealth($playerId, $countKRAKEN_6_EVOLUTION, 3000 + KRAKEN_6_EVOLUTION, $playerId);
+            $countEaterOfSouls = $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
+            if ($countEaterOfSouls) {
+                $this->applyGetHealth($playerId, $countEaterOfSouls, 3000 + EATER_OF_SOULS_EVOLUTION, $playerId);
             }
 
-            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation(CYBER_BUNNY_4_EVOLUTION, null, 'discard'.$playerId));
+            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation(HEART_OF_THE_RABBIT_EVOLUTION, null, 'discard'.$playerId));
             if (count($evolutions) > 0) {
                 foreach($evolutions as $evolution) {
                     $this->getEvolutionFromDiscard($playerId, $evolution->id);
@@ -736,9 +736,13 @@ trait UtilTrait {
             if ($countHeatVision > 0) {
                 $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
             }
-            $countKRAKEN_8_EVOLUTION = $this->countEvolutionOfType($playerId, KRAKEN_8_EVOLUTION);
-            if ($countKRAKEN_8_EVOLUTION > 0) {
-                $this->applyLosePoints($damageDealerId, $countKRAKEN_8_EVOLUTION, 3000 + KRAKEN_8_EVOLUTION);
+            $countTooCuteToSmash = $this->countEvolutionOfType($playerId, TOO_CUTE_TO_SMASH_EVOLUTION);
+            if ($countTooCuteToSmash > 0) {
+                $this->applyLosePoints($damageDealerId, $countTooCuteToSmash, 3000 + TOO_CUTE_TO_SMASH_EVOLUTION);
+            }
+            $countMandiblesOfDread = $this->countEvolutionOfType($playerId, MANDIBLES_OF_DREAD_EVOLUTION);
+            if ($countMandiblesOfDread > 0) {
+                $this->applyLosePoints($playerId, $countMandiblesOfDread, 3000 + MANDIBLES_OF_DREAD_EVOLUTION);
             }
             $alphaMaleEvolutions = $this->getEvolutionsOfType($damageDealerId, ALPHA_MALE_EVOLUTION);
             if (count($alphaMaleEvolutions) > 0 && !$this->isUsedCard(3000 + $alphaMaleEvolutions[0]->id)) {

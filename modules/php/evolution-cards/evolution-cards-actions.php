@@ -131,8 +131,8 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        if (!in_array($evolutionType, [DETACHABLE_TAIL_EVOLUTION, CYBER_BUNNY_3_EVOLUTION]) || $this->countEvolutionOfType($playerId, $evolutionType, false, true) == 0) {
-            throw new \BgaUserException('No Detachable Tail / CYBER_BUNNY_3_EVOLUTION Evolution');
+        if (!in_array($evolutionType, [DETACHABLE_TAIL_EVOLUTION, RABBIT_S_FOOT_EVOLUTION]) || $this->countEvolutionOfType($playerId, $evolutionType, false, true) == 0) {
+            throw new \BgaUserException('No Detachable Tail / Rabbits Foot Evolution');
         }
 
         if ($this->canLoseHealth($playerId, 999) != null) {

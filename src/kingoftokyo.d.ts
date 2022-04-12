@@ -363,7 +363,7 @@ interface EnteringCancelDamageArgs {
     canThrowDices: boolean;
     canUseWings: boolean;
     canUseDetachableTail: boolean;
-    canUseCYBER_BUNNY_3_EVOLUTION: boolean;
+    canUseRabbitsFoot: boolean;
     canUseRobot: boolean;
     playerEnergy: number;
     dice: Die[];

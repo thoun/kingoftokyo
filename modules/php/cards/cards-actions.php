@@ -132,10 +132,10 @@ trait CardsActionTrait {
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, HAVE_IT_ALL_WICKEDNESS_TILE)) {
             $this->applyGetPoints($playerId, 1, 2000 + HAVE_IT_ALL_WICKEDNESS_TILE);
         }
-        // CYBER_BUNNY_6_EVOLUTION
-        $countCYBER_BUNNY_6_EVOLUTION = $this->countEvolutionOfType($playerId, CYBER_BUNNY_6_EVOLUTION);
-        if ($countCYBER_BUNNY_6_EVOLUTION > 0) {
-            $this->applyGetPoints($playerId, $countCYBER_BUNNY_6_EVOLUTION, 3000 + CYBER_BUNNY_6_EVOLUTION);
+        // KING_OF_THE_GIZMO_EVOLUTION
+        $countKING_OF_THE_GIZMO_EVOLUTION = $this->countEvolutionOfType($playerId, KING_OF_THE_GIZMO_EVOLUTION);
+        if ($countKING_OF_THE_GIZMO_EVOLUTION > 0) {
+            $this->applyGetPoints($playerId, $countKING_OF_THE_GIZMO_EVOLUTION, 3000 + KING_OF_THE_GIZMO_EVOLUTION);
         }
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);

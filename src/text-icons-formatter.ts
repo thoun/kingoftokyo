@@ -6,6 +6,7 @@ function formatTextIcons(rawText: string) {
         .replace(/\[Star\]/ig, '<span class="icon points"></span>')
         .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
         .replace(/\[Energy\]/ig, '<span class="icon energy"></span>')
+        .replace(/\[Skull\]/ig, '<span class="icon dead"></span>')
         .replace(/\[dice1\]/ig, '<span class="dice-icon dice1"></span>')
         .replace(/\[dice2\]/ig, '<span class="dice-icon dice2"></span>')
         .replace(/\[dice3\]/ig, '<span class="dice-icon dice3"></span>')

@@ -62,6 +62,7 @@ function formatTextIcons(rawText) {
         .replace(/\[Star\]/ig, '<span class="icon points"></span>')
         .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
         .replace(/\[Energy\]/ig, '<span class="icon energy"></span>')
+        .replace(/\[Skull\]/ig, '<span class="icon dead"></span>')
         .replace(/\[dice1\]/ig, '<span class="dice-icon dice1"></span>')
         .replace(/\[dice2\]/ig, '<span class="dice-icon dice2"></span>')
         .replace(/\[dice3\]/ig, '<span class="dice-icon dice3"></span>')
@@ -1044,24 +1045,32 @@ var EvolutionCards = /** @class */ (function () {
             case 137: return /*_TODOPU*/ ("[6d6e71]Pandarwinism [231f20]Survival of the Cutest");
             case 138: return /*_TODOPU*/ ("[6d6e71]Yin [231f20]& Yang");
             // cyberbunny : soft b67392 strong ec008c
-            case 141: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 1");
-            case 142: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 2");
-            case 143: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 3");
-            case 144: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 4");
-            case 145: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 5");
-            case 146: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 6");
-            case 147: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 7");
-            case 148: return /*_TODOPU*/ ("[b67392]Cyber [ec008c]Bunny 8");
+            case 141: return /*_TODODE*/ ("[b67392]Stroke [ec008c]Of Genius");
+            case 142: return /*_TODODE*/ ("[b67392]Emergency [ec008c]Battery");
+            case 143: return /*_TODODE*/ ("[b67392]Rabbit's [ec008c]Foot");
+            case 144: return /*_TODODE*/ ("[b67392]Heart [ec008c]of the Rabbit");
+            case 145: return /*_TODODE*/ ("[b67392]Secret [ec008c]Laboratory");
+            case 146: return /*_TODODE*/ ("[b67392]King [ec008c]of the Gizmo");
+            case 147: return /*_TODODE*/ ("[b67392]Energy [ec008c]Sword");
+            case 148: return /*_TODODE*/ ("[b67392]Electric [ec008c]Carrot");
             // kraken : blue 2384c6 gray 4c7c96
-            case 151: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]1");
-            case 152: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]2");
-            case 153: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]3");
-            case 154: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]4");
-            case 155: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]5");
-            case 156: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]6");
-            case 157: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]7");
-            case 158: return /*_TODOPU*/ ("[2384c6]Kraken [4c7c96]8");
+            case 151: return /*_TODODE*/ ("[2384c6]Healing [4c7c96]Rain");
+            case 152: return /*_TODODE*/ ("[2384c6]Destructive [4c7c96]Wave");
+            case 153: return /*_TODODE*/ ("[2384c6]Cult [4c7c96]Worshippers");
+            case 154: return /*_TODODE*/ ("[2384c6]High [4c7c96]Tide");
+            case 155: return /*_TODODE*/ ("[2384c6]Terror [4c7c96]of the Deep");
+            case 156: return /*_TODODE*/ ("[2384c6]Eater [4c7c96]of Souls");
+            case 157: return /*_TODODE*/ ("[2384c6]Sunken [4c7c96]Temple");
+            case 158: return /*_TODODE*/ ("[2384c6]Mandibles [4c7c96]of Dread");
             // Baby Gigazaur : dark a5416f light f05a7d
+            case 181: return /*_TODOPUBG*/ ("[a5416f]My [f05a7d]Toy");
+            case 182: return /*_TODOPUBG*/ ("[a5416f]Growing [f05a7d]Fast");
+            case 183: return /*_TODOPUBG*/ ("[a5416f]Nurture [f05a7d]the Young");
+            case 184: return /*_TODOPUBG*/ ("[a5416f]Tiny [f05a7d]Tail");
+            case 185: return /*_TODOPUBG*/ ("[a5416f]Too Cute [f05a7d]to Smash");
+            case 186: return /*_TODOPUBG*/ ("[a5416f]So [f05a7d]Small!");
+            case 187: return /*_TODOPUBG*/ ("[a5416f]Underrated");
+            case 188: return /*_TODOPUBG*/ ("[a5416f]Yummy [f05a7d]Yummy");
         }
         return null;
     };
@@ -1088,67 +1097,67 @@ var EvolutionCards = /** @class */ (function () {
     EvolutionCards.prototype.getCardDescription = function (cardTypeId) {
         switch (cardTypeId) {
             // Space Penguin
-            case 11: return /*_TODOPU*/ ("When you wound a Monster in Tokyo, give them this card. At the start of their turn, choose a die face. That face has no effect this turn. Take this card back at the end of their turn.");
+            case 11: return /*_TODOPU*/ ("When you wound a Monster in <i>Tokyo</i>, give them this card. At the start of their turn, choose a die face. This face has no effect this turn. Take back this card at the end of their turn.");
             case 12: return /*_TODOPU*/ ("Once per turn, during the Buy Power Cards phase, you can shuffle the discard pile and reveal one card randomly. You can buy this card for 1[Energy] less than the normal price or discard it. Put back the rest of the discard pile.");
             case 13: return /*_TODOPU*/ ("Look at the top 3 Power cards of the deck. Choose one and play it in front of you for free. Put the other Power cards on the bottom of the deck.");
-            case 14: return /*_TODOPU*/ ("Until your next turn, other Monsters roll with 1 fewer die.");
+            case 14: return /*_TODOPU*/ ("Until your next turn, other Monsters roll with 1 less die.");
             case 15: return /*_TODOPU*/ ("Spend 1[Energy] to choose one of the dice you rolled. This die is frozen until the beginning of your next turn: it cannot be changed and is used normally by Monsters during the Resolve Dice phase.");
-            case 16: return /*_TODOPU*/ ("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield Tokyo.");
-            case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of Tokyo or choose to stay in Tokyo when you could have Yielded.");
-            case 18: return /*_TODOPU*/ ("Choose an Evolution Card in front of a Monster and put a [snowflakeToken] on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard Icy Reflection.");
+            case 16: return /*_TODOPU*/ ("Play during your turn. Until the start of your next turn, Monsters only have a single Roll and cannot Yield <i>Tokyo</i>.");
+            case 17: return /*_TODOPU*/ ("Gain 1 extra [Star] each time you take control of <i>Tokyo</i> or choose to stay in <i>Tokyo</i> when you could have Yielded.");
+            case 18: return /*_TODOPU*/ ("Choose an Evolution Card in front of a Monster and put a [snowflakeToken] on it. Icy Reflection becomes a copy of that card as if you had played it. If the copied card is removed from play, discard <i>Icy Reflection</i>.");
             // Alienoid
-            case 21: return /*_TODOPU*/ ("Gain 2[Star].");
+            case 21: return "+2[Star]";
             case 22: return /*_TODOPU*/ ("Draw Power cards from the top of the deck until you reveal a [keep] card that costs 4[Energy] or less. Play this card in front of you and discard the other cards you drew.");
             case 23: return /*_TODOPU*/ ("Gain 1[Energy] for each [Heart] you lost this turn.");
-            case 24: return /*_TODOPU*/ ("Put 3 [alienoidToken] tokens on this card. On your turn, you can remove an [alienoidToken] token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
-            case 25: return /*_TODOPU*/ ("If you roll at least [dice2][dice2][dice2] each other Monster loses 1[Heart].");
+            case 24: return /*_TODOPU*/ ("Put 3 [alienoidToken] tokens on this card. On your turn, you can remove a [alienoidToken] token to discard the 3 face-up Power cards and reveal 3 new ones. Discard this card when there are no more tokens on it.");
+            case 25: return /*_TODOPU*/ ("If you roll at least [dice2][dice2][dice2] each of the other Monster loses 1[Heart].");
             case 26: return /*_TODOPU*/ ("Before you roll, you can put 2[Energy] on this card. If you do, and roll at least [diceSmash][diceSmash][diceSmash], you can take back your two [Energy] and make the Monsters you wound lose 2 extra [Heart]. Otherwise you lose your 2[Energy] and lose 2[Heart].");
             case 27: return /*_TODOPU*/ ("Once during your turn, you can spend 1[Energy] to gain 1[Heart].");
             case 28: return /*_TODOPU*/ ("You can buy [keep] cards by paying half of their cost (rounding up). When you do so, place a [UfoToken] on it. At the start of you turn, roll a die for each of your [keep] cards with a [UfoToken]. Discard each [keep] card for which you rolled a [diceSmash]. You cannot have more than 3 [keep] cards with [UfoToken] at a time.");
             // Cyber Kitty
-            case 31: return /*_TODOPU*/ ("If you reach 0[Heart] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave Tokyo. Gain 9[Heart], 9[Star], and continue playing.");
-            case 32: return /*_TODOPU*/ ("All other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
-            case 33: return /*_TODOPU*/ ("All other Monsters lose 1[Heart].");
+            case 31: return /*_TODOPU*/ ("If you reach [Skull] discard your cards (including your Evolutions), lose all your [Energy] and [Star], and leave <i>Tokyo</i>. Gain 9[Heart], 9[Star], and continue playing.");
+            case 32: return /*_TODOPU*/ ("Each of the other Monsters give you 1[Energy] or 1[Star] if they have any (they choose which to give you).");
+            case 33: return /*_TODOPU*/ ("Each of the other Monsters lose 1[Heart].");
             case 34: return /*_TODOPU*/ ("Play at the start of your turn. You only have one roll this turn. Double the result.");
-            case 35: return /*_TODOPU*/ ("When a Monster in Tokyo must lose at least 2[Heart] from your [diceSmash], you can make them lose 2[Heart] fewer and steal 1[Star] and 1[Energy] from them instead.");
-            case 36: return /*_TODOPU*/ ("During other Monsters' movement phases, if Tokyo is empty, you can take control of it instead of the Monster whose turn it is.");
+            case 35: return /*_TODOPU*/ ("When you wound a Monster in <i>Tokyo</i>, if they must lose at least 2[Heart], you may make them lose 2[Heart] less and steal 1[Star] and 1[Energy] from them instead.");
+            case 36: return /*_TODOPU*/ ("During other Monsters' Enter Tokyo phases, if <i>Tokyo</i> is empty and you were not inside at the start of the turn, you can enter <i>Tokyo</i> instead of the Monster whose turn it is.");
             case 37: return /*_TODOPU*/ ("If you roll at least one [dice1], gain 1[Star].");
             case 38: return /*_TODOPU*/ ("If you roll at least one [dice1], add [diceSmash] to your roll.");
             // The King
-            case 41: return /*_TODOPU*/ ("Play when a Monster who controls Tokyo leaves or is eliminated. Take control of Tokyo.");
-            case 42: return /*_TODOPU*/ ("If you Yield Tokyo, do not lose [Heart]. You can’t lose [Heart] this turn.");
-            case 43: return /*_TODOPU*/ ("Play at the end of your movement phase, if you wounded a Monster who controls Tokyo with [diceSmash] and you didn't take control of Tokyo. Take an extra turn.");
-            case 44: return /*_TODOPU*/ ("Gain 2[Heart].");
-            case 45: return /*_TODOPU*/ ("You can force Monsters you wound with your [diceSmash] to Yield Tokyo.");
-            case 46: return /*_TODOPU*/ ("If you wound at least one Monster with your [diceSmash], gain 1[Star].");
-            case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of Tokyo or start your turn in Tokyo.");
-            case 48: return /*_TODOPU*/ ("Play when you enter Tokyo. Gain 1[Star] at the end of each Monster’s turn (including yours). Discard this card and lose all your [Star] if you leave Tokyo.");
+            case 41: return /*_TODOPU*/ ("Play when a Monster who controls <i>Tokyo</i> leaves or is eliminated. Take control of <i>Tokyo</i>.");
+            case 42: return /*_TODOPU*/ ("If you Yield <i>Tokyo</i>, do not lose [Heart]. You can’t lose [Heart] this turn.");
+            case 43: return /*_TODOPU*/ ("Play at the end of your Enter Tokyo phase. If you wounded a Monster who controls <i>Tokyo</i> and you didn't take control of <i>Tokyo</i>, take an extra turn after this one.");
+            case 44: return /*_TODOPU*/ ("+2[Heart]");
+            case 45: return /*_TODOPU*/ ("You can force Monsters you wound to Yield <i>Tokyo</i>.");
+            case 46: return /*_TODOPU*/ ("Each turn you wound at least one Monster, gain 1[Star].");
+            case 47: return /*_TODOPU*/ ("Gain 1 extra [Star] if you take control of <i>Tokyo</i> or if you start your turn in <i>Tokyo</i>.");
+            case 48: return /*_TODOPU*/ ("Play when you are in <i>Tokyo</i>. Gain 1[Star] at the end of each Monster’s turn (including yours). Discard this card and lose all your [Star] if you leave <i>Tokyo</i>.");
             // Gigazaur 
             case 51:
             case 143: return /*_TODOPU*/ ("You can’t lose [Heart] this turn.");
-            case 52: return /*_TODOPU*/ ("Gain 2[Energy] and 1[Heart].");
-            case 53: return /*_TODOPU*/ ("All other Monsters lose 2[Star].");
+            case 52: return "+2[Energy] +1[Heart].";
+            case 53: return /*_TODOPU*/ ("Each of the other Monsters lose 2[Star].");
             case 54: return /*_TODOPU*/ ("Choose a die face. Take all dice with this face and flip them to a (single) face of your choice.");
-            case 55: return /*_TODOPU*/ ("If you start your turn in Tokyo, all other Monsters lose 1[Star].");
+            case 55: return /*_TODOPU*/ ("If you start your turn in <i>Tokyo</i>, each of the other Monsters lose 1[Star].");
             case 56:
-            case 158: return /*_TODOPU*/ ("Monsters that wound you lose 1[Star].");
+            case 185: return /*_TODOPU*/ ("Monsters that wound you lose 1[Star].");
             case 57: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [diceSmash].");
-            case 58: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [dice1] or [dice2]."); // TODOPU check label
+            case 58: return /*_TODOPU*/ ("Once per turn, you can change one of the dice you rolled to [dice1] or [dice2].");
             // Meka Dragon
-            case 61: return /*_TODOPU*/ ("Each Monster you make lose [Heart] with your [diceSmash] loses 2 extra [Heart].");
+            case 61: return /*_TODOPU*/ ("Each Monster you wound this turn loses 2 extra [Heart].");
             case 62: return /*_TODOPU*/ ("Gain 1[Energy] for each [diceSmash] you rolled this turn.");
-            case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time another Monster reaches 0[Heart].");
-            case 64: return /*_TODOPU*/ ("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 4[Heart] and 2[Energy].");
-            case 65: return /*_TODOPU*/ ("When you make Monsters in Tokyo lose at least 1[Heart], Monsters who aren't in Tokyo also lose 1[Heart] (except you).");
-            case 66: return /*_TODOPU*/ ("When you lose [Heart], you can roll a die for each [Heart] lost. For each [diceSmash] rolled this way, the Monster whose turn it is loses 1[Heart].");
+            case 63: return /*_TODOPU*/ ("Gain 3[Star] and 2[Energy] each time another Monster reaches [Skull].");
+            case 64: return /*_TODOPU*/ ("Play before rolling dice. If you are not in <i>Tokyo</i>, skip your turn, gain 4[Heart] and 2[Energy].");
+            case 65: return /*_TODOPU*/ ("When you make Monsters in <i>Tokyo</i> lose at least 1[Heart], Monsters who aren't in <i>Tokyo</i> also lose 1[Heart] each (except you).");
+            case 66: return /*_TODOPU*/ ("When you lose [Heart], you can roll a die for each [Heart] lost. For each [diceSmash] rolled this way, the Monster whose turn it is also loses 1[Heart].");
             case 67: return /*_TODOPU*/ ("On your turn, if you make another Monster lose at least 3[Heart], they lose 1 extra [Heart].");
-            case 68: return /*_TODOPU*/ ("When a Monster makes you lose [Heart] with [diceSmash], you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
+            case 68: return /*_TODOPU*/ ("When a Monster wounds you, you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
             // Pandakaï
             case 131: return /*_TODOPU*/ ("Gain 6[Energy]. All other Monsters gain 3[Energy].");
-            case 132: return /*_TODOPU*/ ("Play when you take control of Tokyo. Make all Monsters outside of Tokyo lose 2[Heart]. Gain 1[Energy], then leave Tokyo. No Monster takes your place.");
+            case 132: return /*_TODOPU*/ ("Play when you enter <i>Tokyo</i>. All Monsters outside of <i>Tokyo</i> lose 2[Heart] each. Gain 1[Energy], then leave <i>Tokyo</i>. No Monster takes your place.");
             case 133: return /*_TODOPU*/ ("Play when a player buys a Power card. They do not spend [Energy] and cannot buy that card this turn. Choose a different Power card they can afford to buy. They must purchase that card.");
-            case 134: return /*_TODOPU*/ ("Lose 1[Star], gain 2[Energy] and 2[Heart].");
-            case 135: return /*_TODOPU*/ ("Each time you roll at least [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], gain 2[Star] and take another turn.");
+            case 134: return "-1[Star] +2[Energy] +2[Heart].";
+            case 135: return /*_TODOPU*/ ("If you rolled at least [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy], gain 2[Star] and take another turn.");
             case 136: return /*_TODOPU*/ ("At the start of your turn, you can put 1[Energy] from the bank on this card OR take all of the [Energy] off this card.");
             case 137: return /*_TODOPU*/ ("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return /*_TODOPU*/ ("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + "<div>[dice1]\u2194[dice3] &nbsp; [dice2]\u2194[diceHeart] &nbsp; [diceSmash]\u2194[diceEnergy]</div>";
@@ -1162,9 +1171,15 @@ var EvolutionCards = /** @class */ (function () {
             // TODODE 147/148
             // Kraken
             case 151: return "+2[Heart]";
-            case 156: return /*_TODODE*/ ("Gain 1[Heart] each time you take control of Tokyo. You can have up to 12[Heart] as long as you own this card.");
-            case 157: return /*_TODOPU*/ ("Play before rolling dice. If you are not in Tokyo, skip your turn, gain 3[Heart] and 3[Energy].");
-            // 158 same as 56
+            // TODODE 151..155
+            case 156: return /*_TODODE*/ ("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
+            case 157: return /*_TODODE*/ ("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
+            case 158: return /*_TODOPU*/ ("Monsters you wound lose 1[Star].");
+            // Baby Gigazaur
+            // TODOPUBG 181..184
+            // 185 same as 56
+            // TODOPUBG 186..187
+            case 188: return "+2[Heart] +1[Energy].";
         }
         return null;
     };
@@ -3850,8 +3865,8 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
                 this.addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only') }), function () { return _this.useInvincibleEvolution(51); });
             }
-            if (args.canUseCYBER_BUNNY_3_EVOLUTION && !document.getElementById('useCYBER_BUNNY_3_EVOLUTION_button')) {
-                this.addActionButton('useCYBER_BUNNY_3_EVOLUTION_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only') }), function () { return _this.useInvincibleEvolution(143); });
+            if (args.canUseRabbitsFoot && !document.getElementById('useRabbitsFoot_button')) {
+                this.addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only') }), function () { return _this.useInvincibleEvolution(143); });
             }
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
                 var _loop_3 = function (i) {

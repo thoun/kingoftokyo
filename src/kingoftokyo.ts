@@ -611,8 +611,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only')}), () => this.useInvincibleEvolution(51));
             }
 
-            if (args.canUseCYBER_BUNNY_3_EVOLUTION && !document.getElementById('useCYBER_BUNNY_3_EVOLUTION_button')) {
-                (this as any).addActionButton('useCYBER_BUNNY_3_EVOLUTION_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
+            if (args.canUseRabbitsFoot && !document.getElementById('useRabbitsFoot_button')) {
+                (this as any).addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
             }
 
             if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
