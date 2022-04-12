@@ -209,6 +209,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'halfMovePhase':
+            case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -409,7 +410,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private onEnteringStepEvolution(args: EnteringStepEvolutionArgs) {
-        console.log('onEnteringStepEvolution', args);
         if ((this as any).isCurrentPlayerActive()) {
             const playerId = this.getPlayerId();
             this.getPlayerTable(playerId).highlightHiddenEvolutions(args.highlighted.filter(card => card.location_arg === playerId));
@@ -789,6 +789,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'halfMovePhase':
+            case 'cardIsBought':
                 this.onLeavingStepEvolution();
                 break;
             case 'changeMimickedCard':
@@ -870,8 +871,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private onLeavingStepEvolution() {
-            const playerId = this.getPlayerId();
-            this.getPlayerTable(playerId)?.unhighlightHiddenEvolutions();
+        const playerId = this.getPlayerId();
+        this.getPlayerTable(playerId)?.unhighlightHiddenEvolutions();
     }
     
     private onLeavingTakeWickednessTile() {

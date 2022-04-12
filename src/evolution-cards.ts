@@ -1,4 +1,4 @@
-const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13,14,15];
+const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,7,8,13,14,15];
 
 class EvolutionCards {
     EVOLUTION_CARDS_TYPES: number[];

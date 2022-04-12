@@ -934,7 +934,7 @@ var CurseCards = /** @class */ (function () {
     };
     return CurseCards;
 }());
-var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 13, 14, 15];
+var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15];
 var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
         this.game = game;
@@ -3498,6 +3498,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'halfMovePhase':
+            case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -3667,7 +3668,6 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringStepEvolution = function (args) {
-        console.log('onEnteringStepEvolution', args);
         if (this.isCurrentPlayerActive()) {
             var playerId_1 = this.getPlayerId();
             this.getPlayerTable(playerId_1).highlightHiddenEvolutions(args.highlighted.filter(function (card) { return card.location_arg === playerId_1; }));
@@ -4020,6 +4020,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'halfMovePhase':
+            case 'cardIsBought':
                 this.onLeavingStepEvolution();
                 break;
             case 'changeMimickedCard':

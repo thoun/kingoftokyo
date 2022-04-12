@@ -31,33 +31,6 @@ trait EvolutionCardsArgTrait {
             '_private' => $privateArgs,
         ];
     }
-
-    function argBeforeStartTurn() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
-
-        return [
-            'canPlayEvolution' => $isPowerUpExpansion, // TODOPU
-            'highlighted' => $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START) : [],
-        ];
-    }
-
-    function argBeforeResolveDice() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
-
-        return [
-            'canPlayEvolution' => $isPowerUpExpansion, // TODOPU
-            'highlighted' => $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) : [],
-        ];
-    }
-
-    function argHalfMovePhase() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
-
-        return [
-            'canPlayEvolution' => $isPowerUpExpansion, // TODOPU
-            'highlighted' => $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE) : [],
-        ];
-    }
     
     function argChooseEvolutionCard() {
         $activePlayerId = $this->getActivePlayerId();
@@ -71,9 +44,43 @@ trait EvolutionCardsArgTrait {
         ];
     }
 
-    function argCardIsBought() {
+    function argBeforeStartTurn() {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START) : [];
+
         return [
-            'highlighted' => $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT),
+            'highlighted' => $highlighted,
+        ];
+    }
+
+    function argBeforeResolveDice() {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) : [];
+
+        return [
+            'highlighted' => $highlighted,
+        ];
+    }
+
+    function argHalfMovePhase() {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        $highlighted = $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE) : [];
+
+        return [
+            'highlighted' => $highlighted,
+        ];
+    }
+
+    function argCardIsBought() {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) : [];
+
+        return [
+            'highlighted' => $highlighted,
         ];
     }
 

@@ -63,7 +63,9 @@ trait CurseCardsStateTrait {
         }
 
         if (gettype($damagesOrState) === 'integer') {
-            $this->goToState($damagesOrState);
+            if ($damagesOrState != -1) {
+                $this->goToState($damagesOrState);
+            }
             return;
         }
 
