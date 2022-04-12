@@ -188,6 +188,10 @@ trait EvolutionCardsUtilTrait {
         // ignore a player if its hand is empty
         $playersIds = array_values(array_filter($playersIds, fn($playerId) => intval($this->evolutionCards->countCardInLocation('hand', $playerId)) > 0));
 
+        if (count($playersIds) == 0) {
+            return false;
+        }
+        
         $dbResults = $this->getCollectionFromDb("SELECT distinct player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
         $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']), array_values($dbResults));
 
