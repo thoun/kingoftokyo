@@ -746,7 +746,7 @@ class Cards {
         
         cardPlaced.superiorAlienTechnologyToken = this.getPlaceOnCard(cardPlaced);
 
-        let html = `<div id="${divId}-superior-alien-technology-token" style="left: ${cardPlaced.superiorAlienTechnologyToken.x - 16}px; top: ${cardPlaced.superiorAlienTechnologyToken.y - 16}px;" class="card-token superior-alien-technology token"></div>`;
+        let html = `<div id="${divId}-superior-alien-technology-token" style="left: ${cardPlaced.superiorAlienTechnologyToken.x - 16}px; top: ${cardPlaced.superiorAlienTechnologyToken.y - 16}px;" class="card-token ufo token"></div>`;
         dojo.place(html, divId);
 
         div.dataset.placed = JSON.stringify(cardPlaced);

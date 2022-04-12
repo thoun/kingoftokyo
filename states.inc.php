@@ -187,8 +187,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_BEFORE_START_TURN => [
         "name" => "beforeStartTurn",
-        "description" => /* client TODOPU translate(*/'${actplayer} can activate an Evolution card'/*)*/,
-        "descriptionmyturn" => /* client TODOPU translate(*/'${you} can activate an Evolution card'/*)*/,
+        "description" => /* client TODOPU translate(*/'${actplayer} may activate an Evolution card'/*)*/,
+        "descriptionmyturn" => /* client TODOPU translate(*/'${you} may activate an Evolution card'/*)*/,
         "type" => "activeplayer",
         "action" => "stBeforeStartTurn",
         "args" => "argBeforeStartTurn",
@@ -454,8 +454,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_BEFORE_RESOLVE_DICE => [
         "name" => "beforeResolveDice",
-        "description" => /* client TODOPU translate(*/'${actplayer} can activate an Evolution card'/*)*/,
-        "descriptionmyturn" => /* client TODOPU translate(*/'${you} can activate an Evolution card'/*)*/,
+        "description" => /* client TODOPU translate(*/'${actplayer} may activate an Evolution card'/*)*/,
+        "descriptionmyturn" => /* client TODOPU translate(*/'${you} may activate an Evolution card'/*)*/,
         "type" => "activeplayer",
         "action" => "stBeforeResolveDice",
         "args" => "argBeforeResolveDice",
@@ -647,8 +647,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_HALF_MOVE_PHASE => [
         "name" => "halfMovePhase",
-        "description" => /* client TODOPU translate(*/'Some players can activate an Evolution card'/*)*/,
-        "descriptionmyturn" => /* client TODOPU translate(*/'${you} can activate an Evolution card'/*)*/,
+        "description" => /* client TODOPU translate(*/'Some players may activate an Evolution card'/*)*/,
+        "descriptionmyturn" => /* client TODOPU translate(*/'${you} may activate an Evolution card'/*)*/,
         "type" => "multipleactiveplayer",
         "action" => "stHalfMovePhase",
         "args" => "argHalfMovePhase",
@@ -759,8 +759,8 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT => [ 
         "name" => "cardIsBought",
-        "description" => /* client TODOPU translate(*/'A player can activate an Evolution card'/*)*/,
-        "descriptionmyturn" => /* client TODOPU translate(*/'${you} can activate an Evolution card'/*)*/,
+        "description" => /* client TODOPU translate(*/'Some players may activate an Evolution card'/*)*/,
+        "descriptionmyturn" => /* client TODOPU translate(*/'${you} may activate an Evolution card'/*)*/,
         "type" => "multipleactiveplayer",
         "action" => "stCardIsBought",
         "args" => "argCardIsBought",

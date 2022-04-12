@@ -1,19 +1,22 @@
 const WICKEDNESS_TILES_WIDTH = 132;
-const WICKEDNESS_TILES_HEIGHT = 82; // TODOWI
+const WICKEDNESS_TILES_HEIGHT = 81;
 const WICKEDNESS_LEVELS = [3, 6, 10];
+
+const wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
 
 class WickednessTiles {
     constructor (private game: KingOfTokyoGame) {}
     
     public setupCards(stocks: Stock[]) {
+        const wickednesstilessurl = `${g_gamethemeurl}img/wickedness-tiles.jpg`;
         stocks.forEach(stock => {
-            const orangewickednesstilessurl = `${g_gamethemeurl}img/orange-wickedness-tiles.jpg`;
+            stock.image_items_per_row = 3;
+
             [1,2,3,4,5,6,7,8,9,10].forEach((id, index) => {
-                stock.addItemType(id, this.getCardLevel(id) * 100 + index, orangewickednesstilessurl, index);
+                stock.addItemType(id, this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index]);
             });
-            const greenwickednesstilessurl = `${g_gamethemeurl}img/green-wickedness-tiles.jpg`;
             [101,102,103,104,105,106,107,108,109,110].forEach((id, index) => {
-                stock.addItemType(id, this.getCardLevel(id) * 100 + index, greenwickednesstilessurl, index);
+                stock.addItemType(id, this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index] + 3);
             });
         });
     }
@@ -128,7 +131,6 @@ class WickednessTiles {
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
         const name = this.getCardName(cardType);
-        const level = this.getCardLevel(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType));
 
         cardDiv.innerHTML = `
@@ -136,7 +138,6 @@ class WickednessTiles {
             <div class="outline ${cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0'}">${name}</div>
             <div class="text">${name}</div>
         </div>
-        <div class="level" [data-level]="${level}">${level}</div>
         
         <div class="description-wrapper">${description}</div>`;
     }

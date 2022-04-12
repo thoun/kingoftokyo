@@ -856,9 +856,9 @@
   left: 0;
   top: 32px;
   width: 132px;
-  height: 82px;
-  background-image: url("img/green-wickedness-tiles.jpg");
-  background-position: -500% 0%;
+  height: 81px;
+  background-image: url("img/wickedness-tiles.jpg");
+  background-position: 50% 0%;
   margin: 0;
 }
 
@@ -1037,13 +1037,6 @@
 .wickedness-tile-stock .stockitem .description-wrapper {
   top: 33px;
 }
-.wickedness-tile-stock .stockitem .level {
-  position: absolute;
-  right: 5px;
-  bottom: 5px;
-  border-radius: 50%;
-  background: white;
-}
 
 #table {
   position: relative;
@@ -1199,15 +1192,30 @@
   position: absolute;
   left: 145px;
   width: 132px;
-  height: 80px;
+  height: 81px;
 }
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile {
   position: absolute;
   margin: 0;
   width: 132px;
-  height: 80px;
-  background: url("img/green-wickedness-tiles.jpg");
+  height: 81px;
+  background: url("img/wickedness-tiles.jpg");
   border-radius: 10px;
+}
+#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile[data-side="0"] {
+  background-position-y: 0%;
+}
+#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile[data-side="1"] {
+  background-position-y: 100%;
+}
+#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile[data-background-index="0"] {
+  background-position-x: 0%;
+}
+#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile[data-background-index="1"] {
+  background-position-x: 50%;
+}
+#table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-reduced .wickedness-tiles-reduced-tile[data-background-index="2"] {
+  background-position-x: 100%;
 }
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-expanded {
   position: absolute;
@@ -1216,7 +1224,7 @@
   background: white;
   border-radius: 8px;
   visibility: hidden;
-  padding-bottom: 1px;
+  padding-bottom: 10px;
   z-index: 20;
 }
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-expanded.visible {
@@ -1982,35 +1990,31 @@ button .icon, a .icon {
   background-position: 0% 0%;
 }
 .token.poison {
-  background-position: 33.33% 0%;
+  background-position: 14.2857142857% 0%;
 }
 .token.smoke-cloud {
-  background-position: 66.66% 0%;
+  background-position: 28.5714285714% 0%;
   box-shadow: 0 0 4px 4px white;
-}
-.token.superior-alien-technology {
-  background-position: 66.66% 0%;
-  box-shadow: 0 0 4px 4px white;
-}
-.token.icy-reflection {
-  background-position: 100% 0%;
-  box-shadow: 0 0 4px 4px #9cc060;
 }
 .token.mimic {
-  background-position: 100% 0%;
+  background-position: 42.8571428571% 0%;
   box-shadow: 0 0 4px 4px #9cc060;
 }
-.token.ufo {
-  background-position: 66.66% 0%;
-  box-shadow: 0 0 4px 4px white;
-}
 .token.alienoid {
-  background-position: 33.33% 0%;
-  box-shadow: 0 0 4px 4px white;
+  background-position: 57.1428571429% 0%;
+  box-shadow: 0 0 4px 4px #9cc3e8;
+}
+.token.ufo {
+  background-position: 71.4285714286% 0%;
+  box-shadow: 0 0 4px 4px #a7a64a;
+}
+.token.icy-reflection {
+  background-position: 85.7142857143% 0%;
+  box-shadow: 0 0 4px 4px #96e3fb;
 }
 .token.target {
-  background-position: 66.66% 0%;
-  box-shadow: 0 0 4px 4px white;
+  background-position: 100% 0%;
+  box-shadow: 0 0 4px 4px #e9c0b8;
 }
 
 #skipBuyPhaseWrapper {
@@ -2088,49 +2092,61 @@ button .icon, a .icon {
 }
 .monster-icon.monster2 {
   background-image: url("img/monster-icons.png");
-  background-position: 8.3333333333% 50%;
+  background-position: 6.6666666667% 50%;
 }
 .monster-icon.monster3 {
   background-image: url("img/monster-icons.png");
-  background-position: 16.6666666667% 50%;
+  background-position: 13.3333333333% 50%;
 }
 .monster-icon.monster4 {
   background-image: url("img/monster-icons.png");
-  background-position: 25% 50%;
+  background-position: 20% 50%;
 }
 .monster-icon.monster5 {
   background-image: url("img/monster-icons.png");
-  background-position: 33.3333333333% 50%;
+  background-position: 26.6666666667% 50%;
 }
 .monster-icon.monster6 {
   background-image: url("img/monster-icons.png");
-  background-position: 41.6666666667% 50%;
+  background-position: 33.3333333333% 50%;
 }
 .monster-icon.monster7 {
   background-image: url("img/monster-icons.png");
-  background-position: 50% 50%;
+  background-position: 40% 50%;
 }
 .monster-icon.monster8 {
   background-image: url("img/monster-icons.png");
-  background-position: 58.3333333333% 50%;
+  background-position: 46.6666666667% 50%;
 }
 .monster-icon.monster9 {
   background-image: url("img/monster-icons.png");
-  background-position: 66.6666666667% 50%;
+  background-position: 53.3333333333% 50%;
 }
 .monster-icon.monster10 {
   background-image: url("img/monster-icons.png");
-  background-position: 75% 50%;
+  background-position: 60% 50%;
 }
 .monster-icon.monster11 {
   background-image: url("img/monster-icons.png");
-  background-position: 83.3333333333% 50%;
+  background-position: 66.6666666667% 50%;
 }
 .monster-icon.monster12 {
   background-image: url("img/monster-icons.png");
-  background-position: 91.6666666667% 50%;
+  background-position: 73.3333333333% 50%;
 }
 .monster-icon.monster13 {
+  background-image: url("img/monster-icons.png");
+  background-position: 80% 50%;
+}
+.monster-icon.monster14 {
+  background-image: url("img/monster-icons.png");
+  background-position: 86.6666666667% 50%;
+}
+.monster-icon.monster15 {
+  background-image: url("img/monster-icons.png");
+  background-position: 93.3333333333% 50%;
+}
+.monster-icon.monster18 {
   background-image: url("img/monster-icons.png");
   background-position: 100% 50%;
 }

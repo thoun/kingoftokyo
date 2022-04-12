@@ -318,47 +318,41 @@ button, a {
   box-shadow: 1px 1px 1px 1px black;
 
   &.shrink-ray {
-    background-position: 0% 0%;
+    background-position: #{0 * 100% / 7} 0%;
   }
 
   &.poison {
-    background-position: 33.33% 0%;
+    background-position: #{1 * 100% / 7} 0%;
   }
 
   &.smoke-cloud {
-    background-position: 66.66% 0%;
+    background-position: #{2 * 100% / 7} 0%;
     box-shadow: 0 0 4px 4px white;
   }
 
-  &.superior-alien-technology {
-    background-position: 66.66% 0%; // TODOPU
-    box-shadow: 0 0 4px 4px white; // TODOPU
-  }
-
-  &.icy-reflection {
-    background-position: 100% 0%; // TODOPU
-    box-shadow: 0 0 4px 4px #9cc060; // TODOPU
-  }
-
   &.mimic {
-    background-position: 100% 0%;
-
+    background-position: #{3 * 100% / 7} 0%;
     box-shadow: 0 0 4px 4px #9cc060;
   }
 
-  &.ufo {
-    background-position: 66.66% 0%; // TODOPU
-    box-shadow: 0 0 4px 4px white; // TODOPU
+  &.alienoid {
+    background-position: #{4 * 100% / 7} 0%;
+    box-shadow: 0 0 4px 4px #9cc3e8;
   }
 
-  &.alienoid {
-    background-position: 33.33% 0%; // TODOPU
-    box-shadow: 0 0 4px 4px white; // TODOPU
+  &.ufo {
+    background-position: #{5 * 100% / 7} 0%;
+    box-shadow: 0 0 4px 4px #a7a64a;
+  }
+
+  &.icy-reflection {
+    background-position: #{6 * 100% / 7} 0%;
+    box-shadow: 0 0 4px 4px #96e3fb;
   }
 
   &.target {
-    background-position: 66.66% 0%; // TODOPU
-    box-shadow: 0 0 4px 4px white; // TODOPU
+    background-position: #{7 * 100% / 7} 0%;
+    box-shadow: 0 0 4px 4px #e9c0b8;
   }
 }
 
@@ -442,11 +436,15 @@ button, a {
     box-shadow: 0px 0px 3px 2px black;
     transition: left 0.5s, top 0.5s;
 
-    @for $i from 1 through 13 {
+    @for $i from 1 through 15 {
         &.monster#{$i} {
           background-image: url('img/monster-icons.png'); // here and not in .monster-icon, so monsters with no icon will get the background-color set in JS instead of first monster icon
-          background-position: (($i - 1) * 100% / 12) 50%;
+          background-position: (($i - 1) * 100% / 15) 50%;
         }
+    }
+    &.monster18 {
+      background-image: url('img/monster-icons.png');
+      background-position: 100% 50%;
     }
 }
 

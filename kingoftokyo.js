@@ -763,7 +763,7 @@ var Cards = /** @class */ (function () {
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.superiorAlienTechnologyToken = this.getPlaceOnCard(cardPlaced);
-        var html = "<div id=\"" + divId + "-superior-alien-technology-token\" style=\"left: " + (cardPlaced.superiorAlienTechnologyToken.x - 16) + "px; top: " + (cardPlaced.superiorAlienTechnologyToken.y - 16) + "px;\" class=\"card-token superior-alien-technology token\"></div>";
+        var html = "<div id=\"" + divId + "-superior-alien-technology-token\" style=\"left: " + (cardPlaced.superiorAlienTechnologyToken.x - 16) + "px; top: " + (cardPlaced.superiorAlienTechnologyToken.y - 16) + "px;\" class=\"card-token ufo token\"></div>";
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
@@ -1353,22 +1353,23 @@ var EvolutionCards = /** @class */ (function () {
     return EvolutionCards;
 }());
 var WICKEDNESS_TILES_WIDTH = 132;
-var WICKEDNESS_TILES_HEIGHT = 82; // TODOWI
+var WICKEDNESS_TILES_HEIGHT = 81;
 var WICKEDNESS_LEVELS = [3, 6, 10];
+var wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
 var WickednessTiles = /** @class */ (function () {
     function WickednessTiles(game) {
         this.game = game;
     }
     WickednessTiles.prototype.setupCards = function (stocks) {
         var _this = this;
+        var wickednesstilessurl = g_gamethemeurl + "img/wickedness-tiles.jpg";
         stocks.forEach(function (stock) {
-            var orangewickednesstilessurl = g_gamethemeurl + "img/orange-wickedness-tiles.jpg";
+            stock.image_items_per_row = 3;
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(function (id, index) {
-                stock.addItemType(id, _this.getCardLevel(id) * 100 + index, orangewickednesstilessurl, index);
+                stock.addItemType(id, _this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index]);
             });
-            var greenwickednesstilessurl = g_gamethemeurl + "img/green-wickedness-tiles.jpg";
             [101, 102, 103, 104, 105, 106, 107, 108, 109, 110].forEach(function (id, index) {
-                stock.addItemType(id, _this.getCardLevel(id) * 100 + index, greenwickednesstilessurl, index);
+                stock.addItemType(id, _this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index] + 3);
             });
         });
     };
@@ -1471,9 +1472,8 @@ var WickednessTiles = /** @class */ (function () {
     };
     WickednessTiles.prototype.setDivAsCard = function (cardDiv, cardType) {
         var name = this.getCardName(cardType);
-        var level = this.getCardLevel(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
-        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        <div class=\"level\" [data-level]=\"" + level + "\">" + level + "</div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
     };
     WickednessTiles.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
         this.game.addTooltipHtml(mimicCardId, this.getTooltip(106) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
@@ -3292,6 +3292,7 @@ var TableCenter = /** @class */ (function () {
             dojo.connect(_this.wickednessTilesStocks[level], 'onChangeSelection', _this, function (_, item_id) { return _this.game.takeWickednessTile(Number(item_id)); });
             _this.game.wickednessTiles.setupCards([_this.wickednessTilesStocks[level]]);
             _this.wickednessTiles[level].forEach(function (tile) { return _this.wickednessTilesStocks[level].addToStockWithId(tile.type, '' + tile.id); });
+            _this.wickednessTiles[level].forEach(function (tile) { return console.log(tile.type, _this.wickednessTilesStocks[level].item_type); });
             document.getElementById("wickedness-tiles-expanded-" + level).addEventListener('click', function () { return dojo.removeClass("wickedness-tiles-expanded-" + level, 'visible'); });
         });
     };
@@ -3320,6 +3321,7 @@ var TableCenter = /** @class */ (function () {
         return this.wickednessTilesStocks[level];
     };
     TableCenter.prototype.showWickednessTiles = function (level) {
+        WICKEDNESS_LEVELS.filter(function (l) { return l !== level; }).forEach(function (l) { return dojo.removeClass("wickedness-tiles-expanded-" + l, 'visible'); });
         dojo.addClass("wickedness-tiles-expanded-" + level, 'visible');
     };
     TableCenter.prototype.setWickednessTilesSelectable = function (level, show, selectable) {
@@ -3345,7 +3347,7 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         document.getElementById("wickedness-tiles-reduced-" + level).innerHTML = '';
         this.wickednessTiles[level].forEach(function (tile, index) {
-            dojo.place("<div id=\"wickedness-tiles-reduced-tile-" + tile.id + "\" class=\"stockitem wickedness-tiles-reduced-tile\" style=\"left: " + index * 5 + "px; top: " + index * 5 + "px;\"></div>", "wickedness-tiles-reduced-" + level);
+            dojo.place("<div id=\"wickedness-tiles-reduced-tile-" + tile.id + "\" class=\"stockitem wickedness-tiles-reduced-tile\" data-side=\"" + tile.side + "\" data-background-index=\"" + wickenessTilesIndex[(tile.type % 100) - 1] + "\" style=\"left: " + index * 5 + "px; top: " + index * 5 + "px;\"></div>", "wickedness-tiles-reduced-" + level);
             _this.game.wickednessTiles.setDivAsCard(document.getElementById("wickedness-tiles-reduced-tile-" + tile.id), tile.type);
         });
     };

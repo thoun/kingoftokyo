@@ -172,15 +172,22 @@
                         position: absolute;
                         left: 145px;
                         width: 132px;
-                        height: 80px; // TODOWI
+                        height: 81px;
 
                         .wickedness-tiles-reduced-tile {
                             position: absolute;
                             margin: 0;
                             width: 132px;
-                            height: 80px; // TODOWI
-                            background: url('img/green-wickedness-tiles.jpg');
+                            height: 81px;
+                            background: url('img/wickedness-tiles.jpg');
                             border-radius: 10px;
+
+                            &[data-side="0"] { background-position-y: 0%; }
+                            &[data-side="1"] { background-position-y: 100%; }
+
+                            &[data-background-index="0"] { background-position-x: 0%; }
+                            &[data-background-index="1"] { background-position-x: 50%; }
+                            &[data-background-index="2"] { background-position-x: 100%; }
                         }
                     }
 
@@ -191,7 +198,7 @@
                         background: white;
                         border-radius: 8px;
                         visibility: hidden;
-                        padding-bottom: 1px;
+                        padding-bottom: 10px;
                         z-index: 20;
         
                         &.visible {

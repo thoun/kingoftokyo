@@ -19,6 +19,8 @@
  *
  */
 
+$this->MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18]; // TODODE?
+
 $this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,13,14,15]; // TODODE add cyberbunny & kraken [101,102,103,104,105,106]
 
 // 1 : permanent

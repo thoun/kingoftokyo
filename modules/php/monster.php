@@ -55,6 +55,10 @@ trait MonsterTrait {
             $monsters = [...$monsters, 21];
         }
 
+        if ($this->isWickednessExpansion()) {
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, $this->MONSTERS_WITH_ICON)));            
+        }
+
         if ($this->isPowerUpExpansion()) {
             $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
         }
