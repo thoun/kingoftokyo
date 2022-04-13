@@ -420,7 +420,7 @@ trait DiceUtilTrait {
                 }
 
                 $underratedEvolutions = $this->getEvolutionsOfType($playerId, UNDERRATED_EVOLUTION);
-                $diceCount[6] += count($underratedEvolutions) * 2;
+                $diceCount += count($underratedEvolutions) * 2;
 
                 if (count($underratedEvolutions) > 0) {
                     $this->removeEvolutions($playerId, $underratedEvolutions);
@@ -854,6 +854,17 @@ trait DiceUtilTrait {
                 $addedSmashes += $countMeowMissle;
                 
                 for ($i=0; $i<$countMeowMissle; $i++) { $cardsAddingSmashes[] = 3000 + MEOW_MISSLE_EVOLUTION; }
+            }
+        }
+
+        // Energy Sword
+        if ($diceCounts[6] >= 1 && $this->isPowerUpExpansion()) {
+            $energySwordEvolutions = $this->getEvolutionsOfType($playerId, ENERGY_SWORD_EVOLUTION);
+            $countEnergySword = count(array_filter($energySwordEvolutions, fn($evolution) => $evolution->tokens > 0));
+            if ($countEnergySword > 0) {
+                $addedSmashes += $countEnergySword;
+                
+                for ($i=0; $i<$countEnergySword; $i++) { $cardsAddingSmashes[] = 3000 + ENERGY_SWORD_EVOLUTION; }
             }
         }
 

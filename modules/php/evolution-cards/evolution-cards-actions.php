@@ -521,14 +521,34 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
   	
+    public function answerEnergySword(bool $use) {
+        $this->checkAction('answerEnergySword');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $unusedEvolutionCard = $this->getFirstUnusedEvolution($playerId, ENERGY_SWORD_EVOLUTION);
+        $this->setUsedCard(3000 + $unusedEvolutionCard->id);
+
+        if ($use) {
+            if ($this->getPlayerEnergy($playerId) < 2) {
+                throw new \BgaUserException("Not enough energy");
+            }
+            $this->applyLoseEnergy($playerId, 2, 0);
+            $this->setEvolutionTokens($playerId, $unusedEvolutionCard, 2);
+        } else {
+            $this->setEvolutionTokens($playerId, $unusedEvolutionCard, 0);
+        }
+        
+        $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
+    }
+  	
     public function answerSunkenTemple(bool $use) {
         $this->checkAction('answerSunkenTemple');
 
         $playerId = $this->getCurrentPlayerId();
 
-        $question = $this->getQuestion();
-        $evolutionId = $question->args->card->id;
-        $this->setUsedCard(3000 + $evolutionId);
+        $unusedEvolutionCard = $this->getFirstUnusedEvolution($playerId, SUNKEN_TEMPLE_EVOLUTION);
+        $this->setUsedCard(3000 + $unusedEvolutionCard->id);
 
         if ($use) {
             $this->applyGetHealth($playerId, 3, 3000 + SUNKEN_TEMPLE_EVOLUTION, $playerId);

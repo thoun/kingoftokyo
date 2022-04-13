@@ -188,6 +188,14 @@ trait DiceStateTrait {
                     }
                 }
             }
+
+            if ($diceCounts[6] >= 1) {
+                $energySwordEvolutions = $this->getEvolutionsOfType($playerId, ENERGY_SWORD_EVOLUTION);
+                $countEnergySword = count(array_filter($energySwordEvolutions, fn($evolution) => $evolution->tokens > 0));
+                if ($countEnergySword > 0) {
+                    $this->applyGetEnergy($playerId, $diceCounts[6] * $countEnergySword, 3000 + ENERGY_SWORD_EVOLUTION);
+                }
+            }
         }
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);

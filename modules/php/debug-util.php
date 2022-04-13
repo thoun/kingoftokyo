@@ -184,7 +184,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
-            $this->debugSetEvolutionInHand(CAT_NIP_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(ENERGY_SWORD_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);

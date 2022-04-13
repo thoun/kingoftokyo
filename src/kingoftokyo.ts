@@ -1285,8 +1285,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('useLightningArmor_button', _("Throw dice"), () => this.useLightningArmor());
                 (this as any).addActionButton('skipLightningArmor_button', _('Skip'), () => this.skipLightningArmor());
                 break;
+            case 'EnergySword':
+                (this as any).addActionButton('useEnergySword_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCards.getCardName(147, 'text-only') }), () => this.answerEnergySword(true));
+                (this as any).addActionButton('skipEnergySword_button', _('Skip'), () => this.answerEnergySword(false));
+                dojo.toggleClass('useEnergySword_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
+                document.getElementById('useEnergySword_button').dataset.enableAtEnergy = '2';
+                break;
             case 'SunkenTemple':
-                (this as any).addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}") , { card_name: this.cards.getCardName(37, 'text-only') }), () => this.answerSunkenTemple(true));
+                (this as any).addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCards.getCardName(157, 'text-only') }), () => this.answerSunkenTemple(true));
                 (this as any).addActionButton('skipSunkenTemple_button', _('Skip'), () => this.answerSunkenTemple(false));
                 break;
         }
@@ -2951,6 +2957,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipLightningArmor');
+    }
+    
+    public answerEnergySword(use: boolean) {
+        if(!(this as any).checkAction('answerEnergySword')) {
+            return;
+        }
+
+        this.takeAction('answerEnergySword', { use });
     }
     
     public answerSunkenTemple(use: boolean) {

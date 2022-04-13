@@ -142,6 +142,35 @@ trait EvolutionCardsStateTrait {
             $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, $superiorAlienTechnologyTokens);
         }
 
+        $unusedEnergySwordCard = $this->getFirstUnusedEvolution($playerId, ENERGY_SWORD_EVOLUTION);
+        if ($unusedEnergySwordCard != null) {
+
+            $potentialEnergy = $this->getPlayerEnergy($playerId);
+            if ($this->isCthulhuExpansion()) {
+                $potentialEnergy += $this->getPlayerCultists($playerId);
+            }
+
+            if ($potentialEnergy >= 2) {
+                $question = new Question(
+                    'EnergySword',
+                    /* client TODOPU translate(*/'${actplayer} can pay 2[Energy] for ${card_name}'/*)*/,
+                    /* client TODOPU translate(*/'${you} can pay 2[Energy] for ${card_name}'/*)*/,
+                    [$playerId],
+                    ST_QUESTIONS_BEFORE_START_TURN,
+                    [
+                        '_args' => [
+                            'card_name' => 3000 + ENERGY_SWORD_EVOLUTION,
+                        ],
+                    ]
+                );
+                $this->setQuestion($question);
+                $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+                $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                return;
+            }
+        }
+
         // must be the last question because it ends the turn
         $unusedTempleEvolutionCard = $this->getFirstUnusedEvolution($playerId, SUNKEN_TEMPLE_EVOLUTION);
         if ($unusedTempleEvolutionCard != null && !$this->inTokyo($playerId)) {
@@ -152,9 +181,7 @@ trait EvolutionCardsStateTrait {
                 /* client TODODE translate(*/'${you} can pass your turn to gain 3[Heart] and 3[Energy]'/*)*/,
                 [$playerId],
                 ST_QUESTIONS_BEFORE_START_TURN,
-                [
-                    'card' => $unusedTempleEvolutionCard,
-                ]
+                []
             );
             $this->setQuestion($question);
             $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);

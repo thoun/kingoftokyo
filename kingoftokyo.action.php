@@ -938,6 +938,15 @@
         self::ajaxResponse();
     }
   	
+    public function answerEnergySword() {
+        self::setAjaxMode();
+
+        $use = self::getArg("use", AT_bool, true);
+        $this->game->answerEnergySword($use);
+
+        self::ajaxResponse();
+    }
+  	
     public function answerSunkenTemple() {
         self::setAjaxMode();
 

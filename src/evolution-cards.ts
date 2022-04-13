@@ -229,19 +229,20 @@ class EvolutionCards {
             case 136: return /*_TODOPU*/("At the start of your turn, you can put 1[Energy] from the bank on this card OR take all of the [Energy] off this card.");
             case 137: return /*_TODOPU*/("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return /*_TODOPU*/("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + `<div>[dice1]↔[dice3] &nbsp; [dice2]↔[diceHeart] &nbsp; [diceSmash]↔[diceEnergy]</div>`;
-            // Cyber Kitty
+            // Cyber Bunny
             case 141: return /*_TODODE*/("Gain 1[Energy] for each [Energy] you already gained this turn.");
             case 142: return "+3[Energy]";
             // 143 same as 51
             case 144: return /*_TODODE*/("Play when another Monster finishes Rolling. Reroll one of this Monster’s dice. Take back <i>Heart of the Rabbit</i> from your discard when you take control of <i>Tokyo</i>.");
             case 145: return /*_TODODE*/("The price of Power cards you buy is reduced by 1[Energy].");
             case 146: return /*_TODODE*/("Gain 1[Star] each time you buy a Power card.");
-            // TODODE 147/148
+            case 147: return /*_TODODE*/("Before rolling dice, you can pay 2[Energy]. If you do so and you roll at least 1 [diceSmash], add [diceSmash] to your Roll. Gain 1[Energy] for each [diceSmash] you rolled this turn.");
+            // TODODE 148
             // Kraken
             case 151: return "+2[Heart]";
             // TODODE 152
             case 153: return /*_TODODE*/("Gain 1[Star] for each [Heart] gained this turn.");
-            // TODODE 151..155
+            // TODODE 154..155
             case 156: return /*_TODODE*/("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
             case 157: return /*_TODODE*/("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
             case 158: return /*_TODOPU*/("Monsters you wound lose 1[Star].");
