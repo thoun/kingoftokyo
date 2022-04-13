@@ -110,7 +110,7 @@ trait EvolutionCardsUtilTrait {
             throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card when resolving dice"));
         }
 
-        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE) && $stateId != ST_MULTIPLAYER_HALF_MOVE_PHASE) {
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) && $stateId != ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO) {
             throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card before entering Tokyo"));
         }
 

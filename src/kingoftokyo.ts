@@ -208,7 +208,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'beforeStartTurn':
             case 'beforeResolveDice':
-            case 'halfMovePhase':
+            case 'beforeEnteringTokyo':
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
@@ -788,7 +788,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'beforeStartTurn':
             case 'beforeResolveDice':
-            case 'halfMovePhase':
+            case 'beforeEnteringTokyo':
             case 'cardIsBought':
                 this.onLeavingStepEvolution();
                 break;
@@ -1147,8 +1147,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;                
-                case 'halfMovePhase':
-                    (this as any).addActionButton('skipHalfMovePhase_button', _("Skip"), () => this.skipHalfMovePhase());
+                case 'beforeEnteringTokyo':
+                    (this as any).addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), () => this.skipBeforeEnteringTokyo());
                     break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
@@ -2112,12 +2112,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('skipBeforeStartTurn');
     }
 
-    public skipHalfMovePhase() {
-        if(!(this as any).checkAction('skipHalfMovePhase')) {
+    public skipBeforeEnteringTokyo() {
+        if(!(this as any).checkAction('skipBeforeEnteringTokyo')) {
             return;
         }
 
-        this.takeAction('skipHalfMovePhase');
+        this.takeAction('skipBeforeEnteringTokyo');
     }
 
     public giveSymbolToActivePlayer(symbol: number) {

@@ -328,7 +328,7 @@ trait PlayerStateTrait {
         $this->goToState(ST_ENTER_TOKYO_APPLY_BURROWING, $jetsDamages);
     }
 
-    function stHalfMovePhase() {
+    function stBeforeEnteringTokyo() {
         if (!$this->isPowerUpExpansion() || !$this->tokyoHasFreeSpot()) {
             $this->goToState($this->redirectAfterHalfMovePhase());
             return;
@@ -336,7 +336,7 @@ trait PlayerStateTrait {
 
         $playerId = $this->getActivePlayerId();
         $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-        $couldPlay = array_values(array_filter($otherPlayersIds, fn($playerId) => $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE)));
+        $couldPlay = array_values(array_filter($otherPlayersIds, fn($playerId) => $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO)));
 
         if (count($couldPlay) > 0) {
             $this->gamestate->setPlayersMultiactive($couldPlay, 'next');
@@ -349,7 +349,7 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
 
         $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA();  
-        $nextState = count($leaversWithUnstableDNA) >= 1 && $leaversWithUnstableDNA[0] != $playerId ? ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD : ST_MULTIPLAYER_HALF_MOVE_PHASE;
+        $nextState = count($leaversWithUnstableDNA) >= 1 && $leaversWithUnstableDNA[0] != $playerId ? ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD : ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO;
 
         // burrowing
         $leaversWithBurrowing = $this->getLeaversWithBurrowing();  

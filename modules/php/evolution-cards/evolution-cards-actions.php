@@ -39,14 +39,18 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function skipBeforeStartTurn() {
-        // TODOPU find why it blocks $this->checkAction('skipBeforeStartTurn');
+    function skipBeforeStartTurn($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipBeforeStartTurn');
+        }        
 
         $this->goToState($this->redirectAfterBeforeStartTurn());
     }
 
-    function skipHalfMovePhase() {
-        $this->checkAction('skipHalfMovePhase');
+    function skipBeforeEnteringTokyo($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipBeforeEnteringTokyo');
+        }
 
         $playerId = $this->getCurrentPlayerId();
 
@@ -109,6 +113,26 @@ trait EvolutionCardsActionTrait {
         $this->checkCanPlayEvolution($card->type, $playerId);
 
         $this->applyPlayEvolution($playerId, $card);
+
+        // if the player has no more evolution cards, we skip the state for him
+        if (intval(($this->evolutionCards->countCardInLocation('hand', $playerId))) == 0) {
+            $stateId = intval($this->gamestate->state_id());
+
+            switch($stateId) {
+                case ST_PLAYER_BEFORE_START_TURN:
+                    $this->skipBeforeStartTurn(true);
+                    break;
+                case ST_PLAYER_BEFORE_RESOLVE_DICE:
+                    $this->skipBeforeResolveDice(true);
+                    break;
+                case ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO:
+                    $this->skipBeforeEnteringTokyo(true);
+                    break;
+                case ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT:
+                    $this->skipCardIsBought(true);
+                    break;
+            }
+        }
     }
 
     function useYinYang() {
@@ -182,8 +206,10 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
 
-    function skipCardIsBought() {
-        $this->checkAction('skipCardIsBought');
+    function skipCardIsBought($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipCardIsBought');
+        }
 
         $playerId = $this->getCurrentPlayerId();
 
@@ -413,8 +439,10 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
   	
-    public function skipBeforeResolveDice() {
-        $this->checkAction('skipBeforeResolveDice');
+    public function skipBeforeResolveDice($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipBeforeResolveDice');
+        }
 
         $this->goToState($this->redirectAfterBeforeResolveDice());
     }    

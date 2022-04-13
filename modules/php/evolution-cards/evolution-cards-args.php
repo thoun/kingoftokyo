@@ -64,10 +64,10 @@ trait EvolutionCardsArgTrait {
         ];
     }
 
-    function argHalfMovePhase() {
+    function argBeforeEnteringTokyo() {
         $isPowerUpExpansion = $this->isPowerUpExpansion();
 
-        $highlighted = $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE) : [];
+        $highlighted = $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) : [];
 
         return [
             'highlighted' => $highlighted,

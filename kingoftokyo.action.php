@@ -76,10 +76,10 @@
         self::ajaxResponse();
     }
   	
-    public function skipHalfMovePhase() {
+    public function skipBeforeEnteringTokyo() {
         self::setAjaxMode();
 
-        $this->game->skipHalfMovePhase();
+        $this->game->skipBeforeEnteringTokyo();
 
         self::ajaxResponse();
     }

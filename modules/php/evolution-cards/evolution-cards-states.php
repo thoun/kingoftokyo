@@ -195,7 +195,7 @@ trait EvolutionCardsStateTrait {
 
         $playerId = $this->getActivePlayerId();
         $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-        $couldPlay = array_values(array_filter($otherPlayersIds, fn($playerId) => $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_AT_HALF_MOVE_PHASE)));
+        $couldPlay = array_values(array_filter($otherPlayersIds, fn($playerId) => $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO)));
 
         if (count($couldPlay) > 0) {
             $this->gamestate->setPlayersMultiactive($couldPlay, 'next');

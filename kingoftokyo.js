@@ -3514,7 +3514,7 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'beforeStartTurn':
             case 'beforeResolveDice':
-            case 'halfMovePhase':
+            case 'beforeEnteringTokyo':
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
@@ -4036,7 +4036,7 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'beforeStartTurn':
             case 'beforeResolveDice':
-            case 'halfMovePhase':
+            case 'beforeEnteringTokyo':
             case 'cardIsBought':
                 this.onLeavingStepEvolution();
                 break;
@@ -4382,8 +4382,8 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
-                case 'halfMovePhase':
-                    this.addActionButton('skipHalfMovePhase_button', _("Skip"), function () { return _this.skipHalfMovePhase(); });
+                case 'beforeEnteringTokyo':
+                    this.addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), function () { return _this.skipBeforeEnteringTokyo(); });
                     break;
                 case 'buyCard':
                     var argsBuyCard = args;
@@ -5175,11 +5175,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipBeforeStartTurn');
     };
-    KingOfTokyo.prototype.skipHalfMovePhase = function () {
-        if (!this.checkAction('skipHalfMovePhase')) {
+    KingOfTokyo.prototype.skipBeforeEnteringTokyo = function () {
+        if (!this.checkAction('skipBeforeEnteringTokyo')) {
             return;
         }
-        this.takeAction('skipHalfMovePhase');
+        this.takeAction('skipBeforeEnteringTokyo');
     };
     KingOfTokyo.prototype.giveSymbolToActivePlayer = function (symbol) {
         if (!this.checkAction('giveSymbolToActivePlayer')) {

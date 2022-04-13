@@ -641,18 +641,18 @@ $playerActionsGameStates = [
         "args" => "argLeaveTokyoExchangeCard",
         "possibleactions" => [ "exchangeCard", "skipExchangeCard" ],
         "transitions" => [
-            "next" => ST_MULTIPLAYER_HALF_MOVE_PHASE,
+            "next" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO,
         ],
     ],
 
-    ST_MULTIPLAYER_HALF_MOVE_PHASE => [
-        "name" => "halfMovePhase",
+    ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO => [
+        "name" => "beforeEnteringTokyo",
         "description" => /* client TODOPU translate(*/'Some players may activate an Evolution card'/*)*/,
         "descriptionmyturn" => /* client TODOPU translate(*/'${you} may activate an Evolution card'/*)*/,
         "type" => "multipleactiveplayer",
-        "action" => "stHalfMovePhase",
-        "args" => "argHalfMovePhase",
-        "possibleactions" => [ "skipHalfMovePhase" ],
+        "action" => "stBeforeEnteringTokyo",
+        "args" => "argBeforeEnteringTokyo",
+        "possibleactions" => [ "skipBeforeEnteringTokyo" ],
         "transitions" => [
             'next' => ST_ENTER_TOKYO,
         ],        
