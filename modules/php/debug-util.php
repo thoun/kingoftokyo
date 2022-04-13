@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        //$this->debugSetEnergy(1);
+        $this->debugSetEnergy(10);
         //$this->debugSetPoints(5);
         //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 1);
@@ -61,12 +61,12 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
-        //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
+        $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
-        //$this->debugSetCardInHand(REGENERATION_CARD, 2343492);
+        $this->debugSetCardInHand(REGENERATION_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
@@ -216,7 +216,7 @@ trait DebugUtilTrait {
             return;
         } 
 
-        $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIBERNATION_CARD);
+        $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".MIMIC_CARD);
     }
 
     function debugSetWickednessTileInTable($cardType) {

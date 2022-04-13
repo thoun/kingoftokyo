@@ -135,9 +135,7 @@ trait WickednessTilesUtilTrait {
         }
     }
 
-    function canChangeMimickedCardWickednessTile() {
-        $playerId = $this->getActivePlayerId();
-
+    function canChangeMimickedCardWickednessTile(int $playerId) {
         // check if player have mimic card
         if (!$this->isWickednessExpansion() || !$this->gotWickednessTile($playerId, FLUXLING_WICKEDNESS_TILE)) {
             return false;

@@ -236,7 +236,7 @@ trait CardsActionTrait {
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
-            $mimic = $this->canChangeMimickedCard();
+            $mimic = $this->canChangeMimickedCard($playerId);
         }
 
         $newCardId = 0;
@@ -244,6 +244,11 @@ trait CardsActionTrait {
             $newCardId = $newCard->id;
         }
         $this->setGameStateValue('newCardId', $newCardId);
+
+        if ($mimic) {
+            $this->goToMimicSelection($playerId, MIMIC_CARD);
+            return;
+        }
 
         $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
 
@@ -534,22 +539,35 @@ trait CardsActionTrait {
     function chooseMimickedCard(int $mimickedCardId) {
         $this->checkAction('chooseMimickedCard');
 
-        $stateName = $this->gamestate->state()['name'];
-        $opportunist = $stateName === 'opportunistChooseMimicCard';
-        $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
+        if (intval($this->gamestate->state_id()) == ST_MULTIPLAYER_ANSWER_QUESTION) { // TODOWI keep only if content
+            $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
-        if ($card->type > 100 || $card->type == MIMIC_CARD) {
-            throw new \BgaUserException("You can only mimic Keep cards");
-        }
+            $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));
+            if ($card->type > 100 || $card->type == MIMIC_CARD) {
+                throw new \BgaUserException("You can only mimic Keep cards");
+            }
 
-        $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
+            $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
 
-        $forceStateAfter = intval($this->getGameStateValue(STATE_AFTER_MIMIC_CHOOSE));
-        if ($forceStateAfter) {
-            $this->jumpToState($forceStateAfter);
-        } else {
-            $this->jumpToState($this->redirectAfterBuyCard($playerId, $this->getGameStateValue('newCardId'), false));
+            $this->removeStackedStateAndRedirect();
+        } else { // TODOWI to remove
+            $stateName = $this->gamestate->state()['name'];
+            $opportunist = $stateName === 'opportunistChooseMimicCard';
+            $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
+
+            $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));
+            if ($card->type > 100 || $card->type == MIMIC_CARD) {
+                throw new \BgaUserException("You can only mimic Keep cards");
+            }
+
+            $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
+
+            $forceStateAfter = intval($this->getGameStateValue(STATE_AFTER_MIMIC_CHOOSE));
+            if ($forceStateAfter) {
+                $this->jumpToState($forceStateAfter);
+            } else {
+                $this->jumpToState($this->redirectAfterBuyCard($playerId, $this->getGameStateValue('newCardId'), false));
+            }
         }
     }
 

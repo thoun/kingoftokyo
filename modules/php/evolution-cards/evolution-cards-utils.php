@@ -21,9 +21,9 @@ trait EvolutionCardsUtilTrait {
         return $states == null ? [] : $states;
     }
 
-    function addStackedState() {
+    function addStackedState($currentState = null) {
         $states = $this->getStackedStates();
-        $states[] = $this->gamestate->state_id();
+        $states[] = $currentState ?? $this->gamestate->state_id();
         $this->setGlobalVariable(STACKED_STATES, $states);
     }
 

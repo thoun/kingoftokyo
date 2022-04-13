@@ -530,7 +530,8 @@ class KingOfTokyo extends Table {
 
         // TODO $this->debugSetupBeforePlaceCard();
         $cards = $this->placeNewCardsOnTable();
-        // TODO $this->debugSetupAfterPlaceCard();
+        // TODO 
+        $this->debugSetupAfterPlaceCard();
 
         $this->notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,
@@ -703,6 +704,11 @@ class KingOfTokyo extends Table {
 
         if ($from_version <= 2204102300) {
             $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_turn_energy` tinyint unsigned NOT NULL DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+
+        if ($from_version <= 2204120846) {
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_turn_health` tinyint unsigned NOT NULL DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

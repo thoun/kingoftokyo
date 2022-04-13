@@ -50,14 +50,14 @@ trait RedirectionTrait {
     }
 
     function redirectAfterStartTurn(int $playerId) {
-        if ($this->canChangeMimickedCardWickednessTile()) {
+        if ($this->canChangeMimickedCardWickednessTile($playerId)) {
             return ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE;
         }
         return $this->redirectAfterChangeMimickWickednessTile($playerId);
     }
 
     function redirectAfterChangeMimickWickednessTile(int $playerId) {
-        if ($this->canChangeMimickedCard()) {
+        if ($this->canChangeMimickedCard($playerId)) {
             return ST_PLAYER_CHANGE_MIMICKED_CARD;
         }
         return $this->redirectAfterChangeMimick($playerId);

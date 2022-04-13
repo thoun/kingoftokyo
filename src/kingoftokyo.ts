@@ -728,6 +728,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         (this as any).updatePageTitle();
 
         switch(question.code) {
+            case 'ChooseMimickedCard':
+                this.onEnteringChooseMimickedCard(question.args.mimicArgs);
+                break;
             case 'Bamboozle':
                 const bamboozleArgs = question.args as BamboozleQuestionArgs;
                 this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, (this as any).isCurrentPlayerActive());
@@ -1643,6 +1646,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
             if (args.question.code === 'Bamboozle') {
                 this.buyCardBamboozle(cardId, from);
+            } else if (args.question.code === 'ChooseMimickedCard') {
+                this.chooseMimickedCard(cardId);
             }
         }
     }
@@ -1703,7 +1708,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
         
         const stateName = this.getStateName();
-        const buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || (stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle');
+        const buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || (stateName === 'answerQuestion' && ['ChooseMimickedCard', 'Bamboozle'].includes(this.gamedatas.gamestate.args.question.code));
         const changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
         if (!buyState && !changeMimicState) {
             return;

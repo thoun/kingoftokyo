@@ -3984,6 +3984,9 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn;
         this.updatePageTitle();
         switch (question.code) {
+            case 'ChooseMimickedCard':
+                this.onEnteringChooseMimickedCard(question.args.mimicArgs);
+                break;
             case 'Bamboozle':
                 var bamboozleArgs = question.args;
                 this.onEnteringBuyCard(bamboozleArgs.buyCardArgs, this.isCurrentPlayerActive());
@@ -4786,6 +4789,9 @@ var KingOfTokyo = /** @class */ (function () {
             if (args.question.code === 'Bamboozle') {
                 this.buyCardBamboozle(cardId, from);
             }
+            else if (args.question.code === 'ChooseMimickedCard') {
+                this.chooseMimickedCard(cardId);
+            }
         }
     };
     KingOfTokyo.prototype.chooseEvolutionCardClick = function (id) {
@@ -4843,7 +4849,7 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         var stateName = this.getStateName();
-        var buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || (stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle');
+        var buyState = stateName === 'buyCard' || stateName === 'opportunistBuyCard' || stateName === 'stealCostumeCard' || (stateName === 'answerQuestion' && ['ChooseMimickedCard', 'Bamboozle'].includes(this.gamedatas.gamestate.args.question.code));
         var changeMimicState = stateName === 'changeMimickedCard' || stateName === 'changeMimickedCardWickednessTile';
         if (!buyState && !changeMimicState) {
             return;

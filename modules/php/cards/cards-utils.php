@@ -4,9 +4,11 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../objects/card.php');
 require_once(__DIR__.'/../objects/damage.php');
+require_once(__DIR__.'/../objects/question.php');
 
 use KOT\Objects\Card;
 use KOT\Objects\Damage;
+use KOT\Objects\Question;
 
 trait CardsUtilTrait {
 
@@ -749,9 +751,7 @@ trait CardsUtilTrait {
         return $opportunistPlayerIds;
     }
 
-    function canChangeMimickedCard() {
-        $playerId = $this->getActivePlayerId();
-
+    function canChangeMimickedCard(int $playerId) {
         // check if player have mimic card
         if ($this->countCardOfType($playerId, MIMIC_CARD, false) == 0) {
             return false;
@@ -967,6 +967,31 @@ trait CardsUtilTrait {
                 $warningIds[$card->id] = '[Star]';
             }
         }
-    }    
+    } 
+    
+    function goToMimicSelection(int $playerId, int $mimicCardType, $endState = null) {
+        $question = new Question(
+            'ChooseMimickedCard',
+            clienttranslate('${actplayer} must select a card to mimic'),
+            clienttranslate('${you} must select a card to mimic'),
+            [$playerId],
+            -1,
+            [ 
+                'playerId' => $playerId,
+                '_args' => [ 
+                    'player_id' => $playerId,
+                    'actplayer' => $this->getPlayerName($playerId) 
+                ],
+                'mimicCardType' => $mimicCardType,
+                'mimicArgs' => $this->getArgChooseMimickedCard($playerId, $mimicCardType),
+            ]
+        );
+
+        $this->addStackedState($endState);
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
     
 }

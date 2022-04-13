@@ -9,6 +9,7 @@ class Player {
     public int $no;
     public int $score;
     public int $health;
+    public int $turnHealth;
     public int $energy;
     public int $turnEnergy;
     public int $location;
@@ -25,6 +26,7 @@ class Player {
         $this->no = intval($dbPlayer['player_no']);
         $this->score = intval($dbPlayer['player_score']);
         $this->health = intval($dbPlayer['player_health']);
+        $this->turnHealth = intval($dbPlayer['player_turn_health']);
         $this->energy = intval($dbPlayer['player_energy']);
         $this->turnEnergy = intval($dbPlayer['player_turn_energy']);
         $this->location = intval($dbPlayer['player_location']);
