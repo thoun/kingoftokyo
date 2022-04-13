@@ -414,6 +414,17 @@ trait DiceUtilTrait {
                         'card_name' => 3000 + MECHA_BLAST_EVOLUTION,
                     ]);
                 }
+
+                if (count($mechaBlastEvolutions) > 0) {
+                    $this->removeEvolutions($playerId, $mechaBlastEvolutions);
+                }
+
+                $underratedEvolutions = $this->getEvolutionsOfType($playerId, UNDERRATED_EVOLUTION);
+                $diceCount[6] += count($underratedEvolutions) * 2;
+
+                if (count($underratedEvolutions) > 0) {
+                    $this->removeEvolutions($playerId, $underratedEvolutions);
+                }
             }
 
             // Shrink Ray
@@ -600,6 +611,7 @@ trait DiceUtilTrait {
         // Gamma Breath & Tail Sweep
         $hasGammaBreath = false;
         $hasTailSweep = false;
+        $hasTinyTail = false;
         if ($isPowerUpExpansion) {
             $gammaBreathCards = $this->getEvolutionsOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);
             if (count($gammaBreathCards) > 0) {
@@ -613,6 +625,13 @@ trait DiceUtilTrait {
                 $usedCards = $this->getUsedCard();
                 $availableTailSweep = array_values(array_filter($tailSweepCards, fn($tailSweepCard) => !in_array(3000 + $tailSweepCard->id, $usedCards)));
                 $hasTailSweep = count($availableTailSweep) > 0;
+            }
+
+            $tinyTailCards = $this->getEvolutionsOfType($playerId, TINY_TAIL_EVOLUTION, true, true);
+            if (count($tinyTailCards) > 0) {
+                $usedCards = $this->getUsedCard();
+                $availableTinyTail = array_values(array_filter($tinyTailCards, fn($tinyTailCard) => $this->countUsedCard(3000 + $tinyTailCard->id) < 2));
+                $hasTinyTail = count($availableTinyTail) > 0;
             }
         }
 
@@ -630,6 +649,7 @@ trait DiceUtilTrait {
             'hasSaurianAdaptability' => $hasSaurianAdaptability,
             'hasGammaBreath' => $hasGammaBreath,
             'hasTailSweep' => $hasTailSweep,
+            'hasTinyTail' => $hasTinyTail,
             'hasYinYang' => $hasYinYang,
         ];
     }
@@ -642,6 +662,7 @@ trait DiceUtilTrait {
             || $cards['hasSaurianAdaptability'] 
             || $cards['hasGammaBreath'] 
             || $cards['hasTailSweep'] 
+            || $cards['hasTinyTail'] 
             || $cards['hasYinYang'];
     }
 

@@ -237,7 +237,7 @@ trait DiceActionTrait {
                 $this->playEvolutionToTable($playerId, $gammaBreathCard);
             }
             $this->setUsedCard(3000 + $gammaBreathCard->id);
-        }  else if ($cardType == 3000 + TAIL_SWEEP_EVOLUTION) {
+        } else if ($cardType == 3000 + TAIL_SWEEP_EVOLUTION) {
             $tailSweepCards = $this->getEvolutionsOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
 
             // we use in priority Icy Reflection
@@ -250,6 +250,21 @@ trait DiceActionTrait {
                 $this->playEvolutionToTable($playerId, $tailSweepCard);
             }
             $this->setUsedCard(3000 + $tailSweepCard->id);
+        } else if ($cardType == 3000 + TINY_TAIL_EVOLUTION) {
+            $tinyTailCards = $this->getEvolutionsOfType($playerId, TINY_TAIL_EVOLUTION, true, true);
+
+            // we use in priority Icy Reflection
+            $tinyTailCard = $this->array_find($tinyTailCards, fn($card) => $card->type == ICY_REFLECTION_EVOLUTION);
+            if ($tinyTailCard === null) {
+                $tinyTailCard = $tinyTailCards[0];
+            }
+
+            if ($tinyTailCard->location === 'hand') {
+                $this->playEvolutionToTable($playerId, $tinyTailCard);
+            }
+            $this->setUsedCard(3000 + $tinyTailCard->id);
+        } else {
+            throw new \BgaUserException('Invalid card to change die');
         }
 
         $activePlayerId = $this->getActivePlayerId();

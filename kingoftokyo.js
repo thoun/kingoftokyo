@@ -1171,14 +1171,20 @@ var EvolutionCards = /** @class */ (function () {
             // TODODE 147/148
             // Kraken
             case 151: return "+2[Heart]";
+            // TODODE 152
+            case 153: return /*_TODODE*/ ("Gain 1[Star] for each [Heart] gained this turn.");
             // TODODE 151..155
             case 156: return /*_TODODE*/ ("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
             case 157: return /*_TODODE*/ ("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
             case 158: return /*_TODOPU*/ ("Monsters you wound lose 1[Star].");
             // Baby Gigazaur
-            // TODOPUBG 181..184
+            case 181: return /*_TODOPUBG*/ ("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve."); // TODOPUBG
+            case 182: return /*_TODOPUBG*/ ("If you roll no [diceHeart], gain 1[Heart].");
+            case 183: return /*_TODOPUBG*/ ("Each Monster who has more [Star] than you has to give you 1[Star].");
+            case 184: return /*_TODOPUBG*/ ("Once per turn, you may change two dice you rolled to [dice1].");
             // 185 same as 56
-            // TODOPUBG 186..187
+            case 186: return /*_TODOPUBG*/ ("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart]."); // TODOPUBG
+            case 187: return /*_TODOPUBG*/ ("Add 2 [diceSmash] to your Roll.");
             case 188: return "+2[Heart] +1[Energy].";
         }
         return null;
@@ -2250,7 +2256,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             this.setSelectableDice(selectableDice);
@@ -2677,6 +2683,7 @@ var DiceManager = /** @class */ (function () {
             var herdCullerButtonId_1 = bubbleActionButtonsId + "-herdCuller";
             var gammaBreathButtonId_1 = bubbleActionButtonsId + "-gammaBreath";
             var tailSweepButtonId_1 = bubbleActionButtonsId + "-tailSweep";
+            var tinyTailButtonId_1 = bubbleActionButtonsId + "-tinyTail";
             var plotTwistButtonId_1 = bubbleActionButtonsId + "-plotTwist";
             var stretchyButtonId_1 = bubbleActionButtonsId + "-stretchy";
             var saurianAdaptabilityButtonId_1 = bubbleActionButtonsId + "-saurianAdaptability";
@@ -2709,6 +2716,12 @@ var DiceManager = /** @class */ (function () {
                     }
                     if (args_1.hasTailSweep) {
                         this.game.createButton(bubbleActionButtonsId, tailSweepButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.evolutionCards.getCardName(58, 'text-only') + "</strong>" }), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3058);
+                            _this.toggleBubbleChangeDie(die);
+                        }, true);
+                    }
+                    if (args_1.hasTinyTail) {
+                        this.game.createButton(bubbleActionButtonsId, tinyTailButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.evolutionCards.getCardName(184, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3058);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
@@ -2750,6 +2763,9 @@ var DiceManager = /** @class */ (function () {
                         if (args_1.hasTailSweep) {
                             dojo.toggleClass(tailSweepButtonId_1, 'disabled', value != 1 && value != 2);
                         }
+                        if (args_1.hasTinyTail && die.value != 1) {
+                            dojo.toggleClass(tinyTailButtonId_1, 'disabled', value != 1);
+                        }
                         if (args_1.hasPlotTwist) {
                             dojo.toggleClass(plotTwistButtonId_1, 'disabled', value < 1);
                         }
@@ -2784,6 +2800,9 @@ var DiceManager = /** @class */ (function () {
                     }
                     if (args_1.hasTailSweep) {
                         dojo.addClass(tailSweepButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasTinyTail) {
+                        dojo.addClass(tinyTailButtonId_1, 'disabled');
                     }
                     if (args_1.hasPlotTwist) {
                         dojo.addClass(plotTwistButtonId_1, 'disabled');

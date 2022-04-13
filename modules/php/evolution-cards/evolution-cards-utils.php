@@ -328,6 +328,9 @@ trait EvolutionCardsUtilTrait {
             case HEALING_RAIN_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
+            case CULT_WORSHIPPERS_EVOLUTION:
+                $this->applyGetPoints($playerId, $this->getPlayer($playerId)->turnHealth, $logCardType);
+                break;
             case SUNKEN_TEMPLE_EVOLUTION:
                 $this->applyGetHealth($playerId, 3, $logCardType, $playerId);
                 $this->applyGetEnergy($playerId, 3, $logCardType);
@@ -335,6 +338,13 @@ trait EvolutionCardsUtilTrait {
                 $this->goToState(ST_NEXT_PLAYER);
                 break;
             // Baby Gigazaur
+            case NURTURE_THE_YOUNG_EVOLUTION:
+                $dbResults = $this->getCollectionFromDb("SELECT `player_id` FROM `player` WHERE `player_score` > (SELECT `player_score` FROM `player` WHERE id = $playerId)");
+                $playersIdsWithMorePoints = array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
+                foreach ($playersIdsWithMorePoints as $playerIdWithMorePoints) {
+                    $this->applyGiveSymbols([0], $playerIdWithMorePoints, $playerId, $logCardType);
+                }
+                break;
             case YUMMY_YUMMY_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 $this->applyGetEnergy($playerId, 1, $logCardType);

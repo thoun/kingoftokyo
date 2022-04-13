@@ -125,6 +125,11 @@ trait UtilTrait {
         return in_array($cardId, $cardsIds);
     }
 
+    function countUsedCard(int $cardId) {
+        $cardsIds = $this->getUsedCard();
+        return count(array_filter($cardsIds, fn($id) => $id == $cardId));
+    }
+
     function setUsedCard(int $cardId) {
         $cardsIds = $this->getUsedCard();
         $cardsIds[] = $cardId;

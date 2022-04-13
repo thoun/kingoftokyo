@@ -239,14 +239,20 @@ class EvolutionCards {
             // TODODE 147/148
             // Kraken
             case 151: return "+2[Heart]";
+            // TODODE 152
+            case 153: return /*_TODODE*/("Gain 1[Star] for each [Heart] gained this turn.");
             // TODODE 151..155
             case 156: return /*_TODODE*/("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
             case 157: return /*_TODODE*/("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
             case 158: return /*_TODOPU*/("Monsters you wound lose 1[Star].");
             // Baby Gigazaur
-            // TODOPUBG 181..184
+            case 181: return /*_TODOPUBG*/("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve."); // TODOPUBG
+            case 182: return /*_TODOPUBG*/("If you roll no [diceHeart], gain 1[Heart].");
+            case 183: return /*_TODOPUBG*/("Each Monster who has more [Star] than you has to give you 1[Star].");
+            case 184: return /*_TODOPUBG*/("Once per turn, you may change two dice you rolled to [dice1].");
             // 185 same as 56
-            // TODOPUBG 186..187
+            case 186: return /*_TODOPUBG*/("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart]."); // TODOPUBG
+            case 187: return /*_TODOPUBG*/("Add 2 [diceSmash] to your Roll.");
             case 188: return "+2[Heart] +1[Energy].";
         }
         return null;

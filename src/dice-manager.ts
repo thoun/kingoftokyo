@@ -76,7 +76,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -539,6 +539,7 @@ class DiceManager {
             const herdCullerButtonId = `${bubbleActionButtonsId}-herdCuller`;
             const gammaBreathButtonId = `${bubbleActionButtonsId}-gammaBreath`;
             const tailSweepButtonId = `${bubbleActionButtonsId}-tailSweep`;
+            const tinyTailButtonId = `${bubbleActionButtonsId}-tinyTail`;
             const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
             const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
             const saurianAdaptabilityButtonId = `${bubbleActionButtonsId}-saurianAdaptability`;
@@ -603,6 +604,18 @@ class DiceManager {
                             true
                         );
                     }
+                    if (args.hasTinyTail) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            tinyTailButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCards.getCardName(184, 'text-only')}</strong>` }),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3058);
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
                     if (args.hasPlotTwist) {
                         this.game.createButton(
                             bubbleActionButtonsId, 
@@ -658,6 +671,9 @@ class DiceManager {
                         if (args.hasTailSweep) {
                             dojo.toggleClass(tailSweepButtonId, 'disabled', value != 1 && value != 2);
                         }
+                        if (args.hasTinyTail && die.value != 1) {
+                            dojo.toggleClass(tinyTailButtonId, 'disabled', value != 1);
+                        }
                         if (args.hasPlotTwist) {
                             dojo.toggleClass(plotTwistButtonId, 'disabled', value < 1);
                         }
@@ -693,6 +709,9 @@ class DiceManager {
                     }
                     if (args.hasTailSweep) {
                         dojo.addClass(tailSweepButtonId, 'disabled');
+                    }
+                    if (args.hasTinyTail) {
+                        dojo.addClass(tinyTailButtonId, 'disabled');
                     }
                     if (args.hasPlotTwist) {
                         dojo.addClass(plotTwistButtonId, 'disabled');

@@ -241,6 +241,13 @@ trait DiceStateTrait {
         $diceCount = $diceCounts[4];
         if ($diceCount > 0) {
             $this->resolveHealthDice($playerId, $diceCount);
+        } else {
+            if ($this->isPowerUpExpansion()) {
+                $countGrowingFast = $this->countEvolutionOfType($playerId, GROWING_FAST_EVOLUTION);
+                if ($countGrowingFast > 0) {
+                    $this->applyGetHealth($playerId, $countGrowingFast, 3000 + GROWING_FAST_EVOLUTION, $playerId);
+                }
+            }
         }
         $this->gamestate->nextState('next');
     }
