@@ -54,8 +54,8 @@ $this->EVOLUTION_TO_PLAY_BEFORE_START = [
     CAT_NIP_EVOLUTION,
     TUNE_UP_EVOLUTION,
     BAMBOO_SUPPLY_EVOLUTION,
-    //- 87 épée énergétique (cyber bunny)
-    //- 95 temple englouti (Kraken)
+    ENERGY_SWORD_EVOLUTION,
+    SUNKEN_TEMPLE_EVOLUTION,
 ];
 
 $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE = [

@@ -1165,7 +1165,7 @@ var EvolutionCards = /** @class */ (function () {
             case 141: return /*_TODODE*/ ("Gain 1[Energy] for each [Energy] you already gained this turn.");
             case 142: return "+3[Energy]";
             // 143 same as 51
-            // TODODE 144
+            case 144: return /*_TODODE*/ ("Play when another Monster finishes Rolling. Reroll one of this Monster’s dice. Take back <i>Heart of the Rabbit</i> from your discard when you take control of <i>Tokyo</i>.");
             case 145: return /*_TODODE*/ ("The price of Power cards you buy is reduced by 1[Energy].");
             case 146: return /*_TODODE*/ ("Gain 1[Star] each time you buy a Power card.");
             // TODODE 147/148
@@ -4529,6 +4529,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.addActionButton('useLightningArmor_button', _("Throw dice"), function () { return _this.useLightningArmor(); });
                 this.addActionButton('skipLightningArmor_button', _('Skip'), function () { return _this.skipLightningArmor(); });
                 break;
+            case 'SunkenTemple':
+                this.addActionButton('useSunkenTemple_button', dojo.string.substitute(_("Use ${card_name}"), { card_name: this.cards.getCardName(37, 'text-only') }), function () { return _this.answerSunkenTemple(true); });
+                this.addActionButton('skipSunkenTemple_button', _('Skip'), function () { return _this.answerSunkenTemple(false); });
+                break;
         }
     };
     ///////////////////////////////////////////////////
@@ -5847,6 +5851,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipLightningArmor');
+    };
+    KingOfTokyo.prototype.answerSunkenTemple = function (use) {
+        if (!this.checkAction('answerSunkenTemple')) {
+            return;
+        }
+        this.takeAction('answerSunkenTemple', { use: use });
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

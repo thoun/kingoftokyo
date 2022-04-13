@@ -142,6 +142,23 @@ trait EvolutionCardsStateTrait {
             $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, $superiorAlienTechnologyTokens);
         }
 
+        // must be the last question because it ends the turn
+        $unusedTempleEvolutionCard = $this->getFirstUnusedEvolution($playerId, SUNKEN_TEMPLE_EVOLUTION);
+        if ($unusedTempleEvolutionCard != null && !$this->inTokyo($playerId)) {
+
+            $question = new Question(
+                'SunkenTemple',
+                /* client TODODE translate(*/'${actplayer} can pass turn to gain 3[Heart] and 3[Energy]'/*)*/,
+                /* client TODODE translate(*/'${you} can pass your turn to gain 3[Heart] and 3[Energy]'/*)*/,
+                [$playerId],
+                ST_QUESTIONS_BEFORE_START_TURN,
+                [
+                    'card' => $unusedTempleEvolutionCard,
+                ]
+            );
+            $this->setQuestion($question);
+            $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+        }
         $this->goToState(ST_START_TURN);
     }
 

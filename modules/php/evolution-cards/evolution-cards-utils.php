@@ -141,7 +141,6 @@ trait EvolutionCardsUtilTrait {
             case JUNGLE_FRENZY_EVOLUTION: // TODOPU use only after move to Tokyo if you didn't enter
                 return $playerId == intval($this->getActivePlayerId()) && !$this->inTokyo($playerId) && $this->isDamageDealtThisTurn($playerId);
             case TUNE_UP_EVOLUTION:
-            case SUNKEN_TEMPLE_EVOLUTION:
                 return !$this->inTokyo($playerId);
             case BLIZZARD_EVOLUTION:
                 if ($playerId != intval($this->getActivePlayerId())) {

@@ -937,5 +937,14 @@
 
         self::ajaxResponse();
     }
+  	
+    public function answerSunkenTemple() {
+        self::setAjaxMode();
+
+        $use = self::getArg("use", AT_bool, true);
+        $this->game->answerSunkenTemple($use);
+
+        self::ajaxResponse();
+    }
 
 }

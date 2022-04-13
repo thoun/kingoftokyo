@@ -1285,6 +1285,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('useLightningArmor_button', _("Throw dice"), () => this.useLightningArmor());
                 (this as any).addActionButton('skipLightningArmor_button', _('Skip'), () => this.skipLightningArmor());
                 break;
+            case 'SunkenTemple':
+                (this as any).addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}") , { card_name: this.cards.getCardName(37, 'text-only') }), () => this.answerSunkenTemple(true));
+                (this as any).addActionButton('skipSunkenTemple_button', _('Skip'), () => this.answerSunkenTemple(false));
+                break;
         }
     }
 
@@ -2947,6 +2951,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipLightningArmor');
+    }
+    
+    public answerSunkenTemple(use: boolean) {
+        if(!(this as any).checkAction('answerSunkenTemple')) {
+            return;
+        }
+
+        this.takeAction('answerSunkenTemple', { use });
     }
     
     public takeAction(action: string, data?: any) {

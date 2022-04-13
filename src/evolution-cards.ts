@@ -233,7 +233,7 @@ class EvolutionCards {
             case 141: return /*_TODODE*/("Gain 1[Energy] for each [Energy] you already gained this turn.");
             case 142: return "+3[Energy]";
             // 143 same as 51
-            // TODODE 144
+            case 144: return /*_TODODE*/("Play when another Monster finishes Rolling. Reroll one of this Monster’s dice. Take back <i>Heart of the Rabbit</i> from your discard when you take control of <i>Tokyo</i>.");
             case 145: return /*_TODODE*/("The price of Power cards you buy is reduced by 1[Energy].");
             case 146: return /*_TODODE*/("Gain 1[Star] each time you buy a Power card.");
             // TODODE 147/148

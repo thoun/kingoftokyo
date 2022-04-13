@@ -520,4 +520,22 @@ trait EvolutionCardsActionTrait {
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
+  	
+    public function answerSunkenTemple(bool $use) {
+        $this->checkAction('answerSunkenTemple');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $question = $this->getQuestion();
+        $evolutionId = $question->args->card->id;
+        $this->setUsedCard(3000 + $evolutionId);
+
+        if ($use) {
+            $this->applyGetHealth($playerId, 3, 3000 + SUNKEN_TEMPLE_EVOLUTION, $playerId);
+            $this->applyGetEnergy($playerId, 3, 3000 + SUNKEN_TEMPLE_EVOLUTION);
+            $this->goToState(ST_NEXT_PLAYER);
+        } else {
+            $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
+        }
+    }
 }

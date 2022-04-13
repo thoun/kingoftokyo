@@ -812,6 +812,7 @@ $playerActionsGameStates = [
             "useExoticArms", "skipExoticArms",
             "giveTarget", "skipGiveTarget",
             "useLightningArmor", "skipLightningArmor",
+            "answerSunkenTemple"
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,
