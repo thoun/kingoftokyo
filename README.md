@@ -55,6 +55,7 @@ before resolving :
  - 92 grande marée (kraken)
 after resolving
  - 34 analyse impitoyable (meka dragon) (or everytime ?)
+ electric carrot
 when tokyo monster is damaged by this player
  - 29 jouer avec sa nourriture (Cyber Kitty)
 during move phase (after leaving, before entering) :
@@ -64,8 +65,6 @@ after move phase active player turn :
  - 59 gare au gorille (The King)
  - 66 panda guerilla (Pandakai)
  - 90 vague dévastatrice (Kraken)
-during buy phase
- - 67 coup de bambou (Pandakai)
 at the end of active player turn :
  - 44 vague de froid (space penguin) (or everytime ?)
  - 45 pris dans la glace (space penguin) (or everytime ?)

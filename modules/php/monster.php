@@ -46,7 +46,7 @@ trait MonsterTrait {
         }
 
         // Lollybot
-        if ($bonusMonsters && $this->releaseDatePassed("2022-04-17T11:00:00", 2)) {
+        if ($bonusMonsters/* && $this->releaseDatePassed("2022-04-17T11:00:00", 2)*/) {
             $monsters = [...$monsters, 19];
         }
 
