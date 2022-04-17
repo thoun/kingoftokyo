@@ -321,11 +321,8 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
 		$ids = [
-			88502882,
-            91906480,
-            86175279,
-            84639460,
-            90335134,
+			88621438,
+            88872819,
 		];
 
 		// Id of the first player in BGA Studio
