@@ -352,10 +352,7 @@ trait UtilTrait {
         }
     }
 
-    function leaveTokyo(int $playerId, bool $force, /*int | null*/ $useCard = null) {
-        if (!$force && !$this->canYieldTokyo($playerId)) {
-            return false;
-        }
+    function leaveTokyo(int $playerId, /*int | null*/ $useCard = null) {
 
         $this->DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null, `stay_tokyo_over` = null where `player_id` = $playerId");
 
@@ -572,7 +569,7 @@ trait UtilTrait {
             if ($this->isTokyoEmpty(false)) {
                 $this->moveFromTokyoBayToCity($this->getPlayerIdInTokyoBay());
             } else {
-                $this->leaveTokyo($this->getPlayerIdInTokyoBay(), true);
+                $this->leaveTokyo($this->getPlayerIdInTokyoBay());
             }
         }
     }

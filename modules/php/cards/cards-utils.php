@@ -91,7 +91,8 @@ trait CardsUtilTrait {
                 break;
             case DEATH_FROM_ABOVE_CARD: 
                 $this->applyGetPoints($playerId, 2, $cardType);
-                return $this->replacePlayersInTokyo($playerId);
+                $this->replacePlayersInTokyo($playerId);
+                break;
             case ENERGIZE_CARD:
                 $this->applyGetEnergy($playerId, 9, $cardType);
                 break;
@@ -411,7 +412,7 @@ trait CardsUtilTrait {
         ]);
 
         if ($this->inTokyo($playerId)) {
-            $this->leaveTokyo($playerId, true); // TODOAN check answer
+            $this->leaveTokyo($playerId);
         }
     }
 

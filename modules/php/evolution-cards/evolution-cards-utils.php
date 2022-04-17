@@ -303,7 +303,7 @@ trait EvolutionCardsUtilTrait {
                 }
 
                 $this->applyGetEnergy($playerId, 1, $logCardType);
-                $this->leaveTokyo($playerId, false); // TODOPU confirm
+                $this->leaveTokyo($playerId);
                 return $damages;
             case BAMBOOZLE_EVOLUTION:
                 $this->playBamboozleEvolution($playerId, $card);

@@ -32,7 +32,7 @@ trait CurseCardsUtilTrait {
 
         switch($cardType) {
             case PHARAONIC_EGO_CURSE_CARD:
-                $this->leaveTokyo($playerId, true);
+                $this->leaveTokyo($playerId);
                 break;
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case THOT_S_BLINDNESS_CURSE_CARD: 
@@ -74,7 +74,8 @@ trait CurseCardsUtilTrait {
                 $this->applyGetEnergy($playerId, 2, $logCardType);
                 break;
             case RESURRECTION_OF_OSIRIS_CURSE_CARD:
-                return $this->replacePlayersInTokyo($playerId);
+                $this->replacePlayersInTokyo($playerId);
+                break;
             case KHEPRI_S_REBELLION_CURSE_CARD:
                 return ST_PLAYER_GIVE_GOLDEN_SCARAB;
             case FALSE_BLESSING_CURSE_CARD:
@@ -113,7 +114,8 @@ trait CurseCardsUtilTrait {
 
         switch($cardType) {
             case PHARAONIC_EGO_CURSE_CARD:
-                return $this->replacePlayersInTokyo($playerId);
+                $this->replacePlayersInTokyo($playerId);
+                break;
             case ISIS_S_DISGRACE_CURSE_CARD: 
             case SET_S_STORM_CURSE_CARD:
                 return [new Damage($playerId, 1, 0, $logCardType)];
@@ -125,7 +127,6 @@ trait CurseCardsUtilTrait {
                 break;
             case RAGING_FLOOD_CURSE_CARD: 
                 return ST_PLAYER_DISCARD_DIE;
-                break;
             case HOTEP_S_PEACE_CURSE_CARD:
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);
                 $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
@@ -171,7 +172,7 @@ trait CurseCardsUtilTrait {
                 }
                 break;
             case RESURRECTION_OF_OSIRIS_CURSE_CARD:
-                $this->leaveTokyo($playerId, true);
+                $this->leaveTokyo($playerId);
                 break;
             case FORBIDDEN_LIBRARY_CURSE_CARD: 
                 $this->snakeEffectDiscardKeepCard($playerId);

@@ -58,18 +58,16 @@ trait PlayerActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
+        $this->yieldTokyo($playerId, $useCard);
+    }
+
+    function yieldTokyo(int $playerId, /*int | null*/ $useCard = null) {
         if (!$this->canYieldTokyo($playerId)) {
             throw new \BgaUserException('Impossible to yield Tokyo');
         }
-
-        $this->applyActionLeaveTokyo($playerId, $useCard);
-    }
-
-    function applyActionLeaveTokyo(int $playerId, /*int | null*/ $useCard, $force = false) {
         
-        if ($this->leaveTokyo($playerId, $force, $useCard)) {
-            $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
-        }
+        $this->leaveTokyo($playerId, $useCard);
+        $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
     
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");

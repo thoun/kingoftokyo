@@ -15,7 +15,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         $this->debugSetEnergy(10);
         //$this->debugSetPoints(5);
@@ -28,6 +28,7 @@ trait DebugUtilTrait {
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
         //$this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
+        $this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
         //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
@@ -61,18 +62,18 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
-        $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
+        //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
-        $this->debugSetCardInHand(REGENERATION_CARD, 2343492);
+        //$this->debugSetCardInHand(REGENERATION_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
-        //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
+        $this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343493);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);

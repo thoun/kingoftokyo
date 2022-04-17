@@ -297,7 +297,7 @@ trait PlayerStateTrait {
                 if ($this->canYieldTokyo($smashedPlayerInTokyo)) {
                     $player = $this->getPlayer($smashedPlayerInTokyo);
                     if ($player->eliminated) {
-                        $this->leaveTokyo($smashedPlayerInTokyo, true);
+                        $this->leaveTokyo($smashedPlayerInTokyo);
                     } else {
                         if (!$this->autoLeave($smashedPlayerInTokyo, $player->health) && !$this->autoStay($smashedPlayerInTokyo, $player->health)) {
                             $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;

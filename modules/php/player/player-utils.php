@@ -88,8 +88,8 @@ trait PlayerUtilTrait {
 
         $leave = $health < $leaveUnder;
 
-        if ($leave && $this->leaveTokyo($playerId, false)) {
-            $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
+        if ($leave) {
+            $this->yieldTokyo($playerId);
         }
 
         return $leave;
@@ -438,26 +438,13 @@ trait PlayerUtilTrait {
         }
 
         // remove other players in Tokyo
-        $damages = [];
         $playerInTokyoCity = $this->getPlayerIdInTokyoCity();
         $playerInTokyoBay = $this->getPlayerIdInTokyoBay();
         if ($playerInTokyoBay != null && $playerInTokyoBay > 0 && $playerInTokyoBay != $playerId) {
-            $this->leaveTokyo($playerInTokyoBay, true);
-
-            // burrowing
-            $countBurrowing = $this->countCardOfType($playerInTokyoBay, BURROWING_CARD);
-            if ($countBurrowing > 0) {
-                $damages[] = new Damage($playerId, $countBurrowing, $playerInTokyoBay, BURROWING_CARD);
-            }
+            $this->leaveTokyo($playerInTokyoBay);
         }
         if ($playerInTokyoCity != null && $playerInTokyoCity > 0 && $playerInTokyoCity != $playerId) {
-            $this->leaveTokyo($playerInTokyoCity, true);
-
-            // burrowing
-            $countBurrowing = $this->countCardOfType($playerInTokyoCity, BURROWING_CARD);
-            if ($countBurrowing > 0) {
-                $damages[] = new Damage($playerId, $countBurrowing, $playerInTokyoCity, BURROWING_CARD);
-            }
+            $this->leaveTokyo($playerInTokyoCity);
         }
 
         if ($playerInTokyoBay == $playerId) {
@@ -466,8 +453,6 @@ trait PlayerUtilTrait {
             // take control of Tokyo
             $this->moveToTokyo($playerId, false);
         }
-    
-        return $damages;
     }
 
     function canUseSymbol(int $playerId, int $symbol) {
