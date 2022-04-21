@@ -263,7 +263,7 @@ trait DiceActionTrait {
                 $this->playEvolutionToTable($playerId, $tinyTailCard);
             }
             $this->setUsedCard(3000 + $tinyTailCard->id);
-        } else {
+        } else if ($cardType != CLOWN_CARD) {
             throw new \BgaUserException('Invalid card to change die');
         }
 

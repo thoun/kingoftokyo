@@ -105,12 +105,12 @@ trait DebugUtilTrait {
 
         // halloween
         if ($this->isHalloweenExpansion()) {
-            //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
+            $this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
             //$this->debugSetCardInHand(GHOST_CARD, 2343492);
             $this->debugSetCardInHand(CLOWN_CARD, 2343492);
-            $this->debugSetCardInHand(DEVIL_CARD, 2343492);
+            //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
-            $this->debugSetCardInHand(ROBOT_CARD, 2343493);
+            //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
             //$this->debugSetCardInHand(PRINCESS_CARD, 2343494);
             //$this->debugSetCardInHand(WITCH_CARD, 2343493);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
