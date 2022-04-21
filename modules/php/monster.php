@@ -232,6 +232,11 @@ trait MonsterTrait {
         $this->giveExtraTime($playerId);
 
         if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
+
+            if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
+                $this->setOwnerIdForAllEvolutions();
+            }
+
             $this->goToState($this->redirectAfterPickMonster());
         } else {
             $this->gamestate->nextState('nextPlayer');

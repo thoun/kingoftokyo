@@ -175,24 +175,24 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
-            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
+            //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
-            $this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
+            //$this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
-            $this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
+            //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
             //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             //$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
         }
 
         // player order
@@ -322,8 +322,10 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
 		$ids = [
-			88621438,
-            88872819,
+			83846198,
+            84582251,
+            86175279,
+            86769394
 		];
 
 		// Id of the first player in BGA Studio
@@ -338,6 +340,10 @@ trait DebugUtilTrait {
 			// 'other' game specific tables. example:
 			// tables specific to your schema that use player_ids
 			$this->DbQuery("UPDATE card SET card_location_arg=$sid WHERE card_location_arg = $id" );
+			$this->DbQuery("UPDATE evolution_card SET card_location_arg=$sid WHERE card_location_arg = $id" );
+			$this->DbQuery("UPDATE evolution_card SET owner_id=$sid WHERE owner_id = $id" );
+			$this->DbQuery("UPDATE evolution_card SET card_location='deck$sid' WHERE card_location='deck$id'" );
+			$this->DbQuery("UPDATE evolution_card SET card_location='discard$sid' WHERE card_location='discard$id'" );
 			
 			++$sid;
 		}

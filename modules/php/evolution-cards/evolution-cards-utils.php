@@ -60,6 +60,10 @@ trait EvolutionCardsUtilTrait {
             $this->evolutionCards->createCards($cards, $location);
             $this->evolutionCards->shuffle($location); 
         }
+
+        if (count($affectedPlayersMonsters) > 0) {
+            $this->setOwnerIdForAllEvolutions();
+        }
     }
 
     function getEvolutionCardFromDb(array $dbCard) {

@@ -353,8 +353,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_DISCARD_DIE => [
         "name" => "discardDie",
-        "description" => clienttranslate('${actplayer} must dicard a die'),
-        "descriptionmyturn" => clienttranslate('${you} must dicard a die (click on a die to discard it)'),
+        "description" => clienttranslate('${actplayer} must discard a die'),
+        "descriptionmyturn" => clienttranslate('${you} must discard a die (click on a die to discard it)'),
         "type" => "activeplayer",
         "action" => "stDiscardDie",
         "args" => "argDiscardDie",
@@ -366,8 +366,8 @@ $playerActionsGameStates = [
 
     ST_PLAYER_DISCARD_KEEP_CARD => [
         "name" => "discardKeepCard",
-        "description" => clienttranslate('${actplayer} must dicard a [keep] card'),
-        "descriptionmyturn" => clienttranslate('${you} must dicard a [keep] card'),
+        "description" => clienttranslate('${actplayer} must discard a [keep] card'),
+        "descriptionmyturn" => clienttranslate('${you} must discard a [keep] card'),
         "type" => "activeplayer",
         "args" => "argDiscardKeepCard",
         "possibleactions" => [ "discardKeepCard" ],

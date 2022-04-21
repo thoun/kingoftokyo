@@ -27,6 +27,8 @@ trait EvolutionCardsStateTrait {
         }
 
         if ($turn >= 8) {
+            $this->setOwnerIdForAllEvolutions();
+            
             $this->goToState($this->redirectAfterPickEvolutionDeck());
         } else {
             $this->setGameStateValue(MUTANT_EVOLUTION_TURN, $turn + 1);
