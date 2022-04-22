@@ -13,24 +13,30 @@ trait DebugUtilTrait {
             return;
         } 
 
+        $playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
+
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        //$this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetEnergy(10);
+        $this->debugSetPlayerInLocation($playersIds[4], 1);
+        $this->debugSetPlayerInLocation($playersIds[0], 2);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetHealth(1);
-        //$this->debugSetPlayerHealth(2343492, 1);
-        //$this->debugSetPlayerHealth(2343493, 1);
-        //$this->debugSetPlayerEnergy(2343493, 4);
-        //$this->debugSetPlayerPoints(2343493, 1);
+        //$this->debugSetPlayerHealth(2343492, 7);
+        $this->debugSetPlayerHealth($playersIds[0], 7);
+        $this->debugSetPlayerHealth($playersIds[1], 6);
+        $this->debugSetPlayerHealth($playersIds[2], 3);
+        $this->debugSetPlayerHealth($playersIds[3], 1);
+        $this->debugSetPlayerHealth($playersIds[4], 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
         //$this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
-        $this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
+        //$this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -73,7 +79,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
-        $this->debugSetCardInHand(BURROWING_CARD, 2343493);
+        //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343493);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
@@ -92,6 +98,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
+        $this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, $playersIds[2]);
+        $this->debugSetCardInHand(HEALING_RAY_CARD, $playersIds[2]);
+        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, $playersIds[4]);
 
         // dark edition
 
@@ -119,8 +128,11 @@ trait DebugUtilTrait {
 
         // cthulhu
         if ($this->isCthulhuExpansion()) {
-            $this->DbQuery("UPDATE player SET `player_cultists` = 1");
-            //$this->DbQuery("UPDATE player SET `player_cultists` = 10 where `player_id` = 2343492");
+            //$this->debugSetCultists(1);
+            //$this->debugSetPlayerCultists(2343492, 10);
+            $this->debugSetPlayerCultists($playersIds[2], 1);
+            $this->debugSetPlayerCultists($playersIds[3], 3);
+            $this->debugSetPlayerCultists($playersIds[4], 2);
         }
 
         // anubis
@@ -197,7 +209,8 @@ trait DebugUtilTrait {
 
         // player order
 
-        $this->gamestate->changeActivePlayer(2343492);
+        //$this->gamestate->changeActivePlayer(2343492);
+        $this->gamestate->changeActivePlayer($playersIds[0]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
@@ -272,6 +285,14 @@ trait DebugUtilTrait {
 
     function debugSetPoints($points) {
         $this->DbQuery("UPDATE player SET `player_score` = $points");
+    }
+
+    function debugSetCultists($cultists) {
+        $this->DbQuery("UPDATE player SET `player_cultists` = $cultists");
+    }
+
+    function debugSetPlayerCultists($playerId, $cultists) {
+        $this->DbQuery("UPDATE player SET `player_cultists` = $cultists where `player_id` = $playerId");
     }
 
     function debugSetCurseCardInTable($cardType) {
@@ -353,5 +374,11 @@ trait DebugUtilTrait {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         }die('debug data : '.json_encode($debugData));
+    }
+
+    function log(...$debugData) { // debug with infinite arguments
+        if ($this->getBgaEnvironment() != 'studio') { 
+            return;
+        }die('debug data : '.implode(', ', array_map(fn($d) => json_encode($d), $debugData)));
     }
 }

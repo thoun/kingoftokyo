@@ -1788,7 +1788,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 'rapidCultistButtons', 
                 'rapidCultistHealthButton', 
                 formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1})}`), 
-                () => this.useRapidCultist(4), 
+                // TODOBUG
+                () => document.querySelectorAll(`[id^='rapidHealingSync_button'`).length > 0 ? (this as any).showMessage('please click on "Use Cultists" button', 'error') : this.useRapidCultist(4), 
                 isMaxHealth
             );
             

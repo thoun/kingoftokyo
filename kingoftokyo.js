@@ -4928,7 +4928,9 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         if (!document.getElementById('rapidCultistButtons')) {
             dojo.place("<div id=\"rapidCultistButtons\"><span>" + dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') }) + " :</span></div>", 'rapid-actions-wrapper');
-            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 })), function () { return _this.useRapidCultist(4); }, isMaxHealth);
+            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 })), 
+            // TODOBUG
+            function () { return document.querySelectorAll("[id^='rapidHealingSync_button'").length > 0 ? _this.showMessage('please click on "Use Cultists" button', 'error') : _this.useRapidCultist(4); }, isMaxHealth);
             this.createButton('rapidCultistButtons', 'rapidCultistEnergyButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1 })), function () { return _this.useRapidCultist(5); });
         }
     };
