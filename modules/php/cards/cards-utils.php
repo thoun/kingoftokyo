@@ -189,7 +189,7 @@ trait CardsUtilTrait {
 
         $mimicCard = null;
         if ($mimicCardType == MIMIC_CARD) {
-            $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0]; // TODOWI if tile mimic mimic
+            $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
 
             if ($mimicCard && $mimicCard->tokens > 0) {
                 $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);

@@ -111,7 +111,6 @@ $game_options = [
         'default' => 1
     ],
 
-    /* TODOWI 
     WICKEDNESS_EXPANSION_OPTION => [
         'name' => totranslate('“Even more wicked!” event'),
         'values' => [
@@ -137,12 +136,25 @@ $game_options = [
                 [ 
                     'type' => 'minplayers',
                     'value' => 9,
-                    'message' => '“Even more wicked!” event will be available from Friday, xxth at 11:00',
+                    'message' => '“Even more wicked!” event will be available from Friday, 10th at 11:00',
+                ] 
+            ],
+            3 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => '“Even more wicked!” event will be available from Friday, 10th at 11:00',
+                ] 
+            ],
+            4 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => '“Even more wicked!” event will be available from Friday, 10th at 11:00',
                 ] 
             ],
         ],
     ],
-    */
 
     /* TODOPU 
     POWERUP_EXPANSION_OPTION => [

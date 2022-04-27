@@ -548,32 +548,17 @@ trait CardsActionTrait {
     function chooseMimickedCard(int $mimickedCardId) {
         $this->checkAction('chooseMimickedCard');
 
-        if (intval($this->gamestate->state_id()) == ST_MULTIPLAYER_ANSWER_QUESTION) { // TODOWI keep only if content
-            $playerId = $this->getCurrentPlayerId();
+        $playerId = $this->getCurrentPlayerId();
 
-            $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));
-            if ($card->type > 100 || $card->type == MIMIC_CARD) {
-                throw new \BgaUserException("You can only mimic Keep cards");
-            }
-
-            $question = $this->getQuestion();
-            $this->setMimickedCardId($question->args->mimicCardType, $playerId, $mimickedCardId);
-
-            $this->removeStackedStateAndRedirect();
-        } else { // TODOWI to remove
-            $stateName = $this->gamestate->state()['name'];
-            $opportunist = $stateName === 'opportunistChooseMimicCard';
-            $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
-
-            $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));
-            if ($card->type > 100 || $card->type == MIMIC_CARD) {
-                throw new \BgaUserException("You can only mimic Keep cards");
-            }
-
-            $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
-
-            $this->jumpToState($this->redirectAfterBuyCard($playerId, $this->getGameStateValue('newCardId')));
+        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));
+        if ($card->type > 100 || $card->type == MIMIC_CARD) {
+            throw new \BgaUserException("You can only mimic Keep cards");
         }
+
+        $question = $this->getQuestion();
+        $this->setMimickedCardId($question->args->mimicCardType, $playerId, $mimickedCardId);
+
+        $this->removeStackedStateAndRedirect();
     }
 
     function changeMimickedCard(int $mimickedCardId) {
@@ -942,7 +927,7 @@ trait CardsActionTrait {
 
         $playerId = intval($this->getCurrentPlayerId());
         
-        $unstableDnaCards = $this->getCardsOfType($playerId, UNSTABLE_DNA_CARD); // TODOWI unstable DNA can be mimicked. create an intervention for this.
+        $unstableDnaCards = $this->getCardsOfType($playerId, UNSTABLE_DNA_CARD); // TODODE unstable DNA can be mimicked. create an intervention for this.
         $unstableDnaCards = array_values(array_filter($unstableDnaCards, fn($card) => $card->id < 2000)); // to remove mimic tile, as you can't exchange a cand with a tile
         $unstableDnaCard = $unstableDnaCards[0];
 

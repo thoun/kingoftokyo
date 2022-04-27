@@ -61,14 +61,14 @@ trait WickednessTilesUtilTrait {
 
         $this->DbQuery("UPDATE player SET `player_wickedness` = $newWickedness, player_take_wickedness_tile = $canTake where `player_id` = $playerId");
 
-        $this->notifyAllPlayers('wickedness', ''/*client TODOWI translate('${player_name} gains ${delta_wickedness} wickedness points')*/, [
+        $this->notifyAllPlayers('wickedness', clienttranslate('${player_name} gains ${delta_wickedness} wickedness points'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'wickedness' => $newWickedness,
             'delta_wickedness' => $number,
         ]);
 
-        // TODOWI $this->incStat($number, 'gainedWickedness', $playerId);
+        $this->incStat($number, 'gainedWickedness', $playerId);
     }
 
     function canTakeWickednessTile(int $playerId) {

@@ -1509,7 +1509,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 <div id="wickedness-counter-wrapper-${player.id}" class="counter">
                     <div class="icon wickedness"></div> 
                     <span id="wickedness-counter-${player.id}"></span>
-                </div>`; // TODOWI
+                </div>`;
             }
             html += `</div>`;
             dojo.place(html, `player_board_${player.id}`);
@@ -1517,7 +1517,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).addTooltipHtml(`health-counter-wrapper-${player.id}`, _("Health"));
             (this as any).addTooltipHtml(`energy-counter-wrapper-${player.id}`, _("Energy"));
             if (gamedatas.wickednessExpansion) {
-                (this as any).addTooltipHtml(`wickedness-counter-wrapper-${player.id}`, /* TODOWI_*/("Wickedness points"));
+                (this as any).addTooltipHtml(`wickedness-counter-wrapper-${player.id}`, _("Wickedness points"));
             }
 
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {

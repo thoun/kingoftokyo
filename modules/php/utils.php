@@ -85,7 +85,7 @@ trait UtilTrait {
     }
 
     function isWickednessExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
+        return intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
     }
 
     function isPowerUpExpansion() {
@@ -1090,8 +1090,8 @@ trait UtilTrait {
 
         // if player will block damage, or he can not block damage anymore, we apply damage and remove it from remainingPlayersId
         if ($currentDamage 
-            && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
-                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId, $currentDamage->clawDamage))
+            && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage) !== null
+                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage, $currentDamage->damageDealerId, $currentDamage->clawDamage))
         ) {
             $this->applyDamages($intervention, $currentPlayerId);
             $this->resolveRemainingDamages($intervention, true, false);

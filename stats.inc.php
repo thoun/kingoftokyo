@@ -139,8 +139,8 @@ $stats_type = [
         "formChanged" => ["id" => 63, "type" => "int", "name" => totranslate("Form change (Mutant Evolution)")],
         "turnsInBipedForm" => ["id" => 64, "type" => "int", "name" => totranslate("Turns in Biped form")],
         "turnsInBeastForm" => ["id" => 65, "type" => "int", "name" => totranslate("Turns in Beast form")],
-        // TODOWI change id !!! "gainedWickedness" => ["id" => x, "type" => "int", "name" => totranslate("Wickedness")],
-        // TODOWI change id !!! "wickednessTilesTaken" => ["id" => x, "type" => "int", "name" => totranslate("Wickedness tales taken")],
+        "gainedWickedness" => ["id" => 66, "type" => "int", "name" => totranslate("Wickedness")],
+        "wickednessTilesTaken" => ["id" => 67, "type" => "int", "name" => totranslate("Wickedness tiles taken")],
     ],
 
     "value_labels" => [

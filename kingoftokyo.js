@@ -1468,61 +1468,61 @@ var WickednessTiles = /** @class */ (function () {
     };
     WickednessTiles.prototype.getCardName = function (cardTypeId) {
         switch (cardTypeId) {
-            // orange // TODOWI translate
-            case 1: return ("Devious");
-            case 2: return ("Eternal");
-            case 3: return ("Skulking");
-            case 4: return ("Tireless");
-            case 5: return ("Cyberbrain");
-            case 6: return ("Evil Lair");
-            case 7: return ("Full regeneration");
-            case 8: return ("Widespread Panic");
-            case 9: return ("Antimatter Beam");
-            case 10: return ("Skybeam");
-            // green // TODOWI translate
-            case 101: return ("Barbs");
-            case 102: return ("Final Roar");
-            case 103: return ("Poison Spit");
-            case 104: return ("Underdog");
-            case 105: return ("Defender of Tokyo");
-            case 106: return ("Fluxling");
-            case 107: return ("Have it all!");
-            case 108: return ("Sonic Boomer");
-            case 109: return ("Final push");
-            case 110: return ("Starburst");
+            // orange
+            case 1: return _("Devious");
+            case 2: return _("Eternal");
+            case 3: return _("Skulking");
+            case 4: return _("Tireless");
+            case 5: return _("Cyberbrain");
+            case 6: return _("Evil Lair");
+            case 7: return _("Full regeneration");
+            case 8: return _("Widespread Panic");
+            case 9: return _("Antimatter Beam");
+            case 10: return _("Skybeam");
+            // green
+            case 101: return _("Barbs");
+            case 102: return _("Final Roar");
+            case 103: return _("Poison Spit");
+            case 104: return _("Underdog");
+            case 105: return _("Defender of Tokyo");
+            case 106: return _("Fluxling");
+            case 107: return _("Have it all!");
+            case 108: return _("Sonic Boomer");
+            case 109: return _("Final push");
+            case 110: return _("Starburst");
         }
         return null;
     };
     WickednessTiles.prototype.getCardDescription = function (cardTypeId) {
         switch (cardTypeId) {
             // orange
-            case 1: return ("<strong>Gain one extra die Roll</strong> each turn.");
-            case 2: return ("At the start of your turn, <strong> gain 1[Heart].</strong>");
-            case 3: return ("When you roll [dice1][dice1][dice1] or more, <strong> gain 1 extra [Star].</strong>");
-            case 4: return ("At the start of your turn, <strong> gain 1[Energy].</strong>");
-            case 5: return ("You get <strong>1 extra die.</strong>");
-            case 6: return ("Buying Power cards <strong>costs you 1 less [energy].</strong>");
-            case 7: return ("<strong>You may have up to 12[heart].</strong> Fully heal (to 12) when you gain this tile.");
-            case 8: return ("<strong>All other Monsters lose 4[Star],</strong> then discard this tile.");
-            case 9: return ("<strong>Double all of your [diceSmash].</strong>");
-            case 10: return ("<strong>Gain 1 extra [Energy]</strong> for each [diceEnergy] and <strong>1 extra [Heart]</strong> for each [diceHeart]");
+            case 1: return _("<strong>Gain one extra die Roll</strong> each turn.");
+            case 2: return _("At the start of your turn, <strong> gain 1[Heart].</strong>");
+            case 3: return _("When you roll [dice1][dice1][dice1] or more, <strong> gain 1 extra [Star].</strong>");
+            case 4: return _("At the start of your turn, <strong> gain 1[Energy].</strong>");
+            case 5: return _("You get <strong>1 extra die.</strong>");
+            case 6: return _("Buying Power cards <strong>costs you 1 less [energy].</strong>");
+            case 7: return _("<strong>You may have up to 12[heart].</strong> Fully heal (to 12) when you gain this tile.");
+            case 8: return _("<strong>All other Monsters lose 4[Star],</strong> then discard this tile.");
+            case 9: return _("<strong>Double all of your [diceSmash].</strong>");
+            case 10: return _("<strong>Gain 1 extra [Energy]</strong> for each [diceEnergy] and <strong>1 extra [Heart]</strong> for each [diceHeart]");
             // green
-            case 101: return ("<strong>When you roll at least [diceSmash][diceSmash], gain a [diceSmash].</strong>");
-            case 102: return ("If you are eliminated from the game with 16[Star] or more, <strong>you win the game instead.</strong>");
-            case 103: return ("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
-            case 104: return ("<strong>When you smash a Monster,</strong> if that Monster has more [Star] than you, <strong>steal 1[Star]</strong>");
-            case 105: return ("When you move into Tokyo or begin yout turn in Tokyo, <strong>all other Monsters lose 1[Star].</strong>");
-            case 106: return ("When you gain this, place it in front of a [keep] card of any player. <strong>This tile counts as a copy of that [keep] card.</strong> You can change which card you are copying at the start of your turn.");
-            case 107: return ("When you acquire this tile, <strong>gain 1[Star] for each [keep] card you have.</strong> Gain 1[Star] each time you buy any Power card");
-            case 108: return ("At the start of your turn, <strong>gain 1[Star].</strong>");
-            case 109: return ("<strong>+2[Heart] +2[Energy]</strong><br><br><strong>Take another turn after this one,</strong> then discard this tile.");
-            case 110: return ("<strong>+12[Energy]</strong> then discard this tile.");
+            case 101: return _("<strong>When you roll at least [diceSmash][diceSmash], gain a [diceSmash].</strong>");
+            case 102: return _("If you are eliminated from the game with 16[Star] or more, <strong>you win the game instead.</strong>");
+            case 103: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
+            case 104: return _("<strong>When you smash a Monster,</strong> if that Monster has more [Star] than you, <strong>steal 1[Star]</strong>");
+            case 105: return _("When you move into Tokyo or begin yout turn in Tokyo, <strong>all other Monsters lose 1[Star].</strong>");
+            case 106: return _("When you gain this, place it in front of a [keep] card of any player. <strong>This tile counts as a copy of that [keep] card.</strong> You can change which card you are copying at the start of your turn.");
+            case 107: return _("When you acquire this tile, <strong>gain 1[Star] for each [keep] card you have.</strong> Gain 1[Star] each time you buy any Power card");
+            case 108: return _("At the start of your turn, <strong>gain 1[Star].</strong>");
+            case 109: return _("<strong>+2[Heart] +2[Energy]</strong><br><br><strong>Take another turn after this one,</strong> then discard this tile.");
+            case 110: return _("<strong>+12[Energy]</strong> then discard this tile.");
         }
         return null;
     };
     WickednessTiles.prototype.getTooltip = function (cardTypeId) {
         var level = this.getCardLevel(cardTypeId);
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(/* TODOWI _(*/ "Level : ${level}" /*)*/, { 'level': level }) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     WickednessTiles.prototype.setupNewCard = function (cardDiv, cardType) {
@@ -3555,7 +3555,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 3: return _('“Nature vs. Machine, part I” event (Tokyo Tower)');
             case 4: return _('“Battle of the Gods: the Revenge!” event (Curse cards)');
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
-            case 6: return /*TODOWI_*/ ('“Even more wicked!” event');
+            case 6: return _('“Even more wicked!” event');
             case 7: return /*TODOPU_*/ ('Power-Up! (Evolutions)');
         }
     };
@@ -3566,7 +3566,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 3: return formatTextIcons("<p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>");
             case 4: return formatTextIcons(_("Anubis brings the Curse cards and the Die of Fate. The Curse card on the table show a permanent effect, applied to all players, and the Die of Fate can trigger the Ankh effect or the Snake effect."));
             case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
-            case 6: return formatTextIcons(/*TODOWI_*/ ("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
+            case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(/*TODOPU_*/ ("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
         }
         return '';
@@ -4922,14 +4922,14 @@ var KingOfTokyo = /** @class */ (function () {
             // health & energy counters
             var html = "<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>";
             if (gamedatas.wickednessExpansion) {
-                html += "\n                <div id=\"wickedness-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon wickedness\"></div> \n                    <span id=\"wickedness-counter-" + player.id + "\"></span>\n                </div>"; // TODOWI
+                html += "\n                <div id=\"wickedness-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon wickedness\"></div> \n                    <span id=\"wickedness-counter-" + player.id + "\"></span>\n                </div>";
             }
             html += "</div>";
             dojo.place(html, "player_board_" + player.id);
             _this.addTooltipHtml("health-counter-wrapper-" + player.id, _("Health"));
             _this.addTooltipHtml("energy-counter-wrapper-" + player.id, _("Energy"));
             if (gamedatas.wickednessExpansion) {
-                _this.addTooltipHtml("wickedness-counter-wrapper-" + player.id, /* TODOWI_*/ ("Wickedness points"));
+                _this.addTooltipHtml("wickedness-counter-wrapper-" + player.id, _("Wickedness points"));
             }
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 var html_1 = "<div class=\"counters\">";
