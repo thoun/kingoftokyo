@@ -619,7 +619,7 @@ class KingOfTokyo extends Table {
                     $this->applyDontSupport($active_player);
                     return;
                 case 'cancelDamage':
-                    $this->applySkipWings($active_player);
+                    $this->applySkipCancelDamage($active_player);
                     return;
                 case 'leaveTokyo':
                     $this->yieldTokyo($active_player);

@@ -788,10 +788,10 @@ trait CardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $this->applySkipWings($playerId);
+        $this->applySkipCancelDamage($playerId);
     }
 
-    function applySkipWings(int $playerId) {
+    function applySkipCancelDamage(int $playerId) {
 
         $intervention = $this->getDamageIntervention();
 

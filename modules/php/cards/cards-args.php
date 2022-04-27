@@ -75,8 +75,9 @@ trait CardsArgTrait {
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+                $buyableCardsOfPlayer = array_values(array_filter($cardsOfPlayer, fn($card) => $card->type < 300));
 
-                foreach ($cardsOfPlayer as $card) {
+                foreach ($buyableCardsOfPlayer as $card) {
                     $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
                     if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                         $canBuyOrNenew = true;
@@ -286,7 +287,7 @@ trait CardsArgTrait {
             $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
         }
         
-        if ($playerId != null) {
+        if ($playerId != null && $intervention !== null) {
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
 
@@ -357,6 +358,7 @@ trait CardsArgTrait {
         } else {
             return [
                 'damage' => '',
+                'canDoAction' => false,
             ];
         }
     }

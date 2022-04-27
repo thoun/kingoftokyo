@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/../objects/player-intervention.php');
+
+use KOT\Objects\CancelDamageIntervention;
+
 trait CardsStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,12 +76,24 @@ trait CardsStateTrait {
         }
     }
 
-    function stCancelDamage() {
+    function stCancelDamage() {            
+        $intervention = $this->getDamageIntervention();
+        $currentPlayerId = $intervention != null && $intervention->remainingPlayersId != null && count($intervention->remainingPlayersId) > 0 ?
+            $intervention->remainingPlayersId[0] : null;
+        $currentDamage = $currentPlayerId !== null ? 
+            $this->array_find($intervention->damages, fn($damage) => $damage->playerId == $currentPlayerId) : null;
+
+        if ($currentDamage 
+            && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
+                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId))
+        ) {
+            $this->applySkipCancelDamage($currentPlayerId);
+        }
+
         $this->stIntervention(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
 
-        if ($this->autoSkipImpossibleActions()) {
-            
-            $intervention = $this->getDamageIntervention();
+        $intervention = $this->getDamageIntervention();
+        if ($intervention !== null && $this->autoSkipImpossibleActions()) {
             
             $playerId = null;
             if ($intervention != null && $intervention->remainingPlayersId != null && count($intervention->remainingPlayersId) > 0) {
@@ -110,7 +126,7 @@ trait CardsStateTrait {
             $canCancelWithSuperJump = $arg['superJumpHearts'] > 0 && $potentialEnergy >= 1;
             $canCancelWithRapidHealing = $arg['damageToCancelToSurvive'] && $arg['damageToCancelToSurvive'] >= 1;
             if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot && !$canCancelWithRapidHealing && !$canCancelWithSuperJump && !$canCancelWithDetachableTail && !$canUseRabbitsFoot) {
-                $this->applySkipWings($playerId);
+                $this->applySkipCancelDamage($playerId);
             }
         }
     }
