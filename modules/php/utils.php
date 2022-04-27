@@ -486,7 +486,7 @@ trait UtilTrait {
         return array_map(fn($dbResult) => new Player($dbResult), array_values($dbResults));
     }
 
-    function getOrderedPlayers(int $currentTurnPlayerId, bool $includeEliminated = false) {
+    function getOrderedPlayers(int $currentTurnPlayerId, bool $includeEliminated = false, bool $currentLast = false) {
         $players = $this->getPlayers($includeEliminated);
 
         $playerIndex = 0; 
@@ -498,11 +498,23 @@ trait UtilTrait {
         }
 
         $orderedPlayers = $players;
-        if ($playerIndex > 0) { // we start from $currentTurnPlayerId and then follow order
-            $orderedPlayers = array_merge(array_slice($players, $playerIndex), array_slice($players, 0, $playerIndex));
+
+        if ($currentLast) {
+            if ($playerIndex < count($players) - 1) { // we start from $currentTurnPlayerId and then follow order
+                $orderedPlayers = array_merge(array_slice($players, $playerIndex + 1), array_slice($players, 0, $playerIndex + 1));
+            }
+        } else {
+            if ($playerIndex > 0) { // we start from $currentTurnPlayerId and then follow order
+                $orderedPlayers = array_merge(array_slice($players, $playerIndex), array_slice($players, 0, $playerIndex));
+            }
         }
 
         return $orderedPlayers;
+    }
+
+    function getOrderedPlayersIds(int $currentTurnPlayerId, bool $includeEliminated = false, bool $currentLast = false) {
+        $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, $includeEliminated, $currentLast);
+        return array_map(fn($player) => $player->id, $orderedPlayers);
     }
     
     function eliminatePlayers(int $currentTurnPlayerId) {
@@ -1033,9 +1045,15 @@ trait UtilTrait {
                 $activePlayerId = $this->getActivePlayerId();
                 $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
             }
+
+            $damagesToPlayer = array_values(array_filter($damages, fn($d) => $damage->playerId == $d->playerId));
+            if (count($damagesToPlayer) > 1) {
+                $this->error('[GBA] multiple damages : ' . json_encode($damagesToPlayer));
+            }
         }
 
         if (count($cancellableDamages) > 0) {
+            // TODOPU $playersIds = $this->getOrderedPlayersIds($damages[0]->damageDealerId, false, true);
             $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages, $damages);
             $cancelDamageIntervention->endState = $endStateId;
             $this->setDamageIntervention($cancelDamageIntervention);

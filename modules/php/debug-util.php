@@ -17,26 +17,26 @@ trait DebugUtilTrait {
 
         // base game
 
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
-        $this->debugSetPlayerInLocation($playersIds[4], 1);
-        $this->debugSetPlayerInLocation($playersIds[0], 2);
+        //$this->debugSetPlayerInLocation($playersIds[4], 1);
+        //$this->debugSetPlayerInLocation($playersIds[0], 2);
         $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 7);
-        $this->debugSetPlayerHealth($playersIds[0], 7);
-        $this->debugSetPlayerHealth($playersIds[1], 6);
-        $this->debugSetPlayerHealth($playersIds[2], 3);
-        $this->debugSetPlayerHealth($playersIds[3], 1);
-        $this->debugSetPlayerHealth($playersIds[4], 5);
+        //$this->debugSetPlayerHealth($playersIds[0], 7);
+        //$this->debugSetPlayerHealth($playersIds[1], 6);
+        //$this->debugSetPlayerHealth($playersIds[2], 3);
+        //$this->debugSetPlayerHealth($playersIds[3], 1);
+        //$this->debugSetPlayerHealth($playersIds[4], 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
         //$this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -63,7 +63,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
+        $this->debugSetCardInHand(WINGS_CARD, 2343494);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
@@ -82,14 +82,14 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343493);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
-        //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343492);
+        $this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
         //$this->debugSetPlayerHealth(2343492, 11);
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343493);
@@ -98,9 +98,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
-        $this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, $playersIds[2]);
-        $this->debugSetCardInHand(HEALING_RAY_CARD, $playersIds[2]);
-        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, $playersIds[4]);
+        //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, $playersIds[2]);
+        //$this->debugSetCardInHand(HEALING_RAY_CARD, $playersIds[2]);
+        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, $playersIds[4]);
 
         // dark edition
 
@@ -128,11 +128,11 @@ trait DebugUtilTrait {
 
         // cthulhu
         if ($this->isCthulhuExpansion()) {
-            //$this->debugSetCultists(1);
+            $this->debugSetCultists(1);
             //$this->debugSetPlayerCultists(2343492, 10);
-            $this->debugSetPlayerCultists($playersIds[2], 1);
-            $this->debugSetPlayerCultists($playersIds[3], 3);
-            $this->debugSetPlayerCultists($playersIds[4], 2);
+            //$this->debugSetPlayerCultists($playersIds[2], 1);
+            //$this->debugSetPlayerCultists($playersIds[3], 3);
+            //$this->debugSetPlayerCultists($playersIds[4], 2);
         }
 
         // anubis
@@ -209,8 +209,8 @@ trait DebugUtilTrait {
 
         // player order
 
-        //$this->gamestate->changeActivePlayer(2343492);
-        $this->gamestate->changeActivePlayer($playersIds[0]);
+        $this->gamestate->changeActivePlayer(2343492);
+        //$this->gamestate->changeActivePlayer($playersIds[0]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);

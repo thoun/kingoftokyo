@@ -53,6 +53,9 @@ class CancelDamageIntervention extends PlayerIntervention {
     public $playersUsedDice; // store playerId => PlayersUsedDice
     public $targetAcquiredAsked = false;
     public $lightningArmorAsked = false;
+    public /*array int[]*/ $remainingPlayersIds;
+    public /*array Damage[], playerId as key*/ $damagesToResolve = [];
+    public /*array Damage[], playerId as key*/ $resolvedDamages = [];
 
     public function __construct(array $remainingPlayersId, array $damages, array $allDamages) {
         parent::__construct(ST_MULTIPLAYER_CANCEL_DAMAGE, $remainingPlayersId);
