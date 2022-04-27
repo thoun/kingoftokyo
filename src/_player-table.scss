@@ -176,6 +176,8 @@
     }
     
     .player-wickedness-tiles {
+        width: 100%;
+        
         &.empty {
             max-height: 0px;
         }

@@ -975,9 +975,6 @@
   -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
-.player-evolution-cards .stockitem .name-wrapper .outline.curse {
-  -webkit-text-stroke: 4px #1c484f;
-}
 .player-evolution-cards .stockitem .name-wrapper .text {
   position: relative;
   left: 0;
@@ -1024,9 +1021,38 @@
   cursor: not-allowed;
 }
 
-.wickedness-tile-stock .stockitem .name-wrapper {
+.wickedness-tile-stock .stockitem .name-and-description {
+  position: absolute;
+  top: 3px;
+  min-height: 75px;
   left: 0;
-  width: 100%;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-content: center;
+}
+.wickedness-tile-stock .stockitem .name-and-description > div {
+  flex: 1;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.wickedness-tile-stock .stockitem .name-wrapper {
+  position: relative;
+  top: unset;
+  left: unset;
+  width: unset;
+  left: 0;
+  width: 112px;
+  text-align: center;
+  margin: 3px;
+}
+.wickedness-tile-stock .stockitem .name-wrapper .outline {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 .wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side0 {
   -webkit-text-stroke: 4px #8c1e10;
@@ -1034,8 +1060,17 @@
 .wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side1 {
   -webkit-text-stroke: 4px #364e11;
 }
+.wickedness-tile-stock .stockitem .name-wrapper .text {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
 .wickedness-tile-stock .stockitem .description-wrapper {
-  top: 33px;
+  position: relative;
+  top: unset;
+  left: unset;
+  width: 92px;
 }
 
 #table {
@@ -1454,6 +1489,9 @@
 #table .player-table .token-wrapper.shrink-ray .token {
   box-shadow: 0 0 4px 4px #d7e2a1;
 }
+#table .player-table .player-wickedness-tiles {
+  width: 100%;
+}
 #table .player-table .player-wickedness-tiles.empty {
   max-height: 0px;
 }
@@ -1708,18 +1746,21 @@ html, .mode_3d #game_play_area_background {
   background-position: 0% 0%;
 }
 .icon.energy {
-  background-position: 20% 0%;
+  background-position: 16.6666666667% 0%;
 }
 .icon.health {
-  background-position: 40% 0%;
+  background-position: 33.3333333333% 0%;
 }
 .icon.forbidden {
-  background-position: 60% 0%;
+  background-position: 50% 0%;
 }
 .icon.dead {
-  background-position: 80% 0%;
+  background-position: 66.6666666667% 0%;
 }
 .icon.lock {
+  background-position: 83.3333333333% 0%;
+}
+.icon.wickedness {
   background-position: 100% 0%;
 }
 

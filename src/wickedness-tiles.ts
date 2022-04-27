@@ -6,6 +6,28 @@ const wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
 
 class WickednessTiles {
     constructor (private game: KingOfTokyoGame) {}
+
+    debugSeeAllCards() {
+        let html = `<div id="all-wickedness-tiles" class="wickedness-tile-stock player-wickedness-tiles">`;
+        [0, 1].forEach(side => 
+            html += `<div id="all-wickedness-tiles-${side}" style="display: flex; flex-wrap: nowrap;"></div>`
+        );
+        html += `</div>`;
+        dojo.place(html, 'kot-table', 'before');
+
+        [0, 1].forEach(side => {
+            const evolutionRow = document.getElementById(`all-wickedness-tiles-${side}`);
+            for (let i = 1; i <= 10; i++) {
+                const tempDiv = this.generateCardDiv({
+                    type: side * 100 + i,
+                    side
+                } as WickednessTile);
+                tempDiv.id = `all-wickedness-tiles-${side}-${i}`;
+                evolutionRow.appendChild(tempDiv);
+                (this.game as any).addTooltipHtml(tempDiv.id, this.getTooltip(side * 100 + i));
+            }
+        })
+    }
     
     public setupCards(stocks: Stock[]) {
         const wickednesstilessurl = `${g_gamethemeurl}img/wickedness-tiles.jpg`;
@@ -44,6 +66,22 @@ class WickednessTiles {
             //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
             this.addCardsToStock(destinationStock, [tile], sourceStock.container_div.id);
         }
+    }
+
+    public generateCardDiv(card: WickednessTile): HTMLDivElement {
+        const tempDiv: HTMLDivElement = document.createElement('div');
+        tempDiv.classList.add('stockitem');
+        tempDiv.style.width = `${WICKEDNESS_TILES_WIDTH}px`;
+        tempDiv.style.height = `${WICKEDNESS_TILES_HEIGHT}px`;
+        tempDiv.style.position = `relative`;
+        tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/wickedness-tiles.jpg')`;
+        tempDiv.style.backgroundPosition = `-${wickenessTilesIndex[card.type % 100] * 50}% ${card.side > 0 ? 100 : 0}%`;
+
+        document.body.appendChild(tempDiv);
+        this.setDivAsCard(tempDiv, card.type);
+        document.body.removeChild(tempDiv);
+            
+        return tempDiv;
     }
 
     public getCardLevel(cardTypeId: number): number {
@@ -134,12 +172,41 @@ class WickednessTiles {
         const description = formatTextIcons(this.getCardDescription(cardType));
 
         cardDiv.innerHTML = `
-        <div class="name-wrapper">
-            <div class="outline ${cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0'}">${name}</div>
-            <div class="text">${name}</div>
-        </div>
-        
-        <div class="description-wrapper">${description}</div>`;
+        <div class="name-and-description">
+            <div>
+                <div class="name-wrapper">
+                    <div class="outline ${cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0'}">${name}</div>
+                    <div class="text">${name}</div>
+                </div>
+            </div>
+            <div>        
+                <div class="description-wrapper">${description}</div>
+            </div>
+        `;
+
+        let textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+
+        if (textHeight > 50) {
+            (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).style.width = '100%';
+        }
+        textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+
+        if (textHeight > 50) {
+            (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).style.fontSize = '6pt';
+        }
+        textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+
+        let nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
+
+        if (75 - textHeight < nameHeight) {
+            (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '8pt';
+        }
+
+        nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
+
+        if (75 - textHeight < nameHeight) {
+            (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '7pt';
+        }
     }
 
     public changeMimicTooltip(mimicCardId: string, mimickedCardText: string) {

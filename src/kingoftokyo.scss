@@ -48,27 +48,31 @@ html, .mode_3d #game_play_area_background {
     background-size: auto 100%;
   
     &.points {
-      background-position: #{0 * 100% / 5} 0%;
+      background-position: #{0 * 100% / 6} 0%;
     }
   
     &.energy {
-      background-position: #{1 * 100% / 5} 0%;
+      background-position: #{1 * 100% / 6} 0%;
     }
   
     &.health {
-      background-position: #{2 * 100% / 5} 0%;
+      background-position: #{2 * 100% / 6} 0%;
     }
   
     &.forbidden {
-      background-position: #{3 * 100% / 5} 0%;
+      background-position: #{3 * 100% / 6} 0%;
     }
   
     &.dead {
-      background-position: #{4 * 100% / 5} 0%;
+      background-position: #{4 * 100% / 6} 0%;
     }
   
     &.lock {
-      background-position: #{5 * 100% / 5} 0%;
+      background-position: #{5 * 100% / 6} 0%;
+    }
+  
+    &.wickedness {
+      background-position: #{6 * 100% / 6} 0%;
     }
 }
 

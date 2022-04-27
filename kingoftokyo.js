@@ -1367,6 +1367,27 @@ var WickednessTiles = /** @class */ (function () {
     function WickednessTiles(game) {
         this.game = game;
     }
+    WickednessTiles.prototype.debugSeeAllCards = function () {
+        var _this = this;
+        var html = "<div id=\"all-wickedness-tiles\" class=\"wickedness-tile-stock player-wickedness-tiles\">";
+        [0, 1].forEach(function (side) {
+            return html += "<div id=\"all-wickedness-tiles-" + side + "\" style=\"display: flex; flex-wrap: nowrap;\"></div>";
+        });
+        html += "</div>";
+        dojo.place(html, 'kot-table', 'before');
+        [0, 1].forEach(function (side) {
+            var evolutionRow = document.getElementById("all-wickedness-tiles-" + side);
+            for (var i = 1; i <= 10; i++) {
+                var tempDiv = _this.generateCardDiv({
+                    type: side * 100 + i,
+                    side: side
+                });
+                tempDiv.id = "all-wickedness-tiles-" + side + "-" + i;
+                evolutionRow.appendChild(tempDiv);
+                _this.game.addTooltipHtml(tempDiv.id, _this.getTooltip(side * 100 + i));
+            }
+        });
+    };
     WickednessTiles.prototype.setupCards = function (stocks) {
         var _this = this;
         var wickednesstilessurl = g_gamethemeurl + "img/wickedness-tiles.jpg";
@@ -1401,6 +1422,19 @@ var WickednessTiles = /** @class */ (function () {
             //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
             this.addCardsToStock(destinationStock, [tile], sourceStock.container_div.id);
         }
+    };
+    WickednessTiles.prototype.generateCardDiv = function (card) {
+        var tempDiv = document.createElement('div');
+        tempDiv.classList.add('stockitem');
+        tempDiv.style.width = WICKEDNESS_TILES_WIDTH + "px";
+        tempDiv.style.height = WICKEDNESS_TILES_HEIGHT + "px";
+        tempDiv.style.position = "relative";
+        tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/wickedness-tiles.jpg')";
+        tempDiv.style.backgroundPosition = "-" + wickenessTilesIndex[card.type % 100] * 50 + "% " + (card.side > 0 ? 100 : 0) + "%";
+        document.body.appendChild(tempDiv);
+        this.setDivAsCard(tempDiv, card.type);
+        document.body.removeChild(tempDiv);
+        return tempDiv;
     };
     WickednessTiles.prototype.getCardLevel = function (cardTypeId) {
         var id = cardTypeId % 100;
@@ -1480,7 +1514,24 @@ var WickednessTiles = /** @class */ (function () {
     WickednessTiles.prototype.setDivAsCard = function (cardDiv, cardType) {
         var name = this.getCardName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
-        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n            <div class=\"text\">" + name + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        cardDiv.innerHTML = "\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n                    <div class=\"text\">" + name + "</div>\n                </div>\n            </div>\n            <div>        \n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        ";
+        var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
+        if (textHeight > 50) {
+            cardDiv.getElementsByClassName('description-wrapper')[0].style.width = '100%';
+        }
+        textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
+        if (textHeight > 50) {
+            cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';
+        }
+        textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
+        var nameHeight = cardDiv.getElementsByClassName('outline')[0].clientHeight;
+        if (75 - textHeight < nameHeight) {
+            cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '8pt';
+        }
+        nameHeight = cardDiv.getElementsByClassName('outline')[0].clientHeight;
+        if (75 - textHeight < nameHeight) {
+            cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '7pt';
+        }
     };
     WickednessTiles.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
         this.game.addTooltipHtml(mimicCardId, this.getTooltip(106) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
@@ -3497,8 +3548,9 @@ var KingOfTokyo = /** @class */ (function () {
         var oldShowMessage = this.showMessage;
         this.showMessage = function (msg, type) { return oldShowMessage(formatTextIcons(msg), type); };
         log("Ending game setup");
-        /*if (window.location.host == 'studio.boardgamearena.com' && this.isPowerUpExpansion()) {
-            this.evolutionCards.debugSeeAllCards();
+        /*if (window.location.host == 'studio.boardgamearena.com') {
+            //this.isPowerUpExpansion() && this.evolutionCards.debugSeeAllCards();
+            //this.isWickednessExpansion() && this.wickednessTiles.debugSeeAllCards();
         }*/
     };
     ///////////////////////////////////////////////////
