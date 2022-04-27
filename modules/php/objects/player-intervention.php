@@ -77,10 +77,7 @@ class CancelDamageIntervention extends PlayerIntervention {
         } else {
             $playerHealth = $game->getPlayerHealth($playerId);
 
-            $totalDamage = $damage;
-            if ($game->countCardOfType($damageDealerId, DEVIL_CARD)) {
-                $totalDamage += 1;
-            }
+            $totalDamage = $game->getEffectiveDamage($damage, $playerId, $damageDealerId)->effectiveDamage;
 
             if ($playerHealth <= $totalDamage) {
                 $rapidHealingHearts = $game->cancellableDamageWithRapidHealing($playerId);

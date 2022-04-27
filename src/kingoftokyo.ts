@@ -616,30 +616,32 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
             }
 
-            if (args.superJumpHearts && !document.getElementById('useSuperJump1_button')) {
-                for (let i=Math.min(args.damage, args.superJumpHearts); i>0; i--) {
-                    let healthLoss = args.damage - i;
-                    const energyCost = (healthLoss === 0 && args.devilCard) ? i - 1 : i;
+            if (args.countSuperJump > 0 && !document.getElementById('useSuperJump1_button')) {
+                Object.keys(args.replaceHeartByEnergyCost).filter(energy => Number(energy) <= args.countSuperJump).forEach(energy => {
+                    const energyCost = Number(energy);
+                    const remainingDamage = args.replaceHeartByEnergyCost[energy];
+
                     const id = `useSuperJump${energyCost}_button`;
                     if (!document.getElementById(id)) {
-                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(53, 'text-only')})), () => this.useSuperJump(energyCost));
+                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(53, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useSuperJump(energyCost));
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
-                }
+                });
             }
 
             if (args.canUseRobot && !document.getElementById('useRobot1_button')) {
-                for (let i=args.damage; i>0; i--) {
-                    let healthLoss = args.damage - i;
-                    const energyCost = (healthLoss === 0 && args.devilCard) ? i - 1 : i;
+                Object.keys(args.replaceHeartByEnergyCost).forEach(energy => {
+                    const energyCost = Number(energy);
+                    const remainingDamage = args.replaceHeartByEnergyCost[energy];
+
                     const id = `useRobot${energyCost}_button`;
                     if (!document.getElementById(id)) {
-                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(210, 'text-only')})), () => this.useRobot(energyCost));
+                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(210, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useRobot(energyCost));
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
-                }
+                });
             }
 
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
@@ -663,8 +665,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                         cardsNames.push(_(this.cards.getCardName(37, 'text-only')));
                     }
 
-                    if (cultistCount + rapidHealingCount >= args.canHeal && 2*rapidHealingCount <= args.playerEnergy) {
-                        const text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')}` + (rapidHealingCount > 0 ? ` (${2*rapidHealingCount}[Energy])` : '')), { 'card_name': cardsNames.join(', '), 'hearts': args.canHeal });
+                    if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive && 2*rapidHealingCount <= args.playerEnergy) {
+                        const text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')}` + (rapidHealingCount > 0 ? ` (${2*rapidHealingCount}[Energy])` : '')), { 'card_name': cardsNames.join(', '), 'hearts': cultistCount + rapidHealingCount });
                         (this as any).addActionButton(`rapidHealingSync_button_${i}`, text, () => this.useRapidHealingSync(cultistCount, rapidHealingCount));
                     }
                 }
@@ -1789,8 +1791,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 'rapidCultistButtons', 
                 'rapidCultistHealthButton', 
                 formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1})}`), 
-                // TODOBUG
-                () => document.querySelectorAll(`[id^='rapidHealingSync_button'`).length > 0 ? (this as any).showMessage('please click on "Use Cultists" button', 'error') : this.useRapidCultist(4), 
+                () => this.useRapidCultist(4), 
                 isMaxHealth
             );
             
@@ -3091,6 +3092,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['addSuperiorAlienTechnologyToken', 1],
             ['removeSuperiorAlienTechnologyToken', 1],
             ['giveTarget', 1],
+            ['updateCancelDamage', 1],
             ['log500', 500]
         ];
     
@@ -3355,16 +3357,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.checkMothershipSupportButtonState();
     }
 
-    notif_useCamouflage(notif: Notif<NotifUseCamouflageArgs>) {
+    notif_useCamouflage(notif: Notif<NotifUpdateCancelDamageArgs>) {
+        this.notif_updateCancelDamage(notif);
+        this.diceManager.showCamouflageRoll(notif.args.diceValues);
+    }
+
+    notif_updateCancelDamage(notif: Notif<NotifUpdateCancelDamageArgs>) {
         if (notif.args.cancelDamageArgs) { 
             this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
             (this as any).updatePageTitle();
             this.onEnteringCancelDamage(notif.args.cancelDamageArgs, (this as any).isCurrentPlayerActive());
         }
-        this.diceManager.showCamouflageRoll(notif.args.diceValues);
     }
 
-    notif_useLightningArmor(notif: Notif<NotifUseCamouflageArgs>) {
+    notif_useLightningArmor(notif: Notif<NotifUpdateCancelDamageArgs>) {
         this.diceManager.showCamouflageRoll(notif.args.diceValues);
     }
 

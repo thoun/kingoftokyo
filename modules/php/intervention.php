@@ -85,17 +85,18 @@ trait InterventionTrait {
         }
     }
 
-    function reduceInterventionDamages(int $playerId, $intervention, int $reduceBy /* -1 for remove all for player*/) {
-        if ($reduceBy === -1) {
-            $intervention->damages = array_values(array_filter($intervention->damages, fn($d) => $d->playerId != $playerId));
-            if ($intervention->allDamages) { // TODOPU remove this if
-                $intervention->allDamages = array_values(array_filter($intervention->allDamages, fn($d) => $d->playerId != $playerId));
-            }
+    function reduceInterventionDamages(int $playerId, &$intervention, int $reduceBy /* -1 for remove all for player*/) {
+        $damageIndex = $this->array_find_index($intervention->damages, fn($d) => $d->playerId == $playerId);
+        $allDamageIndex = $this->array_find_index($intervention->allDamages, fn($d) => $d->playerId == $playerId);
+
+        if ($reduceBy === -1 || $reduceBy >= $intervention->damages[$damageIndex]->remainingDamage) {
+            // damage is fully cancelled, we remove it
+            array_splice($intervention->damages, $damageIndex, 1);
+            array_splice($intervention->allDamages, $allDamageIndex, 1);
         } else {
-            $intervention->damages = $this->reduceInterventionDamagesForArray($playerId, $intervention->damages, $reduceBy);
-            if ($intervention->allDamages) { // TODOPU remove this if
-                $intervention->allDamages = $this->reduceInterventionDamagesForArray($playerId, $intervention->allDamages, $reduceBy);
-            }
+            $intervention->damages[$damageIndex]->damage -= $reduceBy;
+            $intervention->damages[$damageIndex]->remainingDamage -= $reduceBy;
+            $intervention->allDamages[$allDamageIndex]->remainingDamage -= $reduceBy;
         }
         
         $this->setDamageIntervention($intervention);

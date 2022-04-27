@@ -366,6 +366,7 @@ interface EnteringCancelDamageArgs {
     canUseDetachableTail: boolean;
     canUseRabbitsFoot: boolean;
     canUseRobot: boolean;
+    countSuperJump: number;
     playerEnergy: number;
     dice: Die[];
     rethrow3: Rethrow3;
@@ -374,8 +375,8 @@ interface EnteringCancelDamageArgs {
     rapidHealingCultists: number;
     damageToCancelToSurvive: number;
     canHeal: number;
-    damage: number;
-    devilCard: boolean;
+    remainingDamage: number;
+    replaceHeartByEnergyCost: { [energy: number]: number }; // key is the energy spent, value is the heart cost
 }
 
 interface EnteringLeaveTokyoArgs {
@@ -551,10 +552,9 @@ interface NotifToggleMothershipSupportUsedArgs {
     used: boolean;
 }
 
-interface NotifUseCamouflageArgs {
-    playerId: number;
-    diceValues: Die[];
+interface NotifUpdateCancelDamageArgs {
     cancelDamageArgs: EnteringCancelDamageArgs;
+    diceValues?: Die[];
 }
 
 interface NotifChangeDieArgs {

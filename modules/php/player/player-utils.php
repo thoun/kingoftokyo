@@ -536,7 +536,11 @@ trait PlayerUtilTrait {
             $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
 
             if ($playerId == $rapidActionPlayerId) {
-                $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // to update args based on new health
+                $args = $this->argCancelDamage($playerId, false, $intervention);                
+                $this->notifyAllPlayers('updateCancelDamage', '', [
+                    'cancelDamageArgs' => $args,
+                ]);
+                //$this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // to update args based on new health
             }
         }
     }

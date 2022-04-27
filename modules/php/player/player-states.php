@@ -276,7 +276,7 @@ trait PlayerStateTrait {
             $this->incStat(1, $isBeastForm ? 'turnsInBeastForm' : 'turnsInBipedForm', $playerId);
         }
 
-        $this->gamestate->nextState('');
+        $this->goToState(ST_PLAYER_THROW_DICE);
     }
 
     function stLeaveTokyo() {
@@ -284,7 +284,7 @@ trait PlayerStateTrait {
             $canYieldTokyo = $this->argLeaveTokyo()['canYieldTokyo'];
             $oneCanYield = $this->array_some($canYieldTokyo, fn($canYield) => $canYield);
             if (!$oneCanYield) {
-                $this->gamestate->nextState('resume');
+                $this->goToState(ST_LEAVE_TOKYO_APPLY_JETS);
                 return;
             }
         }
@@ -318,7 +318,7 @@ trait PlayerStateTrait {
 
             $this->gamestate->setPlayersMultiactive($aliveSmashedPlayersInTokyo, 'resume', true);
         } else {
-            $this->gamestate->nextState('resume');
+            $this->goToState(ST_LEAVE_TOKYO_APPLY_JETS);
         }
     }
 

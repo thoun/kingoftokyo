@@ -280,8 +280,10 @@ trait CardsArgTrait {
         return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD);
     }
 
-    function argCancelDamage($playerId = null, $hasDice3 = false) {
-        $intervention = $this->getDamageIntervention();
+    function argCancelDamage($playerId = null, $hasDice3 = false, $intervention = null) {
+        if ($intervention == null) {
+            $intervention = $this->getDamageIntervention();
+        }
 
         if ($playerId == null) {
             $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
@@ -298,24 +300,24 @@ trait CardsArgTrait {
             $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $remainingDamage = 0;
-            $devilCard = false;
+            $damageDealerId = 0;
             foreach($intervention->damages as $damage) {
                 if ($damage->playerId == $playerId) {
-                    $remainingDamage += $damage->damage;
-
-                    if ($this->countCardOfType($damage->damageDealerId, DEVIL_CARD)) {
-                        $remainingDamage += 1;
-                        $devilCard = true;
-                    }
+                    $remainingDamage += $damage->remainingDamage ?? $damage->damage;
+                    $damageDealerId = $damage->damageDealerId;
                 }
             }
+
+            $effectiveDamageDetail = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId);
+            $effectiveDamage = $effectiveDamageDetail->effectiveDamage;
 
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
 
             $rapidHealingHearts = $this->cancellableDamageWithRapidHealing($playerId);
-            $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId);
+            $countSuperJump = $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD);
+            $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId); // TODODE use potentialEnergy
             $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
-            $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($remainingDamage, $this->getPlayerHealth($playerId));
+            $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($effectiveDamage, $this->getPlayerHealth($playerId));
             $canHeal = $rapidHealingHearts + $rapidHealingCultists + $superJumpHearts;
             $gotRegeneration = $this->countCardOfType($playerId, REGENERATION_CARD) > 0;
             $cancelHealWithEnergyCards = false;
@@ -332,6 +334,13 @@ trait CardsArgTrait {
                 $damageToCancelToSurvive = 0;
             }
 
+            $replaceHeartByEnergyCost = [];
+            if ($canUseRobot || $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0) {
+                for ($damageReducedBy=1; $damageReducedBy<=$remainingDamage; $damageReducedBy++) {
+                    $replaceHeartByEnergyCost[$damageReducedBy] = $this->getEffectiveDamage($remainingDamage - $damageReducedBy, $playerId, $damageDealerId)->effectiveDamage;
+                }
+            }
+
             $canDoAction = $canThrowDices || $canUseWings || $canUseDetachableTail || $canUseRabbitsFoot || $canUseRobot || $rapidHealingHearts || $superJumpHearts || $rapidHealingCultists || $hasDice3;
 
             return [
@@ -340,6 +349,7 @@ trait CardsArgTrait {
                 'canUseDetachableTail' => $canUseDetachableTail,
                 'canUseRabbitsFoot' => $canUseRabbitsFoot,
                 'canUseRobot' => $canUseRobot,
+                'countSuperJump' => $countSuperJump,
                 'rapidHealingHearts' => $rapidHealingHearts,
                 'superJumpHearts' => $superJumpHearts,
                 'rapidHealingCultists' => $rapidHealingCultists,
@@ -348,7 +358,8 @@ trait CardsArgTrait {
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
                 'damage' => $remainingDamage,
-                'devilCard' => $devilCard,
+                'remainingDamage' => $remainingDamage,
+                'replaceHeartByEnergyCost' => $replaceHeartByEnergyCost,
                 'rethrow3' => [
                     'hasCard' => $hasBackgroundDweller,
                     'hasDice3' => $hasDice3,
@@ -357,7 +368,7 @@ trait CardsArgTrait {
             ];
         } else {
             return [
-                'damage' => '',
+                'damage' => '', // for state message
                 'canDoAction' => false,
             ];
         }

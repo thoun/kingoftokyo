@@ -110,7 +110,7 @@ trait CardsStateTrait {
 
             $hasDice3 = $hasBackgroundDweller && $dice != null ? in_array(3, $diceValues) : false;
 
-            $arg = $this->argCancelDamage($playerId, $hasDice3);
+            $arg = $this->argCancelDamage($playerId, $hasDice3, $intervention);
 
             $canCancelWithCamouflage = $arg['canThrowDices'] || $arg['rethrow3']['hasDice3'];
 

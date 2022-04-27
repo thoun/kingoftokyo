@@ -25,6 +25,15 @@ trait UtilTrait {
         return null;
     }
 
+    function array_find_index(array $array, callable $fn) {
+        foreach ($array as $index => $value) {
+            if($fn($value)) {
+                return $index;
+            }
+        }
+        return null;
+    }
+
     function array_some(array $array, callable $fn) {
         foreach ($array as $value) {
             if($fn($value)) {
@@ -790,67 +799,30 @@ trait UtilTrait {
             return null; // player has wings and cannot lose hearts
         }
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
-
-        // devil
-        $devil = $activePlayerId == $damageDealerId && $playerId != $damageDealerId && $this->countCardOfType($damageDealerId, DEVIL_CARD) > 0;
-        if ($devil) {
-            $health++;
-        }
-
-        $countTargetAcquired = 0;
-        if ($isPowerUpExpansion && $playerId == intval($this->getGameStateValue(TARGETED_PLAYER))) {
-            $countTargetAcquired = $this->countEvolutionOfType($damageDealerId, TARGET_ACQUIRED_EVOLUTION);
-            $health += $countTargetAcquired;
-        }
-        $countClawsOfSteel = 0;
-        if ($isPowerUpExpansion && $health >= 3) {
-            $countClawsOfSteel = $this->countEvolutionOfType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
-            $health += $countClawsOfSteel;
-        }
+        $effectiveDamageDetail = $this->getEffectiveDamage($health, $playerId, $damageDealerId);
+        $effectiveDamage = $effectiveDamageDetail->effectiveDamage;
 
         $actualHealth = $this->getPlayerHealth($playerId);
-        $newHealth = max($actualHealth - $health, 0);
+        $newHealth = max($actualHealth - $effectiveDamage, 0);
 
         $this->DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
         if ($damageDealerId > 0) {
-            $this->incStat($health, 'damageDealt', $damageDealerId);
+            $this->incStat($effectiveDamage, 'damageDealt', $damageDealerId);
         }
-        $this->incStat($health, 'damage', $playerId);
+        $this->incStat($effectiveDamage, 'damage', $playerId);
 
         $message = $cardType <= 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
         $this->notifyAllPlayers('health', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'health' => $newHealth,
-            'delta_health' => $health,
+            'delta_health' => $effectiveDamage,
             'card_name' => $cardType == 0 ? null : $cardType,
         ]);
 
-        if ($devil) {
-            $this->notifyAllPlayers('log', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'delta_health' => 1,
-                'card_name' => DEVIL_CARD,
-            ]);
-        }
-        if ($countTargetAcquired) {
-            $this->notifyAllPlayers('log', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'delta_health' => $countTargetAcquired,
-                'card_name' => 3000 + TARGET_ACQUIRED_EVOLUTION,
-            ]);
-        }
-        if ($countClawsOfSteel) {
-            $this->notifyAllPlayers('log', clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'delta_health' => $countClawsOfSteel,
-                'card_name' => 3000 + CLAWS_OF_STEEL_EVOLUTION,
-            ]);
+        foreach ($effectiveDamageDetail->logs as $log) {
+            $this->notifyAllPlayers('log', $log->message, $log->args);
         }
 
         // Shrink Ray
@@ -868,7 +840,7 @@ trait UtilTrait {
             $this->applyGetPoints($damageDealerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
         }
             
-        $this->DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $health) ON DUPLICATE KEY UPDATE `damages` = `damages` + $health");
+        $this->DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $effectiveDamage) ON DUPLICATE KEY UPDATE `damages` = `damages` + $effectiveDamage");
 
         // pirate
         $pirateCardCount = $this->countCardOfType($damageDealerId, PIRATE_CARD);
@@ -898,7 +870,7 @@ trait UtilTrait {
             }
         }
 
-        $this->eliminatePlayers($activePlayerId);
+        $this->eliminatePlayers($activePlayerId); // TODOBUG $damageDealerId instead ?
 
         return $newHealth;
     }

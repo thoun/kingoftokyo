@@ -655,7 +655,7 @@ trait CardsActionTrait {
 
         $this->reduceInterventionDamages($playerId, $intervention, $cancelledDamage);
 
-        $args = $this->argCancelDamage($playerId, $canRethrow3);
+        $args = $this->argCancelDamage($playerId, $canRethrow3, $intervention);
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
         $stayOnState = false;
@@ -830,8 +830,9 @@ trait CardsActionTrait {
         $this->applyLoseEnergy($playerId, $energy, 0);
 
         $this->reduceInterventionDamages($playerId, $intervention, $energy);
+        $this->setDamageIntervention($intervention);
 
-        $args = $this->argCancelDamage($playerId, false);
+        $args = $this->argCancelDamage($playerId, false, $intervention);
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
         $stayOnState = false;
@@ -839,9 +840,7 @@ trait CardsActionTrait {
             $stayOnState = $args['canDoAction'];
         }
 
-        $this->setDamageIntervention($intervention);
-
-        $this->notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
+        $this->notifyAllPlayers('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => ROBOT_CARD,
@@ -863,7 +862,7 @@ trait CardsActionTrait {
             if ($this->gamestate->state()['name'] == 'cancelDamage') {
                 $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
             }
-        } else {            
+        } else {       
             $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'stay', null, $intervention);
         }
     }
@@ -894,7 +893,7 @@ trait CardsActionTrait {
 
         $this->reduceInterventionDamages($playerId, $intervention, $energy);
 
-        $args = $this->argCancelDamage($playerId, false);
+        $args = $this->argCancelDamage($playerId, false, $intervention);
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
         $stayOnState = false;
@@ -904,7 +903,7 @@ trait CardsActionTrait {
 
         $this->setDamageIntervention($intervention);
 
-        $this->notifyAllPlayers("useRobot", clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
+        $this->notifyAllPlayers('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => SUPER_JUMP_CARD,

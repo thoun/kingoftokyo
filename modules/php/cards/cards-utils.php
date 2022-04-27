@@ -5,10 +5,12 @@ namespace KOT\States;
 require_once(__DIR__.'/../objects/card.php');
 require_once(__DIR__.'/../objects/damage.php');
 require_once(__DIR__.'/../objects/question.php');
+require_once(__DIR__.'/../objects/log.php');
 
 use KOT\Objects\Card;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
+use KOT\Objects\LoseHealthLog;
 
 trait CardsUtilTrait {
 
@@ -996,6 +998,51 @@ trait CardsUtilTrait {
         $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
 
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function getEffectiveDamage(int $damageAmount, int $playerId, int $damageDealerId) {
+        $effectiveDamage = $damageAmount;
+        $logs = [];
+
+        if ($damageAmount > 0) {
+            // devil
+            $countDevil = $playerId != $damageDealerId && intval($this->getActivePlayerId()) == $damageDealerId ? $this->countCardOfType($damageDealerId, DEVIL_CARD) : 0;
+            if ($countDevil > 0) {
+                $effectiveDamage += $countDevil;
+                $logs[] = new LoseHealthLog($this, $playerId, $countDevil, DEVIL_CARD);
+            }
+
+            $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+            // target acquired
+            $countTargetAcquired = 0;
+            if ($isPowerUpExpansion && $playerId == intval($this->getGameStateValue(TARGETED_PLAYER))) {
+                $countTargetAcquired = $this->countEvolutionOfType($damageDealerId, TARGET_ACQUIRED_EVOLUTION);
+
+                if ($countTargetAcquired > 0) {
+                    $effectiveDamage += $countTargetAcquired;
+                    $logs[] = new LoseHealthLog($this, $playerId, $countTargetAcquired, 3000 + TARGET_ACQUIRED_EVOLUTION);
+                }
+            }
+
+            // claws of steel
+            $countClawsOfSteel = 0;
+            if ($isPowerUpExpansion && $damageAmount >= 3) {
+                $countClawsOfSteel = $this->countEvolutionOfType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
+
+                if ($countClawsOfSteel > 0) {
+                    $effectiveDamage += $countClawsOfSteel;
+                    $logs[] = new LoseHealthLog($this, $playerId, $countClawsOfSteel, 3000 + CLAWS_OF_STEEL_EVOLUTION);
+                }
+            }
+
+            // TODOPUHA detachable head TODOPU Mecha blast TODOPU Claws of steel ? TODOPU target acquired TODOPUDE electric carrot
+        }
+
+        $result = new \stdClass();
+        $result->effectiveDamage = $effectiveDamage;
+        $result->logs = $logs;
+        return $result;
     }
     
 }
