@@ -90,7 +90,51 @@ trait CardsStateTrait {
             $this->applySkipCancelDamage($currentPlayerId);
         }
 
-        $this->stIntervention(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
+        // TODOBUG TODOPU old stIntervention;
+
+        $keep = ($intervention->nextState === 'keep' || $intervention->nextState === 'next') 
+            && count($intervention->remainingPlayersId) > 0
+            && !$this->getPlayer($intervention->remainingPlayersId[0])->eliminated;
+            
+        if ($keep) {
+            // we check if player still ca do intervention (in case player got mimic, and mimicked camouflage player dies before mimic player intervention)
+
+            $playerId = $intervention->remainingPlayersId[0];
+
+            $damageDealerId = 0;
+            $damage = 0;
+            foreach($intervention->damages as $d) {
+                if ($d->playerId == $playerId) {
+                    $damage = $d->damage;
+                    $damageDealerId = $d->damageDealerId;
+                    break;
+                }
+            } 
+
+            $keep = CancelDamageIntervention::canDoIntervention($this, $playerId, $damage, $damageDealerId);
+
+            // if player cannot cancel damage, we apply them
+            if (!$keep) {           
+                foreach($intervention->damages as $d) {
+                    if ($d->playerId == $playerId) {
+                        $this->applyDamage($d->playerId, $d->damage, $d->damageDealerId, $d->cardType, $this->getActivePlayerId(), $d->giveShrinkRayToken, $d->givePoisonSpitToken, $d->smasherPoints);
+                    }
+                } 
+            }
+        }
+        
+        if ($keep) { // current player continues / next (intervention player) / or leaving transition
+            $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
+        } else { // leaving transition
+            if ($this->isPowerUpExpansion()) {
+                $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
+                return;
+            }
+
+            $this->deleteGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
+            $this->goToState($intervention->endState);
+        }
+        // TODOBUG TODOPU end old stIntervention
 
         $intervention = $this->getDamageIntervention();
         if ($intervention !== null && $this->autoSkipImpossibleActions()) {

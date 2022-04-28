@@ -483,7 +483,7 @@ trait CardsActionTrait {
     function applyOpportunistSkip(int $playerId) {
         $this->removeDiscardCards($playerId);
 
-        $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', 'end');
+        $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'next', ST_PLAYER_BUY_CARD);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
@@ -691,7 +691,7 @@ trait CardsActionTrait {
         }
 
         if (!$stayOnState) {
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
+            $this->setNextDamageIntervention('next', $intervention);
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
@@ -705,7 +705,7 @@ trait CardsActionTrait {
                 $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
             }
         } else {            
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'stay', null, $intervention);
+            $this->setNextDamageIntervention('stay', $intervention);
         }
     }
 
@@ -739,7 +739,7 @@ trait CardsActionTrait {
             }
         }
         
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention); // must be set before apply damage, in case this player die
+        $this->setNextDamageIntervention('next', $intervention); // must be set before apply damage, in case this player die
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
                 $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
@@ -779,7 +779,7 @@ trait CardsActionTrait {
 
         $intervention = $this->getDamageIntervention();
         $this->reduceInterventionDamages($playerId, $intervention, -1);
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
+        $this->setNextDamageIntervention('next', $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
@@ -801,7 +801,7 @@ trait CardsActionTrait {
             }
         }
 
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
+        $this->setNextDamageIntervention('next', $intervention);
 
         // we check we are still in cancelDamage (we could be redirected if player is eliminated)
         if ($this->gamestate->state()['name'] == 'cancelDamage') {
@@ -849,7 +849,7 @@ trait CardsActionTrait {
         ]);
 
         if (!$stayOnState) {
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
+            $this->setNextDamageIntervention('next', $intervention);
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
@@ -863,7 +863,7 @@ trait CardsActionTrait {
                 $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
             }
         } else {       
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'stay', null, $intervention);
+            $this->setNextDamageIntervention('stay', $intervention);
         }
     }
 
@@ -912,7 +912,7 @@ trait CardsActionTrait {
         ]);
 
         if (!$stayOnState) {
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
+            $this->setNextDamageIntervention('next', $intervention);
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
@@ -926,7 +926,7 @@ trait CardsActionTrait {
                 $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
             }
         } else {            
-            $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'stay', null, $intervention);
+            $this->setNextDamageIntervention('stay', $intervention);
         }
     }
 
