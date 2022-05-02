@@ -1142,6 +1142,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('changeForm_button',   dojo.string.substitute(_("Change to ${otherForm}"), {'otherForm' : _(argsChangeForm.otherForm)}) + formatTextIcons(` ( 1 [Energy])`), () => this.changeForm());
                     (this as any).addActionButton('skipChangeForm_button', _("Don't change form"), () => this.skipChangeForm());
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
+                    document.getElementById(`changeForm_button`).dataset.enableAtEnergy = '1';
                     break;
                 case 'leaveTokyoExchangeCard':
                     const argsExchangeCard = args as EnteringExchangeCardArgs;

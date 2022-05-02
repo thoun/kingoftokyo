@@ -4440,6 +4440,7 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('changeForm_button', dojo.string.substitute(_("Change to ${otherForm}"), { 'otherForm': _(argsChangeForm.otherForm) }) + formatTextIcons(" ( 1 [Energy])"), function () { return _this.changeForm(); });
                     this.addActionButton('skipChangeForm_button', _("Don't change form"), function () { return _this.skipChangeForm(); });
                     dojo.toggleClass('changeForm_button', 'disabled', !argsChangeForm.canChangeForm);
+                    document.getElementById("changeForm_button").dataset.enableAtEnergy = '1';
                     break;
                 case 'leaveTokyoExchangeCard':
                     var argsExchangeCard = args;
