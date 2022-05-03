@@ -147,40 +147,37 @@
                     box-shadow: 2px 2px 5px 2px black;
                     display: inline-block;
 
-                    #wickedness-tiles-reduced-3 {
+                    #wickedness-tiles-pile-3 {
                         top: 258px;
                     }
-                    #wickedness-tiles-reduced-6 {
+                    #wickedness-tiles-pile-6 {
                         top: 141px;
                     }
-                    #wickedness-tiles-reduced-10 {
+                    #wickedness-tiles-pile-10 {
                         top: 6px;
                     }
 
-                    #wickedness-tiles-expanded-3 {
-                        bottom: 10px;
-                    }
-                    #wickedness-tiles-expanded-6 {
-                        //top: 120px;
-                        bottom: 10px;
-                    }
-                    #wickedness-tiles-expanded-10 {
-                        top: 10px;
-                    }
-
-                    .wickedness-tiles-reduced {
+                    .wickedness-tiles-pile {
                         position: absolute;
-                        left: 145px;
-                        width: 132px;
+                        --tile-count: 1;
+                        left: 175px;
+                        width: calc(132px + var(--tile-count) * 3px);
+                        transition: height 0.5s ease-in-out, background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
                         height: 81px;
+                        border-radius: 8px;
+                        opacity: var(--tile-count);
 
-                        .wickedness-tiles-reduced-tile {
+                        .wickedness-tile {
                             position: absolute;
                             margin: 0;
                             width: 132px;
                             height: 81px;
                             background: url('img/wickedness-tiles.jpg');
                             border-radius: 10px;
+                            transition: left 0.5s ease-in-out, top 0.5s ease-in-out;
+                            top: calc(3px * var(--order));
+                            left: calc(3px * var(--order));
+                            cursor: default;
 
                             &[data-side="0"] { background-position-y: 0%; }
                             &[data-side="1"] { background-position-y: 100%; }
@@ -189,36 +186,21 @@
                             &[data-background-index="1"] { background-position-x: 50%; }
                             &[data-background-index="2"] { background-position-x: 100%; }
                         }
-                    }
 
-                    .wickedness-tiles-expanded {
-                        position: absolute;
-                        left: 145px;
-                        width: 142px;
-                        background: white;
-                        border-radius: 8px;
-                        visibility: hidden;
-                        padding-bottom: 10px;
-                        z-index: 20;
-        
-                        &.visible {
-                            visibility: visible;
+                        &:hover, &:active, &.opened {
+                            background-color: #fffc;
+                            box-shadow: 0px 0px 5px 5px #fffc;
+                            height: calc(85px * var(--tile-count) - 3px);
+
+                            .wickedness-tile {
+                                left: 0px;
+                                top: calc(85px * var(--order));
+                            }
                         }
 
-                        .close {
-                            cursor: pointer;
-                            text-align: right;
-                            padding-top: 5px;
-                            padding-right: 10px;
-                        }
-
-                        .wickedness-tile-stock {
-                            width: 132px;
-                        }
-
-                        &:not(.selectable) {
-                            .wickedness-tile-stock {
-                                pointer-events: none;
+                        &.selectable {
+                            .wickedness-tile {
+                                cursor: pointer;
                             }
                         }
                     }

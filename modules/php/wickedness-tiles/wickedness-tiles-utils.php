@@ -23,7 +23,7 @@ trait WickednessTilesUtilTrait {
 
         foreach ([3, 6, 10] as $level) {
             $levelTiles = array_values(array_filter($allTiles, fn($tile) =>
-                $level === ($tile->type > 8 ? 10 : ($tile->type > 4 ? 6 : 3))
+                $level === (($tile->type % 100) > 8 ? 10 : (($tile->type % 100) > 4 ? 6 : 3))
             ));
             $levelTilesIds = array_map(fn($tile) => $tile->id, $levelTiles);
             $this->wickednessTiles->moveCards($levelTilesIds, 'table', $level);
