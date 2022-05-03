@@ -81,11 +81,11 @@ trait UtilTrait {
     }
 
     function isAnubisExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
     }
 
     function isWickednessExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
     }
 
     function isPowerUpExpansion() {
@@ -93,7 +93,7 @@ trait UtilTrait {
     }
 
     function isPowerUpMutantEvolution() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 3;
+        return intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 3;
     }
 
     function isDarkEdition() {

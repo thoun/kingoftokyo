@@ -91,6 +91,18 @@ trait WickednessTilesUtilTrait {
                 }
                 $this->removeWickednessTiles($playerId, [$tile]);
                 break;
+            case ANTIMATTER_BEAM_WICKEDNESS_TILE:
+                $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+                $diceCounts[6] *= 2;
+                $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
+                break;
+            case BARBS_WICKEDNESS_TILE:
+                $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+                if ($diceCounts[6] >= 2) {
+                    $diceCounts[6] += 1;
+                    $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
+                }
+                break;
             case HAVE_IT_ALL_WICKEDNESS_TILE:
                 $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
                 $keepCardsCount = count(array_filter($cardsOfPlayer, fn($card) => $card->type < 100));

@@ -23,6 +23,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
         $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
+        $this->debugSetPlayerPoints(2343493, 5);
         //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 7);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
@@ -173,12 +174,13 @@ trait DebugUtilTrait {
 
         // wickedness
         if ($this->isWickednessExpansion()) {
-            //$this->initWickednessTiles(3);
+            $this->initWickednessTiles(3);
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 4 where `player_id` = 2343493");
-            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 3 where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
+            //$this->debugSetWickednessTileInHand(ANTIMATTER_BEAM_WICKEDNESS_TILE, 2343493);
         }
 
         // power up
