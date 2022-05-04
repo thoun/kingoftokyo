@@ -191,6 +191,7 @@
                             background-color: #fffc;
                             box-shadow: 0px 0px 5px 5px #fffc;
                             height: calc(85px * var(--tile-count) - 3px);
+                            z-index: 1;
 
                             .wickedness-tile {
                                 left: 0px;

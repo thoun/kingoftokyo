@@ -51,7 +51,7 @@ trait MonsterTrait {
         }
 
         // Rob
-        if ($bonusMonsters && $this->releaseDatePassed("2022-05-04T11:00:00", 2)) {
+        if ($bonusMonsters/* && $this->releaseDatePassed("2022-05-04T11:00:00", 2)*/) {
             $monsters = [...$monsters, 21];
         }
 
