@@ -40,6 +40,7 @@ require_once('modules/php/cards/cards-states.php');
 require_once('modules/php/wickedness-tiles/wickedness-tiles-utils.php');
 require_once('modules/php/wickedness-tiles/wickedness-tiles-actions.php');
 require_once('modules/php/wickedness-tiles/wickedness-tiles-args.php');
+require_once('modules/php/wickedness-tiles/wickedness-tiles-states.php');
 require_once('modules/php/curse-cards/curse-cards-utils.php');
 require_once('modules/php/curse-cards/curse-cards-actions.php');
 require_once('modules/php/curse-cards/curse-cards-args.php');
@@ -71,6 +72,7 @@ class KingOfTokyo extends Table {
     use KOT\States\WickednessTilesUtilTrait;
     use KOT\States\WickednessTilesActionTrait;
     use KOT\States\WickednessTilesArgTrait;
+    use KOT\States\WickednessTilesStateTrait;
     use KOT\States\CurseCardsUtilTrait;
     use KOT\States\CurseCardsActionTrait;
     use KOT\States\CurseCardsArgTrait;

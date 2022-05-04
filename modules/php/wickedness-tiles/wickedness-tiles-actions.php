@@ -21,6 +21,12 @@ trait WickednessTilesActionTrait {
 
         $level = $this->canTakeWickednessTile($playerId);
         $tile = $this->getWickednessTileFromDb($this->wickednessTiles->getCard($id));
+
+        $tableTiles = $this->getTableWickednessTiles($level);
+        if (!$this->array_some($tableTiles, fn($t) => $t->id === $tile->id)) {
+            throw new \BgaUserException("This tile is not ont the table");
+        }
+
         $this->wickednessTiles->moveCard($id, 'hand', $playerId);
 
         $this->notifyAllPlayers("takeWickednessTile", clienttranslate('${player_name} takes ${card_name}'), [
@@ -56,8 +62,10 @@ trait WickednessTilesActionTrait {
         $this->goToState($redirectAfterTakeTile, $damages);
     }
   	
-    public function skipTakeWickednessTile() {
-        $this->checkAction('skipTakeWickednessTile');
+    public function skipTakeWickednessTile($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipTakeWickednessTile');
+        }
 
         $playerId = $this->getCurrentPlayerId();
 

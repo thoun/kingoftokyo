@@ -481,6 +481,7 @@ $playerActionsGameStates = [
         "description" => /* client TODOWI translate(*/'${actplayer} can take a wickedness tile'/*)*/,
         "descriptionmyturn" => /* client TODOWI translate(*/'${you} can take a wickedness tile'/*)*/,
         "type" => "activeplayer",
+        "action" => "stTakeWickednessTile",
         "args" => "argTakeWickednessTile",
         "possibleactions" => [ "takeWickednessTile", "skipTakeWickednessTile" ],
         "transitions" => [

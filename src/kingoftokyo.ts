@@ -1096,6 +1096,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'takeWickednessTile':
                     (this as any).addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
+                    const argsTakeWickednessTile = args as EnteringTakeWickednessTileArgs;
+                    if (!argsTakeWickednessTile.canTake) {
+                        this.startActionTimer('skipTakeWickednessTile_button', 5);
+                    }
                     break;
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");

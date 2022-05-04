@@ -130,6 +130,10 @@ trait WickednessTilesUtilTrait {
         ]);
     }
 
+    function getTableWickednessTiles(int $level) {
+        return $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('table', $level));
+    }
+
     function getWickednessTileByType(int $playerId, int $cardType) {
         $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
 

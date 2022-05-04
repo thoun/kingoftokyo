@@ -4373,6 +4373,10 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'takeWickednessTile':
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
+                    var argsTakeWickednessTile = args;
+                    if (!argsTakeWickednessTile.canTake) {
+                        this.startActionTimer('skipTakeWickednessTile_button', 5);
+                    }
                     break;
                 case 'leaveTokyo':
                     var label = _("Stay in Tokyo");

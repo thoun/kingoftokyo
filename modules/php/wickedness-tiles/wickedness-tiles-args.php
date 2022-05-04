@@ -18,9 +18,11 @@ trait WickednessTilesArgTrait {
         $playerId = $this->getActivePlayerId();
         
         $level = $this->canTakeWickednessTile($playerId);
+        $tableTiles = $this->getTableWickednessTiles($level);
     
         return [
             'level' => $level,
+            'canTake' => count($tableTiles) > 0,
         ];
     }
 

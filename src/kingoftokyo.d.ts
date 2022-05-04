@@ -306,6 +306,7 @@ interface EnteringPrepareResolveDiceArgs extends EnteringDiceArgs {
 }
 interface EnteringTakeWickednessTileArgs {
     level: number;
+    canTake: boolean;
 }
 
 interface HealablePlayer {
