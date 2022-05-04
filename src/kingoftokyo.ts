@@ -3332,9 +3332,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.evolutionCards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
     }
 
-    notif_setTileTokens(notif: Notif<NotifSetCardTokensArgs>) {
+    notif_setTileTokens(notif: Notif<NotifSetWickednessTileTokensArgs>) {
         this.wickednessTiles.placeTokensOnTile(this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.card, notif.args.playerId);
-        // TODOWI test with smoke cloud & battery monster
     }
 
     notif_toggleRapidHealing(notif: Notif<NotifToggleRapidHealingArgs>) {

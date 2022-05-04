@@ -48,24 +48,8 @@ class WickednessTiles {
             return;
         }
 
-        cards.forEach(card => stock.addToStockWithId(card.type, `${card.id}`, from));
-    }
-
-    public moveToAnotherStock(sourceStock: Stock, destinationStock: Stock, tile: WickednessTile) {
-        if (sourceStock === destinationStock) {
-            return;
-        }
-        
-        const sourceStockItemId = `${sourceStock.container_div.id}_item_${tile.id}`;
-        if (document.getElementById(sourceStockItemId)) {     
-            this.addCardsToStock(destinationStock, [tile], sourceStockItemId);
-            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
-            sourceStock.removeFromStockById(`${tile.id}`);
-        } else {
-            console.warn(`${sourceStockItemId} not found in `, sourceStock);
-            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
-            this.addCardsToStock(destinationStock, [tile], sourceStock.container_div.id);
-        }
+        cards.forEach(card => stock.addToStockWithId(card.type, `${card.id}`, from));        
+        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnTile(stock, card));
     }
 
     public generateCardDiv(card: WickednessTile): HTMLDivElement {
@@ -236,8 +220,8 @@ class WickednessTiles {
         return newPlace;
     }
 
-    public placeTokensOnTile(stock: Stock, card: Card, playerId?: number) {
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public placeTokensOnTile(stock: Stock, tile: WickednessTile, playerId?: number) {
+        const divId = `${stock.container_div.id}_item_${tile.id}`;
         const div = document.getElementById(divId);
         if (!div) {
             return;
@@ -245,20 +229,20 @@ class WickednessTiles {
         const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
         const placed: PlacedTokens[] = cardPlaced.tokens;
 
-        const cardType = card.mimicType || card.type;
+        const cardType = tile.mimicType || tile.type;
 
         // remove tokens
-        for (let i = card.tokens; i < placed.length; i++) {
+        for (let i = tile.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
                 (this.game as any).slideToObjectAndDestroy(`${divId}-token${i}`, `energy-counter-${playerId}`);
             } else {
                 (this.game as any).fadeOutAndDestroy(`${divId}-token${i}`);
             }
         }
-        placed.splice(card.tokens, placed.length - card.tokens);
+        placed.splice(tile.tokens, placed.length - tile.tokens);
 
         // add tokens
-        for (let i = placed.length; i < card.tokens; i++) {
+        for (let i = placed.length; i < tile.tokens; i++) {
             const newPlace = this.getPlaceOnCard(cardPlaced);
 
             placed.push(newPlace);

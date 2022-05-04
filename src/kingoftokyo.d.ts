@@ -27,6 +27,8 @@ interface WickednessTile {
     id: number;
     type: number;
     side: 0 | 1;
+    tokens: number;
+    mimicType: number;
     level: number;
     location: string;
     location_arg: number;
@@ -533,6 +535,11 @@ interface NotifSetCardTokensArgs {
     playerId: number;
     card: Card;
     type: 'card' | 'tile';
+}
+
+interface NotifSetWickednessTileTokensArgs {
+    playerId: number;
+    card: WickednessTile;
 }
 
 interface NotifSetEvolutionTokensArgs {

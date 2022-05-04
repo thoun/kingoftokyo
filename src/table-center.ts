@@ -1,5 +1,5 @@
 
-const WICKEDNESS_MONSTER_ICON_POSITION = [ // TODOWI test with official image
+const WICKEDNESS_MONSTER_ICON_POSITION = [
     [2, 270],
     [35, 321],
     [87, 316],

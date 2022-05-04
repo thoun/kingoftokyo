@@ -117,7 +117,7 @@ class PlayerTable {
             this.wickednessTiles.onItemCreate = (card_div, card_type_id) => this.game.wickednessTiles.setupNewCard(card_div, card_type_id); 
     
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            player.wickednessTiles?.forEach(tile => this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id));
+            this.game.wickednessTiles.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
         }
 
         if (game.isPowerUpExpansion()) {

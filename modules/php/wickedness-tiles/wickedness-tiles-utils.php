@@ -159,7 +159,7 @@ trait WickednessTilesUtilTrait {
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             foreach($cardsOfPlayer as $card) {
-                if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) { // TODOWI can we mimic mimic with tile ?
+                if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) {
                     return true;
                 }
             }

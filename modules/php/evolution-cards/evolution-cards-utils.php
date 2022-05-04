@@ -743,7 +743,7 @@ trait EvolutionCardsUtilTrait {
             ]);
         }
 
-        $mimicCard = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0]; // TODOWI if tile mimic mimic
+        $mimicCard = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0];
 
         if ($mimicCard && $mimicCard->tokens > 0) {
             $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);

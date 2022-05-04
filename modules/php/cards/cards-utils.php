@@ -302,7 +302,6 @@ trait CardsUtilTrait {
         return count($this->getUnusedCardOfType($playerId, $cardType, $includeMimick));
     }
 
-     // TODOWI add parameter to count cards even if Gaze of the Sphinx is active, for Have it all
     function getCardsOfType($playerId, $cardType, $includeMimick = true) {
         if ($cardType < 100 && !$this->keepAndEvolutionCardsHaveEffect()) {
             return [];
@@ -462,6 +461,7 @@ trait CardsUtilTrait {
     function applyBatteryMonster(int $playerId, $card) {
         $energyOnBatteryMonster = $card->tokens - 2;
         if ($card->type == FLUXLING_WICKEDNESS_TILE) {
+            $card->id = $card->id - 2000;
             $this->setTileTokens($playerId, $card, $energyOnBatteryMonster);
         } else { // mimic or battery monster
             $this->setCardTokens($playerId, $card, $energyOnBatteryMonster);
@@ -509,22 +509,21 @@ trait CardsUtilTrait {
         }
 
         // we choose mimic card first, if available
-        $card = null;
-        foreach($cards as $icard) {
-            if (($icard->type == MIMIC_CARD || $icard->type == FLUXLING_WICKEDNESS_TILE) && $icard->tokens > 0) {
-                $card = $icard;
-            }
-        }
-        if ($card == null) {
-            $card = $cards[0];
-        }
+        $card = $this->array_find($cards, fn($icard) => $icard->type == FLUXLING_WICKEDNESS_TILE && $icard->tokens > 0) ??
+                $this->array_find($cards, fn($icard) => $icard->type == MIMIC_CARD && $icard->tokens > 0) ??
+                $cards[0];
 
         if ($card->tokens < 1) {
             throw new \BgaUserException('Not enough token');
         }
 
         $tokensOnCard = $card->tokens - 1;
-        $this->setCardTokens($playerId, $card, $tokensOnCard);
+        if ($card->type == FLUXLING_WICKEDNESS_TILE) {
+            $card->id = $card->id - 2000;
+            $this->setTileTokens($playerId, $card, $tokensOnCard);
+        } else {
+            $this->setCardTokens($playerId, $card, $tokensOnCard);
+        }
 
         if ($tokensOnCard <= 0 && $card->type != MIMIC_CARD && $card->type != FLUXLING_WICKEDNESS_TILE) {
             $this->removeCard($playerId, $card);

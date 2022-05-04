@@ -1402,26 +1402,12 @@ var WickednessTiles = /** @class */ (function () {
         });
     };
     WickednessTiles.prototype.addCardsToStock = function (stock, cards, from) {
+        var _this = this;
         if (!cards.length) {
             return;
         }
         cards.forEach(function (card) { return stock.addToStockWithId(card.type, "" + card.id, from); });
-    };
-    WickednessTiles.prototype.moveToAnotherStock = function (sourceStock, destinationStock, tile) {
-        if (sourceStock === destinationStock) {
-            return;
-        }
-        var sourceStockItemId = sourceStock.container_div.id + "_item_" + tile.id;
-        if (document.getElementById(sourceStockItemId)) {
-            this.addCardsToStock(destinationStock, [tile], sourceStockItemId);
-            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
-            sourceStock.removeFromStockById("" + tile.id);
-        }
-        else {
-            console.warn(sourceStockItemId + " not found in ", sourceStock);
-            //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
-            this.addCardsToStock(destinationStock, [tile], sourceStock.container_div.id);
-        }
+        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnTile(stock, card); });
     };
     WickednessTiles.prototype.generateCardDiv = function (card) {
         var tempDiv = document.createElement('div');
@@ -1557,17 +1543,17 @@ var WickednessTiles = /** @class */ (function () {
         }
         return newPlace;
     };
-    WickednessTiles.prototype.placeTokensOnTile = function (stock, card, playerId) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    WickednessTiles.prototype.placeTokensOnTile = function (stock, tile, playerId) {
+        var divId = stock.container_div.id + "_item_" + tile.id;
         var div = document.getElementById(divId);
         if (!div) {
             return;
         }
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         var placed = cardPlaced.tokens;
-        var cardType = card.mimicType || card.type;
+        var cardType = tile.mimicType || tile.type;
         // remove tokens
-        for (var i = card.tokens; i < placed.length; i++) {
+        for (var i = tile.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
                 this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
             }
@@ -1575,9 +1561,9 @@ var WickednessTiles = /** @class */ (function () {
                 this.game.fadeOutAndDestroy(divId + "-token" + i);
             }
         }
-        placed.splice(card.tokens, placed.length - card.tokens);
+        placed.splice(tile.tokens, placed.length - tile.tokens);
         // add tokens
-        for (var i = placed.length; i < card.tokens; i++) {
+        for (var i = placed.length; i < tile.tokens; i++) {
             var newPlace = this.getPlaceOnCard(cardPlaced);
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
@@ -1629,7 +1615,7 @@ var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, playerWithGoldenScarab, superiorAlienTechnologyTokens) {
         var _this = this;
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d;
         this.game = game;
         this.player = player;
         this.showHand = false;
@@ -1696,7 +1682,7 @@ var PlayerTable = /** @class */ (function () {
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
             this.game.wickednessTiles.setupCards([this.wickednessTiles]);
-            (_d = player.wickednessTiles) === null || _d === void 0 ? void 0 : _d.forEach(function (tile) { return _this.wickednessTiles.addToStockWithId(tile.type, '' + tile.id); });
+            this.game.wickednessTiles.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
         }
         if (game.isPowerUpExpansion()) {
             this.showHand = this.playerId == this.game.getPlayerId();
@@ -1712,7 +1698,7 @@ var PlayerTable = /** @class */ (function () {
                 this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
                 this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
-                (_e = player.hiddenEvolutions) === null || _e === void 0 ? void 0 : _e.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
+                (_d = player.hiddenEvolutions) === null || _d === void 0 ? void 0 : _d.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
             }
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
@@ -6221,7 +6207,6 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_setTileTokens = function (notif) {
         this.wickednessTiles.placeTokensOnTile(this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.card, notif.args.playerId);
-        // TODOWI test with smoke cloud & battery monster
     };
     KingOfTokyo.prototype.notif_toggleRapidHealing = function (notif) {
         if (notif.args.active) {

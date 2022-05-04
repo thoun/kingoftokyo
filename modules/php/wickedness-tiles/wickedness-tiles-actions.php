@@ -72,13 +72,14 @@ trait WickednessTilesActionTrait {
         $playerId = $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
-        if ($card->type > 100 || $card->type == MIMIC_CARD) { // TODOWI can we mimic mimic with tile ?
+        if ($card->type > 100) {
             throw new \BgaUserException("You can only mimic Keep cards");
+        }
+        if ($card->type == MIMIC_CARD) {
+            throw new \BgaUserException("You cannot mimic Mimic cards");
         }
 
         $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
-
-        // TODOWI can add smashes !!! change smash count and complete destruction
 
         $this->goToState($this->redirectAfterResolveNumberDice());
     }
@@ -89,8 +90,11 @@ trait WickednessTilesActionTrait {
         $playerId = $this->getActivePlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
-        if ($card->type > 100 || $card->type == MIMIC_CARD) { // TODOWI can we mimic mimic with tile ?
+        if ($card->type > 100) {
             throw new \BgaUserException("You can only mimic Keep cards");
+        }
+        if ($card->type == MIMIC_CARD) {
+            throw new \BgaUserException("You cannot mimic Mimic cards");
         }
 
         $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
