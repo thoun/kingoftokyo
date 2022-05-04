@@ -139,7 +139,6 @@ define('CLOWN_ACTIVATED', 'ClownActivated');
 define('CHEERLEADER_SUPPORT', 'CheerleaderSupport');
 define('STATE_AFTER_RESOLVE', 'stateAfterResolve');
 define('PLAYER_WITH_GOLDEN_SCARAB', 'PlayerWithGoldenScarab');
-define('STATE_AFTER_MIMIC_CHOOSE', 'StateAfterMimicChoose');
 define('RAGING_FLOOD_EXTRA_DIE', 'RagingFloodExtraDie');
 define('FALSE_BLESSING_USED_DIE', 'FalseBlessingUsedDie');
 define('DICE_NUMBER', 'DiceNumber');

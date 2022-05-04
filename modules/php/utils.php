@@ -85,7 +85,7 @@ trait UtilTrait {
     }
 
     function isWickednessExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
     }
 
     function isPowerUpExpansion() {

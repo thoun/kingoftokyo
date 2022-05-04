@@ -250,7 +250,7 @@ trait CardsActionTrait {
             return;
         }
 
-        $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId, $mimic);
+        $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId);
 
         $this->goToState($redirectAfterBuyCard, $damages);
     }
@@ -351,7 +351,7 @@ trait CardsActionTrait {
         return $damages;
     }
 
-    function drawCard(int $playerId, bool $redirectAfter = true) {
+    function drawCard(int $playerId, $stateAfter = null) {
         $card = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
 
         $damages = $this->applyPlayCard($playerId, $card);
@@ -361,44 +361,38 @@ trait CardsActionTrait {
             $countAvailableCardsForMimic = 0;
 
             $playersIds = $this->getPlayersIds();
-            foreach($playersIds as $playerId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            foreach($playersIds as $pId) {
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $pId));
                 $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
             }
 
             $mimic = $countAvailableCardsForMimic > 0;
         }
 
-        if (!$redirectAfter) {
-            return false;
+        if ($mimic) {
+            $this->goToMimicSelection($playerId, MIMIC_CARD, $stateAfter);
+        } else {
+            $this->goToState($stateAfter, $damages);
         }
-
-        $this->setGameStateValue(STATE_AFTER_MIMIC_CHOOSE, ST_RESOLVE_DICE);        
-        $redirectAfterDrawCard = $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_RESOLVE_DICE;
-
-        $this->goToState($redirectAfterDrawCard, $damages);
     }
 
-    function redirectAfterBuyCard(int $playerId, $newCardId, bool $mimic) { // return whereToRedirect
+    function redirectAfterBuyCard(int $playerId, $newCardId) { // return whereToRedirect
         $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
         if ($opportunistIntervention) {
             $opportunistIntervention->revealedCardsIds = [$newCardId];
             $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
 
             $this->setInterventionNextState(OPPORTUNIST_INTERVENTION, 'keep', null, $opportunistIntervention);
-            return $mimic ? ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
+            return ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
         } else {
             $playersWithOpportunist = $this->getPlayersWithOpportunist($playerId);
-            if ($mimic) {
-                $this->setGameStateValue(STATE_AFTER_MIMIC_CHOOSE, 0);  
-            }
 
             if (count($playersWithOpportunist) > 0) {
                 $opportunistIntervention = new OpportunistIntervention($playersWithOpportunist, [$newCardId]);
                 $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $opportunistIntervention);
-                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
+                return ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD;
             } else {
-                return $mimic ? ST_PLAYER_CHOOSE_MIMICKED_CARD : ST_PLAYER_BUY_CARD;
+                return ST_PLAYER_BUY_CARD;
             }
         }
     }
@@ -562,12 +556,7 @@ trait CardsActionTrait {
 
             $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
 
-            $forceStateAfter = intval($this->getGameStateValue(STATE_AFTER_MIMIC_CHOOSE));
-            if ($forceStateAfter) {
-                $this->jumpToState($forceStateAfter);
-            } else {
-                $this->jumpToState($this->redirectAfterBuyCard($playerId, $this->getGameStateValue('newCardId'), false));
-            }
+            $this->jumpToState($this->redirectAfterBuyCard($playerId, $this->getGameStateValue('newCardId')));
         }
     }
 

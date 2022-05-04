@@ -580,8 +580,7 @@ trait EvolutionCardsUtilTrait {
             $this->applyPrecisionFieldSupport($playerId);
 
         } else {
-            // TODOPU handle mimic
-            $this->drawCard($playerId, false);
+            $this->drawCard($playerId);
         }
     }
 

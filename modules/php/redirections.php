@@ -3,7 +3,11 @@
 namespace KOT\States;
 
 trait RedirectionTrait {
-    function goToState(int $nextStateId, /*Damage[] | null*/ $damages = null) {
+    function goToState($nextStateId, /*Damage[] | null*/ $damages = null) {
+        if ($nextStateId === null) {
+            $nextStateId = intval($this->gamestate->state_id());
+        }
+
         if ($damages != null && count($damages) > 0) {
             $this->resolveDamages($damages, $nextStateId);
         } else if ($nextStateId == -1) {
