@@ -3417,6 +3417,7 @@ var __assign = (this && this.__assign) || function () {
 };
 var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
+var ACTION_TIMER_DURATION = 5;
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
@@ -3943,11 +3944,14 @@ var KingOfTokyo = /** @class */ (function () {
                 });
             }
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
-                this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), 'skipWings');
+                this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), function () { return _this.skipWings(); });
+                if (!args.canDoAction) {
+                    this.startActionTimer('skipWings_button', ACTION_TIMER_DURATION);
+                }
             }
             var rapidHealingSyncButtons = document.querySelectorAll("[id^='rapidHealingSync_button'");
             rapidHealingSyncButtons.forEach(function (rapidHealingSyncButton) { return rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton); });
-            if (args.canHeal) {
+            if (args.canHeal && args.damageToCancelToSurvive > 0) {
                 var _loop_3 = function (i) {
                     var cultistCount = i;
                     var rapidHealingCount = args.rapidHealingHearts > 0 ? args.canHeal - cultistCount : 0;
@@ -4267,13 +4271,13 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'changeMimickedCardWickednessTile':
                     this.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), function () { return _this.skipChangeMimickedCardWickednessTile(); });
                     if (!args.canChange) {
-                        this.startActionTimer('skipChangeMimickedCardWickednessTile_button', 5);
+                        this.startActionTimer('skipChangeMimickedCardWickednessTile_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'changeMimickedCard':
                     this.addActionButton('skipChangeMimickedCard_button', _("Skip"), function () { return _this.skipChangeMimickedCard(); });
                     if (!args.canChange) {
-                        this.startActionTimer('skipChangeMimickedCard_button', 5);
+                        this.startActionTimer('skipChangeMimickedCard_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'giveSymbolToActivePlayer':
@@ -4291,7 +4295,7 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('goToChangeDie_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
                     var argsThrowDice = args;
                     if (!argsThrowDice.hasActions) {
-                        this.startActionTimer('goToChangeDie_button', 5);
+                        this.startActionTimer('goToChangeDie_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'changeDie':
@@ -4375,7 +4379,7 @@ var KingOfTokyo = /** @class */ (function () {
                     this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
                     var argsTakeWickednessTile = args;
                     if (!argsTakeWickednessTile.canTake) {
-                        this.startActionTimer('skipTakeWickednessTile_button', 5);
+                        this.startActionTimer('skipTakeWickednessTile_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'leaveTokyo':
@@ -4403,7 +4407,7 @@ var KingOfTokyo = /** @class */ (function () {
                             this.addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(42, 'text-only') }), function () { return _this.onLeaveTokyo(3042); });
                         }
                         if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
-                            this.startActionTimer('stayInTokyo_button', 5);
+                            this.startActionTimer('stayInTokyo_button', ACTION_TIMER_DURATION);
                             dojo.addClass('leaveTokyo_button', 'disabled');
                         }
                     }
@@ -4412,7 +4416,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var argsStealCostumeCard = args;
                     this.addActionButton('endStealCostume_button', _("Skip"), 'endStealCostume', null, null, 'red');
                     if (!argsStealCostumeCard.canBuyFromPlayers) {
-                        this.startActionTimer('endStealCostume_button', 5);
+                        this.startActionTimer('endStealCostume_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'changeForm':
@@ -4426,7 +4430,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var argsExchangeCard = args;
                     this.addActionButton('skipExchangeCard_button', _("Skip"), function () { return _this.skipExchangeCard(); });
                     if (!argsExchangeCard.canExchange) {
-                        this.startActionTimer('skipExchangeCard_button', 5);
+                        this.startActionTimer('skipExchangeCard_button', ACTION_TIMER_DURATION);
                     }
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
@@ -4453,13 +4457,13 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                     this.addActionButton('endTurn_button', argsBuyCard.canSell ? _("End turn without selling") : _("End turn"), 'onEndTurn', null, null, 'red');
                     if (!argsBuyCard.canBuyOrNenew && !argsBuyCard.canSell) {
-                        this.startActionTimer('endTurn_button', 5);
+                        this.startActionTimer('endTurn_button', ACTION_TIMER_DURATION);
                     }
                     break;
                 case 'opportunistBuyCard':
                     this.addActionButton('opportunistSkip_button', _("Skip"), 'opportunistSkip');
                     if (!args.canBuy) {
-                        this.startActionTimer('opportunistSkip_button', 5);
+                        this.startActionTimer('opportunistSkip_button', ACTION_TIMER_DURATION);
                     }
                     this.onEnteringBuyCard(args, true); // because it's multiplayer, enter action must be set here
                     break;

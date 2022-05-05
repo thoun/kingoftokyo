@@ -78,54 +78,13 @@ trait CardsStateTrait {
 
     function stCancelDamage() {            
         $intervention = $this->getDamageIntervention();
-        $currentPlayerId = $intervention != null && $intervention->remainingPlayersId != null && count($intervention->remainingPlayersId) > 0 ?
-            $intervention->remainingPlayersId[0] : null;
-        $currentDamage = $currentPlayerId !== null ? 
-            $this->array_find($intervention->damages, fn($damage) => $damage->playerId == $currentPlayerId) : null;
 
-        if ($currentDamage 
-            && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
-                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId))
-        ) {
-            $this->applySkipCancelDamage($currentPlayerId);
+        if ($intervention === null) {
+            throw new \Exception('No damage informations found');
         }
 
-        // TODOBUG TODOPU old stIntervention;
-
-        $keep = ($intervention->nextState === 'keep' || $intervention->nextState === 'next') 
-            && count($intervention->remainingPlayersId) > 0
-            && !$this->getPlayer($intervention->remainingPlayersId[0])->eliminated;
-            
-        if ($keep) {
-            // we check if player still ca do intervention (in case player got mimic, and mimicked camouflage player dies before mimic player intervention)
-
-            $playerId = $intervention->remainingPlayersId[0];
-
-            $damageDealerId = 0;
-            $damage = 0;
-            foreach($intervention->damages as $d) {
-                if ($d->playerId == $playerId) {
-                    $damage = $d->damage;
-                    $damageDealerId = $d->damageDealerId;
-                    break;
-                }
-            } 
-
-            $keep = CancelDamageIntervention::canDoIntervention($this, $playerId, $damage, $damageDealerId);
-
-            // if player cannot cancel damage, we apply them
-            if (!$keep) {           
-                foreach($intervention->damages as $d) {
-                    if ($d->playerId == $playerId) {
-                        $this->applyDamage($d->playerId, $d->damage, $d->damageDealerId, $d->cardType, $this->getActivePlayerId(), $d->giveShrinkRayToken, $d->givePoisonSpitToken, $d->smasherPoints);
-                    }
-                } 
-            }
-        }
-        
-        if ($keep) { // current player continues / next (intervention player) / or leaving transition
-            $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'transitionError', true);
-        } else { // leaving transition
+        // if there is no more player to handle, end this state
+        if (count($intervention->remainingPlayersId) == 0) {
             if ($this->isPowerUpExpansion()) {
                 $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
                 return;
@@ -133,46 +92,45 @@ trait CardsStateTrait {
 
             $this->deleteGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
             $this->goToState($intervention->endState);
+            return;
         }
-        // TODOBUG TODOPU end old stIntervention
 
-        $intervention = $this->getDamageIntervention();
-        if ($intervention !== null && $this->autoSkipImpossibleActions()) {
-            
-            $playerId = null;
-            if ($intervention != null && $intervention->remainingPlayersId != null && count($intervention->remainingPlayersId) > 0) {
-                $playerId = $intervention->remainingPlayersId[0];
-            } else {
+        $currentPlayerId = $intervention->remainingPlayersId[0];
+
+        // if current player is already eliminated, we ignore it
+        if ($this->getPlayer($currentPlayerId)->eliminated) {
+            array_shift($intervention->remainingPlayersId);
+            $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), $intervention);
+            $this->stCancelDamage();
+            return;
+        }
+
+        $currentDamage = $currentPlayerId !== null ? 
+            $this->array_find($intervention->damages, fn($damage) => $damage->playerId == $currentPlayerId) : null;
+
+        // if player will block damage, or he can not block damage anymore, we apply damage and remove it from remainingPlayersId
+        if ($currentDamage 
+            && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
+                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId))
+        ) {
+            $this->applySkipCancelDamage($currentPlayerId);
+            $this->stCancelDamage();
+            return;
+        }
+
+        // if we are still here, player have cards to cancel/reduce damage. We check if he have enough energy to use them
+        if ($this->autoSkipImpossibleActions()) {
+            $arg = $this->argCancelDamage($currentPlayerId);
+            if (!$arg['canDoAction']) {
+                $this->applySkipCancelDamage($currentPlayerId);
+                $this->stCancelDamage();
                 return;
             }
-
-            $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
-            $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
-            $diceValues = $dice != null ? array_map(fn($die) => $die->value, $dice) : [];
-
-            $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0; // Background Dweller
-
-            $hasDice3 = $hasBackgroundDweller && $dice != null ? in_array(3, $diceValues) : false;
-
-            $arg = $this->argCancelDamage($playerId, $hasDice3, $intervention);
-
-            $canCancelWithCamouflage = $arg['canThrowDices'] || $arg['rethrow3']['hasDice3'];
-
-            $potentialEnergy = $this->getPlayerEnergy($playerId);
-            if ($this->isCthulhuExpansion()) {
-                $potentialEnergy += $this->getPlayerCultists($playerId);
-            }
-
-            $canCancelWithWings = $arg['canUseWings'] && $potentialEnergy >= 2;
-            $canCancelWithDetachableTail = $arg['canUseDetachableTail'];
-            $canUseRabbitsFoot = $arg['canUseRabbitsFoot'];
-            $canCancelWithRobot = $arg['canUseRobot'] && $potentialEnergy >= 1;
-            $canCancelWithSuperJump = $arg['superJumpHearts'] > 0 && $potentialEnergy >= 1;
-            $canCancelWithRapidHealing = $arg['damageToCancelToSurvive'] && $arg['damageToCancelToSurvive'] >= 1;
-            if (!$canCancelWithCamouflage && !$canCancelWithWings && !$canCancelWithRobot && !$canCancelWithRapidHealing && !$canCancelWithSuperJump && !$canCancelWithDetachableTail && !$canUseRabbitsFoot) {
-                $this->applySkipCancelDamage($playerId);
-            }
         }
+
+        // if we are still here, no action has been done automatically, we activate the player so he can heal
+        $this->setDamageIntervention($intervention);
+        $this->gamestate->setPlayersMultiactive([$currentPlayerId], 'stay', true);
     }
 
     function stStealCostumeCard() {

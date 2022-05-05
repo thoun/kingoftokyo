@@ -364,6 +364,7 @@ interface EnteringBuyCardArgs {
 }
 
 interface EnteringCancelDamageArgs {
+    canDoAction: boolean;
     canThrowDices: boolean;
     canUseWings: boolean;
     canUseDetachableTail: boolean;

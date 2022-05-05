@@ -177,6 +177,18 @@ trait UtilTrait {
         return intval($this->getUniqueValueFromDB("SELECT player_energy FROM player where `player_id` = $playerId"));
     }
 
+    function getPlayerPotentialEnergy(int $playerId) {
+        $potentialEnergy = $this->getPlayerEnergy($playerId);
+        if ($this->isCthulhuExpansion()) {
+            $cultists = $this->getPlayerCultists($playerId);
+            if ($cultists > 0) {
+                $countFriendOfChildren = $this->countCardOfType($playerId, FRIEND_OF_CHILDREN_CARD);
+                $potentialEnergy += (1 + $countFriendOfChildren) * $cultists;
+            }
+        }
+        return $potentialEnergy;
+    }
+
     function getPlayerPoisonTokens(int $playerId) {
         return intval($this->getUniqueValueFromDB("SELECT player_poison_tokens FROM player where `player_id` = $playerId"));
     }
@@ -545,6 +557,19 @@ trait UtilTrait {
         }
     }
 
+    function safeEliminatePlayer(int $playerId) {
+        if ($this->getRemainingPlayers() > 1) {
+            $this->eliminatePlayer($playerId); // no need for notif, framework does it
+        } else {
+            // if last player, we make a notification same as elimination
+            // but we don't really eliminate him as the framework don't like it and game will end anyway
+            $this->notifyAllPlayers('playerEliminated', '', [
+                'who_quits' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+            ]);
+        }
+    }
+
     function eliminateAPlayer(object $player, int $currentTurnPlayerId) {
         if ($this->isKingKongExpansion()) {
             // Tokyo Tower levels go back to the table
@@ -562,16 +587,8 @@ trait UtilTrait {
         } else {
             $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX)); 
             $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, `player_score_aux` = $scoreAux, player_location = 0 where `player_id` = $player->id");
-            if ($this->getRemainingPlayers() > 1) {
-                $this->eliminatePlayer($player->id); // no need for notif, framework does it
-            } else {
-                // if last player, we make a notification same as elimination
-                // but we don't really eliminate him as the framework don't like it and game will end anyway
-                $this->notifyAllPlayers('playerEliminated', '', [
-                    'who_quits' => $player->id,
-                    'player_name' => $this->getPlayerName($player->id),
-                ]);
-            }
+            
+            $this->safeEliminatePlayer($player->id);
         }
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
@@ -1004,15 +1021,11 @@ trait UtilTrait {
 
     function resolveDamages(array $damages, int $endStateId) {
         $cancellableDamages = [];
-        $playersIds = [];
         foreach ($damages as $damage) {
             if ($this->countCardOfType($damage->playerId, HIBERNATION_CARD) > 0) {
                 // if hibernation, player takes no damage
             } else if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId)) {
                 $cancellableDamages[] = $damage;
-                if (!in_array($damage->playerId, $playersIds)) {
-                    $playersIds[] = $damage->playerId;
-                }
             } else {
                 $activePlayerId = $this->getActivePlayerId();
                 $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
@@ -1020,12 +1033,15 @@ trait UtilTrait {
 
             $damagesToPlayer = array_values(array_filter($damages, fn($d) => $damage->playerId == $d->playerId));
             if (count($damagesToPlayer) > 1) {
+                // can only happen when a player roll Skull and False blessing make him lose hearts
                 $this->error('[GBA] multiple damages : ' . json_encode($damagesToPlayer));
             }
         }
 
         if (count($cancellableDamages) > 0) {
-            // TODOPU $playersIds = $this->getOrderedPlayersIds($damages[0]->damageDealerId, false, true);
+            $playersIds = $this->getOrderedPlayersIds($damages[0]->damageDealerId, false, true);
+            // TODOBUG replace $cancellableDamages by $damages when all are resolved by stCancelDamage
+            $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->array_some($cancellableDamages, fn($damage) => $damage->playerId == $playerId)));
             $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages, $damages);
             $cancelDamageIntervention->endState = $endStateId;
             $this->setDamageIntervention($cancelDamageIntervention);

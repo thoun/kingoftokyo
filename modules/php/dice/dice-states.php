@@ -56,10 +56,7 @@ trait DiceStateTrait {
         $hasEncasedInIce = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
 
         if ($hasEncasedInIce) {
-            $potentialEnergy = $this->getPlayerEnergy($playerId);
-            if ($this->isCthulhuExpansion()) {
-                $potentialEnergy += $this->getPlayerCultists($playerId);
-            }
+            $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
             if ($potentialEnergy < 1) {
                 $hasEncasedInIce = false;

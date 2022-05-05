@@ -24,10 +24,7 @@ trait CardsArgTrait {
     }
 
     function getArgBuyCard(int $playerId, bool $includeCultistsEnergy) {
-        $potentialEnergy = $this->getPlayerEnergy($playerId);
-        if ($includeCultistsEnergy && $this->isCthulhuExpansion()) {
-            $potentialEnergy += $this->getPlayerCultists($playerId);
-        }
+        $potentialEnergy = $includeCultistsEnergy ? $this->getPlayerPotentialEnergy($playerId) : $this->getPlayerEnergy($playerId);
 
         $canBuyPowerCards = $this->canBuyPowerCard($playerId);
         $canBuyOrNenew = $potentialEnergy >= 2;
@@ -165,10 +162,7 @@ trait CardsArgTrait {
         $canBuy = false;
         $canBuyPowerCards = $this->canBuyPowerCard($playerId);
 
-        $potentialEnergy = $this->getPlayerEnergy($playerId);
-        if ($this->isCthulhuExpansion()) {
-            $potentialEnergy += $this->getPlayerCultists($playerId);
-        }
+        $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $cardsCosts = [];
@@ -232,10 +226,7 @@ trait CardsArgTrait {
     function getArgChooseMimickedCard(int $playerId, int $mimicCardType, int $selectionCost = 0) {
         $potentialEnergy = 0;
         if ($selectionCost > 0) {
-            $potentialEnergy = $this->getPlayerEnergy($playerId);
-            if ($this->isCthulhuExpansion()) {
-                $potentialEnergy += $this->getPlayerCultists($playerId);
-            }
+            $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
         }
 
         $canChange = $potentialEnergy >= $selectionCost;
@@ -341,7 +332,18 @@ trait CardsArgTrait {
                 }
             }
 
-            $canDoAction = $canThrowDices || $canUseWings || $canUseDetachableTail || $canUseRabbitsFoot || $canUseRobot || $rapidHealingHearts || $superJumpHearts || $rapidHealingCultists || $hasDice3;
+            $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
+
+            $canDoAction = 
+                $canThrowDices || 
+                $hasDice3 ||
+                ($canUseWings && $potentialEnergy >= 2) || 
+                $canUseDetachableTail || 
+                $canUseRabbitsFoot || 
+                ($canUseRobot && $potentialEnergy >= 1) || 
+                $rapidHealingHearts || 
+                ($superJumpHearts && $potentialEnergy >= 1) || 
+                $rapidHealingCultists;
 
             return [
                 'canThrowDices' => $canThrowDices,
@@ -377,10 +379,7 @@ trait CardsArgTrait {
     function argStealCostumeCard() {
         $playerId = $this->getActivePlayerId();
 
-        $potentialEnergy = $this->getPlayerEnergy($playerId);
-        if ($this->isCthulhuExpansion()) {
-            $potentialEnergy += $this->getPlayerCultists($playerId);
-        }
+        $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
         $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table

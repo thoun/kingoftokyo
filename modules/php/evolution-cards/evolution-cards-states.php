@@ -81,10 +81,7 @@ trait EvolutionCardsStateTrait {
         $unusedExoticArmsCard = $this->getFirstUnusedEvolution($playerId, EXOTIC_ARMS_EVOLUTION);
         if ($unusedExoticArmsCard != null) {
 
-            $potentialEnergy = $this->getPlayerEnergy($playerId);
-            if ($this->isCthulhuExpansion()) {
-                $potentialEnergy += $this->getPlayerCultists($playerId);
-            }
+            $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
             if ($potentialEnergy >= 2) {
                 $question = new Question(
@@ -147,10 +144,7 @@ trait EvolutionCardsStateTrait {
         $unusedEnergySwordCard = $this->getFirstUnusedEvolution($playerId, ENERGY_SWORD_EVOLUTION);
         if ($unusedEnergySwordCard != null) {
 
-            $potentialEnergy = $this->getPlayerEnergy($playerId);
-            if ($this->isCthulhuExpansion()) {
-                $potentialEnergy += $this->getPlayerCultists($playerId);
-            }
+            $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
             if ($potentialEnergy >= 2) {
                 $question = new Question(
