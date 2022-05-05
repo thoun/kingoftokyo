@@ -80,7 +80,8 @@ trait CardsStateTrait {
         $intervention = $this->getDamageIntervention();
 
         if ($intervention === null) {
-            throw new \Exception('No damage informations found');
+            //throw new \Exception('No damage informations found');
+            return;
         }
 
         // if there is no more player to handle, end this state

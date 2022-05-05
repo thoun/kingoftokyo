@@ -189,26 +189,31 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
+            // set monster
             $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
+
+            // dummy card to avoid initial card selection
+            $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
+            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
+            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
+            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);
+
+            // cards to test
             //$this->debugSetEvolutionInHand(11, 2343492, true);
             //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             //$this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
-            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
-            //$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
@@ -351,10 +356,10 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
 		$ids = [
-			83846198,
-            84582251,
-            86175279,
-            86769394
+			86955178,
+92081233,
+91785382,
+92264533,
 		];
 
 		// Id of the first player in BGA Studio
