@@ -273,7 +273,7 @@ trait EvolutionCardsUtilTrait {
             // Meka Dragon
             case DESTRUCTIVE_ANALYSIS_EVOLUTION:
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
+                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false, false);
                 $rolledSmashes = $diceCounts[6];
                 if ($rolledSmashes > 0) {
                     $this->applyGetEnergy($playerId, $rolledSmashes, $logCardType);

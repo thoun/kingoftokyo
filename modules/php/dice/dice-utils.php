@@ -954,11 +954,15 @@ trait DiceUtilTrait {
         }
     }
 
-    function getRolledDiceCounts(int $playerId, array $dice, $ignoreCanUseFace = true) {
+    function getRolledDiceCounts(int $playerId, array $dice, $ignoreCanUseFace = true, $ignoreCanUseSymbol = true) {
         $diceCounts = [0,0,0,0,0,0,0,0];
 
         foreach($dice as $die) {
-            if (($die->type === 0 || $die->type === 1) && ($ignoreCanUseFace || $die->type !== 0 || $this->canUseFace($playerId, $die->value))) {
+            if (
+                ($die->type === 0 || $die->type === 1) && 
+                ($ignoreCanUseFace || $die->type !== 0 || $this->canUseFace($playerId, $die->value)) &&
+                ($ignoreCanUseSymbol || $this->canUseSymbol($playerId, floor(static::getDiceFaceType($die) / 10)))
+            ) {
                 if ($die->type === 0) {                
                     $diceCounts[$die->value] += 1;
                 } else if ($die->type === 1) {

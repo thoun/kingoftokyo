@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -798,15 +798,22 @@ trait UtilTrait {
         }
 
         if ($isPowerUpExpansion && $this->inTokyo($playerId)) {
-            $countBreathOfDoom = $this->countEvolutionOfType($damageDealerId, BREATH_OF_DOOM_EVOLUTION);
-            if ($countBreathOfDoom > 0) {
-                $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
-                foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
-                    if ($outsideTokyoPlayerId != $damageDealerId) {
-                        $this->applyDamage($outsideTokyoPlayerId, $countBreathOfDoom, $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION, $damageDealerId, 0, 0, null);
+            $breathOfDoomEvolutions = $this->getEvolutionsOfType($damageDealerId, BREATH_OF_DOOM_EVOLUTION);
+            if (count($breathOfDoomEvolutions) > 0) {
+                $usedCards = $this->getUsedCard();
+                if (!in_array(3000 + $breathOfDoomEvolutions[0]->id, $usedCards)) {
+                    $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
+                    foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
+                        if ($outsideTokyoPlayerId != $damageDealerId) {
+                            $this->applyDamage($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION, $damageDealerId, 0, 0, null);
+                        }
                     }
                 }
-            }            
+            }
+            
+            foreach ($breathOfDoomEvolutions as $breathOfDoomEvolution) {
+                $this->setUsedCard(3000 + $breathOfDoomEvolution->id);
+            }
         }
     }
 

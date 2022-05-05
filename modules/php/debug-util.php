@@ -17,14 +17,14 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
-        //$this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[4], 1);
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
         $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
-        $this->debugSetHealth(1);
+        //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 7);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
@@ -37,7 +37,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
-        $this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
         //$this->debugSetCardInTable(ENERGIZE_CARD);
         //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
@@ -151,10 +151,10 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
+            $this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
-            //$this->changeGoldenScarabOwner(2343493);
+            $this->changeGoldenScarabOwner(2343493);
         }
 
         // king kong
@@ -189,7 +189,7 @@ trait DebugUtilTrait {
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
-            //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
@@ -198,19 +198,20 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
-            //$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
+            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             //$this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(24, 2343493, true);
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
-            //$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
+            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
+            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             //$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
         }
 
         // player order
