@@ -490,19 +490,6 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE => [
-        "name" => "chooseMimickedCardWickednessTile",
-        "description" => /* client TODOWI translate(*/'${actplayer} must select a card to mimic'/*)*/,
-        "descriptionmyturn" => /* client TODOWI translate(*/'${you} must select a card to mimic'/*)*/,
-        "type" => "activeplayer",
-        "args" => "argChooseMimickedCardWickednessTile",
-        "possibleactions" => [ "chooseMimickedCardWickednessTile" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_HEART_DICE,
-            "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
-        ]
-    ],
-
     ST_RESOLVE_HEART_DICE => [
         "name" => "resolveHeartDice",
         "description" => "",

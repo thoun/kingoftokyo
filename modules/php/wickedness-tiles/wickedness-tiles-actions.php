@@ -43,23 +43,27 @@ trait WickednessTilesActionTrait {
 
         $damages = $this->applyWickednessTileEffect($tile, $playerId);
 
-        $redirectAfterTakeTile = $this->redirectAfterResolveNumberDice();
-
+        $mimic = false;
         if ($tile->type === FLUXLING_WICKEDNESS_TILE) {
             $countAvailableCardsForMimic = 0;
 
             $playersIds = $this->getPlayersIds();
-            foreach($playersIds as $playerId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            foreach($playersIds as $pId) {
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $pId));
                 $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
             }
 
             if ($countAvailableCardsForMimic > 0) {
-                $redirectAfterTakeTile = ST_PLAYER_CHOOSE_MIMICKED_CARD_WICKEDNESS_TILE;
+                $mimic = true;
             }
         }
 
-        $this->goToState($redirectAfterTakeTile, $damages);
+        $stateAfter = $this->redirectAfterResolveNumberDice();
+        if ($mimic) {
+            $this->goToMimicSelection($playerId, FLUXLING_WICKEDNESS_TILE, $stateAfter);
+        } else {
+            $this->goToState($stateAfter, $damages);
+        }
     }
   	
     public function skipTakeWickednessTile($skipActionCheck = false) {

@@ -541,7 +541,8 @@ trait CardsActionTrait {
                 throw new \BgaUserException("You can only mimic Keep cards");
             }
 
-            $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
+            $question = $this->getQuestion();
+            $this->setMimickedCardId($question->args->mimicCardType, $playerId, $mimickedCardId);
 
             $this->removeStackedStateAndRedirect();
         } else { // TODOWI to remove

@@ -46,7 +46,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
-        //$this->debugSetCardInTable(MIMIC_CARD);
+        $this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
@@ -141,7 +141,7 @@ trait DebugUtilTrait {
 
         // anubis
         if ($this->isAnubisExpansion()) {
-            $this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
             //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
@@ -179,8 +179,8 @@ trait DebugUtilTrait {
         if ($this->isWickednessExpansion()) {
             $this->initWickednessTiles(3);
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-            $this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
-            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+            //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
             //$this->debugSetWickednessTileInHand(ANTIMATTER_BEAM_WICKEDNESS_TILE, 2343493);
