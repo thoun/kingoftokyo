@@ -461,7 +461,9 @@ trait EvolutionCardsActionTrait {
         ]);
         $this->setGameStateValue(TARGETED_PLAYER, $question->args->playerId);
 
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+        foreach($question->playersIds as $pId) {
+            $this->gamestate->setPlayerNonMultiactive($pId, 'next');
+        }
     }
   	
     public function skipGiveTarget() {

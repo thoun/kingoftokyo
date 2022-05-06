@@ -17,11 +17,11 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[4], 1);
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
-        $this->debugSetEnergy(5);
+        //$this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
         //$this->debugSetHealth(1);
@@ -45,6 +45,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
         //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
+        //$this->debugSetCardInTable(TANK_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
@@ -67,7 +68,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        $this->debugSetCardInHand(JETS_CARD, 2343493);
+        //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
@@ -177,10 +178,10 @@ trait DebugUtilTrait {
 
         // wickedness
         if ($this->isWickednessExpansion()) {
-            $this->initWickednessTiles(3);
+            $this->initWickednessTiles(3); // 2=orange, 3=green, 4=mix
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
-            $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 6 where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 3 where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
             //$this->debugSetWickednessTileInHand(ANTIMATTER_BEAM_WICKEDNESS_TILE, 2343493);
@@ -190,7 +191,7 @@ trait DebugUtilTrait {
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
             // set monster
-            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
@@ -216,7 +217,9 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
+            //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343494, true);
+            $this->setMimickedEvolution(2343494, $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true));
         }
 
         // player order
