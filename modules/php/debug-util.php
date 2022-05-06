@@ -18,7 +18,7 @@ trait DebugUtilTrait {
         // base game
 
         $this->debugSetPlayerInLocation(2343493, 1);
-        $this->debugSetPlayerInLocation(2343494, 2);
+        //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[4], 1);
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
         $this->debugSetEnergy(5);
@@ -67,7 +67,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(JETS_CARD, 2343493);
+        $this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);

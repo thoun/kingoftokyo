@@ -388,6 +388,11 @@ trait UtilTrait {
             'over' => 0,
         ]);
 
+        // if the player left with autoleave, we automatically suppose he wantes to use Jets if he have one
+        if ($useCard === null && $this->countCardOfType($playerId, JETS_CARD) > 0) {
+            $useCard = JETS_CARD;
+        }
+
         $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
         if ($jetsDamages != null && $useCard != null && in_array($useCard, [24, 3042])) {
             $jetsDamages = array_values(array_filter($jetsDamages, fn($damage) => $damage->playerId != $playerId));
