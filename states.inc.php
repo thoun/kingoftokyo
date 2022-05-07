@@ -506,6 +506,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} can select effect of [diceHeart] dice'),
         "type" => "activeplayer",
         "args" => "argResolveHeartDiceAction",
+        "action" => "stResolveHeartDiceAction",
         "possibleactions" => [ "applyHeartDieChoices" ],
         "transitions" => [
             "next" => ST_RESOLVE_ENERGY_DICE,

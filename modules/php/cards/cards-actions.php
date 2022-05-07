@@ -597,8 +597,10 @@ trait CardsActionTrait {
         $playerId = $this->getCurrentPlayerId();
 
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
-        if ($countCamouflage == 0) {
-            throw new \BgaUserException('No Camouflage card');
+        $countTerrorOfTheDeep = $this->isPowerUpExpansion() ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
+        
+        if ($countCamouflage + $countTerrorOfTheDeep == 0) {
+            throw new \BgaUserException('No card to roll dice and cancel damage');
         }
 
         $intervention = $this->getDamageIntervention();
@@ -624,17 +626,29 @@ trait CardsActionTrait {
 
     function endThrowCamouflageDice(int $playerId, object $intervention, array $dice, bool $incCamouflageRolls) {
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
+        $countTerrorOfTheDeep = $this->isPowerUpExpansion() ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
+        
         $rolledDice = array_values(array_filter($dice, fn($d) => $d->rolled));
         $diceValues = array_map(fn($die) => $die->value, $dice);
         $rolledDiceValues = array_map(fn($die) => $die->value, $rolledDice);
 
         $cancelledDamage = count(array_values(array_filter($rolledDiceValues, fn($face) => $face === 4))); // heart dices
 
-        $playerUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : new PlayersUsedDice($dice, $countCamouflage);
+        $playerUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : new PlayersUsedDice($dice, $countCamouflage + $countTerrorOfTheDeep);
         if ($incCamouflageRolls) {
             $playerUsedDice->rolls = $playerUsedDice->rolls + 1;
         } 
         $intervention->playersUsedDice->{$playerId} = $playerUsedDice;
+
+        $cardLogType = $countTerrorOfTheDeep > 0 && $countCamouflage < $playerUsedDice->rolls ? 3000 + TERROR_OF_THE_DEEP_EVOLUTION : CAMOUFLAGE_CARD;
+
+        if ($cardLogType === 3000 + TERROR_OF_THE_DEEP_EVOLUTION) {
+            $terrorOfTheDeepCards = $this->getEvolutionsOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true);
+
+            if ($this->array_every($terrorOfTheDeepCards, fn($terrorOfTheDeepCard) => $terrorOfTheDeepCard->location === 'hand')) {
+                $this->playEvolutionToTable($playerId, $terrorOfTheDeepCards[0]);
+            }
+        }
 
         $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $cancelledDamage;
 
@@ -663,7 +677,7 @@ trait CardsActionTrait {
             $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and can rethrow [dice3]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
-                'card_name' => CAMOUFLAGE_CARD,
+                'card_name' => $cardLogType,
                 'diceValues' => $dice,
                 'cancelDamageArgs' => $args,
                 'dice' => $diceStr,
@@ -672,7 +686,7 @@ trait CardsActionTrait {
             $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and reduce [Heart] loss by ${cancelledDamage}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
-                'card_name' => CAMOUFLAGE_CARD,
+                'card_name' => $cardLogType,
                 'cancelledDamage' => $cancelledDamage,
                 'diceValues' => $dice,
                 'cancelDamageArgs' => $args,

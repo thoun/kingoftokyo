@@ -69,6 +69,8 @@ trait DiceStateTrait {
     }
 
     function applyResolveDice(int $playerId) {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getPlayerRolledDice($playerId, true, true, false);
         usort($dice, "static::sortDieFunction");
@@ -85,6 +87,8 @@ trait DiceStateTrait {
         ]);
 
         $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
+
+        $diceCountsWithoutAddedSmashes = $diceCounts; // clone
 
         $detail = $this->addSmashesFromCards($playerId, $diceCounts, $playerInTokyo);
         $diceCounts[6] += $detail->addedSmashes;
@@ -128,7 +132,7 @@ trait DiceStateTrait {
                     $countPandaExpress = $this->countEvolutionOfType($playerId, PANDA_EXPRESS_EVOLUTION);
                     if ($countPandaExpress > 0) {
                         $this->applyGetPoints($playerId, 2 * $countPandaExpress, 3000 + PANDA_EXPRESS_EVOLUTION);
-                        $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 1); // TODOPU make it 2 turns ? 
+                        $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 1);
                     }
                 }
             }
@@ -168,7 +172,7 @@ trait DiceStateTrait {
         }
         
         $funnyLookingButDangerousDamages = [];
-        if ($this->isPowerUpExpansion()) {
+        if ($isPowerUpExpansion) {
             if ($diceCounts[4] >= 3) {
                 $countPandarwinism = $this->countEvolutionOfType($playerId, PANDARWINISM_EVOLUTION);
                 if ($countPandarwinism > 0) {
@@ -186,11 +190,11 @@ trait DiceStateTrait {
                 }
             }
 
-            if ($diceCounts[6] >= 1) {
+            if ($diceCountsWithoutAddedSmashes[6] >= 1) {
                 $energySwordEvolutions = $this->getEvolutionsOfType($playerId, ENERGY_SWORD_EVOLUTION);
                 $countEnergySword = count(array_filter($energySwordEvolutions, fn($evolution) => $evolution->tokens > 0));
                 if ($countEnergySword > 0) {
-                    $this->applyGetEnergy($playerId, $diceCounts[6] * $countEnergySword, 3000 + ENERGY_SWORD_EVOLUTION);
+                    $this->applyGetEnergy($playerId, $diceCountsWithoutAddedSmashes[6] * $countEnergySword, 3000 + ENERGY_SWORD_EVOLUTION);
                 }
             }
         }
@@ -238,12 +242,50 @@ trait DiceStateTrait {
         }        
     }
 
+    function addHighTideDice(int $playerId, int $diceCount) {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        
+        $highTideEvolutions = $isPowerUpExpansion ? $this->getEvolutionsOfType($playerId, HIGH_TIDE_EVOLUTION) : [];
+        
+        $addedHearts = 0;
+        $cardsAddingHearts = [];
+        if (count($highTideEvolutions) > 0) {
+            $addedHearts += $diceCount;
+            
+            foreach($highTideEvolutions as $evolution) {
+                $cardsAddingHearts[] = 3000 + $evolution->type;
+            }
+
+            $this->removeEvolutions($playerId, $highTideEvolutions);
+        }
+        $diceCount += $addedHearts;        
+
+        if ($addedHearts) {
+            $diceStr = '';
+            for ($i=0; $i<$addedHearts; $i++) { 
+                $diceStr .= $this->getDieFaceLogName(4, 0); 
+            }
+            
+            $cardNamesStr = implode(', ', $cardsAddingHearts);
+
+            $this->notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'dice' => $diceStr,
+                'card_name' => $cardNamesStr,
+            ]);
+        }
+
+        return $diceCount;
+    }
+
     function stResolveHeartDice() {
         $playerId = $this->getActivePlayerId();
         
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
-        $diceCount = $diceCounts[4];
+        $diceCount = $this->addHighTideDice($playerId, $diceCounts[4]);
+
         if ($diceCount > 0) {
             $this->resolveHealthDice($playerId, $diceCount);
         } else {
@@ -255,6 +297,19 @@ trait DiceStateTrait {
             }
         }
         $this->gamestate->nextState('next');
+    }
+
+    function stResolveHeartDiceAction() {
+        $playerId = $this->getActivePlayerId();
+        
+        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+
+        $diceCount = $this->addHighTideDice($playerId, $diceCounts[4]);
+
+        if ($diceCount > $diceCounts[4]) {
+            $diceCounts[4] = $diceCount;
+            $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
+        }
     }
 
     function stResolveEnergyDice() {

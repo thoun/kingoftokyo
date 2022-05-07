@@ -165,7 +165,13 @@ trait DiceArgTrait {
         $playerId = $this->getActivePlayerId();
 
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-        $diceCount = $diceCounts[4];
+
+        $diceCount = $this->addHighTideDice($playerId, $diceCounts[4]);
+
+        if ($diceCount > $diceCounts[4]) {
+            $diceCounts[4] = $diceCount;
+            $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
+        }
 
         if ($diceCount > 0) {
             $dice = $this->getPlayerRolledDice($playerId, false, false, false);

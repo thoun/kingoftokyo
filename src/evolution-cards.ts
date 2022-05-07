@@ -242,10 +242,11 @@ class EvolutionCards {
             case 151: return "+2[Heart]";
             // TODODE 152
             case 153: return /*_TODODE*/("Gain 1[Star] for each [Heart] gained this turn.");
-            // TODODE 154..155
+            case 154: return /*_TODODE*/("For each [diceHeart] you rolled, add [diceHeart] to your Roll");
+            case 155: return /*_TODODE*/("Roll one die for each [Heart] you lost this turn. Don’t lose [Heart] for each [diceHeart] you roll.");
             case 156: return /*_TODODE*/("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
             case 157: return /*_TODODE*/("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
-            case 158: return /*_TODOPU*/("Monsters you wound lose 1[Star].");
+            case 158: return /*_TODODE*/("Monsters you wound lose 1[Star].");
             // Baby Gigazaur
             case 181: return /*_TODOPUBG*/("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve."); // TODOPUBG
             case 182: return /*_TODOPUBG*/("If you roll no [diceHeart], gain 1[Heart].");

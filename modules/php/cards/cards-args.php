@@ -281,13 +281,15 @@ trait CardsArgTrait {
         }
         
         if ($playerId != null && $intervention !== null) {
+            $isPowerUpExpansion = $this->isPowerUpExpansion();
+            
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
 
-            $canThrowDices = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
+            $canThrowDices = ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || ($isPowerUpExpansion && $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0)) && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
-            $canUseDetachableTail = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0;
-            $canUseRabbitsFoot = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0;
+            $canUseDetachableTail = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0;
+            $canUseRabbitsFoot = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0;
             $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $remainingDamage = 0;

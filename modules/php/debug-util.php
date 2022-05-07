@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[4], 1);
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
@@ -25,7 +25,7 @@ trait DebugUtilTrait {
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
         //$this->debugSetHealth(1);
-        //$this->debugSetPlayerHealth(2343492, 7);
+        $this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -52,7 +52,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(WINGS_CARD);
-        //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
+        //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
@@ -198,6 +198,7 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
+            $this->DbQuery("UPDATE player SET `player_monster` = 15 where `player_id` = 2343492"); // kraken
 
             // dummy card to avoid initial card selection
             $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
@@ -220,10 +221,9 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343494, true);
-            //$this->setMimickedEvolution(2343494, $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true));
-            $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, true);
+            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343493, true);
+            //$this->setMimickedEvolution(2343493, $this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true));
+            $this->debugSetEvolutionInHand(HIGH_TIDE_EVOLUTION, 2343492, false);
         }
 
         // player order

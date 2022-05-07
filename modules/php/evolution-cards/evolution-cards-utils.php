@@ -374,7 +374,7 @@ trait EvolutionCardsUtilTrait {
     function getEvolutionsOfTypeInLocation(int $playerId, int $cardType, string $location) {
         $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, $location, $playerId));
         
-        if ($this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
+        if ($location === 'table' && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
             $mimickedCardType = $this->getMimickedEvolutionType();
             if ($mimickedCardType == $cardType) {
                 $evolutions = array_merge($evolutions, $this->getEvolutionsOfTypeInLocation($playerId, ICY_REFLECTION_EVOLUTION, 'table')); // mimick
