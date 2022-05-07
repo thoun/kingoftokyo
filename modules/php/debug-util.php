@@ -21,7 +21,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[4], 1);
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
-        //$this->debugSetEnergy(5);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
         //$this->debugSetHealth(1);
@@ -68,9 +68,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        //$this->debugSetCardInHand(JETS_CARD, 2343493);
+        $this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
@@ -83,8 +83,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
-        //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
-        //$this->debugSetCardInHand(URBAVORE_CARD, 2343493);
+        //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
+        //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343494);
@@ -167,6 +167,7 @@ trait DebugUtilTrait {
 
         if ($this->isCybertoothExpansion()) {
             $this->setPlayerBerserk(2343492, true);
+            //$this->setPlayerBerserk(2343493, true);
         }
 
         // mutant evolution variant
@@ -218,8 +219,9 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343494, true);
-            $this->setMimickedEvolution(2343494, $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true));
+            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343494, true);
+            //$this->setMimickedEvolution(2343494, $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true));
+            $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
         }
 
         // player order

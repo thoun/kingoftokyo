@@ -373,7 +373,11 @@ trait DiceUtilTrait {
             $usedExoticArms = array_values(array_filter($exoticArmsEvolutions, fn($evolution) => $evolution->tokens > 0));
             $countExoticArms = count($usedExoticArms);
             if ($countExoticArms > 0) {
-                $extraDamage = $diceCount >= 3;
+
+                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
+                $rolledFaces = $this->getRolledDiceFaces($playerId, $dice, true);
+
+                $extraDamage = $rolledFaces[61] >= 3;
 
                 foreach ($usedExoticArms as $exoticArmsEvolution) {
                     $this->setEvolutionTokens($playerId, $exoticArmsEvolution, 0);

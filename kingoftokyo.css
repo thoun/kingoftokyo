@@ -1957,6 +1957,7 @@ html, .mode_3d #game_play_area_background {
   width: 16px;
   height: 16px;
   margin-bottom: -2px;
+  box-shadow: none !important;
 }
 .log .dice-icon {
   width: 20px;
