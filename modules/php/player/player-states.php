@@ -311,6 +311,9 @@ trait PlayerStateTrait {
             if ($this->isPowerUpExpansion()) {
                 $playerId = $this->getActivePlayerId();
                 $countChestThumping = $this->countEvolutionOfType($playerId, CHEST_THUMPING_EVOLUTION);
+                if ($countChestThumping > 0 && $this->isAnubisExpansion() && $this->getCurseCardType() == PHARAONIC_EGO_CURSE_CARD) {
+                    $countChestThumping = 0; // impossible to use Chest Thumping with Pharaonic Ego 
+                }
                 if ($countChestThumping > 0) {
                     $aliveSmashedPlayersInTokyo[] = $playerId;
                 }

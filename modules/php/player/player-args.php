@@ -61,7 +61,10 @@ trait PlayerArgTrait {
 
         if ($isPowerUpExpansion) {
             $countChestThumping = $this->countEvolutionOfType($activePlayerId, CHEST_THUMPING_EVOLUTION);
-            if ($countChestThumping > 0) {
+            if ($countChestThumping > 0 && $this->isAnubisExpansion() && $this->getCurseCardType() == PHARAONIC_EGO_CURSE_CARD) {
+                $countChestThumping = 0; // impossible to use Chest Thumping with Pharaonic Ego 
+            }
+            if ($countChestThumping > 0 && (!$this->isAnubisExpansion() || !$this->anubisCardIs(PHARAONIC_EGO_CURSE_CARD))) {
                 $args = array_merge($args, [
                     'canUseChestThumping' => true,
                     'smashedPlayersInTokyo' => $smashedPlayersInTokyo,
