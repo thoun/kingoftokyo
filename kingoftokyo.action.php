@@ -465,7 +465,7 @@
 
         $id = self::getArg("id", AT_posint, true);
         $from = self::getArg("from", AT_posint, true);
-        $useSuperiorAlienTechnology = self::getArg("useSuperiorAlienTechnology", AT_bool, false); // TODOPU set required to true
+        $useSuperiorAlienTechnology = self::getArg("useSuperiorAlienTechnology", AT_bool, true);
 
         $this->game->buyCard($id, $from, $useSuperiorAlienTechnology);
 
@@ -840,8 +840,10 @@
   	
     public function buyCardMiraculousCatch() {
         self::setAjaxMode();
+        
+        $useSuperiorAlienTechnology = self::getArg("useSuperiorAlienTechnology", AT_bool, true);
 
-        $this->game->buyCardMiraculousCatch();
+        $this->game->buyCardMiraculousCatch($useSuperiorAlienTechnology);
 
         self::ajaxResponse();
     }

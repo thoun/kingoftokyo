@@ -4530,7 +4530,10 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'MiraculousCatch':
                 var miraculousCatchArgs_1 = question.args;
-                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only'), cost: miraculousCatchArgs_1.cost })), function () { return _this.buyCardMiraculousCatch(); });
+                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only'), cost: miraculousCatchArgs_1.cost })), function () { return _this.buyCardMiraculousCatch(false); });
+                if (miraculousCatchArgs_1.costSuperiorAlienTechnology !== null && miraculousCatchArgs_1.costSuperiorAlienTechnology !== miraculousCatchArgs_1.cost) {
+                    this.addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs_1.costSuperiorAlienTechnology })), function () { return _this.buyCardMiraculousCatch(true); });
+                }
                 this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only') })), function () { return _this.skipMiraculousCatch(); });
                 setTimeout(function () { var _a; return (_a = document.getElementById("miraculousCatch-card-" + miraculousCatchArgs_1.card.id)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return _this.buyCardMiraculousCatch(); }); }, 250);
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = '' + miraculousCatchArgs_1.cost;
@@ -4817,7 +4820,7 @@ var KingOfTokyo = /** @class */ (function () {
             }
             else {
                 var cardCostSuperiorAlienTechnology = (_a = this.gamedatas.gamestate.args.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[cardId];
-                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined) {
+                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== this.gamedatas.gamestate.args.cardsCosts[cardId]) {
                     var keys = [
                         formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })),
                         formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: this.gamedatas.gamestate.args.cardsCosts[cardId] })),
@@ -5826,11 +5829,14 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('useMiraculousCatch');
     };
-    KingOfTokyo.prototype.buyCardMiraculousCatch = function () {
+    KingOfTokyo.prototype.buyCardMiraculousCatch = function (useSuperiorAlienTechnology) {
+        if (useSuperiorAlienTechnology === void 0) { useSuperiorAlienTechnology = false; }
         if (!this.checkAction('buyCardMiraculousCatch')) {
             return;
         }
-        this.takeAction('buyCardMiraculousCatch');
+        this.takeAction('buyCardMiraculousCatch', {
+            useSuperiorAlienTechnology: useSuperiorAlienTechnology
+        });
     };
     KingOfTokyo.prototype.skipMiraculousCatch = function () {
         if (!this.checkAction('skipMiraculousCatch')) {

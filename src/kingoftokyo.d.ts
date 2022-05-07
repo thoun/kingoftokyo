@@ -85,6 +85,7 @@ interface IcyReflectionQuestionArgs {
 interface MiraculousCatchQuestionArgs {
     card: Card;
     cost: number;
+    costSuperiorAlienTechnology: number;
 }
 
 interface DeepDiveQuestionArgs {

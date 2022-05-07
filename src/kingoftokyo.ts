@@ -1266,7 +1266,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'MiraculousCatch':
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
-                (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch());
+                (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
+                if (miraculousCatchArgs.costSuperiorAlienTechnology !== null && miraculousCatchArgs.costSuperiorAlienTechnology !== miraculousCatchArgs.cost) {
+                    (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(/*_TODO*/('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
+                }
                 (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
                 setTimeout(() => document.getElementById(`miraculousCatch-card-${miraculousCatchArgs.card.id}`)?.addEventListener('click', () => this.buyCardMiraculousCatch()), 250);
 
@@ -1637,7 +1640,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 );
             } else {
                 const cardCostSuperiorAlienTechnology = (this.gamedatas.gamestate.args as EnteringBuyCardArgs).cardsCostsSuperiorAlienTechnology?.[cardId];
-                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined) {
+                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== (this.gamedatas.gamestate.args as EnteringBuyCardArgs).cardsCosts[cardId]) {
                     const keys = [
                         formatTextIcons(dojo.string.substitute(/*_TODO*/('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })),
                         formatTextIcons(dojo.string.substitute(/*_TODO*/('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: (this.gamedatas.gamestate.args as EnteringBuyCardArgs).cardsCosts[cardId] })),
@@ -2889,12 +2892,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('useMiraculousCatch');
     }
     
-    public buyCardMiraculousCatch() {
+    public buyCardMiraculousCatch(useSuperiorAlienTechnology: boolean = false) {
         if(!(this as any).checkAction('buyCardMiraculousCatch')) {
             return;
         }
 
-        this.takeAction('buyCardMiraculousCatch');
+        this.takeAction('buyCardMiraculousCatch', {
+            useSuperiorAlienTechnology
+        });
     }
     
     public skipMiraculousCatch() {

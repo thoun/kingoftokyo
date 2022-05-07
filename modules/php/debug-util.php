@@ -21,7 +21,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[4], 1);
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
-        $this->debugSetEnergy(5);
+        $this->debugSetEnergy(25);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
         //$this->debugSetHealth(1);
@@ -51,6 +51,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
+        //$this->debugSetCardInTable(WINGS_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343492);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
@@ -68,9 +69,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343492);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
-        $this->debugSetCardInHand(JETS_CARD, 2343493);
+        //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
@@ -142,7 +143,7 @@ trait DebugUtilTrait {
 
         // anubis
         if ($this->isAnubisExpansion()) {
-            //$this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
+            $this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
             //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
@@ -152,7 +153,7 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
-            $this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             $this->changeGoldenScarabOwner(2343493);
@@ -222,6 +223,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343494, true);
             //$this->setMimickedEvolution(2343494, $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true));
             $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, true);
         }
 
         // player order

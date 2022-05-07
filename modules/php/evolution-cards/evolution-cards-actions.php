@@ -315,6 +315,9 @@ trait EvolutionCardsActionTrait {
         $this->cards->shuffle('discard');
         $card = $this->getCardFromDb($this->cards->getCardOnTop('discard'));
 
+        $cost = $this->getCardCost($playerId, $card->type) - 1;
+        $canUseSuperiorAlienTechnology = $card->type < 100 && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
+
         $question = new Question(
             'MiraculousCatch',
             /* client TODOPU translate(*/'${actplayer} can buy ${card_name} from the discard pile for 1[Energy] less'/*)*/,
@@ -323,7 +326,8 @@ trait EvolutionCardsActionTrait {
             ST_QUESTIONS_BEFORE_START_TURN,
             [
                 'card' => $card,
-                'cost' => $this->getCardCost($playerId, $card->type) - 1,
+                'cost' => $cost,
+                'costSuperiorAlienTechnology' => $canUseSuperiorAlienTechnology ? ceil($cost / 2) : null,
                 '_args' => [
                     'card_name' => $card->type,
                 ],
@@ -335,7 +339,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 
-    public function buyCardMiraculousCatch() {
+    public function buyCardMiraculousCatch(bool $useSuperiorAlienTechnology) {
         $this->checkAction('buyCardMiraculousCatch');
 
         $playerId = $this->getActivePlayerId();
@@ -346,14 +350,22 @@ trait EvolutionCardsActionTrait {
         $this->setUsedCard(3000 + $evolution->id);
         $this->cards->shuffle('discard');
 
+        $cost = $this->getCardCost($playerId, $card->type) - 1;        
+        if ($useSuperiorAlienTechnology) {
+            $cost = ceil($cost / 2);
+        }
+
         $playerId = $this->getActivePlayerId();
         $this->applyBuyCard(
             $playerId,
             $card->id,
             0,
             false,
-            $this->getCardCost($playerId, $card->type) - 1
+            $cost
         );
+        if ($useSuperiorAlienTechnology) {
+            $this->addSuperiorAlienTechnologyToken($playerId, $card->id);
+        }
 
         $this->goToState(ST_PLAYER_BUY_CARD);
     }
