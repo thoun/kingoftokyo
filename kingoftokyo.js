@@ -1172,7 +1172,7 @@ var EvolutionCards = /** @class */ (function () {
             case 148: return /*_TODODE*/ ("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy]."); // TODODE 148
             // Kraken
             case 151: return "+2[Heart]";
-            case 152: return /*_TODODE*/ ("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart]."); // TODODE 152
+            case 152: return /*_TODODE*/ ("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart].");
             case 153: return /*_TODODE*/ ("Gain 1[Star] for each [Heart] gained this turn.");
             case 154: return /*_TODODE*/ ("For each [diceHeart] you rolled, add [diceHeart] to your Roll");
             case 155: return /*_TODODE*/ ("Roll one die for each [Heart] you lost this turn. Don’t lose [Heart] for each [diceHeart] you roll.");
@@ -3565,6 +3565,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
+            case 'afterEnteringTokyo':
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
@@ -4098,6 +4099,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
+            case 'afterEnteringTokyo':
             case 'cardIsBought':
                 this.onLeavingStepEvolution();
                 break;
@@ -4450,6 +4452,9 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'beforeEnteringTokyo':
                     this.addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), function () { return _this.skipBeforeEnteringTokyo(); });
+                    break;
+                case 'afterEnteringTokyo':
+                    this.addActionButton('skipAfterEnteringTokyo_button', _("Skip"), function () { return _this.skipAfterEnteringTokyo(); });
                     break;
                 case 'buyCard':
                     var argsBuyCard = args;
@@ -5262,6 +5267,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipBeforeEnteringTokyo');
+    };
+    KingOfTokyo.prototype.skipAfterEnteringTokyo = function () {
+        if (!this.checkAction('skipAfterEnteringTokyo')) {
+            return;
+        }
+        this.takeAction('skipAfterEnteringTokyo');
     };
     KingOfTokyo.prototype.giveSymbolToActivePlayer = function (symbol) {
         if (!this.checkAction('giveSymbolToActivePlayer')) {

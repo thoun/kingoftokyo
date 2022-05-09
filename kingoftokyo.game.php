@@ -720,5 +720,10 @@ class KingOfTokyo extends Table {
               self::applyDbUpgradeToAllDB($sql);
             }
         }
+
+        if ($from_version <= 2205091813) {
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_turn_entered_tokyo` tinyint unsigned NOT NULL DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
     }
 }

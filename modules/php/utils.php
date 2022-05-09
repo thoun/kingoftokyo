@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -298,8 +298,8 @@ trait UtilTrait {
         $incEnergy = 0;
         $incScore = 0;
         $playerGettingEnergy = null;
+        $this->DbQuery("UPDATE player SET player_location = $location, player_turn_entered_tokyo = 1 where `player_id` = $playerId");
         if ($this->isTwoPlayersVariant()) {
-            $this->DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
 
             $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
@@ -312,7 +312,6 @@ trait UtilTrait {
                 $message = clienttranslate('${player_name} enters ${locationName}');
             }
         } else {
-            $this->DbQuery("UPDATE player SET player_location = $location where `player_id` = $playerId");
             if ($this->canGainPoints($playerId)) {
                 $incScore = 1;
                 $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');

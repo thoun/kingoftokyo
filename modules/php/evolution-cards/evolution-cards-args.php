@@ -74,6 +74,18 @@ trait EvolutionCardsArgTrait {
         ];
     }
 
+    function argAfterEnteringTokyo() {
+        $activePlayerId = $this->getActivePlayerId();
+
+        $player = $this->getPlayer($activePlayerId);
+
+        $highlighted = $player->location > 0 && $player->turnEnteredTokyo ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO) : [];
+
+        return [
+            'highlighted' => $highlighted,
+        ];
+    }
+
     function argCardIsBought() {
         $isPowerUpExpansion = $this->isPowerUpExpansion();
 

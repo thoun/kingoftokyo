@@ -118,6 +118,10 @@ trait EvolutionCardsUtilTrait {
             throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card before entering Tokyo"));
         }
 
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO) && $stateId != ST_PLAYER_AFTER_ENTERING_TOKYO) {
+            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card after entering Tokyo"));
+        }
+
         // cards to player when card is bought
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) && $stateId != ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT) {
             $canPlay = $cardType == BAMBOOZLE_EVOLUTION && $playerId != intval($this->getActivePlayerId());
@@ -242,7 +246,7 @@ trait EvolutionCardsUtilTrait {
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 $damages = [];
                 foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 1, $playerId, 3000 + ELECTRO_SCRATCH_EVOLUTION);
+                    $damages[] = new Damage($otherPlayerId, 1, $playerId, $logCardType);
                 }
                 return $damages;
             case FELINE_MOTOR_EVOLUTION:
@@ -331,6 +335,13 @@ trait EvolutionCardsUtilTrait {
             case HEALING_RAIN_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
+            case DESTRUCTIVE_WAVE_EVOLUTION:
+                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                $damages = [];
+                foreach ($otherPlayersIds as $otherPlayerId) {
+                    $damages[] = new Damage($otherPlayerId, 2, $playerId, $logCardType);
+                }
+                return $damages;
             case CULT_WORSHIPPERS_EVOLUTION:
                 $this->applyGetPoints($playerId, $this->getPlayer($playerId)->turnHealth, $logCardType);
                 break;

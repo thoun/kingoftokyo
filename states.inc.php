@@ -660,6 +660,17 @@ $playerActionsGameStates = [
         ],
     ],
 
+    ST_PLAYER_AFTER_ENTERING_TOKYO => [
+        "name" => "afterEnteringTokyo",
+        "description" => /* client TODOPU translate(*/'Some players may activate an Evolution card'/*)*/,
+        "descriptionmyturn" => /* client TODOPU translate(*/'${you} may activate an Evolution card'/*)*/,
+        "type" => "activeplayer",
+        "action" => "stAfterEnteringTokyo",
+        "args" => "argAfterEnteringTokyo",
+        "possibleactions" => [ "skipAfterEnteringTokyo" ],
+        "transitions" => [],        
+    ],
+
     ST_PLAYER_STEAL_COSTUME_CARD => [
         "name" => "stealCostumeCard",
         "description" => clienttranslate('${actplayer} can steal a Costume card'),

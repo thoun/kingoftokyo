@@ -57,6 +57,16 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
+    function skipAfterEnteringTokyo($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipAfterEnteringTokyo');
+        }
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $this->goToState($this->redirectAfterEnterTokyo($playerId));
+    }
+
     function applyChooseEvolutionCard(int $playerId, int $id, bool $init) {
         $topCards = $this->pickEvolutionCards($playerId);
         $card = $this->array_find($topCards, fn($topCard) => $topCard->id == $id);

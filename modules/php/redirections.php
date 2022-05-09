@@ -133,6 +133,14 @@ trait RedirectionTrait {
         }
     }
 
+    function redirectAfterEnterTokyo(int $playerId) {
+        if ($this->isHalloweenExpansion()) { 
+            return ST_PLAYER_STEAL_COSTUME_CARD;
+        } else {
+            return $this->redirectAfterStealCostume($playerId);
+        }
+    }
+
     function redirectAfterStealCostume(int $playerId) {
         if ($this->isMutantEvolutionVariant() && $this->getFormCard($playerId) != null) { 
             return ST_PLAYER_CHANGE_FORM;

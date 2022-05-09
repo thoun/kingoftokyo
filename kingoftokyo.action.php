@@ -84,6 +84,14 @@
         self::ajaxResponse();
     }
   	
+    public function skipAfterEnteringTokyo() {
+        self::setAjaxMode();
+
+        $this->game->skipAfterEnteringTokyo();
+
+        self::ajaxResponse();
+    }
+  	
     public function giveSymbolToActivePlayer() {
         self::setAjaxMode();
 

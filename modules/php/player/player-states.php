@@ -16,7 +16,7 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();        
 
         $this->DbQuery("DELETE FROM `turn_damages`");
-        $this->DbQuery("UPDATE `player` SET `player_turn_energy` = 0, `player_turn_health` = 0");
+        $this->DbQuery("UPDATE `player` SET `player_turn_energy` = 0, `player_turn_health` = 0, `player_turn_entered_tokyo` = 0");
         $this->setGameStateValue(EXTRA_ROLLS, 0);
         $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
         $this->setGameStateValue(SKIP_BUY_PHASE, 0);
@@ -383,10 +383,25 @@ trait PlayerStateTrait {
             $this->setGameStateValue(PREVENT_ENTER_TOKYO, 0);
         }
 
-        if ($this->isHalloweenExpansion()) { 
-            $this->gamestate->nextState('stealCostumeCard');
+        if ($this->isPowerUpExpansion()) {
+            $this->goToState(ST_PLAYER_AFTER_ENTERING_TOKYO);
         } else {
-            $this->goToState($this->redirectAfterStealCostume($playerId));
+            $this->goToState($this->redirectAfterEnterTokyo($playerId));
+        }
+    }
+
+    function stAfterEnteringTokyo() {
+        $playerId = $this->getActivePlayerId();
+        $player = $this->getPlayer($playerId); 
+        if ($player->location == 0 || !$player->turnEnteredTokyo) {
+            $this->goToState($this->redirectAfterEnterTokyo($playerId));
+            return;
+        }
+
+        $couldPlay = $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO);
+
+        if (!$couldPlay) {
+            $this->goToState($this->redirectAfterEnterTokyo($playerId));
         }
     }
 

@@ -211,6 +211,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
+            case 'afterEnteringTokyo':
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
             case 'changeMimickedCard':
@@ -822,6 +823,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
+            case 'afterEnteringTokyo':
             case 'cardIsBought':
                 this.onLeavingStepEvolution();
                 break;
@@ -1184,9 +1186,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
 
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
-                    break;                
+                    break;
                 case 'beforeEnteringTokyo':
                     (this as any).addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), () => this.skipBeforeEnteringTokyo());
+                    break;
+                case 'afterEnteringTokyo':
+                    (this as any).addActionButton('skipAfterEnteringTokyo_button', _("Skip"), () => this.skipAfterEnteringTokyo());
                     break;
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
@@ -2171,6 +2176,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipBeforeEnteringTokyo');
+    }
+
+    public skipAfterEnteringTokyo() {
+        if(!(this as any).checkAction('skipAfterEnteringTokyo')) {
+            return;
+        }
+
+        this.takeAction('skipAfterEnteringTokyo');
     }
 
     public giveSymbolToActivePlayer(symbol: number) {
