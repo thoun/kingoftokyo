@@ -596,10 +596,12 @@ trait CardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $countSoSmall = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) : 0;
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
-        $countTerrorOfTheDeep = $this->isPowerUpExpansion() ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
+        $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
         
-        if ($countCamouflage + $countTerrorOfTheDeep == 0) {
+        if ($countSoSmall + $countCamouflage + $countTerrorOfTheDeep == 0) {
             throw new \BgaUserException('No card to roll dice and cancel damage');
         }
 
@@ -625,29 +627,43 @@ trait CardsActionTrait {
     }
 
     function endThrowCamouflageDice(int $playerId, object $intervention, array $dice, bool $incCamouflageRolls) {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $countSoSmall = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) : 0;
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
-        $countTerrorOfTheDeep = $this->isPowerUpExpansion() ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
+        $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
         
         $rolledDice = array_values(array_filter($dice, fn($d) => $d->rolled));
         $diceValues = array_map(fn($die) => $die->value, $dice);
         $rolledDiceValues = array_map(fn($die) => $die->value, $rolledDice);
 
-        $cancelledDamage = count(array_values(array_filter($rolledDiceValues, fn($face) => $face === 4))); // heart dices
+        $playerUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : new PlayersUsedDice($dice, $countSoSmall + $countCamouflage + $countTerrorOfTheDeep);
+        
+        $cardLogType = $playerUsedDice->rolls < $countSoSmall ? 3000 + SO_SMALL_EVOLUTION : 
+            ($countTerrorOfTheDeep > 0 && $countCamouflage < $playerUsedDice->rolls ? 3000 + TERROR_OF_THE_DEEP_EVOLUTION : CAMOUFLAGE_CARD);
 
-        $playerUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : new PlayersUsedDice($dice, $countCamouflage + $countTerrorOfTheDeep);
         if ($incCamouflageRolls) {
             $playerUsedDice->rolls = $playerUsedDice->rolls + 1;
         } 
         $intervention->playersUsedDice->{$playerId} = $playerUsedDice;
 
-        $cardLogType = $countTerrorOfTheDeep > 0 && $countCamouflage < $playerUsedDice->rolls ? 3000 + TERROR_OF_THE_DEEP_EVOLUTION : CAMOUFLAGE_CARD;
+        if ($cardLogType === 3000 + SO_SMALL_EVOLUTION) {
+            $soSmallCards = $this->getEvolutionsOfType($playerId, SO_SMALL_EVOLUTION, true, true);
 
+            if ($this->array_every($soSmallCards, fn($soSmallCard) => $soSmallCard->location === 'hand')) {
+                $this->playEvolutionToTable($playerId, $soSmallCards[0]);
+            }
+        }
         if ($cardLogType === 3000 + TERROR_OF_THE_DEEP_EVOLUTION) {
             $terrorOfTheDeepCards = $this->getEvolutionsOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true);
 
             if ($this->array_every($terrorOfTheDeepCards, fn($terrorOfTheDeepCard) => $terrorOfTheDeepCard->location === 'hand')) {
                 $this->playEvolutionToTable($playerId, $terrorOfTheDeepCards[0]);
             }
+        }
+
+        $cancelledDamage = count(array_values(array_filter($rolledDiceValues, fn($face) => $face === 4))); // heart dices
+        if ($cardLogType === 3000 + SO_SMALL_EVOLUTION && $cancelledDamage > 0) {
+            $cancelledDamage = count($rolledDice);
         }
 
         $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $cancelledDamage;

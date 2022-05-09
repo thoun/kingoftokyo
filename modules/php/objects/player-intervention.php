@@ -69,7 +69,7 @@ class CancelDamageIntervention extends PlayerIntervention {
         $canDo = $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
             $game->countCardOfType($playerId, ROBOT_CARD) > 0 || 
             ($game->countCardOfType($playerId, WINGS_CARD) > 0 && $game->canLoseHealth($playerId, $damage) == null) ||
-            ($game->isPowerUpExpansion() && ($game->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $game->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $game->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0)) ||
+            ($game->isPowerUpExpansion() && ($game->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $game->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $game->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $game->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0)) ||
             $game->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
 
         if ($canDo) {

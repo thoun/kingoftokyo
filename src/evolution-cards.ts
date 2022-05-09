@@ -1,4 +1,4 @@
-const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,7,8,13,14,15];
+const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,7,8,13,14,15,18];
 
 class EvolutionCards {
     EVOLUTION_CARDS_TYPES: number[];
@@ -253,7 +253,7 @@ class EvolutionCards {
             case 183: return /*_TODOPUBG*/("Each Monster who has more [Star] than you has to give you 1[Star].");
             case 184: return /*_TODOPUBG*/("Once per turn, you may change two dice you rolled to [dice1].");
             // 185 same as 56
-            case 186: return /*_TODOPUBG*/("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart]."); // TODOPUBG
+            case 186: return /*_TODOPUBG*/("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart].");
             case 187: return /*_TODOPUBG*/("Add 2 [diceSmash] to your Roll.");
             case 188: return "+2[Heart] +1[Energy].";
         }

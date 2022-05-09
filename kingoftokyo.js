@@ -935,7 +935,7 @@ var CurseCards = /** @class */ (function () {
     };
     return CurseCards;
 }());
-var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15];
+var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15, 18];
 var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
         this.game = game;
@@ -1185,7 +1185,7 @@ var EvolutionCards = /** @class */ (function () {
             case 183: return /*_TODOPUBG*/ ("Each Monster who has more [Star] than you has to give you 1[Star].");
             case 184: return /*_TODOPUBG*/ ("Once per turn, you may change two dice you rolled to [dice1].");
             // 185 same as 56
-            case 186: return /*_TODOPUBG*/ ("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart]."); // TODOPUBG
+            case 186: return /*_TODOPUBG*/ ("When a Monster wounds you, roll a die for each [diceSmash]. If any of the results is [diceHeart], you lose no [Heart].");
             case 187: return /*_TODOPUBG*/ ("Add 2 [diceSmash] to your Roll.");
             case 188: return "+2[Heart] +1[Energy].";
         }
@@ -3662,9 +3662,11 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setGamestateDescription = function (property) {
         if (property === void 0) { property = ''; }
         var originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
-        this.gamedatas.gamestate.description = "" + originalState['description' + property];
-        this.gamedatas.gamestate.descriptionmyturn = "" + originalState['descriptionmyturn' + property];
-        this.updatePageTitle();
+        if (this.gamedatas.gamestate.description !== "" + originalState['description' + property]) {
+            this.gamedatas.gamestate.description = "" + originalState['description' + property];
+            this.gamedatas.gamestate.descriptionmyturn = "" + originalState['descriptionmyturn' + property];
+            this.updatePageTitle();
+        }
     };
     KingOfTokyo.prototype.removeGamestateDescription = function () {
         this.gamedatas.gamestate.description = '';
@@ -3892,6 +3894,9 @@ var KingOfTokyo = /** @class */ (function () {
         if (args.dice) {
             this.diceManager.showCamouflageRoll(args.dice);
         }
+        if (!args.canCancelDamage && args.canHealToAvoidDeath) {
+            this.setGamestateDescription('HealBeforeDamage');
+        }
         if (isCurrentPlayerActive) {
             if (args.dice && ((_a = args.rethrow3) === null || _a === void 0 ? void 0 : _a.hasCard)) {
                 if (document.getElementById('rethrow3camouflage_button')) {
@@ -3945,7 +3950,15 @@ var KingOfTokyo = /** @class */ (function () {
                 });
             }
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
-                this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), function () { return _this.skipWings(); });
+                var canAvoidDeath_1 = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
+                this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), function () {
+                    if (canAvoidDeath_1) {
+                        _this.confirmationDialog(formatTextIcons(_("Are you sure you want to Skip? It means [Skull]")), function () { return _this.skipWings(); });
+                    }
+                    else {
+                        _this.skipWings();
+                    }
+                }, null, null, canAvoidDeath_1 ? 'red' : undefined);
                 if (!args.canDoAction) {
                     this.startActionTimer('skipWings_button', ACTION_TIMER_DURATION);
                 }

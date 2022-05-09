@@ -315,9 +315,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     
     private setGamestateDescription(property: string = '') {
         const originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
-        this.gamedatas.gamestate.description = `${originalState['description' + property]}`; 
-        this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
-        (this as any).updatePageTitle();
+        if (this.gamedatas.gamestate.description !== `${originalState['description' + property]}`) {
+            this.gamedatas.gamestate.description = `${originalState['description' + property]}`; 
+            this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
+            (this as any).updatePageTitle();
+        }
     }
     
     private removeGamestateDescription() {
@@ -585,6 +587,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (args.dice) {
             this.diceManager.showCamouflageRoll(args.dice);
         }
+
+        if (!args.canCancelDamage && args.canHealToAvoidDeath) {
+            this.setGamestateDescription('HealBeforeDamage');
+        }
         
         if (isCurrentPlayerActive) {
             if (args.dice && args.rethrow3?.hasCard) {
@@ -646,7 +652,24 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
-                (this as any).addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}) : _("Skip"), () => this.skipWings());
+                const canAvoidDeath = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
+                (this as any).addActionButton(
+                    'skipWings_button', 
+                    args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}) : _("Skip"), 
+                    () => {
+                        if (canAvoidDeath) {
+                            (this as any).confirmationDialog(
+                                formatTextIcons(_("Are you sure you want to Skip? It means [Skull]")), 
+                                () => this.skipWings()
+                            );
+                        } else {
+                            this.skipWings();
+                        } 
+                    },
+                    null,
+                    null,
+                    canAvoidDeath ? 'red' : undefined
+                );
                 if (!args.canDoAction) {
                     this.startActionTimer('skipWings_button', ACTION_TIMER_DURATION);
                 }

@@ -17,15 +17,15 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[4], 1);
         //$this->debugSetPlayerInLocation($playersIds[0], 2);
-        $this->debugSetEnergy(25);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
         //$this->debugSetHealth(1);
-        $this->debugSetPlayerHealth(2343492, 1);
+        $this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -87,8 +87,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343492);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343494);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
@@ -221,7 +221,8 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
             //$this->setMimickedEvolution(2343493, $this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true));
             $this->debugSetEvolutionInHand(HIGH_TIDE_EVOLUTION, 2343492, false);
         }
