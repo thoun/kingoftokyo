@@ -389,11 +389,16 @@ class EvolutionCards {
 
     }
 
-    public getTooltip(cardTypeId: number) {
+    // TODOPU set ownerId
+    public getTooltip(cardTypeId: number, ownerId?: number) {
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId, 'text-only')}</strong></p>
-            <p>${this.getCardTypeName(cardTypeId)}</p>
-            <p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
+            <p>${this.getCardTypeName(cardTypeId)}</p>`;
+            if (ownerId) {
+                const owner = this.game.getPlayer(ownerId);
+                tooltip += `<p>${_('Owner:')} <strong style="color: #${owner.color};">${owner.name}</strong></p>`;
+            }
+            tooltip += `<p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
         </div>`;
         return tooltip;
     }

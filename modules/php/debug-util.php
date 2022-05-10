@@ -275,8 +275,9 @@ trait DebugUtilTrait {
     }
 
     function debugSetEvolutionInHand(int $cardType, int $playerId, bool $visible) {
-        $card = $this->getEvolutionCardFromDb(array_values($this->evolutionCards->getCardsOfType($cardType))[0]);
+        $card = $this->getEvolutionCardById(array_values($this->evolutionCards->getCardsOfType($cardType))[0]['id']);
         $this->evolutionCards->moveCard($card->id, $visible ? 'table' : 'hand', $playerId);
+        $this->DbQuery("UPDATE evolution_card SET owner_id=$playerId WHERE card_id = $card->id");
         return $card;
     }
 

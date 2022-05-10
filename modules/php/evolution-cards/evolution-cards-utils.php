@@ -66,33 +66,49 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function getEvolutionCardFromDb(array $dbCard) {
-        if (!$dbCard || !array_key_exists('id', $dbCard)) {
-            throw new \Error('card doesn\'t exists '.json_encode($dbCard));
-        }
-        if (!$dbCard || !array_key_exists('location', $dbCard)) {
-            throw new \Error('location doesn\'t exists '.json_encode($dbCard));
-        }
-        return new EvolutionCard($dbCard);
+    function getEvolutionCardById(int $id) {
+        $sql = "SELECT * FROM `evolution_card` WHERE `card_id` = $id";
+        $dbResults = $this->getCollectionFromDb($sql);
+        return new EvolutionCard(array_values($dbResults)[0]);
     }
 
-    function getEvolutionCardsFromDb(array $dbCards) {
-        return array_map(fn($dbCard) => $this->getEvolutionCardFromDb($dbCard), array_values($dbCards));
+    function getEvolutionCardsByLocation(string $location, /*int|null*/ $location_arg = null, /*int|null*/ $type = null) {
+        $sql = "SELECT * FROM `evolution_card` WHERE `card_location` = '$location'";
+        if ($location_arg !== null) {
+            $sql .= " AND `card_location_arg` = $location_arg";
+        }
+        if ($type !== null) {
+            $sql .= " AND `card_type` = $type";
+        }
+        $dbResults = $this->getCollectionFromDb($sql);
+        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
+    }
+
+    function getEvolutionCardsByType(int $type) {
+        $sql = "SELECT * FROM `evolution_card` WHERE `card_type` = $type";
+        $dbResults = $this->getCollectionFromDb($sql);
+        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
+    }
+
+    function getEvolutionCardsOnDeckTop(int $playerId, int $number) {
+        $sql = "SELECT * FROM `evolution_card` WHERE `card_location` = 'deck$playerId' ORDER BY `location_arg` DESC LIMIT $number";
+        $dbResults = $this->getCollectionFromDb($sql);
+        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
     }
 
     function pickEvolutionCards(int $playerId, int $number = 2) {
         $remainingInDeck = intval($this->evolutionCards->countCardInLocation('deck'.$playerId));
         if ($remainingInDeck >= $number) {
-            return $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($number, 'deck'.$playerId));
+            return $this->getEvolutionCardsOnDeckTop($playerId, $number);
         } else {
-            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($remainingInDeck, 'deck'.$playerId));
+            $cards = $this->getEvolutionCardsOnDeckTop($playerId, $remainingInDeck);
 
             $this->evolutionCards->moveAllCardsInLocation('discard'.$playerId, 'deck'.$playerId);
             $this->evolutionCards->shuffle('deck'.$playerId);
 
             $cards = array_merge(
                 $cards,
-                $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOnTop($number - $remainingInDeck, 'deck'.$playerId))
+                $this->getEvolutionCardsOnDeckTop($playerId, $number - $remainingInDeck)
             );
             return $cards;
         }
@@ -159,7 +175,7 @@ trait EvolutionCardsUtilTrait {
                 $playersIds = $this->getPlayersIds();
                 $canPlayIcyReflection = false;
                 foreach($playersIds as $playerId) {
-                    $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
+                    $evolutions = $this->getEvolutionCardsByLocation('table', $playerId);
                     if ($this->array_some($evolutions, fn($evolution) => $evolution->type != ICY_REFLECTION_EVOLUTION && $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 1)) {
                         $canPlayIcyReflection = true; // if there is a permanent evolution card in table
                     }
@@ -383,7 +399,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getEvolutionsOfTypeInLocation(int $playerId, int $cardType, string $location) {
-        $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation($cardType, null, $location, $playerId));
+        $evolutions = $this->getEvolutionCardsByLocation($location, $playerId, $cardType);
         
         if ($location === 'table' && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
             $mimickedCardType = $this->getMimickedEvolutionType();
@@ -460,7 +476,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function isEvolutionOnTable(int $type) { // owner id | null
-        $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType($type));
+        $cards = $this->getEvolutionCardsByType($type);
         if (count($cards) > 0) {
             $card = $cards[0];
         
@@ -604,7 +620,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
-        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($evolutionId));
+        $card = $this->getEvolutionCardById($evolutionId);
 
         $this->evolutionCards->moveCard($card->id, 'hand', $playerId);
 
@@ -615,7 +631,7 @@ trait EvolutionCardsUtilTrait {
         $cards = [];
 
         foreach ($stepCardsTypes as $stepCardsType) {
-            $stepCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType($stepCardsType));
+            $stepCards = $this->getEvolutionCardsByType($stepCardsType);
             foreach ($stepCards as $stepCard) {
                 if ($stepCard->location == 'hand') {
                     $cards[] = $stepCard;
@@ -688,7 +704,7 @@ trait EvolutionCardsUtilTrait {
         $disabledEvolutions = [];
         $playersIds = $this->getPlayersIds();
         foreach($playersIds as $pId) {
-            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $pId));
+            $evolutions = $this->getEvolutionCardsByLocation('table', $pId);
             foreach($evolutions as $evolution) {
                 if ($evolution->type != ICY_REFLECTION_EVOLUTION && $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 1) {
                     $enabledEvolutions[] = $evolution;
@@ -735,7 +751,7 @@ trait EvolutionCardsUtilTrait {
 
         $tokens = $this->getTokensByEvolutionType($card->type);
         if ($tokens > 0) {
-            $mimicCard = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0];
+            $mimicCard = $this->getEvolutionCardsByType(ICY_REFLECTION_EVOLUTION)[0];
             $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
         }
         
@@ -753,7 +769,7 @@ trait EvolutionCardsUtilTrait {
             ]);
         }
 
-        $mimicCard = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(ICY_REFLECTION_EVOLUTION))[0];
+        $mimicCard = $this->getEvolutionCardsByType(ICY_REFLECTION_EVOLUTION)[0];
 
         if ($mimicCard && $mimicCard->tokens > 0) {
             $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
@@ -801,16 +817,12 @@ trait EvolutionCardsUtilTrait {
     function setOwnerIdForAllEvolutions() {
         $playersIds = $this->getPlayersIds();
         foreach($playersIds as $playerId) {
-            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('deck'.$playerId));
+            $evolutions = $this->getEvolutionCardsByLocation('deck'.$playerId);
             $ids = array_map(fn($evolution) => $evolution->id, $evolutions);
             if(count($ids) > 0) {
                 $this->DbQuery("UPDATE `evolution_card` SET `owner_id` = $playerId where `card_id` IN (" . implode(',', $ids) . ")");
             }
         }
-    }
-
-    function getEvolutionOwnerId(EvolutionCard $evolution) {
-        return intval($this->getUniqueValueFromDB("SELECT `owner_id` FROM `evolution_card` WHERE `card_id` = $evolution->id"));
     }
 
     function giveFreezeRay(int $fromPlayerId, int $toPlayerId) {
@@ -821,7 +833,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function giveBackFreezeRay(int $activePlayerId, EvolutionCard $evolution) {
-        $ownerId = $this->getEvolutionOwnerId($evolution);
+        $ownerId = $evolution->ownerId;
         if ($ownerId != $activePlayerId) {
             $this->removeEvolution($activePlayerId, $evolution, true, false, true);
             $this->evolutionCards->moveCard($evolution->id, 'table', $ownerId);

@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+require_once(__DIR__.'/../objects/damage.php');
+
+use KOT\Objects\Damage;
+
 trait CurseCardsActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +72,7 @@ trait CurseCardsActionTrait {
         foreach($symbolsCount as $symbol => $count) {
             switch($symbol) {
                 case 4: 
-                    $this->applyDamageOld($from, $count, 0, $logCardType, $to, 0, 0, 0);
+                    $this->applyDamage(new Damage($from, $count, 0, $logCardType));
                     $this->applyGetHealth($to, $count, $logCardType, $from);
                     break;
                 case 5:
@@ -239,7 +243,7 @@ trait CurseCardsActionTrait {
 
         $playerId = $this->getActivePlayerId(); 
 
-        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
+        $card = $this->getEvolutionCardById($id);
 
         $this->removeEvolution($playerId, $card);
 

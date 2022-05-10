@@ -4,9 +4,11 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../objects/evolution-card.php');
 require_once(__DIR__.'/../objects/question.php');
+require_once(__DIR__.'/../objects/damage.php');
 
 use KOT\Objects\EvolutionCard;
 use KOT\Objects\Question;
+use KOT\Objects\Damage;
 
 trait EvolutionCardsActionTrait {
 
@@ -24,7 +26,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
+        $card = $this->getEvolutionCardById($id);
 
         if (strpos($card->location, 'mutant') !== 0) {
             throw new \BgaUserException("Card is not selectable");
@@ -118,7 +120,7 @@ trait EvolutionCardsActionTrait {
     function playEvolution(int $id) {
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($id));
+        $card = $this->getEvolutionCardById($id);
 
         $this->checkCanPlayEvolution($card->type, $playerId);
 
@@ -263,7 +265,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($mimickedEvolutionId));        
+        $card = $this->getEvolutionCardById($mimickedEvolutionId);        
         if ($this->EVOLUTION_CARDS_TYPES[$card->type] != 1) {
             throw new \BgaUserException("You can only mimic Permanent evolutions");
         }
@@ -294,7 +296,7 @@ trait EvolutionCardsActionTrait {
 
         $question = $this->getQuestion();
         $evolutionId = $question->args->card->id;
-        $evolution = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($evolutionId));
+        $evolution = $this->getEvolutionCardById($evolutionId);
         $this->setEvolutionTokens($this->getActivePlayerId(), $evolution, $symbol, true);
 
         $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} choses that ${die_face} will have no effect this turn'/*)*/, [
@@ -444,7 +446,7 @@ trait EvolutionCardsActionTrait {
 
         $question = $this->getQuestion();
         $evolutionId = $question->args->card->id;
-        $evolution = $this->getEvolutionCardFromDb($this->evolutionCards->getCard($evolutionId));
+        $evolution = $this->getEvolutionCardById($evolutionId);
         $this->setEvolutionTokens($this->getActivePlayerId(), $evolution, 2);
 
         $this->setUsedCard(3000 + $evolutionId);
@@ -531,7 +533,7 @@ trait EvolutionCardsActionTrait {
             'dice' => $diceStr,
         ]);
         if ($smashCount > 0) {
-            $this->applyDamageOld($damageDealerIdForPlayer, $smashCount, $playerId, 3000 + LIGHTNING_ARMOR_EVOLUTION, $playerId, 0, 0, null);
+            $this->applyDamage(new Damage($damageDealerIdForPlayer, $smashCount, $playerId, 3000 + LIGHTNING_ARMOR_EVOLUTION));
         }
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');

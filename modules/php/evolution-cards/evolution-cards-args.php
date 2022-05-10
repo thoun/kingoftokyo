@@ -19,8 +19,8 @@ trait EvolutionCardsArgTrait {
         $playersIds = $this->getPlayersIds();
         $privateArgs = [];
         foreach($playersIds as $index => $playerId) {
-            $chooseCardIn = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('mutant'.(($index + $turn) % count($playersIds))));
-            $inDeck = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('deck'.$playerId));
+            $chooseCardIn = $this->getEvolutionCardsByLocation('mutant'.(($index + $turn) % count($playersIds)));
+            $inDeck = $this->getEvolutionCardsByLocation('deck'.$playerId);
             $privateArgs[$playerId] = [
                 'chooseCardIn' => $chooseCardIn,
                 'inDeck' => $inDeck,

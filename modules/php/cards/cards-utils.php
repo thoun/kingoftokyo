@@ -379,8 +379,8 @@ trait CardsUtilTrait {
         $this->removeCards($playerId, $cards);
 
         if ($removeEvolutions) {
-            $visibleEvolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $playerId));
-            $hiddenEvolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('hand', $playerId));
+            $visibleEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
+            $hiddenEvolutions = $this->getEvolutionCardsByLocation('hand', $playerId);
             $this->removeEvolutions($playerId, array_merge($visibleEvolutions, $hiddenEvolutions));
         }
 
@@ -866,7 +866,7 @@ trait CardsUtilTrait {
         }
         
         if ($this->isPowerUpExpansion()) {
-            $twasBeautyKilledTheBeastCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION));
+            $twasBeautyKilledTheBeastCards = $this->getEvolutionCardsByType(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
             foreach($twasBeautyKilledTheBeastCards as $twasBeautyKilledTheBeastCard) {
                 if ($twasBeautyKilledTheBeastCard->location == 'table') {
                     $playerId = intval($twasBeautyKilledTheBeastCard->location_arg);
@@ -875,21 +875,21 @@ trait CardsUtilTrait {
                 }
             }
 
-            $simianScamperCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(SIMIAN_SCAMPER_EVOLUTION));
+            $simianScamperCards = $this->getEvolutionCardsByType(SIMIAN_SCAMPER_EVOLUTION);
             foreach($simianScamperCards as $simianScamperCard) {
                 if ($simianScamperCard->location == 'table') {
                     $this->removeEvolution($simianScamperCard->location_arg, $simianScamperCard);
                 }
             }
 
-            $detachableTailCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(DETACHABLE_TAIL_EVOLUTION));
+            $detachableTailCards = $this->getEvolutionCardsByType(DETACHABLE_TAIL_EVOLUTION);
             foreach($detachableTailCards as $detachableTailCard) {
                 if ($detachableTailCard->location == 'table') {
                     $this->removeEvolution($detachableTailCard->location_arg, $detachableTailCard);
                 }
             }
 
-            $detachableTailCards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfType(RABBIT_S_FOOT_EVOLUTION));
+            $detachableTailCards = $this->getEvolutionCardsByType(RABBIT_S_FOOT_EVOLUTION);
             foreach($detachableTailCards as $detachableTailCard) {
                 if ($detachableTailCard->location == 'table') {
                     $this->removeEvolution($detachableTailCard->location_arg, $detachableTailCard);

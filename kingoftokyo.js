@@ -1284,8 +1284,14 @@ var EvolutionCards = /** @class */ (function () {
             cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '7pt';
         }
     };
-    EvolutionCards.prototype.getTooltip = function (cardTypeId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + this.getCardTypeName(cardTypeId) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+    // TODOPU set ownerId
+    EvolutionCards.prototype.getTooltip = function (cardTypeId, ownerId) {
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + this.getCardTypeName(cardTypeId) + "</p>";
+        if (ownerId) {
+            var owner = this.game.getPlayer(ownerId);
+            tooltip += "<p>" + _('Owner:') + " <strong style=\"color: #" + owner.color + ";\">" + owner.name + "</strong></p>";
+        }
+        tooltip += "<p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     EvolutionCards.prototype.setupNewCard = function (cardDiv, cardType) {

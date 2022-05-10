@@ -444,7 +444,7 @@ trait PlayerStateTrait {
         if ($countNaturalSelection > 0) {
             $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
             if ($diceCounts[3] > 0) {
-                $this->applyDamageOld($playerId, $this->getPlayerHealth($playerId), $playerId, NATURAL_SELECTION_CARD, $playerId, 0, 0, null);
+                $this->applyDamage(new Damage($playerId, $this->getPlayerHealth($playerId), $playerId, NATURAL_SELECTION_CARD));
             }
         }
 

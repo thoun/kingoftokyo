@@ -762,7 +762,7 @@ trait CardsActionTrait {
         $this->setNextDamageIntervention('next', $intervention); // must be set before apply damage, in case this player die
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $this->applyDamageOld($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+                $this->applyDamage($damage);
             }
         }
         

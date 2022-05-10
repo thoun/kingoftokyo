@@ -2,13 +2,13 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/objects/dice.php');
-require_once(__DIR__.'/objects/card.php');
 require_once(__DIR__.'/objects/player.php');
 require_once(__DIR__.'/objects/player-intervention.php');
+require_once(__DIR__.'/objects/damage.php');
 
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
+use KOT\Objects\Damage;
 
 trait UtilTrait {
 
@@ -355,7 +355,7 @@ trait UtilTrait {
                 $this->applyGetHealth($playerId, $countEaterOfSouls, 3000 + EATER_OF_SOULS_EVOLUTION, $playerId);
             }
 
-            $evolutions = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsOfTypeInLocation(HEART_OF_THE_RABBIT_EVOLUTION, null, 'discard'.$playerId));
+            $evolutions = $this->getEvolutionCardsByLocation('discard'.$playerId, null, HEART_OF_THE_RABBIT_EVOLUTION);
             if (count($evolutions) > 0) {
                 foreach($evolutions as $evolution) {
                     $this->getEvolutionFromDiscard($playerId, $evolution->id);
@@ -598,7 +598,7 @@ trait UtilTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         if ($this->isPowerUpExpansion()) {            
-            $cards = $this->getEvolutionCardsFromDb($this->evolutionCards->getCardsInLocation('table', $player->id));
+            $cards = $this->getEvolutionCardsByLocation('table', $player->id);
             $this->removeEvolutions($player->id, $cards, true);
         }
         
@@ -734,30 +734,11 @@ trait UtilTrait {
     }
 
     function applyDamage(object &$damage) {
-        $this->applyDamageOld(
-            $damage->playerId,
-            $damage->damage,
-            $damage->damageDealerId,
-            $damage->cardType,
-            $this->getActivePlayerId(),
-            $damage->giveShrinkRayToken,
-            $damage->givePoisonSpitToken,
-            $damage->smasherPoints,
-        );
-    }
-
-    function applyDamageOld(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
-    /*function applyDamageOld(object &$damage) {
         $playerId = $damage->playerId;
-        $health = $damage->damage;
         $damageDealerId = $damage->damageDealerId;
-        $cardType = $damage->cardType;
         $activePlayerId = intval($this->getActivePlayerId());
-        $giveShrinkRayToken = $damage->giveShrinkRayToken;
-        $givePoisonSpitToken = $damage->givePoisonSpitToken;
-        $smasherPoints = $damage->smasherPoints;*/
 
-        $canLoseHealth = $this->canLoseHealth($playerId, $health);
+        $canLoseHealth = $this->canLoseHealth($playerId, $damage->damage);
         if ($canLoseHealth != null) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
 
@@ -767,7 +748,7 @@ trait UtilTrait {
 
         $actualHealth = $this->getPlayerHealth($playerId);
 
-        $newHealth = $this->applyDamageIgnoreCards($playerId, $health, $damageDealerId, $cardType, $activePlayerId, $giveShrinkRayToken, $givePoisonSpitToken,  $smasherPoints);
+        $newHealth = $this->applyDamageIgnoreCards($damage);
 
         $isPowerUpExpansion = $this->isPowerUpExpansion();
 
@@ -799,7 +780,7 @@ trait UtilTrait {
         }
 
         // only smashes
-        if ($cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
+        if ($damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
             $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
             if ($countHeatVision > 0) {
                 $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
@@ -821,7 +802,7 @@ trait UtilTrait {
 
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
         if ($countReflectiveHide > 0) {
-            $this->applyDamageOld($damageDealerId, $countReflectiveHide, $playerId, 2000 + REFLECTIVE_HIDE_CARD, $activePlayerId, 0, 0, null);
+            $this->applyDamage(new Damage($damageDealerId, $countReflectiveHide, $playerId, 2000 + REFLECTIVE_HIDE_CARD));
         }
 
         if ($isPowerUpExpansion && $this->inTokyo($playerId)) {
@@ -832,7 +813,7 @@ trait UtilTrait {
                     $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
                     foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
                         if ($outsideTokyoPlayerId != $damageDealerId) {
-                            $this->applyDamageOld($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION, $damageDealerId, 0, 0, null);
+                            $this->applyDamage(new Damage($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION));
                         }
                     }
                 }
@@ -844,7 +825,13 @@ trait UtilTrait {
         }
     }
 
-    function applyDamageIgnoreCards(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
+    function applyDamageIgnoreCards(object &$damage) {
+        $playerId = $damage->playerId;
+        $health = $damage->damage;
+        $damageDealerId = $damage->damageDealerId;
+        $cardType = $damage->cardType;
+        $smasherPoints = $damage->smasherPoints;
+
         if ($this->canLoseHealth($playerId, $health) != null) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             return null; // player has wings and cannot lose hearts
@@ -855,6 +842,8 @@ trait UtilTrait {
 
         $actualHealth = $this->getPlayerHealth($playerId);
         $newHealth = max($actualHealth - $effectiveDamage, 0);
+
+        $damage->effectiveDamage = $effectiveDamage;
 
         $this->DbQuery("UPDATE player SET `player_health` = $newHealth where `player_id` = $playerId");
 
@@ -877,13 +866,13 @@ trait UtilTrait {
         }
 
         // Shrink Ray
-        if ($giveShrinkRayToken > 0) {
-            $this->applyGetShrinkRayToken($playerId, $giveShrinkRayToken);
+        if ($damage->giveShrinkRayToken > 0) {
+            $this->applyGetShrinkRayToken($playerId, $damage->giveShrinkRayToken);
         }
 
         // Poison Spit
-        if ($givePoisonSpitToken > 0) {
-            $this->applyGetPoisonToken($playerId, $givePoisonSpitToken);
+        if ($damage->givePoisonSpitToken > 0) {
+            $this->applyGetPoisonToken($playerId, $damage->givePoisonSpitToken);
         }
 
         if ($smasherPoints !== null && $this->isWickednessExpansion() && $this->gotWickednessTile($damageDealerId, UNDERDOG_WICKEDNESS_TILE) && $this->getPlayerScore($playerId) > $smasherPoints) {
@@ -921,7 +910,7 @@ trait UtilTrait {
             }
         }
 
-        $this->eliminatePlayers($activePlayerId); // TODOBUG $damageDealerId instead ?
+        $this->eliminatePlayers($damageDealerId > 0 ? $damageDealerId : intval($this->getActivePlayerId()));
 
         return $newHealth;
     }
