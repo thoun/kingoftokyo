@@ -8,6 +8,7 @@ require_once(__DIR__.'/../objects/damage.php');
 
 use KOT\Objects\Dice;
 use KOT\Objects\ChangeActivePlayerDieIntervention;
+use KOT\Objects\ClawDamage;
 use KOT\Objects\Damage;
 
 trait DiceUtilTrait {
@@ -438,11 +439,8 @@ trait DiceUtilTrait {
             if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, POISON_SPIT_WICKEDNESS_TILE)) {
                 $givePoisonSpitToken += 1;
             }
-            // Underdog
-            $playerScore = null;
-            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, UNDERDOG_WICKEDNESS_TILE)) {
-                $playerScore = $this->getPlayerScore($playerId);
-            }
+            
+            $playerScore = $this->getPlayerScore($playerId);
 
             $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 
@@ -478,7 +476,7 @@ trait DiceUtilTrait {
                     $countSimianScamper = $this->countEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
                 }
 
-                $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $giveShrinkRayToken, $givePoisonSpitToken, $playerScore);
+                $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, new ClawDamage($playerScore, $giveShrinkRayToken, $givePoisonSpitToken));
                 if (($countJets > 0 || $countSimianScamper > 0) && $smashedPlayerIsInTokyo) {                
                     $jetsDamages[] = $newDamage;
                 } else {
@@ -527,7 +525,7 @@ trait DiceUtilTrait {
 
                 // we add damage only if it's not already counted in smashed players (without tokens)
                 if (!in_array($damagePlayerId, $smashedPlayersIds)) {
-                    $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $playerId, -FIRE_BREATHING_CARD, 0, 0, null);
+                    $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $playerId, -FIRE_BREATHING_CARD);
                 }
             }
 
@@ -549,7 +547,7 @@ trait DiceUtilTrait {
 
             // we add damage only if it's not already counted in smashed players (without tokens)
             if (!in_array($damagePlayerId, $smashedPlayersIds)) {
-                $damages[] = new Damage($damagePlayerId, $funnyLookingButDangerousDamage, $playerId, -(3000 + FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION), 0, 0, null);
+                $damages[] = new Damage($damagePlayerId, $funnyLookingButDangerousDamage, $playerId, -(3000 + FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION));
             }
         }
 
@@ -564,7 +562,7 @@ trait DiceUtilTrait {
 
             // we add damage only if it's not already counted in smashed players (without tokens)
             if (!in_array($damagePlayerId, $smashedPlayersIds)) {
-                $damages[] = new Damage($damagePlayerId, $exoticArmsDamage, $playerId, -(3000 + EXOTIC_ARMS_EVOLUTION), 0, 0, null);
+                $damages[] = new Damage($damagePlayerId, $exoticArmsDamage, $playerId, -(3000 + EXOTIC_ARMS_EVOLUTION));
             }
         }
 

@@ -104,6 +104,7 @@ trait InterventionTrait {
         $giveShrinkRayToken = 0;
         $givePoisonSpitToken = 0;
         $smasherPoints = null;
+        $clawDamage = null;
 
         foreach($damages as $damage) {
             if ($damage->playerId == $playerId) {
@@ -119,9 +120,12 @@ trait InterventionTrait {
                 }
                 $giveShrinkRayToken += $damage->giveShrinkRayToken;
                 $givePoisonSpitToken += $damage->givePoisonSpitToken;
+                if ($clawDamage === null) {
+                    $clawDamage = $damage->clawDamage;
+                }
             }
         }
-        return $damageNumber == 0 ? null : new Damage($playerId, $damageNumber, $damageDealerId, $cardType, $giveShrinkRayToken, $givePoisonSpitToken, $smasherPoints);
+        return $damageNumber == 0 ? null : new Damage($playerId, $damageNumber, $damageDealerId, $cardType, $clawDamage);
     }
 
     function getDamageIntervention() {
