@@ -103,7 +103,7 @@ trait EvolutionCardsArgTrait {
             'question' => $question,
         ];
 
-        if (property_exists($question->args, '_args')) {
+        if (gettype($question->args) === 'object' && property_exists($question->args, '_args')) {
             $args = array_merge($args, (array)$question->args->{'_args'});
         }
 

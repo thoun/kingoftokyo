@@ -1169,7 +1169,7 @@ var EvolutionCards = /** @class */ (function () {
             case 145: return /*_TODODE*/ ("The price of Power cards you buy is reduced by 1[Energy].");
             case 146: return /*_TODODE*/ ("Gain 1[Star] each time you buy a Power card.");
             case 147: return /*_TODODE*/ ("Before rolling dice, you can pay 2[Energy]. If you do so and you roll at least 1 [diceSmash], add [diceSmash] to your Roll. Gain 1[Energy] for each [diceSmash] you rolled this turn.");
-            case 148: return /*_TODODE*/ ("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy]."); // TODODE 148
+            case 148: return /*_TODODE*/ ("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy].");
             // Kraken
             case 151: return "+2[Heart]";
             case 152: return /*_TODODE*/ ("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart].");
@@ -4597,6 +4597,12 @@ var KingOfTokyo = /** @class */ (function () {
                 this.addActionButton('useSunkenTemple_button', dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCards.getCardName(157, 'text-only') }), function () { return _this.answerSunkenTemple(true); });
                 this.addActionButton('skipSunkenTemple_button', _('Skip'), function () { return _this.answerSunkenTemple(false); });
                 break;
+            case 'ElectricCarrot':
+                this.addActionButton('answerElectricCarrot5_button', formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]' })), function () { return _this.answerElectricCarrot(5); });
+                dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
+                document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
+                this.addActionButton('answerElectricCarrot4_button', formatTextIcons(/*TODOPU_*/ ("Lose 1 extra [Heart]")), function () { return _this.answerElectricCarrot(4); });
+                break;
         }
     };
     ///////////////////////////////////////////////////
@@ -5936,6 +5942,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('answerSunkenTemple', { use: use });
+    };
+    KingOfTokyo.prototype.answerElectricCarrot = function (choice) {
+        if (!this.checkAction('answerElectricCarrot')) {
+            return;
+        }
+        this.takeAction('answerElectricCarrot', { choice: choice });
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

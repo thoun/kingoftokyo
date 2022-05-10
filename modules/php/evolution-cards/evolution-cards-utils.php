@@ -91,7 +91,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getEvolutionCardsOnDeckTop(int $playerId, int $number) {
-        $sql = "SELECT * FROM `evolution_card` WHERE `card_location` = 'deck$playerId' ORDER BY `location_arg` DESC LIMIT $number";
+        $sql = "SELECT * FROM `evolution_card` WHERE `card_location` = 'deck$playerId' ORDER BY `card_location_arg` DESC LIMIT $number";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
     }
@@ -936,5 +936,21 @@ trait EvolutionCardsUtilTrait {
             return true;
         }
         return false;
+    }
+
+    function electricCarrotQuestion(array $smashedPlayersIds) {
+        $question = new Question(
+            'ElectricCarrot',
+            /* client TODOPU translate(*/'Smashed players can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
+            /* client TODOPU translate(*/'${you} can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
+            $smashedPlayersIds,
+            ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
+            []
+        );
+
+        $this->addStackedState();
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive($smashedPlayersIds, 'next', true);
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 }

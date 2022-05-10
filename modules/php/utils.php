@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -837,7 +837,7 @@ trait UtilTrait {
             return null; // player has wings and cannot lose hearts
         }
 
-        $effectiveDamageDetail = $this->getEffectiveDamage($health, $playerId, $damageDealerId);
+        $effectiveDamageDetail = $this->getEffectiveDamage($health, $playerId, $damageDealerId, $damage->clawDamage);
         $effectiveDamage = $effectiveDamageDetail->effectiveDamage;
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -1047,7 +1047,7 @@ trait UtilTrait {
         foreach ($damages as $damage) {
             if ($this->countCardOfType($damage->playerId, HIBERNATION_CARD) > 0) {
                 // if hibernation, player takes no damage
-            } else if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId)) {
+            } else if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId, $damage->clawDamage)) {
                 $cancellableDamages[] = $damage;
             } else {
                 $this->applyDamage($damage);

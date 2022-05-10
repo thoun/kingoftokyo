@@ -112,7 +112,7 @@ trait CardsStateTrait {
         // if player will block damage, or he can not block damage anymore, we apply damage and remove it from remainingPlayersId
         if ($currentDamage 
             && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
-                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId))
+                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId, $currentDamage->clawDamage))
         ) {
             $this->applySkipCancelDamage($currentPlayerId);
             $this->stCancelDamage();

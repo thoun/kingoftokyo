@@ -999,7 +999,7 @@ trait CardsUtilTrait {
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 
-    function getEffectiveDamage(int $damageAmount, int $playerId, int $damageDealerId) {
+    function getEffectiveDamage(int $damageAmount, int $playerId, int $damageDealerId, /*ClawDamage|null*/$clawDamage) {
         $effectiveDamage = $damageAmount;
         $logs = [];
 
@@ -1035,7 +1035,13 @@ trait CardsUtilTrait {
                 }
             }
 
-            // TODOPUHA detachable head TODOPU Mecha blast TODOPU Claws of steel ? TODOPU target acquired TODOPUDE electric carrot
+            // TODOPUHA detachable head TODOPU Mecha blast TODOPU Claws of steel ? TODOPU target acquired
+            
+            // electric carrot
+            if ($clawDamage !== null && $clawDamage->electricCarrotChoice !== null && array_key_exists($playerId, $clawDamage->electricCarrotChoice) && $clawDamage->electricCarrotChoice[$playerId] == 4) {
+                $effectiveDamage += 1;
+                $logs[] = new LoseHealthLog($this, $playerId, 1, 3000 + ELECTRIC_CARROT_EVOLUTION);
+            }
         }
 
         $result = new \stdClass();

@@ -294,14 +294,16 @@ trait CardsArgTrait {
 
             $remainingDamage = 0;
             $damageDealerId = 0;
+            $clawDamage = null;
             foreach($intervention->damages as $damage) {
                 if ($damage->playerId == $playerId) {
                     $remainingDamage += $damage->remainingDamage ?? $damage->damage;
                     $damageDealerId = $damage->damageDealerId;
+                    $clawDamage = $damage->clawDamage;
                 }
             }
 
-            $effectiveDamageDetail = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId);
+            $effectiveDamageDetail = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId, $clawDamage);
             $effectiveDamage = $effectiveDamageDetail->effectiveDamage;
 
             $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
@@ -329,7 +331,7 @@ trait CardsArgTrait {
             $replaceHeartByEnergyCost = [];
             if ($canUseRobot || $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0) {
                 for ($damageReducedBy=1; $damageReducedBy<=$remainingDamage; $damageReducedBy++) {
-                    $replaceHeartByEnergyCost[$damageReducedBy] = $this->getEffectiveDamage($remainingDamage - $damageReducedBy, $playerId, $damageDealerId)->effectiveDamage;
+                    $replaceHeartByEnergyCost[$damageReducedBy] = $this->getEffectiveDamage($remainingDamage - $damageReducedBy, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
                 }
             }
 

@@ -965,5 +965,14 @@
 
         self::ajaxResponse();
     }
+  	
+    public function answerElectricCarrot() {
+        self::setAjaxMode();
+
+        $choice = self::getArg("choice", AT_posint, true);
+        $this->game->answerElectricCarrot($choice);
+
+        self::ajaxResponse();
+    }
 
 }

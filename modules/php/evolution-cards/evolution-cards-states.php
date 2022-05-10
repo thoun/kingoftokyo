@@ -218,7 +218,7 @@ trait EvolutionCardsStateTrait {
     function stAfterAnswerQuestion() {
         $question = $this->getQuestion();
 
-        if ($question->code === 'MegaPurr') {
+        if ($question->code === 'MegaPurr' || $question->code === 'ElectricCarrot') {
             $this->removeStackedStateAndRedirect();
         } else if ($question->code === 'TargetAcquired' || $question->code === 'LightningArmor') {
             $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);

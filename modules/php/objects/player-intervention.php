@@ -65,7 +65,7 @@ class CancelDamageIntervention extends PlayerIntervention {
         $this->playersUsedDice = new \stdClass();
     }
 
-    public static function canDoIntervention(object $game, int $playerId, int $damage, int $damageDealerId) {
+    public static function canDoIntervention(object $game, int $playerId, int $damage, int $damageDealerId, $clawDamage) {
         $canDo = $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
             $game->countCardOfType($playerId, ROBOT_CARD) > 0 || 
             ($game->countCardOfType($playerId, WINGS_CARD) > 0 && $game->canLoseHealth($playerId, $damage) == null) ||
@@ -77,7 +77,7 @@ class CancelDamageIntervention extends PlayerIntervention {
         } else {
             $playerHealth = $game->getPlayerHealth($playerId);
 
-            $totalDamage = $game->getEffectiveDamage($damage, $playerId, $damageDealerId)->effectiveDamage;
+            $totalDamage = $game->getEffectiveDamage($damage, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
 
             if ($playerHealth <= $totalDamage) {
                 $rapidHealingHearts = $game->cancellableDamageWithRapidHealing($playerId);

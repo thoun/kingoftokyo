@@ -584,4 +584,26 @@ trait EvolutionCardsActionTrait {
             $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
         }
     }
+  	
+    public function answerElectricCarrot(int $choice) {
+        $this->checkAction('answerElectricCarrot');
+
+        $playerId = $this->getCurrentPlayerId();
+        
+        if (!in_array($choice, [4, 5])) {
+            throw new \BgaUserException("Invalid choice");
+        } else if ($choice === 5 && $this->getPlayerEnergy($playerId) < 1) {
+            throw new \BgaUserException("Not enough energy");
+        }
+
+        $electricCarrotChoices = $this->getGlobalVariable(ELECTRIC_CARROT_CHOICES, true) ?? [];
+        $electricCarrotChoices[$playerId] = $choice;
+        $this->setGlobalVariable(ELECTRIC_CARROT_CHOICES, $electricCarrotChoices);
+
+        if ($choice === 5) {
+            $this->applyGiveSymbols([5], $playerId, $this->getActivePlayerId(), 3000 + ELECTRIC_CARROT_EVOLUTION);
+        }
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+    }
 }

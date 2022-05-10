@@ -369,7 +369,17 @@ trait DiceUtilTrait {
             $smashedPlayersIds = $this->getPlayersIdsFromLocation($smashTokyo);
         }
 
+        $electricCarrot = false;
+
         if ($isPowerUpExpansion) {
+
+            // Electric Carrot
+            $electricCarrot = $inTokyo && count($smashedPlayersIds) > 0 && $this->countEvolutionOfType($playerId, ELECTRIC_CARROT_EVOLUTION) > 0;
+            if ($electricCarrot && $this->getGlobalVariable(ELECTRIC_CARROT_CHOICES, true) === null) {
+                $this->electricCarrotQuestion($smashedPlayersIds);
+                return;
+            }
+
             $exoticArmsEvolutions = $this->getEvolutionsOfType($playerId, EXOTIC_ARMS_EVOLUTION);
             $usedExoticArms = array_values(array_filter($exoticArmsEvolutions, fn($evolution) => $evolution->tokens > 0));
             $countExoticArms = count($usedExoticArms);
@@ -444,6 +454,11 @@ trait DiceUtilTrait {
 
             $fireBreathingDamages = $this->getGlobalVariable(FIRE_BREATHING_DAMAGES, true);
 
+            $electricCarrotChoices = $electricCarrot ? $this->getGlobalVariable(ELECTRIC_CARROT_CHOICES, true) : [];
+            if ($electricCarrotChoices !== null) {
+                $this->deleteGlobalVariable(ELECTRIC_CARROT_CHOICES);
+            }
+
             $jetsDamages = [];
             $smashedPlayersInTokyo = [];
             foreach($smashedPlayersIds as $smashedPlayerId) {
@@ -476,7 +491,8 @@ trait DiceUtilTrait {
                     $countSimianScamper = $this->countEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
                 }
 
-                $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, new ClawDamage($playerScore, $giveShrinkRayToken, $givePoisonSpitToken));
+                $clawDamage = new ClawDamage($playerScore, $giveShrinkRayToken, $givePoisonSpitToken, $electricCarrotChoices);
+                $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $clawDamage);
                 if (($countJets > 0 || $countSimianScamper > 0) && $smashedPlayerIsInTokyo) {                
                     $jetsDamages[] = $newDamage;
                 } else {

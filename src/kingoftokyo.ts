@@ -1338,6 +1338,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCards.getCardName(157, 'text-only') }), () => this.answerSunkenTemple(true));
                 (this as any).addActionButton('skipSunkenTemple_button', _('Skip'), () => this.answerSunkenTemple(false));
                 break;
+            case 'ElectricCarrot':
+                (this as any).addActionButton('answerElectricCarrot5_button',  formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]'})), () => this.answerElectricCarrot(5));
+                dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
+                document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
+                (this as any).addActionButton('answerElectricCarrot4_button',  formatTextIcons(/*TODOPU_*/("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
+                break;
         }
     }
 
@@ -3026,6 +3032,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('answerSunkenTemple', { use });
+    }
+    
+    public answerElectricCarrot(choice: 4 | 5) {
+        if(!(this as any).checkAction('answerElectricCarrot')) {
+            return;
+        }
+
+        this.takeAction('answerElectricCarrot', { choice });
     }
     
     public takeAction(action: string, data?: any) {

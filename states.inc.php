@@ -816,6 +816,7 @@ $playerActionsGameStates = [
             "useLightningArmor", "skipLightningArmor",
             "answerEnergySword",
             "answerSunkenTemple",
+            "answerElectricCarrot",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

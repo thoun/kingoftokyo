@@ -237,7 +237,7 @@ class EvolutionCards {
             case 145: return /*_TODODE*/("The price of Power cards you buy is reduced by 1[Energy].");
             case 146: return /*_TODODE*/("Gain 1[Star] each time you buy a Power card.");
             case 147: return /*_TODODE*/("Before rolling dice, you can pay 2[Energy]. If you do so and you roll at least 1 [diceSmash], add [diceSmash] to your Roll. Gain 1[Energy] for each [diceSmash] you rolled this turn.");
-            case 148: return /*_TODODE*/("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy]."); // TODODE 148
+            case 148: return /*_TODODE*/("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy].");
             // Kraken
             case 151: return "+2[Heart]";
             case 152: return /*_TODODE*/("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart].");
