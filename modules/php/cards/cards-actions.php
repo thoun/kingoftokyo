@@ -715,7 +715,7 @@ trait CardsActionTrait {
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
-                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+                $this->applyDamage($damage);
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }
@@ -762,7 +762,7 @@ trait CardsActionTrait {
         $this->setNextDamageIntervention('next', $intervention); // must be set before apply damage, in case this player die
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+                $this->applyDamageOld($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
             }
         }
         
@@ -817,7 +817,7 @@ trait CardsActionTrait {
 
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
-                $this->applyDamage($playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $this->getActivePlayerId(), $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+                $this->applyDamage($damage);
             }
         }
 
@@ -873,7 +873,7 @@ trait CardsActionTrait {
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
-                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+                $this->applyDamage($damage);
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }
@@ -936,7 +936,7 @@ trait CardsActionTrait {
 
             $damage = $this->createRemainingDamage($playerId, $intervention->damages);
             if ($damage != null) {
-                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $damage->damageDealerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+                $this->applyDamage($damage);
             } else {
                 $this->removePlayerFromSmashedPlayersInTokyo($playerId);
             }

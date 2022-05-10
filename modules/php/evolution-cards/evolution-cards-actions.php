@@ -531,7 +531,7 @@ trait EvolutionCardsActionTrait {
             'dice' => $diceStr,
         ]);
         if ($smashCount > 0) {
-            $this->applyDamage($damageDealerIdForPlayer, $smashCount, $playerId, 3000 + LIGHTNING_ARMOR_EVOLUTION, $playerId, 0, 0, null);
+            $this->applyDamageOld($damageDealerIdForPlayer, $smashCount, $playerId, 3000 + LIGHTNING_ARMOR_EVOLUTION, $playerId, 0, 0, null);
         }
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');

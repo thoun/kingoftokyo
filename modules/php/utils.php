@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -733,7 +733,30 @@ trait UtilTrait {
         ]);
     }
 
-    function applyDamage(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
+    function applyDamage(object &$damage) {
+        $this->applyDamageOld(
+            $damage->playerId,
+            $damage->damage,
+            $damage->damageDealerId,
+            $damage->cardType,
+            $this->getActivePlayerId(),
+            $damage->giveShrinkRayToken,
+            $damage->givePoisonSpitToken,
+            $damage->smasherPoints,
+        );
+    }
+
+    function applyDamageOld(int $playerId, int $health, int $damageDealerId, int $cardType, int $activePlayerId, int $giveShrinkRayToken, int $givePoisonSpitToken, /*int|null*/ $smasherPoints) {
+    /*function applyDamageOld(object &$damage) {
+        $playerId = $damage->playerId;
+        $health = $damage->damage;
+        $damageDealerId = $damage->damageDealerId;
+        $cardType = $damage->cardType;
+        $activePlayerId = intval($this->getActivePlayerId());
+        $giveShrinkRayToken = $damage->giveShrinkRayToken;
+        $givePoisonSpitToken = $damage->givePoisonSpitToken;
+        $smasherPoints = $damage->smasherPoints;*/
+
         $canLoseHealth = $this->canLoseHealth($playerId, $health);
         if ($canLoseHealth != null) {
             $this->removePlayerFromSmashedPlayersInTokyo($playerId);
@@ -798,7 +821,7 @@ trait UtilTrait {
 
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
         if ($countReflectiveHide > 0) {
-            $this->applyDamage($damageDealerId, $countReflectiveHide, $playerId, 2000 + REFLECTIVE_HIDE_CARD, $activePlayerId, 0, 0, null);
+            $this->applyDamageOld($damageDealerId, $countReflectiveHide, $playerId, 2000 + REFLECTIVE_HIDE_CARD, $activePlayerId, 0, 0, null);
         }
 
         if ($isPowerUpExpansion && $this->inTokyo($playerId)) {
@@ -809,7 +832,7 @@ trait UtilTrait {
                     $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
                     foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
                         if ($outsideTokyoPlayerId != $damageDealerId) {
-                            $this->applyDamage($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION, $damageDealerId, 0, 0, null);
+                            $this->applyDamageOld($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION, $damageDealerId, 0, 0, null);
                         }
                     }
                 }
@@ -1038,8 +1061,7 @@ trait UtilTrait {
             } else if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId)) {
                 $cancellableDamages[] = $damage;
             } else {
-                $activePlayerId = $this->getActivePlayerId();
-                $this->applyDamage($damage->playerId, $damage->damage, $damage->damageDealerId, $damage->cardType, $activePlayerId, $damage->giveShrinkRayToken, $damage->givePoisonSpitToken, $damage->smasherPoints);
+                $this->applyDamage($damage);
             }
 
             $damagesToPlayer = array_values(array_filter($damages, fn($d) => $damage->playerId == $d->playerId));
