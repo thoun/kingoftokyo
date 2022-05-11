@@ -193,7 +193,7 @@ trait EvolutionCardsStateTrait {
         $dbResults = $this->getCollectionFromDb("SELECT player_id, player_monster FROM player WHERE player_id IN (".implode(',', $otherPlayersIds).")");
         $playerMonsters = [];
         foreach($dbResults as $dbResult) {
-            $playerMonsters[intval($dbResult['player_id'])] = intval($dbResult['player_monster']);
+            $playerMonsters[intval($dbResult['player_id'])] = intval($dbResult['player_monster']) % 100;
         }
 
         $playersWithPotentialEvolution = array_values(array_filter($otherPlayersIds, fn($otherPlayer) => in_array($playerMonsters[$otherPlayer], $stepCardsMonsters)));

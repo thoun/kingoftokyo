@@ -13,7 +13,7 @@ trait MonsterTrait {
         $bonusMonsters = intval($this->getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
 
         // Base game monsters : Space Penguin, Alienoid, Cyber Kitty, The King, Gigazaur, Meka Dragon
-        $monsters = /* TODODE $this->isDarkEdition() ? [101,102,103,104,105,106] :*/ [1,2,3,4,5,6];
+        $monsters = $this->isDarkEdition() ? [102,104,105,106,114,115] : [1,2,3,4,5,6];
 
         // Boogie Woogie, Pumpkin Jack
         if ($bonusMonsters || $this->isHalloweenExpansion()) {

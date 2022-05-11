@@ -74,6 +74,13 @@ $monstersNames = [
     19 => "Lollybot",
     // KONY
     21 => "Rob",
+    // Dark edition
+    102 => "Dark Alienoid", 
+    104 => "Dark The King", 
+    105 => "Dark Gigazaur", 
+    106 => "Dark Meka Dragon",
+    114 => "Dark Cyber Bunny", 
+    115 => "Dark Kraken", 
 ];
 
 $commonStats = [

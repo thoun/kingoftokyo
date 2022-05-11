@@ -216,7 +216,7 @@ trait EvolutionCardsUtilTrait {
         }
         
         $dbResults = $this->getCollectionFromDb("SELECT distinct player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
-        $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']), array_values($dbResults));
+        $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']) % 100, array_values($dbResults));
 
         // TODOPU ignore cards on table, or on discard?
         $stepCardsMonsters = array_values(array_unique(array_map(fn($cardId) => floor($cardId / 10), $stepCardsIds)));
@@ -455,7 +455,8 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getGiftEvolutionOfType(int $playerId, int $cardType) {
-        $card = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'table')[0];
+        $cards = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'table');
+        $card = count($cards) > 0 ? $cards[0] : null;
 
         if ($card !== null && $card->ownerId === $playerId) {
             return null; // evolution owner is not affected by gift
