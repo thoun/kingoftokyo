@@ -356,6 +356,12 @@ trait CardsArgTrait {
             $canDoAction = 
                 $canCancelDamage || $canHealToAvoidDeath;
 
+            $damageText = "$remainingDamage";
+            $effectiveDamage = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
+            if ($effectiveDamage > $remainingDamage) {
+                $damageText .= "<small>(+".($effectiveDamage - $remainingDamage).")</small>";
+            }
+
             return [
                 'canThrowDices' => $canThrowDices,
                 'canUseWings' => $canUseWings,
@@ -370,7 +376,7 @@ trait CardsArgTrait {
                 'canHeal' => $canHeal,
                 'playerEnergy' => $this->getPlayerEnergy($playerId),
                 'dice' => $dice,
-                'damage' => $remainingDamage,
+                'damage' => $damageText,
                 'remainingDamage' => $remainingDamage,
                 'replaceHeartByEnergyCost' => $replaceHeartByEnergyCost,
                 'rethrow3' => [
