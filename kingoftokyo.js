@@ -1030,7 +1030,23 @@ var EvolutionCards = /** @class */ (function () {
             case 67: return /*_TODOPU*/ ("[a68d83]Claws [aa673d]of Steel");
             case 68: return /*_TODOPU*/ ("[a68d83]Target [aa673d]Acquired");
             // Boogie Woogie : dark 6c5b55 light a68d83
+            case 71: return /*_TODOPUHA*/ ("[6c5b55]Boo!");
+            case 72: return /*_TODOPUHA*/ ("[6c5b55]Worst [a68d83]Nightmare");
+            case 73: return /*_TODOPUHA*/ ("[6c5b55]I Live [a68d83]Under Your Bed");
+            case 74: return /*_TODOPUHA*/ ("[6c5b55]Boogie [a68d83]Dance");
+            case 75: return /*_TODOPUHA*/ ("[6c5b55]Well of [a68d83]Shadow");
+            case 76: return /*_TODOPUHA*/ ("[6c5b55]Woem [a68d83]Invaders");
+            case 77: return /*_TODOPUHA*/ ("[6c5b55]Nighlife!");
+            case 78: return /*_TODOPUHA*/ ("[6c5b55]Dusk [a68d83]Ritual");
             // Pumpkin Jack : dark de6428 light f7941d
+            case 81: return /*_TODOPUHA*/ ("[de6428]Detachable [f7941d]Head");
+            case 82: return /*_TODOPUHA*/ ("[de6428]Ignis [f7941d]Fatus");
+            case 83: return /*_TODOPUHA*/ ("[de6428]Smashing [f7941d]Pumpkin");
+            case 84: return /*_TODOPUHA*/ ("[de6428]Trick [f7941d]or Threat");
+            case 85: return /*_TODOPUHA*/ ("[de6428]Bobbing [f7941d]for Apples");
+            case 86: return /*_TODOPUHA*/ ("[de6428]Feast [f7941d]of Crows");
+            case 87: return /*_TODOPUHA*/ ("[de6428]Scythe");
+            case 88: return /*_TODOPUHA*/ ("[de6428]Candy!");
             // Cthulhu
             // Anubis
             // King Kong
@@ -1152,6 +1168,15 @@ var EvolutionCards = /** @class */ (function () {
             case 66: return /*_TODOPU*/ ("When you lose [Heart], you can roll a die for each [Heart] lost. For each [diceSmash] rolled this way, the Monster whose turn it is also loses 1[Heart].");
             case 67: return /*_TODOPU*/ ("On your turn, if you make another Monster lose at least 3[Heart], they lose 1 extra [Heart].");
             case 68: return /*_TODOPU*/ ("When a Monster wounds you, you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
+            // Boogie Woogie
+            case 73: return /*_TODOPUHA*/ ("You play with one less die.");
+            case 75: return "+2[Heart]";
+            case 76: return /*_TODOPUHA*/ ("Each of the other Monsters loses 2[Heart].");
+            case 77: return /*_TODOPUHA*/ ("When you enter <i>Tokyo</i>, gain 1[Heart].");
+            // Pumpkin Jack 
+            case 81: return /*_TODOPUHA*/ ("Every time the <i>Owner</i> of this card wounds you, lose an extra [Heart].");
+            case 82: return /*_TODOPUHA*/ ("You have one less Roll each turn.");
+            case 83: return /*_TODOPUHA*/ ("All Monsters with 12 or more [Star] lose 2[Heart].");
             // Pandakaï
             case 131: return /*_TODOPU*/ ("Gain 6[Energy]. All other Monsters gain 3[Energy].");
             case 132: return /*_TODOPU*/ ("Play when you enter <i>Tokyo</i>. All Monsters outside of <i>Tokyo</i> lose 2[Heart] each. Gain 1[Energy], then leave <i>Tokyo</i>. No Monster takes your place.");

@@ -1035,7 +1035,17 @@ trait CardsUtilTrait {
                 }
             }
 
-            // TODOPUHA detachable head TODOPU Mecha blast TODOPU Claws of steel ? TODOPU target acquired
+            // detachable head
+            if ($clawDamage !== null && $isPowerUpExpansion) {
+                $detachableHeadEvolution = $this->getGiftEvolutionOfType($damageDealerId, DETACHABLE_HEAD_EVOLUTION);
+
+                if ($detachableHeadEvolution !== null && $detachableHeadEvolution->ownerId == $damageDealerId) {
+                    $effectiveDamage += 1;
+                    $logs[] = new LoseHealthLog($this, $playerId, 1, 3000 + DETACHABLE_HEAD_EVOLUTION);
+                }
+            }
+
+            // TODOPU Mecha blast TODOPU Claws of steel ?
             
             // electric carrot
             if ($clawDamage !== null && $clawDamage->electricCarrotChoice !== null && array_key_exists($playerId, $clawDamage->electricCarrotChoice) && $clawDamage->electricCarrotChoice[$playerId] == 4) {

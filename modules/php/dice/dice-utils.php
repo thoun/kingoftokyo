@@ -214,7 +214,11 @@ trait DiceUtilTrait {
             $coldWaveOwner = $this->isEvolutionOnTable(COLD_WAVE_EVOLUTION);
             if ($coldWaveOwner != null && $coldWaveOwner != $playerId) {
                 $remove++;
-            }          
+            }   
+
+            if ($this->getGiftEvolutionOfType($playerId, I_LIVE_UNDER_YOUR_BED_EVOLUTION) !== null) {
+                $remove++;
+            }
         }
 
         return max(6 + $add - $remove, 0);

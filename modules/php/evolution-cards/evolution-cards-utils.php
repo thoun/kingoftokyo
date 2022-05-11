@@ -306,7 +306,26 @@ trait EvolutionCardsUtilTrait {
                 $this->goToState(ST_NEXT_PLAYER);
                 break;
             // Boogie Woogie
+            case WELL_OF_SHADOW_EVOLUTION:
+                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
+                break;
+            case WORM_INVADERS_EVOLUTION:
+                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                $damages = [];
+                foreach ($otherPlayersIds as $otherPlayerId) {
+                    $damages[] = new Damage($otherPlayerId, 2, $playerId, $logCardType);
+                }
+                return $damages;
             // Pumpkin Jack
+            case SMASHING_PUMPKIN_EVOLUTION:
+                $players = $this->getPlayers();
+                $damages = [];
+                foreach ($players as $player) {
+                    if ($player->score >= 12) {
+                        $damages[] = new Damage($player->id, 2, $playerId, $logCardType);
+                    }
+                }
+                return $damages;
             // Cthulhu
             // Anubis
             // King Kong
@@ -433,6 +452,16 @@ trait EvolutionCardsUtilTrait {
         }
 
         return $evolutions;
+    }
+
+    function getGiftEvolutionOfType(int $playerId, int $cardType) {
+        $card = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'table')[0];
+
+        if ($card !== null && $card->ownerId === $playerId) {
+            return null; // evolution owner is not affected by gift
+        }
+
+        return $card;
     }
 
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {

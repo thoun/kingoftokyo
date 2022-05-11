@@ -373,8 +373,24 @@ define('BREATH_OF_DOOM_EVOLUTION', 65);
 define('LIGHTNING_ARMOR_EVOLUTION', 66);
 define('CLAWS_OF_STEEL_EVOLUTION', 67);
 define('TARGET_ACQUIRED_EVOLUTION', 68);
-// evolutions : Boogie Woogie (7)
-// evolutions : Pumpkin Jack (8)
+// evolutions : Boogie Woogie
+define('BOO_EVOLUTION', 71);
+define('WORST_NIGHTMARE_EVOLUTION', 72);
+define('I_LIVE_UNDER_YOUR_BED_EVOLUTION', 73);
+define('BOOGIE_DANCE_EVOLUTION', 74);
+define('WELL_OF_SHADOW_EVOLUTION', 75);
+define('WORM_INVADERS_EVOLUTION', 76);
+define('NIGHTLIFE_EVOLUTION', 77);
+define('DUSK_RITUAL_EVOLUTION', 78);
+// evolutions : Pumpkin Jack
+define('DETACHABLE_HEAD_EVOLUTION', 81);
+define('IGNIS_FATUS_EVOLUTION', 82);
+define('SMASHING_PUMPKIN_EVOLUTION', 83);
+define('TRICK_OR_THREAT_EVOLUTION', 84);
+define('BOBBING_FOR_APPLES_EVOLUTION', 85);
+define('FEAST_OF_CROWS_EVOLUTION', 86);
+define('SCYTHE_EVOLUTION', 87);
+define('CANDY_EVOLUTION', 88);
 // evolutions : Pandakaï
 define('PANDA_MONIUM_EVOLUTION', 131);
 define('EATS_SHOOTS_AND_LEAVES_EVOLUTION', 132);

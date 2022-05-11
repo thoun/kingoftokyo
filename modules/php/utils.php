@@ -198,7 +198,10 @@ trait UtilTrait {
     }
 
     function getRollNumber(int $playerId) {
-        if ($this->isPowerUpExpansion()) {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        $ignisFatus = 0;
+        if ($isPowerUpExpansion) {
             $blizzardOwner = $this->isEvolutionOnTable(BLIZZARD_EVOLUTION);
             if ($blizzardOwner != null && $blizzardOwner != $playerId) {
                 return 1;
@@ -206,6 +209,11 @@ trait UtilTrait {
 
             if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 return 1;
+            }        
+
+            // ignis fatus
+            if ($this->getGiftEvolutionOfType($playerId, IGNIS_FATUS_EVOLUTION) !== null) {
+                $ignisFatus = 1;
             }
         }
 
@@ -235,7 +243,7 @@ trait UtilTrait {
             }
         }
 
-        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $deviousTile + $falseBlessing;
+        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $deviousTile + $falseBlessing - $ignisFatus;
         if ($rollNumber > 1 && $removedDieByBuriedInSand) {
             $rollNumber--;
         }
@@ -347,12 +355,16 @@ trait UtilTrait {
                 $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
             }
             $countIAmTheKing = $this->countEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION);
-            if ($countIAmTheKing) {
+            if ($countIAmTheKing > 0) {
                 $this->applyGetPoints($playerId, $countIAmTheKing, 3000 + I_AM_THE_KING_EVOLUTION);
             }
             $countEaterOfSouls = $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
-            if ($countEaterOfSouls) {
+            if ($countEaterOfSouls > 0) {
                 $this->applyGetHealth($playerId, $countEaterOfSouls, 3000 + EATER_OF_SOULS_EVOLUTION, $playerId);
+            }
+            $countNightlife = $this->countEvolutionOfType($playerId, NIGHTLIFE_EVOLUTION);
+            if ($countNightlife > 0) {
+                $this->applyGetHealth($playerId, $countNightlife, 3000 + NIGHTLIFE_EVOLUTION, $playerId);
             }
 
             $evolutions = $this->getEvolutionCardsByLocation('discard'.$playerId, null, HEART_OF_THE_RABBIT_EVOLUTION);
