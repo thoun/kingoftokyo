@@ -748,7 +748,6 @@ trait UtilTrait {
     function applyDamage(object &$damage) {
         $playerId = $damage->playerId;
         $damageDealerId = $damage->damageDealerId;
-        $activePlayerId = intval($this->getActivePlayerId());
 
         $canLoseHealth = $this->canLoseHealth($playerId, $damage->damage);
         if ($canLoseHealth != null) {
@@ -1055,41 +1054,12 @@ trait UtilTrait {
     }
 
     function resolveDamages(array $damages, int $endStateId) {
-        $cancellableDamages = [];
-        foreach ($damages as $damage) {
-            if ($this->countCardOfType($damage->playerId, HIBERNATION_CARD) > 0) {
-                // if hibernation, player takes no damage
-            } else if (CancelDamageIntervention::canDoIntervention($this, $damage->playerId, $damage->damage, $damage->damageDealerId, $damage->clawDamage)) {
-                $cancellableDamages[] = $damage;
-            } else {
-                $this->applyDamage($damage);
-            }
-
-            $damagesToPlayer = array_values(array_filter($damages, fn($d) => $damage->playerId == $d->playerId));
-            if (count($damagesToPlayer) > 1) {
-                // can only happen when a player roll Skull and False blessing make him lose hearts
-                $this->error('[GBA] multiple damages : ' . json_encode($damagesToPlayer));
-            }
-        }
-
-        if (count($cancellableDamages) > 0) {
-            $playersIds = $this->getOrderedPlayersIds($damages[0]->damageDealerId, false, true);
-            // TODOBUG replace $cancellableDamages by $damages when all are resolved by stCancelDamage
-            $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->array_some($cancellableDamages, fn($damage) => $damage->playerId == $playerId)));
-            $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $cancellableDamages, $damages);
-            $cancelDamageIntervention->endState = $endStateId;
-            $this->setDamageIntervention($cancelDamageIntervention);
-            $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
-        } else {
-            if ($this->isPowerUpExpansion()) {
-                $cancelDamageIntervention = new CancelDamageIntervention([], [], $damages);
-                $cancelDamageIntervention->endState = $endStateId;
-                $this->setDamageIntervention($cancelDamageIntervention);
-                $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
-            } else {
-                $this->goToState($endStateId);
-            }
-        }
+        $playersIds = $this->getOrderedPlayersIds($damages[0]->damageDealerId, false, true);
+        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->array_some($damages, fn($damage) => $damage->playerId == $playerId)));
+        $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $damages, $damages);
+        $cancelDamageIntervention->endState = $endStateId;
+        $this->setDamageIntervention($cancelDamageIntervention);
+        $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
     }
 
     function jumpToState(int $stateId) {
