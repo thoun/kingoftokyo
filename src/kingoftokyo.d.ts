@@ -158,6 +158,7 @@ interface KingOfTokyoGamedatas {
     curseCard?: Card;
     wickednessTiles: WickednessTile[];
     EVOLUTION_CARDS_TYPES?: number[];
+    EVOLUTION_CARDS_SINGLE_STATE?: { [stateName: string]: number[] };
     superiorAlienTechnologyTokens?: number[];
     targetedPlayer?: number;
 }

@@ -484,6 +484,14 @@ class KingOfTokyo extends Table {
 
         if ($isPowerUpExpansion) {
             $result['EVOLUTION_CARDS_TYPES'] = $this->EVOLUTION_CARDS_TYPES;
+            $result['EVOLUTION_CARDS_SINGLE_STATE'] = [
+                'beforeStartTurn' => $this->EVOLUTION_TO_PLAY_BEFORE_START, // ST_PLAYER_BEFORE_START_TURN
+                'beforeResolveDice' => $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE, // ST_PLAYER_BEFORE_RESOLVE_DICE
+                'beforeEnteringTokyo' => $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO, // ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO
+                'afterEnteringTokyo' => $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO + $this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO, // ST_PLAYER_AFTER_ENTERING_TOKYO
+                'cardIsBought' => $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT, // ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT
+            ];
+            
             $result['superiorAlienTechnologyTokens'] = $this->getSuperiorAlienTechnologyTokens();
 
             $targetedPlayer = intval($this->getGameStateValue(TARGETED_PLAYER));

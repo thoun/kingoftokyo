@@ -21,7 +21,7 @@ class PlayerTable {
     public pickEvolutionCards: Stock | null = null;;
     public visibleEvolutionCards: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, playerWithGoldenScarab: boolean, superiorAlienTechnologyTokens: number[]) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, playerWithGoldenScarab: boolean, superiorAlienTechnologyTokens: number[], evolutionCardsWithSingleState: number[]) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -161,7 +161,12 @@ class PlayerTable {
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onHiddenEvolutionClick(Number(item_id)));
 
                 this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
-                player.hiddenEvolutions?.forEach(card => this.hiddenEvolutionCards.addToStockWithId(this.showHand ? card.type : 0, '' + card.id));
+                player.hiddenEvolutions?.forEach(card => {
+                    this.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
+                    if (evolutionCardsWithSingleState.includes(card.type)) {
+                        document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`).classList.add('disabled');
+                    }
+                });
             }
 
             this.visibleEvolutionCards = new ebg.stock() as Stock;
@@ -481,5 +486,13 @@ class PlayerTable {
 
     public giveTarget() {
         dojo.place(`<div id="player-table${this.playerId}-target" class="target token"></div>`, `monster-board-${this.playerId}`);
+    }
+    
+    public setEvolutionCardsSingleState(evolutionCardsSingleState: number[], enabled: boolean) {
+        this.hiddenEvolutionCards.items.forEach(item => {
+            if (evolutionCardsSingleState.includes(item.type)) {
+                document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${item.id}`).classList.toggle('disabled', !enabled);
+            }
+        });
     }
 }

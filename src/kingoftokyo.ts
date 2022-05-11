@@ -194,6 +194,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.showMainTable();
         }
 
+        if (this.isPowerUpExpansion()) {
+            const evolutionCardsSingleState = this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE[stateName];
+            if (evolutionCardsSingleState) {
+                this.getPlayerTable(this.getPlayerId())?.setEvolutionCardsSingleState(evolutionCardsSingleState, true);
+            }
+        }
+
         switch (stateName) {
             case 'pickMonster':
                 dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
@@ -817,6 +824,13 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
+
+        if (this.isPowerUpExpansion()) {
+            const evolutionCardsSingleState = this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE[stateName];
+            if (evolutionCardsSingleState) {
+                this.getPlayerTable(this.getPlayerId())?.setEvolutionCardsSingleState(evolutionCardsSingleState, false);
+            }
+        }
 
         switch (stateName) {
             case 'chooseInitialCard':                
@@ -1575,10 +1589,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private createPlayerTables(gamedatas: KingOfTokyoGamedatas) {
+        const evolutionCardsWithSingleState = this.isPowerUpExpansion() ?
+          Object.values(this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE).reduce((a1, a2) => [...a1, ...a2], []) :
+          null;
         this.playerTables = this.getOrderedPlayers().map(player => {
             const playerId = Number(player.id);
             const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens);
+            return new PlayerTable(this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens, evolutionCardsWithSingleState);
         });
 
         if (gamedatas.targetedPlayer) {

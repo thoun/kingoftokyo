@@ -100,10 +100,10 @@ trait EvolutionCardsActionTrait {
         $countMothershipSupportBefore = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
 
         $this->evolutionCards->moveCard($card->id, 'table', $playerId);
-        
-        $damages = $this->applyEvolutionEffects($card, $playerId);
 
         $this->playEvolutionToTable($playerId, $card);
+        
+        $damages = $this->applyEvolutionEffects($card, $playerId);
         
         if (in_array($card->type, $this->AUTO_DISCARDED_EVOLUTIONS)) {
             $this->removeEvolution($playerId, $card, false, 5000);
@@ -121,6 +121,10 @@ trait EvolutionCardsActionTrait {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->getEvolutionCardById($id);
+
+        if ($card->location != 'hand') {
+            throw new \BgaUserException('Evolution card is not in your hand');
+        }
 
         $this->checkCanPlayEvolution($card->type, $playerId);
 

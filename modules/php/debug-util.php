@@ -24,7 +24,7 @@ trait DebugUtilTrait {
         $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
-        $this->debugSetHealth(1);
+        //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343495, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
@@ -87,8 +87,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494);
-        $this->debugSetCardInHand(WINGS_CARD, 2343493);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494);
+        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
@@ -226,6 +226,8 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
             //$this->setMimickedEvolution(2343493, $this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true));
             $this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
         }
 
         // player order

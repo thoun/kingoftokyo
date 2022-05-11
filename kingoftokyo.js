@@ -1645,7 +1645,7 @@ var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 23
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, playerWithGoldenScarab, superiorAlienTechnologyTokens) {
+    function PlayerTable(game, player, playerWithGoldenScarab, superiorAlienTechnologyTokens, evolutionCardsWithSingleState) {
         var _this = this;
         var _a, _b, _c, _d;
         this.game = game;
@@ -1746,7 +1746,12 @@ var PlayerTable = /** @class */ (function () {
                 this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
                 this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
-                (_d = player.hiddenEvolutions) === null || _d === void 0 ? void 0 : _d.forEach(function (card) { return _this.hiddenEvolutionCards.addToStockWithId(_this.showHand ? card.type : 0, '' + card.id); });
+                (_d = player.hiddenEvolutions) === null || _d === void 0 ? void 0 : _d.forEach(function (card) {
+                    _this.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
+                    if (evolutionCardsWithSingleState.includes(card.type)) {
+                        document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id).classList.add('disabled');
+                    }
+                });
             }
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
@@ -2027,6 +2032,14 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.giveTarget = function () {
         dojo.place("<div id=\"player-table" + this.playerId + "-target\" class=\"target token\"></div>", "monster-board-" + this.playerId);
+    };
+    PlayerTable.prototype.setEvolutionCardsSingleState = function (evolutionCardsSingleState, enabled) {
+        var _this = this;
+        this.hiddenEvolutionCards.items.forEach(function (item) {
+            if (evolutionCardsSingleState.includes(item.type)) {
+                document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + item.id).classList.toggle('disabled', !enabled);
+            }
+        });
     };
     return PlayerTable;
 }());
@@ -3587,6 +3600,7 @@ var KingOfTokyo = /** @class */ (function () {
     //                  You can use this method to perform some user interface changes at this moment.
     //
     KingOfTokyo.prototype.onEnteringState = function (stateName, args) {
+        var _a;
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
         var pickMonsterPhase = ['pickMonster', 'pickMonsterNextPlayer'].includes(stateName);
@@ -3597,6 +3611,12 @@ var KingOfTokyo = /** @class */ (function () {
         if (!pickMonsterPhase && !pickEvolutionForDeckPhase) {
             this.removeMutantEvolutionChoice();
             this.showMainTable();
+        }
+        if (this.isPowerUpExpansion()) {
+            var evolutionCardsSingleState = this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE[stateName];
+            if (evolutionCardsSingleState) {
+                (_a = this.getPlayerTable(this.getPlayerId())) === null || _a === void 0 ? void 0 : _a.setEvolutionCardsSingleState(evolutionCardsSingleState, true);
+            }
         }
         switch (stateName) {
             case 'pickMonster':
@@ -4142,7 +4162,14 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
     };
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
+        var _a;
         log('Leaving state: ' + stateName);
+        if (this.isPowerUpExpansion()) {
+            var evolutionCardsSingleState = this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE[stateName];
+            if (evolutionCardsSingleState) {
+                (_a = this.getPlayerTable(this.getPlayerId())) === null || _a === void 0 ? void 0 : _a.setEvolutionCardsSingleState(evolutionCardsSingleState, false);
+            }
+        }
         switch (stateName) {
             case 'chooseInitialCard':
                 this.tableCenter.setVisibleCardsSelectionMode(0);
@@ -4799,10 +4826,13 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
+        var evolutionCardsWithSingleState = this.isPowerUpExpansion() ?
+            Object.values(this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE).reduce(function (a1, a2) { return __spreadArray(__spreadArray([], a1, true), a2, true); }, []) :
+            null;
         this.playerTables = this.getOrderedPlayers().map(function (player) {
             var playerId = Number(player.id);
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(_this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens);
+            return new PlayerTable(_this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens, evolutionCardsWithSingleState);
         });
         if (gamedatas.targetedPlayer) {
             this.getPlayerTable(gamedatas.targetedPlayer).giveTarget();
