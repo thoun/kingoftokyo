@@ -1024,7 +1024,7 @@ trait CardsUtilTrait {
                 }
             }
 
-            // claws of steel
+            // claws of steel // TODOPU check when it is applied
             $countClawsOfSteel = 0;
             if ($isPowerUpExpansion && $damageAmount >= 3) {
                 $countClawsOfSteel = $this->countEvolutionOfType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
@@ -1035,17 +1035,21 @@ trait CardsUtilTrait {
                 }
             }
 
-            // detachable head
             if ($clawDamage !== null && $isPowerUpExpansion) {
+                // detachable head
                 $detachableHeadEvolution = $this->getGiftEvolutionOfType($damageDealerId, DETACHABLE_HEAD_EVOLUTION);
-
                 if ($detachableHeadEvolution !== null && $detachableHeadEvolution->ownerId == $damageDealerId) {
                     $effectiveDamage += 1;
                     $logs[] = new LoseHealthLog($this, $playerId, 1, 3000 + DETACHABLE_HEAD_EVOLUTION);
                 }
-            }
 
-            // TODOPU Mecha blast TODOPU Claws of steel ?
+                // mecha blash
+                $countMechaBlast = $this->countEvolutionOfType($damageDealerId, MECHA_BLAST_EVOLUTION);
+                if ($countMechaBlast > 0) {
+                    $effectiveDamage += $countMechaBlast * 2;
+                    $logs[] = new LoseHealthLog($this, $playerId, $countMechaBlast * 2, 3000 + MECHA_BLAST_EVOLUTION);
+                }
+            }
             
             // electric carrot
             if ($clawDamage !== null && $clawDamage->electricCarrotChoice !== null && array_key_exists($playerId, $clawDamage->electricCarrotChoice) && $clawDamage->electricCarrotChoice[$playerId] == 4) {

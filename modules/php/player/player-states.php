@@ -393,12 +393,11 @@ trait PlayerStateTrait {
     function stAfterEnteringTokyo() {
         $playerId = $this->getActivePlayerId();
         $player = $this->getPlayer($playerId); 
-        if ($player->location == 0 || !$player->turnEnteredTokyo) {
-            $this->goToState($this->redirectAfterEnterTokyo($playerId));
-            return;
-        }
 
-        $couldPlay = $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO);
+        $couldPlay = $this->canPlayStepEvolution(
+            [$playerId], 
+            $player->location == 0 || !$player->turnEnteredTokyo ? $this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO : $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO
+        );
 
         if (!$couldPlay) {
             $this->goToState($this->redirectAfterEnterTokyo($playerId));
@@ -464,9 +463,15 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
 
         if ($this->isPowerUpExpansion()) {
-            $catNipCards = $this->getEvolutionsOfType($playerId, CAT_NIP_EVOLUTION);
-            if (count($catNipCards) > 0) {
-                $this->removeEvolutions($playerId, $catNipCards);
+            $EVOLUTION_TYPES_TO_REMOVE = [
+                CAT_NIP_EVOLUTION, 
+                MECHA_BLAST_EVOLUTION,
+            ];
+            foreach($EVOLUTION_TYPES_TO_REMOVE as $evolutionType) {
+                $evolutions = $this->getEvolutionsOfType($playerId, $evolutionType);
+                if (count($evolutions) > 0) {
+                    $this->removeEvolutions($playerId, $evolutions);
+                }
             }
         }
 
@@ -580,6 +585,9 @@ trait PlayerStateTrait {
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(JUNGLE_FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
                 $anotherTimeWithCard = 3000 + JUNGLE_FRENZY_EVOLUTION;
                 $this->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 0);
+
+                $jungleFrenzyEvolutions = $this->getEvolutionsOfType($playerId, JUNGLE_FRENZY_EVOLUTION);
+                $this->removeEvolutions($playerId, $jungleFrenzyEvolutions);
             }
             
             if ($anotherTimeWithCard > 0) {

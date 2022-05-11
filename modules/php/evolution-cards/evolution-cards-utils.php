@@ -134,7 +134,7 @@ trait EvolutionCardsUtilTrait {
             throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card before entering Tokyo"));
         }
 
-        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO) && $stateId != ST_PLAYER_AFTER_ENTERING_TOKYO) {
+        if (in_array($cardType, [...$this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO, ...$this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO]) && $stateId != ST_PLAYER_AFTER_ENTERING_TOKYO) {
             throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card after entering Tokyo"));
         }
 
@@ -161,9 +161,18 @@ trait EvolutionCardsUtilTrait {
             case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
                 return $this->inTokyo($playerId);
             case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
-                return $this->inTokyo($playerId); // TODOPU use only when you enter Tokyo
-            case JUNGLE_FRENZY_EVOLUTION: // TODOPU use only after move to Tokyo if you didn't enter
-                return $playerId == intval($this->getActivePlayerId()) && !$this->inTokyo($playerId) && $this->isDamageDealtThisTurn($playerId);
+                return $this->inTokyo($playerId);
+            case JUNGLE_FRENZY_EVOLUTION:
+                if ($playerId != intval($this->getActivePlayerId())) {
+                    throw new \BgaUserException(/*self::_TODOPU*/("You must play this Evolution during your turn"));
+                }
+                if ($this->inTokyo($playerId)) {
+                    throw new \BgaUserException(/*self::_TODOPU*/("You can play this Evolution only if you are not in Tokyo"));
+                }
+                if (!$this->isDamageDealtThisTurn($playerId)) {
+                    throw new \BgaUserException(/*self::_TODOPU*/("You didn't dealt damage to a player in Tokyo"));
+                }
+                break;
             case TUNE_UP_EVOLUTION:
                 return !$this->inTokyo($playerId);
             case BLIZZARD_EVOLUTION:
@@ -268,10 +277,12 @@ trait EvolutionCardsUtilTrait {
             case FELINE_MOTOR_EVOLUTION:
                 $this->moveToTokyoFreeSpot($playerId);
                 $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
+                $this->endBeforeEnteringTokyoIfNeeded();
                 break;
             // The King
             case MONKEY_RUSH_EVOLUTION:
                 $this->moveToTokyoFreeSpot($playerId);
+                $this->endBeforeEnteringTokyoIfNeeded();
                 break;
             case JUNGLE_FRENZY_EVOLUTION:
                 $this->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 1);
@@ -1013,5 +1024,11 @@ trait EvolutionCardsUtilTrait {
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+    
+    function endBeforeEnteringTokyoIfNeeded() {
+        if (!$this->tokyoHasFreeSpot()) {
+            $this->goToState($this->redirectAfterHalfMovePhase());
+        }
     }
 }

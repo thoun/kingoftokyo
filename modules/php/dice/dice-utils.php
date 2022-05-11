@@ -414,28 +414,10 @@ trait DiceUtilTrait {
             if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
                 $this->setPlayerBerserk($playerId, true);
             }
-
-            $mechaBlastEvolutions = [];
-            $extraDamageFromMechaBlast = 0;
             
             if ($isPowerUpExpansion) {
                 if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $diceCount *= 2;
-                }
-                $mechaBlastEvolutions = $this->getEvolutionsOfType($playerId, MECHA_BLAST_EVOLUTION);
-                $extraDamageFromMechaBlast = count($mechaBlastEvolutions) * 2; // TODOPU move this to applyDamage ?
-
-                if ($extraDamageFromMechaBlast > 0) {
-                    $this->notifyAllPlayers("log", /*client TODOPU translate(*/'Monsters smashed by ${player_name} loses ${number} extra [Heart] with ${card_name}'/*)*/, [
-                        'playerId' => $playerId,
-                        'player_name' => $this->getPlayerName($playerId),
-                        'number' => $extraDamageFromMechaBlast,
-                        'card_name' => 3000 + MECHA_BLAST_EVOLUTION,
-                    ]);
-                }
-
-                if (count($mechaBlastEvolutions) > 0) {
-                    $this->removeEvolutions($playerId, $mechaBlastEvolutions);
                 }
 
                 $underratedEvolutions = $this->getEvolutionsOfType($playerId, UNDERRATED_EVOLUTION);
@@ -468,7 +450,7 @@ trait DiceUtilTrait {
             foreach($smashedPlayersIds as $smashedPlayerId) {
                 $smashedPlayerIsInTokyo = $this->inTokyo($smashedPlayerId);
 
-                $damageAmount = $diceCount + $extraDamageFromMechaBlast;
+                $damageAmount = $diceCount;
 
                 $fireBreathingDamage = array_key_exists($smashedPlayerId, $fireBreathingDamages) ? $fireBreathingDamages[$smashedPlayerId] : 0;
                 $damageAmount += $fireBreathingDamage;
@@ -547,10 +529,6 @@ trait DiceUtilTrait {
                 if (!in_array($damagePlayerId, $smashedPlayersIds)) {
                     $damages[] = new Damage($damagePlayerId, $fireBreathingDamage, $playerId, -FIRE_BREATHING_CARD);
                 }
-            }
-
-            if (count($mechaBlastEvolutions) > 0) {
-                $this->removeEvolutions($playerId, $mechaBlastEvolutions);
             }
         } else {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);

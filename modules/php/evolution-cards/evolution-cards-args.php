@@ -79,7 +79,9 @@ trait EvolutionCardsArgTrait {
 
         $player = $this->getPlayer($activePlayerId);
 
-        $highlighted = $player->location > 0 && $player->turnEnteredTokyo ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO) : [];
+        $highlighted = $player->location > 0 && $player->turnEnteredTokyo ?
+            $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO) :
+            $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO);
 
         return [
             'highlighted' => $highlighted,
