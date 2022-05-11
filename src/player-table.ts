@@ -15,6 +15,7 @@ class PlayerTable {
     private showHand: boolean = false;
 
     public cards: Stock;
+    public reservedCards: Stock; // TODOPUBG
     public wickednessTiles: Stock;
     public hiddenEvolutionCards: Stock | null = null;
     public pickEvolutionCards: Stock | null = null;;
@@ -54,8 +55,12 @@ class PlayerTable {
             html += `
             <div id="visible-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.visibleEvolutions?.length ? '' : 'empty'}"></div>
             `;
+            // TODOPUBG
+            html += `
+            <div id="reserved-cards-${player.id}" class="reserved card-stock player-cards ${player.cards.length ? '' : 'empty'}"></div>
+            `;
         }
-        html += `    <div id="cards-${player.id}" class="card-stock player-cards ${player.cards.length ? '' : 'empty'}"></div>
+        html += `    <div id="cards-${player.id}" class="card-stock player-cards ${player.reservedCards.length ? '' : 'empty'}"></div>
         </div>
         `;
         dojo.place(html, 'table');
@@ -79,6 +84,22 @@ class PlayerTable {
         }
         if (superiorAlienTechnologyTokens) {
             player.cards.filter(card => superiorAlienTechnologyTokens.includes(card.id)).forEach(card => this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(this.cards, card));
+        }
+
+        if (game.isPowerUpExpansion()) {            
+            // TODOPUBG
+            this.reservedCards = new ebg.stock() as Stock;
+            this.reservedCards.setSelectionAppearance('class');
+            this.reservedCards.selectionClass = 'no-visible-selection';
+            this.reservedCards.create(this.game, $(`reserved-cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
+            this.reservedCards.setSelectionMode(0);
+            this.reservedCards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
+            this.reservedCards.image_items_per_row = 10;
+            this.reservedCards.centerItems = true;
+            dojo.connect(this.reservedCards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.reservedCards, Number(itemId), this.playerId));
+            
+            this.game.cards.setupCards([this.reservedCards]);
+            this.game.cards.addCardsToStock(this.reservedCards, player.reservedCards);
         }
 
         this.initialLocation = Number(player.location);

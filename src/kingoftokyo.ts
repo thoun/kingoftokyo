@@ -724,10 +724,15 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringBuyCard(args: EnteringBuyCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
+            const playerId = this.getPlayerId();
             this.tableCenter.setVisibleCardsSelectionMode(1);
 
+            if (this.isPowerUpExpansion()) {                
+                this.getPlayerTable(playerId).reservedCards.setSelectionMode(1);
+            }
+
             if (args.canBuyFromPlayers) {
-                this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+                this.playerTables.filter(playerTable => playerTable.playerId != playerId).forEach(playerTable => playerTable.cards.setSelectionMode(1));
             }
 
             if (args._private?.pickCards?.length) {
@@ -801,7 +806,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }).join('')
                 }</div>`, `maintitlebar_content`);
                 break;
-
+            case 'MyToy':
+                this.tableCenter.setVisibleCardsSelectionMode(1);
+                break;
         }
     }
 
@@ -901,6 +908,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (this.gamedatas.gamestate.args.question.code === 'Bamboozle') {
                     this.onLeavingBuyCard();
                 }
+                break;            
+            case 'MyToy':
+                this.tableCenter.setVisibleCardsSelectionMode(0);
                 break;
         }
     }
@@ -1707,6 +1717,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.buyCardBamboozle(cardId, from);
             } else if (args.question.code === 'ChooseMimickedCard') {
                 this.chooseMimickedCard(cardId);
+            } else if (args.question.code === 'MyToy') {
+                this.reserveCard(cardId);
             }
         }
     }
@@ -3042,6 +3054,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('answerElectricCarrot', { choice });
     }
     
+    public reserveCard(id: number) {
+        if(!(this as any).checkAction('reserveCard')) {
+            return;
+        }
+
+        this.takeAction('reserveCard', { id });
+    }
+    
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
@@ -3112,6 +3132,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['playerEntersTokyo', ANIMATION_MS],
             ['renewCards', ANIMATION_MS],
             ['buyCard', ANIMATION_MS],
+            ['reserveCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
             ['useCamouflage', ANIMATION_MS],
             ['useLightningArmor', ANIMATION_MS],
@@ -3279,7 +3300,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.cards.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
             this.tableCenter.changeVisibleCardWeight(newCard);
         } else if (notif.args.from > 0) {
-            this.cards.moveToAnotherStock(this.getPlayerTable(notif.args.from).cards, this.getPlayerTable(notif.args.playerId).cards, card);
+            this.cards.moveToAnotherStock(
+                notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards, 
+                this.getPlayerTable(notif.args.playerId).cards, 
+                card);
         } else { // from Made in a lab Pick
             if (this.tableCenter.getPickCard()) { // active player
                 this.cards.moveToAnotherStock(this.tableCenter.getPickCard(), this.getPlayerTable(notif.args.playerId).cards, card);
@@ -3287,6 +3311,21 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
             }
         }
+
+        this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
+
+        this.tableManager.tableHeightChange(); // adapt to new card
+    }
+
+    notif_reserveCard(notif: Notif<NotifBuyCardArgs>) {
+        const card = notif.args.card;
+        this.tableCenter.changeVisibleCardWeight(card);
+
+        const newCard = notif.args.newCard;
+        this.cards.moveToAnotherStock(this.tableCenter.getVisibleCards(), this.getPlayerTable(notif.args.playerId).reservedCards, card); // TODOPUBG add under evolution
+        this.cards.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
+        this.tableCenter.changeVisibleCardWeight(newCard);
+        
 
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
 

@@ -974,5 +974,14 @@
 
         self::ajaxResponse();
     }
+  	
+    public function reserveCard() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+        $this->game->reserveCard($id);
+
+        self::ajaxResponse();
+    }
 
 }

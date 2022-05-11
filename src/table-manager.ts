@@ -168,6 +168,9 @@ class TableManager {
             if (playerTable.wickednessTiles) {
                 dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', !playerTable.wickednessTiles.items.length);
             }
+            if (playerTable.reservedCards) {                
+                dojo.toggleClass(`reserved-cards-${playerTable.playerId}`, 'empty', !playerTable.reservedCards.items.length);
+            }
             dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length);
         });
 

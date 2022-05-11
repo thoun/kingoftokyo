@@ -1488,6 +1488,12 @@
 #table .player-table .player-cards.empty {
   max-height: 20px;
 }
+#table .player-table .player-cards.empty.reserved {
+  max-height: 0px;
+}
+#table .player-table .player-cards.reserved {
+  background: #AAAAAAAA;
+}
 #table .player-table .player-evolution-cards {
   width: 100%;
 }

@@ -409,6 +409,7 @@ class KingOfTokyo extends Table {
 
         foreach ($result['players'] as $playerId => &$playerDb) {
             $playerDb['cards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            $playerDb['reservedCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('reserved'.$playerId));
 
             foreach($playerDb['cards'] as &$card) {
                 if ($card->type == MIMIC_CARD) {

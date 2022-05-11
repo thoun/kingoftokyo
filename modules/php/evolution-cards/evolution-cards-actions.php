@@ -606,4 +606,35 @@ trait EvolutionCardsActionTrait {
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
+  	
+    public function reserveCard(int $id) {
+        $this->checkAction('reserveCard');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $cardLocationArg = $card->location_arg;
+        if ($card->location !== 'table') {
+            throw new \BgaUserException("Card is not on table");
+        }
+
+        $question = $this->getQuestion();
+        $evolution = $question->args->card;
+
+        $this->cards->moveCard($id, 'reserved'.$playerId, $evolution->id);
+
+        $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
+        $topDeckCardBackType = $this->getTopDeckCardBackType();
+
+        $this->notifyAllPlayers("reserveCard", /*client TODOPUBG translate(*/'${player_name} puts ${card_name} to reserve'/*)*/, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card' => $card,
+            'card_name' => $card->type,
+            'newCard' => $newCard,
+            'topDeckCardBackType' => $topDeckCardBackType,
+        ]);
+
+        $this->removeStackedStateAndRedirect();
+    }
 }

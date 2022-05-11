@@ -387,6 +387,9 @@ trait EvolutionCardsUtilTrait {
                 $this->goToState(ST_NEXT_PLAYER);
                 break;
             // Baby Gigazaur
+            case MY_TOY_EVOLUTION:
+                $this->myToyQuestion($playerId, $card);
+                break;
             case NURTURE_THE_YOUNG_EVOLUTION:
                 $dbResults = $this->getCollectionFromDb("SELECT `player_id` FROM `player` WHERE `player_score` > (SELECT `player_score` FROM `player` WHERE id = $playerId)");
                 $playersIdsWithMorePoints = array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
@@ -477,6 +480,14 @@ trait EvolutionCardsUtilTrait {
             $this->removeMimicEvolutionToken($playerId);
         }
         $this->evolutionCards->moveCard($card->id, 'discard'.$playerId);
+
+        if ($card->type == MY_TOY_EVOLUTION || ($card->type == ICY_REFLECTION_EVOLUTION && $this->getMimickedEvolutionType() == MY_TOY_EVOLUTION)) {
+            // if My Toy is removed, reserved card is put to discard
+            $reservedCards = $this->getCardsFromDb($this->cards->getCardsInLocation('reserve'.$playerId, $card->id));
+            if (count($reservedCards) > 0) {
+                $this->cards->moveCards(array_map(fn($reservedCard) => $reservedCard->id, $reservedCards), 'discard');
+            }
+        }
 
         if (!$silent) {
             $this->notifyAllPlayers("removeEvolutions", '', [
@@ -981,6 +992,26 @@ trait EvolutionCardsUtilTrait {
         $this->addStackedState();
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive($smashedPlayersIds, 'next', true);
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function myToyQuestion(int $playerId, EvolutionCard $card) {
+        $question = new Question(
+            'MyToy',
+            /* client TODOPU translate(*/'${player_name} must choose a card to reserve'/*)*/,
+            /* client TODOPU translate(*/'${you} must choose a card to reserve'/*)*/,
+            [$playerId],
+            ST_AFTER_ANSWER_QUESTION,
+            [ 
+                'playerId' => $playerId,
+                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
+                'card' => $card,
+            ]
+        );
+
+        $this->addStackedState();
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 }

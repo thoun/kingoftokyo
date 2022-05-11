@@ -188,6 +188,14 @@
 
         &.empty {
             max-height: 20px;
+
+            &.reserved {
+                max-height: 0px;
+            }
+        }
+
+        &.reserved {
+            background: #AAAAAAAA;
         }
     }
 

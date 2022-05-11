@@ -225,7 +225,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
             //$this->setMimickedEvolution(2343493, $this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true));
-            $this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(MY_TOY_EVOLUTION, 2343492, false);
         }
 
         // player order

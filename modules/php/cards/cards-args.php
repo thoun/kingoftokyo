@@ -38,6 +38,9 @@ trait CardsArgTrait {
         $canUseSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        if ($isPowerUpExpansion) {
+            $cards = array_merge($cards, $this->getCardsFromDb($this->cards->getCardsInLocation('reserved'.$playerId)));
+        }
         $cardsCosts = [];
         $cardsCostsSuperiorAlienTechnology = [];
         

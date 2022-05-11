@@ -114,6 +114,7 @@ interface KingOfTokyoPlayer extends Player {
     cultists: number;
     wickedness?: number;
     cards: Card[];
+    reservedCards: Card[]; // TODOPUBG
     wickednessTiles: WickednessTile[];
     visibleEvolutions?: EvolutionCard[];
     hiddenEvolutions?: EvolutionCard[]; // filled only for current player, else EvolutionCard contains only id

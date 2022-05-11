@@ -132,10 +132,10 @@ trait CardsActionTrait {
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, HAVE_IT_ALL_WICKEDNESS_TILE)) {
             $this->applyGetPoints($playerId, 1, 2000 + HAVE_IT_ALL_WICKEDNESS_TILE);
         }
-        // KING_OF_THE_GIZMO_EVOLUTION
-        $countKING_OF_THE_GIZMO_EVOLUTION = $this->countEvolutionOfType($playerId, KING_OF_THE_GIZMO_EVOLUTION);
-        if ($countKING_OF_THE_GIZMO_EVOLUTION > 0) {
-            $this->applyGetPoints($playerId, $countKING_OF_THE_GIZMO_EVOLUTION, 3000 + KING_OF_THE_GIZMO_EVOLUTION);
+        // King of the gizmo
+        $countKingOfTheGizmo = $this->countEvolutionOfType($playerId, KING_OF_THE_GIZMO_EVOLUTION);
+        if ($countKingOfTheGizmo > 0) {
+            $this->applyGetPoints($playerId, $countKingOfTheGizmo, 3000 + KING_OF_THE_GIZMO_EVOLUTION);
         }
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
@@ -144,8 +144,10 @@ trait CardsActionTrait {
         $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
             
         if ($from > 0) {
-            // If card bought from player, when having mimic token, card keep mimic token
-            $this->removeCard($from, $card, true, false, true);
+            if ($from != $playerId) {
+                // If card bought from player, when having mimic token, card keep mimic token
+                $this->removeCard($from, $card, true, false, true);
+            }
         }
         $this->cards->moveCard($id, 'hand', $playerId);
 
@@ -160,7 +162,9 @@ trait CardsActionTrait {
         $newCard = null;
 
         if ($from > 0) {
-            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
+            $message = $from == $playerId ? /*client TODOPUBG translate(*/'${player_name} buys ${card_name} from reserverd cards ${cost} [energy]'/*)*/ : 
+            clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
+            $this->notifyAllPlayers("buyCard", $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,
@@ -249,6 +253,17 @@ trait CardsActionTrait {
             $this->goToMimicSelection($playerId, MIMIC_CARD);
             return;
         }
+        if ($from === $playerId && $this->isPowerUpExpansion()) {
+            $myToyEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
+            if (count($myToyEvolutions) > 0) {
+                $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => intval($this->cards->countCardInLocation('reserved'.$playerId, $myToyEvolution->id)) === 0));
+
+                if (count($myToyEvolutions) > 0) {
+                    $this->myToyQuestion($playerId, $myToyEvolutions[0]);
+                    return;
+                }
+            }
+        }
 
         $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId);
 
@@ -260,7 +275,7 @@ trait CardsActionTrait {
 
         $stateName = $this->gamestate->state()['name'];
         $opportunist = $stateName === 'opportunistBuyCard';
-        $playerId = $opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId();
+        $playerId = intval($opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId());
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
@@ -273,7 +288,7 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
-        if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
+        if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0 && $from !== $playerId) {
             throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
         }
 
