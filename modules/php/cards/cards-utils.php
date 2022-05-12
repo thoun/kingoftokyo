@@ -1002,10 +1002,11 @@ trait CardsUtilTrait {
     function getEffectiveDamage(int $damageAmount, int $playerId, int $damageDealerId, /*ClawDamage|null*/$clawDamage) {
         $effectiveDamage = $damageAmount;
         $logs = [];
+        $damageByActivePlayer = $playerId != $damageDealerId && intval($this->getActivePlayerId()) == $damageDealerId;
 
         if ($damageAmount > 0) {
             // devil
-            $countDevil = $playerId != $damageDealerId && intval($this->getActivePlayerId()) == $damageDealerId ? $this->countCardOfType($damageDealerId, DEVIL_CARD) : 0;
+            $countDevil = $damageByActivePlayer ? $this->countCardOfType($damageDealerId, DEVIL_CARD) : 0;
             if ($countDevil > 0) {
                 $effectiveDamage += $countDevil;
                 $logs[] = new LoseHealthLog($this, $playerId, $countDevil, DEVIL_CARD);
@@ -1021,17 +1022,6 @@ trait CardsUtilTrait {
                 if ($countTargetAcquired > 0) {
                     $effectiveDamage += $countTargetAcquired;
                     $logs[] = new LoseHealthLog($this, $playerId, $countTargetAcquired, 3000 + TARGET_ACQUIRED_EVOLUTION);
-                }
-            }
-
-            // claws of steel // TODOPU check when it is applied
-            $countClawsOfSteel = 0;
-            if ($isPowerUpExpansion && $damageAmount >= 3) {
-                $countClawsOfSteel = $this->countEvolutionOfType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
-
-                if ($countClawsOfSteel > 0) {
-                    $effectiveDamage += $countClawsOfSteel;
-                    $logs[] = new LoseHealthLog($this, $playerId, $countClawsOfSteel, 3000 + CLAWS_OF_STEEL_EVOLUTION);
                 }
             }
 
@@ -1055,6 +1045,21 @@ trait CardsUtilTrait {
             if ($clawDamage !== null && $clawDamage->electricCarrotChoice !== null && array_key_exists($playerId, $clawDamage->electricCarrotChoice) && $clawDamage->electricCarrotChoice[$playerId] == 4) {
                 $effectiveDamage += 1;
                 $logs[] = new LoseHealthLog($this, $playerId, 1, 3000 + ELECTRIC_CARROT_EVOLUTION);
+            }
+
+            // claws of steel 
+            // last effect so it can be cummulative with previous ones
+            $countClawsOfSteel = 0;
+            if ($isPowerUpExpansion && $damageByActivePlayer) {
+                $countClawsOfSteel = $this->countEvolutionOfType($damageDealerId, CLAWS_OF_STEEL_EVOLUTION);
+
+                if ($countClawsOfSteel > 0) {
+                    $damageBefore = $this->damageDealtToAnotherPlayerThisTurn($damageDealerId, $playerId);
+                    if (($damageBefore + $effectiveDamage) >= 3) {
+                        $effectiveDamage += $countClawsOfSteel;
+                        $logs[] = new LoseHealthLog($this, $playerId, $countClawsOfSteel, 3000 + CLAWS_OF_STEEL_EVOLUTION);
+                    }
+                }
             }
         }
 

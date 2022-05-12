@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -1089,6 +1089,10 @@ trait UtilTrait {
 
     function isDamageDealtToOthersThisTurn(int $playerId) {
         return intval($this->getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` <> $playerId")) > 0;
+    }
+
+    function damageDealtToAnotherPlayerThisTurn(int $playerId, int $toPlayerId) {
+        return intval($this->getUniqueValueFromDB( "SELECT SUM(`damages`) FROM `turn_damages` WHERE `from` = $playerId and `to` = $toPlayerId"));
     }
 
     function playersWoundedByActivePlayerThisTurn(int $playerId) {
