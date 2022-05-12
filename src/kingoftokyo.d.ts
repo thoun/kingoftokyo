@@ -117,6 +117,7 @@ interface KingOfTokyoPlayer extends Player {
     reservedCards: Card[]; // TODOPUBG
     wickednessTiles: WickednessTile[];
     visibleEvolutions?: EvolutionCard[];
+    ownedEvolutions?: EvolutionCard[];
     hiddenEvolutions?: EvolutionCard[]; // filled only for current player, else EvolutionCard contains only id
 }
 
@@ -665,4 +666,9 @@ interface NotifAddSuperiorAlienTechnologyTokenArgs {
 interface NotifGiveTargetArgs {
     playerId: number;
     previousOwner: number;
+}
+
+interface NotifOwnedEvoltionsArgs {
+    playerId: number;
+    evolutions: EvolutionCard[];
 }

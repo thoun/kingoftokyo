@@ -90,6 +90,12 @@ trait EvolutionCardsUtilTrait {
         return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
     }
 
+    function getEvolutionCardsByOwner(int $ownerId) {
+        $sql = "SELECT * FROM `evolution_card` WHERE `owner_id` = $ownerId";
+        $dbResults = $this->getCollectionFromDb($sql);
+        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
+    }
+
     function getEvolutionCardsOnDeckTop(int $playerId, int $number) {
         $sql = "SELECT * FROM `evolution_card` WHERE `card_location` = 'deck$playerId' ORDER BY `card_location_arg` DESC LIMIT $number";
         $dbResults = $this->getCollectionFromDb($sql);
@@ -874,6 +880,11 @@ trait EvolutionCardsUtilTrait {
             if(count($ids) > 0) {
                 $this->DbQuery("UPDATE `evolution_card` SET `owner_id` = $playerId where `card_id` IN (" . implode(',', $ids) . ")");
             }
+
+            $this->notifyAllPlayers('ownedEvolutions', '', [
+                'playerId' => $playerId,
+                'evolutions' => $evolutions,
+            ]);
         }
     }
 

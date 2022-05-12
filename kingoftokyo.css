@@ -111,6 +111,21 @@
   opacity: 1;
 }
 
+.playerhand-counter {
+  white-space: nowrap;
+}
+
+.show-evolutions-button {
+  visibility: hidden;
+  margin-left: 15px;
+}
+.show-evolutions-button.visible {
+  visibility: visible;
+}
+.show-evolutions-button button {
+  white-space: normal;
+}
+
 .dice-icon {
   width: 14px;
   height: 14px;

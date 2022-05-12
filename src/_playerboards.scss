@@ -128,3 +128,20 @@
 .intokyo .kot-token {
   opacity: 1;
 }
+
+.playerhand-counter {
+  white-space: nowrap;
+}
+
+.show-evolutions-button {
+  visibility: hidden;  
+  margin-left: 15px;
+
+  &.visible {
+    visibility: visible;
+  }
+
+  button {
+    white-space: normal;
+  }
+}

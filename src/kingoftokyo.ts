@@ -212,8 +212,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'chooseInitialCard':
                 this.onEnteringChooseInitialCard(args.args);
+                this.showEvolutionsPopinPlayerButtons();
                 break;
             case 'startGame':
+                this.showEvolutionsPopinPlayerButtons();
                 break;
             case 'beforeStartTurn':
             case 'beforeResolveDice':
@@ -314,6 +316,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
                 break;
+        }
+    }
+    
+    private showEvolutionsPopinPlayerButtons() {
+        if (this.isPowerUpExpansion()) {
+            Object.keys(this.gamedatas.players).forEach(playerId => document.getElementById(`see-monster-evolution-player-${playerId}`).classList.toggle('visible', true));
         }
     }
 
@@ -1556,12 +1564,21 @@ class KingOfTokyo implements KingOfTokyoGame {
                         <div class="player-hand-card"></div> 
                         <span id="playerhand-counter-${player.id}"></span>
                     </div>
+                    <div class="show-evolutions-button">
+                    <button id="see-monster-evolution-player-${playerId}" class="bgabutton bgabutton_gray ${this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : ''}">
+                        ${/*TODOPU_*/('Show Evolutions')}
+                    </button>
+                    </div>
                 </div>`, `player_board_${player.id}`);
 
                 const handCounter = new ebg.counter();
                 handCounter.create(`playerhand-counter-${playerId}`);
                 handCounter.setValue(player.hiddenEvolutions.length);
                 this.handCounters[playerId] = handCounter;
+
+                (this as any).addTooltipHtml(`playerhand-counter-wrapper-${player.id}`, /* TODOPU_*/("Number of Evolution cards in hand."));
+
+                document.getElementById(`see-monster-evolution-player-${playerId}`).addEventListener('click', () => this.showPlayerEvolutions(playerId));
             }
 
             dojo.place(`<div class="player-tokens">
@@ -2131,39 +2148,44 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
     
-    private showMonsterEvolutions(monster: number) {
+    private showEvolutionsPopin(cardsTypes: number[], title: string) {
         
         const viewCardsDialog = new ebg.popindialog();
         viewCardsDialog.create('kotViewEvolutionsDialog');
-        viewCardsDialog.setTitle(/*TODOPU_*/("Monster Evolutions"));
+        viewCardsDialog.setTitle(title);
         
         var html = `<div id="see-monster-evolutions" class="evolution-card-stock player-evolution-cards"></div>`;
         
         // Show the dialog
         viewCardsDialog.setContent(html);
-
-        /*const monsterEvolutionsStock = new ebg.stock() as Stock;
-        monsterEvolutionsStock.create( this, $('see-monster-evolutions'), CARD_WIDTH, CARD_WIDTH);
-        monsterEvolutionsStock.setSelectionMode(0);
-        monsterEvolutionsStock.centerItems = true;
-        monsterEvolutionsStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
-        this.evolutionCards.setupCards([monsterEvolutionsStock]);*/
-
-        viewCardsDialog.show();
         
-        for (let i=1; i<=8; i++) {
-            //monsterEvolutionsStock.addToStockWithId(monster * 10 + i, ''+i);
+        cardsTypes.forEach(cardType => {
             dojo.place(`
-                <div id="see-monster-evolutions_item_${i}" class="stockitem stockitem_unselectable" style="background-position: -${(MONSTERS_WITH_POWER_UP_CARDS.indexOf(monster) + 1) *100}% 0%;"></div>
+                <div id="see-monster-evolutions_item_${cardType}" class="stockitem stockitem_unselectable" style="background-position: -${(MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(cardType / 10)) + 1) * 100}% 0%;"></div>
             `, 'see-monster-evolutions');
-            this.evolutionCards.setupNewCard(document.getElementById(`see-monster-evolutions_item_${i}`) as HTMLDivElement, monster * 10 + i);
-        }
-        //setTimeout(() => monsterEvolutionsStock.updateDisplay(), 100);
+            this.evolutionCards.setupNewCard(document.getElementById(`see-monster-evolutions_item_${cardType}`) as HTMLDivElement, cardType);
+        })
+        
+        viewCardsDialog.show();
 
         // Replace the function call when it's clicked
         viewCardsDialog.replaceCloseCallback(() => {            
             viewCardsDialog.destroy();
         });
+    }
+    
+    private showMonsterEvolutions(monster: number) {
+        const cardsTypes = [];
+        for (let i=1; i<=8; i++) {
+            cardsTypes.push(monster * 10 + i);
+        }
+
+        this.showEvolutionsPopin(cardsTypes, /*TODOPU_*/("Monster Evolution cards"));
+    }
+    
+    private showPlayerEvolutions(playerId: number) {
+        const cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(evolution => evolution.type);
+        this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(/*TODOPU_*/("Evolution cards owned by ${player_name}"), {'player_name': this.gamedatas.players[playerId].name}));
     }
 
     public pickMonster(monster: number) {
@@ -3195,6 +3217,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['removeSuperiorAlienTechnologyToken', 1],
             ['giveTarget', 1],
             ['updateCancelDamage', 1],
+            ['ownedEvolutions', 1],
             ['log500', 500]
         ];
     
@@ -3642,6 +3665,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.getPlayerTable(notif.args.previousOwner).removeTarget();
         }
         this.getPlayerTable(notif.args.playerId).giveTarget();
+    }
+    
+    notif_ownedEvolutions(notif: Notif<NotifOwnedEvoltionsArgs>) {
+        this.gamedatas.players[notif.args.playerId].ownedEvolutions = notif.args.evolutions;
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

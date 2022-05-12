@@ -1780,6 +1780,7 @@ var PlayerTable = /** @class */ (function () {
         transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId + "-figure-wrapper", this.game.getZoom());
     };
     PlayerTable.prototype.setVisibleCardsSelectionClass = function (visible) {
+        document.getElementById("hand-wrapper").classList.toggle('double-selection', visible);
         document.getElementById("player-table-" + this.playerId).classList.toggle('double-selection', visible);
     };
     PlayerTable.prototype.removeCards = function (cards) {
@@ -3629,8 +3630,10 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'chooseInitialCard':
                 this.onEnteringChooseInitialCard(args.args);
+                this.showEvolutionsPopinPlayerButtons();
                 break;
             case 'startGame':
+                this.showEvolutionsPopinPlayerButtons();
                 break;
             case 'beforeStartTurn':
             case 'beforeResolveDice':
@@ -3725,6 +3728,11 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
                 break;
+        }
+    };
+    KingOfTokyo.prototype.showEvolutionsPopinPlayerButtons = function () {
+        if (this.isPowerUpExpansion()) {
+            Object.keys(this.gamedatas.players).forEach(function (playerId) { return document.getElementById("see-monster-evolution-player-" + playerId).classList.toggle('visible', true); });
         }
     };
     KingOfTokyo.prototype.showActivePlayer = function (playerId) {
@@ -4802,11 +4810,13 @@ var KingOfTokyo = /** @class */ (function () {
             }
             if (gamedatas.powerUpExpansion) {
                 // hand cards counter
-                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-" + player.id + "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-" + player.id + "\"></span>\n                    </div>\n                </div>", "player_board_" + player.id);
+                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-" + player.id + "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-" + player.id + "\"></span>\n                    </div>\n                    <div class=\"show-evolutions-button\">\n                    <button id=\"see-monster-evolution-player-" + playerId + "\" class=\"bgabutton bgabutton_gray " + (_this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : '') + "\">\n                        " + ('Show Evolutions') + "\n                    </button>\n                    </div>\n                </div>", "player_board_" + player.id);
                 var handCounter = new ebg.counter();
                 handCounter.create("playerhand-counter-" + playerId);
                 handCounter.setValue(player.hiddenEvolutions.length);
                 _this.handCounters[playerId] = handCounter;
+                _this.addTooltipHtml("playerhand-counter-wrapper-" + player.id, /* TODOPU_*/ ("Number of Evolution cards in hand."));
+                document.getElementById("see-monster-evolution-player-" + playerId).addEventListener('click', function () { return _this.showPlayerEvolutions(playerId); });
             }
             dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
             if (!eliminated) {
@@ -5304,30 +5314,34 @@ var KingOfTokyo = /** @class */ (function () {
             }
         });
     };
-    KingOfTokyo.prototype.showMonsterEvolutions = function (monster) {
+    KingOfTokyo.prototype.showEvolutionsPopin = function (cardsTypes, title) {
+        var _this = this;
         var viewCardsDialog = new ebg.popindialog();
         viewCardsDialog.create('kotViewEvolutionsDialog');
-        viewCardsDialog.setTitle(/*TODOPU_*/ ("Monster Evolutions"));
+        viewCardsDialog.setTitle(title);
         var html = "<div id=\"see-monster-evolutions\" class=\"evolution-card-stock player-evolution-cards\"></div>";
         // Show the dialog
         viewCardsDialog.setContent(html);
-        /*const monsterEvolutionsStock = new ebg.stock() as Stock;
-        monsterEvolutionsStock.create( this, $('see-monster-evolutions'), CARD_WIDTH, CARD_WIDTH);
-        monsterEvolutionsStock.setSelectionMode(0);
-        monsterEvolutionsStock.centerItems = true;
-        monsterEvolutionsStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id);
-        this.evolutionCards.setupCards([monsterEvolutionsStock]);*/
+        cardsTypes.forEach(function (cardType) {
+            dojo.place("\n                <div id=\"see-monster-evolutions_item_" + cardType + "\" class=\"stockitem stockitem_unselectable\" style=\"background-position: -" + (MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(cardType / 10)) + 1) * 100 + "% 0%;\"></div>\n            ", 'see-monster-evolutions');
+            _this.evolutionCards.setupNewCard(document.getElementById("see-monster-evolutions_item_" + cardType), cardType);
+        });
         viewCardsDialog.show();
-        for (var i = 1; i <= 8; i++) {
-            //monsterEvolutionsStock.addToStockWithId(monster * 10 + i, ''+i);
-            dojo.place("\n                <div id=\"see-monster-evolutions_item_" + i + "\" class=\"stockitem stockitem_unselectable\" style=\"background-position: -" + (MONSTERS_WITH_POWER_UP_CARDS.indexOf(monster) + 1) * 100 + "% 0%;\"></div>\n            ", 'see-monster-evolutions');
-            this.evolutionCards.setupNewCard(document.getElementById("see-monster-evolutions_item_" + i), monster * 10 + i);
-        }
-        //setTimeout(() => monsterEvolutionsStock.updateDisplay(), 100);
         // Replace the function call when it's clicked
         viewCardsDialog.replaceCloseCallback(function () {
             viewCardsDialog.destroy();
         });
+    };
+    KingOfTokyo.prototype.showMonsterEvolutions = function (monster) {
+        var cardsTypes = [];
+        for (var i = 1; i <= 8; i++) {
+            cardsTypes.push(monster * 10 + i);
+        }
+        this.showEvolutionsPopin(cardsTypes, /*TODOPU_*/ ("Monster Evolution cards"));
+    };
+    KingOfTokyo.prototype.showPlayerEvolutions = function (playerId) {
+        var cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(function (evolution) { return evolution.type; });
+        this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(/*TODOPU_*/ ("Evolution cards owned by ${player_name}"), { 'player_name': this.gamedatas.players[playerId].name }));
     };
     KingOfTokyo.prototype.pickMonster = function (monster) {
         if (!this.checkAction('pickMonster')) {
@@ -6153,6 +6167,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['removeSuperiorAlienTechnologyToken', 1],
             ['giveTarget', 1],
             ['updateCancelDamage', 1],
+            ['ownedEvolutions', 1],
             ['log500', 500]
         ];
         notifs.forEach(function (notif) {
@@ -6524,6 +6539,9 @@ var KingOfTokyo = /** @class */ (function () {
             this.getPlayerTable(notif.args.previousOwner).removeTarget();
         }
         this.getPlayerTable(notif.args.playerId).giveTarget();
+    };
+    KingOfTokyo.prototype.notif_ownedEvolutions = function (notif) {
+        this.gamedatas.players[notif.args.playerId].ownedEvolutions = notif.args.evolutions;
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

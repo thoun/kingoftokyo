@@ -93,7 +93,7 @@ trait UtilTrait {
     }
 
     function isPowerUpMutantEvolution() {
-        return intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 3;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 3;
     }
 
     function isDarkEdition() {

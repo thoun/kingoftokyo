@@ -195,8 +195,8 @@ trait DebugUtilTrait {
             // set monster
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
-            $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
-            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
+            //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343492"); // cyber bunny
             //$this->DbQuery("UPDATE player SET `player_monster` = 15 where `player_id` = 2343492"); // kraken

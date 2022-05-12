@@ -200,6 +200,7 @@ class PlayerTable {
     }
 
     public setVisibleCardsSelectionClass(visible: boolean) {
+        document.getElementById(`hand-wrapper`).classList.toggle('double-selection', visible);
         document.getElementById(`player-table-${this.playerId}`).classList.toggle('double-selection', visible);
     }
 
