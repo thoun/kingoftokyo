@@ -1500,6 +1500,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             html += `</div>`;
             dojo.place(html, `player_board_${player.id}`);
 
+            (this as any).addTooltipHtml(`health-counter-wrapper-${player.id}`, _("Health"));
+            (this as any).addTooltipHtml(`energy-counter-wrapper-${player.id}`, _("Energy"));
+            if (gamedatas.wickednessExpansion) {
+                (this as any).addTooltipHtml(`wickedness-counter-wrapper-${player.id}`, /* TODOWI_*/("Wickedness points"));
+            }
+
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 let html = `<div class="counters">`;
 

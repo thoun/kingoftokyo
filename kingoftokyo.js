@@ -4770,6 +4770,11 @@ var KingOfTokyo = /** @class */ (function () {
             }
             html += "</div>";
             dojo.place(html, "player_board_" + player.id);
+            _this.addTooltipHtml("health-counter-wrapper-" + player.id, _("Health"));
+            _this.addTooltipHtml("energy-counter-wrapper-" + player.id, _("Energy"));
+            if (gamedatas.wickednessExpansion) {
+                _this.addTooltipHtml("wickedness-counter-wrapper-" + player.id, /* TODOWI_*/ ("Wickedness points"));
+            }
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 var html_1 = "<div class=\"counters\">";
                 if (gamedatas.cthulhuExpansion) {
