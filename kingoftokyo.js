@@ -3252,16 +3252,16 @@ var PreferencesManager = /** @class */ (function () {
 }());
 var WICKEDNESS_MONSTER_ICON_POSITION = [
     [2, 270],
-    [35, 321],
-    [87, 316],
-    [129, 284],
-    [107, 237],
-    [86, 193],
-    [128, 165],
-    [86, 130],
-    [44, 96],
-    [88, 58],
-    [128, 31],
+    [32, 317],
+    [84, 312],
+    [124, 280],
+    [103, 235],
+    [82, 191],
+    [124, 164],
+    [83, 130],
+    [41, 96],
+    [84, 58],
+    [124, 33],
 ];
 var TableCenter = /** @class */ (function () {
     function TableCenter(game, players, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {

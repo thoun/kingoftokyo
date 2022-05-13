@@ -1213,7 +1213,7 @@
 }
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board {
   position: relative;
-  width: 174px;
+  width: 170px;
   height: 400px;
   background: url("img/wickedness-board.jpg");
   background-size: cover;
@@ -1232,7 +1232,7 @@
 #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile {
   position: absolute;
   --tile-count: 1;
-  left: 175px;
+  left: 170px;
   width: calc(132px + var(--tile-count) * 3px);
   transition: height 0.5s ease-in-out, background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
   height: 81px;
