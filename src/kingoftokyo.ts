@@ -606,6 +606,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (!args.canCancelDamage && args.canHealToAvoidDeath) {
             this.setGamestateDescription('HealBeforeDamage');
+        } else if (args.canCancelDamage) {
+            this.setGamestateDescription('Reduce');
         }
         
         if (isCurrentPlayerActive) {

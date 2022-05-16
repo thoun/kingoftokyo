@@ -13,18 +13,18 @@ trait DebugUtilTrait {
             return;
         } 
 
-        //$playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
+        $playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343496, 2);
-        //$this->debugSetPlayerInLocation($playersIds[4], 1);
-        //$this->debugSetPlayerInLocation($playersIds[0], 2);
-        $this->debugSetEnergy(5);
+        $this->debugSetPlayerInLocation($playersIds[0], 1);
+        $this->debugSetPlayerInLocation($playersIds[1], 2);
+        //$this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 5);
-        //$this->debugSetHealth(1);
+        $this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343495, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
@@ -46,6 +46,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
         //$this->debugSetCardInTable(TANK_CARD);
+        //$this->debugSetCardInTable(GAS_REFINERY_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
@@ -87,7 +88,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343494);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
@@ -107,6 +108,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, $playersIds[2]);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, $playersIds[2]);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, $playersIds[4]);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, $playersIds[3]);
 
         // dark edition
 
@@ -134,7 +136,7 @@ trait DebugUtilTrait {
 
         // cthulhu
         if ($this->isCthulhuExpansion()) {
-            $this->debugSetCultists(5);
+            //$this->debugSetCultists(1);
             //$this->debugSetPlayerCultists(2343492, 10);
             //$this->debugSetPlayerCultists($playersIds[2], 1);
             //$this->debugSetPlayerCultists($playersIds[3], 3);
@@ -232,8 +234,8 @@ trait DebugUtilTrait {
 
         // player order
 
-        $this->gamestate->changeActivePlayer(2343492);
-        //$this->gamestate->changeActivePlayer($playersIds[0]);
+        //$this->gamestate->changeActivePlayer(2343492);
+        $this->gamestate->changeActivePlayer($playersIds[1]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);

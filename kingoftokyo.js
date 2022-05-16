@@ -3976,6 +3976,9 @@ var KingOfTokyo = /** @class */ (function () {
         if (!args.canCancelDamage && args.canHealToAvoidDeath) {
             this.setGamestateDescription('HealBeforeDamage');
         }
+        else if (args.canCancelDamage) {
+            this.setGamestateDescription('Reduce');
+        }
         if (isCurrentPlayerActive) {
             if (args.dice && ((_a = args.rethrow3) === null || _a === void 0 ? void 0 : _a.hasCard)) {
                 if (document.getElementById('rethrow3camouflage_button')) {

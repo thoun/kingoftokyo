@@ -102,7 +102,8 @@ trait CardsStateTrait {
         if ($this->getPlayer($currentPlayerId)->eliminated) {
             array_shift($intervention->remainingPlayersId);
             $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), $intervention);
-            $this->stCancelDamage();
+            //$this->stCancelDamage();
+            $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
             return;
         }
 
@@ -115,7 +116,8 @@ trait CardsStateTrait {
                 || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId, $currentDamage->clawDamage))
         ) {
             $this->applySkipCancelDamage($currentPlayerId);
-            $this->stCancelDamage();
+            //$this->stCancelDamage();
+            $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
             return;
         }
 
@@ -124,7 +126,8 @@ trait CardsStateTrait {
             $arg = $this->argCancelDamage($currentPlayerId);
             if (!$arg['canDoAction']) {
                 $this->applySkipCancelDamage($currentPlayerId);
-                $this->stCancelDamage();
+                //$this->stCancelDamage();
+                $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
                 return;
             }
         }
