@@ -115,9 +115,11 @@ trait CardsStateTrait {
             && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
                 || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId, $currentDamage->clawDamage))
         ) {
-            $this->applySkipCancelDamage($currentPlayerId);
+
+            $this->applySkipCancelDamage($currentPlayerId, $intervention);
             //$this->stCancelDamage();
-            $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
+            //$this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
+            // we don't need to redirect to ST_MULTIPLAYER_CANCEL_DAMAGE, applySkipCancelDamage will do it for us
             return;
         }
 
@@ -125,15 +127,17 @@ trait CardsStateTrait {
         if ($this->autoSkipImpossibleActions()) {
             $arg = $this->argCancelDamage($currentPlayerId);
             if (!$arg['canDoAction']) {
-                $this->applySkipCancelDamage($currentPlayerId);
+                $this->applySkipCancelDamage($currentPlayerId, $intervention);
                 //$this->stCancelDamage();
-                $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
+                //$this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
+            // we don't need to redirect to ST_MULTIPLAYER_CANCEL_DAMAGE, applySkipCancelDamage will do it for us
                 return;
             }
         }
 
         // if we are still here, no action has been done automatically, we activate the player so he can heal
         $this->setDamageIntervention($intervention);
+        //$this->debug([$intervention, $currentPlayerId]);
         $this->gamestate->setPlayersMultiactive([$currentPlayerId], 'stay', true);
     }
 

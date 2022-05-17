@@ -826,9 +826,10 @@ trait CardsActionTrait {
         $this->applySkipCancelDamage($playerId);
     }
 
-    function applySkipCancelDamage(int $playerId) {
-
-        $intervention = $this->getDamageIntervention();
+    function applySkipCancelDamage(int $playerId, $intervention = null) {
+        if ($intervention === null) {
+            $intervention = $this->getDamageIntervention();
+        }
 
         foreach($intervention->damages as $damage) {
             if ($damage->playerId == $playerId) {
@@ -841,6 +842,9 @@ trait CardsActionTrait {
         // we check we are still in cancelDamage (we could be redirected if player is eliminated)
         if ($this->gamestate->state()['name'] == 'cancelDamage') {
             $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+            //$currentPlayersIds = array_map(fn($idStr) => intval($idStr), $this->gamestate->getActivePlayerList());
+            //$this->debug([$playerId, $currentPlayersIds, in_array($playerId, $currentPlayersIds)]);
+            //$this->debug([$this->getCollectionFromDb("SELECT * FROM global_variables")]);
         }
     }
 

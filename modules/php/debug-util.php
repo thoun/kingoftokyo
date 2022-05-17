@@ -13,19 +13,20 @@ trait DebugUtilTrait {
             return;
         } 
 
-        $playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
+        //$playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
 
         // base game
 
-        //$this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343496, 2);
-        $this->debugSetPlayerInLocation($playersIds[0], 1);
-        $this->debugSetPlayerInLocation($playersIds[1], 2);
-        //$this->debugSetEnergy(5);
+        //$this->debugSetPlayerInLocation($playersIds[0], 1);
+        //$this->debugSetPlayerInLocation($playersIds[1], 2);
+        $this->debugSetEnergy(3);
         //$this->debugSetPoints(5);
-        //$this->debugSetPlayerPoints(2343493, 5);
-        $this->debugSetHealth(5);
-        //$this->debugSetPlayerHealth(2343495, 1);
+        $this->debugSetPlayerPoints(2343493, 4);
+        $this->debugSetHealth(7);
+        //$this->debugSetPlayerHealth(2343492, 7);
+        //$this->debugSetPlayerHealth(2343493, 7);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -51,9 +52,10 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        //$this->debugSetCardInTable(MIMIC_CARD);
+        $this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(WINGS_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
+        //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(REGENERATION_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(RAPID_HEALING_CARD, 2343494));
@@ -72,14 +74,15 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        $this->debugSetCardInHand(SOLAR_POWERED_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
         //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
-        //$this->debugSetCardInHand(REGENERATION_CARD, 2343492);
+        $this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
@@ -92,7 +95,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(WINGS_CARD, 2343493);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
-        //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343492);
+        //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
         //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
@@ -108,7 +111,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, $playersIds[2]);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, $playersIds[2]);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, $playersIds[4]);
-        $this->debugSetCardInHand(CAMOUFLAGE_CARD, $playersIds[3]);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, $playersIds[3]);
 
         // dark edition
 
@@ -124,8 +127,8 @@ trait DebugUtilTrait {
         if ($this->isHalloweenExpansion()) {
             //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
             //$this->debugSetCardInHand(GHOST_CARD, 2343492);
-            //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-            $this->debugSetCardInHand(DEVIL_CARD, 2343492);
+            $this->debugSetCardInHand(CLOWN_CARD, 2343492);
+            //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
             $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
@@ -234,8 +237,8 @@ trait DebugUtilTrait {
 
         // player order
 
-        //$this->gamestate->changeActivePlayer(2343492);
-        $this->gamestate->changeActivePlayer($playersIds[1]);
+        $this->gamestate->changeActivePlayer(2343492);
+        //$this->gamestate->changeActivePlayer($playersIds[1]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);
         //$this->eliminatePlayer(2343495);
@@ -370,10 +373,8 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
 		$ids = [
-			86955178,
-92081233,
-91785382,
-92264533,
+            85136095,
+            87858991
 		];
 
 		// Id of the first player in BGA Studio
