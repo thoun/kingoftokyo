@@ -21,10 +21,10 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343496, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
-        $this->debugSetEnergy(3);
+        $this->debugSetEnergy(10);
         //$this->debugSetPoints(5);
         $this->debugSetPlayerPoints(2343493, 4);
-        $this->debugSetHealth(7);
+        $this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 7);
         //$this->debugSetPlayerHealth(2343493, 7);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
@@ -52,7 +52,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        $this->debugSetCardInTable(MIMIC_CARD);
+        //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(WINGS_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(REGENERATION_CARD, 2343492));
@@ -91,8 +91,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
-        //$this->debugSetCardInHand(WINGS_CARD, 2343493);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343495);
+        $this->debugSetCardInHand(WINGS_CARD, 2343494);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
@@ -139,7 +139,7 @@ trait DebugUtilTrait {
 
         // cthulhu
         if ($this->isCthulhuExpansion()) {
-            //$this->debugSetCultists(1);
+            $this->debugSetCultists(5);
             //$this->debugSetPlayerCultists(2343492, 10);
             //$this->debugSetPlayerCultists($playersIds[2], 1);
             //$this->debugSetPlayerCultists($playersIds[3], 3);

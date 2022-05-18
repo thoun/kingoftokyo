@@ -1058,8 +1058,61 @@ trait UtilTrait {
         $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->array_some($damages, fn($damage) => $damage->playerId == $playerId)));
         $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $damages, $damages);
         $cancelDamageIntervention->endState = $endStateId;
-        $this->setDamageIntervention($cancelDamageIntervention);
-        $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
+
+        $this->resolveRemainingDamages($cancelDamageIntervention);
+    }
+
+    function resolveRemainingDamages(object $intervention, bool $endOfCurrentPlayer = false, bool $fromCancelDamageState = false) {
+        // if there is no more player to handle, end this state
+        if (count($intervention->remainingPlayersId) == 0) {
+            if ($this->isPowerUpExpansion()) {
+                $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
+                return;
+            }
+
+            $this->deleteGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
+            $this->goToState($intervention->endState);
+            return;
+        }
+
+        $currentPlayerId = $intervention->remainingPlayersId[0];
+
+        // if current player is already eliminated, we ignore it
+        if ($endOfCurrentPlayer || $this->getPlayer($currentPlayerId)->eliminated) {
+            array_shift($intervention->remainingPlayersId);
+            $this->resolveRemainingDamages($intervention, $fromCancelDamageState);
+            return;
+        }
+
+        $currentDamage = $currentPlayerId !== null ? 
+            $this->array_find($intervention->damages, fn($damage) => $damage->playerId == $currentPlayerId) : null;
+
+        // if player will block damage, or he can not block damage anymore, we apply damage and remove it from remainingPlayersId
+        if ($currentDamage 
+            && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
+                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId, $currentDamage->clawDamage))
+        ) {
+            $this->applyDamages($intervention, $currentPlayerId);
+            $this->resolveRemainingDamages($intervention, true, false);
+            return;
+        }
+
+        // if we are still here, player have cards to cancel/reduce damage. We check if he have enough energy to use them
+        if ($this->autoSkipImpossibleActions()) {
+            $arg = $this->argCancelDamage($currentPlayerId, $intervention);
+            if (!$arg['canDoAction'] || !$arg['canCancelDamage'] && $arg['damageToCancelToSurvive'] <= 0) {
+                $this->applyDamages($intervention, $currentPlayerId);
+                $this->resolveRemainingDamages($intervention, true, false);
+                return;
+            }
+        }
+
+        // if we are still here, no action has been done automatically, we activate the player so he can heal
+        $this->setDamageIntervention($intervention);
+        if (!$fromCancelDamageState) {
+            $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE);
+        }
+        return true;
     }
 
     function jumpToState(int $stateId) {

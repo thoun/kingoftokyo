@@ -4365,6 +4365,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'cancelDamage':
                 var argsCancelDamage = args;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
+                this.onEnteringCancelDamage(argsCancelDamage, this.isCurrentPlayerActive());
                 break;
         }
         if (this.isCurrentPlayerActive()) {
@@ -4591,9 +4592,6 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'sellCard':
                     this.addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
-                    break;
-                case 'cancelDamage':
-                    this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'answerQuestion':
                     this.onUpdateActionButtonsAnswerQuestion(args);

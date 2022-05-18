@@ -536,7 +536,7 @@ trait PlayerUtilTrait {
             $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
 
             if ($playerId == $rapidActionPlayerId) {
-                $args = $this->argCancelDamage($playerId, false, $intervention);                
+                $args = $this->argCancelDamage($playerId, $intervention);                
                 $this->notifyAllPlayers('updateCancelDamage', '', [
                     'cancelDamageArgs' => $args,
                 ]);

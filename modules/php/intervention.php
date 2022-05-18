@@ -28,17 +28,6 @@ trait InterventionTrait {
         $this->setGlobalVariable($interventionName, $intervention);
     }
 
-    function setNextDamageIntervention(string $nextState, object &$intervention) {
-        $interventionName = CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix();
-
-        $intervention->nextState = $nextState;
-        if ($nextState === 'next' && count($intervention->remainingPlayersId) > 0) {
-            array_shift($intervention->remainingPlayersId); 
-        }
-
-        $this->setGlobalVariable($interventionName, $intervention);
-    }
-
     function stIntervention(string $interventionName) {
         $intervention = $this->getGlobalVariable($interventionName);
 

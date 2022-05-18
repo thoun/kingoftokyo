@@ -274,7 +274,7 @@ trait CardsArgTrait {
         return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD);
     }
 
-    function argCancelDamage($playerId = null, $hasDice3 = false, $intervention = null) {
+    function argCancelDamage($playerId = null, $intervention = null, $hasDice3 = false) {
         if ($intervention == null) {
             $intervention = $this->getDamageIntervention();
         }

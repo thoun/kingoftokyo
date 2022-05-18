@@ -1032,7 +1032,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;            
             case 'cancelDamage':
                 const argsCancelDamage = args as EnteringCancelDamageArgs;
-                this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
+                this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);                
+                this.onEnteringCancelDamage(argsCancelDamage, (this as any).isCurrentPlayerActive());
                 break;
         }
 
@@ -1269,10 +1270,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'sellCard':
                     (this as any).addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
-                    break;
-                
-                case 'cancelDamage':
-                    this.onEnteringCancelDamage(args, true); // because it's multiplayer, enter action must be set here
                     break;
 
                 case 'answerQuestion':

@@ -80,65 +80,13 @@ trait CardsStateTrait {
         $intervention = $this->getDamageIntervention();
 
         if ($intervention === null) {
-            //throw new \Exception('No damage informations found');
+            throw new \Exception('No damage informations found');
             return;
         }
 
-        // if there is no more player to handle, end this state
-        if (count($intervention->remainingPlayersId) == 0) {
-            if ($this->isPowerUpExpansion()) {
-                $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
-                return;
-            }
-
-            $this->deleteGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix());
-            $this->goToState($intervention->endState);
-            return;
-        }
-
-        $currentPlayerId = $intervention->remainingPlayersId[0];
-
-        // if current player is already eliminated, we ignore it
-        if ($this->getPlayer($currentPlayerId)->eliminated) {
-            array_shift($intervention->remainingPlayersId);
-            $this->setGlobalVariable(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), $intervention);
-            //$this->stCancelDamage();
-            $this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
-            return;
-        }
-
-        $currentDamage = $currentPlayerId !== null ? 
-            $this->array_find($intervention->damages, fn($damage) => $damage->playerId == $currentPlayerId) : null;
-
-        // if player will block damage, or he can not block damage anymore, we apply damage and remove it from remainingPlayersId
-        if ($currentDamage 
-            && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/) !== null
-                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage ?? $currentDamage->damage /*TODOWI remove after ??*/, $currentDamage->damageDealerId, $currentDamage->clawDamage))
-        ) {
-
-            $this->applySkipCancelDamage($currentPlayerId, $intervention);
-            //$this->stCancelDamage();
-            //$this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
-            // we don't need to redirect to ST_MULTIPLAYER_CANCEL_DAMAGE, applySkipCancelDamage will do it for us
-            return;
-        }
-
-        // if we are still here, player have cards to cancel/reduce damage. We check if he have enough energy to use them
-        if ($this->autoSkipImpossibleActions()) {
-            $arg = $this->argCancelDamage($currentPlayerId);
-            if (!$arg['canDoAction']) {
-                $this->applySkipCancelDamage($currentPlayerId, $intervention);
-                //$this->stCancelDamage();
-                //$this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // To update args, we can't call stCancelDamage directly
-            // we don't need to redirect to ST_MULTIPLAYER_CANCEL_DAMAGE, applySkipCancelDamage will do it for us
-                return;
-            }
-        }
-
-        // if we are still here, no action has been done automatically, we activate the player so he can heal
-        $this->setDamageIntervention($intervention);
-        //$this->debug([$intervention, $currentPlayerId]);
-        $this->gamestate->setPlayersMultiactive([$currentPlayerId], 'stay', true);
+        //$this->resolveRemainingDamages($intervention, false, true);
+        
+        $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'stay', true);
     }
 
     function stStealCostumeCard() {
