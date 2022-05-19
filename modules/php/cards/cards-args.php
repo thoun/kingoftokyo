@@ -274,7 +274,7 @@ trait CardsArgTrait {
         return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD);
     }
 
-    function argCancelDamage($playerId = null, $intervention = null, $hasDice3 = false) {
+    function argCancelDamage($playerId = null, $intervention = null) {
         if ($intervention == null) {
             $intervention = $this->getDamageIntervention();
         }
@@ -288,6 +288,7 @@ trait CardsArgTrait {
             
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
+            $hasDice3 = $dice ? $this->array_some($dice, fn($die) => $die->value == 3) : false;
 
             $canThrowDices = ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || ($isPowerUpExpansion && ($this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0))) && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
             $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
@@ -342,7 +343,7 @@ trait CardsArgTrait {
 
             $canCancelDamage = 
                 $canThrowDices || 
-                $hasDice3 ||
+                ($hasDice3 && $hasBackgroundDweller) ||
                 ($canUseWings && $potentialEnergy >= 2) || 
                 $canUseDetachableTail || 
                 $canUseRabbitsFoot || 

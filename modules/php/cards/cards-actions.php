@@ -690,7 +690,7 @@ trait CardsActionTrait {
 
         $this->reduceInterventionDamages($playerId, $intervention, $cancelledDamage);
 
-        $args = $this->argCancelDamage($playerId, $canRethrow3, $intervention);
+        $args = $this->argCancelDamage($playerId, $intervention);
 
         // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
         $stayOnState = false;
@@ -704,7 +704,6 @@ trait CardsActionTrait {
         }
 
         if ($canRethrow3) {
-            $this->setDamageIntervention($intervention);
             $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and can rethrow [dice3]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
