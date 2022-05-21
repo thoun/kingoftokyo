@@ -4366,6 +4366,18 @@ var KingOfTokyo = /** @class */ (function () {
                 var argsCancelDamage = args;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
                 this.onEnteringCancelDamage(argsCancelDamage, this.isCurrentPlayerActive());
+                // TODOBUG
+                if (argsCancelDamage.canCancelDamage === undefined) {
+                    try {
+                        var tableId_1 = window.location.search.split('=')[1];
+                        if (tableId_1 === '267833587') {
+                            this.addActionButton('debugBlockedTable_button', "Skip error message", function () { return _this.takeAction('debugBlockedTable', { tableId: tableId_1 }); });
+                        }
+                    }
+                    catch (e) {
+                        console.error(e);
+                    }
+                }
                 break;
         }
         if (this.isCurrentPlayerActive()) {

@@ -1034,6 +1034,18 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const argsCancelDamage = args as EnteringCancelDamageArgs;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);                
                 this.onEnteringCancelDamage(argsCancelDamage, (this as any).isCurrentPlayerActive());
+
+                // TODOBUG
+                if (argsCancelDamage.canCancelDamage === undefined) {
+                    try {
+                        const tableId = window.location.search.split('=')[1];
+                        if (tableId === '267833587') {
+                            (this as any).addActionButton('debugBlockedTable_button', "Skip error message", () => this.takeAction('debugBlockedTable', { tableId }));
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
                 break;
         }
 

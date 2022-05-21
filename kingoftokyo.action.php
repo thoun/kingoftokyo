@@ -983,5 +983,15 @@
 
         self::ajaxResponse();
     }
+  	
+    // TODOBUG
+    public function debugBlockedTable() {
+        self::setAjaxMode();
+
+        $tableId = self::getArg("tableId", AT_posint, true);
+        $this->game->debugBlockedTable($tableId);
+
+        self::ajaxResponse();
+    }
 
 }

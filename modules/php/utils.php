@@ -1188,4 +1188,11 @@ trait UtilTrait {
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
+  	
+    // TODOBUG
+    public function debugBlockedTable(int $tableId) {
+        if ($tableId == 267833587) {
+            $this->goToState(ST_MULTIPLAYER_LEAVE_TOKYO);
+        }
+    }
 }
