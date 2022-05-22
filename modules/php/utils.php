@@ -1191,7 +1191,7 @@ trait UtilTrait {
   	
     // TODOBUG
     public function debugBlockedTable(int $tableId) {
-        if ($tableId == 267833587) {
+        if ($tableId == 267984719) {
             $this->goToState(ST_MULTIPLAYER_LEAVE_TOKYO);
         }
     }
