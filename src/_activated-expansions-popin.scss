@@ -1,0 +1,208 @@
+$expansions-colors: white, #ff8200, #00a295, #fcbaae, #ccb556, #e22c04;
+
+#active-expansions-button {
+    background: white;
+    padding: 0;
+
+    .title {
+        padding: 3px;
+    }
+
+    .expansion-zone-list {
+        display: flex;
+        
+        .expansion-zone {
+            flex: 1;
+            padding: 3px 0;
+
+            &[data-activated="false"] {
+                //filter: grayscale(1) brightness(1.5);
+                display: none;
+            }
+
+            .expansion-icon {
+                display: inline-block;
+                position: relative;
+                width: 24px;
+                height: 24px;
+                background-image: url('img/expansions-icons.png');
+                background-size: auto 100%;
+            }
+        }
+
+        @each $expansion-color in $expansions-colors {
+            $i: index($expansions-colors, $expansion-color) - 1;
+            .expansion-zone[data-expansion="#{$i}"] { 
+                background: $expansion-color;
+
+                .expansion-icon {
+                    background-position-x: (($i - 1) * 100% / 4);
+                }
+            }
+        }
+    }
+}
+
+#popin_showActivatedExpansions_container {
+    position: absolute; 
+    left: 0px; 
+    top: 0px; 
+    width: 1903px; 
+    max-width: 100vw; 
+    height: 2525.19px;
+    /*max-height: 100vh; */
+}
+
+#popin_showActivatedExpansions_underlay {
+    position: absolute; 
+    left: 0px; 
+    top: 0px; 
+    width: 100%; 
+    height: 100%; 
+    z-index: 949; 
+    opacity: 0.7; 
+    background-color: white;
+}
+
+#popin_showActivatedExpansions_wrapper {
+    position: absolute; 
+    left: 0px; 
+    top: 0px; 
+    width: 100vw; 
+    height: 100vh; 
+    z-index: 950; 
+    opacity: 1; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start; 
+    transform-origin: left top;
+}
+
+#popin_showActivatedExpansions {
+    z-index: 2000;
+    margin-top: 80px;
+
+    max-width: 99%;
+    width: 1096.3px;
+
+    background: white;
+    box-shadow: 3px 3px 10px 1px #000a;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.kingoftokyo_popin {
+    width: 80%;
+    position: relative;
+
+    .closeicon {
+        background-color: black;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: absolute;
+        top: -16px;
+        right: -22px;
+        font-size: 100%;
+        color: white;
+        z-index: 1;
+
+        &:hover {
+            text-decoration: none;
+            color: #a6c136;
+            transform: scale(1.1);
+        }
+    }
+}
+
+h2 {
+    text-align: center;
+}
+
+#playermat-container-modal {
+    overflow-y: auto;
+
+    @each $expansion-color in $expansions-colors {
+        $i: index($expansions-colors, $expansion-color) - 1;
+        details[data-expansion="#{$i}"] { 
+            background: $expansion-color;
+        }
+    }
+
+    details {
+        border-radius: 10px;
+
+        &[data-expansion="0"] {
+            .activation-status {
+                display: none;
+            }
+        }
+
+        &[data-activated="false"] {
+            .activation-status {
+                background: #b5b5b5;
+            }
+        }
+
+        .description {
+            padding: 10px;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 10px;
+            font-size: 110%;
+            font-weight: bold;
+        }
+
+        .activation-status {
+            background: green;
+            text-transform: uppercase;
+            color: white;
+            font-size: 10pt;
+            padding: 2px 8px;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .block-buttons {
+            display: flex;
+            justify-content: center;
+
+            .bgabutton {
+                width: auto;
+
+                &:not(:first-child) {
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      margin-bottom: -2px;
+    }
+
+    /*summary:after {
+        content: "+";
+        color: #FFFFFF;
+        float: right;
+        font-size: 1.5em;
+        font-weight: bold;
+        margin: -5px 5px 0 0;
+        padding: 0;
+        text-align: center;
+        width: 20px;
+     }
+     
+     details[open] summary:after {
+        content: "-";
+       color: #FFFFFF
+     }*/
+}

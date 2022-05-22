@@ -102,6 +102,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
     
         this.createPlayerPanels(gamedatas); 
+        setTimeout(() => new ActivatedExpansionsPopin(gamedatas, (this as any).players_metadata?.[this.getPlayerId()]?.language), 500);
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
         this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
