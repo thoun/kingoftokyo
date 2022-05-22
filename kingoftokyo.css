@@ -1747,7 +1747,7 @@ html[data-dice="3"] .animation {
   background: white;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="0"] .expansion-icon {
-  background-position-x: -25%;
+  background-position-x: -16.6666666667%;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="1"] {
   background: #ff8200;
@@ -1759,24 +1759,36 @@ html[data-dice="3"] .animation {
   background: #00a295;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="2"] .expansion-icon {
-  background-position-x: 25%;
+  background-position-x: 16.6666666667%;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="3"] {
   background: #fcbaae;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="3"] .expansion-icon {
-  background-position-x: 50%;
+  background-position-x: 33.3333333333%;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="4"] {
   background: #ccb556;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="4"] .expansion-icon {
-  background-position-x: 75%;
+  background-position-x: 50%;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="5"] {
   background: #e22c04;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="5"] .expansion-icon {
+  background-position-x: 66.6666666667%;
+}
+#active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="6"] {
+  background: #06b8ee;
+}
+#active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="6"] .expansion-icon {
+  background-position-x: 83.3333333333%;
+}
+#active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="7"] {
+  background: #5d7b38;
+}
+#active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="7"] .expansion-icon {
   background-position-x: 100%;
 }
 
@@ -1892,6 +1904,12 @@ h2 {
 }
 #playermat-container-modal details[data-expansion="5"] {
   background: #e22c04;
+}
+#playermat-container-modal details[data-expansion="6"] {
+  background: #06b8ee;
+}
+#playermat-container-modal details[data-expansion="7"] {
+  background: #5d7b38;
 }
 #playermat-container-modal details {
   border-radius: 10px;

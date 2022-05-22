@@ -3484,9 +3484,7 @@ var RULEBOOK_LINKS = [
     },
     {
         'en': 'https://www.iello.fr/regles/KOT_KingKong-US-Rules.pdf',
-    },
-    {
-        'en': 'https://www.iello.fr/regles/KOT_KingKong-US-Rules.pdf',
+        'fr': 'http://iello.fr/regles/KOT_KONG_regles.pdf',
     },
     {
         'en': 'http://iello.fr/regles/KOT-Anubis-rulebook-EN.pdf',
@@ -3494,9 +3492,17 @@ var RULEBOOK_LINKS = [
     },
     {
         'en': 'https://cdn.1j1ju.com/medias/6f/b6/07-king-of-tokyo-new-york-monster-pack-cybertooth-rulebook.pdf',
-    }
+        'fr': 'https://cdn.1j1ju.com/medias/80/e7/99-king-of-tokyo-new-york-monster-pack-cybertooth-regle.pdf',
+    },
+    {
+    // TODOWI
+    },
+    {
+        'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',
+        'fr': 'https://cdn.1j1ju.com/medias/8c/62/83-king-of-tokyo-power-up-regle.pdf',
+    },
 ];
-var EXPANSION_NUMBER = 5;
+var EXPANSION_NUMBER = 5; // TODOWI // TODOPU
 var ActivatedExpansionsPopin = /** @class */ (function () {
     function ActivatedExpansionsPopin(gamedatas, language) {
         var _this = this;
@@ -3517,7 +3523,13 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             this.activatedExpansions.push(4);
         }
         if (this.gamedatas.cybertoothExpansion) {
-            this.activatedExpansions.push(8);
+            this.activatedExpansions.push(5);
+        }
+        if (this.gamedatas.wickednessExpansion) {
+            this.activatedExpansions.push(6);
+        }
+        if (this.gamedatas.powerUpExpansion) {
+            this.activatedExpansions.push(7);
         }
         if (this.activatedExpansions.length) {
             var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">" + _('Active expansions') + "</div>\n                    <div class=\"expansion-zone-list\">";
@@ -3538,6 +3550,8 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 3: return _('“Nature vs. Machine, part I” event (Tokyo Tower)');
             case 4: return _('“Battle of the Gods: the Revenge!” event (Curse cards)');
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
+            case 6: return /*TODOWI_*/ ('“Even more wicked!” event');
+            case 7: return /*TODOPU_*/ ('Power-Up! (Evolutions)');
         }
     };
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
@@ -3547,6 +3561,8 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 3: return formatTextIcons("<p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>");
             case 4: return formatTextIcons(_("Anubis brings the Curse cards and the Die of Fate. The Curse card on the table show a permanent effect, applied to all players, and the Die of Fate can trigger the Ankh effect or the Snake effect."));
             case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
+            case 6: return formatTextIcons(/*TODOWI_*/ ("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
+            case 7: return formatTextIcons(/*TODOPU_*/ ("Halloween expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
         }
         return '';
     };
@@ -4490,7 +4506,7 @@ var KingOfTokyo = /** @class */ (function () {
                 if (argsCancelDamage.canCancelDamage === undefined) {
                     try {
                         var tableId_1 = window.location.search.split('=')[1];
-                        if (tableId_1 === '267984719') {
+                        if (tableId_1 === '267984719' || tableId_1 === '267549223') {
                             this.addActionButton('debugBlockedTable_button', "Skip error message", function () { return _this.takeAction('debugBlockedTable', { tableId: tableId_1 }); });
                         }
                     }

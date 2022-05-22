@@ -1,31 +1,37 @@
 const RULEBOOK_LINKS = [
-    {
+    { // base game
         'en': 'https://cdn.shopify.com/s/files/1/0049/3351/7425/files/KOT2-rulebook_EN.pdf?1387',
         'fr': 'https://iello.fr/regles/regles_KOTv2.pdf',
     },
-    {
+    { // halloween
         'en': 'https://www.fgbradleys.com/rules/rules6/King%20of%20Tokyo%20Halloween%20-%20rules.pdf',
         'fr': 'https://www.iello.fr/regles/KOT_HALLOWEEN_regles.pdf',
     },
-    {
+    { // cthlhu
         'en': 'https://cdn.1j1ju.com/medias/47/0e/7f-king-of-tokyo-new-york-monster-pack-cthulhu-rulebook.pdf',
         'fr': 'https://www.play-in.com/pdf/rules_games/monster_pack_cthulhu_-_extension_king_of_tokyo_regles_fr.pdf',
     },
-    {
+    { // king kong
         'en': 'https://www.iello.fr/regles/KOT_KingKong-US-Rules.pdf',
+        'fr': 'http://iello.fr/regles/KOT_KONG_regles.pdf',
     },
-    {
-        'en': 'https://www.iello.fr/regles/KOT_KingKong-US-Rules.pdf',
-    },
-    {
+    { // anubis
         'en': 'http://iello.fr/regles/KOT-Anubis-rulebook-EN.pdf',
         'fr': 'http://iello.fr/regles/51530_regles.pdf',
     },
-    {
+    { // cybertooth
         'en': 'https://cdn.1j1ju.com/medias/6f/b6/07-king-of-tokyo-new-york-monster-pack-cybertooth-rulebook.pdf',
-    }
+        'fr': 'https://cdn.1j1ju.com/medias/80/e7/99-king-of-tokyo-new-york-monster-pack-cybertooth-regle.pdf',
+    },
+    {
+    // TODOWI
+    },
+    {
+        'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',
+        'fr': 'https://cdn.1j1ju.com/medias/8c/62/83-king-of-tokyo-power-up-regle.pdf',
+    },
 ];
-const EXPANSION_NUMBER = 5;
+const EXPANSION_NUMBER = 5; // TODOWI // TODOPU
 
 class ActivatedExpansionsPopin {
     public activatedExpansions: number[] = [];
@@ -45,7 +51,13 @@ class ActivatedExpansionsPopin {
             this.activatedExpansions.push(4);
         }
         if (this.gamedatas.cybertoothExpansion) {
-            this.activatedExpansions.push(8);
+            this.activatedExpansions.push(5);
+        }
+        if (this.gamedatas.wickednessExpansion) {
+            this.activatedExpansions.push(6);
+        }
+        if (this.gamedatas.powerUpExpansion) {
+            this.activatedExpansions.push(7);
         }
 
         if (this.activatedExpansions.length) {
@@ -78,6 +90,8 @@ class ActivatedExpansionsPopin {
             case 3: return _('“Nature vs. Machine, part I” event (Tokyo Tower)');
             case 4: return _('“Battle of the Gods: the Revenge!” event (Curse cards)');
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
+            case 6: return /*TODOWI_*/('“Even more wicked!” event');
+            case 7: return /*TODOPU_*/('Power-Up! (Evolutions)');
         }
     }
 
@@ -92,6 +106,8 @@ class ActivatedExpansionsPopin {
             case 4: return formatTextIcons(_("Anubis brings the Curse cards and the Die of Fate. The Curse card on the table show a permanent effect, applied to all players, and the Die of Fate can trigger the Ankh effect or the Snake effect."));
             case 5: return formatTextIcons(`<p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
+            case 6: return formatTextIcons(/*TODOWI_*/("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
+            case 7: return formatTextIcons(/*TODOPU_*/("Halloween expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
         }
         return '';
     }
