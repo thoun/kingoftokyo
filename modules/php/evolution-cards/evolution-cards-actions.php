@@ -269,9 +269,12 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getEvolutionCardById($mimickedEvolutionId);        
+        $card = $this->getEvolutionCardById($mimickedEvolutionId);
         if ($this->EVOLUTION_CARDS_TYPES[$card->type] != 1) {
             throw new \BgaUserException("You can only mimic Permanent evolutions");
+        }
+        if ($card->type === ICY_REFLECTION_EVOLUTION) {
+            throw new \BgaUserException("You cannot mimic Icy Reflection");
         }
 
         $this->setMimickedEvolution($playerId, $card);

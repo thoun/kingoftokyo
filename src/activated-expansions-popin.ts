@@ -107,7 +107,7 @@ class ActivatedExpansionsPopin {
             case 5: return formatTextIcons(`<p>${_("When you roll 4 or more [diceSmash], you are in Berserk mode!")}</p>
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
             case 6: return formatTextIcons(/*TODOWI_*/("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
-            case 7: return formatTextIcons(/*TODOPU_*/("Halloween expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
+            case 7: return formatTextIcons(/*TODOPU_*/("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
         }
         return '';
     }
