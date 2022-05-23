@@ -97,7 +97,7 @@ class ActivatedExpansionsPopin {
 
     private getDescription(index: number) {
         switch (index) {
-            case 1: return formatTextIcons(_('Halloween expansion brings a new set of Costume cards. Each player start with a Costume card (chosen between 2). When you smash a player with at least 3 [diceSmash], you can steal him Costumes cards (by paying its cost).'));
+            case 1: return formatTextIcons(_('Halloween expansion brings a new set of Costume cards. Each player start with a Costume card (chosen between 2). When you smash a player with at least 3 [diceSmash], you can steal their Costumes cards (by paying its cost).'));
             case 2: return formatTextIcons(`<p>${_("After resolving your dice, if you rolled four identical faces, take a Cultist tile")}</p>
             <p>${_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.")}</p>`);
             case 3: return formatTextIcons(`<p>${_("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.")}</p>

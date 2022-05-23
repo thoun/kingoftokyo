@@ -3556,13 +3556,13 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
     };
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
         switch (index) {
-            case 1: return formatTextIcons(_('Halloween expansion brings a new set of Costume cards. Each player start with a Costume card (chosen between 2). When you smash a player with at least 3 [diceSmash], you can steal him Costumes cards (by paying its cost).'));
+            case 1: return formatTextIcons(_('Halloween expansion brings a new set of Costume cards. Each player start with a Costume card (chosen between 2). When you smash a player with at least 3 [diceSmash], you can steal their Costumes cards (by paying its cost).'));
             case 2: return formatTextIcons("<p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");
             case 3: return formatTextIcons("<p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>");
             case 4: return formatTextIcons(_("Anubis brings the Curse cards and the Die of Fate. The Curse card on the table show a permanent effect, applied to all players, and the Die of Fate can trigger the Ankh effect or the Snake effect."));
             case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
             case 6: return formatTextIcons(/*TODOWI_*/ ("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
-            case 7: return formatTextIcons(/*TODOPU_*/ ("Halloween expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
+            case 7: return formatTextIcons(/*TODOPU_*/ ("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
         }
         return '';
     };

@@ -70,7 +70,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
-        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
+        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
@@ -91,7 +91,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
+        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343494);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
@@ -223,7 +223,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
@@ -233,6 +233,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
         }
 
         // player order

@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -1066,6 +1066,7 @@ trait UtilTrait {
         // if there is no more player to handle, end this state
         if (count($intervention->remainingPlayersId) == 0) {
             if ($this->isPowerUpExpansion()) {
+                $this->setDamageIntervention($intervention);
                 $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
                 return;
             }
