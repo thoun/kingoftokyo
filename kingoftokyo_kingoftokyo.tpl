@@ -30,10 +30,15 @@
             <div id="left-column" class="table-column"></div>
             <div id="center-column" class="table-column">
                 <div id="table-center" class="whiteblock">
-                    <div id="deck-wrapper">
-                        <div id="deck"></div>
-                    </div>
-                    <div id="visible-cards" class="card-stock">
+                    <div id="table-cards">
+                        <div id="table-power-cards">
+                            <div id="deck-wrapper">
+                                <div id="deck"></div>
+                            </div>
+                            <div id="visible-cards" class="card-stock">
+                            </div>
+                        </div>
+                        <div id="table-curse-cards"></div>
                     </div>
 
                     <div id="full-board">

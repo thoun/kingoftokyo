@@ -3273,6 +3273,7 @@ var TableCenter = /** @class */ (function () {
         if (game.isWickednessExpansion()) {
             dojo.place("\n            <div id=\"wickedness-board-wrapper\">\n                <div id=\"wickedness-board\"></div>\n            </div>", 'full-board');
             this.createWickednessTiles(wickednessTiles);
+            document.getElementById("table-cards").dataset.wickednessBoard = 'true';
             players.forEach(function (player) {
                 dojo.place("<div id=\"monster-icon-" + player.id + "\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div>", 'wickedness-board');
                 _this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
@@ -3304,7 +3305,7 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.createCurseCard = function (curseCard) {
         var _this = this;
-        dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'full-board', 'before');
+        dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'table-curse-cards');
         this.curseCard = new ebg.stock();
         this.curseCard.setSelectionAppearance('class');
         this.curseCard.selectionClass = 'no-visible-selection';

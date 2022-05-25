@@ -31,6 +31,8 @@ class TableCenter {
             </div>`, 'full-board');
             this.createWickednessTiles(wickednessTiles);
 
+            document.getElementById(`table-cards`).dataset.wickednessBoard = 'true';
+
             players.forEach(player => {
                 dojo.place(`<div id="monster-icon-${player.id}" class="monster-icon monster${player.monster}" style="background-color: #${player.color};"></div>`, 'wickedness-board');
                 this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
@@ -69,7 +71,7 @@ class TableCenter {
         dojo.place(`<div id="curse-wrapper">
             <div id="curse-deck"></div>
             <div id="curse-card"></div>
-        </div>`, 'full-board', 'before');
+        </div>`, 'table-curse-cards');
 
         this.curseCard = new ebg.stock() as Stock;
         this.curseCard.setSelectionAppearance('class');

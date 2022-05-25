@@ -46,9 +46,26 @@
             min-width: 420px;
         }
 
+        #table-cards {
+            display: flex;
+            flex-direction: column;
+
+            &[data-wickedness-board="true"] {
+                flex-direction: row;
+                gap: 10px;
+                align-items: stretch;
+
+                &>div {
+                    flex: 1;
+                }
+            }
+        }
+
         #curse-wrapper {
             display: flex;
             justify-content: center;
+            align-items: center;
+            height: 100%;
             background: rgba(0,0,0,0.5);
             border-radius: 10px;
             margin-bottom: 10px;

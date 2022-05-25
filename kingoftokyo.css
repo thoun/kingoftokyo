@@ -1129,9 +1129,23 @@
   margin-bottom: 10px;
   min-width: 420px;
 }
+#table #table-center #table-cards {
+  display: flex;
+  flex-direction: column;
+}
+#table #table-center #table-cards[data-wickedness-board=true] {
+  flex-direction: row;
+  gap: 10px;
+  align-items: stretch;
+}
+#table #table-center #table-cards[data-wickedness-board=true] > div {
+  flex: 1;
+}
 #table #table-center #curse-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   margin-bottom: 10px;
