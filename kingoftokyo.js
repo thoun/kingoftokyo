@@ -3287,6 +3287,9 @@ var TableCenter = /** @class */ (function () {
         if (game.isAnubisExpansion()) {
             this.createCurseCard(curseCard);
         }
+        else {
+            document.getElementById('table-curse-cards').style.display = 'none';
+        }
     }
     TableCenter.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType) {
         var _this = this;

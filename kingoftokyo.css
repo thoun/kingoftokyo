@@ -2198,6 +2198,7 @@ html, .mode_3d #game_play_area_background {
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 2;
 }
 #zoom-wrapper #zoom-controls button {
   width: 40px;

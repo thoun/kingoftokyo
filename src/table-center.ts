@@ -47,6 +47,8 @@ class TableCenter {
 
         if (game.isAnubisExpansion()) {
             this.createCurseCard(curseCard);
+        } else {
+            document.getElementById('table-curse-cards').style.display = 'none';
         }
     }
 
