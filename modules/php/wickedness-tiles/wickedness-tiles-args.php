@@ -19,10 +19,16 @@ trait WickednessTilesArgTrait {
         
         $level = $this->canTakeWickednessTile($playerId);
         $tableTiles = $this->getTableWickednessTiles($level);
+
+        $dice = $this->getPlayerRolledDice($playerId, false, false, false);
+        $canHealWithDice = $this->canHealWithDice($playerId);
     
         return [
             'level' => $level,
             'canTake' => count($tableTiles) > 0,
+
+            'dice' => $dice,
+            'canHealWithDice' => $canHealWithDice,
         ];
     }
 

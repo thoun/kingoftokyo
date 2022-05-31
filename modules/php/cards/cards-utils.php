@@ -358,25 +358,16 @@ trait CardsUtilTrait {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
-    private function resetWickednessAndTiles(int $playerId) {
-        // discard all tiles
-        $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
-        $this->removeWickednessTiles($playerId, $tiles);
-
-        // reset wickedness
-        $this->DbQuery("UPDATE player SET `player_wickedness` = 0, player_take_wickedness_tile = 0 where `player_id` = $playerId");
-        $this->notifyAllPlayers('wickedness', '', [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'wickedness' => 0,
-        ]);
-    }
-
-    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickednessAndTiles, bool $removeEvolutions, int $newHearts) {
+    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, int $newHearts) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $this->removeCards($playerId, $cards);
+        // discard all tiles
+        if ($this->isWickednessExpansion()) {
+            $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
+            $this->removeWickednessTiles($playerId, $tiles);
+        }
 
         if ($removeEvolutions) {
             $visibleEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
@@ -384,8 +375,14 @@ trait CardsUtilTrait {
             $this->removeEvolutions($playerId, array_merge($visibleEvolutions, $hiddenEvolutions));
         }
 
-        if ($resetWickednessAndTiles) {
-            $this->resetWickednessAndTiles($playerId);
+        // reset wickedness
+        if ($resetWickedness) {
+            $this->DbQuery("UPDATE player SET `player_wickedness` = 0, player_take_wickedness_tile = 0 where `player_id` = $playerId");
+            $this->notifyAllPlayers('wickedness', '', [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'wickedness' => 0,
+            ]);
         }
 
         // lose all stars

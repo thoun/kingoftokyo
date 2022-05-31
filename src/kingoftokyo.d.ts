@@ -308,7 +308,7 @@ interface EnteringRerollDiceArgs extends EnteringDiceArgs {
 interface EnteringPrepareResolveDiceArgs extends EnteringDiceArgs {
     hasEncasedInIce: boolean;
 }
-interface EnteringTakeWickednessTileArgs {
+interface EnteringTakeWickednessTileArgs extends EnteringDiceArgs {
     level: number;
     canTake: boolean;
 }

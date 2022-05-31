@@ -3496,7 +3496,8 @@ var RULEBOOK_LINKS = [
         'fr': 'https://cdn.1j1ju.com/medias/80/e7/99-king-of-tokyo-new-york-monster-pack-cybertooth-regle.pdf',
     },
     {
-    // TODOWI
+        // TODOWI
+        'fr': 'https://iello.fr/regles/KOT_mechancete_Rules_FR.pdf',
     },
     {
         'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',
@@ -4076,7 +4077,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringTakeWickednessTile = function (args, isCurrentPlayerActive) {
+        var _a;
         this.tableCenter.setWickednessTilesSelectable(args.level, true, isCurrentPlayerActive);
+        if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+        }
     };
     KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args, isCurrentPlayerActive) {
         var _a;
@@ -4507,7 +4512,7 @@ var KingOfTokyo = /** @class */ (function () {
                 if (argsCancelDamage.canCancelDamage === undefined) {
                     try {
                         var tableId_1 = window.location.search.split('=')[1];
-                        if (tableId_1 === '267984719' || tableId_1 === '267549223') {
+                        if (tableId_1 === '267984719' || tableId_1 === '267549223' || tableId_1 === '267674165') {
                             this.addActionButton('debugBlockedTable_button', "Skip error message", function () { return _this.takeAction('debugBlockedTable', { tableId: tableId_1 }); });
                         }
                     }

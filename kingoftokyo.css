@@ -1093,6 +1093,7 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
+  z-index: 1;
 }
 #table .table-column {
   display: flex;

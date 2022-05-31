@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -1192,7 +1192,7 @@ trait UtilTrait {
   	
     // TODOBUG
     public function debugBlockedTable(int $tableId) {
-        if ($tableId == 267984719 || $tableId == 267549223) {
+        if ($tableId == 267984719 || $tableId == 267549223 || $tableId == 267674165) {
             $this->goToState(ST_MULTIPLAYER_LEAVE_TOKYO);
         }
     }

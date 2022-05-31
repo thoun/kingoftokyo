@@ -570,6 +570,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     
     private onEnteringTakeWickednessTile(args: EnteringTakeWickednessTileArgs, isCurrentPlayerActive: boolean) {
         this.tableCenter.setWickednessTilesSelectable(args.level, true, isCurrentPlayerActive);
+
+        if (args.dice?.length) {
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+        }
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs, isCurrentPlayerActive: boolean) {
@@ -1040,7 +1044,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (argsCancelDamage.canCancelDamage === undefined) {
                     try {
                         const tableId = window.location.search.split('=')[1];
-                        if (tableId === '267984719' || tableId === '267549223') {
+                        if (tableId === '267984719' || tableId === '267549223' || tableId === '267674165') {
                             (this as any).addActionButton('debugBlockedTable_button', "Skip error message", () => this.takeAction('debugBlockedTable', { tableId }));
                         }
                     } catch (e) {

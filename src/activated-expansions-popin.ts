@@ -24,7 +24,8 @@ const RULEBOOK_LINKS = [
         'fr': 'https://cdn.1j1ju.com/medias/80/e7/99-king-of-tokyo-new-york-monster-pack-cybertooth-regle.pdf',
     },
     {
-    // TODOWI
+        // TODOWI
+        'fr': 'https://iello.fr/regles/KOT_mechancete_Rules_FR.pdf',
     },
     {
         'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',

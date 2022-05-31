@@ -21,7 +21,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343496, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
-        //$this->debugSetEnergy(10);
+        $this->debugSetEnergy(10);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(1);
@@ -79,8 +79,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
         //$this->debugSetCardInHand(CLOWN_CARD, 2343492);
-        //$this->debugSetCardInHand(STRETCHY_CARD, 2343492);
-        //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
+        $this->debugSetCardInHand(STRETCHY_CARD, 2343492);
+        $this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
@@ -156,8 +156,8 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
-            $this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
+            $this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
@@ -185,13 +185,13 @@ trait DebugUtilTrait {
 
         // wickedness
         if ($this->isWickednessExpansion()) {
-            $this->initWickednessTiles(3); // 2=orange, 3=green, 4=mix
+            $this->initWickednessTiles(2); // 2=orange, 3=green, 4=mix
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
             $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 3 where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
-            //$this->debugSetWickednessTileInHand(ANTIMATTER_BEAM_WICKEDNESS_TILE, 2343493);
+            $this->debugSetWickednessTileInHand(ANTIMATTER_BEAM_WICKEDNESS_TILE, 2343492);
         }
 
         // power up
