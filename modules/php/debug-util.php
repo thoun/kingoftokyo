@@ -75,7 +75,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343493);
         //$this->debugSetCardInHand(SOLAR_POWERED_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
@@ -377,8 +377,8 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
 		$ids = [
-            88603665,
-            86175279
+            88149777,
+84047280
 		];
 
 		// Id of the first player in BGA Studio
@@ -397,6 +397,8 @@ trait DebugUtilTrait {
 			$this->DbQuery("UPDATE evolution_card SET owner_id=$sid WHERE owner_id = $id" );
 			$this->DbQuery("UPDATE evolution_card SET card_location='deck$sid' WHERE card_location='deck$id'" );
 			$this->DbQuery("UPDATE evolution_card SET card_location='discard$sid' WHERE card_location='discard$id'" );
+			$this->DbQuery("UPDATE evolution_card SET card_location='discard$sid' WHERE card_location='discard$id'" );
+            $this->DbQuery("UPDATE global_variables set `value` = REPLACE(`value`, '$id', '$sid')" );
 			
 			++$sid;
 		}

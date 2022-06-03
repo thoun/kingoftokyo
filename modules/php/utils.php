@@ -715,7 +715,7 @@ trait UtilTrait {
         if ($actualHealth == $newHealth) {
             return; // already at full life, no need for notif
         }
-        $realDeltaHealth = $newHealth - $actualHealth;
+        $realDeltaHealth = max(0, $newHealth - $actualHealth);
 
         $this->DbQuery("UPDATE player SET `player_health` = $newHealth, `player_turn_health` = `player_turn_health` + $realDeltaHealth where `player_id` = $playerId");
 
