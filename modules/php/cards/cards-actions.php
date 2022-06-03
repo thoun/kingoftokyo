@@ -162,7 +162,7 @@ trait CardsActionTrait {
         $newCard = null;
 
         if ($from > 0) {
-            $message = $from == $playerId ? /*client TODOPUBG translate(*/'${player_name} buys ${card_name} from reserverd cards ${cost} [energy]'/*)*/ : 
+            $message = $from == $playerId ? /*client TODOPUBG translate(*/'${player_name} buys ${card_name} from reserved cards ${cost} [energy]'/*)*/ : 
             clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
             $this->notifyAllPlayers("buyCard", $message, [
                 'playerId' => $playerId,

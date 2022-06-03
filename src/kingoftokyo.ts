@@ -753,9 +753,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.getPlayerTable(playerId).reservedCards.setSelectionMode(1);
             }
 
-            if (args.canBuyFromPlayers) {
-                this.playerTables.filter(playerTable => playerTable.playerId != playerId).forEach(playerTable => playerTable.cards.setSelectionMode(1));
-            }
+            this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(args.canBuyFromPlayers && playerTable.playerId != playerId ? 1 : 0));
 
             if (args._private?.pickCards?.length) {
                 this.tableCenter.showPickStock(args._private.pickCards);
