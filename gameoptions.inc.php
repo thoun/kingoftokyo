@@ -130,30 +130,7 @@ $game_options = [
                 'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(random mix)'),
             ],
         ],
-        'default' => 1,
-        'startcondition' => [
-            2 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => '“Even more wicked!” event will be available from Friday, 10th at 11:00',
-                ] 
-            ],
-            3 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => '“Even more wicked!” event will be available from Friday, 10th at 11:00',
-                ] 
-            ],
-            4 => [
-                [ 
-                    'type' => 'minplayers',
-                    'value' => 9,
-                    'message' => '“Even more wicked!” event will be available from Friday, 10th at 11:00',
-                ] 
-            ],
-        ],
+        'default' => 2,
     ],
 
     /* TODOPU 
@@ -173,6 +150,22 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'startcondition' => [
+            2 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Power-Up! will be available from Friday, xxth at 11:00',
+                ] 
+            ],
+            3 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Power-Up! event will be available from Friday, xxth at 11:00',
+                ] 
+            ],
+        ],
     ],
     */
 

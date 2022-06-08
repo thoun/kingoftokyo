@@ -23,16 +23,17 @@ const RULEBOOK_LINKS = [
         'en': 'https://cdn.1j1ju.com/medias/6f/b6/07-king-of-tokyo-new-york-monster-pack-cybertooth-rulebook.pdf',
         'fr': 'https://cdn.1j1ju.com/medias/80/e7/99-king-of-tokyo-new-york-monster-pack-cybertooth-regle.pdf',
     },
-    {
-        // TODOWI
+    { // Even more wicked
+        'en': 'https://boardgamegeek.com/file/download_redirect/3d766a927a5baa69f0c801f9c94075980ad22892161e1f12/KOT_Wickedness_Rules_EN.pdf',
         'fr': 'https://iello.fr/regles/KOT_mechancete_Rules_FR.pdf',
     },
-    {
+    { // Power-Up!
         'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',
         'fr': 'https://cdn.1j1ju.com/medias/8c/62/83-king-of-tokyo-power-up-regle.pdf',
     },
+    // TODODE
 ];
-const EXPANSION_NUMBER = 5; // TODOWI // TODOPU
+const EXPANSION_NUMBER = 6; // TODOPU // TODODE
 
 class ActivatedExpansionsPopin {
     public activatedExpansions: number[] = [];
@@ -59,6 +60,9 @@ class ActivatedExpansionsPopin {
         }
         if (this.gamedatas.powerUpExpansion) {
             this.activatedExpansions.push(7);
+        }
+        if (this.gamedatas.darkEdition) {
+            this.activatedExpansions.push(8);
         }
 
         if (this.activatedExpansions.length) {
@@ -93,6 +97,7 @@ class ActivatedExpansionsPopin {
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
             case 6: return _('“Even more wicked!” event');
             case 7: return /*TODOPU_*/('Power-Up! (Evolutions)');
+            // TODODE
         }
     }
 
@@ -109,6 +114,7 @@ class ActivatedExpansionsPopin {
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(/*TODOPU_*/("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
+            // TODODE
         }
         return '';
     }

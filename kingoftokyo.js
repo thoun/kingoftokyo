@@ -1509,7 +1509,7 @@ var WickednessTiles = /** @class */ (function () {
             // green
             case 101: return _("<strong>When you roll at least [diceSmash][diceSmash], gain a [diceSmash].</strong>");
             case 102: return _("If you are eliminated from the game with 16[Star] or more, <strong>you win the game instead.</strong>");
-            case 103: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
+            case 103: return _("Give 1 <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each token they have on them.</strong> A token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 104: return _("<strong>When you smash a Monster,</strong> if that Monster has more [Star] than you, <strong>steal 1[Star]</strong>");
             case 105: return _("When you move into Tokyo or begin yout turn in Tokyo, <strong>all other Monsters lose 1[Star].</strong>");
             case 106: return _("When you gain this, place it in front of a [keep] card of any player. <strong>This tile counts as a copy of that [keep] card.</strong> You can change which card you are copying at the start of your turn.");
@@ -1520,9 +1520,10 @@ var WickednessTiles = /** @class */ (function () {
         }
         return null;
     };
-    WickednessTiles.prototype.getTooltip = function (cardTypeId) {
-        var level = this.getCardLevel(cardTypeId);
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+    WickednessTiles.prototype.getTooltip = function (cardType) {
+        var level = this.getCardLevel(cardType);
+        var description = formatTextIcons(this.getCardDescription(cardType));
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardType) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + description + "</p>\n        </div>";
         return tooltip;
     };
     WickednessTiles.prototype.setupNewCard = function (cardDiv, cardType) {
@@ -3499,15 +3500,16 @@ var RULEBOOK_LINKS = [
         'fr': 'https://cdn.1j1ju.com/medias/80/e7/99-king-of-tokyo-new-york-monster-pack-cybertooth-regle.pdf',
     },
     {
-        // TODOWI
+        'en': 'https://boardgamegeek.com/file/download_redirect/3d766a927a5baa69f0c801f9c94075980ad22892161e1f12/KOT_Wickedness_Rules_EN.pdf',
         'fr': 'https://iello.fr/regles/KOT_mechancete_Rules_FR.pdf',
     },
     {
         'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',
         'fr': 'https://cdn.1j1ju.com/medias/8c/62/83-king-of-tokyo-power-up-regle.pdf',
     },
+    // TODODE
 ];
-var EXPANSION_NUMBER = 5; // TODOWI // TODOPU
+var EXPANSION_NUMBER = 6; // TODOPU // TODODE
 var ActivatedExpansionsPopin = /** @class */ (function () {
     function ActivatedExpansionsPopin(gamedatas, language) {
         var _this = this;
@@ -3536,6 +3538,9 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
         if (this.gamedatas.powerUpExpansion) {
             this.activatedExpansions.push(7);
         }
+        if (this.gamedatas.darkEdition) {
+            this.activatedExpansions.push(8);
+        }
         if (this.activatedExpansions.length) {
             var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">" + _('Active expansions') + "</div>\n                    <div class=\"expansion-zone-list\">";
             for (var i = 1; i <= EXPANSION_NUMBER; i++) {
@@ -3557,6 +3562,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
             case 6: return _('“Even more wicked!” event');
             case 7: return /*TODOPU_*/ ('Power-Up! (Evolutions)');
+            // TODODE
         }
     };
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
@@ -3568,6 +3574,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(/*TODOPU_*/ ("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
+            // TODODE
         }
         return '';
     };

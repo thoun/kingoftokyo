@@ -269,7 +269,8 @@ trait DiceUtilTrait {
             
 
             if (($number == 1 || $number == 2) && $this->isWickednessExpansion()) {
-                $this->applyGetWickedness($playerId, 3 - $number);
+                $wickednessPoints = (3 - $number) * floor($diceCount / 3);
+                $this->applyGetWickedness($playerId, $wickednessPoints);
             }
         }
 

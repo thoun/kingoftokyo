@@ -124,7 +124,7 @@ class WickednessTiles {
             // green
             case 101: return _("<strong>When you roll at least [diceSmash][diceSmash], gain a [diceSmash].</strong>");
             case 102: return _("If you are eliminated from the game with 16[Star] or more, <strong>you win the game instead.</strong>");
-            case 103: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
+            case 103: return _("Give 1 <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each token they have on them.</strong> A token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 104: return _("<strong>When you smash a Monster,</strong> if that Monster has more [Star] than you, <strong>steal 1[Star]</strong>");
             case 105: return _("When you move into Tokyo or begin yout turn in Tokyo, <strong>all other Monsters lose 1[Star].</strong>");
             case 106: return _("When you gain this, place it in front of a [keep] card of any player. <strong>This tile counts as a copy of that [keep] card.</strong> You can change which card you are copying at the start of your turn.");
@@ -136,12 +136,13 @@ class WickednessTiles {
         return null;
     }
 
-    public getTooltip(cardTypeId: number) {
-        const level = this.getCardLevel(cardTypeId);
+    public getTooltip(cardType: number) {
+        const level = this.getCardLevel(cardType);
+        const description = formatTextIcons(this.getCardDescription(cardType));
         let tooltip = `<div class="card-tooltip">
-            <p><strong>${this.getCardName(cardTypeId)}</strong></p>
+            <p><strong>${this.getCardName(cardType)}</strong></p>
             <p class="level">${ dojo.string.substitute(_("Level : ${level}"), {'level': level}) }</p>
-            <p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
+            <p>${description}</p>
         </div>`;
         return tooltip;
     }
