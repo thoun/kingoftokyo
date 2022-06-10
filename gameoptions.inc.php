@@ -148,8 +148,8 @@ $game_options = [
                 'tmdisplay' => totranslate('Power-Up! (Evolutions) with Mutant Evolution'),
             ],
         ],
-        'default' => 1,
-        'startcondition' => [
+        'default' => 2,
+        /* TODOPU 'startcondition' => [
             2 => [
                 [ 
                     'type' => 'minplayers',
@@ -164,7 +164,7 @@ $game_options = [
                     'message' => 'Power-Up! will be available soon!',
                 ] 
             ],
-        ],
+        ],*/
     ],
 
     /* TODODE 
