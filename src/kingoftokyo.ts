@@ -75,6 +75,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).dontPreloadImage(`costume-cards.jpg`);
             (this as any).dontPreloadImage(`orange_dice.png`);
         }
+        if (!gamedatas.powerUpExpansion) {
+            (this as any).dontPreloadImage(`background-powerup.jpg`);
+            (this as any).dontPreloadImage(`animations-powerup.jpg`);
+            (this as any).dontPreloadImage(`powerup_dice.png`);
+        }
 
         log( "Starting game setup" );
         

@@ -1,0 +1,37 @@
+html[data-background="4"] {
+    background: url('img/background-powerup.jpg') #06557a;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/background-powerup.jpg') #06557a;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}
+
+html[data-dice="4"] {
+    .die-item {
+        &.black {
+            background-color: #157597;
+            border-color: #157597;
+            background-image: url('img/powerup_dice.png');
+        }
+    }
+
+    .log {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/powerup_dice.png');
+        }
+    }
+
+    .gamelogreview {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/powerup_dice.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/animations-powerup.png');
+    }
+}

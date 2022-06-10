@@ -162,7 +162,7 @@ $game_options = [
                 [ 
                     'type' => 'minplayers',
                     'value' => 9,
-                    'message' => 'Power-Up! event will be available from Friday, xxth at 11:00',
+                    'message' => 'Power-Up! will be available from Friday, xxth at 11:00',
                 ] 
             ],
         ],
@@ -282,6 +282,7 @@ $game_preferences = [
             1 => ['name' => totranslate('Base game')],
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
+            /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
         ],
         'default' => 0
     ],
@@ -294,6 +295,7 @@ $game_preferences = [
             1 => ['name' => totranslate('Base game')],
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
+            /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
         ],
         'default' => 0
     ],

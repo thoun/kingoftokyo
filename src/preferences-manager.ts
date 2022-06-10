@@ -35,7 +35,12 @@ class PreferencesManager {
         if (versionNumber > 0) {
             return versionNumber;
         } else {
-            return this.game.isHalloweenExpansion() ? 2 : 1;
+            if (this.game.isPowerUpExpansion()) {
+                return 4;
+            } else if (this.game.isHalloweenExpansion()) {
+                return 2;
+            }
+            return 1;
         }
     }
       
@@ -64,6 +69,7 @@ class PreferencesManager {
         switch (prefId) {
             case 2: return '000000';
             case 3: return '0096CC';
+            case 4: return '157597';
         }
         
         return '96c93c';        

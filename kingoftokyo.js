@@ -3219,7 +3219,13 @@ var PreferencesManager = /** @class */ (function () {
             return versionNumber;
         }
         else {
-            return this.game.isHalloweenExpansion() ? 2 : 1;
+            if (this.game.isPowerUpExpansion()) {
+                return 4;
+            }
+            else if (this.game.isHalloweenExpansion()) {
+                return 2;
+            }
+            return 1;
         }
     };
     PreferencesManager.prototype.onPreferenceChange = function (prefId, prefValue) {
@@ -3246,6 +3252,7 @@ var PreferencesManager = /** @class */ (function () {
         switch (prefId) {
             case 2: return '000000';
             case 3: return '0096CC';
+            case 4: return '157597';
         }
         return '96c93c';
     };
@@ -3672,6 +3679,11 @@ var KingOfTokyo = /** @class */ (function () {
         if (!gamedatas.halloweenExpansion) {
             this.dontPreloadImage("costume-cards.jpg");
             this.dontPreloadImage("orange_dice.png");
+        }
+        if (!gamedatas.powerUpExpansion) {
+            this.dontPreloadImage("background-powerup.jpg");
+            this.dontPreloadImage("animations-powerup.jpg");
+            this.dontPreloadImage("powerup_dice.png");
         }
         log("Starting game setup");
         this.gamedatas = gamedatas;
