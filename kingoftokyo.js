@@ -3907,7 +3907,7 @@ var RULEBOOK_LINKS = [
         'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
     },
 ];
-var EXPANSION_NUMBER = 6; // TODOPU // TODODE
+var EXPANSION_NUMBER = 7; // TODODE
 var ActivatedExpansionsPopin = /** @class */ (function () {
     function ActivatedExpansionsPopin(gamedatas, language) {
         var _this = this;
@@ -3962,9 +3962,8 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 4: return _('“Battle of the Gods: the Revenge!” event (Curse cards)');
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
             case 6: return _('“Even more wicked!” event');
-            case 7: return /*TODOPU_*/ ('Power-Up! (Evolutions)');
+            case 7: return _('Power-Up! (Evolutions)');
             case 8: return /*TODODE*/ ('Dark Edition');
-            // 
         }
     };
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
@@ -3975,7 +3974,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 4: return formatTextIcons(_("Anubis brings the Curse cards and the Die of Fate. The Curse card on the table show a permanent effect, applied to all players, and the Die of Fate can trigger the Ankh effect or the Snake effect."));
             case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
-            case 7: return formatTextIcons(/*TODOPU_*/ ("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
+            case 7: return formatTextIcons(_("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
             case 8: return /*TODODE_*/ ("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
         }
         return '';

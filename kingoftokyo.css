@@ -1914,7 +1914,7 @@ html[data-dice="4"] .animation {
   background-position-x: 71.4285714286%;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="7"] {
-  background: #5d7b38;
+  background: #0b75a7;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="7"] .expansion-icon {
   background-position-x: 85.7142857143%;
@@ -2043,7 +2043,7 @@ h2 {
   background: #06b8ee;
 }
 #playermat-container-modal details[data-expansion="7"] {
-  background: #5d7b38;
+  background: #0b75a7;
 }
 #playermat-container-modal details[data-expansion="8"] {
   background: #41423c;
