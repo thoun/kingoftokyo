@@ -34,7 +34,7 @@ class TableCenter {
             document.getElementById(`table-cards`).dataset.wickednessBoard = 'true';
 
             players.forEach(player => {
-                dojo.place(`<div id="monster-icon-${player.id}" class="monster-icon monster${player.monster}" style="background-color: #${player.color};"></div>`, 'wickedness-board');
+                dojo.place(`<div id="monster-icon-${player.id}-wickedness" class="monster-icon monster${player.monster}" style="background-color: #${player.color};"></div>`, 'wickedness-board');
                 this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
             });
             this.moveWickednessPoints();
@@ -196,7 +196,7 @@ class TableCenter {
 
     private moveWickednessPoints() {
         this.wickednessPoints.forEach((wickedness, playerId) => {
-            const markerDiv = document.getElementById(`monster-icon-${playerId}`);
+            const markerDiv = document.getElementById(`monster-icon-${playerId}-wickedness`);
 
             const position = WICKEDNESS_MONSTER_ICON_POSITION[wickedness];
     

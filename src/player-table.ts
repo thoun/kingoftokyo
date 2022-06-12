@@ -327,6 +327,11 @@ class PlayerTable {
 
         dojo.removeClass(`monster-board-${this.playerId}`, 'monster0');
         dojo.addClass(`monster-board-${this.playerId}`, newMonsterClass);
+
+        
+        const wickednessMarkerDiv = document.getElementById(`monster-icon-${this.playerId}-wickedness`);
+        wickednessMarkerDiv?.classList.remove('monster0');
+        wickednessMarkerDiv?.classList.add(newMonsterClass);
     }
 
     private getPlaceToken(placed: PlacedTokens[]): PlacedTokens {

@@ -1893,6 +1893,9 @@ var PlayerTable = /** @class */ (function () {
         dojo.addClass("monster-figure-" + this.playerId, newMonsterClass);
         dojo.removeClass("monster-board-" + this.playerId, 'monster0');
         dojo.addClass("monster-board-" + this.playerId, newMonsterClass);
+        var wickednessMarkerDiv = document.getElementById("monster-icon-" + this.playerId + "-wickedness");
+        wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.remove('monster0');
+        wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.add(newMonsterClass);
     };
     PlayerTable.prototype.getPlaceToken = function (placed) {
         var _this = this;
@@ -3283,7 +3286,7 @@ var TableCenter = /** @class */ (function () {
             this.createWickednessTiles(wickednessTiles);
             document.getElementById("table-cards").dataset.wickednessBoard = 'true';
             players.forEach(function (player) {
-                dojo.place("<div id=\"monster-icon-" + player.id + "\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div>", 'wickedness-board');
+                dojo.place("<div id=\"monster-icon-" + player.id + "-wickedness\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div>", 'wickedness-board');
                 _this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
             });
             this.moveWickednessPoints();
@@ -3418,7 +3421,7 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.moveWickednessPoints = function () {
         var _this = this;
         this.wickednessPoints.forEach(function (wickedness, playerId) {
-            var markerDiv = document.getElementById("monster-icon-" + playerId);
+            var markerDiv = document.getElementById("monster-icon-" + playerId + "-wickedness");
             var position = WICKEDNESS_MONSTER_ICON_POSITION[wickedness];
             var topShift = 0;
             var leftShift = 0;
@@ -4605,7 +4608,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var argsGiveGoldenScarab = args;
                     argsGiveGoldenScarab.playersIds.forEach(function (playerId) {
                         var player = _this.gamedatas.players[playerId];
-                        var label = "<div id=\"monster-icon-" + player.id + "\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div> " + player.name;
+                        var label = "<div class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div> " + player.name;
                         _this.addActionButton("giveGoldenScarab_button_" + playerId, label, function () { return _this.giveGoldenScarab(playerId); });
                     });
                     break;
