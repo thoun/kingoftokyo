@@ -750,5 +750,15 @@ class KingOfTokyo extends Table {
             $sql = "UPDATE `DBPREFIX_player` SET `player_take_wickedness_tiles` = CONCAT('[', `player_take_wickedness_tile`, ']') WHERE `player_take_wickedness_tile` <> 0";
             self::applyDbUpgradeToAllDB($sql);
         }
+
+        if ($from_version <= 2206121552) {
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'player_take_wickedness_tiles'");
+            if (is_null($result)) {
+                $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_take_wickedness_tiles` varchar(15) DEFAULT '[]'";
+                self::applyDbUpgradeToAllDB($sql);
+                $sql = "UPDATE `DBPREFIX_player` SET `player_take_wickedness_tiles` = CONCAT('[', `player_take_wickedness_tile`, ']') WHERE `player_take_wickedness_tile` <> 0";
+                self::applyDbUpgradeToAllDB($sql);
+            }
+        }
     }
 }
