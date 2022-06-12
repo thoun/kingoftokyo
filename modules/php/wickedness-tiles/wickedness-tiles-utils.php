@@ -52,13 +52,15 @@ trait WickednessTilesUtilTrait {
         $oldWickedness = $this->getPlayerWickedness($playerId);
         $newWickedness = min(10, $oldWickedness + $number);
 
+        $levels = json_decode($this->getUniqueValueFromDB("SELECT player_take_wickedness_tiles FROM `player` where `player_id` = $playerId"), true);
         foreach ([3, 6, 10] as $level) {
             if ($oldWickedness < $level && $newWickedness >= $level) {
-                $this->DbQuery("UPDATE player SET player_take_wickedness_tile = $level where `player_id` = $playerId");
+                $levels[] = $level;
             }
         }
 
-        $this->DbQuery("UPDATE player SET `player_wickedness` = $newWickedness where `player_id` = $playerId");
+        $levelsJson = json_encode($levels);
+        $this->DbQuery("UPDATE player SET `player_wickedness` = $newWickedness, `player_take_wickedness_tiles` = '$levelsJson' where `player_id` = $playerId");
 
         $this->notifyAllPlayers('wickedness', clienttranslate('${player_name} gains ${delta_wickedness} wickedness points'), [
             'playerId' => $playerId,
@@ -71,7 +73,8 @@ trait WickednessTilesUtilTrait {
     }
 
     function canTakeWickednessTile(int $playerId) {
-        return intval($this->getUniqueValueFromDB("SELECT player_take_wickedness_tile FROM `player` where `player_id` = $playerId"));
+        $levels = json_decode($this->getUniqueValueFromDB("SELECT player_take_wickedness_tiles FROM `player` where `player_id` = $playerId"), true);
+        return count($levels) > 0 ? min($levels) : 0;
     }
 
     function applyWickednessTileEffect(object $tile, int $playerId) { // return $damages

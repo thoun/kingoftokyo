@@ -224,7 +224,7 @@ trait DiceStateTrait {
         $playerId = $this->getActivePlayerId();
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
-            $this->jumpToState($this->redirectAfterResolveNumberDice());
+            $this->goToState($this->redirectAfterResolveNumberDice());
             return;
         }
 
@@ -235,11 +235,7 @@ trait DiceStateTrait {
             $this->resolveNumberDice($playerId, $diceFace, $diceCount);
         }
 
-        if ($this->isWickednessExpansion() && $this->canTakeWickednessTile($playerId) > 0) {
-            $this->gamestate->nextState('takeWickednessTile');
-        } else {
-            $this->jumpToState($this->redirectAfterResolveNumberDice());
-        }        
+        $this->goToState($this->redirectAfterResolveNumberDice());
     }
 
     function addHighTideDice(int $playerId, int $diceCount) {

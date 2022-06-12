@@ -377,7 +377,7 @@ trait CardsUtilTrait {
 
         // reset wickedness
         if ($resetWickedness) {
-            $this->DbQuery("UPDATE player SET `player_wickedness` = 0, player_take_wickedness_tile = 0 where `player_id` = $playerId");
+            $this->DbQuery("UPDATE player SET `player_wickedness` = 0, player_take_wickedness_tiles = '[]' where `player_id` = $playerId");
             $this->notifyAllPlayers('wickedness', '', [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),

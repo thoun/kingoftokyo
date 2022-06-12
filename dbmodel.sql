@@ -58,7 +58,7 @@ ALTER TABLE `player` ADD `player_dead` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_berserk` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_cultists` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_wickedness` tinyint UNSIGNED NOT NULL DEFAULT 0;
-ALTER TABLE `player` ADD `player_take_wickedness_tile` tinyint UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_take_wickedness_tiles` varchar(15) DEFAULT '[]';
 ALTER TABLE `player` ADD `player_zombified` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_turn_entered_tokyo` tinyint UNSIGNED NOT NULL DEFAULT 0;
 

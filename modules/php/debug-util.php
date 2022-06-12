@@ -71,7 +71,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
-        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
+        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
@@ -86,7 +86,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
-        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
+        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
@@ -188,8 +188,8 @@ trait DebugUtilTrait {
         if ($this->isWickednessExpansion()) {
             //$this->initWickednessTiles(2); // 2=orange, 3=green, 4=mix
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-            $this->DbQuery("UPDATE player SET `player_wickedness` = 9 where `player_id` = 2343492");
-            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 3 where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
+            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[3]' where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
             //$this->debugSetWickednessTileInHand(ANTIMATTER_BEAM_WICKEDNESS_TILE, 2343492);

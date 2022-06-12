@@ -89,6 +89,11 @@ trait RedirectionTrait {
 
     function redirectAfterResolveNumberDice() {
         $playerId = $this->getActivePlayerId();
+
+        if ($this->isWickednessExpansion() && $this->canTakeWickednessTile($playerId) > 0) {
+            return ST_PLAYER_TAKE_WICKEDNESS_TILE;
+        }
+
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
         $canSelectHeartDiceUse = false;

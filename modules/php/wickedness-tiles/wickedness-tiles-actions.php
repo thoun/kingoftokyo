@@ -13,6 +13,12 @@ trait WickednessTilesActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
    
+    private function removeFirstTakeWickednessTileLevel(int $playerId) {
+        $levels = json_decode($this->getUniqueValueFromDB("SELECT player_take_wickedness_tiles FROM `player` where `player_id` = $playerId"), true);
+        array_shift($levels);
+        $levelsJson = json_encode($levels);
+        $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '$levelsJson' where `player_id` = $playerId");
+    }
   	
     public function takeWickednessTile(int $id) {
         $this->checkAction('takeWickednessTile');
@@ -39,7 +45,7 @@ trait WickednessTilesActionTrait {
 
         $this->incStat(1, 'wickednessTilesTaken', $playerId);
 
-        $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
+        $this->removeFirstTakeWickednessTileLevel($playerId);
 
         $damages = $this->applyWickednessTileEffect($tile, $playerId);
 
@@ -73,7 +79,7 @@ trait WickednessTilesActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $this->DbQuery("UPDATE player SET `player_take_wickedness_tile` = 0 where `player_id` = $playerId");
+        $this->removeFirstTakeWickednessTileLevel($playerId);
 
         $this->goToState($this->redirectAfterResolveNumberDice());
     }
