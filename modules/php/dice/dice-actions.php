@@ -360,13 +360,13 @@ trait DiceActionTrait {
             $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after} (${card_name} is discarded)');
         }
 
-        $stayForRethrow3 = $value == 3 && $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
+        $stayForRethrow3 = $die->type == 0 && $value == 3 && $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
         $oldValue = $die->value;
 
         $die->value = $value;
         $intervention->lastRolledDie = $die;
 
-        if ($value == 3) {
+        if ($die->type == 0 && $value == 3) {
             $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, $die->id);
         }
 

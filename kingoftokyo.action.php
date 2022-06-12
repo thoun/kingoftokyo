@@ -305,7 +305,7 @@
 
         $symbols = self::getArg("symbols", AT_numberlist, true);
 
-        $this->game->giveSymbols(array_map(function($idStr) { return intval($idStr); }, explode(',', $symbols)));
+        $this->game->giveSymbols(array_map(fn($idStr) => intval($idStr), explode(',', $symbols)));
 
         self::ajaxResponse();
     }
@@ -363,7 +363,7 @@
 
         $ids = self::getArg("ids", AT_numberlist, true);
 
-        $this->game->rerollDice(array_map(function($idStr) { return intval($idStr); }, explode(',', $ids)));
+        $this->game->rerollDice(array_map(fn($idStr) => intval($idStr), explode(',', $ids)));
 
         self::ajaxResponse();
     }
