@@ -50,16 +50,15 @@ trait WickednessTilesUtilTrait {
     
     function applyGetWickedness(int $playerId, int $number) {
         $oldWickedness = $this->getPlayerWickedness($playerId);
-        $newWickedness = min(10, $this->getPlayerWickedness($playerId) + $number);
+        $newWickedness = min(10, $oldWickedness + $number);
 
-        $canTake = 0;
         foreach ([3, 6, 10] as $level) {
             if ($oldWickedness < $level && $newWickedness >= $level) {
-                $canTake = $level;
+                $this->DbQuery("UPDATE player SET player_take_wickedness_tile = $level where `player_id` = $playerId");
             }
         }
 
-        $this->DbQuery("UPDATE player SET `player_wickedness` = $newWickedness, player_take_wickedness_tile = $canTake where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_wickedness` = $newWickedness where `player_id` = $playerId");
 
         $this->notifyAllPlayers('wickedness', clienttranslate('${player_name} gains ${delta_wickedness} wickedness points'), [
             'playerId' => $playerId,
