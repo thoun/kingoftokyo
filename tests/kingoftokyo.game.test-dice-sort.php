@@ -4,7 +4,7 @@ require_once ('../kingoftokyo.game.php');
 
 use KOT\Objects\Dice;
 
-class KingOfTokyoTestDiceSort extends KingOfTokyo { // this is your game class defined in ggg.game.php
+class KingOfTokyoTestDiceSort extends KingOfTokyoPowerUp { // this is your game class defined in ggg.game.php
     function __construct() {
         // parent::__construct();
         include '../material.inc.php';// this is how this normally included, from constructor

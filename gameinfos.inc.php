@@ -3,7 +3,7 @@
 $gameinfos = [ 
 
     // Name of the game in English (will serve as the basis for translation) 
-    'game_name' => "King of Tokyo",
+    'game_name' => "King of Tokyo: Power-Up!",
 
     // Game designer (or game designers, separated by commas)
     'designer' => 'Richard Garfield',
@@ -24,7 +24,7 @@ $gameinfos = [
     'publisher_bgg_id' => 8923,
 
     // Board game geek if of the game
-    'bgg_id' => 70323,
+    'bgg_id' => 127067,
 
 
     // Players configuration that can be played (ex: 2 to 4 players)
