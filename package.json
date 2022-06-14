@@ -1,11 +1,11 @@
 {
-  "name": "kingoftokyo",
+  "name": "kingoftokyopowerup",
   "version": "1.0.0",
   "description": "",
-  "main": "kingoftokyo.js",
+  "main": "kingoftokyopowerup.js",
   "scripts": {
     "build:ts": "tsc",
-    "build:scss": "sass --no-source-map src/kingoftokyo.scss kingoftokyo.css"
+    "build:scss": "sass --no-source-map src/kingoftokyo.scss kingoftokyopowerup.css"
   },
   "author": "",
   "license": "ISC",

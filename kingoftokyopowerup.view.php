@@ -26,9 +26,9 @@
   
   require_once(APP_BASE_PATH."view/common/game.view.php");
   
-  class view_kingoftokyo_kingoftokyo extends game_view {
+  class view_kingoftokyopowerup_kingoftokyopowerup extends game_view {
     function getGameName() {
-        return "kingoftokyo";
+        return "kingoftokyopowerup";
     }
     
   	function build_page($viewArgs) {		
