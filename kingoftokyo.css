@@ -1461,6 +1461,30 @@
 #table .player-table .monster-board-wrapper .monster-board.monster21 {
   background-image: url("img/monster-board-21.png");
 }
+#table .player-table .monster-board-wrapper .monster-board.monster31 {
+  background-image: url("img/monster-board-31.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster32 {
+  background-image: url("img/monster-board-32.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster33 {
+  background-image: url("img/monster-board-33.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster34 {
+  background-image: url("img/monster-board-34.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster35 {
+  background-image: url("img/monster-board-35.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster36 {
+  background-image: url("img/monster-board-36.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster37 {
+  background-image: url("img/monster-board-37.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster38 {
+  background-image: url("img/monster-board-38.png");
+}
 #table .player-table .monster-board-wrapper .monster-board .target.token {
   position: absolute;
   top: -15px;
@@ -2137,6 +2161,30 @@ html, .mode_3d #game_play_area_background {
 }
 .monster-figure.monster21 {
   background-image: url("img/monster-figure-21.png");
+}
+.monster-figure.monster31 {
+  background-image: url("img/monster-figure-31.png");
+}
+.monster-figure.monster32 {
+  background-image: url("img/monster-figure-32.png");
+}
+.monster-figure.monster33 {
+  background-image: url("img/monster-figure-33.png");
+}
+.monster-figure.monster34 {
+  background-image: url("img/monster-figure-34.png");
+}
+.monster-figure.monster35 {
+  background-image: url("img/monster-figure-35.png");
+}
+.monster-figure.monster36 {
+  background-image: url("img/monster-figure-36.png");
+}
+.monster-figure.monster37 {
+  background-image: url("img/monster-figure-37.png");
+}
+.monster-figure.monster38 {
+  background-image: url("img/monster-figure-38.png");
 }
 .monster-figure.monster12.beast-mode {
   background-image: url("img/monster-figure-12-beast.png");

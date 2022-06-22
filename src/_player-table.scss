@@ -120,6 +120,11 @@
                     background-image: url('img/monster-board-#{$i}.png');
                 }
             }
+            @for $i from 31 through 38 {
+                &.monster#{$i} {
+                    background-image: url('img/monster-board-#{$i}.png');
+                }
+            }
 
             .target.token {
                 position: absolute;

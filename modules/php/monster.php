@@ -55,6 +55,34 @@ trait MonsterTrait {
             $monsters = [...$monsters, 21];
         }
 
+        // World tour
+        if ($bonusMonsters) {
+            if ($this->releaseDatePassed("2022-07-01T00:00:00", 2) && !$this->releaseDatePassed("2022-07-08T00:00:00", 2)) {
+                $monsters = [...$monsters, 31];
+            }
+            if ($this->releaseDatePassed("2022-07-08T00:00:00", 2) && !$this->releaseDatePassed("2022-07-15T00:00:00", 2)) {
+                $monsters = [...$monsters, 32];
+            }
+            if ($this->releaseDatePassed("2022-07-15T00:00:00", 2) && !$this->releaseDatePassed("2022-07-22T00:00:00", 2)) {
+                $monsters = [...$monsters, 33];
+            }
+            if ($this->releaseDatePassed("2022-07-22T00:00:00", 2) && !$this->releaseDatePassed("2022-07-29T00:00:00", 2)) {
+                $monsters = [...$monsters, 34];
+            }
+            if ($this->releaseDatePassed("2022-07-29T00:00:00", 2) && !$this->releaseDatePassed("2022-08-05T00:00:00", 2)) {
+                $monsters = [...$monsters, 35];
+            }
+            if ($this->releaseDatePassed("2022-08-05T00:00:00", 2) && !$this->releaseDatePassed("2022-08-12T00:00:00", 2)) {
+                $monsters = [...$monsters, 36];
+            }
+            if ($this->releaseDatePassed("2022-08-12T00:00:00", 2) && !$this->releaseDatePassed("2022-08-19T00:00:00", 2)) {
+                $monsters = [...$monsters, 37];
+            }
+            if ($this->releaseDatePassed("2022-08-19T00:00:00", 2) && !$this->releaseDatePassed("2022-08-26T00:00:00", 2)) {
+                $monsters = [...$monsters, 38];
+            }
+        }
+
         if ($this->isWickednessExpansion()) {
             $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, $this->MONSTERS_WITH_ICON)));            
         }

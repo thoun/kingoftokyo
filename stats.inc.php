@@ -74,6 +74,15 @@ $monstersNames = [
     19 => "Lollybot",
     // KONY
     21 => "Rob",
+    // World Tour
+    31 => "Quetzalcóatl",
+    32 => "Chupacabras",
+    33 => "Adamastor",
+    34 => "Fenir Fenrisulven",
+    35 => "Golem",
+    36 => "Marhanagy Szürke",
+    37 => "Lutoborshch",
+    38 => "Mech-Armor Ikari-Oh",
     // Dark edition
     102 => "Dark Alienoid", 
     104 => "Dark The King", 

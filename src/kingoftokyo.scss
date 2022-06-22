@@ -114,6 +114,11 @@ html, .mode_3d #game_play_area_background {
           background-image: url('img/monster-figure-#{$i}.png');
       }
   }
+  @for $i from 31 through 38 {
+      &.monster#{$i} {
+          background-image: url('img/monster-figure-#{$i}.png');
+      }
+  }
 
   &.monster12.beast-mode {
     background-image: url('img/monster-figure-12-beast.png');
