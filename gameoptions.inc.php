@@ -130,7 +130,7 @@ $game_options = [
                 'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(random mix)'),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
     ],
 
     /* TODOPU 
