@@ -1047,7 +1047,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (argsCancelDamage.canCancelDamage === undefined) {
                     try {
                         const tableId = window.location.search.split('=')[1];
-                        if (tableId === '267984719' || tableId === '267549223' || tableId === '267674165') {
+                        if (tableId === '267984719' ||tableId === '277304366') {
                             (this as any).addActionButton('debugBlockedTable_button', "Skip error message", () => this.takeAction('debugBlockedTable', { tableId }));
                         }
                     } catch (e) {

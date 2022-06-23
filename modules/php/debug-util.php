@@ -377,8 +377,8 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
 		$ids = [
-            88149777,
-84047280
+            86698684,
+92716756
 		];
 
 		// Id of the first player in BGA Studio
@@ -393,6 +393,7 @@ trait DebugUtilTrait {
 			// 'other' game specific tables. example:
 			// tables specific to your schema that use player_ids
 			$this->DbQuery("UPDATE card SET card_location_arg=$sid WHERE card_location_arg = $id" );
+			$this->DbQuery("UPDATE wickedness_tile SET card_location_arg=$sid WHERE card_location_arg = $id" );
 			$this->DbQuery("UPDATE evolution_card SET card_location_arg=$sid WHERE card_location_arg = $id" );
 			$this->DbQuery("UPDATE evolution_card SET owner_id=$sid WHERE owner_id = $id" );
 			$this->DbQuery("UPDATE evolution_card SET card_location='deck$sid' WHERE card_location='deck$id'" );
