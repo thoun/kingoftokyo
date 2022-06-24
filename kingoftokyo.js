@@ -1522,7 +1522,7 @@ var WickednessTiles = /** @class */ (function () {
     };
     WickednessTiles.prototype.getTooltip = function (cardType) {
         var level = this.getCardLevel(cardType);
-        var description = formatTextIcons(this.getCardDescription(cardType));
+        var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardType) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + description + "</p>\n        </div>";
         return tooltip;
     };
@@ -1532,7 +1532,7 @@ var WickednessTiles = /** @class */ (function () {
     };
     WickednessTiles.prototype.setDivAsCard = function (cardDiv, cardType) {
         var name = this.getCardName(cardType);
-        var description = formatTextIcons(this.getCardDescription(cardType));
+        var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         cardDiv.innerHTML = "\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n                    <div class=\"text\">" + name + "</div>\n                </div>\n            </div>\n            <div>        \n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        ";
         var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         if (textHeight > 50) {

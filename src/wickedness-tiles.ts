@@ -138,7 +138,7 @@ class WickednessTiles {
 
     public getTooltip(cardType: number) {
         const level = this.getCardLevel(cardType);
-        const description = formatTextIcons(this.getCardDescription(cardType));
+        const description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardType)}</strong></p>
             <p class="level">${ dojo.string.substitute(_("Level : ${level}"), {'level': level}) }</p>
@@ -154,7 +154,7 @@ class WickednessTiles {
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
         const name = this.getCardName(cardType);
-        const description = formatTextIcons(this.getCardDescription(cardType));
+        const description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
 
         cardDiv.innerHTML = `
         <div class="name-and-description">
