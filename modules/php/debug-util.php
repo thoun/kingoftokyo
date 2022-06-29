@@ -190,9 +190,9 @@ trait DebugUtilTrait {
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             $this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[3]' where `player_id` = 2343492");
-            //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
+            $this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
-            //$this->debugSetWickednessTileInHand(ANTIMATTER_BEAM_WICKEDNESS_TILE, 2343492);
+            $this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
         }
 
         // power up

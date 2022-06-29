@@ -5207,10 +5207,8 @@ var KingOfTokyo = /** @class */ (function () {
         var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds, true), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }), true);
         disabledCardsIds.forEach(function (id) {
             var disabled = disabledIds.some(function (disabledId) { return disabledId == id; }) || cardsCosts[id] > playerEnergy;
-            var cardDiv = document.querySelector("div[id$=\"_item_" + id + "\"]");
-            if (cardDiv && cardDiv.closest('.card-stock') !== null) {
-                dojo.toggleClass(cardDiv, 'disabled', disabled);
-            }
+            var cardDiv = document.querySelector(".card-stock div[id$=\"_item_" + id + "\"]");
+            cardDiv.classList.toggle('disabled', disabled);
         });
     };
     // called on state enter and when energy number is changed

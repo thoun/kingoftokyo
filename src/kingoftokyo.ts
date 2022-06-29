@@ -1824,10 +1824,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         const disabledCardsIds = [...disabledIds, ...Object.keys(cardsCosts).map(cardId => Number(cardId))];
         disabledCardsIds.forEach(id => {
             const disabled = disabledIds.some(disabledId => disabledId == id) || cardsCosts[id] > playerEnergy;
-            const cardDiv = document.querySelector(`div[id$="_item_${id}"]`) as HTMLElement;
-            if (cardDiv && cardDiv.closest('.card-stock') !== null) {
-                dojo.toggleClass(cardDiv, 'disabled', disabled);
-            }
+            const cardDiv = document.querySelector(`.card-stock div[id$="_item_${id}"]`) as HTMLElement;
+            cardDiv.classList.toggle('disabled', disabled);
         });
     }
 
