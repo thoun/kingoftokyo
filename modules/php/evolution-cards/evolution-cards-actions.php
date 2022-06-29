@@ -361,7 +361,7 @@ trait EvolutionCardsActionTrait {
     public function buyCardMiraculousCatch(bool $useSuperiorAlienTechnology) {
         $this->checkAction('buyCardMiraculousCatch');
 
-        $playerId = $this->getActivePlayerId();
+        $playerId = $this->getCurrentPlayerId();
         $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
 
         $card = $this->getCardFromDb($this->cards->getCardOnTop('discard'));
@@ -374,7 +374,6 @@ trait EvolutionCardsActionTrait {
             $cost = ceil($cost / 2);
         }
 
-        $playerId = $this->getActivePlayerId();
         $this->applyBuyCard(
             $playerId,
             $card->id,
@@ -392,7 +391,7 @@ trait EvolutionCardsActionTrait {
     public function skipMiraculousCatch() {
         $this->checkAction('skipMiraculousCatch');
 
-        $playerId = $this->getActivePlayerId();
+        $playerId = $this->getCurrentPlayerId();
         $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
 
         $this->setUsedCard(3000 + $evolution->id);
@@ -404,7 +403,7 @@ trait EvolutionCardsActionTrait {
     public function playCardDeepDive(int $id) {
         $this->checkAction('playCardDeepDive');
 
-        $playerId = $this->getActivePlayerId();
+        $playerId = $this->getCurrentPlayerId();
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
         $damages = $this->applyPlayCard($playerId, $card);

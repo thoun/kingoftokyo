@@ -235,7 +235,7 @@ trait DebugUtilTrait {
             //$this->setMimickedEvolution(2343493, $this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true));
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
         }
 
