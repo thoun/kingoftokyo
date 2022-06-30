@@ -208,7 +208,7 @@ $game_options = [
                 'tmdisplay' => totranslate('Players can pick a monster'),
             ],
         ],
-        'default' => 1,
+        'default' => 2, // TODOWT reset to 1 after World Tour
     ],
 
     BONUS_MONSTERS_OPTION => [
