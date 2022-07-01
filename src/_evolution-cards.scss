@@ -3,21 +3,38 @@
 
         .name-and-description {
             position: absolute;
-            top: 37px;
-            left: 14px;
-            width: 104px;
-            height: 79px;
+            top: 45px;
+            left: 6px;
+            right: 6px;
+            height: 70px;
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
-            align-content: center;
+            align-items: center;
 
             & > div {
                 flex: 1;
-                width: 104px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
+            }
+        }
+
+        .evolution-type {
+            position: absolute;
+            font-size: 6pt;
+            left: 22px;
+            top: 36px;
+            width: 87px;
+            text-transform: uppercase;
+            color: white;
+            white-space: nowrap;
+            text-align: center;
+            background: #00000066;
+            box-shadow: 0 0 3px 2px #00000066;
+
+            strong {
+                color: #fff200;
             }
         }
 
@@ -25,7 +42,7 @@
             position: relative;
             top: unset;
             left: unset;
-            width: unset;
+            width: 104px;
             font-size: 9pt;
             color: white;
             font-family: 'goodgirl';
@@ -47,27 +64,11 @@
             }
         }
 
-        .evolution-type {
-            position: absolute;
-            font-size: 6pt;
-            left: 22px;
-            top: 26px;
-            width: 87px;
-            text-transform: uppercase;
-            color: white;
-            white-space: nowrap;
-            text-align: center;
-
-            strong {
-                color: #fff200;
-            }
-        }
-
         .description-wrapper {
             position: relative;
             top: unset;
             left: unset;
-            width: unset;
+            width: 104px;
             text-overflow: ellipsis;
             text-align: center;
             color: black;

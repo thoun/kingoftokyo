@@ -956,27 +956,42 @@
 
 .player-evolution-cards .stockitem .name-and-description {
   position: absolute;
-  top: 37px;
-  left: 14px;
-  width: 104px;
-  height: 79px;
+  top: 45px;
+  left: 6px;
+  right: 6px;
+  height: 70px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  align-content: center;
+  align-items: center;
 }
 .player-evolution-cards .stockitem .name-and-description > div {
   flex: 1;
-  width: 104px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.player-evolution-cards .stockitem .evolution-type {
+  position: absolute;
+  font-size: 6pt;
+  left: 22px;
+  top: 36px;
+  width: 87px;
+  text-transform: uppercase;
+  color: white;
+  white-space: nowrap;
+  text-align: center;
+  background: #00000066;
+  box-shadow: 0 0 3px 2px #00000066;
+}
+.player-evolution-cards .stockitem .evolution-type strong {
+  color: #fff200;
 }
 .player-evolution-cards .stockitem .name-wrapper {
   position: relative;
   top: unset;
   left: unset;
-  width: unset;
+  width: 104px;
   font-size: 9pt;
   color: white;
   font-family: "goodgirl";
@@ -995,25 +1010,11 @@
   top: 0;
   width: 100%;
 }
-.player-evolution-cards .stockitem .evolution-type {
-  position: absolute;
-  font-size: 6pt;
-  left: 22px;
-  top: 26px;
-  width: 87px;
-  text-transform: uppercase;
-  color: white;
-  white-space: nowrap;
-  text-align: center;
-}
-.player-evolution-cards .stockitem .evolution-type strong {
-  color: #fff200;
-}
 .player-evolution-cards .stockitem .description-wrapper {
   position: relative;
   top: unset;
   left: unset;
-  width: unset;
+  width: 104px;
   text-overflow: ellipsis;
   text-align: center;
   color: black;

@@ -7,6 +7,7 @@ class EvolutionCards {
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
     }
 
+    // gameui.evolutionCards.debugSeeAllCards()
     debugSeeAllCards() {
         let html = `<div id="all-evolution-cards" class="evolution-card-stock player-evolution-cards">`;
         MONSTERS_WITH_POWER_UP_CARDS.forEach(monster => 
@@ -382,36 +383,55 @@ class EvolutionCards {
         cardDiv.innerHTML = `
         <div class="evolution-type">${type}</div>
         <div class="name-and-description">
-            <div>
+            <div class="name-row">
                 <div class="name-wrapper">
                     <div class="outline">${this.getCardName(cardType, 'span')}</div>
                     <div class="text">${this.getCardName(cardType, 'text-only')}</div>
                 </div>
             </div>
-            <div>
+            <div class="description-row">
                 <div class="description-wrapper">${description}</div>
             </div>
         </div>      
         `;
-        let textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
+
+        const evolutionType = cardDiv.getElementsByClassName('evolution-type')[0] as HTMLDivElement;
+        const nameAndDescription = cardDiv.getElementsByClassName('name-and-description')[0] as HTMLDivElement;
+        const nameWrapper = cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement;
+        const outline = cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement;
+        const descriptionWrapper = cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement;
+
+        let textHeight = descriptionWrapper.clientHeight;
 
         if (textHeight > 50) {
-            (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).style.fontSize = '6pt';
-        }
-        textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
-
-        let nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
-
-        if (77 - textHeight < nameHeight) {
-            (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '8pt';
+            descriptionWrapper.style.fontSize = '6pt';
+            textHeight = descriptionWrapper.clientHeight;
+        } else {
+            return;
         }
 
-        nameHeight = (cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement).clientHeight;
+        let nameHeight = outline.clientHeight;
 
-        if (77 - textHeight < nameHeight) {
-            (cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement).style.fontSize = '7pt';
+        if (71 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '8pt';
+            nameHeight = outline.clientHeight;
         }
 
+        if (71 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '7pt';
+            nameHeight = outline.clientHeight;
+        }
+
+        if (71 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '6pt';
+            outline.style.webkitTextStroke = '3px #a6c136';
+        }
+
+        if (textHeight > 50 || nameWrapper.getBoundingClientRect().top < evolutionType.getBoundingClientRect().bottom) {
+            descriptionWrapper.style.width = '120px';
+            descriptionWrapper.style.background = '#FFFFFFCC';
+            nameAndDescription.style.height = '87px';
+        }
     }
 
     // TODOPU set ownerId
