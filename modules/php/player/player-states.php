@@ -339,7 +339,16 @@ trait PlayerStateTrait {
 
         $playerId = $this->getActivePlayerId();
         $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-        $couldPlay = array_values(array_filter($otherPlayersIds, fn($pId) => $this->canPlayStepEvolution([$pId], $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO)));
+        $couldPlay = array_values(array_filter($otherPlayersIds, fn($pId) => 
+            $this->canPlayStepEvolution([$pId], $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO))
+        );
+        
+        if ($this->getMimickedEvolutionType() == FELINE_MOTOR_EVOLUTION) {
+            $icyReflection = $this->getEvolutionCardsByType(ICY_REFLECTION_EVOLUTION)[0];
+            if (in_array($icyReflection->location_arg, $otherPlayersIds)) {
+                $couldPlay[] = $icyReflection->location_arg;
+            }
+        }
 
         if (count($couldPlay) > 0) {
             $this->gamestate->setPlayersMultiactive($couldPlay, 'next');

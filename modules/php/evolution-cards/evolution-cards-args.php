@@ -69,8 +69,15 @@ trait EvolutionCardsArgTrait {
 
         $highlighted = $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) : [];
 
+
+        $playerId = $this->getActivePlayerId();
+        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+
+        $felineMotorPlayersIds = array_filter($otherPlayersIds, fn($pId) => $this->countEvolutionOfType($pId, FELINE_MOTOR_EVOLUTION) > 0);
+
         return [
             'highlighted' => $highlighted,
+            'canUseFelineMotor' => $felineMotorPlayersIds,
         ];
     }
 

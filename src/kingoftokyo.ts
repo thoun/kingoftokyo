@@ -229,6 +229,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'afterEnteringTokyo':
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'changeMimickedCardWickednessTile':
@@ -1243,7 +1244,15 @@ class KingOfTokyo implements KingOfTokyoGame {
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'beforeEnteringTokyo':
+                    const argsBeforeEnteringTokyo = args as BeforeEnteringTokyoArgs;
+
+
+                    if (argsBeforeEnteringTokyo.canUseFelineMotor.includes(this.getPlayerId())) {
+                        (this as any).addActionButton('useFelineMotor_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(36, 'text-only') }), () => this.useFelineMotor());
+                    } 
+
                     (this as any).addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), () => this.skipBeforeEnteringTokyo());
+
                     break;
                 case 'afterEnteringTokyo':
                     (this as any).addActionButton('skipAfterEnteringTokyo_button', _("Skip"), () => this.skipAfterEnteringTokyo());
@@ -3122,6 +3131,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('reserveCard', { id });
+    }
+    
+    public useFelineMotor() {
+        if(!(this as any).checkAction('useFelineMotor')) {
+            return;
+        }
+
+        this.takeAction('useFelineMotor');
     }
     
     public takeAction(action: string, data?: any) {

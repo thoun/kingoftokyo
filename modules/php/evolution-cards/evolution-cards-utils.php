@@ -281,9 +281,7 @@ trait EvolutionCardsUtilTrait {
                 }
                 return $damages;
             case FELINE_MOTOR_EVOLUTION:
-                $this->moveToTokyoFreeSpot($playerId);
-                $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
-                $this->endBeforeEnteringTokyoIfNeeded();
+                $this->applyFelineMotor($playerId);
                 break;
             // The King
             case MONKEY_RUSH_EVOLUTION:
@@ -1046,5 +1044,11 @@ trait EvolutionCardsUtilTrait {
         if (!$this->tokyoHasFreeSpot()) {
             $this->goToState($this->redirectAfterHalfMovePhase());
         }
+    }
+
+    function applyFelineMotor(int $playerId) {
+        $this->moveToTokyoFreeSpot($playerId);
+        $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
+        $this->endBeforeEnteringTokyoIfNeeded();
     }
 }

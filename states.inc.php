@@ -645,7 +645,10 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stBeforeEnteringTokyo",
         "args" => "argBeforeEnteringTokyo",
-        "possibleactions" => [ "skipBeforeEnteringTokyo" ],
+        "possibleactions" => [ 
+            "skipBeforeEnteringTokyo",
+            "useFelineMotor", 
+        ],
         "transitions" => [
             'next' => ST_ENTER_TOKYO,
         ],        

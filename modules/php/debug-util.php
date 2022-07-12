@@ -210,12 +210,12 @@ trait DebugUtilTrait {
             // dummy card to avoid initial card selection
             /*$this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(MONKEY_RUSH_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
             $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
             $this->debugSetEvolutionInHand(EATS_SHOOTS_AND_LEAVES_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
 
             // cards to test
             //$this->debugSetEvolutionInHand(11, 2343492, true);
@@ -232,11 +232,11 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
-            //$this->setMimickedEvolution(2343493, $this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true));
+            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
+            $this->setMimickedEvolution(2343493, $this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true));
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             $this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343493, false);
-            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
         }
 
         // player order

@@ -3823,6 +3823,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'afterEnteringTokyo':
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args.args);
+                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'changeMimickedCardWickednessTile':
@@ -4745,6 +4746,10 @@ var KingOfTokyo = /** @class */ (function () {
                     this.onEnteringExchangeCard(args, true); // because it's multiplayer, enter action must be set here
                     break;
                 case 'beforeEnteringTokyo':
+                    var argsBeforeEnteringTokyo = args;
+                    if (argsBeforeEnteringTokyo.canUseFelineMotor.includes(this.getPlayerId())) {
+                        this.addActionButton('useFelineMotor_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(36, 'text-only') }), function () { return _this.useFelineMotor(); });
+                    }
                     this.addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), function () { return _this.skipBeforeEnteringTokyo(); });
                     break;
                 case 'afterEnteringTokyo':
@@ -6254,6 +6259,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('reserveCard', { id: id });
+    };
+    KingOfTokyo.prototype.useFelineMotor = function () {
+        if (!this.checkAction('useFelineMotor')) {
+            return;
+        }
+        this.takeAction('useFelineMotor');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

@@ -984,6 +984,14 @@
         self::ajaxResponse();
     }
   	
+    public function useFelineMotor() {
+        self::setAjaxMode();
+
+        $this->game->useFelineMotor();
+
+        self::ajaxResponse();
+    }
+  	
     // TODOBUG
     public function debugBlockedTable() {
         self::setAjaxMode();

@@ -643,4 +643,12 @@ trait EvolutionCardsActionTrait {
 
         $this->removeStackedStateAndRedirect();
     }
+
+    public function useFelineMotor() {
+        $this->checkAction('useFelineMotor');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $this->applyFelineMotor($playerId);
+    }
 }

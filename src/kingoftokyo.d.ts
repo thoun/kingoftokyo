@@ -350,6 +350,10 @@ interface EnteringExchangeCardArgs {
     canExchange: boolean;
 }
 
+interface BeforeEnteringTokyoArgs {
+    canUseFelineMotor: number[];
+}
+
 interface EnteringBuyCardArgs {
     disabledIds: number[];
     canBuyFromPlayers: boolean;
