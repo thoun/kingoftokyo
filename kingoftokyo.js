@@ -4554,7 +4554,7 @@ var KingOfTokyo = /** @class */ (function () {
                 if (argsCancelDamage.canCancelDamage === undefined) {
                     try {
                         var tableId_1 = window.location.search.split('=')[1];
-                        if (tableId_1 === '267984719' || tableId_1 === '277304366') {
+                        if (tableId_1 === '277711940' || tableId_1 === '277304366') {
                             this.addActionButton('debugBlockedTable_button', "Skip error message", function () { return _this.takeAction('debugBlockedTable', { tableId: tableId_1 }); });
                         }
                     }

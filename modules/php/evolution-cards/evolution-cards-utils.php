@@ -914,6 +914,11 @@ trait EvolutionCardsUtilTrait {
 
     function addSuperiorAlienTechnologyToken(int $playerId, int $cardId) {
         $cardsIds = $this->getSuperiorAlienTechnologyTokens();
+
+        if (count($cardsIds) >= 3) {
+            throw new \BgaUserException('You can only have 3 cards with tokens.');
+        }
+
         $cardsIds[] = $cardId;
         $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, $cardsIds);
 

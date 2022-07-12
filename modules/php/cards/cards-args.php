@@ -35,7 +35,7 @@ trait CardsArgTrait {
 
         // superior alien technology
         $isPowerUpExpansion = $this->isPowerUpExpansion();
-        $canUseSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
+        $canUseSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && count($this->getSuperiorAlienTechnologyTokens()) < 3;
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         if ($isPowerUpExpansion) {
