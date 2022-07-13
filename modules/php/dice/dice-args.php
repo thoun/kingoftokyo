@@ -243,11 +243,13 @@ trait DiceArgTrait {
         $hasEncasedInIce = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
 
         $dice = $this->getPlayerRolledDice($playerId, true, true, false);
+        $selectableDice = $this->getSelectableDice($dice, false, false);
         $canHealWithDice = $this->canHealWithDice($playerId);
 
         return [ 
             'dice' => $dice,
             'canHealWithDice' => $canHealWithDice,
+            'selectableDice' => $selectableDice,
             'hasEncasedInIce' => $hasEncasedInIce,
         ];
     }
