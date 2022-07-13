@@ -751,18 +751,4 @@ class Cards {
 
         div.dataset.placed = JSON.stringify(cardPlaced);
     }
-
-    public removeSuperiorAlienTechnologyTokenOnCard(stock: Stock, card: Card) { 
-        const divId = `${stock.container_div.id}_item_${card.id}`;
-        const div = document.getElementById(divId);
-              
-        const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
-        cardPlaced.superiorAlienTechnologyToken = null;
-
-        if (document.getElementById(`${divId}-superior-alien-technology-token`)) {
-            (this.game as any).fadeOutAndDestroy(`${divId}-superior-alien-technology-token`);
-        }
-
-        div.dataset.placed = JSON.stringify(cardPlaced);
-    }
 }

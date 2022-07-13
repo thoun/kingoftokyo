@@ -35,7 +35,8 @@ trait CardsArgTrait {
 
         // superior alien technology
         $isPowerUpExpansion = $this->isPowerUpExpansion();
-        $canUseSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && count($this->getSuperiorAlienTechnologyTokens()) < 3;
+        $gotSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
+        $canUseSuperiorAlienTechnology = $gotSuperiorAlienTechnology && (count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION));
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         if ($isPowerUpExpansion) {
@@ -57,7 +58,7 @@ trait CardsArgTrait {
             if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                 $canBuyOrNenew = true;
             }
-            if ($canUseSuperiorAlienTechnology && $card->type < 100) {
+            if ($gotSuperiorAlienTechnology && $card->type < 100) {
                 $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
 
                 if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
@@ -82,7 +83,7 @@ trait CardsArgTrait {
                     if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                         $canBuyOrNenew = true;
                     }
-                    if ($canUseSuperiorAlienTechnology && $card->type < 100) {
+                    if ($gotSuperiorAlienTechnology && $card->type < 100) {
                         $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
         
                         if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
@@ -110,7 +111,7 @@ trait CardsArgTrait {
                 if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
                     $canBuyOrNenew = true;
                 }
-                if ($canUseSuperiorAlienTechnology && $card->type < 100) {
+                if ($gotSuperiorAlienTechnology && $card->type < 100) {
                     $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
     
                     if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
@@ -149,6 +150,7 @@ trait CardsArgTrait {
             'canUseAdaptingTechnology' => $canUseAdaptingTechnology,
             'canUseMiraculousCatch' => $canUseMiraculousCatch,
             'unusedMiraculousCatch' => $unusedMiraculousCatch,
+            'gotSuperiorAlienTechnology' => $gotSuperiorAlienTechnology,
             'canUseSuperiorAlienTechnology' => $canUseSuperiorAlienTechnology,
         ] + $pickArgs;
     }

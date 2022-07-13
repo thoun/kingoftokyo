@@ -21,7 +21,7 @@ class PlayerTable {
     public pickEvolutionCards: Stock | null = null;;
     public visibleEvolutionCards: Stock;
 
-    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, playerWithGoldenScarab: boolean, superiorAlienTechnologyTokens: number[], evolutionCardsWithSingleState: number[]) {
+    constructor(private game: KingOfTokyoGame, private player: KingOfTokyoPlayer, playerWithGoldenScarab: boolean, evolutionCardsWithSingleState: number[]) {
         this.playerId = Number(player.id);
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
@@ -82,8 +82,8 @@ class PlayerTable {
         if (playerWithGoldenScarab) {
             this.cards.addToStockWithId(999, 'goldenscarab');
         }
-        if (superiorAlienTechnologyTokens) {
-            player.cards.filter(card => superiorAlienTechnologyTokens.includes(card.id)).forEach(card => this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(this.cards, card));
+        if (player.superiorAlienTechnologyTokens?.length) {
+            player.cards.filter(card => player.superiorAlienTechnologyTokens.includes(card.id)).forEach(card => this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(this.cards, card));
         }
 
         if (game.isPowerUpExpansion()) {            

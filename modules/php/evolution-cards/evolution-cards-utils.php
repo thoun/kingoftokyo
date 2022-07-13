@@ -905,20 +905,20 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function getSuperiorAlienTechnologyTokens() {
-        $cardsIds = $this->getGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, true);
+    function getSuperiorAlienTechnologyTokens(int $playerId) {
+        $cardsIds = $this->getGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, true);
         return $cardsIds == null ? [] : $cardsIds;
     }
 
     function addSuperiorAlienTechnologyToken(int $playerId, int $cardId) {
-        $cardsIds = $this->getSuperiorAlienTechnologyTokens();
+        $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
 
-        if (count($cardsIds) >= 3) {
+        if (count($cardsIds) >= 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION)) {
             throw new \BgaUserException('You can only have 3 cards with tokens.');
         }
 
         $cardsIds[] = $cardId;
-        $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, $cardsIds);
+        $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, $cardsIds);
 
         $card = $this->cards->getCard($cardId);
         $this->notifyAllPlayers("addSuperiorAlienTechnologyToken", '', [

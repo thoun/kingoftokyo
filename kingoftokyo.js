@@ -767,16 +767,6 @@ var Cards = /** @class */ (function () {
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
-    Cards.prototype.removeSuperiorAlienTechnologyTokenOnCard = function (stock, card) {
-        var divId = stock.container_div.id + "_item_" + card.id;
-        var div = document.getElementById(divId);
-        var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
-        cardPlaced.superiorAlienTechnologyToken = null;
-        if (document.getElementById(divId + "-superior-alien-technology-token")) {
-            this.game.fadeOutAndDestroy(divId + "-superior-alien-technology-token");
-        }
-        div.dataset.placed = JSON.stringify(cardPlaced);
-    };
     return Cards;
 }());
 var CurseCards = /** @class */ (function () {
@@ -1665,9 +1655,9 @@ var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 23
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
 var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, playerWithGoldenScarab, superiorAlienTechnologyTokens, evolutionCardsWithSingleState) {
+    function PlayerTable(game, player, playerWithGoldenScarab, evolutionCardsWithSingleState) {
         var _this = this;
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         this.game = game;
         this.player = player;
         this.showHand = false;
@@ -1703,8 +1693,8 @@ var PlayerTable = /** @class */ (function () {
         if (playerWithGoldenScarab) {
             this.cards.addToStockWithId(999, 'goldenscarab');
         }
-        if (superiorAlienTechnologyTokens) {
-            player.cards.filter(function (card) { return superiorAlienTechnologyTokens.includes(card.id); }).forEach(function (card) { return _this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(_this.cards, card); });
+        if ((_d = player.superiorAlienTechnologyTokens) === null || _d === void 0 ? void 0 : _d.length) {
+            player.cards.filter(function (card) { return player.superiorAlienTechnologyTokens.includes(card.id); }).forEach(function (card) { return _this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(_this.cards, card); });
         }
         if (game.isPowerUpExpansion()) {
             // TODOPUBG
@@ -1766,7 +1756,7 @@ var PlayerTable = /** @class */ (function () {
                 this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
                 this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
-                (_d = player.hiddenEvolutions) === null || _d === void 0 ? void 0 : _d.forEach(function (card) {
+                (_e = player.hiddenEvolutions) === null || _e === void 0 ? void 0 : _e.forEach(function (card) {
                     _this.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
                     if (evolutionCardsWithSingleState.includes(card.type)) {
                         document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id).classList.add('disabled');
@@ -5049,7 +5039,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables = this.getOrderedPlayers().map(function (player) {
             var playerId = Number(player.id);
             var playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(_this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens, evolutionCardsWithSingleState);
+            return new PlayerTable(_this, player, playerWithGoldenScarab, evolutionCardsWithSingleState);
         });
         if (gamedatas.targetedPlayer) {
             this.getPlayerTable(gamedatas.targetedPlayer).giveTarget();
@@ -5145,16 +5135,17 @@ var KingOfTokyo = /** @class */ (function () {
             this.changeMimickedCardWickednessTile(cardId);
         }
         else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
-            var warningIcon = !warningChecked && this.gamedatas.gamestate.args.warningIds[cardId];
+            var buyCardArgs = this.gamedatas.gamestate.args;
+            var warningIcon = !warningChecked && buyCardArgs.warningIds[cardId];
             if (warningIcon) {
                 this.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, cardId, from, true); });
             }
             else {
-                var cardCostSuperiorAlienTechnology = (_a = this.gamedatas.gamestate.args.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[cardId];
-                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== this.gamedatas.gamestate.args.cardsCosts[cardId]) {
+                var cardCostSuperiorAlienTechnology = (_a = buyCardArgs.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[cardId];
+                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId]) {
                     var keys = [
                         formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })),
-                        formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: this.gamedatas.gamestate.args.cardsCosts[cardId] })),
+                        formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
                         _('Cancel')
                     ];
                     this.multipleChoiceDialog(dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCards.getCardName(28, 'text-only') }), keys, function (choice) {
@@ -5164,6 +5155,12 @@ var KingOfTokyo = /** @class */ (function () {
                             _this.buyCard(cardId, from, choiceIndex === 0);
                         }
                     });
+                    if (buyCardArgs.canUseSuperiorAlienTechnology === false) {
+                        document.getElementById("choice_btn_0").classList.add('disabled');
+                    }
+                    if (buyCardArgs.cardsCosts[cardId] > this.getPlayerEnergy(this.getPlayerId())) {
+                        document.getElementById("choice_btn_1").classList.add('disabled');
+                    }
                 }
                 else {
                     this.tableCenter.removeOtherCardsFromPick(cardId);
@@ -5257,7 +5254,7 @@ var KingOfTokyo = /** @class */ (function () {
             playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
         }
         var cardsCosts = args.cardsCosts;
-        if (args.canUseSuperiorAlienTechnology) {
+        if (args.gotSuperiorAlienTechnology) {
             cardsCosts = __assign(__assign({}, cardsCosts), args.cardsCostsSuperiorAlienTechnology);
         }
         this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
@@ -6375,7 +6372,6 @@ var KingOfTokyo = /** @class */ (function () {
             ['removeWickednessTiles', 1],
             ['addEvolutionCardInHand', 1],
             ['addSuperiorAlienTechnologyToken', 1],
-            ['removeSuperiorAlienTechnologyToken', 1],
             ['giveTarget', 1],
             ['updateCancelDamage', 1],
             ['ownedEvolutions', 1],
@@ -6740,10 +6736,6 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_addSuperiorAlienTechnologyToken = function (notif) {
         var stock = this.getPlayerTable(notif.args.playerId).cards;
         this.cards.placeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
-    };
-    KingOfTokyo.prototype.notif_removeSuperiorAlienTechnologyToken = function (notif) {
-        var stock = this.getPlayerTable(notif.args.playerId).cards;
-        this.cards.removeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
     };
     KingOfTokyo.prototype.notif_giveTarget = function (notif) {
         if (notif.args.previousOwner) {

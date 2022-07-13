@@ -335,7 +335,7 @@ trait EvolutionCardsActionTrait {
         $card = $this->getCardFromDb($this->cards->getCardOnTop('discard'));
 
         $cost = $this->getCardCost($playerId, $card->type) - 1;
-        $canUseSuperiorAlienTechnology = $card->type < 100 && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && count($this->getSuperiorAlienTechnologyTokens()) < 3;
+        $canUseSuperiorAlienTechnology = $card->type < 100 && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION);
 
         $question = new Question(
             'MiraculousCatch',

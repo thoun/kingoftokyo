@@ -106,7 +106,7 @@ trait EvolutionCardsStateTrait {
         }
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens();
+        $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
         $cardsWithSuperiorAlienTechnologyTokens = array_values(array_filter($cards, fn($card) => in_array($card->id, $superiorAlienTechnologyTokens)));
 
         if (count($cardsWithSuperiorAlienTechnologyTokens) > 0) {
@@ -128,17 +128,9 @@ trait EvolutionCardsStateTrait {
 
                 if ($remove) {
                     $this->removeCard($playerId, $card);
-                } else {
-                    $this->notifyAllPlayers("removeSuperiorAlienTechnologyToken", '', [
-                        'playerId' => $playerId,
-                        'card' => $card,
-                    ]);
+                    $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
                 }
-
-                $superiorAlienTechnologyTokens = array_values(array_filter($superiorAlienTechnologyTokens, fn($token) => $token != $card->id));
             }
-
-            $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS, $superiorAlienTechnologyTokens);
         }
 
         $unusedEnergySwordCard = $this->getFirstUnusedEvolution($playerId, ENERGY_SWORD_EVOLUTION);

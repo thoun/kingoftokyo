@@ -1646,7 +1646,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables = this.getOrderedPlayers().map(player => {
             const playerId = Number(player.id);
             const playerWithGoldenScarab = gamedatas.anubisExpansion && playerId === gamedatas.playerWithGoldenScarab;
-            return new PlayerTable(this, player, playerWithGoldenScarab, gamedatas.superiorAlienTechnologyTokens, evolutionCardsWithSingleState);
+            return new PlayerTable(this, player, playerWithGoldenScarab, evolutionCardsWithSingleState);
         });
 
         if (gamedatas.targetedPlayer) {
@@ -1744,18 +1744,19 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else if (stateName === 'changeMimickedCardWickednessTile') {
             this.changeMimickedCardWickednessTile(cardId);
         } else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
-            const warningIcon = !warningChecked && (this.gamedatas.gamestate.args as EnteringBuyCardArgs).warningIds[cardId];
+            const buyCardArgs = this.gamedatas.gamestate.args as EnteringBuyCardArgs;
+            const warningIcon = !warningChecked && buyCardArgs.warningIds[cardId];
             if (warningIcon) {
                 (this as any).confirmationDialog(
                     formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon})), 
                     () => this.onVisibleCardClick(stock, cardId, from, true)
                 );
             } else {
-                const cardCostSuperiorAlienTechnology = (this.gamedatas.gamestate.args as EnteringBuyCardArgs).cardsCostsSuperiorAlienTechnology?.[cardId];
-                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== (this.gamedatas.gamestate.args as EnteringBuyCardArgs).cardsCosts[cardId]) {
+                const cardCostSuperiorAlienTechnology = buyCardArgs.cardsCostsSuperiorAlienTechnology?.[cardId];
+                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId]) {
                     const keys = [
                         formatTextIcons(dojo.string.substitute(/*_TODO*/('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })),
-                        formatTextIcons(dojo.string.substitute(/*_TODO*/('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: (this.gamedatas.gamestate.args as EnteringBuyCardArgs).cardsCosts[cardId] })),
+                        formatTextIcons(dojo.string.substitute(/*_TODO*/('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
                         _('Cancel')
                     ];
 
@@ -1770,6 +1771,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                             }
                         }
                       );
+
+                      if (buyCardArgs.canUseSuperiorAlienTechnology === false) {
+                        document.getElementById(`choice_btn_0`).classList.add('disabled');
+                      }
+                      if (buyCardArgs.cardsCosts[cardId] > this.getPlayerEnergy(this.getPlayerId())) {
+                        document.getElementById(`choice_btn_1`).classList.add('disabled');
+                      }
                 } else {
                     this.tableCenter.removeOtherCardsFromPick(cardId);
                     this.buyCard(cardId, from);
@@ -1860,7 +1868,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         let cardsCosts = args.cardsCosts;
-        if ((args as EnteringBuyCardArgs).canUseSuperiorAlienTechnology) {
+        if ((args as EnteringBuyCardArgs).gotSuperiorAlienTechnology) {
             cardsCosts = {...cardsCosts, ...(args as EnteringBuyCardArgs).cardsCostsSuperiorAlienTechnology};
         }
 
@@ -3254,7 +3262,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['removeWickednessTiles', 1],
             ['addEvolutionCardInHand', 1],
             ['addSuperiorAlienTechnologyToken', 1],
-            ['removeSuperiorAlienTechnologyToken', 1],
             ['giveTarget', 1],
             ['updateCancelDamage', 1],
             ['ownedEvolutions', 1],
@@ -3693,11 +3700,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_addSuperiorAlienTechnologyToken(notif: Notif<NotifAddSuperiorAlienTechnologyTokenArgs>) {
         const stock = this.getPlayerTable(notif.args.playerId).cards;
         this.cards.placeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
-    }
-    
-    notif_removeSuperiorAlienTechnologyToken(notif: Notif<NotifAddSuperiorAlienTechnologyTokenArgs>) {
-        const stock = this.getPlayerTable(notif.args.playerId).cards;
-        this.cards.removeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
     }
     
     notif_giveTarget(notif: Notif<NotifGiveTargetArgs>) {

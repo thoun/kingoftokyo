@@ -452,6 +452,8 @@ class KingOfTokyo extends Table {
                 $mothershipSupportCards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
                 $playerDb['mothershipSupport'] = count($mothershipSupportCards) > 0;
                 $playerDb['mothershipSupportUsed'] = count($mothershipSupportCards) > 0 && $this->array_every($mothershipSupportCards, fn($card) => $this->isUsedCard(3000 + $card->id));
+
+                $playerDb['superiorAlienTechnologyTokens'] = $this->getSuperiorAlienTechnologyTokens($playerId);
             }
         }
 
@@ -492,8 +494,6 @@ class KingOfTokyo extends Table {
                 'afterEnteringTokyo' => $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO + $this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO, // ST_PLAYER_AFTER_ENTERING_TOKYO
                 'cardIsBought' => $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT, // ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT
             ];
-            
-            $result['superiorAlienTechnologyTokens'] = $this->getSuperiorAlienTechnologyTokens();
 
             $targetedPlayer = intval($this->getGameStateValue(TARGETED_PLAYER));
             if ($targetedPlayer > 0) {

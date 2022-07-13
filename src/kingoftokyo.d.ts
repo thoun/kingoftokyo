@@ -119,6 +119,7 @@ interface KingOfTokyoPlayer extends Player {
     visibleEvolutions?: EvolutionCard[];
     ownedEvolutions?: EvolutionCard[];
     hiddenEvolutions?: EvolutionCard[]; // filled only for current player, else EvolutionCard contains only id
+    superiorAlienTechnologyTokens?: number[];
 }
 
 interface KingOfTokyoGamedatas {
@@ -160,7 +161,6 @@ interface KingOfTokyoGamedatas {
     wickednessTiles: WickednessTile[];
     EVOLUTION_CARDS_TYPES?: number[];
     EVOLUTION_CARDS_SINGLE_STATE?: { [stateName: string]: number[] };
-    superiorAlienTechnologyTokens?: number[];
     targetedPlayer?: number;
 }
 
@@ -362,6 +362,7 @@ interface EnteringBuyCardArgs {
     canUseAdaptingTechnology: boolean;
     canUseMiraculousCatch: boolean;
     unusedMiraculousCatch: boolean;
+    gotSuperiorAlienTechnology: boolean;
     canUseSuperiorAlienTechnology: boolean;
     _private: {
         pickCards: Card[];
