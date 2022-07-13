@@ -907,7 +907,7 @@ trait UtilTrait {
             && $this->getPlayerScore($playerId) >= 16;
 
         if (!$finalRoarWillActivate) {
-            if ($this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, NINE_LIVES_EVOLUTION, true, true) > 0) {
+            if ($this->isPowerUpExpansion() && $this->getPlayerHealth($playerId) == 0 && $this->countEvolutionOfType($playerId, NINE_LIVES_EVOLUTION, true, true) > 0) {
                 $this->applyNineLives($playerId);
             }
 
