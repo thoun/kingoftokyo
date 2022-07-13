@@ -406,6 +406,11 @@ trait EvolutionCardsActionTrait {
         $playerId = $this->getCurrentPlayerId();
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
+        $evolutions = $this->getEvolutionCardsByType(DEEP_DIVE_EVOLUTION);
+        foreach($evolutions as $evolution) {
+            $this->removeEvolution($playerId, $evolution);
+        }
+
         $damages = $this->applyPlayCard($playerId, $card);
 
         $this->goToState(-1, $damages);

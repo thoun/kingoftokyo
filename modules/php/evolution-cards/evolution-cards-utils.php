@@ -157,7 +157,7 @@ trait EvolutionCardsUtilTrait {
             case SIMIAN_SCAMPER_EVOLUTION:
             case DETACHABLE_TAIL_EVOLUTION:
             case RABBIT_S_FOOT_EVOLUTION:
-                throw new \BgaUserException(/*self::_TODOPU*/("You can't play this Evolution now"));
+                throw new \BgaUserException(/*self::_TODOPU*/("You can't play this Evolution now, you'll be asked to use it when you'll take damage"));
             case FELINE_MOTOR_EVOLUTION:
                 $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
                 if (in_array($playerId, $startedTurnInTokyo)) {
