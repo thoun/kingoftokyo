@@ -946,7 +946,7 @@ trait CardsUtilTrait {
         if ($countAstronaut > 0) {
             $playerScore = $this->getPlayerScore($playerId);
             if ($playerScore >= 17) {
-                $this->applyGetPoints($playerId, MAX_POINT - $playerScore, ASTRONAUT_CARD);
+                $this->applyGetPointsIgnoreCards($playerId, MAX_POINT - $playerScore, ASTRONAUT_CARD);
             }
         }
     }

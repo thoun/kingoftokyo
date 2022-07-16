@@ -946,7 +946,7 @@ trait DiceUtilTrait {
 
         if ($newLevel === 3) {
             $playerScore = $this->getPlayerScore($playerId);
-            $this->applyGetPoints($playerId, MAX_POINT - $playerScore, 0);
+            $this->applyGetPointsIgnoreCards($playerId, MAX_POINT - $playerScore, 0);
             
             $this->notifyAllPlayers("fullTokyoTower", clienttranslate('${player_name} claims Tokyo Tower top level and wins the game'), [
                 'playerId' => $playerId,

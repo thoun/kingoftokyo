@@ -17,11 +17,11 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343496, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
-        $this->debugSetEnergy(50);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(1);
@@ -160,6 +160,7 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
+            $this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             $this->changeGoldenScarabOwner(2343493);
@@ -167,8 +168,8 @@ trait DebugUtilTrait {
 
         // king kong
 
-        //$this->changeTokyoTowerOwner(2343493, 1);
-        //$this->changeTokyoTowerOwner(2343493, 2);
+        $this->changeTokyoTowerOwner(2343492, 1);
+        $this->changeTokyoTowerOwner(2343492, 2);
 
         // cybertooth
 
@@ -188,11 +189,11 @@ trait DebugUtilTrait {
         if ($this->isWickednessExpansion()) {
             //$this->initWickednessTiles(2); // 2=orange, 3=green, 4=mix
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-            $this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
+            //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[3]' where `player_id` = 2343492");
-            $this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
+            //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
-            $this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
+            //$this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
         }
 
         // power up
