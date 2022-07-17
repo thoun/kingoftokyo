@@ -68,7 +68,7 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343493), 3, true);
         //$this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492);
-        $this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
+        //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
@@ -76,7 +76,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(SOLAR_POWERED_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
@@ -202,8 +202,8 @@ trait DebugUtilTrait {
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
             // set monster
-            $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
-            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
+            $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493"); // space penguin
+            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
@@ -238,6 +238,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(ELECTRO_SCRATCH_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
         }
 

@@ -60,7 +60,7 @@ trait EvolutionCardsStateTrait {
 
         $unsetFreezeRayCard = $this->getFirstUnsetFreezeRay($playerId);
         if ($unsetFreezeRayCard != null) {
-            $ownerId = $this->getEvolutionOwnerId($unsetFreezeRayCard);
+            $ownerId = $unsetFreezeRayCard->ownerId;
             if ($playerId != $ownerId) {
                 $question = new Question(
                     'FreezeRay',

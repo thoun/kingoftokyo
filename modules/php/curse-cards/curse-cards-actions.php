@@ -72,7 +72,8 @@ trait CurseCardsActionTrait {
         foreach($symbolsCount as $symbol => $count) {
             switch($symbol) {
                 case 4: 
-                    $this->applyDamage(new Damage($from, $count, 0, $logCardType));
+                    $damage = new Damage($from, $count, 0, $logCardType);
+                    $this->applyDamage($damage);
                     $this->applyGetHealth($to, $count, $logCardType, $from);
                     break;
                 case 5:
