@@ -144,6 +144,10 @@ trait CardsActionTrait {
         $mimickedCardIdTile = $this->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
             
         if ($from > 0) {
+            if ($card->location_arg != $from) {
+                throw new \BgaUserException("This player doesn't own this card");
+            }
+
             if ($from != $playerId) {
                 // If card bought from player, when having mimic token, card keep mimic token
                 $this->removeCard($from, $card, true, false, true);
