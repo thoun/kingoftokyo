@@ -1858,8 +1858,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (!buyState && !changeMimicState) {
             return;
         }
+        const bamboozle = stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle';
+        if (bamboozle) {
+            playerEnergy = this.energyCounters[this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId].getValue();
+        }
         if (args === null) {
-            args = stateName === 'answerQuestion' ?
+            args = bamboozle ?
                 this.gamedatas.gamestate.args.question.args.buyCardArgs :
                 this.gamedatas.gamestate.args;
         }
