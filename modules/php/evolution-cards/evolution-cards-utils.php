@@ -32,8 +32,9 @@ trait EvolutionCardsUtilTrait {
         if (count($states) < 1) {
             throw new \Exception('No stacked state to remove');
         }
-        $this->goToState(array_pop($states));
+        $newState = array_pop($states);
         $this->setGlobalVariable(STACKED_STATES, $states);
+        $this->goToState($newState);
     }
 
     function getStackedStateSuffix() {

@@ -92,7 +92,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-        //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
+        $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343494);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
@@ -167,9 +167,10 @@ trait DebugUtilTrait {
         }
 
         // king kong
-
-        $this->changeTokyoTowerOwner(2343492, 1);
-        $this->changeTokyoTowerOwner(2343492, 2);
+        if ($this->isKingKongExpansion()) {
+            $this->changeTokyoTowerOwner(2343492, 1);
+            $this->changeTokyoTowerOwner(2343492, 2);
+        }
 
         // cybertooth
 
@@ -190,7 +191,7 @@ trait DebugUtilTrait {
             //$this->initWickednessTiles(2); // 2=orange, 3=green, 4=mix
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
-            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[3]' where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
             //$this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
