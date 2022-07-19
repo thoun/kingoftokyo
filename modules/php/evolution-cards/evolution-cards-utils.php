@@ -372,9 +372,6 @@ trait EvolutionCardsUtilTrait {
                 $this->applyGetEnergy($playerId, 2, $logCardType);
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;
-            case BAMBOO_SUPPLY_EVOLUTION:
-                // TODOPU $this->goToState(ST_START_TURN);
-                break;
             // cyberbunny
             case STROKE_OF_GENIUS_EVOLUTION:
                 $this->applyGetEnergy($playerId, $this->getPlayer($playerId)->turnEnergy, $logCardType);
@@ -622,22 +619,47 @@ trait EvolutionCardsUtilTrait {
         $buyCardArgs = $this->getArgBuyCard($cardBeingBought->playerId, false);
         $buyCardArgs['disabledIds'] = [...$buyCardArgs['disabledIds'], $cardBeingBought->cardId];
 
-        $question = new Question(
-            'Bamboozle',
-            /* client TODOPU translate(*/'${actplayer} must choose another card'/*)*/,
-            /* client TODOPU translate(*/'${you} must choose another card'/*)*/,
-            [$playerId],
-            ST_PLAYER_BUY_CARD,
-            [ 
-                'cardBeingBought' => $cardBeingBought, 
-                'buyCardArgs' => $buyCardArgs,
-            ]
-        );
-        $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-        $this->removeEvolution($playerId, $card);
+        $canBuyAnother = false;
+        $playerEnergy = $this->getPlayerEnergy($cardBeingBought->playerId);
+        foreach($buyCardArgs['cardsCosts'] as $cardId => $cost) {
+            if (!in_array($cardId, $buyCardArgs['disabledIds']) && $cost <= $playerEnergy) {
+                $canBuyAnother = true;
+                break;
+            }
+        }
 
-        $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+        if ($canBuyAnother) {
+
+            $question = new Question(
+                'Bamboozle',
+                /* client TODOPU translate(*/'${actplayer} must choose another card'/*)*/,
+                /* client TODOPU translate(*/'${you} must choose another card'/*)*/,
+                [$playerId],
+                ST_PLAYER_BUY_CARD,
+                [ 
+                    'cardBeingBought' => $cardBeingBought, 
+                    'buyCardArgs' => $buyCardArgs,
+                ]
+            );
+            $this->setQuestion($question);
+            $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+            $this->removeEvolution($playerId, $card);
+
+            $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+
+        } else {
+            $activePlayerId = $this->getActivePlayerId();
+
+            $forbiddenCard = $this->getCardFromDb($this->cards->getCard($cardBeingBought->cardId));
+
+            $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} prevents ${player_name2} to buy ${card_name}. ${player_name2} is not forced to buy another card, as player energy is too low to buy another card. '/*)*/, [
+                'player_name' => $this->getPlayerName($playerId),
+                'player_name2' => $this->getPlayerName($activePlayerId),
+                'card_name' => $forbiddenCard->type,
+            ]);
+    
+            $this->skipCardIsBought(true);
+        }
     }
     
     function applyPrecisionFieldSupport(int $playerId) {

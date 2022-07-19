@@ -4270,7 +4270,12 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {
         var _a, _b;
         if (isCurrentPlayerActive) {
+            var stateName = this.getStateName();
+            var bamboozle = stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle';
             var playerId_2 = this.getPlayerId();
+            if (bamboozle) {
+                playerId_2 = this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId;
+            }
             this.tableCenter.setVisibleCardsSelectionMode(1);
             if (this.isPowerUpExpansion()) {
                 this.getPlayerTable(playerId_2).reservedCards.setSelectionMode(1);
@@ -5229,7 +5234,7 @@ var KingOfTokyo = /** @class */ (function () {
         disabledCardsIds.forEach(function (id) {
             var disabled = disabledIds.some(function (disabledId) { return disabledId == id; }) || cardsCosts[id] > playerEnergy;
             var cardDiv = document.querySelector(".card-stock div[id$=\"_item_" + id + "\"]");
-            cardDiv.classList.toggle('disabled', disabled);
+            cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.toggle('disabled', disabled);
         });
     };
     // called on state enter and when energy number is changed
@@ -5246,8 +5251,10 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         var bamboozle = stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle';
+        var playerId = this.getPlayerId();
         if (bamboozle) {
-            playerEnergy = this.energyCounters[this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId].getValue();
+            playerId = this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId;
+            playerEnergy = this.energyCounters[playerId].getValue();
         }
         if (args === null) {
             args = bamboozle ?
@@ -5255,7 +5262,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.gamedatas.gamestate.args;
         }
         if (playerEnergy === null) {
-            playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
+            playerEnergy = this.energyCounters[playerId].getValue();
         }
         var cardsCosts = args.cardsCosts;
         if (args.gotSuperiorAlienTechnology) {

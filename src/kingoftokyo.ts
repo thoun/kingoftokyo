@@ -752,7 +752,13 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringBuyCard(args: EnteringBuyCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
-            const playerId = this.getPlayerId();
+            const stateName = this.getStateName();
+            const bamboozle = stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle';        
+            let playerId = this.getPlayerId();
+            if (bamboozle) {
+                playerId = this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId;
+            }
+
             this.tableCenter.setVisibleCardsSelectionMode(1);
 
             if (this.isPowerUpExpansion()) {                
@@ -1842,7 +1848,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         disabledCardsIds.forEach(id => {
             const disabled = disabledIds.some(disabledId => disabledId == id) || cardsCosts[id] > playerEnergy;
             const cardDiv = document.querySelector(`.card-stock div[id$="_item_${id}"]`) as HTMLElement;
-            cardDiv.classList.toggle('disabled', disabled);
+            cardDiv?.classList.toggle('disabled', disabled);
         });
     }
 
@@ -1858,9 +1864,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (!buyState && !changeMimicState) {
             return;
         }
-        const bamboozle = stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle';
+        const bamboozle = stateName === 'answerQuestion' && this.gamedatas.gamestate.args.question.code === 'Bamboozle';        
+        let playerId = this.getPlayerId();
         if (bamboozle) {
-            playerEnergy = this.energyCounters[this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId].getValue();
+            playerId = this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId;
+            playerEnergy = this.energyCounters[playerId].getValue();
         }
         if (args === null) {
             args = bamboozle ?
@@ -1868,7 +1876,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.gamedatas.gamestate.args;
         }
         if (playerEnergy === null) {
-            playerEnergy = this.energyCounters[this.getPlayerId()].getValue();
+            playerEnergy = this.energyCounters[playerId].getValue();
         }
 
         let cardsCosts = args.cardsCosts;
