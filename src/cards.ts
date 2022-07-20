@@ -28,6 +28,90 @@ const TRANSFORMATION_CARDS_LIST = [1];
 
 const FLIPPABLE_CARDS = [301];
 
+const DARK_EDITION_CARDS_COLOR_MAPPINGS = {
+    101: {
+        'B180A0': 'b0782a',
+        '9F7595': 'c5985d',
+    },
+    102: {
+        '496787': 'f47920',
+        '415C7A': 'faa61f',
+    },
+    103: {
+        '993422': 'aa1f23',
+        '5F6A70': 'e12d2b',
+    },
+    104: {
+        '5BB3E2': '477b3a',
+        '45A2D6': '89c546',
+        'CE542B': '89c546',
+    },
+    105: {
+        '5D657F': '358246',
+    },
+    106: {
+        '7F2719': 'f7f39b',
+        '812819': 'ffd530',
+    },
+    107: {
+        '7F2719': 'f7f39b',
+        '812819': 'ffd530',
+    },
+    108: {
+        '71200F': 'ea7b24',
+        '4E130B': 'faa61f',
+    },
+    109: {
+        'B1624A': 'e63047',
+    },
+    110: {
+        '645656': '6ea54a',
+        '71625F': '3f612e',
+    },
+    112: {
+        '5B79A2': 'eca729',
+        '5B79A3': 'fdda50', // 5B79A3 not present in current card, to add ?
+    },
+    113: {
+        'EE008E': 'cfad2e',
+        '49236C': 'f8f16b',
+    },
+    115: {
+        '684376': 'c8b62f',
+        '41375F': 'f8f16b',
+    },
+    116: {
+        '5F8183': 'f47920',
+    },
+    117: {
+        'AF966B': '5269b1',
+    },
+    118: {
+        '847443': '2e88b9',
+        '8D7F4E': '63c0ed',
+    },
+};
+
+const DARK_EDITION_CARDS_MAIN_COLOR = {
+    101: '#b0782a',
+    102: '#f47920',
+    103: '#e12d2b',
+    104: '#5a802e',
+    105: '#358246',
+    106: '#ffd530',
+    107: '#ffd530',
+    108: '#d56529',
+    109: '#e63047',
+    110: '#6ea54a',
+    112: '#eca729',
+    113: '#cfad2e',
+    115: '#c8b62f',
+    116: '#f47920',
+    117: '#5269b1',
+    118: '#2e88b9',
+    119: '#41813c',
+};
+
 class Cards {
     constructor (private game: KingOfTokyoGame) {}
     
@@ -427,7 +511,7 @@ class Cards {
             case 116: return _("[5F8183]Skyscraper");
             case 117: return _("[AF966B]Tank");
             case 118: return _("[847443]Vast [8D7F4E]Storm");
-            case 119: return "Monster pets"; // TODODE
+            case 119: return /*TODODE _*/("[83aa50]Monster [41813c]pets");
 
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
@@ -459,8 +543,15 @@ class Cards {
             return coloredCardName?.replace(/\[(\w+)\]/g, '');
         } else if (state == 'span') {
             let first = true;
+
+            const colorMapping = this.game.isDarkEdition() ? DARK_EDITION_CARDS_COLOR_MAPPINGS[cardTypeId] : null;
+
             return coloredCardName?.replace(/\[(\w+)\]/g, (index, color) => {
-                let span = `<span style="-webkit-text-stroke-color: #${color};">`;
+                let mappedColor = color;
+                if (colorMapping?.[color]) {
+                    mappedColor = colorMapping[color];
+                }
+                let span = `<span style="-webkit-text-stroke-color: #${mappedColor};">`;
                 if (first) {
                     first = false;
                 } else {
@@ -670,6 +761,9 @@ class Cards {
         </div>
         
         <div class="description-wrapper">${description}</div>`;
+        if (this.game.isDarkEdition() && DARK_EDITION_CARDS_MAIN_COLOR[cardType]) {
+            cardDiv.style.setProperty('--main-color', DARK_EDITION_CARDS_MAIN_COLOR[cardType]);
+        }
 
         let textHeight = (cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement).clientHeight;
 

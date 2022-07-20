@@ -79,6 +79,8 @@ html[data-dark-edition="true"] {
     
     .card-stock {
         .stockitem, #deck {
+            --main-color: #f6d445;
+
             .card-token {    
                 &.mimic-tile {
                     background-image: url("img/dark/wickedness-tiles.jpg"); 
@@ -92,12 +94,18 @@ html[data-dark-edition="true"] {
             .name-wrapper {
                 font-size: 13pt;
                 font-family: 'young-frankenstein-italic';
+                color: black;
             }
 
             .type-wrapper {
                 transform: unset;
                 font-family: 'young-frankenstein';
                 font-size: 11pt;
+
+
+                .text {                    
+                    background: var(--main-color);
+                }
 
                 &.keep .outline, &.discard .outline, &.costume .outline, &.transformation .outline {
                     -webkit-text-stroke: 0;
@@ -107,11 +115,11 @@ html[data-dark-edition="true"] {
                 &.keep {
                     ::before {
                         content: '((';
-                        color: #f6d445;
+                        color: var(--main-color);
                     }
                     ::after {
                         content: '))';
-                        color: #f6d445;
+                        color: var(--main-color);
                     }
                 }
             }

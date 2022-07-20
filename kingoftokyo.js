@@ -97,6 +97,88 @@ var DISCARD_CARDS_LIST = {
 var COSTUME_CARDS_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 var TRANSFORMATION_CARDS_LIST = [1];
 var FLIPPABLE_CARDS = [301];
+var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
+    101: {
+        'B180A0': 'b0782a',
+        '9F7595': 'c5985d',
+    },
+    102: {
+        '496787': 'f47920',
+        '415C7A': 'faa61f',
+    },
+    103: {
+        '993422': 'aa1f23',
+        '5F6A70': 'e12d2b',
+    },
+    104: {
+        '5BB3E2': '477b3a',
+        '45A2D6': '89c546',
+        'CE542B': '89c546',
+    },
+    105: {
+        '5D657F': '358246',
+    },
+    106: {
+        '7F2719': 'f7f39b',
+        '812819': 'ffd530',
+    },
+    107: {
+        '7F2719': 'f7f39b',
+        '812819': 'ffd530',
+    },
+    108: {
+        '71200F': 'ea7b24',
+        '4E130B': 'faa61f',
+    },
+    109: {
+        'B1624A': 'e63047',
+    },
+    110: {
+        '645656': '6ea54a',
+        '71625F': '3f612e',
+    },
+    112: {
+        '5B79A2': 'eca729',
+        '5B79A3': 'fdda50', // 5B79A3 not present in current card, to add ?
+    },
+    113: {
+        'EE008E': 'cfad2e',
+        '49236C': 'f8f16b',
+    },
+    115: {
+        '684376': 'c8b62f',
+        '41375F': 'f8f16b',
+    },
+    116: {
+        '5F8183': 'f47920',
+    },
+    117: {
+        'AF966B': '5269b1',
+    },
+    118: {
+        '847443': '2e88b9',
+        '8D7F4E': '63c0ed',
+    },
+};
+var DARK_EDITION_CARDS_MAIN_COLOR = {
+    101: '#b0782a',
+    102: '#f47920',
+    103: '#e12d2b',
+    104: '#5a802e',
+    105: '#358246',
+    106: '#ffd530',
+    107: '#ffd530',
+    108: '#d56529',
+    109: '#e63047',
+    110: '#6ea54a',
+    112: '#eca729',
+    113: '#cfad2e',
+    115: '#c8b62f',
+    116: '#f47920',
+    117: '#5269b1',
+    118: '#2e88b9',
+    119: '#41813c',
+};
 var Cards = /** @class */ (function () {
     function Cards(game) {
         this.game = game;
@@ -476,7 +558,7 @@ var Cards = /** @class */ (function () {
             case 116: return _("[5F8183]Skyscraper");
             case 117: return _("[AF966B]Tank");
             case 118: return _("[847443]Vast [8D7F4E]Storm");
-            case 119: return "Monster pets"; // TODODE
+            case 119: return /*TODODE _*/ ("[83aa50]Monster [41813c]pets");
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
             case 202: return _("[005c98]Ghost");
@@ -507,8 +589,13 @@ var Cards = /** @class */ (function () {
         }
         else if (state == 'span') {
             var first_1 = true;
+            var colorMapping_1 = this.game.isDarkEdition() ? DARK_EDITION_CARDS_COLOR_MAPPINGS[cardTypeId] : null;
             return (coloredCardName === null || coloredCardName === void 0 ? void 0 : coloredCardName.replace(/\[(\w+)\]/g, function (index, color) {
-                var span = "<span style=\"-webkit-text-stroke-color: #" + color + ";\">";
+                var mappedColor = color;
+                if (colorMapping_1 === null || colorMapping_1 === void 0 ? void 0 : colorMapping_1[color]) {
+                    mappedColor = colorMapping_1[color];
+                }
+                var span = "<span style=\"-webkit-text-stroke-color: #" + mappedColor + ";\">";
                 if (first_1) {
                     first_1 = false;
                 }
@@ -700,6 +787,9 @@ var Cards = /** @class */ (function () {
         var description = formatTextIcons(this.getCardDescription(cardType, side));
         var position = this.getCardNamePosition(cardType, side);
         cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" " + (position ? "style=\"left: " + position[0] + "px; top: " + position[1] + "px;\"" : '') + ">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span', side) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only', side) + "</div>\n        </div>\n        <div class=\"type-wrapper " + this.getCardTypeClass(cardType) + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
+        if (this.game.isDarkEdition() && DARK_EDITION_CARDS_MAIN_COLOR[cardType]) {
+            cardDiv.style.setProperty('--main-color', DARK_EDITION_CARDS_MAIN_COLOR[cardType]);
+        }
         var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         if (textHeight > 80) {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.fontSize = '6pt';

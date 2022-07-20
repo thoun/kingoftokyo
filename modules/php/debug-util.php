@@ -22,7 +22,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 10);
-        $this->debugSetEnergy(2);
+        $this->debugSetEnergy(5);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(1);
@@ -57,6 +57,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(WINGS_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
+        $this->DbQuery("UPDATE card SET `card_location` = 'deck'");
+        foreach ($this->KEEP_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable($cardType);
+        //foreach ($this->DISCARD_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable(100+$cardType);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(REGENERATION_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(OPPORTUNIST_CARD, 2343494));
@@ -86,7 +89,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
-        $this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
+        //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
@@ -119,7 +122,7 @@ trait DebugUtilTrait {
         // dark edition
 
         if ($this->isDarkEdition()) {
-            $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
+            //$this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
             //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
             //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
             //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
