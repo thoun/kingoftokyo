@@ -137,7 +137,7 @@ class PlayerTable {
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = (card_div, card_type_id) => this.game.wickednessTiles.setupNewCard(card_div, card_type_id); 
     
-            this.game.wickednessTiles.setupCards([this.wickednessTiles]);
+            this.game.wickednessTiles.setupCards([this.wickednessTiles], this.game.isDarkEdition());
             this.game.wickednessTiles.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
         }
 

@@ -1,3 +1,50 @@
-html[data-dar-edition="true"] {
-    
+html[data-dark-edition="true"] {
+    .stockitem, #deck {
+        .card-token {    
+            &.mimic-tile {
+                background-image: url("img/dark/wickedness-tiles.jpg"); 
+            }
+        }
+    }
+
+    .card-keep-text {
+        color: white;
+        font-family: 'young-frankenstein';
+
+        .outline {
+            -webkit-text-stroke: 0;
+            visibility: none;
+        }
+
+        ::before {
+            content: '((';
+            color: #f6d445;
+        }
+        ::after {
+            content: '))';
+            color: #f6d445;
+        }
+    }
+
+    .wickedness-tile-stock .stockitem, #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile {
+        background-image: url('img/dark/wickedness-tiles.jpg');
+
+        .name-wrapper {
+            font-family: 'young-frankenstein-expanded-italic';
+            color: #f6d445;
+
+            .outline {
+                &.wickedness-tile-side0 {
+                    -webkit-text-stroke: 4px #231f20;  
+                }
+                &.wickedness-tile-side1 {
+                    -webkit-text-stroke: 4px #231f20;  
+                }
+            }
+        }
+
+        .description-wrapper {
+            color: white;
+        }
+    }
 }

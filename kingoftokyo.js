@@ -1429,9 +1429,9 @@ var WickednessTiles = /** @class */ (function () {
             }
         });
     };
-    WickednessTiles.prototype.setupCards = function (stocks) {
+    WickednessTiles.prototype.setupCards = function (stocks, darkEdition) {
         var _this = this;
-        var wickednesstilessurl = g_gamethemeurl + "img/wickedness-tiles.jpg";
+        var wickednesstilessurl = g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "wickedness-tiles.jpg";
         stocks.forEach(function (stock) {
             stock.image_items_per_row = 3;
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(function (id, index) {
@@ -1739,7 +1739,7 @@ var PlayerTable = /** @class */ (function () {
             this.wickednessTiles.setSelectionMode(0);
             this.wickednessTiles.centerItems = true;
             this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
-            this.game.wickednessTiles.setupCards([this.wickednessTiles]);
+            this.game.wickednessTiles.setupCards([this.wickednessTiles], this.game.isDarkEdition());
             this.game.wickednessTiles.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
         }
         if (game.isPowerUpExpansion()) {

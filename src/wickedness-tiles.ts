@@ -29,8 +29,8 @@ class WickednessTiles {
         })
     }
     
-    public setupCards(stocks: Stock[]) {
-        const wickednesstilessurl = `${g_gamethemeurl}img/wickedness-tiles.jpg`;
+    public setupCards(stocks: Stock[], darkEdition: boolean) {
+        const wickednesstilessurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}wickedness-tiles.jpg`;
         stocks.forEach(stock => {
             stock.image_items_per_row = 3;
 

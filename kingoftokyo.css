@@ -2020,9 +2020,57 @@ h2 {
   margin-bottom: -2px;
 }
 
+html[data-dark-edition=true] .stockitem .card-token.mimic-tile, html[data-dark-edition=true] #deck .card-token.mimic-tile {
+  background-image: url("img/dark/wickedness-tiles.jpg");
+}
+html[data-dark-edition=true] .card-keep-text {
+  color: white;
+  font-family: "young-frankenstein";
+}
+html[data-dark-edition=true] .card-keep-text .outline {
+  -webkit-text-stroke: 0;
+  visibility: none;
+}
+html[data-dark-edition=true] .card-keep-text ::before {
+  content: "((";
+  color: #f6d445;
+}
+html[data-dark-edition=true] .card-keep-text ::after {
+  content: "))";
+  color: #f6d445;
+}
+html[data-dark-edition=true] .wickedness-tile-stock .stockitem, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile {
+  background-image: url("img/dark/wickedness-tiles.jpg");
+}
+html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper {
+  font-family: "young-frankenstein-expanded-italic";
+  color: #f6d445;
+}
+html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side0, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side0 {
+  -webkit-text-stroke: 4px #231f20;
+}
+html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side1, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side1 {
+  -webkit-text-stroke: 4px #231f20;
+}
+html[data-dark-edition=true] .wickedness-tile-stock .stockitem .description-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .description-wrapper {
+  color: white;
+}
+
 @font-face {
   font-family: "goodgirl";
   src: url("img/goodgirl-webfont.woff2") format("woff2"), url("img/goodgirl-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "young-frankenstein";
+  src: url("img/dark/youngfrank.woff2") format("woff2"), url("img/dark/youngfrank.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "young-frankenstein-expanded-italic";
+  src: url("img/dark/youngfrankexpandital.woff2") format("woff2"), url("img/dark/youngfrankexpandital.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }

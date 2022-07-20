@@ -89,7 +89,7 @@ trait UtilTrait {
     }
 
     function isPowerUpExpansion() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
@@ -97,7 +97,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
