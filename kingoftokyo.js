@@ -3758,6 +3758,9 @@ var KingOfTokyo = /** @class */ (function () {
             this.CULTIST_TOOLTIP = formatTextIcons("\n            <h3>" + _("Cultists") + "</h3>\n            <p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");
             this.addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
         }
+        if (gamedatas.darkEdition) {
+            document.getElementsByTagName('html')[0].dataset.darkEdition = 'true';
+        }
         // override to allow icons in messages
         var oldShowMessage = this.showMessage;
         this.showMessage = function (msg, type) { return oldShowMessage(formatTextIcons(msg), type); };
