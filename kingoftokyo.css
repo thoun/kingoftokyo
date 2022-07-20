@@ -2232,6 +2232,9 @@ html[data-dark-edition=true] .energy-cube.cube-shape-3 {
 html[data-dark-edition=true] .energy-cube.cube-shape-4 {
   background-position-x: 100%;
 }
+html[data-dark-edition=true] #zoom-wrapper #zoom-controls button {
+  background-image: url("img/dark/zoom-white.svg");
+}
 
 html[data-background="5"] {
   background: url("img/dark/background.jpg") #13141a;

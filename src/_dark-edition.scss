@@ -219,9 +219,14 @@ html[data-dark-edition="true"] {
             &.cube-shape-#{$i} {
                 background-position-x: #{$i * 25%};
             }
-          }
+        }
         
     }
+
+    #zoom-wrapper #zoom-controls button {
+        background-image: url('img/dark/zoom-white.svg');
+    }
+      
 }
 
 html[data-background="5"] {
