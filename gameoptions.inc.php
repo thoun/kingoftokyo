@@ -283,6 +283,7 @@ $game_preferences = [
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
             /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
+            /* TODOPU 5 => ['name' => totranslate('Dark Edition')], */
         ],
         'default' => 0
     ],
@@ -296,6 +297,7 @@ $game_preferences = [
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
             /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
+            /* TODOPU 5 => ['name' => totranslate('Dark Edition')], */
         ],
         'default' => 0
     ],

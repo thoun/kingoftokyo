@@ -3231,7 +3231,10 @@ var PreferencesManager = /** @class */ (function () {
             return versionNumber;
         }
         else {
-            if (this.game.isPowerUpExpansion()) {
+            if (this.game.isDarkEdition()) {
+                return 5;
+            }
+            else if (this.game.isPowerUpExpansion()) {
                 return 4;
             }
             else if (this.game.isHalloweenExpansion()) {
