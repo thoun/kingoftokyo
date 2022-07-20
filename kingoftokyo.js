@@ -3292,6 +3292,19 @@ var WICKEDNESS_MONSTER_ICON_POSITION = [
     [84, 58],
     [124, 33],
 ];
+var WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
+    [-50, 302],
+    [29, 345],
+    [8, 312],
+    [42, 277],
+    [29, 239],
+    [5, 200],
+    [42, 165],
+    [10, 130],
+    [37, 90],
+    [9, 58],
+    [41, 22],
+];
 var TableCenter = /** @class */ (function () {
     function TableCenter(game, players, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {
         var _this = this;
@@ -3440,7 +3453,8 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         this.wickednessPoints.forEach(function (wickedness, playerId) {
             var markerDiv = document.getElementById("monster-icon-" + playerId + "-wickedness");
-            var position = WICKEDNESS_MONSTER_ICON_POSITION[wickedness];
+            var positionArray = _this.game.isDarkEdition() ? WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION : WICKEDNESS_MONSTER_ICON_POSITION;
+            var position = positionArray[wickedness];
             var topShift = 0;
             var leftShift = 0;
             _this.wickednessPoints.forEach(function (iWickedness, iPlayerId) {

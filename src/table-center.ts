@@ -1,4 +1,3 @@
-
 const WICKEDNESS_MONSTER_ICON_POSITION = [
     [2, 270],
     [32, 317],
@@ -11,6 +10,20 @@ const WICKEDNESS_MONSTER_ICON_POSITION = [
     [41, 96],
     [84, 58],
     [124, 33],
+];
+
+const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
+    [-50, 302],
+    [29, 345],
+    [8, 312],
+    [42, 277],
+    [29, 239],
+    [5, 200],
+    [42, 165],
+    [10, 130],
+    [37, 90],
+    [9, 58],
+    [41, 22],
 ];
 
 class TableCenter {
@@ -198,7 +211,8 @@ class TableCenter {
         this.wickednessPoints.forEach((wickedness, playerId) => {
             const markerDiv = document.getElementById(`monster-icon-${playerId}-wickedness`);
 
-            const position = WICKEDNESS_MONSTER_ICON_POSITION[wickedness];
+            const positionArray = this.game.isDarkEdition() ? WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION : WICKEDNESS_MONSTER_ICON_POSITION;
+            const position = positionArray[wickedness];
     
             let topShift = 0;
             let leftShift = 0;

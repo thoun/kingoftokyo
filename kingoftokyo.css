@@ -2152,6 +2152,32 @@ html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper .ou
 html[data-dark-edition=true] .wickedness-tile-stock .stockitem .description-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .description-wrapper {
   color: white;
 }
+html[data-dark-edition=true] #table #table-center #full-board #board {
+  background-image: url("img/dark/tokyo.jpg");
+}
+html[data-dark-edition=true] #table #table-center #full-board #board.twoPlayersVariant {
+  background: url("img/dark/tokyo-2pvariant.jpg");
+}
+html[data-dark-edition=true] #table #table-center #full-board #board #tokyo-city {
+  top: 35px;
+  left: -6px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #board #tokyo-bay {
+  bottom: 95px;
+  right: 41px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper {
+  width: 140px;
+  position: relative;
+  left: -80px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board {
+  background: none;
+  box-shadow: none;
+}
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile {
+  left: 84px;
+}
 html[data-dark-edition=true] #table .player-table .player-name.goodgirl {
   font-family: "young-frankenstein-italic";
   font-size: 20pt;

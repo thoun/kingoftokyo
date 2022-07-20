@@ -126,6 +126,40 @@ html[data-dark-edition="true"] {
         }
     }
 
+    #table  #table-center #full-board {
+        #board {
+            background-image: url('img/dark/tokyo.jpg');
+            
+            &.twoPlayersVariant {
+                background: url('img/dark/tokyo-2pvariant.jpg');
+            }
+
+            #tokyo-city {
+                top: 35px;
+                left: -6px;
+            }
+            #tokyo-bay {
+                bottom: 95px;
+                right: 41px;
+            }
+        }
+
+        #wickedness-board-wrapper {
+            width: 140px;
+            position: relative;
+            left: -80px;
+
+            #wickedness-board {
+                background: none;
+                box-shadow: none;
+
+                .wickedness-tiles-pile {
+                    left: 84px;
+                }
+            }
+        }
+    }
+
     #table .player-table {
         .player-name {    
             &.goodgirl {
