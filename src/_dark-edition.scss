@@ -168,6 +168,20 @@ html[data-dark-edition="true"] {
             }
         }
     }
+
+    
+
+    .energy-cube {
+        background: url('img/dark/energy-cubes.png') center no-repeat;
+        background-size: auto 100%;
+
+        @for $i from 0 through 4 {
+            &.cube-shape-#{$i} {
+                background-position-x: #{$i * 25%};
+            }
+          }
+        
+    }
 }
 
 html[data-background="5"] {

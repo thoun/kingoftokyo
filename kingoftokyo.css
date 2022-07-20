@@ -2182,6 +2182,25 @@ html[data-dark-edition=true] #table .player-table .player-name.goodgirl {
   font-family: "young-frankenstein-italic";
   font-size: 20pt;
 }
+html[data-dark-edition=true] .energy-cube {
+  background: url("img/dark/energy-cubes.png") center no-repeat;
+  background-size: auto 100%;
+}
+html[data-dark-edition=true] .energy-cube.cube-shape-0 {
+  background-position-x: 0%;
+}
+html[data-dark-edition=true] .energy-cube.cube-shape-1 {
+  background-position-x: 25%;
+}
+html[data-dark-edition=true] .energy-cube.cube-shape-2 {
+  background-position-x: 50%;
+}
+html[data-dark-edition=true] .energy-cube.cube-shape-3 {
+  background-position-x: 75%;
+}
+html[data-dark-edition=true] .energy-cube.cube-shape-4 {
+  background-position-x: 100%;
+}
 
 html[data-background="5"] {
   background: url("img/dark/background.jpg") #13141a;

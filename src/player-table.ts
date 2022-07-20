@@ -316,7 +316,7 @@ class PlayerTable {
             const newPlace = this.getPlaceEnergySide(placed);
 
             placed.push(newPlace);
-            let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="energy-cube"></div>`;
+            let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="energy-cube cube-shape-${Math.floor(Math.random()*5)}"></div>`;
             dojo.place(html, divId);
         }
 

@@ -218,7 +218,7 @@ var Cards = /** @class */ (function () {
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
             if (cardType === 28) {
-                html += "energy-cube";
+                html += "energy-cube cube-shape-" + Math.floor(Math.random() * 5);
             }
             else if (cardType === 41) {
                 html += "smoke-cloud token";
@@ -1275,7 +1275,7 @@ var EvolutionCards = /** @class */ (function () {
                 html += "ufo token";
             }
             else if (cardType === 26 || cardType === 136) {
-                html += "energy-cube";
+                html += "energy-cube cube-shape-" + Math.floor(Math.random() * 5);
             }
             html += "\"></div>";
             dojo.place(html, divId);
@@ -1610,7 +1610,7 @@ var WickednessTiles = /** @class */ (function () {
             placed.push(newPlace);
             var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
             if (cardType === 28) {
-                html += "energy-cube";
+                html += "energy-cube cube-shape-" + Math.floor(Math.random() * 5);
             }
             else if (cardType === 41) {
                 html += "smoke-cloud token";
@@ -1895,7 +1895,7 @@ var PlayerTable = /** @class */ (function () {
         for (var i = placed.length; i < energy; i++) {
             var newPlace = this.getPlaceEnergySide(placed);
             placed.push(newPlace);
-            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"energy-cube\"></div>";
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"energy-cube cube-shape-" + Math.floor(Math.random() * 5) + "\"></div>";
             dojo.place(html, divId);
         }
         div.dataset.placed = JSON.stringify(placed);

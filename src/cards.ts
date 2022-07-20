@@ -166,7 +166,7 @@ class Cards {
             placed.push(newPlace);
             let html = `<div id="${divId}-token${i}" style="left: ${newPlace.x - 16}px; top: ${newPlace.y - 16}px;" class="card-token `;
             if (cardType === 28) {
-                html += `energy-cube`;
+                html += `energy-cube cube-shape-${Math.floor(Math.random()*5)}`;
             } else if (cardType === 41) {
                 html += `smoke-cloud token`;
             }

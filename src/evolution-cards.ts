@@ -367,7 +367,7 @@ class EvolutionCards {
             if (cardType === 24) {
                 html += `ufo token`;
             } else if (cardType === 26 || cardType === 136) {
-                html += `energy-cube`;
+                html += `energy-cube cube-shape-${Math.floor(Math.random()*5)}`;
             }
             html += `"></div>`;
             dojo.place(html, divId);
