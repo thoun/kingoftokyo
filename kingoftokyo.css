@@ -2074,6 +2074,15 @@ h2 {
   margin-bottom: -2px;
 }
 
+html[data-dark-edition=true] .player-board {
+  background-color: #737373;
+}
+html[data-dark-edition=true] .player-board .player_score, html[data-dark-edition=true] .player-board .fa-star {
+  color: #f99603;
+}
+html[data-dark-edition=true] .player-board .counters {
+  color: white;
+}
 html[data-dark-edition=true] #rolled-dice #locked-dice {
   border: 2px solid #ecda5f;
 }
@@ -2104,6 +2113,9 @@ html[data-dark-edition=true] .double-selection .no-visible-selection-except-doub
 }
 html[data-dark-edition=true] .highlight-evolution {
   box-shadow: 0px 0px 5px 5px #ecda5f;
+}
+html[data-dark-edition=true] #table #table-center #deck-wrapper #deck {
+  background: url("img/dark/card-back.jpg");
 }
 html[data-dark-edition=true] .stockitem .card-token.mimic-tile, html[data-dark-edition=true] #deck .card-token.mimic-tile {
   background-image: url("img/dark/wickedness-tiles.jpg");
@@ -2142,7 +2154,18 @@ html[data-dark-edition=true] .wickedness-tile-stock .stockitem .description-wrap
 }
 html[data-dark-edition=true] #table .player-table .player-name.goodgirl {
   font-family: "young-frankenstein-italic";
-  font-size: 18pt;
+  font-size: 20pt;
+}
+
+html[data-background="5"] {
+  background: url("img/dark/background.jpg") #13141a;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+html[data-background="5"] .mode_3d #game_play_area_background {
+  background: url("img/dark/background.jpg") #13141a;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
 }
 
 html[data-dice="5"] .die-item.black {
@@ -2155,10 +2178,7 @@ html[data-dice="5"] .die-item.green {
   border-color: #737373;
   background-image: url("img/dark/opaque_dice.png");
 }
-html[data-dice="5"] .log .dice-icon:not(.berserk):not(.die-of-fate) {
-  background-image: url("img/dark/black_dice.png");
-}
-html[data-dice="5"] .gamelogreview .dice-icon:not(.berserk):not(.die-of-fate) {
+html[data-dice="5"] .dice-icon:not(.berserk):not(.die-of-fate) {
   background-image: url("img/dark/black_dice.png");
 }
 html[data-dice="5"] .animation {

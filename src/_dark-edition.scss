@@ -3,6 +3,18 @@ $darkEditionBlack: #41423c;
 $darkEditionGrey: #737373;
 
 html[data-dark-edition="true"] {
+    .player-board {
+        background-color: $darkEditionGrey;
+
+        .player_score, .fa-star {
+            color: #f99603;
+        }
+
+        .counters {
+            color: white;
+        }
+    }
+
     #rolled-dice {
         #locked-dice {
           border: 2px solid $darkEditionYellow;
@@ -53,6 +65,16 @@ html[data-dark-edition="true"] {
 
     .highlight-evolution {
         box-shadow: 0px 0px 5px 5px $darkEditionYellow;
+    }
+
+    #table {
+        #table-center {
+            #deck-wrapper {
+                #deck {
+                    background: url('img/dark/card-back.jpg');
+                }
+            }
+        }
     }
     
     .stockitem, #deck {
@@ -108,12 +130,23 @@ html[data-dark-edition="true"] {
         .player-name {    
             &.goodgirl {
                 font-family: 'young-frankenstein-italic';
-                font-size: 18pt;
+                font-size: 20pt;
             }
         }
     }
 }
 
+html[data-background="5"] {
+    background: url('img/dark/background.jpg') #13141a;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/dark/background.jpg') #13141a;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}
 
 html[data-dice="5"] {
     .die-item {
@@ -129,17 +162,9 @@ html[data-dice="5"] {
             background-image: url('img/dark/opaque_dice.png');  
         }
     }
-
-    .log {        
-        .dice-icon:not(.berserk):not(.die-of-fate) {
-            background-image: url('img/dark/black_dice.png');
-        }
-    }
-
-    .gamelogreview {        
-        .dice-icon:not(.berserk):not(.die-of-fate) {
-            background-image: url('img/dark/black_dice.png');
-        }
+     
+    .dice-icon:not(.berserk):not(.die-of-fate) {
+        background-image: url('img/dark/black_dice.png');
     }
     
     .animation {
