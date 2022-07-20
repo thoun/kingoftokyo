@@ -2,7 +2,9 @@ const isDebug = window.location.host == 'studio.boardgamearena.com' || window.lo
 const log = isDebug ? console.log.bind(window.console) : function () { };
 
 const POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
+const POINTS_DEG_DARK_EDITION = [44, 62, 76, 91, 106, 121, 136, 148, 161, 174, 189, 205, 224, 239, 256, 275, 292, 309, 327, 342, 359];
 const HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
+const HEALTH_DEG_DARK_EDITION = [360, 332, 305, 279, 255, 230, 204, 177, 153, 124, 101, 69, 48];
 const SPLIT_ENERGY_CUBES = 6;
 type TokenType = 'poison' | 'shrink-ray';
 
@@ -34,7 +36,7 @@ class PlayerTable {
                 <div class="outline${player.color === '000000' ? ' white' : ''}">${player.name}</div>
                 <div class="text">${player.name}</div>
             </div> 
-            <div id="monster-board-wrapper-${player.id}" class="monster-board-wrapper ${player.location > 0 ? 'intokyo' : ''}">
+            <div id="monster-board-wrapper-${player.id}" class="monster-board-wrapper monster${this.monster} ${player.location > 0 ? 'intokyo' : ''}">
                 <div class="blue wheel" id="blue-wheel-${player.id}"></div>
                 <div class="red wheel" id="red-wheel-${player.id}"></div>
                 <div class="kot-token"></div>
@@ -223,15 +225,17 @@ class PlayerTable {
     }
 
     public setPoints(points: number, delay: number = 0) {
+        const deg = this.monster > 100 ? POINTS_DEG_DARK_EDITION : POINTS_DEG;
         setTimeout(
-            () => document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${POINTS_DEG[Math.min(20, points)]}deg)`,
+            () => document.getElementById(`blue-wheel-${this.playerId}`).style.transform = `rotate(${deg[Math.min(20, points)]}deg)`,
             delay
         );
     }
 
     public setHealth(health: number, delay: number = 0) {
+        const deg = this.monster > 100 ? HEALTH_DEG_DARK_EDITION : HEALTH_DEG;
         setTimeout(
-            () => document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${health > 12 ? 22 : HEALTH_DEG[health]}deg)`,
+            () => document.getElementById(`red-wheel-${this.playerId}`).style.transform = `rotate(${health > 12 ? 22 : deg[health]}deg)`,
             delay
         );
     }
@@ -327,6 +331,9 @@ class PlayerTable {
 
         dojo.removeClass(`monster-board-${this.playerId}`, 'monster0');
         dojo.addClass(`monster-board-${this.playerId}`, newMonsterClass);
+
+        dojo.removeClass(`monster-board-wrapper-${this.playerId}`, 'monster0');
+        dojo.addClass(`monster-board-wrapper-${this.playerId}`, newMonsterClass);
 
         
         const wickednessMarkerDiv = document.getElementById(`monster-icon-${this.playerId}-wickedness`);

@@ -1,6 +1,8 @@
 $tokyoGreen: #a6c136;
 $tokyoBlack: #211D1F;
 
+$darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115; 
+
 @import 'playerboards';
 @import 'dice';
 @import 'cards';
@@ -34,6 +36,14 @@ $tokyoBlack: #211D1F;
   font-family: 'young-frankenstein-expanded-italic';
   src: url('img/dark/youngfrankexpandital.woff2') format('woff2'),
        url('img/dark/youngfrankexpandital.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'young-frankenstein-italic';
+  src: url('img/dark/youngfrankital.woff2') format('woff2'),
+       url('img/dark/youngfrankital.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -135,6 +145,11 @@ html, .mode_3d #game_play_area_background {
       &.monster#{$i} {
           background-image: url('img/monster-figure-#{$i}.png');
       }
+  }
+  @each $i in $darkEditionMonstersNumbers {
+    &.monster#{$i} {
+        background-image: url('img/dark/monster-figure-#{$i}.png');
+    }
   }
 
   &.monster12.beast-mode {
@@ -473,6 +488,14 @@ button, a {
     &.monster18 {
       background-image: url('img/monster-icons.png');
       background-position: 100% 50%;
+    }
+    @each $darkEditionMonstersNumber in $darkEditionMonstersNumbers {
+      $i: index($darkEditionMonstersNumbers, $darkEditionMonstersNumber);
+      &.monster#{$darkEditionMonstersNumber} {
+        background-image: url('img/dark/monster-icons.png'); // here and not in .monster-icon, so monsters with no icon will get the background-color set in JS instead of first monster icon
+        background-position: (($i - 1) * 100% / 5) 50%;
+        box-shadow: none;
+      }
     }
 }
 

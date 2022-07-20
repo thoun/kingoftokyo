@@ -1652,7 +1652,9 @@ var isDebug = window.location.host == 'studio.boardgamearena.com' || window.loca
 ;
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var POINTS_DEG = [25, 40, 56, 73, 89, 105, 122, 138, 154, 170, 187, 204, 221, 237, 254, 271, 288, 305, 322, 339, 359];
+var POINTS_DEG_DARK_EDITION = [44, 62, 76, 91, 106, 121, 136, 148, 161, 174, 189, 205, 224, 239, 256, 275, 292, 309, 327, 342, 359];
 var HEALTH_DEG = [360, 326, 301, 274, 249, 226, 201, 174, 149, 122, 98, 64, 39];
+var HEALTH_DEG_DARK_EDITION = [360, 332, 305, 279, 255, 230, 204, 177, 153, 124, 101, 69, 48];
 var SPLIT_ENERGY_CUBES = 6;
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player, playerWithGoldenScarab, evolutionCardsWithSingleState) {
@@ -1667,7 +1669,7 @@ var PlayerTable = /** @class */ (function () {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
-        var html = "\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>";
+        var html = "\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper monster" + this.monster + " " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>";
         if (game.isWickednessExpansion()) {
             html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_a = player.wickednessTiles) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>   ";
         }
@@ -1815,12 +1817,14 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.setPoints = function (points, delay) {
         var _this = this;
         if (delay === void 0) { delay = 0; }
-        setTimeout(function () { return document.getElementById("blue-wheel-" + _this.playerId).style.transform = "rotate(" + POINTS_DEG[Math.min(20, points)] + "deg)"; }, delay);
+        var deg = this.monster > 100 ? POINTS_DEG_DARK_EDITION : POINTS_DEG;
+        setTimeout(function () { return document.getElementById("blue-wheel-" + _this.playerId).style.transform = "rotate(" + deg[Math.min(20, points)] + "deg)"; }, delay);
     };
     PlayerTable.prototype.setHealth = function (health, delay) {
         var _this = this;
         if (delay === void 0) { delay = 0; }
-        setTimeout(function () { return document.getElementById("red-wheel-" + _this.playerId).style.transform = "rotate(" + (health > 12 ? 22 : HEALTH_DEG[health]) + "deg)"; }, delay);
+        var deg = this.monster > 100 ? HEALTH_DEG_DARK_EDITION : HEALTH_DEG;
+        setTimeout(function () { return document.getElementById("red-wheel-" + _this.playerId).style.transform = "rotate(" + (health > 12 ? 22 : deg[health]) + "deg)"; }, delay);
     };
     PlayerTable.prototype.setEnergy = function (energy, delay) {
         var _this = this;
@@ -1902,6 +1906,8 @@ var PlayerTable = /** @class */ (function () {
         dojo.addClass("monster-figure-" + this.playerId, newMonsterClass);
         dojo.removeClass("monster-board-" + this.playerId, 'monster0');
         dojo.addClass("monster-board-" + this.playerId, newMonsterClass);
+        dojo.removeClass("monster-board-wrapper-" + this.playerId, 'monster0');
+        dojo.addClass("monster-board-wrapper-" + this.playerId, newMonsterClass);
         var wickednessMarkerDiv = document.getElementById("monster-icon-" + this.playerId + "-wickedness");
         wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.remove('monster0');
         wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.add(newMonsterClass);
@@ -3298,7 +3304,7 @@ var TableCenter = /** @class */ (function () {
             this.createWickednessTiles(wickednessTiles);
             document.getElementById("table-cards").dataset.wickednessBoard = 'true';
             players.forEach(function (player) {
-                dojo.place("<div id=\"monster-icon-" + player.id + "-wickedness\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div>", 'wickedness-board');
+                dojo.place("<div id=\"monster-icon-" + player.id + "-wickedness\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: " + (player.monster > 100 ? 'unset' : '#' + player.color) + ";\"></div>", 'wickedness-board');
                 _this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
             });
             this.moveWickednessPoints();
@@ -4629,7 +4635,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var argsGiveGoldenScarab = args;
                     argsGiveGoldenScarab.playersIds.forEach(function (playerId) {
                         var player = _this.gamedatas.players[playerId];
-                        var label = "<div class=\"monster-icon monster" + player.monster + "\" style=\"background-color: #" + player.color + ";\"></div> " + player.name;
+                        var label = "<div class=\"monster-icon monster" + player.monster + "\" style=\"background-color: " + (player.monster > 100 ? 'unset' : '#' + player.color) + ";\"></div> " + player.name;
                         _this.addActionButton("giveGoldenScarab_button_" + playerId, label, function () { return _this.giveGoldenScarab(playerId); });
                     });
                     break;

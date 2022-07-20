@@ -103,6 +103,15 @@ html[data-dark-edition="true"] {
             color: white;
         }
     }
+
+    #table .player-table {
+        .player-name {    
+            &.goodgirl {
+                font-family: 'young-frankenstein-italic';
+                font-size: 18pt;
+            }
+        }
+    }
 }
 
 

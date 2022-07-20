@@ -1381,6 +1381,42 @@
   bottom: 5px;
   transform: rotate(98deg);
 }
+#table .player-table .monster-board-wrapper.monster102 .wheel.blue {
+  background-image: url("img/dark/yellow-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster102 .wheel.red {
+  background-image: url("img/dark/red-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster104 .wheel.blue {
+  background-image: url("img/dark/yellow-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster104 .wheel.red {
+  background-image: url("img/dark/red-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster105 .wheel.blue {
+  background-image: url("img/dark/yellow-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster105 .wheel.red {
+  background-image: url("img/dark/red-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster106 .wheel.blue {
+  background-image: url("img/dark/yellow-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster106 .wheel.red {
+  background-image: url("img/dark/red-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster114 .wheel.blue {
+  background-image: url("img/dark/yellow-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster114 .wheel.red {
+  background-image: url("img/dark/red-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster115 .wheel.blue {
+  background-image: url("img/dark/yellow-wheel.png");
+}
+#table .player-table .monster-board-wrapper.monster115 .wheel.red {
+  background-image: url("img/dark/red-wheel.png");
+}
 #table .player-table .monster-board-wrapper .monster-board {
   width: 280px;
   height: 219px;
@@ -1485,6 +1521,24 @@
 }
 #table .player-table .monster-board-wrapper .monster-board.monster38 {
   background-image: url("img/monster-board-38.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster102 {
+  background-image: url("img/dark/monster-board-102.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster104 {
+  background-image: url("img/dark/monster-board-104.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster105 {
+  background-image: url("img/dark/monster-board-105.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster106 {
+  background-image: url("img/dark/monster-board-106.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster114 {
+  background-image: url("img/dark/monster-board-114.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster115 {
+  background-image: url("img/dark/monster-board-115.png");
 }
 #table .player-table .monster-board-wrapper .monster-board .target.token {
   position: absolute;
@@ -2086,6 +2140,10 @@ html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper .ou
 html[data-dark-edition=true] .wickedness-tile-stock .stockitem .description-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .description-wrapper {
   color: white;
 }
+html[data-dark-edition=true] #table .player-table .player-name.goodgirl {
+  font-family: "young-frankenstein-italic";
+  font-size: 18pt;
+}
 
 html[data-dice="5"] .die-item.black {
   background-color: #41423c;
@@ -2122,6 +2180,12 @@ html[data-dice="5"] .animation {
 @font-face {
   font-family: "young-frankenstein-expanded-italic";
   src: url("img/dark/youngfrankexpandital.woff2") format("woff2"), url("img/dark/youngfrankexpandital.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "young-frankenstein-italic";
+  src: url("img/dark/youngfrankital.woff2") format("woff2"), url("img/dark/youngfrankital.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
@@ -2285,6 +2349,24 @@ html, .mode_3d #game_play_area_background {
 }
 .monster-figure.monster38 {
   background-image: url("img/monster-figure-38.png");
+}
+.monster-figure.monster102 {
+  background-image: url("img/dark/monster-figure-102.png");
+}
+.monster-figure.monster104 {
+  background-image: url("img/dark/monster-figure-104.png");
+}
+.monster-figure.monster105 {
+  background-image: url("img/dark/monster-figure-105.png");
+}
+.monster-figure.monster106 {
+  background-image: url("img/dark/monster-figure-106.png");
+}
+.monster-figure.monster114 {
+  background-image: url("img/dark/monster-figure-114.png");
+}
+.monster-figure.monster115 {
+  background-image: url("img/dark/monster-figure-115.png");
 }
 .monster-figure.monster12.beast-mode {
   background-image: url("img/monster-figure-12-beast.png");
@@ -2624,6 +2706,36 @@ button .icon, a .icon {
 .monster-icon.monster18 {
   background-image: url("img/monster-icons.png");
   background-position: 100% 50%;
+}
+.monster-icon.monster102 {
+  background-image: url("img/dark/monster-icons.png");
+  background-position: 0% 50%;
+  box-shadow: none;
+}
+.monster-icon.monster104 {
+  background-image: url("img/dark/monster-icons.png");
+  background-position: 20% 50%;
+  box-shadow: none;
+}
+.monster-icon.monster105 {
+  background-image: url("img/dark/monster-icons.png");
+  background-position: 40% 50%;
+  box-shadow: none;
+}
+.monster-icon.monster106 {
+  background-image: url("img/dark/monster-icons.png");
+  background-position: 60% 50%;
+  box-shadow: none;
+}
+.monster-icon.monster114 {
+  background-image: url("img/dark/monster-icons.png");
+  background-position: 80% 50%;
+  box-shadow: none;
+}
+.monster-icon.monster115 {
+  background-image: url("img/dark/monster-icons.png");
+  background-position: 100% 50%;
+  box-shadow: none;
 }
 
 #generalactions .monster-icon {

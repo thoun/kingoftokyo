@@ -96,6 +96,20 @@
             }
         }
 
+        @each $i in $darkEditionMonstersNumbers {
+            &.monster#{$i} {
+                .wheel {    
+                    &.blue {
+                        background-image: url('img/dark/yellow-wheel.png');
+                    }
+        
+                    &.red {
+                        background-image: url('img/dark/red-wheel.png');
+                    }
+                }
+            }
+          }
+
         .monster-board {
             width: 280px;
             height: 219px;
@@ -123,6 +137,11 @@
             @for $i from 31 through 38 {
                 &.monster#{$i} {
                     background-image: url('img/monster-board-#{$i}.png');
+                }
+            }
+            @each $i in $darkEditionMonstersNumbers {
+                &.monster#{$i} {
+                    background-image: url('img/dark/monster-board-#{$i}.png');
                 }
             }
 

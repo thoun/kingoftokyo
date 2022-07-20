@@ -1134,7 +1134,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     const argsGiveGoldenScarab = args as EnteringGiveGoldenScarabArgs;
                     argsGiveGoldenScarab.playersIds.forEach(playerId => {
                         const player = this.gamedatas.players[playerId];
-                        const label = `<div class="monster-icon monster${player.monster}" style="background-color: #${player.color};"></div> ${player.name}`;
+                        const label = `<div class="monster-icon monster${player.monster}" style="background-color: ${player.monster > 100 ? 'unset' : '#'+player.color};"></div> ${player.name}`;
                         (this as any).addActionButton(`giveGoldenScarab_button_${playerId}`, label, () => this.giveGoldenScarab(playerId));
                     });
                     break;
