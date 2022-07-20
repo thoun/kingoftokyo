@@ -587,6 +587,12 @@ interface NotifChangeDieArgs {
     psychicProbeRollDieArgs?: EnteringPsychicProbeRollDieArgs;
 }
 
+interface NotifChangeDiceArgs {
+    playerId: number;
+    canHealWithDice: boolean;
+    dieIdsToValues: { [dieId: number]: number };
+}
+
 interface NotifUpdateLeaveTokyoUnderArgs {
     under: number;
 }

@@ -6345,6 +6345,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['useCamouflage', ANIMATION_MS],
             ['useLightningArmor', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
+            ['changeDice', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
             ['takeWickednessTile', ANIMATION_MS],
@@ -6645,6 +6646,12 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_rethrow3changeDie = function (notif) {
         this.diceManager.changeDie(notif.args.dieId, notif.args.canHealWithDice, notif.args.toValue, notif.args.roll);
+    };
+    KingOfTokyo.prototype.notif_changeDice = function (notif) {
+        var _this = this;
+        Object.keys(notif.args.dieIdsToValues).forEach(function (key) {
+            return _this.diceManager.changeDie(Number(key), notif.args.canHealWithDice, notif.args.dieIdsToValues[key], false);
+        });
     };
     KingOfTokyo.prototype.notif_resolvePlayerDice = function () {
         this.diceManager.lockAll();

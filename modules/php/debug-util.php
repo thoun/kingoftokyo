@@ -239,6 +239,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(YIN_YANG_EVOLUTION, 2343492, true);
         }
 
         // player order

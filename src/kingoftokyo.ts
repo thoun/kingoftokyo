@@ -3236,6 +3236,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['useCamouflage', ANIMATION_MS],
             ['useLightningArmor', ANIMATION_MS],
             ['changeDie', ANIMATION_MS],
+            ['changeDice', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
             ['changeCurseCard', ANIMATION_MS],
             ['takeWickednessTile', ANIMATION_MS],
@@ -3585,6 +3586,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_rethrow3changeDie(notif: Notif<NotifChangeDieArgs>) {
         this.diceManager.changeDie(notif.args.dieId, notif.args.canHealWithDice, notif.args.toValue, notif.args.roll);
+    }
+
+    notif_changeDice(notif: Notif<NotifChangeDiceArgs>) {
+        Object.keys(notif.args.dieIdsToValues).forEach(key => 
+            this.diceManager.changeDie(Number(key), notif.args.canHealWithDice, notif.args.dieIdsToValues[key], false)
+        );
     }
 
     notif_resolvePlayerDice() {
