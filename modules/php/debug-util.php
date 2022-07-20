@@ -45,8 +45,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
         //$this->debugSetCardInTable(BATTERY_MONSTER_CARD);
         //$this->debugSetCardInTable(ASTRONAUT_CARD);
-        $this->debugSetCardInTable(ARMOR_PLATING_CARD);
-        $this->debugSetCardInTable(EVEN_BIGGER_CARD);
+        //$this->debugSetCardInTable(ARMOR_PLATING_CARD);
+        //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
         //$this->debugSetCardInTable(TANK_CARD);
         //$this->debugSetCardInTable(GAS_REFINERY_CARD);
@@ -73,11 +73,11 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
-        $this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
+        //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(SOLAR_POWERED_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
@@ -86,7 +86,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
-        //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
+        $this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);

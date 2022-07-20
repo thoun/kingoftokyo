@@ -2117,8 +2117,35 @@ html[data-dark-edition=true] .highlight-evolution {
 html[data-dark-edition=true] #table #table-center #deck-wrapper #deck {
   background: url("img/dark/card-back.jpg");
 }
-html[data-dark-edition=true] .stockitem .card-token.mimic-tile, html[data-dark-edition=true] #deck .card-token.mimic-tile {
+html[data-dark-edition=true] .card-stock .stockitem .card-token.mimic-tile, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile {
   background-image: url("img/dark/wickedness-tiles.jpg");
+}
+html[data-dark-edition=true] .card-stock .stockitem .bottom, html[data-dark-edition=true] .card-stock #deck .bottom {
+  background-image: url("img/dark/card-bottom.png");
+}
+html[data-dark-edition=true] .card-stock .stockitem .name-wrapper, html[data-dark-edition=true] .card-stock #deck .name-wrapper {
+  font-size: 13pt;
+  font-family: "young-frankenstein-italic";
+}
+html[data-dark-edition=true] .card-stock .stockitem .type-wrapper, html[data-dark-edition=true] .card-stock #deck .type-wrapper {
+  transform: unset;
+  font-family: "young-frankenstein";
+  font-size: 11pt;
+}
+html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.transformation .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.transformation .outline {
+  -webkit-text-stroke: 0;
+  visibility: hidden;
+}
+html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.keep ::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::before {
+  content: "((";
+  color: #f6d445;
+}
+html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.keep ::after, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::after {
+  content: "))";
+  color: #f6d445;
+}
+html[data-dark-edition=true] .card-stock .stockitem .description-wrapper, html[data-dark-edition=true] .card-stock #deck .description-wrapper {
+  color: white;
 }
 html[data-dark-edition=true] .card-keep-text {
   color: white;
@@ -2181,6 +2208,10 @@ html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-
 html[data-dark-edition=true] #table .player-table .player-name.goodgirl {
   font-family: "young-frankenstein-italic";
   font-size: 20pt;
+}
+html[data-dark-edition=true] .icon.points {
+  background-image: url("img/dark/icons.png");
+  background-position: 0% 0%;
 }
 html[data-dark-edition=true] .energy-cube {
   background: url("img/dark/energy-cubes.png") center no-repeat;

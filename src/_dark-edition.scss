@@ -77,10 +77,47 @@ html[data-dark-edition="true"] {
         }
     }
     
-    .stockitem, #deck {
-        .card-token {    
-            &.mimic-tile {
-                background-image: url("img/dark/wickedness-tiles.jpg"); 
+    .card-stock {
+        .stockitem, #deck {
+            .card-token {    
+                &.mimic-tile {
+                    background-image: url("img/dark/wickedness-tiles.jpg"); 
+                }
+            }
+
+            .bottom {
+                background-image: url('img/dark/card-bottom.png');
+            }
+
+            .name-wrapper {
+                font-size: 13pt;
+                font-family: 'young-frankenstein-italic';
+            }
+
+            .type-wrapper {
+                transform: unset;
+                font-family: 'young-frankenstein';
+                font-size: 11pt;
+
+                &.keep .outline, &.discard .outline, &.costume .outline, &.transformation .outline {
+                    -webkit-text-stroke: 0;
+                    visibility: hidden;
+                }
+
+                &.keep {
+                    ::before {
+                        content: '((';
+                        color: #f6d445;
+                    }
+                    ::after {
+                        content: '))';
+                        color: #f6d445;
+                    }
+                }
+            }
+
+            .description-wrapper {
+                color: white;
             }
         }
     }
@@ -168,8 +205,11 @@ html[data-dark-edition="true"] {
             }
         }
     }
-
     
+    .icon.points {
+        background-image: url('img/dark/icons.png');
+        background-position: 0% 0%;
+    }
 
     .energy-cube {
         background: url('img/dark/energy-cubes.png') center no-repeat;
