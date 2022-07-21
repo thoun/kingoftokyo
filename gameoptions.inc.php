@@ -169,7 +169,6 @@ $game_options = [
     ],
     */
 
-    /* TODODE 
     DARK_EDITION_OPTION => [
         'name' => totranslate('Dark edition'),
         'values' => [
@@ -191,7 +190,6 @@ $game_options = [
         ],
         'default' => 1,
     ],
-    */
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [
@@ -224,7 +222,7 @@ $game_options = [
                 'description' => totranslate("Include bonus/promo monsters"),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
     ],
 
     110 => [
@@ -283,7 +281,7 @@ $game_preferences = [
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
             /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
-            /* TODOPU 5 => ['name' => totranslate('Dark Edition')], */
+            5 => ['name' => totranslate('Dark Edition')],
         ],
         'default' => 0
     ],
@@ -297,7 +295,7 @@ $game_preferences = [
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
             /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
-            /* TODOPU 5 => ['name' => totranslate('Dark Edition')], */
+            5 => ['name' => totranslate('Dark Edition')],
         ],
         'default' => 0
     ],
