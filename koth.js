@@ -5608,7 +5608,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
         var evolutionCardsWithSingleState = this.isPowerUpExpansion() ?
-            Object.values(this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE).reduce(function (a1, a2) { return __spreadArray(__spreadArray([], a1, true), a2, true); }, []) :
+            Object.values(this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE).reduce(function (a1, a2) { return __spreadArray(__spreadArray([], a1), a2); }, []) :
             null;
         this.playerTables = this.getOrderedPlayers().map(function (player) {
             var playerId = Number(player.id);
@@ -5831,7 +5831,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {
-        var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds, true), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }), true);
+        var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }));
         disabledCardsIds.forEach(function (id) {
             var disabled = disabledIds.some(function (disabledId) { return disabledId == id; }) || cardsCosts[id] > playerEnergy;
             var cardDiv = document.querySelector(".card-stock div[id$=\"_item_" + id + "\"]");
