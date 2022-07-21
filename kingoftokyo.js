@@ -620,13 +620,13 @@ var Cards = /** @class */ (function () {
             case 13:
             case 14: return 7;
             case 15: return 4;
-            case 16: return 5;
+            case 16: return this.game.isDarkEdition() ? 6 : 5;
             case 17: return 3;
             case 18: return 5;
-            case 19: return 4;
+            case 19: return this.game.isDarkEdition() ? 6 : 4;
             case 20: return 4;
             case 21: return 5;
-            case 22: return 3;
+            case 22: return this.game.isDarkEdition() ? 5 : 3;
             case 23: return 7;
             case 24: return 5;
             case 25: return 2;
@@ -646,7 +646,7 @@ var Cards = /** @class */ (function () {
             case 39: return 3;
             case 40: return 6;
             case 41: return 4;
-            case 42: return 2;
+            case 42: return this.game.isDarkEdition() ? 3 : 2;
             case 43: return 5;
             case 44: return 3;
             case 45: return 4;
@@ -888,6 +888,11 @@ var Cards = /** @class */ (function () {
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
             case 49: return "<div><i>" + ("You CANNOT buy this card while in TOKYO") + "</i></div>" + /*_TODODE*/ ("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
             case 50: return /*_TODODE*/ ("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
+            case 51: return '<div><strong>+4[Energy] +4[Heart]</strong></div>' + /*TODODE_*/ ("<strong>Use an extra die.</strong> If you ever end one of your turns with at least [dice3], you lose all your [Heart].");
+            case 52: return /*TODODE_*/ ("<strong>Any Monster who makes you lose [Heart] loses 1[Heart]</strong> as well.");
+            case 53: return /*TODODE_*/ ("Once each player’s turn, you may spend 1[Energy] <strong>to negate the loss of 1[Heart].</strong>");
+            case 54: return /*TODODE_*/ ("When you Yield Tokyo, <strong>you may exchange this card</strong> with a card of your choice from the Monster who Smashed you.");
+            case 55: return /*TODODE_*/ ("If you reach [Skull] for the first time in this game, <strong>discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star], Yield Tokyo, gain 12[Heart] and continue playing.</strong> For the rest of the game, your maximum [Heart] is increased to 12[Heart] and <strong>you can’t use [diceHeart] anymore.</strong>");
             // TODODE
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";

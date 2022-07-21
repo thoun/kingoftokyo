@@ -532,7 +532,7 @@ trait CardsActionTrait {
             throw new \BgaUserException("You can only sell Keep cards");
         }
 
-        $fullCost = $this->CARD_COST[$card->type];
+        $fullCost = $this->getCardBaseCost($card->type);
 
         $this->removeCard($playerId, $card, true);
 

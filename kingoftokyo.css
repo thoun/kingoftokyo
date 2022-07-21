@@ -2242,6 +2242,11 @@ html[data-dark-edition=true] .energy-cube.cube-shape-4 {
 html[data-dark-edition=true] #zoom-wrapper #zoom-controls button {
   background-image: url("img/dark/zoom-white.svg");
 }
+html[data-dark-edition=true] .tundra .dijitTooltipContainer {
+  background: black;
+  color: white;
+  border-color: gray;
+}
 
 html[data-background="5"] {
   background: url("img/dark/background.jpg") #13141a;

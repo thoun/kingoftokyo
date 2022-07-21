@@ -682,7 +682,7 @@ trait EvolutionCardsUtilTrait {
             $this->cards->moveCard($topCard->id, 'discard');
             $this->applyPrecisionFieldSupport($playerId);
 
-        } else if ($this->CARD_COST[$topCard->type] > 4) {
+        } else if ($this->getCardBaseCost($topCard->type) > 4) {
 
             $this->notifyAllPlayers('log500', /*client TODOPU translate(*/'${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'/*)*/, [
                 'playerId' => $playerId,

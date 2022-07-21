@@ -18,6 +18,23 @@ trait CardsUtilTrait {
     //////////// Utility functions
     ////////////
 
+    function getCardBaseCost(int $cardType) {
+        $cost = $this->CARD_COST[$cardType];
+
+        // new costs for the Dark Edition
+        if (($cardType ===  16 || $cardType ===  19) && $this->isDarkEdition()) {
+            return 6;
+        }
+        if ($cardType ===  22 && $this->isDarkEdition()) {
+            return 5;
+        }
+        if ($cardType ===  42 && $this->isDarkEdition()) {
+            return 3;
+        }
+
+        return $cost;
+    }
+
     function initCards() {
         $cards = [];
 
@@ -334,7 +351,7 @@ trait CardsUtilTrait {
     }
 
     function getCardCost(int $playerId, int $cardType) {
-        $cardCost = $this->CARD_COST[$cardType];
+        $cardCost = $this->getCardBaseCost($cardType);
 
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
