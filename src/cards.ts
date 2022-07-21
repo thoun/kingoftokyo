@@ -978,6 +978,8 @@ class Cards {
     }
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number, side: number = null) {
+        cardDiv.classList.add('kot-card');
+        cardDiv.dataset.design = cardType < 200 && this.game.isDarkEdition() ? 'dark-edition' : 'standard';
         const type = this.getCardTypeName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType, side));
         const position = this.getCardNamePosition(cardType, side);

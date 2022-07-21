@@ -78,7 +78,7 @@ html[data-dark-edition="true"] {
     }
     
     .card-stock {
-        .stockitem, #deck {
+        .stockitem.kot-card[data-design="dark-edition"], #deck {
             --main-color: #f6d445;
 
             .card-token {    
@@ -130,22 +130,25 @@ html[data-dark-edition="true"] {
         }
     }
 
-    .card-keep-text {
-        color: white;
-        font-family: 'young-frankenstein';
+    .kot-card[data-design="dark-edition"], .kot-tile, .dijitTooltipContainer {
 
-        .outline {
-            -webkit-text-stroke: 0;
-            visibility: none;
-        }
+        .card-keep-text {
+            color: white;
+            font-family: 'young-frankenstein';
 
-        ::before {
-            content: '((';
-            color: #f6d445;
-        }
-        ::after {
-            content: '))';
-            color: #f6d445;
+            .outline {
+                -webkit-text-stroke: 0;
+                visibility: none;
+            }
+
+            ::before {
+                content: '((';
+                color: #f6d445;
+            }
+            ::after {
+                content: '))';
+                color: #f6d445;
+            }
         }
     }
 
@@ -214,9 +217,11 @@ html[data-dark-edition="true"] {
         }
     }
     
-    .icon.points {
-        background-image: url('img/dark/icons.png');
-        background-position: 0% 0%;
+    .kot-card[data-design="dark-edition"], .kot-tile, .tokyo-tower, .dijitTooltipContainer {
+        .icon.points {
+            background-image: url('img/dark/icons.png');
+            background-position: 0% 0%;
+        }
     }
 
     .energy-cube {
@@ -239,6 +244,30 @@ html[data-dark-edition="true"] {
         background: black;
         color: white;
         border-color: gray;
+    }
+
+    
+    .token {    
+        &.shrink-ray {
+            background-image: url('img/dark/tokens.png');
+            background-position: 0% 0%;
+            border-radius: unset;
+            box-shadow: none !important;
+        }
+    
+        &.poison {
+            background-image: url('img/dark/tokens.png');
+            background-position: 50% 0%;
+            border-radius: unset;
+            box-shadow: none !important;
+        }
+    
+        &.smoke-cloud {
+            background-image: url('img/dark/tokens.png');
+            background-position: 100% 0%;
+            border-radius: unset;
+            box-shadow: none !important;
+        }
     }
 }
 
@@ -268,9 +297,23 @@ html[data-dice="5"] {
             background-image: url('img/dark/opaque_dice.png');  
         }
     }
+
+    .log {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dark/black_dice.png');
+        }
+    }
+
+    .gamelogreview {
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dark/black_dice.png');
+        }
+    }
      
-    .dice-icon:not(.berserk):not(.die-of-fate) {
-        background-image: url('img/dark/black_dice.png');
+    .kot-card[data-design="dark-edition"], .kot-tile {
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dark/black_dice.png');
+        }
     }
     
     .animation {

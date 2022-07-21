@@ -2117,56 +2117,56 @@ html[data-dark-edition=true] .highlight-evolution {
 html[data-dark-edition=true] #table #table-center #deck-wrapper #deck {
   background: url("img/dark/card-back.jpg");
 }
-html[data-dark-edition=true] .card-stock .stockitem, html[data-dark-edition=true] .card-stock #deck {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition], html[data-dark-edition=true] .card-stock #deck {
   --main-color: #f6d445;
 }
-html[data-dark-edition=true] .card-stock .stockitem .card-token.mimic-tile, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .card-token.mimic-tile, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile {
   background-image: url("img/dark/wickedness-tiles.jpg");
 }
-html[data-dark-edition=true] .card-stock .stockitem .bottom, html[data-dark-edition=true] .card-stock #deck .bottom {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .bottom, html[data-dark-edition=true] .card-stock #deck .bottom {
   background-image: url("img/dark/card-bottom.png");
 }
-html[data-dark-edition=true] .card-stock .stockitem .name-wrapper, html[data-dark-edition=true] .card-stock #deck .name-wrapper {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .name-wrapper, html[data-dark-edition=true] .card-stock #deck .name-wrapper {
   font-size: 13pt;
   font-family: "young-frankenstein-italic";
   color: black;
 }
-html[data-dark-edition=true] .card-stock .stockitem .type-wrapper, html[data-dark-edition=true] .card-stock #deck .type-wrapper {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper, html[data-dark-edition=true] .card-stock #deck .type-wrapper {
   transform: unset;
   font-family: "young-frankenstein";
   font-size: 11pt;
 }
-html[data-dark-edition=true] .card-stock .stockitem .type-wrapper .text, html[data-dark-edition=true] .card-stock #deck .type-wrapper .text {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper .text, html[data-dark-edition=true] .card-stock #deck .type-wrapper .text {
   background: var(--main-color);
 }
-html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.transformation .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.transformation .outline {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.transformation .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.transformation .outline {
   -webkit-text-stroke: 0;
   visibility: hidden;
 }
-html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.keep ::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::before {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep ::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::before {
   content: "((";
   color: var(--main-color);
 }
-html[data-dark-edition=true] .card-stock .stockitem .type-wrapper.keep ::after, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::after {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep ::after, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::after {
   content: "))";
   color: var(--main-color);
 }
-html[data-dark-edition=true] .card-stock .stockitem .description-wrapper, html[data-dark-edition=true] .card-stock #deck .description-wrapper {
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .description-wrapper, html[data-dark-edition=true] .card-stock #deck .description-wrapper {
   color: white;
 }
-html[data-dark-edition=true] .card-keep-text {
+html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text, html[data-dark-edition=true] .kot-tile .card-keep-text, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text {
   color: white;
   font-family: "young-frankenstein";
 }
-html[data-dark-edition=true] .card-keep-text .outline {
+html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text .outline, html[data-dark-edition=true] .kot-tile .card-keep-text .outline, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text .outline {
   -webkit-text-stroke: 0;
   visibility: none;
 }
-html[data-dark-edition=true] .card-keep-text ::before {
+html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text ::before, html[data-dark-edition=true] .kot-tile .card-keep-text ::before, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text ::before {
   content: "((";
   color: #f6d445;
 }
-html[data-dark-edition=true] .card-keep-text ::after {
+html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text ::after, html[data-dark-edition=true] .kot-tile .card-keep-text ::after, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text ::after {
   content: "))";
   color: #f6d445;
 }
@@ -2216,7 +2216,7 @@ html[data-dark-edition=true] #table .player-table .player-name.goodgirl {
   font-family: "young-frankenstein-italic";
   font-size: 20pt;
 }
-html[data-dark-edition=true] .icon.points {
+html[data-dark-edition=true] .kot-card[data-design=dark-edition] .icon.points, html[data-dark-edition=true] .kot-tile .icon.points, html[data-dark-edition=true] .tokyo-tower .icon.points, html[data-dark-edition=true] .dijitTooltipContainer .icon.points {
   background-image: url("img/dark/icons.png");
   background-position: 0% 0%;
 }
@@ -2247,6 +2247,24 @@ html[data-dark-edition=true] .tundra .dijitTooltipContainer {
   color: white;
   border-color: gray;
 }
+html[data-dark-edition=true] .token.shrink-ray {
+  background-image: url("img/dark/tokens.png");
+  background-position: 0% 0%;
+  border-radius: unset;
+  box-shadow: none !important;
+}
+html[data-dark-edition=true] .token.poison {
+  background-image: url("img/dark/tokens.png");
+  background-position: 50% 0%;
+  border-radius: unset;
+  box-shadow: none !important;
+}
+html[data-dark-edition=true] .token.smoke-cloud {
+  background-image: url("img/dark/tokens.png");
+  background-position: 100% 0%;
+  border-radius: unset;
+  box-shadow: none !important;
+}
 
 html[data-background="5"] {
   background: url("img/dark/background.jpg") #13141a;
@@ -2269,7 +2287,13 @@ html[data-dice="5"] .die-item.green {
   border-color: #737373;
   background-image: url("img/dark/opaque_dice.png");
 }
-html[data-dice="5"] .dice-icon:not(.berserk):not(.die-of-fate) {
+html[data-dice="5"] .log .dice-icon:not(.berserk):not(.die-of-fate) {
+  background-image: url("img/dark/black_dice.png");
+}
+html[data-dice="5"] .gamelogreview .dice-icon:not(.berserk):not(.die-of-fate) {
+  background-image: url("img/dark/black_dice.png");
+}
+html[data-dice="5"] .kot-card[data-design=dark-edition] .dice-icon:not(.berserk):not(.die-of-fate), html[data-dice="5"] .kot-tile .dice-icon:not(.berserk):not(.die-of-fate) {
   background-image: url("img/dark/black_dice.png");
 }
 html[data-dice="5"] .animation {

@@ -1015,6 +1015,8 @@ var Cards = /** @class */ (function () {
     };
     Cards.prototype.setDivAsCard = function (cardDiv, cardType, side) {
         if (side === void 0) { side = null; }
+        cardDiv.classList.add('kot-card');
+        cardDiv.dataset.design = cardType < 200 && this.game.isDarkEdition() ? 'dark-edition' : 'standard';
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType, side));
         var position = this.getCardNamePosition(cardType, side);
@@ -1229,6 +1231,7 @@ var CurseCards = /** @class */ (function () {
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     CurseCards.prototype.setDivAsCard = function (cardDiv, cardType) {
+        cardDiv.classList.add('kot-curse-card');
         var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
         var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
         var snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));
@@ -1606,6 +1609,7 @@ var EvolutionCards = /** @class */ (function () {
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
     EvolutionCards.prototype.setDivAsCard = function (cardDiv, cardType) {
+        cardDiv.classList.add('kot-evolution');
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
         cardDiv.innerHTML = "\n        <div class=\"evolution-type\">" + type + "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n                    <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        </div>      \n        ";
@@ -1863,6 +1867,7 @@ var WickednessTiles = /** @class */ (function () {
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     WickednessTiles.prototype.setDivAsCard = function (cardDiv, cardType) {
+        cardDiv.classList.add('kot-tile');
         var name = this.getCardName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         cardDiv.innerHTML = "\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n                    <div class=\"text\">" + name + "</div>\n                </div>\n            </div>\n            <div>        \n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        ";

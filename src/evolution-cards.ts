@@ -377,6 +377,7 @@ class EvolutionCards {
     }
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
+        cardDiv.classList.add('kot-evolution');
         const type = this.getCardTypeName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType));
 

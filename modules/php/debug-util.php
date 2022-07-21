@@ -34,8 +34,8 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth($playersIds[3], 1);
         //$this->debugSetPlayerHealth($playersIds[4], 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
-        //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
-        //$this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
+        $this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
+        $this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
         //$this->debugSetCardInTable(HEAL_CARD);
@@ -57,8 +57,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(WINGS_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
-        $this->DbQuery("UPDATE card SET `card_location` = 'deck'");
-        foreach ($this->KEEP_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable($cardType);
+        //$this->DbQuery("UPDATE card SET `card_location` = 'deck'");
+        //foreach ($this->KEEP_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable($cardType);
         //foreach ($this->DISCARD_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable(100+$cardType);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(REGENERATION_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
@@ -70,7 +70,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492), 4);
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
-        //$this->setCardTokens(2343493, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343493), 3, true);
+        $this->setCardTokens(2343493, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343493), 3, true);
         //$this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492);
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
@@ -135,9 +135,9 @@ trait DebugUtilTrait {
             //$this->debugSetCardInHand(GHOST_CARD, 2343492);
             $this->debugSetCardInHand(CLOWN_CARD, 2343492);
             //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-            //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
+            $this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-            $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+            //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
             //$this->debugSetCardInHand(WITCH_CARD, 2343493);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
             //$this->debugSetCardInHand(PIRATE_CARD, 2343494);

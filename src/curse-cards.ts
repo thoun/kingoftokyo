@@ -136,6 +136,7 @@ class CurseCards {
     }
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
+        cardDiv.classList.add('kot-curse-card');
         const permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
         const ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
         const snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));

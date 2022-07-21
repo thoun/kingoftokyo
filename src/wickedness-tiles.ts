@@ -153,6 +153,7 @@ class WickednessTiles {
     }
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
+        cardDiv.classList.add('kot-tile');
         const name = this.getCardName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
 

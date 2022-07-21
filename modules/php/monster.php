@@ -88,7 +88,7 @@ trait MonsterTrait {
         }
 
         if ($this->isPowerUpExpansion()) {
-            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster % 100, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
         }
         
         return $monsters;
