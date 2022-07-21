@@ -98,6 +98,170 @@ var COSTUME_CARDS_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 var TRANSFORMATION_CARDS_LIST = [1];
 var FLIPPABLE_CARDS = [301];
 var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
+    // keep
+    1: {
+        '724468': '6abd45',
+        '6E3F63': 'a3ce51',
+    },
+    2: {
+        '442E70': 'ea6284',
+        '57347E': 'cc343f',
+    },
+    3: {
+        '624A9E': 'f89b21',
+        '624A9F': 'e86a24', // TODODE 624A9F not present in current card, to add ?
+    },
+    4: {
+        '6FBA44': '25c1f2',
+        '6FBA45': '9adbf2', // TODODE 6FBA45 not present in current card, to add ?
+    },
+    5: {
+        '0068A1': 'e7622e',
+        '0070AA': 'eec248',
+    },
+    6: {
+        '5A6E79': '74a534',
+    },
+    7: {
+        '5DB1DD': 'd89028',
+    },
+    8: {
+        '7C7269': 'c24c47',
+        '958B7F': 'e67765',
+    },
+    9: {
+        '836380': 'c4432d',
+        '836381': 'be6d4f', // TODODE 836381 not present in current card, to add ?
+    },
+    10: {
+        '42B4B4': 'ed2024',
+        '25948B': 'b22127',
+    },
+    11: {
+        '0C4E4A': '537dbf',
+        '004C6E': 'abe0f7',
+    },
+    12: {
+        '293066': 'f37671',
+        '293067': 'ee2b2c', // TODODE 293067 not present in current card, to add ?
+    },
+    13: {
+        '060D29': 'ee323e',
+        '0C1946': 'b92530',
+    },
+    14: {
+        '060D29': 'ee323e',
+        '0C1946': 'b92530',
+    },
+    15: {
+        '823F24': 'eb5224',
+        'FAAE5A': 'f09434',
+    },
+    16: {
+        '5F6D7A': '5a56a5',
+        '5F6D7B': '817ebb', // TODODE 5F6D7B not present in current card, to add ?
+    },
+    17: {
+        '0481C4': 'e37ea0',
+        '0481C5': 'c53240', // TODODE 0481C5 not present in current card, to add ? before Children
+    },
+    18: {
+        '8E4522': '3262ae',
+        '277C43': '70b3e3',
+    },
+    19: {
+        '958877': 'f37c21',
+    },
+    21: {
+        '2B63A5': 'e47825',
+    },
+    22: {
+        'BBB595': 'fdb813',
+        '835C25': 'e27926',
+    },
+    23: {
+        '0C94D0': '6b489d',
+        '0C94D1': 'af68aa', // TODODE 0C94D1 not present in current card, to add ? before Child
+    },
+    24: {
+        'AABEE1': 'fce150',
+    },
+    25: {
+        '075087': '598c4e',
+        '124884': '8ac667',
+    },
+    26: {
+        '5E9541': '5c9942',
+    },
+    29: {
+        '67374D': '2e73b9',
+        '83B5B6': '5ebcea',
+    },
+    30: {
+        '5B79A2': 'f16122',
+    },
+    31: {
+        '0068A1': '306bb1',
+    },
+    32: {
+        '462365': 'f59cb7',
+        '563D5B': 'd46793',
+    },
+    33: {
+        'CD599A': 'a43c8d',
+        'E276A7': 'ed82b4',
+    },
+    34: {
+        '1E345D': '6ea943',
+        '1E345E': '447537', // TODODE 1E345E not present in current card, to add ?
+    },
+    36: {
+        '2A7C3C': '537dbf',
+        '6DB446': 'abe0f7',
+    },
+    37: {
+        '8D6E5C': 'ee3343',
+        'B16E44': 'ba2c38',
+    },
+    38: {
+        '5C273B': 'ed6f2f',
+    },
+    40: {
+        'A2B164': 'a3ce4e',
+        'A07958': '437c3a',
+    },
+    41: {
+        '5E7795': 'efcf43',
+        '5E7796': 'e0a137', // TODODE 5E7796 not present in current card, to add ?
+    },
+    42: {
+        '142338': '2eb28b',
+        '46617C': '91cc83',
+    },
+    43: {
+        'A9C7AD': 'ee2d31',
+        '4F6269': 'bb2026',
+    },
+    44: {
+        'AE2B7B': 'ef549f',
+    },
+    45: {
+        '56170E': 'f7941d',
+        '56170F': 'fdbb43', // TODODE 56170F not present in current card, to add ?
+    },
+    46: {
+        'B795A5': '7cc145',
+    },
+    47: {
+        '757A52': '23735f',
+        '60664A': '23735f',
+        '52593A': '23735f',
+        '88A160': '1fa776',
+    },
+    48: {
+        '443E56': 'bc4386',
+    },
+    // discard
     101: {
         'B180A0': 'b0782a',
         '9F7595': 'c5985d',
@@ -139,7 +303,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     112: {
         '5B79A2': 'eca729',
-        '5B79A3': 'fdda50', // 5B79A3 not present in current card, to add ?
+        '5B79A3': 'fdda50', // TODODE 5B79A3 not present in current card, to add ?
     },
     113: {
         'EE008E': 'cfad2e',
@@ -161,6 +325,58 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
 };
 var DARK_EDITION_CARDS_MAIN_COLOR = {
+    // keep
+    1: '#5ebb46',
+    2: '#cc343f',
+    3: '#e86a24',
+    4: '#25c1f2',
+    5: '#e7622e',
+    6: '#74a534',
+    7: '#d89028',
+    8: '#c24c47',
+    9: '#c4432d',
+    10: '#ed2024',
+    11: '#537dbf',
+    12: '#ee2b2c',
+    13: '#ee323e',
+    14: '#ee323e',
+    15: '#eb5224',
+    16: '#5a56a5',
+    17: '#c53240',
+    18: '#3262ae',
+    19: '#f37c21',
+    21: '#e47825',
+    22: '#e27926',
+    23: '#6b489d',
+    24: '#fce150',
+    25: '#598c4e',
+    26: '#5c9942',
+    29: '#5ebcea',
+    30: '#f16122',
+    31: '#306bb1',
+    32: '#d46793',
+    33: '#a43c8d',
+    36: '#537dbf',
+    37: '#ee3343',
+    38: '#ed6f2f',
+    34: '#447537',
+    40: '#437c3a',
+    41: '#e0a137',
+    42: '#2eb28b',
+    43: '#ee2d31',
+    44: '#ef549f',
+    45: '#f9a229',
+    46: '#7cc145',
+    47: '#1fa776',
+    48: '#bc4386',
+    49: '#eeb91a',
+    50: '#ee3934',
+    51: '#f283ae',
+    52: '#d65ca3',
+    53: '#f15c37',
+    54: '#4f7f3a',
+    55: '#659640',
+    // discard
     101: '#b0782a',
     102: '#f47920',
     103: '#e12d2b',
@@ -525,20 +741,20 @@ var Cards = /** @class */ (function () {
             case 39: return _("[007DC0]Rooting for the Underdog");
             case 40: return _("[A2B164]Shrink [A07958]Ray");
             case 41: return _("[5E7795]Smoke Cloud");
-            case 42: return _("[142338]Solar [46617C]Powered");
+            case 42: return this.game.isDarkEdition() ? /*TODODE_*/ ("[2eb28b]Lunar [91cc83]Powered") : _("[142338]Solar [46617C]Powered");
             case 43: return _("[A9C7AD]Spiked [4F6269]Tail");
             case 44: return _("[AE2B7B]Stretchy");
             case 45: return _("[56170E]Energy Drink");
             case 46: return _("[B795A5]Urbavore");
             case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
             case 48: return _("[443E56]Wings");
-            case 49: return ("Hibernation"); // TODODE
-            case 50: return ("Nanobots"); // TODODE
-            case 51: return ("Natural Selection"); // TODODE
-            case 52: return ("Reflective Hide"); // TODODE
-            case 53: return ("Super Jump"); // TODODE
-            case 54: return ("Unstable DNA"); // TODODE
-            case 55: return ("Zombify"); // TODODE
+            case 49: return /*TODODE_*/ ("[eeb91a]Hibernation");
+            case 50: return /*TODODE_*/ ("[ee3934]Nanobots");
+            case 51: return /*TODODE_*/ ("[9e4163]Natural [f283ae]Selection");
+            case 52: return /*TODODE_*/ ("[ad457e]Reflective [d65ca3]Hide");
+            case 53: return /*TODODE_*/ ("[f2633b]Super [faa73b]Jump");
+            case 54: return /*TODODE_*/ ("[4f7f3a]Unstable [a9d154]DNA");
+            case 55: return /*TODODE_*/ ("[659640]Zombify");
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
