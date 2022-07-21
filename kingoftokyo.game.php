@@ -197,7 +197,7 @@ class KingOfTokyo extends Table {
                     $playerMonster = $monsters[bga_rand(1, count($monsters)) - 1];
                 }
                 $affectedMonsters[$playerId] = $playerMonster;
-                $affectedPlayersMonsters[$playerMonster] = $playerId;
+                $affectedPlayersMonsters[$playerMonster % 100] = $playerId; // % 100, for evolutions only!
             }
 
             $color = array_shift( $default_colors );
@@ -352,7 +352,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup(array_keys($players));
+        //$this->debugSetup(array_keys($players));
 
         /************ End of the game initialization *****/
     }

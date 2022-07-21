@@ -72,6 +72,7 @@ class PreferencesManager {
             case 2: return '000000';
             case 3: return '0096CC';
             case 4: return '157597';
+            case 5: return 'ecda5f';
         }
         
         return '96c93c';        

@@ -26,18 +26,19 @@ class EvolutionCards {
                 evolutionRow.appendChild(tempDiv);
                 (this.game as any).addTooltipHtml(tempDiv.id, this.getTooltip(monster * 10 + i));
             }
-        })
+        });
     }
     
     public setupCards(stocks: Stock[]) {
 
         stocks.forEach(stock => {
-            const keepcardsurl = `${g_gamethemeurl}img/evolution-cards.jpg`;
-            stock.addItemType(0, 0, keepcardsurl, 0);
-            MONSTERS_WITH_POWER_UP_CARDS.forEach((monster, index) => {  // keep
-                for (let i=1; i <=8; i++) {
+            const evolutioncardsurl = `${g_gamethemeurl}img/evolution-cards.jpg`;
+            stock.addItemType(0, 0, evolutioncardsurl, 0);
+            MONSTERS_WITH_POWER_UP_CARDS.forEach((monster, index) => {
+                for (let i = 1; i <= 8; i++) {
                     const uniqueId = monster * 10 + i;
-                    stock.addItemType(uniqueId, uniqueId, keepcardsurl, index + 1);
+                    stock.addItemType(uniqueId, uniqueId, evolutioncardsurl, index + 1);
+                    uniqueId == 146 && console.log(uniqueId, uniqueId, evolutioncardsurl, index + 1);
                 }
             });
             

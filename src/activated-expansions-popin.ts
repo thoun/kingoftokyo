@@ -31,7 +31,10 @@ const RULEBOOK_LINKS = [
         'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',
         'fr': 'https://cdn.1j1ju.com/medias/8c/62/83-king-of-tokyo-power-up-regle.pdf',
     },
-    // TODODE
+    { // Dark edition
+        'en': 'https://cdn.1j1ju.com/medias/53/d4/2e-king-of-tokyo-dark-edition-rulebook.pdf',
+        'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
+    },
 ];
 const EXPANSION_NUMBER = 6; // TODOPU // TODODE
 
@@ -73,7 +76,10 @@ class ActivatedExpansionsPopin {
                     <div class="expansion-zone-list">`;
 
             for (let i = 1; i <= EXPANSION_NUMBER; i++) {
-                const activated = this.activatedExpansions.includes(i);
+                let activated = this.activatedExpansions.includes(i);
+                if (i == 6 && this.gamedatas.darkEdition) {
+                    activated = false;
+                }
                 html += `<div class="expansion-zone" data-expansion="${i}" data-activated="${activated.toString()}"><div class="expansion-icon"></div></div>`;
             }
                     
@@ -97,7 +103,8 @@ class ActivatedExpansionsPopin {
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
             case 6: return _('“Even more wicked!” event');
             case 7: return /*TODOPU_*/('Power-Up! (Evolutions)');
-            // TODODE
+            case 8: return /*TODODE*/('Dark Edition');
+            // 
         }
     }
 
@@ -114,7 +121,7 @@ class ActivatedExpansionsPopin {
             <p>${_("You play with the additional Berserk die, until you heal yourself.")}</p>`);
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(/*TODOPU_*/("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
-            // TODODE
+            case 8: return /*TODODE_*/("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
         }
         return '';
     }

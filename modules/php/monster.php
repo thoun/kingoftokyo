@@ -127,7 +127,7 @@ trait MonsterTrait {
         ]);
 
         if ($this->isPowerUpExpansion()) {
-            $this->evolutionCards->moveAllCardsInLocationKeepOrder('monster'.$monsterId, 'deck'.$playerId);
+            $this->evolutionCards->moveAllCardsInLocationKeepOrder('monster'.($monsterId % 100), 'deck'.$playerId);
         }
     }
 

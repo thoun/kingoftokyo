@@ -112,6 +112,9 @@ html[data-dark-edition="true"] {
                 font-size: 11pt;
 
                 &.keep {
+                    .outline {
+                        -webkit-text-stroke: 0;
+                    }
                     .outline::before {
                         top: -4px;
                         left: -4px;
@@ -126,6 +129,9 @@ html[data-dark-edition="true"] {
                 }
 
                 &.discard {
+                    .outline {
+                        -webkit-text-stroke: 0;
+                    }
                     .outline::before {
                         top: -6px;
                         left: 0px;

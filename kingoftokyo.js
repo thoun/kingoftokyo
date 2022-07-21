@@ -1280,12 +1280,13 @@ var EvolutionCards = /** @class */ (function () {
     };
     EvolutionCards.prototype.setupCards = function (stocks) {
         stocks.forEach(function (stock) {
-            var keepcardsurl = g_gamethemeurl + "img/evolution-cards.jpg";
-            stock.addItemType(0, 0, keepcardsurl, 0);
+            var evolutioncardsurl = g_gamethemeurl + "img/evolution-cards.jpg";
+            stock.addItemType(0, 0, evolutioncardsurl, 0);
             MONSTERS_WITH_POWER_UP_CARDS.forEach(function (monster, index) {
                 for (var i = 1; i <= 8; i++) {
                     var uniqueId = monster * 10 + i;
-                    stock.addItemType(uniqueId, uniqueId, keepcardsurl, index + 1);
+                    stock.addItemType(uniqueId, uniqueId, evolutioncardsurl, index + 1);
+                    uniqueId == 146 && console.log(uniqueId, uniqueId, evolutioncardsurl, index + 1);
                 }
             });
         });
@@ -2239,6 +2240,9 @@ var PlayerTable = /** @class */ (function () {
         var wickednessMarkerDiv = document.getElementById("monster-icon-" + this.playerId + "-wickedness");
         wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.remove('monster0');
         wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.add(newMonsterClass);
+        if (monster > 100) {
+            wickednessMarkerDiv.style.backgroundColor = 'unset';
+        }
     };
     PlayerTable.prototype.getPlaceToken = function (placed) {
         var _this = this;
@@ -2323,7 +2327,6 @@ var PlayerTable = /** @class */ (function () {
             this.pickEvolutionCards.create(this.game, $("pick-evolution"), CARD_WIDTH, CARD_WIDTH);
             this.pickEvolutionCards.setSelectionMode(1);
             this.pickEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
-            this.pickEvolutionCards.image_items_per_row = 10;
             this.pickEvolutionCards.centerItems = true;
             dojo.connect(this.pickEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.chooseEvolutionCardClick(Number(item_id)); });
         }
@@ -3602,6 +3605,7 @@ var PreferencesManager = /** @class */ (function () {
             case 2: return '000000';
             case 3: return '0096CC';
             case 4: return '157597';
+            case 5: return 'ecda5f';
         }
         return '96c93c';
     };
@@ -3877,7 +3881,10 @@ var RULEBOOK_LINKS = [
         'en': 'https://cdn.1j1ju.com/medias/69/8c/32-king-of-tokyo-power-up-rulebook.pdf',
         'fr': 'https://cdn.1j1ju.com/medias/8c/62/83-king-of-tokyo-power-up-regle.pdf',
     },
-    // TODODE
+    {
+        'en': 'https://cdn.1j1ju.com/medias/53/d4/2e-king-of-tokyo-dark-edition-rulebook.pdf',
+        'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
+    },
 ];
 var EXPANSION_NUMBER = 6; // TODOPU // TODODE
 var ActivatedExpansionsPopin = /** @class */ (function () {
@@ -3915,6 +3922,9 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">" + _('Active expansions') + "</div>\n                    <div class=\"expansion-zone-list\">";
             for (var i = 1; i <= EXPANSION_NUMBER; i++) {
                 var activated = this.activatedExpansions.includes(i);
+                if (i == 6 && this.gamedatas.darkEdition) {
+                    activated = false;
+                }
                 html += "<div class=\"expansion-zone\" data-expansion=\"" + i + "\" data-activated=\"" + activated.toString() + "\"><div class=\"expansion-icon\"></div></div>";
             }
             html += "        </div>\n                </button>\n            </div>";
@@ -3932,7 +3942,8 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
             case 6: return _('“Even more wicked!” event');
             case 7: return /*TODOPU_*/ ('Power-Up! (Evolutions)');
-            // TODODE
+            case 8: return /*TODODE*/ ('Dark Edition');
+            // 
         }
     };
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
@@ -3944,7 +3955,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(/*TODOPU_*/ ("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
-            // TODODE
+            case 8: return /*TODODE_*/ ("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
         }
         return '';
     };

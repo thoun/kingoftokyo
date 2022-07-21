@@ -339,6 +339,9 @@ class PlayerTable {
         const wickednessMarkerDiv = document.getElementById(`monster-icon-${this.playerId}-wickedness`);
         wickednessMarkerDiv?.classList.remove('monster0');
         wickednessMarkerDiv?.classList.add(newMonsterClass);
+        if (monster > 100) {
+            wickednessMarkerDiv.style.backgroundColor = 'unset';
+        }
     }
 
     private getPlaceToken(placed: PlacedTokens[]): PlacedTokens {
@@ -438,7 +441,6 @@ class PlayerTable {
             this.pickEvolutionCards.create(this.game, $(`pick-evolution`), CARD_WIDTH, CARD_WIDTH);
             this.pickEvolutionCards.setSelectionMode(1);
             this.pickEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
-            this.pickEvolutionCards.image_items_per_row = 10;
             this.pickEvolutionCards.centerItems = true;
             dojo.connect(this.pickEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.chooseEvolutionCardClick(Number(item_id)));
         }

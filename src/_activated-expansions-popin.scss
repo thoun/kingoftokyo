@@ -1,4 +1,4 @@
-$expansions-colors: white, #ff8200, #00a295, #fcbaae, #ccb556, #e22c04, #06b8ee, #5d7b38;
+$expansions-colors: white, #ff8200, #00a295, #fcbaae, #ccb556, #e22c04, #06b8ee, #5d7b38, #41423c;
 
 #active-expansions-button {
     background: white;
@@ -36,7 +36,7 @@ $expansions-colors: white, #ff8200, #00a295, #fcbaae, #ccb556, #e22c04, #06b8ee,
                 background: $expansion-color;
 
                 .expansion-icon {
-                    background-position-x: (($i - 1) * 100% / 6);
+                    background-position-x: (($i - 1) * 100% / 7);
                 }
             }
         }
