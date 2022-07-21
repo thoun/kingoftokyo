@@ -220,6 +220,7 @@ class KingOfTokyo extends Table {
         }
 
         /************ Start the game initialization *****/
+        $darkEdition = intval($this->getGameStateValue(DARK_EDITION_OPTION));
         $wickednessExpansion = intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
 
         // Init global values with their initial values
@@ -296,9 +297,9 @@ class KingOfTokyo extends Table {
             $this->initStat('player', 'turnsInBerserk', 0);
         }
 
-        if ($wickednessExpansion > 1) {
-            //$this->initStat('player', 'gainedWickedness', 0);
-            //$this->initStat('player', 'wickednessTilesTaken', 0);
+        if ($darkEdition > 1 || $wickednessExpansion > 1) {
+            $this->initStat('player', 'gainedWickedness', 0);
+            $this->initStat('player', 'wickednessTilesTaken', 0);
         }
 
         if ($this->isKingKongExpansion()) {
@@ -330,7 +331,10 @@ class KingOfTokyo extends Table {
             $this->curseCards->pickCardForLocation('deck', 'table');
             $this->applyCursePermanentEffectOnReveal();
         }
-        if ($wickednessExpansion > 1) {
+        
+        if ($darkEdition > 1) {
+            $this->initWickednessTiles($darkEdition);
+        } else if ($wickednessExpansion > 1) {
             $this->initWickednessTiles($wickednessExpansion);
         }
 
