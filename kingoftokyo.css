@@ -2144,20 +2144,27 @@ html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-ed
   font-family: "young-frankenstein";
   font-size: 11pt;
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper .text, html[data-dark-edition=true] .card-stock #deck .type-wrapper .text {
-  background: var(--main-color);
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline::before {
+  top: -4px;
+  left: -4px;
+  bottom: -4px;
+  right: -4px;
+  position: absolute;
+  content: "";
+  -webkit-mask: url("img/dark/keep-mask.png") no-repeat center/contain;
+  mask: url("img/dark/keep-mask.png") no-repeat center/contain;
+  background-color: var(--main-color);
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.transformation .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.costume .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.transformation .outline {
-  -webkit-text-stroke: 0;
-  visibility: hidden;
-}
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep ::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::before {
-  content: "((";
-  color: var(--main-color);
-}
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep ::after, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep ::after {
-  content: "))";
-  color: var(--main-color);
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.discard .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline::before {
+  top: -6px;
+  left: 0px;
+  bottom: -4px;
+  right: -8px;
+  position: absolute;
+  content: "";
+  -webkit-mask: url("img/dark/discard-mask.png") no-repeat center/contain;
+  mask: url("img/dark/discard-mask.png") no-repeat center/contain;
+  background-color: var(--main-color);
 }
 html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .description-wrapper, html[data-dark-edition=true] .card-stock #deck .description-wrapper {
   color: white;

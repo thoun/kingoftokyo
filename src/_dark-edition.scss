@@ -111,24 +111,31 @@ html[data-dark-edition="true"] {
                 font-family: 'young-frankenstein';
                 font-size: 11pt;
 
-
-                .text {                    
-                    background: var(--main-color);
-                }
-
-                &.keep .outline, &.discard .outline, &.costume .outline, &.transformation .outline {
-                    -webkit-text-stroke: 0;
-                    visibility: hidden;
-                }
-
                 &.keep {
-                    ::before {
-                        content: '((';
-                        color: var(--main-color);
+                    .outline::before {
+                        top: -4px;
+                        left: -4px;
+                        bottom: -4px;
+                        right: -4px;
+                        position: absolute;
+                        content: '';
+                        -webkit-mask: url('img/dark/keep-mask.png') no-repeat center / contain; 
+                        mask: url('img/dark/keep-mask.png') no-repeat center / contain;  
+                        background-color: var(--main-color); 
                     }
-                    ::after {
-                        content: '))';
-                        color: var(--main-color);
+                }
+
+                &.discard {
+                    .outline::before {
+                        top: -6px;
+                        left: 0px;
+                        bottom: -4px;
+                        right: -8px;
+                        position: absolute;
+                        content: '';
+                        -webkit-mask: url('img/dark/discard-mask.png') no-repeat center / contain; 
+                        mask: url('img/dark/discard-mask.png') no-repeat center / contain;  
+                        background-color: var(--main-color); 
                     }
                 }
             }
