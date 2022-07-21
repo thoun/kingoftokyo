@@ -702,27 +702,34 @@ var Cards = /** @class */ (function () {
             // KEEP
             case 1: return _("[724468]Acid [6E3F63]Attack");
             case 2: return _("[442E70]Alien [57347E]Origin");
-            case 3: return _("[624A9E]Alpha Monster");
-            case 4: return _("[6FBA44]Armor Plating");
+            case 39999: return _("[624A9E]Alpha Monster"); // TODODEAFTER remove
+            case 3: return _("[624A9E]Alpha [624A9F]Monster");
+            case 49999: return _("[6FBA44]Armor Plating"); // TODODEAFTER remove
+            case 4: return _("[6FBA44]Armor [6FBA45]Plating");
             case 5: return _("[0068A1]Background [0070AA]Dweller");
             case 6: return _("[5A6E79]Burrowing");
             case 7: return _("[5DB1DD]Camouflage");
             case 8: return _("[7C7269]Complete [958B7F]Destruction");
-            case 9: return _("[836380]Media-Friendly");
+            case 99999: return _("[836380]Media-Friendly"); // TODODEAFTER remove
+            case 9: return _("[836380]Media-[836381]Friendly");
             case 10: return _("[42B4B4]Eater of [25948B]the Dead");
             case 11: return _("[0C4E4A]Energy [004C6E]Hoarder");
-            case 12: return _("[293066]Even Bigger");
+            case 129999: return _("[293066]Even Bigger"); // TODODEAFTER remove
+            case 12: return _("[293066]Even [293067]Bigger");
             case 13:
             case 14: return _("[060D29]Extra [0C1946]Head");
             case 15: return _("[823F24]Fire [FAAE5A]Breathing");
-            case 16: return _("[5F6D7A]Freeze Time");
+            case 169999: return _("[5F6D7A]Freeze Time"); // TODODEAFTER remove
+            case 16: return _("[5F6D7A]Freeze [5F6D7B]Time");
+            case 179999: return _("[0481C4]Friend of [0481C5]Children"); // TODODEAFTER remove
             case 17: return _("[0481C4]Friend of Children");
             case 18: return _("[8E4522]Giant [277C43]Brain");
             case 19: return _("[958877]Gourmet");
             case 20: return _("[7A673C]Healing [DC825F]Ray");
             case 21: return _("[2B63A5]Herbivore");
             case 22: return _("[BBB595]Herd [835C25]Culler");
-            case 23: return _("[0C94D0]It Has a Child!");
+            case 239999: return _("[0C94D0]It Has a Child!"); // TODODEAFTER remove
+            case 23: return _("[0C94D0]It Has a [0C94D1]Child!");
             case 24: return _("[AABEE1]Jets");
             case 25: return _("[075087]Made in [124884]a Lab");
             case 26: return _("[5E9541]Metamorph");
@@ -733,18 +740,21 @@ var Cards = /** @class */ (function () {
             case 31: return _("[0068A1]Opportunist");
             case 32: return _("[462365]Parasitic [563D5B]Tentacles");
             case 33: return _("[CD599A]Plot [E276A7]Twist");
-            case 34: return _("[1E345D]Poison Quills");
+            case 349999: return _("[1E345D]Poison Quills"); // TODODEAFTER remove
+            case 34: return _("[1E345D]Poison [1E345E]Quills");
             case 35: return _("[3D5C33]Poison Spit");
             case 36: return _("[2A7C3C]Psychic [6DB446]Probe");
             case 37: return _("[8D6E5C]Rapid [B16E44]Healing");
             case 38: return _("[5C273B]Regeneration");
             case 39: return _("[007DC0]Rooting for the Underdog");
             case 40: return _("[A2B164]Shrink [A07958]Ray");
-            case 41: return _("[5E7795]Smoke Cloud");
+            case 419999: return _("[5E7795]Smoke Cloud"); // TODODEAFTER remove
+            case 41: return _("[5E7795]Smoke [5E7796]Cloud");
             case 42: return this.game.isDarkEdition() ? /*TODODE_*/ ("[2eb28b]Lunar [91cc83]Powered") : _("[142338]Solar [46617C]Powered");
             case 43: return _("[A9C7AD]Spiked [4F6269]Tail");
             case 44: return _("[AE2B7B]Stretchy");
-            case 45: return _("[56170E]Energy Drink");
+            case 459999: return _("[56170E]Energy Drink"); // TODODEAFTER remove
+            case 45: return _("[56170E]Energy [56170F]Drink");
             case 46: return _("[B795A5]Urbavore");
             case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
             case 48: return _("[443E56]Wings");
@@ -767,7 +777,8 @@ var Cards = /** @class */ (function () {
             case 109: return _("[B1624A]Frenzy");
             case 110: return _("[645656]Gas [71625F]Refinery");
             case 111: return _("[815321]Heal");
-            case 112: return _("[5B79A2]High Altitude Bombing");
+            case 1129999: return _("[5B79A2]High Altitude Bombing"); // TODODEAFTER remove
+            case 112: return _("[5B79A2]High Altitude [5B79A3]Bombing");
             case 113: return _("[EE008E]Jet [49236C]Fighters");
             case 114: return _("[68696B]National [53575A]Guard");
             case 115: return _("[684376]Nuclear [41375F]Power Plant");
