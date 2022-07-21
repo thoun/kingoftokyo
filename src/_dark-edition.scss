@@ -3,6 +3,15 @@ $darkEditionBlack: #41423c;
 $darkEditionGrey: #737373;
 
 html[data-dark-edition="true"] {
+    #loader_mask #game_box_loader_front, #loader_mask #game_box_loader_back {
+        background-image: url('img/dark/game-box.png');
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+        width: 0px;
+        height: 0px;
+        padding:500px 0 0 500px;
+    }
+
     .player-board {
         background-color: $darkEditionGrey;
 
