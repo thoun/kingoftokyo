@@ -143,10 +143,6 @@ trait WickednessTilesUtilTrait {
     }
 
     function gotWickednessTile(int $playerId, int $cardType) {
-        if (!$this->keepAndEvolutionCardsHaveEffect()) {
-            return false;
-        }
-        
         return count($this->wickednessTiles->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId)) > 0;
     }
     
