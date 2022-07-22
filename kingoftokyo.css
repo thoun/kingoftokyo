@@ -2140,6 +2140,11 @@ html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-ed
 html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .card-token.mimic-tile, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile {
   background-image: url("img/dark/wickedness-tiles.jpg");
 }
+html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .card-token.mimic-tile .name-wrapper, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile .name-wrapper {
+  font-size: 10pt;
+  font-family: "young-frankenstein-italic";
+  color: #f6d445;
+}
 html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .bottom, html[data-dark-edition=true] .card-stock #deck .bottom {
   background-image: url("img/dark/card-bottom.png");
 }
@@ -2317,13 +2322,7 @@ html[data-dice="5"] .die-item.green {
   border-color: #737373;
   background-image: url("img/dark/opaque_dice.png");
 }
-html[data-dice="5"] .log .dice-icon:not(.berserk):not(.die-of-fate) {
-  background-image: url("img/dark/black_dice.png");
-}
-html[data-dice="5"] .gamelogreview .dice-icon:not(.berserk):not(.die-of-fate) {
-  background-image: url("img/dark/black_dice.png");
-}
-html[data-dice="5"] .kot-card[data-design=dark-edition] .dice-icon:not(.berserk):not(.die-of-fate), html[data-dice="5"] .kot-tile .dice-icon:not(.berserk):not(.die-of-fate) {
+html[data-dice="5"] .log .dice-icon:not(.berserk):not(.die-of-fate), html[data-dice="5"] .gamelogreview .dice-icon:not(.berserk):not(.die-of-fate), html[data-dice="5"] .dijitTooltipContainer .dice-icon:not(.berserk):not(.die-of-fate), html[data-dice="5"] .kot-card[data-design=dark-edition] .dice-icon:not(.berserk):not(.die-of-fate), html[data-dice="5"] .kot-tile .dice-icon:not(.berserk):not(.die-of-fate) {
   background-image: url("img/dark/black_dice.png");
 }
 html[data-dice="5"] .animation {

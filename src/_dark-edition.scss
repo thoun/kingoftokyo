@@ -93,6 +93,12 @@ html[data-dark-edition="true"] {
             .card-token {    
                 &.mimic-tile {
                     background-image: url("img/dark/wickedness-tiles.jpg"); 
+
+                    .name-wrapper {
+                        font-size: 10pt;
+                        font-family: 'young-frankenstein-italic';
+                        color: #f6d445;
+                    }
                 }
             }
 
@@ -320,19 +326,7 @@ html[data-dice="5"] {
         }
     }
 
-    .log {        
-        .dice-icon:not(.berserk):not(.die-of-fate) {
-            background-image: url('img/dark/black_dice.png');
-        }
-    }
-
-    .gamelogreview {
-        .dice-icon:not(.berserk):not(.die-of-fate) {
-            background-image: url('img/dark/black_dice.png');
-        }
-    }
-     
-    .kot-card[data-design="dark-edition"], .kot-tile {
+    .log, .gamelogreview, .dijitTooltipContainer, .kot-card[data-design="dark-edition"], .kot-tile {
         .dice-icon:not(.berserk):not(.die-of-fate) {
             background-image: url('img/dark/black_dice.png');
         }

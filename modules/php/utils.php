@@ -97,7 +97,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
@@ -812,8 +812,9 @@ trait UtilTrait {
         }
 
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
-        if ($countReflectiveHide > 0) {
-            $this->applyDamage(new Damage($damageDealerId, $countReflectiveHide, $playerId, 2000 + REFLECTIVE_HIDE_CARD));
+        if ($countReflectiveHide > 0 && $damage->cardType != REFLECTIVE_HIDE_CARD && $damageDealerId > 0) { // we avoid infinite loop if mimicked, and reflective on poison tokens
+            $reflectiveDamage = new Damage($damageDealerId, $countReflectiveHide, $playerId, REFLECTIVE_HIDE_CARD);
+            $this->applyDamage($reflectiveDamage);
         }
 
         if ($isPowerUpExpansion && $this->inTokyo($playerId)) {
@@ -824,7 +825,8 @@ trait UtilTrait {
                     $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
                     foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
                         if ($outsideTokyoPlayerId != $damageDealerId) {
-                            $this->applyDamage(new Damage($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION));
+                            $breathOfDoomDamage = new Damage($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION);
+                            $this->applyDamage($breathOfDoomDamage);
                         }
                     }
                 }
