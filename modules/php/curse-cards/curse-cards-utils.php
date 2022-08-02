@@ -139,8 +139,7 @@ trait CurseCardsUtilTrait {
                 $this->applyLosePoints($playerId, 2, $logCardType);
                 break;
             case INADEQUATE_OFFERING_CURSE_CARD: 
-                $this->snakeEffectDiscardKeepCard($playerId);
-                break;
+                return $this->snakeEffectDiscardKeepCard($playerId);
             case BOW_BEFORE_RA_CURSE_CARD:
                 return [new Damage($playerId, 2, 0, $logCardType)];
             case VENGEANCE_OF_HORUS_CURSE_CARD:
@@ -175,8 +174,7 @@ trait CurseCardsUtilTrait {
                 $this->leaveTokyo($playerId);
                 break;
             case FORBIDDEN_LIBRARY_CURSE_CARD: 
-                $this->snakeEffectDiscardKeepCard($playerId);
-                break;
+                return $this->snakeEffectDiscardKeepCard($playerId);
             case PHARAONIC_SKIN_CURSE_CARD:
                 $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
                 if ($playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab && count($this->argGiveSymbols()['combinations']) > 0) {
@@ -230,9 +228,10 @@ trait CurseCardsUtilTrait {
         $keepCards = array_values(array_filter($cards, fn($card) => $card->type < 100));
         $count = count($keepCards);
         if ($count > 1) {
-            $this->jumpToState(ST_PLAYER_DISCARD_KEEP_CARD);
+            return ST_PLAYER_DISCARD_KEEP_CARD;
         } else if ($count === 1) {
             $this->applyDiscardKeepCard($playerId, $keepCards[0]);
+            return null;
         }
     }
 
@@ -347,7 +346,7 @@ trait CurseCardsUtilTrait {
 
     function applyDiscardKeepCard(int $playerId, object $card) {
 
-        $this->notifyAllPlayers("discardedDie", clienttranslate('${player_name} discards ${card_name}'), [
+        $this->notifyAllPlayers("log", clienttranslate('${player_name} discards ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => $card->type,
