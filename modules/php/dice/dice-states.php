@@ -334,7 +334,7 @@ trait DiceStateTrait {
         
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
-        if ($this->canUseSymbol($playerId, 6)) {
+        if ($this->canUseSymbol($playerId, 6) && $this->canUseFace($playerId, 6)) {
             $diceCount = $diceCounts[6];
         } else {
             $diceCount = 0;

@@ -117,7 +117,8 @@ trait CardsStateTrait {
             if ( $cheerleaderCard->location == 'hand') {
                 $playerId = intval($cheerleaderCard->location_arg);
 
-                if ($playerId != intval($this->getActivePlayerId())) {
+                $activePlayerId = intval($this->getActivePlayerId());
+                if ($playerId != $activePlayerId && $this->canUseSymbol($activePlayerId, 6) && $this->canUseFace($activePlayerId, 6)) {
                     $cheerleaderSupportPlayerIds[] = $playerId;
                 }
             }
