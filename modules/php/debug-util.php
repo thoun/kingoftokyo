@@ -219,8 +219,8 @@ trait DebugUtilTrait {
             // dummy card to avoid initial card selection
             $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
             $this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
-            /*$this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
-            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
+            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
+            /*$this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
             $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
 
@@ -244,8 +244,10 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true);
             $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
+
+            //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
 
         // player order

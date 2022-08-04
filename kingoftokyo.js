@@ -3647,7 +3647,9 @@ var TableCenter = /** @class */ (function () {
         if (game.isWickednessExpansion()) {
             dojo.place("\n            <div id=\"wickedness-board-wrapper\">\n                <div id=\"wickedness-board\"></div>\n            </div>", 'full-board');
             this.createWickednessTiles(wickednessTiles);
-            document.getElementById("table-cards").dataset.wickednessBoard = 'true';
+            if (!game.isDarkEdition()) {
+                document.getElementById("table-cards").dataset.wickednessBoard = 'true';
+            }
             players.forEach(function (player) {
                 dojo.place("<div id=\"monster-icon-" + player.id + "-wickedness\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: " + (player.monster > 100 ? 'unset' : '#' + player.color) + ";\"></div>", 'wickedness-board');
                 _this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
@@ -5385,10 +5387,11 @@ var KingOfTokyo = /** @class */ (function () {
                 _this.addTooltipHtml("playerhand-counter-wrapper-" + player.id, /* TODOPU_*/ ("Number of Evolution cards in hand."));
                 document.getElementById("see-monster-evolution-player-" + playerId).addEventListener('click', function () { return _this.showPlayerEvolutions(playerId); });
             }
-            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
+            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-target-tokens-" + player.id + "\" class=\"player-token target-tokens\"></div>\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
             if (!eliminated) {
                 _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
                 _this.setPoisonTokens(playerId, player.poisonTokens);
+                _this.setPlayerTokens(playerId, gamedatas.targetedPlayer == playerId ? 1 : 0, 'target');
             }
             dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"><div class=\"kot-token\"></div></div>", "player_board_" + player.id);
             if (player.location > 0) {
@@ -7123,8 +7126,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_giveTarget = function (notif) {
         if (notif.args.previousOwner) {
             this.getPlayerTable(notif.args.previousOwner).removeTarget();
+            this.setPlayerTokens(notif.args.previousOwner, 0, 'target');
         }
         this.getPlayerTable(notif.args.playerId).giveTarget();
+        this.setPlayerTokens(notif.args.playerId, 1, 'target');
     };
     KingOfTokyo.prototype.notif_ownedEvolutions = function (notif) {
         this.gamedatas.players[notif.args.playerId].ownedEvolutions = notif.args.evolutions;

@@ -1626,6 +1626,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             dojo.place(`<div class="player-tokens">
+                <div id="player-board-target-tokens-${player.id}" class="player-token target-tokens"></div>
                 <div id="player-board-shrink-ray-tokens-${player.id}" class="player-token shrink-ray-tokens"></div>
                 <div id="player-board-poison-tokens-${player.id}" class="player-token poison-tokens"></div>
             </div>`, `player_board_${player.id}`);
@@ -1633,6 +1634,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             if (!eliminated) {
                 this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
                 this.setPoisonTokens(playerId, player.poisonTokens);
+                this.setPlayerTokens(playerId, gamedatas.targetedPlayer == playerId ? 1 : 0, 'target');
             }
 
             dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${player.monster}"><div class="kot-token"></div></div>`, `player_board_${player.id}`);
@@ -3728,8 +3730,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     notif_giveTarget(notif: Notif<NotifGiveTargetArgs>) {
         if (notif.args.previousOwner) {
             this.getPlayerTable(notif.args.previousOwner).removeTarget();
+            this.setPlayerTokens(notif.args.previousOwner, 0, 'target');
         }
         this.getPlayerTable(notif.args.playerId).giveTarget();
+        this.setPlayerTokens(notif.args.playerId, 1, 'target');
     }
     
     notif_ownedEvolutions(notif: Notif<NotifOwnedEvoltionsArgs>) {

@@ -44,7 +44,9 @@ class TableCenter {
             </div>`, 'full-board');
             this.createWickednessTiles(wickednessTiles);
 
-            document.getElementById(`table-cards`).dataset.wickednessBoard = 'true';
+            if (!game.isDarkEdition()) {
+                document.getElementById(`table-cards`).dataset.wickednessBoard = 'true';
+            }
 
             players.forEach(player => {
                 dojo.place(`<div id="monster-icon-${player.id}-wickedness" class="monster-icon monster${player.monster}" style="background-color: ${player.monster > 100 ? 'unset' : '#'+player.color};"></div>`, 'wickedness-board');
