@@ -508,7 +508,7 @@ trait DiceActionTrait {
 
         foreach($smashDieChoices as $playerId => $smashDieChoice) {
             if ($smashDieChoice == 'steal') {
-                $this->applyGiveSymbols([0, 5], $playerId, $activePlayerId, PLAY_WITH_YOUR_FOOD_EVOLUTION);
+                $this->applyGiveSymbols([0, 5], $playerId, $activePlayerId, 3000 + PLAY_WITH_YOUR_FOOD_EVOLUTION);
                 $playersSmashesWithReducedDamage[$playerId] = 2;
             }
         }
