@@ -305,7 +305,7 @@ trait EvolutionCardsActionTrait {
         $evolution = $this->getEvolutionCardById($evolutionId);
         $this->setEvolutionTokens($this->getActivePlayerId(), $evolution, $symbol, true);
 
-        $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} choses that ${die_face} will have no effect this turn'/*)*/, [
+        $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} chooses that ${die_face} will have no effect this turn'/*)*/, [
             'player_name' => $this->getPlayerName($this->getCurrentPlayerId()),
             'die_face' => $this->getDieFaceLogName($symbol, 0),
         ]);
