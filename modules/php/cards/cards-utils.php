@@ -375,7 +375,7 @@ trait CardsUtilTrait {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
-    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, int $newHearts) {
+    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, int $newHearts) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
@@ -386,7 +386,7 @@ trait CardsUtilTrait {
             $this->removeWickednessTiles($playerId, $tiles);
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($removeEvolutions) {
             $visibleEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
             $hiddenEvolutions = $this->getEvolutionCardsByLocation('hand', $playerId);
             $this->removeEvolutions($playerId, array_merge($visibleEvolutions, $hiddenEvolutions));
@@ -437,6 +437,7 @@ trait CardsUtilTrait {
             IT_HAS_A_CHILD_CARD, 
             clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'),
             $this->isDarkEdition(), 
+            false,
             10
         );
     }
@@ -449,6 +450,7 @@ trait CardsUtilTrait {
             2000 + ZOMBIFY_CARD, 
             /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/,
             true, 
+            false,
             12
         );
     }
@@ -459,6 +461,7 @@ trait CardsUtilTrait {
             3000 + NINE_LIVES_EVOLUTION, 
             /*client TODOPU translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'/*)*/,
             false, 
+            true,
             9
         );
 
