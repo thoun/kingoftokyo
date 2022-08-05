@@ -52,13 +52,13 @@ class DiceManager {
         this.dice = [];
     }
 
-    public setDiceForThrowDice(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) {
+    public setDiceForThrowDice(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, frozenFaces: number[]) {
         this.action = 'move';
         this.dice?.forEach(die => this.removeDice(die));
         this.clearDiceHtml();
         this.dice = dice;
 
-        dice.forEach(die => this.createDice(die, canHealWithDice));
+        dice.forEach(die => this.createDice(die, canHealWithDice, frozenFaces));
         this.setSelectableDice(selectableDice);
     }
 
@@ -75,7 +75,7 @@ class DiceManager {
         this.removeDice(die, ANIMATION_MS);
     }
 
-    public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean) {
+    public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean, frozenFaces: number[]) {
         this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail ? 'change' : null;
         this.changeDieArgs = args;
 
@@ -89,13 +89,13 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
     }
 
-    public setDiceForDiscardDie(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, action: DieClickAction = 'discard') {
+    public setDiceForDiscardDie(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, frozenFaces: number[], action: DieClickAction = 'discard') {
         this.action = action;
         this.selectedDice = [];
         
@@ -103,13 +103,13 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
     }
 
-    public setDiceForSelectHeartAction(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) { 
+    public setDiceForSelectHeartAction(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, frozenFaces: number[]) { 
         this.action = null;
         if (this.dice.length) {
             return;
@@ -118,13 +118,13 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
     }
 
-    setDiceForPsychicProbe(dice: Die[], selectableDice: Die[], canHealWithDice: boolean) {
+    setDiceForPsychicProbe(dice: Die[], selectableDice: Die[], canHealWithDice: boolean, frozenFaces: number[]) {
         this.action = 'psychicProbeRoll';
 
         /*if (this.dice.length) { if active, event are not reset and roll is not applied
@@ -136,7 +136,7 @@ class DiceManager {
         this.dice = dice;
         
         dice.forEach(die => {
-            this.createAndPlaceDiceHtml(die, canHealWithDice, this.getLockedDiceId(die));
+            this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, this.getLockedDiceId(die));
             this.addDiceRollClass(die);
         });
 
@@ -185,7 +185,7 @@ class DiceManager {
                 type: 0,
                 canReroll: true,
             };
-            this.createAndPlaceDiceHtml(die, true, `dice-selector`);
+            this.createAndPlaceDiceHtml(die, true, [], `dice-selector`);
             this.addDiceRollClass(die);
         });
     }
@@ -381,7 +381,7 @@ class DiceManager {
         `);
     }
 
-    private createAndPlaceDie6Html(die: Die, canHealWithDice: boolean, destinationId: string) {
+    private createAndPlaceDie6Html(die: Die, canHealWithDice: boolean, frozenFaces: number[], destinationId: string) {
         let html = `<div id="dice${die.id}" class="dice dice${die.value}" data-dice-id="${die.id}" data-dice-value="${die.value}">
         <ol class="die-list" data-roll="${die.value}">`;
         const colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
@@ -389,7 +389,9 @@ class DiceManager {
             html += `<li class="die-item ${colorClass} side${dieFace}" data-side="${dieFace}"></li>`;
         }
         html += `</ol>`;
-        if (!die.type && die.value === 4 && !canHealWithDice) {
+        if (!die.type && frozenFaces?.includes(die.value)) {
+            html += `<div class="icon frozen"></div>`;
+        } else if (!die.type && die.value === 4 && !canHealWithDice) {
             html += `<div class="icon forbidden"></div>`;
         }
         if (!die.canReroll) {
@@ -405,11 +407,11 @@ class DiceManager {
     }
 
 
-    private createAndPlaceDiceHtml(die: Die, canHealWithDice: boolean, destinationId: string) {
+    private createAndPlaceDiceHtml(die: Die, canHealWithDice: boolean, frozenFaces: number[], destinationId: string) {
         if (die.type == 2) {
             this.createAndPlaceDie4Html(die, destinationId);
         } else {
-            this.createAndPlaceDie6Html(die, canHealWithDice, destinationId);
+            this.createAndPlaceDie6Html(die, canHealWithDice, frozenFaces, destinationId);
         }
 
         this.getDieDiv(die).addEventListener('click', event => this.dieClick(die, event));
@@ -419,8 +421,8 @@ class DiceManager {
         return document.getElementById(`dice${die.id}`) as HTMLDivElement;
     }
 
-    private createDice(die: Die, canHealWithDice: boolean) {
-        this.createAndPlaceDiceHtml(die, canHealWithDice, die.locked ? this.getLockedDiceId(die) : `dice-selector`);
+    private createDice(die: Die, canHealWithDice: boolean, frozenFaces) {
+        this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, die.locked ? this.getLockedDiceId(die) : `dice-selector`);
 
         const div = this.getDieDiv(die);
         div.addEventListener('animationend', (e: AnimationEvent) => {

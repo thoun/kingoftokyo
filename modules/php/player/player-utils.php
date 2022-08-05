@@ -424,6 +424,22 @@ trait PlayerUtilTrait {
         return !$inTokyo;
     }
 
+    function frozenFaces(int $playerId) {
+        if (!$this->isPowerUpExpansion()) {
+            return [];
+        }
+
+        $frozenFaces = [];
+        $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+        foreach ($freezeRayCards as $freezeRayCard) {
+            if ($freezeRayCard->tokens > 0 && !in_array($freezeRayCard->tokens, $frozenFaces)) {
+                $frozenFaces[] = $freezeRayCard->tokens;
+            }
+        }
+        
+        return $frozenFaces;
+    }
+
     function canBuyPowerCard(int $playerId) {
         $canBuyCards = true;
         if ($this->isAnubisExpansion() && $this->getCurseCardType() == FORBIDDEN_LIBRARY_CURSE_CARD) {

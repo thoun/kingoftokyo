@@ -29,6 +29,7 @@ trait WickednessTilesArgTrait {
 
             'dice' => $dice,
             'canHealWithDice' => $canHealWithDice,
+            'frozenFaces' => $this->frozenFaces($playerId),
         ];
     }
 

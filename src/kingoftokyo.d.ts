@@ -231,6 +231,7 @@ interface EnteringDiceArgs {
     dice: Die[];
     selectableDice: Die[];
     canHealWithDice: boolean;
+    frozenFaces: number[];
 }
 
 interface EnergyDrink {

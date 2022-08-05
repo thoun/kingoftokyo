@@ -63,6 +63,7 @@ trait DiceArgTrait {
             'dice' => $dice,
             'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($playerId),
+            'frozenFaces' => $this->frozenFaces($playerId),
             'energyDrink' => [
                 'hasCard' => $hasEnergyDrink,
                 'playerEnergy' => $playerEnergy,
@@ -97,6 +98,7 @@ trait DiceArgTrait {
             'dice' => $dice,
             'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($playerId),
+            'frozenFaces' => $this->frozenFaces($playerId),
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $canRetrow3,
@@ -154,6 +156,7 @@ trait DiceArgTrait {
             'dice' => $dice,
             'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'frozenFaces' => $this->frozenFaces($activePlayerId),
             'rethrow3' => [
                 'hasCard' => $hasBackgroundDweller,
                 'hasDice3' => $hasDice3,
@@ -185,6 +188,7 @@ trait DiceArgTrait {
             $diceArg = $canSelectHeartDiceUse ? [
                 'dice' => $dice,
                 'canHealWithDice' => $canHealWithDice,
+                'frozenFaces' => $this->frozenFaces($playerId),
             ] : [ 'skipped' => true ];
     
             return $selectHeartDiceUseArg + $diceArg;
@@ -198,6 +202,7 @@ trait DiceArgTrait {
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'frozenFaces' => $this->frozenFaces($activePlayerId),
         ];
     }
 
@@ -210,6 +215,7 @@ trait DiceArgTrait {
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'frozenFaces' => $this->frozenFaces($activePlayerId),
             'selectableDice' => [],
             'canLeaveHibernation' => $canLeaveHibernation,
         ];
@@ -228,6 +234,7 @@ trait DiceArgTrait {
             $diceArg = $canUsePlayWithYourFood ? [
                 'dice' => $dice,
                 'canHealWithDice' => $canHealWithDice,
+                'frozenFaces' => $this->frozenFaces($playerId),
                 'canUsePlayWithYourFood' => true,
                 'willBeWoundedIds' => $canUsePlayWithYourFood,
             ] : [ 'skipped' => true ];
@@ -249,6 +256,7 @@ trait DiceArgTrait {
         return [ 
             'dice' => $dice,
             'canHealWithDice' => $canHealWithDice,
+            'frozenFaces' => $this->frozenFaces($playerId),
             'selectableDice' => $selectableDice,
             'hasEncasedInIce' => $hasEncasedInIce,
         ];

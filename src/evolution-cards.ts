@@ -38,7 +38,6 @@ class EvolutionCards {
                 for (let i = 1; i <= 8; i++) {
                     const uniqueId = monster * 10 + i;
                     stock.addItemType(uniqueId, uniqueId, evolutioncardsurl, index + 1);
-                    uniqueId == 146 && console.log(uniqueId, uniqueId, evolutioncardsurl, index + 1);
                 }
             });
             

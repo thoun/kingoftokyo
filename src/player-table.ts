@@ -518,7 +518,9 @@ class PlayerTable {
         });
     }
 
-    public checkHandEmpty() {        
-        document.getElementById(`hand-evolution-cards-wrapper`).classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
+    public checkHandEmpty() {
+        if (this.hiddenEvolutionCards) {
+            document.getElementById(`hand-evolution-cards-wrapper`).classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
+        }
     }
 }

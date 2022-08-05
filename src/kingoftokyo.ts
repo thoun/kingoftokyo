@@ -454,7 +454,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
 
-        this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice);
+        this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
@@ -508,7 +508,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringChangeDie(args: EnteringChangeDieArgs, isCurrentPlayerActive: boolean) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForChangeDie(args.dice, args.selectableDice, args, args.canHealWithDice);
+            this.diceManager.setDiceForChangeDie(args.dice, args.selectableDice, args, args.canHealWithDice, args.frozenFaces);
         }
 
         if (isCurrentPlayerActive && args.dice && args.rethrow3?.hasCard) {
@@ -521,7 +521,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringPsychicProbeRollDie(args: EnteringPsychicProbeRollDieArgs) {
-        this.diceManager.setDiceForPsychicProbe(args.dice, args.selectableDice, args.canHealWithDice);
+        this.diceManager.setDiceForPsychicProbe(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
 
         if (args.dice && args.rethrow3?.hasCard && (this as any).isCurrentPlayerActive()) {
             if (document.getElementById('rethrow3psychicProbe_button')) {
@@ -534,25 +534,25 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringDiscardDie(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     }
 
     private onEnteringSelectExtraDie(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     }
 
     private onEnteringRerollOrDiscardDie(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, 'rerollOrDiscard');
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces, 'rerollOrDiscard');
         }
     }
 
     private onEnteringRerollDice(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, 'rerollDice');
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces, 'rerollDice');
         }
     }
 
@@ -561,7 +561,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.setGamestateDescription('EncasedInIce');
         }
         if (args.dice?.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, isCurrentPlayerActive ? args.selectableDice : [], args.canHealWithDice, 'freezeDie');
+            this.diceManager.setDiceForDiscardDie(args.dice, isCurrentPlayerActive ? args.selectableDice : [], args.canHealWithDice, args.frozenFaces, 'freezeDie');
         }
     }
 
@@ -574,7 +574,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringResolveNumberDice(args: EnteringDiceArgs) {
         if (args.dice?.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     }
     
@@ -582,7 +582,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.tableCenter.setWickednessTilesSelectable(args.level, true, isCurrentPlayerActive);
 
         if (args.dice?.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     }
 
@@ -591,7 +591,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.removeGamestateDescription();
         }
         if (args.dice?.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
 
             if (isCurrentPlayerActive) {
                 dojo.place(`<div id="heart-action-selector" class="whiteblock action-selector"></div>`, 'rolled-dice-and-rapid-actions', 'after');
@@ -605,7 +605,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.removeGamestateDescription();
         }
         if (args.dice?.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
 
             if (isCurrentPlayerActive) {
                 dojo.place(`<div id="smash-action-selector" class="whiteblock action-selector"></div>`, 'rolled-dice-and-rapid-actions', 'after');

@@ -104,7 +104,7 @@
   }
 }
 
-.icon.forbidden {
+.icon.forbidden, .icon.frozen {
   position: absolute;
   bottom: -10px;
   right: -10px;
@@ -138,7 +138,7 @@ $size: 0.25em;
       animation: rolled-dice 1s forwards;
       transform: translateY(-40vh);
 
-      .icon.forbidden {
+      .icon.forbidden, .icon.frozen {
         display: none;
       }
   }
@@ -663,7 +663,7 @@ $distFromCenter: 1em;
     }
     
 
-  .icon.forbidden {
+  .icon.forbidden, .icon.frozen {
     transform: translateZ(20px);
   }
 }

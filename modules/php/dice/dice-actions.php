@@ -285,6 +285,7 @@ trait DiceActionTrait {
                 'card_name' => $cardType,
                 'dieId' => $die->id,
                 'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+                'frozenFaces' => $this->frozenFaces($activePlayerId),
                 'toValue' => $value,
                 'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),
                 'die_face_after' => $this->getDieFaceLogName($value, $die->type),

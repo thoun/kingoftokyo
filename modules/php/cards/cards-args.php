@@ -20,6 +20,7 @@ trait CardsArgTrait {
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, true),
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'frozenFaces' => $this->frozenFaces($activePlayerId),
         ];
     }
 

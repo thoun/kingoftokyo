@@ -1286,7 +1286,6 @@ var EvolutionCards = /** @class */ (function () {
                 for (var i = 1; i <= 8; i++) {
                     var uniqueId = monster * 10 + i;
                     stock.addItemType(uniqueId, uniqueId, evolutioncardsurl, index + 1);
-                    uniqueId == 146 && console.log(uniqueId, uniqueId, evolutioncardsurl, index + 1);
                 }
             });
         });
@@ -2395,7 +2394,9 @@ var PlayerTable = /** @class */ (function () {
         });
     };
     PlayerTable.prototype.checkHandEmpty = function () {
-        document.getElementById("hand-evolution-cards-wrapper").classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
+        if (this.hiddenEvolutionCards) {
+            document.getElementById("hand-evolution-cards-wrapper").classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
+        }
     };
     return PlayerTable;
 }());
@@ -2691,14 +2692,14 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = [];
     };
-    DiceManager.prototype.setDiceForThrowDice = function (dice, selectableDice, canHealWithDice) {
+    DiceManager.prototype.setDiceForThrowDice = function (dice, selectableDice, canHealWithDice, frozenFaces) {
         var _this = this;
         var _a;
         this.action = 'move';
         (_a = this.dice) === null || _a === void 0 ? void 0 : _a.forEach(function (die) { return _this.removeDice(die); });
         this.clearDiceHtml();
         this.dice = dice;
-        dice.forEach(function (die) { return _this.createDice(die, canHealWithDice); });
+        dice.forEach(function (die) { return _this.createDice(die, canHealWithDice, frozenFaces); });
         this.setSelectableDice(selectableDice);
     };
     DiceManager.prototype.disableDiceAction = function () {
@@ -2711,7 +2712,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.discardDie = function (die) {
         this.removeDice(die, ANIMATION_MS);
     };
-    DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice) {
+    DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice, frozenFaces) {
         var _this = this;
         var _a;
         this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail ? 'change' : null;
@@ -2724,12 +2725,12 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
+            _this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
     };
-    DiceManager.prototype.setDiceForDiscardDie = function (dice, selectableDice, canHealWithDice, action) {
+    DiceManager.prototype.setDiceForDiscardDie = function (dice, selectableDice, canHealWithDice, frozenFaces, action) {
         var _this = this;
         if (action === void 0) { action = 'discard'; }
         this.action = action;
@@ -2737,12 +2738,12 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
+            _this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
     };
-    DiceManager.prototype.setDiceForSelectHeartAction = function (dice, selectableDice, canHealWithDice) {
+    DiceManager.prototype.setDiceForSelectHeartAction = function (dice, selectableDice, canHealWithDice, frozenFaces) {
         var _this = this;
         this.action = null;
         if (this.dice.length) {
@@ -2751,12 +2752,12 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
+            _this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
     };
-    DiceManager.prototype.setDiceForPsychicProbe = function (dice, selectableDice, canHealWithDice) {
+    DiceManager.prototype.setDiceForPsychicProbe = function (dice, selectableDice, canHealWithDice, frozenFaces) {
         var _this = this;
         this.action = 'psychicProbeRoll';
         /*if (this.dice.length) { if active, event are not reset and roll is not applied
@@ -2766,7 +2767,7 @@ var DiceManager = /** @class */ (function () {
         this.clearDiceHtml();
         this.dice = dice;
         dice.forEach(function (die) {
-            _this.createAndPlaceDiceHtml(die, canHealWithDice, _this.getLockedDiceId(die));
+            _this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, _this.getLockedDiceId(die));
             _this.addDiceRollClass(die);
         });
         this.setSelectableDice(selectableDice);
@@ -2814,7 +2815,7 @@ var DiceManager = /** @class */ (function () {
                 type: 0,
                 canReroll: true,
             };
-            _this.createAndPlaceDiceHtml(die, true, "dice-selector");
+            _this.createAndPlaceDiceHtml(die, true, [], "dice-selector");
             _this.addDiceRollClass(die);
         });
     };
@@ -2990,14 +2991,17 @@ var DiceManager = /** @class */ (function () {
         dojo.place(html, destinationId);
         this.game.addTooltipHtml("dice" + die.id, "\n        <strong>" + _("Die of Fate effects") + "</strong>\n        <div><div class=\"anubis-icon anubis-icon1\"></div> " + _("Change Curse: Discard the current Curse and reveal the next one.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon2\"></div> " + _("No effect. The card's permanent effect remains active, however.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon3\"></div> " + _("Suffer the Snake effect.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon4\"></div> " + _("Receive the blessing of the Ankh effect.") + "</div>\n        ");
     };
-    DiceManager.prototype.createAndPlaceDie6Html = function (die, canHealWithDice, destinationId) {
+    DiceManager.prototype.createAndPlaceDie6Html = function (die, canHealWithDice, frozenFaces, destinationId) {
         var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
         var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (var dieFace = 1; dieFace <= 6; dieFace++) {
             html += "<li class=\"die-item " + colorClass + " side" + dieFace + "\" data-side=\"" + dieFace + "\"></li>";
         }
         html += "</ol>";
-        if (!die.type && die.value === 4 && !canHealWithDice) {
+        if (!die.type && (frozenFaces === null || frozenFaces === void 0 ? void 0 : frozenFaces.includes(die.value))) {
+            html += "<div class=\"icon frozen\"></div>";
+        }
+        else if (!die.type && die.value === 4 && !canHealWithDice) {
             html += "<div class=\"icon forbidden\"></div>";
         }
         if (!die.canReroll) {
@@ -3009,21 +3013,21 @@ var DiceManager = /** @class */ (function () {
         dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
         dojo.place(html, destinationId);
     };
-    DiceManager.prototype.createAndPlaceDiceHtml = function (die, canHealWithDice, destinationId) {
+    DiceManager.prototype.createAndPlaceDiceHtml = function (die, canHealWithDice, frozenFaces, destinationId) {
         var _this = this;
         if (die.type == 2) {
             this.createAndPlaceDie4Html(die, destinationId);
         }
         else {
-            this.createAndPlaceDie6Html(die, canHealWithDice, destinationId);
+            this.createAndPlaceDie6Html(die, canHealWithDice, frozenFaces, destinationId);
         }
         this.getDieDiv(die).addEventListener('click', function (event) { return _this.dieClick(die, event); });
     };
     DiceManager.prototype.getDieDiv = function (die) {
         return document.getElementById("dice" + die.id);
     };
-    DiceManager.prototype.createDice = function (die, canHealWithDice) {
-        this.createAndPlaceDiceHtml(die, canHealWithDice, die.locked ? this.getLockedDiceId(die) : "dice-selector");
+    DiceManager.prototype.createDice = function (die, canHealWithDice, frozenFaces) {
+        this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, die.locked ? this.getLockedDiceId(die) : "dice-selector");
         var div = this.getDieDiv(die);
         div.addEventListener('animationend', function (e) {
             if (e.animationName == 'rolled-dice') {
@@ -4372,7 +4376,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? "last" : '');
         this.diceManager.showLock();
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
-        this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice);
+        this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         if (isCurrentPlayerActive) {
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
@@ -4413,7 +4417,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var _a, _b;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForChangeDie(args.dice, args.selectableDice, args, args.canHealWithDice);
+            this.diceManager.setDiceForChangeDie(args.dice, args.selectableDice, args, args.canHealWithDice, args.frozenFaces);
         }
         if (isCurrentPlayerActive && args.dice && ((_b = args.rethrow3) === null || _b === void 0 ? void 0 : _b.hasCard)) {
             if (document.getElementById('rethrow3changeDie_button')) {
@@ -4427,7 +4431,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringPsychicProbeRollDie = function (args) {
         var _this = this;
         var _a;
-        this.diceManager.setDiceForPsychicProbe(args.dice, args.selectableDice, args.canHealWithDice);
+        this.diceManager.setDiceForPsychicProbe(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         if (args.dice && ((_a = args.rethrow3) === null || _a === void 0 ? void 0 : _a.hasCard) && this.isCurrentPlayerActive()) {
             if (document.getElementById('rethrow3psychicProbe_button')) {
                 dojo.toggleClass('rethrow3psychicProbe_button', 'disabled', !args.rethrow3.hasDice3);
@@ -4440,25 +4444,25 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringDiscardDie = function (args) {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     };
     KingOfTokyo.prototype.onEnteringSelectExtraDie = function (args) {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     };
     KingOfTokyo.prototype.onEnteringRerollOrDiscardDie = function (args) {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, 'rerollOrDiscard');
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces, 'rerollOrDiscard');
         }
     };
     KingOfTokyo.prototype.onEnteringRerollDice = function (args) {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, 'rerollDice');
+            this.diceManager.setDiceForDiscardDie(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces, 'rerollDice');
         }
     };
     KingOfTokyo.prototype.onEnteringPrepareResolveDice = function (args, isCurrentPlayerActive) {
@@ -4467,7 +4471,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.setGamestateDescription('EncasedInIce');
         }
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForDiscardDie(args.dice, isCurrentPlayerActive ? args.selectableDice : [], args.canHealWithDice, 'freezeDie');
+            this.diceManager.setDiceForDiscardDie(args.dice, isCurrentPlayerActive ? args.selectableDice : [], args.canHealWithDice, args.frozenFaces, 'freezeDie');
         }
     };
     KingOfTokyo.prototype.onEnteringDiscardKeepCard = function (args) {
@@ -4480,14 +4484,14 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringResolveNumberDice = function (args) {
         var _a;
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     };
     KingOfTokyo.prototype.onEnteringTakeWickednessTile = function (args, isCurrentPlayerActive) {
         var _a;
         this.tableCenter.setWickednessTilesSelectable(args.level, true, isCurrentPlayerActive);
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         }
     };
     KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args, isCurrentPlayerActive) {
@@ -4496,7 +4500,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.removeGamestateDescription();
         }
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
             if (isCurrentPlayerActive) {
                 dojo.place("<div id=\"heart-action-selector\" class=\"whiteblock action-selector\"></div>", 'rolled-dice-and-rapid-actions', 'after');
                 new HeartActionSelector(this, 'heart-action-selector', args);
@@ -4509,7 +4513,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.removeGamestateDescription();
         }
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
-            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice);
+            this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
             if (isCurrentPlayerActive) {
                 dojo.place("<div id=\"smash-action-selector\" class=\"whiteblock action-selector\"></div>", 'rolled-dice-and-rapid-actions', 'after');
                 new SmashActionSelector(this, 'smash-action-selector', args);

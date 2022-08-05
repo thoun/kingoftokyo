@@ -586,6 +586,7 @@ trait EvolutionCardsUtilTrait {
             'card_name' => 3000 + YIN_YANG_EVOLUTION,
             'dieIdsToValues' => $idToValue,
             'canHealWithDice' => $this->canHealWithDice($playerId),
+            'frozenFaces' => $this->frozenFaces($playerId),
             'die_face_before' => $dieFacesBefore,
             'die_face_after' => $dieFacesAfter,
         ]);

@@ -224,7 +224,7 @@
   height: 16px;
 }
 
-.icon.forbidden {
+.icon.forbidden, .icon.frozen {
   position: absolute;
   bottom: -10px;
   right: -10px;
@@ -254,7 +254,7 @@
   animation: rolled-dice 1s forwards;
   transform: translateY(-40vh);
 }
-.dice[data-rolled=true] .icon.forbidden {
+.dice[data-rolled=true] .icon.forbidden, .dice[data-rolled=true] .icon.frozen {
   display: none;
 }
 @keyframes rolled-dice {
@@ -713,7 +713,7 @@
 .mode_3d .dice {
   transform: translateZ(20px);
 }
-.mode_3d .icon.forbidden {
+.mode_3d .icon.forbidden, .mode_3d .icon.frozen {
   transform: translateZ(20px);
 }
 
@@ -2383,21 +2383,24 @@ html, .mode_3d #game_play_area_background {
   background-position: 0% 0%;
 }
 .icon.energy {
-  background-position: 16.6666666667% 0%;
+  background-position: 14.2857142857% 0%;
 }
 .icon.health {
-  background-position: 33.3333333333% 0%;
+  background-position: 28.5714285714% 0%;
 }
 .icon.forbidden {
-  background-position: 50% 0%;
+  background-position: 42.8571428571% 0%;
 }
 .icon.dead {
-  background-position: 66.6666666667% 0%;
+  background-position: 57.1428571429% 0%;
 }
 .icon.lock {
-  background-position: 83.3333333333% 0%;
+  background-position: 71.4285714286% 0%;
 }
 .icon.wickedness {
+  background-position: 85.7142857143% 0%;
+}
+.icon.frozen {
   background-position: 100% 0%;
 }
 

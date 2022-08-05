@@ -40,6 +40,7 @@ trait CurseCardsArgTrait {
             'dice' => $dice,
             'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($playerId),
+            'frozenFaces' => $this->frozenFaces($playerId),
         ];
     }
 
@@ -49,6 +50,7 @@ trait CurseCardsArgTrait {
         return [
             'dice' => $this->getPlayerRolledDice($playerId, true, true, false),
             'canHealWithDice' => $this->canHealWithDice($playerId),
+            'frozenFaces' => $this->frozenFaces($playerId),
         ];
     }
 
@@ -126,6 +128,7 @@ trait CurseCardsArgTrait {
         return [
             'dice' => $activePlayerDice,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'frozenFaces' => $this->frozenFaces($activePlayerId),
             'selectableDice' => $selectableDice,
         ];
     }
@@ -149,6 +152,7 @@ trait CurseCardsArgTrait {
             'dice' => $activePlayerDice,
             'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
+            'frozenFaces' => $this->frozenFaces($activePlayerId),
             'min' => $min,
             'max' => $max,
         ];
