@@ -373,6 +373,7 @@ trait EvolutionCardsActionTrait {
             $cost = ceil($cost / 2);
         }
 
+        // applyBuyCard do the redirection
         $this->applyBuyCard(
             $playerId,
             $card->id,
@@ -383,8 +384,6 @@ trait EvolutionCardsActionTrait {
         if ($useSuperiorAlienTechnology) {
             $this->addSuperiorAlienTechnologyToken($playerId, $card->id);
         }
-
-        $this->goToState(ST_PLAYER_BUY_CARD);
     }
 
     public function skipMiraculousCatch() {

@@ -4,6 +4,14 @@ namespace KOT\States;
 
 trait RedirectionTrait {
     function goToState($nextStateId, /*Damage[] | null*/ $damages = null) {
+
+        /*$activePlayerId = $this->getActivePlayerId();
+        $this->trace("[GBA] activePlayerId $activePlayerId goToState $nextStateId damages ".json_encode($damages != null));
+        if ($activePlayerId == 2343493 && $nextStateId == 50) {
+            debug_print_backtrace();
+            die('stacktrace ;');
+        }*/
+
         if ($nextStateId === null) {
             $nextStateId = intval($this->gamestate->state_id());
         }
