@@ -73,7 +73,7 @@ trait EvolutionCardsArgTrait {
         $playerId = $this->getActivePlayerId();
         $otherPlayersIds = $this->getOtherPlayersIds($playerId);
 
-        $felineMotorPlayersIds = array_filter($otherPlayersIds, fn($pId) => $this->countEvolutionOfType($pId, FELINE_MOTOR_EVOLUTION) > 0);
+        $felineMotorPlayersIds = array_values(array_filter($otherPlayersIds, fn($pId) => $this->countEvolutionOfType($pId, FELINE_MOTOR_EVOLUTION) > 0));
 
         return [
             'highlighted' => $highlighted,
