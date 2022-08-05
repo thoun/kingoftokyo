@@ -198,7 +198,11 @@ trait CardsActionTrait {
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
-            $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
+            $numberOfCardsInTable = intval($this->cards->countCardInLocation('table'));
+
+            $newCard = $numberOfCardsInTable < 3 ?
+                $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg)) :
+                null;
             $topDeckCardBackType = $this->getTopDeckCardBackType();
     
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
