@@ -533,7 +533,7 @@ trait EvolutionCardsActionTrait {
             $diceStr .= $this->getDieFaceLogName($dieValue, 0);
         }
 
-        $this->notifyAllPlayers("useLightningArmor", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and make ${player_name2} lose ${damage}[Heart]'), [
+        $this->notifyAllPlayers("useLightningArmor", /*client TODOPU translate*/('${player_name} uses ${card_name}, rolls ${dice} and makes ${player_name2} lose ${damage}[Heart]'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'player_name2' => $this->getPlayerName($damageDealerIdForPlayer),

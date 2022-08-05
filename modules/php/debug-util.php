@@ -164,10 +164,11 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
+            $this->debugSetCurseCardInTable(ORDEAL_OF_THE_MIGHTY_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
-            $this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             $this->changeGoldenScarabOwner(2343493);
@@ -245,7 +246,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(DETACHABLE_TAIL_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }

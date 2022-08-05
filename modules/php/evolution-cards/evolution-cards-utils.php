@@ -1002,34 +1002,36 @@ trait EvolutionCardsUtilTrait {
                 $damageAmountByPlayer[$playerId] = 0;
                 $damageDealerIdByPlayer[$playerId] = 0;
                 foreach($allDamages as $damage) {
-                    if ($damage->playerId == $playerId) {
+                    if ($damage->playerId == $playerId && $damage->damageDealerId != $playerId && $damage->damageDealerId != 0) {
                         $damageAmountByPlayer[$playerId] += $damage->damage;
                         $damageDealerIdByPlayer[$playerId] += $damage->damageDealerId;
                     }
                 }
             }
 
-            $question = new Question(
-                'LightningArmor',
-                /* client TODOPU translate(*/'Player with ${card_name} can throw dice to backfire damage'/*)*/,
-                /* client TODOPU translate(*/'${you} can throw dice to backfire damage'/*)*/,
-                $playersWithLightningArmor,
-                ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
-                [ 
-                    'damageAmountByPlayer' => $damageAmountByPlayer,
-                    'damageDealerIdByPlayer' => $damageDealerIdByPlayer,
-                    'playerId' => $activePlayerId,
-                    '_args' => [ 
-                        'player_name' => $this->getPlayerName($activePlayerId), 
-                        'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
-                    ],
-                ]
-            );
+            if ($this->array_some($damageAmountByPlayer, fn($damageAmount) => $damageAmount > 0)) {
+                $question = new Question(
+                    'LightningArmor',
+                    /* client TODOPU translate(*/'Player with ${card_name} can throw dice to backfire damage'/*)*/,
+                    /* client TODOPU translate(*/'${you} can throw dice to backfire damage'/*)*/,
+                    $playersWithLightningArmor,
+                    ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
+                    [ 
+                        'damageAmountByPlayer' => $damageAmountByPlayer,
+                        'damageDealerIdByPlayer' => $damageDealerIdByPlayer,
+                        'playerId' => $activePlayerId,
+                        '_args' => [ 
+                            'player_name' => $this->getPlayerName($activePlayerId), 
+                            'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
+                        ],
+                    ]
+                );
 
-            $this->setQuestion($question);
-            $this->gamestate->setPlayersMultiactive($playersWithLightningArmor, 'next', true);
-            $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-            return true;
+                $this->setQuestion($question);
+                $this->gamestate->setPlayersMultiactive($playersWithLightningArmor, 'next', true);
+                $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+                return true;
+            }
         }
         return false;
     }
