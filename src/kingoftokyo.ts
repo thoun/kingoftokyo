@@ -3699,16 +3699,18 @@ class KingOfTokyo implements KingOfTokyoGame {
         const playerId = notif.args.playerId;
         const card = notif.args.card;
         const isCurrentPlayer = this.getPlayerId() === playerId;
+        const playerTable = this.getPlayerTable(playerId);
         if (isCurrentPlayer) {
             if (card?.type) {
-                this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
+                playerTable.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
             }
         } else if (card?.id) {
-            this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
+            playerTable.hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
         if (!card || !card.type) {
             this.handCounters[playerId].incValue(1);
         }
+        playerTable?.checkHandEmpty();
 
         this.tableManager.tableHeightChange(); // adapt to new card
     }

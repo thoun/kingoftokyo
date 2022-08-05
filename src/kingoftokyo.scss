@@ -612,3 +612,20 @@ button, a {
     gap: 10px;
   }
 }
+
+#hand-evolution-cards {  
+  transition: height 0.5s;
+  
+  #empty-message {
+    display: none;
+    text-align: center;
+  }
+
+  &.empty {
+    height: unset !important;
+
+    #empty-message {
+      display: block;
+    }
+  }
+}

@@ -2077,7 +2077,7 @@ var PlayerTable = /** @class */ (function () {
             this.showHand = this.playerId == this.game.getPlayerId();
             if (this.showHand) {
                 document.getElementById("hand-wrapper").classList.add('whiteblock');
-                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                ", "hand-wrapper");
+                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                    <div id=\"empty-message\">" + ('Your hand is empty') + "</div>\n                </div>\n                ", "hand-wrapper");
                 this.hiddenEvolutionCards = new ebg.stock();
                 this.hiddenEvolutionCards.setSelectionAppearance('class');
                 this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
@@ -2093,6 +2093,7 @@ var PlayerTable = /** @class */ (function () {
                         document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id).classList.add('disabled');
                     }
                 });
+                this.checkHandEmpty();
             }
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
@@ -2142,6 +2143,7 @@ var PlayerTable = /** @class */ (function () {
             (_a = _this.hiddenEvolutionCards) === null || _a === void 0 ? void 0 : _a.removeFromStockById('' + id);
             _this.visibleEvolutionCards.removeFromStockById('' + id);
         });
+        this.checkHandEmpty();
     };
     PlayerTable.prototype.setPoints = function (points, delay) {
         var _this = this;
@@ -2353,6 +2355,7 @@ var PlayerTable = /** @class */ (function () {
                 this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], "playerhand-counter-wrapper-" + this.playerId);
             }
         }
+        this.checkHandEmpty();
     };
     PlayerTable.prototype.highlightHiddenEvolutions = function (cards) {
         var _this = this;
@@ -2360,7 +2363,6 @@ var PlayerTable = /** @class */ (function () {
             return;
         }
         cards.forEach(function (card) {
-            console.log(card, document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id));
             var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
             cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.add('highlight-evolution');
         });
@@ -2391,6 +2393,9 @@ var PlayerTable = /** @class */ (function () {
                 document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + item.id).classList.toggle('disabled', !enabled);
             }
         });
+    };
+    PlayerTable.prototype.checkHandEmpty = function () {
+        document.getElementById("hand-evolution-cards").classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
     };
     return PlayerTable;
 }());
@@ -7098,17 +7103,19 @@ var KingOfTokyo = /** @class */ (function () {
         var playerId = notif.args.playerId;
         var card = notif.args.card;
         var isCurrentPlayer = this.getPlayerId() === playerId;
+        var playerTable = this.getPlayerTable(playerId);
         if (isCurrentPlayer) {
             if (card === null || card === void 0 ? void 0 : card.type) {
-                this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
+                playerTable.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
             }
         }
         else if (card === null || card === void 0 ? void 0 : card.id) {
-            this.getPlayerTable(playerId).hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
+            playerTable.hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
         }
         if (!card || !card.type) {
             this.handCounters[playerId].incValue(1);
         }
+        playerTable === null || playerTable === void 0 ? void 0 : playerTable.checkHandEmpty();
         this.tableManager.tableHeightChange(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_playEvolution = function (notif) {

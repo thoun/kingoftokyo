@@ -150,7 +150,9 @@ class PlayerTable {
                 document.getElementById(`hand-wrapper`).classList.add('whiteblock');
                 dojo.place(`
                 <div id="pick-evolution" class="evolution-card-stock player-evolution-cards pick-evolution-cards"></div>
-                <div id="hand-evolution-cards" class="evolution-card-stock player-evolution-cards"></div>
+                <div id="hand-evolution-cards" class="evolution-card-stock player-evolution-cards">
+                    <div id="empty-message">${/*TODOPU_*/('Your hand is empty')}</div>
+                </div>
                 `, `hand-wrapper`);
 
                 this.hiddenEvolutionCards = new ebg.stock() as Stock;
@@ -169,6 +171,7 @@ class PlayerTable {
                         document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`).classList.add('disabled');
                     }
                 });
+                this.checkHandEmpty();
             }
 
             this.visibleEvolutionCards = new ebg.stock() as Stock;
@@ -222,6 +225,7 @@ class PlayerTable {
             this.hiddenEvolutionCards?.removeFromStockById(''+id);
             this.visibleEvolutionCards.removeFromStockById(''+id);
         });
+        this.checkHandEmpty();
     }
 
     public setPoints(points: number, delay: number = 0) {
@@ -469,6 +473,7 @@ class PlayerTable {
                 this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], `playerhand-counter-wrapper-${this.playerId}`);
             }
         }
+        this.checkHandEmpty();
     }
     
     public highlightHiddenEvolutions(cards: EvolutionCard[]) {
@@ -477,7 +482,6 @@ class PlayerTable {
         }
 
         cards.forEach(card => {
-            console.log(card, document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`));
             const cardDiv = document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
             cardDiv?.classList.add('highlight-evolution');
         });
@@ -509,5 +513,9 @@ class PlayerTable {
                 document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${item.id}`).classList.toggle('disabled', !enabled);
             }
         });
+    }
+
+    public checkHandEmpty() {        
+        document.getElementById(`hand-evolution-cards`).classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
     }
 }

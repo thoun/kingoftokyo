@@ -3015,3 +3015,17 @@ button .icon, a .icon {
   justify-content: center;
   gap: 10px;
 }
+
+#hand-evolution-cards {
+  transition: height 0.5s;
+}
+#hand-evolution-cards #empty-message {
+  display: none;
+  text-align: center;
+}
+#hand-evolution-cards.empty {
+  height: unset !important;
+}
+#hand-evolution-cards.empty #empty-message {
+  display: block;
+}
