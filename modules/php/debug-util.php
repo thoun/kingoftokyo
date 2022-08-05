@@ -161,13 +161,13 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
             //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
-            $this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
+            $this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             $this->changeGoldenScarabOwner(2343493);
@@ -211,8 +211,9 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343493"); // space penguin
             $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
+            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343493"); // gigazaur
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
+            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343492"); // cyber bunny
             //$this->DbQuery("UPDATE player SET `player_monster` = 15 where `player_id` = 2343492"); // kraken
 
@@ -244,8 +245,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(TARGET_ACQUIRED_EVOLUTION, 2343493, true);
-            $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(DETACHABLE_TAIL_EVOLUTION, 2343493, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }

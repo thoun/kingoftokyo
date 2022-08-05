@@ -187,10 +187,9 @@ trait EvolutionCardsActionTrait {
 
         $this->playEvolutionToTable($playerId, $card, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
-        $intervention = $this->getDamageIntervention();        
+        $intervention = $this->getDamageIntervention();
         $this->reduceInterventionDamages($playerId, $intervention, -1);
-        $this->setInterventionNextState(CANCEL_DAMAGE_INTERVENTION.$this->getStackedStateSuffix(), 'next', null, $intervention);
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
+        $this->resolveRemainingDamages($intervention, true, false);
     }
   	
     function putEnergyOnBambooSupply() {
