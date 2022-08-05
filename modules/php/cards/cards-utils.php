@@ -984,7 +984,7 @@ trait CardsUtilTrait {
                 $warningIds[$card->id] = '[Energy]';
             }
         } else if (in_array($card->type, [APPARTMENT_BUILDING_CARD, COMMUTER_TRAIN_CARD, CORNER_STORE_CARD, JET_FIGHTERS_CARD, NATIONAL_GUARD_CARD, NUCLEAR_POWER_PLANT_CARD, SKYSCRAPER_CARD, TANK_CARD])) {
-            if (!$this->canGainPoints($playerId)) {
+            if ($this->canGainPoints($playerId) !== null) {
                 $warningIds[$card->id] = '[Star]';
             }
         }

@@ -178,7 +178,7 @@ trait PlayerStateTrait {
                     $this->applyGetEnergy($playerGettingEnergy, $incEnergy, 0);
                 }
             } else {
-                if ($this->canGainPoints($playerId)) {
+                if ($this->canGainPoints($playerId) === null) {
                     $incScore = 2;
                     $this->applyGetPoints($playerId, $incScore, -1);
 

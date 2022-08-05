@@ -97,7 +97,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        /*return $this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
@@ -320,7 +320,7 @@ trait UtilTrait {
                 $message = clienttranslate('${player_name} enters ${locationName}');
             }
         } else {
-            if ($this->canGainPoints($playerId)) {
+            if ($this->canGainPoints($playerId) === null) {
                 $incScore = 1;
                 $message = clienttranslate('${player_name} enters ${locationName} and gains 1 [Star]');
             } else {
@@ -640,10 +640,10 @@ trait UtilTrait {
 
     // $cardType = 0 => notification with no message
     // $cardType = -1 => no notification
-
     function applyGetPoints(int $playerId, int $points, int $cardType) {
-        if (!$this->canGainPoints($playerId)) {
-            return;
+        $canGainPoints = $this->canGainPoints($playerId);
+        if ($canGainPoints !== null) {
+            return $canGainPoints;
         }
 
         $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
@@ -652,6 +652,8 @@ trait UtilTrait {
             // Astronaut
             $this->applyAstronaut($playerId);
         }
+
+        return null;
     }
 
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {

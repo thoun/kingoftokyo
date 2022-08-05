@@ -356,11 +356,11 @@ trait PlayerUtilTrait {
 
             if ($curseCardType == TUTANKHAMUN_S_CURSE_CURSE_CARD) {
                 if ($playerId != $this->getPlayerIdWithGoldenScarab()) {
-                    return false;
+                    return 1000 + TUTANKHAMUN_S_CURSE_CURSE_CARD;
                 }
             }
         }
-        return true;
+        return null;
     }
 
     function canEnterTokyo(int $playerId) {

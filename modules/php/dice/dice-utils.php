@@ -235,18 +235,28 @@ trait DiceUtilTrait {
                 }
             }
 
-            $this->applyGetPoints($playerId, $points, -1);
+            $canGetPoints = $this->applyGetPoints($playerId, $points, -1);
 
-            $this->incStat($points, 'pointsWonWith'.$number.'Dice', $playerId);
+            if ($canGetPoints === null) {
+                $this->incStat($points, 'pointsWonWith'.$number.'Dice', $playerId);
 
-            $this->notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} gains ${deltaPoints}[Star] with ${dice_value} dice'), [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'deltaPoints' => $points,
-                'points' => $this->getPlayerScore($playerId),
-                'diceValue' => $number,
-                'dice_value' => "[dice$number]",
-            ]);
+                $this->notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} gains ${deltaPoints}[Star] with ${dice_value} dice'), [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'deltaPoints' => $points,
+                    'points' => $this->getPlayerScore($playerId),
+                    'diceValue' => $number,
+                    'dice_value' => "[dice$number]",
+                ]);
+            } else {
+                $this->notifyAllPlayers("log", clienttranslate('${player_name} gains no [Star] with ${dice_value} dice because of ${card_name}'), [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'card_name' => $canGetPoints,
+                    'diceValue' => $number,
+                    'dice_value' => "[dice$number]",
+                ]);
+            }
 
             if ($number == 1) {
                 // gourmet
