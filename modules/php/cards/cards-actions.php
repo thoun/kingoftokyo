@@ -307,7 +307,9 @@ trait CardsActionTrait {
         $canPreventBuying = !$opportunist && $this->isPowerUpExpansion()
             && $this->canPlayStepEvolution($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT);
 
-        if ($canPreventBuying && $this->getGlobalVariable(CARD_BEING_BOUGHT) == null) { // To avoid ask twice in the same turn if it has been played on first
+        if ($canPreventBuying && (
+            $this->getGlobalVariable(CARD_BEING_BOUGHT) == null || $this->getGlobalVariable(CARD_BEING_BOUGHT)->allowed
+        )) { // To avoid ask twice in the same turn if it has been played on first
             $this->notifyAllPlayers("log", /*clienttranslate(*/'${player_name} wants to buy ${card_name}'/*)*/, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
