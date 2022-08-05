@@ -2077,7 +2077,7 @@ var PlayerTable = /** @class */ (function () {
             this.showHand = this.playerId == this.game.getPlayerId();
             if (this.showHand) {
                 document.getElementById("hand-wrapper").classList.add('whiteblock');
-                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                    <div id=\"empty-message\">" + ('Your hand is empty') + "</div>\n                </div>\n                ", "hand-wrapper");
+                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div id=\"myhand\">" + ('My hand') + "</div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">" + ('Your hand is empty') + "</div>\n                    </div>\n                </div>\n                ", "hand-wrapper");
                 this.hiddenEvolutionCards = new ebg.stock();
                 this.hiddenEvolutionCards.setSelectionAppearance('class');
                 this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
@@ -2395,7 +2395,7 @@ var PlayerTable = /** @class */ (function () {
         });
     };
     PlayerTable.prototype.checkHandEmpty = function () {
-        document.getElementById("hand-evolution-cards").classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
+        document.getElementById("hand-evolution-cards-wrapper").classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
     };
     return PlayerTable;
 }());

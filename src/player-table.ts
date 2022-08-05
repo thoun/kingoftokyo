@@ -150,8 +150,11 @@ class PlayerTable {
                 document.getElementById(`hand-wrapper`).classList.add('whiteblock');
                 dojo.place(`
                 <div id="pick-evolution" class="evolution-card-stock player-evolution-cards pick-evolution-cards"></div>
-                <div id="hand-evolution-cards" class="evolution-card-stock player-evolution-cards">
-                    <div id="empty-message">${/*TODOPU_*/('Your hand is empty')}</div>
+                <div id="hand-evolution-cards-wrapper">
+                    <div id="myhand">${/*TODOPU_*/('My hand')}</div>
+                    <div id="hand-evolution-cards" class="evolution-card-stock player-evolution-cards">
+                        <div id="empty-message">${/*TODOPU_*/('Your hand is empty')}</div>
+                    </div>
                 </div>
                 `, `hand-wrapper`);
 
@@ -516,6 +519,6 @@ class PlayerTable {
     }
 
     public checkHandEmpty() {        
-        document.getElementById(`hand-evolution-cards`).classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
+        document.getElementById(`hand-evolution-cards-wrapper`).classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
     }
 }

@@ -3016,16 +3016,29 @@ button .icon, a .icon {
   gap: 10px;
 }
 
-#hand-evolution-cards {
-  transition: height 0.5s;
+#hand-evolution-cards-wrapper {
+  display: flex;
 }
-#hand-evolution-cards #empty-message {
+#hand-evolution-cards-wrapper #myhand {
+  text-align: center;
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  text-overflow: ellipsis;
+}
+#hand-evolution-cards-wrapper #hand-evolution-cards {
+  transition: height 0.5s;
+  flex: 1;
+}
+#hand-evolution-cards-wrapper #hand-evolution-cards #empty-message {
   display: none;
   text-align: center;
 }
-#hand-evolution-cards.empty {
+#hand-evolution-cards-wrapper.empty #myhand {
+  display: none;
+}
+#hand-evolution-cards-wrapper.empty #hand-evolution-cards {
   height: unset !important;
 }
-#hand-evolution-cards.empty #empty-message {
+#hand-evolution-cards-wrapper.empty #hand-evolution-cards #empty-message {
   display: block;
 }

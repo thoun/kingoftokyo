@@ -613,19 +613,37 @@ button, a {
   }
 }
 
-#hand-evolution-cards {  
-  transition: height 0.5s;
-  
-  #empty-message {
-    display: none;
+#hand-evolution-cards-wrapper {
+  display: flex;
+
+  #myhand {
     text-align: center;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    text-overflow: ellipsis;
+  }
+
+  #hand-evolution-cards {
+    transition: height 0.5s;
+    flex: 1;
+
+    #empty-message {
+      display: none;
+      text-align: center;
+    }
   }
 
   &.empty {
-    height: unset !important;
+    #myhand {
+      display: none;
+    }
 
-    #empty-message {
-      display: block;
+    #hand-evolution-cards {  
+      height: unset !important;
+
+      #empty-message {
+        display: block;
+      }
     }
   }
 }
