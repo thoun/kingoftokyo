@@ -2134,7 +2134,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'autoSkipPlayEvolution-wrapper', 
                 'autoSkipPlayEvolutionButton', 
-                _("Ask to play evolution") + ' &#x25BE;', 
+                /*_TODOPU*/("Ask to play evolution") + ' &#x25BE;', 
                 () => this.toggleAutoSkipPlayEvolutionPopin(), 
             );
         }
@@ -2154,40 +2154,40 @@ class KingOfTokyo implements KingOfTokyoGame {
         let bubble = document.getElementById(popinId);
         if (!bubble) { 
             let html = `<div id="${popinId}" class="discussion_bubble autoSkipPlayEvolutionBubble">
-                <h3>${_("Ask to play Evolution, for Evolutions playable on specific occasions")}</h3>
+                <h3>${/*_TODOPU*/("Ask to play Evolution, for Evolutions playable on specific occasions")}</h3>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="0" id="autoSkipPlayEvolution-all" />
                     <label for="autoSkipPlayEvolution-all">
-                        ${_("Ask for every specific occasion even if I don't have the card in my hand.")}
+                        ${/*_TODOPU*/("Ask for every specific occasion even if I don't have the card in my hand.")}
                         <div class="label-detail">
-                            ${_("Recommended. You won't be asked when your hand is empty")}
+                            ${/*_TODOPU*/("Recommended. You won't be asked when your hand is empty")}
                         </div>
                     </label>
                 </div>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="1" id="autoSkipPlayEvolution-real" />
                     <label for="autoSkipPlayEvolution-real">
-                        ${_("Ask only if I have in my hand an Evolution matching the specific occasion.")}<br>
+                        ${/*_TODOPU*/("Ask only if I have in my hand an Evolution matching the specific occasion.")}<br>
                         <div class="label-detail spe-warning">
-                            <strong>${_("Warning:")}</strong> ${_("Your opponent can deduce what you have in hand with this option.")}
+                            <strong>${/*_TODOPU*/("Warning:")}</strong> ${/*_TODOPU*/("Your opponent can deduce what you have in hand with this option.")}
                         </div>
                     </label>
                 </div>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="2" id="autoSkipPlayEvolution-turn" />
                     <label for="autoSkipPlayEvolution-turn">
-                        ${_("Do not ask until my next turn.")}<br>
+                        ${/*_TODOPU*/("Do not ask until my next turn.")}<br>
                         <div class="label-detail spe-warning">
-                            <strong>${_("Warning:")}</strong> ${_("Do it only if you're sure you won't need an Evolution soon.")}
+                            <strong>${/*_TODOPU*/("Warning:")}</strong> ${/*_TODOPU*/("Do it only if you're sure you won't need an Evolution soon.")}
                         </div>
                     </label>
                 </div>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="3" id="autoSkipPlayEvolution-off" />
                     <label for="autoSkipPlayEvolution-off">
-                        ${_("Do not ask until I turn it back on.")}
+                        ${/*_TODOPU*/("Do not ask until I turn it back on.")}
                         <div class="label-detail spe-warning">
-                            <strong>${_("Warning:")}</strong> ${_("Do it only if you're sure you won't need an Evolution soon.")}
+                            <strong>${/*_TODOPU*/("Warning:")}</strong> ${/*_TODOPU*/("Do it only if you're sure you won't need an Evolution soon.")}
                         </div>
                     </label>
                 </div>
