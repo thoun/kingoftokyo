@@ -674,6 +674,16 @@
         self::ajaxResponse();
     }
   	
+    public function setAskPlayEvolution() {
+        self::setAjaxMode();
+
+        $value = self::getArg("value", AT_posint, true);
+
+        $this->game->setAskPlayEvolution($value);
+
+        self::ajaxResponse();
+    }
+  	
     public function setSkipBuyPhase() {
         self::setAjaxMode();
 

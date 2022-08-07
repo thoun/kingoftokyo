@@ -151,12 +151,18 @@ class PlayerTable {
                 dojo.place(`
                 <div id="pick-evolution" class="evolution-card-stock player-evolution-cards pick-evolution-cards"></div>
                 <div id="hand-evolution-cards-wrapper">
-                    <div id="myhand">${/*TODOPU_*/('My hand')}</div>
+                    <div class="hand-title">
+                        <div>
+                            <div id="myhand">${/*TODOPU_*/('My hand')}</div>
+                        </div>
+                        <div id="autoSkipPlayEvolution-wrapper"></div>
+                    </div>
                     <div id="hand-evolution-cards" class="evolution-card-stock player-evolution-cards">
                         <div id="empty-message">${/*TODOPU_*/('Your hand is empty')}</div>
                     </div>
                 </div>
                 `, `hand-wrapper`);
+                this.game.addAutoSkipPlayEvolutionButton();
 
                 this.hiddenEvolutionCards = new ebg.stock() as Stock;
                 this.hiddenEvolutionCards.setSelectionAppearance('class');

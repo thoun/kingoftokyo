@@ -70,7 +70,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492), 4);
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
-        //$this->setCardTokens(2343493, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343493), 3, true);
+        $this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 3, true);
         //$this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492);
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);

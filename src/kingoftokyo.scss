@@ -242,6 +242,36 @@ html, .mode_3d #game_play_area_background {
   }
 }
 
+.autoSkipPlayEvolutionBubble {
+  top: 35px;
+  bottom: unset;
+  right: 0px;
+  cursor: default;
+  width: 200px;
+  white-space: normal;
+  box-shadow: 1px 1px 4px 1px black;
+
+  &::after {
+    top: -10px;
+    bottom: unset;
+    border-width: 0 15px 15px 15px;
+  }
+
+  .autoSkipPlayEvolution-option {    
+    margin-top: 8px;
+    margin-bottom: 8px;
+    text-align: left;
+
+    .label-detail {
+      padding: 5px;
+
+      &.spe-warning {
+        color: darkred;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 550px) {
   #rolled-dice-and-rapid-actions {
     display: block;
@@ -618,13 +648,17 @@ button, a {
 }
 
 #hand-evolution-cards-wrapper {
-  display: flex;
+  .hand-title {
+    display: flex;
+    justify-content: space-between;
 
-  #myhand {
-    text-align: center;
-    writing-mode: vertical-lr;
-    transform: rotate(180deg);
-    text-overflow: ellipsis;
+    #autoSkipPlayEvolution-wrapper {
+      position: relative;
+
+      #autoSkipPlayEvolutionButton {
+        margin-top: -10px;
+      }
+    }
   }
 
   #hand-evolution-cards {
@@ -638,7 +672,7 @@ button, a {
   }
 
   &.empty {
-    #myhand {
+    .hand-title {
       display: none;
     }
 

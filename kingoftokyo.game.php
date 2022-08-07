@@ -396,6 +396,9 @@ class KingOfTokyo extends Table {
         if ($isWickednessExpansion) {
             $sql .= ", player_wickedness wickedness ";
         }
+        if ($isPowerUpExpansion) {
+            $sql .= ", ask_play_evolution askPlayEvolution ";
+        }
         $sql .= "FROM player order by player_no ";
         $result['players'] = $this->getCollectionFromDb($sql);
 
@@ -503,6 +506,8 @@ class KingOfTokyo extends Table {
             if ($targetedPlayer > 0) {
                 $result['targetedPlayer'] = $targetedPlayer;
             }
+
+            $result['askPlayEvolution'] = intval($result['players'][$current_player_id]['askPlayEvolution']);
         }      
 
         return $result;
@@ -763,6 +768,11 @@ class KingOfTokyo extends Table {
                 $sql = "UPDATE `DBPREFIX_player` SET `player_take_wickedness_tiles` = CONCAT('[', `player_take_wickedness_tile`, ']') WHERE `player_take_wickedness_tile` <> 0";
                 self::applyDbUpgradeToAllDB($sql);
             }
+        }
+
+        if ($from_version <= 2208051621) {
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `ask_play_evolution` tinyint unsigned NOT NULL DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
         }
     }
 }

@@ -155,6 +155,20 @@ trait PlayerUtilTrait {
         ]);
     }
 
+    function applyAskPlayEvolution(int $playerId, int $value) {
+        $this->DbQuery("UPDATE player SET `ask_play_evolution` = $value where `player_id` = $playerId");
+
+        $this->notifyPlayer($playerId, 'updateAskPlayEvolution', '', [
+            'value' => $value,
+        ]);
+    }
+
+    function setAskPlayEvolution(int $value) {
+        $playerId = $this->getCurrentPlayerId(); // current, not active !
+
+        $this->applyAskPlayEvolution($playerId,  $value);
+    }
+
     function asyncEliminatePlayer(int $playerId) {
         $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX));
         $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0, `player_dead` = $scoreAux where `player_id` = $playerId");

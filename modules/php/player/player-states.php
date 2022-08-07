@@ -31,7 +31,16 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(CARD_BEING_BOUGHT, null);
         $this->setGlobalVariable(STARTED_TURN_IN_TOKYO, $this->getPlayersIdsInTokyo());
 
-        if (!$this->isPowerUpExpansion() || !$this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        if ($isPowerUpExpansion) {
+            $player = $this->getPlayer($playerId);
+            if ($player->askPlayEvolution == 2) {
+                $this->applyAskPlayEvolution($playerId, 0);
+            }
+        }
+
+        if (!$isPowerUpExpansion || !$this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
             $this->goToState($this->redirectAfterBeforeStartTurn());
         }
     }

@@ -221,23 +221,52 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
-    function canPlayStepEvolution(array $playersIds, array $stepCardsIds) {
-        $playersIds = $this->isPowerUpMutantEvolution() ? $this->getPlayersIds(true) : $playersIds;
+    function canPlayStepEvolution(array $playersIds, array $stepCardsIds) { // return array of players able to play
+        $isPowerUpMutantEvolution = $this->isPowerUpMutantEvolution();
+        $playersIds = $isPowerUpMutantEvolution ? $this->getPlayersIds(true) : $playersIds;
 
         // ignore a player if its hand is empty
         $playersIds = array_values(array_filter($playersIds, fn($playerId) => intval($this->evolutionCards->countCardInLocation('hand', $playerId)) > 0));
 
         if (count($playersIds) == 0) {
-            return false;
+            return [];
+        }
+
+        $playersAskPlayEvolution = [];
+        foreach($playersIds as $playerId) {
+            $player = $this->getPlayer($playerId);
+            $playersAskPlayEvolution[$playerId] = $player->askPlayEvolution;
+        }
+        // ignore a player if he don't want to be asked
+        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $playersAskPlayEvolution[$playerId] < 2));
+
+        if (count($playersIds) == 0) {
+            return [];
         }
         
-        $dbResults = $this->getCollectionFromDb("SELECT distinct player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
-        $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']) % 100, array_values($dbResults));
+        $dbResults = $this->getCollectionFromDb("SELECT player_id, player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
+        $monsters = array_map(fn($dbResult) => intval($dbResult['player_monster']) % 100, $dbResults);
+        
+        $playersIdsWithPotentialCards = [];
+        foreach ($playersIds as $playerId) {
+            $playerPotentialMonsters = $isPowerUpMutantEvolution ? array_values($monsters) : [$monsters[$playerId]];
+            $playerPotentionStepCardsTypes = array_values(array_filter($stepCardsIds, fn($cardType) => in_array(floor($cardType / 10), $playerPotentialMonsters)));
 
-        // TODOPU ignore cards on table, or on discard?
-        $stepCardsMonsters = array_values(array_unique(array_map(fn($cardId) => floor($cardId / 10), $stepCardsIds)));
+            if (count($playerPotentionStepCardsTypes) > 0) {
+                // TODOPU ignore cards on table, or on discard?
 
-        return $this->array_some($monsters, fn($monster) => in_array($monster, $stepCardsMonsters));
+                if ($playersAskPlayEvolution[$playerId] == 1) {
+                    $playerHand = $this->getEvolutionCardsByLocation('hand', $playerId);
+                    if ($this->array_some($playerHand, fn($evolutionCard) => in_array($evolutionCard->type, $playerPotentionStepCardsTypes))) {
+                        $playersIdsWithPotentialCards[] = $playerId;
+                    }
+                } else {
+                    $playersIdsWithPotentialCards[] = $playerId;
+                }
+            }
+        }
+
+        return $playersIdsWithPotentialCards;
     }
 
     function applyEvolutionEffects(EvolutionCard $card, int $playerId) { // return $damages

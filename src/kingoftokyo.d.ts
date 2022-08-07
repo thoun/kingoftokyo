@@ -145,6 +145,7 @@ interface KingOfTokyoGamedatas {
     } 
     leaveTokyoUnder: number;
     stayTokyoOver: number;
+    askPlayEvolution: number;
     twoPlayersVariant: boolean;
     halloweenExpansion: boolean;
     kingkongExpansion: boolean;
@@ -208,6 +209,7 @@ interface KingOfTokyoGame extends Game {
     getPlayerEnergy(playerId: number): number;
     onHiddenEvolutionClick: (cardId: number) => void;
     onVisibleEvolutionClick: (cardId: number) => void;
+    addAutoSkipPlayEvolutionButton(): void;
 }
 
 interface EnteringPickMonsterArgs {
@@ -600,6 +602,10 @@ interface NotifUpdateLeaveTokyoUnderArgs {
 
 interface NotifUpdateStayTokyoOverArgs {
     over: number;
+}
+
+interface NotifUpdateAskPlayEvolutionArgs {
+    value: number;
 }
 
 interface NotifChangeTokyoTowerOwnerArgs {

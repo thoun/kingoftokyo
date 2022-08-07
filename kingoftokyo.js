@@ -2076,7 +2076,8 @@ var PlayerTable = /** @class */ (function () {
             this.showHand = this.playerId == this.game.getPlayerId();
             if (this.showHand) {
                 document.getElementById("hand-wrapper").classList.add('whiteblock');
-                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div id=\"myhand\">" + ('My hand') + "</div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">" + ('Your hand is empty') + "</div>\n                    </div>\n                </div>\n                ", "hand-wrapper");
+                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div class=\"hand-title\">\n                        <div>\n                            <div id=\"myhand\">" + ('My hand') + "</div>\n                        </div>\n                        <div id=\"autoSkipPlayEvolution-wrapper\"></div>\n                    </div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">" + ('Your hand is empty') + "</div>\n                    </div>\n                </div>\n                ", "hand-wrapper");
+                this.game.addAutoSkipPlayEvolutionButton();
                 this.hiddenEvolutionCards = new ebg.stock();
                 this.hiddenEvolutionCards.setSelectionAppearance('class');
                 this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
@@ -4183,13 +4184,6 @@ var KingOfTokyo = /** @class */ (function () {
             case 'startGame':
                 this.showEvolutionsPopinPlayerButtons();
                 break;
-            case 'beforeStartTurn':
-            case 'beforeResolveDice':
-            case 'beforeEnteringTokyo':
-            case 'afterEnteringTokyo':
-            case 'cardIsBought':
-                this.onEnteringStepEvolution(args.args);
-                break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
             case 'changeMimickedCardWickednessTile':
@@ -4262,9 +4256,6 @@ var KingOfTokyo = /** @class */ (function () {
             case 'buyCard':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringBuyCard(args.args, this.isCurrentPlayerActive());
-                break;
-            case 'cardIsBought':
-                this.onEnteringStepEvolution(args.args);
                 break;
             case 'sellCard':
                 this.setDiceSelectorVisibility(false);
@@ -4365,6 +4356,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringStepEvolution = function (args) {
+        console.log('onEnteringStepEvolution', args, this.isCurrentPlayerActive());
         if (this.isCurrentPlayerActive()) {
             var playerId_1 = this.getPlayerId();
             this.getPlayerTable(playerId_1).highlightHiddenEvolutions(args.highlighted.filter(function (card) { return card.location_arg === playerId_1; }));
@@ -4892,6 +4884,13 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var _a, _b;
         switch (stateName) {
+            case 'beforeStartTurn':
+            case 'beforeResolveDice':
+            case 'beforeEnteringTokyo':
+            case 'afterEnteringTokyo':
+            case 'cardIsBought':
+                this.onEnteringStepEvolution(args); // because it's multiplayer, enter action must be set here
+                break;
             case 'changeActivePlayerDie':
             case 'psychicProbeRollDie':
                 this.setDiceSelectorVisibility(true);
@@ -5835,6 +5834,52 @@ var KingOfTokyo = /** @class */ (function () {
             bubble.dataset.visible = 'false';
         }
     };
+    KingOfTokyo.prototype.addAutoSkipPlayEvolutionButton = function () {
+        var _this = this;
+        if (!document.getElementById('autoSkipPlayEvolutionButton')) {
+            this.createButton('autoSkipPlayEvolution-wrapper', 'autoSkipPlayEvolutionButton', _("Ask to play evolution") + ' &#x25BE;', function () { return _this.toggleAutoSkipPlayEvolutionPopin(); });
+        }
+    };
+    KingOfTokyo.prototype.toggleAutoSkipPlayEvolutionPopin = function () {
+        var bubble = document.getElementById("discussion_bubble_autoSkipPlayEvolution");
+        if ((bubble === null || bubble === void 0 ? void 0 : bubble.dataset.visible) === 'true') {
+            this.closeAutoSkipPlayEvolutionPopin();
+        }
+        else {
+            this.openAutoSkipPlayEvolutionPopin();
+        }
+    };
+    KingOfTokyo.prototype.openAutoSkipPlayEvolutionPopin = function () {
+        var _this = this;
+        var popinId = "discussion_bubble_autoSkipPlayEvolution";
+        var bubble = document.getElementById(popinId);
+        if (!bubble) {
+            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoSkipPlayEvolutionBubble\">\n                <h3>" + _("Ask to play Evolution, for Evolutions playable on specific occasions") + "</h3>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"0\" id=\"autoSkipPlayEvolution-all\" />\n                    <label for=\"autoSkipPlayEvolution-all\">\n                        " + _("Ask for every specific occasion even if I don't have the card in my hand.") + "\n                        <div class=\"label-detail\">\n                            " + _("Recommended. You won't be asked when your hand is empty") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"1\" id=\"autoSkipPlayEvolution-real\" />\n                    <label for=\"autoSkipPlayEvolution-real\">\n                        " + _("Ask only if I have in my hand an Evolution matching the specific occasion.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Your opponent can deduce what you have in hand with this option.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"2\" id=\"autoSkipPlayEvolution-turn\" />\n                    <label for=\"autoSkipPlayEvolution-turn\">\n                        " + _("Do not ask until my next turn.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"3\" id=\"autoSkipPlayEvolution-off\" />\n                    <label for=\"autoSkipPlayEvolution-off\">\n                        " + _("Do not ask until I turn it back on.") + "\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n            </div>";
+            dojo.place(html, 'autoSkipPlayEvolutionButton');
+            Array.from(document.querySelectorAll('input[name="autoSkipPlayEvolution"]')).forEach(function (input) {
+                input.addEventListener('change', function () {
+                    var value = document.querySelector('input[name="autoSkipPlayEvolution"]:checked').value;
+                    _this.setAskPlayEvolution(Number(value));
+                    setTimeout(function () { return _this.closeAutoSkipPlayEvolutionPopin(); }, 100);
+                });
+            });
+            bubble = document.getElementById(popinId);
+            this.notif_updateAskPlayEvolution({
+                args: {
+                    value: this.gamedatas.askPlayEvolution
+                }
+            });
+        }
+        bubble.style.display = 'block';
+        bubble.dataset.visible = 'true';
+    };
+    KingOfTokyo.prototype.closeAutoSkipPlayEvolutionPopin = function () {
+        var bubble = document.getElementById("discussion_bubble_autoSkipPlayEvolution");
+        if (bubble) {
+            bubble.style.display = 'none';
+            bubble.dataset.visible = 'false';
+        }
+    };
     KingOfTokyo.prototype.setMimicToken = function (type, card) {
         var _this = this;
         if (!card) {
@@ -6453,6 +6498,11 @@ var KingOfTokyo = /** @class */ (function () {
             over: over
         });
     };
+    KingOfTokyo.prototype.setAskPlayEvolution = function (value) {
+        this.takeNoLockAction('setAskPlayEvolution', {
+            value: value
+        });
+    };
     KingOfTokyo.prototype.exchangeCard = function (id) {
         if (!this.checkAction('exchangeCard')) {
             return;
@@ -6755,6 +6805,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['toggleMothershipSupportUsed', 1],
             ['updateLeaveTokyoUnder', 1],
             ['updateStayTokyoOver', 1],
+            ['updateAskPlayEvolution', 1],
             ['kotPlayerEliminated', 1],
             ['setPlayerBerserk', 1],
             ['cultist', 1],
@@ -7055,6 +7106,9 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.removeClass(popinId + "_setStay" + notif.args.over, 'bgabutton_gray');
             dojo.addClass(popinId + "_setStay" + notif.args.over, 'bgabutton_blue');
         }
+    };
+    KingOfTokyo.prototype.notif_updateAskPlayEvolution = function (notif) {
+        document.querySelector("input[name=\"autoSkipPlayEvolution\"][value=\"" + notif.args.value + "\"]").checked = true;
     };
     KingOfTokyo.prototype.notif_changeTokyoTowerOwner = function (notif) {
         var playerId = notif.args.playerId;

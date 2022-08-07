@@ -19,6 +19,7 @@ class Player {
     public int $wickedness;
     public int $zombified;
     public bool $turnEnteredTokyo;
+    public int $askPlayEvolution;
 
     public function __construct($dbPlayer) {
         $this->id = intval($dbPlayer['player_id']);
@@ -37,6 +38,7 @@ class Player {
         $this->wickedness = intval($dbPlayer['player_wickedness']);
         $this->zombified = boolval($dbPlayer['player_zombified']);
         $this->turnEnteredTokyo = boolval($dbPlayer['player_turn_entered_tokyo']);
+        $this->askPlayEvolution = array_key_exists('ask_play_evolution', $dbPlayer) ? intval($dbPlayer['ask_play_evolution']) : 0;
     } 
 }
 ?>
