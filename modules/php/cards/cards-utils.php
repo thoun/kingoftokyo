@@ -546,7 +546,7 @@ trait CardsUtilTrait {
         $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;
         $this->setGameStateValue(EXTRA_ROLLS, $extraRolls);
 
-        $this->notifyAllPlayers('log', clienttranslate('${player_name} use a ${card_name} to gain 1 extra roll'), [
+        $this->notifyAllPlayers('log', clienttranslate('${player_name} uses ${card_name} to gain 1 extra roll'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card_name' => SMOKE_CLOUD_CARD,
