@@ -778,7 +778,7 @@ class KingOfTokyoPowerUp extends Table {
             }
         }
 
-        if ($from_version <= 2208051621) {
+        if ($from_version <= 2208051624) {
             $sql = "ALTER TABLE `DBPREFIX_player` ADD `ask_play_evolution` tinyint unsigned NOT NULL DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
