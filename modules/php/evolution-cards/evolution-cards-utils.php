@@ -177,7 +177,7 @@ trait EvolutionCardsUtilTrait {
                     throw new \BgaUserException(/*self::_TODOPU*/("You can play this Evolution only if you are not in Tokyo"));
                 }
                 if (!$this->isDamageDealtThisTurn($playerId)) {
-                    throw new \BgaUserException(/*self::_TODOPU*/("You didn't dealt damage to a player in Tokyo"));
+                    throw new \BgaUserException(/*self::_TODOPU*/("You didn't deal damage to a player in Tokyo"));
                 }
                 break;
             case TUNE_UP_EVOLUTION:
