@@ -88,6 +88,33 @@ $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT = [
     BAMBOOZLE_EVOLUTION,
 ];
 
+$this->EVOLUTIONS_TO_HEAL = [ // evolutionType => heal amount (null if variable)
+
+    // Space Penguin
+    DEEP_DIVE_EVOLUTION => null, // in case Heal or Even bigger is picked on cards
+    // Alienoid
+    PRECISION_FIELD_SUPPORT_EVOLUTION => null, // in case Even bigger is picked on cards
+    // Cyber Kitty
+    // The King
+    GIANT_BANANA_EVOLUTION => 2,
+    // Gigazaur
+    RADIOACTIVE_WASTE_EVOLUTION => 1,
+    // Meka Dragon    
+    // Boogie Woogie
+    WELL_OF_SHADOW_EVOLUTION => 2,
+    // Pumpkin Jack
+    FEAST_OF_CROWS_EVOLUTION => null,
+    CANDY_EVOLUTION => 1,
+    // Pandakaï
+    BEAR_NECESSITIES_EVOLUTION => 2,
+    // Cyber Bunny
+    // Kraken
+    HEALING_RAIN_EVOLUTION => 2,
+    CULT_WORSHIPPERS_EVOLUTION => null,
+    // Baby Gigazaur
+    YUMMY_YUMMY_EVOLUTION => 2,
+];
+
 $this->CARD_COST = [
     // KEEP
     1 => 6,

@@ -64,36 +64,5 @@ class CancelDamageIntervention extends PlayerIntervention {
         $this->allDamages = $allDamages;
         $this->playersUsedDice = new \stdClass();
     }
-
-    public static function canDoIntervention(object $game, int $playerId, int $damage, int $damageDealerId, $clawDamage) {
-        $canDo = $game->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
-            $game->countCardOfType($playerId, ROBOT_CARD) > 0 || 
-            ($game->countCardOfType($playerId, WINGS_CARD) > 0 && $game->canLoseHealth($playerId, $damage) == null) ||
-            ($game->isPowerUpExpansion() && ($game->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $game->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $game->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $game->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0)) ||
-            $game->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
-
-        if ($canDo) {
-            return true;
-        } else {
-            $playerHealth = $game->getPlayerHealth($playerId);
-
-            $totalDamage = $game->getEffectiveDamage($damage, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
-
-            if ($playerHealth <= $totalDamage) {
-                $rapidHealingHearts = $game->cancellableDamageWithRapidHealing($playerId);
-                $superJumpHearts = $game->cancellableDamageWithSuperJump($playerId);
-                $rapidHealingCultists = $game->isCthulhuExpansion() ? $game->cancellableDamageWithCultists($playerId) : 0;
-                $damageToCancelToSurvive = $game->getDamageToCancelToSurvive($totalDamage, $playerHealth);
-                $canHeal = $rapidHealingHearts + $rapidHealingCultists + $superJumpHearts;
-                if ($game->countCardOfType($playerId, REGENERATION_CARD)) {
-                    $canHeal *= 2;
-                }
-                
-                return $canHeal > 0 && $canHeal >= $damageToCancelToSurvive;
-            } else {
-                return false;
-            }
-        }
-    }
 }
 ?>

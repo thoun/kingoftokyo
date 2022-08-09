@@ -104,6 +104,7 @@ trait EvolutionCardsActionTrait {
         $this->playEvolutionToTable($playerId, $card);
         
         $damages = $this->applyEvolutionEffects($card, $playerId);
+        $this->updateCancelDamageIfNeeded($playerId);
         
         if (in_array($card->type, $this->AUTO_DISCARDED_EVOLUTIONS)) {
             $this->removeEvolution($playerId, $card, false, 5000);

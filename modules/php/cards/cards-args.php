@@ -320,7 +320,17 @@ trait CardsArgTrait {
             $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId); // TODODE use potentialEnergy
             $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
             $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($effectiveDamage, $this->getPlayerHealth($playerId));
-            $canHeal = $rapidHealingHearts + $rapidHealingCultists + $superJumpHearts;
+            $healWithEvolutions = 0;
+            if ($damageToCancelToSurvive > 0 && $this->isPowerUpExpansion()) {
+                foreach($this->EVOLUTIONS_TO_HEAL as $evolutionType => $amount) {
+                    $count = $this->countEvolutionOfType($playerId, $evolutionType, false, true);
+
+                    if ($count > 0) {
+                        $healWithEvolutions += $count * ($amount === null ? 999 : $amount); 
+                    } 
+                }
+            }
+            $canHeal = $rapidHealingHearts + $rapidHealingCultists + $superJumpHearts + $healWithEvolutions;
             $gotRegeneration = $this->countCardOfType($playerId, REGENERATION_CARD) > 0;
             $cancelHealWithEnergyCards = false;
             if ($gotRegeneration) {
@@ -353,9 +363,7 @@ trait CardsArgTrait {
                 ($canUseRobot && $potentialEnergy >= 1) ||
                 ($superJumpHearts && $potentialEnergy >= 1);
 
-            $canHealToAvoidDeath = 
-                $rapidHealingHearts || 
-                $rapidHealingCultists;
+            $canHealToAvoidDeath = !$cancelHealWithEnergyCards;
 
             $canDoAction = 
                 $canCancelDamage || $canHealToAvoidDeath;

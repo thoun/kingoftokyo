@@ -1066,6 +1066,48 @@ trait UtilTrait {
         $this->resolveRemainingDamages($cancelDamageIntervention);
     }
 
+    function canDoIntervention(int $playerId, int $damage, int $damageDealerId, $clawDamage) {
+
+        $canDo = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
+            $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
+            ($this->countCardOfType($playerId, WINGS_CARD) > 0 && $this->canLoseHealth($playerId, $damage) == null) ||
+            ($this->isPowerUpExpansion() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0)) ||
+            $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
+
+        if ($canDo) {
+            return true;
+        } else {
+            $playerHealth = $this->getPlayerHealth($playerId);
+
+            $totalDamage = $this->getEffectiveDamage($damage, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
+
+            if ($playerHealth <= $totalDamage) {
+                $rapidHealingHearts = $this->cancellableDamageWithRapidHealing($playerId);
+                $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId);
+                $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
+                $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($totalDamage, $playerHealth);
+                $healWithEvolutions = 0;
+                if ($damageToCancelToSurvive > 0 && $this->isPowerUpExpansion()) {
+                    foreach($this->EVOLUTIONS_TO_HEAL as $evolutionType => $amount) {
+                        $count = $this->countEvolutionOfType($playerId, $evolutionType, false, true);
+    
+                        if ($count > 0) {
+                            $healWithEvolutions += $count * ($amount === null ? 999 : $amount); 
+                        } 
+                    }
+                }
+                $canHeal = $rapidHealingHearts + $rapidHealingCultists + $superJumpHearts + $healWithEvolutions;
+                if ($this->countCardOfType($playerId, REGENERATION_CARD)) {
+                    $canHeal *= 2;
+                }
+                
+                return $canHeal > 0 && $canHeal >= $damageToCancelToSurvive;
+            } else {
+                return false;
+            }
+        }
+    }
+
     function resolveRemainingDamages(object $intervention, bool $endOfCurrentPlayer = false, bool $fromCancelDamageState = false) {
         // if there is no more player to handle, end this state
         if (count($intervention->remainingPlayersId) == 0) {
@@ -1095,7 +1137,7 @@ trait UtilTrait {
         // if player will block damage, or he can not block damage anymore, we apply damage and remove it from remainingPlayersId
         if ($currentDamage 
             && ($this->canLoseHealth($currentPlayerId, $currentDamage->remainingDamage) !== null
-                || !CancelDamageIntervention::canDoIntervention($this, $currentPlayerId, $currentDamage->remainingDamage, $currentDamage->damageDealerId, $currentDamage->clawDamage))
+                || !$this->canDoIntervention($currentPlayerId, $currentDamage->remainingDamage, $currentDamage->damageDealerId, $currentDamage->clawDamage))
         ) {
             $this->applyDamages($intervention, $currentPlayerId);
             $this->resolveRemainingDamages($intervention, true, false);
