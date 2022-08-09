@@ -380,11 +380,9 @@ trait EvolutionCardsActionTrait {
             $card->id,
             0,
             false,
-            $cost
+            $cost,
+            $useSuperiorAlienTechnology
         );
-        if ($useSuperiorAlienTechnology) {
-            $this->addSuperiorAlienTechnologyToken($playerId, $card->id);
-        }
     }
 
     public function skipMiraculousCatch() {

@@ -198,10 +198,7 @@ trait EvolutionCardsStateTrait {
 
         if ($cardBeingBought->allowed) {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, false, $cardBeingBought->cost);            
-            if ($cardBeingBought->useSuperiorAlienTechnology) {
-                $this->addSuperiorAlienTechnologyToken($cardBeingBought->playerId, $cardBeingBought->cardId);
-            }
+            $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, false, $cardBeingBought->cost, $cardBeingBought->useSuperiorAlienTechnology);
         } else {
             $this->goToState(ST_PLAYER_BUY_CARD);
         }

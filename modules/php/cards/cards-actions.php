@@ -112,7 +112,7 @@ trait CardsActionTrait {
         $this->goToState($this->redirectAfterStealCostume($playerId));
     }
 
-    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist, $buyCost = null) {
+    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist, $buyCost = null, $useSuperiorAlienTechnology = false) {
         $card = $this->getCardFromDb($this->cards->getCard($id));
         $cardLocationArg = $card->location_arg;
         $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
@@ -257,6 +257,11 @@ trait CardsActionTrait {
         }
         $this->setGameStateValue('newCardId', $newCardId);
 
+        
+        if ($useSuperiorAlienTechnology) {
+            $this->addSuperiorAlienTechnologyToken($playerId, $id);
+        }
+
         if ($mimic) {
             $this->goToMimicSelection($playerId, MIMIC_CARD);
             return;
@@ -290,6 +295,11 @@ trait CardsActionTrait {
         $cost = $this->getCardCost($playerId, $card->type);
         if ($useSuperiorAlienTechnology) {
             $cost = ceil($cost / 2);
+
+            $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
+            if (count($cardsIds) >= 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION)) {
+                throw new \BgaUserException('You can only have 3 cards with tokens.');
+            }
         }
 
         if (!$this->canBuyCard($playerId, $card->type, $cost)) {
@@ -303,6 +313,7 @@ trait CardsActionTrait {
         if (!$this->canBuyPowerCard($playerId)) {
             throw new \BgaUserException("You can't buy Power cards");
         }
+        $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
         
         $canPreventBuying = !$opportunist && $this->isPowerUpExpansion()
             && $this->canPlayStepEvolution($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT);
@@ -320,10 +331,7 @@ trait CardsActionTrait {
             $this->jumpToState(ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT);
         } else {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($playerId, $id, $from, $opportunist, $cost);
-            if ($useSuperiorAlienTechnology) {
-                $this->addSuperiorAlienTechnologyToken($playerId, $id);
-            }
+            $this->applyBuyCard($playerId, $id, $from, $opportunist, $cost, $useSuperiorAlienTechnology);
         }
     }
 
