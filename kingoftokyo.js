@@ -4701,9 +4701,9 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'MiraculousCatch':
                 var miraculousCatchArgs = question.args;
-                var card = this.cards.generateCardDiv(miraculousCatchArgs.card);
-                card.id = "miraculousCatch-card-" + miraculousCatchArgs.card.id;
-                dojo.place("<div id=\"card-MiraculousCatch-wrapper\" class=\"card-in-title-wrapper\">" + card.outerHTML + "</div>", "maintitlebar_content");
+                var miraculousCatchCard = this.cards.generateCardDiv(miraculousCatchArgs.card);
+                miraculousCatchCard.id = "miraculousCatch-card-" + miraculousCatchArgs.card.id;
+                dojo.place("<div id=\"card-MiraculousCatch-wrapper\" class=\"card-in-title-wrapper\">" + miraculousCatchCard.outerHTML + "</div>", "maintitlebar_content");
                 break;
             case 'DeepDive':
                 var deepDiveCatchArgs = question.args;
@@ -4715,6 +4715,11 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'MyToy':
                 this.tableCenter.setVisibleCardsSelectionMode(1);
+                break;
+            case 'SuperiorAlienTechnology':
+                var superiorAlienTechnologyArgs = question.args;
+                this.setTitleBarSuperiorAlienTechnologyCard(superiorAlienTechnologyArgs.card);
+                this.setDiceSelectorVisibility(false);
                 break;
         }
     };
@@ -4850,7 +4855,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onLeavingAnswerQuestion = function () {
-        var _a, _b;
+        var _a, _b, _c;
         var question = this.gamedatas.gamestate.args.question;
         switch (question.code) {
             case 'Bamboozle':
@@ -4868,12 +4873,19 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 break;
             case 'MiraculousCatch':
-                var card = document.getElementById("card-MiraculousCatch-wrapper");
-                (_a = card === null || card === void 0 ? void 0 : card.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(card);
+                var miraculousCatchCard = document.getElementById("card-MiraculousCatch-wrapper");
+                (_a = miraculousCatchCard === null || miraculousCatchCard === void 0 ? void 0 : miraculousCatchCard.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(miraculousCatchCard);
                 break;
             case 'DeepDive':
                 var cards = document.getElementById("card-DeepDive-wrapper");
                 (_b = cards === null || cards === void 0 ? void 0 : cards.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(cards);
+                break;
+            case 'SuperiorAlienTechnology':
+                var superiorAlienTechnologyCard = document.getElementById("card-SuperiorAlienTechnology-wrapper");
+                while (superiorAlienTechnologyCard) {
+                    (_c = superiorAlienTechnologyCard === null || superiorAlienTechnologyCard === void 0 ? void 0 : superiorAlienTechnologyCard.parentElement) === null || _c === void 0 ? void 0 : _c.removeChild(superiorAlienTechnologyCard);
+                    superiorAlienTechnologyCard = document.getElementById("card-SuperiorAlienTechnology-wrapper");
+                }
                 break;
         }
     };
@@ -5262,6 +5274,9 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
                 document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
                 this.addActionButton('answerElectricCarrot4_button', formatTextIcons(/*TODOPU_*/ ("Lose 1 extra [Heart]")), function () { return _this.answerElectricCarrot(4); });
+                break;
+            case 'SuperiorAlienTechnology':
+                this.addActionButton('throwDieSuperiorAlienTechnology_button', /*TODOPU_*/ ('Roll a die'), function () { return _this.throwDieSuperiorAlienTechnology(); });
                 break;
         }
     };
@@ -6702,6 +6717,12 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('useFelineMotor');
     };
+    KingOfTokyo.prototype.throwDieSuperiorAlienTechnology = function () {
+        if (!this.checkAction('throwDieSuperiorAlienTechnology')) {
+            return;
+        }
+        this.takeAction('throwDieSuperiorAlienTechnology');
+    };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
@@ -6781,6 +6802,8 @@ var KingOfTokyo = /** @class */ (function () {
             ['discardedDie', ANIMATION_MS],
             ['exchangeCard', ANIMATION_MS],
             ['playEvolution', ANIMATION_MS],
+            ['superiorAlienTechnologyRolledDie', ANIMATION_MS],
+            ['superiorAlienTechnologyLog', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -7199,6 +7222,36 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_ownedEvolutions = function (notif) {
         this.gamedatas.players[notif.args.playerId].ownedEvolutions = notif.args.evolutions;
+    };
+    KingOfTokyo.prototype.setTitleBarSuperiorAlienTechnologyCard = function (card, parent) {
+        if (parent === void 0) { parent = "maintitlebar_content"; }
+        var superiorAlienTechnologyCard = this.cards.generateCardDiv(card);
+        superiorAlienTechnologyCard.id = "SuperiorAlienTechnology-card-" + card.id;
+        dojo.place("<div id=\"card-SuperiorAlienTechnology-wrapper\" class=\"card-in-title-wrapper\">" + superiorAlienTechnologyCard.outerHTML + "</div>", parent);
+    };
+    KingOfTokyo.prototype.notif_superiorAlienTechnologyRolledDie = function (notif) {
+        this.setTitleBarSuperiorAlienTechnologyCard(notif.args.card, 'gameaction_status_wrap');
+        this.setDiceSelectorVisibility(true);
+        this.diceManager.showCamouflageRoll([{
+                id: 0,
+                value: notif.args.dieValue,
+                extra: false,
+                locked: false,
+                rolled: true,
+                type: 0,
+                canReroll: true,
+            }]);
+    };
+    KingOfTokyo.prototype.notif_superiorAlienTechnologyLog = function (notif) {
+        //this.setTitleBarSuperiorAlienTechnologyCard(notif.args.card, 'gameaction_status_wrap');
+        if (document.getElementById('dice0')) {
+            var message = notif.args.dieValue == 6 ?
+                /*TODOPU_*/ ('<strong>${card_name}</strong> card removed!') :
+                /*TODOPU_*/ ('<strong>${card_name}</strong> card kept!');
+            this.doShowBubble('dice0', dojo.string.substitute(message, {
+                'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
+            }), 'superiorAlienTechnologyBubble');
+        }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;

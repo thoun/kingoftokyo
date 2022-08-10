@@ -116,6 +116,12 @@ html, .mode_3d #game_play_area_background {
   .icon {
     margin: -5px 0;
   }
+
+  .ufo.token {
+    margin: -5px 0;
+    box-shadow: unset;
+    vertical-align: middle;
+  }
 }
 
 #monster-pick {

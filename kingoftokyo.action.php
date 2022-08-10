@@ -1002,6 +1002,14 @@
         self::ajaxResponse();
     }
   	
+    public function throwDieSuperiorAlienTechnology() {
+        self::setAjaxMode();
+
+        $this->game->throwDieSuperiorAlienTechnology();
+
+        self::ajaxResponse();
+    }
+  	
     // TODOBUG
     public function debugBlockedTable() {
         self::setAjaxMode();

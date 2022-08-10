@@ -654,4 +654,43 @@ trait EvolutionCardsActionTrait {
 
         $this->applyFelineMotor($playerId);
     }
+
+    public function throwDieSuperiorAlienTechnology() {
+        $this->checkAction('throwDieSuperiorAlienTechnology');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $question = $this->getQuestion();
+        $card = $question->args->card;
+        
+        $dieFace = bga_rand(1, 6);
+
+        $remove = $dieFace == 6;
+
+        $message = $remove ? 
+            /*clienttranslate(*/'${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and loses it'/*)*/ :
+            /*clienttranslate(*/'${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and keeps it'/*)*/;
+
+        $this->notifyAllPlayers('superiorAlienTechnologyRolledDie', '', [
+            'dieValue' => $dieFace,
+            'card' => $card,
+        ]);
+        $this->notifyAllPlayers('superiorAlienTechnologyLog', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => $card->type,
+            'die_face' => $this->getDieFaceLogName($dieFace, 0),
+            'dieValue' => $dieFace,
+            'card' => $card,
+        ]);
+
+        if ($remove) {
+            $this->removeCard($playerId, $card);
+            $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
+            $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, $superiorAlienTechnologyTokens);
+        }
+        $this->setUsedCard(800 + $card->id);
+        $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
+        return;
+    }
 }

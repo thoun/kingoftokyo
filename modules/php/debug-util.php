@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343496, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
@@ -212,9 +212,9 @@ trait DebugUtilTrait {
             $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
-            //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343493"); // gigazaur
+            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343493"); // gigazaur
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
+            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343492"); // cyber bunny
             //$this->DbQuery("UPDATE player SET `player_monster` = 15 where `player_id` = 2343492"); // kraken
 

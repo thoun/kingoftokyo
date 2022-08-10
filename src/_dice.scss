@@ -667,3 +667,11 @@ $distFromCenter: 1em;
     transform: translateZ(20px);
   }
 }
+
+.discussion_bubble.superiorAlienTechnologyBubble {
+  white-space: nowrap;
+
+  &:after {
+    left: 15px;
+  }
+}

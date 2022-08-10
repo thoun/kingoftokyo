@@ -819,9 +819,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'MiraculousCatch':
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
-                const card = this.cards.generateCardDiv(miraculousCatchArgs.card);
-                card.id = `miraculousCatch-card-${miraculousCatchArgs.card.id}`;
-                dojo.place(`<div id="card-MiraculousCatch-wrapper" class="card-in-title-wrapper">${card.outerHTML}</div>`, `maintitlebar_content`);
+                const miraculousCatchCard = this.cards.generateCardDiv(miraculousCatchArgs.card);
+                miraculousCatchCard.id = `miraculousCatch-card-${miraculousCatchArgs.card.id}`;
+                dojo.place(`<div id="card-MiraculousCatch-wrapper" class="card-in-title-wrapper">${miraculousCatchCard.outerHTML}</div>`, `maintitlebar_content`);
                 break;
             case 'DeepDive':
                 const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
@@ -835,6 +835,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'MyToy':
                 this.tableCenter.setVisibleCardsSelectionMode(1);
+                break;
+            case 'SuperiorAlienTechnology':
+                const superiorAlienTechnologyArgs = question.args as SuperiorAlienTechnologyQuestionArgs;
+                this.setTitleBarSuperiorAlienTechnologyCard(superiorAlienTechnologyArgs.card);
+                this.setDiceSelectorVisibility(false);
                 break;
         }
     }
@@ -998,12 +1003,19 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
             case 'MiraculousCatch':
-                const card = document.getElementById(`card-MiraculousCatch-wrapper`);
-                card?.parentElement?.removeChild(card);
+                const miraculousCatchCard = document.getElementById(`card-MiraculousCatch-wrapper`);
+                miraculousCatchCard?.parentElement?.removeChild(miraculousCatchCard);
                 break;
             case 'DeepDive':
                 const cards = document.getElementById(`card-DeepDive-wrapper`);
                 cards?.parentElement?.removeChild(cards);
+                break;
+            case 'SuperiorAlienTechnology':
+                let superiorAlienTechnologyCard = document.getElementById(`card-SuperiorAlienTechnology-wrapper`);
+                while(superiorAlienTechnologyCard) {
+                    superiorAlienTechnologyCard?.parentElement?.removeChild(superiorAlienTechnologyCard);
+                    superiorAlienTechnologyCard = document.getElementById(`card-SuperiorAlienTechnology-wrapper`);
+                }
                 break;
         }
     }
@@ -1412,6 +1424,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
                 document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
                 (this as any).addActionButton('answerElectricCarrot4_button',  formatTextIcons(/*TODOPU_*/("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
+                break;
+            case 'SuperiorAlienTechnology':
+                (this as any).addActionButton('throwDieSuperiorAlienTechnology_button', /*TODOPU_*/('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
                 break;
         }
     }
@@ -3266,6 +3281,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('useFelineMotor');
     }
     
+    public throwDieSuperiorAlienTechnology() {
+        if(!(this as any).checkAction('throwDieSuperiorAlienTechnology')) {
+            return;
+        }
+
+        this.takeAction('throwDieSuperiorAlienTechnology');
+    }
+    
     public takeAction(action: string, data?: any) {
         data = data || {};
         data.lock = true;
@@ -3349,6 +3372,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['discardedDie', ANIMATION_MS],
             ['exchangeCard', ANIMATION_MS],
             ['playEvolution', ANIMATION_MS],
+            ['superiorAlienTechnologyRolledDie', ANIMATION_MS],
+            ['superiorAlienTechnologyLog', ANIMATION_MS],
             ['resolvePlayerDice', 500],
             ['changeTokyoTowerOwner', 500],
             ['changeForm', 500],
@@ -3842,8 +3867,42 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.setPlayerTokens(notif.args.playerId, 1, 'target');
     }
     
-    notif_ownedEvolutions(notif: Notif<NotifOwnedEvoltionsArgs>) {
+    notif_ownedEvolutions(notif: Notif<NotifOwnedEvolutionsArgs>) {
         this.gamedatas.players[notif.args.playerId].ownedEvolutions = notif.args.evolutions;
+    }
+
+    private setTitleBarSuperiorAlienTechnologyCard(card: Card, parent: string = `maintitlebar_content`) {
+        const superiorAlienTechnologyCard = this.cards.generateCardDiv(card);
+        superiorAlienTechnologyCard.id = `SuperiorAlienTechnology-card-${card.id}`;
+        dojo.place(`<div id="card-SuperiorAlienTechnology-wrapper" class="card-in-title-wrapper">${superiorAlienTechnologyCard.outerHTML}</div>`, parent);
+    }
+    
+    notif_superiorAlienTechnologyRolledDie(notif: Notif<NotifSuperiorAlienTechnologyRolledDieArgs>) {
+        this.setTitleBarSuperiorAlienTechnologyCard(notif.args.card, 'gameaction_status_wrap');
+        this.setDiceSelectorVisibility(true);
+
+        this.diceManager.showCamouflageRoll([{
+            id: 0,
+            value: notif.args.dieValue,
+            extra: false,
+            locked: false,
+            rolled: true,
+            type: 0,
+            canReroll: true,
+        }]);
+    }
+    
+    notif_superiorAlienTechnologyLog(notif: Notif<NotifSuperiorAlienTechnologyRolledDieArgs>) {
+        //this.setTitleBarSuperiorAlienTechnologyCard(notif.args.card, 'gameaction_status_wrap');
+
+        if (document.getElementById('dice0')) {
+            const message = notif.args.dieValue == 6 ? 
+                /*TODOPU_*/('<strong>${card_name}</strong> card removed!') : 
+                /*TODOPU_*/('<strong>${card_name}</strong> card kept!');
+            (this as any).doShowBubble('dice0', dojo.string.substitute(message, {
+                'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
+            }), 'superiorAlienTechnologyBubble');
+        }
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

@@ -717,6 +717,13 @@
   transform: translateZ(20px);
 }
 
+.discussion_bubble.superiorAlienTechnologyBubble {
+  white-space: nowrap;
+}
+.discussion_bubble.superiorAlienTechnologyBubble:after {
+  left: 15px;
+}
+
 .stockitem, #deck {
   border-radius: 10px;
   margin: 5px;
@@ -2410,6 +2417,11 @@ html, .mode_3d #game_play_area_background {
 }
 #page-title .icon {
   margin: -5px 0;
+}
+#page-title .ufo.token {
+  margin: -5px 0;
+  box-shadow: unset;
+  vertical-align: middle;
 }
 
 #monster-pick {

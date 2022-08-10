@@ -108,29 +108,28 @@ trait EvolutionCardsStateTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
         $cardsWithSuperiorAlienTechnologyTokens = array_values(array_filter($cards, fn($card) => in_array($card->id, $superiorAlienTechnologyTokens)));
+        $usedCardsIds = $this->getUsedCard();
+        $cardWithSuperiorAlienTechnologyToken = $this->array_find($cardsWithSuperiorAlienTechnologyTokens, fn($iCard) => !in_array(800 + $iCard->id, $usedCardsIds));
 
-        if (count($cardsWithSuperiorAlienTechnologyTokens) > 0) {
-            foreach($cardsWithSuperiorAlienTechnologyTokens as $card) {
-                $dieFace = bga_rand(1, 6);
-
-                $remove = $dieFace == 6;
-
-                $message = $remove ? 
-                    /*clienttranslate(*/'${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and must remove it'/*)*/ :
-                    /*clienttranslate(*/'${player_name} rolls ${die_face} for the card ${card_name} with a [ufoToken] on it and keeps it'/*)*/;
-
-                $this->notifyAllPlayers('log', $message, [
-                    'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
-                    'card_name' => $card->type,
-                    'die_face' => $this->getDieFaceLogName($dieFace, 0),
-                ]);
-
-                if ($remove) {
-                    $this->removeCard($playerId, $card);
-                    $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
-                }
-            }
+        if ($cardWithSuperiorAlienTechnologyToken != null) {
+            $question = new Question(
+                'SuperiorAlienTechnology',
+                /* client TODOPU translate(*/'${actplayer} must roll a die for ${card_name} ([ufoToken] on it)'/*)*/,
+                /* client TODOPU translate(*/'${you} must roll a die for ${card_name} ([ufoToken] on it)'/*)*/,
+                [$playerId],
+                ST_QUESTIONS_BEFORE_START_TURN,
+                [
+                    'card' => $cardWithSuperiorAlienTechnologyToken,
+                    '_args' => [
+                        'card_name' => $cardWithSuperiorAlienTechnologyToken->type,
+                    ],
+                ]
+            );
+            $this->setQuestion($question);
+            $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+    
+            $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+            return;
         }
 
         $unusedEnergySwordCard = $this->getFirstUnusedEvolution($playerId, ENERGY_SWORD_EVOLUTION);

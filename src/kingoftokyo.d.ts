@@ -96,6 +96,10 @@ interface TargetAcquiredQuestionArgs {
     playerId: number;
 }
 
+interface SuperiorAlienTechnologyQuestionArgs {
+    card: Card;
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
@@ -686,7 +690,12 @@ interface NotifGiveTargetArgs {
     previousOwner: number;
 }
 
-interface NotifOwnedEvoltionsArgs {
+interface NotifOwnedEvolutionsArgs {
     playerId: number;
     evolutions: EvolutionCard[];
+}
+
+interface NotifSuperiorAlienTechnologyRolledDieArgs {
+    dieValue: number;
+    card: Card;
 }
