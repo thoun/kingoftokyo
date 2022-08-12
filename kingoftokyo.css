@@ -963,10 +963,10 @@
 
 .player-evolution-cards .stockitem .name-and-description {
   position: absolute;
-  top: 45px;
-  left: 6px;
-  right: 6px;
-  height: 70px;
+  top: 69px;
+  left: 22px;
+  right: 22px;
+  height: 102px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -980,10 +980,10 @@
 }
 .player-evolution-cards .stockitem .evolution-type {
   position: absolute;
-  font-size: 6pt;
-  left: 22px;
-  top: 36px;
-  width: 87px;
+  font-size: 8pt;
+  left: 38px;
+  top: 55px;
+  right: 36px;
   text-transform: uppercase;
   color: white;
   white-space: nowrap;
@@ -998,8 +998,8 @@
   position: relative;
   top: unset;
   left: unset;
-  width: 104px;
-  font-size: 9pt;
+  width: unset;
+  font-size: 11pt;
   color: white;
   font-family: "goodgirl";
   text-align: center;
@@ -1008,7 +1008,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  -webkit-text-stroke: 4px #a6c136;
+  -webkit-text-stroke: 5px #a6c136;
   width: 100%;
 }
 .player-evolution-cards .stockitem .name-wrapper .text {
@@ -1021,11 +1021,11 @@
   position: relative;
   top: unset;
   left: unset;
-  width: 104px;
+  width: unset;
   text-overflow: ellipsis;
   text-align: center;
   color: black;
-  font-size: 7pt;
+  font-size: 8pt;
 }
 .player-evolution-cards .stockitem .description-wrapper .icon {
   width: 12px;

@@ -1,6 +1,8 @@
 const CARD_WIDTH = 132;
 const CARD_HEIGHT = 185;
 
+const EVOLUTION_SIZE = 198;
+
 interface PlacedTokens {
     x: number;
     y: number;

@@ -50,9 +50,6 @@ class PlayerTable {
             </div> 
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
             <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>`;
-        if (game.isWickednessExpansion()) {
-            html += `<div id="wickedness-tiles-${player.id}" class="wickedness-tile-stock player-wickedness-tiles ${player.wickednessTiles?.length ? '' : 'empty'}"></div>   `;
-        }
         if (game.isPowerUpExpansion()) {
             html += `
             <div id="visible-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.visibleEvolutions?.length ? '' : 'empty'}"></div>
@@ -61,6 +58,9 @@ class PlayerTable {
             html += `
             <div id="reserved-cards-${player.id}" class="reserved card-stock player-cards ${player.cards.length ? '' : 'empty'}"></div>
             `;
+        }
+        if (game.isWickednessExpansion()) {
+            html += `<div id="wickedness-tiles-${player.id}" class="wickedness-tile-stock player-wickedness-tiles ${player.wickednessTiles?.length ? '' : 'empty'}"></div>`;
         }
         html += `    <div id="cards-${player.id}" class="card-stock player-cards ${player.reservedCards.length ? '' : 'empty'}"></div>
         </div>
@@ -167,7 +167,7 @@ class PlayerTable {
                 this.hiddenEvolutionCards = new ebg.stock() as Stock;
                 this.hiddenEvolutionCards.setSelectionAppearance('class');
                 this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
-                this.hiddenEvolutionCards.create(this.game, $(`hand-evolution-cards`), CARD_WIDTH, CARD_WIDTH);
+                this.hiddenEvolutionCards.create(this.game, $(`hand-evolution-cards`), EVOLUTION_SIZE, EVOLUTION_SIZE);
                 this.hiddenEvolutionCards.setSelectionMode(2);
                 this.hiddenEvolutionCards.centerItems = true;
                 this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
@@ -186,7 +186,7 @@ class PlayerTable {
             this.visibleEvolutionCards = new ebg.stock() as Stock;
             this.visibleEvolutionCards.setSelectionAppearance('class');
             this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
-            this.visibleEvolutionCards.create(this.game, $(`visible-evolution-cards-${player.id}`), CARD_WIDTH, CARD_WIDTH);
+            this.visibleEvolutionCards.create(this.game, $(`visible-evolution-cards-${player.id}`), EVOLUTION_SIZE, EVOLUTION_SIZE);
             this.visibleEvolutionCards.setSelectionMode(0);
             this.visibleEvolutionCards.centerItems = true;
             this.visibleEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 

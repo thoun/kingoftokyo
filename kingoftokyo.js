@@ -86,6 +86,7 @@ function formatTextIcons(rawText) {
 }
 var CARD_WIDTH = 132;
 var CARD_HEIGHT = 185;
+var EVOLUTION_SIZE = 198;
 var KEEP_CARDS_LIST = {
     base: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48],
     dark: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55],
@@ -1256,6 +1257,7 @@ var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
         this.game = game;
         this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
+        //this.debugSeeAllCards();
     }
     // gameui.evolutionCards.debugSeeAllCards()
     EvolutionCards.prototype.debugSeeAllCards = function () {
@@ -1613,36 +1615,43 @@ var EvolutionCards = /** @class */ (function () {
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType));
         cardDiv.innerHTML = "\n        <div class=\"evolution-type\">" + type + "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n                    <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        </div>      \n        ";
-        var evolutionType = cardDiv.getElementsByClassName('evolution-type')[0];
-        var nameAndDescription = cardDiv.getElementsByClassName('name-and-description')[0];
         var nameWrapper = cardDiv.getElementsByClassName('name-wrapper')[0];
         var outline = cardDiv.getElementsByClassName('outline')[0];
         var descriptionWrapper = cardDiv.getElementsByClassName('description-wrapper')[0];
         var textHeight = descriptionWrapper.clientHeight;
-        if (textHeight > 50) {
+        var nameHeight = outline.clientHeight;
+        if (102 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '10pt';
+            outline.style.webkitTextStroke = '4px #a6c136';
+            nameHeight = outline.clientHeight;
+        }
+        if (102 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '9pt';
+            nameHeight = outline.clientHeight;
+        }
+        if (textHeight > 80) {
+            descriptionWrapper.style.fontSize = '7pt';
+            textHeight = descriptionWrapper.clientHeight;
+        }
+        else {
+            return;
+        }
+        if (textHeight > 80) {
             descriptionWrapper.style.fontSize = '6pt';
             textHeight = descriptionWrapper.clientHeight;
         }
         else {
             return;
         }
-        var nameHeight = outline.clientHeight;
-        if (71 - textHeight < nameHeight) {
+        if (102 - textHeight < nameHeight) {
             nameWrapper.style.fontSize = '8pt';
-            nameHeight = outline.clientHeight;
-        }
-        if (71 - textHeight < nameHeight) {
-            nameWrapper.style.fontSize = '7pt';
-            nameHeight = outline.clientHeight;
-        }
-        if (71 - textHeight < nameHeight) {
-            nameWrapper.style.fontSize = '6pt';
             outline.style.webkitTextStroke = '3px #a6c136';
+            nameHeight = outline.clientHeight;
         }
-        if (textHeight > 50 || nameWrapper.getBoundingClientRect().top < evolutionType.getBoundingClientRect().bottom) {
-            descriptionWrapper.style.width = '120px';
-            descriptionWrapper.style.background = '#FFFFFFCC';
-            nameAndDescription.style.height = '87px';
+        if (102 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '7pt';
+            outline.style.webkitTextStroke = '3px #a6c136';
+            nameHeight = outline.clientHeight;
         }
     };
     // TODOPU set ownerId
@@ -1702,8 +1711,8 @@ var EvolutionCards = /** @class */ (function () {
     EvolutionCards.prototype.generateCardDiv = function (card) {
         var tempDiv = document.createElement('div');
         tempDiv.classList.add('stockitem');
-        tempDiv.style.width = CARD_WIDTH + "px";
-        tempDiv.style.height = CARD_WIDTH + "px";
+        tempDiv.style.width = EVOLUTION_SIZE + "px";
+        tempDiv.style.height = EVOLUTION_SIZE + "px";
         tempDiv.style.position = "relative";
         tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/evolution-cards.jpg')";
         var imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1;
@@ -1718,7 +1727,7 @@ var EvolutionCards = /** @class */ (function () {
         var mimickedCardText = '-';
         if (mimickedCard) {
             var tempDiv = this.generateCardDiv(mimickedCard);
-            mimickedCardText = "<br>" + tempDiv.outerHTML;
+            mimickedCardText = "<br><div class=\"player-evolution-cards\">" + tempDiv.outerHTML + "</div>";
         }
         return mimickedCardText;
     };
@@ -1998,13 +2007,13 @@ var PlayerTable = /** @class */ (function () {
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
         var html = "\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper monster" + this.monster + " " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>";
-        if (game.isWickednessExpansion()) {
-            html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_a = player.wickednessTiles) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>   ";
-        }
         if (game.isPowerUpExpansion()) {
-            html += "\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_b = player.visibleEvolutions) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>\n            ";
+            html += "\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>\n            ";
             // TODOPUBG
             html += "\n            <div id=\"reserved-cards-" + player.id + "\" class=\"reserved card-stock player-cards " + (player.cards.length ? '' : 'empty') + "\"></div>\n            ";
+        }
+        if (game.isWickednessExpansion()) {
+            html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_b = player.wickednessTiles) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>";
         }
         html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (player.reservedCards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
         dojo.place(html, 'table');
@@ -2081,7 +2090,7 @@ var PlayerTable = /** @class */ (function () {
                 this.hiddenEvolutionCards = new ebg.stock();
                 this.hiddenEvolutionCards.setSelectionAppearance('class');
                 this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
-                this.hiddenEvolutionCards.create(this.game, $("hand-evolution-cards"), CARD_WIDTH, CARD_WIDTH);
+                this.hiddenEvolutionCards.create(this.game, $("hand-evolution-cards"), EVOLUTION_SIZE, EVOLUTION_SIZE);
                 this.hiddenEvolutionCards.setSelectionMode(2);
                 this.hiddenEvolutionCards.centerItems = true;
                 this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
@@ -2098,7 +2107,7 @@ var PlayerTable = /** @class */ (function () {
             this.visibleEvolutionCards = new ebg.stock();
             this.visibleEvolutionCards.setSelectionAppearance('class');
             this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
-            this.visibleEvolutionCards.create(this.game, $("visible-evolution-cards-" + player.id), CARD_WIDTH, CARD_WIDTH);
+            this.visibleEvolutionCards.create(this.game, $("visible-evolution-cards-" + player.id), EVOLUTION_SIZE, EVOLUTION_SIZE);
             this.visibleEvolutionCards.setSelectionMode(0);
             this.visibleEvolutionCards.centerItems = true;
             this.visibleEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };

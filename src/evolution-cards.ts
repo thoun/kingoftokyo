@@ -5,6 +5,7 @@ class EvolutionCards {
 
     constructor (private game: KingOfTokyoGame) {
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
+        //this.debugSeeAllCards();
     }
 
     // gameui.evolutionCards.debugSeeAllCards()
@@ -396,42 +397,46 @@ class EvolutionCards {
         </div>      
         `;
 
-        const evolutionType = cardDiv.getElementsByClassName('evolution-type')[0] as HTMLDivElement;
-        const nameAndDescription = cardDiv.getElementsByClassName('name-and-description')[0] as HTMLDivElement;
         const nameWrapper = cardDiv.getElementsByClassName('name-wrapper')[0] as HTMLDivElement;
         const outline = cardDiv.getElementsByClassName('outline')[0] as HTMLDivElement;
         const descriptionWrapper = cardDiv.getElementsByClassName('description-wrapper')[0] as HTMLDivElement;
 
         let textHeight = descriptionWrapper.clientHeight;
+        let nameHeight = outline.clientHeight;
 
-        if (textHeight > 50) {
+        if (102 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '10pt';
+            outline.style.webkitTextStroke = '4px #a6c136';
+            nameHeight = outline.clientHeight;
+        }
+        if (102 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '9pt';
+            nameHeight = outline.clientHeight;
+        }
+
+        if (textHeight > 80) {
+            descriptionWrapper.style.fontSize = '7pt';
+            textHeight = descriptionWrapper.clientHeight;
+        } else {
+            return;
+        }
+        if (textHeight > 80) {
             descriptionWrapper.style.fontSize = '6pt';
             textHeight = descriptionWrapper.clientHeight;
         } else {
             return;
         }
 
-        let nameHeight = outline.clientHeight;
-
-        if (71 - textHeight < nameHeight) {
+        if (102 - textHeight < nameHeight) {
             nameWrapper.style.fontSize = '8pt';
-            nameHeight = outline.clientHeight;
-        }
-
-        if (71 - textHeight < nameHeight) {
-            nameWrapper.style.fontSize = '7pt';
-            nameHeight = outline.clientHeight;
-        }
-
-        if (71 - textHeight < nameHeight) {
-            nameWrapper.style.fontSize = '6pt';
             outline.style.webkitTextStroke = '3px #a6c136';
+            nameHeight = outline.clientHeight;
         }
 
-        if (textHeight > 50 || nameWrapper.getBoundingClientRect().top < evolutionType.getBoundingClientRect().bottom) {
-            descriptionWrapper.style.width = '120px';
-            descriptionWrapper.style.background = '#FFFFFFCC';
-            nameAndDescription.style.height = '87px';
+        if (102 - textHeight < nameHeight) {
+            nameWrapper.style.fontSize = '7pt';
+            outline.style.webkitTextStroke = '3px #a6c136';
+            nameHeight = outline.clientHeight;
         }
     }
 
@@ -502,8 +507,8 @@ class EvolutionCards {
     public generateCardDiv(card: Card): HTMLDivElement {
         const tempDiv: HTMLDivElement = document.createElement('div');
         tempDiv.classList.add('stockitem');
-        tempDiv.style.width = `${CARD_WIDTH}px`;
-        tempDiv.style.height = `${CARD_WIDTH}px`;
+        tempDiv.style.width = `${EVOLUTION_SIZE}px`;
+        tempDiv.style.height = `${EVOLUTION_SIZE}px`;
         tempDiv.style.position = `relative`;
         tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/evolution-cards.jpg')`;
         const imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1;
@@ -522,7 +527,7 @@ class EvolutionCards {
         if (mimickedCard) {
             const tempDiv = this.generateCardDiv(mimickedCard);
 
-            mimickedCardText = `<br>${tempDiv.outerHTML}`;
+            mimickedCardText = `<br><div class="player-evolution-cards">${tempDiv.outerHTML}</div>`;
         }
 
         return mimickedCardText;
