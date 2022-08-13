@@ -451,7 +451,7 @@ class PlayerTable {
             this.pickEvolutionCards = new ebg.stock() as Stock;
             this.pickEvolutionCards.setSelectionAppearance('class');
             this.pickEvolutionCards.selectionClass = 'no-visible-selection-except-double-selection';
-            this.pickEvolutionCards.create(this.game, $(`pick-evolution`), CARD_WIDTH, CARD_WIDTH);
+            this.pickEvolutionCards.create(this.game, $(`pick-evolution`), EVOLUTION_SIZE, EVOLUTION_SIZE);
             this.pickEvolutionCards.setSelectionMode(1);
             this.pickEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
             this.pickEvolutionCards.centerItems = true;

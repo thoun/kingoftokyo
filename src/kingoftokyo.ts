@@ -384,7 +384,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.choseEvolutionInStock = new ebg.stock() as Stock;
             this.choseEvolutionInStock.setSelectionAppearance('class');
             this.choseEvolutionInStock.selectionClass = 'no-visible-selection';
-            this.choseEvolutionInStock.create(this, $(`choose-evolution-in`), CARD_WIDTH, CARD_WIDTH);
+            this.choseEvolutionInStock.create(this, $(`choose-evolution-in`), EVOLUTION_SIZE, EVOLUTION_SIZE);
             this.choseEvolutionInStock.setSelectionMode(2);
             this.choseEvolutionInStock.centerItems = true;
             this.choseEvolutionInStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
@@ -393,7 +393,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.inDeckEvolutionsStock = new ebg.stock() as Stock;
             this.inDeckEvolutionsStock.setSelectionAppearance('class');
             this.inDeckEvolutionsStock.selectionClass = 'no-visible-selection';
-            this.inDeckEvolutionsStock.create(this, $(`evolutions-in-deck`), CARD_WIDTH, CARD_WIDTH);
+            this.inDeckEvolutionsStock.create(this, $(`evolutions-in-deck`), EVOLUTION_SIZE, EVOLUTION_SIZE);
             this.inDeckEvolutionsStock.setSelectionMode(0);
             this.inDeckEvolutionsStock.centerItems = true;
             this.inDeckEvolutionsStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
