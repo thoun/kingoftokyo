@@ -375,7 +375,7 @@ trait CardsUtilTrait {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
-    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, int $newHearts) {
+    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, int $newHearts, int $points) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
@@ -402,8 +402,7 @@ trait CardsUtilTrait {
             ]);
         }
 
-        // lose all stars
-        $points = 0;
+        // go back to $points stars
         $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
         $this->notifyAllPlayers('points','', [
             'playerId' => $playerId,
@@ -438,7 +437,8 @@ trait CardsUtilTrait {
             clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'),
             $this->isDarkEdition(), 
             false,
-            10
+            10,
+            0
         );
     }
 
@@ -451,7 +451,8 @@ trait CardsUtilTrait {
             /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/,
             true, 
             false,
-            12
+            12,
+            0
         );
     }
 
@@ -462,14 +463,9 @@ trait CardsUtilTrait {
             /*client TODOPU translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'/*)*/,
             false, 
             true,
+            9,
             9
         );
-
-        $this->notifyAllPlayers('points','', [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'points' => 9,
-        ]);
     }
 
     function applyBatteryMonster(int $playerId, $card) {
