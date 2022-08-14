@@ -4994,7 +4994,7 @@ var KingOfTokyo = /** @class */ (function () {
                     document.getElementById("giveSymbolToActivePlayer_button5").dataset.enableAtEnergy = '1';
                     break;
                 case 'throwDice':
-                    this.addActionButton('goToChangeDie_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+                    this.addActionButton('goToChangeDie_button', _("Resolve dice"), function () { return _this.goToChangeDie(); }, null, null, 'red');
                     var argsThrowDice = args;
                     if (!argsThrowDice.hasActions) {
                         this.startActionTimer('goToChangeDie_button', ACTION_TIMER_DURATION);
@@ -6145,7 +6145,14 @@ var KingOfTokyo = /** @class */ (function () {
             id: id
         });
     };
-    KingOfTokyo.prototype.goToChangeDie = function () {
+    KingOfTokyo.prototype.goToChangeDie = function (confirmed) {
+        var _this = this;
+        if (confirmed === void 0) { confirmed = false; }
+        var args = this.gamedatas.gamestate.args;
+        if (!confirmed && args.throwNumber == 1 && args.maxThrowNumber > 1) {
+            this.confirmationDialog(formatTextIcons(_('Are you sure you want to resolve dice without any reroll? If you want to change your dice, click on the dice you want to keep and use "Reroll dice" button to reroll the others.')), function () { return _this.goToChangeDie(true); });
+            return;
+        }
         if (!this.checkAction('goToChangeDie', true)) {
             return;
         }

@@ -1119,7 +1119,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     document.getElementById(`giveSymbolToActivePlayer_button5`).dataset.enableAtEnergy = '1';
                     break;
                 case 'throwDice':
-                    (this as any).addActionButton('goToChangeDie_button', _("Resolve dice"), 'goToChangeDie', null, null, 'red');
+                    (this as any).addActionButton('goToChangeDie_button', _("Resolve dice"), () => this.goToChangeDie(), null, null, 'red');
 
                     const argsThrowDice = args as EnteringThrowDiceArgs;
                     if (!argsThrowDice.hasActions) {
@@ -2536,7 +2536,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
 
-    public goToChangeDie() {
+    public goToChangeDie(confirmed: boolean = false) {
+        const args = this.gamedatas.gamestate.args as EnteringThrowDiceArgs;
+        if (!confirmed && args.throwNumber == 1 && args.maxThrowNumber > 1) {
+            (this as any).confirmationDialog(
+                formatTextIcons(_('Are you sure you want to resolve dice without any reroll? If you want to change your dice, click on the dice you want to keep and use "Reroll dice" button to reroll the others.')), 
+                () => this.goToChangeDie(true)
+            );
+            return;
+        }
+
         if(!(this as any).checkAction('goToChangeDie', true)) {
             return;
         }
