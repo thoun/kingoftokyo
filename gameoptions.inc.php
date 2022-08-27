@@ -133,7 +133,6 @@ $game_options = [
         'default' => 1,
     ],
 
-    /* TODOPU 
     POWERUP_EXPANSION_OPTION => [
         'name' => totranslate('Power-Up! (Evolutions)'),
         'values' => [
@@ -155,19 +154,18 @@ $game_options = [
                 [ 
                     'type' => 'minplayers',
                     'value' => 9,
-                    'message' => 'Power-Up! will be available from Friday, xxth at 11:00',
+                    'message' => 'Power-Up! will be available soon!',
                 ] 
             ],
             3 => [
                 [ 
                     'type' => 'minplayers',
                     'value' => 9,
-                    'message' => 'Power-Up! will be available from Friday, xxth at 11:00',
+                    'message' => 'Power-Up! will be available soon!',
                 ] 
             ],
         ],
     ],
-    */
 
     /* TODODE 
     DARK_EDITION_OPTION => [
@@ -190,6 +188,29 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'startcondition' => [
+            2 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Dark edition will be available from Friday, xxth at 11:00',
+                ] 
+            ],
+            3 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Dark edition will be available from Friday, xxth at 11:00',
+                ] 
+            ],
+            4 => [
+                [ 
+                    'type' => 'minplayers',
+                    'value' => 9,
+                    'message' => 'Dark edition will be available from Friday, xxth at 11:00',
+                ] 
+            ],
+        ],
     ],
     */
 
@@ -282,8 +303,8 @@ $game_preferences = [
             1 => ['name' => totranslate('Base game')],
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
-            /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
-            /* TODOPU 5 => ['name' => totranslate('Dark Edition')], */
+            4 => ['name' => totranslate('Power-Up!')],
+            /* TODODE 5 => ['name' => totranslate('Dark Edition')], */
         ],
         'default' => 0
     ],
@@ -296,8 +317,8 @@ $game_preferences = [
             1 => ['name' => totranslate('Base game')],
             2 => ['name' => totranslate('Halloween event')],
             3 => ['name' => totranslate('Christmas event')],
-            /* TODOPU 4 => ['name' => totranslate('Power-Up!')], */
-            /* TODOPU 5 => ['name' => totranslate('Dark Edition')], */
+            4 => ['name' => totranslate('Power-Up!')],
+            /* TODODE 5 => ['name' => totranslate('Dark Edition')], */
         ],
         'default' => 0
     ],

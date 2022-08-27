@@ -45,8 +45,8 @@ trait EvolutionCardsStateTrait {
         if ($unusedBambooSupplyCard != null) {
             $question = new Question(
                 'BambooSupply',
-                /* client TODOPU translate(*/'${actplayer} can put or take [Energy]'/*)*/,
-                /* client TODOPU translate(*/'${you} can put or take [Energy]'/*)*/,
+                clienttranslate('${actplayer} can put or take [Energy]'),
+                clienttranslate('${you} can put or take [Energy]'),
                 [$playerId],
                 ST_QUESTIONS_BEFORE_START_TURN,
                 [ 'canTake' => $unusedBambooSupplyCard->tokens > 0 ]
@@ -64,8 +64,8 @@ trait EvolutionCardsStateTrait {
             if ($playerId != $ownerId) {
                 $question = new Question(
                     'FreezeRay',
-                    /* client TODOPU translate(*/'${actplayer} must choose a die face that will have no effect that turn'/*)*/,
-                    /* client TODOPU translate(*/'${you} must choose a die face that will have no effect that turn'/*)*/,
+                    clienttranslate('${actplayer} must choose a die face that will have no effect that turn'),
+                    clienttranslate('${you} must choose a die face that will have no effect that turn'),
                     [$ownerId],
                     ST_QUESTIONS_BEFORE_START_TURN,
                     [ 'card' => $unsetFreezeRayCard ]
@@ -86,8 +86,8 @@ trait EvolutionCardsStateTrait {
             if ($potentialEnergy >= 2) {
                 $question = new Question(
                     'ExoticArms',
-                    /* client TODOPU translate(*/'${actplayer} can put 2[Energy] on ${card_name}'/*)*/,
-                    /* client TODOPU translate(*/'${you} can put 2[Energy] on ${card_name}'/*)*/,
+                    clienttranslate('${actplayer} can put 2[Energy] on ${card_name}'),
+                    clienttranslate('${you} can put 2[Energy] on ${card_name}'),
                     [$playerId],
                     ST_QUESTIONS_BEFORE_START_TURN,
                     [ 
@@ -114,8 +114,8 @@ trait EvolutionCardsStateTrait {
         if ($cardWithSuperiorAlienTechnologyToken != null) {
             $question = new Question(
                 'SuperiorAlienTechnology',
-                /* client TODOPU translate(*/'${actplayer} must roll a die for ${card_name} ([ufoToken] on it)'/*)*/,
-                /* client TODOPU translate(*/'${you} must roll a die for ${card_name} ([ufoToken] on it)'/*)*/,
+                clienttranslate('${actplayer} must roll a die for ${card_name} ([ufoToken] on it)'),
+                clienttranslate('${you} must roll a die for ${card_name} ([ufoToken] on it)'),
                 [$playerId],
                 ST_QUESTIONS_BEFORE_START_TURN,
                 [
@@ -140,8 +140,8 @@ trait EvolutionCardsStateTrait {
             if ($potentialEnergy >= 2) {
                 $question = new Question(
                     'EnergySword',
-                    /* client TODOPU translate(*/'${actplayer} can pay 2[Energy] for ${card_name}'/*)*/,
-                    /* client TODOPU translate(*/'${you} can pay 2[Energy] for ${card_name}'/*)*/,
+                    clienttranslate('${actplayer} can pay 2[Energy] for ${card_name}'),
+                    clienttranslate('${you} can pay 2[Energy] for ${card_name}'),
                     [$playerId],
                     ST_QUESTIONS_BEFORE_START_TURN,
                     [

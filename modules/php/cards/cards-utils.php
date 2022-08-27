@@ -460,7 +460,7 @@ trait CardsUtilTrait {
         $this->applyResurrectCard(
             $playerId, 
             3000 + NINE_LIVES_EVOLUTION, 
-            /*client TODOPU translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'/*)*/,
+            clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'),
             false, 
             true,
             9,

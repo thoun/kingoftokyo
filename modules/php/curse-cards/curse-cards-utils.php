@@ -85,8 +85,8 @@ trait CurseCardsUtilTrait {
                 if ($this->isPowerUpExpansion()) {
                     $question = new Question(
                         'GazeOfTheSphinxAnkh',
-                        /* client TODOPU translate(*/'${actplayer} must choose to draw an Evolution card or gain 3[Energy]'/*)*/,
-                        /* client TODOPU translate(*/'${you} must choose to draw an Evolution card or gain 3[Energy]'/*)*/,
+                        clienttranslate('${actplayer} must choose to draw an Evolution card or gain 3[Energy]'),
+                        clienttranslate('${you} must choose to draw an Evolution card or gain 3[Energy]'),
                         [$playerId],
                         ST_RESOLVE_DICE,
                         []
@@ -196,8 +196,8 @@ trait CurseCardsUtilTrait {
                     $playerEnergy = $this->getPlayerEnergy($playerId);
                     $question = new Question(
                         'GazeOfTheSphinxSnake',
-                        /* client TODOPU translate(*/'${actplayer} must choose to discard an Evolution card (from its hand or in play) or lose 3[Energy]'/*)*/,
-                        /* client TODOPU translate(*/'Click on an Evolution card (from your hand or in play) to discard it or lose 3[Energy]'/*)*/,
+                        clienttranslate('${actplayer} must choose to discard an Evolution card (from its hand or in play) or lose 3[Energy]'),
+                        clienttranslate('Click on an Evolution card (from your hand or in play) to discard it or lose 3[Energy]'),
                         [$playerId],
                         ST_RESOLVE_DICE,
                         [

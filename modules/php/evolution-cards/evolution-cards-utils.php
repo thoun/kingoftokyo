@@ -576,7 +576,7 @@ trait EvolutionCardsUtilTrait {
         // lose all stars
         $points = 0;
         $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
-        $this->notifyAllPlayers('points', /*client TODOPU translate(*/'${player_name} left Tokyo when ${card_name} is played, and loses all [Star].'/*)*/, [
+        $this->notifyAllPlayers('points', clienttranslate('${player_name} left Tokyo when ${card_name} is played, and loses all [Star].'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'points' => $points,
@@ -669,8 +669,8 @@ trait EvolutionCardsUtilTrait {
 
             $question = new Question(
                 'Bamboozle',
-                /* client TODOPU translate(*/'${actplayer} must choose another card'/*)*/,
-                /* client TODOPU translate(*/'${you} must choose another card'/*)*/,
+                clienttranslate('${actplayer} must choose another card'),
+                clienttranslate('${you} must choose another card'),
                 [$playerId],
                 ST_PLAYER_BUY_CARD,
                 [ 
@@ -689,7 +689,7 @@ trait EvolutionCardsUtilTrait {
 
             $forbiddenCard = $this->getCardFromDb($this->cards->getCard($cardBeingBought->cardId));
 
-            $this->notifyAllPlayers('log', /*client TODOPU translate(*/'${player_name} prevents ${player_name2} to buy ${card_name}. ${player_name2} is not forced to buy another card, as player energy is too low to buy another card. '/*)*/, [
+            $this->notifyAllPlayers('log', clienttranslate('${player_name} prevents ${player_name2} to buy ${card_name}. ${player_name2} is not forced to buy another card, as player energy is too low to buy another card. '), [
                 'player_name' => $this->getPlayerName($playerId),
                 'player_name2' => $this->getPlayerName($activePlayerId),
                 'card_name' => $forbiddenCard->type,
@@ -704,7 +704,7 @@ trait EvolutionCardsUtilTrait {
 
         if ($topCard->type > 100) {
 
-            $this->notifyAllPlayers('log500', /*client TODOPU translate(*/'${player_name} draws ${card_name}. This card is discarded as it is not a Keep card.'/*)*/, [
+            $this->notifyAllPlayers('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it is not a Keep card.'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => $topCard->type,
@@ -714,7 +714,7 @@ trait EvolutionCardsUtilTrait {
 
         } else if ($this->getCardBaseCost($topCard->type) > 4) {
 
-            $this->notifyAllPlayers('log500', /*client TODOPU translate(*/'${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'/*)*/, [
+            $this->notifyAllPlayers('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => $topCard->type,
@@ -772,8 +772,8 @@ trait EvolutionCardsUtilTrait {
 
         $question = new Question(
             'MegaPurr',
-            /* client TODOPU translate(*/'Other monsters must give [Energy] or [Star] to ${player_name}'/*)*/,
-            /* client TODOPU translate(*/'${you} must give [Energy] or [Star] to ${player_name}'/*)*/,
+            clienttranslate('Other monsters must give [Energy] or [Star] to ${player_name}'),
+            clienttranslate('${you} must give [Energy] or [Star] to ${player_name}'),
             [$otherPlayersIds],
             ST_AFTER_ANSWER_QUESTION,
             [ 
@@ -801,8 +801,8 @@ trait EvolutionCardsUtilTrait {
 
         $question = new Question(
             'DeepDive',
-            /* client TODOPU translate(*/'${actplayer} can play a card from the bottom of the deck for free'/*)*/,
-            /* client TODOPU translate(*/'${you} can play a card from the bottom of the deck for free'/*)*/,
+            clienttranslate('${actplayer} can play a card from the bottom of the deck for free'),
+            clienttranslate('${you} can play a card from the bottom of the deck for free'),
             [$playerId],
             -1,
             [
@@ -833,8 +833,8 @@ trait EvolutionCardsUtilTrait {
         
         $question = new Question(
             'IcyReflection',
-            /* client TODOPU translate(*/'${player_name} must choose an Evolution card to copy'/*)*/,
-            /* client TODOPU translate(*/'${you} must choose an Evolution card to copy'/*)*/,
+            clienttranslate('${player_name} must choose an Evolution card to copy'),
+            clienttranslate('${you} must choose an Evolution card to copy'),
             [$playerId],
             ST_AFTER_ANSWER_QUESTION,
             [ 
@@ -998,8 +998,8 @@ trait EvolutionCardsUtilTrait {
             if (count($playersWithTargetAcquired) > 0) {
                 $question = new Question(
                     'TargetAcquired',
-                    /* client TODOPU translate(*/'Player with ${card_name} can give target to ${player_name}'/*)*/,
-                    /* client TODOPU translate(*/'${you} can give target to ${player_name}'/*)*/,
+                    clienttranslate('Player with ${card_name} can give target to ${player_name}'),
+                    clienttranslate('${you} can give target to ${player_name}'),
                     $playersWithTargetAcquired,
                     ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
                     [ 
@@ -1043,8 +1043,8 @@ trait EvolutionCardsUtilTrait {
             if ($this->array_some($damageAmountByPlayer, fn($damageAmount) => $damageAmount > 0)) {
                 $question = new Question(
                     'LightningArmor',
-                    /* client TODOPU translate(*/'Player with ${card_name} can throw dice to backfire damage'/*)*/,
-                    /* client TODOPU translate(*/'${you} can throw dice to backfire damage'/*)*/,
+                    clienttranslate('Player with ${card_name} can throw dice to backfire damage'),
+                    clienttranslate('${you} can throw dice to backfire damage'),
                     $playersWithLightningArmor,
                     ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
                     [ 
@@ -1070,8 +1070,8 @@ trait EvolutionCardsUtilTrait {
     function electricCarrotQuestion(array $smashedPlayersIds) {
         $question = new Question(
             'ElectricCarrot',
-            /* client TODOPU translate(*/'Smashed players can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
-            /* client TODOPU translate(*/'${you} can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
+            /*client TODODE translate(*/'Smashed players can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
+            /*client TODODE translate(*/'${you} can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
             $smashedPlayersIds,
             ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
             []
@@ -1086,8 +1086,8 @@ trait EvolutionCardsUtilTrait {
     function myToyQuestion(int $playerId, EvolutionCard $card) {
         $question = new Question(
             'MyToy',
-            /* client TODOPU translate(*/'${player_name} must choose a card to reserve'/*)*/,
-            /* client TODOPU translate(*/'${you} must choose a card to reserve'/*)*/,
+            /*client TODOPUBG translate(*/'${player_name} must choose a card to reserve'/*)*/,
+            /*client TODOPUBG translate(*/'${you} must choose a card to reserve'/*)*/,
             [$playerId],
             ST_AFTER_ANSWER_QUESTION,
             [ 

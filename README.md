@@ -45,7 +45,6 @@ TODODE handle cards cost differences
 TODODE handle cards color/style differences
 TODODE handle it has a child text difference
 TODOPU stats
-TODOPU prepare change mimick states ?
 
 log no energy/heart/points won
 

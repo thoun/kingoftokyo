@@ -466,9 +466,9 @@ class EvolutionCards {
     private getCardTypeName(cardType: number) {
         const type = this.EVOLUTION_CARDS_TYPES[cardType];
         switch (type) {
-            case 1: return /*_ TODOPU */('<strong>Permanent</strong> evolution');
-            case 2: return /*_ TODOPU */('<strong>Temporary</strong> evolution');
-            case 3: return /*_ TODOPU */('<strong>Gift</strong> evolution');
+            case 1: return _('<strong>Permanent</strong> evolution');
+            case 2: return _('<strong>Temporary</strong> evolution');
+            case 3: return _('<strong>Gift</strong> evolution');
         }
         return null;
     }
