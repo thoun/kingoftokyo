@@ -1367,7 +1367,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
                     }
                 });
-
+                break;
             case 'FreezeRay':
                 for (let face=1; face<=6; face++) {
                     (this as any).addActionButton(`selectFrozenDieFace_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.chooseFreezeRayDieFace(face));

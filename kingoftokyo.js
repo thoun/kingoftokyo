@@ -5225,6 +5225,7 @@ var KingOfTokyo = /** @class */ (function () {
                         dojo.addClass("giveSymbol_button" + symbol, 'disabled');
                     }
                 });
+                break;
             case 'FreezeRay':
                 var _loop_5 = function (face) {
                     this_4.addActionButton("selectFrozenDieFace_button" + face, formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
