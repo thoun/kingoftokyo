@@ -301,7 +301,7 @@ trait EvolutionCardsUtilTrait {
                 break;
             // Cyber Kitty
             case MEGA_PURR_EVOLUTION:
-                $this->applyMegaPurr($playerId);
+                $this->applyMegaPurr($playerId, $card);
                 break;
             case ELECTRO_SCRATCH_EVOLUTION:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
@@ -758,7 +758,7 @@ trait EvolutionCardsUtilTrait {
         return $cards;
     }
 
-    function applyMegaPurr(int $playerId) {
+    function applyMegaPurr(int $playerId, EvolutionCard $card) {
         $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->score > 0);
 
         if (count($otherPlayers) == 0) {
@@ -777,6 +777,7 @@ trait EvolutionCardsUtilTrait {
             [$otherPlayersIds],
             ST_AFTER_ANSWER_QUESTION,
             [ 
+                'card' => $card,
                 'playerId' => $playerId,
                 '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
                 'canGive5' => $canGiveEnergy,

@@ -207,6 +207,10 @@ trait EvolutionCardsStateTrait {
         $question = $this->getQuestion();
 
         if ($question->code === 'MegaPurr' || $question->code === 'ElectricCarrot') {
+            if ($question->code === 'MegaPurr') {
+                $this->removeEvolution($question->args->playerId, $question->args->card);
+            }
+
             $this->removeStackedStateAndRedirect();
         } else if ($question->code === 'TargetAcquired' || $question->code === 'LightningArmor') {
             $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
