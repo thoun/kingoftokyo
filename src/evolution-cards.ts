@@ -215,7 +215,7 @@ class EvolutionCards {
             case 41: return _("Play when a Monster who controls <i>Tokyo</i> leaves or is eliminated. Take control of <i>Tokyo</i>.");
             case 42: return _("If you Yield <i>Tokyo</i>, do not lose [Heart]. You can’t lose [Heart] this turn.");
             case 43: return _("Play at the end of your Enter Tokyo phase. If you wounded a Monster who controls <i>Tokyo</i> and you didn't take control of <i>Tokyo</i>, take an extra turn after this one.");
-            case 44: return _("+2[Heart]");
+            case 44: return "+2[Heart]";
             case 45: return _("You can force Monsters you wound to Yield <i>Tokyo</i>.");
             case 46: return _("Each turn you wound at least one Monster, gain 1[Star].");
             case 47: return _("Gain 1 extra [Star] if you take control of <i>Tokyo</i> or if you start your turn in <i>Tokyo</i>.");
