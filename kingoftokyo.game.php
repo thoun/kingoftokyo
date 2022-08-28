@@ -314,6 +314,14 @@ class KingOfTokyo extends Table {
             $this->initStat('player', 'turnsInBipedForm', 0);
             $this->initStat('player', 'turnsInBeastForm', 0);
         }
+        if ($this->isPowerUpExpansion()) {
+            $this->initStat('player', 'pickedPermanentEvolution', 0);
+            $this->initStat('player', 'pickedTemporaryEvolution', 0);
+            $this->initStat('player', 'pickedGiftEvolution', 0);
+            $this->initStat('player', 'playedPermanentEvolution', 0);
+            $this->initStat('player', 'playedTemporaryEvolution', 0);
+            $this->initStat('player', 'playedGiftEvolution', 0);
+        }
 
         if (!$this->canPickMonster()) {
             foreach($affectedMonsters as $playerId => $monsterId) {
@@ -356,7 +364,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup(array_keys($players));
+        //$this->debugSetup(array_keys($players));
 
         /************ End of the game initialization *****/
     }

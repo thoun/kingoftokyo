@@ -41,6 +41,12 @@ $this->EVOLUTION_CARDS_TYPES = [
     181 => 1, 182 => 1, 183 => 2, 184 => 1, 185 => 1, 186 => 1, 187 => 2, 188 => 2, // Baby Gigazaur
 ];
 
+$this->EVOLUTION_CARDS_TYPES_FOR_STATS = [
+    1 => 'PermanentEvolution',
+    2 => 'TemporaryEvolution',
+    3 => 'GiftEvolution',
+];
+
 // remove the evolutions 5s after use
 $this->AUTO_DISCARDED_EVOLUTIONS = [
     ALIEN_SCOURGE_EVOLUTION, PRECISION_FIELD_SUPPORT_EVOLUTION, ANGER_BATTERIES_EVOLUTION, // Alienoid

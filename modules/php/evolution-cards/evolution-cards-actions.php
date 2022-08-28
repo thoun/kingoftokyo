@@ -80,6 +80,8 @@ trait EvolutionCardsActionTrait {
         $this->evolutionCards->moveCard($id, 'hand', $playerId);
         $this->evolutionCards->moveCard($otherCard->id, 'discard'.$playerId);
 
+        $this->incStat(1, 'picked'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
+
         $message = $init ? '' : clienttranslate('${player_name} ends his rolls with at least 3 [diceHeart] and takes a new Evolution card');
         $this->notifNewEvolutionCard($playerId, $card, $message);
         

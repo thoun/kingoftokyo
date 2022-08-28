@@ -150,6 +150,12 @@ $stats_type = [
         "turnsInBeastForm" => ["id" => 65, "type" => "int", "name" => totranslate("Turns in Beast form")],
         "gainedWickedness" => ["id" => 66, "type" => "int", "name" => totranslate("Wickedness")],
         "wickednessTilesTaken" => ["id" => 67, "type" => "int", "name" => totranslate("Wickedness tiles taken")],
+        "pickedPermanentEvolution" => ["id" => 68, "type" => "int", "name" => totranslate("Picked Evolution (Permanent)")],
+        "pickedTemporaryEvolution" => ["id" => 69, "type" => "int", "name" => totranslate("Picked Evolution (Temporary)")],
+        "pickedGiftEvolution" => ["id" => 70, "type" => "int", "name" => totranslate("Picked Evolution (Gift)")],
+        "playedPermanentEvolution" => ["id" => 71, "type" => "int", "name" => totranslate("Played Evolution (Permanent)")],
+        "playedTemporaryEvolution" => ["id" => 72, "type" => "int", "name" => totranslate("Played Evolution (Temporary)")],
+        "playedGiftEvolution" => ["id" => 73, "type" => "int", "name" => totranslate("Played Evolution (Gift)")],
     ],
 
     "value_labels" => [

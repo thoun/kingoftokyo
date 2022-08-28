@@ -219,6 +219,8 @@ trait EvolutionCardsUtilTrait {
             'card_name' => 3000 + $card->type,
             'fromPlayerId' => $fromPlayerId,
         ]);
+        
+        $this->incStat(1, 'played'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
     }
 
     function canPlayStepEvolution(array $playersIds, array $stepCardsIds) { // return array of players able to play
@@ -733,6 +735,8 @@ trait EvolutionCardsUtilTrait {
         $this->evolutionCards->moveCard($card->id, 'hand', $playerId);
 
         $this->notifNewEvolutionCard($playerId, $card);
+
+        $this->incStat(1, 'picked'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
     }
 
     function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
@@ -741,6 +745,8 @@ trait EvolutionCardsUtilTrait {
         $this->evolutionCards->moveCard($card->id, 'hand', $playerId);
 
         $this->notifNewEvolutionCard($playerId, $card);
+
+        $this->incStat(1, 'picked'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
     }
 
     function getHighlightedEvolutions(array $stepCardsTypes) {
