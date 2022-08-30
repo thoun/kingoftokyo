@@ -31,7 +31,7 @@ trait MonsterTrait {
         }
 
         // Pandakaï
-        if (/* TODOPU $bonusMonsters ||*/ $this->isPowerUpExpansion()) {
+        if ($bonusMonsters || $this->isPowerUpExpansion()) {
             $monsters = [...$monsters, 13];
         }
 
