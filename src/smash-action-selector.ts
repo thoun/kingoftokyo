@@ -23,7 +23,7 @@ class SmashActionSelector {
             this.createToggleButton(
                 `${nodeId}-player${playerId}`, 
                 `${nodeId}-player${playerId}-smash`, 
-                /*_TODOPU*/("Don't steal"), 
+                _("Don't steal"), 
                 () => this.setSelectedAction(playerId, 'smash'),
                 true
             );
@@ -31,7 +31,7 @@ class SmashActionSelector {
             this.createToggleButton(
                 `${nodeId}-player${playerId}`, 
                 `${nodeId}-player${playerId}-steal`, 
-                formatTextIcons(/*_TODOPU*/('Steal 1[Star] and 1[Energy]')),
+                formatTextIcons(_('Steal 1[Star] and 1[Energy]')),
                 () => this.setSelectedAction(playerId, 'steal'),
             );
         });

@@ -643,7 +643,7 @@ class DiceManager {
                         );
                     }
                     if (args.hasSaurianAdaptability) {
-                        const saurianAdaptabilityButtonLabel = dojo.string.substitute(/*TODOPU_*/("Change all ${die_face} with ${card_name}"), {
+                        const saurianAdaptabilityButtonLabel = dojo.string.substitute(_("Change all ${die_face} with ${card_name}"), {
                             'card_name': `<strong>${this.game.evolutionCards.getCardName(54, 'text-only')}</strong>`, 
                             'die_face': formatTextIcons(DICE_STRINGS[die.value]),
                         });

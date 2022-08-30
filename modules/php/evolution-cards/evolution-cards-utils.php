@@ -125,31 +125,31 @@ trait EvolutionCardsUtilTrait {
         $stateId = intval($this->gamestate->state_id());
 
         if ($stateId < 17) {
-            throw new \BgaUserException(/*self::_TODOPU*/("You can only play evolution cards when the game is started"));
+            throw new \BgaUserException(self::_("You can only play evolution cards when the game is started"));
         }
 
         // cards to player before starting turn
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_START) && $stateId != ST_PLAYER_BEFORE_START_TURN) {
-            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card before starting turn"));
+            throw new \BgaUserException(self::_("You can only play this evolution card before starting turn"));
         }
 
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) && $stateId != ST_PLAYER_BEFORE_RESOLVE_DICE) {
-            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card when resolving dice"));
+            throw new \BgaUserException(self::_("You can only play this evolution card when resolving dice"));
         }
 
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) && $stateId != ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO) {
-            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card before entering Tokyo"));
+            throw new \BgaUserException(self::_("You can only play this evolution card before entering Tokyo"));
         }
 
         if (in_array($cardType, [...$this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO, ...$this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO]) && $stateId != ST_PLAYER_AFTER_ENTERING_TOKYO) {
-            throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card after entering Tokyo"));
+            throw new \BgaUserException(self::_("You can only play this evolution card after entering Tokyo"));
         }
 
         // cards to player when card is bought
         if (in_array($cardType, $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) && $stateId != ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT) {
             $canPlay = $cardType == BAMBOOZLE_EVOLUTION && $playerId != intval($this->getActivePlayerId());
             if (!$canPlay) {
-                throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card when another player is buying a card"));
+                throw new \BgaUserException(self::_("You can only play this evolution card when another player is buying a card"));
             }
         }
 
@@ -158,11 +158,11 @@ trait EvolutionCardsUtilTrait {
             case SIMIAN_SCAMPER_EVOLUTION:
             case DETACHABLE_TAIL_EVOLUTION:
             case RABBIT_S_FOOT_EVOLUTION:
-                throw new \BgaUserException(/*self::_TODOPU*/("You can't play this Evolution now, you'll be asked to use it when you'll take damage"));
+                throw new \BgaUserException(self::_("You can't play this Evolution now, you'll be asked to use it when you'll take damage"));
             case FELINE_MOTOR_EVOLUTION:
                 $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
                 if (in_array($playerId, $startedTurnInTokyo)) {
-                    throw new \BgaUserException(/*self::_TODOPU*/("You started your turn in Tokyo"));
+                    throw new \BgaUserException(self::_("You started your turn in Tokyo"));
                 }
                 break;
             case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
@@ -171,20 +171,20 @@ trait EvolutionCardsUtilTrait {
                 return $this->inTokyo($playerId);
             case JUNGLE_FRENZY_EVOLUTION:
                 if ($playerId != intval($this->getActivePlayerId())) {
-                    throw new \BgaUserException(/*self::_TODOPU*/("You must play this Evolution during your turn"));
+                    throw new \BgaUserException(self::_("You must play this Evolution during your turn"));
                 }
                 if ($this->inTokyo($playerId)) {
-                    throw new \BgaUserException(/*self::_TODOPU*/("You can play this Evolution only if you are not in Tokyo"));
+                    throw new \BgaUserException(self::_("You can play this Evolution only if you are not in Tokyo"));
                 }
                 if (!$this->isDamageDealtThisTurn($playerId)) {
-                    throw new \BgaUserException(/*self::_TODOPU*/("You didn't deal damage to a player in Tokyo"));
+                    throw new \BgaUserException(self::_("You didn't deal damage to a player in Tokyo"));
                 }
                 break;
             case TUNE_UP_EVOLUTION:
                 return !$this->inTokyo($playerId);
             case BLIZZARD_EVOLUTION:
                 if ($playerId != intval($this->getActivePlayerId())) {
-                    throw new \BgaUserException(/*self::_TODOPU*/("You must play this Evolution during your turn"));
+                    throw new \BgaUserException(self::_("You must play this Evolution during your turn"));
                 }
                 break;
             case ICY_REFLECTION_EVOLUTION:
@@ -197,7 +197,7 @@ trait EvolutionCardsUtilTrait {
                     }
                 }
                 if (!$canPlayIcyReflection) {
-                    throw new \BgaUserException(/*self::_TODOPU*/("You can only play this evolution card when there is another permanent Evolution on the table"));
+                    throw new \BgaUserException(self::_("You can only play this evolution card when there is another permanent Evolution on the table"));
                 }
         }
 

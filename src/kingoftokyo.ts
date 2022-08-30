@@ -353,7 +353,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             <div id="pick-monster-figure-${monster}-wrapper">
                 <div id="pick-monster-figure-${monster}" class="monster-figure monster${monster}"></div>`;
             if (this.isPowerUpExpansion()) {
-                html += `<div><button id="see-monster-evolution-${monster}" class="bgabutton bgabutton_blue see-evolutions-button"><div class="player-evolution-card"></div>${/*TODOPU_*/('Show Evolutions')}</button></div>`;
+                html += `<div><button id="see-monster-evolution-${monster}" class="bgabutton bgabutton_blue see-evolutions-button"><div class="player-evolution-card"></div>${_('Show Evolutions')}</button></div>`;
             }
             html += `</div>`;
             dojo.place(html, `monster-pick`);
@@ -372,11 +372,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (!document.getElementById('choose-evolution-in')) {
             dojo.place(`
                 <div class="whiteblock">
-                    <h3>${/*TODOPU_*/("Choose an Evolution in")}</h3>
+                    <h3>${_("Choose an Evolution in")}</h3>
                     <div id="choose-evolution-in" class="evolution-card-stock player-evolution-cards"></div>
                 </div>
                 <div class="whiteblock">
-                    <h3>${/*TODOPU_*/("Evolutions in your deck")}</h3>
+                    <h3>${_("Evolutions in your deck")}</h3>
                     <div id="evolutions-in-deck" class="evolution-card-stock player-evolution-cards"></div>
                 </div>
             `, 'mutant-evolution-choice');
@@ -1217,7 +1217,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                          
                         this.smashedPlayersStillInTokyo.forEach(playerId => {
                             const player = this.gamedatas.players[playerId];
-                            (this as any).addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(/*TODOPU_*/("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
+                            (this as any).addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
                         });
                         (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only')}), () => this.skipChestThumping());
                     } else {
@@ -1335,8 +1335,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch(question.code) {
             case 'BambooSupply':
                 const substituteParams = { card_name: this.evolutionCards.getCardName(136, 'text-only')};
-                const putLabel = dojo.string.substitute(/*TODOPU_*/("Put ${number}[Energy] on ${card_name}"), {...substituteParams, number: 1});
-                const takeLabel = dojo.string.substitute(/*TODOPU_*/("Take all [Energy] from ${card_name}"), substituteParams);
+                const putLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), {...substituteParams, number: 1});
+                const takeLabel = dojo.string.substitute(_("Take all [Energy] from ${card_name}"), substituteParams);
                 (this as any).addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
                 (this as any).addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), () => this.takeEnergyOnBambooSupply());
                 const bambooSupplyQuestionArgs = question.args as BambooSupplyQuestionArgs;
@@ -1346,7 +1346,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
 
             case 'GazeOfTheSphinxAnkh':
-                (this as any).addActionButton('gazeOfTheSphinxDrawEvolution_button', /*TODOPU_*/("Draw Evolution"), () => this.gazeOfTheSphinxDrawEvolution());
+                (this as any).addActionButton('gazeOfTheSphinxDrawEvolution_button', _("Draw Evolution"), () => this.gazeOfTheSphinxDrawEvolution());
                 (this as any).addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3})}`), () => this.gazeOfTheSphinxGainEnergy());
                 break;
 
@@ -1375,11 +1375,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'MiraculousCatch':
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
-                (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
+                (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
                 if (miraculousCatchArgs.costSuperiorAlienTechnology !== null && miraculousCatchArgs.costSuperiorAlienTechnology !== miraculousCatchArgs.cost) {
                     (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(/*_TODO*/('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
                 }
-                (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
+                (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
                 setTimeout(() => document.getElementById(`miraculousCatch-card-${miraculousCatchArgs.card.id}`)?.addEventListener('click', () => this.buyCardMiraculousCatch()), 250);
 
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = ''+miraculousCatchArgs.cost;
@@ -1388,12 +1388,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'DeepDive':
                 const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
                 deepDiveCatchArgs.cards.forEach(card => {
-                    (this as any).addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(/*TODOPU_*/('Play ${card_name}'), { card_name: this.cards.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
+                    (this as any).addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: this.cards.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
                     setTimeout(() => document.getElementById(`deepDive-card-${card.id}`)?.addEventListener('click', () => this.playCardDeepDive(card.id)), 250);
                 });
                 break;
             case 'ExoticArms':
-                const useExoticArmsLabel = dojo.string.substitute(/*TODOPU_*/("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCards.getCardName(26, 'text-only'), number: 2 });
+                const useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCards.getCardName(26, 'text-only'), number: 2 });
                 
                 (this as any).addActionButton('useExoticArms_button', formatTextIcons(useExoticArmsLabel), () => this.useExoticArms());
                 (this as any).addActionButton('skipExoticArms_button', _('Skip'), () => this.skipExoticArms());
@@ -1402,7 +1402,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'TargetAcquired':
                 const targetAcquiredCatchArgs = question.args as TargetAcquiredQuestionArgs;
-                (this as any).addActionButton('giveTarget_button', dojo.string.substitute(/*TODOPU_*/("Give target to ${player_name}"), {'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name}), () => this.giveTarget());
+                (this as any).addActionButton('giveTarget_button', dojo.string.substitute(_("Give target to ${player_name}"), {'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name}), () => this.giveTarget());
                 (this as any).addActionButton('skipGiveTarget_button', _('Skip'), () => this.skipGiveTarget());
                 break;
             case 'LightningArmor':
@@ -1423,10 +1423,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('answerElectricCarrot5_button',  formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]'})), () => this.answerElectricCarrot(5));
                 dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
                 document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
-                (this as any).addActionButton('answerElectricCarrot4_button',  formatTextIcons(/*TODOPU_*/("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
+                (this as any).addActionButton('answerElectricCarrot4_button',  formatTextIcons(_("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
                 break;
             case 'SuperiorAlienTechnology':
-                (this as any).addActionButton('throwDieSuperiorAlienTechnology_button', /*TODOPU_*/('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
+                (this as any).addActionButton('throwDieSuperiorAlienTechnology_button', _('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
                 break;
         }
     }
@@ -1624,7 +1624,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     </div>
                     <div class="show-evolutions-button">
                     <button id="see-monster-evolution-player-${playerId}" class="bgabutton bgabutton_gray ${this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : ''}">
-                        ${/*TODOPU_*/('Show Evolutions')}
+                        ${_('Show Evolutions')}
                     </button>
                     </div>
                 </div>`, `player_board_${player.id}`);
@@ -1634,7 +1634,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 handCounter.setValue(player.hiddenEvolutions.length);
                 this.handCounters[playerId] = handCounter;
 
-                (this as any).addTooltipHtml(`playerhand-counter-wrapper-${player.id}`, /* TODOPU_*/("Number of Evolution cards in hand."));
+                (this as any).addTooltipHtml(`playerhand-counter-wrapper-${player.id}`, _("Number of Evolution cards in hand."));
 
                 document.getElementById(`see-monster-evolution-player-${playerId}`).addEventListener('click', () => this.showPlayerEvolutions(playerId));
             }
@@ -2149,7 +2149,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'autoSkipPlayEvolution-wrapper', 
                 'autoSkipPlayEvolutionButton', 
-                /*_TODOPU*/("Ask to play evolution") + ' &#x25BE;', 
+                _("Ask to play evolution") + ' &#x25BE;', 
                 () => this.toggleAutoSkipPlayEvolutionPopin(), 
             );
         }
@@ -2169,40 +2169,40 @@ class KingOfTokyo implements KingOfTokyoGame {
         let bubble = document.getElementById(popinId);
         if (!bubble) { 
             let html = `<div id="${popinId}" class="discussion_bubble autoSkipPlayEvolutionBubble">
-                <h3>${/*_TODOPU*/("Ask to play Evolution, for Evolutions playable on specific occasions")}</h3>
+                <h3>${_("Ask to play Evolution, for Evolutions playable on specific occasions")}</h3>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="0" id="autoSkipPlayEvolution-all" />
                     <label for="autoSkipPlayEvolution-all">
-                        ${/*_TODOPU*/("Ask for every specific occasion even if I don't have the card in my hand.")}
+                        ${_("Ask for every specific occasion even if I don't have the card in my hand.")}
                         <div class="label-detail">
-                            ${/*_TODOPU*/("Recommended. You won't be asked when your hand is empty")}
+                            ${_("Recommended. You won't be asked when your hand is empty")}
                         </div>
                     </label>
                 </div>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="1" id="autoSkipPlayEvolution-real" />
                     <label for="autoSkipPlayEvolution-real">
-                        ${/*_TODOPU*/("Ask only if I have in my hand an Evolution matching the specific occasion.")}<br>
+                        ${_("Ask only if I have in my hand an Evolution matching the specific occasion.")}<br>
                         <div class="label-detail spe-warning">
-                            <strong>${/*_TODOPU*/("Warning:")}</strong> ${/*_TODOPU*/("Your opponent can deduce what you have in hand with this option.")}
+                            <strong>${_("Warning:")}</strong> ${_("Your opponent can deduce what you have in hand with this option.")}
                         </div>
                     </label>
                 </div>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="2" id="autoSkipPlayEvolution-turn" />
                     <label for="autoSkipPlayEvolution-turn">
-                        ${/*_TODOPU*/("Do not ask until my next turn.")}<br>
+                        ${_("Do not ask until my next turn.")}<br>
                         <div class="label-detail spe-warning">
-                            <strong>${/*_TODOPU*/("Warning:")}</strong> ${/*_TODOPU*/("Do it only if you're sure you won't need an Evolution soon.")}
+                            <strong>${_("Warning:")}</strong> ${_("Do it only if you're sure you won't need an Evolution soon.")}
                         </div>
                     </label>
                 </div>
                 <div class="autoSkipPlayEvolution-option">
                     <input type="radio" name="autoSkipPlayEvolution" value="3" id="autoSkipPlayEvolution-off" />
                     <label for="autoSkipPlayEvolution-off">
-                        ${/*_TODOPU*/("Do not ask until I turn it back on.")}
+                        ${_("Do not ask until I turn it back on.")}
                         <div class="label-detail spe-warning">
-                            <strong>${/*_TODOPU*/("Warning:")}</strong> ${/*_TODOPU*/("Do it only if you're sure you won't need an Evolution soon.")}
+                            <strong>${_("Warning:")}</strong> ${_("Do it only if you're sure you won't need an Evolution soon.")}
                         </div>
                     </label>
                 </div>
@@ -2346,12 +2346,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             cardsTypes.push(monster * 10 + i);
         }
 
-        this.showEvolutionsPopin(cardsTypes, /*TODOPU_*/("Monster Evolution cards"));
+        this.showEvolutionsPopin(cardsTypes, _("Monster Evolution cards"));
     }
     
     private showPlayerEvolutions(playerId: number) {
         const cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(evolution => evolution.type);
-        this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(/*TODOPU_*/("Evolution cards owned by ${player_name}"), {'player_name': this.gamedatas.players[playerId].name}));
+        this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(_("Evolution cards owned by ${player_name}"), {'player_name': this.gamedatas.players[playerId].name}));
     }
 
     public pickMonster(monster: number) {
@@ -3906,8 +3906,8 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (document.getElementById('dice0')) {
             const message = notif.args.dieValue == 6 ? 
-                /*TODOPU_*/('<strong>${card_name}</strong> card removed!') : 
-                /*TODOPU_*/('<strong>${card_name}</strong> card kept!');
+                _('<strong>${card_name}</strong> card removed!') : 
+                _('<strong>${card_name}</strong> card kept!');
             (this as any).doShowBubble('dice0', dojo.string.substitute(message, {
                 'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');

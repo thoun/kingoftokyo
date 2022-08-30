@@ -1160,7 +1160,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return _("At the start of each turn, the Monster with the Golden Scarab must give 1[Heart]/[Energy]/[Star] to the Monster whose turn it is.");
             case 21: return _("Only [diceSmash], [diceHeart] and [diceEnergy] faces can be used.");
             case 22: return _("Monsters roll 2 extra dice and have 1 extra die Roll. After resolving their dice, they lose 1[Heart] for each different face they rolled.");
-            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/ ("[Keep] cards and Permanent Evolution cards have no effect.") : _("[Keep] cards have no effect.");
+            case 23: return this.game.isPowerUpExpansion() ? _("[Keep] cards and Permanent Evolution cards have no effect.") : _("[Keep] cards have no effect.");
             case 24: return _("You cannot reroll your [dice1].");
         }
         return null;
@@ -1189,7 +1189,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return _("Take the Golden Scarab and give it to the Monster of your choice.");
             case 21: return _("Cancel the Curse effect.");
             case 22: return _("Choose up to 2 dice, you can reroll or discard each of these dice.");
-            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/ ("Draw an Evolution card or gain 3[Energy].") : "+3[Energy].";
+            case 23: return this.game.isPowerUpExpansion() ? _("Draw an Evolution card or gain 3[Energy].") : "+3[Energy].";
             case 24: return _("Gain 1[Energy] for each [dice1] you rolled.");
         }
         return null;
@@ -1218,7 +1218,7 @@ var CurseCards = /** @class */ (function () {
             case 20: return _("Take the Golden Scarab.");
             case 21: return _("Cancel the Curse effect. [diceSmash], [diceHeart] and [diceEnergy] faces cannot be used.");
             case 22: return _("The player on your left chooses two of your dice. Reroll these dice.");
-            case 23: return this.game.isPowerUpExpansion() ? /*TODOPU_*/ ("Discard an Evolution card from your hand or in play or lose 3[Energy].") : "-3[Energy].";
+            case 23: return this.game.isPowerUpExpansion() ? _("Discard an Evolution card from your hand or in play or lose 3[Energy].") : "-3[Energy].";
             case 24: return _("Discard 1[dice1]");
         }
         return null;
@@ -2085,7 +2085,7 @@ var PlayerTable = /** @class */ (function () {
             this.showHand = this.playerId == this.game.getPlayerId();
             if (this.showHand) {
                 document.getElementById("hand-wrapper").classList.add('whiteblock');
-                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div class=\"hand-title\">\n                        <div>\n                            <div id=\"myhand\">" + ('My hand') + "</div>\n                        </div>\n                        <div id=\"autoSkipPlayEvolution-wrapper\"></div>\n                    </div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">" + ('Your hand is empty') + "</div>\n                    </div>\n                </div>\n                ", "hand-wrapper");
+                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div class=\"hand-title\">\n                        <div>\n                            <div id=\"myhand\">" + _('My hand') + "</div>\n                        </div>\n                        <div id=\"autoSkipPlayEvolution-wrapper\"></div>\n                    </div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">" + _('Your hand is empty') + "</div>\n                    </div>\n                </div>\n                ", "hand-wrapper");
                 this.game.addAutoSkipPlayEvolutionButton();
                 this.hiddenEvolutionCards = new ebg.stock();
                 this.hiddenEvolutionCards.setSelectionAppearance('class');
@@ -3211,7 +3211,7 @@ var DiceManager = /** @class */ (function () {
                         }, true);
                     }
                     if (args_1.hasSaurianAdaptability) {
-                        var saurianAdaptabilityButtonLabel = dojo.string.substitute(/*TODOPU_*/ ("Change all ${die_face} with ${card_name}"), {
+                        var saurianAdaptabilityButtonLabel = dojo.string.substitute(_("Change all ${die_face} with ${card_name}"), {
                             'card_name': "<strong>" + this.game.evolutionCards.getCardName(54, 'text-only') + "</strong>",
                             'die_face': formatTextIcons(DICE_STRINGS[die.value]),
                         });
@@ -3527,9 +3527,8 @@ var SmashActionSelector = /** @class */ (function () {
             var html = "<div class=\"row\">\n                <div class=\"legend\" style=\"color: #" + player.color + "\">\n                    " + player.name + "\n                </div>\n                <div id=\"" + nodeId + "-player" + playerId + "\" class=\"toggle-buttons\"></div>\n            </div>";
             dojo.place(html, nodeId);
             _this.selections[playerId] = 'smash';
-            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-smash", 
-            /*_TODOPU*/ ("Don't steal"), function () { return _this.setSelectedAction(playerId, 'smash'); }, true);
-            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-steal", formatTextIcons(/*_TODOPU*/ ('Steal 1[Star] and 1[Energy]')), function () { return _this.setSelectedAction(playerId, 'steal'); });
+            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-smash", _("Don't steal"), function () { return _this.setSelectedAction(playerId, 'smash'); }, true);
+            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-steal", formatTextIcons(_('Steal 1[Star] and 1[Energy]')), function () { return _this.setSelectedAction(playerId, 'steal'); });
         });
     };
     SmashActionSelector.prototype.createToggleButton = function (destinationId, id, text, callback, selected) {
@@ -4307,7 +4306,7 @@ var KingOfTokyo = /** @class */ (function () {
         args.availableMonsters.forEach(function (monster) {
             var html = "\n            <div id=\"pick-monster-figure-" + monster + "-wrapper\">\n                <div id=\"pick-monster-figure-" + monster + "\" class=\"monster-figure monster" + monster + "\"></div>";
             if (_this.isPowerUpExpansion()) {
-                html += "<div><button id=\"see-monster-evolution-" + monster + "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>" + ('Show Evolutions') + "</button></div>";
+                html += "<div><button id=\"see-monster-evolution-" + monster + "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>" + _('Show Evolutions') + "</button></div>";
             }
             html += "</div>";
             dojo.place(html, "monster-pick");
@@ -4322,7 +4321,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringPickEvolutionForDeck = function (args) {
         var _this = this;
         if (!document.getElementById('choose-evolution-in')) {
-            dojo.place("\n                <div class=\"whiteblock\">\n                    <h3>" + ("Choose an Evolution in") + "</h3>\n                    <div id=\"choose-evolution-in\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n                <div class=\"whiteblock\">\n                    <h3>" + ("Evolutions in your deck") + "</h3>\n                    <div id=\"evolutions-in-deck\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n            ", 'mutant-evolution-choice');
+            dojo.place("\n                <div class=\"whiteblock\">\n                    <h3>" + _("Choose an Evolution in") + "</h3>\n                    <div id=\"choose-evolution-in\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n                <div class=\"whiteblock\">\n                    <h3>" + _("Evolutions in your deck") + "</h3>\n                    <div id=\"evolutions-in-deck\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n            ", 'mutant-evolution-choice');
             this.choseEvolutionInStock = new ebg.stock();
             this.choseEvolutionInStock.setSelectionAppearance('class');
             this.choseEvolutionInStock.selectionClass = 'no-visible-selection';
@@ -5092,7 +5091,7 @@ var KingOfTokyo = /** @class */ (function () {
                         }
                         this.smashedPlayersStillInTokyo.forEach(function (playerId) {
                             var player = _this.gamedatas.players[playerId];
-                            _this.addActionButton("useChestThumping_button" + playerId, dojo.string.substitute(/*TODOPU_*/ ("Force ${player_name} to Yield Tokyo"), { 'player_name': "<span style=\"color: #" + player.color + "\">" + player.name + "</span>" }), function () { return _this.useChestThumping(playerId); });
+                            _this.addActionButton("useChestThumping_button" + playerId, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': "<span style=\"color: #" + player.color + "\">" + player.name + "</span>" }), function () { return _this.useChestThumping(playerId); });
                         });
                         this.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only') }), function () { return _this.skipChestThumping(); });
                     }
@@ -5195,8 +5194,8 @@ var KingOfTokyo = /** @class */ (function () {
         switch (question.code) {
             case 'BambooSupply':
                 var substituteParams = { card_name: this.evolutionCards.getCardName(136, 'text-only') };
-                var putLabel = dojo.string.substitute(/*TODOPU_*/ ("Put ${number}[Energy] on ${card_name}"), __assign(__assign({}, substituteParams), { number: 1 }));
-                var takeLabel = dojo.string.substitute(/*TODOPU_*/ ("Take all [Energy] from ${card_name}"), substituteParams);
+                var putLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), __assign(__assign({}, substituteParams), { number: 1 }));
+                var takeLabel = dojo.string.substitute(_("Take all [Energy] from ${card_name}"), substituteParams);
                 this.addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), function () { return _this.putEnergyOnBambooSupply(); });
                 this.addActionButton('takeEnergyOnBambooSupply_button', formatTextIcons(takeLabel), function () { return _this.takeEnergyOnBambooSupply(); });
                 var bambooSupplyQuestionArgs = question.args;
@@ -5205,7 +5204,7 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 break;
             case 'GazeOfTheSphinxAnkh':
-                this.addActionButton('gazeOfTheSphinxDrawEvolution_button', /*TODOPU_*/ ("Draw Evolution"), function () { return _this.gazeOfTheSphinxDrawEvolution(); });
+                this.addActionButton('gazeOfTheSphinxDrawEvolution_button', _("Draw Evolution"), function () { return _this.gazeOfTheSphinxDrawEvolution(); });
                 this.addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons("" + dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3 })), function () { return _this.gazeOfTheSphinxGainEnergy(); });
                 break;
             case 'GazeOfTheSphinxSnake':
@@ -5236,11 +5235,11 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'MiraculousCatch':
                 var miraculousCatchArgs_1 = question.args;
-                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only'), cost: miraculousCatchArgs_1.cost })), function () { return _this.buyCardMiraculousCatch(false); });
+                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only'), cost: miraculousCatchArgs_1.cost })), function () { return _this.buyCardMiraculousCatch(false); });
                 if (miraculousCatchArgs_1.costSuperiorAlienTechnology !== null && miraculousCatchArgs_1.costSuperiorAlienTechnology !== miraculousCatchArgs_1.cost) {
                     this.addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs_1.costSuperiorAlienTechnology })), function () { return _this.buyCardMiraculousCatch(true); });
                 }
-                this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only') })), function () { return _this.skipMiraculousCatch(); });
+                this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only') })), function () { return _this.skipMiraculousCatch(); });
                 setTimeout(function () { var _a; return (_a = document.getElementById("miraculousCatch-card-" + miraculousCatchArgs_1.card.id)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return _this.buyCardMiraculousCatch(); }); }, 250);
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = '' + miraculousCatchArgs_1.cost;
                 dojo.toggleClass('buyCardMiraculousCatch_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < miraculousCatchArgs_1.cost);
@@ -5248,12 +5247,12 @@ var KingOfTokyo = /** @class */ (function () {
             case 'DeepDive':
                 var deepDiveCatchArgs = question.args;
                 deepDiveCatchArgs.cards.forEach(function (card) {
-                    _this.addActionButton("playCardDeepDive_button" + card.id, formatTextIcons(dojo.string.substitute(/*TODOPU_*/ ('Play ${card_name}'), { card_name: _this.cards.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
+                    _this.addActionButton("playCardDeepDive_button" + card.id, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: _this.cards.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
                     setTimeout(function () { var _a; return (_a = document.getElementById("deepDive-card-" + card.id)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return _this.playCardDeepDive(card.id); }); }, 250);
                 });
                 break;
             case 'ExoticArms':
-                var useExoticArmsLabel = dojo.string.substitute(/*TODOPU_*/ ("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCards.getCardName(26, 'text-only'), number: 2 });
+                var useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCards.getCardName(26, 'text-only'), number: 2 });
                 this.addActionButton('useExoticArms_button', formatTextIcons(useExoticArmsLabel), function () { return _this.useExoticArms(); });
                 this.addActionButton('skipExoticArms_button', _('Skip'), function () { return _this.skipExoticArms(); });
                 dojo.toggleClass('useExoticArms_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
@@ -5261,7 +5260,7 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'TargetAcquired':
                 var targetAcquiredCatchArgs = question.args;
-                this.addActionButton('giveTarget_button', dojo.string.substitute(/*TODOPU_*/ ("Give target to ${player_name}"), { 'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name }), function () { return _this.giveTarget(); });
+                this.addActionButton('giveTarget_button', dojo.string.substitute(_("Give target to ${player_name}"), { 'player_name': this.getPlayer(targetAcquiredCatchArgs.playerId).name }), function () { return _this.giveTarget(); });
                 this.addActionButton('skipGiveTarget_button', _('Skip'), function () { return _this.skipGiveTarget(); });
                 break;
             case 'LightningArmor':
@@ -5282,10 +5281,10 @@ var KingOfTokyo = /** @class */ (function () {
                 this.addActionButton('answerElectricCarrot5_button', formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]' })), function () { return _this.answerElectricCarrot(5); });
                 dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
                 document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
-                this.addActionButton('answerElectricCarrot4_button', formatTextIcons(/*TODOPU_*/ ("Lose 1 extra [Heart]")), function () { return _this.answerElectricCarrot(4); });
+                this.addActionButton('answerElectricCarrot4_button', formatTextIcons(_("Lose 1 extra [Heart]")), function () { return _this.answerElectricCarrot(4); });
                 break;
             case 'SuperiorAlienTechnology':
-                this.addActionButton('throwDieSuperiorAlienTechnology_button', /*TODOPU_*/ ('Roll a die'), function () { return _this.throwDieSuperiorAlienTechnology(); });
+                this.addActionButton('throwDieSuperiorAlienTechnology_button', _('Roll a die'), function () { return _this.throwDieSuperiorAlienTechnology(); });
                 break;
         }
     };
@@ -5411,12 +5410,12 @@ var KingOfTokyo = /** @class */ (function () {
             }
             if (gamedatas.powerUpExpansion) {
                 // hand cards counter
-                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-" + player.id + "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-" + player.id + "\"></span>\n                    </div>\n                    <div class=\"show-evolutions-button\">\n                    <button id=\"see-monster-evolution-player-" + playerId + "\" class=\"bgabutton bgabutton_gray " + (_this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : '') + "\">\n                        " + ('Show Evolutions') + "\n                    </button>\n                    </div>\n                </div>", "player_board_" + player.id);
+                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-" + player.id + "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-" + player.id + "\"></span>\n                    </div>\n                    <div class=\"show-evolutions-button\">\n                    <button id=\"see-monster-evolution-player-" + playerId + "\" class=\"bgabutton bgabutton_gray " + (_this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : '') + "\">\n                        " + _('Show Evolutions') + "\n                    </button>\n                    </div>\n                </div>", "player_board_" + player.id);
                 var handCounter = new ebg.counter();
                 handCounter.create("playerhand-counter-" + playerId);
                 handCounter.setValue(player.hiddenEvolutions.length);
                 _this.handCounters[playerId] = handCounter;
-                _this.addTooltipHtml("playerhand-counter-wrapper-" + player.id, /* TODOPU_*/ ("Number of Evolution cards in hand."));
+                _this.addTooltipHtml("playerhand-counter-wrapper-" + player.id, _("Number of Evolution cards in hand."));
                 document.getElementById("see-monster-evolution-player-" + playerId).addEventListener('click', function () { return _this.showPlayerEvolutions(playerId); });
             }
             dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-target-tokens-" + player.id + "\" class=\"player-token target-tokens\"></div>\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
@@ -5861,8 +5860,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addAutoSkipPlayEvolutionButton = function () {
         var _this = this;
         if (!document.getElementById('autoSkipPlayEvolutionButton')) {
-            this.createButton('autoSkipPlayEvolution-wrapper', 'autoSkipPlayEvolutionButton', 
-            /*_TODOPU*/ ("Ask to play evolution") + ' &#x25BE;', function () { return _this.toggleAutoSkipPlayEvolutionPopin(); });
+            this.createButton('autoSkipPlayEvolution-wrapper', 'autoSkipPlayEvolutionButton', _("Ask to play evolution") + ' &#x25BE;', function () { return _this.toggleAutoSkipPlayEvolutionPopin(); });
         }
     };
     KingOfTokyo.prototype.toggleAutoSkipPlayEvolutionPopin = function () {
@@ -5879,7 +5877,7 @@ var KingOfTokyo = /** @class */ (function () {
         var popinId = "discussion_bubble_autoSkipPlayEvolution";
         var bubble = document.getElementById(popinId);
         if (!bubble) {
-            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoSkipPlayEvolutionBubble\">\n                <h3>" + ("Ask to play Evolution, for Evolutions playable on specific occasions") + "</h3>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"0\" id=\"autoSkipPlayEvolution-all\" />\n                    <label for=\"autoSkipPlayEvolution-all\">\n                        " + ("Ask for every specific occasion even if I don't have the card in my hand.") + "\n                        <div class=\"label-detail\">\n                            " + ("Recommended. You won't be asked when your hand is empty") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"1\" id=\"autoSkipPlayEvolution-real\" />\n                    <label for=\"autoSkipPlayEvolution-real\">\n                        " + ("Ask only if I have in my hand an Evolution matching the specific occasion.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + ("Warning:") + "</strong> " + ("Your opponent can deduce what you have in hand with this option.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"2\" id=\"autoSkipPlayEvolution-turn\" />\n                    <label for=\"autoSkipPlayEvolution-turn\">\n                        " + ("Do not ask until my next turn.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + ("Warning:") + "</strong> " + ("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"3\" id=\"autoSkipPlayEvolution-off\" />\n                    <label for=\"autoSkipPlayEvolution-off\">\n                        " + ("Do not ask until I turn it back on.") + "\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + ("Warning:") + "</strong> " + ("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n            </div>";
+            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoSkipPlayEvolutionBubble\">\n                <h3>" + _("Ask to play Evolution, for Evolutions playable on specific occasions") + "</h3>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"0\" id=\"autoSkipPlayEvolution-all\" />\n                    <label for=\"autoSkipPlayEvolution-all\">\n                        " + _("Ask for every specific occasion even if I don't have the card in my hand.") + "\n                        <div class=\"label-detail\">\n                            " + _("Recommended. You won't be asked when your hand is empty") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"1\" id=\"autoSkipPlayEvolution-real\" />\n                    <label for=\"autoSkipPlayEvolution-real\">\n                        " + _("Ask only if I have in my hand an Evolution matching the specific occasion.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Your opponent can deduce what you have in hand with this option.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"2\" id=\"autoSkipPlayEvolution-turn\" />\n                    <label for=\"autoSkipPlayEvolution-turn\">\n                        " + _("Do not ask until my next turn.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"3\" id=\"autoSkipPlayEvolution-off\" />\n                    <label for=\"autoSkipPlayEvolution-off\">\n                        " + _("Do not ask until I turn it back on.") + "\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n            </div>";
             dojo.place(html, 'autoSkipPlayEvolutionButton');
             Array.from(document.querySelectorAll('input[name="autoSkipPlayEvolution"]')).forEach(function (input) {
                 input.addEventListener('change', function () {
@@ -5997,11 +5995,11 @@ var KingOfTokyo = /** @class */ (function () {
         for (var i = 1; i <= 8; i++) {
             cardsTypes.push(monster * 10 + i);
         }
-        this.showEvolutionsPopin(cardsTypes, /*TODOPU_*/ ("Monster Evolution cards"));
+        this.showEvolutionsPopin(cardsTypes, _("Monster Evolution cards"));
     };
     KingOfTokyo.prototype.showPlayerEvolutions = function (playerId) {
         var cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(function (evolution) { return evolution.type; });
-        this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(/*TODOPU_*/ ("Evolution cards owned by ${player_name}"), { 'player_name': this.gamedatas.players[playerId].name }));
+        this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(_("Evolution cards owned by ${player_name}"), { 'player_name': this.gamedatas.players[playerId].name }));
     };
     KingOfTokyo.prototype.pickMonster = function (monster) {
         if (!this.checkAction('pickMonster')) {
@@ -7262,8 +7260,8 @@ var KingOfTokyo = /** @class */ (function () {
         //this.setTitleBarSuperiorAlienTechnologyCard(notif.args.card, 'gameaction_status_wrap');
         if (document.getElementById('dice0')) {
             var message = notif.args.dieValue == 6 ?
-                /*TODOPU_*/ ('<strong>${card_name}</strong> card removed!') :
-                /*TODOPU_*/ ('<strong>${card_name}</strong> card kept!');
+                _('<strong>${card_name}</strong> card removed!') :
+                _('<strong>${card_name}</strong> card kept!');
             this.doShowBubble('dice0', dojo.string.substitute(message, {
                 'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');

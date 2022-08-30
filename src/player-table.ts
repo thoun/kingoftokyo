@@ -153,12 +153,12 @@ class PlayerTable {
                 <div id="hand-evolution-cards-wrapper">
                     <div class="hand-title">
                         <div>
-                            <div id="myhand">${/*TODOPU_*/('My hand')}</div>
+                            <div id="myhand">${_('My hand')}</div>
                         </div>
                         <div id="autoSkipPlayEvolution-wrapper"></div>
                     </div>
                     <div id="hand-evolution-cards" class="evolution-card-stock player-evolution-cards">
-                        <div id="empty-message">${/*TODOPU_*/('Your hand is empty')}</div>
+                        <div id="empty-message">${_('Your hand is empty')}</div>
                     </div>
                 </div>
                 `, `hand-wrapper`);
