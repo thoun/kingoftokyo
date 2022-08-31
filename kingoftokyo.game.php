@@ -257,9 +257,12 @@ class KingOfTokyo extends Table {
         $this->initStat('player', 'pointsWin', 0);
         $this->initStat('table', 'eliminationWin', 0);
         $this->initStat('player', 'eliminationWin', 0);
+        $this->initStat('table', 'smashesGiven', 0);
+        $this->initStat('player', 'smashesGiven', 0);
         
         $this->initStat('table', 'survivorRatio', 0);
 
+        $this->initStat('player', 'smashesReceived', 0);
         $this->initStat('player', 'survived', 0);
         $this->initStat('player', 'turnsInTokyo', 0);
         $this->initStat('player', 'tokyoEnters', 0);

@@ -93,25 +93,24 @@ $monstersNames = [
 ];
 
 $commonStats = [
+    "turnsNumber" => ["id" => 10, "type" => "int", "name" => totranslate("Number of turns")],
+    "pointsWin" => ["id" => 11, "type" => "bool", "name" => totranslate("Won by points")],
+    "eliminationWin" => ["id" => 12, "type" => "bool", "name" => totranslate("Won by elimination")],
     "monster" => ["id" => 100, "type" => "int", "name" => "Monster", "display" => "limited"],
     "monsterAutomatic" => ["id" => 101, "type" => "int", "name" => totranslate("Monster (automatic)")],
     "monsterPick" => ["id" => 102, "type" => "int", "name" => totranslate("Monster (chosen)")],
+    "smashesGiven" => ["id" => 13, "type" => "int", "name" => totranslate("Given smashes")],
 ];
 
 $stats_type = [
     // Statistics global to table
     "table" => $commonStats + [
-        "turnsNumber" => ["id" => 10, "type" => "int", "name" => totranslate("Number of turns")],
-        "pointsWin" => ["id" => 11, "type" => "bool", "name" => totranslate("Won by points")],
-        "eliminationWin" => ["id" => 12, "type" => "bool", "name" => totranslate("Won by elimination")],
         "survivorRatio" => ["id" => 20, "type" => "float", "name" => totranslate("Survivors ratio")],
     ],
     
     // Statistics existing for each player
     "player" => $commonStats + [
-        "turnsNumber" => ["id" => 10, "type" => "int", "name" => totranslate("Number of turns")],
-        "pointsWin" => ["id" => 11, "type" => "bool", "name" => totranslate("Won by points")],
-        "eliminationWin" => ["id" => 12, "type" => "bool", "name" => totranslate("Won by elimination")],
+        "smashesReceived" => ["id" => 29, "type" => "int", "name" => totranslate("Received smashes")],
         "survived" => ["id" => 30, "type" => "bool", "name" => totranslate("Survived")],
         "turnsInTokyo" => ["id" => 31, "type" => "int", "name" => totranslate("Turns in Tokyo")],
         "tokyoEnters" => ["id" => 32, "type" => "int", "name" => totranslate("Tokyo enters")],

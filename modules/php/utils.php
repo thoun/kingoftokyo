@@ -838,6 +838,13 @@ trait UtilTrait {
                 $this->setUsedCard(3000 + $breathOfDoomEvolution->id);
             }
         }
+
+        // only smashes
+        if ($damage->cardType == 0 && $damageDealerId != 0 && $playerId != 0) {
+            $this->incStat($damage->damage, 'smashesGiven');
+            $this->incStat($damage->damage, 'smashesGiven', $damageDealerId);
+            $this->incStat($damage->damage, 'smashesReceived', $playerId);
+        }
     }
 
     function applyDamageIgnoreCards(object &$damage) {
