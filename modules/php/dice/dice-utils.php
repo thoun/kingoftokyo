@@ -504,7 +504,7 @@ trait DiceUtilTrait {
                 if (count($smashedPlayersInTokyo) === 1 && $isPowerUpExpansion) {
                     $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
                     if (count($freezeRayEvolutions) > 0) {
-                        $this->giveFreezeRay($playerId, $smashedPlayersInTokyo[0]);
+                        $this->giveFreezeRay($playerId, $smashedPlayersInTokyo[0], $freezeRayEvolutions[0]);
                     }
                 }
             } else {

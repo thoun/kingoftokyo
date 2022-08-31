@@ -953,19 +953,25 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function giveFreezeRay(int $fromPlayerId, int $toPlayerId) {
-        $evolution = $this->getEvolutionsOfType($fromPlayerId, FREEZE_RAY_EVOLUTION)[0];
-        $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
-        $this->evolutionCards->moveCard($evolution->id, 'table', $toPlayerId);
-        $this->playEvolutionToTable($toPlayerId, $evolution, '', $fromPlayerId);
+    function giveFreezeRay(int $fromPlayerId, int $toPlayerId, EvolutionCard $evolution) {
+        $ownerId = $evolution->ownerId;
+        if ($ownerId == $fromPlayerId) {
+            $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
+            $this->evolutionCards->moveCard($evolution->id, 'table', $toPlayerId);
+            $this->playEvolutionToTable($toPlayerId, $evolution, '', $fromPlayerId);
+        }
     }
 
     function giveBackFreezeRay(int $activePlayerId, EvolutionCard $evolution) {
         $ownerId = $evolution->ownerId;
         if ($ownerId != $activePlayerId) {
-            $this->removeEvolution($activePlayerId, $evolution, true, false, true);
-            $this->evolutionCards->moveCard($evolution->id, 'table', $ownerId);
-            $this->playEvolutionToTable($ownerId, $evolution, '', $activePlayerId);
+            if ($this->getPlayer($ownerId)->eliminated) {
+                $this->removeEvolution($activePlayerId, $evolution);
+            } else {
+                $this->removeEvolution($activePlayerId, $evolution, true, false, true);
+                $this->evolutionCards->moveCard($evolution->id, 'table', $ownerId);
+                $this->playEvolutionToTable($ownerId, $evolution, '', $activePlayerId);
+            }
 
             // reset freeze ray disabled symbol
             $this->setEvolutionTokens($ownerId, $evolution, 0, true);

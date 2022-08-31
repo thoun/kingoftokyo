@@ -128,6 +128,7 @@ trait MonsterTrait {
 
         if ($this->isPowerUpExpansion()) {
             $this->evolutionCards->moveAllCardsInLocationKeepOrder('monster'.($monsterId % 100), 'deck'.$playerId);
+            $this->evolutionCards->shuffle('deck'.$playerId);
         }
     }
 
