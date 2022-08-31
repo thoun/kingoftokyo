@@ -3359,19 +3359,26 @@ var AnimationManager = /** @class */ (function () {
                     animationDiv.style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
                 }, 50);
                 setTimeout(function () {
+                    var _a, _b;
                     var targetId = "monster-figure-" + playerId;
                     if (targetToken) {
                         var tokensDivs = document.querySelectorAll("div[id^='token-wrapper-" + playerId + "-" + targetToken + "-token'");
                         targetId = tokensDivs[tokensDivs.length - (i + 1)].id;
                     }
-                    var destination = document.getElementById(targetId).getBoundingClientRect();
-                    var deltaX = destination.left - originLeft + shift * _this.game.getZoom();
-                    var deltaY = destination.top - originTop + shift * _this.game.getZoom();
-                    animationDiv.style.transition = "transform 0.5s ease-in";
-                    animationDiv.style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(" + 0.3 * _this.game.getZoom() + ")";
-                    animationDiv.addEventListener('transitionend', function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); });
-                    // security
-                    setTimeout(function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); }, 1050);
+                    var destination = (_a = document.getElementById(targetId)) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect();
+                    if (destination) {
+                        var deltaX = destination.left - originLeft + shift * _this.game.getZoom();
+                        var deltaY = destination.top - originTop + shift * _this.game.getZoom();
+                        animationDiv.style.transition = "transform 0.5s ease-in";
+                        animationDiv.style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(" + 0.3 * _this.game.getZoom() + ")";
+                        animationDiv.addEventListener('transitionend', function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); });
+                        // security
+                        setTimeout(function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); }, 1050);
+                    }
+                    else {
+                        // in case the player dies when starting the animation
+                        (_b = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(animationDiv);
+                    }
                 }, 1000);
             };
             for (var i = 0; i < number; i++) {

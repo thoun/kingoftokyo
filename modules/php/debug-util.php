@@ -25,7 +25,7 @@ trait DebugUtilTrait {
         $this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
-        //$this->debugSetHealth(1);
+        $this->debugSetHealth(2);
         //$this->debugSetPlayerHealth(2343492, 7);
         //$this->debugSetPlayerHealth(2343493, 7);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
@@ -51,7 +51,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(TANK_CARD);
         //$this->debugSetCardInTable(GAS_REFINERY_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CHEERLEADER_CARD);
-        $this->debugSetCardInTable(MIMIC_CARD);
+        //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
@@ -75,7 +75,7 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
         //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
-        $this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
+        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
@@ -157,14 +157,14 @@ trait DebugUtilTrait {
         // anubis
         if ($this->isAnubisExpansion()) {
             //$this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
+            $this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
             //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
             //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
-            $this->debugSetCurseCardInTable(ORDEAL_OF_THE_MIGHTY_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_MIGHTY_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
@@ -202,7 +202,7 @@ trait DebugUtilTrait {
             $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
-            $this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
+            //$this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
         }
 
         // power up
@@ -257,7 +257,7 @@ trait DebugUtilTrait {
 
         // player order
 
-        $this->gamestate->changeActivePlayer(2343495);
+        $this->gamestate->changeActivePlayer(2343492);
         //$this->gamestate->changeActivePlayer($playersIds[1]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);

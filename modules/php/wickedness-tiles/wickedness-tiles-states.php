@@ -9,8 +9,15 @@ trait WickednessTilesStateTrait {
 ////////////
 
     function stTakeWickednessTile() {
-        if ($this->autoSkipImpossibleActions()) {
-            $playerId = $this->getActivePlayerId();        
+        $playerId = $this->getActivePlayerId();  
+
+        // if player is dead async, he can't buy or sell
+        if ($this->getPlayer($playerId)->eliminated) {
+            $this->skipTakeWickednessTile(true);
+            return;
+        }
+
+        if ($this->autoSkipImpossibleActions()) {      
             $level = $this->canTakeWickednessTile($playerId);
             $tableTiles = $this->getTableWickednessTiles($level);
         
