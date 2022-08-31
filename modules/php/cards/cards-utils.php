@@ -1010,6 +1010,10 @@ trait CardsUtilTrait {
             ]
         );
 
+        if ($endState == null && in_array(intval($this->gamestate->state_id()), [ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT, ST_AFTER_WHEN_CARD_IS_BOUGHT])) {
+            $endState = ST_PLAYER_BUY_CARD;
+        }
+
         $this->addStackedState($endState);
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
