@@ -380,7 +380,7 @@ class EvolutionCards {
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
         cardDiv.classList.add('kot-evolution');
         const type = this.getCardTypeName(cardType);
-        const description = formatTextIcons(this.getCardDescription(cardType));
+        const description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
 
         cardDiv.innerHTML = `
         <div class="evolution-type">${type}</div>
@@ -449,7 +449,7 @@ class EvolutionCards {
                 const owner = this.game.getPlayer(ownerId);
                 tooltip += `<p>${_('Owner:')} <strong style="color: #${owner.color};">${owner.name}</strong></p>`;
             }
-            tooltip += `<p>${formatTextIcons(this.getCardDescription(cardTypeId))}</p>
+            tooltip += `<p>${formatTextIcons(this.getCardDescription(cardTypeId).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'))}</p>
         </div>`;
         return tooltip;
     }

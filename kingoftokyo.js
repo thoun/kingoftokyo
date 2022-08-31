@@ -1613,7 +1613,7 @@ var EvolutionCards = /** @class */ (function () {
     EvolutionCards.prototype.setDivAsCard = function (cardDiv, cardType) {
         cardDiv.classList.add('kot-evolution');
         var type = this.getCardTypeName(cardType);
-        var description = formatTextIcons(this.getCardDescription(cardType));
+        var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         cardDiv.innerHTML = "\n        <div class=\"evolution-type\">" + type + "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n                    <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        </div>      \n        ";
         var nameWrapper = cardDiv.getElementsByClassName('name-wrapper')[0];
         var outline = cardDiv.getElementsByClassName('outline')[0];
@@ -1661,7 +1661,7 @@ var EvolutionCards = /** @class */ (function () {
             var owner = this.game.getPlayer(ownerId);
             tooltip += "<p>" + _('Owner:') + " <strong style=\"color: #" + owner.color + ";\">" + owner.name + "</strong></p>";
         }
-        tooltip += "<p>" + formatTextIcons(this.getCardDescription(cardTypeId)) + "</p>\n        </div>";
+        tooltip += "<p>" + formatTextIcons(this.getCardDescription(cardTypeId).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>')) + "</p>\n        </div>";
         return tooltip;
     };
     EvolutionCards.prototype.setupNewCard = function (cardDiv, cardType) {

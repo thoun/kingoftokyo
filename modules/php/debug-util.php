@@ -210,12 +210,12 @@ trait DebugUtilTrait {
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
             // set monster
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
-            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // alienoid
+            //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // alienoid
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343493"); // gigazaur
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
-            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
+            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343492"); // cyber bunny
             //$this->DbQuery("UPDATE player SET `player_monster` = 15 where `player_id` = 2343492"); // kraken
 
@@ -245,7 +245,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(MEGA_PURR_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
