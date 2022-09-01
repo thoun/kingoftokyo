@@ -375,7 +375,7 @@ trait CardsUtilTrait {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
-    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, int $newHearts, int $points) {
+    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, bool $removeEnergy, int $newHearts, int $points) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
@@ -399,6 +399,16 @@ trait CardsUtilTrait {
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'wickedness' => 0,
+            ]);
+        }
+
+        // remove energy
+        if ($removeEnergy) {
+            $this->DbQuery("UPDATE player SET `player_energy` = 0 where `player_id` = $playerId");
+            $this->notifyAllPlayers('energy','', [
+                'playerId' => $playerId,
+                'player_name' => $playerName,
+                'energy' => 0,
             ]);
         }
 
@@ -437,6 +447,7 @@ trait CardsUtilTrait {
             clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and [Star] are lost but player gets back 10 [Heart]'),
             $this->isDarkEdition(), 
             false,
+            false,
             10,
             0
         );
@@ -451,6 +462,7 @@ trait CardsUtilTrait {
             /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/,
             true, 
             false,
+            false,
             12,
             0
         );
@@ -460,8 +472,9 @@ trait CardsUtilTrait {
         $this->applyResurrectCard(
             $playerId, 
             3000 + NINE_LIVES_EVOLUTION, 
-            clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'),
+            clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all [Energy], [Star], cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'),
             false, 
+            true,
             true,
             9,
             9

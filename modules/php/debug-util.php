@@ -25,7 +25,7 @@ trait DebugUtilTrait {
         $this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
-        $this->debugSetHealth(2);
+        $this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 7);
         //$this->debugSetPlayerHealth(2343493, 7);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
@@ -228,7 +228,7 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
 
             // cards to test
-            //$this->debugSetEvolutionInHand(11, 2343492, true);
+            $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
