@@ -761,6 +761,8 @@ trait UtilTrait {
 
         $actualHealth = $this->getPlayerHealth($playerId);
 
+        $damagedPlayerInTokyoBeforeDamage = $this->inTokyo($playerId);
+
         $newHealth = $this->applyDamageIgnoreCards($damage);
 
         $isPowerUpExpansion = $this->isPowerUpExpansion();
@@ -819,14 +821,14 @@ trait UtilTrait {
             $this->applyDamage($reflectiveDamage);
         }
 
-        if ($isPowerUpExpansion && $this->inTokyo($playerId)) {
+        if ($isPowerUpExpansion && $damagedPlayerInTokyoBeforeDamage) { // player may be inside tokyo before damage and outside after (with It has a Child)
             $breathOfDoomEvolutions = $this->getEvolutionsOfType($damageDealerId, BREATH_OF_DOOM_EVOLUTION);
             if (count($breathOfDoomEvolutions) > 0) {
                 $usedCards = $this->getUsedCard();
                 if (!in_array(3000 + $breathOfDoomEvolutions[0]->id, $usedCards)) {
                     $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
                     foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
-                        if ($outsideTokyoPlayerId != $damageDealerId) {
+                        if ($outsideTokyoPlayerId != $damageDealerId && $outsideTokyoPlayerId != $playerId) {
                             $breathOfDoomDamage = new Damage($outsideTokyoPlayerId, count($breathOfDoomEvolutions), $damageDealerId, 3000 + BREATH_OF_DOOM_EVOLUTION);
                             $this->applyDamage($breathOfDoomDamage);
                         }
