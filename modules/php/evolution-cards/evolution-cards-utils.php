@@ -318,7 +318,9 @@ trait EvolutionCardsUtilTrait {
             // The King
             case MONKEY_RUSH_EVOLUTION:
                 $this->moveToTokyoFreeSpot($playerId);
-                $this->endBeforeEnteringTokyoIfNeeded();
+                if (!$this->tokyoHasFreeSpot()) {
+                    $this->goToState($this->redirectAfterHalfMovePhase());
+                }
                 break;
             case JUNGLE_FRENZY_EVOLUTION:
                 $this->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 1);
@@ -1138,16 +1140,10 @@ trait EvolutionCardsUtilTrait {
         $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
-    
-    function endBeforeEnteringTokyoIfNeeded() {
-        if (!$this->tokyoHasFreeSpot()) {
-            $this->goToState($this->redirectAfterHalfMovePhase());
-        }
-    }
 
     function applyFelineMotor(int $playerId) {
         $this->moveToTokyoFreeSpot($playerId);
         $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
-        $this->endBeforeEnteringTokyoIfNeeded();
+        $this->goToState($this->redirectAfterHalfMovePhase());
     }
 }
