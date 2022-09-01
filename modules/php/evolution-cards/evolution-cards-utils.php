@@ -168,9 +168,11 @@ trait EvolutionCardsUtilTrait {
                 }
                 break;
             case TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION:
-                return $this->inTokyo($playerId);
             case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
-                return $this->inTokyo($playerId);
+                if (!$this->inTokyo($playerId)) {
+                    throw new \BgaUserException(self::_("You can play this Evolution only if you are in Tokyo"));
+                }
+                break;
             case JUNGLE_FRENZY_EVOLUTION:
                 if ($playerId != intval($this->getActivePlayerId())) {
                     throw new \BgaUserException(self::_("You must play this Evolution during your turn"));
@@ -183,7 +185,10 @@ trait EvolutionCardsUtilTrait {
                 }
                 break;
             case TUNE_UP_EVOLUTION:
-                return !$this->inTokyo($playerId);
+                if ($this->inTokyo($playerId)) {
+                    throw new \BgaUserException(self::_("You can play this Evolution only if you are not in Tokyo"));
+                }
+                break;
             case BLIZZARD_EVOLUTION:
                 if ($playerId != intval($this->getActivePlayerId())) {
                     throw new \BgaUserException(self::_("You must play this Evolution during your turn"));
@@ -201,9 +206,8 @@ trait EvolutionCardsUtilTrait {
                 if (!$canPlayIcyReflection) {
                     throw new \BgaUserException(self::_("You can only play this evolution card when there is another permanent Evolution on the table"));
                 }
+                break;
         }
-
-        return true;
     }
 
     function playEvolutionToTable(int $playerId, EvolutionCard &$card, /*string | null*/ $message = null, $fromPlayerId = null) {

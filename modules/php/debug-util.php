@@ -27,7 +27,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 7);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -245,7 +245,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
