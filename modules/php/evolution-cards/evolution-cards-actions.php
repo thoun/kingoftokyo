@@ -695,4 +695,16 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
         return;
     }
+
+    public function freezeRayChooseOpponent(int $toPlayerId) {
+        $this->checkAction('freezeRayChooseOpponent');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $question = $this->getQuestion();
+        $card = $this->getEvolutionCardById($question->args->card->id);
+        $this->giveFreezeRay($playerId, $toPlayerId, $card);
+
+        $this->removeStackedStateAndRedirect();
+    }
 }

@@ -100,6 +100,10 @@ interface SuperiorAlienTechnologyQuestionArgs {
     card: Card;
 }
 
+interface FreezeRayChooseOpponentQuestionArgs {
+    smashedPlayersIds: number[];
+}
+
 interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;

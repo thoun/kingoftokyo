@@ -18,14 +18,14 @@ trait DebugUtilTrait {
         // base game
 
         $this->debugSetPlayerInLocation(2343493, 1);
-        //$this->debugSetPlayerInLocation(2343496, 2);
+        $this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 10);
-        $this->debugSetEnergy(8);
+        //$this->debugSetEnergy(8);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
-        $this->debugSetHealth(1);
+        //$this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 7);
         //$this->debugSetPlayerHealth(2343493, 7);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
@@ -224,8 +224,8 @@ trait DebugUtilTrait {
             $this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
-            /*$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
-            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
+            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
+            /*$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
 
             // cards to test
             $this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
@@ -245,7 +245,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343495, true);
+            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);

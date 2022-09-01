@@ -823,7 +823,8 @@ $playerActionsGameStates = [
             "answerSunkenTemple",
             "answerElectricCarrot",
             "reserveCard",
-            "throwDieSuperiorAlienTechnology"
+            "throwDieSuperiorAlienTechnology",
+            "freezeRayChooseOpponent",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

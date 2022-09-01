@@ -1114,6 +1114,30 @@ trait EvolutionCardsUtilTrait {
         $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
+
+    function freezeRayChooseOpponentQuestion(int $playerId, array $smashedPlayersIds, EvolutionCard $card) {
+        $question = new Question(
+            'FreezeRayChooseOpponent',
+            clienttranslate('${player_name} must choose an opponent to give ${card_name} to'),
+            clienttranslate('${you} must choose an opponent to give ${card_name} to'),
+            [$playerId],
+            ST_AFTER_ANSWER_QUESTION,
+            [ 
+                'playerId' => $playerId,
+                '_args' => [ 
+                    'player_name' => $this->getPlayerName($playerId),
+                    'card_name' => 3000 + $card->type,
+                ],
+                'card' => $card,
+                'smashedPlayersIds' => $smashedPlayersIds,
+            ]
+        );
+
+        $this->addStackedState();
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
     
     function endBeforeEnteringTokyoIfNeeded() {
         if (!$this->tokyoHasFreeSpot()) {

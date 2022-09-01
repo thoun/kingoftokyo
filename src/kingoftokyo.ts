@@ -790,7 +790,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.gamedatas.gamestate.descriptionmyturn = question.descriptionmyturn; 
         (this as any).updatePageTitle();
 
-        switch(question.code) {
+        switch (question.code) {
             case 'ChooseMimickedCard':
                 this.onEnteringChooseMimickedCard(question.args.mimicArgs);
                 break;
@@ -840,6 +840,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const superiorAlienTechnologyArgs = question.args as SuperiorAlienTechnologyQuestionArgs;
                 this.setTitleBarSuperiorAlienTechnologyCard(superiorAlienTechnologyArgs.card);
                 this.setDiceSelectorVisibility(false);
+                break;
+            case 'FreezeRayChooseOpponent':
+                const argsFreezeRayChooseOpponent = question.args as FreezeRayChooseOpponentQuestionArgs;
+                argsFreezeRayChooseOpponent.smashedPlayersIds.forEach(playerId => {
+                    const player = this.gamedatas.players[playerId];
+                    const label = `<div class="monster-icon monster${player.monster}" style="background-color: ${player.monster > 100 ? 'unset' : '#'+player.color};"></div> ${player.name}`;
+                    (this as any).addActionButton(`freezeRayChooseOpponent_button_${playerId}`, label, () => this.freezeRayChooseOpponent(playerId));
+                });
                 break;
         }
     }
@@ -3296,6 +3304,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('throwDieSuperiorAlienTechnology');
+    }
+    
+    public freezeRayChooseOpponent(playerId: number) {
+        if(!(this as any).checkAction('freezeRayChooseOpponent')) {
+            return;
+        }
+
+        this.takeAction('freezeRayChooseOpponent', { playerId });
     }
     
     public takeAction(action: string, data?: any) {

@@ -4735,6 +4735,14 @@ var KingOfTokyo = /** @class */ (function () {
                 this.setTitleBarSuperiorAlienTechnologyCard(superiorAlienTechnologyArgs.card);
                 this.setDiceSelectorVisibility(false);
                 break;
+            case 'FreezeRayChooseOpponent':
+                var argsFreezeRayChooseOpponent = question.args;
+                argsFreezeRayChooseOpponent.smashedPlayersIds.forEach(function (playerId) {
+                    var player = _this.gamedatas.players[playerId];
+                    var label = "<div class=\"monster-icon monster" + player.monster + "\" style=\"background-color: " + (player.monster > 100 ? 'unset' : '#' + player.color) + ";\"></div> " + player.name;
+                    _this.addActionButton("freezeRayChooseOpponent_button_" + playerId, label, function () { return _this.freezeRayChooseOpponent(playerId); });
+                });
+                break;
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -6743,6 +6751,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('throwDieSuperiorAlienTechnology');
+    };
+    KingOfTokyo.prototype.freezeRayChooseOpponent = function (playerId) {
+        if (!this.checkAction('freezeRayChooseOpponent')) {
+            return;
+        }
+        this.takeAction('freezeRayChooseOpponent', { playerId: playerId });
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

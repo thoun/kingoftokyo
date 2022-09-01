@@ -1010,6 +1010,15 @@
         self::ajaxResponse();
     }
   	
+    public function freezeRayChooseOpponent() {
+        self::setAjaxMode();
+
+        $playerId = self::getArg("playerId", AT_posint, true);
+        $this->game->freezeRayChooseOpponent($playerId);
+
+        self::ajaxResponse();
+    }
+  	
     // TODOBUG
     public function debugBlockedTable() {
         self::setAjaxMode();
