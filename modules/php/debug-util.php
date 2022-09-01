@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343494, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
@@ -245,7 +245,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(FELINE_MOTOR_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(SAURIAN_ADAPTABILITY_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
