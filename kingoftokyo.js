@@ -3585,6 +3585,7 @@ var PreferencesManager = /** @class */ (function () {
         dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
         try {
             document.getElementById('preference_control_203').closest(".preference_choice").style.display = 'none';
+            document.getElementById('preference_fontrol_203').closest(".preference_choice").style.display = 'none';
         }
         catch (e) { }
     };

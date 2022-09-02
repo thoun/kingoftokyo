@@ -28,6 +28,7 @@ class PreferencesManager {
 
         try {
             (document.getElementById('preference_control_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
+            (document.getElementById('preference_fontrol_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
         } catch (e) {}
     }
 
