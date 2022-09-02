@@ -503,11 +503,12 @@ trait DiceUtilTrait {
 
                 if ($isPowerUpExpansion) {
                     $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
-                    if (count($freezeRayEvolutions) > 0) {
+                    $freezeRayEvolution = $this->array_find($freezeRayEvolutions, fn($evolution) => $evolution->ownerId == $playerId);
+                    if ($freezeRayEvolution != null) {
                         if (count($smashedPlayersInTokyo) === 1) {
-                            $this->giveFreezeRay($playerId, $smashedPlayersInTokyo[0], $freezeRayEvolutions[0]);
+                            $this->giveFreezeRay($playerId, $smashedPlayersInTokyo[0], $freezeRayEvolution);
                         } else {
-                            $this->freezeRayChooseOpponentQuestion($playerId, $smashedPlayersInTokyo, $freezeRayEvolutions[0]);
+                            $this->freezeRayChooseOpponentQuestion($playerId, $smashedPlayersInTokyo, $freezeRayEvolution);
                             return;
                         }
                     }

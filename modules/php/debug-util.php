@@ -17,8 +17,8 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
-        //$this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 10);
@@ -93,7 +93,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
-        $this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
+        //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
@@ -209,11 +209,11 @@ trait DebugUtilTrait {
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
             // set monster
-            $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343495"); // space penguin
-            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // alienoid
-            $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
+            //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343495"); // space penguin
+            //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // alienoid
+            //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
-            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343494"); // gigazaur
+            //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343494"); // gigazaur
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343492"); // cyber bunny
@@ -245,7 +245,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(MECHA_BLAST_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION, 2343492, false);
+        $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true/*, 2343495*/);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
@@ -306,10 +306,11 @@ trait DebugUtilTrait {
         return $card;
     }
 
-    function debugSetEvolutionInHand(int $cardType, int $playerId, bool $visible) {
+    function debugSetEvolutionInHand(int $cardType, int $playerId, bool $visible, $owner = null) {
         $card = $this->getEvolutionCardById(intval(array_values($this->evolutionCards->getCardsOfType($cardType))[0]['id']));
         $this->evolutionCards->moveCard($card->id, $visible ? 'table' : 'hand', $playerId);
-        $this->DbQuery("UPDATE evolution_card SET owner_id=$playerId WHERE card_id = $card->id");
+        $ownerId = $owner === null ? $playerId : $owner;
+        $this->DbQuery("UPDATE evolution_card SET owner_id=$ownerId WHERE card_id = $card->id");
         return $card;
     }
 
