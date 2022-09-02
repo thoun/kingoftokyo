@@ -360,7 +360,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             document.getElementById(`pick-monster-figure-${monster}`).addEventListener('click', () => this.pickMonster(monster));
             if (this.isPowerUpExpansion()) {
-                document.getElementById(`see-monster-evolution-${monster}`).addEventListener('click', () => this.showMonsterEvolutions(monster));
+                document.getElementById(`see-monster-evolution-${monster}`).addEventListener('click', () => this.showMonsterEvolutions(monster % 100));
             }
         });
 

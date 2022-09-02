@@ -4320,7 +4320,7 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.place(html, "monster-pick");
             document.getElementById("pick-monster-figure-" + monster).addEventListener('click', function () { return _this.pickMonster(monster); });
             if (_this.isPowerUpExpansion()) {
-                document.getElementById("see-monster-evolution-" + monster).addEventListener('click', function () { return _this.showMonsterEvolutions(monster); });
+                document.getElementById("see-monster-evolution-" + monster).addEventListener('click', function () { return _this.showMonsterEvolutions(monster % 100); });
             }
         });
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
