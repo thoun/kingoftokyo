@@ -4038,6 +4038,7 @@ var __assign = (this && this.__assign) || function () {
 var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
 var ACTION_TIMER_DURATION = 5;
+var SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
 var KingOfTokyo = /** @class */ (function () {
     function KingOfTokyo() {
         this.healthCounters = [];
@@ -4376,6 +4377,17 @@ var KingOfTokyo = /** @class */ (function () {
             var playerId_1 = this.getPlayerId();
             this.getPlayerTable(playerId_1).highlightHiddenEvolutions(args.highlighted.filter(function (card) { return card.location_arg === playerId_1; }));
         }
+    };
+    KingOfTokyo.prototype.onEnteringBeforeEndTurn = function (args) {
+        var _a;
+        (_a = Object.keys(args._private)) === null || _a === void 0 ? void 0 : _a.forEach(function (key) {
+            var div = document.getElementById("hand-evolution-cards_item_" + key);
+            if (div) {
+                var counter = args._private[key];
+                var symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
+                dojo.place(formatTextIcons("<div class=\"evolution-inner-counter\">" + counter[0] + " " + symbol + "</div>"), div);
+            }
+        });
     };
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
         var _this = this;
@@ -4771,6 +4783,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
             case 'cardIsBought':
+            case 'beforeEndTurn':
                 this.onLeavingStepEvolution();
                 break;
             case 'changeMimickedCard':
@@ -4926,6 +4939,10 @@ var KingOfTokyo = /** @class */ (function () {
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args); // because it's multiplayer, enter action must be set here
                 break;
+            case 'beforeEndTurn':
+                this.onEnteringStepEvolution(args); // because it's multiplayer, enter action must be set here
+                this.onEnteringBeforeEndTurn(args);
+                break;
             case 'changeActivePlayerDie':
             case 'psychicProbeRollDie':
                 this.setDiceSelectorVisibility(true);
@@ -4984,6 +5001,9 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'beforeStartTurn':
                     this.addActionButton('skipBeforeStartTurn_button', _("Skip"), function () { return _this.skipBeforeStartTurn(); });
                     break;
+                case 'beforeEndTurn':
+                    this.addActionButton('skipBeforeEndTurn_button', _("Skip"), function () { return _this.skipBeforeEndTurn(); });
+                    break;
                 case 'changeMimickedCardWickednessTile':
                     this.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), function () { return _this.skipChangeMimickedCardWickednessTile(); });
                     if (!args.canChange) {
@@ -5039,9 +5059,8 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'giveSymbols':
                     var argsGiveSymbols = args;
-                    var SYMBOL_AS_STRING_PADDED_1 = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
                     argsGiveSymbols.combinations.forEach(function (combination, combinationIndex) {
-                        var symbols = SYMBOL_AS_STRING_PADDED_1[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED_1[combination[1]] : '');
+                        var symbols = SYMBOL_AS_STRING_PADDED[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED[combination[1]] : '');
                         _this.addActionButton("giveSymbols_button" + combinationIndex, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: symbols })), function () { return _this.giveSymbols(combination); });
                     });
                     break;
@@ -6047,6 +6066,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('skipBeforeStartTurn');
+    };
+    KingOfTokyo.prototype.skipBeforeEndTurn = function () {
+        if (!this.checkAction('skipBeforeEndTurn')) {
+            return;
+        }
+        this.takeAction('skipBeforeEndTurn');
     };
     KingOfTokyo.prototype.skipBeforeEnteringTokyo = function () {
         if (!this.checkAction('skipBeforeEnteringTokyo')) {

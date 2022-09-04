@@ -92,5 +92,23 @@
             filter: contrast(0.6);
             cursor: not-allowed;
         }
+
+        .evolution-inner-counter {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ffcf13;
+            border-radius: 8px;
+            color: black;
+            font-size: 90%;
+            padding: 2px;
+            padding-left: 5px;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+                vertical-align: middle;
+            }
+        }
     }
 }

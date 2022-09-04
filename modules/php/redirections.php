@@ -161,5 +161,25 @@ trait RedirectionTrait {
             return ST_PLAYER_BUY_CARD;
         }
     }
+
+    /* TODO die() function redirectAfterBuyCard(bool $ignoreSell) {
+        if (!$ignoreSell && $this->countCardOfType($this->getActivePlayerId(), METAMORPH_CARD) > 0) {
+            return ST_PLAYER_SELL_CARD;
+        } else {
+            return $this->redirectAfterSellCard();
+        }
+    }*/
+
+    function redirectAfterSellCard() {
+        if ($this->isPowerUpExpansion()) {
+            return ST_MULTIPLAYER_BEFORE_END_TURN;
+        } else {
+            return $this->redirectAfterBeforeEndTurn();
+        }
+    }
+
+    function redirectAfterBeforeEndTurn() {
+        return ST_RESOLVE_END_TURN;
+    }
     
 }

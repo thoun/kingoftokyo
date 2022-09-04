@@ -262,5 +262,35 @@ trait EvolutionCardsStateTrait {
 
         $this->goToState($intervention->endState);
     }
+
+    function stBeforeEndTurn() {
+        $playerId = intval($this->getActivePlayerId());
+        $this->removeDiscardCards($playerId);
+
+        $playersIds = $this->getPlayersIds();
+        $stepCardsMonsters = array_values(array_unique(array_map(fn($cardId) => floor($cardId / 10), $this->EVOLUTION_TO_PLAY_BEFORE_END_MULTI)));
+
+        $dbResults = $this->getCollectionFromDb("SELECT player_id, player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
+        $playerMonsters = [];
+        foreach($dbResults as $dbResult) {
+            $playerMonsters[intval($dbResult['player_id'])] = intval($dbResult['player_monster']) % 100;
+        }
+        $playersWithPotentialEvolution = array_values(array_filter($playersIds, fn($otherPlayer) => in_array($playerMonsters[$otherPlayer], $stepCardsMonsters)));
+
+        if ($this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE) && !in_array($playerId, $playersWithPotentialEvolution)) {
+            $playersWithPotentialEvolution[] = $playerId;
+        }
+
+
+        if (count($playersWithPotentialEvolution) == 0) {
+            $this->goToState($this->redirectAfterBeforeEndTurn());
+        } else {
+            $this->gamestate->setPlayersMultiactive($playersWithPotentialEvolution, 'next', true);
+        }
+    }
+
+    function stAfterBeforeEndTurn() {
+        $this->goToState($this->redirectAfterBeforeEndTurn());
+    }
     
 }

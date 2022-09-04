@@ -11,6 +11,7 @@ declare const board: HTMLDivElement;
 const ANIMATION_MS = 1500;
 const PUNCH_SOUND_DURATION = 250;
 const ACTION_TIMER_DURATION = 5;
+const SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
 
 type FalseBlessingAnkhAction = 'falseBlessingReroll' | 'falseBlessingDiscard';
 
@@ -436,6 +437,17 @@ class KingOfTokyo implements KingOfTokyoGame {
             const playerId = this.getPlayerId();
             this.getPlayerTable(playerId).highlightHiddenEvolutions(args.highlighted.filter(card => card.location_arg === playerId));
         }
+    }
+
+    private onEnteringBeforeEndTurn(args: EnteringBeforeEndTurnArgs) {
+        Object.keys(args._private)?.forEach(key => {
+            const div = document.getElementById(`hand-evolution-cards_item_${key}`);
+            if (div) {
+                const counter = args._private[key];
+                const symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
+                dojo.place(formatTextIcons(`<div class="evolution-inner-counter">${counter[0]} ${symbol}</div>`), div);
+            }
+        });
     }
 
     private onEnteringThrowDice(args: EnteringThrowDiceArgs) {
@@ -879,6 +891,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
             case 'cardIsBought':
+            case 'beforeEndTurn':
                 this.onLeavingStepEvolution();
                 break;
             case 'changeMimickedCard':
@@ -1041,6 +1054,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'cardIsBought':
                 this.onEnteringStepEvolution(args); // because it's multiplayer, enter action must be set here
                 break;
+            case 'beforeEndTurn':
+                this.onEnteringStepEvolution(args); // because it's multiplayer, enter action must be set here
+                this.onEnteringBeforeEndTurn(args);
+                break;
 
             case 'changeActivePlayerDie': case 'psychicProbeRollDie':
                 this.setDiceSelectorVisibility(true);
@@ -1101,6 +1118,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'beforeStartTurn':
                     (this as any).addActionButton('skipBeforeStartTurn_button', _("Skip"), () => this.skipBeforeStartTurn());
                     break;
+                case 'beforeEndTurn':
+                    (this as any).addActionButton('skipBeforeEndTurn_button', _("Skip"), () => this.skipBeforeEndTurn());
+                    break;
                 case 'changeMimickedCardWickednessTile':
                     (this as any).addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"),  () => this.skipChangeMimickedCardWickednessTile());
 
@@ -1159,7 +1179,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     break;
                 case 'giveSymbols':
                     const argsGiveSymbols = args as EnteringGiveSymbolsArgs;
-                    const SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
+                    
                     argsGiveSymbols.combinations.forEach((combination, combinationIndex) => {
                         const symbols = SYMBOL_AS_STRING_PADDED[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED[combination[1]] : '');
                         (this as any).addActionButton(`giveSymbols_button${combinationIndex}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: symbols })), () => this.giveSymbols(combination));
@@ -2399,6 +2419,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('skipBeforeStartTurn');
+    }
+
+    public skipBeforeEndTurn() {
+        if(!(this as any).checkAction('skipBeforeEndTurn')) {
+            return;
+        }
+
+        this.takeAction('skipBeforeEndTurn');
     }
 
     public skipBeforeEnteringTokyo() {

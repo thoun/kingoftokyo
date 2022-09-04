@@ -49,6 +49,14 @@ trait EvolutionCardsActionTrait {
         $this->goToState($this->redirectAfterBeforeStartTurn());
     }
 
+    function skipBeforeEndTurn($skipActionCheck = false) {
+        if (!$skipActionCheck) {
+            $this->checkAction('skipBeforeEndTurn');
+        }        
+
+        $this->goToState($this->redirectAfterBeforeEndTurn());
+    }
+
     function skipBeforeEnteringTokyo($skipActionCheck = false) {
         if (!$skipActionCheck) {
             $this->checkAction('skipBeforeEnteringTokyo');
@@ -149,6 +157,9 @@ trait EvolutionCardsActionTrait {
                     break;
                 case ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT:
                     $this->skipCardIsBought(true);
+                    break;
+                case ST_MULTIPLAYER_BEFORE_END_TURN:
+                    $this->skipBeforeEndTurn(true);
                     break;
             }
         }

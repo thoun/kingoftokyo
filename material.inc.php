@@ -99,6 +99,20 @@ $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT = [
     BAMBOOZLE_EVOLUTION,
 ];
 
+$this->EVOLUTION_TO_PLAY_BEFORE_END_MULTI = [
+    ANGER_BATTERIES_EVOLUTION,
+    STROKE_OF_GENIUS_EVOLUTION,
+    CULT_WORSHIPPERS_EVOLUTION,
+];
+
+$this->EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE = [
+    // in case it's picked just before turn end (no buy phase)
+    COLD_WAVE_EVOLUTION, 
+    BLIZZARD_EVOLUTION,
+];
+
+$this->EVOLUTION_TO_PLAY_BEFORE_END = array_merge($this->EVOLUTION_TO_PLAY_BEFORE_END_MULTI, $this->EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE);
+
 $this->EVOLUTIONS_TO_HEAL = [ // evolutionType => heal amount (null if variable)
 
     // Space Penguin

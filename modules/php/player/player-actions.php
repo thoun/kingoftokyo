@@ -25,7 +25,7 @@ trait PlayerActionTrait {
         $playerId = $this->getActivePlayerId();
         $this->removeDiscardCards($playerId);
    
-        $this->gamestate->nextState('endTurn');
+        $this->goToState($this->redirectAfterSellCard());
     }
 
     function notifStayInTokyo($playerId) {

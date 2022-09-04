@@ -715,7 +715,6 @@ $playerActionsGameStates = [
             //"buyMimicCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD,
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
-            "endTurn" => ST_RESOLVE_END_TURN,
             "renew" => ST_PLAYER_BUY_CARD,
         ]
     ],
@@ -795,7 +794,6 @@ $playerActionsGameStates = [
         "possibleactions" => [ "sellCard", "endTurn" ],
         "transitions" => [
             "sellCard" => ST_PLAYER_SELL_CARD,
-            "endTurn" => ST_RESOLVE_END_TURN,
         ]
     ],
 
@@ -836,6 +834,27 @@ $playerActionsGameStates = [
         "description" => "",
         "type" => "game",
         "action" => "stAfterAnswerQuestion",
+        "transitions" => [],
+    ],
+
+    ST_MULTIPLAYER_BEFORE_END_TURN => [
+        "name" => "beforeEndTurn",
+        "description" => clienttranslate('${actplayer} may activate an Evolution card'),
+        "descriptionmyturn" => clienttranslate('${you} may activate an Evolution card'),
+        "type" => "multipleactiveplayer",
+        "action" => "stBeforeEndTurn",
+        "args" => "argBeforeEndTurn",
+        "possibleactions" => [ "skipBeforeEndTurn" ],
+        "transitions" => [
+            "next" => ST_AFTER_BEFORE_END_TURN,
+        ],
+    ],
+
+    ST_AFTER_BEFORE_END_TURN => [
+        "name" => "afterBeforeEndTurn",
+        "description" => "",
+        "type" => "game",
+        "action" => "stAfterBeforeEndTurn",
         "transitions" => [],
     ],
 

@@ -76,6 +76,14 @@
         self::ajaxResponse();
     }
   	
+    public function skipBeforeEndTurn() {
+        self::setAjaxMode();
+
+        $this->game->skipBeforeEndTurn();
+
+        self::ajaxResponse();
+    }
+  	
     public function skipBeforeEnteringTokyo() {
         self::setAjaxMode();
 

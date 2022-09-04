@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 ALTER TABLE `player` ADD `player_location` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_health` tinyint UNSIGNED NOT NULL DEFAULT 10;
 ALTER TABLE `player` ADD `player_turn_health` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_turn_gained_health` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_energy` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_turn_energy` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_monster` tinyint unsigned NOT NULL;

@@ -270,6 +270,10 @@ interface EnteringStepEvolutionArgs {
     highlighted: EvolutionCard[];
 }
 
+interface EnteringBeforeEndTurnArgs extends EnteringStepEvolutionArgs {
+    _private: { [cardId: number]: number[] };
+}
+
 interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     throwNumber: number;
     maxThrowNumber: number;

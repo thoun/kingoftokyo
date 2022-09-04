@@ -1042,6 +1042,22 @@
   filter: contrast(0.6);
   cursor: not-allowed;
 }
+.player-evolution-cards .stockitem .evolution-inner-counter {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ffcf13;
+  border-radius: 8px;
+  color: black;
+  font-size: 90%;
+  padding: 2px;
+  padding-left: 5px;
+}
+.player-evolution-cards .stockitem .evolution-inner-counter .icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
 
 .wickedness-tile-stock .stockitem .name-and-description {
   position: absolute;
@@ -1914,7 +1930,7 @@ html[data-dice="4"] .animation {
   background-position-x: 71.4285714286%;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="7"] {
-  background: #0b75a7;
+  background: #5d7b38;
 }
 #active-expansions-button .expansion-zone-list .expansion-zone[data-expansion="7"] .expansion-icon {
   background-position-x: 85.7142857143%;
@@ -2043,7 +2059,7 @@ h2 {
   background: #06b8ee;
 }
 #playermat-container-modal details[data-expansion="7"] {
-  background: #0b75a7;
+  background: #5d7b38;
 }
 #playermat-container-modal details[data-expansion="8"] {
   background: #41423c;

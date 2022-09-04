@@ -119,4 +119,41 @@ trait EvolutionCardsArgTrait {
         return $args;
     }
 
+    function argBeforeEndTurn() {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
+        $highlighted = [];
+        $privatePlayers = [];
+        
+        if ($isPowerUpExpansion) {
+            $highlighted = $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_END);
+
+            $players = $this->getPlayers();
+            foreach ($players as $player) {
+                $evolutionsWithEffectCounter = [];
+                $handEvolutions = $this->getEvolutionCardsByLocation('hand', $player->id);
+                // all $this->EVOLUTION_TO_PLAY_BEFORE_END_MULTI = [
+                $angerBatteriesEvolution = $this->array_find($handEvolutions, fn($evolution) => $evolution->type == ANGER_BATTERIES_EVOLUTION);
+                $strokeOfGeniusEvolution = $this->array_find($handEvolutions, fn($evolution) => $evolution->type == STROKE_OF_GENIUS_EVOLUTION);
+                $cultWorshippersEvolution = $this->array_find($handEvolutions, fn($evolution) => $evolution->type == CULT_WORSHIPPERS_EVOLUTION);
+
+                if ($angerBatteriesEvolution != null) {
+                    $evolutionsWithEffectCounter[$angerBatteriesEvolution->id] = [$player->turnLostHealth, 4];
+                }
+                if ($strokeOfGeniusEvolution != null) {
+                    $evolutionsWithEffectCounter[$strokeOfGeniusEvolution->id] = [$player->turnEnergy, 4];
+                }
+                if ($cultWorshippersEvolution != null) {
+                    $evolutionsWithEffectCounter[$cultWorshippersEvolution->id] = [$player->turnGainedHealth, 0];
+                }
+                $privatePlayers[$player->id] = $evolutionsWithEffectCounter;
+            }
+        } 
+
+        return [
+            'highlighted' => $highlighted,
+            '_private' => $privatePlayers,
+        ];
+    }
+
 }

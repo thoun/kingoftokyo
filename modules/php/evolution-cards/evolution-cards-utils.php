@@ -430,7 +430,7 @@ trait EvolutionCardsUtilTrait {
                 }
                 return $damages;
             case CULT_WORSHIPPERS_EVOLUTION:
-                $this->applyGetPoints($playerId, $this->getPlayer($playerId)->turnHealth, $logCardType);
+                $this->applyGetPoints($playerId, $this->getPlayer($playerId)->turnGainedHealth, $logCardType);
                 break;
             case SUNKEN_TEMPLE_EVOLUTION:
                 $this->applyGetHealth($playerId, 3, $logCardType, $playerId);

@@ -72,7 +72,7 @@ trait CardsStateTrait {
         $countMetamorph = $this->countCardOfType($playerId, METAMORPH_CARD);
 
         if ($countMetamorph < 1) { // no need to check remaining cards, if player got metamoph he got cards to sell
-            $this->gamestate->nextState('endTurn');
+            $this->goToState($this->redirectAfterSellCard());
         }
     }
 

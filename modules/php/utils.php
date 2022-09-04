@@ -719,7 +719,7 @@ trait UtilTrait {
         }
         $realDeltaHealth = max(0, $newHealth - $actualHealth);
 
-        $this->DbQuery("UPDATE player SET `player_health` = $newHealth, `player_turn_health` = `player_turn_health` + $realDeltaHealth where `player_id` = $playerId");
+        $this->DbQuery("UPDATE player SET `player_health` = $newHealth, `player_turn_gained_health` = `player_turn_gained_health` + $realDeltaHealth where `player_id` = $playerId");
 
         $this->incStat($health, 'heal', $playerId);
 
