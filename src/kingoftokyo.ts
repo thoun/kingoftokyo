@@ -891,8 +891,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
             case 'cardIsBought':
+                this.onLeavingStepEvolution();
+                break;
             case 'beforeEndTurn':
                 this.onLeavingStepEvolution();
+                this.onLeavingBeforeEndTurn();
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -978,6 +981,12 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onLeavingStepEvolution() {
         const playerId = this.getPlayerId();
         this.getPlayerTable(playerId)?.unhighlightHiddenEvolutions();
+    }
+
+    private onLeavingBeforeEndTurn() {
+        (Array.from(document.querySelectorAll(`.evolution-inner-counter`)) as HTMLElement[]).forEach(elem => {
+            elem?.parentElement?.removeChild(elem);
+        });
     }
     
     private onLeavingTakeWickednessTile() {

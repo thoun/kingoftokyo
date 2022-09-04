@@ -141,7 +141,7 @@ trait EvolutionCardsArgTrait {
                     $evolutionsWithEffectCounter[$angerBatteriesEvolution->id] = [$player->turnLostHealth, 4];
                 }
                 if ($strokeOfGeniusEvolution != null) {
-                    $evolutionsWithEffectCounter[$strokeOfGeniusEvolution->id] = [$player->turnEnergy, 4];
+                    $evolutionsWithEffectCounter[$strokeOfGeniusEvolution->id] = [$player->turnEnergy, 5];
                 }
                 if ($cultWorshippersEvolution != null) {
                     $evolutionsWithEffectCounter[$cultWorshippersEvolution->id] = [$player->turnGainedHealth, 0];

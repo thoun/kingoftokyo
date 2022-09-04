@@ -4783,8 +4783,11 @@ var KingOfTokyo = /** @class */ (function () {
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
             case 'cardIsBought':
+                this.onLeavingStepEvolution();
+                break;
             case 'beforeEndTurn':
                 this.onLeavingStepEvolution();
+                this.onLeavingBeforeEndTurn();
                 break;
             case 'changeMimickedCard':
             case 'chooseMimickedCard':
@@ -4869,6 +4872,12 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         var playerId = this.getPlayerId();
         (_a = this.getPlayerTable(playerId)) === null || _a === void 0 ? void 0 : _a.unhighlightHiddenEvolutions();
+    };
+    KingOfTokyo.prototype.onLeavingBeforeEndTurn = function () {
+        Array.from(document.querySelectorAll(".evolution-inner-counter")).forEach(function (elem) {
+            var _a;
+            (_a = elem === null || elem === void 0 ? void 0 : elem.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(elem);
+        });
     };
     KingOfTokyo.prototype.onLeavingTakeWickednessTile = function () {
         this.tableCenter.setWickednessTilesSelectable(null, false, false);
