@@ -129,7 +129,7 @@ trait EvolutionCardsUtilTrait {
         }
 
         // cards to player before starting turn
-        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_START) && $cardType != BAMBOO_SUPPLY_EVOLUTION && $stateId != ST_PLAYER_BEFORE_START_TURN) {
+        if (in_array($cardType, $this->EVOLUTION_TO_PLAY_BEFORE_START_TEMPORARY) && $stateId != ST_PLAYER_BEFORE_START_TURN) {
             throw new \BgaUserException(self::_("You can only play this evolution card before starting turn"));
         }
 
