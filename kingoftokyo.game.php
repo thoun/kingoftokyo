@@ -643,7 +643,7 @@ class KingOfTokyo extends Table {
         } else if ($state['type'] == "multipleactiveplayer") {
             switch ($statename) {
                 case 'psychicProbeRollDie':
-                    $this->applyPsychicProbeSkip($active_player);
+                    $this->applyChangeActivePlayerDieSkip($active_player);
                     return;
                 case 'cheerleaderSupport':
                     $this->applyDontSupport($active_player);

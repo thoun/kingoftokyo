@@ -272,10 +272,28 @@
         self::ajaxResponse();
     }
   	
+    public function changeActivePlayerDie() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+
+        $this->game->changeActivePlayerDie($id);
+
+        self::ajaxResponse();
+    }
+  	
     public function psychicProbeSkip() {
         self::setAjaxMode();
 
-        $this->game->psychicProbeSkip();
+        $this->game->changeActivePlayerDieSkip();
+
+        self::ajaxResponse();
+    }
+  	
+    public function changeActivePlayerDieSkip() {
+        self::setAjaxMode();
+
+        $this->game->changeActivePlayerDieSkip();
 
         self::ajaxResponse();
     }

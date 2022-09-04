@@ -122,6 +122,8 @@ trait DiceArgTrait {
         if ($playerId) {
             $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
             $witchCards = $this->getCardsOfType($playerId, WITCH_CARD);
+            $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+
             $canRoll = false;
             $usedCards = $this->getUsedCard();
             foreach($psychicProbeCards as $psychicProbeCard) {
@@ -131,6 +133,11 @@ trait DiceArgTrait {
             }
             foreach($witchCards as $witchCard) {
                 if (!in_array($witchCard->id, $usedCards)) {
+                    $canRoll = true;
+                }
+            }
+            foreach($heartOfTheRabbitEvolutions as $heartOfTheRabbitEvolution) {
+                if (!in_array(3000 + $heartOfTheRabbitEvolution->id, $usedCards)) {
                     $canRoll = true;
                 }
             }

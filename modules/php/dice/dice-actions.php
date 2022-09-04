@@ -356,6 +356,11 @@ trait DiceActionTrait {
             }
         }
 
+        if ($cardType == 3000 + HEART_OF_THE_RABBIT_EVOLUTION) {
+            $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+            $this->applyPlayEvolution($playerId, $heartOfTheRabbitEvolutions[0]);
+        }
+
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         if ($discardBecauseOfHeart) {
             $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after} (${card_name} is discarded)');
@@ -411,15 +416,15 @@ trait DiceActionTrait {
         }
     }
 
-    function psychicProbeSkip() {
-        $this->checkAction('psychicProbeSkip');
+    function changeActivePlayerDieSkip() {
+        $this->checkAction('changeActivePlayerDieSkip');
 
         $playerId = $this->getCurrentPlayerId();
 
-        $this->applyPsychicProbeSkip($playerId);
+        $this->applyChangeActivePlayerDieSkip($playerId);
     }
 
-    function applyPsychicProbeSkip(int $playerId) {
+    function applyChangeActivePlayerDieSkip(int $playerId) {
         $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
         $this->setInterventionNextState(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');

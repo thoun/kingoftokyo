@@ -5052,7 +5052,7 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'changeActivePlayerDie':
                 case 'psychicProbeRollDie':
-                    this.addActionButton('changeActivePlayerDieSkip_button', _("Skip"), 'psychicProbeSkip');
+                    this.addActionButton('changeActivePlayerDieSkip_button', _("Skip"), function () { return _this.changeActivePlayerDieSkip(); });
                     break;
                 case 'cheerleaderSupport':
                     this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), function () { return _this.support(); });
@@ -6487,11 +6487,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('opportunistSkip');
     };
-    KingOfTokyo.prototype.psychicProbeSkip = function () {
-        if (!this.checkAction('psychicProbeSkip')) {
+    KingOfTokyo.prototype.changeActivePlayerDieSkip = function () {
+        if (!this.checkAction('changeActivePlayerDieSkip')) {
             return;
         }
-        this.takeAction('psychicProbeSkip');
+        this.takeAction('changeActivePlayerDieSkip');
     };
     KingOfTokyo.prototype.skipChangeMimickedCard = function () {
         if (!this.checkAction('skipChangeMimickedCard', true)) {

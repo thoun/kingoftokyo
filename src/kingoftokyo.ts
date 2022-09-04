@@ -1172,7 +1172,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), () => this.resolveDice(), null, null, 'red');
                     break;
                 case 'changeActivePlayerDie': case 'psychicProbeRollDie':
-                    (this as any).addActionButton('changeActivePlayerDieSkip_button', _("Skip"), 'psychicProbeSkip');
+                    (this as any).addActionButton('changeActivePlayerDieSkip_button', _("Skip"), () => this.changeActivePlayerDieSkip());
                     break;
                 case 'cheerleaderSupport':
                     (this as any).addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), () => this.support());
@@ -2954,12 +2954,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('opportunistSkip');
     }
 
-    public psychicProbeSkip() {
-        if(!(this as any).checkAction('psychicProbeSkip')) {
+    public changeActivePlayerDieSkip() {
+        if(!(this as any).checkAction('changeActivePlayerDieSkip')) {
             return;
         }
 
-        this.takeAction('psychicProbeSkip');
+        this.takeAction('changeActivePlayerDieSkip');
     }
 
     public skipChangeMimickedCard() {

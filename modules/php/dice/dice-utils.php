@@ -737,6 +737,30 @@ trait DiceUtilTrait {
         return $psychicProbePlayerIds;
     }
 
+    function getPlayersWithHeartOfTheRabbit(int $playerId) {
+        $orderedPlayers = $this->getOrderedPlayers($playerId);
+        $heartOfTheRabbitPlayerIds = [];
+
+        foreach($orderedPlayers as $player) {
+            if ($player->id != $playerId) {
+
+                $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($player->id, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+                $unusedHeartOfTheRabbitEvolutions = 0;
+                $usedCards = $this->getUsedCard();
+                foreach($heartOfTheRabbitEvolutions as $heartOfTheRabbitEvolution) {
+                    if (!in_array($heartOfTheRabbitEvolution->id, $usedCards)) {
+                        $unusedHeartOfTheRabbitEvolutions++;
+                    }
+                }
+                if ($unusedHeartOfTheRabbitEvolutions > 0) {
+                    $heartOfTheRabbitPlayerIds[] = $player->id;
+                }            
+            }
+        }
+
+        return $heartOfTheRabbitPlayerIds;
+    }
+
     function getPsychicProbeInterventionEndState($intervention) {
         $canChangeWithCards = $this->canChangeDie($this->getChangeDieCards($intervention->activePlayerId));
         $canRetrow3 = intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($intervention->activePlayerId, BACKGROUND_DWELLER_CARD) > 0;
@@ -792,6 +816,7 @@ trait DiceUtilTrait {
 
     function getChangeActivePlayerDieIntervention(int $playerId) { // return null or ChangeActivePlayerDieIntervention
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);
+        $playersWithHeartOfTheRabbit = $this->getPlayersWithHeartOfTheRabbit($playerId);
         $playersWithActivatedWitch = [];
         
         $witchCards = $this->getCardsFromDb($this->cards->getCardsOfType(WITCH_CARD));
@@ -808,7 +833,7 @@ trait DiceUtilTrait {
             }
         }
 
-        $playersWithChangeActivePlayerDieCard = array_unique(array_merge($playersWithPsychicProbe, $playersWithActivatedWitch), SORT_REGULAR);
+        $playersWithChangeActivePlayerDieCard = array_unique(array_merge($playersWithPsychicProbe, $playersWithHeartOfTheRabbit, $playersWithActivatedWitch), SORT_REGULAR);
         if (count($playersWithChangeActivePlayerDieCard) > 0) {
             $cards = [];
             foreach ($playersWithPsychicProbe as $playerWithPsychicProbe) {
@@ -816,6 +841,10 @@ trait DiceUtilTrait {
             }
             foreach ($playersWithActivatedWitch as $playerWithActivatedWitch) {
                 $cards = array_merge($cards, $this->getCardsOfType($playerWithActivatedWitch, WITCH_CARD));
+            }
+            foreach ($playersWithHeartOfTheRabbit as $playerWithHeartOfTheRabbit) {
+                $evolutions = $this->getEvolutionsOfType($playerWithHeartOfTheRabbit, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
+                $cards = array_merge($cards, $evolutions);
             }
             $changeActivePlayerDieIntervention = new ChangeActivePlayerDieIntervention($playersWithChangeActivePlayerDieCard, $playerId, $cards);
             return $changeActivePlayerDieIntervention;
@@ -923,6 +952,7 @@ trait DiceUtilTrait {
     function getUnusedChangeActivePlayerDieCards(int $playerId) {
         $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
         $witchCards = $this->getCardsOfType($playerId, WITCH_CARD);
+        $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
         if (count($witchCards) > 0 && !$this->willBeWounded($playerId, $this->getActivePlayerId())) {
             $witchCards = [];
         }
@@ -936,6 +966,15 @@ trait DiceUtilTrait {
                 $unusedCards[] = $witchCard;
             }
         }
+        // then heart of the rabbit
+        foreach($heartOfTheRabbitEvolutions as $heartOfTheRabbitEvolution) {
+            if (!in_array(3000 + $heartOfTheRabbitEvolution->id, $usedCards)) {
+                $heartOfTheRabbitEvolution->id = 3000 + $heartOfTheRabbitEvolution->id;
+                $heartOfTheRabbitEvolution->type = 3000 + $heartOfTheRabbitEvolution->type;
+                $unusedCards[] = $heartOfTheRabbitEvolution;
+            }
+        }
+
         // then psychic probe
         // we want only one psychicProbe, event if player got 2
         $psychicProbeCards = array_slice($psychicProbeCards, 0, 1);
