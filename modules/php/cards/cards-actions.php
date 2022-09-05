@@ -656,8 +656,12 @@ trait CardsActionTrait {
 
         $playerUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : new PlayersUsedDice($dice, $countSoSmall + $countCamouflage + $countTerrorOfTheDeep);
         
-        $cardLogType = $playerUsedDice->rolls < $countSoSmall ? 3000 + SO_SMALL_EVOLUTION : 
-            ($countTerrorOfTheDeep > 0 && $countCamouflage < $playerUsedDice->rolls ? 3000 + TERROR_OF_THE_DEEP_EVOLUTION : CAMOUFLAGE_CARD);
+        $cardLogType = CAMOUFLAGE_CARD;
+        if ($countSoSmall > 0 && $playerUsedDice->rolls < $countSoSmall) {
+            $cardLogType = 3000 + SO_SMALL_EVOLUTION;
+        } else if ($countTerrorOfTheDeep > 0 && $playerUsedDice->rolls < $countTerrorOfTheDeep) {
+            $cardLogType = 3000 + TERROR_OF_THE_DEEP_EVOLUTION;
+        }
 
         if ($incCamouflageRolls) {
             $playerUsedDice->rolls = $playerUsedDice->rolls + 1;
