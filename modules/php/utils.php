@@ -804,7 +804,7 @@ trait UtilTrait {
             if ($countTooCuteToSmash > 0) {
                 $this->applyLosePoints($damageDealerId, $countTooCuteToSmash, 3000 + TOO_CUTE_TO_SMASH_EVOLUTION);
             }
-            $countMandiblesOfDread = $this->countEvolutionOfType($playerId, MANDIBLES_OF_DREAD_EVOLUTION);
+            $countMandiblesOfDread = $this->countEvolutionOfType($damageDealerId, MANDIBLES_OF_DREAD_EVOLUTION);
             if ($countMandiblesOfDread > 0) {
                 $this->applyLosePoints($playerId, $countMandiblesOfDread, 3000 + MANDIBLES_OF_DREAD_EVOLUTION);
             }
