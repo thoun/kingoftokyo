@@ -138,7 +138,7 @@ trait EvolutionCardsArgTrait {
                 $cultWorshippersEvolution = $this->array_find($handEvolutions, fn($evolution) => $evolution->type == CULT_WORSHIPPERS_EVOLUTION);
 
                 if ($angerBatteriesEvolution != null) {
-                    $evolutionsWithEffectCounter[$angerBatteriesEvolution->id] = [$player->turnLostHealth, 4];
+                    $evolutionsWithEffectCounter[$angerBatteriesEvolution->id] = [$player->turnLostHealth, 5];
                 }
                 if ($strokeOfGeniusEvolution != null) {
                     $evolutionsWithEffectCounter[$strokeOfGeniusEvolution->id] = [$player->turnEnergy, 5];

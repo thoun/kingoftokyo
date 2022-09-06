@@ -142,6 +142,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "pickEvolutionForDeck" ],
         "transitions" => [
             "next" => ST_NEXT_PICK_EVOLUTION_DECK,
+            "end" => ST_NEXT_PICK_EVOLUTION_DECK, // for zombie
         ],
     ],
 
@@ -253,6 +254,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "giveSymbolToActivePlayer" ],
         "transitions" => [
             "stay" => ST_INITIAL_DICE_ROLL, // needed for elimination
+            "end" => ST_INITIAL_DICE_ROLL, // for zombie
         ],
     ],
 
@@ -434,6 +436,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "rerollDice" ],
         "transitions" => [
             "" => ST_RESOLVE_DICE,
+            "end" => ST_RESOLVE_DICE, // for zombie
         ],
     ],
 
@@ -604,6 +607,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "stay", "leave", "useChestThumping", "skipChestThumping" ],
         "transitions" => [
             "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
+            "end" => ST_LEAVE_TOKYO_APPLY_JETS, // for zombie
         ],
     ],
 
@@ -635,6 +639,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "exchangeCard", "skipExchangeCard" ],
         "transitions" => [
             "next" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO,
+            "end" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO, // for zombie
         ],
     ],
 
@@ -651,6 +656,7 @@ $playerActionsGameStates = [
         ],
         "transitions" => [
             'next' => ST_ENTER_TOKYO,
+            "end" => ST_ENTER_TOKYO, // for zombie
         ],        
     ],
 
@@ -773,6 +779,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "skipCardIsBought" ],
         "transitions" => [
             "next" => ST_AFTER_WHEN_CARD_IS_BOUGHT,
+            "end" => ST_AFTER_WHEN_CARD_IS_BOUGHT, // for zombie
         ],
     ],
 
@@ -826,6 +833,7 @@ $playerActionsGameStates = [
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,
+            "end" => ST_AFTER_ANSWER_QUESTION, // for zombie
         ],
     ],
 
@@ -847,6 +855,7 @@ $playerActionsGameStates = [
         "possibleactions" => [ "skipBeforeEndTurn" ],
         "transitions" => [
             "next" => ST_AFTER_BEFORE_END_TURN,
+            "end" => ST_AFTER_BEFORE_END_TURN, // for zombie
         ],
     ],
 
