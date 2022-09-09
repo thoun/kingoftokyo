@@ -50,6 +50,7 @@ ALTER TABLE `player` ADD `player_turn_health` SMALLINT UNSIGNED NOT NULL DEFAULT
 ALTER TABLE `player` ADD `player_turn_gained_health` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_energy` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_turn_energy` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_turn_gained_points` SMALLINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_monster` tinyint unsigned NOT NULL;
 ALTER TABLE `player` ADD `player_poison_tokens` tinyint unsigned NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_shrink_ray_tokens` tinyint unsigned NOT NULL DEFAULT 0;
