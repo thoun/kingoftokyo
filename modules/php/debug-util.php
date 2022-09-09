@@ -27,7 +27,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 7);
-        //$this->debugSetPlayerHealth(2343493, 1);
+        $this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -101,7 +101,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493);
         //$this->debugSetCardInHand(WINGS_CARD, 2343494);
         //$this->debugSetCardInHand(ENERGY_DRINK_CARD, 2343492);
-        $this->debugSetCardInHand(METAMORPH_CARD, 2343492);
+        $this->debugSetCardInHand(METAMORPH_CARD, 2343493);
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);

@@ -672,7 +672,7 @@ trait CardsUtilTrait {
             $this->removeMimicToken(FLUXLING_WICKEDNESS_TILE, $playerId);
         }
 
-        $this->cards->moveCard($card->id, 'discard');
+        $this->cards->moveCard($card->id, $card->type < 300 ? 'discard' : 'void'); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
 
         if ($this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
             $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
