@@ -40,7 +40,7 @@ trait PlayerStateTrait {
             }
         }
 
-        if (!$isPowerUpExpansion || !$this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_START)) {
+        if (!$isPowerUpExpansion || count($this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_START)) == 0) {
             $this->goToState($this->redirectAfterBeforeStartTurn());
         }
     }
@@ -349,7 +349,7 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
         $otherPlayersIds = $this->getOtherPlayersIds($playerId);
         $couldPlay = array_values(array_filter($otherPlayersIds, fn($pId) => 
-            $this->canPlayStepEvolution([$pId], $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO))
+            $this->getPlayersIdsWhoCouldPlayEvolutions([$pId], $this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO))
         );
         
         if ($this->getMimickedEvolutionType() == FELINE_MOTOR_EVOLUTION) {
@@ -412,12 +412,12 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
         $player = $this->getPlayer($playerId); 
 
-        $couldPlay = $this->canPlayStepEvolution(
+        $couldPlay = $this->getPlayersIdsWhoCouldPlayEvolutions(
             [$playerId], 
             $player->location == 0 || !$player->turnEnteredTokyo ? $this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO : $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO
         );
 
-        if (!$couldPlay) {
+        if (count($couldPlay) == 0) {
             $this->goToState($this->redirectAfterEnterTokyo($playerId));
         }
     }

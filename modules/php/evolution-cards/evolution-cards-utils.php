@@ -229,7 +229,7 @@ trait EvolutionCardsUtilTrait {
         $this->incStat(1, 'played'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
     }
 
-    function canPlayStepEvolution(array $playersIds, array $stepCardsIds) { // return array of players able to play
+    function getPlayersIdsWhoCouldPlayEvolutions(array $playersIds, array $stepCardsIds) { // return array of players able to play
         $isPowerUpMutantEvolution = $this->isPowerUpMutantEvolution();
         $playersIds = $isPowerUpMutantEvolution ? $this->getPlayersIds(true) : $playersIds;
 

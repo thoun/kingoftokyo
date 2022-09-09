@@ -609,7 +609,9 @@ trait UtilTrait {
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
-        if ($this->isPowerUpExpansion()) {            
+        if ($this->isPowerUpExpansion()) {
+            $cards = $this->getEvolutionCardsByLocation('hand', $player->id);
+            $this->removeEvolutions($player->id, $cards, true);
             $cards = $this->getEvolutionCardsByLocation('table', $player->id);
             $this->removeEvolutions($player->id, $cards, true);
         }

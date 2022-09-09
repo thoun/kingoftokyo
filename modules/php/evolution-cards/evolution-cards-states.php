@@ -178,16 +178,7 @@ trait EvolutionCardsStateTrait {
 
     function stCardIsBought() {
         $otherPlayersIds = $this->getOtherPlayersIds($this->getActivePlayerId());
-
-        $stepCardsMonsters = array_values(array_unique(array_map(fn($cardId) => floor($cardId / 10), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT)));
-
-        $dbResults = $this->getCollectionFromDb("SELECT player_id, player_monster FROM player WHERE player_id IN (".implode(',', $otherPlayersIds).")");
-        $playerMonsters = [];
-        foreach($dbResults as $dbResult) {
-            $playerMonsters[intval($dbResult['player_id'])] = intval($dbResult['player_monster']) % 100;
-        }
-
-        $playersWithPotentialEvolution = array_values(array_filter($otherPlayersIds, fn($otherPlayer) => in_array($playerMonsters[$otherPlayer], $stepCardsMonsters)));
+        $playersWithPotentialEvolution = $this->getPlayersIdsWhoCouldPlayEvolutions($otherPlayersIds, $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT);
 
         $this->gamestate->setPlayersMultiactive($playersWithPotentialEvolution, 'next', true);
     }
@@ -226,7 +217,7 @@ trait EvolutionCardsStateTrait {
         }
 
         $playerId = $this->getActivePlayerId();
-        $couldPlay = $this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE);
+        $couldPlay = count($this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE)) > 0;
 
         if ($couldPlay) {
             $this->gamestate->setPlayersMultiactive([$playerId], 'next');
@@ -268,16 +259,9 @@ trait EvolutionCardsStateTrait {
         $this->removeDiscardCards($playerId);
 
         $playersIds = $this->getPlayersIds();
-        $stepCardsMonsters = array_values(array_unique(array_map(fn($cardId) => floor($cardId / 10), $this->EVOLUTION_TO_PLAY_BEFORE_END_MULTI)));
+        $playersWithPotentialEvolution = $this->getPlayersIdsWhoCouldPlayEvolutions($playersIds, $this->EVOLUTION_TO_PLAY_BEFORE_END_MULTI);
 
-        $dbResults = $this->getCollectionFromDb("SELECT player_id, player_monster FROM player WHERE player_id IN (".implode(',', $playersIds).")");
-        $playerMonsters = [];
-        foreach($dbResults as $dbResult) {
-            $playerMonsters[intval($dbResult['player_id'])] = intval($dbResult['player_monster']) % 100;
-        }
-        $playersWithPotentialEvolution = array_values(array_filter($playersIds, fn($otherPlayer) => in_array($playerMonsters[$otherPlayer], $stepCardsMonsters)));
-
-        if ($this->canPlayStepEvolution([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE) && !in_array($playerId, $playersWithPotentialEvolution)) {
+        if ($this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE) && !in_array($playerId, $playersWithPotentialEvolution)) {
             $playersWithPotentialEvolution[] = $playerId;
         }
 

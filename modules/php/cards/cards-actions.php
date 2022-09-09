@@ -316,7 +316,7 @@ trait CardsActionTrait {
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
         
         $canPreventBuying = !$opportunist && $this->isPowerUpExpansion()
-            && $this->canPlayStepEvolution($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT);
+            && count($this->getPlayersIdsWhoCouldPlayEvolutions($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT)) > 0;
 
         if ($canPreventBuying && (
             $this->getGlobalVariable(CARD_BEING_BOUGHT) == null || $this->getGlobalVariable(CARD_BEING_BOUGHT)->allowed
