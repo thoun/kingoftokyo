@@ -214,7 +214,7 @@ trait CurseCardsActionTrait {
             }
         }
 
-        $this->gamestate->setPlayerNonMultiactive($playerId, '');
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
     }
 
     

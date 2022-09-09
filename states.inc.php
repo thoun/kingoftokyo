@@ -435,8 +435,7 @@ $playerActionsGameStates = [
         "action" => "stRerollDice",
         "possibleactions" => [ "rerollDice" ],
         "transitions" => [
-            "" => ST_RESOLVE_DICE,
-            "end" => ST_RESOLVE_DICE, // for zombie
+            "end" => ST_RESOLVE_DICE,
         ],
     ],
 
