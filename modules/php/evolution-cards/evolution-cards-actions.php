@@ -443,7 +443,8 @@ trait EvolutionCardsActionTrait {
             0,
             false,
             $cost,
-            $useSuperiorAlienTechnology
+            $useSuperiorAlienTechnology,
+            false,
         );
     }
 

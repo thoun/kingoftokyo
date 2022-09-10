@@ -1439,7 +1439,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
                 (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
                 if (miraculousCatchArgs.costSuperiorAlienTechnology !== null && miraculousCatchArgs.costSuperiorAlienTechnology !== miraculousCatchArgs.cost) {
-                    (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(/*_TODO*/('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
+                    (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
                 }
                 (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
                 setTimeout(() => document.getElementById(`miraculousCatch-card-${miraculousCatchArgs.card.id}`)?.addEventListener('click', () => this.buyCardMiraculousCatch()), 250);
@@ -1841,30 +1841,42 @@ class KingOfTokyo implements KingOfTokyoGame {
                 );
             } else {
                 const cardCostSuperiorAlienTechnology = buyCardArgs.cardsCostsSuperiorAlienTechnology?.[cardId];
-                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId]) {
+                const cardCostBobbingForApples = buyCardArgs.cardsCostsBobbingForApples?.[cardId];
+                const canUseSuperiorAlienTechnologyForCard = cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId];
+                const canUseBobbingForApplesForCard = cardCostBobbingForApples !== null && cardCostBobbingForApples !== undefined && cardCostBobbingForApples !== buyCardArgs.cardsCosts[cardId];
+                if (canUseSuperiorAlienTechnologyForCard || canUseBobbingForApplesForCard) {
+                    const both = canUseSuperiorAlienTechnologyForCard && canUseBobbingForApplesForCard;
                     const keys = [
-                        formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })),
-                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
+                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(canUseSuperiorAlienTechnologyForCard ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
                         _('Cancel')
                     ];
+                    if (cardCostBobbingForApples) {
+                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(85, 'text-only'), cost: cardCostBobbingForApples })));
+                    }
+                    if (canUseSuperiorAlienTechnologyForCard) {
+                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })));
+                    }
 
                     (this as any).multipleChoiceDialog(
                         dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCards.getCardName(28, 'text-only')}), 
                         keys, 
-                        (choice) => {
+                        (choice: string) => {
                             const choiceIndex = Number(choice);
-                            if (choiceIndex < 2) {
+                            if (choiceIndex < (both ? 3 : 2)) {
                                 this.tableCenter.removeOtherCardsFromPick(cardId);
-                                this.buyCard(cardId, from, choiceIndex === 0);
+                                this.buyCard(cardId, from, canUseSuperiorAlienTechnologyForCard && choiceIndex === 0, canUseBobbingForApplesForCard && choiceIndex === (both ? 1 : 0));
                             }
                         }
                       );
 
-                      if (buyCardArgs.canUseSuperiorAlienTechnology === false) {
+                      if (canUseSuperiorAlienTechnologyForCard && buyCardArgs.canUseSuperiorAlienTechnology === false || cardCostSuperiorAlienTechnology > this.getPlayerEnergy(this.getPlayerId())) {
                         document.getElementById(`choice_btn_0`).classList.add('disabled');
                       }
+                      if (canUseBobbingForApplesForCard && cardCostBobbingForApples > this.getPlayerEnergy(this.getPlayerId())) {
+                        document.getElementById(`choice_btn_${(both ? 1 : 0)}`).classList.add('disabled');
+                      }
                       if (buyCardArgs.cardsCosts[cardId] > this.getPlayerEnergy(this.getPlayerId())) {
-                        document.getElementById(`choice_btn_1`).classList.add('disabled');
+                        document.getElementById(`choice_btn_${(both ? 2 : 1)}`).classList.add('disabled');
                       }
                 } else {
                     this.tableCenter.removeOtherCardsFromPick(cardId);
@@ -1961,10 +1973,16 @@ class KingOfTokyo implements KingOfTokyoGame {
             playerEnergy = this.energyCounters[playerId].getValue();
         }
 
-        let cardsCosts = args.cardsCosts;
-        if ((args as EnteringBuyCardArgs).gotSuperiorAlienTechnology) {
-            cardsCosts = {...cardsCosts, ...(args as EnteringBuyCardArgs).cardsCostsSuperiorAlienTechnology};
+        let cardsCosts = {...args.cardsCosts};
+        const argsBuyCard = args as EnteringBuyCardArgs;
+        if (argsBuyCard.gotSuperiorAlienTechnology) {
+            cardsCosts = {...cardsCosts, ...argsBuyCard.cardsCostsSuperiorAlienTechnology};
         }
+        Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(cardId => {
+            if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
+                cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
+            }
+        });
 
         this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
 
@@ -2862,7 +2880,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('skipChangeForm');
     }
 
-    public buyCard(id: number, from: number, useSuperiorAlienTechnology: boolean = false) {
+    public buyCard(id: number, from: number, useSuperiorAlienTechnology: boolean = false, useBobbingForApples: boolean = false) {
         if(!(this as any).checkAction('buyCard')) {
             return;
         }
@@ -2870,7 +2888,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('buyCard', {
             id,
             from,
-            useSuperiorAlienTechnology
+            useSuperiorAlienTechnology,
+            useBobbingForApples
         });
     }
 
@@ -3250,7 +3269,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('buyCardMiraculousCatch', {
-            useSuperiorAlienTechnology
+            useSuperiorAlienTechnology,
         });
     }
     

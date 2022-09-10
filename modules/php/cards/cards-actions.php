@@ -112,7 +112,7 @@ trait CardsActionTrait {
         $this->goToState($this->redirectAfterStealCostume($playerId));
     }
 
-    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist, $buyCost = null, $useSuperiorAlienTechnology = false) {
+    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
         $card = $this->getCardFromDb($this->cards->getCard($id));
         $cardLocationArg = $card->location_arg;
         $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
@@ -216,6 +216,34 @@ trait CardsActionTrait {
                 'topDeckCardBackType' => $topDeckCardBackType,
             ]);
 
+            if ($useBobbingForApples) {
+                $evolution = $this->getFirstUnusedEvolution($playerId, BOBBING_FOR_APPLES_EVOLUTION);
+                if ($evolution === null) {
+                    throw new \BgaUserException("No unused evolution");
+                }
+                $this->setUsedCard(3000 + $evolution->id);
+
+                if ($newCard == null) {
+                    throw new \BgaUserException("You can't buy with Bobbing for Apples when there is no new card revealed");
+                } else {
+                    $newCardCost = $this->getCardBaseCost($newCard->type);
+
+                    if ($newCardCost % 2 == 0) {
+                        $this->notifyAllPlayers("log", /*client TODOPUHA translate*/('The newly revealed card has an even cost, ${player_name} can keep ${card_name}'), [
+                            'player_name' => $this->getPlayerName($playerId),
+                            'card_name' => $card->type,
+                        ]);
+                    } else {
+                        $this->notifyAllPlayers("log500", /*client TODOPUHA translate*/('The newly revealed card has an odd cost, ${player_name} discard ${card_name} and regain [Energy] spent'), [
+                            'player_name' => $this->getPlayerName($playerId),
+                            'card_name' => $card->type,
+                        ]);
+                        $this->removeCard($playerId, $card);
+                        $this->applyGetEnergyIgnoreCards($playerId, $cost, 0);
+                    }
+                }
+            }
+
             // if player doesn't pick card revealed by Made in a lab, we set it back to top deck and Made in a lab is ended for this turn
             $this->setMadeInALabCardIds($playerId, [0]);
         }
@@ -283,7 +311,7 @@ trait CardsActionTrait {
         $this->goToState($redirectAfterBuyCard, $damages);
     }
 
-    function buyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false) {
+    function buyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
         $this->checkAction('buyCard');
 
         $stateName = $this->gamestate->state()['name'];
@@ -300,6 +328,9 @@ trait CardsActionTrait {
             if (count($cardsIds) >= 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION)) {
                 throw new \BgaUserException('You can only have 3 cards with tokens.');
             }
+        }
+        if ($useBobbingForApples) {
+            $cost = max(0, $cost - 2);
         }
 
         if (!$this->canBuyCard($playerId, $card->type, $cost)) {
@@ -327,11 +358,11 @@ trait CardsActionTrait {
                 'card' => $card,
                 'card_name' => $card->type,
             ]);
-            $this->setGlobalVariable(CARD_BEING_BOUGHT, new CardBeingBought($id, $playerId, $from, $cost, $useSuperiorAlienTechnology));
+            $this->setGlobalVariable(CARD_BEING_BOUGHT, new CardBeingBought($id, $playerId, $from, $cost, $useSuperiorAlienTechnology, $useBobbingForApples));
             $this->jumpToState(ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT);
         } else {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($playerId, $id, $from, $opportunist, $cost, $useSuperiorAlienTechnology);
+            $this->applyBuyCard($playerId, $id, $from, $opportunist, $cost, $useSuperiorAlienTechnology, $useBobbingForApples);
         }
     }
 

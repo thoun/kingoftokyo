@@ -38,6 +38,7 @@ trait CardsArgTrait {
         $isPowerUpExpansion = $this->isPowerUpExpansion();
         $gotSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
         $canUseSuperiorAlienTechnology = $gotSuperiorAlienTechnology && (count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION));
+        $canUseBobbingForApples = $isPowerUpExpansion && $this->getFirstUnusedEvolution($playerId, BOBBING_FOR_APPLES_EVOLUTION) != null;
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         if ($isPowerUpExpansion) {
@@ -45,6 +46,7 @@ trait CardsArgTrait {
         }
         $cardsCosts = [];
         $cardsCostsSuperiorAlienTechnology = [];
+        $cardsCostsBobbingForApples = [];
         
         $disabledIds = [];
 
@@ -63,6 +65,13 @@ trait CardsArgTrait {
                 $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
 
                 if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
+                    $canBuyOrNenew = true;
+                }
+            }
+            if ($canUseBobbingForApples) {
+                $cardsCostsBobbingForApples[$card->id] = max(0, $cardsCosts[$card->id] - 2);
+
+                if ($canBuyPowerCards && $cardsCostsBobbingForApples[$card->id] <= $potentialEnergy) {
                     $canBuyOrNenew = true;
                 }
             }
@@ -147,12 +156,14 @@ trait CardsArgTrait {
             'canSell' => $canSell,
             'cardsCosts' => $cardsCosts,
             'cardsCostsSuperiorAlienTechnology' => $cardsCostsSuperiorAlienTechnology,
+            'cardsCostsBobbingForApples' => $cardsCostsBobbingForApples,
             'warningIds' => $warningIds,
             'canUseAdaptingTechnology' => $canUseAdaptingTechnology,
             'canUseMiraculousCatch' => $canUseMiraculousCatch,
             'unusedMiraculousCatch' => $unusedMiraculousCatch,
             'gotSuperiorAlienTechnology' => $gotSuperiorAlienTechnology,
             'canUseSuperiorAlienTechnology' => $canUseSuperiorAlienTechnology,
+            'canUseBobbingForApples' => $canUseBobbingForApples,
         ] + $pickArgs;
     }
 

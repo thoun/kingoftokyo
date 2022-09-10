@@ -1500,7 +1500,7 @@ var EvolutionCards = /** @class */ (function () {
             case 82: return /*_TODOPUHA*/ ("You have one less Roll each turn.");
             case 83: return /*_TODOPUHA*/ ("All Monsters with 12 or more [Star] lose 2[Heart].");
             case 84: return /*_TODOPUHA*/ ("If you roll [dice1][dice1][dice1], each of the other Monsters must give you 1[Energy] or lose 2[Heart].");
-            // TODOPUHA 85
+            case 85: return /*_TODOPUHA*/ ("Once per turn, you can buy a Power card for 2[Energy] less. If the Power card that replaces it has an odd cost, discard the one you just bought and regain the [Energy] you spent.");
             case 86: return /*_TODOPUHA*/ ("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
             // TODOPUHA 87
             case 88: return "+1[Heart]<br>" + /*_TODOPUHA*/ ("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
@@ -5313,7 +5313,7 @@ var KingOfTokyo = /** @class */ (function () {
                 var miraculousCatchArgs_1 = question.args;
                 this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only'), cost: miraculousCatchArgs_1.cost })), function () { return _this.buyCardMiraculousCatch(false); });
                 if (miraculousCatchArgs_1.costSuperiorAlienTechnology !== null && miraculousCatchArgs_1.costSuperiorAlienTechnology !== miraculousCatchArgs_1.cost) {
-                    this.addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(/*_TODO*/ ('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs_1.costSuperiorAlienTechnology })), function () { return _this.buyCardMiraculousCatch(true); });
+                    this.addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs_1.costSuperiorAlienTechnology })), function () { return _this.buyCardMiraculousCatch(true); });
                 }
                 this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only') })), function () { return _this.skipMiraculousCatch(); });
                 setTimeout(function () { var _a; return (_a = document.getElementById("miraculousCatch-card-" + miraculousCatchArgs_1.card.id)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return _this.buyCardMiraculousCatch(); }); }, 250);
@@ -5577,7 +5577,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from, warningChecked) {
         var _this = this;
-        var _a;
+        var _a, _b;
         if (from === void 0) { from = 0; }
         if (warningChecked === void 0) { warningChecked = false; }
         if (!cardId) {
@@ -5622,24 +5622,36 @@ var KingOfTokyo = /** @class */ (function () {
             }
             else {
                 var cardCostSuperiorAlienTechnology = (_a = buyCardArgs.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[cardId];
-                if (cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId]) {
+                var cardCostBobbingForApples = (_b = buyCardArgs.cardsCostsBobbingForApples) === null || _b === void 0 ? void 0 : _b[cardId];
+                var canUseSuperiorAlienTechnologyForCard_1 = cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId];
+                var canUseBobbingForApplesForCard_1 = cardCostBobbingForApples !== null && cardCostBobbingForApples !== undefined && cardCostBobbingForApples !== buyCardArgs.cardsCosts[cardId];
+                if (canUseSuperiorAlienTechnologyForCard_1 || canUseBobbingForApplesForCard_1) {
+                    var both_1 = canUseSuperiorAlienTechnologyForCard_1 && canUseBobbingForApplesForCard_1;
                     var keys = [
-                        formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })),
-                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
+                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(canUseSuperiorAlienTechnologyForCard_1 ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
                         _('Cancel')
                     ];
+                    if (cardCostBobbingForApples) {
+                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(85, 'text-only'), cost: cardCostBobbingForApples })));
+                    }
+                    if (canUseSuperiorAlienTechnologyForCard_1) {
+                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })));
+                    }
                     this.multipleChoiceDialog(dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCards.getCardName(28, 'text-only') }), keys, function (choice) {
                         var choiceIndex = Number(choice);
-                        if (choiceIndex < 2) {
+                        if (choiceIndex < (both_1 ? 3 : 2)) {
                             _this.tableCenter.removeOtherCardsFromPick(cardId);
-                            _this.buyCard(cardId, from, choiceIndex === 0);
+                            _this.buyCard(cardId, from, canUseSuperiorAlienTechnologyForCard_1 && choiceIndex === 0, canUseBobbingForApplesForCard_1 && choiceIndex === (both_1 ? 1 : 0));
                         }
                     });
-                    if (buyCardArgs.canUseSuperiorAlienTechnology === false) {
+                    if (canUseSuperiorAlienTechnologyForCard_1 && buyCardArgs.canUseSuperiorAlienTechnology === false || cardCostSuperiorAlienTechnology > this.getPlayerEnergy(this.getPlayerId())) {
                         document.getElementById("choice_btn_0").classList.add('disabled');
                     }
+                    if (canUseBobbingForApplesForCard_1 && cardCostBobbingForApples > this.getPlayerEnergy(this.getPlayerId())) {
+                        document.getElementById("choice_btn_" + (both_1 ? 1 : 0)).classList.add('disabled');
+                    }
                     if (buyCardArgs.cardsCosts[cardId] > this.getPlayerEnergy(this.getPlayerId())) {
-                        document.getElementById("choice_btn_1").classList.add('disabled');
+                        document.getElementById("choice_btn_" + (both_1 ? 2 : 1)).classList.add('disabled');
                     }
                 }
                 else {
@@ -5739,10 +5751,16 @@ var KingOfTokyo = /** @class */ (function () {
         if (playerEnergy === null) {
             playerEnergy = this.energyCounters[playerId].getValue();
         }
-        var cardsCosts = args.cardsCosts;
-        if (args.gotSuperiorAlienTechnology) {
-            cardsCosts = __assign(__assign({}, cardsCosts), args.cardsCostsSuperiorAlienTechnology);
+        var cardsCosts = __assign({}, args.cardsCosts);
+        var argsBuyCard = args;
+        if (argsBuyCard.gotSuperiorAlienTechnology) {
+            cardsCosts = __assign(__assign({}, cardsCosts), argsBuyCard.cardsCostsSuperiorAlienTechnology);
         }
+        Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(function (cardId) {
+            if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
+                cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
+            }
+        });
         this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
         // renew button
         if (buyState && document.getElementById('renew_button')) {
@@ -6425,15 +6443,17 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('skipChangeForm');
     };
-    KingOfTokyo.prototype.buyCard = function (id, from, useSuperiorAlienTechnology) {
+    KingOfTokyo.prototype.buyCard = function (id, from, useSuperiorAlienTechnology, useBobbingForApples) {
         if (useSuperiorAlienTechnology === void 0) { useSuperiorAlienTechnology = false; }
+        if (useBobbingForApples === void 0) { useBobbingForApples = false; }
         if (!this.checkAction('buyCard')) {
             return;
         }
         this.takeAction('buyCard', {
             id: id,
             from: from,
-            useSuperiorAlienTechnology: useSuperiorAlienTechnology
+            useSuperiorAlienTechnology: useSuperiorAlienTechnology,
+            useBobbingForApples: useBobbingForApples
         });
     };
     KingOfTokyo.prototype.buyCardBamboozle = function (id, from) {
@@ -6730,7 +6750,7 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('buyCardMiraculousCatch', {
-            useSuperiorAlienTechnology: useSuperiorAlienTechnology
+            useSuperiorAlienTechnology: useSuperiorAlienTechnology,
         });
     };
     KingOfTokyo.prototype.skipMiraculousCatch = function () {

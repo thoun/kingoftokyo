@@ -277,6 +277,13 @@ trait EvolutionCardsUtilTrait {
         return $playersIdsWithPotentialCards;
     }
 
+    function applyEvolutionEffectsRefreshBuyCardArgsIfNeeded(int $playerId) {
+        // if the player is in buy phase, refresh args
+        if ($playerId == intval($this->getActivePlayerId()) && intval($this->gamestate->state_id()) == ST_PLAYER_BUY_CARD) {
+            $this->goToState(ST_PLAYER_BUY_CARD);
+        }
+    }
+
     function applyEvolutionEffects(EvolutionCard $card, int $playerId) { // return $damages
         if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$card->type] == 1) {
             return; // TODOPU test
@@ -308,10 +315,7 @@ trait EvolutionCardsUtilTrait {
                 $this->setEvolutionTokens($playerId, $card, $this->getTokensByEvolutionType(ADAPTING_TECHNOLOGY_EVOLUTION));
                 break;
             case SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION: 
-                // if the player is in buy phase, refresh args
-                if ($playerId == intval($this->getActivePlayerId()) && intval($this->gamestate->state_id()) == ST_PLAYER_BUY_CARD) {
-                    $this->goToState(ST_PLAYER_BUY_CARD);
-                }
+                $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId);
                 break;
             // Cyber Kitty
             case MEGA_PURR_EVOLUTION:
@@ -387,6 +391,9 @@ trait EvolutionCardsUtilTrait {
                     }
                 }
                 return $damages;
+            case BOBBING_FOR_APPLES_EVOLUTION: 
+                $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId);
+                break;
             case FEAST_OF_CROWS_EVOLUTION:
                 $this->applyFeastOfCrows($playerId, $card);
                 break;

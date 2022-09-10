@@ -500,8 +500,9 @@
         $id = self::getArg("id", AT_posint, true);
         $from = self::getArg("from", AT_posint, true);
         $useSuperiorAlienTechnology = self::getArg("useSuperiorAlienTechnology", AT_bool, true);
+        $useBobbingForApples = self::getArg("useBobbingForApples", AT_bool, false); // TODOPUHA true
 
-        $this->game->buyCard($id, $from, $useSuperiorAlienTechnology);
+        $this->game->buyCard($id, $from, $useSuperiorAlienTechnology, $useBobbingForApples);
 
         self::ajaxResponse();
     }

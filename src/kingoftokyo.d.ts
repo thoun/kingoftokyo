@@ -94,6 +94,7 @@ interface MiraculousCatchQuestionArgs {
     card: Card;
     cost: number;
     costSuperiorAlienTechnology: number;
+    costBobbingForApples: number;
 }
 
 interface DeepDiveQuestionArgs {
@@ -393,6 +394,7 @@ interface EnteringBuyCardArgs {
     cardsCosts: { [cardId: number]: number };
     warningIds: { [cardId: number]: string };
     cardsCostsSuperiorAlienTechnology: { [cardId: number]: number };
+    cardsCostsBobbingForApples: { [cardId: number]: number };
 }
 
 interface EnteringCancelDamageArgs {

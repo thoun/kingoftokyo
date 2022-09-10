@@ -251,7 +251,7 @@ class EvolutionCards {
             case 82: return /*_TODOPUHA*/("You have one less Roll each turn.");
             case 83: return /*_TODOPUHA*/("All Monsters with 12 or more [Star] lose 2[Heart].");
             case 84: return /*_TODOPUHA*/("If you roll [dice1][dice1][dice1], each of the other Monsters must give you 1[Energy] or lose 2[Heart].");
-            // TODOPUHA 85
+            case 85: return /*_TODOPUHA*/("Once per turn, you can buy a Power card for 2[Energy] less. If the Power card that replaces it has an odd cost, discard the one you just bought and regain the [Energy] you spent.");
             case 86: return /*_TODOPUHA*/("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
             // TODOPUHA 87
             case 88: return "+1[Heart]<br>" + /*_TODOPUHA*/("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
