@@ -399,7 +399,7 @@ trait UtilTrait {
             'over' => 0,
         ]);
 
-        // if the player left with autoleave, we automatically suppose he wantes to use Jets if he have one
+        // if the player left with autoleave, we automatically suppose he wants to use Jets if he have one
         if ($useCard === null && $this->countCardOfType($playerId, JETS_CARD) > 0) {
             $useCard = JETS_CARD;
         }
@@ -421,6 +421,20 @@ trait UtilTrait {
             $twasBeautyKilledTheBeastCards = $this->getEvolutionsOfType($playerId, TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
             if (count($twasBeautyKilledTheBeastCards) > 0 && !$this->getPlayer($playerId)->eliminated) {
                 $this->applyLeaveWithTwasBeautyKilledTheBeast($playerId, $twasBeautyKilledTheBeastCards);
+            }
+
+            // if everyone left Tokyo but player with chest thumping is still active, we disable it
+            if (intval($this->gamestate->state_id()) === ST_MULTIPLAYER_LEAVE_TOKYO) {
+                if ($this->isTokyoEmpty(false) && $this->isTokyoEmpty(true)) {
+                    // out of tokyo is already tested in the if just above
+                    $playersWithChestThumpingOutOfTokyo = array_values(array_filter($this->gamestate->getActivePlayerList(), fn($stillActivePlayer) => 
+                        $this->countEvolutionOfType($stillActivePlayer, CHEST_THUMPING_EVOLUTION)
+                    ));
+
+                    foreach ($playersWithChestThumpingOutOfTokyo as $playerWithChestThumpingOutOfTokyo) {
+                        $this->gamestate->setPlayerNonMultiactive($playerWithChestThumpingOutOfTokyo, 'resume');
+                    }
+                }
             }
         }
 

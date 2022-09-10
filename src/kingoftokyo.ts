@@ -1256,7 +1256,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                             const player = this.gamedatas.players[playerId];
                             (this as any).addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
                         });
-                        (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only')}), () => this.skipChestThumping());
+                        if (this.smashedPlayersStillInTokyo.length) {
+                            (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only')}), () => this.skipChestThumping());
+                        }
                     } else {
                         const playerHasJets = argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId());
                         const playerHasSimianScamper = argsLeaveTokyo.simianScamperPlayers?.includes(this.getPlayerId());

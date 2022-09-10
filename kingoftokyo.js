@@ -3570,7 +3570,7 @@ var PreferencesManager = /** @class */ (function () {
         var _this = this;
         // Extract the ID and value from the UI control
         var onchange = function (e) {
-            var match = e.target.id.match(/^preference_control_(\d+)$/);
+            var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
             if (!match) {
                 return;
             }
@@ -5137,7 +5137,9 @@ var KingOfTokyo = /** @class */ (function () {
                             var player = _this.gamedatas.players[playerId];
                             _this.addActionButton("useChestThumping_button" + playerId, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': "<span style=\"color: #" + player.color + "\">" + player.name + "</span>" }), function () { return _this.useChestThumping(playerId); });
                         });
-                        this.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only') }), function () { return _this.skipChestThumping(); });
+                        if (this.smashedPlayersStillInTokyo.length) {
+                            this.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only') }), function () { return _this.skipChestThumping(); });
+                        }
                     }
                     else {
                         var playerHasJets_1 = (_a = argsLeaveTokyo.jetsPlayers) === null || _a === void 0 ? void 0 : _a.includes(this.getPlayerId());

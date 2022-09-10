@@ -299,8 +299,8 @@ trait EvolutionCardsActionTrait {
         $this->checkAction('useChestThumping');
 
         $this->leaveTokyo($playerId);
-
-        $this->goToState(ST_MULTIPLAYER_LEAVE_TOKYO);
+        
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'resume');
     }
   	
     public function skipChestThumping() {
