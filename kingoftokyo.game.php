@@ -518,7 +518,9 @@ class KingOfTokyo extends Table {
                 $result['targetedPlayer'] = $targetedPlayer;
             }
 
-            $result['askPlayEvolution'] = intval($result['players'][$current_player_id]['askPlayEvolution']);
+            if (array_key_exists($current_player_id, $result['players'])) {
+                $result['askPlayEvolution'] = intval($result['players'][$current_player_id]['askPlayEvolution']);
+            }
         }      
 
         return $result;
