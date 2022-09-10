@@ -1053,6 +1053,14 @@
         self::ajaxResponse();
     }
   	
+    public function trickOrThreatLoseHearts() {
+        self::setAjaxMode();
+
+        $this->game->trickOrThreatLoseHearts();
+
+        self::ajaxResponse();
+    }
+  	
     // TODOBUG
     public function debugBlockedTable() {
         self::setAjaxMode();

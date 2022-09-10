@@ -21,7 +21,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
-        $this->debugSetEnergy(4);
+        $this->debugSetPlayerEnergy(2343493, 4);
         //$this->debugSetPlayerPoints(2343493, 2);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
@@ -247,7 +247,7 @@ trait DebugUtilTrait {
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(CANDY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(TRICK_OR_THREAT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);

@@ -829,6 +829,7 @@ $playerActionsGameStates = [
             "reserveCard",
             "throwDieSuperiorAlienTechnology",
             "freezeRayChooseOpponent",
+            "trickOrThreatLoseHearts",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

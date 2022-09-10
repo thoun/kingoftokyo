@@ -321,7 +321,7 @@ trait EvolutionCardsActionTrait {
         $question = $this->getQuestion();
         $evolutionPlayerId = $question->args->playerId;
         
-        $this->applyGiveSymbols([$symbol], $playerId, $evolutionPlayerId, 3000 + MEGA_PURR_EVOLUTION);
+        $this->applyGiveSymbols([$symbol], $playerId, $evolutionPlayerId, 3000 + $question->args->card->type);
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
@@ -766,5 +766,18 @@ trait EvolutionCardsActionTrait {
         $this->giveFreezeRay($playerId, $toPlayerId, $card);
 
         $this->removeStackedStateAndRedirect();
+    }
+
+    public function trickOrThreatLoseHearts() {
+        $this->checkAction('trickOrThreatLoseHearts');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $question = $this->getQuestion();
+
+        $damage = new Damage($playerId, 2, 0, 3000 + TRICK_OR_THREAT_EVOLUTION);
+        $this->applyDamage($damage);
+
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 }

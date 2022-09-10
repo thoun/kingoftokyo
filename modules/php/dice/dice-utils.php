@@ -225,13 +225,22 @@ trait DiceUtilTrait {
     }
 
     function resolveNumberDice(int $playerId, int $number, int $diceCount) {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
         // number
         if ($diceCount >= 3) {
             $points = $number + $diceCount - 3;
-
-            if ($this->isPowerUpExpansion()) {
+            if ($isPowerUpExpansion) {
                 if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                     $points *= 2;
+                }
+
+                if ($number === 1) {
+                    $trickOrThreatEvolutions = $this->getEvolutionsOfType($playerId, TRICK_OR_THREAT_EVOLUTION);
+                    if (count($trickOrThreatEvolutions) > 0) {
+                        $this->applyTrickOrThreat($playerId, $trickOrThreatEvolutions[0]);
+                        return true;
+                    }
                 }
             }
 
@@ -284,12 +293,14 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($diceCount >= 1 && $number == 1 && $this->isPowerUpExpansion()) {
+        if ($diceCount >= 1 && $number == 1 && $isPowerUpExpansion) {
             $countMouseHunter = $this->countEvolutionOfType($playerId, MOUSE_HUNTER_EVOLUTION);
             if ($countMouseHunter > 0) {
                 $this->applyGetPoints($playerId, $countMouseHunter, 3000 + MOUSE_HUNTER_EVOLUTION);
             }
         }
+
+        return false;
     }
 
     function resolveHealthDice(int $playerId, int $diceCount) { 

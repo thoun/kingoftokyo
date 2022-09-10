@@ -81,6 +81,10 @@ interface GiveSymbolQuestionArgs {
     symbols: number[];
 }
 
+interface TrickOrThreatQuestionArgs {
+    canGiveEnergy: number[];
+}
+
 interface IcyReflectionQuestionArgs {
     enabledEvolutions: EvolutionCard[];
     disabledEvolutions: EvolutionCard[];

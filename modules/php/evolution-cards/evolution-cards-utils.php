@@ -852,6 +852,37 @@ trait EvolutionCardsUtilTrait {
         $this->applyGiveSymbolQuestion($playerId, $card, $otherPlayers, [4, 0, 5]);
     }
 
+    function applyTrickOrThreat(int $playerId, EvolutionCard $card) {
+        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->health > 0);
+
+        if (count($otherPlayers) == 0) {
+            return;
+        }
+
+        $otherPlayersIds = array_map(fn($player) => $player->id, $otherPlayers);
+
+        $canGiveEnergy = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->energy > 0)));
+
+        $question = new Question(
+            'TrickOrThreat',
+            /*client TODOPUHA translate*/('Other monsters must give 1[Energy] or to ${player_name} or lose 2[Heart]'),
+            /*client TODOPUHA translate*/('${you} must give 1[Energy] or to ${player_name} or lose 2[Heart]'),
+            [$otherPlayersIds],
+            ST_AFTER_ANSWER_QUESTION,
+            [ 
+                'card' => $card,
+                'playerId' => $playerId,
+                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
+                'canGiveEnergy' => $canGiveEnergy,
+            ]
+        );
+
+        $this->addStackedState();
+        $this->setQuestion($question);
+        $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
+        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
     function applyDeepDive(int $playerId) {
         if (intval($this->cards->countCardInLocation('deck')) === 0) {
             throw new \BgaUserException("No cards in deck pile");

@@ -1421,6 +1421,15 @@ class KingOfTokyo implements KingOfTokyoGame {
                     }
                 });
                 break;
+            case 'TrickOrThreat':
+                const trickOrThreatPlayerId = this.getPlayerId();
+                const trickOrThreatQuestionArgs = question.args as TrickOrThreatQuestionArgs;
+                (this as any).addActionButton(`giveSymbol_button5`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[5]})), () => this.giveSymbol(5));
+                if (!trickOrThreatQuestionArgs.canGiveEnergy.includes(trickOrThreatPlayerId)) {
+                    dojo.addClass(`giveSymbol_button5`, 'disabled');
+                }
+                (this as any).addActionButton(`trickOrThreatLoseHearts`, formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: '2[Heart]'})), () => this.trickOrThreatLoseHearts());
+                break;
             case 'FreezeRay':
                 for (let face=1; face<=6; face++) {
                     (this as any).addActionButton(`selectFrozenDieFace_button${face}`, formatTextIcons(DICE_STRINGS[face]), () => this.chooseFreezeRayDieFace(face));
@@ -3373,6 +3382,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('freezeRayChooseOpponent', { playerId });
+    }
+    
+    public trickOrThreatLoseHearts() {
+        if(!(this as any).checkAction('trickOrThreatLoseHearts')) {
+            return;
+        }
+
+        this.takeAction('trickOrThreatLoseHearts');
     }
     
     public takeAction(action: string, data?: any) {

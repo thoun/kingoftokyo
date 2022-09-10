@@ -1488,15 +1488,21 @@ var EvolutionCards = /** @class */ (function () {
             case 67: return _("On your turn, if you make another Monster lose at least 3[Heart], they lose 1 extra [Heart].");
             case 68: return _("When a Monster wounds you, you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
             // Boogie Woogie
+            // TODOPUHA 71 72
             case 73: return /*_TODOPUHA*/ ("You play with one less die.");
+            // TODOPUHA 74
             case 75: return "+2[Heart]";
             case 76: return /*_TODOPUHA*/ ("Each of the other Monsters loses 2[Heart].");
             case 77: return /*_TODOPUHA*/ ("When you enter <i>Tokyo</i>, gain 1[Heart].");
+            // TODOPUHA 78
             // Pumpkin Jack 
             case 81: return /*_TODOPUHA*/ ("Every time the <i>Owner</i> of this card wounds you, lose an extra [Heart].");
             case 82: return /*_TODOPUHA*/ ("You have one less Roll each turn.");
             case 83: return /*_TODOPUHA*/ ("All Monsters with 12 or more [Star] lose 2[Heart].");
+            case 84: return /*_TODOPUHA*/ ("If you roll [dice1][dice1][dice1], each of the other Monsters must give you 1[Energy] or lose 2[Heart].");
+            // TODOPUHA 85
             case 86: return /*_TODOPUHA*/ ("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
+            // TODOPUHA 87
             case 88: return "+1[Heart]<br>" + /*_TODOPUHA*/ ("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
             // Pandakaï
             case 131: return _("Gain 6[Energy]. All other Monsters gain 3[Energy].");
@@ -5285,6 +5291,15 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                 });
                 break;
+            case 'TrickOrThreat':
+                var trickOrThreatPlayerId = this.getPlayerId();
+                var trickOrThreatQuestionArgs = question.args;
+                this.addActionButton("giveSymbol_button5", formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[5] })), function () { return _this.giveSymbol(5); });
+                if (!trickOrThreatQuestionArgs.canGiveEnergy.includes(trickOrThreatPlayerId)) {
+                    dojo.addClass("giveSymbol_button5", 'disabled');
+                }
+                this.addActionButton("trickOrThreatLoseHearts", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: '2[Heart]' })), function () { return _this.trickOrThreatLoseHearts(); });
+                break;
             case 'FreezeRay':
                 var _loop_5 = function (face) {
                     this_4.addActionButton("selectFrozenDieFace_button" + face, formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
@@ -6815,6 +6830,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('freezeRayChooseOpponent', { playerId: playerId });
+    };
+    KingOfTokyo.prototype.trickOrThreatLoseHearts = function () {
+        if (!this.checkAction('trickOrThreatLoseHearts')) {
+            return;
+        }
+        this.takeAction('trickOrThreatLoseHearts');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};

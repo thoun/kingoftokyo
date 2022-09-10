@@ -232,7 +232,10 @@ trait DiceStateTrait {
 
         for ($diceFace = 1; $diceFace <= 3; $diceFace++) {
             $diceCount = $diceCounts[$diceFace];
-            $this->resolveNumberDice($playerId, $diceFace, $diceCount);
+            $redirected = $this->resolveNumberDice($playerId, $diceFace, $diceCount);
+            if ($redirected) {
+                return;
+            }
         }
 
         $this->goToState($this->redirectAfterResolveNumberDice());
