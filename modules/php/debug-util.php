@@ -21,8 +21,8 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
-        $this->debugSetPlayerEnergy(2343494, 2);
-        $this->debugSetPlayerPoints(2343493, 2);
+        //$this->debugSetEnergy(4);
+        //$this->debugSetPlayerPoints(2343493, 2);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
@@ -210,13 +210,13 @@ trait DebugUtilTrait {
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
             $this->DbQuery("UPDATE player SET `ask_play_evolution` = 1");
             // set monster
-            //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343495"); // space penguin
+            //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 2 where `player_id` = 2343492"); // alienoid
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
-            $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343492"); // the king
+            $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343494"); // gigazaur
-            //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
+            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343494"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343493"); // cyber bunny
             //$this->DbQuery("UPDATE player SET `player_monster` = 15 where `player_id` = 2343492"); // kraken
 
@@ -247,8 +247,9 @@ trait DebugUtilTrait {
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(MEGA_PURR_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true/*, 2343495*/);
+            $this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(BLIZZARD_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);

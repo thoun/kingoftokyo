@@ -34,6 +34,11 @@ trait PlayerStateTrait {
         $isPowerUpExpansion = $this->isPowerUpExpansion();
 
         if ($isPowerUpExpansion) {
+            $blizzardCards = $this->getEvolutionsOfType($playerId, BLIZZARD_EVOLUTION);
+            if (count($blizzardCards) > 0) {
+                $this->removeEvolutions($playerId, $blizzardCards);
+            }
+
             $player = $this->getPlayer($playerId);
             if ($player->askPlayEvolution == 2) {
                 $this->applyAskPlayEvolution($playerId, 0);
@@ -147,11 +152,6 @@ trait PlayerStateTrait {
             if (count($coldWaveCards) > 0) {
                 $this->removeEvolutions($playerId, $coldWaveCards);
             }
-
-            $blizzardCards = $this->getEvolutionsOfType($playerId, BLIZZARD_EVOLUTION);
-            if (count($blizzardCards) > 0) {
-                $this->removeEvolutions($playerId, $blizzardCards);
-            }    
 
             $mothershipEvolutionCards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
             if (count($mothershipEvolutionCards) > 0) {
