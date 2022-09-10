@@ -5265,7 +5265,7 @@ var KingOfTokyo = /** @class */ (function () {
                 var SYMBOL_AS_STRING_2 = ['[Energy]', '[Star]'];
                 [5, 0].forEach(function (symbol, symbolIndex) {
                     _this.addActionButton("giveSymbol_button" + symbol, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_2[symbolIndex] })), function () { return _this.giveSymbol(symbol); });
-                    if (symbol == 5 && !question.args["canGive" + symbol].includes(playerId_3)) {
+                    if (!question.args["canGive" + symbol].includes(playerId_3)) {
                         dojo.addClass("giveSymbol_button" + symbol, 'disabled');
                     }
                 });
@@ -7506,6 +7506,10 @@ var KingOfTokyo = /** @class */ (function () {
                     if (((_b = (_a = args[property]) === null || _a === void 0 ? void 0 : _a.indexOf) === null || _b === void 0 ? void 0 : _b.call(_a, ']')) > 0) {
                         args[property] = formatTextIcons(_(args[property]));
                     }
+                }
+                if (args.player_name && typeof args.player_name[0] === 'string' && args.player_name.indexOf('<') === -1) {
+                    var player = Object.values(this.gamedatas.players).find(function (player) { return player.name == args.player_name; });
+                    args.player_name = "<span style=\"font-weight:bold;color:#" + player.color + ";\">" + args.player_name + "</span>";
                 }
                 log = formatTextIcons(_(log));
             }

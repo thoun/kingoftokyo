@@ -784,11 +784,13 @@ trait EvolutionCardsUtilTrait {
         $canGiveEnergy = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->energy > 0)));
         $canGiveStar = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->score > 0)));
 
+        $otherPlayersIdsThatCanPlay = array_values(array_filter($otherPlayersIds, fn($otherPlayerId) => in_array($otherPlayerId, $canGiveEnergy) || in_array($otherPlayerId, $canGiveStar)));
+
         $question = new Question(
             'MegaPurr',
             clienttranslate('Other monsters must give [Energy] or [Star] to ${player_name}'),
             clienttranslate('${you} must give [Energy] or [Star] to ${player_name}'),
-            [$otherPlayersIds],
+            [$otherPlayersIdsThatCanPlay],
             ST_AFTER_ANSWER_QUESTION,
             [ 
                 'card' => $card,
@@ -801,7 +803,7 @@ trait EvolutionCardsUtilTrait {
 
         $this->addStackedState();
         $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
+        $this->gamestate->setPlayersMultiactive($otherPlayersIdsThatCanPlay, 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 

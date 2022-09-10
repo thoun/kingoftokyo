@@ -1402,7 +1402,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const SYMBOL_AS_STRING = ['[Energy]', '[Star]'];
                 [5,0].forEach((symbol, symbolIndex) => {
                     (this as any).addActionButton(`giveSymbol_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbol(symbol));
-                    if (symbol == 5 && !question.args[`canGive${symbol}`].includes(playerId)) {
+                    if (!question.args[`canGive${symbol}`].includes(playerId)) {
                         dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
                     }
                 });
@@ -4159,6 +4159,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                     if (args[property]?.indexOf?.(']') > 0) {
                         args[property] = formatTextIcons(_(args[property]));
                     }
+                }
+
+                if (args.player_name && typeof args.player_name[0] === 'string' && args.player_name.indexOf('<') === -1) {
+                    const player = Object.values(this.gamedatas.players).find(player => player.name == args.player_name);
+                    args.player_name = `<span style="font-weight:bold;color:#${player.color};">${args.player_name}</span>`;
                 }
 
                 log = formatTextIcons(_(log));
