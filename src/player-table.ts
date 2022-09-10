@@ -174,8 +174,10 @@ class PlayerTable {
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onHiddenEvolutionClick(Number(item_id)));
 
                 this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
+                if (player.hiddenEvolutions) {
+                    this.game.evolutionCards.addCardsToStock(this.hiddenEvolutionCards, player.hiddenEvolutions);
+                }
                 player.hiddenEvolutions?.forEach(card => {
-                    this.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
                     if (evolutionCardsWithSingleState.includes(card.type)) {
                         document.getElementById(`${this.hiddenEvolutionCards.container_div.id}_item_${card.id}`).classList.add('disabled');
                     }

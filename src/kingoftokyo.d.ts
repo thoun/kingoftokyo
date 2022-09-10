@@ -36,6 +36,7 @@ interface WickednessTile {
 
 interface EvolutionCard {
     id: number;
+    ownerId: number;
     monster: number;
     card: number;
     type: number;

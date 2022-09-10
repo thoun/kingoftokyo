@@ -448,7 +448,6 @@ class EvolutionCards {
         }
     }
 
-    // TODOPU set ownerId
     public getTooltip(cardTypeId: number, ownerId?: number) {
         let tooltip = `<div class="card-tooltip">
             <p><strong>${this.getCardName(cardTypeId, 'text-only')}</strong></p>
@@ -488,7 +487,8 @@ class EvolutionCards {
 
         cards.forEach(card => {
             stock.addToStockWithId(card.type, `${card.id}`, from);
-            //const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
+            const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
+            (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(card.type, card.ownerId));
         });
         cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
     }

@@ -1662,7 +1662,6 @@ var EvolutionCards = /** @class */ (function () {
             nameHeight = outline.clientHeight;
         }
     };
-    // TODOPU set ownerId
     EvolutionCards.prototype.getTooltip = function (cardTypeId, ownerId) {
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + this.getCardTypeName(cardTypeId) + "</p>";
         if (ownerId) {
@@ -1695,7 +1694,8 @@ var EvolutionCards = /** @class */ (function () {
         }
         cards.forEach(function (card) {
             stock.addToStockWithId(card.type, "" + card.id, from);
-            //const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
+            var cardDiv = document.getElementById(stock.container_div.id + "_item_" + card.id);
+            _this.game.addTooltipHtml(cardDiv.id, _this.getTooltip(card.type, card.ownerId));
         });
         cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(stock, card); });
     };
@@ -2104,8 +2104,10 @@ var PlayerTable = /** @class */ (function () {
                 this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCards.setupNewCard(card_div, card_type_id); };
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
                 this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
+                if (player.hiddenEvolutions) {
+                    this.game.evolutionCards.addCardsToStock(this.hiddenEvolutionCards, player.hiddenEvolutions);
+                }
                 (_e = player.hiddenEvolutions) === null || _e === void 0 ? void 0 : _e.forEach(function (card) {
-                    _this.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
                     if (evolutionCardsWithSingleState.includes(card.type)) {
                         document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id).classList.add('disabled');
                     }

@@ -249,7 +249,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(SCYTHE_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
+            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
