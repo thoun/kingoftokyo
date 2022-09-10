@@ -800,6 +800,15 @@ trait UtilTrait {
                     }
                 }
             }
+
+            if ($playerId != $damageDealerId && $isPowerUpExpansion) {
+                $scytheEvolutions = $this->getEvolutionsOfType($damageDealerId, SCYTHE_EVOLUTION);
+                if (count($scytheEvolutions) > 0 && $this->getPlayer($playerId)->eliminated) {
+                    foreach($scytheEvolutions as $scytheEvolution) {
+                        $this->setEvolutionTokens($damageDealerId, $scytheEvolution, $scytheEvolution->tokens + 1);
+                    }
+                }
+            }
         }
 
         if ($actualHealth - $newHealth >= 2) {

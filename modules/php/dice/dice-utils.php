@@ -902,8 +902,16 @@ trait DiceUtilTrait {
             }
         }
 
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $scytheEvolutions = $this->getEvolutionsOfType($playerId, SCYTHE_EVOLUTION);
+        foreach($scytheEvolutions as $scytheEvolution) {
+            $addedSmashes += $scytheEvolution->tokens;
+                
+            $cardsAddingSmashes[] = 3000 + SCYTHE_EVOLUTION;
+        }
+
         // Meow Missle
-        if ($diceCounts[1] >= 1 && $this->isPowerUpExpansion()) {
+        if ($diceCounts[1] >= 1 && $isPowerUpExpansion) {
             $countMeowMissle = $this->countEvolutionOfType($playerId, MEOW_MISSLE_EVOLUTION);
             if ($countMeowMissle > 0) {
                 $addedSmashes += $countMeowMissle;
@@ -913,7 +921,7 @@ trait DiceUtilTrait {
         }
 
         // Energy Sword
-        if ($diceCounts[6] >= 1 && $this->isPowerUpExpansion()) {
+        if ($diceCounts[6] >= 1 && $isPowerUpExpansion) {
             $energySwordEvolutions = $this->getEvolutionsOfType($playerId, ENERGY_SWORD_EVOLUTION);
             $countEnergySword = count(array_filter($energySwordEvolutions, fn($evolution) => $evolution->tokens > 0));
             if ($countEnergySword > 0) {

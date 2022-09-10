@@ -397,6 +397,9 @@ trait EvolutionCardsUtilTrait {
             case FEAST_OF_CROWS_EVOLUTION:
                 $this->applyFeastOfCrows($playerId, $card);
                 break;
+            case SCYTHE_EVOLUTION:
+                $this->setEvolutionTokens($playerId, $card, 1);
+                break;
             case CANDY_EVOLUTION:
                 $this->applyGetHealth($playerId, 1, $logCardType, $playerId);
                 break;

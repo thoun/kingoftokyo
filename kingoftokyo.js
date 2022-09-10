@@ -1502,7 +1502,7 @@ var EvolutionCards = /** @class */ (function () {
             case 84: return /*_TODOPUHA*/ ("If you roll [dice1][dice1][dice1], each of the other Monsters must give you 1[Energy] or lose 2[Heart].");
             case 85: return /*_TODOPUHA*/ ("Once per turn, you can buy a Power card for 2[Energy] less. If the Power card that replaces it has an odd cost, discard the one you just bought and regain the [Energy] you spent.");
             case 86: return /*_TODOPUHA*/ ("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
-            // TODOPUHA 87
+            case 87: return /*_TODOPUHA*/ ("When you play this card and each time you eliminate a Monster, put 1[Energy] from the pool on this card. For each [Energy] on this card, add [diceSmash] to your Roll.");
             case 88: return "+1[Heart]<br>" + /*_TODOPUHA*/ ("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
             // Pandakaï
             case 131: return _("Gain 6[Energy]. All other Monsters gain 3[Energy].");
@@ -1594,7 +1594,7 @@ var EvolutionCards = /** @class */ (function () {
         var cardType = /* TODOPU card.mimicType ||*/ card.type;
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
-            if (cardType === 136 && playerId) {
+            if ([136, 87].includes(cardType) && playerId) {
                 this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
             }
             else {
@@ -1610,7 +1610,7 @@ var EvolutionCards = /** @class */ (function () {
             if (cardType === 24) {
                 html += "ufo token";
             }
-            else if (cardType === 26 || cardType === 136) {
+            else if ([26, 136, 87].includes(cardType)) {
                 html += "energy-cube cube-shape-" + Math.floor(Math.random() * 5);
             }
             html += "\"></div>";
