@@ -105,7 +105,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(RAPID_HEALING_CARD, 2343493);
         //$this->debugSetCardInHand(SHRINK_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(POISON_SPIT_CARD, 2343492);
-        //$this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
+        $this->debugSetCardInHand(FIRE_BREATHING_CARD, 2343492);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343492);
         //$this->debugSetPlayerHealth(2343492, 11);
@@ -247,8 +247,7 @@ trait DebugUtilTrait {
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(BLIZZARD_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);

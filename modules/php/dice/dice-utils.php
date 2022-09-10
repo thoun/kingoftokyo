@@ -549,6 +549,7 @@ trait DiceUtilTrait {
             }
         } else {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
+            $smashedPlayersIds = [];
         }
 
         // funny looking but dangerous
