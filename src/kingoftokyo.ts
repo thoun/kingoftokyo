@@ -1397,12 +1397,22 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
 
-            case 'MegaPurr':
+            case 'MegaPurr': // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
                 const playerId = this.getPlayerId();
                 const SYMBOL_AS_STRING = ['[Energy]', '[Star]'];
                 [5,0].forEach((symbol, symbolIndex) => {
                     (this as any).addActionButton(`giveSymbol_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbol(symbol));
                     if (!question.args[`canGive${symbol}`].includes(playerId)) {
+                        dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
+                    }
+                });
+                break;
+            case 'GiveSymbol':
+                const giveSymbolPlayerId = this.getPlayerId();
+                const giveSymbolQuestionArgs = question.args as GiveSymbolQuestionArgs;
+                giveSymbolQuestionArgs.symbols.forEach((symbol) => {
+                    (this as any).addActionButton(`giveSymbol_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[symbol]})), () => this.giveSymbol(symbol));
+                    if (!question.args[`canGive${symbol}`].includes(giveSymbolPlayerId)) {
                         dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
                     }
                 });
@@ -4164,6 +4174,14 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (args.player_name && typeof args.player_name[0] === 'string' && args.player_name.indexOf('<') === -1) {
                     const player = Object.values(this.gamedatas.players).find(player => player.name == args.player_name);
                     args.player_name = `<span style="font-weight:bold;color:#${player.color};">${args.player_name}</span>`;
+                }
+
+                if (args.symbolsToGive && typeof args.symbolsToGive === 'object') {
+                    const symbolsStr: string[] = args.symbolsToGive.map((symbol: number) => SYMBOL_AS_STRING_PADDED[symbol]);
+                    args.symbolsToGive = formatTextIcons(_('${symbol1} or ${symbol2}')
+                      .replace('${symbol1}', symbolsStr.slice(0, symbolsStr.length - 1).join(', '))
+                      .replace('${symbol2}', symbolsStr[symbolsStr.length - 1])
+                    );
                 }
 
                 log = formatTextIcons(_(log));

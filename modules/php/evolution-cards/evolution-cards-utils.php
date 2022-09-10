@@ -381,6 +381,9 @@ trait EvolutionCardsUtilTrait {
                     }
                 }
                 return $damages;
+            case FEAST_OF_CROWS_EVOLUTION:
+                $this->applyFeastOfCrows($playerId, $card);
+                break;
             // Cthulhu
             // Anubis
             // King Kong
@@ -772,8 +775,7 @@ trait EvolutionCardsUtilTrait {
         return $cards;
     }
 
-    function applyMegaPurr(int $playerId, EvolutionCard $card) {
-        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->score > 0);
+    function applyGiveSymbolQuestion(int $playerId, EvolutionCard $card, array $otherPlayers, array $symbols) {
 
         if (count($otherPlayers) == 0) {
             return;
@@ -781,30 +783,64 @@ trait EvolutionCardsUtilTrait {
 
         $otherPlayersIds = array_map(fn($player) => $player->id, $otherPlayers);
 
-        $canGiveEnergy = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->energy > 0)));
-        $canGiveStar = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->score > 0)));
+        $canGiveSymbols = [];
+        foreach($symbols as $symbol) {
+            $canGiveSymbol = [];
+            $playerField = '';
+            switch ($symbol) {
+                case 0: 
+                    $playerField = 'score';
+                    break;
+                case 4: 
+                    $playerField = 'health';
+                    break;
+                case 5: 
+                    $playerField = 'energy';
+                    break;
+            }
 
-        $otherPlayersIdsThatCanPlay = array_values(array_filter($otherPlayersIds, fn($otherPlayerId) => in_array($otherPlayerId, $canGiveEnergy) || in_array($otherPlayerId, $canGiveStar)));
+            $canGiveSymbol = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->{$playerField} > 0)));
+
+            $canGiveSymbols[$symbol] = $canGiveSymbol;
+        }
+
+        $args = [ 
+            'card' => $card,
+            'playerId' => $playerId,
+            '_args' => [ 
+                'player_name' => $this->getPlayerName($playerId),
+                'symbolsToGive' => $symbols,
+            ],
+            'symbols' => $symbols,
+        ];
+
+        foreach($canGiveSymbols as $symbol => $canGiveSymbol) {
+            $args['canGive'.$symbol] = $canGiveSymbol;
+        }
 
         $question = new Question(
-            'MegaPurr',
-            clienttranslate('Other monsters must give [Energy] or [Star] to ${player_name}'),
-            clienttranslate('${you} must give [Energy] or [Star] to ${player_name}'),
-            [$otherPlayersIdsThatCanPlay],
+            'GiveSymbol',
+            clienttranslate('Other monsters must give ${symbolsToGive} to ${player_name}'),
+            clienttranslate('${you} must give ${symbolsToGive} to ${player_name}'),
+            [$otherPlayersIds],
             ST_AFTER_ANSWER_QUESTION,
-            [ 
-                'card' => $card,
-                'playerId' => $playerId,
-                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
-                'canGive5' => $canGiveEnergy,
-                'canGive0' => $canGiveStar,
-            ]
+            $args,
         );
 
         $this->addStackedState();
         $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive($otherPlayersIdsThatCanPlay, 'next', true);
+        $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function applyMegaPurr(int $playerId, EvolutionCard $card) {
+        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->score > 0);
+        $this->applyGiveSymbolQuestion($playerId, $card, $otherPlayers, [5, 0]);
+    }
+
+    function applyFeastOfCrows(int $playerId, EvolutionCard $card) {
+        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->score > 0 || $player->health > 0);
+        $this->applyGiveSymbolQuestion($playerId, $card, $otherPlayers, [4, 0, 5]);
     }
 
     function applyDeepDive(int $playerId) {

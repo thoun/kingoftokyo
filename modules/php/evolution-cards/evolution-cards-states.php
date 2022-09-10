@@ -197,8 +197,8 @@ trait EvolutionCardsStateTrait {
     function stAfterAnswerQuestion() {
         $question = $this->getQuestion();
 
-        if ($question->code === 'MegaPurr' || $question->code === 'ElectricCarrot') {
-            if ($question->code === 'MegaPurr') {
+        if ($question->code === 'GiveSymbol' || $$question->code === 'MegaPurr' || $question->code === 'ElectricCarrot') {
+            if ($question->code === 'GiveSymbol' || $question->code === 'MegaPurr') { // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
                 $this->removeEvolution($question->args->playerId, $question->args->card);
             }
 

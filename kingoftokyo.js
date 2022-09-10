@@ -1496,6 +1496,7 @@ var EvolutionCards = /** @class */ (function () {
             case 81: return /*_TODOPUHA*/ ("Every time the <i>Owner</i> of this card wounds you, lose an extra [Heart].");
             case 82: return /*_TODOPUHA*/ ("You have one less Roll each turn.");
             case 83: return /*_TODOPUHA*/ ("All Monsters with 12 or more [Star] lose 2[Heart].");
+            case 86: return /*_TODOPUHA*/ ("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
             // Pandakaï
             case 131: return _("Gain 6[Energy]. All other Monsters gain 3[Energy].");
             case 132: return _("Play when you enter <i>Tokyo</i>. All Monsters outside of <i>Tokyo</i> lose 2[Heart] each. Gain 1[Energy], then leave <i>Tokyo</i>. No Monster takes your place.");
@@ -5260,12 +5261,22 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
                 }
                 break;
-            case 'MegaPurr':
+            case 'MegaPurr': // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
                 var playerId_3 = this.getPlayerId();
                 var SYMBOL_AS_STRING_2 = ['[Energy]', '[Star]'];
                 [5, 0].forEach(function (symbol, symbolIndex) {
                     _this.addActionButton("giveSymbol_button" + symbol, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_2[symbolIndex] })), function () { return _this.giveSymbol(symbol); });
                     if (!question.args["canGive" + symbol].includes(playerId_3)) {
+                        dojo.addClass("giveSymbol_button" + symbol, 'disabled');
+                    }
+                });
+                break;
+            case 'GiveSymbol':
+                var giveSymbolPlayerId_1 = this.getPlayerId();
+                var giveSymbolQuestionArgs = question.args;
+                giveSymbolQuestionArgs.symbols.forEach(function (symbol) {
+                    _this.addActionButton("giveSymbol_button" + symbol, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[symbol] })), function () { return _this.giveSymbol(symbol); });
+                    if (!question.args["canGive" + symbol].includes(giveSymbolPlayerId_1)) {
                         dojo.addClass("giveSymbol_button" + symbol, 'disabled');
                     }
                 });
@@ -7510,6 +7521,12 @@ var KingOfTokyo = /** @class */ (function () {
                 if (args.player_name && typeof args.player_name[0] === 'string' && args.player_name.indexOf('<') === -1) {
                     var player = Object.values(this.gamedatas.players).find(function (player) { return player.name == args.player_name; });
                     args.player_name = "<span style=\"font-weight:bold;color:#" + player.color + ";\">" + args.player_name + "</span>";
+                }
+                if (args.symbolsToGive && typeof args.symbolsToGive === 'object') {
+                    var symbolsStr = args.symbolsToGive.map(function (symbol) { return SYMBOL_AS_STRING_PADDED[symbol]; });
+                    args.symbolsToGive = formatTextIcons(_('${symbol1} or ${symbol2}')
+                        .replace('${symbol1}', symbolsStr.slice(0, symbolsStr.length - 1).join(', '))
+                        .replace('${symbol2}', symbolsStr[symbolsStr.length - 1]));
                 }
                 log = formatTextIcons(_(log));
             }

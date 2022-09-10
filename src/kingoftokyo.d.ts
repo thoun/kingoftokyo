@@ -77,6 +77,10 @@ interface GazeOfTheSphinxSnakeQuestionArgs {
     canLoseEnergy: boolean;
 }
 
+interface GiveSymbolQuestionArgs {
+    symbols: number[];
+}
+
 interface IcyReflectionQuestionArgs {
     enabledEvolutions: EvolutionCard[];
     disabledEvolutions: EvolutionCard[];
