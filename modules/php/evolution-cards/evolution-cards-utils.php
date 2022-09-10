@@ -307,6 +307,12 @@ trait EvolutionCardsUtilTrait {
             case ADAPTING_TECHNOLOGY_EVOLUTION:
                 $this->setEvolutionTokens($playerId, $card, $this->getTokensByEvolutionType(ADAPTING_TECHNOLOGY_EVOLUTION));
                 break;
+            case SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION: 
+                // if the player is in buy phase, refresh args
+                if ($playerId == intval($this->getActivePlayerId()) && intval($this->gamestate->state_id()) == ST_PLAYER_BUY_CARD) {
+                    $this->goToState(ST_PLAYER_BUY_CARD);
+                }
+                break;
             // Cyber Kitty
             case MEGA_PURR_EVOLUTION:
                 $this->applyMegaPurr($playerId, $card);
