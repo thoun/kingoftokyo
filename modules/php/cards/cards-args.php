@@ -293,12 +293,6 @@ trait CardsArgTrait {
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
             $hasDice3 = $dice ? $this->array_some($dice, fn($die) => $die->value == 3) : false;
 
-            $canThrowDices = ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || ($isPowerUpExpansion && ($this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0))) && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
-            $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
-            $canUseDetachableTail = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0;
-            $canUseRabbitsFoot = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0;
-            $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
-
             $remainingDamage = 0;
             $damageDealerId = 0;
             $clawDamage = null;
@@ -309,6 +303,13 @@ trait CardsArgTrait {
                     $clawDamage = $damage->clawDamage;
                 }
             }
+
+            $canThrowDices = ($this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || ($isPowerUpExpansion && ($this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0))) && ($playersUsedDice == null || $playersUsedDice->rolls < $playersUsedDice->maxRolls);
+            $canUseWings = $this->countCardOfType($playerId, WINGS_CARD) > 0;
+            $canUseDetachableTail = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0;
+            $canUseRabbitsFoot = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0;
+            $canUseCandy = $isPowerUpExpansion && $clawDamage !== null && $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0;
+            $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
 
             $effectiveDamageDetail = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId, $clawDamage);
             $effectiveDamage = $effectiveDamageDetail->effectiveDamage;
@@ -360,6 +361,7 @@ trait CardsArgTrait {
                 ($canUseWings && $potentialEnergy >= 2) || 
                 $canUseDetachableTail || 
                 $canUseRabbitsFoot || 
+                $canUseCandy ||
                 ($canUseRobot && $potentialEnergy >= 1) ||
                 ($superJumpHearts && $potentialEnergy >= 1);
 
@@ -379,6 +381,7 @@ trait CardsArgTrait {
                 'canUseWings' => $canUseWings,
                 'canUseDetachableTail' => $canUseDetachableTail,
                 'canUseRabbitsFoot' => $canUseRabbitsFoot,
+                'canUseCandy' => $canUseCandy,
                 'canUseRobot' => $canUseRobot,
                 'countSuperJump' => $countSuperJump,
                 'rapidHealingHearts' => $rapidHealingHearts,

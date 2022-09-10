@@ -400,6 +400,7 @@ interface EnteringCancelDamageArgs {
     canUseWings: boolean;
     canUseDetachableTail: boolean;
     canUseRabbitsFoot: boolean;
+    canUseCandy: boolean;
     canUseRobot: boolean;
     countSuperJump: number;
     playerEnergy: number;

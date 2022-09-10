@@ -920,10 +920,10 @@ trait CardsUtilTrait {
                 }
             }
 
-            $detachableTailCards = $this->getEvolutionCardsByType(RABBIT_S_FOOT_EVOLUTION);
-            foreach($detachableTailCards as $detachableTailCard) {
-                if ($detachableTailCard->location == 'table') {
-                    $this->removeEvolution($detachableTailCard->location_arg, $detachableTailCard);
+            $rabbitsFootCards = $this->getEvolutionCardsByType(RABBIT_S_FOOT_EVOLUTION);
+            foreach($rabbitsFootCards as $rabbitsFootCard) {
+                if ($rabbitsFootCard->location == 'table') {
+                    $this->removeEvolution($rabbitsFootCard->location_arg, $rabbitsFootCard);
                 }
             }
         }

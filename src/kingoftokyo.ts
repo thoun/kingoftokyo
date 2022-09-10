@@ -659,6 +659,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
             }
 
+            if (args.canUseCandy && !document.getElementById('useCandy_button')) {
+                (this as any).addActionButton('useCandy_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(88, 'text-only')}), () => this.useCandyEvolution());
+            }
+
             if (args.countSuperJump > 0 && !document.getElementById('useSuperJump1_button')) {
                 Object.keys(args.replaceHeartByEnergyCost).filter(energy => Number(energy) <= args.countSuperJump).forEach(energy => {
                     const energyCost = Number(energy);
@@ -3030,6 +3034,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.takeAction('useInvincibleEvolution', {
             evolutionType
         });
+    }
+
+    public useCandyEvolution() {
+        if(!(this as any).checkAction('useCandyEvolution')) {
+            return;
+        }
+
+        this.takeAction('useCandyEvolution');
     }
 
     public skipWings() {

@@ -205,6 +205,55 @@ trait EvolutionCardsActionTrait {
         $this->reduceInterventionDamages($playerId, $intervention, -1);
         $this->resolveRemainingDamages($intervention, true, false);
     }
+    
+    function useCandyEvolution() {
+        $this->checkAction('useCandyEvolution');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        if ($this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) == 0) {
+            throw new \BgaUserException('No Candy Evolution');
+        }
+
+        if ($this->canLoseHealth($playerId, 999) != null) {
+            throw new \BgaUserException('You already invincible');
+        }
+
+        $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+
+        $evolution = $this->getEvolutionsOfType($playerId, CANDY_EVOLUTION, true, true)[0];
+
+        $this->evolutionCards->moveCard($evolution->id, 'table', $playerId);
+
+        $this->playEvolutionToTable($playerId, $evolution, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
+
+        $intervention = $this->getDamageIntervention();
+        $damageDealerId = null;
+        $clawDamage = null;
+        foreach($intervention->damages as $damage) {
+            if ($damage->playerId == $playerId) {
+                $damageDealerId = $damage->damageDealerId;
+                $clawDamage = $damage->clawDamage;
+            }
+        }
+
+        if ($clawDamage === null || $damageDealerId === null || $damageDealerId === 0) {
+            throw new \BgaUserException('You can only use it when wounded');
+        }
+
+        $fromPlayerId = $playerId;
+        $toPlayerId = $damageDealerId;
+        $this->removeEvolution($fromPlayerId, $evolution);
+        $this->evolutionCards->moveCard($evolution->id, 'hand', $toPlayerId);
+        $message = /*client TODOPUHA translate*/('${player_name2} use ${card_name} to avoid damages and gives ${card_name} to ${player_name}');
+        $this->notifNewEvolutionCard($toPlayerId, $evolution, $message, [
+            'card_name' => 3000 + $evolution->type,
+            'player_name2' => $this->getPlayerName($fromPlayerId),
+        ]);
+
+        $this->reduceInterventionDamages($playerId, $intervention, -1);
+        $this->resolveRemainingDamages($intervention, true, false);
+    }
   	
     function putEnergyOnBambooSupply() {
         $this->checkAction('putEnergyOnBambooSupply');

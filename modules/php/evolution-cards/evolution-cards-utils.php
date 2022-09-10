@@ -390,6 +390,9 @@ trait EvolutionCardsUtilTrait {
             case FEAST_OF_CROWS_EVOLUTION:
                 $this->applyFeastOfCrows($playerId, $card);
                 break;
+            case CANDY_EVOLUTION:
+                $this->applyGetHealth($playerId, 1, $logCardType, $playerId);
+                break;
             // Cthulhu
             // Anubis
             // King Kong
@@ -465,13 +468,13 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
-    function notifNewEvolutionCard(int $playerId, EvolutionCard $card, $message = '') {
-        $this->notifyPlayer($playerId, "addEvolutionCardInHand", '', [
+    function notifNewEvolutionCard(int $playerId, EvolutionCard $evolution, $message = '', $args = []) {
+        $this->notifyPlayer($playerId, "addEvolutionCardInHand", '', $args + [
             'playerId' => $playerId,
-            'card' => $card,
+            'card' => $evolution,
         ]);    
 
-        $this->notifyAllPlayers("addEvolutionCardInHand", $message, [
+        $this->notifyAllPlayers("addEvolutionCardInHand", $message, $args + [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
         ]);

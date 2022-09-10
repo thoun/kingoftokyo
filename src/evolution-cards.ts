@@ -248,6 +248,7 @@ class EvolutionCards {
             case 82: return /*_TODOPUHA*/("You have one less Roll each turn.");
             case 83: return /*_TODOPUHA*/("All Monsters with 12 or more [Star] lose 2[Heart].");
             case 86: return /*_TODOPUHA*/("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
+            case 88: return "+1[Heart]<br>" + /*_TODOPUHA*/("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
             // Pandakaï
             case 131: return _("Gain 6[Energy]. All other Monsters gain 3[Energy].");  
             case 132: return _("Play when you enter <i>Tokyo</i>. All Monsters outside of <i>Tokyo</i> lose 2[Heart] each. Gain 1[Energy], then leave <i>Tokyo</i>. No Monster takes your place.");

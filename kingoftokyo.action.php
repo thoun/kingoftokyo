@@ -651,6 +651,14 @@
 
         self::ajaxResponse();
     }
+    
+    public function useCandyEvolution() {
+        self::setAjaxMode();
+
+        $this->game->useCandyEvolution();
+
+        self::ajaxResponse();
+    }
 
     public function skipWings() {
         self::setAjaxMode();

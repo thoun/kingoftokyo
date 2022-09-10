@@ -1096,7 +1096,7 @@ trait UtilTrait {
         $canDo = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
             $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
             ($this->countCardOfType($playerId, WINGS_CARD) > 0 && $this->canLoseHealth($playerId, $damage) == null) ||
-            ($this->isPowerUpExpansion() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0)) ||
+            ($this->isPowerUpExpansion() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0)) ||
             $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
 
         if ($canDo) {
