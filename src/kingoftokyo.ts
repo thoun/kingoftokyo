@@ -1978,11 +1978,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (argsBuyCard.gotSuperiorAlienTechnology) {
             cardsCosts = {...cardsCosts, ...argsBuyCard.cardsCostsSuperiorAlienTechnology};
         }
-        Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(cardId => {
-            if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
-                cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
-            }
-        });
+        if (argsBuyCard.cardsCostsBobbingForApples) {
+            Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(cardId => {
+                if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
+                    cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
+                }
+            });
+        }
 
         this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
 

@@ -5758,11 +5758,13 @@ var KingOfTokyo = /** @class */ (function () {
         if (argsBuyCard.gotSuperiorAlienTechnology) {
             cardsCosts = __assign(__assign({}, cardsCosts), argsBuyCard.cardsCostsSuperiorAlienTechnology);
         }
-        Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(function (cardId) {
-            if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
-                cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
-            }
-        });
+        if (argsBuyCard.cardsCostsBobbingForApples) {
+            Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(function (cardId) {
+                if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
+                    cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
+                }
+            });
+        }
         this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
         // renew button
         if (buyState && document.getElementById('renew_button')) {
