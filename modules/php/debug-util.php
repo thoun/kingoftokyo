@@ -216,8 +216,9 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343494"); // gigazaur
-            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343494"); // pandakai
+            //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343494"); // pandakai
+            $this->DbQuery("UPDATE player SET `player_monster` = 8 where `player_id` = 2343492"); // pumpkin jack
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343493"); // cyber bunny
             //$this->DbQuery("UPDATE player SET `player_monster` = 15 where `player_id` = 2343492"); // kraken
 
@@ -248,7 +249,8 @@ trait DebugUtilTrait {
             //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
-            //$this->debugSetEvolutionInHand(SCYTHE_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(DETACHABLE_HEAD_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(IGNIS_FATUS_EVOLUTION, 2343493, true, 2343492);
             //$this->debugSetEvolutionInHand(WORST_NIGHTMARE_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(TRICK_OR_THREAT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);

@@ -153,6 +153,10 @@ trait EvolutionCardsUtilTrait {
             }
         }
 
+        if ($this->EVOLUTION_CARDS_TYPES[$cardType] == 3) {
+            throw new \BgaUserException(/*self::_TODOPUHA*/("You can only play this evolution now, you'll be asked to use it when you wound a Monster"));
+        }
+
         switch($cardType) {
             case NINE_LIVES_EVOLUTION:
             case SIMIAN_SCAMPER_EVOLUTION:
@@ -1258,5 +1262,10 @@ trait EvolutionCardsUtilTrait {
         $this->moveToTokyoFreeSpot($playerId);
         $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
         $this->goToState($this->redirectAfterHalfMovePhase());
+    }
+
+    function isGiftCardsInPlay() {
+        $players = $this->getPlayers(true);
+        return $this->array_some($players, fn($player) => in_array($player->monster % 100, [7, 8]));
     }
 }

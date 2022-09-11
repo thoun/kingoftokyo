@@ -7,6 +7,7 @@ class Player {
     public string $name;
     public string $color;
     public int $no;
+    public int $monster;
     public int $score;
     public int $health;
     public int $turnLostHealth;
@@ -27,6 +28,7 @@ class Player {
         $this->name = $dbPlayer['player_name'];
         $this->color = $dbPlayer['player_color'];
         $this->no = intval($dbPlayer['player_no']);
+        $this->monster = intval($dbPlayer['player_monster']);
         $this->score = intval($dbPlayer['player_score']);
         $this->health = intval($dbPlayer['player_health']);
         $this->turnLostHealth = intval($dbPlayer['player_turn_health']);

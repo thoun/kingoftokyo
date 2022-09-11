@@ -665,7 +665,7 @@ $playerActionsGameStates = [
         "type" => "game",
         "action" => "stEnterTokyo",
         "transitions" => [
-            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
+            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION,
             "buyCard" => ST_PLAYER_BUY_CARD,
         ],
     ],
@@ -681,17 +681,19 @@ $playerActionsGameStates = [
         "transitions" => [],        
     ],
 
-    ST_PLAYER_STEAL_COSTUME_CARD => [
+    ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION => [
         "name" => "stealCostumeCard",
         "description" => clienttranslate('${actplayer} can steal a Costume card'),
         "descriptionmyturn" => clienttranslate('${you} can steal a Costume card'),
+        "descriptionStealAndGive" => /*client TODOPUHA translate*/('${actplayer} can steal a Costume card and give a Gift Evolution'),
+        "descriptionmyturnStealAndGive" => /*client TODOPUHA translate*/('${you} can steal a Costume card and give a Gift Evolution'),
+        "descriptionGive" => /*client TODOPUHA translate*/('${actplayer} can give a Gift Evolution'),
+        "descriptionmyturnGive" => /*client TODOPUHA translate*/('${you} can give a Gift Evolution'),
         "type" => "activeplayer",
         "args" => "argStealCostumeCard",
         "action" => "stStealCostumeCard",
-        "possibleactions" => [ "stealCostumeCard", "endStealCostume" ],
-        "transitions" => [
-            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD,
-        ]
+        "possibleactions" => [ "stealCostumeCard", 'giveGiftEvolution', "endStealCostume" ],
+        "transitions" => [],
     ],
 
     ST_PLAYER_CHANGE_FORM => [

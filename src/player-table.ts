@@ -508,6 +508,28 @@ class PlayerTable {
             cardDiv.classList.remove('highlight-evolution');
         });
     }
+    
+    public highlightVisibleEvolutions(cards: EvolutionCard[]) {
+        if (!this.visibleEvolutionCards) {
+            return;
+        }
+
+        cards.forEach(card => {
+            const cardDiv = document.getElementById(`${this.visibleEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
+            cardDiv?.classList.add('highlight-evolution');
+        });
+    }
+    
+    public unhighlightVisibleEvolutions() {
+        if (!this.visibleEvolutionCards) {
+            return;
+        }
+        
+        this.visibleEvolutionCards?.items.forEach(card => {
+            const cardDiv = document.getElementById(`${this.visibleEvolutionCards.container_div.id}_item_${card.id}`) as HTMLDivElement;
+            cardDiv.classList.remove('highlight-evolution');
+        });
+    }
 
     public removeTarget() {
         const target = document.getElementById(`player-table${this.playerId}-target`);

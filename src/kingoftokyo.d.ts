@@ -362,8 +362,12 @@ interface EnteringResolveSmashDiceArgs extends EnteringDiceArgs {
 
 interface EnteringStealCostumeCardArgs {
     disabledIds: number[];
+    woundedPlayersIds: number[];
     canBuyFromPlayers: boolean;
     cardsCosts: { [cardId: number]: number };
+    canGiveGift: boolean;
+    tableGifts: EvolutionCard[];
+    highlighted: EvolutionCard[];
 }
 
 interface EnteringChangeFormArgs {

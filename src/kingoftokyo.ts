@@ -748,9 +748,26 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringStealCostumeCard(args: EnteringStealCostumeCardArgs, isCurrentPlayerActive: boolean) {
+        if (!args.canGiveGift && !args.canBuyFromPlayers && !this.isHalloweenExpansion()) {
+            this.setGamestateDescription('Give');
+        }
+        if (args.canGiveGift) {
+            this.setGamestateDescription(args.canBuyFromPlayers ? `StealAndGive` : 'Give');
+
+            if (isCurrentPlayerActive) {
+                this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards?.setSelectionMode(1);
+            }
+        }
+
         if (isCurrentPlayerActive) {
-            this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
-            this.setBuyDisabledCard(args);
+            if (args.canBuyFromPlayers) {
+                this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+                this.setBuyDisabledCard(args);
+            }
+
+            const playerId = this.getPlayerId();
+            this.getPlayerTable(playerId).highlightHiddenEvolutions(args.highlighted.filter(card => card.location_arg === playerId));
+            this.getPlayerTable(playerId).highlightVisibleEvolutions(args.tableGifts);
         }
     }
 
@@ -951,10 +968,12 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.removeSkipBuyPhaseToggle();
                 break;
             case 'leaveTokyoExchangeCard':
-            case 'stealCostumeCard':
             case 'buyCard':
             case 'opportunistBuyCard':
                 this.onLeavingBuyCard();
+                break;
+            case 'stealCostumeCard':
+                this.onLeavingStealCostumeCard();
                 break;
             case 'cardIsBought':
                 this.onLeavingStepEvolution();
@@ -1002,6 +1021,18 @@ class KingOfTokyo implements KingOfTokyoGame {
         dojo.query('.stockitem').removeClass('disabled');
         this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));            
         this.tableCenter.hidePickStock();
+    }
+
+    private onLeavingStealCostumeCard() {
+        this.onLeavingBuyCard();
+
+        const playerId = this.getPlayerId();
+        const playerTable = this.getPlayerTable(playerId);
+        if (playerTable) {
+            playerTable.unhighlightHiddenEvolutions();
+            playerTable.unhighlightVisibleEvolutions();
+            playerTable.visibleEvolutionCards?.setSelectionMode(0);
+        }
     }
 
     private onLeavingChooseMimickedCard() {
@@ -1284,9 +1315,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'stealCostumeCard':
                     const argsStealCostumeCard = args as EnteringStealCostumeCardArgs;
 
-                    (this as any).addActionButton('endStealCostume_button', _("Skip"), 'endStealCostume', null, null, 'red');
+                    (this as any).addActionButton('endStealCostume_button', _("Skip"), () => this.endStealCostume(), null, null, 'red');
 
-                    if (!argsStealCostumeCard.canBuyFromPlayers) {
+                    if (!argsStealCostumeCard.canBuyFromPlayers && !argsStealCostumeCard.canGiveGift) {
                         this.startActionTimer('endStealCostume_button', ACTION_TIMER_DURATION);
                     }
                     break;
@@ -1547,11 +1578,11 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.players[playerId];
     }
 
-    public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false) {
+    public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false, dojoPlace: string = undefined) {
         const html = `<button class="action-button bgabutton bgabutton_blue" id="${id}">
             ${text}
         </button>`;
-        dojo.place(html, destinationId);
+        dojo.place(html, destinationId, dojoPlace);
         if (disabled) {
             dojo.addClass(id, 'disabled');
         }
@@ -1912,6 +1943,19 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    public onSelectGiftEvolution(cardId: number) {
+        let generalActionButtons = Array.from(document.getElementById(`generalactions`).getElementsByClassName(`action-button`)) as HTMLElement[];
+        generalActionButtons = generalActionButtons.slice(0, generalActionButtons.findIndex(button => button.id == 'endStealCostume_button'));
+        generalActionButtons.forEach(generalActionButton => generalActionButton.remove());
+        const args = this.gamedatas.gamestate.args as EnteringStealCostumeCardArgs;
+        args.woundedPlayersIds.slice().reverse().forEach(woundedPlayerId => {
+            const woundedPlayer = this.getPlayer(woundedPlayerId);
+            const cardType = Number((document.querySelector(`[data-evolution-id="${cardId}"]`) as HTMLDivElement).dataset.evolutionType);
+            const label = /*TODOPUHA_*/('Give ${card_name} to ${player_name}').replace('${card_name}', this.evolutionCards.getCardName(cardType, 'text-only')).replace('${player_name}', `<strong style="color: #${woundedPlayer.color};">${woundedPlayer.name}</strong>`);
+            this.createButton('endStealCostume_button', `giveGift${cardId}to${woundedPlayerId}_button`, label, () => this.giveGiftEvolution(cardId, woundedPlayerId), false, 'before')
+        });
+    }
+
     public onHiddenEvolutionClick(cardId: number) {
         const stateName = this.getStateName();
         if (stateName === 'answerQuestion') {
@@ -1920,6 +1964,9 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
                 return;
             }
+        } else if (stateName === 'stealCostumeCard') {
+            this.onSelectGiftEvolution(cardId);
+            return;
         }
         
         this.playEvolution(cardId);
@@ -1934,6 +1981,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             } else if (args.question.code === 'IcyReflection') {
                 this.chooseMimickedEvolution(Number(cardId));
             }
+        } else if (stateName === 'stealCostumeCard') {
+            this.onSelectGiftEvolution(cardId);
         }
     }
     
@@ -3170,6 +3219,13 @@ class KingOfTokyo implements KingOfTokyoGame {
             id
         });
     }
+
+    public giveGiftEvolution(id: number, toPlayerId: number) {
+        this.takeAction('giveGiftEvolution', {
+            id,
+            toPlayerId,
+        });
+    }
     
     public useYinYang() {
         if(!(this as any).checkAction('useYinYang')) {
@@ -3706,6 +3762,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
             } as Notif<NotifRemoveEvolutionsArgs>), notif.args.delay);
         } else {
+            console.log(notif.args, notif.args.cards[0].location);
             this.getPlayerTable(notif.args.playerId).removeEvolutions(notif.args.cards);
             this.handCounters[notif.args.playerId].incValue(-notif.args.cards.filter(card => card.location === 'hand').length);
             this.tableManager.tableHeightChange(); // adapt after removed cards

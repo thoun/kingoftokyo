@@ -101,7 +101,7 @@ trait CardsActionTrait {
         $this->updateKillPlayersScoreAux();
         $this->eliminatePlayers($playerId);
 
-        $this->gamestate->nextState('stealCostumeCard');
+        $this->goToState(ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION);
     }
 
     function endStealCostume() {

@@ -547,6 +547,10 @@ button, a {
   .action-button-toggle-button-selected {
     border: 3px solid #4871b6;
   }
+
+  button {
+    width: auto;
+  }
 }
 
 .anubis-icon {

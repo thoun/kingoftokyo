@@ -2966,6 +2966,9 @@ button .icon, a .icon {
 #generalactions .action-button-toggle-button-selected {
   border: 3px solid #4871b6;
 }
+#generalactions button {
+  width: auto;
+}
 
 .anubis-icon {
   background: url("img/anubis_die_icons.png");

@@ -789,6 +789,17 @@
         self::ajaxResponse();
     }
   	
+    public function giveGiftEvolution() {
+        self::setAjaxMode();
+
+        $id = self::getArg("id", AT_posint, true);
+        $toPlayerId = self::getArg("toPlayerId", AT_posint, true);
+
+        $this->game->giveGiftEvolution($id, $toPlayerId);
+
+        self::ajaxResponse();
+    }
+  	
     public function useYinYang() {
         self::setAjaxMode();
 

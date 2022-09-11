@@ -165,6 +165,21 @@ trait EvolutionCardsActionTrait {
         }
     }
 
+    function giveGiftEvolution(int $id, int $toPlayerId) {
+        $this->checkAction('giveGiftEvolution');
+
+        $fromPlayerId = $this->getCurrentPlayerId();
+        $evolution = $this->getEvolutionCardById($id);
+
+        $this->removeEvolution($fromPlayerId, $evolution, $evolution->location == 'table');
+        $this->evolutionCards->moveCard($evolution->id, 'table', $toPlayerId);
+        $movedEvolution = $this->getEvolutionCardById($id); // so we relead location
+        $this->playEvolutionToTable($toPlayerId, $movedEvolution, '', $fromPlayerId);
+
+        $this->goToState(ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION);
+    }
+
+
     function useYinYang() {
         $this->checkAction('useYinYang');
 

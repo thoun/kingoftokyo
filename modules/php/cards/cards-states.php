@@ -90,18 +90,16 @@ trait CardsStateTrait {
     }
 
     function stStealCostumeCard() {
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
         $playerId = $this->getActivePlayerId();
 
-        if ($diceCounts[6] < 3 || $this->getPlayer($playerId)->eliminated) {
-            // skip state, can't steal cards (not enough smashes) or dead
+        if ($this->getPlayer($playerId)->eliminated) {
+            // skip state, can't steal cards if dead
             $this->goToState($this->redirectAfterStealCostume($playerId));
             return;
         }
         
         $args = $this->argStealCostumeCard();
-        if ($this->autoSkipImpossibleActions() && !$args['canBuyFromPlayers']) {
+        if ($this->autoSkipImpossibleActions() && !$args['canBuyFromPlayers'] && !$args['canGiveGift']) {
             // skip state, can't buy cards
             $this->goToState($this->redirectAfterStealCostume($playerId));
             return;
