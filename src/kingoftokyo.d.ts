@@ -82,8 +82,9 @@ interface GiveSymbolQuestionArgs {
     symbols: number[];
 }
 
-interface TrickOrThreatQuestionArgs {
+interface GiveEnergyOrLoseHeartsQuestionArgs {
     canGiveEnergy: number[];
+    heartNumber: number;
 }
 
 interface IcyReflectionQuestionArgs {

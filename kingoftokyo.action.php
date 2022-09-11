@@ -1054,10 +1054,10 @@
         self::ajaxResponse();
     }
   	
-    public function trickOrThreatLoseHearts() {
+    public function loseHearts() {
         self::setAjaxMode();
 
-        $this->game->trickOrThreatLoseHearts();
+        $this->game->loseHearts();
 
         self::ajaxResponse();
     }

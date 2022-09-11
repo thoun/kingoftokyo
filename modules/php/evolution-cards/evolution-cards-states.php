@@ -41,6 +41,16 @@ trait EvolutionCardsStateTrait {
     function stQuestionsBeforeStartTurn() {
         $playerId = $this->getActivePlayerId();
 
+        $worstNightmareEvolution = $this->getGiftEvolutionOfType($playerId, WORST_NIGHTMARE_EVOLUTION);
+        if ($worstNightmareEvolution != null && !in_array(3000 + $worstNightmareEvolution->id, $this->getUsedCard())) {
+            $applied = $this->applyWorstNightmare($playerId, $worstNightmareEvolution);
+            if ($applied) {
+                return;
+            } else {
+                $this->setUsedCard(3000 + $worstNightmareEvolution->id);
+            }
+        }
+
         $unusedBambooSupplyCard = $this->getFirstUnusedEvolution($playerId, BAMBOO_SUPPLY_EVOLUTION);
         if ($unusedBambooSupplyCard != null) {
             $question = new Question(
@@ -197,8 +207,8 @@ trait EvolutionCardsStateTrait {
     function stAfterAnswerQuestion() {
         $question = $this->getQuestion();
 
-        if ($question->code === 'GiveSymbol' || $question->code === 'TrickOrThreat' || $question->code === 'MegaPurr' || $question->code === 'ElectricCarrot') {
-            if ($question->code === 'GiveSymbol' || $question->code === 'TrickOrThreat' || $question->code === 'MegaPurr') { // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
+        if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts' || $question->code === 'MegaPurr' || $question->code === 'ElectricCarrot') {
+            if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts' || $question->code === 'MegaPurr') { // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
                 $this->removeEvolution($question->args->playerId, $question->args->card);
             }
 

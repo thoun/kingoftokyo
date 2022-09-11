@@ -862,28 +862,26 @@ trait EvolutionCardsUtilTrait {
         $this->applyGiveSymbolQuestion($playerId, $card, $otherPlayers, [4, 0, 5]);
     }
 
-    function applyTrickOrThreat(int $playerId, EvolutionCard $card) {
-        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->health > 0);
-
-        if (count($otherPlayers) == 0) {
-            return;
-        }
-
+    function applyGiveEnergyOrLoseHeartsQuestion(int $playerId, array $otherPlayers, EvolutionCard $card, int $heartNumber) {
         $otherPlayersIds = array_map(fn($player) => $player->id, $otherPlayers);
 
         $canGiveEnergy = array_map(fn($player) => $player->id, array_values(array_filter($otherPlayers, fn($player) => $player->energy > 0)));
 
         $question = new Question(
-            'TrickOrThreat',
-            /*client TODOPUHA translate*/('Other monsters must give 1[Energy] or to ${player_name} or lose 2[Heart]'),
-            /*client TODOPUHA translate*/('${you} must give 1[Energy] or to ${player_name} or lose 2[Heart]'),
+            'GiveEnergyOrLoseHearts',
+            /*client TODOPUHA translate*/('Other monsters must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
+            /*client TODOPUHA translate*/('${you} must give 1[Energy] or to ${player_name} or lose ${heartNumber}[Heart]'),
             [$otherPlayersIds],
             ST_AFTER_ANSWER_QUESTION,
             [ 
                 'card' => $card,
                 'playerId' => $playerId,
-                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
+                '_args' => [ 
+                    'player_name' => $this->getPlayerName($playerId),
+                    'heartNumber' => $heartNumber,
+                 ],
                 'canGiveEnergy' => $canGiveEnergy,
+                'heartNumber' => $heartNumber,
             ]
         );
 
@@ -891,6 +889,27 @@ trait EvolutionCardsUtilTrait {
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
+
+    function applyTrickOrThreat(int $playerId, EvolutionCard $card) {
+        $givers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->health > 0);
+
+        if (count($givers) == 0) {
+            return;
+        }
+        $receiving = $playerId;
+        $this->applyGiveEnergyOrLoseHeartsQuestion($receiving, $givers, $card, 2);
+    }
+
+    function applyWorstNightmare(int $playerId, EvolutionCard $card) {
+        $givers = array_filter([$this->getPlayer($playerId)], fn($player) => $player->energy > 0 || $player->health > 0);
+
+        if (count($givers) == 0) {
+            return false;
+        }
+        $receiving = $card->ownerId;
+        $this->applyGiveEnergyOrLoseHeartsQuestion($receiving, $givers, $card, 1);
+        return true;
     }
 
     function applyDeepDive(int $playerId) {

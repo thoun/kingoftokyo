@@ -323,6 +323,10 @@ trait EvolutionCardsActionTrait {
         
         $this->applyGiveSymbols([$symbol], $playerId, $evolutionPlayerId, 3000 + $question->args->card->type);
 
+        if ($question->args->card->type == WORST_NIGHTMARE_EVOLUTION) {
+            $this->setUsedCard(3000 + $question->args->card->id);
+        }
+
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
@@ -769,15 +773,22 @@ trait EvolutionCardsActionTrait {
         $this->removeStackedStateAndRedirect();
     }
 
-    public function trickOrThreatLoseHearts() {
-        $this->checkAction('trickOrThreatLoseHearts');
+    public function loseHearts() {
+        $this->checkAction('loseHearts');
 
         $playerId = $this->getCurrentPlayerId();
 
         $question = $this->getQuestion();
+        $card = $question->args->card;
 
-        $damage = new Damage($playerId, 2, 0, 3000 + TRICK_OR_THREAT_EVOLUTION);
-        $this->applyDamage($damage);
+        if ($card->type == TRICK_OR_THREAT_EVOLUTION) {
+            $damage = new Damage($playerId, 2, 0, 3000 + TRICK_OR_THREAT_EVOLUTION);
+            $this->applyDamage($damage);
+        } else if ($card->type == WORST_NIGHTMARE_EVOLUTION) {
+            $damage = new Damage($playerId, 1, 0, 3000 + WORST_NIGHTMARE_EVOLUTION);
+            $this->applyDamage($damage);
+            $this->setUsedCard(3000 + $card->id);
+        }
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }

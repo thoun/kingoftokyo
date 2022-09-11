@@ -1488,7 +1488,8 @@ var EvolutionCards = /** @class */ (function () {
             case 67: return _("On your turn, if you make another Monster lose at least 3[Heart], they lose 1 extra [Heart].");
             case 68: return _("When a Monster wounds you, you can give them the [targetToken] token. The Monster who has the [targetToken] token loses 1 extra [Heart] each time you make them lose [Heart].");
             // Boogie Woogie
-            // TODOPUHA 71 72
+            // TODOPUHA 71
+            case 72: return /*_TODOPUHA*/ ("At the beginning of your turn, give 1[Energy] to the <i>Owner</i> of this card or lose 1[Heart]."); // TODOPUHA TOCHECK what if owner dies?
             case 73: return /*_TODOPUHA*/ ("You play with one less die.");
             // TODOPUHA 74
             case 75: return "+2[Heart]";
@@ -5293,14 +5294,14 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                 });
                 break;
-            case 'TrickOrThreat':
-                var trickOrThreatPlayerId = this.getPlayerId();
-                var trickOrThreatQuestionArgs = question.args;
+            case 'GiveEnergyOrLoseHearts':
+                var giveEnergyOrLoseHeartsPlayerId = this.getPlayerId();
+                var giveEnergyOrLoseHeartsQuestionArgs = question.args;
                 this.addActionButton("giveSymbol_button5", formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[5] })), function () { return _this.giveSymbol(5); });
-                if (!trickOrThreatQuestionArgs.canGiveEnergy.includes(trickOrThreatPlayerId)) {
+                if (!giveEnergyOrLoseHeartsQuestionArgs.canGiveEnergy.includes(giveEnergyOrLoseHeartsPlayerId)) {
                     dojo.addClass("giveSymbol_button5", 'disabled');
                 }
-                this.addActionButton("trickOrThreatLoseHearts", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: '2[Heart]' })), function () { return _this.trickOrThreatLoseHearts(); });
+                this.addActionButton("loseHearts_button", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: giveEnergyOrLoseHeartsQuestionArgs.heartNumber + "[Heart]" })), function () { return _this.loseHearts(); });
                 break;
             case 'FreezeRay':
                 var _loop_5 = function (face) {
@@ -6855,11 +6856,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.takeAction('freezeRayChooseOpponent', { playerId: playerId });
     };
-    KingOfTokyo.prototype.trickOrThreatLoseHearts = function () {
-        if (!this.checkAction('trickOrThreatLoseHearts')) {
+    KingOfTokyo.prototype.loseHearts = function () {
+        if (!this.checkAction('loseHearts')) {
             return;
         }
-        this.takeAction('trickOrThreatLoseHearts');
+        this.takeAction('loseHearts');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
