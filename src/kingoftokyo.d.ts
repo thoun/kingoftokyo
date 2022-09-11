@@ -128,6 +128,7 @@ interface KingOfTokyoPlayer extends Player {
     location: number;
     maxHealth: number;
     playerDead: number;
+    zombified: boolean;
     tokyoTowerLevels?: number[];
     berserk?: boolean;
     cultists: number;
@@ -723,4 +724,9 @@ interface NotifOwnedEvolutionsArgs {
 interface NotifSuperiorAlienTechnologyRolledDieArgs {
     dieValue: number;
     card: Card;
+}
+
+interface NotifResurrectArgs {
+    playerId: number;
+    zombified: boolean;
 }

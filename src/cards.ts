@@ -953,6 +953,8 @@ class Cards {
             }
             (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
         }
+        cardDiv.dataset.cardId = cardDiv.id.split('_')[2];
+        cardDiv.dataset.cardType = ''+cardType;
     }
 
     private getCardTypeName(cardType: number) {

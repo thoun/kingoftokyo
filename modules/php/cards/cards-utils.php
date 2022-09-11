@@ -378,7 +378,11 @@ trait CardsUtilTrait {
     function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, bool $removeEnergy, int $newHearts, int $points) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
+        $zombified = $this->getPlayer($playerId)->zombified;
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        if ($zombified) {
+            $cards = array_filter($cards, fn($card) => $card->type != ZOMBIFY_CARD);
+        }
         $this->removeCards($playerId, $cards);
         // discard all tiles
         if ($this->isWickednessExpansion()) {
@@ -428,11 +432,12 @@ trait CardsUtilTrait {
             'health' => $newHearts,
         ]);
 
-        $this->notifyAllPlayers('log', $message, [
+        $this->notifyAllPlayers('resurrect', $message, [
             'playerId' => $playerId,
             'player_name' => $playerName,
             'health' => $newHearts,
             'card_name' => $logCardType,
+            'zombified' => $zombified,
         ]);
 
         if ($this->inTokyo($playerId)) {
@@ -458,7 +463,7 @@ trait CardsUtilTrait {
 
         $this->applyResurrectCard(
             $playerId, 
-            2000 + ZOMBIFY_CARD, 
+            ZOMBIFY_CARD, 
             /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/,
             true, 
             false,

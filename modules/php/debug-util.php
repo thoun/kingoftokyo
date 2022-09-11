@@ -22,13 +22,13 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343493, 4);
-        //$this->debugSetEnergy(20);
-        //$this->debugSetPlayerPoints(2343493, 2);
+        $this->debugSetEnergy(20);
+        $this->debugSetPlayerPoints(2343493, 2);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 7);
-        //$this->debugSetPlayerHealth(2343493, 1);
+        $this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -95,7 +95,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
-        //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
+        $this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
@@ -128,8 +128,8 @@ trait DebugUtilTrait {
             //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
             //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
             //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
-            //$this->debugSetCardInHand(ZOMBIFY_CARD, 2343493);
-            $this->debugSetCardInHand(REFLECTIVE_HIDE_CARD, 2343493);
+            $this->debugSetCardInHand(ZOMBIFY_CARD, 2343493);
+            //$this->debugSetCardInHand(REFLECTIVE_HIDE_CARD, 2343493);
         }
 
         // halloween

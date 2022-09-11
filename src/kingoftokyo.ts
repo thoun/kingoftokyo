@@ -3589,7 +3589,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['giveTarget', 1],
             ['updateCancelDamage', 1],
             ['ownedEvolutions', 1],
-            ['log500', 500]
+            ['resurrect', 1],
+            ['log500', 500],
         ];
     
         notifs.forEach((notif) => {
@@ -4085,6 +4086,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).doShowBubble('dice0', dojo.string.substitute(message, {
                 'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');
+        }
+    }
+
+    notif_resurrect(notif: Notif<NotifResurrectArgs>) {
+        if (notif.args.zombified) {
+            this.getPlayerTable(notif.args.playerId).zombify();
         }
     }
     

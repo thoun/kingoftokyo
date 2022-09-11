@@ -388,8 +388,6 @@ class EvolutionCards {
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {
         cardDiv.classList.add('kot-evolution');
-        cardDiv.dataset.evolutionId = cardDiv.id.split('_')[2];
-        cardDiv.dataset.evolutionType = ''+cardType;
         const type = this.getCardTypeName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
 
@@ -470,6 +468,8 @@ class EvolutionCards {
         }
 
         this.setDivAsCard(cardDiv, cardType); 
+        cardDiv.dataset.evolutionId = cardDiv.id.split('_')[2];
+        cardDiv.dataset.evolutionType = ''+cardType;
         (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
 

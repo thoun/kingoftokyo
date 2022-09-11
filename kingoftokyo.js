@@ -985,6 +985,8 @@ var Cards = /** @class */ (function () {
             }
             this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
         }
+        cardDiv.dataset.cardId = cardDiv.id.split('_')[2];
+        cardDiv.dataset.cardType = '' + cardType;
     };
     Cards.prototype.getCardTypeName = function (cardType) {
         if (cardType < 100) {
@@ -1621,8 +1623,6 @@ var EvolutionCards = /** @class */ (function () {
     };
     EvolutionCards.prototype.setDivAsCard = function (cardDiv, cardType) {
         cardDiv.classList.add('kot-evolution');
-        cardDiv.dataset.evolutionId = cardDiv.id.split('_')[2];
-        cardDiv.dataset.evolutionType = '' + cardType;
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         cardDiv.innerHTML = "\n        <div class=\"evolution-type\">" + type + "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n                    <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        </div>      \n        ";
@@ -1679,6 +1679,8 @@ var EvolutionCards = /** @class */ (function () {
             return;
         }
         this.setDivAsCard(cardDiv, cardType);
+        cardDiv.dataset.evolutionId = cardDiv.id.split('_')[2];
+        cardDiv.dataset.evolutionType = '' + cardType;
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
     EvolutionCards.prototype.getCardTypeName = function (cardType) {
@@ -1878,6 +1880,7 @@ var WickednessTiles = /** @class */ (function () {
     };
     WickednessTiles.prototype.getTooltip = function (cardType) {
         var level = this.getCardLevel(cardType);
+        console.log(cardType, this.getCardDescription(cardType));
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardType) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + description + "</p>\n        </div>";
         return tooltip;
@@ -2129,6 +2132,9 @@ var PlayerTable = /** @class */ (function () {
             if (player.visibleEvolutions) {
                 this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
             }
+        }
+        if (player.zombified) {
+            this.zombify();
         }
     }
     ;
@@ -2441,6 +2447,10 @@ var PlayerTable = /** @class */ (function () {
         if (this.hiddenEvolutionCards) {
             document.getElementById("hand-evolution-cards-wrapper").classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
         }
+    };
+    PlayerTable.prototype.zombify = function () {
+        var _a;
+        (_a = document.querySelector("#cards-" + this.player.id + " [data-card-type=\"55\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('highlight-zombify');
     };
     return PlayerTable;
 }());
@@ -7056,7 +7066,8 @@ var KingOfTokyo = /** @class */ (function () {
             ['giveTarget', 1],
             ['updateCancelDamage', 1],
             ['ownedEvolutions', 1],
-            ['log500', 500]
+            ['resurrect', 1],
+            ['log500', 500],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_" + notif[0]);
@@ -7470,6 +7481,11 @@ var KingOfTokyo = /** @class */ (function () {
             this.doShowBubble('dice0', dojo.string.substitute(message, {
                 'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');
+        }
+    };
+    KingOfTokyo.prototype.notif_resurrect = function (notif) {
+        if (notif.args.zombified) {
+            this.getPlayerTable(notif.args.playerId).zombify();
         }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {

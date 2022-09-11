@@ -397,7 +397,7 @@ class KingOfTokyo extends Table {
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead ";
+        $sql = "SELECT player_id id, player_score score, player_health health, player_energy energy, player_location `location`, player_monster monster, player_no, player_poison_tokens as poisonTokens, player_shrink_ray_tokens as shrinkRayTokens, player_dead playerDead, player_zombified zombified ";
         if ($isCybertoothExpansion) {
             $sql .= ", player_berserk berserk ";
         }
@@ -438,6 +438,7 @@ class KingOfTokyo extends Table {
             $playerDb['poisonTokens'] = intval($playerDb['poisonTokens']);
             $playerDb['shrinkRayTokens'] = intval($playerDb['shrinkRayTokens']);
             $playerDb['playerDead'] = intval($playerDb['playerDead']);
+            $playerDb['zombified'] = boolval($playerDb['zombified']);
 
             $playerDb['rapidHealing'] = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
             $playerDb['maxHealth'] = $this->getPlayerMaxHealth($playerId);

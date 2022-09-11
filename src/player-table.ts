@@ -199,6 +199,10 @@ class PlayerTable {
                 this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
             }
         }
+
+        if (player.zombified) {
+            this.zombify();
+        }
     }
 
     public initPlacement() {
@@ -552,5 +556,9 @@ class PlayerTable {
         if (this.hiddenEvolutionCards) {
             document.getElementById(`hand-evolution-cards-wrapper`).classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
         }
+    }
+    
+    public zombify() {
+        document.querySelector(`#cards-${this.player.id} [data-card-type="55"]`)?.classList.add('highlight-zombify');
     }
 }
