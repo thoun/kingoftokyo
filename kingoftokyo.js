@@ -1880,7 +1880,6 @@ var WickednessTiles = /** @class */ (function () {
     };
     WickednessTiles.prototype.getTooltip = function (cardType) {
         var level = this.getCardLevel(cardType);
-        console.log(cardType, this.getCardDescription(cardType));
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardType) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + description + "</p>\n        </div>";
         return tooltip;
@@ -3994,9 +3993,6 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">" + _('Active expansions') + "</div>\n                    <div class=\"expansion-zone-list\">";
             for (var i = 1; i <= EXPANSION_NUMBER; i++) {
                 var activated = this.activatedExpansions.includes(i);
-                if (i == 6 && this.gamedatas.darkEdition) {
-                    activated = false;
-                }
                 html += "<div class=\"expansion-zone\" data-expansion=\"" + i + "\" data-activated=\"" + activated.toString() + "\"><div class=\"expansion-icon\"></div></div>";
             }
             html += "        </div>\n                </button>\n            </div>";

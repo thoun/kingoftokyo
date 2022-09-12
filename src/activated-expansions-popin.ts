@@ -76,10 +76,7 @@ class ActivatedExpansionsPopin {
                     <div class="expansion-zone-list">`;
 
             for (let i = 1; i <= EXPANSION_NUMBER; i++) {
-                let activated = this.activatedExpansions.includes(i);
-                if (i == 6 && this.gamedatas.darkEdition) {
-                    activated = false;
-                }
+                const activated = this.activatedExpansions.includes(i);
                 html += `<div class="expansion-zone" data-expansion="${i}" data-activated="${activated.toString()}"><div class="expansion-icon"></div></div>`;
             }
                     
