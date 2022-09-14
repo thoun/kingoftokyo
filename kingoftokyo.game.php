@@ -806,5 +806,13 @@ class KingOfTokyo extends Table {
             $sql = "ALTER TABLE `DBPREFIX_turn_damages` ADD `claw_damages` tinyint unsigned NOT NULL DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
+
+        if ($from_version <= 2209141913) {
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `turn_damages` LIKE 'claw_damages'");
+            if (is_null($result)) {
+                $sql = "ALTER TABLE `DBPREFIX_turn_damages` ADD `claw_damages` tinyint unsigned NOT NULL DEFAULT 0";
+                self::applyDbUpgradeToAllDB($sql);
+            }
+        }
     }
 }
