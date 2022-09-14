@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `turn_damages` (
   `from` INT(10) unsigned NOT NULL,
   `to` INT(10) unsigned NOT NULL,
   `damages` TINYINT unsigned NOT NULL,
+  `claw_damages` tinyint unsigned NOT NULL,
   PRIMARY KEY (`from`, `to`)
 ) ENGINE=InnoDB;
 

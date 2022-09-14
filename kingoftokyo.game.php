@@ -801,5 +801,10 @@ class KingOfTokyo extends Table {
                 self::applyDbUpgradeToAllDB($sql);
             }
         }
+
+        if ($from_version <= 2209111657) {
+            $sql = "ALTER TABLE `DBPREFIX_turn_damages` ADD `claw_damages` tinyint unsigned NOT NULL DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
     }
 }

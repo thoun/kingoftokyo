@@ -97,7 +97,7 @@ trait UtilTrait {
     }
 
     function isDarkEdition() {
-        return $this->getBgaEnvironment() == 'studio' || intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return /*$this->getBgaEnvironment() == 'studio' ||*/ intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
     }
 
     function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
@@ -928,8 +928,9 @@ trait UtilTrait {
             $this->applyLosePoints($playerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
             $this->applyGetPoints($damageDealerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
         }
-            
-        $this->DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`)  VALUES ($damageDealerId, $playerId, $effectiveDamage) ON DUPLICATE KEY UPDATE `damages` = `damages` + $effectiveDamage");
+        
+        $clawDamages = $damage->clawDamage !== null ? 1 : 0;
+        $this->DbQuery("INSERT INTO `turn_damages`(`from`, `to`, `damages`, `claw_damages`)  VALUES ($damageDealerId, $playerId, $effectiveDamage, $clawDamages) ON DUPLICATE KEY UPDATE `damages` = `damages` + $effectiveDamage, `claw_damages` = $clawDamages");
 
         // pirate
         $pirateCardCount = $this->countCardOfType($damageDealerId, PIRATE_CARD);
@@ -1230,7 +1231,7 @@ trait UtilTrait {
     }
 
     function playersWoundedByActivePlayerThisTurn(int $playerId) {
-        $dbResults = $this->getCollectionFromDb("SELECT `to` FROM `turn_damages` WHERE `from` = $playerId");
+        $dbResults = $this->getCollectionFromDb("SELECT `to` FROM `turn_damages` WHERE `from` = $playerId AND `claw_damages` = 1");
         return array_map(fn($dbResult) => intval($dbResult['to']), array_values($dbResults));
     }
 

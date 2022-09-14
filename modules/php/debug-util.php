@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
@@ -28,7 +28,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 7);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -95,7 +95,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
-        $this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
+        //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
         //$this->debugSetCardInHand(URBAVORE_CARD, 2343492);
         //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
@@ -134,11 +134,11 @@ trait DebugUtilTrait {
 
         // halloween
         if ($this->isHalloweenExpansion()) {
-            //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
-            //$this->debugSetCardInHand(GHOST_CARD, 2343492);
+            $this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
+            $this->debugSetCardInHand(GHOST_CARD, 2343494);
             $this->debugSetCardInHand(CLOWN_CARD, 2343492);
             //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
-            $this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
+            //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
             //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
             //$this->debugSetCardInHand(WITCH_CARD, 2343493);
