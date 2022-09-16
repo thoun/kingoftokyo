@@ -71,7 +71,7 @@ trait EvolutionCardsStateTrait {
         $unsetFreezeRayCard = $this->getFirstUnsetFreezeRay($playerId);
         if ($unsetFreezeRayCard != null) {
             $ownerId = $unsetFreezeRayCard->ownerId;
-            if ($playerId != $ownerId) {
+            if ($playerId != $ownerId && !$this->getPlayer($ownerId)->eliminated) {
                 $question = new Question(
                     'FreezeRay',
                     clienttranslate('${actplayer} must choose a die face that will have no effect that turn'),
@@ -85,6 +85,8 @@ trait EvolutionCardsStateTrait {
 
                 $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
                 return;
+            } else {
+                $this->setUsedCard(3000 + $unsetFreezeRayCard->id);
             }
         }
 
