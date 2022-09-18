@@ -66,11 +66,13 @@ trait PlayerActionTrait {
             throw new \BgaUserException('Impossible to yield Tokyo');
         }
         
-        $this->leaveTokyo($playerId, $useCard);
         $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
+        $this->leaveTokyo($playerId, $useCard);
     
-        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
-        $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
+        // leaveTokyo may have already made transition with Chest Thumping
+        if (intval($this->gamestate->state_id()) == ST_MULTIPLAYER_LEAVE_TOKYO) {
+            $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
+        }
     }
 
     function setSkipBuyPhase(bool $skipBuyPhase) {

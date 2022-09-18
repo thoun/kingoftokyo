@@ -360,7 +360,7 @@ trait PlayerStateTrait {
         }
 
         if (count($couldPlay) > 0) {
-            $this->gamestate->setPlayersMultiactive($couldPlay, 'next');
+            $this->gamestate->setPlayersMultiactive($couldPlay, 'next', true);
         } else {
             $this->goToState($this->redirectAfterHalfMovePhase());
         }
