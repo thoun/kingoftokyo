@@ -164,7 +164,10 @@ trait EvolutionCardsUtilTrait {
             case RABBIT_S_FOOT_EVOLUTION:
                 throw new \BgaUserException(self::_("You can't play this Evolution now, you'll be asked to use it when you'll take damage"));
             case SAURIAN_ADAPTABILITY_EVOLUTION:
-                throw new \BgaUserException(self::_("You can't play this Evolution now, you'll be asked to use it when you resolve your dice"));
+                $message = $stateId === ST_PLAYER_CHANGE_DIE ? 
+                    self::_("Click on a die face you want to change") :
+                    self::_("You can't play this Evolution now, you'll be asked to use it when you change your dice result");
+                throw new \BgaUserException($message);
             case FELINE_MOTOR_EVOLUTION:
                 $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
                 if (in_array($playerId, $startedTurnInTokyo)) {

@@ -211,11 +211,11 @@ trait DebugUtilTrait {
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
             $this->DbQuery("UPDATE player SET `ask_play_evolution` = 1");
             // set monster
-            $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
+            //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
             //$this->DbQuery("UPDATE player SET `player_monster` = 2 where `player_id` = 2343492"); // alienoid
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
-            //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343494"); // gigazaur
+            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // gigazaur
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 7 where `player_id` = 2343492"); // boogie woogie
@@ -258,9 +258,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(JUNGLE_FRENZY_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(CHEST_THUMPING_EVOLUTION, 2343493, true);
-            $this->debugSetEvolutionInHand(ALPHA_MALE_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(SAURIAN_ADAPTABILITY_EVOLUTION, 2343492, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
