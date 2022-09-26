@@ -4064,6 +4064,67 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
     };
     return ActivatedExpansionsPopin;
 }());
+var MonsterGroup = /** @class */ (function () {
+    function MonsterGroup(monsters, title, color) {
+        this.monsters = monsters;
+        this.title = title;
+        this.color = color;
+    }
+    return MonsterGroup;
+}());
+var MonsterSelector = /** @class */ (function () {
+    function MonsterSelector(game) {
+        this.game = game;
+        this.BONUS_GROUP = new MonsterGroup([], _('Bonus'), '#ffffff');
+        this.MONSTER_GROUPS = [
+            new MonsterGroup([1, 2, 3, 4, 5, 6, 102, 104, 105, 106, 114, 115], 'King of Tokyo', '#ffcf13'),
+            new MonsterGroup([7, 8], _('Halloween expansion'), '#ff8200'),
+            new MonsterGroup([18], _('Monster Box exclusive'), '#dd4271'),
+            new MonsterGroup([9, 10, 11, 12], _('Monster Packs'), '#a9e9ae'),
+            new MonsterGroup([13], _('Power-Up! expansion'), '#5d7b38'),
+            new MonsterGroup([21, 22, 23, 24, 25, 26], 'King of New-York', '#645195'),
+        ];
+    }
+    MonsterSelector.prototype.onEnteringPickMonster = function (args) {
+        var _this = this;
+        // TODO clean only needed
+        var html = "";
+        var bonusMonsters = args.availableMonsters.filter(function (monster) { return !_this.MONSTER_GROUPS.some(function (monsterGroup) { return monsterGroup.monsters.includes(monster); }); });
+        __spreadArray(__spreadArray([], this.MONSTER_GROUPS, true), [this.BONUS_GROUP], false).filter(function (group) {
+            var bonus = !group.monsters.length;
+            return args.availableMonsters.some(function (monster) { return (bonus ? bonusMonsters : group.monsters).includes(monster); });
+        }).forEach(function (group) {
+            var bonus = !group.monsters.length;
+            html += "\n            <div class=\"monster-group\">\n                <div class=\"title\" style=\"--title-color: " + group.color + ";\">" + group.title + "</div>      \n                <div class=\"monster-group-monsters\">";
+            var groupMonsters = args.availableMonsters.filter(function (monster) { return (bonus ? bonusMonsters : group.monsters).includes(monster); });
+            groupMonsters.forEach(function (monster) {
+                html += "\n                    <div id=\"pick-monster-figure-" + monster + "-wrapper\">\n                        <div id=\"pick-monster-figure-" + monster + "\" class=\"monster-figure monster" + monster + "\"></div>";
+                if (_this.game.isPowerUpExpansion()) {
+                    html += "<div><button id=\"see-monster-evolution-" + monster + "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>" + _('Show Evolutions') + "</button></div>";
+                }
+                html += "</div>";
+            });
+            html += "    </div>      \n            </div>\n            ";
+        });
+        document.getElementById('monster-pick').innerHTML = html;
+        args.availableMonsters.forEach(function (monster) {
+            document.getElementById("pick-monster-figure-" + monster).addEventListener('click', function () { return _this.game.pickMonster(monster); });
+            if (_this.game.isPowerUpExpansion()) {
+                document.getElementById("see-monster-evolution-" + monster).addEventListener('click', function () { return _this.showMonsterEvolutions(monster % 100); });
+            }
+        });
+        var isCurrentPlayerActive = this.game.isCurrentPlayerActive();
+        dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
+    };
+    MonsterSelector.prototype.showMonsterEvolutions = function (monster) {
+        var cardsTypes = [];
+        for (var i = 1; i <= 8; i++) {
+            cardsTypes.push(monster * 10 + i);
+        }
+        this.game.showEvolutionsPopin(cardsTypes, _("Monster Evolution cards"));
+    };
+    return MonsterSelector;
+}());
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -4148,6 +4209,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);
         setTimeout(function () { var _a, _b; return new ActivatedExpansionsPopin(gamedatas, (_b = (_a = _this.players_metadata) === null || _a === void 0 ? void 0 : _a[_this.getPlayerId()]) === null || _b === void 0 ? void 0 : _b.language); }, 500);
+        this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
         this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
@@ -4227,7 +4289,7 @@ var KingOfTokyo = /** @class */ (function () {
         switch (stateName) {
             case 'pickMonster':
                 dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
-                this.onEnteringPickMonster(args.args);
+                this.monsterSelector.onEnteringPickMonster(args.args);
                 break;
             case 'pickEvolutionForDeck':
                 dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
@@ -4347,25 +4409,6 @@ var KingOfTokyo = /** @class */ (function () {
         this.gamedatas.gamestate.description = '';
         this.gamedatas.gamestate.descriptionmyturn = '';
         this.updatePageTitle();
-    };
-    KingOfTokyo.prototype.onEnteringPickMonster = function (args) {
-        var _this = this;
-        // TODO clean only needed
-        document.getElementById('monster-pick').innerHTML = '';
-        args.availableMonsters.forEach(function (monster) {
-            var html = "\n            <div id=\"pick-monster-figure-" + monster + "-wrapper\">\n                <div id=\"pick-monster-figure-" + monster + "\" class=\"monster-figure monster" + monster + "\"></div>";
-            if (_this.isPowerUpExpansion()) {
-                html += "<div><button id=\"see-monster-evolution-" + monster + "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>" + _('Show Evolutions') + "</button></div>";
-            }
-            html += "</div>";
-            dojo.place(html, "monster-pick");
-            document.getElementById("pick-monster-figure-" + monster).addEventListener('click', function () { return _this.pickMonster(monster); });
-            if (_this.isPowerUpExpansion()) {
-                document.getElementById("see-monster-evolution-" + monster).addEventListener('click', function () { return _this.showMonsterEvolutions(monster % 100); });
-            }
-        });
-        var isCurrentPlayerActive = this.isCurrentPlayerActive();
-        dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
     };
     KingOfTokyo.prototype.onEnteringPickEvolutionForDeck = function (args) {
         var _this = this;
@@ -6166,13 +6209,6 @@ var KingOfTokyo = /** @class */ (function () {
         viewCardsDialog.replaceCloseCallback(function () {
             viewCardsDialog.destroy();
         });
-    };
-    KingOfTokyo.prototype.showMonsterEvolutions = function (monster) {
-        var cardsTypes = [];
-        for (var i = 1; i <= 8; i++) {
-            cardsTypes.push(monster * 10 + i);
-        }
-        this.showEvolutionsPopin(cardsTypes, _("Monster Evolution cards"));
     };
     KingOfTokyo.prototype.showPlayerEvolutions = function (playerId) {
         var cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(function (evolution) { return evolution.type; });

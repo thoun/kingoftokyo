@@ -22,6 +22,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private wickednessCounters: Counter[] = [];
     private cultistCounters: Counter[] = [];
     private handCounters: Counter[] = [];
+    private monsterSelector: MonsterSelector;
     private diceManager: DiceManager;
     private animationManager: AnimationManager;
     private playerTables: PlayerTable[] = [];
@@ -109,6 +110,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     
         this.createPlayerPanels(gamedatas); 
         setTimeout(() => new ActivatedExpansionsPopin(gamedatas, (this as any).players_metadata?.[this.getPlayerId()]?.language), 500);
+        this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
         this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
@@ -215,7 +217,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         switch (stateName) {
             case 'pickMonster':
                 dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
-                this.onEnteringPickMonster(args.args);
+                this.monsterSelector.onEnteringPickMonster(args.args);
                 break;
             case 'pickEvolutionForDeck':
                 dojo.addClass('kot-table', 'pickMonsterOrEvolutionDeck');
@@ -344,29 +346,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.gamedatas.gamestate.description = ''; 
         this.gamedatas.gamestate.descriptionmyturn = ''; 
         (this as any).updatePageTitle();        
-    }
-    
-    private onEnteringPickMonster(args: EnteringPickMonsterArgs) {
-        // TODO clean only needed
-        document.getElementById('monster-pick').innerHTML = '';
-        args.availableMonsters.forEach(monster => {
-            let html = `
-            <div id="pick-monster-figure-${monster}-wrapper">
-                <div id="pick-monster-figure-${monster}" class="monster-figure monster${monster}"></div>`;
-            if (this.isPowerUpExpansion()) {
-                html += `<div><button id="see-monster-evolution-${monster}" class="bgabutton bgabutton_blue see-evolutions-button"><div class="player-evolution-card"></div>${_('Show Evolutions')}</button></div>`;
-            }
-            html += `</div>`;
-            dojo.place(html, `monster-pick`);
-
-            document.getElementById(`pick-monster-figure-${monster}`).addEventListener('click', () => this.pickMonster(monster));
-            if (this.isPowerUpExpansion()) {
-                document.getElementById(`see-monster-evolution-${monster}`).addEventListener('click', () => this.showMonsterEvolutions(monster % 100));
-            }
-        });
-
-        const isCurrentPlayerActive = (this as any).isCurrentPlayerActive();
-        dojo.toggleClass('monster-pick', 'selectable', isCurrentPlayerActive);
     }
 
     private onEnteringPickEvolutionForDeck(args: EnteringPickEvolutionForDeckArgs) {
@@ -2445,7 +2424,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
     
-    private showEvolutionsPopin(cardsTypes: number[], title: string) {
+    public showEvolutionsPopin(cardsTypes: number[], title: string): void {
         
         const viewCardsDialog = new ebg.popindialog();
         viewCardsDialog.create('kotViewEvolutionsDialog');
@@ -2471,21 +2450,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         });
     }
     
-    private showMonsterEvolutions(monster: number) {
-        const cardsTypes = [];
-        for (let i=1; i<=8; i++) {
-            cardsTypes.push(monster * 10 + i);
-        }
-
-        this.showEvolutionsPopin(cardsTypes, _("Monster Evolution cards"));
-    }
-    
     private showPlayerEvolutions(playerId: number) {
         const cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(evolution => evolution.type);
         this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(_("Evolution cards owned by ${player_name}"), {'player_name': this.gamedatas.players[playerId].name}));
     }
 
-    public pickMonster(monster: number) {
+    public pickMonster(monster: number): void {
         if(!(this as any).checkAction('pickMonster')) {
             return;
         }

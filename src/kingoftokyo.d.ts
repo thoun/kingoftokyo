@@ -230,6 +230,8 @@ interface KingOfTokyoGame extends Game {
     onHiddenEvolutionClick: (cardId: number) => void;
     onVisibleEvolutionClick: (cardId: number) => void;
     addAutoSkipPlayEvolutionButton(): void;
+    pickMonster(monster: number): void;
+    showEvolutionsPopin(cardsTypes: number[], title: string): void;
 }
 
 interface EnteringPickMonsterArgs {

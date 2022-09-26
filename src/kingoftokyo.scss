@@ -130,7 +130,30 @@ html, .mode_3d #game_play_area_background {
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
-  margin: 20px;
+  margin: 10px;
+  gap: 10px;
+
+  .monster-group {
+    background: #FFFFFFAA;
+
+    .title {
+      --title-color: white;
+
+      text-align: center;
+      font-size: 110%;
+      padding: 10px;
+      background: linear-gradient(180deg, var(--title-color) 0%, transparent 100%);
+    }
+
+    .monster-group-monsters {
+      display: flex;
+      align-content: center;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 10px;
+    }
+  }
 
   &.selectable {
     .monster-figure {
