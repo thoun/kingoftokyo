@@ -148,7 +148,7 @@ $game_options = [
                 'tmdisplay' => totranslate('Power-Up! (Evolutions) with Mutant Evolution'),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
     ],
 
     /* TODODE 
@@ -213,7 +213,7 @@ $game_options = [
                 'tmdisplay' => totranslate('Players can pick a monster'),
             ],
         ],
-        'default' => 2, // TODOWT reset to 1 after World Tour
+        'default' => 1,
     ],
 
     BONUS_MONSTERS_OPTION => [
