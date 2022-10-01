@@ -1411,16 +1411,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
 
-            case 'MegaPurr': // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
-                const playerId = this.getPlayerId();
-                const SYMBOL_AS_STRING = ['[Energy]', '[Star]'];
-                [5,0].forEach((symbol, symbolIndex) => {
-                    (this as any).addActionButton(`giveSymbol_button${symbol}`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING[symbolIndex]})), () => this.giveSymbol(symbol));
-                    if (!question.args[`canGive${symbol}`].includes(playerId)) {
-                        dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
-                    }
-                });
-                break;
             case 'GiveSymbol':
                 const giveSymbolPlayerId = this.getPlayerId();
                 const giveSymbolQuestionArgs = question.args as GiveSymbolQuestionArgs;

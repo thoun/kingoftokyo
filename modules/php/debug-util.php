@@ -243,7 +243,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
@@ -258,7 +258,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(SAURIAN_ADAPTABILITY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(MEGA_PURR_EVOLUTION, 2343493, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
@@ -407,7 +407,7 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
         // SELECT JSON_ARRAYAGG(`player_id`) FROM `player`
-		$ids = [83927530, 84072320, 84309542, 86213377];
+		$ids = [85715530, 88227457, 92721094];
 
 		// Id of the first player in BGA Studio
 		$sid = 2343492;

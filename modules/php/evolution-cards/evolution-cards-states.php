@@ -206,11 +206,19 @@ trait EvolutionCardsStateTrait {
         }
     }
 
+    function stAnswerQuestion() {
+        $activePlayers = $this->gamestate->getActivePlayerList();
+        if (count($activePlayers) == 0) {
+            $question = $this->getQuestion();
+            $this->gamestate->setPlayersMultiactive($question->playersIds, 'next', true);
+        }
+    }
+
     function stAfterAnswerQuestion() {
         $question = $this->getQuestion();
 
-        if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts' || $question->code === 'MegaPurr' || $question->code === 'ElectricCarrot') {
-            if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts' || $question->code === 'MegaPurr') { // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
+        if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts' || $question->code === 'ElectricCarrot') {
+            if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts') {
                 $this->removeEvolution($question->args->playerId, $question->args->card);
             }
 

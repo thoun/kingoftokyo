@@ -810,6 +810,7 @@ $playerActionsGameStates = [
         "description" => '',
         "descriptionmyturn" => '',
         "type" => "multipleactiveplayer",
+        "action" => "stAnswerQuestion",
         "args" => "argAnswerQuestion",
         "possibleactions" => [ 
             "chooseMimickedCard",

@@ -5374,16 +5374,6 @@ var KingOfTokyo = /** @class */ (function () {
                     dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
                 }
                 break;
-            case 'MegaPurr': // TODOPU TOTOMP TODOPUHA remove MegaPurr here and over
-                var playerId_4 = this.getPlayerId();
-                var SYMBOL_AS_STRING_2 = ['[Energy]', '[Star]'];
-                [5, 0].forEach(function (symbol, symbolIndex) {
-                    _this.addActionButton("giveSymbol_button" + symbol, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_2[symbolIndex] })), function () { return _this.giveSymbol(symbol); });
-                    if (!question.args["canGive" + symbol].includes(playerId_4)) {
-                        dojo.addClass("giveSymbol_button" + symbol, 'disabled');
-                    }
-                });
-                break;
             case 'GiveSymbol':
                 var giveSymbolPlayerId_1 = this.getPlayerId();
                 var giveSymbolQuestionArgs = question.args;
