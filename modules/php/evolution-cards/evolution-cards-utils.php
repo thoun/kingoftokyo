@@ -292,7 +292,7 @@ trait EvolutionCardsUtilTrait {
     }
 
     function applyEvolutionEffects(EvolutionCard $card, int $playerId) { // return $damages
-        if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$card->type] == 1) {
+        if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$card->type] == 1 && $card->type != ICY_REFLECTION_EVOLUTION) {
             return; // TODOPU test
         }
 

@@ -161,13 +161,13 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
             //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
             //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
-            $this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
             //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
             //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_MIGHTY_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
+            $this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
@@ -243,7 +243,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
@@ -258,7 +258,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(MEGA_PURR_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(ALPHA_MALE_EVOLUTION, 2343493, true);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
