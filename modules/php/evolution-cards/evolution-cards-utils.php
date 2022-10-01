@@ -1075,25 +1075,38 @@ trait EvolutionCardsUtilTrait {
         }
     }
 
+    function giveEvolution(int $fromPlayerId, int $toPlayerId, EvolutionCard $evolution) {
+        if ($toPlayerId == $fromPlayerId) {
+            return;
+        }
+
+        if ($this->getPlayer($toPlayerId)->eliminated) {
+            $this->removeEvolution($fromPlayerId, $evolution);
+        }
+
+        $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
+        $this->evolutionCards->moveCard($evolution->id, 'table', $toPlayerId);
+        $movedEvolution = $this->getEvolutionCardById($evolution->id); // so we relaad location
+        $this->playEvolutionToTable($toPlayerId, $movedEvolution, '', $fromPlayerId);
+
+        if ($evolution->id == $this->getMimickedEvolutionId()) {
+            $this->notifyAllPlayers("setMimicEvolutionToken", '', [
+                'card' => $movedEvolution,
+            ]);
+        }
+    }
+
     function giveFreezeRay(int $fromPlayerId, int $toPlayerId, EvolutionCard $evolution) {
         $ownerId = $evolution->ownerId;
         if ($ownerId == $fromPlayerId) {
-            $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
-            $this->evolutionCards->moveCard($evolution->id, 'table', $toPlayerId);
-            $this->playEvolutionToTable($toPlayerId, $evolution, '', $fromPlayerId);
+            $this->giveEvolution($fromPlayerId, $toPlayerId, $evolution);
         }
     }
 
     function giveBackFreezeRay(int $activePlayerId, EvolutionCard $evolution) {
         $ownerId = $evolution->ownerId;
         if ($ownerId != $activePlayerId) {
-            if ($this->getPlayer($ownerId)->eliminated) {
-                $this->removeEvolution($activePlayerId, $evolution);
-            } else {
-                $this->removeEvolution($activePlayerId, $evolution, true, false, true);
-                $this->evolutionCards->moveCard($evolution->id, 'table', $ownerId);
-                $this->playEvolutionToTable($ownerId, $evolution, '', $activePlayerId);
-            }
+            $this->giveEvolution($activePlayerId, $ownerId, $evolution);
 
             // reset freeze ray disabled symbol
             $this->setEvolutionTokens($ownerId, $evolution, 0, true);

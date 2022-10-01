@@ -3993,6 +3993,9 @@ class KingOfTokyo implements KingOfTokyoGame {
             fromStock = this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards;
         }
         this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card, fromStock);
+        if (notif.args.fromPlayerId) {
+            this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards.removeFromStockById(''+notif.args.card.id);
+        }
 
         this.tableManager.tableHeightChange(); // adapt to new card
     }
