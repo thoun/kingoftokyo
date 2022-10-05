@@ -22,7 +22,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343493, 4);
-        $this->debugSetEnergy(20);
+        //$this->debugSetEnergy(20);
         $this->debugSetPlayerPoints(2343493, 2);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
@@ -243,7 +243,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
@@ -258,7 +258,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }

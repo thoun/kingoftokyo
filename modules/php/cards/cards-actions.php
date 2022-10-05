@@ -481,6 +481,8 @@ trait CardsActionTrait {
 
             if ($adaptiveTechnologyCard->location === 'hand') {
                 $this->applyPlayEvolution($playerId, $adaptiveTechnologyCard);
+                $this->applyEvolutionEffects($adaptiveTechnologyCard, $playerId);
+                $adaptiveTechnologyCard = $this->getEvolutionCardById($adaptiveTechnologyCard->id);
             }
             $tokens = $adaptiveTechnologyCard->tokens - 1;
             $this->setEvolutionTokens($playerId, $adaptiveTechnologyCard, $tokens);

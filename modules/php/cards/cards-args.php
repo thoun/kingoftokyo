@@ -25,17 +25,23 @@ trait CardsArgTrait {
     }
 
     function getArgBuyCard(int $playerId, bool $includeCultistsEnergy) {
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
+
         $potentialEnergy = $includeCultistsEnergy ? $this->getPlayerPotentialEnergy($playerId) : $this->getPlayerEnergy($playerId);
 
         $canBuyPowerCards = $this->canBuyPowerCard($playerId);
         $canBuyOrNenew = $potentialEnergy >= 2;
         $canSell = $this->countCardOfType($playerId, METAMORPH_CARD) > 0;
 
+        // allow to replace cards with Adapting technology even without energy
+        if ($isPowerUpExpansion && $this->getEvolutionsOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true)) {
+            $canBuyOrNenew = true;
+        }
+
         // parasitic tentacles
         $canBuyFromPlayers = $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) > 0;
 
         // superior alien technology
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
         $gotSuperiorAlienTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0;
         $canUseSuperiorAlienTechnology = $gotSuperiorAlienTechnology && (count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION));
         $canUseBobbingForApples = $isPowerUpExpansion && $this->getFirstUnusedEvolution($playerId, BOBBING_FOR_APPLES_EVOLUTION) != null;
