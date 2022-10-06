@@ -2181,6 +2181,7 @@ html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-ed
   transform: unset;
   font-family: "young-frankenstein";
   font-size: 11pt;
+  margin-top: -5px;
 }
 html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline {
   -webkit-text-stroke: 0;
@@ -2216,6 +2217,9 @@ html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-ed
 html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text, html[data-dark-edition=true] .kot-tile .card-keep-text, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text {
   color: white;
   font-family: "young-frankenstein";
+  font-size: 8pt;
+  font-weight: normal;
+  letter-spacing: 0.05rem;
 }
 html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text .outline, html[data-dark-edition=true] .kot-tile .card-keep-text .outline, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text .outline {
   -webkit-text-stroke: 0;
@@ -2224,10 +2228,12 @@ html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text
 html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text ::before, html[data-dark-edition=true] .kot-tile .card-keep-text ::before, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text ::before {
   content: "((";
   color: #f6d445;
+  letter-spacing: unset;
 }
 html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text ::after, html[data-dark-edition=true] .kot-tile .card-keep-text ::after, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text ::after {
   content: "))";
   color: #f6d445;
+  letter-spacing: unset;
 }
 html[data-dark-edition=true] .wickedness-tile-stock .stockitem, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile {
   background-image: url("img/dark/wickedness-tiles.jpg");
@@ -2246,23 +2252,32 @@ html[data-dark-edition=true] .wickedness-tile-stock .stockitem .description-wrap
   color: white;
 }
 html[data-dark-edition=true] #table #table-center #full-board #board {
+  width: 470px;
+  height: 470px;
   background-image: url("img/dark/tokyo.jpg");
 }
 html[data-dark-edition=true] #table #table-center #full-board #board.twoPlayersVariant {
   background: url("img/dark/tokyo-2pvariant.jpg");
 }
 html[data-dark-edition=true] #table #table-center #full-board #board #tokyo-city {
-  top: 35px;
-  left: -6px;
+  top: 61px;
+  left: 17px;
 }
 html[data-dark-edition=true] #table #table-center #full-board #board #tokyo-bay {
-  bottom: 95px;
-  right: 41px;
+  bottom: 123px;
+  right: 78px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #board #twoPlayersVariant-message {
+  right: 100px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #board #board-corner-highlight {
+  bottom: 17px;
 }
 html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper {
   width: 140px;
   position: relative;
   left: -80px;
+  height: 470px;
 }
 html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board {
   background: none;
@@ -2271,9 +2286,25 @@ html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-
 html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile {
   left: 84px;
 }
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board #wickedness-tiles-pile-3 {
+  top: 302px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board #wickedness-tiles-pile-6 {
+  top: 172px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board #wickedness-tiles-pile-10 {
+  top: 3px;
+}
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon {
+  transition: opacity 0.5s;
+}
+html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .monster-icon[data-wickedness="0"] {
+  opacity: 0;
+}
 html[data-dark-edition=true] #table .player-table .player-name.goodgirl {
   font-family: "young-frankenstein-italic";
-  font-size: 20pt;
+  font-size: 21pt;
+  letter-spacing: 0.1rem;
 }
 html[data-dark-edition=true] .kot-card[data-design=dark-edition] .icon.points, html[data-dark-edition=true] .kot-tile .icon.points, html[data-dark-edition=true] .tokyo-tower .icon.points, html[data-dark-edition=true] .dijitTooltipContainer .icon.points {
   background-image: url("img/dark/icons.png");

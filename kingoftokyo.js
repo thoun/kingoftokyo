@@ -3694,17 +3694,17 @@ var WICKEDNESS_MONSTER_ICON_POSITION = [
     [124, 33],
 ];
 var WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
-    [-50, 302],
-    [29, 345],
-    [8, 312],
-    [42, 277],
-    [29, 239],
-    [5, 200],
-    [42, 165],
-    [10, 130],
-    [37, 90],
-    [9, 58],
-    [41, 22],
+    [-28, 324],
+    [24, 410],
+    [-2, 370],
+    [39, 328],
+    [22, 284],
+    [-5, 236],
+    [38, 197],
+    [1, 156],
+    [32, 107],
+    [1, 70],
+    [37, 29],
 ];
 var TableCenter = /** @class */ (function () {
     function TableCenter(game, players, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {
@@ -3856,6 +3856,7 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         this.wickednessPoints.forEach(function (wickedness, playerId) {
             var markerDiv = document.getElementById("monster-icon-" + playerId + "-wickedness");
+            markerDiv.dataset.wickedness = '' + wickedness;
             var positionArray = _this.game.isDarkEdition() ? WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION : WICKEDNESS_MONSTER_ICON_POSITION;
             var position = positionArray[wickedness];
             var topShift = 0;
@@ -4077,7 +4078,7 @@ var MonsterSelector = /** @class */ (function () {
         this.game = game;
         this.BONUS_GROUP = new MonsterGroup([], _('Bonus'), '#ffffff');
         this.MONSTER_GROUPS = [
-            new MonsterGroup([1, 2, 3, 4, 5, 6, 102, 104, 105, 106, 114, 115], 'King of Tokyo', '#ffcf13'),
+            new MonsterGroup([1, 2, 3, 4, 5, 6, 102, 104, 105, 106, 114, 115], this.game.isDarkEdition() ? 'King of Tokyo Dark Edition' : 'King of Tokyo', '#ffcf13'),
             new MonsterGroup([7, 8], _('Halloween expansion'), '#ff8200'),
             new MonsterGroup([18], _('Monster Box exclusive'), '#dd4271'),
             new MonsterGroup([9, 10, 11, 12], _('Monster Packs'), '#a9e9ae'),

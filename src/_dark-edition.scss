@@ -116,6 +116,7 @@ html[data-dark-edition="true"] {
                 transform: unset;
                 font-family: 'young-frankenstein';
                 font-size: 11pt;
+                margin-top: -5px;
 
                 &.keep {
                     .outline {
@@ -163,6 +164,9 @@ html[data-dark-edition="true"] {
         .card-keep-text {
             color: white;
             font-family: 'young-frankenstein';
+            font-size: 8pt;
+            font-weight: normal;
+            letter-spacing: 0.05rem;
 
             .outline {
                 -webkit-text-stroke: 0;
@@ -172,10 +176,12 @@ html[data-dark-edition="true"] {
             ::before {
                 content: '((';
                 color: #f6d445;
+                letter-spacing: unset;
             }
             ::after {
                 content: '))';
                 color: #f6d445;
+                letter-spacing: unset;
             }
         }
     }
@@ -204,6 +210,8 @@ html[data-dark-edition="true"] {
 
     #table  #table-center #full-board {
         #board {
+            width: 470px;
+            height: 470px;
             background-image: url('img/dark/tokyo.jpg');
             
             &.twoPlayersVariant {
@@ -211,12 +219,20 @@ html[data-dark-edition="true"] {
             }
 
             #tokyo-city {
-                top: 35px;
-                left: -6px;
+                top: 61px;
+                left: 17px;
             }
             #tokyo-bay {
-                bottom: 95px;
-                right: 41px;
+                bottom: 123px;
+                right: 78px;
+            }
+
+            #twoPlayersVariant-message {
+                right: 100px;
+            }
+
+            #board-corner-highlight {
+                bottom: 17px;
             }
         }
 
@@ -224,6 +240,7 @@ html[data-dark-edition="true"] {
             width: 140px;
             position: relative;
             left: -80px;
+            height: 470px;
 
             #wickedness-board {
                 background: none;
@@ -231,6 +248,24 @@ html[data-dark-edition="true"] {
 
                 .wickedness-tiles-pile {
                     left: 84px;
+                }
+
+                #wickedness-tiles-pile-3 {
+                    top: 302px;
+                }
+                #wickedness-tiles-pile-6 {
+                    top: 172px;
+                }
+                #wickedness-tiles-pile-10 {
+                    top: 3px;
+                }
+                
+                .monster-icon {
+                    transition: opacity 0.5s;
+
+                    &[data-wickedness="0"] {
+                        opacity: 0;
+                    }
                 }
             }
         }
@@ -240,7 +275,8 @@ html[data-dark-edition="true"] {
         .player-name {    
             &.goodgirl {
                 font-family: 'young-frankenstein-italic';
-                font-size: 20pt;
+                font-size: 21pt;
+                letter-spacing: .1rem;
             }
         }
     }
