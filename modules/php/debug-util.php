@@ -258,7 +258,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(MEGA_PURR_EVOLUTION, 2343492, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }

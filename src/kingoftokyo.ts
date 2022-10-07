@@ -1419,14 +1419,23 @@ class KingOfTokyo implements KingOfTokyoGame {
                     if (!question.args[`canGive${symbol}`].includes(giveSymbolPlayerId)) {
                         dojo.addClass(`giveSymbol_button${symbol}`, 'disabled');
                     }
+                    if (symbol == 5) {
+                        const giveEnergyButton = document.getElementById(`giveSymbol_button5`);
+                        giveEnergyButton.dataset.enableAtEnergy = '1';                        
+                        this.updateEnableAtEnergy(this.getPlayerId());
+                    }
                 });
                 break;
             case 'GiveEnergyOrLoseHearts':
                 const giveEnergyOrLoseHeartsPlayerId = this.getPlayerId();
                 const giveEnergyOrLoseHeartsQuestionArgs = question.args as GiveEnergyOrLoseHeartsQuestionArgs;
                 (this as any).addActionButton(`giveSymbol_button5`, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[5]})), () => this.giveSymbol(5));
+                const giveEnergyButton = document.getElementById(`giveSymbol_button5`);
+                giveEnergyButton.dataset.enableAtEnergy = '1';                   
+                this.updateEnableAtEnergy(this.getPlayerId());
                 if (!giveEnergyOrLoseHeartsQuestionArgs.canGiveEnergy.includes(giveEnergyOrLoseHeartsPlayerId)) {
-                    dojo.addClass(`giveSymbol_button5`, 'disabled');
+                    giveEnergyButton.classList.add('disabled');
+                    
                 }
                 (this as any).addActionButton(`loseHearts_button`, formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: `${giveEnergyOrLoseHeartsQuestionArgs.heartNumber}[Heart]`})), () => this.loseHearts());
                 break;
@@ -4094,6 +4103,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.checkMothershipSupportButtonState();
         this.setBuyDisabledCard(null, energy);
         
+        this.updateEnableAtEnergy(playerId, energy);
+    }
+
+    private updateEnableAtEnergy(playerId: number, energy: number | null = null) {
+        if (energy === null) {
+            energy = this.getPlayerEnergy(playerId);
+        }
         (Array.from(document.querySelectorAll(`[data-enable-at-energy]`)) as HTMLElement[]).forEach(button => {
             const enableAtEnergy = Number(button.dataset.enableAtEnergy);
             dojo.toggleClass(button, 'disabled', energy < enableAtEnergy);

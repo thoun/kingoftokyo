@@ -5386,14 +5386,22 @@ var KingOfTokyo = /** @class */ (function () {
                     if (!question.args["canGive" + symbol].includes(giveSymbolPlayerId_1)) {
                         dojo.addClass("giveSymbol_button" + symbol, 'disabled');
                     }
+                    if (symbol == 5) {
+                        var giveEnergyButton_1 = document.getElementById("giveSymbol_button5");
+                        giveEnergyButton_1.dataset.enableAtEnergy = '1';
+                        _this.updateEnableAtEnergy(_this.getPlayerId());
+                    }
                 });
                 break;
             case 'GiveEnergyOrLoseHearts':
                 var giveEnergyOrLoseHeartsPlayerId = this.getPlayerId();
                 var giveEnergyOrLoseHeartsQuestionArgs = question.args;
                 this.addActionButton("giveSymbol_button5", formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[5] })), function () { return _this.giveSymbol(5); });
+                var giveEnergyButton = document.getElementById("giveSymbol_button5");
+                giveEnergyButton.dataset.enableAtEnergy = '1';
+                this.updateEnableAtEnergy(this.getPlayerId());
                 if (!giveEnergyOrLoseHeartsQuestionArgs.canGiveEnergy.includes(giveEnergyOrLoseHeartsPlayerId)) {
-                    dojo.addClass("giveSymbol_button5", 'disabled');
+                    giveEnergyButton.classList.add('disabled');
                 }
                 this.addActionButton("loseHearts_button", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: giveEnergyOrLoseHeartsQuestionArgs.heartNumber + "[Heart]" })), function () { return _this.loseHearts(); });
                 break;
@@ -7552,6 +7560,13 @@ var KingOfTokyo = /** @class */ (function () {
         this.checkRapidHealingButtonState();
         this.checkMothershipSupportButtonState();
         this.setBuyDisabledCard(null, energy);
+        this.updateEnableAtEnergy(playerId, energy);
+    };
+    KingOfTokyo.prototype.updateEnableAtEnergy = function (playerId, energy) {
+        if (energy === void 0) { energy = null; }
+        if (energy === null) {
+            energy = this.getPlayerEnergy(playerId);
+        }
         Array.from(document.querySelectorAll("[data-enable-at-energy]")).forEach(function (button) {
             var enableAtEnergy = Number(button.dataset.enableAtEnergy);
             dojo.toggleClass(button, 'disabled', energy < enableAtEnergy);
