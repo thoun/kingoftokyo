@@ -2272,6 +2272,9 @@ var PlayerTable = /** @class */ (function () {
         if (monster > 100) {
             wickednessMarkerDiv.style.backgroundColor = 'unset';
         }
+        this.monster = monster;
+        this.setPoints(0);
+        this.setHealth(10);
     };
     PlayerTable.prototype.getPlaceToken = function (placed) {
         var _this = this;

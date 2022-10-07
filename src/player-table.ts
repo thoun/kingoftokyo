@@ -361,6 +361,10 @@ class PlayerTable {
         if (monster > 100) {
             wickednessMarkerDiv.style.backgroundColor = 'unset';
         }
+
+        this.monster = monster;
+        this.setPoints(0);
+        this.setHealth(10);
     }
 
     private getPlaceToken(placed: PlacedTokens[]): PlacedTokens {
