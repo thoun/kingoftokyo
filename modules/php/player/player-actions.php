@@ -73,6 +73,8 @@ trait PlayerActionTrait {
         if (intval($this->gamestate->state_id()) == ST_MULTIPLAYER_LEAVE_TOKYO) {
             $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
         }
+
+        $this->checkOnlyChestThumpingRemaining();
     }
 
     function setSkipBuyPhase(bool $skipBuyPhase) {
