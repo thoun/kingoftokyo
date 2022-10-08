@@ -5021,6 +5021,9 @@ var KingOfTokyo = /** @class */ (function () {
         var _a, _b, _c;
         var question = this.gamedatas.gamestate.args.question;
         switch (question.code) {
+            case 'ChooseMimickedCard':
+                this.onLeavingChooseMimickedCard();
+                break;
             case 'Bamboozle':
                 this.onLeavingBuyCard();
                 break;

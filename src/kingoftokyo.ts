@@ -1030,6 +1030,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         const question: Question = this.gamedatas.gamestate.args.question;
 
         switch(question.code) {
+            case 'ChooseMimickedCard':
+                this.onLeavingChooseMimickedCard();
+                break;
             case 'Bamboozle':
                 this.onLeavingBuyCard();
                 break;

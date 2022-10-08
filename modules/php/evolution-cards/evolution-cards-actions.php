@@ -489,7 +489,24 @@ trait EvolutionCardsActionTrait {
 
         $damages = $this->applyPlayCard($playerId, $card);
 
-        $this->goToState(-1, $damages);
+        $mimic = false;
+        if ($card->type == MIMIC_CARD) {
+            $countAvailableCardsForMimic = 0;
+
+            $playersIds = $this->getPlayersIds();
+            foreach($playersIds as $pId) {
+                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $pId));
+                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
+            }
+
+            $mimic = $countAvailableCardsForMimic > 0;
+        }
+
+        if ($mimic) {
+            $this->goToMimicSelection($playerId, MIMIC_CARD, -1);
+        } else {
+            $this->goToState(-1, $damages);
+        }        
     }
   	
     public function freezeDie(int $id) {

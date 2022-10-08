@@ -925,7 +925,7 @@ trait EvolutionCardsUtilTrait {
         }
 
         $this->cards->shuffle('discard');
-        $cards = $this->getCardsFromDb(array_slice($this->cards->getCardsInLocation('deck', null, 'location_arg'), 0, 3));
+        $cards = $this->getCardsFromDb($this->cards->getCardsOnTop(3, 'deck'));
 
         $question = new Question(
             'DeepDive',
