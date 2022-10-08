@@ -284,9 +284,9 @@ trait EvolutionCardsUtilTrait {
         return $playersIdsWithPotentialCards;
     }
 
-    function applyEvolutionEffectsRefreshBuyCardArgsIfNeeded(int $playerId) {
+    function applyEvolutionEffectsRefreshBuyCardArgsIfNeeded(int $playerId, bool $refreshForAnyPlayer = false) {
         // if the player is in buy phase, refresh args
-        if ($playerId == intval($this->getActivePlayerId()) && intval($this->gamestate->state_id()) == ST_PLAYER_BUY_CARD) {
+        if (($refreshForAnyPlayer || $playerId == intval($this->getActivePlayerId())) && intval($this->gamestate->state_id()) == ST_PLAYER_BUY_CARD) {
             $this->goToState(ST_PLAYER_BUY_CARD);
         }
     }
@@ -421,6 +421,7 @@ trait EvolutionCardsUtilTrait {
                 foreach ($otherPlayersIds as $otherPlayerId) {
                     $this->applyGetEnergy($otherPlayerId, 3, $logCardType);
                 }
+                $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId, true);
                 break;
             case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
                 $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();

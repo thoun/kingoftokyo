@@ -17,13 +17,13 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343493, 4);
         //$this->debugSetEnergy(20);
-        $this->debugSetPlayerPoints(2343493, 2);
+        //$this->debugSetPlayerPoints(2343493, 2);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
@@ -51,7 +51,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
         //$this->debugSetCardInTable(TANK_CARD);
         //$this->debugSetCardInTable(GAS_REFINERY_CARD);
-        $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".MIMIC_CARD);
+        //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".MIMIC_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
@@ -90,7 +90,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HERD_CULLER_CARD, 2343492);
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
-        $this->debugSetCardInHand(ALPHA_MONSTER_CARD, 2343493);
+        //$this->debugSetCardInHand(ALPHA_MONSTER_CARD, 2343493);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
         //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
@@ -258,7 +258,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(PANDA_MONIUM_EVOLUTION, 2343492, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
