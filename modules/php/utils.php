@@ -432,10 +432,11 @@ trait UtilTrait {
     function checkOnlyChestThumpingRemaining() {
         if (intval($this->gamestate->state_id()) === ST_MULTIPLAYER_LEAVE_TOKYO) {
             $activePlayerList = $this->gamestate->getActivePlayerList();
-            if (count($activePlayerList) == 1 && intval($activePlayerList[0]) == intval($this->getActivePlayerId())) {
+            $activePlayerId = intval($this->getActivePlayerId());
+            if (count($activePlayerList) == 1 && intval($activePlayerList[0]) == $activePlayerId && $this->countEvolutionOfType($activePlayerId, CHEST_THUMPING_EVOLUTION) > 0) {
                 $argLeaveTokyo = $this->argLeaveTokyo();
                 if (array_key_exists('smashedPlayersInTokyo', $argLeaveTokyo)) {
-                    $smashedPlayersInTokyo = ['smashedPlayersInTokyo'];
+                    $smashedPlayersInTokyo = $argLeaveTokyo['smashedPlayersInTokyo'];
                     // if there is no remaining smashed player in tokyo, chest thumping player is deactivated
                     if (!$this->array_some($smashedPlayersInTokyo, fn($pId) => $this->inTokyo($pId))) {                    
                         $this->gamestate->setPlayerNonMultiactive($activePlayerList[0], 'resume');
