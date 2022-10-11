@@ -139,12 +139,18 @@ $size: 0.25em;
       transform: translateY(-40vh);
 
       .icon.forbidden, .icon.frozen {
-        display: none;
+        opacity: 0;
+        animation: rolled-dice-forbidden 1s forwards;
       }
   }
 
   @keyframes rolled-dice {
       100% { transform: initial; }
+  }
+
+  @keyframes rolled-dice-forbidden {
+      99% { opacity: 0; }
+      100% { opacity: 1; }
   }
 
   .die-list {

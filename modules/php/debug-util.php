@@ -17,8 +17,8 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
-        $this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343493, 4);
@@ -57,7 +57,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(WINGS_CARD);
-        //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
+        $this->debugSetCardInHand(MIMIC_CARD, 2343493);
         //$this->DbQuery("UPDATE card SET `card_location` = 'deck'");
         //foreach ($this->KEEP_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable($cardType);
         //foreach ($this->DISCARD_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable(100+$cardType);
@@ -68,7 +68,7 @@ trait DebugUtilTrait {
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(JETS_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(POISON_SPIT_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(CAMOUFLAGE_CARD, 2343493));
-        //$this->setMimickedCard(MIMIC_CARD, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
+        $this->setMimickedCard(MIMIC_CARD, 2343493, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343494));
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492), 4);
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 3, true);

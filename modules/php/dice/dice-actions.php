@@ -386,6 +386,7 @@ trait DiceActionTrait {
             'die_face_before' => $this->getDieFaceLogName($oldValue, $die->type),
             'die_face_after' => $this->getDieFaceLogName($value, $die->type),
             'psychicProbeRollDieArgs' => $stayForRethrow3 ? $this->argChangeActivePlayerDie($intervention) : null,
+            'canHealWithDice' => $this->canHealWithDice($this->getActivePlayerId()),
         ]);
 
         $unusedCards = $this->getUnusedChangeActivePlayerDieCards($playerId);
