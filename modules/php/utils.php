@@ -433,10 +433,13 @@ trait UtilTrait {
         if (intval($this->gamestate->state_id()) === ST_MULTIPLAYER_LEAVE_TOKYO) {
             $activePlayerList = $this->gamestate->getActivePlayerList();
             if (count($activePlayerList) == 1 && intval($activePlayerList[0]) == intval($this->getActivePlayerId())) {
-                $smashedPlayersInTokyo = $this->argLeaveTokyo()['smashedPlayersInTokyo'];
-                // if there is no remaining smashed player in tokyo, chest thumping player is deactivated
-                if (!$this->array_some($smashedPlayersInTokyo, fn($pId) => $this->inTokyo($pId))) {                    
-                    $this->gamestate->setPlayerNonMultiactive($activePlayerList[0], 'resume');
+                $argLeaveTokyo = $this->argLeaveTokyo();
+                if (array_key_exists('smashedPlayersInTokyo', $argLeaveTokyo)) {
+                    $smashedPlayersInTokyo = ['smashedPlayersInTokyo'];
+                    // if there is no remaining smashed player in tokyo, chest thumping player is deactivated
+                    if (!$this->array_some($smashedPlayersInTokyo, fn($pId) => $this->inTokyo($pId))) {                    
+                        $this->gamestate->setPlayerNonMultiactive($activePlayerList[0], 'resume');
+                    }
                 }
             }
         }
