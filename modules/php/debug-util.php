@@ -17,18 +17,18 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
-        //$this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
-        $this->debugSetPlayerEnergy(2343492, 9);
+        //$this->debugSetPlayerEnergy(2343492, 9);
         //$this->debugSetEnergy(20);
-        $this->debugSetPlayerPoints(2343493, 17);
+        //$this->debugSetPlayerPoints(2343493, 17);
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 7);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -74,7 +74,7 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 3, true);
         //$this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492);
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
-        //$this->debugSetCardInHand(ALIEN_ORIGIN_CARD, 2343493);
+        $this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
@@ -259,7 +259,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(CHEST_THUMPING_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
