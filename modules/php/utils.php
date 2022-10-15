@@ -577,16 +577,12 @@ trait UtilTrait {
         $orderedPlayers = $this->getOrderedPlayers($currentTurnPlayerId, false);
 
         foreach($orderedPlayers as $player) {
-            if ($player->health == 0 && !$player->eliminated) {
+            if ($player->health == 0 && !$player->eliminated && $this->countCardOfType($player->id, ZOMBIE_CARD) == 0) { // ignore players with Zombie
                 // Final Roar
                 if ($this->isWickednessExpansion() && $this->gotWickednessTile($player->id, FINAL_ROAR_WICKEDNESS_TILE) && $player->score >= 16) {
                     $this->applyGetPointsIgnoreCards($player->id, MAX_POINT - $player->score, 2000 + FINAL_ROAR_WICKEDNESS_TILE);
                 } else {
-                    // Zombie
-                    $countZombie = $this->countCardOfType($player->id, ZOMBIE_CARD);
-                    if ($countZombie == 0) {
-                        $this->eliminateAPlayer($player, $currentTurnPlayerId);
-                    }
+                    $this->eliminateAPlayer($player, $currentTurnPlayerId);
                 }
             }
         }
