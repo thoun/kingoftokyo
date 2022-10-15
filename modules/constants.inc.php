@@ -393,6 +393,15 @@ define('BOBBING_FOR_APPLES_EVOLUTION', 85);
 define('FEAST_OF_CROWS_EVOLUTION', 86);
 define('SCYTHE_EVOLUTION', 87);
 define('CANDY_EVOLUTION', 88);
+// evolutions : King Kong
+define('SON_OF_KONG_KIKO_EVOLUTION', 111);
+define('KING_OF_SKULL_ISLAND_EVOLUTION', 112); // TODOPUKK : Play when you Yield Tokyo. Gain [Health] to your maximum amount. Skip your next turn.
+define('ISLANDER_SACRIFICE_EVOLUTION', 113); // TODOPUKK : Roll 6 dice. Gain 1 [Energy] per [Lightning] and 1 [Health] per [Heart] rolled (even if you are in Tokyo). If you rolled less than 2 [Lightning] and/or [Heart], take this card back.
+define('MONKEY_LEAP_EVOLUTION', 114); // TODOPUKK : Play during another Monster's movement phase. If Tokyo is empty, you can take control of it instead of the Monster whose turn it is.
+define('IT_WAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION', 115); // TODOPUKK : Take the Beauty card, [King Kong] side up. If you don't have the Beauty card at the start of your turn, you cannot reroll [Claw] and you wound only the Monster with the Beauty card.
+define('JET_CLUB_EVOLUTION', 116);
+define('EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION', 117);
+define('CLIMB_TOKYO_TOWER_EVOLUTION', 118);
 // evolutions : Pandakaï
 define('PANDA_MONIUM_EVOLUTION', 131);
 define('EATS_SHOOTS_AND_LEAVES_EVOLUTION', 132);

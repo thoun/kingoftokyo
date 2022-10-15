@@ -3,11 +3,13 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/../objects/card.php');
+require_once(__DIR__.'/../objects/evolution-card.php');
 require_once(__DIR__.'/../objects/damage.php');
 require_once(__DIR__.'/../objects/question.php');
 require_once(__DIR__.'/../objects/log.php');
 
 use KOT\Objects\Card;
+use KOT\Objects\EvolutionCard;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
 use KOT\Objects\LoseHealthLog;
@@ -375,7 +377,7 @@ trait CardsUtilTrait {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
-    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, bool $removeEnergy, int $newHearts, int $points) {
+    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, bool $removeEnergy, int $newHearts, /*int|null*/ $points) {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $zombified = $this->getPlayer($playerId)->zombified;
@@ -416,13 +418,15 @@ trait CardsUtilTrait {
             ]);
         }
 
-        // go back to $points stars
-        $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
-        $this->notifyAllPlayers('points','', [
-            'playerId' => $playerId,
-            'player_name' => $playerName,
-            'points' => $points,
-        ]);
+        if ($points !== null) {
+            // go back to $points stars
+            $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+            $this->notifyAllPlayers('points','', [
+                'playerId' => $playerId,
+                'player_name' => $playerName,
+                'points' => $points,
+            ]);
+        }
 
         // get back to $newHearts heart
         $this->DbQuery("UPDATE player SET `player_health` = $newHearts where `player_id` = $playerId");
@@ -473,16 +477,34 @@ trait CardsUtilTrait {
         );
     }
 
-    function applyNineLives(int $playerId) {
+    function applyNineLives(int $playerId, EvolutionCard &$card) {
+        $this->playEvolutionToTable($playerId, $card, '');
+
         $this->applyResurrectCard(
             $playerId, 
-            3000 + NINE_LIVES_EVOLUTION, 
+            3000 + $card->type, 
             clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all [Energy], [Star], cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'),
             false, 
             true,
             true,
             9,
             9
+        );
+    }
+
+    function applySonOfKongKiko(int $playerId, EvolutionCard &$card) {
+        $this->playEvolutionToTable($playerId, $card, '');
+        $this->removeEvolution($playerId, $card, false, 5000);
+
+        $this->applyResurrectCard(
+            $playerId, 
+            3000 + $card->type, 
+            /*client TODOPUKK translate*/('${player_name} reached 0 [Heart]. With ${card_name}, ${player_name} gets back to 4[Heart], leave Tokyo, and continue playing'),
+            false, 
+            false,
+            false,
+            4,
+            null
         );
     }
 

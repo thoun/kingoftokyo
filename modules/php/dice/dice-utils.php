@@ -298,6 +298,24 @@ trait DiceUtilTrait {
             if ($countMouseHunter > 0) {
                 $this->applyGetPoints($playerId, $countMouseHunter, 3000 + MOUSE_HUNTER_EVOLUTION);
             }
+
+            if ($this->inTokyo($playerId)) {
+                $countClimbTokyoTower = $this->countEvolutionOfType($playerId, CLIMB_TOKYO_TOWER_EVOLUTION);
+                if ($countClimbTokyoTower > 0) {
+                    if ($diceCount >= 6) {
+                        $playerScore = $this->getPlayerScore($playerId);
+                        $this->applyGetPointsIgnoreCards($playerId, MAX_POINT - $playerScore, 0);
+            
+                        $this->notifyAllPlayers("climbTokyoTower", /*client TODOPUKKtranslate*/('${player_name} rolled [dice1][dice1][dice1][dice1][dice1][dice1] and wins the game with ${card_name}'), [
+                            'playerId' => $playerId,
+                            'player_name' => $this->getPlayerName($playerId),
+                            'card_name' => 3000 + CLIMB_TOKYO_TOWER_EVOLUTION,
+                        ]);
+                    } else {
+                        $this->applyGetPoints($playerId, $countClimbTokyoTower * $diceCount, 3000 + CLIMB_TOKYO_TOWER_EVOLUTION);
+                    }
+                }
+            }
         }
 
         return false;
@@ -854,6 +872,7 @@ trait DiceUtilTrait {
     function addSmashesFromCards(int $playerId, array $diceCounts, bool $playerInTokyo) {
         $addedSmashes = 0;
         $cardsAddingSmashes = [];
+        $isPowerUpExpansion = $this->isPowerUpExpansion();
 
         // cheerleader
         if (intval($this->getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
@@ -867,6 +886,16 @@ trait DiceUtilTrait {
             $addedSmashes += $countAcidAttack;
 
             for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = ACID_ATTACK_CARD; }
+        }
+
+        // Jet club
+        if ($isPowerUpExpansion && $playerInTokyo) {
+            $jetClubEvolutions = $this->getEvolutionsOfType($playerId, JET_CLUB_EVOLUTION);
+            foreach($jetClubEvolutions as $jetClubEvolution) {
+                $addedSmashes += 1;
+                    
+                $cardsAddingSmashes[] = 3000 + JET_CLUB_EVOLUTION;
+            }
         }
 
         // burrowing
@@ -889,7 +918,6 @@ trait DiceUtilTrait {
             }
         }
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
         $scytheEvolutions = $this->getEvolutionsOfType($playerId, SCYTHE_EVOLUTION);
         foreach($scytheEvolutions as $scytheEvolution) {
             $addedSmashes += $scytheEvolution->tokens;

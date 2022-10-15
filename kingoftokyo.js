@@ -1254,7 +1254,7 @@ var CurseCards = /** @class */ (function () {
     };
     return CurseCards;
 }());
-var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15, 18];
+var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, /*TODOPUKK 11,*/ 13, 14, 15, 18];
 var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
         this.game = game;
@@ -1370,7 +1370,15 @@ var EvolutionCards = /** @class */ (function () {
             case 88: return /*_TODOPUHA*/ ("[de6428]Candy!");
             // Cthulhu
             // Anubis
-            // King Kong
+            // King Kong TODOPUKK color codes
+            case 111: return /*_TODOPUKK*/ ("Son of Kong Kiko");
+            case 112: return /*_TODOPUKK*/ ("King of Skull Island");
+            case 113: return /*_TODOPUKK*/ ("Islander Sacrifice");
+            case 114: return /*_TODOPUKK*/ ("Monkey Leap");
+            case 115: return /*_TODOPUKK*/ ("It Was Beauty Killed the Beast");
+            case 116: return /*_TODOPUKK*/ ("Jet Club");
+            case 117: return /*_TODOPUKK*/ ("8th Wonder of the World");
+            case 118: return /*_TODOPUKK*/ ("Climb Tokyo Tower");
             // Cybertooth
             // Pandakaï : light 6d6e71 dark 231f20
             case 131: return _("[6d6e71]Panda[231f20]Monium");
@@ -1507,6 +1515,15 @@ var EvolutionCards = /** @class */ (function () {
             case 86: return /*_TODOPUHA*/ ("Each Monster must give you 1[Heart], 1[Star], or 1[Energy].");
             case 87: return /*_TODOPUHA*/ ("When you play this card and each time you eliminate a Monster, put 1[Energy] from the pool on this card. For each [Energy] on this card, add [diceSmash] to your Roll.");
             case 88: return "+1[Heart]<br>" + /*_TODOPUHA*/ ("<strong>Or</strong><br>Play this card when a Monster wounds you. Do not lose [Heart] and give this card to that Monster.");
+            // King Kong
+            case 111: return /*_TODOPUKK*/ ("Play when you reach 0[Heart]. Gain 4[Heart], leave Tokyo, and continue playing.");
+            case 112: return /*_TODOPUKK*/ ("Play when you Yield Tokyo. Gain [Heart] to your maximum amount. Skip your next turn.");
+            case 113: return /*_TODOPUKK*/ ("Roll 6 dice. Gain 1[Energy] per [diceEnergy] and 1[Heart] per [diceHeart] rolled (even if you are in Tokyo). If you rolled less than 2 [diceEnergy] and/or [diceHeart], take this card back.");
+            case 114: return /*_TODOPUKK*/ ("Play during another Monster's movement phase. If Tokyo is empty, you can take control of it instead of the Monster whose turn it is.");
+            case 115: return /*_TODOPUKK*/ ("Take the Beauty card, [King Kong] side up. If you don't have the Beauty card at the start of your turn, you cannot reroll [diceSmash] and you wound only the Monster with the Beauty card.");
+            case 116: return /*_TODOPUKK*/ ("If you are in Tokyo, add [diceSmash] to your roll.");
+            case 117: return /*_TODOPUKK*/ ("If you roll at least 4 identical faces, gain 1[Star].");
+            case 118: return /*_TODOPUKK*/ ("If you are in Tokyo, gain 1[Star] for each [dice1] you roll. If you roll [dice1][dice1][dice1][dice1][dice1][dice1], you win the game.");
             // Pandakaï
             case 131: return _("Gain 6[Energy]. All other Monsters gain 3[Energy].");
             case 132: return _("Play when you enter <i>Tokyo</i>. All Monsters outside of <i>Tokyo</i> lose 2[Heart] each. Gain 1[Energy], then leave <i>Tokyo</i>. No Monster takes your place.");

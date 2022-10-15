@@ -163,11 +163,20 @@ trait DiceStateTrait {
             $this->getNewTokyoTowerLevel($playerId);
         }
         
-        if ($this->isCthulhuExpansion()) {
-            for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-                if ($diceCounts[$diceFace] >= 4 && $this->canUseSymbol($playerId, $diceFace) && $this->canUseFace($playerId, $diceFace)) {
+        $isCthulhuExpansion = $this->isCthulhuExpansion();
+        $fourOfAKind = false;
+        for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
+            if ($diceCounts[$diceFace] >= 4 && $this->canUseSymbol($playerId, $diceFace) && $this->canUseFace($playerId, $diceFace)) {
+                $fourOfAKind = true;
+                if ($isCthulhuExpansion) {
                     $this->applyGetCultist($playerId, $diceFace);
                 }
+            }
+        }
+        if ($isPowerUpExpansion && $fourOfAKind) {
+            $count8thWonderOfTheWorld = $this->countEvolutionOfType($playerId, EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION);
+            if ($count8thWonderOfTheWorld > 0) {
+                $this->applyGetPoints($playerId, $count8thWonderOfTheWorld, 3000 + EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION);
             }
         }
         

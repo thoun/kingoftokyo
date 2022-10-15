@@ -17,17 +17,17 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 9);
-        //$this->debugSetEnergy(20);
+        $this->debugSetEnergy(5);
         //$this->debugSetPlayerPoints(2343493, 17);
-        //$this->debugSetPoints(5);
+        $this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
-        $this->debugSetPlayerHealth(2343492, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
@@ -35,7 +35,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth($playersIds[3], 1);
         //$this->debugSetPlayerHealth($playersIds[4], 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
-        $this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
+        //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
         //$this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
@@ -234,7 +234,7 @@ trait DebugUtilTrait {
             /*$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
 
             // cards to test
-            //$this->debugSetEvolutionInHand(NINE_LIVES_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(CLIMB_TOKYO_TOWER_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
@@ -253,7 +253,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(EATS_SHOOTS_AND_LEAVES_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
+            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(WORST_NIGHTMARE_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(TRICK_OR_THREAT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);

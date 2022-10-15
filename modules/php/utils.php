@@ -947,8 +947,20 @@ trait UtilTrait {
             && $this->getPlayerScore($playerId) >= 16;
 
         if (!$finalRoarWillActivate) {
-            if ($this->isPowerUpExpansion() && $this->getPlayerHealth($playerId) == 0 && $this->countEvolutionOfType($playerId, NINE_LIVES_EVOLUTION, true, true) > 0) {
-                $this->applyNineLives($playerId);
+            if ($this->isPowerUpExpansion()) {
+                if ($this->getPlayerHealth($playerId) == 0) {
+                    $sonOfKongKikoEvolutions = $this->getEvolutionsOfType($playerId, SON_OF_KONG_KIKO_EVOLUTION, true, true);
+                    if (count($sonOfKongKikoEvolutions) > 0) {
+                        $this->applySonOfKongKiko($playerId, $sonOfKongKikoEvolutions[0]);
+                    }
+                }
+
+                if ($this->getPlayerHealth($playerId) == 0) {
+                    $nineLivesEvolutions = $this->getEvolutionsOfType($playerId, NINE_LIVES_EVOLUTION, true, true);
+                    if (count($nineLivesEvolutions) > 0) {
+                        $this->applyNineLives($playerId, $nineLivesEvolutions[0]);
+                    }
+                }
             }
 
             if ($this->countCardOfType($playerId, ZOMBIFY_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
