@@ -425,6 +425,13 @@ trait PlayerStateTrait {
     function stResolveEndTurn() {
         $playerId = $this->getActivePlayerId();
 
+        if ($this->isPowerUpExpansion()) {
+            $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
+            foreach ($freezeRayEvolutions as $freezeRayEvolution) {
+                $this->giveBackFreezeRay($playerId, $freezeRayEvolution);
+            }
+        }
+
         // apply end of turn effects (after Selling Cards)
         
         // rooting for the underdog
@@ -539,13 +546,6 @@ trait PlayerStateTrait {
         $playerId = $this->getActivePlayerId();
 
         $this->removeDiscardCards($playerId);
-
-        if ($this->isPowerUpExpansion()) {
-            $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
-            foreach ($freezeRayEvolutions as $freezeRayEvolution) {
-                $this->giveBackFreezeRay($playerId, $freezeRayEvolution);
-            }
-        }
 
         if (!$this->getPlayer($playerId)->eliminated) {
             $this->applyEndOfEachMonsterCards();

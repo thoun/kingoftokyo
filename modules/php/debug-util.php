@@ -17,8 +17,8 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
-        $this->debugSetPlayerInLocation(2343494, 2);
+        $this->debugSetPlayerInLocation(2343492, 1);
+        //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 9);
@@ -27,7 +27,7 @@ trait DebugUtilTrait {
         //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
-        //$this->debugSetPlayerHealth(2343492, 7);
+        $this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
@@ -35,7 +35,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth($playersIds[3], 1);
         //$this->debugSetPlayerHealth($playersIds[4], 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
-        //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
+        $this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
         //$this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
         //$this->debugSetCardInTable(FRENZY_CARD);
         //$this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
@@ -74,7 +74,7 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 3, true);
         //$this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492);
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
-        $this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
+        //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
@@ -253,13 +253,12 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(EATS_SHOOTS_AND_LEAVES_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343494, true, 2343493);
+            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(WORST_NIGHTMARE_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(TRICK_OR_THREAT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
