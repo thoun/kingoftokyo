@@ -234,7 +234,7 @@ trait DebugUtilTrait {
             /*$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
 
             // cards to test
-            $this->debugSetEvolutionInHand(CLIMB_TOKYO_TOWER_EVOLUTION, 2343492, true);
+            //$this->debugSetEvolutionInHand(CLIMB_TOKYO_TOWER_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
@@ -243,7 +243,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
+            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
