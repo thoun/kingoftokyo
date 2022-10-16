@@ -733,21 +733,23 @@
   left: 15px;
 }
 
-.stockitem, #deck {
+.stockitem, #deck, .kot-curse-card {
   border-radius: 10px;
-  margin: 5px;
   text-align: center;
-  overflow: hidden;
-  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
 }
-.stockitem .bottom, #deck .bottom {
+.stockitem:not(.kot-curse-card), #deck:not(.kot-curse-card), .kot-curse-card:not(.kot-curse-card) {
+  margin: 5px;
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.stockitem .bottom, #deck .bottom, .kot-curse-card .bottom {
   position: absolute;
   bottom: 0;
   width: 100%;
   background: url("img/card-bottom.png");
   background-position: center top;
 }
-.stockitem .name-wrapper, #deck .name-wrapper {
+.stockitem .name-wrapper, #deck .name-wrapper, .kot-curse-card .name-wrapper {
   position: absolute;
   top: 14px;
   left: 34px;
@@ -757,23 +759,23 @@
   width: 95px;
   text-align: center;
 }
-.stockitem .name-wrapper .outline, #deck .name-wrapper .outline {
+.stockitem .name-wrapper .outline, #deck .name-wrapper .outline, .kot-curse-card .name-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
-.stockitem .name-wrapper .outline.curse, #deck .name-wrapper .outline.curse {
+.stockitem .name-wrapper .outline.curse, #deck .name-wrapper .outline.curse, .kot-curse-card .name-wrapper .outline.curse {
   -webkit-text-stroke: 4px #1c484f;
 }
-.stockitem .name-wrapper .text, #deck .name-wrapper .text {
+.stockitem .name-wrapper .text, #deck .name-wrapper .text, .kot-curse-card .name-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
 }
-.stockitem .type-wrapper, #deck .type-wrapper {
+.stockitem .type-wrapper, #deck .type-wrapper, .kot-curse-card .type-wrapper {
   position: absolute;
   left: 0px;
   font-size: 9pt;
@@ -781,31 +783,31 @@
   transform: rotate(-5deg);
   font-family: "goodgirl";
 }
-.stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline {
+.stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline, .kot-curse-card .type-wrapper.keep .outline {
   -webkit-text-stroke: 4px #00aeef;
 }
-.stockitem .type-wrapper.discard .outline, #deck .type-wrapper.discard .outline {
+.stockitem .type-wrapper.discard .outline, #deck .type-wrapper.discard .outline, .kot-curse-card .type-wrapper.discard .outline {
   -webkit-text-stroke: 4px #ef1923;
 }
-.stockitem .type-wrapper.costume .outline, #deck .type-wrapper.costume .outline {
+.stockitem .type-wrapper.costume .outline, #deck .type-wrapper.costume .outline, .kot-curse-card .type-wrapper.costume .outline {
   -webkit-text-stroke: 4px #f7941d;
 }
-.stockitem .type-wrapper.transformation .outline, #deck .type-wrapper.transformation .outline {
+.stockitem .type-wrapper.transformation .outline, #deck .type-wrapper.transformation .outline, .kot-curse-card .type-wrapper.transformation .outline {
   -webkit-text-stroke: 4px #13b48f;
 }
-.stockitem .type-wrapper .outline, #deck .type-wrapper .outline {
+.stockitem .type-wrapper .outline, #deck .type-wrapper .outline, .kot-curse-card .type-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .type-wrapper .text, #deck .type-wrapper .text {
+.stockitem .type-wrapper .text, #deck .type-wrapper .text, .kot-curse-card .type-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .description-wrapper, #deck .description-wrapper {
+.stockitem .description-wrapper, #deck .description-wrapper, .kot-curse-card .description-wrapper {
   position: absolute;
   left: 4px;
   width: 124px;
@@ -815,12 +817,12 @@
   color: black;
   font-size: 7pt;
 }
-.stockitem .description-wrapper .icon, #deck .description-wrapper .icon {
+.stockitem .description-wrapper .icon, #deck .description-wrapper .icon, .kot-curse-card .description-wrapper .icon {
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
 }
-.stockitem .effect-wrapper, #deck .effect-wrapper {
+.stockitem .effect-wrapper, #deck .effect-wrapper, .kot-curse-card .effect-wrapper {
   position: absolute;
   text-overflow: ellipsis;
   text-align: center;
@@ -828,60 +830,60 @@
   display: flex;
   align-items: center;
 }
-.stockitem .effect-wrapper div, #deck .effect-wrapper div {
+.stockitem .effect-wrapper div, #deck .effect-wrapper div, .kot-curse-card .effect-wrapper div {
   flex: 1;
 }
-.stockitem .effect-wrapper .icon, #deck .effect-wrapper .icon {
+.stockitem .effect-wrapper .icon, #deck .effect-wrapper .icon, .kot-curse-card .effect-wrapper .icon {
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
 }
-.stockitem .effect-wrapper .effect-text.overflow, #deck .effect-wrapper .effect-text.overflow {
+.stockitem .effect-wrapper .effect-text.overflow, #deck .effect-wrapper .effect-text.overflow, .kot-curse-card .effect-wrapper .effect-text.overflow {
   background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
   margin: -5px;
   padding: 2px;
   border-radius: 7px;
 }
-.stockitem .effect-wrapper .effect-text.overflow.permanent, #deck .effect-wrapper .effect-text.overflow.permanent {
+.stockitem .effect-wrapper .effect-text.overflow.permanent, #deck .effect-wrapper .effect-text.overflow.permanent, .kot-curse-card .effect-wrapper .effect-text.overflow.permanent {
   background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
   border: 2px solid #42aad1;
 }
-.stockitem .permanent-effect-wrapper, #deck .permanent-effect-wrapper {
+.stockitem .permanent-effect-wrapper, #deck .permanent-effect-wrapper, .kot-curse-card .permanent-effect-wrapper {
   left: 9px;
   width: 116px;
   top: 59px;
   height: 38px;
   color: white;
 }
-.stockitem .ankh-effect-wrapper, #deck .ankh-effect-wrapper {
+.stockitem .ankh-effect-wrapper, #deck .ankh-effect-wrapper, .kot-curse-card .ankh-effect-wrapper {
   left: 6px;
   width: 58px;
   top: 124px;
   height: 52px;
   color: black;
 }
-.stockitem .snake-effect-wrapper, #deck .snake-effect-wrapper {
+.stockitem .snake-effect-wrapper, #deck .snake-effect-wrapper, .kot-curse-card .snake-effect-wrapper {
   left: 68px;
   width: 58px;
   top: 124px;
   height: 52px;
   color: black;
 }
-.stockitem[id$=goldenscarab], #deck[id$=goldenscarab] {
+.stockitem[id$=goldenscarab], #deck[id$=goldenscarab], .kot-curse-card[id$=goldenscarab] {
   pointer-events: none;
 }
-.stockitem.disabled, #deck.disabled {
+.stockitem.disabled, #deck.disabled, .kot-curse-card.disabled {
   filter: contrast(0.6);
   cursor: not-allowed;
 }
-.stockitem .card-token, #deck .card-token {
+.stockitem .card-token, #deck .card-token, .kot-curse-card .card-token {
   position: absolute;
   z-index: 12;
 }
-.stockitem .card-token.mimic, #deck .card-token.mimic {
+.stockitem .card-token.mimic, #deck .card-token.mimic, .kot-curse-card .card-token.mimic {
   z-index: 13;
 }
-.stockitem .card-token.mimic-tile, #deck .card-token.mimic-tile {
+.stockitem .card-token.mimic-tile, #deck .card-token.mimic-tile, .kot-curse-card .card-token.mimic-tile {
   z-index: 11;
   left: 0;
   top: 32px;
@@ -968,6 +970,144 @@
 }
 .card-inner .card-side.back {
   transform: rotateY(180deg);
+}
+
+body > .card {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+}
+
+.card[data-side=back] .card-sides {
+  transform: rotateY(180deg);
+}
+.card .card-sides {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+.card .card-sides .card-side {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  /* Safari */
+  backface-visibility: hidden;
+  transform-origin: center center;
+  border-radius: 5px;
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.card .card-sides .card-side.front > * {
+  pointer-events: none;
+  user-select: none;
+}
+.card .card-sides .card-side.back {
+  transform: rotateY(180deg);
+}
+.card .card-sides .card-side.back > * {
+  pointer-events: none;
+  user-select: none;
+}
+
+.card-stock.hidden-deck {
+  position: relative;
+}
+.card-stock.hidden-deck > .card[id$=-hidden-deck-back] {
+  box-shadow: 4px 4px 0px 0px #111, 5px 5px 2px 1px rgba(0, 0, 0, 0.5);
+}
+.card-stock.hidden-deck > .card:not([id$=-hidden-deck-back]) {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.card-stock.hidden-deck[data-empty=true] {
+  visibility: hidden;
+}
+.card-stock.visible-deck {
+  position: relative;
+}
+.card-stock.visible-deck > .card.under {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.kot-curse-card {
+  display: inline-block;
+  position: relative;
+  border-radius: 10px;
+  text-align: center;
+  width: 132px;
+  height: 185px;
+}
+.kot-curse-card .card-side {
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
+}
+.kot-curse-card .effect-wrapper {
+  position: absolute;
+  text-overflow: ellipsis;
+  text-align: center;
+  font-size: 7pt;
+  display: flex;
+  align-items: center;
+}
+.kot-curse-card .effect-wrapper div {
+  flex: 1;
+}
+.kot-curse-card .effect-wrapper .icon {
+  width: 12px;
+  height: 12px;
+  margin-bottom: -2px;
+}
+.kot-curse-card .effect-wrapper .effect-text.overflow {
+  background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
+  margin: -5px;
+  padding: 2px;
+  border-radius: 7px;
+}
+.kot-curse-card .effect-wrapper .effect-text.overflow.permanent {
+  background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
+  border: 2px solid #42aad1;
+}
+.kot-curse-card .permanent-effect-wrapper {
+  left: 9px;
+  width: 116px;
+  top: 59px;
+  height: 38px;
+  color: white;
+}
+.kot-curse-card .ankh-effect-wrapper {
+  left: 6px;
+  width: 58px;
+  top: 124px;
+  height: 52px;
+  color: black;
+}
+.kot-curse-card .snake-effect-wrapper {
+  left: 68px;
+  width: 58px;
+  top: 124px;
+  height: 52px;
+  color: black;
+}
+
+.card .card-sides .card-side.front {
+  background-size: auto 100%;
+  background-image: url("img/anubis-cards.jpg");
+  background-position: 100% 50%;
+}
+.card .card-sides .card-side.back {
+  background-size: auto 100%;
+  background-image: url("img/anubis-cards.jpg");
+  background-position: 50% 50%;
 }
 
 .player-evolution-cards .stockitem .name-and-description {
@@ -1179,22 +1319,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 10px;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   margin-bottom: 10px;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.5);
-}
-#table #table-center #curse-wrapper #curse-deck {
-  width: 132px;
-  height: 185px;
-  background: url("img/anubis-cards.jpg");
-  background-position: 50% 50%;
-  box-shadow: 4px 4px 0px 0px #333;
-  border-radius: 10px;
-}
-#table #table-center #curse-wrapper #curse-card {
-  width: 132px;
 }
 #table #table-center #full-board {
   display: flex;

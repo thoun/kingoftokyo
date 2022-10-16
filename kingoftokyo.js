@@ -84,6 +84,312 @@ function formatTextIcons(rawText) {
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var CardStock = /** @class */ (function () {
+    function CardStock(manager, element) {
+        this.manager = manager;
+        this.element = element;
+        manager.addStock(this);
+        element.classList.add('card-stock', this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase());
+    }
+    CardStock.prototype.addOrUpdateCard = function (card, animation) {
+        var element = this.manager.getCardElement(card);
+        this.element.appendChild(element);
+        if (animation) {
+            if (animation.fromStock) {
+                // TODO
+            }
+            else if (animation.fromElement && !element.closest("#" + animation.fromElement.id)) {
+                this.slideFromElement(element, animation.fromElement, animation.originalSide);
+            }
+        }
+        /*const existingDiv = document.getElementById(`card-${card.id}`);
+        const side = card.category ? 'front' : 'back';
+        if (existingDiv) {
+            (this.game as any).removeTooltip(`card-${card.id}`);
+            const oldType = Number(existingDiv.dataset.category);
+            existingDiv.classList.remove('selectable', 'selected', 'disabled');
+
+            if (existingDiv.parentElement.id != destinationId) {
+                if (instant) {
+                    document.getElementById(destinationId).appendChild(existingDiv);
+                } else {
+                    slideToObjectAndAttach(this.game, existingDiv, destinationId);
+                }
+            }
+
+            existingDiv.dataset.side = ''+side;
+            if (!oldType && card.category) {
+                this.setVisibleInformations(existingDiv, card);
+            } else if (oldType && !card.category) {
+                if (instant) {
+                    this.removeVisibleInformations(existingDiv);
+                } else {
+                    setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
+                }
+            }
+            if (card.category) {
+                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
+            }
+        } else {
+            const div = document.createElement('div');
+            div.id = `card-${card.id}`;
+            div.classList.add('card');
+            div.dataset.id = ''+card.id;
+            div.dataset.side = ''+side;
+
+            div.innerHTML = `
+                <div class="card-sides">
+                    <div class="card-side front">
+                    </div>
+                    <div class="card-side back">
+                    </div>
+                </div>
+            `;
+            document.getElementById(destinationId).appendChild(div);
+            div.addEventListener('click', () => this.game.onCardClick(card));
+
+            if (from) {
+                const fromCardId = document.getElementById(from).id;
+                slideFromObject(this.game, div, fromCardId);
+            }
+
+            if (card.category) {
+                this.setVisibleInformations(div, card);
+                if (!destinationId.startsWith('help-')) {
+                    this.game.setTooltip(div.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
+                }
+            }
+        }*/
+    };
+    CardStock.prototype.updateCard = function (card) {
+        /*const existingDiv = document.getElementById(`card-${card.id}`);
+        const side = card.category ? 'front' : 'back';
+        if (existingDiv) {
+            (this.game as any).removeTooltip(`card-${card.id}`);
+            const oldType = Number(existingDiv.dataset.category);
+            existingDiv.dataset.side = ''+side;
+            if (!oldType && card.category) {
+                this.setVisibleInformations(existingDiv, card);
+            } else if (oldType && !card.category) {
+                setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
+            }
+            if (card.category) {
+                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
+            }
+        }*/
+    };
+    CardStock.prototype.removeCard = function (card) {
+        this.manager.removeCard(card);
+        this.onCardRemoved(card);
+    };
+    CardStock.prototype.onCardRemoved = function (card) {
+    };
+    CardStock.prototype.slideFromElement = function (element, fromElement, originalSide) {
+        var originBR = fromElement.getBoundingClientRect();
+        if (document.visibilityState !== 'hidden' && !this.manager.game.instantaneousMode) {
+            var destinationBR = element.getBoundingClientRect();
+            var deltaX = destinationBR.left - originBR.left;
+            var deltaY = destinationBR.top - originBR.top;
+            element.style.zIndex = '10';
+            element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px)";
+            var side_1 = element.dataset.side;
+            if (originalSide && originalSide != side_1) {
+                var cardSides_1 = element.getElementsByClassName('card-sides')[0];
+                cardSides_1.style.transition = 'none';
+                element.dataset.side = originalSide;
+                setTimeout(function () {
+                    cardSides_1.style.transition = null;
+                    element.dataset.side = side_1;
+                });
+            }
+            setTimeout(function () {
+                element.style.transition = "transform 0.5s linear";
+                element.style.transform = null;
+            });
+            setTimeout(function () {
+                element.style.zIndex = null;
+                element.style.transition = null;
+                element.style.position = null;
+            }, 600);
+        }
+    };
+    return CardStock;
+}());
+var HiddenDeck = /** @class */ (function (_super) {
+    __extends(HiddenDeck, _super);
+    function HiddenDeck(manager, element, empty) {
+        if (empty === void 0) { empty = false; }
+        var _this = _super.call(this, manager, element) || this;
+        _this.manager = manager;
+        _this.element = element;
+        _this.setEmpty(empty);
+        _this.element.appendChild(_this.manager.getCardElement({ id: element.id + "-hidden-deck-back" }, false));
+        return _this;
+    }
+    HiddenDeck.prototype.setEmpty = function (empty) {
+        this.element.dataset.empty = empty.toString();
+    };
+    return HiddenDeck;
+}(CardStock));
+var VisibleDeck = /** @class */ (function (_super) {
+    __extends(VisibleDeck, _super);
+    function VisibleDeck(manager, element) {
+        var _this = _super.call(this, manager, element) || this;
+        _this.manager = manager;
+        _this.element = element;
+        return _this;
+    }
+    VisibleDeck.prototype.addOrUpdateCard = function (card, animation) {
+        var _this = this;
+        if (this.currentCard) {
+            var currentCard_1 = this.currentCard;
+            document.getElementById(this.manager.getId(currentCard_1)).classList.add('under');
+            setTimeout(function () { return _this.removeCard(currentCard_1); }, 600);
+        }
+        this.currentCard = card;
+        _super.prototype.addOrUpdateCard.call(this, card, animation);
+    };
+    return VisibleDeck;
+}(CardStock));
+var CardManager = /** @class */ (function () {
+    function CardManager(game, settings) {
+        this.game = game;
+        this.settings = settings;
+        this.stocks = [];
+    }
+    CardManager.prototype.addStock = function (stock) {
+        this.stocks.push(stock);
+    };
+    CardManager.prototype.getId = function (card) {
+        var _a, _b, _c;
+        return (_c = (_b = (_a = this.settings).getId) === null || _b === void 0 ? void 0 : _b.call(_a, card)) !== null && _c !== void 0 ? _c : "card-" + card.id;
+    };
+    CardManager.prototype.getCardElement = function (card, visible) {
+        var _a, _b, _c, _d, _e, _f;
+        if (visible === void 0) { visible = true; }
+        var id = this.getId(card);
+        var side = visible ? 'front' : 'back';
+        // TODO check if exists
+        var element = document.createElement("div");
+        element.id = id;
+        element.dataset.side = '' + side;
+        element.innerHTML = "\n            <div class=\"card-sides\">\n                <div class=\"card-side front\">\n                </div>\n                <div class=\"card-side back\">\n                </div>\n            </div>\n        ";
+        element.classList.add('card');
+        document.body.appendChild(element);
+        (_b = (_a = this.settings).setupDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element);
+        if (visible) {
+            (_d = (_c = this.settings).setupFrontDiv) === null || _d === void 0 ? void 0 : _d.call(_c, card, element.getElementsByClassName('front')[0]);
+        }
+        (_f = (_e = this.settings).setupBackDiv) === null || _f === void 0 ? void 0 : _f.call(_e, card, element.getElementsByClassName('back')[0]);
+        document.body.removeChild(element);
+        return element;
+    };
+    CardManager.prototype.createMoveOrUpdateCard = function (card, destinationId, instant, from) {
+        if (instant === void 0) { instant = false; }
+        if (from === void 0) { from = null; }
+        /*const existingDiv = document.getElementById(`card-${card.id}`);
+        const side = card.category ? 'front' : 'back';
+        if (existingDiv) {
+            (this.game as any).removeTooltip(`card-${card.id}`);
+            const oldType = Number(existingDiv.dataset.category);
+            existingDiv.classList.remove('selectable', 'selected', 'disabled');
+
+            if (existingDiv.parentElement.id != destinationId) {
+                if (instant) {
+                    document.getElementById(destinationId).appendChild(existingDiv);
+                } else {
+                    slideToObjectAndAttach(this.game, existingDiv, destinationId);
+                }
+            }
+
+            existingDiv.dataset.side = ''+side;
+            if (!oldType && card.category) {
+                this.setVisibleInformations(existingDiv, card);
+            } else if (oldType && !card.category) {
+                if (instant) {
+                    this.removeVisibleInformations(existingDiv);
+                } else {
+                    setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
+                }
+            }
+            if (card.category) {
+                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
+            }
+        } else {
+            const div = document.createElement('div');
+            div.id = `card-${card.id}`;
+            div.classList.add('card');
+            div.dataset.id = ''+card.id;
+            div.dataset.side = ''+side;
+
+            div.innerHTML = `
+                <div class="card-sides">
+                    <div class="card-side front">
+                    </div>
+                    <div class="card-side back">
+                    </div>
+                </div>
+            `;
+            document.getElementById(destinationId).appendChild(div);
+            div.addEventListener('click', () => this.game.onCardClick(card));
+
+            if (from) {
+                const fromCardId = document.getElementById(from).id;
+                slideFromObject(this.game, div, fromCardId);
+            }
+
+            if (card.category) {
+                this.setVisibleInformations(div, card);
+                if (!destinationId.startsWith('help-')) {
+                    this.game.setTooltip(div.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
+                }
+            }
+        }*/
+    };
+    CardManager.prototype.updateCard = function (card) {
+        /*const existingDiv = document.getElementById(`card-${card.id}`);
+        const side = card.category ? 'front' : 'back';
+        if (existingDiv) {
+            (this.game as any).removeTooltip(`card-${card.id}`);
+            const oldType = Number(existingDiv.dataset.category);
+            existingDiv.dataset.side = ''+side;
+            if (!oldType && card.category) {
+                this.setVisibleInformations(existingDiv, card);
+            } else if (oldType && !card.category) {
+                setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
+            }
+            if (card.category) {
+                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
+            }
+        }*/
+    };
+    CardManager.prototype.removeCard = function (card) {
+        var id = this.getId(card);
+        var div = document.getElementById(id);
+        if (!div) {
+            return;
+        }
+        div.id = "deleted" + id;
+        // TODO this.removeVisibleInformations(div);
+        div.remove();
+    };
+    return CardManager;
+}());
 var CARD_WIDTH = 132;
 var CARD_HEIGHT = 185;
 var EVOLUTION_SIZE = 198;
@@ -3772,17 +4078,10 @@ var TableCenter = /** @class */ (function () {
         this.setTopDeckCardBackType(topDeckCardBackType);
     };
     TableCenter.prototype.createCurseCard = function (curseCard) {
-        var _this = this;
         dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'table-curse-cards');
-        this.curseCard = new ebg.stock();
-        this.curseCard.setSelectionAppearance('class');
-        this.curseCard.selectionClass = 'no-visible-selection';
-        this.curseCard.create(this.game, $('curse-card'), CARD_WIDTH, CARD_HEIGHT);
-        this.curseCard.setSelectionMode(0);
-        this.curseCard.centerItems = true;
-        this.curseCard.onItemCreate = function (card_div, card_type_id) { return _this.game.curseCards.setupNewCard(card_div, card_type_id); };
-        this.game.curseCards.setupCards([this.curseCard]);
-        this.curseCard.addToStockWithId(curseCard.type, '' + curseCard.id);
+        this.curseCard = new VisibleDeck(this.game.curseCardsManager, document.getElementById('curse-card'));
+        this.curseCard.addOrUpdateCard(curseCard);
+        new HiddenDeck(this.game.curseCardsManager, document.getElementById('curse-deck'));
         this.game.addTooltipHtml("curse-deck", "\n        <strong>" + _("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
@@ -3861,8 +4160,7 @@ var TableCenter = /** @class */ (function () {
         return this.tokyoTower;
     };
     TableCenter.prototype.changeCurseCard = function (card) {
-        this.curseCard.removeAll();
-        this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
+        this.curseCard.addOrUpdateCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
     };
     TableCenter.prototype.createWickednessTiles = function (wickednessTiles) {
         var _this = this;
@@ -4224,6 +4522,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.cards = new Cards(this);
         this.curseCards = new CurseCards(this);
+        this.curseCardsManager = new CardManager(this, {
+            getId: function (card) { return "curse-card-" + card.id; },
+            setupDiv: function (card, div) { return div.classList.add('kot-curse-card'); },
+            setupFrontDiv: function (card, div) { return _this.curseCards.setDivAsCard(div, card.type); },
+        });
         this.wickednessTiles = new WickednessTiles(this);
         this.evolutionCards = new EvolutionCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });

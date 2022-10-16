@@ -30,6 +30,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     public tableManager: TableManager;
     public cards: Cards;
     public curseCards: CurseCards;
+    public curseCardsManager: CardManager<CurseCard>;
     public wickednessTiles: WickednessTiles;    
     public evolutionCards: EvolutionCards;
     //private rapidHealingSyncHearts: number;
@@ -103,6 +104,11 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.cards = new Cards(this);
         this.curseCards = new CurseCards(this);
+        this.curseCardsManager = new CardManager<CurseCard>(this, {
+            getId: (card) => `curse-card-${card.id}`,
+            setupDiv: (card: CurseCard, div: HTMLElement) => div.classList.add('kot-curse-card'),
+            setupFrontDiv: (card: CurseCard, div: HTMLElement) => this.curseCards.setDivAsCard(div as HTMLDivElement, card.type),
+        });
         this.wickednessTiles = new WickednessTiles(this);
         this.evolutionCards = new EvolutionCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});

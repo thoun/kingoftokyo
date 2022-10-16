@@ -28,7 +28,8 @@ const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
 
 class TableCenter {
     private visibleCards: Stock;
-    private curseCard: Stock;
+    //private curseCard: Stock;
+    private curseCard: CardStock<CurseCard>;
     private pickCard: Stock;
     private wickednessTiles: WickednessTile[][] = [];
     private tokyoTower: TokyoTower;
@@ -90,16 +91,10 @@ class TableCenter {
             <div id="curse-card"></div>
         </div>`, 'table-curse-cards');
 
-        this.curseCard = new ebg.stock() as Stock;
-        this.curseCard.setSelectionAppearance('class');
-        this.curseCard.selectionClass = 'no-visible-selection';
-        this.curseCard.create(this.game, $('curse-card'), CARD_WIDTH, CARD_HEIGHT);
-        this.curseCard.setSelectionMode(0);
-        this.curseCard.centerItems = true;
-        this.curseCard.onItemCreate = (card_div, card_type_id) => this.game.curseCards.setupNewCard(card_div, card_type_id); 
 
-        this.game.curseCards.setupCards([this.curseCard]);
-        this.curseCard.addToStockWithId(curseCard.type, '' + curseCard.id);
+        this.curseCard = new VisibleDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-card'));
+        this.curseCard.addOrUpdateCard(curseCard);
+        new HiddenDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'));
 
         (this.game as any).addTooltipHtml(`curse-deck`, `
         <strong>${_("Curse card pile.")}</strong>
@@ -196,8 +191,7 @@ class TableCenter {
     }
     
     public changeCurseCard(card: Card) {
-        this.curseCard.removeAll();
-        this.curseCard.addToStockWithId(card.type, '' + card.id, 'curse-deck');
+        this.curseCard.addOrUpdateCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
     }
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {

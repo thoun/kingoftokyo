@@ -1,0 +1,86 @@
+.kot-curse-card {
+    display: inline-block;
+    position: relative;
+    border-radius: 10px;
+    text-align: center;
+    width: 132px;
+    height: 185px;
+
+    .card-side {
+        box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
+    }
+
+    .effect-wrapper {
+        position: absolute;
+        text-overflow: ellipsis;
+        text-align: center;
+        font-size: 7pt;
+        display: flex;
+        align-items: center;
+
+        div {
+            flex: 1;
+        }
+
+        .icon {
+            width: 12px;
+            height: 12px;
+            margin-bottom: -2px;
+        }
+
+        .effect-text {
+            &.overflow {
+                background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
+                margin: -5px;
+                padding: 2px;
+                border-radius: 7px;
+                &.permanent {
+                    background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
+                    border: 2px solid #42aad1;
+                }
+            }
+        }
+    }
+
+    .permanent-effect-wrapper {
+        left: 9px;
+        width: 116px;
+        top: 59px;
+        height: 38px;
+        color: white;
+    }
+
+    .ankh-effect-wrapper {
+        left: 6px;
+        width: 58px;
+        top: 124px;
+        height: 52px;
+        color: black;
+    }
+
+    .snake-effect-wrapper {
+        left: 68px;
+        width: 58px;
+        top: 124px;
+        height: 52px;
+        color: black;
+    }
+}
+
+.card {
+    .card-sides {
+        .card-side {
+            &.front {
+                background-size: auto 100%;
+                background-image: url('img/anubis-cards.jpg');
+                background-position: 100% 50%;
+            } 
+            
+            &.back {
+                background-size: auto 100%;
+                background-image: url('img/anubis-cards.jpg');
+                background-position: 50% 50%;
+            }
+        }
+    }
+}

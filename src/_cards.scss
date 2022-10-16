@@ -10,13 +10,15 @@ $description-left: 4px;
 $description-width: 124px;
 $description-size: 7pt;
 
-.stockitem, #deck {
+.stockitem, #deck, .kot-curse-card {
     border-radius: 10px;
-    margin: 5px;
+    &:not(.kot-curse-card) {
+        margin: 5px;
+        box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
+        overflow: hidden;
+    }
     // border: 1px solid white;
     text-align: center;
-    overflow: hidden;
-    box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
 
     .bottom {
         position: absolute;

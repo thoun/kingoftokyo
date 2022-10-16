@@ -23,6 +23,11 @@ interface Card {
     location_arg: number;
 }
 
+interface CurseCard {
+    id: number;
+    type: number;
+}
+
 interface WickednessTile {
     id: number;
     type: number;
@@ -200,6 +205,7 @@ interface KingOfTokyoGame extends Game {
     tableManager: TableManager;
     cards: Cards;
     curseCards: CurseCards;
+    curseCardsManager: CardManager<CurseCard>;
     wickednessTiles: WickednessTiles;
     evolutionCards: EvolutionCards;
     POISON_TOKEN_TOOLTIP: string;
