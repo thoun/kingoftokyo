@@ -376,7 +376,7 @@ class Cards {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     }
 
-    public placeMimicOnCard(type: 'card' | 'tile', stock: Stock, card: Card, wickednessTiles: WickednessTiles) {
+    public placeMimicOnCard(type: 'card' | 'tile', stock: Stock, card: Card, wickednessTiles: WickednessTilesManager) {
         const divId = `${stock.container_div.id}_item_${card.id}`;
         const div = document.getElementById(divId);
 

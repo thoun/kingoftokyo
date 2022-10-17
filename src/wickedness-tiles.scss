@@ -1,0 +1,153 @@
+$name-left: 34px;
+$name-top: 14px;
+$name-width: 95px;
+$name-size: 10pt;
+
+$description-left: 4px;
+$description-width: 124px;
+$description-size: 7pt;
+
+.kot-tile {
+    display: inline-block;
+    position: relative;
+    border-radius: 10px;
+    text-align: center;
+    width: 132px;
+    height: 81px;
+    background-image: url('img/wickedness-tiles.jpg');
+    background-size: auto 200%;
+
+    &[data-color="orange"] {
+        background-position-y: 0%;
+    }
+    &[data-color="green"] {
+        background-position-y: 100%;
+    }
+    &[data-level="3"] {
+        background-position-x: 0%;
+    }
+    &[data-level="6"] {
+        background-position-x: 50%;
+    }
+    &[data-level="10"] {
+        background-position-x: 100%;
+    }
+
+    .name-wrapper {
+        position: absolute;
+        top: $name-top;
+        left: $name-left;
+        font-size: $name-size;
+        color: white;
+        font-family: 'goodgirl';
+        width: $name-width;
+        text-align: center;
+
+        .outline {
+            position: absolute;
+            left: 0;
+            top: 0;
+            -webkit-text-stroke: 4px $tokyoGreen;
+            width: 100%;
+
+            &.curse {
+              -webkit-text-stroke: 4px #1c484f;  
+            }
+        }
+
+        .text {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+    }
+
+    .description-wrapper {
+        position: absolute;
+        left: $description-left;
+        width: $description-width;
+        bottom: 4px;
+        text-overflow: ellipsis;
+        text-align: center;
+        color: black;
+        font-size: $description-size;
+
+        .icon {
+            width: 12px;
+            height: 12px;
+            margin-bottom: -2px;
+        }
+    }
+
+    &.disabled {
+        filter: contrast(0.6);
+        cursor: not-allowed;
+    }
+}
+
+//-------------------------------------------
+
+.wickedness-tile-stock {
+
+    .stockitem, .kot-tile {
+
+        .name-and-description {
+            position: absolute;
+            top: 3px;
+            min-height: 75px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-content: center;
+
+            & > div {
+                flex: 1;
+                width: auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
+        .name-wrapper {
+            position: relative;
+            top: unset;
+            left: unset;
+            width: unset;
+            left: 0;
+            width: 112px;
+            text-align: center;
+            margin: 3px;
+
+            .outline {
+                position: absolute;
+                left: 0;
+                top: 0;
+
+                &.wickedness-tile-side0 {
+                    -webkit-text-stroke: 4px #8c1e10;  
+                }
+                &.wickedness-tile-side1 {
+                    -webkit-text-stroke: 4px #364e11;  
+                }
+            }
+
+            .text {
+                position: relative;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        .description-wrapper {
+            position: relative;
+            top: unset;
+            left: unset;
+            width: 92px;
+        }
+    }
+}

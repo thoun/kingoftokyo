@@ -1,12 +1,13 @@
-class CurseCards {
-    constructor (private game: KingOfTokyoGame) {}
-    
-    public setupCards(stocks: Stock[]) {
-        stocks.forEach(stock => {
-            const anubiscardsurl = `${g_gamethemeurl}img/anubis-cards.jpg`;
-            for (let i=1; i<=24; i++) {
-                stock.addItemType(i, i, anubiscardsurl, 2);
-            }
+class CurseCardsManager extends CardManager<CurseCard> {
+    constructor (public game: KingOfTokyoGame) {
+        super(game, {
+            getId: (card) => `curse-card-${card.id}`,
+            setupDiv: (card: CurseCard, div: HTMLElement) => div.classList.add('kot-curse-card'),
+            setupFrontDiv: (card: CurseCard, div: HTMLElement) => {
+                this.setDivAsCard(div as HTMLDivElement, card.type);
+                div.id = `${super.getId(card)}-front`;
+                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
+            },
         });
     }
 
@@ -128,11 +129,6 @@ class CurseCards {
             <p><strong>${_("Snake effect")} :</strong> ${formatTextIcons(this.getSnakeEffect(cardTypeId))}</p>
         </div>`;
         return tooltip;
-    }
-
-    public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
-        this.setDivAsCard(cardDiv, cardType); 
-        (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     }
 
     public setDivAsCard(cardDiv: HTMLDivElement, cardType: number) {

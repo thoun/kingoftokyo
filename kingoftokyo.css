@@ -733,23 +733,23 @@
   left: 15px;
 }
 
-.stockitem, #deck, .kot-curse-card {
+.stockitem, #deck, .kot-curse-card, .kot-tile {
   border-radius: 10px;
   text-align: center;
 }
-.stockitem:not(.kot-curse-card), #deck:not(.kot-curse-card), .kot-curse-card:not(.kot-curse-card) {
+.stockitem:not(.kot-curse-card):not(.kot-tile), #deck:not(.kot-curse-card):not(.kot-tile), .kot-curse-card:not(.kot-curse-card):not(.kot-tile), .kot-tile:not(.kot-curse-card):not(.kot-tile) {
   margin: 5px;
   box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
-.stockitem .bottom, #deck .bottom, .kot-curse-card .bottom {
+.stockitem .bottom, #deck .bottom, .kot-curse-card .bottom, .kot-tile .bottom {
   position: absolute;
   bottom: 0;
   width: 100%;
   background: url("img/card-bottom.png");
   background-position: center top;
 }
-.stockitem .name-wrapper, #deck .name-wrapper, .kot-curse-card .name-wrapper {
+.stockitem .name-wrapper, #deck .name-wrapper, .kot-curse-card .name-wrapper, .kot-tile .name-wrapper {
   position: absolute;
   top: 14px;
   left: 34px;
@@ -759,23 +759,23 @@
   width: 95px;
   text-align: center;
 }
-.stockitem .name-wrapper .outline, #deck .name-wrapper .outline, .kot-curse-card .name-wrapper .outline {
+.stockitem .name-wrapper .outline, #deck .name-wrapper .outline, .kot-curse-card .name-wrapper .outline, .kot-tile .name-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
-.stockitem .name-wrapper .outline.curse, #deck .name-wrapper .outline.curse, .kot-curse-card .name-wrapper .outline.curse {
+.stockitem .name-wrapper .outline.curse, #deck .name-wrapper .outline.curse, .kot-curse-card .name-wrapper .outline.curse, .kot-tile .name-wrapper .outline.curse {
   -webkit-text-stroke: 4px #1c484f;
 }
-.stockitem .name-wrapper .text, #deck .name-wrapper .text, .kot-curse-card .name-wrapper .text {
+.stockitem .name-wrapper .text, #deck .name-wrapper .text, .kot-curse-card .name-wrapper .text, .kot-tile .name-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
 }
-.stockitem .type-wrapper, #deck .type-wrapper, .kot-curse-card .type-wrapper {
+.stockitem .type-wrapper, #deck .type-wrapper, .kot-curse-card .type-wrapper, .kot-tile .type-wrapper {
   position: absolute;
   left: 0px;
   font-size: 9pt;
@@ -783,31 +783,31 @@
   transform: rotate(-5deg);
   font-family: "goodgirl";
 }
-.stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline, .kot-curse-card .type-wrapper.keep .outline {
+.stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline, .kot-curse-card .type-wrapper.keep .outline, .kot-tile .type-wrapper.keep .outline {
   -webkit-text-stroke: 4px #00aeef;
 }
-.stockitem .type-wrapper.discard .outline, #deck .type-wrapper.discard .outline, .kot-curse-card .type-wrapper.discard .outline {
+.stockitem .type-wrapper.discard .outline, #deck .type-wrapper.discard .outline, .kot-curse-card .type-wrapper.discard .outline, .kot-tile .type-wrapper.discard .outline {
   -webkit-text-stroke: 4px #ef1923;
 }
-.stockitem .type-wrapper.costume .outline, #deck .type-wrapper.costume .outline, .kot-curse-card .type-wrapper.costume .outline {
+.stockitem .type-wrapper.costume .outline, #deck .type-wrapper.costume .outline, .kot-curse-card .type-wrapper.costume .outline, .kot-tile .type-wrapper.costume .outline {
   -webkit-text-stroke: 4px #f7941d;
 }
-.stockitem .type-wrapper.transformation .outline, #deck .type-wrapper.transformation .outline, .kot-curse-card .type-wrapper.transformation .outline {
+.stockitem .type-wrapper.transformation .outline, #deck .type-wrapper.transformation .outline, .kot-curse-card .type-wrapper.transformation .outline, .kot-tile .type-wrapper.transformation .outline {
   -webkit-text-stroke: 4px #13b48f;
 }
-.stockitem .type-wrapper .outline, #deck .type-wrapper .outline, .kot-curse-card .type-wrapper .outline {
+.stockitem .type-wrapper .outline, #deck .type-wrapper .outline, .kot-curse-card .type-wrapper .outline, .kot-tile .type-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .type-wrapper .text, #deck .type-wrapper .text, .kot-curse-card .type-wrapper .text {
+.stockitem .type-wrapper .text, #deck .type-wrapper .text, .kot-curse-card .type-wrapper .text, .kot-tile .type-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .description-wrapper, #deck .description-wrapper, .kot-curse-card .description-wrapper {
+.stockitem .description-wrapper, #deck .description-wrapper, .kot-curse-card .description-wrapper, .kot-tile .description-wrapper {
   position: absolute;
   left: 4px;
   width: 124px;
@@ -817,12 +817,12 @@
   color: black;
   font-size: 7pt;
 }
-.stockitem .description-wrapper .icon, #deck .description-wrapper .icon, .kot-curse-card .description-wrapper .icon {
+.stockitem .description-wrapper .icon, #deck .description-wrapper .icon, .kot-curse-card .description-wrapper .icon, .kot-tile .description-wrapper .icon {
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
 }
-.stockitem .effect-wrapper, #deck .effect-wrapper, .kot-curse-card .effect-wrapper {
+.stockitem .effect-wrapper, #deck .effect-wrapper, .kot-curse-card .effect-wrapper, .kot-tile .effect-wrapper {
   position: absolute;
   text-overflow: ellipsis;
   text-align: center;
@@ -830,60 +830,60 @@
   display: flex;
   align-items: center;
 }
-.stockitem .effect-wrapper div, #deck .effect-wrapper div, .kot-curse-card .effect-wrapper div {
+.stockitem .effect-wrapper div, #deck .effect-wrapper div, .kot-curse-card .effect-wrapper div, .kot-tile .effect-wrapper div {
   flex: 1;
 }
-.stockitem .effect-wrapper .icon, #deck .effect-wrapper .icon, .kot-curse-card .effect-wrapper .icon {
+.stockitem .effect-wrapper .icon, #deck .effect-wrapper .icon, .kot-curse-card .effect-wrapper .icon, .kot-tile .effect-wrapper .icon {
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
 }
-.stockitem .effect-wrapper .effect-text.overflow, #deck .effect-wrapper .effect-text.overflow, .kot-curse-card .effect-wrapper .effect-text.overflow {
+.stockitem .effect-wrapper .effect-text.overflow, #deck .effect-wrapper .effect-text.overflow, .kot-curse-card .effect-wrapper .effect-text.overflow, .kot-tile .effect-wrapper .effect-text.overflow {
   background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
   margin: -5px;
   padding: 2px;
   border-radius: 7px;
 }
-.stockitem .effect-wrapper .effect-text.overflow.permanent, #deck .effect-wrapper .effect-text.overflow.permanent, .kot-curse-card .effect-wrapper .effect-text.overflow.permanent {
+.stockitem .effect-wrapper .effect-text.overflow.permanent, #deck .effect-wrapper .effect-text.overflow.permanent, .kot-curse-card .effect-wrapper .effect-text.overflow.permanent, .kot-tile .effect-wrapper .effect-text.overflow.permanent {
   background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
   border: 2px solid #42aad1;
 }
-.stockitem .permanent-effect-wrapper, #deck .permanent-effect-wrapper, .kot-curse-card .permanent-effect-wrapper {
+.stockitem .permanent-effect-wrapper, #deck .permanent-effect-wrapper, .kot-curse-card .permanent-effect-wrapper, .kot-tile .permanent-effect-wrapper {
   left: 9px;
   width: 116px;
   top: 59px;
   height: 38px;
   color: white;
 }
-.stockitem .ankh-effect-wrapper, #deck .ankh-effect-wrapper, .kot-curse-card .ankh-effect-wrapper {
+.stockitem .ankh-effect-wrapper, #deck .ankh-effect-wrapper, .kot-curse-card .ankh-effect-wrapper, .kot-tile .ankh-effect-wrapper {
   left: 6px;
   width: 58px;
   top: 124px;
   height: 52px;
   color: black;
 }
-.stockitem .snake-effect-wrapper, #deck .snake-effect-wrapper, .kot-curse-card .snake-effect-wrapper {
+.stockitem .snake-effect-wrapper, #deck .snake-effect-wrapper, .kot-curse-card .snake-effect-wrapper, .kot-tile .snake-effect-wrapper {
   left: 68px;
   width: 58px;
   top: 124px;
   height: 52px;
   color: black;
 }
-.stockitem[id$=goldenscarab], #deck[id$=goldenscarab], .kot-curse-card[id$=goldenscarab] {
+.stockitem[id$=goldenscarab], #deck[id$=goldenscarab], .kot-curse-card[id$=goldenscarab], .kot-tile[id$=goldenscarab] {
   pointer-events: none;
 }
-.stockitem.disabled, #deck.disabled, .kot-curse-card.disabled {
+.stockitem.disabled, #deck.disabled, .kot-curse-card.disabled, .kot-tile.disabled {
   filter: contrast(0.6);
   cursor: not-allowed;
 }
-.stockitem .card-token, #deck .card-token, .kot-curse-card .card-token {
+.stockitem .card-token, #deck .card-token, .kot-curse-card .card-token, .kot-tile .card-token {
   position: absolute;
   z-index: 12;
 }
-.stockitem .card-token.mimic, #deck .card-token.mimic, .kot-curse-card .card-token.mimic {
+.stockitem .card-token.mimic, #deck .card-token.mimic, .kot-curse-card .card-token.mimic, .kot-tile .card-token.mimic {
   z-index: 13;
 }
-.stockitem .card-token.mimic-tile, #deck .card-token.mimic-tile, .kot-curse-card .card-token.mimic-tile {
+.stockitem .card-token.mimic-tile, #deck .card-token.mimic-tile, .kot-curse-card .card-token.mimic-tile, .kot-tile .card-token.mimic-tile {
   z-index: 11;
   left: 0;
   top: 32px;
@@ -1017,6 +1017,25 @@ body > .card {
   user-select: none;
 }
 
+.card-stock.line-stock {
+  display: flex;
+  gap: 10px;
+}
+.card-stock.line-stock[data-wrap=true] {
+  flex-wrap: wrap;
+}
+.card-stock.line-stock[data-wrap=false] {
+  flex-wrap: nowrap;
+}
+.card-stock.line-stock[data-direction=row] {
+  flex-direction: row;
+}
+.card-stock.line-stock[data-direction=column] {
+  flex-direction: column;
+}
+.card-stock.line-stock[data-center=true] {
+  justify-content: center;
+}
 .card-stock.hidden-deck {
   position: relative;
 }
@@ -1050,6 +1069,16 @@ body > .card {
 }
 .kot-curse-card .card-side {
   box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
+}
+.kot-curse-card .card-side.front {
+  background-size: auto 100%;
+  background-image: url("img/anubis-cards.jpg");
+  background-position: 100% 50%;
+}
+.kot-curse-card .card-side.back {
+  background-size: auto 100%;
+  background-image: url("img/anubis-cards.jpg");
+  background-position: 50% 50%;
 }
 .kot-curse-card .effect-wrapper {
   position: absolute;
@@ -1097,17 +1126,6 @@ body > .card {
   top: 124px;
   height: 52px;
   color: black;
-}
-
-.card .card-sides .card-side.front {
-  background-size: auto 100%;
-  background-image: url("img/anubis-cards.jpg");
-  background-position: 100% 50%;
-}
-.card .card-sides .card-side.back {
-  background-size: auto 100%;
-  background-image: url("img/anubis-cards.jpg");
-  background-position: 50% 50%;
 }
 
 .player-evolution-cards .stockitem .name-and-description {
@@ -1208,7 +1226,78 @@ body > .card {
   vertical-align: middle;
 }
 
-.wickedness-tile-stock .stockitem .name-and-description {
+.kot-tile {
+  display: inline-block;
+  position: relative;
+  border-radius: 10px;
+  text-align: center;
+  width: 132px;
+  height: 81px;
+  background-image: url("img/wickedness-tiles.jpg");
+  background-size: auto 200%;
+}
+.kot-tile[data-color=orange] {
+  background-position-y: 0%;
+}
+.kot-tile[data-color=green] {
+  background-position-y: 100%;
+}
+.kot-tile[data-level="3"] {
+  background-position-x: 0%;
+}
+.kot-tile[data-level="6"] {
+  background-position-x: 50%;
+}
+.kot-tile[data-level="10"] {
+  background-position-x: 100%;
+}
+.kot-tile .name-wrapper {
+  position: absolute;
+  top: 14px;
+  left: 34px;
+  font-size: 10pt;
+  color: white;
+  font-family: "goodgirl";
+  width: 95px;
+  text-align: center;
+}
+.kot-tile .name-wrapper .outline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-text-stroke: 4px #a6c136;
+  width: 100%;
+}
+.kot-tile .name-wrapper .outline.curse {
+  -webkit-text-stroke: 4px #1c484f;
+}
+.kot-tile .name-wrapper .text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+.kot-tile .description-wrapper {
+  position: absolute;
+  left: 4px;
+  width: 124px;
+  bottom: 4px;
+  text-overflow: ellipsis;
+  text-align: center;
+  color: black;
+  font-size: 7pt;
+}
+.kot-tile .description-wrapper .icon {
+  width: 12px;
+  height: 12px;
+  margin-bottom: -2px;
+}
+.kot-tile.disabled {
+  filter: contrast(0.6);
+  cursor: not-allowed;
+}
+
+.wickedness-tile-stock .stockitem .name-and-description, .wickedness-tile-stock .kot-tile .name-and-description {
   position: absolute;
   top: 3px;
   min-height: 75px;
@@ -1219,14 +1308,14 @@ body > .card {
   justify-content: space-evenly;
   align-content: center;
 }
-.wickedness-tile-stock .stockitem .name-and-description > div {
+.wickedness-tile-stock .stockitem .name-and-description > div, .wickedness-tile-stock .kot-tile .name-and-description > div {
   flex: 1;
   width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.wickedness-tile-stock .stockitem .name-wrapper {
+.wickedness-tile-stock .stockitem .name-wrapper, .wickedness-tile-stock .kot-tile .name-wrapper {
   position: relative;
   top: unset;
   left: unset;
@@ -1236,24 +1325,24 @@ body > .card {
   text-align: center;
   margin: 3px;
 }
-.wickedness-tile-stock .stockitem .name-wrapper .outline {
+.wickedness-tile-stock .stockitem .name-wrapper .outline, .wickedness-tile-stock .kot-tile .name-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
 }
-.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side0 {
+.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side0, .wickedness-tile-stock .kot-tile .name-wrapper .outline.wickedness-tile-side0 {
   -webkit-text-stroke: 4px #8c1e10;
 }
-.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side1 {
+.wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side1, .wickedness-tile-stock .kot-tile .name-wrapper .outline.wickedness-tile-side1 {
   -webkit-text-stroke: 4px #364e11;
 }
-.wickedness-tile-stock .stockitem .name-wrapper .text {
+.wickedness-tile-stock .stockitem .name-wrapper .text, .wickedness-tile-stock .kot-tile .name-wrapper .text {
   position: relative;
   left: 0;
   top: 0;
   width: 100%;
 }
-.wickedness-tile-stock .stockitem .description-wrapper {
+.wickedness-tile-stock .stockitem .description-wrapper, .wickedness-tile-stock .kot-tile .description-wrapper {
   position: relative;
   top: unset;
   left: unset;
@@ -2352,6 +2441,9 @@ html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-ed
 }
 html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .description-wrapper, html[data-dark-edition=true] .card-stock #deck .description-wrapper {
   color: white;
+}
+html[data-dark-edition=true] .kot-tile {
+  background-image: url("img/dark/wickedness-tiles.jpg");
 }
 html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text, html[data-dark-edition=true] .kot-tile .card-keep-text, html[data-dark-edition=true] .dijitTooltipContainer .card-keep-text {
   color: white;

@@ -29,9 +29,8 @@ class KingOfTokyo implements KingOfTokyoGame {
     private preferencesManager: PreferencesManager;
     public tableManager: TableManager;
     public cards: Cards;
-    public curseCards: CurseCards;
-    public curseCardsManager: CardManager<CurseCard>;
-    public wickednessTiles: WickednessTiles;    
+    public curseCardsManager: CurseCardsManager;
+    public wickednessTilesManager: WickednessTilesManager;    
     public evolutionCards: EvolutionCards;
     //private rapidHealingSyncHearts: number;
     public towerLevelsOwners = [];
@@ -103,13 +102,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.cards = new Cards(this);
-        this.curseCards = new CurseCards(this);
-        this.curseCardsManager = new CardManager<CurseCard>(this, {
-            getId: (card) => `curse-card-${card.id}`,
-            setupDiv: (card: CurseCard, div: HTMLElement) => div.classList.add('kot-curse-card'),
-            setupFrontDiv: (card: CurseCard, div: HTMLElement) => this.curseCards.setDivAsCard(div as HTMLDivElement, card.type),
-        });
-        this.wickednessTiles = new WickednessTiles(this);
+        this.curseCardsManager = new CurseCardsManager(this);
+        this.wickednessTilesManager = new WickednessTilesManager(this);
         this.evolutionCards = new EvolutionCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
@@ -2362,7 +2356,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.playerTables.forEach(playerTable => {
             if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
-                this.cards.placeMimicOnCard(type, playerTable.cards, card, this.wickednessTiles);
+                this.cards.placeMimicOnCard(type, playerTable.cards, card, this.wickednessTilesManager);
             }
         });
 
@@ -2399,12 +2393,15 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private setMimicTooltip(type: 'card' | 'tile', mimickedCard: Card) {
         this.playerTables.forEach(playerTable => {
-            const stock = type === 'tile' ? playerTable.wickednessTiles : playerTable.cards;
             const mimicCardId = type === 'tile' ? 106 : 27;
-            const mimicCardItem = stock.items.find(item => Number(item.type) == mimicCardId);
+            const mimicCardItem = (type === 'tile' ? playerTable.wickednessTiles.getCards() : playerTable.cards.items).find(item => Number(item.type) == mimicCardId);
             if (mimicCardItem) {
-                const cardManager = type === 'tile' ? this.wickednessTiles : this.cards;
-                cardManager.changeMimicTooltip(`${stock.container_div.id}_item_${mimicCardItem.id}`, this.cards.getMimickedCardText(mimickedCard));
+                const cardManager = type === 'tile' ? this.wickednessTilesManager : this.cards;
+                if (type === 'tile') {
+                    cardManager.changeMimicTooltip(this.wickednessTilesManager.getId(mimicCardItem), this.cards.getMimickedCardText(mimickedCard));
+                } else {
+                    cardManager.changeMimicTooltip(`${playerTable.cards.container_div.id}_item_${mimicCardItem.id}`, this.cards.getMimickedCardText(mimickedCard));
+                }
             }
         });
     }
@@ -3826,7 +3823,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_setTileTokens(notif: Notif<NotifSetWickednessTileTokensArgs>) {
-        this.wickednessTiles.placeTokensOnTile(this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.card, notif.args.playerId);
+        this.wickednessTilesManager.placeTokensOnTile(notif.args.card, notif.args.playerId);
     }
 
     notif_toggleRapidHealing(notif: Notif<NotifToggleRapidHealingArgs>) {
@@ -3955,7 +3952,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_takeWickednessTile(notif: Notif<NotifTakeWickednessTileArgs>) {
         const tile = notif.args.tile;
-        this.wickednessTiles.addCardsToStock(this.getPlayerTable(notif.args.playerId).wickednessTiles, [tile], `wickedness-tiles-pile-tile-${tile.id}`);
+        this.wickednessTilesManager.addCardsToStock(this.getPlayerTable(notif.args.playerId).wickednessTiles, [tile], document.getElementById(`wickedness-tiles-pile-tile-${tile.id}`));
         this.tableCenter.removeWickednessTileFromPile(notif.args.level, tile);
 
         this.tableManager.tableHeightChange(); // adapt to new card
@@ -4219,9 +4216,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (logType >= 3000) {
             return this.evolutionCards.getCardName(logType - 3000, 'text-only');
         } else if (logType >= 2000) {
-            return this.wickednessTiles.getCardName(logType - 2000);
+            return this.wickednessTilesManager.getCardName(logType - 2000);
         } else if (logType >= 1000) {
-            return this.curseCards.getCardName(logType - 1000);
+            return this.curseCardsManager.getCardName(logType - 1000);
         } else {
             return this.cards.getCardName(logType, 'text-only');
         }
@@ -4231,9 +4228,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (logType >= 3000) {
             return this.evolutionCards.getTooltip(logType - 3000);
         } else if (logType >= 2000) {
-            return this.wickednessTiles.getTooltip(logType - 2000);
+            return this.wickednessTilesManager.getTooltip(logType - 2000);
         } else if (logType >= 1000) {
-            return this.curseCards.getTooltip(logType - 1000);
+            return this.curseCardsManager.getTooltip(logType - 1000);
         } else {
             return this.cards.getTooltip(logType);
         }

@@ -18,7 +18,7 @@ class PlayerTable {
 
     public cards: Stock;
     public reservedCards: Stock; // TODOPUBG
-    public wickednessTiles: Stock;
+    public wickednessTiles: LineStock<WickednessTile>;
     public hiddenEvolutionCards: Stock | null = null;
     public pickEvolutionCards: Stock | null = null;;
     public visibleEvolutionCards: Stock;
@@ -131,16 +131,9 @@ class PlayerTable {
         }
 
         if (this.game.isWickednessExpansion()) {
-            this.wickednessTiles = new ebg.stock() as Stock;
-            this.wickednessTiles.setSelectionAppearance('class');
-            this.wickednessTiles.selectionClass = 'no-visible-selection';
-            this.wickednessTiles.create(this.game, $(`wickedness-tiles-${player.id}`), WICKEDNESS_TILES_WIDTH, WICKEDNESS_TILES_HEIGHT);
-            this.wickednessTiles.setSelectionMode(0);
-            this.wickednessTiles.centerItems = true;
-            this.wickednessTiles.onItemCreate = (card_div, card_type_id) => this.game.wickednessTiles.setupNewCard(card_div, card_type_id); 
+            this.wickednessTiles = new LineStock<WickednessTile>(this.game.wickednessTilesManager, document.getElementById(`wickedness-tiles-${player.id}`));
     
-            this.game.wickednessTiles.setupCards([this.wickednessTiles], this.game.isDarkEdition());
-            this.game.wickednessTiles.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
+            this.game.wickednessTilesManager.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
         }
 
         if (game.isPowerUpExpansion()) {
@@ -230,8 +223,7 @@ class PlayerTable {
     }
 
     public removeWickednessTiles(tiles: WickednessTile[]) {
-        const tilesIds = tiles.map(tile => tile.id);
-        tilesIds.forEach(id => this.wickednessTiles.removeFromStockById(''+id));
+        tiles.forEach(tile => this.wickednessTiles.removeCard(tile));
     }
 
     public removeEvolutions(cards: EvolutionCard[]) {

@@ -159,6 +159,10 @@ html[data-dark-edition="true"] {
         }
     }
 
+    .kot-tile {
+        background-image: url('img/dark/wickedness-tiles.jpg');
+    }
+
     .kot-card[data-design="dark-edition"], .kot-tile, .dijitTooltipContainer {
 
         .card-keep-text {

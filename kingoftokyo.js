@@ -103,10 +103,17 @@ var CardStock = /** @class */ (function () {
     function CardStock(manager, element) {
         this.manager = manager;
         this.element = element;
+        this.cards = [];
         manager.addStock(this);
         element.classList.add('card-stock', this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase());
     }
-    CardStock.prototype.addOrUpdateCard = function (card, animation) {
+    CardStock.prototype.getCards = function () {
+        return this.cards;
+    };
+    CardStock.prototype.isEmpty = function () {
+        return !this.cards.length;
+    };
+    CardStock.prototype.addCard = function (card, animation) {
         var element = this.manager.getCardElement(card);
         this.element.appendChild(element);
         if (animation) {
@@ -117,87 +124,37 @@ var CardStock = /** @class */ (function () {
                 this.slideFromElement(element, animation.fromElement, animation.originalSide);
             }
         }
-        /*const existingDiv = document.getElementById(`card-${card.id}`);
-        const side = card.category ? 'front' : 'back';
-        if (existingDiv) {
-            (this.game as any).removeTooltip(`card-${card.id}`);
-            const oldType = Number(existingDiv.dataset.category);
-            existingDiv.classList.remove('selectable', 'selected', 'disabled');
-
-            if (existingDiv.parentElement.id != destinationId) {
-                if (instant) {
-                    document.getElementById(destinationId).appendChild(existingDiv);
-                } else {
-                    slideToObjectAndAttach(this.game, existingDiv, destinationId);
-                }
-            }
-
-            existingDiv.dataset.side = ''+side;
-            if (!oldType && card.category) {
-                this.setVisibleInformations(existingDiv, card);
-            } else if (oldType && !card.category) {
-                if (instant) {
-                    this.removeVisibleInformations(existingDiv);
-                } else {
-                    setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
-                }
-            }
-            if (card.category) {
-                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-            }
-        } else {
-            const div = document.createElement('div');
-            div.id = `card-${card.id}`;
-            div.classList.add('card');
-            div.dataset.id = ''+card.id;
-            div.dataset.side = ''+side;
-
-            div.innerHTML = `
-                <div class="card-sides">
-                    <div class="card-side front">
-                    </div>
-                    <div class="card-side back">
-                    </div>
-                </div>
-            `;
-            document.getElementById(destinationId).appendChild(div);
-            div.addEventListener('click', () => this.game.onCardClick(card));
-
-            if (from) {
-                const fromCardId = document.getElementById(from).id;
-                slideFromObject(this.game, div, fromCardId);
-            }
-
-            if (card.category) {
-                this.setVisibleInformations(div, card);
-                if (!destinationId.startsWith('help-')) {
-                    this.game.setTooltip(div.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-                }
-            }
-        }*/
+        this.cards.push(card);
     };
-    CardStock.prototype.updateCard = function (card) {
-        /*const existingDiv = document.getElementById(`card-${card.id}`);
-        const side = card.category ? 'front' : 'back';
-        if (existingDiv) {
-            (this.game as any).removeTooltip(`card-${card.id}`);
-            const oldType = Number(existingDiv.dataset.category);
-            existingDiv.dataset.side = ''+side;
-            if (!oldType && card.category) {
-                this.setVisibleInformations(existingDiv, card);
-            } else if (oldType && !card.category) {
-                setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
+    CardStock.prototype.addCards = function (cards, animation, shift) {
+        var _this = this;
+        if (shift === void 0) { shift = false; }
+        if (shift === true) {
+            // TODO chain promise
+            shift = 500;
+        }
+        if (shift) {
+            var _loop_1 = function (i) {
+                setTimeout(function () { return _this.addCard(cards[i], animation); }, i * shift);
+            };
+            for (var i = 0; i < cards.length; i++) {
+                _loop_1(i);
             }
-            if (card.category) {
-                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-            }
-        }*/
+        }
+        else {
+            cards.forEach(function (card) { return _this.addCard(card, animation); });
+        }
     };
     CardStock.prototype.removeCard = function (card) {
         this.manager.removeCard(card);
         this.onCardRemoved(card);
     };
     CardStock.prototype.onCardRemoved = function (card) {
+        var _this = this;
+        var index = this.cards.findIndex(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
+        if (index !== -1) {
+            this.cards.splice(index, 1);
+        }
     };
     CardStock.prototype.slideFromElement = function (element, fromElement, originalSide) {
         var originBR = fromElement.getBoundingClientRect();
@@ -230,6 +187,22 @@ var CardStock = /** @class */ (function () {
     };
     return CardStock;
 }());
+var LineStock = /** @class */ (function (_super) {
+    __extends(LineStock, _super);
+    function LineStock(manager, element, wrap, direction, center) {
+        if (wrap === void 0) { wrap = true; }
+        if (direction === void 0) { direction = 'row'; }
+        if (center === void 0) { center = true; }
+        var _this = _super.call(this, manager, element) || this;
+        _this.manager = manager;
+        _this.element = element;
+        element.dataset.wrap = wrap.toString();
+        element.dataset.direction = direction;
+        element.dataset.center = center.toString();
+        return _this;
+    }
+    return LineStock;
+}(CardStock));
 var HiddenDeck = /** @class */ (function (_super) {
     __extends(HiddenDeck, _super);
     function HiddenDeck(manager, element, empty) {
@@ -254,15 +227,14 @@ var VisibleDeck = /** @class */ (function (_super) {
         _this.element = element;
         return _this;
     }
-    VisibleDeck.prototype.addOrUpdateCard = function (card, animation) {
+    VisibleDeck.prototype.addCard = function (card, animation) {
         var _this = this;
-        if (this.currentCard) {
-            var currentCard_1 = this.currentCard;
-            document.getElementById(this.manager.getId(currentCard_1)).classList.add('under');
-            setTimeout(function () { return _this.removeCard(currentCard_1); }, 600);
+        var currentCard = this.cards[this.cards.length - 1];
+        if (currentCard) {
+            document.getElementById(this.manager.getId(currentCard)).classList.add('under');
+            setTimeout(function () { return _this.removeCard(currentCard); }, 600);
         }
-        this.currentCard = card;
-        _super.prototype.addOrUpdateCard.call(this, card, animation);
+        _super.prototype.addCard.call(this, card, animation);
     };
     return VisibleDeck;
 }(CardStock));
@@ -1403,19 +1375,22 @@ var Cards = /** @class */ (function () {
     };
     return Cards;
 }());
-var CurseCards = /** @class */ (function () {
-    function CurseCards(game) {
-        this.game = game;
+var CurseCardsManager = /** @class */ (function (_super) {
+    __extends(CurseCardsManager, _super);
+    function CurseCardsManager(game) {
+        var _this = _super.call(this, game, {
+            getId: function (card) { return "curse-card-" + card.id; },
+            setupDiv: function (card, div) { return div.classList.add('kot-curse-card'); },
+            setupFrontDiv: function (card, div) {
+                _this.setDivAsCard(div, card.type);
+                div.id = _super.prototype.getId.call(_this, card) + "-front";
+                _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
+            },
+        }) || this;
+        _this.game = game;
+        return _this;
     }
-    CurseCards.prototype.setupCards = function (stocks) {
-        stocks.forEach(function (stock) {
-            var anubiscardsurl = g_gamethemeurl + "img/anubis-cards.jpg";
-            for (var i = 1; i <= 24; i++) {
-                stock.addItemType(i, i, anubiscardsurl, 2);
-            }
-        });
-    };
-    CurseCards.prototype.getCardName = function (cardTypeId) {
+    CurseCardsManager.prototype.getCardName = function (cardTypeId) {
         switch (cardTypeId) {
             case 1: return _("Pharaonic Ego");
             case 2: return _("Isis's Disgrace");
@@ -1444,7 +1419,7 @@ var CurseCards = /** @class */ (function () {
         }
         return null;
     };
-    CurseCards.prototype.getPermanentEffect = function (cardTypeId) {
+    CurseCardsManager.prototype.getPermanentEffect = function (cardTypeId) {
         switch (cardTypeId) {
             case 1: return _("Monsters cannot Yield Tokyo.");
             case 2: return _("Monsters without the Golden Scarab cannot gain [Heart].");
@@ -1473,7 +1448,7 @@ var CurseCards = /** @class */ (function () {
         }
         return null;
     };
-    CurseCards.prototype.getAnkhEffect = function (cardTypeId) {
+    CurseCardsManager.prototype.getAnkhEffect = function (cardTypeId) {
         switch (cardTypeId) {
             case 1: return _("Yield Tokyo. You can’t enter Tokyo this turn.");
             case 2:
@@ -1502,7 +1477,7 @@ var CurseCards = /** @class */ (function () {
         }
         return null;
     };
-    CurseCards.prototype.getSnakeEffect = function (cardTypeId) {
+    CurseCardsManager.prototype.getSnakeEffect = function (cardTypeId) {
         switch (cardTypeId) {
             case 1: return _("Take control of Tokyo.");
             case 2:
@@ -1531,15 +1506,11 @@ var CurseCards = /** @class */ (function () {
         }
         return null;
     };
-    CurseCards.prototype.getTooltip = function (cardTypeId) {
+    CurseCardsManager.prototype.getTooltip = function (cardTypeId) {
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p><strong>" + _("Permanent effect") + " :</strong> " + formatTextIcons(this.getPermanentEffect(cardTypeId)) + "</p>\n            <p><strong>" + _("Ankh effect") + " :</strong> " + formatTextIcons(this.getAnkhEffect(cardTypeId)) + "</p>\n            <p><strong>" + _("Snake effect") + " :</strong> " + formatTextIcons(this.getSnakeEffect(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
-    CurseCards.prototype.setupNewCard = function (cardDiv, cardType) {
-        this.setDivAsCard(cardDiv, cardType);
-        this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
-    };
-    CurseCards.prototype.setDivAsCard = function (cardDiv, cardType) {
+    CurseCardsManager.prototype.setDivAsCard = function (cardDiv, cardType) {
         cardDiv.classList.add('kot-curse-card');
         var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
         var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
@@ -1558,8 +1529,8 @@ var CurseCards = /** @class */ (function () {
             }
         });
     };
-    return CurseCards;
-}());
+    return CurseCardsManager;
+}(CardManager));
 var MONSTERS_WITH_POWER_UP_CARDS = [1, 2, 3, 4, 5, 6, 7, 8, /*TODOPUKK 11,*/ 13, 14, 15, 18];
 var EvolutionCards = /** @class */ (function () {
     function EvolutionCards(game) {
@@ -2076,11 +2047,24 @@ var WICKEDNESS_TILES_WIDTH = 132;
 var WICKEDNESS_TILES_HEIGHT = 81;
 var WICKEDNESS_LEVELS = [3, 6, 10];
 var wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
-var WickednessTiles = /** @class */ (function () {
-    function WickednessTiles(game) {
-        this.game = game;
+var WickednessTilesManager = /** @class */ (function (_super) {
+    __extends(WickednessTilesManager, _super);
+    function WickednessTilesManager(game) {
+        var _this = _super.call(this, game, {
+            getId: function (card) { return "wickedness-tile-" + card.id; },
+            setupDiv: function (card, div) { return div.classList.add('kot-tile'); },
+            setupFrontDiv: function (card, div) {
+                div.dataset.color = card.type >= 100 ? 'green' : 'orange';
+                div.dataset.level = "" + _this.getCardLevel(card.type);
+                _this.setDivAsCard(div, card.type);
+                div.id = _super.prototype.getId.call(_this, card) + "-front";
+                _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
+            },
+        }) || this;
+        _this.game = game;
+        return _this;
     }
-    WickednessTiles.prototype.debugSeeAllCards = function () {
+    WickednessTilesManager.prototype.debugSeeAllCards = function () {
         var _this = this;
         var html = "<div id=\"all-wickedness-tiles\" class=\"wickedness-tile-stock player-wickedness-tiles\">";
         [0, 1].forEach(function (side) {
@@ -2101,41 +2085,30 @@ var WickednessTiles = /** @class */ (function () {
             }
         });
     };
-    WickednessTiles.prototype.setupCards = function (stocks, darkEdition) {
-        var _this = this;
-        var wickednesstilessurl = g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "wickedness-tiles.jpg";
-        stocks.forEach(function (stock) {
-            stock.image_items_per_row = 3;
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(function (id, index) {
-                stock.addItemType(id, _this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index]);
-            });
-            [101, 102, 103, 104, 105, 106, 107, 108, 109, 110].forEach(function (id, index) {
-                stock.addItemType(id, _this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index] + 3);
-            });
-        });
-    };
-    WickednessTiles.prototype.addCardsToStock = function (stock, cards, from) {
+    WickednessTilesManager.prototype.addCardsToStock = function (stock, cards, from) {
         var _this = this;
         if (!cards.length) {
             return;
         }
-        cards.forEach(function (card) { return stock.addToStockWithId(card.type, "" + card.id, from); });
-        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnTile(stock, card); });
+        var animation = from ? { fromElement: from } : undefined;
+        stock.addCards(cards, animation);
+        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnTile(card); });
     };
-    WickednessTiles.prototype.generateCardDiv = function (card) {
+    WickednessTilesManager.prototype.generateCardDiv = function (card) {
+        var wickednesstilessurl = g_gamethemeurl + "img/" + (this.game.isDarkEdition() ? 'dark/' : '') + "wickedness-tiles.jpg";
         var tempDiv = document.createElement('div');
         tempDiv.classList.add('stockitem');
         tempDiv.style.width = WICKEDNESS_TILES_WIDTH + "px";
         tempDiv.style.height = WICKEDNESS_TILES_HEIGHT + "px";
         tempDiv.style.position = "relative";
-        tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/wickedness-tiles.jpg')";
+        tempDiv.style.backgroundImage = "url('" + wickednesstilessurl + "')";
         tempDiv.style.backgroundPosition = "-" + wickenessTilesIndex[card.type % 100] * 50 + "% " + (card.side > 0 ? 100 : 0) + "%";
         document.body.appendChild(tempDiv);
         this.setDivAsCard(tempDiv, card.type);
         document.body.removeChild(tempDiv);
         return tempDiv;
     };
-    WickednessTiles.prototype.getCardLevel = function (cardTypeId) {
+    WickednessTilesManager.prototype.getCardLevel = function (cardTypeId) {
         var id = cardTypeId % 100;
         if (id > 8) {
             return 10;
@@ -2147,7 +2120,7 @@ var WickednessTiles = /** @class */ (function () {
             return 3;
         }
     };
-    WickednessTiles.prototype.getCardName = function (cardTypeId) {
+    WickednessTilesManager.prototype.getCardName = function (cardTypeId) {
         switch (cardTypeId) {
             // orange
             case 1: return _("Devious");
@@ -2174,7 +2147,7 @@ var WickednessTiles = /** @class */ (function () {
         }
         return null;
     };
-    WickednessTiles.prototype.getCardDescription = function (cardTypeId) {
+    WickednessTilesManager.prototype.getCardDescription = function (cardTypeId) {
         switch (cardTypeId) {
             // orange
             case 1: return _("<strong>Gain one extra die Roll</strong> each turn.");
@@ -2201,17 +2174,17 @@ var WickednessTiles = /** @class */ (function () {
         }
         return null;
     };
-    WickednessTiles.prototype.getTooltip = function (cardType) {
+    WickednessTilesManager.prototype.getTooltip = function (cardType) {
         var level = this.getCardLevel(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
         var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardType) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + description + "</p>\n        </div>";
         return tooltip;
     };
-    WickednessTiles.prototype.setupNewCard = function (cardDiv, cardType) {
+    WickednessTilesManager.prototype.setupNewCard = function (cardDiv, cardType) {
         this.setDivAsCard(cardDiv, cardType);
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
     };
-    WickednessTiles.prototype.setDivAsCard = function (cardDiv, cardType) {
+    WickednessTilesManager.prototype.setDivAsCard = function (cardDiv, cardType) {
         cardDiv.classList.add('kot-tile');
         var name = this.getCardName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
@@ -2234,13 +2207,13 @@ var WickednessTiles = /** @class */ (function () {
             cardDiv.getElementsByClassName('name-wrapper')[0].style.fontSize = '7pt';
         }
     };
-    WickednessTiles.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
+    WickednessTilesManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
         this.game.addTooltipHtml(mimicCardId, this.getTooltip(106) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
-    WickednessTiles.prototype.getDistance = function (p1, p2) {
+    WickednessTilesManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
-    WickednessTiles.prototype.getPlaceOnCard = function (cardPlaced) {
+    WickednessTilesManager.prototype.getPlaceOnCard = function (cardPlaced) {
         var _this = this;
         var newPlace = {
             x: Math.random() * 100 + 16,
@@ -2258,8 +2231,8 @@ var WickednessTiles = /** @class */ (function () {
         }
         return newPlace;
     };
-    WickednessTiles.prototype.placeTokensOnTile = function (stock, tile, playerId) {
-        var divId = stock.container_div.id + "_item_" + tile.id;
+    WickednessTilesManager.prototype.placeTokensOnTile = function (tile, playerId) {
+        var divId = this.getId(tile);
         var div = document.getElementById(divId);
         if (!div) {
             return;
@@ -2289,12 +2262,12 @@ var WickednessTiles = /** @class */ (function () {
                 html += "smoke-cloud token";
             }
             html += "\"></div>";
-            dojo.place(html, divId);
+            dojo.place(html, div.getElementsByClassName('front')[0]);
         }
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
-    return WickednessTiles;
-}());
+    return WickednessTilesManager;
+}(CardManager));
 var TokyoTower = /** @class */ (function () {
     function TokyoTower(divId, levels) {
         this.divId = divId + "-tokyo-tower";
@@ -2407,15 +2380,8 @@ var PlayerTable = /** @class */ (function () {
             }
         }
         if (this.game.isWickednessExpansion()) {
-            this.wickednessTiles = new ebg.stock();
-            this.wickednessTiles.setSelectionAppearance('class');
-            this.wickednessTiles.selectionClass = 'no-visible-selection';
-            this.wickednessTiles.create(this.game, $("wickedness-tiles-" + player.id), WICKEDNESS_TILES_WIDTH, WICKEDNESS_TILES_HEIGHT);
-            this.wickednessTiles.setSelectionMode(0);
-            this.wickednessTiles.centerItems = true;
-            this.wickednessTiles.onItemCreate = function (card_div, card_type_id) { return _this.game.wickednessTiles.setupNewCard(card_div, card_type_id); };
-            this.game.wickednessTiles.setupCards([this.wickednessTiles], this.game.isDarkEdition());
-            this.game.wickednessTiles.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
+            this.wickednessTiles = new LineStock(this.game.wickednessTilesManager, document.getElementById("wickedness-tiles-" + player.id));
+            this.game.wickednessTilesManager.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
         }
         if (game.isPowerUpExpansion()) {
             this.showHand = this.playerId == this.game.getPlayerId();
@@ -2482,8 +2448,7 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.removeWickednessTiles = function (tiles) {
         var _this = this;
-        var tilesIds = tiles.map(function (tile) { return tile.id; });
-        tilesIds.forEach(function (id) { return _this.wickednessTiles.removeFromStockById('' + id); });
+        tiles.forEach(function (tile) { return _this.wickednessTiles.removeCard(tile); });
     };
     PlayerTable.prototype.removeEvolutions = function (cards) {
         var _this = this;
@@ -2939,7 +2904,7 @@ var TableManager = /** @class */ (function () {
                 dojo.toggleClass("visible-evolution-cards-" + playerTable.playerId, 'empty', !playerTable.visibleEvolutionCards.items.length);
             }
             if (playerTable.wickednessTiles) {
-                dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', !playerTable.wickednessTiles.items.length);
+                dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', playerTable.wickednessTiles.isEmpty());
             }
             if (playerTable.reservedCards) {
                 dojo.toggleClass("reserved-cards-" + playerTable.playerId, 'empty', !playerTable.reservedCards.items.length);
@@ -2989,7 +2954,7 @@ var DieFaceSelector = /** @class */ (function () {
         this.nodeId = nodeId;
         this.dieValue = die.value;
         var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
-        var _loop_1 = function (face) {
+        var _loop_2 = function (face) {
             var faceId = nodeId + "-face" + face;
             var html = "<div id=\"" + faceId + "\" class=\"die-item dice-icon dice" + face + " " + colorClass + " " + (this_1.dieValue == face ? 'disabled' : '') + "\">";
             if (!die.type && face === 4 && !canHealWithDice) {
@@ -3013,7 +2978,7 @@ var DieFaceSelector = /** @class */ (function () {
         };
         var this_1 = this;
         for (var face = 1; face <= 6; face++) {
-            _loop_1(face);
+            _loop_2(face);
         }
     }
     DieFaceSelector.prototype.getValue = function () {
@@ -3717,7 +3682,7 @@ var AnimationManager = /** @class */ (function () {
             var maxSpaces = SPACE_BETWEEN_ANIMATION_AT_START * number;
             var halfMaxSpaces = maxSpaces / 2;
             var shift = targetToken ? 16 : 59;
-            var _loop_2 = function (i) {
+            var _loop_3 = function (i) {
                 var originLeft = originCenter - halfMaxSpaces + SPACE_BETWEEN_ANIMATION_AT_START * i;
                 var animationId = "animation" + diceValue + "-" + i + "-player" + playerId + "-" + new Date().getTime();
                 dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\" style=\"left: " + (originLeft + window.scrollX - 94) + "px; top: " + (originTop + window.scrollY - 94) + "px;\"></div>", document.body);
@@ -3751,7 +3716,7 @@ var AnimationManager = /** @class */ (function () {
                 }, 1000);
             };
             for (var i = 0; i < number; i++) {
-                _loop_2(i);
+                _loop_3(i);
             }
         });
     };
@@ -4080,7 +4045,7 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.createCurseCard = function (curseCard) {
         dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'table-curse-cards');
         this.curseCard = new VisibleDeck(this.game.curseCardsManager, document.getElementById('curse-card'));
-        this.curseCard.addOrUpdateCard(curseCard);
+        this.curseCard.addCard(curseCard);
         new HiddenDeck(this.game.curseCardsManager, document.getElementById('curse-deck'));
         this.game.addTooltipHtml("curse-deck", "\n        <strong>" + _("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
     };
@@ -4160,12 +4125,12 @@ var TableCenter = /** @class */ (function () {
         return this.tokyoTower;
     };
     TableCenter.prototype.changeCurseCard = function (card) {
-        this.curseCard.addOrUpdateCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
+        this.curseCard.addCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
     };
     TableCenter.prototype.createWickednessTiles = function (wickednessTiles) {
         var _this = this;
         WICKEDNESS_LEVELS.forEach(function (level) {
-            _this.wickednessTiles[level] = wickednessTiles.filter(function (tile) { return _this.game.wickednessTiles.getCardLevel(tile.type) === level; });
+            _this.wickednessTiles[level] = wickednessTiles.filter(function (tile) { return _this.game.wickednessTilesManager.getCardLevel(tile.type) === level; });
             dojo.place("<div id=\"wickedness-tiles-pile-" + level + "\" class=\"wickedness-tiles-pile wickedness-tile-stock\"></div>", 'wickedness-board');
             _this.setWickednessTilesPile(level);
         });
@@ -4220,8 +4185,8 @@ var TableCenter = /** @class */ (function () {
         this.wickednessTiles[level].forEach(function (tile, index) {
             dojo.place("<div id=\"wickedness-tiles-pile-tile-" + tile.id + "\" class=\"stockitem wickedness-tile\" data-side=\"" + tile.side + "\" data-background-index=\"" + wickenessTilesIndex[(tile.type % 100) - 1] + "\"></div>", pileDiv);
             var tileDiv = document.getElementById("wickedness-tiles-pile-tile-" + tile.id);
-            _this.game.wickednessTiles.setDivAsCard(tileDiv, tile.type);
-            _this.game.addTooltipHtml(tileDiv.id, _this.game.wickednessTiles.getTooltip(tile.type));
+            _this.game.wickednessTilesManager.setDivAsCard(tileDiv, tile.type);
+            _this.game.addTooltipHtml(tileDiv.id, _this.game.wickednessTilesManager.getTooltip(tile.type));
             tileDiv.style.setProperty('--order', '' + index);
             tileDiv.addEventListener('click', function () {
                 if (tileDiv.closest('.wickedness-tiles-pile').classList.contains('selectable')) {
@@ -4521,13 +4486,8 @@ var KingOfTokyo = /** @class */ (function () {
             this.addTwoPlayerVariantNotice(gamedatas);
         }
         this.cards = new Cards(this);
-        this.curseCards = new CurseCards(this);
-        this.curseCardsManager = new CardManager(this, {
-            getId: function (card) { return "curse-card-" + card.id; },
-            setupDiv: function (card, div) { return div.classList.add('kot-curse-card'); },
-            setupFrontDiv: function (card, div) { return _this.curseCards.setDivAsCard(div, card.type); },
-        });
-        this.wickednessTiles = new WickednessTiles(this);
+        this.curseCardsManager = new CurseCardsManager(this);
+        this.wickednessTilesManager = new WickednessTilesManager(this);
         this.evolutionCards = new EvolutionCards(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
@@ -5030,7 +4990,7 @@ var KingOfTokyo = /** @class */ (function () {
             var rapidHealingSyncButtons = document.querySelectorAll("[id^='rapidHealingSync_button'");
             rapidHealingSyncButtons.forEach(function (rapidHealingSyncButton) { return rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton); });
             if (args.canHeal && args.damageToCancelToSurvive > 0) {
-                var _loop_3 = function (i) {
+                var _loop_4 = function (i) {
                     var cultistCount = i;
                     var rapidHealingCount = args.rapidHealingHearts > 0 ? args.canHeal - cultistCount : 0;
                     var cardsNames = [];
@@ -5048,7 +5008,7 @@ var KingOfTokyo = /** @class */ (function () {
                 var this_2 = this;
                 //this.rapidHealingSyncHearts = args.rapidHealingHearts;
                 for (var i = Math.min(args.rapidHealingCultists, args.canHeal); i >= 0; i--) {
-                    _loop_3(i);
+                    _loop_4(i);
                 }
             }
         }
@@ -5515,12 +5475,12 @@ var KingOfTokyo = /** @class */ (function () {
                     });
                     break;
                 case 'selectExtraDie':
-                    var _loop_4 = function (face) {
+                    var _loop_5 = function (face) {
                         this_3.addActionButton("selectExtraDie_button" + face, formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
                     };
                     var this_3 = this;
                     for (var face = 1; face <= 6; face++) {
-                        _loop_4(face);
+                        _loop_5(face);
                     }
                     break;
                 case 'rerollOrDiscardDie':
@@ -5729,12 +5689,12 @@ var KingOfTokyo = /** @class */ (function () {
                 this.addActionButton("loseHearts_button", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: giveEnergyOrLoseHeartsQuestionArgs.heartNumber + "[Heart]" })), function () { return _this.loseHearts(); });
                 break;
             case 'FreezeRay':
-                var _loop_5 = function (face) {
+                var _loop_6 = function (face) {
                     this_4.addActionButton("selectFrozenDieFace_button" + face, formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
                 };
                 var this_4 = this;
                 for (var face = 1; face <= 6; face++) {
-                    _loop_5(face);
+                    _loop_6(face);
                 }
                 break;
             case 'MiraculousCatch':
@@ -6329,23 +6289,23 @@ var KingOfTokyo = /** @class */ (function () {
             html += "<button class=\"action-button bgabutton " + (!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton disable\" id=\"" + popinId + "_setStay0\">" + _('Disabled') + "</button>";
             html += "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
-            var _loop_6 = function (i) {
+            var _loop_7 = function (i) {
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth; i > 0; i--) {
-                _loop_6(i);
+                _loop_7(i);
             }
-            var _loop_7 = function (i) {
+            var _loop_8 = function (i) {
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth + 1; i > 2; i--) {
-                _loop_7(i);
+                _loop_8(i);
             }
             document.getElementById(popinId + "_setStay0").addEventListener('click', function () {
                 _this.setStayTokyoOver(0);
@@ -6368,7 +6328,7 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.destroy(popinId + "_setStay" + i);
             }
         }
-        var _loop_8 = function (i) {
+        var _loop_9 = function (i) {
             if (!document.getElementById(popinId + "_set" + i)) {
                 dojo.place("<button class=\"action-button bgabutton " + (this_5.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
                 document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
@@ -6379,9 +6339,9 @@ var KingOfTokyo = /** @class */ (function () {
         };
         var this_5 = this;
         for (var i = 11; i <= maxHealth; i++) {
-            _loop_8(i);
+            _loop_9(i);
         }
-        var _loop_9 = function (i) {
+        var _loop_10 = function (i) {
             if (!document.getElementById(popinId + "_setStay" + i)) {
                 dojo.place("<button class=\"action-button bgabutton " + (this_6.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_6.gamedatas.leaveTokyoUnder > 0 && i <= this_6.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
                 document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
@@ -6392,7 +6352,7 @@ var KingOfTokyo = /** @class */ (function () {
         };
         var this_6 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
-            _loop_9(i);
+            _loop_10(i);
         }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
@@ -6455,7 +6415,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.playerTables.forEach(function (playerTable) {
             if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
-                _this.cards.placeMimicOnCard(type, playerTable.cards, card, _this.wickednessTiles);
+                _this.cards.placeMimicOnCard(type, playerTable.cards, card, _this.wickednessTilesManager);
             }
         });
         this.setMimicTooltip(type, card);
@@ -6487,12 +6447,16 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setMimicTooltip = function (type, mimickedCard) {
         var _this = this;
         this.playerTables.forEach(function (playerTable) {
-            var stock = type === 'tile' ? playerTable.wickednessTiles : playerTable.cards;
             var mimicCardId = type === 'tile' ? 106 : 27;
-            var mimicCardItem = stock.items.find(function (item) { return Number(item.type) == mimicCardId; });
+            var mimicCardItem = (type === 'tile' ? playerTable.wickednessTiles.getCards() : playerTable.cards.items).find(function (item) { return Number(item.type) == mimicCardId; });
             if (mimicCardItem) {
-                var cardManager = type === 'tile' ? _this.wickednessTiles : _this.cards;
-                cardManager.changeMimicTooltip(stock.container_div.id + "_item_" + mimicCardItem.id, _this.cards.getMimickedCardText(mimickedCard));
+                var cardManager = type === 'tile' ? _this.wickednessTilesManager : _this.cards;
+                if (type === 'tile') {
+                    cardManager.changeMimicTooltip(_this.wickednessTilesManager.getId(mimicCardItem), _this.cards.getMimickedCardText(mimickedCard));
+                }
+                else {
+                    cardManager.changeMimicTooltip(playerTable.cards.container_div.id + "_item_" + mimicCardItem.id, _this.cards.getMimickedCardText(mimickedCard));
+                }
             }
         });
     };
@@ -7638,7 +7602,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.evolutionCards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_setTileTokens = function (notif) {
-        this.wickednessTiles.placeTokensOnTile(this.getPlayerTable(notif.args.playerId).wickednessTiles, notif.args.card, notif.args.playerId);
+        this.wickednessTilesManager.placeTokensOnTile(notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_toggleRapidHealing = function (notif) {
         if (notif.args.active) {
@@ -7749,7 +7713,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_takeWickednessTile = function (notif) {
         var tile = notif.args.tile;
-        this.wickednessTiles.addCardsToStock(this.getPlayerTable(notif.args.playerId).wickednessTiles, [tile], "wickedness-tiles-pile-tile-" + tile.id);
+        this.wickednessTilesManager.addCardsToStock(this.getPlayerTable(notif.args.playerId).wickednessTiles, [tile], document.getElementById("wickedness-tiles-pile-tile-" + tile.id));
         this.tableCenter.removeWickednessTileFromPile(notif.args.level, tile);
         this.tableManager.tableHeightChange(); // adapt to new card
     };
@@ -7981,10 +7945,10 @@ var KingOfTokyo = /** @class */ (function () {
             return this.evolutionCards.getCardName(logType - 3000, 'text-only');
         }
         else if (logType >= 2000) {
-            return this.wickednessTiles.getCardName(logType - 2000);
+            return this.wickednessTilesManager.getCardName(logType - 2000);
         }
         else if (logType >= 1000) {
-            return this.curseCards.getCardName(logType - 1000);
+            return this.curseCardsManager.getCardName(logType - 1000);
         }
         else {
             return this.cards.getCardName(logType, 'text-only');
@@ -7995,10 +7959,10 @@ var KingOfTokyo = /** @class */ (function () {
             return this.evolutionCards.getTooltip(logType - 3000);
         }
         else if (logType >= 2000) {
-            return this.wickednessTiles.getTooltip(logType - 2000);
+            return this.wickednessTilesManager.getTooltip(logType - 2000);
         }
         else if (logType >= 1000) {
-            return this.curseCards.getTooltip(logType - 1000);
+            return this.curseCardsManager.getTooltip(logType - 1000);
         }
         else {
             return this.cards.getTooltip(logType);

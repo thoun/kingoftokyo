@@ -166,7 +166,7 @@ class TableManager {
                 dojo.toggleClass(`visible-evolution-cards-${playerTable.playerId}`, 'empty', !playerTable.visibleEvolutionCards.items.length);
             }
             if (playerTable.wickednessTiles) {
-                dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', !playerTable.wickednessTiles.items.length);
+                dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', playerTable.wickednessTiles.isEmpty());
             }
             if (playerTable.reservedCards) {                
                 dojo.toggleClass(`reserved-cards-${playerTable.playerId}`, 'empty', !playerTable.reservedCards.items.length);

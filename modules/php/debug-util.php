@@ -205,6 +205,8 @@ trait DebugUtilTrait {
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
             $this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
             $this->debugSetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343492);
+            $this->debugSetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
+            $this->debugSetWickednessTileInHand(DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 2343492);
         }
 
         // power up

@@ -5,12 +5,22 @@ interface CardAnimation<T> {
 }
 
 class CardStock<T> {
+    protected cards: T[] = [];
+
     constructor(protected manager: CardManager<T>, protected element: HTMLElement) {
         manager.addStock(this);
         element.classList.add('card-stock', this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase());
     }
 
-    public addOrUpdateCard(card: T, animation?: CardAnimation<T>) {
+    public getCards(): T[] {
+        return this.cards;
+    }
+
+    public isEmpty(): boolean {
+        return !this.cards.length;
+    }
+
+    public addCard(card: T, animation?: CardAnimation<T>) {
         const element = this.manager.getCardElement(card);
         this.element.appendChild(element);
 
@@ -22,82 +32,22 @@ class CardStock<T> {
             }
         }
 
-        /*const existingDiv = document.getElementById(`card-${card.id}`);
-        const side = card.category ? 'front' : 'back';
-        if (existingDiv) {
-            (this.game as any).removeTooltip(`card-${card.id}`);
-            const oldType = Number(existingDiv.dataset.category);
-            existingDiv.classList.remove('selectable', 'selected', 'disabled');
-
-            if (existingDiv.parentElement.id != destinationId) {
-                if (instant) {
-                    document.getElementById(destinationId).appendChild(existingDiv);
-                } else {
-                    slideToObjectAndAttach(this.game, existingDiv, destinationId);
-                }
-            }
-
-            existingDiv.dataset.side = ''+side;
-            if (!oldType && card.category) {
-                this.setVisibleInformations(existingDiv, card);
-            } else if (oldType && !card.category) {
-                if (instant) {
-                    this.removeVisibleInformations(existingDiv);
-                } else {
-                    setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
-                }
-            }
-            if (card.category) {
-                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-            }
-        } else {
-            const div = document.createElement('div');
-            div.id = `card-${card.id}`;
-            div.classList.add('card');
-            div.dataset.id = ''+card.id;
-            div.dataset.side = ''+side;
-
-            div.innerHTML = `
-                <div class="card-sides">
-                    <div class="card-side front">
-                    </div>
-                    <div class="card-side back">
-                    </div>
-                </div>
-            `;
-            document.getElementById(destinationId).appendChild(div);
-            div.addEventListener('click', () => this.game.onCardClick(card));
-
-            if (from) {
-                const fromCardId = document.getElementById(from).id;
-                slideFromObject(this.game, div, fromCardId);
-            }
-
-            if (card.category) {
-                this.setVisibleInformations(div, card);
-                if (!destinationId.startsWith('help-')) {
-                    this.game.setTooltip(div.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-                }
-            }
-        }*/
+        this.cards.push(card);
     }
 
-    public updateCard(card: T) {
-        /*const existingDiv = document.getElementById(`card-${card.id}`);
-        const side = card.category ? 'front' : 'back';
-        if (existingDiv) {
-            (this.game as any).removeTooltip(`card-${card.id}`);
-            const oldType = Number(existingDiv.dataset.category);
-            existingDiv.dataset.side = ''+side;
-            if (!oldType && card.category) {
-                this.setVisibleInformations(existingDiv, card);
-            } else if (oldType && !card.category) {
-                setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
+    public addCards(cards: T[], animation?: CardAnimation<T>, shift: number | boolean = false) {
+        if (shift === true) {
+            // TODO chain promise
+            shift = 500;
+        }
+
+        if (shift) {
+            for (let i=0; i<cards.length; i++) {
+                setTimeout(() => this.addCard(cards[i], animation), i * shift);
             }
-            if (card.category) {
-                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-            }
-        }*/
+        } else {
+            cards.forEach(card => this.addCard(card, animation));
+        }
     }
 
     public removeCard(card: T) {
@@ -106,6 +56,10 @@ class CardStock<T> {
     }
 
     public onCardRemoved(card: T) {
+        const index = this.cards.findIndex(c => this.manager.getId(c) == this.manager.getId(card));
+        if (index !== -1) {
+            this.cards.splice(index, 1);
+        }
     }
 
     protected slideFromElement(element: HTMLElement, fromElement: HTMLElement, originalSide: 'front' | 'back') {
@@ -144,6 +98,15 @@ class CardStock<T> {
     }
 }
 
+class LineStock<T> extends CardStock<T> {
+    constructor(protected manager: CardManager<T>, protected element: HTMLElement, wrap: boolean = true, direction: 'row' | 'column' = 'row', center: boolean = true) {
+        super(manager, element);
+        element.dataset.wrap = wrap.toString();
+        element.dataset.direction = direction;
+        element.dataset.center = center.toString();
+    }
+}
+
 class HiddenDeck<T> extends CardStock<T> {
     constructor(protected manager: CardManager<T>, protected element: HTMLElement, empty: boolean = false) {
         super(manager, element);
@@ -158,18 +121,17 @@ class HiddenDeck<T> extends CardStock<T> {
 }
 
 class VisibleDeck<T> extends CardStock<T> {
-    private currentCard: T;
     constructor(protected manager: CardManager<T>, protected element: HTMLElement) {
         super(manager, element);
     }
 
-    public addOrUpdateCard(card: T, animation?: CardAnimation<T>) {
-        if (this.currentCard) {
-            const currentCard = this.currentCard;
+    public addCard(card: T, animation?: CardAnimation<T>) {
+        const currentCard = this.cards[this.cards.length - 1];
+        if (currentCard) {
             document.getElementById(this.manager.getId(currentCard)).classList.add('under');
             setTimeout(() => this.removeCard(currentCard), 600);
         }
-        this.currentCard = card;
-        super.addOrUpdateCard(card, animation);
+
+        super.addCard(card, animation);
     }
 }

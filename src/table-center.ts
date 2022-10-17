@@ -93,7 +93,7 @@ class TableCenter {
 
 
         this.curseCard = new VisibleDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-card'));
-        this.curseCard.addOrUpdateCard(curseCard);
+        this.curseCard.addCard(curseCard);
         new HiddenDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'));
 
         (this.game as any).addTooltipHtml(`curse-deck`, `
@@ -191,12 +191,12 @@ class TableCenter {
     }
     
     public changeCurseCard(card: Card) {
-        this.curseCard.addOrUpdateCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
+        this.curseCard.addCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
     }
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {
         WICKEDNESS_LEVELS.forEach(level => {
-            this.wickednessTiles[level] = wickednessTiles.filter(tile => this.game.wickednessTiles.getCardLevel(tile.type) === level);
+            this.wickednessTiles[level] = wickednessTiles.filter(tile => this.game.wickednessTilesManager.getCardLevel(tile.type) === level);
 
             dojo.place(`<div id="wickedness-tiles-pile-${level}" class="wickedness-tiles-pile wickedness-tile-stock"></div>`, 'wickedness-board');
             this.setWickednessTilesPile(level);
@@ -260,8 +260,8 @@ class TableCenter {
                 pileDiv
             );
             const tileDiv = document.getElementById(`wickedness-tiles-pile-tile-${tile.id}`) as HTMLDivElement;
-            this.game.wickednessTiles.setDivAsCard(tileDiv, tile.type);
-            (this.game as any).addTooltipHtml(tileDiv.id, this.game.wickednessTiles.getTooltip(tile.type));
+            this.game.wickednessTilesManager.setDivAsCard(tileDiv, tile.type);
+            (this.game as any).addTooltipHtml(tileDiv.id, this.game.wickednessTilesManager.getTooltip(tile.type));
             tileDiv.style.setProperty('--order', ''+index);
             tileDiv.addEventListener('click', () => {
                 if (tileDiv.closest('.wickedness-tiles-pile').classList.contains('selectable')) {

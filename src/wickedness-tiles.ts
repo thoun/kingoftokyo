@@ -4,8 +4,20 @@ const WICKEDNESS_LEVELS = [3, 6, 10];
 
 const wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
 
-class WickednessTiles {
-    constructor (private game: KingOfTokyoGame) {}
+class WickednessTilesManager extends CardManager<WickednessTile> {
+    constructor (public game: KingOfTokyoGame) {
+        super(game, {
+            getId: (card) => `wickedness-tile-${card.id}`,
+            setupDiv: (card: WickednessTile, div: HTMLElement) => div.classList.add('kot-tile'),
+            setupFrontDiv: (card: WickednessTile, div: HTMLElement) => {
+                div.dataset.color = card.type >= 100 ? 'green' : 'orange';
+                div.dataset.level = `${this.getCardLevel(card.type)}`;
+                this.setDivAsCard(div as HTMLDivElement, card.type);
+                div.id = `${super.getId(card)}-front`;
+                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
+            },
+        });
+    }
 
     debugSeeAllCards() {
         let html = `<div id="all-wickedness-tiles" class="wickedness-tile-stock player-wickedness-tiles">`;
@@ -29,36 +41,25 @@ class WickednessTiles {
         })
     }
     
-    public setupCards(stocks: Stock[], darkEdition: boolean) {
-        const wickednesstilessurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}wickedness-tiles.jpg`;
-        stocks.forEach(stock => {
-            stock.image_items_per_row = 3;
-
-            [1,2,3,4,5,6,7,8,9,10].forEach((id, index) => {
-                stock.addItemType(id, this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index]);
-            });
-            [101,102,103,104,105,106,107,108,109,110].forEach((id, index) => {
-                stock.addItemType(id, this.getCardLevel(id) * 100 + index, wickednesstilessurl, wickenessTilesIndex[index] + 3);
-            });
-        });
-    }
-    
-    public addCardsToStock(stock: Stock, cards: WickednessTile[], from?: string) {
+    public addCardsToStock(stock: LineStock<WickednessTile>, cards: WickednessTile[], from?: HTMLElement) {
         if (!cards.length) {
             return;
         }
 
-        cards.forEach(card => stock.addToStockWithId(card.type, `${card.id}`, from));        
-        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnTile(stock, card));
+        const animation = from ? { fromElement: from } : undefined;
+        stock.addCards(cards, animation);   
+        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnTile(card));
     }
 
     public generateCardDiv(card: WickednessTile): HTMLDivElement {
+        const wickednesstilessurl = `${g_gamethemeurl}img/${this.game.isDarkEdition() ? 'dark/' : ''}wickedness-tiles.jpg`;
+
         const tempDiv: HTMLDivElement = document.createElement('div');
         tempDiv.classList.add('stockitem');
         tempDiv.style.width = `${WICKEDNESS_TILES_WIDTH}px`;
         tempDiv.style.height = `${WICKEDNESS_TILES_HEIGHT}px`;
         tempDiv.style.position = `relative`;
-        tempDiv.style.backgroundImage = `url('${g_gamethemeurl}img/wickedness-tiles.jpg')`;
+        tempDiv.style.backgroundImage = `url('${wickednesstilessurl}')`;
         tempDiv.style.backgroundPosition = `-${wickenessTilesIndex[card.type % 100] * 50}% ${card.side > 0 ? 100 : 0}%`;
 
         document.body.appendChild(tempDiv);
@@ -222,8 +223,8 @@ class WickednessTiles {
         return newPlace;
     }
 
-    public placeTokensOnTile(stock: Stock, tile: WickednessTile, playerId?: number) {
-        const divId = `${stock.container_div.id}_item_${tile.id}`;
+    public placeTokensOnTile(tile: WickednessTile, playerId?: number) {
+        const divId = this.getId(tile);
         const div = document.getElementById(divId);
         if (!div) {
             return;
@@ -255,7 +256,7 @@ class WickednessTiles {
                 html += `smoke-cloud token`;
             }
             html += `"></div>`;
-            dojo.place(html, divId);
+            dojo.place(html, div.getElementsByClassName('front')[0] as HTMLElement);
         }
 
         div.dataset.placed = JSON.stringify(cardPlaced);
