@@ -3952,7 +3952,9 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_takeWickednessTile(notif: Notif<NotifTakeWickednessTileArgs>) {
         const tile = notif.args.tile;
-        this.wickednessTilesManager.addCardsToStock(this.getPlayerTable(notif.args.playerId).wickednessTiles, [tile], document.getElementById(`wickedness-tiles-pile-tile-${tile.id}`));
+        this.getPlayerTable(notif.args.playerId).wickednessTiles.addCard(tile, {
+            fromStock: this.tableCenter.wickednessDecks.getStock(tile)
+        });
         this.tableCenter.removeWickednessTileFromPile(notif.args.level, tile);
 
         this.tableManager.tableHeightChange(); // adapt to new card

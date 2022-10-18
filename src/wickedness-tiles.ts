@@ -4,6 +4,60 @@ const WICKEDNESS_LEVELS = [3, 6, 10];
 
 const wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
 
+class WickednessDecks extends CardStock<WickednessTile> {
+    private decks: AllVisibleDeck<WickednessTile>[] = [];
+    
+    constructor(protected manager: CardManager<WickednessTile>) {
+        super(manager, null);
+
+        WICKEDNESS_LEVELS.forEach(level => {
+            dojo.place(`<div id="wickedness-tiles-pile-${level}" class="wickedness-tiles-pile wickedness-tile-stock"></div>`, 'wickedness-board');
+            this.decks[level] = new AllVisibleDeck<WickednessTile>(manager, document.getElementById(`wickedness-tiles-pile-${level}`));
+            this.decks[level].onSelectionChange = (selection: WickednessTile[], lastChange: WickednessTile | null) => this.selectionChange(selection, lastChange);
+        });
+    }   
+
+    public addCard(card: WickednessTile, animation?: CardAnimation<WickednessTile>) {
+        const level = this.getCardLevel(card.type);
+        this.decks[level].addCard(card, animation);
+    }
+
+    protected getCardLevel(cardTypeId: number): number {
+        const id = cardTypeId % 100;
+        if (id > 8) {
+            return 10;
+        } else if (id > 4) {
+            return 6;
+        } else {
+            return 3;
+        }
+    }
+    
+    public setOpened(level: number, opened: boolean) {
+        this.decks[level].setOpened(opened);
+    }
+    
+    public setSelectableLevel(level: number | null) {
+        WICKEDNESS_LEVELS.forEach(l => {
+            this.decks[l].setSelectionMode(l === level ? 'single' : 'none');
+        });
+    }
+
+    protected selectionChange(selection: WickednessTile[], lastChange: WickednessTile | null) {
+        this.onSelectionChange?.(selection, lastChange);
+    }
+
+    public removeCard(card: WickednessTile) {
+        WICKEDNESS_LEVELS.forEach(l => {
+            this.decks[l].removeCard(card);
+        });
+    }
+    
+    public getStock(card: WickednessTile): CardStock<WickednessTile> {
+        return this.decks[this.getCardLevel(card.type)];
+    }
+}
+
 class WickednessTilesManager extends CardManager<WickednessTile> {
     constructor (public game: KingOfTokyoGame) {
         super(game, {
@@ -15,6 +69,9 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
                 this.setDivAsCard(div as HTMLDivElement, card.type);
                 div.id = `${super.getId(card)}-front`;
                 (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
+                if (card.tokens > 0) {
+                    this.placeTokensOnTile(card);
+                }
             },
         });
     }
@@ -41,13 +98,15 @@ class WickednessTilesManager extends CardManager<WickednessTile> {
         })
     }
     
-    public addCardsToStock(stock: LineStock<WickednessTile>, cards: WickednessTile[], from?: HTMLElement) {
+    public addCardsToStock(stock: LineStock<WickednessTile>, cards: WickednessTile[], from?: WickednessDecks) {
         if (!cards.length) {
             return;
         }
 
-        const animation = from ? { fromElement: from } : undefined;
-        stock.addCards(cards, animation);   
+        cards.forEach(card => {
+            const animation: CardAnimation<WickednessTile> = from ? { fromStock: from.getStock(card) } : undefined;
+            stock.addCard(card, animation);   
+        });
         cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnTile(card));
     }
 

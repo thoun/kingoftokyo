@@ -84,28 +84,16 @@ function formatTextIcons(rawText) {
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var CardStock = /** @class */ (function () {
     function CardStock(manager, element) {
         this.manager = manager;
         this.element = element;
         this.cards = [];
+        this.selectedCards = [];
+        this.selectionMode = 'none';
         manager.addStock(this);
-        element.classList.add('card-stock', this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase());
+        element === null || element === void 0 ? void 0 : element.classList.add('card-stock', this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase());
+        this.bindClick();
     }
     CardStock.prototype.getCards = function () {
         return this.cards;
@@ -113,15 +101,32 @@ var CardStock = /** @class */ (function () {
     CardStock.prototype.isEmpty = function () {
         return !this.cards.length;
     };
+    CardStock.prototype.getSelection = function () {
+        return this.selectedCards;
+    };
     CardStock.prototype.addCard = function (card, animation) {
-        var element = this.manager.getCardElement(card);
-        this.element.appendChild(element);
-        if (animation) {
-            if (animation.fromStock) {
-                // TODO
+        var moved = false;
+        console.log(card, animation);
+        if (animation === null || animation === void 0 ? void 0 : animation.fromStock) {
+            var element = document.getElementById(this.manager.getId(card));
+            if ((element === null || element === void 0 ? void 0 : element.parentElement) == animation.fromStock.element) {
+                this.element.appendChild(element);
+                this.slideFromElement(element, animation.fromStock.element, animation.originalSide);
+                animation.fromStock.removeCard(card);
+                moved = true;
             }
-            else if (animation.fromElement && !element.closest("#" + animation.fromElement.id)) {
-                this.slideFromElement(element, animation.fromElement, animation.originalSide);
+        }
+        if (!moved) {
+            var element = this.manager.getCardElement(card);
+            this.element.appendChild(element);
+            if (animation) {
+                if (animation.fromStock) {
+                    this.slideFromElement(element, animation.fromStock.element, animation.originalSide);
+                    animation.fromStock.removeCard(card);
+                }
+                else if (animation.fromElement && element.closest("#" + animation.fromElement.id)) {
+                    this.slideFromElement(element, animation.fromElement, animation.originalSide);
+                }
             }
         }
         this.cards.push(card);
@@ -146,24 +151,119 @@ var CardStock = /** @class */ (function () {
         }
     };
     CardStock.prototype.removeCard = function (card) {
-        this.manager.removeCard(card);
-        this.onCardRemoved(card);
+        var element = document.getElementById(this.manager.getId(card));
+        if (element && element.parentElement == this.element) {
+            this.manager.removeCard(card);
+        }
+        this.cardRemoved(card);
     };
-    CardStock.prototype.onCardRemoved = function (card) {
+    CardStock.prototype.cardRemoved = function (card) {
         var _this = this;
         var index = this.cards.findIndex(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
         if (index !== -1) {
             this.cards.splice(index, 1);
         }
     };
-    CardStock.prototype.slideFromElement = function (element, fromElement, originalSide) {
+    CardStock.prototype.setSelectionMode = function (selectionMode) {
+        var _this = this;
+        this.cards.forEach(function (card) {
+            var element = _this.manager.getCardElement(card);
+            element.classList.toggle('selectable', selectionMode != 'none');
+        });
+        this.selectionMode = selectionMode;
+    };
+    CardStock.prototype.selectCard = function (card, silent) {
+        var _this = this;
+        var _a;
+        if (silent === void 0) { silent = false; }
+        if (this.selectionMode == 'none') {
+            return;
+        }
+        if (this.selectionMode === 'single') {
+            this.cards.filter(function (c) { return _this.manager.getId(c) != _this.manager.getId(card); }).forEach(function (c) { return _this.unselectCard(c, true); });
+        }
+        this.cards.forEach(function (card) {
+            var element = _this.manager.getCardElement(card);
+            element.classList.add('selected');
+            _this.selectedCards.push(card);
+        });
+        if (!silent) {
+            (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), card);
+        }
+    };
+    CardStock.prototype.unselectCard = function (card, silent) {
+        var _this = this;
+        var _a;
+        if (silent === void 0) { silent = false; }
+        var element = this.manager.getCardElement(card);
+        element.classList.remove('selected');
+        var index = this.selectedCards.findIndex(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
+        if (index !== -1) {
+            this.selectedCards.splice(index, 1);
+        }
+        if (!silent) {
+            (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), card);
+        }
+    };
+    CardStock.prototype.selectAll = function (silent) {
+        var _this = this;
+        var _a;
+        if (silent === void 0) { silent = false; }
+        if (this.selectionMode == 'none') {
+            return;
+        }
+        this.cards.forEach(function (c) { return _this.selectCard(c, true); });
+        if (!silent) {
+            (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), null);
+        }
+    };
+    CardStock.prototype.unselectAll = function (silent) {
+        var _this = this;
+        var _a;
+        if (silent === void 0) { silent = false; }
+        this.cards.forEach(function (c) { return _this.unselectCard(c, true); });
+        if (!silent) {
+            (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), null);
+        }
+    };
+    CardStock.prototype.bindClick = function () {
+        var _this = this;
+        var _a;
+        (_a = this.element) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function (event) {
+            var cardDiv = event.target.closest('.card');
+            if (!cardDiv) {
+                return;
+            }
+            var card = _this.cards.find(function (c) { return _this.manager.getId(c) == cardDiv.id; });
+            if (!card) {
+                return;
+            }
+            _this.cardClick(card);
+        });
+    };
+    CardStock.prototype.cardClick = function (card) {
+        var _this = this;
+        var _a;
+        if (this.selectionMode != 'none') {
+            var alreadySelected = this.selectedCards.some(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
+            if (alreadySelected) {
+                this.unselectCard(card);
+            }
+            else {
+                this.selectCard(card);
+            }
+        }
+        (_a = this.onCardClick) === null || _a === void 0 ? void 0 : _a.call(this, card);
+    };
+    CardStock.prototype.slideFromElement = function (element, fromElement, originalSide, rotationDelta) {
+        if (rotationDelta === void 0) { rotationDelta = 0; }
         var originBR = fromElement.getBoundingClientRect();
         if (document.visibilityState !== 'hidden' && !this.manager.game.instantaneousMode) {
             var destinationBR = element.getBoundingClientRect();
-            var deltaX = destinationBR.left - originBR.left;
-            var deltaY = destinationBR.top - originBR.top;
+            var deltaX = (destinationBR.left + destinationBR.right) / 2 - (originBR.left + originBR.right) / 2;
+            var deltaY = (destinationBR.top + destinationBR.bottom) / 2 - (originBR.top + originBR.bottom) / 2;
             element.style.zIndex = '10';
-            element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px)";
+            element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px) rotate(" + rotationDelta + "deg)";
             var side_1 = element.dataset.side;
             if (originalSide && originalSide != side_1) {
                 var cardSides_1 = element.getElementsByClassName('card-sides')[0];
@@ -187,6 +287,21 @@ var CardStock = /** @class */ (function () {
     };
     return CardStock;
 }());
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var LineStock = /** @class */ (function (_super) {
     __extends(LineStock, _super);
     function LineStock(manager, element, wrap, direction, center) {
@@ -237,6 +352,42 @@ var VisibleDeck = /** @class */ (function (_super) {
         _super.prototype.addCard.call(this, card, animation);
     };
     return VisibleDeck;
+}(CardStock));
+var AllVisibleDeck = /** @class */ (function (_super) {
+    __extends(AllVisibleDeck, _super);
+    function AllVisibleDeck(manager, element) {
+        var _this = _super.call(this, manager, element) || this;
+        _this.manager = manager;
+        _this.element = element;
+        return _this;
+    }
+    AllVisibleDeck.prototype.addCard = function (card, animation) {
+        var order = this.cards.length;
+        _super.prototype.addCard.call(this, card, animation);
+        var cardId = this.manager.getId(card);
+        var cardDiv = document.getElementById(cardId);
+        cardDiv.style.setProperty('--order', '' + order);
+        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+    };
+    AllVisibleDeck.prototype.addCards = function (cards, animation, shift) {
+        var _this = this;
+        if (shift === void 0) { shift = false; }
+        cards.forEach(function (card) { return _this.addCard(card, animation); });
+    };
+    AllVisibleDeck.prototype.setOpened = function (opened) {
+        this.element.classList.toggle('opened', opened);
+    };
+    AllVisibleDeck.prototype.cardRemoved = function (card) {
+        var _this = this;
+        _super.prototype.cardRemoved.call(this, card);
+        this.cards.forEach(function (c, index) {
+            var cardId = _this.manager.getId(c);
+            var cardDiv = document.getElementById(cardId);
+            cardDiv.style.setProperty('--order', '' + index);
+        });
+        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+    };
+    return AllVisibleDeck;
 }(CardStock));
 var CardManager = /** @class */ (function () {
     function CardManager(game, settings) {
@@ -2047,6 +2198,59 @@ var WICKEDNESS_TILES_WIDTH = 132;
 var WICKEDNESS_TILES_HEIGHT = 81;
 var WICKEDNESS_LEVELS = [3, 6, 10];
 var wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
+var WickednessDecks = /** @class */ (function (_super) {
+    __extends(WickednessDecks, _super);
+    function WickednessDecks(manager) {
+        var _this = _super.call(this, manager, null) || this;
+        _this.manager = manager;
+        _this.decks = [];
+        WICKEDNESS_LEVELS.forEach(function (level) {
+            dojo.place("<div id=\"wickedness-tiles-pile-" + level + "\" class=\"wickedness-tiles-pile wickedness-tile-stock\"></div>", 'wickedness-board');
+            _this.decks[level] = new AllVisibleDeck(manager, document.getElementById("wickedness-tiles-pile-" + level));
+            _this.decks[level].onSelectionChange = function (selection, lastChange) { return _this.selectionChange(selection, lastChange); };
+        });
+        return _this;
+    }
+    WickednessDecks.prototype.addCard = function (card, animation) {
+        var level = this.getCardLevel(card.type);
+        this.decks[level].addCard(card, animation);
+    };
+    WickednessDecks.prototype.getCardLevel = function (cardTypeId) {
+        var id = cardTypeId % 100;
+        if (id > 8) {
+            return 10;
+        }
+        else if (id > 4) {
+            return 6;
+        }
+        else {
+            return 3;
+        }
+    };
+    WickednessDecks.prototype.setOpened = function (level, opened) {
+        this.decks[level].setOpened(opened);
+    };
+    WickednessDecks.prototype.setSelectableLevel = function (level) {
+        var _this = this;
+        WICKEDNESS_LEVELS.forEach(function (l) {
+            _this.decks[l].setSelectionMode(l === level ? 'single' : 'none');
+        });
+    };
+    WickednessDecks.prototype.selectionChange = function (selection, lastChange) {
+        var _a;
+        (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, selection, lastChange);
+    };
+    WickednessDecks.prototype.removeCard = function (card) {
+        var _this = this;
+        WICKEDNESS_LEVELS.forEach(function (l) {
+            _this.decks[l].removeCard(card);
+        });
+    };
+    WickednessDecks.prototype.getStock = function (card) {
+        return this.decks[this.getCardLevel(card.type)];
+    };
+    return WickednessDecks;
+}(CardStock));
 var WickednessTilesManager = /** @class */ (function (_super) {
     __extends(WickednessTilesManager, _super);
     function WickednessTilesManager(game) {
@@ -2059,6 +2263,9 @@ var WickednessTilesManager = /** @class */ (function (_super) {
                 _this.setDivAsCard(div, card.type);
                 div.id = _super.prototype.getId.call(_this, card) + "-front";
                 _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
+                if (card.tokens > 0) {
+                    _this.placeTokensOnTile(card);
+                }
             },
         }) || this;
         _this.game = game;
@@ -2090,8 +2297,10 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         if (!cards.length) {
             return;
         }
-        var animation = from ? { fromElement: from } : undefined;
-        stock.addCards(cards, animation);
+        cards.forEach(function (card) {
+            var animation = from ? { fromStock: from.getStock(card) } : undefined;
+            stock.addCard(card, animation);
+        });
         cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnTile(card); });
     };
     WickednessTilesManager.prototype.generateCardDiv = function (card) {
@@ -4001,7 +4210,6 @@ var TableCenter = /** @class */ (function () {
     function TableCenter(game, players, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {
         var _this = this;
         this.game = game;
-        this.wickednessTiles = [];
         this.wickednessPoints = new Map();
         this.createVisibleCards(visibleCards, topDeckCardBackType);
         if (game.isWickednessExpansion()) {
@@ -4129,11 +4337,9 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.createWickednessTiles = function (wickednessTiles) {
         var _this = this;
-        WICKEDNESS_LEVELS.forEach(function (level) {
-            _this.wickednessTiles[level] = wickednessTiles.filter(function (tile) { return _this.game.wickednessTilesManager.getCardLevel(tile.type) === level; });
-            dojo.place("<div id=\"wickedness-tiles-pile-" + level + "\" class=\"wickedness-tiles-pile wickedness-tile-stock\"></div>", 'wickedness-board');
-            _this.setWickednessTilesPile(level);
-        });
+        this.wickednessDecks = new WickednessDecks(this.game.wickednessTilesManager);
+        this.wickednessDecks.onSelectionChange = function (selection, lastChange) { return _this.game.takeWickednessTile(lastChange.id); };
+        this.wickednessDecks.addCards(wickednessTiles);
     };
     TableCenter.prototype.moveWickednessPoints = function () {
         var _this = this;
@@ -4159,47 +4365,19 @@ var TableCenter = /** @class */ (function () {
         this.moveWickednessPoints();
     };
     TableCenter.prototype.showWickednessTiles = function (level) {
-        WICKEDNESS_LEVELS.filter(function (l) { return l !== level; }).forEach(function (l) { return dojo.removeClass("wickedness-tiles-pile-" + l, 'opened'); });
-        dojo.addClass("wickedness-tiles-pile-" + level, 'opened');
+        var _this = this;
+        WICKEDNESS_LEVELS.filter(function (l) { return l !== level; }).forEach(function (l) { return _this.wickednessDecks.setOpened(l, false); });
+        if (level !== null) {
+            this.wickednessDecks.setOpened(level, true);
+        }
     };
     TableCenter.prototype.setWickednessTilesSelectable = function (level, show, selectable) {
-        if (show) {
-            this.showWickednessTiles(level);
-        }
-        else {
-            WICKEDNESS_LEVELS.forEach(function (level) { return dojo.removeClass("wickedness-tiles-pile-" + level, 'opened'); });
-        }
-        if (selectable) {
-            dojo.addClass("wickedness-tiles-pile-" + level, 'selectable');
-        }
-        else {
-            WICKEDNESS_LEVELS.forEach(function (level) {
-                dojo.removeClass("wickedness-tiles-pile-" + level, 'selectable');
-            });
-        }
-    };
-    TableCenter.prototype.setWickednessTilesPile = function (level) {
-        var _this = this;
-        var pileDiv = document.getElementById("wickedness-tiles-pile-" + level);
-        pileDiv.innerHTML = '';
-        this.wickednessTiles[level].forEach(function (tile, index) {
-            dojo.place("<div id=\"wickedness-tiles-pile-tile-" + tile.id + "\" class=\"stockitem wickedness-tile\" data-side=\"" + tile.side + "\" data-background-index=\"" + wickenessTilesIndex[(tile.type % 100) - 1] + "\"></div>", pileDiv);
-            var tileDiv = document.getElementById("wickedness-tiles-pile-tile-" + tile.id);
-            _this.game.wickednessTilesManager.setDivAsCard(tileDiv, tile.type);
-            _this.game.addTooltipHtml(tileDiv.id, _this.game.wickednessTilesManager.getTooltip(tile.type));
-            tileDiv.style.setProperty('--order', '' + index);
-            tileDiv.addEventListener('click', function () {
-                if (tileDiv.closest('.wickedness-tiles-pile').classList.contains('selectable')) {
-                    _this.game.takeWickednessTile(tile.id);
-                }
-            });
-        });
-        pileDiv.style.setProperty('--tile-count', '' + this.wickednessTiles[level].length);
+        this.showWickednessTiles(show ? level : null);
+        this.wickednessDecks.setSelectableLevel(selectable ? level : null);
     };
     TableCenter.prototype.removeWickednessTileFromPile = function (level, removedTile) {
-        this.wickednessTiles[level].splice(this.wickednessTiles[level].findIndex(function (tile) { return tile.id == removedTile.id; }), 1);
-        this.setWickednessTilesPile(level);
-        dojo.removeClass("wickedness-tiles-pile-" + level, 'opened');
+        this.wickednessDecks.removeCard(removedTile);
+        this.wickednessDecks.setOpened(level, false);
     };
     return TableCenter;
 }());
@@ -7713,7 +7891,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_takeWickednessTile = function (notif) {
         var tile = notif.args.tile;
-        this.wickednessTilesManager.addCardsToStock(this.getPlayerTable(notif.args.playerId).wickednessTiles, [tile], document.getElementById("wickedness-tiles-pile-tile-" + tile.id));
+        this.getPlayerTable(notif.args.playerId).wickednessTiles.addCard(tile, {
+            fromStock: this.tableCenter.wickednessDecks.getStock(tile)
+        });
         this.tableCenter.removeWickednessTileFromPile(notif.args.level, tile);
         this.tableManager.tableHeightChange(); // adapt to new card
     };

@@ -28,10 +28,9 @@ const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
 
 class TableCenter {
     private visibleCards: Stock;
-    //private curseCard: Stock;
     private curseCard: CardStock<CurseCard>;
     private pickCard: Stock;
-    private wickednessTiles: WickednessTile[][] = [];
+    public wickednessDecks: WickednessDecks;
     private tokyoTower: TokyoTower;
     private wickednessPoints = new Map<number, number>();
 
@@ -195,12 +194,9 @@ class TableCenter {
     }
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {
-        WICKEDNESS_LEVELS.forEach(level => {
-            this.wickednessTiles[level] = wickednessTiles.filter(tile => this.game.wickednessTilesManager.getCardLevel(tile.type) === level);
-
-            dojo.place(`<div id="wickedness-tiles-pile-${level}" class="wickedness-tiles-pile wickedness-tile-stock"></div>`, 'wickedness-board');
-            this.setWickednessTilesPile(level);
-        });
+        this.wickednessDecks = new WickednessDecks(this.game.wickednessTilesManager);
+        this.wickednessDecks.onSelectionChange = (selection: WickednessTile[], lastChange: WickednessTile) => this.game.takeWickednessTile(lastChange.id);
+        this.wickednessDecks.addCards(wickednessTiles);
     }
 
     private moveWickednessPoints() {
@@ -230,51 +226,20 @@ class TableCenter {
         this.moveWickednessPoints();
     }
     
-    public showWickednessTiles(level: number) {
-        WICKEDNESS_LEVELS.filter(l => l !== level).forEach(l => dojo.removeClass(`wickedness-tiles-pile-${l}`, 'opened'));
-        dojo.addClass(`wickedness-tiles-pile-${level}`, 'opened');
+    public showWickednessTiles(level: number | null) {
+        WICKEDNESS_LEVELS.filter(l => l !== level).forEach(l => this.wickednessDecks.setOpened(l, false));
+        if (level !== null) {
+            this.wickednessDecks.setOpened(level, true);
+        }
     }
     
     public setWickednessTilesSelectable(level: number, show: boolean, selectable: boolean) {
-        if (show) {
-            this.showWickednessTiles(level);
-        } else {
-            WICKEDNESS_LEVELS.forEach(level => dojo.removeClass(`wickedness-tiles-pile-${level}`, 'opened'));
-        }
-
-        if (selectable) {
-            dojo.addClass(`wickedness-tiles-pile-${level}`, 'selectable');
-        } else {
-            WICKEDNESS_LEVELS.forEach(level => {
-                dojo.removeClass(`wickedness-tiles-pile-${level}`, 'selectable');
-            });
-        }
-    }
-
-    public setWickednessTilesPile(level: number) {
-        const pileDiv = document.getElementById(`wickedness-tiles-pile-${level}`);
-        pileDiv.innerHTML = '';
-        this.wickednessTiles[level].forEach((tile, index) => {
-            dojo.place(
-                `<div id="wickedness-tiles-pile-tile-${tile.id}" class="stockitem wickedness-tile" data-side="${tile.side}" data-background-index="${wickenessTilesIndex[(tile.type % 100) - 1]}"></div>`, 
-                pileDiv
-            );
-            const tileDiv = document.getElementById(`wickedness-tiles-pile-tile-${tile.id}`) as HTMLDivElement;
-            this.game.wickednessTilesManager.setDivAsCard(tileDiv, tile.type);
-            (this.game as any).addTooltipHtml(tileDiv.id, this.game.wickednessTilesManager.getTooltip(tile.type));
-            tileDiv.style.setProperty('--order', ''+index);
-            tileDiv.addEventListener('click', () => {
-                if (tileDiv.closest('.wickedness-tiles-pile').classList.contains('selectable')) {
-                    this.game.takeWickednessTile(tile.id);
-                }
-            });
-        });
-        pileDiv.style.setProperty('--tile-count', ''+this.wickednessTiles[level].length);
+        this.showWickednessTiles(show ? level : null);
+        this.wickednessDecks.setSelectableLevel(selectable ? level : null);
     }
 
     public removeWickednessTileFromPile(level: number, removedTile: WickednessTile) {
-        this.wickednessTiles[level].splice(this.wickednessTiles[level].findIndex(tile => tile.id == removedTile.id), 1);
-        this.setWickednessTilesPile(level);
-        dojo.removeClass(`wickedness-tiles-pile-${level}`, 'opened')
+        this.wickednessDecks.removeCard(removedTile);
+        this.wickednessDecks.setOpened(level, false);
     }
 }

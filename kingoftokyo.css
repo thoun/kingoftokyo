@@ -1036,6 +1036,7 @@ body > .card {
 .card-stock.line-stock[data-center=true] {
   justify-content: center;
 }
+
 .card-stock.hidden-deck {
   position: relative;
 }
@@ -1050,6 +1051,7 @@ body > .card {
 .card-stock.hidden-deck[data-empty=true] {
   visibility: hidden;
 }
+
 .card-stock.visible-deck {
   position: relative;
 }
@@ -1057,6 +1059,29 @@ body > .card {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.card-stock.all-visible-deck {
+  position: absolute;
+  --tile-count: 1;
+  width: calc(132px + var(--tile-count) * 3px);
+  transition: height 0.5s ease-in-out, background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  opacity: var(--tile-count);
+}
+.card-stock.all-visible-deck > * {
+  position: absolute;
+  margin: 0;
+  transition: left 0.5s ease-in-out, top 0.5s ease-in-out;
+  top: calc(3px * var(--order));
+  left: calc(3px * var(--order));
+}
+.card-stock.all-visible-deck:hover, .card-stock.all-visible-deck:active, .card-stock.all-visible-deck.opened {
+  height: calc(85px * var(--tile-count) - 3px);
+  z-index: 1;
+}
+.card-stock.all-visible-deck:hover > *, .card-stock.all-visible-deck:active > *, .card-stock.all-visible-deck.opened > * {
+  left: 0px;
+  top: calc(85px * var(--order));
 }
 
 .kot-curse-card {
