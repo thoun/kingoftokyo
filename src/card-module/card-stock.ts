@@ -16,7 +16,7 @@ class CardStock<T> {
 
     constructor(protected manager: CardManager<T>, protected element: HTMLElement) {
         manager.addStock(this);
-        element?.classList.add('card-stock', this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase());
+        element?.classList.add('card-stock'/*, this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase()* doesn't work in production because of minification */);
         this.bindClick();
     }
 

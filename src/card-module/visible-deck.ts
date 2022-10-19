@@ -1,6 +1,7 @@
 class VisibleDeck<T> extends CardStock<T> {
     constructor(protected manager: CardManager<T>, protected element: HTMLElement) {
         super(manager, element);
+        element.classList.add('visible-deck');
     }
 
     public addCard(card: T, animation?: CardAnimation<T>) {

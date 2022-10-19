@@ -92,7 +92,7 @@ var CardStock = /** @class */ (function () {
         this.selectedCards = [];
         this.selectionMode = 'none';
         manager.addStock(this);
-        element === null || element === void 0 ? void 0 : element.classList.add('card-stock', this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase());
+        element === null || element === void 0 ? void 0 : element.classList.add('card-stock' /*, this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase()* doesn't work in production because of minification */);
         this.bindClick();
     }
     CardStock.prototype.getCards = function () {
@@ -321,6 +321,7 @@ var LineStock = /** @class */ (function (_super) {
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
+        element.classList.add('line-stock');
         element.dataset.center = center.toString();
         element.style.setProperty('--wrap', wrap);
         element.style.setProperty('--direction', direction);
@@ -336,6 +337,7 @@ var HiddenDeck = /** @class */ (function (_super) {
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
+        element.classList.add('hidden-deck');
         _this.setEmpty(empty);
         _this.element.appendChild(_this.manager.getCardElement({ id: element.id + "-hidden-deck-back" }, false));
         return _this;
@@ -351,6 +353,7 @@ var VisibleDeck = /** @class */ (function (_super) {
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
+        element.classList.add('visible-deck');
         return _this;
     }
     VisibleDeck.prototype.addCard = function (card, animation) {
@@ -370,6 +373,7 @@ var AllVisibleDeck = /** @class */ (function (_super) {
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
+        element.classList.add('all-visible-deck');
         element.style.setProperty('--width', width);
         element.style.setProperty('--height', height);
         element.style.setProperty('--shift', shift);
