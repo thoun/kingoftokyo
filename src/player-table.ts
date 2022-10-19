@@ -163,12 +163,12 @@ class PlayerTable {
                 this.hiddenEvolutionCards.create(this.game, $(`hand-evolution-cards`), EVOLUTION_SIZE, EVOLUTION_SIZE);
                 this.hiddenEvolutionCards.setSelectionMode(2);
                 this.hiddenEvolutionCards.centerItems = true;
-                this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+                this.hiddenEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCardsManager.setupNewCard(card_div, card_type_id); 
                 dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onHiddenEvolutionClick(Number(item_id)));
 
-                this.game.evolutionCards.setupCards([this.hiddenEvolutionCards]);
+                this.game.evolutionCardsManager.setupCards([this.hiddenEvolutionCards]);
                 if (player.hiddenEvolutions) {
-                    this.game.evolutionCards.addCardsToStock(this.hiddenEvolutionCards, player.hiddenEvolutions);
+                    this.game.evolutionCardsManager.addCardsToStock(this.hiddenEvolutionCards, player.hiddenEvolutions);
                 }
                 player.hiddenEvolutions?.forEach(card => {
                     if (evolutionCardsWithSingleState.includes(card.type)) {
@@ -184,12 +184,12 @@ class PlayerTable {
             this.visibleEvolutionCards.create(this.game, $(`visible-evolution-cards-${player.id}`), EVOLUTION_SIZE, EVOLUTION_SIZE);
             this.visibleEvolutionCards.setSelectionMode(0);
             this.visibleEvolutionCards.centerItems = true;
-            this.visibleEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+            this.visibleEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCardsManager.setupNewCard(card_div, card_type_id); 
             dojo.connect(this.visibleEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleEvolutionClick(Number(item_id)));
     
-            this.game.evolutionCards.setupCards([this.visibleEvolutionCards]);
+            this.game.evolutionCardsManager.setupCards([this.visibleEvolutionCards]);
             if (player.visibleEvolutions) {
-                this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
+                this.game.evolutionCardsManager.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
             }
         }
 
@@ -455,14 +455,14 @@ class PlayerTable {
             this.pickEvolutionCards.selectionClass = 'no-visible-selection-except-double-selection';
             this.pickEvolutionCards.create(this.game, $(`pick-evolution`), EVOLUTION_SIZE, EVOLUTION_SIZE);
             this.pickEvolutionCards.setSelectionMode(1);
-            this.pickEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCards.setupNewCard(card_div, card_type_id); 
+            this.pickEvolutionCards.onItemCreate = (card_div, card_type_id) => this.game.evolutionCardsManager.setupNewCard(card_div, card_type_id); 
             this.pickEvolutionCards.centerItems = true;
             dojo.connect(this.pickEvolutionCards, 'onChangeSelection', this, (_, item_id: string) => this.game.chooseEvolutionCardClick(Number(item_id)));
         }
             
         document.getElementById(`pick-evolution`).style.display = 'block';
 
-        this.game.evolutionCards.setupCards([this.pickEvolutionCards]);
+        this.game.evolutionCardsManager.setupCards([this.pickEvolutionCards]);
         //this.game.evolutionCards.addCardsToStock(this.pickEvolutionCards, cards);
         cards.forEach(card => this.pickEvolutionCards.addToStockWithId(card.type, '' + card.id));
     }
@@ -476,12 +476,12 @@ class PlayerTable {
     
     public playEvolution(card: EvolutionCard, fromStock?: Stock) {
         if (this.hiddenEvolutionCards) {
-            this.game.evolutionCards.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+            this.game.evolutionCardsManager.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
         } else {
             if (fromStock) {
-                this.game.evolutionCards.moveToAnotherStock(fromStock, this.visibleEvolutionCards, card);
+                this.game.evolutionCardsManager.moveToAnotherStock(fromStock, this.visibleEvolutionCards, card);
             } else {
-                this.game.evolutionCards.addCardsToStock(this.visibleEvolutionCards, [card], `playerhand-counter-wrapper-${this.playerId}`);
+                this.game.evolutionCardsManager.addCardsToStock(this.visibleEvolutionCards, [card], `playerhand-counter-wrapper-${this.playerId}`);
             }
         }
         this.checkHandEmpty();

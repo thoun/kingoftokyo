@@ -21,7 +21,7 @@ class CardStock<T> {
     }
 
     public getCards(): T[] {
-        return this.cards;
+        return this.cards.slice();
     }
 
     public isEmpty(): boolean {
@@ -32,17 +32,24 @@ class CardStock<T> {
         return this.selectedCards;
     }
 
+    public cardInStock(card: T): boolean {
+        const element = document.getElementById(this.manager.getId(card));
+        return element ? this.cardElementInStock(element) : false;
+    }
+
+    protected cardElementInStock(element: HTMLElement): boolean {
+        return element?.parentElement == this.element;
+    }
+
     public addCard(card: T, animation?: CardAnimation<T>) {
-        let moved = false;
-        if (animation?.fromStock) {
-            let element = document.getElementById(this.manager.getId(card));
-            if (element?.parentElement == animation.fromStock.element) {
-                this.moveFromOtherStock(card, element, animation);
-                moved = true;
-            }
+        if (this.cardInStock(card)) {
+            return;
         }
 
-        if (!moved) {
+        if (animation?.fromStock && animation.fromStock.cardInStock(card)) {
+            let element = document.getElementById(this.manager.getId(card));
+            this.moveFromOtherStock(card, element, animation);
+        } else {
             const element = this.manager.getCardElement(card);
             this.moveFromElement(card, element, animation);
         }
@@ -88,8 +95,7 @@ class CardStock<T> {
     }
 
     public removeCard(card: T) {
-        let element = document.getElementById(this.manager.getId(card));
-        if (element && element.parentElement == this.element) {
+        if (this.cardInStock(card)) {
             this.manager.removeCard(card);
         }
         this.cardRemoved(card);
@@ -100,6 +106,11 @@ class CardStock<T> {
         if (index !== -1) {
             this.cards.splice(index, 1);
         }
+    }
+
+    public removeAll() {
+        const cards = this.getCards(); // use a copy of the array as we iterate and modify it at the same time
+        cards.forEach(card => this.removeCard(card));
     }
 
     protected setSelectableCard(card: T, selectable: boolean) {

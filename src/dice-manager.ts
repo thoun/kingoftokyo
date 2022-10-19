@@ -586,7 +586,7 @@ class DiceManager {
                         this.game.createButton(
                             bubbleActionButtonsId, 
                             gammaBreathButtonId, 
-                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCards.getCardName(57, 'text-only')}</strong>` }),
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(57, 'text-only')}</strong>` }),
                             () => {
                                 this.game.changeDie(die.id, dieFaceSelector.getValue(), 3057);
                                 this.toggleBubbleChangeDie(die);
@@ -598,7 +598,7 @@ class DiceManager {
                         this.game.createButton(
                             bubbleActionButtonsId, 
                             tailSweepButtonId, 
-                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCards.getCardName(58, 'text-only')}</strong>` }),
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(58, 'text-only')}</strong>` }),
                             () => {
                                 this.game.changeDie(die.id, dieFaceSelector.getValue(), 3058);
                                 this.toggleBubbleChangeDie(die);
@@ -610,7 +610,7 @@ class DiceManager {
                         this.game.createButton(
                             bubbleActionButtonsId, 
                             tinyTailButtonId, 
-                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCards.getCardName(184, 'text-only')}</strong>` }),
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(184, 'text-only')}</strong>` }),
                             () => {
                                 this.game.changeDie(die.id, dieFaceSelector.getValue(), 3058);
                                 this.toggleBubbleChangeDie(die);
@@ -644,7 +644,7 @@ class DiceManager {
                     }
                     if (args.hasSaurianAdaptability) {
                         const saurianAdaptabilityButtonLabel = dojo.string.substitute(_("Change all ${die_face} with ${card_name}"), {
-                            'card_name': `<strong>${this.game.evolutionCards.getCardName(54, 'text-only')}</strong>`, 
+                            'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(54, 'text-only')}</strong>`, 
                             'die_face': formatTextIcons(DICE_STRINGS[die.value]),
                         });
                         this.game.createButton(

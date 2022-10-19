@@ -10,9 +10,9 @@ $description-left: 4px;
 $description-width: 124px;
 $description-size: 7pt;
 
-.stockitem, #deck, .kot-curse-card, .kot-tile {
+.stockitem, #deck, .kot-curse-card, .kot-tile, .kot-evolution {
     border-radius: 10px;
-    &:not(.kot-curse-card):not(.kot-tile) {
+    &:not(.kot-curse-card):not(.kot-tile):not(.kot-evolution) {
         margin: 5px;
         box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
         overflow: hidden;

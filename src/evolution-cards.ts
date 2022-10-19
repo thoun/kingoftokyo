@@ -1,11 +1,25 @@
 const MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,7,8,/*TODOPUKK 11,*/13,14,15,18];
 
-class EvolutionCards {
+class EvolutionCardsManager extends CardManager<EvolutionCard> {
     EVOLUTION_CARDS_TYPES: number[];
-
-    constructor (private game: KingOfTokyoGame) {
+    constructor (public game: KingOfTokyoGame) {
+        super(game, {
+            getId: (card) => `evolution-card-${card.id}`,
+            setupDiv: (card: EvolutionCard, div: HTMLElement) => div.classList.add('kot-evolution'),
+            setupFrontDiv: (card: EvolutionCard, div: HTMLElement) => {
+                div.style.backgroundPositionX = `${(MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1) * 100 / MONSTERS_WITH_POWER_UP_CARDS.length}%`;
+                this.setDivAsCard(div as HTMLDivElement, card.type);
+                div.id = `${super.getId(card)}-front`;
+                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
+                /*if (card.tokens > 0) {
+                    this.placeTokensOnTile(card);
+                }*/
+            },
+            setupBackDiv: (card: EvolutionCard, div: HTMLElement) => {
+                div.style.backgroundPositionX = `0%`;
+            }
+        });
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
-        //this.debugSeeAllCards();
     }
 
     // gameui.evolutionCards.debugSeeAllCards()

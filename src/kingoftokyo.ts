@@ -31,13 +31,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     public cards: Cards;
     public curseCardsManager: CurseCardsManager;
     public wickednessTilesManager: WickednessTilesManager;    
-    public evolutionCards: EvolutionCards;
+    public evolutionCardsManager: EvolutionCardsManager;
     //private rapidHealingSyncHearts: number;
     public towerLevelsOwners = [];
     private tableCenter: TableCenter;
     private falseBlessingAnkhAction: FalseBlessingAnkhAction = null;
-    private choseEvolutionInStock: Stock;
-    private inDeckEvolutionsStock: Stock;
+    private choseEvolutionInStock: LineStock<EvolutionCard>;
+    private inDeckEvolutionsStock: LineStock<EvolutionCard>;
     private smashedPlayersStillInTokyo: number[];
         
     public SHINK_RAY_TOKEN_TOOLTIP: string;
@@ -104,7 +104,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.cards = new Cards(this);
         this.curseCardsManager = new CurseCardsManager(this);
         this.wickednessTilesManager = new WickednessTilesManager(this);
-        this.evolutionCards = new EvolutionCards(this);
+        this.evolutionCardsManager = new EvolutionCardsManager(this);
         this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});
         this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
     
@@ -361,30 +361,17 @@ class KingOfTokyo implements KingOfTokyoGame {
                 </div>
             `, 'mutant-evolution-choice');
 
-            this.choseEvolutionInStock = new ebg.stock() as Stock;
-            this.choseEvolutionInStock.setSelectionAppearance('class');
-            this.choseEvolutionInStock.selectionClass = 'no-visible-selection';
-            this.choseEvolutionInStock.create(this, $(`choose-evolution-in`), EVOLUTION_SIZE, EVOLUTION_SIZE);
-            this.choseEvolutionInStock.setSelectionMode(2);
-            this.choseEvolutionInStock.centerItems = true;
-            this.choseEvolutionInStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
-            dojo.connect(this.choseEvolutionInStock, 'onChangeSelection', this, (_, item_id: string) => this.pickEvolutionForDeck(Number(item_id)));
-            
-            this.inDeckEvolutionsStock = new ebg.stock() as Stock;
-            this.inDeckEvolutionsStock.setSelectionAppearance('class');
-            this.inDeckEvolutionsStock.selectionClass = 'no-visible-selection';
-            this.inDeckEvolutionsStock.create(this, $(`evolutions-in-deck`), EVOLUTION_SIZE, EVOLUTION_SIZE);
-            this.inDeckEvolutionsStock.setSelectionMode(0);
-            this.inDeckEvolutionsStock.centerItems = true;
-            this.inDeckEvolutionsStock.onItemCreate = (card_div, card_type_id) => this.evolutionCards.setupNewCard(card_div, card_type_id); 
 
-            this.evolutionCards.setupCards([this.choseEvolutionInStock, this.inDeckEvolutionsStock]);
+            this.choseEvolutionInStock = new LineStock<EvolutionCard>(this.evolutionCardsManager, document.getElementById(`choose-evolution-in`));
+            this.choseEvolutionInStock.setSelectionMode('single');
+            this.choseEvolutionInStock.onSelectionChange = (_, card: EvolutionCard) => this.pickEvolutionForDeck(card.id);
+            
+            this.inDeckEvolutionsStock = new LineStock<EvolutionCard>(this.evolutionCardsManager, document.getElementById(`evolutions-in-deck`));
         }
 
         this.choseEvolutionInStock.removeAll();
-        args._private.chooseCardIn.forEach(card => this.choseEvolutionInStock.addToStockWithId(card.type, ''+card.id));
-        
-        args._private.inDeck.filter(card => !this.inDeckEvolutionsStock.items.some(item => Number(item.id) === card.id)).forEach(card => this.inDeckEvolutionsStock.addToStockWithId(card.type, ''+card.id));
+        this.choseEvolutionInStock.addCards(args._private.chooseCardIn);
+        this.inDeckEvolutionsStock.addCards(args._private.inDeck.filter(card => !this.inDeckEvolutionsStock.cardInStock(card))); 
     }
 
     private onEnteringChooseInitialCard(args: EnteringChooseInitialCardArgs) {
@@ -631,15 +618,15 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.canUseDetachableTail && !document.getElementById('useDetachableTail_button')) {
-                (this as any).addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(51, 'text-only')}), () => this.useInvincibleEvolution(51));
+                (this as any).addActionButton('useDetachableTail_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(51, 'text-only')}), () => this.useInvincibleEvolution(51));
             }
 
             if (args.canUseRabbitsFoot && !document.getElementById('useRabbitsFoot_button')) {
-                (this as any).addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
+                (this as any).addActionButton('useRabbitsFoot_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(143, 'text-only')}), () => this.useInvincibleEvolution(143));
             }
 
             if (args.canUseCandy && !document.getElementById('useCandy_button')) {
-                (this as any).addActionButton('useCandy_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(88, 'text-only')}), () => this.useCandyEvolution());
+                (this as any).addActionButton('useCandy_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(88, 'text-only')}), () => this.useCandyEvolution());
             }
 
             if (args.countSuperJump > 0 && !document.getElementById('useSuperJump1_button')) {
@@ -1183,7 +1170,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'changeDie':
                     const argsChangeDie = args as EnteringChangeDieArgs;
                     if (argsChangeDie.hasYinYang) {
-                        (this as any).addActionButton('useYinYang_button',dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(138, 'text-only') }), () => this.useYinYang());
+                        (this as any).addActionButton('useYinYang_button',dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), () => this.useYinYang());
                     }
 
                     (this as any).addActionButton('resolve_button', _("Resolve dice"), () => this.resolveDice(), null, null, 'red');
@@ -1274,7 +1261,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                             (this as any).addActionButton(`useChestThumping_button${playerId}`, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': `<span style="color: #${player.color}">${player.name}</span>`}), () => this.useChestThumping(playerId))
                         });
                         if (this.smashedPlayersStillInTokyo.length) {
-                            (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(45, 'text-only')}), () => this.skipChestThumping());
+                            (this as any).addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(45, 'text-only')}), () => this.skipChestThumping());
                         }
                     } else {
                         const playerHasJets = argsLeaveTokyo.jetsPlayers?.includes(this.getPlayerId());
@@ -1285,7 +1272,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         (this as any).addActionButton('stayInTokyo_button', label, () => this.onStayInTokyo());
                         (this as any).addActionButton('leaveTokyo_button', _("Leave Tokyo"), () => this.onLeaveTokyo(playerHasJets ? 24 : undefined));
                         if (playerHasSimianScamper) {
-                            (this as any).addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(42, 'text-only') }), () => this.onLeaveTokyo(3042));
+                            (this as any).addActionButton('leaveTokyoSimianScamper_button', _("Leave Tokyo") + ' : ' + dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(42, 'text-only') }), () => this.onLeaveTokyo(3042));
                         }
                         if (!argsLeaveTokyo.canYieldTokyo[this.getPlayerId()]) {
                             this.startActionTimer('stayInTokyo_button', ACTION_TIMER_DURATION);
@@ -1325,7 +1312,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
 
                     if (argsBeforeEnteringTokyo.canUseFelineMotor.includes(this.getPlayerId())) {
-                        (this as any).addActionButton('useFelineMotor_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCards.getCardName(36, 'text-only') }), () => this.useFelineMotor());
+                        (this as any).addActionButton('useFelineMotor_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(36, 'text-only') }), () => this.useFelineMotor());
                     } 
 
                     (this as any).addActionButton('skipBeforeEnteringTokyo_button', _("Skip"), () => this.skipBeforeEnteringTokyo());
@@ -1337,13 +1324,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'buyCard':
                     const argsBuyCard = args as EnteringBuyCardArgs;
                     if (argsBuyCard.canUseMiraculousCatch) {
-                        (this as any).addActionButton('useMiraculousCatch_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(12, 'text-only')}), () => this.useMiraculousCatch());
+                        (this as any).addActionButton('useMiraculousCatch_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(12, 'text-only')}), () => this.useMiraculousCatch());
                         if (!argsBuyCard.unusedMiraculousCatch) {
                             dojo.addClass('useMiraculousCatch_button', 'disabled');
                         }
                     }
                     if (argsBuyCard.canUseAdaptingTechnology) {
-                        (this as any).addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCards.getCardName(24, 'text-only')}) + ')', () => this.onRenew(3024));
+                        (this as any).addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only')}) + ')', () => this.onRenew(3024));
                     }
                     (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.onRenew(4));
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
@@ -1390,7 +1377,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         switch(question.code) {
             case 'BambooSupply':
-                const substituteParams = { card_name: this.evolutionCards.getCardName(136, 'text-only')};
+                const substituteParams = { card_name: this.evolutionCardsManager.getCardName(136, 'text-only')};
                 const putLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), {...substituteParams, number: 1});
                 const takeLabel = dojo.string.substitute(_("Take all [Energy] from ${card_name}"), substituteParams);
                 (this as any).addActionButton('putEnergyOnBambooSupply_button', formatTextIcons(putLabel), () => this.putEnergyOnBambooSupply());
@@ -1451,7 +1438,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
                 (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
                 if (miraculousCatchArgs.costSuperiorAlienTechnology !== null && miraculousCatchArgs.costSuperiorAlienTechnology !== miraculousCatchArgs.cost) {
-                    (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
+                    (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
                 }
                 (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
                 setTimeout(() => document.getElementById(`miraculousCatch-card-${miraculousCatchArgs.card.id}`)?.addEventListener('click', () => this.buyCardMiraculousCatch()), 250);
@@ -1467,7 +1454,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 });
                 break;
             case 'ExoticArms':
-                const useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCards.getCardName(26, 'text-only'), number: 2 });
+                const useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(26, 'text-only'), number: 2 });
                 
                 (this as any).addActionButton('useExoticArms_button', formatTextIcons(useExoticArmsLabel), () => this.useExoticArms());
                 (this as any).addActionButton('skipExoticArms_button', _('Skip'), () => this.skipExoticArms());
@@ -1484,13 +1471,13 @@ class KingOfTokyo implements KingOfTokyoGame {
                 (this as any).addActionButton('skipLightningArmor_button', _('Skip'), () => this.skipLightningArmor());
                 break;
             case 'EnergySword':
-                (this as any).addActionButton('useEnergySword_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCards.getCardName(147, 'text-only') }), () => this.answerEnergySword(true));
+                (this as any).addActionButton('useEnergySword_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(147, 'text-only') }), () => this.answerEnergySword(true));
                 (this as any).addActionButton('skipEnergySword_button', _('Skip'), () => this.answerEnergySword(false));
                 dojo.toggleClass('useEnergySword_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 2);
                 document.getElementById('useEnergySword_button').dataset.enableAtEnergy = '2';
                 break;
             case 'SunkenTemple':
-                (this as any).addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCards.getCardName(157, 'text-only') }), () => this.answerSunkenTemple(true));
+                (this as any).addActionButton('useSunkenTemple_button',  dojo.string.substitute(_("Use ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(157, 'text-only') }), () => this.answerSunkenTemple(true));
                 (this as any).addActionButton('skipSunkenTemple_button', _('Skip'), () => this.answerSunkenTemple(false));
                 break;
             case 'ElectricCarrot':
@@ -1859,18 +1846,18 @@ class KingOfTokyo implements KingOfTokyoGame {
                 if (canUseSuperiorAlienTechnologyForCard || canUseBobbingForApplesForCard) {
                     const both = canUseSuperiorAlienTechnologyForCard && canUseBobbingForApplesForCard;
                     const keys = [
-                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(canUseSuperiorAlienTechnologyForCard ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
+                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(canUseSuperiorAlienTechnologyForCard ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
                         _('Cancel')
                     ];
                     if (cardCostBobbingForApples) {
-                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(85, 'text-only'), cost: cardCostBobbingForApples })));
+                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(85, 'text-only'), cost: cardCostBobbingForApples })));
                     }
                     if (canUseSuperiorAlienTechnologyForCard) {
-                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCards.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })));
+                        keys.unshift(formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: cardCostSuperiorAlienTechnology })));
                     }
 
                     (this as any).multipleChoiceDialog(
-                        dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCards.getCardName(28, 'text-only')}), 
+                        dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCardsManager.getCardName(28, 'text-only')}), 
                         keys, 
                         (choice: string) => {
                             const choiceIndex = Number(choice);
@@ -1932,7 +1919,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         args.woundedPlayersIds.slice().reverse().forEach(woundedPlayerId => {
             const woundedPlayer = this.getPlayer(woundedPlayerId);
             const cardType = Number((document.querySelector(`[data-evolution-id="${cardId}"]`) as HTMLDivElement).dataset.evolutionType);
-            const label = /*TODOPUHA_*/('Give ${card_name} to ${player_name}').replace('${card_name}', this.evolutionCards.getCardName(cardType, 'text-only')).replace('${player_name}', `<strong style="color: #${woundedPlayer.color};">${woundedPlayer.name}</strong>`);
+            const label = /*TODOPUHA_*/('Give ${card_name} to ${player_name}').replace('${card_name}', this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', `<strong style="color: #${woundedPlayer.color};">${woundedPlayer.name}</strong>`);
             this.createButton('endStealCostume_button', `giveGift${cardId}to${woundedPlayerId}_button`, label, () => this.giveGiftEvolution(cardId, woundedPlayerId), false, 'before')
         });
     }
@@ -2047,7 +2034,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'rapid-actions-wrapper', 
                 'mothershipSupportButton', 
-                dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (1[Energy])`), { card_name: this.evolutionCards.getCardName(27, 'text-only'), hearts: 1 }), 
+                dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (1[Energy])`), { card_name: this.evolutionCardsManager.getCardName(27, 'text-only'), hearts: 1 }), 
                 () => this.useMothershipSupport(), 
                 this.gamedatas.players[this.getPlayerId()].mothershipSupportUsed || userEnergy < 1 || isMaxHealth
             );
@@ -2384,7 +2371,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.playerTables.forEach(playerTable => {
             if (playerTable.visibleEvolutionCards.items.some(item => Number(item.id) == card.id)) {
-                this.evolutionCards.placeMimicOnCard(playerTable.visibleEvolutionCards, card);
+                this.evolutionCardsManager.placeMimicOnCard(playerTable.visibleEvolutionCards, card);
             }
         });
 
@@ -2410,7 +2397,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.playerTables.forEach(playerTable => {
             const mimicCardItem = playerTable.visibleEvolutionCards.items.find(item => Number(item.type) == 18);
             if (mimicCardItem) {
-                this.evolutionCards.changeMimicTooltip(`${playerTable.visibleEvolutionCards.container_div.id}_item_${mimicCardItem.id}`, this.evolutionCards.getMimickedCardText(mimickedCard));
+                this.evolutionCardsManager.changeMimicTooltip(`${playerTable.visibleEvolutionCards.container_div.id}_item_${mimicCardItem.id}`, this.evolutionCardsManager.getMimickedCardText(mimickedCard));
             }
         });
     }
@@ -2424,7 +2411,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         this.playerTables.forEach(playerTable => {
             if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
-                this.evolutionCards.removeMimicOnCard(playerTable.cards, card);
+                this.evolutionCardsManager.removeMimicOnCard(playerTable.cards, card);
             }
         });
     }
@@ -2435,17 +2422,12 @@ class KingOfTokyo implements KingOfTokyoGame {
         viewCardsDialog.create('kotViewEvolutionsDialog');
         viewCardsDialog.setTitle(title);
         
-        var html = `<div id="see-monster-evolutions" class="evolution-card-stock player-evolution-cards"></div>`;
+        var html = `<div id="see-monster-evolutions"></div>`;
         
         // Show the dialog
         viewCardsDialog.setContent(html);
-        
-        cardsTypes.forEach(cardType => {
-            dojo.place(`
-                <div id="see-monster-evolutions_item_${cardType}" class="stockitem stockitem_unselectable" style="background-position: -${(MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(cardType / 10)) + 1) * 100}% 0%;"></div>
-            `, 'see-monster-evolutions');
-            this.evolutionCards.setupNewCard(document.getElementById(`see-monster-evolutions_item_${cardType}`) as HTMLDivElement, cardType);
-        })
+        const stock = new LineStock<EvolutionCard>(this.evolutionCardsManager, document.getElementById('see-monster-evolutions'));
+        stock.addCards(cardsTypes.map((cardType, index) => ({ id: 100000 + index, type: cardType } as EvolutionCard)));
         
         viewCardsDialog.show();
 
@@ -3594,7 +3576,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_evolutionPickedForDeck(notif: Notif<any>) {
-        this.evolutionCards.moveToAnotherStock(this.choseEvolutionInStock, this.inDeckEvolutionsStock, notif.args.card);
+        this.inDeckEvolutionsStock.addCard(notif.args.card, { fromStock: this.choseEvolutionInStock });
     }
 
     notif_setInitialCards(notif: Notif<NotifSetInitialCardsArgs>) {
@@ -3819,7 +3801,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_setEvolutionTokens(notif: Notif<NotifSetEvolutionTokensArgs>) {
-        this.evolutionCards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
+        this.evolutionCardsManager.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
     }
 
     notif_setTileTokens(notif: Notif<NotifSetWickednessTileTokensArgs>) {
@@ -4216,7 +4198,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private getLogCardName(logType: number) {
         if (logType >= 3000) {
-            return this.evolutionCards.getCardName(logType - 3000, 'text-only');
+            return this.evolutionCardsManager.getCardName(logType - 3000, 'text-only');
         } else if (logType >= 2000) {
             return this.wickednessTilesManager.getCardName(logType - 2000);
         } else if (logType >= 1000) {
@@ -4228,7 +4210,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private getLogCardTooltip(logType: number) {
         if (logType >= 3000) {
-            return this.evolutionCards.getTooltip(logType - 3000);
+            return this.evolutionCardsManager.getTooltip(logType - 3000);
         } else if (logType >= 2000) {
             return this.wickednessTilesManager.getTooltip(logType - 2000);
         } else if (logType >= 1000) {

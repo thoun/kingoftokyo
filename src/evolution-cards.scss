@@ -1,0 +1,261 @@
+$name-left: 34px;
+$name-top: 14px;
+$name-width: 95px;
+$name-size: 10pt;
+
+$type-left: 0px;
+$type-size: 9pt;
+
+$description-left: 4px;
+$description-width: 124px;
+$description-size: 7pt;
+
+.kot-evolution {
+    display: inline-block;
+    position: relative;
+    border-radius: 10px;
+    text-align: center;
+    width: 198px;
+    height: 198px;
+    background-image: url('img/evolution-cards.jpg');
+    background-size: auto 100%;
+
+    .name-and-description {
+        position: absolute;
+        top: 69px;
+        left: 22px;
+        right: 22px;
+        height: 102px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+
+        & > div {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .evolution-type {
+        position: absolute;
+        font-size: 8pt;
+        left: 38px;
+        top: 55px;
+        right: 36px;
+        text-transform: uppercase;
+        color: white;
+        white-space: nowrap;
+        text-align: center;
+        background: #00000066;
+        box-shadow: 0 0 3px 2px #00000066;
+
+        strong {
+            color: #fff200;
+        }
+    }
+
+    .name-wrapper {
+
+        position: relative;
+        top: unset;
+        left: unset;
+        width: unset;
+        font-size: 11pt;
+        color: white;
+        font-family: 'goodgirl';
+        text-align: center;
+
+        .outline {
+            position: absolute;
+            left: 0;
+            top: 0;
+            -webkit-text-stroke: 5px $tokyoGreen;
+            width: 100%;
+        }
+
+        .text {
+            position: relative;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+    }
+
+    .description-wrapper {
+        bottom: 4px;
+        text-align: center;
+
+        position: relative;
+        top: unset;
+        left: unset;
+        width: unset;
+        text-overflow: ellipsis;
+        text-align: center;
+        color: black;
+        font-size: 8pt;
+
+        .icon {
+            width: 12px;
+            height: 12px;
+            margin-bottom: -2px;
+        }
+
+        .token {
+            width: 12px;
+            height: 12px;
+            margin-bottom: -2px;
+            box-shadow: none;
+        }
+    }
+
+    &.disabled {
+        filter: contrast(0.6);
+        cursor: not-allowed;
+    }
+
+    .evolution-inner-counter {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ffcf13;
+        border-radius: 8px;
+        color: black;
+        font-size: 90%;
+        padding: 2px;
+        padding-left: 5px;
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+        }
+    }
+
+    .card-token {
+        position: absolute;
+        z-index: 12;
+
+        &.mimic {
+            z-index: 13;
+        }
+    }
+}
+//-------------------------------------------
+
+.player-evolution-cards {
+    .stockitem {
+
+        .name-and-description {
+            position: absolute;
+            top: 69px;
+            left: 22px;
+            right: 22px;
+            height: 102px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+
+            & > div {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
+        .evolution-type {
+            position: absolute;
+            font-size: 8pt;
+            left: 38px;
+            top: 55px;
+            right: 36px;
+            text-transform: uppercase;
+            color: white;
+            white-space: nowrap;
+            text-align: center;
+            background: #00000066;
+            box-shadow: 0 0 3px 2px #00000066;
+
+            strong {
+                color: #fff200;
+            }
+        }
+
+        .name-wrapper {
+            position: relative;
+            top: unset;
+            left: unset;
+            width: unset;
+            font-size: 11pt;
+            color: white;
+            font-family: 'goodgirl';
+            text-align: center;
+
+            .outline {
+                position: absolute;
+                left: 0;
+                top: 0;
+                -webkit-text-stroke: 5px $tokyoGreen;
+                width: 100%;
+            }
+
+            .text {
+                position: relative;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        .description-wrapper {
+            position: relative;
+            top: unset;
+            left: unset;
+            width: unset;
+            text-overflow: ellipsis;
+            text-align: center;
+            color: black;
+            font-size: 8pt;
+
+            .icon {
+                width: 12px;
+                height: 12px;
+                margin-bottom: -2px;
+            }
+
+            .token {
+                width: 12px;
+                height: 12px;
+                margin-bottom: -2px;
+                box-shadow: none;
+            }
+        }
+        
+        &.disabled {
+            filter: contrast(0.6);
+            cursor: not-allowed;
+        }
+
+        .evolution-inner-counter {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ffcf13;
+            border-radius: 8px;
+            color: black;
+            font-size: 90%;
+            padding: 2px;
+            padding-left: 5px;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+                vertical-align: middle;
+            }
+        }
+    }
+}
