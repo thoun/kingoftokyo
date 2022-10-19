@@ -218,8 +218,8 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 2 where `player_id` = 2343492"); // alienoid
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
             $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
-            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // gigazaur
-            //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // gigazaur
+            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 7 where `player_id` = 2343492"); // boogie woogie
             //$this->DbQuery("UPDATE player SET `player_monster` = 8 where `player_id` = 2343492"); // pumpkin jack
@@ -245,8 +245,8 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);

@@ -11,9 +11,9 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
                 this.setDivAsCard(div as HTMLDivElement, card.type);
                 div.id = `${super.getId(card)}-front`;
                 (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
-                /*if (card.tokens > 0) {
-                    this.placeTokensOnTile(card);
-                }*/
+                if (card.tokens > 0) {
+                    this.placeTokensOnCard(card);
+                }
             },
             setupBackDiv: (card: EvolutionCard, div: HTMLElement) => {
                 div.style.backgroundPositionX = `0%`;
@@ -36,26 +36,11 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             for (let i = 1; i <= 8; i++) {
                 const tempDiv = this.generateCardDiv({
                     type: monster * 10 + i
-                } as Card);
+                } as EvolutionCard);
                 tempDiv.id = `all-evolution-cards-${monster}-${i}`;
                 evolutionRow.appendChild(tempDiv);
                 (this.game as any).addTooltipHtml(tempDiv.id, this.getTooltip(monster * 10 + i));
             }
-        });
-    }
-    
-    public setupCards(stocks: Stock[]) {
-
-        stocks.forEach(stock => {
-            const evolutioncardsurl = `${g_gamethemeurl}img/evolution-cards.jpg`;
-            stock.addItemType(0, 0, evolutioncardsurl, 0);
-            MONSTERS_WITH_POWER_UP_CARDS.forEach((monster, index) => {
-                for (let i = 1; i <= 8; i++) {
-                    const uniqueId = monster * 10 + i;
-                    stock.addItemType(uniqueId, uniqueId, evolutioncardsurl, index + 1);
-                }
-            });
-            
         });
     }
 
@@ -331,8 +316,8 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     }
 
-    public placeMimicOnCard(stock: Stock, card: Card) {
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public placeMimicOnCard(card: EvolutionCard) {
+        const divId = this.getId(card);
         const div = document.getElementById(divId);
 
         const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
@@ -345,8 +330,8 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         div.dataset.placed = JSON.stringify(cardPlaced);
     }
 
-    public removeMimicOnCard(stock: Stock, card: Card) { 
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public removeMimicOnCard(card: EvolutionCard) { 
+        const divId = this.getId(card);
         const div = document.getElementById(divId);
 
         const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
@@ -378,8 +363,8 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         return newPlace;
     }
 
-    public placeTokensOnCard(stock: Stock, card: EvolutionCard, playerId?: number) {
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public placeTokensOnCard(card: EvolutionCard, playerId?: number) {
+        const divId = this.getId(card);
         const div = document.getElementById(divId);
         if (!div) {
             return;
@@ -524,7 +509,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
             (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(card.type, card.ownerId));
         });
-        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
+        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(card));
     }
 
     public moveToAnotherStock(sourceStock: Stock, destinationStock: Stock, card: EvolutionCard) {
@@ -546,7 +531,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         this.game.tableManager.tableHeightChange();
     }
 
-    public generateCardDiv(card: Card): HTMLDivElement {
+    public generateCardDiv(card: EvolutionCard): HTMLDivElement {
         const tempDiv: HTMLDivElement = document.createElement('div');
         tempDiv.classList.add('stockitem');
         tempDiv.style.width = `${EVOLUTION_SIZE}px`;
@@ -564,7 +549,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
         return tempDiv;
     }
 
-    public getMimickedCardText(mimickedCard: Card): string {
+    public getMimickedCardText(mimickedCard: EvolutionCard): string {
         let mimickedCardText = '-';
         if (mimickedCard) {
             const tempDiv = this.generateCardDiv(mimickedCard);

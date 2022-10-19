@@ -29,10 +29,14 @@ class CardStock<T> {
     }
 
     public getSelection(): T[] {
-        return this.selectedCards;
+        return this.selectedCards.slice();
     }
 
-    public cardInStock(card: T): boolean {
+    public contains(card: T): boolean {
+        return this.cards.some(c => this.manager.getId(c) == this.manager.getId(card));
+    }
+    // TODO keep only one ?
+    protected cardInStock(card: T): boolean {
         const element = document.getElementById(this.manager.getId(card));
         return element ? this.cardElementInStock(element) : false;
     }
@@ -41,16 +45,26 @@ class CardStock<T> {
         return element?.parentElement == this.element;
     }
 
+    public getCardElement(card: T): HTMLElement {
+        return document.getElementById(this.manager.getId(card));
+    }
+
     public addCard(card: T, animation?: CardAnimation<T>) {
         if (this.cardInStock(card)) {
             return;
         }
 
-        if (animation?.fromStock && animation.fromStock.cardInStock(card)) {
+        // we check if card is in stock then we ignore animation
+        const currentStock = this.manager.getCardStock(card);
+
+        if (currentStock?.cardInStock(card)) {
+            let element = document.getElementById(this.manager.getId(card));
+            this.moveFromOtherStock(card, element, { ...animation, fromStock: currentStock });
+        } else if (animation?.fromStock && animation.fromStock.cardInStock(card)) {
             let element = document.getElementById(this.manager.getId(card));
             this.moveFromOtherStock(card, element, animation);
         } else {
-            const element = this.manager.getCardElement(card);
+            const element = this.manager.createCardElement(card);
             this.moveFromElement(card, element, animation);
         }
 
@@ -114,7 +128,7 @@ class CardStock<T> {
     }
 
     protected setSelectableCard(card: T, selectable: boolean) {
-        const element = this.manager.getCardElement(card);
+        const element = this.getCardElement(card);
         element.classList.toggle('selectable', selectable);
     }
 
@@ -125,6 +139,7 @@ class CardStock<T> {
     }
 
     public selectCard(card: T, silent: boolean = false) {
+        console.log('selectCard', card, silent);
         if (this.selectionMode == 'none') {
             return;
         }
@@ -133,11 +148,9 @@ class CardStock<T> {
             this.cards.filter(c => this.manager.getId(c) != this.manager.getId(card)).forEach(c => this.unselectCard(c, true));
         }
 
-        this.cards.forEach(card => {
-            const element = this.manager.getCardElement(card);
-            element.classList.add('selected');
-            this.selectedCards.push(card);
-        });
+        const element = this.getCardElement(card);
+        element.classList.add('selected');
+        this.selectedCards.push(card);
         
         if (!silent) {
             this.onSelectionChange?.(this.selectedCards.slice(), card);
@@ -145,7 +158,7 @@ class CardStock<T> {
     }
 
     public unselectCard(card: T, silent: boolean = false) {
-        const element = this.manager.getCardElement(card);
+        const element = this.getCardElement(card);
         element.classList.remove('selected');
 
         const index = this.selectedCards.findIndex(c => this.manager.getId(c) == this.manager.getId(card));
@@ -171,7 +184,8 @@ class CardStock<T> {
     }
 
     public unselectAll(silent: boolean = false) {
-        this.cards.forEach(c => this.unselectCard(c, true));
+        const cards = this.getCards(); // use a copy of the array as we iterate and modify it at the same time
+        cards.forEach(c => this.unselectCard(c, true));
         
         if (!silent) {
             this.onSelectionChange?.(this.selectedCards.slice(), null);

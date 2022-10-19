@@ -84,6 +84,17 @@ function formatTextIcons(rawText) {
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var CardStock = /** @class */ (function () {
     function CardStock(manager, element) {
         this.manager = manager;
@@ -102,8 +113,13 @@ var CardStock = /** @class */ (function () {
         return !this.cards.length;
     };
     CardStock.prototype.getSelection = function () {
-        return this.selectedCards;
+        return this.selectedCards.slice();
     };
+    CardStock.prototype.contains = function (card) {
+        var _this = this;
+        return this.cards.some(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
+    };
+    // TODO keep only one ?
     CardStock.prototype.cardInStock = function (card) {
         var element = document.getElementById(this.manager.getId(card));
         return element ? this.cardElementInStock(element) : false;
@@ -111,16 +127,25 @@ var CardStock = /** @class */ (function () {
     CardStock.prototype.cardElementInStock = function (element) {
         return (element === null || element === void 0 ? void 0 : element.parentElement) == this.element;
     };
+    CardStock.prototype.getCardElement = function (card) {
+        return document.getElementById(this.manager.getId(card));
+    };
     CardStock.prototype.addCard = function (card, animation) {
         if (this.cardInStock(card)) {
             return;
         }
-        if ((animation === null || animation === void 0 ? void 0 : animation.fromStock) && animation.fromStock.cardInStock(card)) {
+        // we check if card is in stock then we ignore animation
+        var currentStock = this.manager.getCardStock(card);
+        if (currentStock === null || currentStock === void 0 ? void 0 : currentStock.cardInStock(card)) {
+            var element = document.getElementById(this.manager.getId(card));
+            this.moveFromOtherStock(card, element, __assign(__assign({}, animation), { fromStock: currentStock }));
+        }
+        else if ((animation === null || animation === void 0 ? void 0 : animation.fromStock) && animation.fromStock.cardInStock(card)) {
             var element = document.getElementById(this.manager.getId(card));
             this.moveFromOtherStock(card, element, animation);
         }
         else {
-            var element = this.manager.getCardElement(card);
+            var element = this.manager.createCardElement(card);
             this.moveFromElement(card, element, animation);
         }
         this.setSelectableCard(card, this.selectionMode != 'none');
@@ -182,7 +207,7 @@ var CardStock = /** @class */ (function () {
         cards.forEach(function (card) { return _this.removeCard(card); });
     };
     CardStock.prototype.setSelectableCard = function (card, selectable) {
-        var element = this.manager.getCardElement(card);
+        var element = this.getCardElement(card);
         element.classList.toggle('selectable', selectable);
     };
     CardStock.prototype.setSelectionMode = function (selectionMode) {
@@ -195,17 +220,16 @@ var CardStock = /** @class */ (function () {
         var _this = this;
         var _a;
         if (silent === void 0) { silent = false; }
+        console.log('selectCard', card, silent);
         if (this.selectionMode == 'none') {
             return;
         }
         if (this.selectionMode === 'single') {
             this.cards.filter(function (c) { return _this.manager.getId(c) != _this.manager.getId(card); }).forEach(function (c) { return _this.unselectCard(c, true); });
         }
-        this.cards.forEach(function (card) {
-            var element = _this.manager.getCardElement(card);
-            element.classList.add('selected');
-            _this.selectedCards.push(card);
-        });
+        var element = this.getCardElement(card);
+        element.classList.add('selected');
+        this.selectedCards.push(card);
         if (!silent) {
             (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), card);
         }
@@ -214,7 +238,7 @@ var CardStock = /** @class */ (function () {
         var _this = this;
         var _a;
         if (silent === void 0) { silent = false; }
-        var element = this.manager.getCardElement(card);
+        var element = this.getCardElement(card);
         element.classList.remove('selected');
         var index = this.selectedCards.findIndex(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
         if (index !== -1) {
@@ -240,7 +264,8 @@ var CardStock = /** @class */ (function () {
         var _this = this;
         var _a;
         if (silent === void 0) { silent = false; }
-        this.cards.forEach(function (c) { return _this.unselectCard(c, true); });
+        var cards = this.getCards(); // use a copy of the array as we iterate and modify it at the same time
+        cards.forEach(function (c) { return _this.unselectCard(c, true); });
         if (!silent) {
             (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), null);
         }
@@ -349,7 +374,7 @@ var HiddenDeck = /** @class */ (function (_super) {
         _this.element = element;
         element.classList.add('hidden-deck');
         _this.setEmpty(empty);
-        _this.element.appendChild(_this.manager.getCardElement({ id: element.id + "-hidden-deck-back" }, false));
+        _this.element.appendChild(_this.manager.createCardElement({ id: element.id + "-hidden-deck-back" }, false));
         return _this;
     }
     HiddenDeck.prototype.setEmpty = function (empty) {
@@ -430,7 +455,7 @@ var CardManager = /** @class */ (function () {
         var _a, _b, _c;
         return (_c = (_b = (_a = this.settings).getId) === null || _b === void 0 ? void 0 : _b.call(_a, card)) !== null && _c !== void 0 ? _c : "card-" + card.id;
     };
-    CardManager.prototype.getCardElement = function (card, visible) {
+    CardManager.prototype.createCardElement = function (card, visible) {
         var _a, _b, _c, _d, _e, _f;
         if (visible === void 0) { visible = true; }
         var id = this.getId(card);
@@ -450,85 +475,6 @@ var CardManager = /** @class */ (function () {
         document.body.removeChild(element);
         return element;
     };
-    CardManager.prototype.createMoveOrUpdateCard = function (card, destinationId, instant, from) {
-        if (instant === void 0) { instant = false; }
-        if (from === void 0) { from = null; }
-        /*const existingDiv = document.getElementById(`card-${card.id}`);
-        const side = card.category ? 'front' : 'back';
-        if (existingDiv) {
-            (this.game as any).removeTooltip(`card-${card.id}`);
-            const oldType = Number(existingDiv.dataset.category);
-            existingDiv.classList.remove('selectable', 'selected', 'disabled');
-
-            if (existingDiv.parentElement.id != destinationId) {
-                if (instant) {
-                    document.getElementById(destinationId).appendChild(existingDiv);
-                } else {
-                    slideToObjectAndAttach(this.game, existingDiv, destinationId);
-                }
-            }
-
-            existingDiv.dataset.side = ''+side;
-            if (!oldType && card.category) {
-                this.setVisibleInformations(existingDiv, card);
-            } else if (oldType && !card.category) {
-                if (instant) {
-                    this.removeVisibleInformations(existingDiv);
-                } else {
-                    setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
-                }
-            }
-            if (card.category) {
-                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-            }
-        } else {
-            const div = document.createElement('div');
-            div.id = `card-${card.id}`;
-            div.classList.add('card');
-            div.dataset.id = ''+card.id;
-            div.dataset.side = ''+side;
-
-            div.innerHTML = `
-                <div class="card-sides">
-                    <div class="card-side front">
-                    </div>
-                    <div class="card-side back">
-                    </div>
-                </div>
-            `;
-            document.getElementById(destinationId).appendChild(div);
-            div.addEventListener('click', () => this.game.onCardClick(card));
-
-            if (from) {
-                const fromCardId = document.getElementById(from).id;
-                slideFromObject(this.game, div, fromCardId);
-            }
-
-            if (card.category) {
-                this.setVisibleInformations(div, card);
-                if (!destinationId.startsWith('help-')) {
-                    this.game.setTooltip(div.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-                }
-            }
-        }*/
-    };
-    CardManager.prototype.updateCard = function (card) {
-        /*const existingDiv = document.getElementById(`card-${card.id}`);
-        const side = card.category ? 'front' : 'back';
-        if (existingDiv) {
-            (this.game as any).removeTooltip(`card-${card.id}`);
-            const oldType = Number(existingDiv.dataset.category);
-            existingDiv.dataset.side = ''+side;
-            if (!oldType && card.category) {
-                this.setVisibleInformations(existingDiv, card);
-            } else if (oldType && !card.category) {
-                setTimeout(() => this.removeVisibleInformations(existingDiv), 500); // so we don't change face while it is still visible
-            }
-            if (card.category) {
-                this.game.setTooltip(existingDiv.id, this.getTooltip(card.category, card.family) + `<br><br><i>${this.COLORS[card.color]}</i>`);
-            }
-        }*/
-    };
     CardManager.prototype.removeCard = function (card) {
         var id = this.getId(card);
         var div = document.getElementById(id);
@@ -538,6 +484,9 @@ var CardManager = /** @class */ (function () {
         div.id = "deleted" + id;
         // TODO this.removeVisibleInformations(div);
         div.remove();
+    };
+    CardManager.prototype.getCardStock = function (card) {
+        return this.stocks.find(function (stock) { return stock.contains(card); });
     };
     return CardManager;
 }());
@@ -1722,9 +1671,9 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
                 _this.setDivAsCard(div, card.type);
                 div.id = _super.prototype.getId.call(_this, card) + "-front";
                 _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
-                /*if (card.tokens > 0) {
-                    this.placeTokensOnTile(card);
-                }*/
+                if (card.tokens > 0) {
+                    _this.placeTokensOnCard(card);
+                }
             },
             setupBackDiv: function (card, div) {
                 div.style.backgroundPositionX = "0%";
@@ -1753,18 +1702,6 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
                 evolutionRow.appendChild(tempDiv);
                 _this.game.addTooltipHtml(tempDiv.id, _this.getTooltip(monster * 10 + i));
             }
-        });
-    };
-    EvolutionCardsManager.prototype.setupCards = function (stocks) {
-        stocks.forEach(function (stock) {
-            var evolutioncardsurl = g_gamethemeurl + "img/evolution-cards.jpg";
-            stock.addItemType(0, 0, evolutioncardsurl, 0);
-            MONSTERS_WITH_POWER_UP_CARDS.forEach(function (monster, index) {
-                for (var i = 1; i <= 8; i++) {
-                    var uniqueId = monster * 10 + i;
-                    stock.addItemType(uniqueId, uniqueId, evolutioncardsurl, index + 1);
-                }
-            });
         });
     };
     EvolutionCardsManager.prototype.getColoredCardName = function (cardTypeId) {
@@ -2039,8 +1976,8 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
     EvolutionCardsManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
-    EvolutionCardsManager.prototype.placeMimicOnCard = function (stock, card) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    EvolutionCardsManager.prototype.placeMimicOnCard = function (card) {
+        var divId = this.getId(card);
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
@@ -2048,8 +1985,8 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
-    EvolutionCardsManager.prototype.removeMimicOnCard = function (stock, card) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    EvolutionCardsManager.prototype.removeMimicOnCard = function (card) {
+        var divId = this.getId(card);
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = null;
@@ -2076,8 +2013,8 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         }
         return newPlace;
     };
-    EvolutionCardsManager.prototype.placeTokensOnCard = function (stock, card, playerId) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    EvolutionCardsManager.prototype.placeTokensOnCard = function (card, playerId) {
+        var divId = this.getId(card);
         var div = document.getElementById(divId);
         if (!div) {
             return;
@@ -2192,7 +2129,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             var cardDiv = document.getElementById(stock.container_div.id + "_item_" + card.id);
             _this.game.addTooltipHtml(cardDiv.id, _this.getTooltip(card.type, card.ownerId));
         });
-        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(stock, card); });
+        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(card); });
     };
     EvolutionCardsManager.prototype.moveToAnotherStock = function (sourceStock, destinationStock, card) {
         if (sourceStock === destinationStock) {
@@ -2643,43 +2580,29 @@ var PlayerTable = /** @class */ (function () {
                 document.getElementById("hand-wrapper").classList.add('whiteblock');
                 dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div class=\"hand-title\">\n                        <div>\n                            <div id=\"myhand\">" + _('My hand') + "</div>\n                        </div>\n                        <div id=\"autoSkipPlayEvolution-wrapper\"></div>\n                    </div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">" + _('Your hand is empty') + "</div>\n                    </div>\n                </div>\n                ", "hand-wrapper");
                 this.game.addAutoSkipPlayEvolutionButton();
-                this.hiddenEvolutionCards = new ebg.stock();
-                this.hiddenEvolutionCards.setSelectionAppearance('class');
-                this.hiddenEvolutionCards.selectionClass = 'no-visible-selection';
-                this.hiddenEvolutionCards.create(this.game, $("hand-evolution-cards"), EVOLUTION_SIZE, EVOLUTION_SIZE);
-                this.hiddenEvolutionCards.setSelectionMode(2);
-                this.hiddenEvolutionCards.centerItems = true;
-                this.hiddenEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCardsManager.setupNewCard(card_div, card_type_id); };
-                dojo.connect(this.hiddenEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onHiddenEvolutionClick(Number(item_id)); });
-                this.game.evolutionCardsManager.setupCards([this.hiddenEvolutionCards]);
+                this.hiddenEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("hand-evolution-cards"));
+                this.hiddenEvolutionCards.setSelectionMode('multiple');
+                this.hiddenEvolutionCards.onSelectionChange = function (_, card) { return _this.game.onHiddenEvolutionClick(card.id); };
                 if (player.hiddenEvolutions) {
-                    this.game.evolutionCardsManager.addCardsToStock(this.hiddenEvolutionCards, player.hiddenEvolutions);
+                    this.hiddenEvolutionCards.addCards(player.hiddenEvolutions);
                 }
                 (_e = player.hiddenEvolutions) === null || _e === void 0 ? void 0 : _e.forEach(function (card) {
                     if (evolutionCardsWithSingleState.includes(card.type)) {
-                        document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id).classList.add('disabled');
+                        _this.hiddenEvolutionCards.getCardElement(card).classList.add('disabled');
                     }
                 });
                 this.checkHandEmpty();
             }
-            this.visibleEvolutionCards = new ebg.stock();
-            this.visibleEvolutionCards.setSelectionAppearance('class');
-            this.visibleEvolutionCards.selectionClass = 'no-visible-selection';
-            this.visibleEvolutionCards.create(this.game, $("visible-evolution-cards-" + player.id), EVOLUTION_SIZE, EVOLUTION_SIZE);
-            this.visibleEvolutionCards.setSelectionMode(0);
-            this.visibleEvolutionCards.centerItems = true;
-            this.visibleEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCardsManager.setupNewCard(card_div, card_type_id); };
-            dojo.connect(this.visibleEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleEvolutionClick(Number(item_id)); });
-            this.game.evolutionCardsManager.setupCards([this.visibleEvolutionCards]);
+            this.visibleEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("visible-evolution-cards-" + player.id));
+            this.visibleEvolutionCards.onSelectionChange = function (_, card) { return _this.game.onVisibleEvolutionClick(card.id); };
             if (player.visibleEvolutions) {
-                this.game.evolutionCardsManager.addCardsToStock(this.visibleEvolutionCards, player.visibleEvolutions);
+                this.visibleEvolutionCards.addCards(player.visibleEvolutions);
             }
         }
         if (player.zombified) {
             this.zombify();
         }
     }
-    ;
     PlayerTable.prototype.initPlacement = function () {
         if (this.initialLocation > 0) {
             this.enterTokyo(this.initialLocation);
@@ -2706,11 +2629,10 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.removeEvolutions = function (cards) {
         var _this = this;
-        var cardsIds = cards.map(function (card) { return card.id; });
-        cardsIds.forEach(function (id) {
+        cards.forEach(function (card) {
             var _a;
-            (_a = _this.hiddenEvolutionCards) === null || _a === void 0 ? void 0 : _a.removeFromStockById('' + id);
-            _this.visibleEvolutionCards.removeFromStockById('' + id);
+            (_a = _this.hiddenEvolutionCards) === null || _a === void 0 ? void 0 : _a.removeCard(card);
+            _this.visibleEvolutionCards.removeCard(card);
         });
         this.checkHandEmpty();
     };
@@ -2895,19 +2817,12 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.showEvolutionPickStock = function (cards) {
         var _this = this;
         if (!this.pickEvolutionCards) {
-            this.pickEvolutionCards = new ebg.stock();
-            this.pickEvolutionCards.setSelectionAppearance('class');
-            this.pickEvolutionCards.selectionClass = 'no-visible-selection-except-double-selection';
-            this.pickEvolutionCards.create(this.game, $("pick-evolution"), EVOLUTION_SIZE, EVOLUTION_SIZE);
-            this.pickEvolutionCards.setSelectionMode(1);
-            this.pickEvolutionCards.onItemCreate = function (card_div, card_type_id) { return _this.game.evolutionCardsManager.setupNewCard(card_div, card_type_id); };
-            this.pickEvolutionCards.centerItems = true;
-            dojo.connect(this.pickEvolutionCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.chooseEvolutionCardClick(Number(item_id)); });
+            this.pickEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("pick-evolution"));
+            this.pickEvolutionCards.setSelectionMode('single');
+            this.pickEvolutionCards.onSelectionChange = function (_, card) { return _this.game.chooseEvolutionCardClick(card.id); };
         }
-        document.getElementById("pick-evolution").style.display = 'block';
-        this.game.evolutionCardsManager.setupCards([this.pickEvolutionCards]);
-        //this.game.evolutionCards.addCardsToStock(this.pickEvolutionCards, cards);
-        cards.forEach(function (card) { return _this.pickEvolutionCards.addToStockWithId(card.type, '' + card.id); });
+        document.getElementById("pick-evolution").style.display = null;
+        this.pickEvolutionCards.addCards(cards);
     };
     PlayerTable.prototype.hideEvolutionPickStock = function () {
         if (this.pickEvolutionCards) {
@@ -2917,14 +2832,14 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.playEvolution = function (card, fromStock) {
         if (this.hiddenEvolutionCards) {
-            this.game.evolutionCardsManager.moveToAnotherStock(this.hiddenEvolutionCards, this.visibleEvolutionCards, card);
+            this.visibleEvolutionCards.addCard(card, { fromStock: this.hiddenEvolutionCards });
         }
         else {
             if (fromStock) {
-                this.game.evolutionCardsManager.moveToAnotherStock(fromStock, this.visibleEvolutionCards, card);
+                this.visibleEvolutionCards.addCard(card, { fromStock: fromStock });
             }
             else {
-                this.game.evolutionCardsManager.addCardsToStock(this.visibleEvolutionCards, [card], "playerhand-counter-wrapper-" + this.playerId);
+                this.visibleEvolutionCards.addCard(card, { fromElement: document.getElementById("playerhand-counter-wrapper-" + this.playerId) });
             }
         }
         this.checkHandEmpty();
@@ -2935,18 +2850,17 @@ var PlayerTable = /** @class */ (function () {
             return;
         }
         cards.forEach(function (card) {
-            var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
+            var cardDiv = _this.hiddenEvolutionCards.getCardElement(card);
             cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.add('highlight-evolution');
         });
     };
     PlayerTable.prototype.unhighlightHiddenEvolutions = function () {
         var _this = this;
-        var _a;
         if (!this.hiddenEvolutionCards) {
             return;
         }
-        (_a = this.hiddenEvolutionCards) === null || _a === void 0 ? void 0 : _a.items.forEach(function (card) {
-            var cardDiv = document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + card.id);
+        this.hiddenEvolutionCards.getCards().forEach(function (card) {
+            var cardDiv = _this.hiddenEvolutionCards.getCardElement(card);
             cardDiv.classList.remove('highlight-evolution');
         });
     };
@@ -2956,7 +2870,7 @@ var PlayerTable = /** @class */ (function () {
             return;
         }
         cards.forEach(function (card) {
-            var cardDiv = document.getElementById(_this.visibleEvolutionCards.container_div.id + "_item_" + card.id);
+            var cardDiv = _this.visibleEvolutionCards.getCardElement(card);
             cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.add('highlight-evolution');
         });
     };
@@ -2966,8 +2880,8 @@ var PlayerTable = /** @class */ (function () {
         if (!this.visibleEvolutionCards) {
             return;
         }
-        (_a = this.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.items.forEach(function (card) {
-            var cardDiv = document.getElementById(_this.visibleEvolutionCards.container_div.id + "_item_" + card.id);
+        (_a = this.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.getCards().forEach(function (card) {
+            var cardDiv = _this.visibleEvolutionCards.getCardElement(card);
             cardDiv.classList.remove('highlight-evolution');
         });
     };
@@ -2981,15 +2895,15 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setEvolutionCardsSingleState = function (evolutionCardsSingleState, enabled) {
         var _this = this;
-        this.hiddenEvolutionCards.items.forEach(function (item) {
-            if (evolutionCardsSingleState.includes(item.type)) {
-                document.getElementById(_this.hiddenEvolutionCards.container_div.id + "_item_" + item.id).classList.toggle('disabled', !enabled);
+        this.hiddenEvolutionCards.getCards().forEach(function (card) {
+            if (evolutionCardsSingleState.includes(card.type)) {
+                _this.hiddenEvolutionCards.getCardElement(card).classList.toggle('disabled', !enabled);
             }
         });
     };
     PlayerTable.prototype.checkHandEmpty = function () {
         if (this.hiddenEvolutionCards) {
-            document.getElementById("hand-evolution-cards-wrapper").classList.toggle('empty', !this.hiddenEvolutionCards.items.length);
+            document.getElementById("hand-evolution-cards-wrapper").classList.toggle('empty', this.hiddenEvolutionCards.isEmpty());
         }
     };
     PlayerTable.prototype.zombify = function () {
@@ -3155,7 +3069,7 @@ var TableManager = /** @class */ (function () {
     TableManager.prototype.tableHeightChange = function () {
         this.playerTables.forEach(function (playerTable) {
             if (playerTable.visibleEvolutionCards) {
-                dojo.toggleClass("visible-evolution-cards-" + playerTable.playerId, 'empty', !playerTable.visibleEvolutionCards.items.length);
+                dojo.toggleClass("visible-evolution-cards-" + playerTable.playerId, 'empty', playerTable.visibleEvolutionCards.isEmpty());
             }
             if (playerTable.wickednessTiles) {
                 dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', playerTable.wickednessTiles.isEmpty());
@@ -4634,17 +4548,6 @@ var MonsterSelector = /** @class */ (function () {
     };
     return MonsterSelector;
 }());
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
 var ACTION_TIMER_DURATION = 5;
@@ -4930,7 +4833,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.choseEvolutionInStock.removeAll();
         this.choseEvolutionInStock.addCards(args._private.chooseCardIn);
-        this.inDeckEvolutionsStock.addCards(args._private.inDeck.filter(function (card) { return !_this.inDeckEvolutionsStock.cardInStock(card); }));
+        this.inDeckEvolutionsStock.addCards(args._private.inDeck.filter(function (card) { return !_this.inDeckEvolutionsStock.contains(card); }));
     };
     KingOfTokyo.prototype.onEnteringChooseInitialCard = function (args) {
         var suffix = '';
@@ -5240,7 +5143,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (args.canGiveGift) {
             this.setGamestateDescription(args.canBuyFromPlayers ? "StealAndGive" : 'Give');
             if (isCurrentPlayerActive) {
-                (_a = this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.setSelectionMode(1);
+                (_a = this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.setSelectionMode('single');
             }
         }
         if (isCurrentPlayerActive) {
@@ -5309,13 +5212,13 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'GazeOfTheSphinxSnake':
                 if (this.isCurrentPlayerActive()) {
-                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(1);
+                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode('single');
                 }
                 break;
             case 'IcyReflection':
                 if (this.isCurrentPlayerActive()) {
                     var icyReflectionArgs = question.args;
-                    this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode(1); });
+                    this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode('single'); });
                     icyReflectionArgs.disabledEvolutions.forEach(function (evolution) {
                         var cardDiv = document.querySelector("div[id$=\"_item_" + evolution.id + "\"]");
                         if (cardDiv && cardDiv.closest('.player-evolution-cards') !== null) {
@@ -5496,7 +5399,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (playerTable) {
             playerTable.unhighlightHiddenEvolutions();
             playerTable.unhighlightVisibleEvolutions();
-            (_a = playerTable.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.setSelectionMode(0);
+            (_a = playerTable.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.setSelectionMode('none');
         }
     };
     KingOfTokyo.prototype.onLeavingChooseMimickedCard = function () {
@@ -5522,12 +5425,12 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'GazeOfTheSphinxSnake':
                 if (this.isCurrentPlayerActive()) {
-                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode(0);
+                    this.getPlayerTable(this.getPlayerId()).visibleEvolutionCards.setSelectionMode('none');
                 }
                 break;
             case 'IcyReflection':
                 if (this.isCurrentPlayerActive()) {
-                    this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode(0); });
+                    this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode('none'); });
                     dojo.query('.stockitem').removeClass('disabled');
                 }
                 break;
@@ -5616,7 +5519,7 @@ var KingOfTokyo = /** @class */ (function () {
                     if (this.isInitialCardDoubleSelection()) {
                         this.addActionButton('confirmInitialCards_button', _("Confirm"), function () {
                             var _a, _b;
-                            return _this.chooseInitialCard(Number((_a = _this.tableCenter.getVisibleCards().getSelectedItems()[0]) === null || _a === void 0 ? void 0 : _a.id), Number((_b = _this.getPlayerTable(_this.getPlayerId()).pickEvolutionCards.getSelectedItems()[0]) === null || _b === void 0 ? void 0 : _b.id));
+                            return _this.chooseInitialCard(Number((_a = _this.tableCenter.getVisibleCards().getSelectedItems()[0]) === null || _a === void 0 ? void 0 : _a.id), Number((_b = _this.getPlayerTable(_this.getPlayerId()).pickEvolutionCards.getSelection()[0]) === null || _b === void 0 ? void 0 : _b.id));
                         });
                         document.getElementById("confirmInitialCards_button").classList.add('disabled');
                     }
@@ -6137,7 +6040,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.confirmDoubleSelectionCheckState = function () {
         var _a, _b, _c;
         var costumeSelected = ((_a = this.tableCenter.getVisibleCards()) === null || _a === void 0 ? void 0 : _a.getSelectedItems().length) === 1;
-        var evolutionSelected = ((_b = this.getPlayerTable(this.getPlayerId())) === null || _b === void 0 ? void 0 : _b.pickEvolutionCards.getSelectedItems().length) === 1;
+        var evolutionSelected = ((_b = this.getPlayerTable(this.getPlayerId())) === null || _b === void 0 ? void 0 : _b.pickEvolutionCards.getSelection().length) === 1;
         (_c = document.getElementById("confirmInitialCards_button")) === null || _c === void 0 ? void 0 : _c.classList.toggle('disabled', !costumeSelected || !evolutionSelected);
     };
     KingOfTokyo.prototype.setDiceSelectorVisibility = function (visible) {
@@ -6646,22 +6549,19 @@ var KingOfTokyo = /** @class */ (function () {
         });
     };
     KingOfTokyo.prototype.setMimicEvolutionToken = function (card) {
-        var _this = this;
+        console.log(card);
         if (!card) {
             return;
         }
-        this.playerTables.forEach(function (playerTable) {
-            if (playerTable.visibleEvolutionCards.items.some(function (item) { return Number(item.id) == card.id; })) {
-                _this.evolutionCardsManager.placeMimicOnCard(playerTable.visibleEvolutionCards, card);
-            }
-        });
+        this.evolutionCardsManager.placeMimicOnCard(card);
         this.setMimicEvolutionTooltip(card);
     };
     KingOfTokyo.prototype.setMimicTooltip = function (type, mimickedCard) {
         var _this = this;
         this.playerTables.forEach(function (playerTable) {
             var mimicCardId = type === 'tile' ? 106 : 27;
-            var mimicCardItem = (type === 'tile' ? playerTable.wickednessTiles.getCards() : playerTable.cards.items).find(function (item) { return Number(item.type) == mimicCardId; });
+            var cards = type === 'tile' ? playerTable.wickednessTiles.getCards() : playerTable.cards.items;
+            var mimicCardItem = cards.find(function (item) { return Number(item.type) == mimicCardId; });
             if (mimicCardItem) {
                 var cardManager = type === 'tile' ? _this.wickednessTilesManager : _this.cards;
                 if (type === 'tile') {
@@ -6676,9 +6576,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setMimicEvolutionTooltip = function (mimickedCard) {
         var _this = this;
         this.playerTables.forEach(function (playerTable) {
-            var mimicCardItem = playerTable.visibleEvolutionCards.items.find(function (item) { return Number(item.type) == 18; });
+            var mimicCardItem = playerTable.visibleEvolutionCards.getCards().find(function (item) { return Number(item.type) == 18; });
             if (mimicCardItem) {
-                _this.evolutionCardsManager.changeMimicTooltip(playerTable.visibleEvolutionCards.container_div.id + "_item_" + mimicCardItem.id, _this.evolutionCardsManager.getMimickedCardText(mimickedCard));
+                _this.evolutionCardsManager.changeMimicTooltip(_this.evolutionCardsManager.getId(mimicCardItem), _this.evolutionCardsManager.getMimickedCardText(mimickedCard));
             }
         });
     };
@@ -6690,7 +6590,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.playerTables.forEach(function (playerTable) {
             if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
-                _this.evolutionCardsManager.removeMimicOnCard(playerTable.cards, card);
+                _this.evolutionCardsManager.removeMimicOnCard(card);
             }
         });
     };
@@ -7809,7 +7709,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_setEvolutionTokens = function (notif) {
-        this.evolutionCardsManager.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).visibleEvolutionCards, notif.args.card, notif.args.playerId);
+        this.evolutionCardsManager.placeTokensOnCard(notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_setTileTokens = function (notif) {
         this.wickednessTilesManager.placeTokensOnTile(notif.args.card, notif.args.playerId);
@@ -7950,11 +7850,11 @@ var KingOfTokyo = /** @class */ (function () {
         var playerTable = this.getPlayerTable(playerId);
         if (isCurrentPlayer) {
             if (card === null || card === void 0 ? void 0 : card.type) {
-                playerTable.hiddenEvolutionCards.addToStockWithId(card.type, '' + card.id);
+                playerTable.hiddenEvolutionCards.addCard(card);
             }
         }
         else if (card === null || card === void 0 ? void 0 : card.id) {
-            playerTable.hiddenEvolutionCards.addToStockWithId(0, '' + card.id);
+            playerTable.hiddenEvolutionCards.addCard(card);
         }
         if (!card || !card.type) {
             this.handCounters[playerId].incValue(1);
@@ -7970,7 +7870,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card, fromStock);
         if (notif.args.fromPlayerId) {
-            this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards.removeFromStockById('' + notif.args.card.id);
+            this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards.removeCard(notif.args.card);
         }
         this.tableManager.tableHeightChange(); // adapt to new card
     };

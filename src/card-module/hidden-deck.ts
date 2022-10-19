@@ -4,7 +4,7 @@ class HiddenDeck<T> extends CardStock<T> {
         element.classList.add('hidden-deck');
         this.setEmpty(empty);
 
-        this.element.appendChild(this.manager.getCardElement({ id: `${element.id}-hidden-deck-back` } as any, false));
+        this.element.appendChild(this.manager.createCardElement({ id: `${element.id}-hidden-deck-back` } as any, false));
     }
 
     public setEmpty(empty: boolean) {

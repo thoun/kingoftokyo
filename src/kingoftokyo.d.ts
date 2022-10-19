@@ -166,7 +166,7 @@ interface KingOfTokyoGamedatas {
     mimickedCards: {
         card: Card | null;
         tile: Card | null;
-        evolution: Card | null;
+        evolution: EvolutionCard | null;
     } 
     leaveTokyoUnder: number;
     stayTokyoOver: number;
@@ -587,7 +587,7 @@ interface NotifSetPlayerTokensArgs extends NotifResolveArgs {
 
 interface NotifSetCardTokensArgs {
     playerId: number;
-    card: Card;
+    card: Card | EvolutionCard;
     type: 'card' | 'tile';
 }
 

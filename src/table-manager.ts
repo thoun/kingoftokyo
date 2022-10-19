@@ -163,7 +163,7 @@ class TableManager {
     public tableHeightChange() {
         this.playerTables.forEach(playerTable => {
             if (playerTable.visibleEvolutionCards) {
-                dojo.toggleClass(`visible-evolution-cards-${playerTable.playerId}`, 'empty', !playerTable.visibleEvolutionCards.items.length);
+                dojo.toggleClass(`visible-evolution-cards-${playerTable.playerId}`, 'empty', playerTable.visibleEvolutionCards.isEmpty());
             }
             if (playerTable.wickednessTiles) {
                 dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', playerTable.wickednessTiles.isEmpty());
