@@ -169,9 +169,9 @@ class TableManager {
                 dojo.toggleClass(`wickedness-tiles-${playerTable.playerId}`, 'empty', playerTable.wickednessTiles.isEmpty());
             }
             if (playerTable.reservedCards) {                
-                dojo.toggleClass(`reserved-cards-${playerTable.playerId}`, 'empty', !playerTable.reservedCards.items.length);
+                dojo.toggleClass(`reserved-cards-${playerTable.playerId}`, 'empty', playerTable.reservedCards.isEmpty());
             }
-            dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', !playerTable.cards.items.length);
+            dojo.toggleClass(`cards-${playerTable.playerId}`, 'empty', playerTable.cards.isEmpty());
         });
 
         const zoomWrapper = document.getElementById('zoom-wrapper');

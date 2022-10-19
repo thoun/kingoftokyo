@@ -28,7 +28,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private playerTables: PlayerTable[] = [];
     private preferencesManager: PreferencesManager;
     public tableManager: TableManager;
-    public cards: Cards;
+    public cardsManager: CardsManager;
     public curseCardsManager: CurseCardsManager;
     public wickednessTilesManager: WickednessTilesManager;    
     public evolutionCardsManager: EvolutionCardsManager;
@@ -101,12 +101,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.addTwoPlayerVariantNotice(gamedatas);
         }
 
-        this.cards = new Cards(this);
+        this.cardsManager = new CardsManager(this);
         this.curseCardsManager = new CurseCardsManager(this);
         this.wickednessTilesManager = new WickednessTilesManager(this);
         this.evolutionCardsManager = new EvolutionCardsManager(this);
-        this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(40, 'text-only')});
-        this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cards.getCardName(35, 'text-only')});
+        this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), {'card_name': this.cardsManager.getCardName(40, 'text-only')});
+        this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), {'card_name': this.cardsManager.getCardName(35, 'text-only')});
     
         this.createPlayerPanels(gamedatas); 
         setTimeout(() => new ActivatedExpansionsPopin(gamedatas, (this as any).players_metadata?.[this.getPlayerId()]?.language), 500);
@@ -437,7 +437,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.rethrow3.hasCard) {
-                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' ('+this.cards.getCardName(5, 'text-only')+')', () => this.rethrow3(), !args.rethrow3.hasDice3);
+                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' ('+this.cardsManager.getCardName(5, 'text-only')+')', () => this.rethrow3(), !args.rethrow3.hasDice3);
             }
 
             if (args.energyDrink?.hasCard && args.throwNumber === args.maxThrowNumber) {
@@ -460,7 +460,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 args.dice.filter(die => die.type < 2).forEach(die => {
                     if (die.canReroll && (die.type > 0 || !simpleFaces.includes(die.value))) {
                         const faceText = die.type == 1 ? BERSERK_DIE_STRINGS[die.value] : DICE_STRINGS[die.value];
-                        this.createButton('beast-form-dice-actions', `rerollDie${die.id}_button`, _("Reroll") + formatTextIcons(' ' + faceText) + ' ('+this.cards.getCardName(301, 'text-only', 1)+')', () => this.rerollDie(die.id), !args.rerollDie.canUseBeastForm);
+                        this.createButton('beast-form-dice-actions', `rerollDie${die.id}_button`, _("Reroll") + formatTextIcons(' ' + faceText) + ' ('+this.cardsManager.getCardName(301, 'text-only', 1)+')', () => this.rerollDie(die.id), !args.rerollDie.canUseBeastForm);
 
                         if (die.type == 0) {
                             simpleFaces.push(die.value);
@@ -536,7 +536,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringDiscardKeepCard(args: EnteringDiscardKeepCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('single'));
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
@@ -610,7 +610,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.canUseWings && !document.getElementById('useWings_button')) {
-                (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only')})), () => this.useWings());
+                (this as any).addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cardsManager.getCardName(48, 'text-only')})), () => this.useWings());
                 document.getElementById('useWings_button').dataset.enableAtEnergy = '2';
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
@@ -636,7 +636,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                     const id = `useSuperJump${energyCost}_button`;
                     if (!document.getElementById(id)) {
-                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(53, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useSuperJump(energyCost));
+                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(53, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useSuperJump(energyCost));
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -650,7 +650,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
                     const id = `useRobot${energyCost}_button`;
                     if (!document.getElementById(id)) {
-                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cards.getCardName(210, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useRobot(energyCost));
+                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(210, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useRobot(energyCost));
                         document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -661,7 +661,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const canAvoidDeath = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
                 (this as any).addActionButton(
                     'skipWings_button', 
-                    args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only')}) : _("Skip"), 
+                    args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cardsManager.getCardName(48, 'text-only')}) : _("Skip"), 
                     () => {
                         if (canAvoidDeath) {
                             (this as any).confirmationDialog(
@@ -695,7 +695,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         cardsNames.push(_('Cultist'));
                     }
                     if (rapidHealingCount > 0) {
-                        cardsNames.push(_(this.cards.getCardName(37, 'text-only')));
+                        cardsNames.push(_(this.cardsManager.getCardName(37, 'text-only')));
                     }
 
                     if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive && 2*rapidHealingCount <= args.playerEnergy) {
@@ -727,7 +727,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         if (isCurrentPlayerActive) {
             if (args.canBuyFromPlayers) {
-                this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+                this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('single'));
                 this.setBuyDisabledCard(args);
             }
 
@@ -739,7 +739,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringExchangeCard(args: EnteringExchangeCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
-            this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('single'));
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
@@ -756,10 +756,10 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.tableCenter.setVisibleCardsSelectionMode(1);
 
             if (this.isPowerUpExpansion()) {                
-                this.getPlayerTable(playerId).reservedCards.setSelectionMode(1);
+                this.getPlayerTable(playerId).reservedCards.setSelectionMode('single');
             }
 
-            this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(args.canBuyFromPlayers && playerTable.playerId != playerId ? 1 : 0));
+            this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(args.canBuyFromPlayers && playerTable.playerId != playerId ? 'single' : 'multiple'));
 
             if (args._private?.pickCards?.length) {
                 this.tableCenter.showPickStock(args._private.pickCards);
@@ -771,14 +771,14 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringChooseMimickedCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode('single'));
             this.setBuyDisabledCard(args);
         }
     }
 
     private onEnteringSellCard(args: EnteringBuyCardArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(1));
+            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('single'));
             args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
         }
     }
@@ -818,7 +818,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'MiraculousCatch':
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
-                const miraculousCatchCard = this.cards.generateCardDiv(miraculousCatchArgs.card);
+                const miraculousCatchCard = this.cardsManager.generateCardDiv(miraculousCatchArgs.card);
                 miraculousCatchCard.id = `miraculousCatch-card-${miraculousCatchArgs.card.id}`;
                 dojo.place(`<div id="card-MiraculousCatch-wrapper" class="card-in-title-wrapper">${miraculousCatchCard.outerHTML}</div>`, `maintitlebar_content`);
                 break;
@@ -826,7 +826,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
                 dojo.place(`<div id="card-DeepDive-wrapper" class="card-in-title-wrapper">${
                     deepDiveCatchArgs.cards.map(card => {
-                        const cardDiv = this.cards.generateCardDiv(card);
+                        const cardDiv = this.cardsManager.generateCardDiv(card);
                         cardDiv.id = `deepDive-card-${card.id}`;
                         return cardDiv.outerHTML;
                     }).join('')
@@ -985,7 +985,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private onLeavingBuyCard() {
         this.tableCenter.setVisibleCardsSelectionMode(0);
         dojo.query('.stockitem').removeClass('disabled');
-        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));            
+        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode('none'));            
         this.tableCenter.hidePickStock();
     }
 
@@ -1003,12 +1003,12 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onLeavingChooseMimickedCard() {
         dojo.query('.stockitem').removeClass('disabled');
-        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode(0));
+        this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode('none'));
     }
 
     private onLeavingSellCard() {
         if ((this as any).isCurrentPlayerActive()) {
-            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode(0));
+            this.playerTables.filter(playerTable => playerTable.playerId === this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('none'));
             dojo.query('.stockitem').removeClass('disabled');
         }
     }
@@ -1436,11 +1436,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'MiraculousCatch':
                 const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
-                (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
+                (this as any).addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs.card.type, 'text-only'), cost: miraculousCatchArgs.cost })), () => this.buyCardMiraculousCatch(false));
                 if (miraculousCatchArgs.costSuperiorAlienTechnology !== null && miraculousCatchArgs.costSuperiorAlienTechnology !== miraculousCatchArgs.cost) {
                     (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
                 }
-                (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
+                (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
                 setTimeout(() => document.getElementById(`miraculousCatch-card-${miraculousCatchArgs.card.id}`)?.addEventListener('click', () => this.buyCardMiraculousCatch()), 250);
 
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = ''+miraculousCatchArgs.cost;
@@ -1449,7 +1449,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             case 'DeepDive':
                 const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
                 deepDiveCatchArgs.cards.forEach(card => {
-                    (this as any).addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: this.cards.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
+                    (this as any).addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
                     setTimeout(() => document.getElementById(`deepDive-card-${card.id}`)?.addEventListener('click', () => this.playCardDeepDive(card.id)), 250);
                 });
                 break;
@@ -1786,7 +1786,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             dojo.removeClass('kot-table', 'pickMonsterOrEvolutionDeck');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
             this.tableCenter.getVisibleCards().updateDisplay();
-            this.playerTables.forEach(playerTable => playerTable.cards.updateDisplay());
         }
     }
 
@@ -1801,52 +1800,52 @@ class KingOfTokyo implements KingOfTokyoGame {
         dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
     }
 
-    public onVisibleCardClick(stock: Stock, cardId: number, from: number = 0, warningChecked: boolean = false) { // from : player id
-        if (!cardId) {
+    public onVisibleCardClick(stock: CardStock<Card>, card: Card, from: number = 0, warningChecked: boolean = false) { // from : player id
+        if (!card?.id) {
             return;
         }
 
-        if (dojo.hasClass(`${stock.container_div.id}_item_${cardId}`, 'disabled')) {
-            stock.unselectItem(''+cardId);
+        if (stock.getCardElement(card).classList.contains('disabled')) {
+            stock.unselectCard(card);
             return;
         }
 
         const stateName = this.getStateName();
         if (stateName === 'chooseInitialCard') {
             if (!this.isInitialCardDoubleSelection()) {
-                this.chooseInitialCard(Number(cardId), null);
+                this.chooseInitialCard(card.id, null);
             } else {
                 this.confirmDoubleSelectionCheckState();
             }
         } else if (stateName === 'stealCostumeCard') {
-            this.stealCostumeCard(cardId);
+            this.stealCostumeCard(card.id);
         } else if (stateName === 'sellCard') {
-            this.sellCard(cardId);
+            this.sellCard(card.id);
         } else if (stateName === 'chooseMimickedCard' || stateName === 'opportunistChooseMimicCard') {
-            this.chooseMimickedCard(cardId);
+            this.chooseMimickedCard(card.id);
         } else if (stateName === 'changeMimickedCard') {
-            this.changeMimickedCard(cardId);
+            this.changeMimickedCard(card.id);
         } else if (stateName === 'chooseMimickedCardWickednessTile') {
-            this.chooseMimickedCardWickednessTile(cardId);
+            this.chooseMimickedCardWickednessTile(card.id);
         } else if (stateName === 'changeMimickedCardWickednessTile') {
-            this.changeMimickedCardWickednessTile(cardId);
+            this.changeMimickedCardWickednessTile(card.id);
         } else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             const buyCardArgs = this.gamedatas.gamestate.args as EnteringBuyCardArgs;
-            const warningIcon = !warningChecked && buyCardArgs.warningIds[cardId];
+            const warningIcon = !warningChecked && buyCardArgs.warningIds[card.id];
             if (warningIcon) {
                 (this as any).confirmationDialog(
                     formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon})), 
-                    () => this.onVisibleCardClick(stock, cardId, from, true)
+                    () => this.onVisibleCardClick(stock, card, from, true)
                 );
             } else {
-                const cardCostSuperiorAlienTechnology = buyCardArgs.cardsCostsSuperiorAlienTechnology?.[cardId];
-                const cardCostBobbingForApples = buyCardArgs.cardsCostsBobbingForApples?.[cardId];
-                const canUseSuperiorAlienTechnologyForCard = cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId];
-                const canUseBobbingForApplesForCard = cardCostBobbingForApples !== null && cardCostBobbingForApples !== undefined && cardCostBobbingForApples !== buyCardArgs.cardsCosts[cardId];
+                const cardCostSuperiorAlienTechnology = buyCardArgs.cardsCostsSuperiorAlienTechnology?.[card.id];
+                const cardCostBobbingForApples = buyCardArgs.cardsCostsBobbingForApples?.[card.id];
+                const canUseSuperiorAlienTechnologyForCard = cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[card.id];
+                const canUseBobbingForApplesForCard = cardCostBobbingForApples !== null && cardCostBobbingForApples !== undefined && cardCostBobbingForApples !== buyCardArgs.cardsCosts[card.id];
                 if (canUseSuperiorAlienTechnologyForCard || canUseBobbingForApplesForCard) {
                     const both = canUseSuperiorAlienTechnologyForCard && canUseBobbingForApplesForCard;
                     const keys = [
-                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(canUseSuperiorAlienTechnologyForCard ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
+                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(canUseSuperiorAlienTechnologyForCard ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[card.id] })),
                         _('Cancel')
                     ];
                     if (cardCostBobbingForApples) {
@@ -1862,8 +1861,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                         (choice: string) => {
                             const choiceIndex = Number(choice);
                             if (choiceIndex < (both ? 3 : 2)) {
-                                this.tableCenter.removeOtherCardsFromPick(cardId);
-                                this.buyCard(cardId, from, canUseSuperiorAlienTechnologyForCard && choiceIndex === 0, canUseBobbingForApplesForCard && choiceIndex === (both ? 1 : 0));
+                                this.tableCenter.removeOtherCardsFromPick(card.id);
+                                this.buyCard(card.id, from, canUseSuperiorAlienTechnologyForCard && choiceIndex === 0, canUseBobbingForApplesForCard && choiceIndex === (both ? 1 : 0));
                             }
                         }
                       );
@@ -1874,26 +1873,26 @@ class KingOfTokyo implements KingOfTokyoGame {
                       if (canUseBobbingForApplesForCard && cardCostBobbingForApples > this.getPlayerEnergy(this.getPlayerId())) {
                         document.getElementById(`choice_btn_${(both ? 1 : 0)}`).classList.add('disabled');
                       }
-                      if (buyCardArgs.cardsCosts[cardId] > this.getPlayerEnergy(this.getPlayerId())) {
+                      if (buyCardArgs.cardsCosts[card.id] > this.getPlayerEnergy(this.getPlayerId())) {
                         document.getElementById(`choice_btn_${(both ? 2 : 1)}`).classList.add('disabled');
                       }
                 } else {
-                    this.tableCenter.removeOtherCardsFromPick(cardId);
-                    this.buyCard(cardId, from);
+                    this.tableCenter.removeOtherCardsFromPick(card.id);
+                    this.buyCard(card.id, from);
                 }
             }
         } else if (stateName === 'discardKeepCard') {
-            this.discardKeepCard(cardId);
+            this.discardKeepCard(card.id);
         } else if (stateName === 'leaveTokyoExchangeCard') {
-            this.exchangeCard(cardId);
+            this.exchangeCard(card.id);
         } else if (stateName === 'answerQuestion') {
             const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
             if (args.question.code === 'Bamboozle') {
-                this.buyCardBamboozle(cardId, from);
+                this.buyCardBamboozle(card.id, from);
             } else if (args.question.code === 'ChooseMimickedCard') {
-                this.chooseMimickedCard(cardId);
+                this.chooseMimickedCard(card.id);
             } else if (args.question.code === 'MyToy') {
-                this.reserveCard(cardId);
+                this.reserveCard(card.id);
             }
         }
     }
@@ -2016,7 +2015,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.createButton(
                 'rapid-actions-wrapper', 
                 'rapidHealingButton', 
-                dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (2[Energy])`), { card_name: this.cards.getCardName(37, 'text-only'), hearts: 1 }), 
+                dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (2[Energy])`), { card_name: this.cardsManager.getCardName(37, 'text-only'), hearts: 1 }), 
                 () => this.useRapidHealing(), 
                 userEnergy < 2 || isMaxHealth
             );
@@ -2342,8 +2341,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.playerTables.forEach(playerTable => {
-            if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
-                this.cards.placeMimicOnCard(type, playerTable.cards, card, this.wickednessTilesManager);
+            if (playerTable.cards.getCards().some(item => Number(item.id) == card.id)) {
+                this.cardsManager.placeMimicOnCard(type, card, this.wickednessTilesManager);
             }
         });
 
@@ -2358,13 +2357,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.playerTables.forEach(playerTable => {
-            if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
-                this.cards.removeMimicOnCard(type, playerTable.cards, card);
+            if (playerTable.cards.getCards().some(item => Number(item.id) == card.id)) {
+                this.cardsManager.removeMimicOnCard(type, card);
             }
         });
     }
 
-    private setMimicEvolutionToken(card: EvolutionCard) {console.log(card);
+    private setMimicEvolutionToken(card: EvolutionCard) {
         if (!card) {
             return;
         }
@@ -2376,15 +2375,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     private setMimicTooltip(type: 'card' | 'tile', mimickedCard: Card) {
         this.playerTables.forEach(playerTable => {
             const mimicCardId = type === 'tile' ? 106 : 27;
-            const cards: any[] = type === 'tile' ? playerTable.wickednessTiles.getCards() : playerTable.cards.items;
+            const cards: any[] = (type === 'tile' ? playerTable.wickednessTiles : playerTable.cards).getCards();
             const mimicCardItem = cards.find(item => Number(item.type) == mimicCardId);
             if (mimicCardItem) {
-                const cardManager = type === 'tile' ? this.wickednessTilesManager : this.cards;
-                if (type === 'tile') {
-                    cardManager.changeMimicTooltip(this.wickednessTilesManager.getId(mimicCardItem), this.cards.getMimickedCardText(mimickedCard));
-                } else {
-                    cardManager.changeMimicTooltip(`${playerTable.cards.container_div.id}_item_${mimicCardItem.id}`, this.cards.getMimickedCardText(mimickedCard));
-                }
+                const cardManager = type === 'tile' ? this.wickednessTilesManager : this.cardsManager;
+                cardManager.changeMimicTooltip(cardManager.getId(mimicCardItem),  this.cardsManager.getMimickedCardText(mimickedCard));
             }
         });
     }
@@ -2406,7 +2401,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.playerTables.forEach(playerTable => {
-            if (playerTable.cards.items.some(item => Number(item.id) == card.id)) {
+            if (playerTable.cards.getCards().some(item => Number(item.id) == card.id)) {
                 this.evolutionCardsManager.removeMimicOnCard(card);
             }
         });
@@ -3657,23 +3652,20 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         if (notif.args.discardCard) { // initial card
-            this.cards.moveToAnotherStock(this.tableCenter.getVisibleCards(), this.getPlayerTable(notif.args.playerId).cards, card);
-            this.tableCenter.getVisibleCards().removeFromStockById(''+notif.args.discardCard.id);
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
         } else if (notif.args.newCard) {
-        const newCard = notif.args.newCard;
-            this.cards.moveToAnotherStock(this.tableCenter.getVisibleCards(), this.getPlayerTable(notif.args.playerId).cards, card);
-            this.cards.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
+            const newCard = notif.args.newCard;
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
+            this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
             this.tableCenter.changeVisibleCardWeight(newCard);
         } else if (notif.args.from > 0) {
-            this.cards.moveToAnotherStock(
-                notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards, 
-                this.getPlayerTable(notif.args.playerId).cards, 
-                card);
+            const fromStock = notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards, 
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock });
         } else { // from Made in a lab Pick
             if (this.tableCenter.getPickCard()) { // active player
-                this.cards.moveToAnotherStock(this.tableCenter.getPickCard(), this.getPlayerTable(notif.args.playerId).cards, card);
+                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getPickCard() });
             } else {
-                this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
+                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromElement: 'deck' });
             }
         }
 
@@ -3687,8 +3679,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.tableCenter.changeVisibleCardWeight(card);
 
         const newCard = notif.args.newCard;
-        this.cards.moveToAnotherStock(this.tableCenter.getVisibleCards(), this.getPlayerTable(notif.args.playerId).reservedCards, card); // TODOPUBG add under evolution
-        this.cards.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
+        this.getPlayerTable(notif.args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
+        this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
         this.tableCenter.changeVisibleCardWeight(newCard);
         
 
@@ -3793,7 +3785,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {
-        this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card as Card, notif.args.playerId);
+        this.cardsManager.placeTokensOnCard(notif.args.card as Card, notif.args.playerId);
     }
 
     notif_setEvolutionTokens(notif: Notif<NotifSetEvolutionTokensArgs>) {
@@ -3944,7 +3936,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_changeGoldenScarabOwner(notif: Notif<NotifChangeGoldenScarabOwnerArgs>) {
-        this.getPlayerTable(notif.args.playerId).takeGoldenScarab(this.getPlayerTable(notif.args.previousOwner).cards);
+        this.getPlayerTable(notif.args.playerId).takeGoldenScarab();
         this.tableManager.tableHeightChange(); // adapt after moved card
     }
 
@@ -3953,12 +3945,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_exchangeCard(notif: Notif<NotifExchangeCardArgs>) {
-        this.cards.exchangeCardFromStocks(
-            this.getPlayerTable(notif.args.playerId).cards,
-            this.getPlayerTable(notif.args.previousOwner).cards,
-            notif.args.unstableDnaCard,
-            notif.args.exchangedCard,
-        );
+        const previousOwnerCards = this.getPlayerTable(notif.args.previousOwner).cards;
+        const playerCards = this.getPlayerTable(notif.args.playerId).cards;
+        previousOwnerCards.addCard(notif.args.unstableDnaCard, { fromStock: playerCards });
+        playerCards.addCard(notif.args.exchangedCard, { fromStock: playerCards });
     }
     
     notif_addEvolutionCardInHand(notif: Notif<NotifAddEvolutionCardInHandArgs>) {
@@ -3996,8 +3986,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     notif_addSuperiorAlienTechnologyToken(notif: Notif<NotifAddSuperiorAlienTechnologyTokenArgs>) {
-        const stock = this.getPlayerTable(notif.args.playerId).cards;
-        this.cards.placeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
+        this.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(notif.args.card);
     }
     
     notif_giveTarget(notif: Notif<NotifGiveTargetArgs>) {
@@ -4014,7 +4003,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private setTitleBarSuperiorAlienTechnologyCard(card: Card, parent: string = `maintitlebar_content`) {
-        const superiorAlienTechnologyCard = this.cards.generateCardDiv(card);
+        const superiorAlienTechnologyCard = this.cardsManager.generateCardDiv(card);
         superiorAlienTechnologyCard.id = `SuperiorAlienTechnology-card-${card.id}`;
         dojo.place(`<div id="card-SuperiorAlienTechnology-wrapper" class="card-in-title-wrapper">${superiorAlienTechnologyCard.outerHTML}</div>`, parent);
     }
@@ -4042,7 +4031,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 _('<strong>${card_name}</strong> card removed!') : 
                 _('<strong>${card_name}</strong> card kept!');
             (this as any).doShowBubble('dice0', dojo.string.substitute(message, {
-                'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
+                'card_name': this.cardsManager.getCardName(notif.args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');
         }
     }
@@ -4200,7 +4189,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else if (logType >= 1000) {
             return this.curseCardsManager.getCardName(logType - 1000);
         } else {
-            return this.cards.getCardName(logType, 'text-only');
+            return this.cardsManager.getCardName(logType, 'text-only');
         }
     }
 
@@ -4212,7 +4201,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         } else if (logType >= 1000) {
             return this.curseCardsManager.getTooltip(logType - 1000);
         } else {
-            return this.cards.getTooltip(logType);
+            return this.cardsManager.getTooltip(logType);
         }
     }
 

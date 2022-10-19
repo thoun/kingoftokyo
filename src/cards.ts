@@ -330,8 +330,40 @@ const DARK_EDITION_CARDS_MAIN_COLOR = {
     119: '#41813c',
 };
 
-class Cards {
-    constructor (private game: KingOfTokyoGame) {}
+class CardsManager extends CardManager<Card> {
+    EVOLUTION_CARDS_TYPES: number[];
+    constructor (public game: KingOfTokyoGame) {
+        super(game, {
+            getId: (card) => `card-${card.id}`,
+            setupDiv: (card: Card, div: HTMLElement) => {
+                div.classList.add('kot-card');
+                div.dataset.cardId = ''+card.id;
+                div.dataset.cardType = ''+card.type;
+            },
+            setupFrontDiv: (card: Card, div: HTMLElement) => {
+                this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
+        
+                if (FLIPPABLE_CARDS.includes(card.type)) {
+                    this.setDivAsCard(div as HTMLDivElement, 301, 0); 
+                } else if (card.type < 999) {
+                    this.setDivAsCard(div as HTMLDivElement, card.type + (card.side || 0));
+                }
+                div.id = `${super.getId(card)}-front`;
+                (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, card.side));
+                if (card.tokens > 0) {
+                    this.placeTokensOnCard(card);
+                }
+            },
+            setupBackDiv: (card: Card, div: HTMLElement) => {
+                if (FLIPPABLE_CARDS.includes(card.type)) {
+                    this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
+                    this.setDivAsCard(div as HTMLDivElement, 301, 1);
+                    (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, card.side));
+                }
+            }
+        });
+        this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
+    }
     
     public setupCards(stocks: Stock[]) {
         const darkEdition = this.game.isDarkEdition();
@@ -376,8 +408,8 @@ class Cards {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     }
 
-    public placeMimicOnCard(type: 'card' | 'tile', stock: Stock, card: Card, wickednessTiles: WickednessTilesManager) {
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public placeMimicOnCard(type: 'card' | 'tile', card: Card, wickednessTiles: WickednessTilesManager) {
+        const divId = this.getId(card);
         const div = document.getElementById(divId);
 
         if (type === 'tile') {
@@ -398,8 +430,8 @@ class Cards {
         }
     }
 
-    public removeMimicOnCard(type: 'card' | 'tile', stock: Stock, card: Card) { 
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public removeMimicOnCard(type: 'card' | 'tile', card: Card) { 
+        const divId = this.getId(card);
         const div = document.getElementById(divId);
         
         if (type === 'tile') {
@@ -441,8 +473,8 @@ class Cards {
         return newPlace;
     }
 
-    public placeTokensOnCard(stock: Stock, card: Card, playerId?: number) {
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public placeTokensOnCard(card: Card, playerId?: number) {
+        const divId = this.getId(card);
         const div = document.getElementById(divId);
         if (!div) {
             return;
@@ -490,10 +522,10 @@ class Cards {
             const cardDiv = document.getElementById(`${stock.container_div.id}_item_${card.id}`) as HTMLDivElement;
             cardDiv.dataset.side = ''+card.side;
             if (card.side !== null) {
-                this.game.cards.updateFlippableCardTooltip(cardDiv)
+                this.game.cardsManager.updateFlippableCardTooltip(cardDiv)
             }
         });
-        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(stock, card));
+        cards.filter(card => card.tokens > 0).forEach(card => this.placeTokensOnCard(card));
     }
 
     public moveToAnotherStock(sourceStock: Stock, destinationStock: Stock, card: Card) {
@@ -511,19 +543,6 @@ class Cards {
             //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
-    }
-
-    public exchangeCardFromStocks(sourceStock: Stock, destinationStock: Stock, cardOnSource: Card, cardOnDestination: Card) {
-        if (sourceStock === destinationStock) {
-            return;
-        }
-        
-        const sourceStockItemId = `${sourceStock.container_div.id}_item_${cardOnSource.id}`;
-        const destinationStockItemId = `${destinationStock.container_div.id}_item_${cardOnDestination.id}`;
-        this.addCardsToStock(destinationStock, [cardOnSource], sourceStockItemId);
-        this.addCardsToStock(sourceStock, [cardOnDestination], destinationStockItemId);
-        sourceStock.removeFromStockById(`${cardOnSource.id}`);
-        destinationStock.removeFromStockById(`${cardOnDestination.id}`);
     }
 
     private getCardNamePosition(cardTypeId: number, side: number = null) {
@@ -1021,6 +1040,42 @@ class Cards {
             nameWrapperDiv.style.top = `${Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName)}px`;
         }
     }
+    
+    private setFrontBackground(cardDiv: HTMLDivElement, cardType: number, side: 0 | 1 = null) {
+        const darkEdition = this.game.isDarkEdition();
+        const version: 'base' | 'dark' = darkEdition ? 'dark' : 'base';
+
+        if (cardType < 100) {
+            const keepcardsurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}keep-cards.jpg`;
+            cardDiv.style.backgroundImage = `url('${keepcardsurl}')`;
+            const index = KEEP_CARDS_LIST[version].findIndex(type => type == cardType);
+            cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
+            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100 / 4}%`;
+            console.log(cardDiv);
+        } else if (cardType < 200) {
+            const index = DISCARD_CARDS_LIST[version].findIndex(type => type == cardType % 100);
+            const discardcardsurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}discard-cards.jpg`;
+            cardDiv.style.backgroundImage = `url('${discardcardsurl}')`;
+            cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
+            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100}%`;
+        } else if (cardType < 300) {
+            const index = COSTUME_CARDS_LIST.findIndex(type => type == cardType % 100);
+            const costumecardsurl = `${g_gamethemeurl}img/costume-cards.jpg`;
+            cardDiv.style.backgroundImage = `url('${costumecardsurl}')`;
+            cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
+            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100}%`;
+        } else if (cardType < 400) {
+            const transformationcardsurl = `${g_gamethemeurl}img/transformation-cards.jpg`;
+            cardDiv.style.backgroundImage = `url('${transformationcardsurl}')`;
+            cardDiv.style.backgroundPositionX = `${side * 100}%`;
+            cardDiv.style.backgroundPositionY = '0%';
+        } else if (cardType == 999) {
+            const anubiscardsurl = `${g_gamethemeurl}img/anubis-cards.jpg`;
+            cardDiv.style.backgroundImage = `url(${anubiscardsurl}`;
+            cardDiv.style.backgroundPositionX = '0%';
+            cardDiv.style.backgroundPositionY = '0%';
+        }
+    }
 
     private getImageName(cardType: number) {
         if (cardType < 100) {
@@ -1071,8 +1126,8 @@ class Cards {
     }
 
     
-    public placeSuperiorAlienTechnologyTokenOnCard(stock: Stock, card: Card) {
-        const divId = `${stock.container_div.id}_item_${card.id}`;
+    public placeSuperiorAlienTechnologyTokenOnCard(card: Card) {
+        const divId = this.getId(card);
 
         const div = document.getElementById(divId);
         const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};

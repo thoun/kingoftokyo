@@ -203,7 +203,7 @@ interface KingOfTokyoGame extends Game {
     isDefaultFont(): boolean;
     
     tableManager: TableManager;
-    cards: Cards;
+    cardsManager: CardsManager;
     curseCardsManager: CurseCardsManager;
     wickednessTilesManager: WickednessTilesManager;
     evolutionCardsManager: EvolutionCardsManager;
@@ -217,7 +217,7 @@ interface KingOfTokyoGame extends Game {
     rerollOrDiscardDie: (id: number) => void;
     freezeDie: (id: number) => void;
     createButton: (destinationId: string, id: string, text: string, callback: Function, disabled?: boolean) => void;
-    onVisibleCardClick: (stock: Stock, cardId: number, from?: number) => void;
+    onVisibleCardClick: (stock: CardStock<Card>, card: Card, from?: number) => void;
     takeWickednessTile(id: number): void;
     chooseEvolutionCardClick(id: number): void;
     getPlayerId: () => number;

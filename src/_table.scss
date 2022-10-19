@@ -28,6 +28,7 @@
                 height: 132px;
                 background: url('img/card-back.jpg');
                 box-shadow: 4px 4px 0px 0px #333;
+                border-radius: 10px;
 
                 &[data-type="costume"] {
                     background: url('img/card-back-costume.jpg');

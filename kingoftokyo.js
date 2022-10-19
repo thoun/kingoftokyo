@@ -802,11 +802,43 @@ var DARK_EDITION_CARDS_MAIN_COLOR = {
     118: '#2e88b9',
     119: '#41813c',
 };
-var Cards = /** @class */ (function () {
-    function Cards(game) {
-        this.game = game;
+var CardsManager = /** @class */ (function (_super) {
+    __extends(CardsManager, _super);
+    function CardsManager(game) {
+        var _this = _super.call(this, game, {
+            getId: function (card) { return "card-" + card.id; },
+            setupDiv: function (card, div) {
+                div.classList.add('kot-card');
+                div.dataset.cardId = '' + card.id;
+                div.dataset.cardType = '' + card.type;
+            },
+            setupFrontDiv: function (card, div) {
+                _this.setFrontBackground(div, card.type, card.side);
+                if (FLIPPABLE_CARDS.includes(card.type)) {
+                    _this.setDivAsCard(div, 301, 0);
+                }
+                else if (card.type < 999) {
+                    _this.setDivAsCard(div, card.type + (card.side || 0));
+                }
+                div.id = _super.prototype.getId.call(_this, card) + "-front";
+                _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type, card.side));
+                if (card.tokens > 0) {
+                    _this.placeTokensOnCard(card);
+                }
+            },
+            setupBackDiv: function (card, div) {
+                if (FLIPPABLE_CARDS.includes(card.type)) {
+                    _this.setFrontBackground(div, card.type, card.side);
+                    _this.setDivAsCard(div, 301, 1);
+                    _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type, card.side));
+                }
+            }
+        }) || this;
+        _this.game = game;
+        _this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
+        return _this;
     }
-    Cards.prototype.setupCards = function (stocks) {
+    CardsManager.prototype.setupCards = function (stocks) {
         var darkEdition = this.game.isDarkEdition();
         var version = darkEdition ? 'dark' : 'base';
         var costumes = this.game.isHalloweenExpansion();
@@ -839,11 +871,11 @@ var Cards = /** @class */ (function () {
             }
         });
     };
-    Cards.prototype.getDistance = function (p1, p2) {
+    CardsManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
-    Cards.prototype.placeMimicOnCard = function (type, stock, card, wickednessTiles) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    CardsManager.prototype.placeMimicOnCard = function (type, card, wickednessTiles) {
+        var divId = this.getId(card);
         var div = document.getElementById(divId);
         if (type === 'tile') {
             var html = "<div id=\"" + divId + "-mimic-token-tile\" class=\"card-token mimic-tile stockitem\"></div>";
@@ -860,8 +892,8 @@ var Cards = /** @class */ (function () {
             div_1.dataset.placed = JSON.stringify(cardPlaced);
         }
     };
-    Cards.prototype.removeMimicOnCard = function (type, stock, card) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    CardsManager.prototype.removeMimicOnCard = function (type, card) {
+        var divId = this.getId(card);
         var div = document.getElementById(divId);
         if (type === 'tile') {
             if (document.getElementById(divId + "-mimic-token-tile")) {
@@ -878,7 +910,7 @@ var Cards = /** @class */ (function () {
             div.dataset.placed = JSON.stringify(cardPlaced);
         }
     };
-    Cards.prototype.getPlaceOnCard = function (cardPlaced) {
+    CardsManager.prototype.getPlaceOnCard = function (cardPlaced) {
         var _this = this;
         var newPlace = {
             x: Math.random() * 100 + 16,
@@ -899,8 +931,8 @@ var Cards = /** @class */ (function () {
         }
         return newPlace;
     };
-    Cards.prototype.placeTokensOnCard = function (stock, card, playerId) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    CardsManager.prototype.placeTokensOnCard = function (card, playerId) {
+        var divId = this.getId(card);
         var div = document.getElementById(divId);
         if (!div) {
             return;
@@ -934,7 +966,7 @@ var Cards = /** @class */ (function () {
         }
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
-    Cards.prototype.addCardsToStock = function (stock, cards, from) {
+    CardsManager.prototype.addCardsToStock = function (stock, cards, from) {
         var _this = this;
         if (!cards.length) {
             return;
@@ -944,12 +976,12 @@ var Cards = /** @class */ (function () {
             var cardDiv = document.getElementById(stock.container_div.id + "_item_" + card.id);
             cardDiv.dataset.side = '' + card.side;
             if (card.side !== null) {
-                _this.game.cards.updateFlippableCardTooltip(cardDiv);
+                _this.game.cardsManager.updateFlippableCardTooltip(cardDiv);
             }
         });
-        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(stock, card); });
+        cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(card); });
     };
-    Cards.prototype.moveToAnotherStock = function (sourceStock, destinationStock, card) {
+    CardsManager.prototype.moveToAnotherStock = function (sourceStock, destinationStock, card) {
         if (sourceStock === destinationStock) {
             return;
         }
@@ -965,18 +997,7 @@ var Cards = /** @class */ (function () {
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
     };
-    Cards.prototype.exchangeCardFromStocks = function (sourceStock, destinationStock, cardOnSource, cardOnDestination) {
-        if (sourceStock === destinationStock) {
-            return;
-        }
-        var sourceStockItemId = sourceStock.container_div.id + "_item_" + cardOnSource.id;
-        var destinationStockItemId = destinationStock.container_div.id + "_item_" + cardOnDestination.id;
-        this.addCardsToStock(destinationStock, [cardOnSource], sourceStockItemId);
-        this.addCardsToStock(sourceStock, [cardOnDestination], destinationStockItemId);
-        sourceStock.removeFromStockById("" + cardOnSource.id);
-        destinationStock.removeFromStockById("" + cardOnDestination.id);
-    };
-    Cards.prototype.getCardNamePosition = function (cardTypeId, side) {
+    CardsManager.prototype.getCardNamePosition = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
         switch (cardTypeId) {
             // KEEP
@@ -1009,7 +1030,7 @@ var Cards = /** @class */ (function () {
         }
         return null;
     };
-    Cards.prototype.getCardCost = function (cardTypeId) {
+    CardsManager.prototype.getCardCost = function (cardTypeId) {
         switch (cardTypeId) {
             // KEEP
             case 1: return 6;
@@ -1103,7 +1124,7 @@ var Cards = /** @class */ (function () {
         }
         return null;
     };
-    Cards.prototype.getColoredCardName = function (cardTypeId, side) {
+    CardsManager.prototype.getColoredCardName = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
         switch (cardTypeId) {
             // KEEP
@@ -1215,7 +1236,7 @@ var Cards = /** @class */ (function () {
         }
         return null;
     };
-    Cards.prototype.getCardName = function (cardTypeId, state, side) {
+    CardsManager.prototype.getCardName = function (cardTypeId, state, side) {
         if (side === void 0) { side = null; }
         var coloredCardName = this.getColoredCardName(cardTypeId, side);
         if (state == 'text-only') {
@@ -1241,7 +1262,7 @@ var Cards = /** @class */ (function () {
         }
         return null;
     };
-    Cards.prototype.getCardDescription = function (cardTypeId, side) {
+    CardsManager.prototype.getCardDescription = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
         switch (cardTypeId) {
             // KEEP
@@ -1342,14 +1363,14 @@ var Cards = /** @class */ (function () {
         }
         return null;
     };
-    Cards.prototype.updateFlippableCardTooltip = function (cardDiv) {
+    CardsManager.prototype.updateFlippableCardTooltip = function (cardDiv) {
         var type = Number(cardDiv.dataset.type);
         if (!FLIPPABLE_CARDS.includes(type)) {
             return;
         }
         this.game.addTooltipHtml(cardDiv.id, this.getTooltip(type, Number(cardDiv.dataset.side)));
     };
-    Cards.prototype.getTooltip = function (cardTypeId, side) {
+    CardsManager.prototype.getTooltip = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
         if (cardTypeId === 999) {
             return _("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
@@ -1377,7 +1398,7 @@ var Cards = /** @class */ (function () {
         tooltip += "</div>";
         return tooltip;
     };
-    Cards.prototype.setupNewCard = function (cardDiv, cardType) {
+    CardsManager.prototype.setupNewCard = function (cardDiv, cardType) {
         if (FLIPPABLE_CARDS.includes(cardType)) {
             cardDiv.dataset.type = '' + cardType;
             cardDiv.classList.add('card-inner');
@@ -1394,7 +1415,7 @@ var Cards = /** @class */ (function () {
         cardDiv.dataset.cardId = cardDiv.id.split('_')[2];
         cardDiv.dataset.cardType = '' + cardType;
     };
-    Cards.prototype.getCardTypeName = function (cardType) {
+    CardsManager.prototype.getCardTypeName = function (cardType) {
         if (cardType < 100) {
             return _('Keep');
         }
@@ -1408,7 +1429,7 @@ var Cards = /** @class */ (function () {
             return _('Transformation');
         }
     };
-    Cards.prototype.getCardTypeClass = function (cardType) {
+    CardsManager.prototype.getCardTypeClass = function (cardType) {
         if (cardType < 100) {
             return 'keep';
         }
@@ -1422,7 +1443,7 @@ var Cards = /** @class */ (function () {
             return 'transformation';
         }
     };
-    Cards.prototype.setDivAsCard = function (cardDiv, cardType, side) {
+    CardsManager.prototype.setDivAsCard = function (cardDiv, cardType, side) {
         if (side === void 0) { side = null; }
         cardDiv.classList.add('kot-card');
         cardDiv.dataset.design = cardType < 200 && this.game.isDarkEdition() ? 'dark-edition' : 'standard';
@@ -1449,7 +1470,46 @@ var Cards = /** @class */ (function () {
             nameWrapperDiv.style.top = Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName) + "px";
         }
     };
-    Cards.prototype.getImageName = function (cardType) {
+    CardsManager.prototype.setFrontBackground = function (cardDiv, cardType, side) {
+        if (side === void 0) { side = null; }
+        var darkEdition = this.game.isDarkEdition();
+        var version = darkEdition ? 'dark' : 'base';
+        if (cardType < 100) {
+            var keepcardsurl = g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "keep-cards.jpg";
+            cardDiv.style.backgroundImage = "url('" + keepcardsurl + "')";
+            var index = KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
+            cardDiv.style.backgroundPositionX = (index % 10) * 100 / 9 + "%";
+            cardDiv.style.backgroundPositionY = Math.floor(index / 10) * 100 / 4 + "%";
+            console.log(cardDiv);
+        }
+        else if (cardType < 200) {
+            var index = DISCARD_CARDS_LIST[version].findIndex(function (type) { return type == cardType % 100; });
+            var discardcardsurl = g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "discard-cards.jpg";
+            cardDiv.style.backgroundImage = "url('" + discardcardsurl + "')";
+            cardDiv.style.backgroundPositionX = (index % 10) * 100 / 9 + "%";
+            cardDiv.style.backgroundPositionY = Math.floor(index / 10) * 100 + "%";
+        }
+        else if (cardType < 300) {
+            var index = COSTUME_CARDS_LIST.findIndex(function (type) { return type == cardType % 100; });
+            var costumecardsurl = g_gamethemeurl + "img/costume-cards.jpg";
+            cardDiv.style.backgroundImage = "url('" + costumecardsurl + "')";
+            cardDiv.style.backgroundPositionX = (index % 10) * 100 / 9 + "%";
+            cardDiv.style.backgroundPositionY = Math.floor(index / 10) * 100 + "%";
+        }
+        else if (cardType < 400) {
+            var transformationcardsurl = g_gamethemeurl + "img/transformation-cards.jpg";
+            cardDiv.style.backgroundImage = "url('" + transformationcardsurl + "')";
+            cardDiv.style.backgroundPositionX = side * 100 + "%";
+            cardDiv.style.backgroundPositionY = '0%';
+        }
+        else if (cardType == 999) {
+            var anubiscardsurl = g_gamethemeurl + "img/anubis-cards.jpg";
+            cardDiv.style.backgroundImage = "url(" + anubiscardsurl;
+            cardDiv.style.backgroundPositionX = '0%';
+            cardDiv.style.backgroundPositionY = '0%';
+        }
+    };
+    CardsManager.prototype.getImageName = function (cardType) {
         if (cardType < 100) {
             return 'keep';
         }
@@ -1463,7 +1523,7 @@ var Cards = /** @class */ (function () {
             return 'transformation';
         }
     };
-    Cards.prototype.generateCardDiv = function (card) {
+    CardsManager.prototype.generateCardDiv = function (card) {
         var tempDiv = document.createElement('div');
         tempDiv.classList.add('stockitem');
         tempDiv.style.width = CARD_WIDTH + "px";
@@ -1481,7 +1541,7 @@ var Cards = /** @class */ (function () {
         document.body.removeChild(tempDiv);
         return tempDiv;
     };
-    Cards.prototype.getMimickedCardText = function (mimickedCard) {
+    CardsManager.prototype.getMimickedCardText = function (mimickedCard) {
         var mimickedCardText = '-';
         if (mimickedCard) {
             var tempDiv = this.generateCardDiv(mimickedCard);
@@ -1489,11 +1549,11 @@ var Cards = /** @class */ (function () {
         }
         return mimickedCardText;
     };
-    Cards.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
+    CardsManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
         this.game.addTooltipHtml(mimicCardId, this.getTooltip(27) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
-    Cards.prototype.placeSuperiorAlienTechnologyTokenOnCard = function (stock, card) {
-        var divId = stock.container_div.id + "_item_" + card.id;
+    CardsManager.prototype.placeSuperiorAlienTechnologyTokenOnCard = function (card) {
+        var divId = this.getId(card);
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.superiorAlienTechnologyToken = this.getPlaceOnCard(cardPlaced);
@@ -1501,8 +1561,8 @@ var Cards = /** @class */ (function () {
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
-    return Cards;
-}());
+    return CardsManager;
+}(CardManager));
 var CurseCardsManager = /** @class */ (function (_super) {
     __extends(CurseCardsManager, _super);
     function CurseCardsManager(game) {
@@ -2518,36 +2578,20 @@ var PlayerTable = /** @class */ (function () {
         html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (player.reservedCards.length ? '' : 'empty') + "\"></div>\n        </div>\n        ";
         dojo.place(html, 'table');
         this.setMonsterFigureBeastMode(((_c = player.cards.find(function (card) { return card.type === 301; })) === null || _c === void 0 ? void 0 : _c.side) === 1);
-        this.cards = new ebg.stock();
-        this.cards.setSelectionAppearance('class');
-        this.cards.selectionClass = 'no-visible-selection';
-        this.cards.create(this.game, $("cards-" + this.player.id), CARD_WIDTH, CARD_HEIGHT);
-        this.cards.setSelectionMode(0);
-        this.cards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
-        this.cards.image_items_per_row = 10;
-        this.cards.centerItems = true;
-        dojo.connect(this.cards, 'onChangeSelection', this, function (_, itemId) { return _this.game.onVisibleCardClick(_this.cards, Number(itemId), _this.playerId); });
-        this.game.cards.setupCards([this.cards]);
-        this.game.cards.addCardsToStock(this.cards, player.cards);
+        this.cards = new LineStock(this.game.cardsManager, document.getElementById("cards-" + this.player.id));
+        this.cards.onSelectionChange = function (_, card) { return _this.game.onVisibleCardClick(_this.cards, card, _this.playerId); };
+        this.cards.addCards(player.cards);
         if (playerWithGoldenScarab) {
-            this.cards.addToStockWithId(999, 'goldenscarab');
+            this.takeGoldenScarab();
         }
         if ((_d = player.superiorAlienTechnologyTokens) === null || _d === void 0 ? void 0 : _d.length) {
-            player.cards.filter(function (card) { return player.superiorAlienTechnologyTokens.includes(card.id); }).forEach(function (card) { return _this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(_this.cards, card); });
+            player.cards.filter(function (card) { return player.superiorAlienTechnologyTokens.includes(card.id); }).forEach(function (card) { return _this.game.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(card); });
         }
         if (game.isPowerUpExpansion()) {
             // TODOPUBG
-            this.reservedCards = new ebg.stock();
-            this.reservedCards.setSelectionAppearance('class');
-            this.reservedCards.selectionClass = 'no-visible-selection';
-            this.reservedCards.create(this.game, $("reserved-cards-" + this.player.id), CARD_WIDTH, CARD_HEIGHT);
-            this.reservedCards.setSelectionMode(0);
-            this.reservedCards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
-            this.reservedCards.image_items_per_row = 10;
-            this.reservedCards.centerItems = true;
-            dojo.connect(this.reservedCards, 'onChangeSelection', this, function (_, itemId) { return _this.game.onVisibleCardClick(_this.reservedCards, Number(itemId), _this.playerId); });
-            this.game.cards.setupCards([this.reservedCards]);
-            this.game.cards.addCardsToStock(this.reservedCards, player.reservedCards);
+            this.reservedCards = new LineStock(this.game.cardsManager, document.getElementById("reserved-cards-" + this.player.id));
+            this.cards.onSelectionChange = function (_, card) { return _this.game.onVisibleCardClick(_this.reservedCards, card, _this.playerId); };
+            this.reservedCards.addCards(player.reservedCards);
         }
         this.initialLocation = Number(player.location);
         this.setPoints(Number(player.score));
@@ -2620,8 +2664,7 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.removeCards = function (cards) {
         var _this = this;
-        var cardsIds = cards.map(function (card) { return card.id; });
-        cardsIds.forEach(function (id) { return _this.cards.removeFromStockById('' + id); });
+        cards.forEach(function (card) { return _this.cards.removeCard(card); });
     };
     PlayerTable.prototype.removeWickednessTiles = function (tiles) {
         var _this = this;
@@ -2665,7 +2708,7 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         var _a;
         this.setEnergy(0);
-        this.cards.items.filter(function (item) { return item.id !== 'goldenscarab'; }).forEach(function (item) { return _this.cards.removeFromStockById(item.id); });
+        this.cards.getCards().filter(function (card) { return card.id !== 999; }).forEach(function (card) { return _this.cards.removeCard(card); });
         (_a = this.visibleEvolutionCards) === null || _a === void 0 ? void 0 : _a.removeAll();
         if (document.getElementById("monster-figure-" + this.playerId)) {
             this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
@@ -2788,9 +2831,9 @@ var PlayerTable = /** @class */ (function () {
         document.getElementById("berserk-token-" + this.playerId).dataset.visible = berserk ? 'true' : 'false';
     };
     PlayerTable.prototype.changeForm = function (card) {
-        var cardDiv = document.getElementById(this.cards.container_div.id + "_item_" + card.id);
-        cardDiv.dataset.side = '' + card.side;
-        this.game.cards.updateFlippableCardTooltip(cardDiv);
+        var cardDiv = this.cards.getCardElement(card);
+        cardDiv.dataset.side = card.side ? 'back' : 'front';
+        this.game.cardsManager.updateFlippableCardTooltip(cardDiv);
         this.setMonsterFigureBeastMode(card.side === 1);
     };
     PlayerTable.prototype.setMonsterFigureBeastMode = function (beastMode) {
@@ -2809,10 +2852,8 @@ var PlayerTable = /** @class */ (function () {
             this.game.addTooltipHtml(containerId + "-" + i, this.game.CULTIST_TOOLTIP);
         }
     };
-    PlayerTable.prototype.takeGoldenScarab = function (previousOwnerStock) {
-        var sourceStockItemId = previousOwnerStock.container_div.id + "_item_goldenscarab";
-        this.cards.addToStockWithId(999, 'goldenscarab', sourceStockItemId);
-        previousOwnerStock.removeFromStockById("goldenscarab");
+    PlayerTable.prototype.takeGoldenScarab = function () {
+        this.cards.addCard({ id: 999, type: 999 });
     };
     PlayerTable.prototype.showEvolutionPickStock = function (cards) {
         var _this = this;
@@ -3075,9 +3116,9 @@ var TableManager = /** @class */ (function () {
                 dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', playerTable.wickednessTiles.isEmpty());
             }
             if (playerTable.reservedCards) {
-                dojo.toggleClass("reserved-cards-" + playerTable.playerId, 'empty', !playerTable.reservedCards.items.length);
+                dojo.toggleClass("reserved-cards-" + playerTable.playerId, 'empty', playerTable.reservedCards.isEmpty());
             }
-            dojo.toggleClass("cards-" + playerTable.playerId, 'empty', !playerTable.cards.items.length);
+            dojo.toggleClass("cards-" + playerTable.playerId, 'empty', playerTable.cards.isEmpty());
         });
         var zoomWrapper = document.getElementById('zoom-wrapper');
         zoomWrapper.style.height = document.getElementById('table').clientHeight * this.zoom + "px";
@@ -3670,14 +3711,14 @@ var DiceManager = /** @class */ (function () {
             if (creation) {
                 var buttonText = _("Change die face with ${card_name}");
                 if (args_1.hasClown) {
-                    this.game.createButton(bubbleActionButtonsId, clownButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(212, 'text-only') + "</strong>" }), function () {
+                    this.game.createButton(bubbleActionButtonsId, clownButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(212, 'text-only') + "</strong>" }), function () {
                         _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 212),
                             _this.toggleBubbleChangeDie(die);
                     }, true);
                 }
                 else {
                     if (args_1.hasHerdCuller) {
-                        this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(22, 'text-only') + "</strong>" }), function () {
+                        this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(22, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 22);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
@@ -3701,13 +3742,13 @@ var DiceManager = /** @class */ (function () {
                         }, true);
                     }
                     if (args_1.hasPlotTwist) {
-                        this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(33, 'text-only') + "</strong>" }), function () {
+                        this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(33, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 33),
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasStretchy) {
-                        this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cards.getCardName(44, 'text-only') + "</strong>" }) + formatTextIcons(' (2 [Energy])'), function () {
+                        this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(44, 'text-only') + "</strong>" }) + formatTextIcons(' (2 [Energy])'), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 44),
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
@@ -4201,11 +4242,11 @@ var TableCenter = /** @class */ (function () {
         this.visibleCards.selectionClass = 'no-visible-selection-except-double-selection';
         this.visibleCards.create(this.game, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
-        this.visibleCards.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
+        this.visibleCards.onItemCreate = function (card_div, card_type_id) { return _this.game.cardsManager.setupNewCard(card_div, card_type_id); };
         this.visibleCards.image_items_per_row = 10;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleCardClick(_this.visibleCards, Number(item_id)); });
-        this.game.cards.setupCards([this.visibleCards]);
+        this.game.cardsManager.setupCards([this.visibleCards]);
         this.setVisibleCards(visibleCards);
         this.setTopDeckCardBackType(topDeckCardBackType);
     };
@@ -4231,7 +4272,7 @@ var TableCenter = /** @class */ (function () {
             this.pickCard.selectionClass = 'no-visible-selection';
             this.pickCard.create(this.game, $('pick-stock'), CARD_WIDTH, CARD_HEIGHT);
             this.pickCard.setSelectionMode(1);
-            this.pickCard.onItemCreate = function (card_div, card_type_id) { return _this.game.cards.setupNewCard(card_div, card_type_id); };
+            this.pickCard.onItemCreate = function (card_div, card_type_id) { return _this.game.cardsManager.setupNewCard(card_div, card_type_id); };
             this.pickCard.image_items_per_row = 10;
             this.pickCard.centerItems = true;
             dojo.connect(this.pickCard, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleCardClick(_this.pickCard, Number(item_id)); });
@@ -4239,8 +4280,8 @@ var TableCenter = /** @class */ (function () {
         else {
             document.getElementById('pick-stock').style.display = 'block';
         }
-        this.game.cards.setupCards([this.pickCard]);
-        this.game.cards.addCardsToStock(this.pickCard, cards);
+        this.game.cardsManager.setupCards([this.pickCard]);
+        this.game.cardsManager.addCardsToStock(this.pickCard, cards);
     };
     TableCenter.prototype.hidePickStock = function () {
         var div = document.getElementById('pick-stock');
@@ -4260,13 +4301,13 @@ var TableCenter = /** @class */ (function () {
         }
     };
     TableCenter.prototype.setInitialCards = function (cards) {
-        this.game.cards.addCardsToStock(this.visibleCards, cards, 'deck');
+        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
     };
     TableCenter.prototype.setVisibleCards = function (cards) {
         var newWeights = {};
         cards.forEach(function (card) { return newWeights[card.type] = card.location_arg; });
         this.visibleCards.changeItemsWeight(newWeights);
-        this.game.cards.addCardsToStock(this.visibleCards, cards, 'deck');
+        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
     };
     TableCenter.prototype.removeOtherCardsFromPick = function (cardId) {
         var _this = this;
@@ -4613,12 +4654,12 @@ var KingOfTokyo = /** @class */ (function () {
         if (gamedatas.twoPlayersVariant) {
             this.addTwoPlayerVariantNotice(gamedatas);
         }
-        this.cards = new Cards(this);
+        this.cardsManager = new CardsManager(this);
         this.curseCardsManager = new CurseCardsManager(this);
         this.wickednessTilesManager = new WickednessTilesManager(this);
         this.evolutionCardsManager = new EvolutionCardsManager(this);
-        this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(40, 'text-only') });
-        this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cards.getCardName(35, 'text-only') });
+        this.SHINK_RAY_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Shrink ray tokens (given by ${card_name}). Reduce dice count by one per token. Use you [diceHeart] to remove them.")), { 'card_name': this.cardsManager.getCardName(40, 'text-only') });
+        this.POISON_TOKEN_TOOLTIP = dojo.string.substitute(formatTextIcons(_("Poison tokens (given by ${card_name}). Make you lose one [heart] per token at the end of your turn. Use you [diceHeart] to remove them.")), { 'card_name': this.cardsManager.getCardName(35, 'text-only') });
         this.createPlayerPanels(gamedatas);
         setTimeout(function () { var _a, _b; return new ActivatedExpansionsPopin(gamedatas, (_b = (_a = _this.players_metadata) === null || _a === void 0 ? void 0 : _a[_this.getPlayerId()]) === null || _b === void 0 ? void 0 : _b.language); }, 500);
         this.monsterSelector = new MonsterSelector(this);
@@ -4885,7 +4926,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to reroll the others"), _("Ctrl+click to move all dice with same value") + "<br>\n                    " + _("Alt+click to move all dice but clicked die"));
             }
             if (args.rethrow3.hasCard) {
-                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' (' + this.cards.getCardName(5, 'text-only') + ')', function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
+                this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' (' + this.cardsManager.getCardName(5, 'text-only') + ')', function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
             }
             if (((_a = args.energyDrink) === null || _a === void 0 ? void 0 : _a.hasCard) && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(" ( 1[Energy])"), function () { return _this.buyEnergyDrink(); });
@@ -4903,7 +4944,7 @@ var KingOfTokyo = /** @class */ (function () {
                 args.dice.filter(function (die) { return die.type < 2; }).forEach(function (die) {
                     if (die.canReroll && (die.type > 0 || !simpleFaces_1.includes(die.value))) {
                         var faceText = die.type == 1 ? BERSERK_DIE_STRINGS[die.value] : DICE_STRINGS[die.value];
-                        _this.createButton('beast-form-dice-actions', "rerollDie" + die.id + "_button", _("Reroll") + formatTextIcons(' ' + faceText) + ' (' + _this.cards.getCardName(301, 'text-only', 1) + ')', function () { return _this.rerollDie(die.id); }, !args.rerollDie.canUseBeastForm);
+                        _this.createButton('beast-form-dice-actions', "rerollDie" + die.id + "_button", _("Reroll") + formatTextIcons(' ' + faceText) + ' (' + _this.cardsManager.getCardName(301, 'text-only', 1) + ')', function () { return _this.rerollDie(die.id); }, !args.rerollDie.canUseBeastForm);
                         if (die.type == 0) {
                             simpleFaces_1.push(die.value);
                         }
@@ -4979,7 +5020,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringDiscardKeepCard = function (args) {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
-            this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+            this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
             args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
@@ -5050,7 +5091,7 @@ var KingOfTokyo = /** @class */ (function () {
                 dojo.destroy('throwCamouflageDice_button');
             }
             if (args.canUseWings && !document.getElementById('useWings_button')) {
-                this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cards.getCardName(48, 'text-only') })), function () { return _this.useWings(); });
+                this.addActionButton('useWings_button', formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + " ( 2[Energy] )", { 'card_name': this.cardsManager.getCardName(48, 'text-only') })), function () { return _this.useWings(); });
                 document.getElementById('useWings_button').dataset.enableAtEnergy = '2';
                 if (args.playerEnergy < 2) {
                     dojo.addClass('useWings_button', 'disabled');
@@ -5071,7 +5112,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var remainingDamage = args.replaceHeartByEnergyCost[energy];
                     var id = "useSuperJump" + energyCost + "_button";
                     if (!document.getElementById(id)) {
-                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cards.getCardName(53, 'text-only') }) + (remainingDamage > 0 ? " (-" + remainingDamage + "[Heart])" : '')), function () { return _this.useSuperJump(energyCost); });
+                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(53, 'text-only') }) + (remainingDamage > 0 ? " (-" + remainingDamage + "[Heart])" : '')), function () { return _this.useSuperJump(energyCost); });
                         document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -5083,7 +5124,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var remainingDamage = args.replaceHeartByEnergyCost[energy];
                     var id = "useRobot" + energyCost + "_button";
                     if (!document.getElementById(id)) {
-                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cards.getCardName(210, 'text-only') }) + (remainingDamage > 0 ? " (-" + remainingDamage + "[Heart])" : '')), function () { return _this.useRobot(energyCost); });
+                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(210, 'text-only') }) + (remainingDamage > 0 ? " (-" + remainingDamage + "[Heart])" : '')), function () { return _this.useRobot(energyCost); });
                         document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -5091,7 +5132,7 @@ var KingOfTokyo = /** @class */ (function () {
             }
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 var canAvoidDeath_1 = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
-                this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cards.getCardName(48, 'text-only') }) : _("Skip"), function () {
+                this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cardsManager.getCardName(48, 'text-only') }) : _("Skip"), function () {
                     if (canAvoidDeath_1) {
                         _this.confirmationDialog(formatTextIcons(_("Are you sure you want to Skip? It means [Skull]")), function () { return _this.skipWings(); });
                     }
@@ -5114,7 +5155,7 @@ var KingOfTokyo = /** @class */ (function () {
                         cardsNames.push(_('Cultist'));
                     }
                     if (rapidHealingCount > 0) {
-                        cardsNames.push(_(this_2.cards.getCardName(37, 'text-only')));
+                        cardsNames.push(_(this_2.cardsManager.getCardName(37, 'text-only')));
                     }
                     if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive && 2 * rapidHealingCount <= args.playerEnergy) {
                         var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("" + _('Gain ${hearts}[Heart]') + (rapidHealingCount > 0 ? " (" + 2 * rapidHealingCount + "[Energy])" : '')), { 'card_name': cardsNames.join(', '), 'hearts': cultistCount + rapidHealingCount });
@@ -5148,7 +5189,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         if (isCurrentPlayerActive) {
             if (args.canBuyFromPlayers) {
-                this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+                this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
                 this.setBuyDisabledCard(args);
             }
             var playerId_2 = this.getPlayerId();
@@ -5159,7 +5200,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringExchangeCard = function (args, isCurrentPlayerActive) {
         var _this = this;
         if (isCurrentPlayerActive) {
-            this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+            this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
             args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
@@ -5174,9 +5215,9 @@ var KingOfTokyo = /** @class */ (function () {
             }
             this.tableCenter.setVisibleCardsSelectionMode(1);
             if (this.isPowerUpExpansion()) {
-                this.getPlayerTable(playerId_3).reservedCards.setSelectionMode(1);
+                this.getPlayerTable(playerId_3).reservedCards.setSelectionMode('single');
             }
-            this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(args.canBuyFromPlayers && playerTable.playerId != playerId_3 ? 1 : 0); });
+            this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(args.canBuyFromPlayers && playerTable.playerId != playerId_3 ? 'single' : 'multiple'); });
             if ((_b = (_a = args._private) === null || _a === void 0 ? void 0 : _a.pickCards) === null || _b === void 0 ? void 0 : _b.length) {
                 this.tableCenter.showPickStock(args._private.pickCards);
             }
@@ -5185,14 +5226,14 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onEnteringChooseMimickedCard = function (args) {
         if (this.isCurrentPlayerActive()) {
-            this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+            this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
             this.setBuyDisabledCard(args);
         }
     };
     KingOfTokyo.prototype.onEnteringSellCard = function (args) {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
-            this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(1); });
+            this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
             args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
@@ -5229,14 +5270,14 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'MiraculousCatch':
                 var miraculousCatchArgs = question.args;
-                var miraculousCatchCard = this.cards.generateCardDiv(miraculousCatchArgs.card);
+                var miraculousCatchCard = this.cardsManager.generateCardDiv(miraculousCatchArgs.card);
                 miraculousCatchCard.id = "miraculousCatch-card-" + miraculousCatchArgs.card.id;
                 dojo.place("<div id=\"card-MiraculousCatch-wrapper\" class=\"card-in-title-wrapper\">" + miraculousCatchCard.outerHTML + "</div>", "maintitlebar_content");
                 break;
             case 'DeepDive':
                 var deepDiveCatchArgs = question.args;
                 dojo.place("<div id=\"card-DeepDive-wrapper\" class=\"card-in-title-wrapper\">" + deepDiveCatchArgs.cards.map(function (card) {
-                    var cardDiv = _this.cards.generateCardDiv(card);
+                    var cardDiv = _this.cardsManager.generateCardDiv(card);
                     cardDiv.id = "deepDive-card-" + card.id;
                     return cardDiv.outerHTML;
                 }).join('') + "</div>", "maintitlebar_content");
@@ -5388,7 +5429,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onLeavingBuyCard = function () {
         this.tableCenter.setVisibleCardsSelectionMode(0);
         dojo.query('.stockitem').removeClass('disabled');
-        this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(0); });
+        this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode('none'); });
         this.tableCenter.hidePickStock();
     };
     KingOfTokyo.prototype.onLeavingStealCostumeCard = function () {
@@ -5404,12 +5445,12 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.onLeavingChooseMimickedCard = function () {
         dojo.query('.stockitem').removeClass('disabled');
-        this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(0); });
+        this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode('none'); });
     };
     KingOfTokyo.prototype.onLeavingSellCard = function () {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
-            this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode(0); });
+            this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('none'); });
             dojo.query('.stockitem').removeClass('disabled');
         }
     };
@@ -5815,11 +5856,11 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'MiraculousCatch':
                 var miraculousCatchArgs_1 = question.args;
-                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only'), cost: miraculousCatchArgs_1.cost })), function () { return _this.buyCardMiraculousCatch(false); });
+                this.addActionButton('buyCardMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Buy ${card_name} for ${cost}[Energy]'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs_1.card.type, 'text-only'), cost: miraculousCatchArgs_1.cost })), function () { return _this.buyCardMiraculousCatch(false); });
                 if (miraculousCatchArgs_1.costSuperiorAlienTechnology !== null && miraculousCatchArgs_1.costSuperiorAlienTechnology !== miraculousCatchArgs_1.cost) {
                     this.addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: miraculousCatchArgs_1.costSuperiorAlienTechnology })), function () { return _this.buyCardMiraculousCatch(true); });
                 }
-                this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cards.getCardName(miraculousCatchArgs_1.card.type, 'text-only') })), function () { return _this.skipMiraculousCatch(); });
+                this.addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs_1.card.type, 'text-only') })), function () { return _this.skipMiraculousCatch(); });
                 setTimeout(function () { var _a; return (_a = document.getElementById("miraculousCatch-card-" + miraculousCatchArgs_1.card.id)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return _this.buyCardMiraculousCatch(); }); }, 250);
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = '' + miraculousCatchArgs_1.cost;
                 dojo.toggleClass('buyCardMiraculousCatch_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < miraculousCatchArgs_1.cost);
@@ -5827,7 +5868,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'DeepDive':
                 var deepDiveCatchArgs = question.args;
                 deepDiveCatchArgs.cards.forEach(function (card) {
-                    _this.addActionButton("playCardDeepDive_button" + card.id, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: _this.cards.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
+                    _this.addActionButton("playCardDeepDive_button" + card.id, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: _this.cardsManager.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
                     setTimeout(function () { var _a; return (_a = document.getElementById("deepDive-card-" + card.id)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return _this.playCardDeepDive(card.id); }); }, 250);
                 });
                 break;
@@ -6068,7 +6109,6 @@ var KingOfTokyo = /** @class */ (function () {
             dojo.removeClass('kot-table', 'pickMonsterOrEvolutionDeck');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
             this.tableCenter.getVisibleCards().updateDisplay();
-            this.playerTables.forEach(function (playerTable) { return playerTable.cards.updateDisplay(); });
         }
     };
     KingOfTokyo.prototype.getStateName = function () {
@@ -6080,60 +6120,60 @@ var KingOfTokyo = /** @class */ (function () {
         var canReroll = selectedDiceCount >= args.min && selectedDiceCount <= args.max;
         dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
     };
-    KingOfTokyo.prototype.onVisibleCardClick = function (stock, cardId, from, warningChecked) {
+    KingOfTokyo.prototype.onVisibleCardClick = function (stock, card, from, warningChecked) {
         var _this = this;
         var _a, _b;
         if (from === void 0) { from = 0; }
         if (warningChecked === void 0) { warningChecked = false; }
-        if (!cardId) {
+        if (!(card === null || card === void 0 ? void 0 : card.id)) {
             return;
         }
-        if (dojo.hasClass(stock.container_div.id + "_item_" + cardId, 'disabled')) {
-            stock.unselectItem('' + cardId);
+        if (stock.getCardElement(card).classList.contains('disabled')) {
+            stock.unselectCard(card);
             return;
         }
         var stateName = this.getStateName();
         if (stateName === 'chooseInitialCard') {
             if (!this.isInitialCardDoubleSelection()) {
-                this.chooseInitialCard(Number(cardId), null);
+                this.chooseInitialCard(card.id, null);
             }
             else {
                 this.confirmDoubleSelectionCheckState();
             }
         }
         else if (stateName === 'stealCostumeCard') {
-            this.stealCostumeCard(cardId);
+            this.stealCostumeCard(card.id);
         }
         else if (stateName === 'sellCard') {
-            this.sellCard(cardId);
+            this.sellCard(card.id);
         }
         else if (stateName === 'chooseMimickedCard' || stateName === 'opportunistChooseMimicCard') {
-            this.chooseMimickedCard(cardId);
+            this.chooseMimickedCard(card.id);
         }
         else if (stateName === 'changeMimickedCard') {
-            this.changeMimickedCard(cardId);
+            this.changeMimickedCard(card.id);
         }
         else if (stateName === 'chooseMimickedCardWickednessTile') {
-            this.chooseMimickedCardWickednessTile(cardId);
+            this.chooseMimickedCardWickednessTile(card.id);
         }
         else if (stateName === 'changeMimickedCardWickednessTile') {
-            this.changeMimickedCardWickednessTile(cardId);
+            this.changeMimickedCardWickednessTile(card.id);
         }
         else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             var buyCardArgs = this.gamedatas.gamestate.args;
-            var warningIcon = !warningChecked && buyCardArgs.warningIds[cardId];
+            var warningIcon = !warningChecked && buyCardArgs.warningIds[card.id];
             if (warningIcon) {
-                this.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, cardId, from, true); });
+                this.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, card, from, true); });
             }
             else {
-                var cardCostSuperiorAlienTechnology = (_a = buyCardArgs.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[cardId];
-                var cardCostBobbingForApples = (_b = buyCardArgs.cardsCostsBobbingForApples) === null || _b === void 0 ? void 0 : _b[cardId];
-                var canUseSuperiorAlienTechnologyForCard_1 = cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[cardId];
-                var canUseBobbingForApplesForCard_1 = cardCostBobbingForApples !== null && cardCostBobbingForApples !== undefined && cardCostBobbingForApples !== buyCardArgs.cardsCosts[cardId];
+                var cardCostSuperiorAlienTechnology = (_a = buyCardArgs.cardsCostsSuperiorAlienTechnology) === null || _a === void 0 ? void 0 : _a[card.id];
+                var cardCostBobbingForApples = (_b = buyCardArgs.cardsCostsBobbingForApples) === null || _b === void 0 ? void 0 : _b[card.id];
+                var canUseSuperiorAlienTechnologyForCard_1 = cardCostSuperiorAlienTechnology !== null && cardCostSuperiorAlienTechnology !== undefined && cardCostSuperiorAlienTechnology !== buyCardArgs.cardsCosts[card.id];
+                var canUseBobbingForApplesForCard_1 = cardCostBobbingForApples !== null && cardCostBobbingForApples !== undefined && cardCostBobbingForApples !== buyCardArgs.cardsCosts[card.id];
                 if (canUseSuperiorAlienTechnologyForCard_1 || canUseBobbingForApplesForCard_1) {
                     var both_1 = canUseSuperiorAlienTechnologyForCard_1 && canUseBobbingForApplesForCard_1;
                     var keys = [
-                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(canUseSuperiorAlienTechnologyForCard_1 ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[cardId] })),
+                        formatTextIcons(dojo.string.substitute(_('Don\'t use ${card_name} and pay full cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(canUseSuperiorAlienTechnologyForCard_1 ? 28 : 85, 'text-only'), cost: buyCardArgs.cardsCosts[card.id] })),
                         _('Cancel')
                     ];
                     if (cardCostBobbingForApples) {
@@ -6145,8 +6185,8 @@ var KingOfTokyo = /** @class */ (function () {
                     this.multipleChoiceDialog(dojo.string.substitute(_('Do you want to buy the card at reduced cost with ${card_name} ?'), { 'card_name': this.evolutionCardsManager.getCardName(28, 'text-only') }), keys, function (choice) {
                         var choiceIndex = Number(choice);
                         if (choiceIndex < (both_1 ? 3 : 2)) {
-                            _this.tableCenter.removeOtherCardsFromPick(cardId);
-                            _this.buyCard(cardId, from, canUseSuperiorAlienTechnologyForCard_1 && choiceIndex === 0, canUseBobbingForApplesForCard_1 && choiceIndex === (both_1 ? 1 : 0));
+                            _this.tableCenter.removeOtherCardsFromPick(card.id);
+                            _this.buyCard(card.id, from, canUseSuperiorAlienTechnologyForCard_1 && choiceIndex === 0, canUseBobbingForApplesForCard_1 && choiceIndex === (both_1 ? 1 : 0));
                         }
                     });
                     if (canUseSuperiorAlienTechnologyForCard_1 && buyCardArgs.canUseSuperiorAlienTechnology === false || cardCostSuperiorAlienTechnology > this.getPlayerEnergy(this.getPlayerId())) {
@@ -6155,32 +6195,32 @@ var KingOfTokyo = /** @class */ (function () {
                     if (canUseBobbingForApplesForCard_1 && cardCostBobbingForApples > this.getPlayerEnergy(this.getPlayerId())) {
                         document.getElementById("choice_btn_" + (both_1 ? 1 : 0)).classList.add('disabled');
                     }
-                    if (buyCardArgs.cardsCosts[cardId] > this.getPlayerEnergy(this.getPlayerId())) {
+                    if (buyCardArgs.cardsCosts[card.id] > this.getPlayerEnergy(this.getPlayerId())) {
                         document.getElementById("choice_btn_" + (both_1 ? 2 : 1)).classList.add('disabled');
                     }
                 }
                 else {
-                    this.tableCenter.removeOtherCardsFromPick(cardId);
-                    this.buyCard(cardId, from);
+                    this.tableCenter.removeOtherCardsFromPick(card.id);
+                    this.buyCard(card.id, from);
                 }
             }
         }
         else if (stateName === 'discardKeepCard') {
-            this.discardKeepCard(cardId);
+            this.discardKeepCard(card.id);
         }
         else if (stateName === 'leaveTokyoExchangeCard') {
-            this.exchangeCard(cardId);
+            this.exchangeCard(card.id);
         }
         else if (stateName === 'answerQuestion') {
             var args = this.gamedatas.gamestate.args;
             if (args.question.code === 'Bamboozle') {
-                this.buyCardBamboozle(cardId, from);
+                this.buyCardBamboozle(card.id, from);
             }
             else if (args.question.code === 'ChooseMimickedCard') {
-                this.chooseMimickedCard(cardId);
+                this.chooseMimickedCard(card.id);
             }
             else if (args.question.code === 'MyToy') {
-                this.reserveCard(cardId);
+                this.reserveCard(card.id);
             }
         }
     };
@@ -6297,7 +6337,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addRapidHealingButton = function (userEnergy, isMaxHealth) {
         var _this = this;
         if (!document.getElementById('rapidHealingButton')) {
-            this.createButton('rapid-actions-wrapper', 'rapidHealingButton', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (2[Energy])"), { card_name: this.cards.getCardName(37, 'text-only'), hearts: 1 }), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
+            this.createButton('rapid-actions-wrapper', 'rapidHealingButton', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (2[Energy])"), { card_name: this.cardsManager.getCardName(37, 'text-only'), hearts: 1 }), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
         }
     };
     KingOfTokyo.prototype.removeRapidHealingButton = function () {
@@ -6530,8 +6570,8 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.playerTables.forEach(function (playerTable) {
-            if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
-                _this.cards.placeMimicOnCard(type, playerTable.cards, card, _this.wickednessTilesManager);
+            if (playerTable.cards.getCards().some(function (item) { return Number(item.id) == card.id; })) {
+                _this.cardsManager.placeMimicOnCard(type, card, _this.wickednessTilesManager);
             }
         });
         this.setMimicTooltip(type, card);
@@ -6543,13 +6583,12 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.playerTables.forEach(function (playerTable) {
-            if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
-                _this.cards.removeMimicOnCard(type, playerTable.cards, card);
+            if (playerTable.cards.getCards().some(function (item) { return Number(item.id) == card.id; })) {
+                _this.cardsManager.removeMimicOnCard(type, card);
             }
         });
     };
     KingOfTokyo.prototype.setMimicEvolutionToken = function (card) {
-        console.log(card);
         if (!card) {
             return;
         }
@@ -6560,16 +6599,11 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         this.playerTables.forEach(function (playerTable) {
             var mimicCardId = type === 'tile' ? 106 : 27;
-            var cards = type === 'tile' ? playerTable.wickednessTiles.getCards() : playerTable.cards.items;
+            var cards = (type === 'tile' ? playerTable.wickednessTiles : playerTable.cards).getCards();
             var mimicCardItem = cards.find(function (item) { return Number(item.type) == mimicCardId; });
             if (mimicCardItem) {
-                var cardManager = type === 'tile' ? _this.wickednessTilesManager : _this.cards;
-                if (type === 'tile') {
-                    cardManager.changeMimicTooltip(_this.wickednessTilesManager.getId(mimicCardItem), _this.cards.getMimickedCardText(mimickedCard));
-                }
-                else {
-                    cardManager.changeMimicTooltip(playerTable.cards.container_div.id + "_item_" + mimicCardItem.id, _this.cards.getMimickedCardText(mimickedCard));
-                }
+                var cardManager = type === 'tile' ? _this.wickednessTilesManager : _this.cardsManager;
+                cardManager.changeMimicTooltip(cardManager.getId(mimicCardItem), _this.cardsManager.getMimickedCardText(mimickedCard));
             }
         });
     };
@@ -6589,7 +6623,7 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.playerTables.forEach(function (playerTable) {
-            if (playerTable.cards.items.some(function (item) { return Number(item.id) == card.id; })) {
+            if (playerTable.cards.getCards().some(function (item) { return Number(item.id) == card.id; })) {
                 _this.evolutionCardsManager.removeMimicOnCard(card);
             }
         });
@@ -7592,24 +7626,24 @@ var KingOfTokyo = /** @class */ (function () {
             this.setEnergy(notif.args.playerId, notif.args.energy);
         }
         if (notif.args.discardCard) { // initial card
-            this.cards.moveToAnotherStock(this.tableCenter.getVisibleCards(), this.getPlayerTable(notif.args.playerId).cards, card);
-            this.tableCenter.getVisibleCards().removeFromStockById('' + notif.args.discardCard.id);
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
         }
         else if (notif.args.newCard) {
             var newCard = notif.args.newCard;
-            this.cards.moveToAnotherStock(this.tableCenter.getVisibleCards(), this.getPlayerTable(notif.args.playerId).cards, card);
-            this.cards.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
+            this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
             this.tableCenter.changeVisibleCardWeight(newCard);
         }
         else if (notif.args.from > 0) {
-            this.cards.moveToAnotherStock(notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards, this.getPlayerTable(notif.args.playerId).cards, card);
+            var fromStock = notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards;
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: fromStock });
         }
         else { // from Made in a lab Pick
             if (this.tableCenter.getPickCard()) { // active player
-                this.cards.moveToAnotherStock(this.tableCenter.getPickCard(), this.getPlayerTable(notif.args.playerId).cards, card);
+                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getPickCard() });
             }
             else {
-                this.cards.addCardsToStock(this.getPlayerTable(notif.args.playerId).cards, [card], 'deck');
+                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromElement: 'deck' });
             }
         }
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
@@ -7619,8 +7653,8 @@ var KingOfTokyo = /** @class */ (function () {
         var card = notif.args.card;
         this.tableCenter.changeVisibleCardWeight(card);
         var newCard = notif.args.newCard;
-        this.cards.moveToAnotherStock(this.tableCenter.getVisibleCards(), this.getPlayerTable(notif.args.playerId).reservedCards, card); // TODOPUBG add under evolution
-        this.cards.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
+        this.getPlayerTable(notif.args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
+        this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
         this.tableCenter.changeVisibleCardWeight(newCard);
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
         this.tableManager.tableHeightChange(); // adapt to new card
@@ -7706,7 +7740,7 @@ var KingOfTokyo = /** @class */ (function () {
         setTimeout(function () { return _this.notif_poisonToken(notif); }, ANIMATION_MS);
     };
     KingOfTokyo.prototype.notif_setCardTokens = function (notif) {
-        this.cards.placeTokensOnCard(this.getPlayerTable(notif.args.playerId).cards, notif.args.card, notif.args.playerId);
+        this.cardsManager.placeTokensOnCard(notif.args.card, notif.args.playerId);
     };
     KingOfTokyo.prototype.notif_setEvolutionTokens = function (notif) {
         this.evolutionCardsManager.placeTokensOnCard(notif.args.card, notif.args.playerId);
@@ -7834,14 +7868,17 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager.tableHeightChange(); // adapt after removed cards
     };
     KingOfTokyo.prototype.notif_changeGoldenScarabOwner = function (notif) {
-        this.getPlayerTable(notif.args.playerId).takeGoldenScarab(this.getPlayerTable(notif.args.previousOwner).cards);
+        this.getPlayerTable(notif.args.playerId).takeGoldenScarab();
         this.tableManager.tableHeightChange(); // adapt after moved card
     };
     KingOfTokyo.prototype.notif_discardedDie = function (notif) {
         this.diceManager.discardDie(notif.args.die);
     };
     KingOfTokyo.prototype.notif_exchangeCard = function (notif) {
-        this.cards.exchangeCardFromStocks(this.getPlayerTable(notif.args.playerId).cards, this.getPlayerTable(notif.args.previousOwner).cards, notif.args.unstableDnaCard, notif.args.exchangedCard);
+        var previousOwnerCards = this.getPlayerTable(notif.args.previousOwner).cards;
+        var playerCards = this.getPlayerTable(notif.args.playerId).cards;
+        previousOwnerCards.addCard(notif.args.unstableDnaCard, { fromStock: playerCards });
+        playerCards.addCard(notif.args.exchangedCard, { fromStock: playerCards });
     };
     KingOfTokyo.prototype.notif_addEvolutionCardInHand = function (notif) {
         var playerId = notif.args.playerId;
@@ -7875,8 +7912,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableManager.tableHeightChange(); // adapt to new card
     };
     KingOfTokyo.prototype.notif_addSuperiorAlienTechnologyToken = function (notif) {
-        var stock = this.getPlayerTable(notif.args.playerId).cards;
-        this.cards.placeSuperiorAlienTechnologyTokenOnCard(stock, notif.args.card);
+        this.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(notif.args.card);
     };
     KingOfTokyo.prototype.notif_giveTarget = function (notif) {
         if (notif.args.previousOwner) {
@@ -7891,7 +7927,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.setTitleBarSuperiorAlienTechnologyCard = function (card, parent) {
         if (parent === void 0) { parent = "maintitlebar_content"; }
-        var superiorAlienTechnologyCard = this.cards.generateCardDiv(card);
+        var superiorAlienTechnologyCard = this.cardsManager.generateCardDiv(card);
         superiorAlienTechnologyCard.id = "SuperiorAlienTechnology-card-" + card.id;
         dojo.place("<div id=\"card-SuperiorAlienTechnology-wrapper\" class=\"card-in-title-wrapper\">" + superiorAlienTechnologyCard.outerHTML + "</div>", parent);
     };
@@ -7915,7 +7951,7 @@ var KingOfTokyo = /** @class */ (function () {
                 _('<strong>${card_name}</strong> card removed!') :
                 _('<strong>${card_name}</strong> card kept!');
             this.doShowBubble('dice0', dojo.string.substitute(message, {
-                'card_name': this.cards.getCardName(notif.args.card.type, 'text-only')
+                'card_name': this.cardsManager.getCardName(notif.args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');
         }
     };
@@ -8063,7 +8099,7 @@ var KingOfTokyo = /** @class */ (function () {
             return this.curseCardsManager.getCardName(logType - 1000);
         }
         else {
-            return this.cards.getCardName(logType, 'text-only');
+            return this.cardsManager.getCardName(logType, 'text-only');
         }
     };
     KingOfTokyo.prototype.getLogCardTooltip = function (logType) {
@@ -8077,7 +8113,7 @@ var KingOfTokyo = /** @class */ (function () {
             return this.curseCardsManager.getTooltip(logType - 1000);
         }
         else {
-            return this.cards.getTooltip(logType);
+            return this.cardsManager.getTooltip(logType);
         }
     };
     /* This enable to inject translatable styled things to logs or action bar */

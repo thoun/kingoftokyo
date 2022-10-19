@@ -74,12 +74,12 @@ class TableCenter {
         this.visibleCards.selectionClass = 'no-visible-selection-except-double-selection';
         this.visibleCards.create(this.game, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
         this.visibleCards.setSelectionMode(0);
-        this.visibleCards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id); 
+        this.visibleCards.onItemCreate = (card_div, card_type_id) => this.game.cardsManager.setupNewCard(card_div, card_type_id); 
         this.visibleCards.image_items_per_row = 10;
         this.visibleCards.centerItems = true;
         dojo.connect(this.visibleCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.visibleCards, Number(item_id)));
 
-        this.game.cards.setupCards([this.visibleCards]);
+        this.game.cardsManager.setupCards([this.visibleCards]);
         this.setVisibleCards(visibleCards);
 
         this.setTopDeckCardBackType(topDeckCardBackType);
@@ -119,7 +119,7 @@ class TableCenter {
             this.pickCard.selectionClass = 'no-visible-selection';
             this.pickCard.create(this.game, $('pick-stock'), CARD_WIDTH, CARD_HEIGHT);
             this.pickCard.setSelectionMode(1);
-            this.pickCard.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id); 
+            this.pickCard.onItemCreate = (card_div, card_type_id) => this.game.cardsManager.setupNewCard(card_div, card_type_id); 
             this.pickCard.image_items_per_row = 10;
             this.pickCard.centerItems = true;
             dojo.connect(this.pickCard, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.pickCard, Number(item_id)));
@@ -127,8 +127,8 @@ class TableCenter {
             document.getElementById('pick-stock').style.display = 'block';
         }
 
-        this.game.cards.setupCards([this.pickCard]);
-        this.game.cards.addCardsToStock(this.pickCard, cards);
+        this.game.cardsManager.setupCards([this.pickCard]);
+        this.game.cardsManager.addCardsToStock(this.pickCard, cards);
     }
 
     public hidePickStock() {
@@ -154,7 +154,7 @@ class TableCenter {
     }
     
     public setInitialCards(cards: Card[]) {        
-        this.game.cards.addCardsToStock(this.visibleCards, cards, 'deck');
+        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
     }
 
     private setVisibleCards(cards: Card[]) {
@@ -162,7 +162,7 @@ class TableCenter {
         cards.forEach(card => newWeights[card.type] = card.location_arg);
         this.visibleCards.changeItemsWeight(newWeights);
 
-        this.game.cards.addCardsToStock(this.visibleCards, cards, 'deck');
+        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
     }
     
     public removeOtherCardsFromPick(cardId: number) {        

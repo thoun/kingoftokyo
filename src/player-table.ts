@@ -16,8 +16,8 @@ class PlayerTable {
     private tokyoTower: TokyoTower;
     private showHand: boolean = false;
 
-    public cards: Stock;
-    public reservedCards: Stock; // TODOPUBG
+    public cards: LineStock<Card>;
+    public reservedCards: LineStock<Card>; // TODOPUBG
     public wickednessTiles: LineStock<WickednessTile>;
     public hiddenEvolutionCards: LineStock<EvolutionCard> | null = null;
     public pickEvolutionCards: LineStock<EvolutionCard> | null = null;
@@ -69,39 +69,23 @@ class PlayerTable {
 
         this.setMonsterFigureBeastMode(player.cards.find(card => card.type === 301)?.side === 1);
 
-        this.cards = new ebg.stock() as Stock;
-        this.cards.setSelectionAppearance('class');
-        this.cards.selectionClass = 'no-visible-selection';
-        this.cards.create(this.game, $(`cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
-        this.cards.setSelectionMode(0);
-        this.cards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
-        this.cards.image_items_per_row = 10;
-        this.cards.centerItems = true;
-        dojo.connect(this.cards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.cards, Number(itemId), this.playerId));
+        this.cards = new LineStock<Card>(this.game.cardsManager, document.getElementById(`cards-${this.player.id}`));
+        this.cards.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.cards, card, this.playerId);
 
-        this.game.cards.setupCards([this.cards]);
-        this.game.cards.addCardsToStock(this.cards, player.cards);
+        this.cards.addCards(player.cards);
         if (playerWithGoldenScarab) {
-            this.cards.addToStockWithId(999, 'goldenscarab');
+            this.takeGoldenScarab();
         }
         if (player.superiorAlienTechnologyTokens?.length) {
-            player.cards.filter(card => player.superiorAlienTechnologyTokens.includes(card.id)).forEach(card => this.game.cards.placeSuperiorAlienTechnologyTokenOnCard(this.cards, card));
+            player.cards.filter(card => player.superiorAlienTechnologyTokens.includes(card.id)).forEach(card => this.game.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(card));
         }
 
         if (game.isPowerUpExpansion()) {            
             // TODOPUBG
-            this.reservedCards = new ebg.stock() as Stock;
-            this.reservedCards.setSelectionAppearance('class');
-            this.reservedCards.selectionClass = 'no-visible-selection';
-            this.reservedCards.create(this.game, $(`reserved-cards-${this.player.id}`), CARD_WIDTH, CARD_HEIGHT);
-            this.reservedCards.setSelectionMode(0);
-            this.reservedCards.onItemCreate = (card_div, card_type_id) => this.game.cards.setupNewCard(card_div, card_type_id);
-            this.reservedCards.image_items_per_row = 10;
-            this.reservedCards.centerItems = true;
-            dojo.connect(this.reservedCards, 'onChangeSelection', this, (_, itemId: string) => this.game.onVisibleCardClick(this.reservedCards, Number(itemId), this.playerId));
+            this.reservedCards = new LineStock<Card>(this.game.cardsManager, document.getElementById(`reserved-cards-${this.player.id}`));
+            this.cards.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.reservedCards, card, this.playerId);
             
-            this.game.cards.setupCards([this.reservedCards]);
-            this.game.cards.addCardsToStock(this.reservedCards, player.reservedCards);
+            this.reservedCards.addCards(player.reservedCards);
         }
 
         this.initialLocation = Number(player.location);
@@ -204,8 +188,7 @@ class PlayerTable {
     }
 
     public removeCards(cards: Card[]) {
-        const cardsIds = cards.map(card => card.id);
-        cardsIds.forEach(id => this.cards.removeFromStockById(''+id));
+        cards.forEach(card => this.cards.removeCard(card));
     }
 
     public removeWickednessTiles(tiles: WickednessTile[]) {
@@ -252,7 +235,7 @@ class PlayerTable {
 
     public eliminatePlayer() {
         this.setEnergy(0);
-        this.cards.items.filter(item => item.id !== 'goldenscarab').forEach(item => this.cards.removeFromStockById(item.id));
+        this.cards.getCards().filter(card => card.id !== 999).forEach(card => this.cards.removeCard(card));
         this.visibleEvolutionCards?.removeAll();
         if (document.getElementById(`monster-figure-${this.playerId}`)) {
             (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);
@@ -403,9 +386,9 @@ class PlayerTable {
     }
     
     public changeForm(card: Card) {
-        const cardDiv = document.getElementById(`${this.cards.container_div.id}_item_${card.id}`) as HTMLDivElement;
-        cardDiv.dataset.side = ''+card.side;
-        this.game.cards.updateFlippableCardTooltip(cardDiv);
+        const cardDiv = this.cards.getCardElement(card) as HTMLDivElement;
+        cardDiv.dataset.side = card.side ? 'back' : 'front';
+        this.game.cardsManager.updateFlippableCardTooltip(cardDiv);
         this.setMonsterFigureBeastMode(card.side === 1);
     }
 
@@ -427,10 +410,8 @@ class PlayerTable {
         }
     }
 
-    public takeGoldenScarab(previousOwnerStock: Stock) {
-        const sourceStockItemId = `${previousOwnerStock.container_div.id}_item_goldenscarab`;
-        this.cards.addToStockWithId(999, 'goldenscarab', sourceStockItemId);
-        previousOwnerStock.removeFromStockById(`goldenscarab`);
+    public takeGoldenScarab() {
+        this.cards.addCard({ id: 999, type: 999 } as Card);
     }
     
     public showEvolutionPickStock(cards: EvolutionCard[]) {

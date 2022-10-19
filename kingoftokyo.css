@@ -733,23 +733,26 @@
   left: 15px;
 }
 
-.stockitem, #deck, .kot-curse-card, .kot-tile, .kot-evolution {
+.kot-curse-card, .kot-tile, .kot-evolution, .kot-card {
   border-radius: 10px;
   text-align: center;
 }
-.stockitem:not(.kot-curse-card):not(.kot-tile):not(.kot-evolution), #deck:not(.kot-curse-card):not(.kot-tile):not(.kot-evolution), .kot-curse-card:not(.kot-curse-card):not(.kot-tile):not(.kot-evolution), .kot-tile:not(.kot-curse-card):not(.kot-tile):not(.kot-evolution), .kot-evolution:not(.kot-curse-card):not(.kot-tile):not(.kot-evolution) {
-  margin: 5px;
-  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+.kot-curse-card.kot-card, .kot-tile.kot-card, .kot-evolution.kot-card, .kot-card.kot-card {
+  display: inline-block;
+  position: relative;
+  border-radius: 10px;
+  text-align: center;
+  width: 132px;
+  height: 185px;
 }
-.stockitem .bottom, #deck .bottom, .kot-curse-card .bottom, .kot-tile .bottom, .kot-evolution .bottom {
+.kot-curse-card .bottom, .kot-tile .bottom, .kot-evolution .bottom, .kot-card .bottom {
   position: absolute;
   bottom: 0;
   width: 100%;
   background: url("img/card-bottom.png");
   background-position: center top;
 }
-.stockitem .name-wrapper, #deck .name-wrapper, .kot-curse-card .name-wrapper, .kot-tile .name-wrapper, .kot-evolution .name-wrapper {
+.kot-curse-card .name-wrapper, .kot-tile .name-wrapper, .kot-evolution .name-wrapper, .kot-card .name-wrapper {
   position: absolute;
   top: 14px;
   left: 34px;
@@ -759,23 +762,23 @@
   width: 95px;
   text-align: center;
 }
-.stockitem .name-wrapper .outline, #deck .name-wrapper .outline, .kot-curse-card .name-wrapper .outline, .kot-tile .name-wrapper .outline, .kot-evolution .name-wrapper .outline {
+.kot-curse-card .name-wrapper .outline, .kot-tile .name-wrapper .outline, .kot-evolution .name-wrapper .outline, .kot-card .name-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   -webkit-text-stroke: 4px #a6c136;
   width: 100%;
 }
-.stockitem .name-wrapper .outline.curse, #deck .name-wrapper .outline.curse, .kot-curse-card .name-wrapper .outline.curse, .kot-tile .name-wrapper .outline.curse, .kot-evolution .name-wrapper .outline.curse {
+.kot-curse-card .name-wrapper .outline.curse, .kot-tile .name-wrapper .outline.curse, .kot-evolution .name-wrapper .outline.curse, .kot-card .name-wrapper .outline.curse {
   -webkit-text-stroke: 4px #1c484f;
 }
-.stockitem .name-wrapper .text, #deck .name-wrapper .text, .kot-curse-card .name-wrapper .text, .kot-tile .name-wrapper .text, .kot-evolution .name-wrapper .text {
+.kot-curse-card .name-wrapper .text, .kot-tile .name-wrapper .text, .kot-evolution .name-wrapper .text, .kot-card .name-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
 }
-.stockitem .type-wrapper, #deck .type-wrapper, .kot-curse-card .type-wrapper, .kot-tile .type-wrapper, .kot-evolution .type-wrapper {
+.kot-curse-card .type-wrapper, .kot-tile .type-wrapper, .kot-evolution .type-wrapper, .kot-card .type-wrapper {
   position: absolute;
   left: 0px;
   font-size: 9pt;
@@ -783,31 +786,31 @@
   transform: rotate(-5deg);
   font-family: "goodgirl";
 }
-.stockitem .type-wrapper.keep .outline, #deck .type-wrapper.keep .outline, .kot-curse-card .type-wrapper.keep .outline, .kot-tile .type-wrapper.keep .outline, .kot-evolution .type-wrapper.keep .outline {
+.kot-curse-card .type-wrapper.keep .outline, .kot-tile .type-wrapper.keep .outline, .kot-evolution .type-wrapper.keep .outline, .kot-card .type-wrapper.keep .outline {
   -webkit-text-stroke: 4px #00aeef;
 }
-.stockitem .type-wrapper.discard .outline, #deck .type-wrapper.discard .outline, .kot-curse-card .type-wrapper.discard .outline, .kot-tile .type-wrapper.discard .outline, .kot-evolution .type-wrapper.discard .outline {
+.kot-curse-card .type-wrapper.discard .outline, .kot-tile .type-wrapper.discard .outline, .kot-evolution .type-wrapper.discard .outline, .kot-card .type-wrapper.discard .outline {
   -webkit-text-stroke: 4px #ef1923;
 }
-.stockitem .type-wrapper.costume .outline, #deck .type-wrapper.costume .outline, .kot-curse-card .type-wrapper.costume .outline, .kot-tile .type-wrapper.costume .outline, .kot-evolution .type-wrapper.costume .outline {
+.kot-curse-card .type-wrapper.costume .outline, .kot-tile .type-wrapper.costume .outline, .kot-evolution .type-wrapper.costume .outline, .kot-card .type-wrapper.costume .outline {
   -webkit-text-stroke: 4px #f7941d;
 }
-.stockitem .type-wrapper.transformation .outline, #deck .type-wrapper.transformation .outline, .kot-curse-card .type-wrapper.transformation .outline, .kot-tile .type-wrapper.transformation .outline, .kot-evolution .type-wrapper.transformation .outline {
+.kot-curse-card .type-wrapper.transformation .outline, .kot-tile .type-wrapper.transformation .outline, .kot-evolution .type-wrapper.transformation .outline, .kot-card .type-wrapper.transformation .outline {
   -webkit-text-stroke: 4px #13b48f;
 }
-.stockitem .type-wrapper .outline, #deck .type-wrapper .outline, .kot-curse-card .type-wrapper .outline, .kot-tile .type-wrapper .outline, .kot-evolution .type-wrapper .outline {
+.kot-curse-card .type-wrapper .outline, .kot-tile .type-wrapper .outline, .kot-evolution .type-wrapper .outline, .kot-card .type-wrapper .outline {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .type-wrapper .text, #deck .type-wrapper .text, .kot-curse-card .type-wrapper .text, .kot-tile .type-wrapper .text, .kot-evolution .type-wrapper .text {
+.kot-curse-card .type-wrapper .text, .kot-tile .type-wrapper .text, .kot-evolution .type-wrapper .text, .kot-card .type-wrapper .text {
   position: absolute;
   left: 0;
   top: 0;
   width: 120px;
 }
-.stockitem .description-wrapper, #deck .description-wrapper, .kot-curse-card .description-wrapper, .kot-tile .description-wrapper, .kot-evolution .description-wrapper {
+.kot-curse-card .description-wrapper, .kot-tile .description-wrapper, .kot-evolution .description-wrapper, .kot-card .description-wrapper {
   position: absolute;
   left: 4px;
   width: 124px;
@@ -817,12 +820,12 @@
   color: black;
   font-size: 7pt;
 }
-.stockitem .description-wrapper .icon, #deck .description-wrapper .icon, .kot-curse-card .description-wrapper .icon, .kot-tile .description-wrapper .icon, .kot-evolution .description-wrapper .icon {
+.kot-curse-card .description-wrapper .icon, .kot-tile .description-wrapper .icon, .kot-evolution .description-wrapper .icon, .kot-card .description-wrapper .icon {
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
 }
-.stockitem .effect-wrapper, #deck .effect-wrapper, .kot-curse-card .effect-wrapper, .kot-tile .effect-wrapper, .kot-evolution .effect-wrapper {
+.kot-curse-card .effect-wrapper, .kot-tile .effect-wrapper, .kot-evolution .effect-wrapper, .kot-card .effect-wrapper {
   position: absolute;
   text-overflow: ellipsis;
   text-align: center;
@@ -830,60 +833,60 @@
   display: flex;
   align-items: center;
 }
-.stockitem .effect-wrapper div, #deck .effect-wrapper div, .kot-curse-card .effect-wrapper div, .kot-tile .effect-wrapper div, .kot-evolution .effect-wrapper div {
+.kot-curse-card .effect-wrapper div, .kot-tile .effect-wrapper div, .kot-evolution .effect-wrapper div, .kot-card .effect-wrapper div {
   flex: 1;
 }
-.stockitem .effect-wrapper .icon, #deck .effect-wrapper .icon, .kot-curse-card .effect-wrapper .icon, .kot-tile .effect-wrapper .icon, .kot-evolution .effect-wrapper .icon {
+.kot-curse-card .effect-wrapper .icon, .kot-tile .effect-wrapper .icon, .kot-evolution .effect-wrapper .icon, .kot-card .effect-wrapper .icon {
   width: 12px;
   height: 12px;
   margin-bottom: -2px;
 }
-.stockitem .effect-wrapper .effect-text.overflow, #deck .effect-wrapper .effect-text.overflow, .kot-curse-card .effect-wrapper .effect-text.overflow, .kot-tile .effect-wrapper .effect-text.overflow, .kot-evolution .effect-wrapper .effect-text.overflow {
+.kot-curse-card .effect-wrapper .effect-text.overflow, .kot-tile .effect-wrapper .effect-text.overflow, .kot-evolution .effect-wrapper .effect-text.overflow, .kot-card .effect-wrapper .effect-text.overflow {
   background: radial-gradient(#fefefe, #fdfaf3, #f8ead0);
   margin: -5px;
   padding: 2px;
   border-radius: 7px;
 }
-.stockitem .effect-wrapper .effect-text.overflow.permanent, #deck .effect-wrapper .effect-text.overflow.permanent, .kot-curse-card .effect-wrapper .effect-text.overflow.permanent, .kot-tile .effect-wrapper .effect-text.overflow.permanent, .kot-evolution .effect-wrapper .effect-text.overflow.permanent {
+.kot-curse-card .effect-wrapper .effect-text.overflow.permanent, .kot-tile .effect-wrapper .effect-text.overflow.permanent, .kot-evolution .effect-wrapper .effect-text.overflow.permanent, .kot-card .effect-wrapper .effect-text.overflow.permanent {
   background: radial-gradient(#0db9e9, #0fa2d8, #1265ab);
   border: 2px solid #42aad1;
 }
-.stockitem .permanent-effect-wrapper, #deck .permanent-effect-wrapper, .kot-curse-card .permanent-effect-wrapper, .kot-tile .permanent-effect-wrapper, .kot-evolution .permanent-effect-wrapper {
+.kot-curse-card .permanent-effect-wrapper, .kot-tile .permanent-effect-wrapper, .kot-evolution .permanent-effect-wrapper, .kot-card .permanent-effect-wrapper {
   left: 9px;
   width: 116px;
   top: 59px;
   height: 38px;
   color: white;
 }
-.stockitem .ankh-effect-wrapper, #deck .ankh-effect-wrapper, .kot-curse-card .ankh-effect-wrapper, .kot-tile .ankh-effect-wrapper, .kot-evolution .ankh-effect-wrapper {
+.kot-curse-card .ankh-effect-wrapper, .kot-tile .ankh-effect-wrapper, .kot-evolution .ankh-effect-wrapper, .kot-card .ankh-effect-wrapper {
   left: 6px;
   width: 58px;
   top: 124px;
   height: 52px;
   color: black;
 }
-.stockitem .snake-effect-wrapper, #deck .snake-effect-wrapper, .kot-curse-card .snake-effect-wrapper, .kot-tile .snake-effect-wrapper, .kot-evolution .snake-effect-wrapper {
+.kot-curse-card .snake-effect-wrapper, .kot-tile .snake-effect-wrapper, .kot-evolution .snake-effect-wrapper, .kot-card .snake-effect-wrapper {
   left: 68px;
   width: 58px;
   top: 124px;
   height: 52px;
   color: black;
 }
-.stockitem[id$=goldenscarab], #deck[id$=goldenscarab], .kot-curse-card[id$=goldenscarab], .kot-tile[id$=goldenscarab], .kot-evolution[id$=goldenscarab] {
+.kot-curse-card[id$=goldenscarab], .kot-tile[id$=goldenscarab], .kot-evolution[id$=goldenscarab], .kot-card[id$=goldenscarab] {
   pointer-events: none;
 }
-.stockitem.disabled, #deck.disabled, .kot-curse-card.disabled, .kot-tile.disabled, .kot-evolution.disabled {
+.kot-curse-card.disabled, .kot-tile.disabled, .kot-evolution.disabled, .kot-card.disabled {
   filter: contrast(0.6);
   cursor: not-allowed;
 }
-.stockitem .card-token, #deck .card-token, .kot-curse-card .card-token, .kot-tile .card-token, .kot-evolution .card-token {
+.kot-curse-card .card-token, .kot-tile .card-token, .kot-evolution .card-token, .kot-card .card-token {
   position: absolute;
   z-index: 12;
 }
-.stockitem .card-token.mimic, #deck .card-token.mimic, .kot-curse-card .card-token.mimic, .kot-tile .card-token.mimic, .kot-evolution .card-token.mimic {
+.kot-curse-card .card-token.mimic, .kot-tile .card-token.mimic, .kot-evolution .card-token.mimic, .kot-card .card-token.mimic {
   z-index: 13;
 }
-.stockitem .card-token.mimic-tile, #deck .card-token.mimic-tile, .kot-curse-card .card-token.mimic-tile, .kot-tile .card-token.mimic-tile, .kot-evolution .card-token.mimic-tile {
+.kot-curse-card .card-token.mimic-tile, .kot-tile .card-token.mimic-tile, .kot-evolution .card-token.mimic-tile, .kot-card .card-token.mimic-tile {
   z-index: 11;
   left: 0;
   top: 32px;
@@ -1516,6 +1519,7 @@ body > .card {
   height: 132px;
   background: url("img/card-back.jpg");
   box-shadow: 4px 4px 0px 0px #333;
+  border-radius: 10px;
 }
 #table #table-center #deck-wrapper #deck[data-type=costume] {
   background: url("img/card-back-costume.jpg");
@@ -1742,6 +1746,7 @@ body > .card {
 }
 #table .player-table .monster-board-wrapper {
   position: relative;
+  margin-bottom: 8px;
 }
 #table .player-table .monster-board-wrapper .kot-token {
   z-index: 3;

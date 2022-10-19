@@ -10,15 +10,18 @@ $description-left: 4px;
 $description-width: 124px;
 $description-size: 7pt;
 
-.stockitem, #deck, .kot-curse-card, .kot-tile, .kot-evolution {
+.kot-curse-card, .kot-tile, .kot-evolution, .kot-card {
     border-radius: 10px;
-    &:not(.kot-curse-card):not(.kot-tile):not(.kot-evolution) {
-        margin: 5px;
-        box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
-        overflow: hidden;
-    }
-    // border: 1px solid white;
     text-align: center;
+
+    &.kot-card {
+        display: inline-block;
+        position: relative;
+        border-radius: 10px;
+        text-align: center;
+        width: 132px;
+        height: 185px;
+    }
 
     .bottom {
         position: absolute;
