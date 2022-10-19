@@ -29,6 +29,7 @@ const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
 class TableCenter {
     private visibleCards: Stock;
     private curseCard: CardStock<CurseCard>;
+    private curseDeck: CardStock<CurseCard>;
     private pickCard: Stock;
     public wickednessDecks: WickednessDecks;
     private tokyoTower: TokyoTower;
@@ -93,7 +94,7 @@ class TableCenter {
 
         this.curseCard = new VisibleDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-card'));
         this.curseCard.addCard(curseCard);
-        new HiddenDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'));
+        this.curseDeck = new HiddenDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'));
 
         (this.game as any).addTooltipHtml(`curse-deck`, `
         <strong>${_("Curse card pile.")}</strong>
@@ -190,7 +191,7 @@ class TableCenter {
     }
     
     public changeCurseCard(card: Card) {
-        this.curseCard.addCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
+        this.curseCard.addCard(card, { fromStock: this.curseDeck, originalSide: 'back' });
     }
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {
@@ -236,10 +237,12 @@ class TableCenter {
     public setWickednessTilesSelectable(level: number, show: boolean, selectable: boolean) {
         this.showWickednessTiles(show ? level : null);
         this.wickednessDecks.setSelectableLevel(selectable ? level : null);
+        console.log($('wickedness-tiles-pile-6').innerHTML);
     }
 
     public removeWickednessTileFromPile(level: number, removedTile: WickednessTile) {
         this.wickednessDecks.removeCard(removedTile);
         this.wickednessDecks.setOpened(level, false);
+        this.wickednessDecks.setSelectableLevel(null);
     }
 }

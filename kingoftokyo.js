@@ -106,30 +106,37 @@ var CardStock = /** @class */ (function () {
     };
     CardStock.prototype.addCard = function (card, animation) {
         var moved = false;
-        console.log(card, animation);
         if (animation === null || animation === void 0 ? void 0 : animation.fromStock) {
             var element = document.getElementById(this.manager.getId(card));
             if ((element === null || element === void 0 ? void 0 : element.parentElement) == animation.fromStock.element) {
-                this.element.appendChild(element);
-                this.slideFromElement(element, animation.fromStock.element, animation.originalSide);
-                animation.fromStock.removeCard(card);
+                this.moveFromOtherStock(card, element, animation);
                 moved = true;
             }
         }
         if (!moved) {
             var element = this.manager.getCardElement(card);
-            this.element.appendChild(element);
-            if (animation) {
-                if (animation.fromStock) {
-                    this.slideFromElement(element, animation.fromStock.element, animation.originalSide);
-                    animation.fromStock.removeCard(card);
-                }
-                else if (animation.fromElement && element.closest("#" + animation.fromElement.id)) {
-                    this.slideFromElement(element, animation.fromElement, animation.originalSide);
-                }
+            this.moveFromElement(card, element, animation);
+        }
+        this.setSelectableCard(card, this.selectionMode != 'none');
+        this.cards.push(card);
+    };
+    CardStock.prototype.moveFromOtherStock = function (card, cardElement, animation) {
+        this.element.appendChild(cardElement);
+        cardElement.classList.remove('selectable', 'selected');
+        this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+        animation.fromStock.removeCard(card);
+    };
+    CardStock.prototype.moveFromElement = function (card, cardElement, animation) {
+        this.element.appendChild(cardElement);
+        if (animation) {
+            if (animation.fromStock) {
+                this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+                animation.fromStock.removeCard(card);
+            }
+            else if (animation.fromElement && cardElement.closest("#" + animation.fromElement.id)) {
+                this.slideFromElement(cardElement, animation.fromElement, animation.originalSide);
             }
         }
-        this.cards.push(card);
     };
     CardStock.prototype.addCards = function (cards, animation, shift) {
         var _this = this;
@@ -164,12 +171,14 @@ var CardStock = /** @class */ (function () {
             this.cards.splice(index, 1);
         }
     };
+    CardStock.prototype.setSelectableCard = function (card, selectable) {
+        var element = this.manager.getCardElement(card);
+        element.classList.toggle('selectable', selectable);
+    };
     CardStock.prototype.setSelectionMode = function (selectionMode) {
         var _this = this;
-        this.cards.forEach(function (card) {
-            var element = _this.manager.getCardElement(card);
-            element.classList.toggle('selectable', selectionMode != 'none');
-        });
+        this.cards.forEach(function (card) { return _this.setSelectableCard(card, selectionMode != 'none'); });
+        this.element.classList.toggle('selectable', selectionMode != 'none');
         this.selectionMode = selectionMode;
     };
     CardStock.prototype.selectCard = function (card, silent) {
@@ -304,16 +313,18 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var LineStock = /** @class */ (function (_super) {
     __extends(LineStock, _super);
-    function LineStock(manager, element, wrap, direction, center) {
-        if (wrap === void 0) { wrap = true; }
+    function LineStock(manager, element, wrap, direction, center, gap) {
+        if (wrap === void 0) { wrap = 'wrap'; }
         if (direction === void 0) { direction = 'row'; }
         if (center === void 0) { center = true; }
+        if (gap === void 0) { gap = '8px'; }
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
-        element.dataset.wrap = wrap.toString();
-        element.dataset.direction = direction;
         element.dataset.center = center.toString();
+        element.style.setProperty('--wrap', wrap);
+        element.style.setProperty('--direction', direction);
+        element.style.setProperty('--gap', gap);
         return _this;
     }
     return LineStock;
@@ -355,10 +366,13 @@ var VisibleDeck = /** @class */ (function (_super) {
 }(CardStock));
 var AllVisibleDeck = /** @class */ (function (_super) {
     __extends(AllVisibleDeck, _super);
-    function AllVisibleDeck(manager, element) {
+    function AllVisibleDeck(manager, element, width, height, shift) {
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
+        element.style.setProperty('--width', width);
+        element.style.setProperty('--height', height);
+        element.style.setProperty('--shift', shift);
         return _this;
     }
     AllVisibleDeck.prototype.addCard = function (card, animation) {
@@ -2206,7 +2220,7 @@ var WickednessDecks = /** @class */ (function (_super) {
         _this.decks = [];
         WICKEDNESS_LEVELS.forEach(function (level) {
             dojo.place("<div id=\"wickedness-tiles-pile-" + level + "\" class=\"wickedness-tiles-pile wickedness-tile-stock\"></div>", 'wickedness-board');
-            _this.decks[level] = new AllVisibleDeck(manager, document.getElementById("wickedness-tiles-pile-" + level));
+            _this.decks[level] = new AllVisibleDeck(manager, document.getElementById("wickedness-tiles-pile-" + level), '132px', '81px', '3px');
             _this.decks[level].onSelectionChange = function (selection, lastChange) { return _this.selectionChange(selection, lastChange); };
         });
         return _this;
@@ -2233,7 +2247,7 @@ var WickednessDecks = /** @class */ (function (_super) {
     WickednessDecks.prototype.setSelectableLevel = function (level) {
         var _this = this;
         WICKEDNESS_LEVELS.forEach(function (l) {
-            _this.decks[l].setSelectionMode(l === level ? 'single' : 'none');
+            _this.decks[l].setSelectionMode(l == level ? 'single' : 'none');
         });
     };
     WickednessDecks.prototype.selectionChange = function (selection, lastChange) {
@@ -4254,7 +4268,7 @@ var TableCenter = /** @class */ (function () {
         dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'table-curse-cards');
         this.curseCard = new VisibleDeck(this.game.curseCardsManager, document.getElementById('curse-card'));
         this.curseCard.addCard(curseCard);
-        new HiddenDeck(this.game.curseCardsManager, document.getElementById('curse-deck'));
+        this.curseDeck = new HiddenDeck(this.game.curseCardsManager, document.getElementById('curse-deck'));
         this.game.addTooltipHtml("curse-deck", "\n        <strong>" + _("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
@@ -4333,7 +4347,7 @@ var TableCenter = /** @class */ (function () {
         return this.tokyoTower;
     };
     TableCenter.prototype.changeCurseCard = function (card) {
-        this.curseCard.addCard(card, { fromElement: document.getElementById('curse-deck'), originalSide: 'back' });
+        this.curseCard.addCard(card, { fromStock: this.curseDeck, originalSide: 'back' });
     };
     TableCenter.prototype.createWickednessTiles = function (wickednessTiles) {
         var _this = this;
@@ -4374,10 +4388,12 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.setWickednessTilesSelectable = function (level, show, selectable) {
         this.showWickednessTiles(show ? level : null);
         this.wickednessDecks.setSelectableLevel(selectable ? level : null);
+        console.log($('wickedness-tiles-pile-6').innerHTML);
     };
     TableCenter.prototype.removeWickednessTileFromPile = function (level, removedTile) {
         this.wickednessDecks.removeCard(removedTile);
         this.wickednessDecks.setOpened(level, false);
+        this.wickednessDecks.setSelectableLevel(null);
     };
     return TableCenter;
 }());

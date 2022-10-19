@@ -34,32 +34,42 @@ class CardStock<T> {
 
     public addCard(card: T, animation?: CardAnimation<T>) {
         let moved = false;
-        console.log(card, animation);
         if (animation?.fromStock) {
             let element = document.getElementById(this.manager.getId(card));
             if (element?.parentElement == animation.fromStock.element) {
-                this.element.appendChild(element);
-                this.slideFromElement(element, animation.fromStock.element, animation.originalSide);
-                animation.fromStock.removeCard(card);
+                this.moveFromOtherStock(card, element, animation);
                 moved = true;
             }
         }
 
         if (!moved) {
             const element = this.manager.getCardElement(card);
-            this.element.appendChild(element);
-    
-            if (animation) {
-                if (animation.fromStock) {
-                    this.slideFromElement(element, animation.fromStock.element, animation.originalSide);
-                    animation.fromStock.removeCard(card);
-                } else if (animation.fromElement && element.closest(`#${animation.fromElement.id}`)) {
-                    this.slideFromElement(element, animation.fromElement, animation.originalSide);
-                }
-            }
+            this.moveFromElement(card, element, animation);
         }
 
+        this.setSelectableCard(card, this.selectionMode != 'none');
+
         this.cards.push(card);
+    }
+
+    protected moveFromOtherStock(card: T, cardElement: HTMLElement, animation: CardAnimation<T>) {
+        this.element.appendChild(cardElement);
+        cardElement.classList.remove('selectable', 'selected');
+        this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+        animation.fromStock.removeCard(card);
+    }
+
+    protected moveFromElement(card: T, cardElement: HTMLElement, animation: CardAnimation<T>) {
+        this.element.appendChild(cardElement);
+    
+        if (animation) {
+            if (animation.fromStock) {
+                this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+                animation.fromStock.removeCard(card);
+            } else if (animation.fromElement && cardElement.closest(`#${animation.fromElement.id}`)) {
+                this.slideFromElement(cardElement, animation.fromElement, animation.originalSide);
+            }
+        }
     }
 
     public addCards(cards: T[], animation?: CardAnimation<T>, shift: number | boolean = false) {
@@ -92,12 +102,14 @@ class CardStock<T> {
         }
     }
 
-    public setSelectionMode(selectionMode: CardSelectionMode) {
-        this.cards.forEach(card => {
-            const element = this.manager.getCardElement(card);
-            element.classList.toggle('selectable', selectionMode != 'none');
-        });
+    protected setSelectableCard(card: T, selectable: boolean) {
+        const element = this.manager.getCardElement(card);
+        element.classList.toggle('selectable', selectable);
+    }
 
+    public setSelectionMode(selectionMode: CardSelectionMode) {
+        this.cards.forEach(card => this.setSelectableCard(card, selectionMode != 'none'));
+        this.element.classList.toggle('selectable', selectionMode != 'none');
         this.selectionMode = selectionMode;
     }
 

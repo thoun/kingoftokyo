@@ -2,21 +2,9 @@
 
     &.line-stock {
         display: flex;
-        gap: 10px;
-
-        &[data-wrap="true"] {
-            flex-wrap: wrap;
-        }
-        &[data-wrap="false"] {
-            flex-wrap: nowrap;
-        }
-
-        &[data-direction="row"] {
-            flex-direction: row;
-        }
-        &[data-direction="column"] {
-            flex-direction: column;
-        }
+        gap: var(--gap);
+        flex-wrap: var(--wrap);
+        flex-direction: var(--direction);
 
         &[data-center="true"] {
             justify-content: center;

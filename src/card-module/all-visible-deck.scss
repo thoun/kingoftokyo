@@ -2,7 +2,7 @@
     &.all-visible-deck {
         position: absolute;
         --tile-count: 1;
-        width: calc(132px + var(--tile-count) * 3px);
+        width: calc(var(--width) + var(--tile-count) * var(--shift));
         transition: height 0.5s ease-in-out, background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
         opacity: var(--tile-count);
 
@@ -10,17 +10,16 @@
             position: absolute;
             margin: 0;
             transition: left 0.5s ease-in-out, top 0.5s ease-in-out;
-            top: calc(3px * var(--order));
-            left: calc(3px * var(--order));
+            top: calc(var(--shift) * var(--order));
+            left: calc(var(--shift) * var(--order));
         }
 
         &:hover, &:active, &.opened {
-            height: calc(85px * var(--tile-count) - 3px);
+            height: calc((var(--height) + var(--shift)) * var(--tile-count) - var(--shift));
             z-index: 1;
 
             & > * {
-                left: 0px;
-                top: calc(85px * var(--order));
+                top: calc((var(--height) + var(--shift)) * var(--order));
             }
         }
     }

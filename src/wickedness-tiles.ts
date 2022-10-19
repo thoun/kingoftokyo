@@ -12,7 +12,7 @@ class WickednessDecks extends CardStock<WickednessTile> {
 
         WICKEDNESS_LEVELS.forEach(level => {
             dojo.place(`<div id="wickedness-tiles-pile-${level}" class="wickedness-tiles-pile wickedness-tile-stock"></div>`, 'wickedness-board');
-            this.decks[level] = new AllVisibleDeck<WickednessTile>(manager, document.getElementById(`wickedness-tiles-pile-${level}`));
+            this.decks[level] = new AllVisibleDeck<WickednessTile>(manager, document.getElementById(`wickedness-tiles-pile-${level}`), '132px', '81px', '3px');
             this.decks[level].onSelectionChange = (selection: WickednessTile[], lastChange: WickednessTile | null) => this.selectionChange(selection, lastChange);
         });
     }   
@@ -39,7 +39,7 @@ class WickednessDecks extends CardStock<WickednessTile> {
     
     public setSelectableLevel(level: number | null) {
         WICKEDNESS_LEVELS.forEach(l => {
-            this.decks[l].setSelectionMode(l === level ? 'single' : 'none');
+            this.decks[l].setSelectionMode(l == level ? 'single' : 'none');
         });
     }
 

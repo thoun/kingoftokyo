@@ -1,6 +1,9 @@
 class AllVisibleDeck<T> extends CardStock<T> {
-    constructor(protected manager: CardManager<T>, protected element: HTMLElement) {
+    constructor(protected manager: CardManager<T>, protected element: HTMLElement, width: string, height: string, shift: string) {
         super(manager, element);
+        element.style.setProperty('--width', width);
+        element.style.setProperty('--height', height);
+        element.style.setProperty('--shift', shift);
     }        
 
     public addCard(card: T, animation?: CardAnimation<T>) {
