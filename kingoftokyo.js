@@ -330,14 +330,14 @@ var CardStock = /** @class */ (function () {
                         element.dataset.side = side_1;
                     });
                 }
+                //window.innerHeight;
                 setTimeout(function () {
                     element.style.transition = "transform 0.5s linear";
                     element.style.transform = null;
-                });
+                }, 10);
                 setTimeout(function () {
                     element.style.zIndex = null;
                     element.style.transition = null;
-                    element.style.position = null;
                     success(true);
                 }, 600);
             }

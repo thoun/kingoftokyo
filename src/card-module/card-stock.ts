@@ -267,14 +267,14 @@ class CardStock<T> {
                     });
                 }
         
+                //window.innerHeight;
                 setTimeout(() => {
                     element.style.transition = `transform 0.5s linear`;
                     element.style.transform = null;
-                });
+                }, 10);
                 setTimeout(() => {
                     element.style.zIndex = null;
                     element.style.transition = null;
-                    element.style.position = null;
                     success(true);
                 }, 600);
             } else {
