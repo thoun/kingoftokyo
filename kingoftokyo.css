@@ -2549,7 +2549,7 @@ html[data-dark-edition=true] .double-selection .no-visible-selection-except-doub
 html[data-dark-edition=true] .highlight-evolution, html[data-dark-edition=true] .highlight-zombify {
   box-shadow: 0px 0px 5px 5px #ffeb68;
 }
-html[data-dark-edition=true] #table #table-center #deck-wrapper #deck #card-deck-hidden-deck-back {
+html[data-dark-edition=true] #table #table-center #table-power-cards #deck-wrapper #deck #card-deck-hidden-deck-back {
   background: url("img/dark/card-back.jpg");
 }
 html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition], html[data-dark-edition=true] .card-stock #deck {

@@ -330,9 +330,10 @@ var CardStock = /** @class */ (function () {
                         element.dataset.side = side_1;
                     });
                 }
-                //window.innerHeight;
                 setTimeout(function () {
+                    element.offsetHeight;
                     element.style.transition = "transform 0.5s linear";
+                    element.offsetHeight;
                     element.style.transform = null;
                 }, 10);
                 setTimeout(function () {
@@ -4363,7 +4364,11 @@ var TableCenter = /** @class */ (function () {
             this.visibleCards.addCards(cards);
         }
         else {
-            this.deck.addCards(cards);
+            var cardsForDeck = cards.slice();
+            cardsForDeck.sort(function (a, b) { return b.location_arg - a.location_arg; });
+            // add 3 - 2 - 1
+            this.deck.addCards(cardsForDeck);
+            // reveal 1 - 2 - 3
             this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
         }
     };

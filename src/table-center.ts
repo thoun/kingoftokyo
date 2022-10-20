@@ -153,7 +153,11 @@ class TableCenter {
         if (init) {
             this.visibleCards.addCards(cards);
         } else {
-            this.deck.addCards(cards);
+            const cardsForDeck = cards.slice();
+            cardsForDeck.sort((a, b) => b.location_arg - a.location_arg);
+            // add 3 - 2 - 1
+            this.deck.addCards(cardsForDeck);
+            // reveal 1 - 2 - 3
             this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
         }
     }

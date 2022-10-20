@@ -78,10 +78,12 @@ html[data-dark-edition="true"] {
 
     #table {
         #table-center {
-            #deck-wrapper {
-                #deck {
-                    #card-deck-hidden-deck-back {
-                        background: url('img/dark/card-back.jpg');
+            #table-power-cards {
+                #deck-wrapper {
+                    #deck {
+                        #card-deck-hidden-deck-back {
+                            background: url('img/dark/card-back.jpg');
+                        }
                     }
                 }
             }

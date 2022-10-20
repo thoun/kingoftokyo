@@ -22,7 +22,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 9);
-        $this->debugSetEnergy(5);
+        $this->debugSetEnergy(50);
         //$this->debugSetPlayerPoints(2343493, 17);
         $this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);

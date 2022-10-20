@@ -267,9 +267,10 @@ class CardStock<T> {
                     });
                 }
         
-                //window.innerHeight;
                 setTimeout(() => {
+                    element.offsetHeight;
                     element.style.transition = `transform 0.5s linear`;
+                    element.offsetHeight;
                     element.style.transform = null;
                 }, 10);
                 setTimeout(() => {
