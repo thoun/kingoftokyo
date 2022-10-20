@@ -387,7 +387,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         if ((this as any).isCurrentPlayerActive()) {
-            this.tableCenter.setVisibleCardsSelectionMode(1);
+            this.tableCenter.setVisibleCardsSelectionMode('single');
 
             if (args.chooseEvolution) {
                 const playerTable = this.getPlayerTable(this.getPlayerId());
@@ -753,7 +753,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 playerId = this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId;
             }
 
-            this.tableCenter.setVisibleCardsSelectionMode(1);
+            this.tableCenter.setVisibleCardsSelectionMode('single');
 
             if (this.isPowerUpExpansion()) {                
                 this.getPlayerTable(playerId).reservedCards.setSelectionMode('single');
@@ -833,7 +833,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }</div>`, `maintitlebar_content`);
                 break;
             case 'MyToy':
-                this.tableCenter.setVisibleCardsSelectionMode(1);
+                this.tableCenter.setVisibleCardsSelectionMode('single');
                 break;
             case 'SuperiorAlienTechnology':
                 const superiorAlienTechnologyArgs = question.args as SuperiorAlienTechnologyQuestionArgs;
@@ -866,7 +866,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         switch (stateName) {
             case 'chooseInitialCard':                
-                this.tableCenter.setVisibleCardsSelectionMode(0);
+                this.tableCenter.setVisibleCardsSelectionMode('none');
                 this.tableCenter.setVisibleCardsSelectionClass(false);
                 this.playerTables.forEach(playerTable => {
                     playerTable.hideEvolutionPickStock();
@@ -962,7 +962,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;            
             case 'MyToy':
-                this.tableCenter.setVisibleCardsSelectionMode(0);
+                this.tableCenter.setVisibleCardsSelectionMode('none');
                 break;
         }
     }
@@ -983,7 +983,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onLeavingBuyCard() {
-        this.tableCenter.setVisibleCardsSelectionMode(0);
+        this.tableCenter.setVisibleCardsSelectionMode('none');
         dojo.query('.stockitem').removeClass('disabled');
         this.playerTables.forEach(playerTable => playerTable.cards.setSelectionMode('none'));            
         this.tableCenter.hidePickStock();
@@ -1122,7 +1122,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'chooseInitialCard':
                     if (this.isInitialCardDoubleSelection()) {
                         (this as any).addActionButton('confirmInitialCards_button', _("Confirm"), () => this.chooseInitialCard(
-                            Number(this.tableCenter.getVisibleCards().getSelectedItems()[0]?.id),
+                            Number(this.tableCenter.getVisibleCards().getSelection()[0]?.id),
                             Number(this.getPlayerTable(this.getPlayerId()).pickEvolutionCards.getSelection()[0]?.id),
                         ));
                         document.getElementById(`confirmInitialCards_button`).classList.add('disabled');
@@ -1333,6 +1333,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                         (this as any).addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only')}) + ')', () => this.onRenew(3024));
                     }
                     (this as any).addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.onRenew(4));
+                    document.getElementById('renew_button').dataset.enableAtEnergy = '2';
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
@@ -1751,7 +1752,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private confirmDoubleSelectionCheckState() {
-        const costumeSelected = this.tableCenter.getVisibleCards()?.getSelectedItems().length === 1;
+        const costumeSelected = this.tableCenter.getVisibleCards()?.getSelection().length === 1;
         const evolutionSelected = this.getPlayerTable(this.getPlayerId())?.pickEvolutionCards.getSelection().length === 1;
         document.getElementById(`confirmInitialCards_button`)?.classList.toggle('disabled', !costumeSelected || !evolutionSelected);
     }
@@ -1785,7 +1786,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
             dojo.removeClass('kot-table', 'pickMonsterOrEvolutionDeck');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
-            this.tableCenter.getVisibleCards().updateDisplay();
         }
     }
 
@@ -1957,7 +1957,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         const disabledCardsIds = [...disabledIds, ...Object.keys(cardsCosts).map(cardId => Number(cardId))];
         disabledCardsIds.forEach(id => {
             const disabled = disabledIds.some(disabledId => disabledId == id) || cardsCosts[id] > playerEnergy;
-            const cardDiv = document.querySelector(`.card-stock div[id$="_item_${id}"]`) as HTMLElement;
+            const cardDiv = this.cardsManager.getCardElement({ id } as Card);
             cardDiv?.classList.toggle('disabled', disabled);
         });
     }
@@ -3655,17 +3655,18 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
         } else if (notif.args.newCard) {
             const newCard = notif.args.newCard;
-            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
-            this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
-            this.tableCenter.changeVisibleCardWeight(newCard);
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }).then(() => {
+                this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
+                this.tableCenter.changeVisibleCardWeight(newCard);
+            });
         } else if (notif.args.from > 0) {
-            const fromStock = notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards, 
+            const fromStock = notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards;
             this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock });
         } else { // from Made in a lab Pick
             if (this.tableCenter.getPickCard()) { // active player
                 this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getPickCard() });
             } else {
-                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromElement: 'deck' });
+                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
             }
         }
 
@@ -3680,7 +3681,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const newCard = notif.args.newCard;
         this.getPlayerTable(notif.args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
-        this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
+        this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
         this.tableCenter.changeVisibleCardWeight(newCard);
         
 

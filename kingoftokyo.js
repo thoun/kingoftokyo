@@ -130,51 +130,59 @@ var CardStock = /** @class */ (function () {
     CardStock.prototype.getCardElement = function (card) {
         return document.getElementById(this.manager.getId(card));
     };
-    CardStock.prototype.addCard = function (card, animation) {
+    CardStock.prototype.addCard = function (card, animation, visible) {
+        if (visible === void 0) { visible = true; }
         if (this.cardInStock(card)) {
             return;
         }
+        var promise;
         // we check if card is in stock then we ignore animation
         var currentStock = this.manager.getCardStock(card);
         if (currentStock === null || currentStock === void 0 ? void 0 : currentStock.cardInStock(card)) {
             var element = document.getElementById(this.manager.getId(card));
-            this.moveFromOtherStock(card, element, __assign(__assign({}, animation), { fromStock: currentStock }));
+            promise = this.moveFromOtherStock(card, element, __assign(__assign({}, animation), { fromStock: currentStock }));
+            element.dataset.side = visible ? 'front' : 'back';
         }
         else if ((animation === null || animation === void 0 ? void 0 : animation.fromStock) && animation.fromStock.cardInStock(card)) {
             var element = document.getElementById(this.manager.getId(card));
-            this.moveFromOtherStock(card, element, animation);
+            promise = this.moveFromOtherStock(card, element, animation);
         }
         else {
-            var element = this.manager.createCardElement(card);
-            this.moveFromElement(card, element, animation);
+            var element = this.manager.createCardElement(card, visible);
+            promise = this.moveFromElement(card, element, animation);
         }
         this.setSelectableCard(card, this.selectionMode != 'none');
         this.cards.push(card);
+        return promise;
     };
     CardStock.prototype.moveFromOtherStock = function (card, cardElement, animation) {
+        var promise;
         this.element.appendChild(cardElement);
         cardElement.classList.remove('selectable', 'selected');
-        this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+        promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
         animation.fromStock.removeCard(card);
+        return promise;
     };
     CardStock.prototype.moveFromElement = function (card, cardElement, animation) {
+        var promise;
         this.element.appendChild(cardElement);
         if (animation) {
             if (animation.fromStock) {
-                this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+                promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
                 animation.fromStock.removeCard(card);
             }
-            else if (animation.fromElement && cardElement.closest("#" + animation.fromElement.id)) {
-                this.slideFromElement(cardElement, animation.fromElement, animation.originalSide);
+            else if (animation.fromElement) {
+                promise = this.slideFromElement(cardElement, animation.fromElement, animation.originalSide, animation.rotationDelta);
             }
         }
+        return promise;
     };
     CardStock.prototype.addCards = function (cards, animation, shift) {
         var _this = this;
         if (shift === void 0) { shift = false; }
         if (shift === true) {
             // TODO chain promise
-            shift = 500;
+            shift = 800;
         }
         if (shift) {
             var _loop_1 = function (i) {
@@ -220,7 +228,6 @@ var CardStock = /** @class */ (function () {
         var _this = this;
         var _a;
         if (silent === void 0) { silent = false; }
-        console.log('selectCard', card, silent);
         if (this.selectionMode == 'none') {
             return;
         }
@@ -300,34 +307,41 @@ var CardStock = /** @class */ (function () {
         (_a = this.onCardClick) === null || _a === void 0 ? void 0 : _a.call(this, card);
     };
     CardStock.prototype.slideFromElement = function (element, fromElement, originalSide, rotationDelta) {
-        if (rotationDelta === void 0) { rotationDelta = 0; }
-        var originBR = fromElement.getBoundingClientRect();
-        if (document.visibilityState !== 'hidden' && !this.manager.game.instantaneousMode) {
-            var destinationBR = element.getBoundingClientRect();
-            var deltaX = (destinationBR.left + destinationBR.right) / 2 - (originBR.left + originBR.right) / 2;
-            var deltaY = (destinationBR.top + destinationBR.bottom) / 2 - (originBR.top + originBR.bottom) / 2;
-            element.style.zIndex = '10';
-            element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px) rotate(" + rotationDelta + "deg)";
-            var side_1 = element.dataset.side;
-            if (originalSide && originalSide != side_1) {
-                var cardSides_1 = element.getElementsByClassName('card-sides')[0];
-                cardSides_1.style.transition = 'none';
-                element.dataset.side = originalSide;
+        var _this = this;
+        var promise = new Promise(function (success) {
+            var originBR = fromElement.getBoundingClientRect();
+            if (document.visibilityState !== 'hidden' && !_this.manager.game.instantaneousMode) {
+                var destinationBR = element.getBoundingClientRect();
+                var deltaX = (destinationBR.left + destinationBR.right) / 2 - (originBR.left + originBR.right) / 2;
+                var deltaY = (destinationBR.top + destinationBR.bottom) / 2 - (originBR.top + originBR.bottom) / 2;
+                element.style.zIndex = '10';
+                element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px) rotate(" + (rotationDelta !== null && rotationDelta !== void 0 ? rotationDelta : 0) + "deg)";
+                var side_1 = element.dataset.side;
+                if (originalSide && originalSide != side_1) {
+                    var cardSides_1 = element.getElementsByClassName('card-sides')[0];
+                    cardSides_1.style.transition = 'none';
+                    element.dataset.side = originalSide;
+                    setTimeout(function () {
+                        cardSides_1.style.transition = null;
+                        element.dataset.side = side_1;
+                    });
+                }
                 setTimeout(function () {
-                    cardSides_1.style.transition = null;
-                    element.dataset.side = side_1;
+                    element.style.transition = "transform 0.5s linear";
+                    element.style.transform = null;
                 });
+                setTimeout(function () {
+                    element.style.zIndex = null;
+                    element.style.transition = null;
+                    element.style.position = null;
+                    success(true);
+                }, 600);
             }
-            setTimeout(function () {
-                element.style.transition = "transform 0.5s linear";
-                element.style.transform = null;
-            });
-            setTimeout(function () {
-                element.style.zIndex = null;
-                element.style.transition = null;
-                element.style.position = null;
-            }, 600);
-        }
+            else {
+                success(true);
+            }
+        });
+        return promise;
     };
     return CardStock;
 }());
@@ -348,23 +362,31 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var LineStock = /** @class */ (function (_super) {
     __extends(LineStock, _super);
-    function LineStock(manager, element, wrap, direction, center, gap) {
-        if (wrap === void 0) { wrap = 'wrap'; }
-        if (direction === void 0) { direction = 'row'; }
-        if (center === void 0) { center = true; }
-        if (gap === void 0) { gap = '8px'; }
+    function LineStock(manager, element, settings) {
+        var _a, _b, _c, _d;
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
         element.classList.add('line-stock');
-        element.dataset.center = center.toString();
-        element.style.setProperty('--wrap', wrap);
-        element.style.setProperty('--direction', direction);
-        element.style.setProperty('--gap', gap);
+        element.dataset.center = ((_a = settings === null || settings === void 0 ? void 0 : settings.center) !== null && _a !== void 0 ? _a : true).toString();
+        element.style.setProperty('--wrap', (_b = settings === null || settings === void 0 ? void 0 : settings.wrap) !== null && _b !== void 0 ? _b : 'wrap');
+        element.style.setProperty('--direction', (_c = settings === null || settings === void 0 ? void 0 : settings.direction) !== null && _c !== void 0 ? _c : 'row');
+        element.style.setProperty('--gap', (_d = settings === null || settings === void 0 ? void 0 : settings.gap) !== null && _d !== void 0 ? _d : '8px');
         return _this;
     }
     return LineStock;
 }(CardStock));
+var SlotStock = /** @class */ (function (_super) {
+    __extends(SlotStock, _super);
+    function SlotStock(manager, element, settings) {
+        var _this = _super.call(this, manager, element, settings) || this;
+        _this.manager = manager;
+        _this.element = element;
+        element.classList.add('slot-stock');
+        return _this;
+    }
+    return SlotStock;
+}(LineStock));
 var HiddenDeck = /** @class */ (function (_super) {
     __extends(HiddenDeck, _super);
     function HiddenDeck(manager, element, empty) {
@@ -379,6 +401,10 @@ var HiddenDeck = /** @class */ (function (_super) {
     }
     HiddenDeck.prototype.setEmpty = function (empty) {
         this.element.dataset.empty = empty.toString();
+    };
+    HiddenDeck.prototype.addCard = function (card, animation, visible) {
+        if (visible === void 0) { visible = false; }
+        return _super.prototype.addCard.call(this, card, animation, visible);
     };
     return HiddenDeck;
 }(CardStock));
@@ -468,12 +494,13 @@ var CardManager = /** @class */ (function () {
         element.classList.add('card');
         document.body.appendChild(element);
         (_b = (_a = this.settings).setupDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element);
-        if (visible) {
-            (_d = (_c = this.settings).setupFrontDiv) === null || _d === void 0 ? void 0 : _d.call(_c, card, element.getElementsByClassName('front')[0]);
-        }
+        (_d = (_c = this.settings).setupFrontDiv) === null || _d === void 0 ? void 0 : _d.call(_c, card, element.getElementsByClassName('front')[0]);
         (_f = (_e = this.settings).setupBackDiv) === null || _f === void 0 ? void 0 : _f.call(_e, card, element.getElementsByClassName('back')[0]);
         document.body.removeChild(element);
         return element;
+    };
+    CardManager.prototype.getCardElement = function (card) {
+        return document.getElementById(this.getId(card));
     };
     CardManager.prototype.removeCard = function (card) {
         var id = this.getId(card);
@@ -827,10 +854,20 @@ var CardsManager = /** @class */ (function (_super) {
                 }
             },
             setupBackDiv: function (card, div) {
-                if (FLIPPABLE_CARDS.includes(card.type)) {
+                var darkEdition = _this.game.isDarkEdition();
+                if (card.type < 200) {
+                    div.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "card-back.jpg')";
+                }
+                else if (card.type < 300) {
+                    div.style.backgroundImage = "url('" + g_gamethemeurl + "img/card-back-costume.jpg')";
+                }
+                else if (FLIPPABLE_CARDS.includes(card.type)) {
                     _this.setFrontBackground(div, card.type, card.side);
                     _this.setDivAsCard(div, 301, 1);
                     _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type, card.side));
+                }
+                else if (card.type == 999) {
+                    _this.setFrontBackground(div, card.type, card.side);
                 }
             }
         }) || this;
@@ -1480,7 +1517,6 @@ var CardsManager = /** @class */ (function (_super) {
             var index = KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
             cardDiv.style.backgroundPositionX = (index % 10) * 100 / 9 + "%";
             cardDiv.style.backgroundPositionY = Math.floor(index / 10) * 100 / 4 + "%";
-            console.log(cardDiv);
         }
         else if (cardType < 200) {
             var index = DISCARD_CARDS_LIST[version].findIndex(function (type) { return type == cardType % 100; });
@@ -4237,17 +4273,10 @@ var TableCenter = /** @class */ (function () {
     }
     TableCenter.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType) {
         var _this = this;
-        this.visibleCards = new ebg.stock();
-        this.visibleCards.setSelectionAppearance('class');
-        this.visibleCards.selectionClass = 'no-visible-selection-except-double-selection';
-        this.visibleCards.create(this.game, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
-        this.visibleCards.setSelectionMode(0);
-        this.visibleCards.onItemCreate = function (card_div, card_type_id) { return _this.game.cardsManager.setupNewCard(card_div, card_type_id); };
-        this.visibleCards.image_items_per_row = 10;
-        this.visibleCards.centerItems = true;
-        dojo.connect(this.visibleCards, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleCardClick(_this.visibleCards, Number(item_id)); });
-        this.game.cardsManager.setupCards([this.visibleCards]);
-        this.setVisibleCards(visibleCards);
+        this.deck = new HiddenDeck(this.game.cardsManager, document.getElementById('deck'));
+        this.visibleCards = new LineStock(this.game.cardsManager, document.getElementById('visible-cards'));
+        this.visibleCards.onSelectionChange = function (_, card) { return _this.game.onVisibleCardClick(_this.visibleCards, card); };
+        this.setVisibleCards(visibleCards, true);
         this.setTopDeckCardBackType(topDeckCardBackType);
     };
     TableCenter.prototype.createCurseCard = function (curseCard) {
@@ -4267,21 +4296,14 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         if (!this.pickCard) {
             dojo.place('<div id="pick-stock" class="card-stock"></div>', 'deck-wrapper');
-            this.pickCard = new ebg.stock();
-            this.pickCard.setSelectionAppearance('class');
-            this.pickCard.selectionClass = 'no-visible-selection';
-            this.pickCard.create(this.game, $('pick-stock'), CARD_WIDTH, CARD_HEIGHT);
-            this.pickCard.setSelectionMode(1);
-            this.pickCard.onItemCreate = function (card_div, card_type_id) { return _this.game.cardsManager.setupNewCard(card_div, card_type_id); };
-            this.pickCard.image_items_per_row = 10;
-            this.pickCard.centerItems = true;
-            dojo.connect(this.pickCard, 'onChangeSelection', this, function (_, item_id) { return _this.game.onVisibleCardClick(_this.pickCard, Number(item_id)); });
+            this.pickCard = new LineStock(this.game.cardsManager, document.getElementById('pick-stock'));
+            this.pickCard.setSelectionMode('single');
+            this.pickCard.onSelectionChange = function (_, card) { return _this.game.onVisibleCardClick(_this.pickCard, card); };
         }
         else {
-            document.getElementById('pick-stock').style.display = 'block';
+            document.getElementById('pick-stock').style.display = null;
         }
-        this.game.cardsManager.setupCards([this.pickCard]);
-        this.game.cardsManager.addCardsToStock(this.pickCard, cards);
+        this.pickCard.addCards(cards);
     };
     TableCenter.prototype.hidePickStock = function () {
         var div = document.getElementById('pick-stock');
@@ -4297,31 +4319,38 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.setTopDeckCardBackType = function (topDeckCardBackType) {
         if (topDeckCardBackType !== undefined && topDeckCardBackType !== null) {
-            document.getElementById('deck').dataset.type = topDeckCardBackType;
+            document.getElementById('card-deck-hidden-deck-back').dataset.type = topDeckCardBackType;
         }
     };
     TableCenter.prototype.setInitialCards = function (cards) {
-        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
+        this.deck.addCards(cards);
+        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
     };
-    TableCenter.prototype.setVisibleCards = function (cards) {
+    TableCenter.prototype.setVisibleCards = function (cards, init) {
+        if (init === void 0) { init = false; }
         var newWeights = {};
         cards.forEach(function (card) { return newWeights[card.type] = card.location_arg; });
-        this.visibleCards.changeItemsWeight(newWeights);
-        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
+        // TODO this.visibleCards.changeItemsWeight(newWeights);
+        if (init) {
+            this.visibleCards.addCards(cards);
+        }
+        else {
+            this.deck.addCards(cards);
+            this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
+        }
     };
     TableCenter.prototype.removeOtherCardsFromPick = function (cardId) {
         var _this = this;
         var _a;
-        var removeFromPickIds = (_a = this.pickCard) === null || _a === void 0 ? void 0 : _a.items.map(function (item) { return Number(item.id); });
+        var removeFromPickIds = (_a = this.pickCard) === null || _a === void 0 ? void 0 : _a.getCards().map(function (item) { return Number(item.id); });
         removeFromPickIds === null || removeFromPickIds === void 0 ? void 0 : removeFromPickIds.forEach(function (id) {
             if (id !== cardId) {
-                _this.pickCard.removeFromStockById('' + id);
+                _this.pickCard.removeCard({ id: id });
             }
         });
     };
     TableCenter.prototype.changeVisibleCardWeight = function (card) {
-        var _a;
-        this.visibleCards.changeItemsWeight((_a = {}, _a[card.type] = card.location_arg, _a));
+        // TODO this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
     };
     TableCenter.prototype.getVisibleCards = function () {
         return this.visibleCards;
@@ -4887,7 +4916,7 @@ var KingOfTokyo = /** @class */ (function () {
             this.tableCenter.setVisibleCardsSelectionClass(args.chooseEvolution);
         }
         if (this.isCurrentPlayerActive()) {
-            this.tableCenter.setVisibleCardsSelectionMode(1);
+            this.tableCenter.setVisibleCardsSelectionMode('single');
             if (args.chooseEvolution) {
                 var playerTable = this.getPlayerTable(this.getPlayerId());
                 playerTable.showEvolutionPickStock(args._private.evolutions);
@@ -5213,7 +5242,7 @@ var KingOfTokyo = /** @class */ (function () {
             if (bamboozle) {
                 playerId_3 = this.gamedatas.gamestate.args.question.args.cardBeingBought.playerId;
             }
-            this.tableCenter.setVisibleCardsSelectionMode(1);
+            this.tableCenter.setVisibleCardsSelectionMode('single');
             if (this.isPowerUpExpansion()) {
                 this.getPlayerTable(playerId_3).reservedCards.setSelectionMode('single');
             }
@@ -5283,7 +5312,7 @@ var KingOfTokyo = /** @class */ (function () {
                 }).join('') + "</div>", "maintitlebar_content");
                 break;
             case 'MyToy':
-                this.tableCenter.setVisibleCardsSelectionMode(1);
+                this.tableCenter.setVisibleCardsSelectionMode('single');
                 break;
             case 'SuperiorAlienTechnology':
                 var superiorAlienTechnologyArgs = question.args;
@@ -5313,7 +5342,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         switch (stateName) {
             case 'chooseInitialCard':
-                this.tableCenter.setVisibleCardsSelectionMode(0);
+                this.tableCenter.setVisibleCardsSelectionMode('none');
                 this.tableCenter.setVisibleCardsSelectionClass(false);
                 this.playerTables.forEach(function (playerTable) {
                     playerTable.hideEvolutionPickStock();
@@ -5408,7 +5437,7 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 break;
             case 'MyToy':
-                this.tableCenter.setVisibleCardsSelectionMode(0);
+                this.tableCenter.setVisibleCardsSelectionMode('none');
                 break;
         }
     };
@@ -5427,7 +5456,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableCenter.setWickednessTilesSelectable(null, false, false);
     };
     KingOfTokyo.prototype.onLeavingBuyCard = function () {
-        this.tableCenter.setVisibleCardsSelectionMode(0);
+        this.tableCenter.setVisibleCardsSelectionMode('none');
         dojo.query('.stockitem').removeClass('disabled');
         this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode('none'); });
         this.tableCenter.hidePickStock();
@@ -5560,7 +5589,7 @@ var KingOfTokyo = /** @class */ (function () {
                     if (this.isInitialCardDoubleSelection()) {
                         this.addActionButton('confirmInitialCards_button', _("Confirm"), function () {
                             var _a, _b;
-                            return _this.chooseInitialCard(Number((_a = _this.tableCenter.getVisibleCards().getSelectedItems()[0]) === null || _a === void 0 ? void 0 : _a.id), Number((_b = _this.getPlayerTable(_this.getPlayerId()).pickEvolutionCards.getSelection()[0]) === null || _b === void 0 ? void 0 : _b.id));
+                            return _this.chooseInitialCard(Number((_a = _this.tableCenter.getVisibleCards().getSelection()[0]) === null || _a === void 0 ? void 0 : _a.id), Number((_b = _this.getPlayerTable(_this.getPlayerId()).pickEvolutionCards.getSelection()[0]) === null || _b === void 0 ? void 0 : _b.id));
                         });
                         document.getElementById("confirmInitialCards_button").classList.add('disabled');
                     }
@@ -5760,6 +5789,7 @@ var KingOfTokyo = /** @class */ (function () {
                         this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only') }) + ')', function () { return _this.onRenew(3024); });
                     }
                     this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(" ( 2 [Energy])"), function () { return _this.onRenew(4); });
+                    document.getElementById('renew_button').dataset.enableAtEnergy = '2';
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
                     }
@@ -6080,7 +6110,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.confirmDoubleSelectionCheckState = function () {
         var _a, _b, _c;
-        var costumeSelected = ((_a = this.tableCenter.getVisibleCards()) === null || _a === void 0 ? void 0 : _a.getSelectedItems().length) === 1;
+        var costumeSelected = ((_a = this.tableCenter.getVisibleCards()) === null || _a === void 0 ? void 0 : _a.getSelection().length) === 1;
         var evolutionSelected = ((_b = this.getPlayerTable(this.getPlayerId())) === null || _b === void 0 ? void 0 : _b.pickEvolutionCards.getSelection().length) === 1;
         (_c = document.getElementById("confirmInitialCards_button")) === null || _c === void 0 ? void 0 : _c.classList.toggle('disabled', !costumeSelected || !evolutionSelected);
     };
@@ -6108,7 +6138,6 @@ var KingOfTokyo = /** @class */ (function () {
         if (dojo.hasClass('kot-table', 'pickMonsterOrEvolutionDeck')) {
             dojo.removeClass('kot-table', 'pickMonsterOrEvolutionDeck');
             this.tableManager.setAutoZoomAndPlacePlayerTables();
-            this.tableCenter.getVisibleCards().updateDisplay();
         }
     };
     KingOfTokyo.prototype.getStateName = function () {
@@ -6282,10 +6311,11 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {
+        var _this = this;
         var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds, true), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }), true);
         disabledCardsIds.forEach(function (id) {
             var disabled = disabledIds.some(function (disabledId) { return disabledId == id; }) || cardsCosts[id] > playerEnergy;
-            var cardDiv = document.querySelector(".card-stock div[id$=\"_item_" + id + "\"]");
+            var cardDiv = _this.cardsManager.getCardElement({ id: id });
             cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.toggle('disabled', disabled);
         });
     };
@@ -7620,6 +7650,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
+        var _this = this;
         var card = notif.args.card;
         this.tableCenter.changeVisibleCardWeight(card);
         if (notif.args.energy !== undefined) {
@@ -7629,10 +7660,11 @@ var KingOfTokyo = /** @class */ (function () {
             this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
         }
         else if (notif.args.newCard) {
-            var newCard = notif.args.newCard;
-            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
-            this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
-            this.tableCenter.changeVisibleCardWeight(newCard);
+            var newCard_1 = notif.args.newCard;
+            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }).then(function () {
+                _this.tableCenter.getVisibleCards().addCard(newCard_1, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
+                _this.tableCenter.changeVisibleCardWeight(newCard_1);
+            });
         }
         else if (notif.args.from > 0) {
             var fromStock = notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards;
@@ -7643,7 +7675,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getPickCard() });
             }
             else {
-                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromElement: 'deck' });
+                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
             }
         }
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
@@ -7654,7 +7686,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableCenter.changeVisibleCardWeight(card);
         var newCard = notif.args.newCard;
         this.getPlayerTable(notif.args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
-        this.cardsManager.addCardsToStock(this.tableCenter.getVisibleCards(), [newCard], 'deck');
+        this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
         this.tableCenter.changeVisibleCardWeight(newCard);
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
         this.tableManager.tableHeightChange(); // adapt to new card

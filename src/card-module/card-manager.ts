@@ -38,12 +38,14 @@ class CardManager<T> {
         element.classList.add('card');
         document.body.appendChild(element);
         this.settings.setupDiv?.(card, element);
-        if (visible) {
-            this.settings.setupFrontDiv?.(card, element.getElementsByClassName('front')[0] as HTMLDivElement);
-        }
+        this.settings.setupFrontDiv?.(card, element.getElementsByClassName('front')[0] as HTMLDivElement);
         this.settings.setupBackDiv?.(card, element.getElementsByClassName('back')[0] as HTMLDivElement);
         document.body.removeChild(element);
         return element;
+    }
+
+    public getCardElement(card: T): HTMLElement {
+        return document.getElementById(this.getId(card));
     }
 
     public removeCard(card: T) {

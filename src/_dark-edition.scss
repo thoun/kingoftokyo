@@ -80,7 +80,9 @@ html[data-dark-edition="true"] {
         #table-center {
             #deck-wrapper {
                 #deck {
-                    background: url('img/dark/card-back.jpg');
+                    #card-deck-hidden-deck-back {
+                        background: url('img/dark/card-back.jpg');
+                    }
                 }
             }
         }

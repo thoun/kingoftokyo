@@ -27,10 +27,11 @@ const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
 ];
 
 class TableCenter {
-    private visibleCards: Stock;
+    private deck: HiddenDeck<Card>;
+    private visibleCards: LineStock<Card>;
     private curseCard: CardStock<CurseCard>;
-    private curseDeck: CardStock<CurseCard>;
-    private pickCard: Stock;
+    private curseDeck: HiddenDeck<CurseCard>;
+    private pickCard: LineStock<Card>;
     public wickednessDecks: WickednessDecks;
     private tokyoTower: TokyoTower;
     private wickednessPoints = new Map<number, number>();
@@ -69,18 +70,12 @@ class TableCenter {
     }
 
     public createVisibleCards(visibleCards: Card[], topDeckCardBackType: string) {
-        this.visibleCards = new ebg.stock() as Stock;
-        this.visibleCards.setSelectionAppearance('class');
-        this.visibleCards.selectionClass = 'no-visible-selection-except-double-selection';
-        this.visibleCards.create(this.game, $('visible-cards'), CARD_WIDTH, CARD_HEIGHT);
-        this.visibleCards.setSelectionMode(0);
-        this.visibleCards.onItemCreate = (card_div, card_type_id) => this.game.cardsManager.setupNewCard(card_div, card_type_id); 
-        this.visibleCards.image_items_per_row = 10;
-        this.visibleCards.centerItems = true;
-        dojo.connect(this.visibleCards, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.visibleCards, Number(item_id)));
+        this.deck = new HiddenDeck<Card>(this.game.cardsManager, document.getElementById('deck'));
 
-        this.game.cardsManager.setupCards([this.visibleCards]);
-        this.setVisibleCards(visibleCards);
+        this.visibleCards = new LineStock<Card>(this.game.cardsManager, document.getElementById('visible-cards'));
+        this.visibleCards.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.visibleCards, card);
+
+        this.setVisibleCards(visibleCards, true);
 
         this.setTopDeckCardBackType(topDeckCardBackType);
     }
@@ -102,7 +97,7 @@ class TableCenter {
         `);
     }
 
-    public setVisibleCardsSelectionMode(mode: number) {
+    public setVisibleCardsSelectionMode(mode: CardSelectionMode) {
         this.visibleCards.setSelectionMode(mode);
     }
 
@@ -114,21 +109,14 @@ class TableCenter {
         if (!this.pickCard) { 
             dojo.place('<div id="pick-stock" class="card-stock"></div>', 'deck-wrapper');
 
-            this.pickCard = new ebg.stock() as Stock;
-            this.pickCard.setSelectionAppearance('class');
-            this.pickCard.selectionClass = 'no-visible-selection';
-            this.pickCard.create(this.game, $('pick-stock'), CARD_WIDTH, CARD_HEIGHT);
-            this.pickCard.setSelectionMode(1);
-            this.pickCard.onItemCreate = (card_div, card_type_id) => this.game.cardsManager.setupNewCard(card_div, card_type_id); 
-            this.pickCard.image_items_per_row = 10;
-            this.pickCard.centerItems = true;
-            dojo.connect(this.pickCard, 'onChangeSelection', this, (_, item_id: string) => this.game.onVisibleCardClick(this.pickCard, Number(item_id)));
+            this.pickCard = new LineStock<Card>(this.game.cardsManager, document.getElementById('pick-stock'));
+            this.pickCard.setSelectionMode('single');
+            this.pickCard.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.pickCard, card);
         } else {
-            document.getElementById('pick-stock').style.display = 'block';
+            document.getElementById('pick-stock').style.display = null;
         }
 
-        this.game.cardsManager.setupCards([this.pickCard]);
-        this.game.cardsManager.addCardsToStock(this.pickCard, cards);
+        this.pickCard.addCards(cards);
     }
 
     public hidePickStock() {
@@ -149,40 +137,46 @@ class TableCenter {
 
     public setTopDeckCardBackType(topDeckCardBackType: string) {
         if (topDeckCardBackType !== undefined && topDeckCardBackType !== null) {
-            document.getElementById('deck').dataset.type = topDeckCardBackType;
+            document.getElementById('card-deck-hidden-deck-back').dataset.type = topDeckCardBackType;
         }
     }
     
-    public setInitialCards(cards: Card[]) {        
-        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
+    public setInitialCards(cards: Card[]) {   
+        this.deck.addCards(cards);     
+        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
     }
 
-    private setVisibleCards(cards: Card[]) {
+    private setVisibleCards(cards: Card[], init: boolean = false) {
         const newWeights = {};
         cards.forEach(card => newWeights[card.type] = card.location_arg);
-        this.visibleCards.changeItemsWeight(newWeights);
+        // TODO this.visibleCards.changeItemsWeight(newWeights);
 
-        this.game.cardsManager.addCardsToStock(this.visibleCards, cards, 'deck');
+        if (init) {
+            this.visibleCards.addCards(cards);
+        } else {
+            this.deck.addCards(cards);
+            this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
+        }
     }
     
     public removeOtherCardsFromPick(cardId: number) {        
-        const removeFromPickIds = this.pickCard?.items.map(item => Number(item.id));
+        const removeFromPickIds = this.pickCard?.getCards().map(item => Number(item.id));
         removeFromPickIds?.forEach(id => {
             if (id !== cardId) {
-                this.pickCard.removeFromStockById(''+id);
+                this.pickCard.removeCard({ id } as Card);
             }
         });
     }
 
     public changeVisibleCardWeight(card: Card) {
-        this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
+        // TODO this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
     }
 
-    public getVisibleCards(): Stock {
+    public getVisibleCards(): LineStock<Card> {
         return this.visibleCards;
     }
     
-    public getPickCard(): Stock {
+    public getPickCard(): LineStock<Card> {
         return this.pickCard;
     }
     

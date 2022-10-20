@@ -16,6 +16,7 @@
         "src/text-icons-formatter.ts",
         "src/card-module/card-stock.ts",
         "src/card-module/line-stock.ts",
+        "src/card-module/slot-stock.ts",
         "src/card-module/hidden-deck.ts",
         "src/card-module/visible-deck.ts",
         "src/card-module/all-visible-deck.ts",

@@ -2,6 +2,7 @@ interface CardAnimation<T> {
     fromStock?: CardStock<T>;
     fromElement?: HTMLElement;
     originalSide?: 'front' | 'back';
+    rotationDelta?: number,
 }
 
 type CardSelectionMode = 'none' | 'single' | 'multiple';
@@ -49,54 +50,67 @@ class CardStock<T> {
         return document.getElementById(this.manager.getId(card));
     }
 
-    public addCard(card: T, animation?: CardAnimation<T>) {
+    public addCard(card: T, animation?: CardAnimation<T>, visible: boolean = true): Promise<boolean> {
         if (this.cardInStock(card)) {
             return;
         }
+
+        let promise: Promise<boolean>;
 
         // we check if card is in stock then we ignore animation
         const currentStock = this.manager.getCardStock(card);
 
         if (currentStock?.cardInStock(card)) {
             let element = document.getElementById(this.manager.getId(card));
-            this.moveFromOtherStock(card, element, { ...animation, fromStock: currentStock });
+            promise = this.moveFromOtherStock(card, element, { ...animation, fromStock: currentStock,  });
+            element.dataset.side = visible ? 'front' : 'back';
         } else if (animation?.fromStock && animation.fromStock.cardInStock(card)) {
             let element = document.getElementById(this.manager.getId(card));
-            this.moveFromOtherStock(card, element, animation);
+            promise = this.moveFromOtherStock(card, element, animation);
         } else {
-            const element = this.manager.createCardElement(card);
-            this.moveFromElement(card, element, animation);
+            const element = this.manager.createCardElement(card, visible);
+            promise = this.moveFromElement(card, element, animation);
         }
 
         this.setSelectableCard(card, this.selectionMode != 'none');
 
         this.cards.push(card);
+
+        return promise;
     }
 
-    protected moveFromOtherStock(card: T, cardElement: HTMLElement, animation: CardAnimation<T>) {
+    protected moveFromOtherStock(card: T, cardElement: HTMLElement, animation: CardAnimation<T>): Promise<boolean> {
+        let promise: Promise<boolean>;
+
         this.element.appendChild(cardElement);
         cardElement.classList.remove('selectable', 'selected');
-        this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+        promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
         animation.fromStock.removeCard(card);
+
+        return promise;
     }
 
-    protected moveFromElement(card: T, cardElement: HTMLElement, animation: CardAnimation<T>) {
+    protected moveFromElement(card: T, cardElement: HTMLElement, animation: CardAnimation<T>): Promise<boolean> {
+        let promise: Promise<boolean>;
+
         this.element.appendChild(cardElement);
     
         if (animation) {
             if (animation.fromStock) {
-                this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide);
+                promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
                 animation.fromStock.removeCard(card);
-            } else if (animation.fromElement && cardElement.closest(`#${animation.fromElement.id}`)) {
-                this.slideFromElement(cardElement, animation.fromElement, animation.originalSide);
+            } else if (animation.fromElement) {
+                promise = this.slideFromElement(cardElement, animation.fromElement, animation.originalSide, animation.rotationDelta);
             }
         }
+
+        return promise;
     }
 
     public addCards(cards: T[], animation?: CardAnimation<T>, shift: number | boolean = false) {
         if (shift === true) {
             // TODO chain promise
-            shift = 500;
+            shift = 800;
         }
 
         if (shift) {
@@ -139,7 +153,6 @@ class CardStock<T> {
     }
 
     public selectCard(card: T, silent: boolean = false) {
-        console.log('selectCard', card, silent);
         if (this.selectionMode == 'none') {
             return;
         }
@@ -220,38 +233,46 @@ class CardStock<T> {
         this.onCardClick?.(card);
     }
 
-    protected slideFromElement(element: HTMLElement, fromElement: HTMLElement, originalSide: 'front' | 'back', rotationDelta: number = 0) {
-        const originBR = fromElement.getBoundingClientRect();
-        
-        if (document.visibilityState !== 'hidden' && !(this.manager.game as any).instantaneousMode) {
-            const destinationBR = element.getBoundingClientRect();
-    
-            const deltaX = (destinationBR.left + destinationBR.right)/2 - (originBR.left + originBR.right)/2;
-            const deltaY = (destinationBR.top + destinationBR.bottom)/2 - (originBR.top+ originBR.bottom)/2;
-    
-            element.style.zIndex = '10';
-            element.style.transform = `translate(${-deltaX}px, ${-deltaY}px) rotate(${rotationDelta}deg)`;
+    protected slideFromElement(element: HTMLElement, fromElement: HTMLElement, originalSide: 'front' | 'back', rotationDelta: number): Promise<boolean> {
+        const promise = new Promise<boolean>((success) => {
 
-            const side = element.dataset.side;
-            if (originalSide && originalSide != side) {
-                const cardSides = element.getElementsByClassName('card-sides')[0] as HTMLDivElement;
-                cardSides.style.transition = 'none';
-                element.dataset.side = originalSide;
+            const originBR = fromElement.getBoundingClientRect();
+            
+            if (document.visibilityState !== 'hidden' && !(this.manager.game as any).instantaneousMode) {
+                const destinationBR = element.getBoundingClientRect();
+        
+                const deltaX = (destinationBR.left + destinationBR.right)/2 - (originBR.left + originBR.right)/2;
+                const deltaY = (destinationBR.top + destinationBR.bottom)/2 - (originBR.top+ originBR.bottom)/2;
+        
+                element.style.zIndex = '10';
+                element.style.transform = `translate(${-deltaX}px, ${-deltaY}px) rotate(${rotationDelta ?? 0}deg)`;
+
+                const side = element.dataset.side;
+                if (originalSide && originalSide != side) {
+                    const cardSides = element.getElementsByClassName('card-sides')[0] as HTMLDivElement;
+                    cardSides.style.transition = 'none';
+                    element.dataset.side = originalSide;
+                    setTimeout(() => {
+                        cardSides.style.transition = null;
+                        element.dataset.side = side;
+                    });
+                }
+        
                 setTimeout(() => {
-                    cardSides.style.transition = null;
-                    element.dataset.side = side;
+                    element.style.transition = `transform 0.5s linear`;
+                    element.style.transform = null;
                 });
+                setTimeout(() => {
+                    element.style.zIndex = null;
+                    element.style.transition = null;
+                    element.style.position = null;
+                    success(true);
+                }, 600);
+            } else {
+                success(true);
             }
-    
-            setTimeout(() => {
-                element.style.transition = `transform 0.5s linear`;
-                element.style.transform = null;
-            });
-            setTimeout(() => {
-                element.style.zIndex = null;
-                element.style.transition = null;
-                element.style.position = null;
-            }, 600);
-        }
+        });
+
+        return promise;
     }
 }

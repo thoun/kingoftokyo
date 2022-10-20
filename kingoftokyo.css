@@ -1037,6 +1037,16 @@ body > .card {
   justify-content: center;
 }
 
+.card-stock.slot-stock {
+  display: flex;
+  gap: var(--gap);
+  flex-wrap: var(--wrap);
+  flex-direction: var(--direction);
+}
+.card-stock.slot-stock[data-center=true] {
+  justify-content: center;
+}
+
 .card-stock.hidden-deck {
   position: relative;
 }
@@ -1508,23 +1518,30 @@ body > .card {
 #table #table-center {
   position: relative;
 }
-#table #table-center #deck-wrapper {
+#table #table-center #table-power-cards {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+#table #table-center #table-power-cards #deck-wrapper {
   position: relative;
   overflow: visible;
-}
-#table #table-center #deck-wrapper #deck {
   width: 185px;
   height: 132px;
-  background: url("img/card-back.jpg");
-  box-shadow: 4px 4px 0px 0px #333;
-  border-radius: 10px;
 }
-#table #table-center #deck-wrapper #deck[data-type=costume] {
+#table #table-center #table-power-cards #deck-wrapper #deck {
+  transform-origin: center center;
+  transform: translate(26px, -26px) rotate(90deg);
+  width: 132px;
+  height: 185px;
+}
+#table #table-center #table-power-cards #deck-wrapper #deck #card-deck-hidden-deck-back {
+  background: url("img/card-back.jpg");
+}
+#table #table-center #table-power-cards #deck-wrapper #deck #card-deck-hidden-deck-back[data-type=costume] {
   background: url("img/card-back-costume.jpg");
 }
-#table #table-center #deck-wrapper #pick-stock {
+#table #table-center #table-power-cards #deck-wrapper #pick-stock {
   position: absolute;
   bottom: -5px;
   width: 100%;
@@ -1533,6 +1550,8 @@ body > .card {
 #table #table-center #visible-cards {
   margin-bottom: 10px;
   min-width: 420px;
+  min-height: 185px;
+  margin-top: 8px;
 }
 #table #table-center #table-cards {
   display: flex;
@@ -2526,7 +2545,7 @@ html[data-dark-edition=true] .double-selection .no-visible-selection-except-doub
 html[data-dark-edition=true] .highlight-evolution, html[data-dark-edition=true] .highlight-zombify {
   box-shadow: 0px 0px 5px 5px #ffeb68;
 }
-html[data-dark-edition=true] #table #table-center #deck-wrapper #deck {
+html[data-dark-edition=true] #table #table-center #deck-wrapper #deck #card-deck-hidden-deck-back {
   background: url("img/dark/card-back.jpg");
 }
 html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition], html[data-dark-edition=true] .card-stock #deck {

@@ -355,10 +355,17 @@ class CardsManager extends CardManager<Card> {
                 }
             },
             setupBackDiv: (card: Card, div: HTMLElement) => {
-                if (FLIPPABLE_CARDS.includes(card.type)) {
+                const darkEdition = this.game.isDarkEdition();
+                if (card.type < 200) {
+                    div.style.backgroundImage = `url('${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}card-back.jpg')`;
+                } else if (card.type < 300) {
+                    div.style.backgroundImage = `url('${g_gamethemeurl}img/card-back-costume.jpg')`;
+                } else if (FLIPPABLE_CARDS.includes(card.type)) {
                     this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
                     this.setDivAsCard(div as HTMLDivElement, 301, 1);
                     (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, card.side));
+                } else if (card.type == 999) {
+                    this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
                 }
             }
         });
@@ -1051,7 +1058,6 @@ class CardsManager extends CardManager<Card> {
             const index = KEEP_CARDS_LIST[version].findIndex(type => type == cardType);
             cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
             cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100 / 4}%`;
-            console.log(cardDiv);
         } else if (cardType < 200) {
             const index = DISCARD_CARDS_LIST[version].findIndex(type => type == cardType % 100);
             const discardcardsurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}discard-cards.jpg`;
