@@ -5,6 +5,11 @@ interface CardAnimation<T> {
     rotationDelta?: number,
 }
 
+interface AddCardSettings {
+    visible?: boolean;
+    forceToElement?: HTMLElement;
+}
+
 type CardSelectionMode = 'none' | 'single' | 'multiple';
 
 class CardStock<T> {
@@ -50,7 +55,7 @@ class CardStock<T> {
         return document.getElementById(this.manager.getId(card));
     }
 
-    public addCard(card: T, animation?: CardAnimation<T>, visible: boolean = true): Promise<boolean> {
+    public addCard(card: T, animation?: CardAnimation<T>, settings?: AddCardSettings): Promise<boolean> {
         if (this.cardInStock(card)) {
             return;
         }
@@ -62,14 +67,14 @@ class CardStock<T> {
 
         if (currentStock?.cardInStock(card)) {
             let element = document.getElementById(this.manager.getId(card));
-            promise = this.moveFromOtherStock(card, element, { ...animation, fromStock: currentStock,  });
-            element.dataset.side = visible ? 'front' : 'back';
+            promise = this.moveFromOtherStock(card, element, { ...animation, fromStock: currentStock,  }, settings);
+            element.dataset.side = (settings?.visible ?? true) ? 'front' : 'back';
         } else if (animation?.fromStock && animation.fromStock.cardInStock(card)) {
             let element = document.getElementById(this.manager.getId(card));
-            promise = this.moveFromOtherStock(card, element, animation);
+            promise = this.moveFromOtherStock(card, element, animation, settings);
         } else {
-            const element = this.manager.createCardElement(card, visible);
-            promise = this.moveFromElement(card, element, animation);
+            const element = this.manager.createCardElement(card, (settings?.visible ?? true));
+            promise = this.moveFromElement(card, element, animation, settings);
         }
 
         this.setSelectableCard(card, this.selectionMode != 'none');
@@ -79,10 +84,10 @@ class CardStock<T> {
         return promise;
     }
 
-    protected moveFromOtherStock(card: T, cardElement: HTMLElement, animation: CardAnimation<T>): Promise<boolean> {
+    protected moveFromOtherStock(card: T, cardElement: HTMLElement, animation: CardAnimation<T>, settings?: AddCardSettings): Promise<boolean> {
         let promise: Promise<boolean>;
 
-        this.element.appendChild(cardElement);
+        (settings?.forceToElement ?? this.element).appendChild(cardElement);
         cardElement.classList.remove('selectable', 'selected');
         promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
         animation.fromStock.removeCard(card);
@@ -90,10 +95,10 @@ class CardStock<T> {
         return promise;
     }
 
-    protected moveFromElement(card: T, cardElement: HTMLElement, animation: CardAnimation<T>): Promise<boolean> {
+    protected moveFromElement(card: T, cardElement: HTMLElement, animation: CardAnimation<T>, settings?: AddCardSettings): Promise<boolean> {
         let promise: Promise<boolean>;
 
-        this.element.appendChild(cardElement);
+        (settings?.forceToElement ?? this.element).appendChild(cardElement);
     
         if (animation) {
             if (animation.fromStock) {
@@ -107,18 +112,22 @@ class CardStock<T> {
         return promise;
     }
 
-    public addCards(cards: T[], animation?: CardAnimation<T>, shift: number | boolean = false) {
+    public addCards(cards: T[], animation?: CardAnimation<T>, settings?: AddCardSettings, shift: number | boolean = false) {
         if (shift === true) {
-            // TODO chain promise
-            shift = 800;
+            if (cards.length) {
+                this.addCard(cards[0], animation, settings).then(
+                    () => this.addCards(cards.slice(1), animation, settings, shift)
+                );
+            }
+            return;
         }
 
         if (shift) {
             for (let i=0; i<cards.length; i++) {
-                setTimeout(() => this.addCard(cards[i], animation), i * shift);
+                setTimeout(() => this.addCard(cards[i], animation, settings), i * shift);
             }
         } else {
-            cards.forEach(card => this.addCard(card, animation));
+            cards.forEach(card => this.addCard(card, animation, settings));
         }
     }
 
@@ -269,7 +278,7 @@ class CardStock<T> {
                     success(true);
                 }, 600);
             } else {
-                success(true);
+                success(false);
             }
         });
 

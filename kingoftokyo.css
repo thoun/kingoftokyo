@@ -1553,6 +1553,10 @@ body > .card {
   min-height: 185px;
   margin-top: 8px;
 }
+#table #table-center #visible-cards .slot {
+  width: 132px;
+  height: 185px;
+}
 #table #table-center #table-cards {
   display: flex;
   flex-direction: column;

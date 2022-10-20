@@ -28,8 +28,8 @@ const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
 
 class TableCenter {
     private deck: HiddenDeck<Card>;
-    private visibleCards: LineStock<Card>;
-    private curseCard: CardStock<CurseCard>;
+    private visibleCards: SlotStock<Card>;
+    private curseCard: VisibleDeck<CurseCard>;
     private curseDeck: HiddenDeck<CurseCard>;
     private pickCard: LineStock<Card>;
     public wickednessDecks: WickednessDecks;
@@ -72,8 +72,11 @@ class TableCenter {
     public createVisibleCards(visibleCards: Card[], topDeckCardBackType: string) {
         this.deck = new HiddenDeck<Card>(this.game.cardsManager, document.getElementById('deck'));
 
-        this.visibleCards = new LineStock<Card>(this.game.cardsManager, document.getElementById('visible-cards'));
-        this.visibleCards.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.visibleCards, card);
+        this.visibleCards = new SlotStock<Card>(this.game.cardsManager, document.getElementById('visible-cards'), {
+            slotsIds: [1, 2, 3],
+            mapCardToSlot: (card: Card) => card.location_arg,
+        });
+        this.visibleCards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.visibleCards, card);
 
         this.setVisibleCards(visibleCards, true);
 
@@ -143,19 +146,15 @@ class TableCenter {
     
     public setInitialCards(cards: Card[]) {   
         this.deck.addCards(cards);     
-        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
+        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
     }
 
     private setVisibleCards(cards: Card[], init: boolean = false) {
-        const newWeights = {};
-        cards.forEach(card => newWeights[card.type] = card.location_arg);
-        // TODO this.visibleCards.changeItemsWeight(newWeights);
-
         if (init) {
             this.visibleCards.addCards(cards);
         } else {
             this.deck.addCards(cards);
-            this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
+            this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
         }
     }
     
@@ -168,11 +167,7 @@ class TableCenter {
         });
     }
 
-    public changeVisibleCardWeight(card: Card) {
-        // TODO this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
-    }
-
-    public getVisibleCards(): LineStock<Card> {
+    public getVisibleCards(): SlotStock<Card> {
         return this.visibleCards;
     }
     

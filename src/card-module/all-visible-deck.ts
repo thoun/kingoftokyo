@@ -7,19 +7,19 @@ class AllVisibleDeck<T> extends CardStock<T> {
         element.style.setProperty('--shift', shift);
     }        
 
-    public addCard(card: T, animation?: CardAnimation<T>) {
+    public addCard(card: T, animation?: CardAnimation<T>, settings?: AddCardSettings): Promise<boolean> {
+        let promise: Promise<boolean>;
+
         const order = this.cards.length;
-        super.addCard(card, animation);
+        promise = super.addCard(card, animation, settings);
         
         const cardId = this.manager.getId(card);
         const cardDiv = document.getElementById(cardId);
         cardDiv.style.setProperty('--order', ''+order);
 
         this.element.style.setProperty('--tile-count', ''+this.cards.length);
-    }
 
-    public addCards(cards: T[], animation?: CardAnimation<T>, shift: number | boolean = false) {
-        cards.forEach(card => this.addCard(card, animation));
+        return promise;
     }
 
     public setOpened(opened: boolean) {

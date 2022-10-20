@@ -1,8 +1,8 @@
 interface LineStockSettings {
-    wrap: 'wrap' | 'nowrap';
-    direction: 'row' | 'column';
-    center: boolean;
-    gap: string;
+    wrap?: 'wrap' | 'nowrap';
+    direction?: 'row' | 'column';
+    center?: boolean;
+    gap?: string;
 }
 
 class LineStock<T> extends CardStock<T> {

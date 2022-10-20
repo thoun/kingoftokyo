@@ -3645,7 +3645,6 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
         const card = notif.args.card;
-        this.tableCenter.changeVisibleCardWeight(card);
 
         if (notif.args.energy !== undefined) {
             this.setEnergy(notif.args.playerId, notif.args.energy);
@@ -3657,7 +3656,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             const newCard = notif.args.newCard;
             this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }).then(() => {
                 this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
-                this.tableCenter.changeVisibleCardWeight(newCard);
             });
         } else if (notif.args.from > 0) {
             const fromStock = notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards;
@@ -3677,12 +3675,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_reserveCard(notif: Notif<NotifBuyCardArgs>) {
         const card = notif.args.card;
-        this.tableCenter.changeVisibleCardWeight(card);
 
         const newCard = notif.args.newCard;
         this.getPlayerTable(notif.args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
         this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
-        this.tableCenter.changeVisibleCardWeight(newCard);
         
 
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);

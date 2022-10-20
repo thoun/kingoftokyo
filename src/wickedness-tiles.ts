@@ -17,9 +17,9 @@ class WickednessDecks extends CardStock<WickednessTile> {
         });
     }   
 
-    public addCard(card: WickednessTile, animation?: CardAnimation<WickednessTile>) {
+    public addCard(card: WickednessTile, animation?: CardAnimation<WickednessTile>): Promise<boolean> {
         const level = this.getCardLevel(card.type);
-        this.decks[level].addCard(card, animation);
+        return this.decks[level].addCard(card, animation);
     }
 
     protected getCardLevel(cardTypeId: number): number {

@@ -11,7 +11,11 @@ class HiddenDeck<T> extends CardStock<T> {
         this.element.dataset.empty = empty.toString();
     }
 
-    public addCard(card: T, animation?: CardAnimation<T>, visible: boolean = false): Promise<boolean> {
-        return super.addCard(card, animation, visible);
+    public addCard(card: T, animation?: CardAnimation<T>, settings?: AddCardSettings): Promise<boolean> {
+        const newSettings: AddCardSettings = {
+            ...settings,
+            visible: settings?.visible ?? false
+        }
+        return super.addCard(card, animation, newSettings);
     }
 }

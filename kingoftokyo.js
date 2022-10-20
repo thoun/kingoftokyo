@@ -130,8 +130,8 @@ var CardStock = /** @class */ (function () {
     CardStock.prototype.getCardElement = function (card) {
         return document.getElementById(this.manager.getId(card));
     };
-    CardStock.prototype.addCard = function (card, animation, visible) {
-        if (visible === void 0) { visible = true; }
+    CardStock.prototype.addCard = function (card, animation, settings) {
+        var _a, _b;
         if (this.cardInStock(card)) {
             return;
         }
@@ -140,32 +140,34 @@ var CardStock = /** @class */ (function () {
         var currentStock = this.manager.getCardStock(card);
         if (currentStock === null || currentStock === void 0 ? void 0 : currentStock.cardInStock(card)) {
             var element = document.getElementById(this.manager.getId(card));
-            promise = this.moveFromOtherStock(card, element, __assign(__assign({}, animation), { fromStock: currentStock }));
-            element.dataset.side = visible ? 'front' : 'back';
+            promise = this.moveFromOtherStock(card, element, __assign(__assign({}, animation), { fromStock: currentStock }), settings);
+            element.dataset.side = ((_a = settings === null || settings === void 0 ? void 0 : settings.visible) !== null && _a !== void 0 ? _a : true) ? 'front' : 'back';
         }
         else if ((animation === null || animation === void 0 ? void 0 : animation.fromStock) && animation.fromStock.cardInStock(card)) {
             var element = document.getElementById(this.manager.getId(card));
-            promise = this.moveFromOtherStock(card, element, animation);
+            promise = this.moveFromOtherStock(card, element, animation, settings);
         }
         else {
-            var element = this.manager.createCardElement(card, visible);
-            promise = this.moveFromElement(card, element, animation);
+            var element = this.manager.createCardElement(card, ((_b = settings === null || settings === void 0 ? void 0 : settings.visible) !== null && _b !== void 0 ? _b : true));
+            promise = this.moveFromElement(card, element, animation, settings);
         }
         this.setSelectableCard(card, this.selectionMode != 'none');
         this.cards.push(card);
         return promise;
     };
-    CardStock.prototype.moveFromOtherStock = function (card, cardElement, animation) {
+    CardStock.prototype.moveFromOtherStock = function (card, cardElement, animation, settings) {
+        var _a;
         var promise;
-        this.element.appendChild(cardElement);
+        ((_a = settings === null || settings === void 0 ? void 0 : settings.forceToElement) !== null && _a !== void 0 ? _a : this.element).appendChild(cardElement);
         cardElement.classList.remove('selectable', 'selected');
         promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
         animation.fromStock.removeCard(card);
         return promise;
     };
-    CardStock.prototype.moveFromElement = function (card, cardElement, animation) {
+    CardStock.prototype.moveFromElement = function (card, cardElement, animation, settings) {
+        var _a;
         var promise;
-        this.element.appendChild(cardElement);
+        ((_a = settings === null || settings === void 0 ? void 0 : settings.forceToElement) !== null && _a !== void 0 ? _a : this.element).appendChild(cardElement);
         if (animation) {
             if (animation.fromStock) {
                 promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
@@ -177,23 +179,25 @@ var CardStock = /** @class */ (function () {
         }
         return promise;
     };
-    CardStock.prototype.addCards = function (cards, animation, shift) {
+    CardStock.prototype.addCards = function (cards, animation, settings, shift) {
         var _this = this;
         if (shift === void 0) { shift = false; }
         if (shift === true) {
-            // TODO chain promise
-            shift = 800;
+            if (cards.length) {
+                this.addCard(cards[0], animation, settings).then(function () { return _this.addCards(cards.slice(1), animation, settings, shift); });
+            }
+            return;
         }
         if (shift) {
             var _loop_1 = function (i) {
-                setTimeout(function () { return _this.addCard(cards[i], animation); }, i * shift);
+                setTimeout(function () { return _this.addCard(cards[i], animation, settings); }, i * shift);
             };
             for (var i = 0; i < cards.length; i++) {
                 _loop_1(i);
             }
         }
         else {
-            cards.forEach(function (card) { return _this.addCard(card, animation); });
+            cards.forEach(function (card) { return _this.addCard(card, animation, settings); });
         }
     };
     CardStock.prototype.removeCard = function (card) {
@@ -338,7 +342,7 @@ var CardStock = /** @class */ (function () {
                 }, 600);
             }
             else {
-                success(true);
+                success(false);
             }
         });
         return promise;
@@ -376,15 +380,50 @@ var LineStock = /** @class */ (function (_super) {
     }
     return LineStock;
 }(CardStock));
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var SlotStock = /** @class */ (function (_super) {
     __extends(SlotStock, _super);
     function SlotStock(manager, element, settings) {
         var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
+        _this.slots = [];
         element.classList.add('slot-stock');
+        _this.mapCardToSlot = settings.mapCardToSlot;
+        settings.slotsIds.forEach(function (slotId) {
+            _this.createSlot(slotId, settings.slotClasses);
+        });
         return _this;
     }
+    SlotStock.prototype.createSlot = function (slot, slotClasses) {
+        var _a;
+        this.slots[slot] = document.createElement("div");
+        this.element.appendChild(this.slots[slot]);
+        (_a = this.slots[slot].classList).add.apply(_a, __spreadArray(['slot'], (slotClasses !== null && slotClasses !== void 0 ? slotClasses : []), true));
+    };
+    SlotStock.prototype.addCard = function (card, animation, settings) {
+        var _a, _b;
+        var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
+        if (!slotId) {
+            throw new Error("Impossible to add card to slot : no SlotId. Add slotId to settings or set mapCardToSlot to SlotCard constructor.");
+        }
+        if (!this.slots[slotId]) {
+            throw new Error("Impossible to add card to slot \"" + slotId + "\" : slot \"" + slotId + "\" doesn't exists.");
+        }
+        var newSettings = __assign(__assign({}, settings), { forceToElement: this.slots[slotId] });
+        return _super.prototype.addCard.call(this, card, animation, newSettings);
+    };
+    SlotStock.prototype.cardElementInStock = function (element) {
+        return (element === null || element === void 0 ? void 0 : element.parentElement.parentElement) == this.element;
+    };
     return SlotStock;
 }(LineStock));
 var HiddenDeck = /** @class */ (function (_super) {
@@ -402,9 +441,10 @@ var HiddenDeck = /** @class */ (function (_super) {
     HiddenDeck.prototype.setEmpty = function (empty) {
         this.element.dataset.empty = empty.toString();
     };
-    HiddenDeck.prototype.addCard = function (card, animation, visible) {
-        if (visible === void 0) { visible = false; }
-        return _super.prototype.addCard.call(this, card, animation, visible);
+    HiddenDeck.prototype.addCard = function (card, animation, settings) {
+        var _a;
+        var newSettings = __assign(__assign({}, settings), { visible: (_a = settings === null || settings === void 0 ? void 0 : settings.visible) !== null && _a !== void 0 ? _a : false });
+        return _super.prototype.addCard.call(this, card, animation, newSettings);
     };
     return HiddenDeck;
 }(CardStock));
@@ -417,14 +457,14 @@ var VisibleDeck = /** @class */ (function (_super) {
         element.classList.add('visible-deck');
         return _this;
     }
-    VisibleDeck.prototype.addCard = function (card, animation) {
+    VisibleDeck.prototype.addCard = function (card, animation, settings) {
         var _this = this;
         var currentCard = this.cards[this.cards.length - 1];
         if (currentCard) {
             document.getElementById(this.manager.getId(currentCard)).classList.add('under');
             setTimeout(function () { return _this.removeCard(currentCard); }, 600);
         }
-        _super.prototype.addCard.call(this, card, animation);
+        return _super.prototype.addCard.call(this, card, animation, settings);
     };
     return VisibleDeck;
 }(CardStock));
@@ -440,18 +480,15 @@ var AllVisibleDeck = /** @class */ (function (_super) {
         element.style.setProperty('--shift', shift);
         return _this;
     }
-    AllVisibleDeck.prototype.addCard = function (card, animation) {
+    AllVisibleDeck.prototype.addCard = function (card, animation, settings) {
+        var promise;
         var order = this.cards.length;
-        _super.prototype.addCard.call(this, card, animation);
+        promise = _super.prototype.addCard.call(this, card, animation, settings);
         var cardId = this.manager.getId(card);
         var cardDiv = document.getElementById(cardId);
         cardDiv.style.setProperty('--order', '' + order);
         this.element.style.setProperty('--tile-count', '' + this.cards.length);
-    };
-    AllVisibleDeck.prototype.addCards = function (cards, animation, shift) {
-        var _this = this;
-        if (shift === void 0) { shift = false; }
-        cards.forEach(function (card) { return _this.addCard(card, animation); });
+        return promise;
     };
     AllVisibleDeck.prototype.setOpened = function (opened) {
         this.element.classList.toggle('opened', opened);
@@ -2291,7 +2328,7 @@ var WickednessDecks = /** @class */ (function (_super) {
     }
     WickednessDecks.prototype.addCard = function (card, animation) {
         var level = this.getCardLevel(card.type);
-        this.decks[level].addCard(card, animation);
+        return this.decks[level].addCard(card, animation);
     };
     WickednessDecks.prototype.getCardLevel = function (cardTypeId) {
         var id = cardTypeId % 100;
@@ -2989,15 +3026,6 @@ var PlayerTable = /** @class */ (function () {
     };
     return PlayerTable;
 }());
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
 var CARDS_PER_ROW = 3;
@@ -4274,8 +4302,11 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType) {
         var _this = this;
         this.deck = new HiddenDeck(this.game.cardsManager, document.getElementById('deck'));
-        this.visibleCards = new LineStock(this.game.cardsManager, document.getElementById('visible-cards'));
-        this.visibleCards.onSelectionChange = function (_, card) { return _this.game.onVisibleCardClick(_this.visibleCards, card); };
+        this.visibleCards = new SlotStock(this.game.cardsManager, document.getElementById('visible-cards'), {
+            slotsIds: [1, 2, 3],
+            mapCardToSlot: function (card) { return card.location_arg; },
+        });
+        this.visibleCards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.visibleCards, card); };
         this.setVisibleCards(visibleCards, true);
         this.setTopDeckCardBackType(topDeckCardBackType);
     };
@@ -4324,19 +4355,16 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.setInitialCards = function (cards) {
         this.deck.addCards(cards);
-        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
+        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
     };
     TableCenter.prototype.setVisibleCards = function (cards, init) {
         if (init === void 0) { init = false; }
-        var newWeights = {};
-        cards.forEach(function (card) { return newWeights[card.type] = card.location_arg; });
-        // TODO this.visibleCards.changeItemsWeight(newWeights);
         if (init) {
             this.visibleCards.addCards(cards);
         }
         else {
             this.deck.addCards(cards);
-            this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, true);
+            this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
         }
     };
     TableCenter.prototype.removeOtherCardsFromPick = function (cardId) {
@@ -4348,9 +4376,6 @@ var TableCenter = /** @class */ (function () {
                 _this.pickCard.removeCard({ id: id });
             }
         });
-    };
-    TableCenter.prototype.changeVisibleCardWeight = function (card) {
-        // TODO this.visibleCards.changeItemsWeight( { [card.type]: card.location_arg } );
     };
     TableCenter.prototype.getVisibleCards = function () {
         return this.visibleCards;
@@ -7652,7 +7677,6 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.notif_buyCard = function (notif) {
         var _this = this;
         var card = notif.args.card;
-        this.tableCenter.changeVisibleCardWeight(card);
         if (notif.args.energy !== undefined) {
             this.setEnergy(notif.args.playerId, notif.args.energy);
         }
@@ -7663,7 +7687,6 @@ var KingOfTokyo = /** @class */ (function () {
             var newCard_1 = notif.args.newCard;
             this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }).then(function () {
                 _this.tableCenter.getVisibleCards().addCard(newCard_1, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
-                _this.tableCenter.changeVisibleCardWeight(newCard_1);
             });
         }
         else if (notif.args.from > 0) {
@@ -7683,11 +7706,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_reserveCard = function (notif) {
         var card = notif.args.card;
-        this.tableCenter.changeVisibleCardWeight(card);
         var newCard = notif.args.newCard;
         this.getPlayerTable(notif.args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
         this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
-        this.tableCenter.changeVisibleCardWeight(newCard);
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
         this.tableManager.tableHeightChange(); // adapt to new card
     };

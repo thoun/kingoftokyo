@@ -4,13 +4,13 @@ class VisibleDeck<T> extends CardStock<T> {
         element.classList.add('visible-deck');
     }
 
-    public addCard(card: T, animation?: CardAnimation<T>) {
+    public addCard(card: T, animation?: CardAnimation<T>, settings?: AddCardSettings): Promise<boolean> {
         const currentCard = this.cards[this.cards.length - 1];
         if (currentCard) {
             document.getElementById(this.manager.getId(currentCard)).classList.add('under');
             setTimeout(() => this.removeCard(currentCard), 600);
         }
 
-        super.addCard(card, animation);
+        return super.addCard(card, animation, settings);
     }
 }
