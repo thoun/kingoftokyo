@@ -145,11 +145,14 @@ class TableCenter {
     }
     
     public setInitialCards(cards: Card[]) {   
-        this.deck.addCards(cards);     
-        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
+        this.deck.addCards(cards);
+        this.visibleCards.removeAll();
+        this.visibleCards.setSlotsIds([0, 1]);
+        const cardsWithSlot = cards.map((card, index) => ({ ...card, location_arg: index }));
+        this.visibleCards.addCards(cardsWithSlot, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
     }
 
-    private setVisibleCards(cards: Card[], init: boolean = false) {
+    public setVisibleCards(cards: Card[], init: boolean = false) {
         if (init) {
             this.visibleCards.addCards(cards);
         } else {
@@ -158,6 +161,7 @@ class TableCenter {
             // add 3 - 2 - 1
             this.deck.addCards(cardsForDeck);
             // reveal 1 - 2 - 3
+            this.visibleCards.setSlotsIds([1, 2, 3]);
             this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
         }
     }

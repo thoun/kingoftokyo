@@ -393,27 +393,32 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 var SlotStock = /** @class */ (function (_super) {
     __extends(SlotStock, _super);
     function SlotStock(manager, element, settings) {
+        var _a, _b;
         var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
+        _this.slotsIds = [];
         _this.slots = [];
         element.classList.add('slot-stock');
         _this.mapCardToSlot = settings.mapCardToSlot;
-        settings.slotsIds.forEach(function (slotId) {
-            _this.createSlot(slotId, settings.slotClasses);
+        _this.slotsIds = (_a = settings.slotsIds) !== null && _a !== void 0 ? _a : [];
+        _this.slotClasses = (_b = settings.slotClasses) !== null && _b !== void 0 ? _b : [];
+        _this.slotsIds.forEach(function (slotId) {
+            _this.createSlot(slotId);
         });
         return _this;
     }
-    SlotStock.prototype.createSlot = function (slot, slotClasses) {
+    SlotStock.prototype.createSlot = function (slotId) {
         var _a;
-        this.slots[slot] = document.createElement("div");
-        this.element.appendChild(this.slots[slot]);
-        (_a = this.slots[slot].classList).add.apply(_a, __spreadArray(['slot'], (slotClasses !== null && slotClasses !== void 0 ? slotClasses : []), true));
+        this.slots[slotId] = document.createElement("div");
+        this.slots[slotId].dataset.slotId = slotId;
+        this.element.appendChild(this.slots[slotId]);
+        (_a = this.slots[slotId].classList).add.apply(_a, __spreadArray(['slot'], this.slotClasses, true));
     };
     SlotStock.prototype.addCard = function (card, animation, settings) {
         var _a, _b;
         var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
-        if (!slotId) {
+        if (slotId === undefined) {
             throw new Error("Impossible to add card to slot : no SlotId. Add slotId to settings or set mapCardToSlot to SlotCard constructor.");
         }
         if (!this.slots[slotId]) {
@@ -421,6 +426,22 @@ var SlotStock = /** @class */ (function (_super) {
         }
         var newSettings = __assign(__assign({}, settings), { forceToElement: this.slots[slotId] });
         return _super.prototype.addCard.call(this, card, animation, newSettings);
+    };
+    SlotStock.prototype.setSlotsIds = function (slotsIds) {
+        var _this = this;
+        if (slotsIds.length == this.slotsIds.length && slotsIds.every(function (slotId, index) { return _this.slotsIds[index] === slotId; })) {
+            // no change
+            console.warn('no change', slotsIds, this.slotsIds);
+            return;
+        }
+        console.warn('change!');
+        this.removeAll();
+        this.element.innerHTML = '';
+        this.slotsIds = slotsIds !== null && slotsIds !== void 0 ? slotsIds : [];
+        this.slotsIds.forEach(function (slotId) {
+            _this.createSlot(slotId);
+        });
+        console.log('setSlotsIds', this.element.innerHTML);
     };
     SlotStock.prototype.cardElementInStock = function (element) {
         return (element === null || element === void 0 ? void 0 : element.parentElement.parentElement) == this.element;
@@ -4356,7 +4377,10 @@ var TableCenter = /** @class */ (function () {
     };
     TableCenter.prototype.setInitialCards = function (cards) {
         this.deck.addCards(cards);
-        this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
+        this.visibleCards.removeAll();
+        this.visibleCards.setSlotsIds([0, 1]);
+        var cardsWithSlot = cards.map(function (card, index) { return (__assign(__assign({}, card), { location_arg: index })); });
+        this.visibleCards.addCards(cardsWithSlot, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
     };
     TableCenter.prototype.setVisibleCards = function (cards, init) {
         if (init === void 0) { init = false; }
@@ -4369,6 +4393,7 @@ var TableCenter = /** @class */ (function () {
             // add 3 - 2 - 1
             this.deck.addCards(cardsForDeck);
             // reveal 1 - 2 - 3
+            this.visibleCards.setSlotsIds([1, 2, 3]);
             this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
         }
     };
@@ -7528,7 +7553,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var notifs = [
             ['pickMonster', 500],
-            ['setInitialCards', 500],
+            ['setInitialCards', ANIMATION_MS * 3],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealingRay', ANIMATION_MS],
@@ -7539,7 +7564,7 @@ var KingOfTokyo = /** @class */ (function () {
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
             ['playerEntersTokyo', ANIMATION_MS],
-            ['renewCards', ANIMATION_MS],
+            ['renewCards', ANIMATION_MS * 3],
             ['buyCard', ANIMATION_MS],
             ['reserveCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
@@ -7619,7 +7644,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.inDeckEvolutionsStock.addCard(notif.args.card, { fromStock: this.choseEvolutionInStock });
     };
     KingOfTokyo.prototype.notif_setInitialCards = function (notif) {
-        this.tableCenter.setInitialCards(notif.args.cards);
+        this.tableCenter.setVisibleCards(notif.args.cards);
     };
     KingOfTokyo.prototype.notif_resolveNumberDice = function (notif) {
         this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);

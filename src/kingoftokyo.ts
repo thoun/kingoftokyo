@@ -3474,7 +3474,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const notifs = [
             ['pickMonster', 500],
-            ['setInitialCards', 500],
+            ['setInitialCards', ANIMATION_MS * 3],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealingRay', ANIMATION_MS],
@@ -3485,7 +3485,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
             ['playerEntersTokyo', ANIMATION_MS],
-            ['renewCards', ANIMATION_MS],
+            ['renewCards', ANIMATION_MS * 3],
             ['buyCard', ANIMATION_MS],
             ['reserveCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
@@ -3571,7 +3571,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_setInitialCards(notif: Notif<NotifSetInitialCardsArgs>) {
-        this.tableCenter.setInitialCards(notif.args.cards);
+        this.tableCenter.setVisibleCards(notif.args.cards);
     }
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
