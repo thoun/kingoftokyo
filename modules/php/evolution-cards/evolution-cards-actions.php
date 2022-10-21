@@ -491,6 +491,15 @@ trait EvolutionCardsActionTrait {
 
         $damages = $this->applyPlayCard($playerId, $card);
 
+        // move other cards to bottom deck
+        $question = $this->getQuestion();
+        $cards = $question->args->cards;
+        $otherCards = array_values(array_filter($cards, fn($otherCard) => $otherCard->id != $card->id));
+        $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + ".count($otherCards)." WHERE `card_location` = 'deck'");
+        foreach($otherCards as $index => $otherCard) {
+            $this->cards->moveCard($otherCard->id, 'deck', $index);
+        }
+
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
             $countAvailableCardsForMimic = 0;

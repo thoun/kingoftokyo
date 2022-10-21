@@ -209,6 +209,12 @@
         }
     }
 
+    .cards-stocks {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
     .player-cards {
         width: 100%;
 

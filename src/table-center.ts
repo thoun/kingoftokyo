@@ -179,6 +179,10 @@ class TableCenter {
         return this.visibleCards;
     }
     
+    public getDeck(): HiddenDeck<Card> {
+        return this.deck;
+    }
+    
     public getPickCard(): LineStock<Card> {
         return this.pickCard;
     }

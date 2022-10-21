@@ -49,7 +49,8 @@ class PlayerTable {
                 <div id="token-wrapper-${this.playerId}-shrink-ray" class="token-wrapper shrink-ray"></div>
             </div> 
             <div id="energy-wrapper-${player.id}-left" class="energy-wrapper left"></div>
-            <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>`;
+            <div id="energy-wrapper-${player.id}-right" class="energy-wrapper right"></div>
+            <div class="cards-stocks">`;
         if (game.isPowerUpExpansion()) {
             html += `
             <div id="visible-evolution-cards-${player.id}" class="evolution-card-stock player-evolution-cards ${player.visibleEvolutions?.length ? '' : 'empty'}"></div>
@@ -63,6 +64,7 @@ class PlayerTable {
             html += `<div id="wickedness-tiles-${player.id}" class="wickedness-tile-stock player-wickedness-tiles ${player.wickednessTiles?.length ? '' : 'empty'}"></div>`;
         }
         html += `    <div id="cards-${player.id}" class="card-stock player-cards ${player.reservedCards.length ? '' : 'empty'}"></div>
+            </div>
         </div>
         `;
         dojo.place(html, 'table');

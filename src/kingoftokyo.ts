@@ -39,6 +39,7 @@ class KingOfTokyo implements KingOfTokyoGame {
     private choseEvolutionInStock: LineStock<EvolutionCard>;
     private inDeckEvolutionsStock: LineStock<EvolutionCard>;
     private smashedPlayersStillInTokyo: number[];
+    private titleBarStock: LineStock<Card>;
         
     public SHINK_RAY_TOKEN_TOOLTIP: string;
     public POISON_TOKEN_TOOLTIP: string;
@@ -817,20 +818,20 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
             case 'MiraculousCatch':
-                const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;
-                const miraculousCatchCard = this.cardsManager.generateCardDiv(miraculousCatchArgs.card);
-                miraculousCatchCard.id = `miraculousCatch-card-${miraculousCatchArgs.card.id}`;
-                dojo.place(`<div id="card-MiraculousCatch-wrapper" class="card-in-title-wrapper">${miraculousCatchCard.outerHTML}</div>`, `maintitlebar_content`);
+                const miraculousCatchArgs = question.args as MiraculousCatchQuestionArgs;                
+                dojo.place(`<div id="title-bar-stock" class="card-in-title-wrapper"></div>`, `maintitlebar_content`);
+                this.titleBarStock = new LineStock<Card>(this.cardsManager, document.getElementById('title-bar-stock'));
+                this.titleBarStock.addCard(miraculousCatchArgs.card);
+                this.titleBarStock.setSelectionMode('single');
+                this.titleBarStock.onCardClick = () => this.buyCardMiraculousCatch();
                 break;
             case 'DeepDive':
                 const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
-                dojo.place(`<div id="card-DeepDive-wrapper" class="card-in-title-wrapper">${
-                    deepDiveCatchArgs.cards.map(card => {
-                        const cardDiv = this.cardsManager.generateCardDiv(card);
-                        cardDiv.id = `deepDive-card-${card.id}`;
-                        return cardDiv.outerHTML;
-                    }).join('')
-                }</div>`, `maintitlebar_content`);
+                dojo.place(`<div id="title-bar-stock" class="card-in-title-wrapper"></div>`, `maintitlebar_content`);
+                this.titleBarStock = new LineStock<Card>(this.cardsManager, document.getElementById('title-bar-stock'));
+                this.titleBarStock.addCards(deepDiveCatchArgs.cards, { fromStock: this.tableCenter.getDeck(), originalSide: 'back', rotationDelta: 90 }, undefined, true);
+                this.titleBarStock.setSelectionMode('single');
+                this.titleBarStock.onCardClick = (card: Card) => this.playCardDeepDive(card.id);
                 break;
             case 'MyToy':
                 this.tableCenter.setVisibleCardsSelectionMode('single');
@@ -1037,19 +1038,10 @@ class KingOfTokyo implements KingOfTokyoGame {
                 }
                 break;
             case 'MiraculousCatch':
-                const miraculousCatchCard = document.getElementById(`card-MiraculousCatch-wrapper`);
-                miraculousCatchCard?.parentElement?.removeChild(miraculousCatchCard);
-                break;
             case 'DeepDive':
-                const cards = document.getElementById(`card-DeepDive-wrapper`);
-                cards?.parentElement?.removeChild(cards);
-                break;
-            case 'SuperiorAlienTechnology':
-                let superiorAlienTechnologyCard = document.getElementById(`card-SuperiorAlienTechnology-wrapper`);
-                while(superiorAlienTechnologyCard) {
-                    superiorAlienTechnologyCard?.parentElement?.removeChild(superiorAlienTechnologyCard);
-                    superiorAlienTechnologyCard = document.getElementById(`card-SuperiorAlienTechnology-wrapper`);
-                }
+            case 'SuperiorAlienTechnology':                
+                this.titleBarStock.removeAll();
+                document.getElementById(`title-bar-stock`)?.remove();
                 break;
         }
     }
@@ -1442,7 +1434,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                     (this as any).addActionButton('buyCardMiraculousCatchUseSuperiorAlienTechnology_button', formatTextIcons(dojo.string.substitute(_('Use ${card_name} and pay half cost ${cost}[Energy]'), { card_name: this.evolutionCardsManager.getCardName(28, 'text-only'), cost: miraculousCatchArgs.costSuperiorAlienTechnology })), () => this.buyCardMiraculousCatch(true));
                 }
                 (this as any).addActionButton('skipMiraculousCatch_button', formatTextIcons(dojo.string.substitute(_('Discard ${card_name}'), { card_name: this.cardsManager.getCardName(miraculousCatchArgs.card.type, 'text-only') })), () => this.skipMiraculousCatch());
-                setTimeout(() => document.getElementById(`miraculousCatch-card-${miraculousCatchArgs.card.id}`)?.addEventListener('click', () => this.buyCardMiraculousCatch()), 250);
 
                 document.getElementById('buyCardMiraculousCatch_button').dataset.enableAtEnergy = ''+miraculousCatchArgs.cost;
                 dojo.toggleClass('buyCardMiraculousCatch_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < miraculousCatchArgs.cost);
@@ -1451,7 +1442,6 @@ class KingOfTokyo implements KingOfTokyoGame {
                 const deepDiveCatchArgs = question.args as DeepDiveQuestionArgs;
                 deepDiveCatchArgs.cards.forEach(card => {
                     (this as any).addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
-                    setTimeout(() => document.getElementById(`deepDive-card-${card.id}`)?.addEventListener('click', () => this.playCardDeepDive(card.id)), 250);
                 });
                 break;
             case 'ExoticArms':
@@ -4000,9 +3990,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private setTitleBarSuperiorAlienTechnologyCard(card: Card, parent: string = `maintitlebar_content`) {
-        const superiorAlienTechnologyCard = this.cardsManager.generateCardDiv(card);
-        superiorAlienTechnologyCard.id = `SuperiorAlienTechnology-card-${card.id}`;
-        dojo.place(`<div id="card-SuperiorAlienTechnology-wrapper" class="card-in-title-wrapper">${superiorAlienTechnologyCard.outerHTML}</div>`, parent);
+        dojo.place(`<div id="title-bar-stock" class="card-in-title-wrapper"></div>`, parent);
+        this.titleBarStock = new LineStock<Card>(this.cardsManager, document.getElementById('title-bar-stock'));
+        this.titleBarStock.addCard({...card, id: 9999 + card.id });
+        this.titleBarStock.setSelectionMode('single');
+        this.titleBarStock.onCardClick = () => this.throwDieSuperiorAlienTechnology();
     }
     
     notif_superiorAlienTechnologyRolledDie(notif: Notif<NotifSuperiorAlienTechnologyRolledDieArgs>) {

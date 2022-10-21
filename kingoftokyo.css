@@ -2008,6 +2008,11 @@ body > .card {
 #table .player-table .player-wickedness-tiles.empty {
   max-height: 0px;
 }
+#table .player-table .cards-stocks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 #table .player-table .player-cards {
   width: 100%;
 }
@@ -3511,8 +3516,6 @@ button .icon, a .icon {
   }
 }
 .card-in-title-wrapper {
-  display: flex;
-  justify-content: center;
   line-height: normal;
   font-weight: normal;
 }

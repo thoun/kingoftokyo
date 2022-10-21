@@ -22,7 +22,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 9);
-        $this->debugSetEnergy(50);
+        $this->debugSetEnergy(5);
         //$this->debugSetPlayerPoints(2343493, 17);
         $this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
@@ -75,9 +75,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492);
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
-        //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
-        $this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492);
-        //$this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
+        $this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
+        //$this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492);
+        $this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
@@ -246,8 +246,10 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343493, true);
-            $this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, false);
+            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343493, true);
+            $this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
             //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
