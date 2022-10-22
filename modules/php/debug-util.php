@@ -77,7 +77,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         $this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492);
-        $this->debugSetCardInHand(ACID_ATTACK_CARD, 2343492);
+        $this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
         //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);

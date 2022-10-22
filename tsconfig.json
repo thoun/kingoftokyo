@@ -14,6 +14,7 @@
         "src/kingoftokyo.d.ts",
         "src/slide-utils.ts",
         "src/text-icons-formatter.ts",
+        "src/card-module/animations.ts",
         "src/card-module/card-stock.ts",
         "src/card-module/line-stock.ts",
         "src/card-module/slot-stock.ts",

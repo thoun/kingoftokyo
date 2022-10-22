@@ -84,6 +84,78 @@ function formatTextIcons(rawText) {
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
+function stockSlideAnimation(settings) {
+    var promise = new Promise(function (success) {
+        var _a;
+        var originBR = settings.fromElement.getBoundingClientRect();
+        var destinationBR = settings.element.getBoundingClientRect();
+        var deltaX = (destinationBR.left + destinationBR.right) / 2 - (originBR.left + originBR.right) / 2;
+        var deltaY = (destinationBR.top + destinationBR.bottom) / 2 - (originBR.top + originBR.bottom) / 2;
+        settings.element.style.zIndex = '10';
+        settings.element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px) rotate(" + ((_a = settings.rotationDelta) !== null && _a !== void 0 ? _a : 0) + "deg)";
+        var side = settings.element.dataset.side;
+        if (settings.originalSide && settings.originalSide != side) {
+            var cardSides_1 = settings.element.getElementsByClassName('card-sides')[0];
+            cardSides_1.style.transition = 'none';
+            settings.element.dataset.side = settings.originalSide;
+            setTimeout(function () {
+                cardSides_1.style.transition = null;
+                settings.element.dataset.side = side;
+            });
+        }
+        setTimeout(function () {
+            settings.element.offsetHeight;
+            settings.element.style.transition = "transform 0.5s linear";
+            settings.element.offsetHeight;
+            settings.element.style.transform = null;
+        }, 10);
+        setTimeout(function () {
+            settings.element.style.zIndex = null;
+            settings.element.style.transition = null;
+            success(true);
+        }, 600);
+    });
+    return promise;
+}
+/* example
+function stockSlideWithDoubleLoopAnimation(settings: AnimationSettings): Promise<boolean> {
+    const promise = new Promise<boolean>((success) => {
+
+        const originBR = settings.fromElement.getBoundingClientRect();
+        const destinationBR = settings.element.getBoundingClientRect();
+
+        const deltaX = (destinationBR.left + destinationBR.right)/2 - (originBR.left + originBR.right)/2;
+        const deltaY = (destinationBR.top + destinationBR.bottom)/2 - (originBR.top+ originBR.bottom)/2;
+
+        settings.element.style.zIndex = '10';
+        settings.element.style.transform = `translate(${-deltaX}px, ${-deltaY}px) rotate(${(settings.rotationDelta ?? 0) + 720}deg)`;
+
+        const side = settings.element.dataset.side;
+        if (settings.originalSide && settings.originalSide != side) {
+            const cardSides = settings.element.getElementsByClassName('card-sides')[0] as HTMLDivElement;
+            cardSides.style.transition = 'none';
+            settings.element.dataset.side = settings.originalSide;
+            setTimeout(() => {
+                cardSides.style.transition = null;
+                settings.element.dataset.side = side;
+            });
+        }
+
+        setTimeout(() => {
+            settings.element.offsetHeight;
+            settings.element.style.transition = `transform 0.5s linear`;
+            settings.element.offsetHeight;
+            settings.element.style.transform = null;
+        }, 10);
+        setTimeout(() => {
+            settings.element.style.zIndex = null;
+            settings.element.style.transition = null;
+            success(true);
+        }, 600);
+    });
+    return promise;
+}
+*/ 
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -160,7 +232,13 @@ var CardStock = /** @class */ (function () {
         var promise;
         ((_a = settings === null || settings === void 0 ? void 0 : settings.forceToElement) !== null && _a !== void 0 ? _a : this.element).appendChild(cardElement);
         cardElement.classList.remove('selectable', 'selected');
-        promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
+        promise = this.animationFromElement({
+            element: cardElement,
+            fromElement: animation.fromStock.element,
+            originalSide: animation.originalSide,
+            rotationDelta: animation.rotationDelta,
+            animation: animation.animation,
+        });
         animation.fromStock.removeCard(card);
         return promise;
     };
@@ -170,11 +248,23 @@ var CardStock = /** @class */ (function () {
         ((_a = settings === null || settings === void 0 ? void 0 : settings.forceToElement) !== null && _a !== void 0 ? _a : this.element).appendChild(cardElement);
         if (animation) {
             if (animation.fromStock) {
-                promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
+                promise = this.animationFromElement({
+                    element: cardElement,
+                    fromElement: animation.fromStock.element,
+                    originalSide: animation.originalSide,
+                    rotationDelta: animation.rotationDelta,
+                    animation: animation.animation,
+                });
                 animation.fromStock.removeCard(card);
             }
             else if (animation.fromElement) {
-                promise = this.slideFromElement(cardElement, animation.fromElement, animation.originalSide, animation.rotationDelta);
+                promise = this.animationFromElement({
+                    element: cardElement,
+                    fromElement: animation.fromElement,
+                    originalSide: animation.originalSide,
+                    rotationDelta: animation.rotationDelta,
+                    animation: animation.animation,
+                });
             }
         }
         return promise;
@@ -310,43 +400,15 @@ var CardStock = /** @class */ (function () {
         }
         (_a = this.onCardClick) === null || _a === void 0 ? void 0 : _a.call(this, card);
     };
-    CardStock.prototype.slideFromElement = function (element, fromElement, originalSide, rotationDelta) {
-        var _this = this;
-        var promise = new Promise(function (success) {
-            var originBR = fromElement.getBoundingClientRect();
-            if (document.visibilityState !== 'hidden' && !_this.manager.game.instantaneousMode) {
-                var destinationBR = element.getBoundingClientRect();
-                var deltaX = (destinationBR.left + destinationBR.right) / 2 - (originBR.left + originBR.right) / 2;
-                var deltaY = (destinationBR.top + destinationBR.bottom) / 2 - (originBR.top + originBR.bottom) / 2;
-                element.style.zIndex = '10';
-                element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px) rotate(" + (rotationDelta !== null && rotationDelta !== void 0 ? rotationDelta : 0) + "deg)";
-                var side_1 = element.dataset.side;
-                if (originalSide && originalSide != side_1) {
-                    var cardSides_1 = element.getElementsByClassName('card-sides')[0];
-                    cardSides_1.style.transition = 'none';
-                    element.dataset.side = originalSide;
-                    setTimeout(function () {
-                        cardSides_1.style.transition = null;
-                        element.dataset.side = side_1;
-                    });
-                }
-                setTimeout(function () {
-                    element.offsetHeight;
-                    element.style.transition = "transform 0.5s linear";
-                    element.offsetHeight;
-                    element.style.transform = null;
-                }, 10);
-                setTimeout(function () {
-                    element.style.zIndex = null;
-                    element.style.transition = null;
-                    success(true);
-                }, 600);
-            }
-            else {
-                success(false);
-            }
-        });
-        return promise;
+    CardStock.prototype.animationFromElement = function (settings) {
+        var _a;
+        if (document.visibilityState !== 'hidden' && !this.manager.game.instantaneousMode) {
+            var animation = (_a = settings.animation) !== null && _a !== void 0 ? _a : stockSlideAnimation;
+            return animation(settings);
+        }
+        else {
+            return Promise.resolve(false);
+        }
     };
     return CardStock;
 }());

@@ -1,10 +1,3 @@
-interface CardAnimation<T> {
-    fromStock?: CardStock<T>;
-    fromElement?: HTMLElement;
-    originalSide?: 'front' | 'back';
-    rotationDelta?: number,
-}
-
 interface AddCardSettings {
     visible?: boolean;
     forceToElement?: HTMLElement;
@@ -89,7 +82,13 @@ class CardStock<T> {
 
         (settings?.forceToElement ?? this.element).appendChild(cardElement);
         cardElement.classList.remove('selectable', 'selected');
-        promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
+        promise = this.animationFromElement({
+            element: cardElement, 
+            fromElement: animation.fromStock.element, 
+            originalSide: animation.originalSide, 
+            rotationDelta: animation.rotationDelta,
+            animation: animation.animation,
+        });
         animation.fromStock.removeCard(card);
 
         return promise;
@@ -102,10 +101,22 @@ class CardStock<T> {
     
         if (animation) {
             if (animation.fromStock) {
-                promise = this.slideFromElement(cardElement, animation.fromStock.element, animation.originalSide, animation.rotationDelta);
+                promise = this.animationFromElement({
+                    element: cardElement, 
+                    fromElement: animation.fromStock.element, 
+                    originalSide: animation.originalSide, 
+                    rotationDelta: animation.rotationDelta,
+                    animation: animation.animation,
+                });
                 animation.fromStock.removeCard(card);
             } else if (animation.fromElement) {
-                promise = this.slideFromElement(cardElement, animation.fromElement, animation.originalSide, animation.rotationDelta);
+                promise = this.animationFromElement({
+                    element: cardElement, 
+                    fromElement: animation.fromElement, 
+                    originalSide: animation.originalSide, 
+                    rotationDelta: animation.rotationDelta,
+                    animation: animation.animation,
+                });
             }
         }
 
@@ -242,47 +253,12 @@ class CardStock<T> {
         this.onCardClick?.(card);
     }
 
-    protected slideFromElement(element: HTMLElement, fromElement: HTMLElement, originalSide: 'front' | 'back', rotationDelta: number): Promise<boolean> {
-        const promise = new Promise<boolean>((success) => {
-
-            const originBR = fromElement.getBoundingClientRect();
-            
-            if (document.visibilityState !== 'hidden' && !(this.manager.game as any).instantaneousMode) {
-                const destinationBR = element.getBoundingClientRect();
-        
-                const deltaX = (destinationBR.left + destinationBR.right)/2 - (originBR.left + originBR.right)/2;
-                const deltaY = (destinationBR.top + destinationBR.bottom)/2 - (originBR.top+ originBR.bottom)/2;
-        
-                element.style.zIndex = '10';
-                element.style.transform = `translate(${-deltaX}px, ${-deltaY}px) rotate(${rotationDelta ?? 0}deg)`;
-
-                const side = element.dataset.side;
-                if (originalSide && originalSide != side) {
-                    const cardSides = element.getElementsByClassName('card-sides')[0] as HTMLDivElement;
-                    cardSides.style.transition = 'none';
-                    element.dataset.side = originalSide;
-                    setTimeout(() => {
-                        cardSides.style.transition = null;
-                        element.dataset.side = side;
-                    });
-                }
-        
-                setTimeout(() => {
-                    element.offsetHeight;
-                    element.style.transition = `transform 0.5s linear`;
-                    element.offsetHeight;
-                    element.style.transform = null;
-                }, 10);
-                setTimeout(() => {
-                    element.style.zIndex = null;
-                    element.style.transition = null;
-                    success(true);
-                }, 600);
-            } else {
-                success(false);
-            }
-        });
-
-        return promise;
+    protected animationFromElement(settings: AnimationSettings): Promise<boolean> {
+        if (document.visibilityState !== 'hidden' && !(this.manager.game as any).instantaneousMode) {
+            const animation = settings.animation ?? stockSlideAnimation;
+            return animation(settings);
+        } else {
+            return Promise.resolve(false);
+        }
     }
 }
