@@ -79,9 +79,9 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492);
         $this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
-        //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
+        $this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
-        //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
+        $this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
         //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(SOLAR_POWERED_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
@@ -92,8 +92,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(ALPHA_MONSTER_CARD, 2343493);
-        //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
-        //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
+        $this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
+        $this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         $this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);

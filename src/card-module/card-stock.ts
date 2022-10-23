@@ -81,7 +81,7 @@ class CardStock<T> {
         let promise: Promise<boolean>;
 
         (settings?.forceToElement ?? this.element).appendChild(cardElement);
-        cardElement.classList.remove('selectable', 'selected');
+        cardElement.classList.remove('selectable', 'selected', 'disabled');
         promise = this.animationFromElement({
             element: cardElement, 
             fromElement: animation.fromStock.element, 

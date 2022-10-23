@@ -231,7 +231,7 @@ var CardStock = /** @class */ (function () {
         var _a;
         var promise;
         ((_a = settings === null || settings === void 0 ? void 0 : settings.forceToElement) !== null && _a !== void 0 ? _a : this.element).appendChild(cardElement);
-        cardElement.classList.remove('selectable', 'selected');
+        cardElement.classList.remove('selectable', 'selected', 'disabled');
         promise = this.animationFromElement({
             element: cardElement,
             fromElement: animation.fromStock.element,
