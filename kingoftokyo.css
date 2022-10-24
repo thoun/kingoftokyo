@@ -984,6 +984,7 @@ body > .card {
 .card[data-side=back] .card-sides {
   transform: rotateY(180deg);
 }
+
 .card .card-sides {
   position: absolute;
   top: 0;
@@ -993,6 +994,7 @@ body > .card {
   transform-style: preserve-3d;
   transition: transform 0.5s;
 }
+
 .card .card-sides .card-side {
   position: absolute;
   top: 0;
@@ -1008,13 +1010,16 @@ body > .card {
   box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
+
 .card .card-sides .card-side.front > * {
   pointer-events: none;
   user-select: none;
 }
+
 .card .card-sides .card-side.back {
   transform: rotateY(180deg);
 }
+
 .card .card-sides .card-side.back > * {
   pointer-events: none;
   user-select: none;
@@ -1023,6 +1028,7 @@ body > .card {
 .card-stock.selectable .card:not(.disabled) {
   cursor: pointer;
 }
+
 .card-stock .card.selectable:not(.disabled) {
   cursor: pointer;
 }
@@ -1033,6 +1039,7 @@ body > .card {
   flex-wrap: var(--wrap);
   flex-direction: var(--direction);
 }
+
 .card-stock.line-stock[data-center=true] {
   justify-content: center;
 }
@@ -1043,6 +1050,7 @@ body > .card {
   flex-wrap: var(--wrap);
   flex-direction: var(--direction);
 }
+
 .card-stock.slot-stock[data-center=true] {
   justify-content: center;
 }
@@ -1050,14 +1058,17 @@ body > .card {
 .card-stock.hidden-deck {
   position: relative;
 }
+
 .card-stock.hidden-deck > .card[id$=-hidden-deck-back] {
   box-shadow: 4px 4px 0px 0px #111, 5px 5px 2px 1px rgba(0, 0, 0, 0.5);
 }
+
 .card-stock.hidden-deck > .card:not([id$=-hidden-deck-back]) {
   position: absolute;
   top: 0;
   left: 0;
 }
+
 .card-stock.hidden-deck[data-empty=true] {
   visibility: hidden;
 }
@@ -1065,6 +1076,7 @@ body > .card {
 .card-stock.visible-deck {
   position: relative;
 }
+
 .card-stock.visible-deck > .card.under {
   position: absolute;
   top: 0;
@@ -1078,6 +1090,7 @@ body > .card {
   transition: height 0.5s ease-in-out, background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
   opacity: var(--tile-count);
 }
+
 .card-stock.all-visible-deck > * {
   position: absolute;
   margin: 0;
@@ -1085,10 +1098,12 @@ body > .card {
   top: calc(var(--shift) * var(--order));
   left: calc(var(--shift) * var(--order));
 }
+
 .card-stock.all-visible-deck:hover, .card-stock.all-visible-deck:active, .card-stock.all-visible-deck.opened {
   height: calc((var(--height) + var(--shift)) * var(--tile-count) - var(--shift));
   z-index: 1;
 }
+
 .card-stock.all-visible-deck:hover > *, .card-stock.all-visible-deck:active > *, .card-stock.all-visible-deck.opened > * {
   top: calc((var(--height) + var(--shift)) * var(--order));
 }
