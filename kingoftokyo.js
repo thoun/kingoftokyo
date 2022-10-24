@@ -205,7 +205,7 @@ var CardStock = /** @class */ (function () {
     CardStock.prototype.addCard = function (card, animation, settings) {
         var _a, _b;
         if (this.cardInStock(card)) {
-            return;
+            return Promise.resolve(false);
         }
         var promise;
         // we check if card is in stock then we ignore animation
