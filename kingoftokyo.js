@@ -5366,7 +5366,7 @@ var KingOfTokyo = /** @class */ (function () {
             if (this.isPowerUpExpansion()) {
                 this.getPlayerTable(playerId_3).reservedCards.setSelectionMode('single');
             }
-            this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(args.canBuyFromPlayers && playerTable.playerId != playerId_3 ? 'single' : 'multiple'); });
+            this.playerTables.forEach(function (playerTable) { return playerTable.cards.setSelectionMode(args.canBuyFromPlayers && playerTable.playerId != playerId_3 ? 'single' : 'none'); });
             if ((_b = (_a = args._private) === null || _a === void 0 ? void 0 : _a.pickCards) === null || _b === void 0 ? void 0 : _b.length) {
                 this.tableCenter.showPickStock(args._private.pickCards);
             }
