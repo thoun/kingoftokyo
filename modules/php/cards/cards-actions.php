@@ -337,13 +337,22 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
-        if ($from > 0 && $this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0 && $from !== $playerId) {
-            throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
+        if ($from > 0) {
+            if ($from !== $playerId) {
+                if ($this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
+                    throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
+                }
+            } else if ($from === $playerId) {
+                if ($card->location_arg !== 'reserved'.$playerId) {
+                    throw new \BgaUserException("You can't buy this card");
+                }
+            }
         }
 
         if (!$this->canBuyPowerCard($playerId)) {
             throw new \BgaUserException("You can't buy Power cards");
-        }
+        }        
+
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
         
         $canPreventBuying = !$opportunist && $this->isPowerUpExpansion()
