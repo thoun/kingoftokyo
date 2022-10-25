@@ -1218,8 +1218,8 @@ trait EvolutionCardsUtilTrait {
     function electricCarrotQuestion(array $smashedPlayersIds) {
         $question = new Question(
             'ElectricCarrot',
-            /*client TODODE translate(*/'Smashed players can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
-            /*client TODODE translate(*/'${you} can give 1[Energy] or lose 1 extra [Heart]'/*)*/,
+            clienttranslate('Smashed players can give 1[Energy] or lose 1 extra [Heart]'),
+            clienttranslate('${you} can give 1[Energy] or lose 1 extra [Heart]'),
             $smashedPlayersIds,
             ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
             []

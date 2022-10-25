@@ -140,23 +140,23 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 137: return _("[6d6e71]Pandarwinism [231f20]Survival of the Cutest");
             case 138: return _("[6d6e71]Yin [231f20]& Yang");
             // cyberbunny : soft b67392 strong ec008c
-            case 141: return /*_TODODE*/("[b67392]Stroke [ec008c]Of Genius");
-            case 142: return /*_TODODE*/("[b67392]Emergency [ec008c]Battery");
-            case 143: return /*_TODODE*/("[b67392]Rabbit's [ec008c]Foot");
-            case 144: return /*_TODODE*/("[b67392]Heart [ec008c]of the Rabbit");
-            case 145: return /*_TODODE*/("[b67392]Secret [ec008c]Laboratory");
-            case 146: return /*_TODODE*/("[b67392]King [ec008c]of the Gizmo");
-            case 147: return /*_TODODE*/("[b67392]Energy [ec008c]Sword");
-            case 148: return /*_TODODE*/("[b67392]Electric [ec008c]Carrot");
+            case 141: return _("[b67392]Stroke [ec008c]Of Genius");
+            case 142: return _("[b67392]Emergency [ec008c]Battery");
+            case 143: return _("[b67392]Rabbit's [ec008c]Foot");
+            case 144: return _("[b67392]Heart [ec008c]of the Rabbit");
+            case 145: return _("[b67392]Secret [ec008c]Laboratory");
+            case 146: return _("[b67392]King [ec008c]of the Gizmo");
+            case 147: return _("[b67392]Energy [ec008c]Sword");
+            case 148: return _("[b67392]Electric [ec008c]Carrot");
             // kraken : blue 2384c6 gray 4c7c96
-            case 151: return /*_TODODE*/("[2384c6]Healing [4c7c96]Rain");
-            case 152: return /*_TODODE*/("[2384c6]Destructive [4c7c96]Wave");
-            case 153: return /*_TODODE*/("[2384c6]Cult [4c7c96]Worshippers");
-            case 154: return /*_TODODE*/("[2384c6]High [4c7c96]Tide");
-            case 155: return /*_TODODE*/("[2384c6]Terror [4c7c96]of the Deep");
-            case 156: return /*_TODODE*/("[2384c6]Eater [4c7c96]of Souls");
-            case 157: return /*_TODODE*/("[2384c6]Sunken [4c7c96]Temple");
-            case 158: return /*_TODODE*/("[2384c6]Mandibles [4c7c96]of Dread");
+            case 151: return _("[2384c6]Healing [4c7c96]Rain");
+            case 152: return _("[2384c6]Destructive [4c7c96]Wave");
+            case 153: return _("[2384c6]Cult [4c7c96]Worshippers");
+            case 154: return _("[2384c6]High [4c7c96]Tide");
+            case 155: return _("[2384c6]Terror [4c7c96]of the Deep");
+            case 156: return _("[2384c6]Eater [4c7c96]of Souls");
+            case 157: return _("[2384c6]Sunken [4c7c96]Temple");
+            case 158: return _("[2384c6]Mandibles [4c7c96]of Dread");
             // Baby Gigazaur : dark a5416f light f05a7d
             case 181: return /*_TODOPUBG*/("[a5416f]My [f05a7d]Toy");
             case 182: return /*_TODOPUBG*/("[a5416f]Growing [f05a7d]Fast");
@@ -282,23 +282,23 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 137: return _("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return _("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + `<div>[dice1]↔[dice3] &nbsp; [dice2]↔[diceHeart] &nbsp; [diceSmash]↔[diceEnergy]</div>`;
             // Cyber Bunny
-            case 141: return /*_TODODE*/("Gain 1[Energy] for each [Energy] you already gained this turn.");
+            case 141: return _("Gain 1[Energy] for each [Energy] you already gained this turn.");
             case 142: return "+3[Energy]";
             // 143 same as 51
-            case 144: return /*_TODODE*/("Play when another Monster finishes Rolling. Reroll one of this Monster’s dice. Take back <i>Heart of the Rabbit</i> from your discard when you take control of <i>Tokyo</i>.");
-            case 145: return /*_TODODE*/("The price of Power cards you buy is reduced by 1[Energy].");
-            case 146: return /*_TODODE*/("Gain 1[Star] each time you buy a Power card.");
-            case 147: return /*_TODODE*/("Before rolling dice, you can pay 2[Energy]. If you do so and you roll at least 1 [diceSmash], add [diceSmash] to your Roll. Gain 1[Energy] for each [diceSmash] you rolled this turn.");
-            case 148: return /*_TODODE*/("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy].");
+            case 144: return _("Play when another Monster finishes Rolling. Reroll one of this Monster’s dice. Take back <i>Heart of the Rabbit</i> from your discard when you take control of <i>Tokyo</i>.");
+            case 145: return _("The price of Power cards you buy is reduced by 1[Energy].");
+            case 146: return _("Gain 1[Star] each time you buy a Power card.");
+            case 147: return _("Before rolling dice, you can pay 2[Energy]. If you do so and you roll at least 1 [diceSmash], add [diceSmash] to your Roll. Gain 1[Energy] for each [diceSmash] you rolled this turn.");
+            case 148: return _("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy].");
             // Kraken
             case 151: return "+2[Heart]";
-            case 152: return /*_TODODE*/("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart].");
-            case 153: return /*_TODODE*/("Gain 1[Star] for each [Heart] gained this turn.");
-            case 154: return /*_TODODE*/("For each [diceHeart] you rolled, add [diceHeart] to your Roll");
-            case 155: return /*_TODODE*/("Roll one die for each [Heart] you lost this turn. Don’t lose [Heart] for each [diceHeart] you roll.");
-            case 156: return /*_TODODE*/("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
-            case 157: return /*_TODODE*/("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
-            case 158: return /*_TODODE*/("Monsters you wound lose 1[Star].");
+            case 152: return _("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart].");
+            case 153: return _("Gain 1[Star] for each [Heart] gained this turn.");
+            case 154: return _("For each [diceHeart] you rolled, add [diceHeart] to your Roll");
+            case 155: return _("Roll one die for each [Heart] you lost this turn. Don’t lose [Heart] for each [diceHeart] you roll.");
+            case 156: return _("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
+            case 157: return _("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
+            case 158: return _("Monsters you wound lose 1[Star].");
             // Baby Gigazaur
             case 181: return /*_TODOPUBG*/("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve."); // TODOPUBG
             case 182: return /*_TODOPUBG*/("If you roll no [diceHeart], gain 1[Heart].");

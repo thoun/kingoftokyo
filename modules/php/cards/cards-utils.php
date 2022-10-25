@@ -468,7 +468,7 @@ trait CardsUtilTrait {
         $this->applyResurrectCard(
             $playerId, 
             ZOMBIFY_CARD, 
-            /*client TODODE translate(*/'${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'/*)*/,
+            clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all cards, tiles, wickedness and [Star] are lost but player gets back 12 [Heart] and is now a Zombie!'),
             true, 
             false,
             false,

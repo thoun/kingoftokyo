@@ -664,11 +664,11 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     3: {
         '624A9E': 'f89b21',
-        '624A9F': 'e86a24', // TODODE 624A9F not present in current card, to add ?
+        '624A9F': 'e86a24',
     },
     4: {
         '6FBA44': '25c1f2',
-        '6FBA45': '9adbf2', // TODODE 6FBA45 not present in current card, to add ?
+        '6FBA45': '9adbf2',
     },
     5: {
         '0068A1': 'e7622e',
@@ -686,7 +686,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     9: {
         '836380': 'c4432d',
-        '836381': 'be6d4f', // TODODE 836381 not present in current card, to add ?
+        '836381': 'be6d4f',
     },
     10: {
         '42B4B4': 'ed2024',
@@ -698,7 +698,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     12: {
         '293066': 'f37671',
-        '293067': 'ee2b2c', // TODODE 293067 not present in current card, to add ?
+        '293067': 'ee2b2c',
     },
     13: {
         '060D29': 'ee323e',
@@ -714,11 +714,11 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     16: {
         '5F6D7A': '5a56a5',
-        '5F6D7B': '817ebb', // TODODE 5F6D7B not present in current card, to add ?
+        '5F6D7B': '817ebb',
     },
     17: {
         '0481C4': 'e37ea0',
-        '0481C5': 'c53240', // TODODE 0481C5 not present in current card, to add ? before Children
+        '0481C5': 'c53240',
     },
     18: {
         '8E4522': '3262ae',
@@ -736,7 +736,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     23: {
         '0C94D0': '6b489d',
-        '0C94D1': 'af68aa', // TODODE 0C94D1 not present in current card, to add ? before Child
+        '0C94D1': 'af68aa',
     },
     24: {
         'AABEE1': 'fce150',
@@ -768,7 +768,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     34: {
         '1E345D': '6ea943',
-        '1E345E': '447537', // TODODE 1E345E not present in current card, to add ?
+        '1E345E': '447537',
     },
     36: {
         '2A7C3C': '537dbf',
@@ -787,7 +787,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     41: {
         '5E7795': 'efcf43',
-        '5E7796': 'e0a137', // TODODE 5E7796 not present in current card, to add ?
+        '5E7796': 'e0a137',
     },
     42: {
         '142338': '2eb28b',
@@ -802,7 +802,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     45: {
         '56170E': 'f7941d',
-        '56170F': 'fdbb43', // TODODE 56170F not present in current card, to add ?
+        '56170F': 'fdbb43',
     },
     46: {
         'B795A5': '7cc145',
@@ -858,7 +858,7 @@ var DARK_EDITION_CARDS_COLOR_MAPPINGS = {
     },
     112: {
         '5B79A2': 'eca729',
-        '5B79A3': 'fdda50', // TODODE 5B79A3 not present in current card, to add ?
+        '5B79A3': 'fdda50',
     },
     113: {
         'EE008E': 'cfad2e',
@@ -1288,33 +1288,26 @@ var CardsManager = /** @class */ (function (_super) {
             // KEEP
             case 1: return _("[724468]Acid [6E3F63]Attack");
             case 2: return _("[442E70]Alien [57347E]Origin");
-            case 39999: return _("[624A9E]Alpha Monster"); // TODODEAFTER remove
             case 3: return _("[624A9E]Alpha [624A9F]Monster");
-            case 49999: return _("[6FBA44]Armor Plating"); // TODODEAFTER remove
             case 4: return _("[6FBA44]Armor [6FBA45]Plating");
             case 5: return _("[0068A1]Background [0070AA]Dweller");
             case 6: return _("[5A6E79]Burrowing");
             case 7: return _("[5DB1DD]Camouflage");
             case 8: return _("[7C7269]Complete [958B7F]Destruction");
-            case 99999: return _("[836380]Media-Friendly"); // TODODEAFTER remove
             case 9: return _("[836380]Media-[836381]Friendly");
             case 10: return _("[42B4B4]Eater of [25948B]the Dead");
             case 11: return _("[0C4E4A]Energy [004C6E]Hoarder");
-            case 129999: return _("[293066]Even Bigger"); // TODODEAFTER remove
             case 12: return _("[293066]Even [293067]Bigger");
             case 13:
             case 14: return _("[060D29]Extra [0C1946]Head");
             case 15: return _("[823F24]Fire [FAAE5A]Breathing");
-            case 169999: return _("[5F6D7A]Freeze Time"); // TODODEAFTER remove
             case 16: return _("[5F6D7A]Freeze [5F6D7B]Time");
-            case 179999: return _("[0481C4]Friend of [0481C5]Children"); // TODODEAFTER remove
             case 17: return _("[0481C4]Friend of Children");
             case 18: return _("[8E4522]Giant [277C43]Brain");
             case 19: return _("[958877]Gourmet");
             case 20: return _("[7A673C]Healing [DC825F]Ray");
             case 21: return _("[2B63A5]Herbivore");
             case 22: return _("[BBB595]Herd [835C25]Culler");
-            case 239999: return _("[0C94D0]It Has a Child!"); // TODODEAFTER remove
             case 23: return _("[0C94D0]It Has a [0C94D1]Child!");
             case 24: return _("[AABEE1]Jets");
             case 25: return _("[075087]Made in [124884]a Lab");
@@ -1326,7 +1319,6 @@ var CardsManager = /** @class */ (function (_super) {
             case 31: return _("[0068A1]Opportunist");
             case 32: return _("[462365]Parasitic [563D5B]Tentacles");
             case 33: return _("[CD599A]Plot [E276A7]Twist");
-            case 349999: return _("[1E345D]Poison Quills"); // TODODEAFTER remove
             case 34: return _("[1E345D]Poison [1E345E]Quills");
             case 35: return _("[3D5C33]Poison Spit");
             case 36: return _("[2A7C3C]Psychic [6DB446]Probe");
@@ -1334,23 +1326,21 @@ var CardsManager = /** @class */ (function (_super) {
             case 38: return _("[5C273B]Regeneration");
             case 39: return _("[007DC0]Rooting for the Underdog");
             case 40: return _("[A2B164]Shrink [A07958]Ray");
-            case 419999: return _("[5E7795]Smoke Cloud"); // TODODEAFTER remove
             case 41: return _("[5E7795]Smoke [5E7796]Cloud");
-            case 42: return this.game.isDarkEdition() ? /*TODODE_*/ ("[2eb28b]Lunar [91cc83]Powered") : _("[142338]Solar [46617C]Powered");
+            case 42: return this.game.isDarkEdition() ? _("[2eb28b]Lunar [91cc83]Powered") : _("[142338]Solar [46617C]Powered");
             case 43: return _("[A9C7AD]Spiked [4F6269]Tail");
             case 44: return _("[AE2B7B]Stretchy");
-            case 459999: return _("[56170E]Energy Drink"); // TODODEAFTER remove
             case 45: return _("[56170E]Energy [56170F]Drink");
             case 46: return _("[B795A5]Urbavore");
             case 47: return _("[757A52]We're [60664A]Only [52593A]Making It [88A160]Stronger!");
             case 48: return _("[443E56]Wings");
-            case 49: return /*TODODE_*/ ("[eeb91a]Hibernation");
-            case 50: return /*TODODE_*/ ("[ee3934]Nanobots");
-            case 51: return /*TODODE_*/ ("[9e4163]Natural [f283ae]Selection");
-            case 52: return /*TODODE_*/ ("[ad457e]Reflective [d65ca3]Hide");
-            case 53: return /*TODODE_*/ ("[f2633b]Super [faa73b]Jump");
-            case 54: return /*TODODE_*/ ("[4f7f3a]Unstable [a9d154]DNA");
-            case 55: return /*TODODE_*/ ("[659640]Zombify");
+            case 49: return _("[eeb91a]Hibernation");
+            case 50: return _("[ee3934]Nanobots");
+            case 51: return _("[9e4163]Natural [f283ae]Selection");
+            case 52: return _("[ad457e]Reflective [d65ca3]Hide");
+            case 53: return _("[f2633b]Super [faa73b]Jump");
+            case 54: return _("[4f7f3a]Unstable [a9d154]DNA");
+            case 55: return _("[659640]Zombify");
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -1363,7 +1353,6 @@ var CardsManager = /** @class */ (function (_super) {
             case 109: return _("[B1624A]Frenzy");
             case 110: return _("[645656]Gas [71625F]Refinery");
             case 111: return _("[815321]Heal");
-            case 1129999: return _("[5B79A2]High Altitude Bombing"); // TODODEAFTER remove
             case 112: return _("[5B79A2]High Altitude [5B79A3]Bombing");
             case 113: return _("[EE008E]Jet [49236C]Fighters");
             case 114: return _("[68696B]National [53575A]Guard");
@@ -1371,7 +1360,7 @@ var CardsManager = /** @class */ (function (_super) {
             case 116: return _("[5F8183]Skyscraper");
             case 117: return _("[AF966B]Tank");
             case 118: return _("[847443]Vast [8D7F4E]Storm");
-            case 119: return /*TODODE _*/ ("[83aa50]Monster [41813c]pets");
+            case 119: return _("[83aa50]Monster [41813c]pets");
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
             case 202: return _("[005c98]Ghost");
@@ -1446,7 +1435,9 @@ var CardsManager = /** @class */ (function (_super) {
             case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
             case 21: return _("<strong>Gain 1[Star]</strong> at the end of your turn if you don't make anyone lose [Heart].");
             case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
-            case 23: return _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
+            case 23: return this.game.isDarkEdition() ?
+                _("If you reach [Skull], discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star] and Yield Tokyo. <strong>Gain 10[Heart] and continue playing.</strong>") :
+                _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
             case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
             case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
             case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
@@ -1472,14 +1463,13 @@ var CardsManager = /** @class */ (function (_super) {
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
-            case 49: return "<div><i>" + ("You CANNOT buy this card while in TOKYO") + "</i></div>" + /*_TODODE*/ ("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
-            case 50: return /*_TODODE*/ ("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
-            case 51: return '<div><strong>+4[Energy] +4[Heart]</strong></div>' + /*TODODE_*/ ("<strong>Use an extra die.</strong> If you ever end one of your turns with at least [dice3], you lose all your [Heart].");
-            case 52: return /*TODODE_*/ ("<strong>Any Monster who makes you lose [Heart] loses 1[Heart]</strong> as well.");
-            case 53: return /*TODODE_*/ ("Once each player’s turn, you may spend 1[Energy] <strong>to negate the loss of 1[Heart].</strong>");
-            case 54: return /*TODODE_*/ ("When you Yield Tokyo, <strong>you may exchange this card</strong> with a card of your choice from the Monster who Smashed you.");
-            case 55: return /*TODODE_*/ ("If you reach [Skull] for the first time in this game, <strong>discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star], Yield Tokyo, gain 12[Heart] and continue playing.</strong> For the rest of the game, your maximum [Heart] is increased to 12[Heart] and <strong>you can’t use [diceHeart] anymore.</strong>");
-            // TODODE
+            case 49: return "<div><i>" + _("You CANNOT buy this card while in TOKYO") + "</i></div>" + _("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
+            case 50: return _("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
+            case 51: return '<div><strong>+4[Energy] +4[Heart]</strong></div>' + _("<strong>Use an extra die.</strong> If you ever end one of your turns with at least [dice3], you lose all your [Heart].");
+            case 52: return _("<strong>Any Monster who makes you lose [Heart] loses 1[Heart]</strong> as well.");
+            case 53: return _("Once each player’s turn, you may spend 1[Energy] <strong>to negate the loss of 1[Heart].</strong>");
+            case 54: return _("When you Yield Tokyo, <strong>you may exchange this card</strong> with a card of your choice from the Monster who Smashed you.");
+            case 55: return _("If you reach [Skull] for the first time in this game, <strong>discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star], Yield Tokyo, gain 12[Heart] and continue playing.</strong> For the rest of the game, your maximum [Heart] is increased to 12[Heart] and <strong>you can’t use [diceHeart] anymore.</strong>");
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
@@ -1499,7 +1489,7 @@ var CardsManager = /** @class */ (function (_super) {
             case 116: return "<strong>+ 4[Star].";
             case 117: return "<strong>+ 4[Star] -3[Heart].</strong>";
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
-            case 119: return "<strong>All Monsters</strong> (including you) <strong>lose 3[Star].</strong>"; // TODODE
+            case 119: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Star].</strong>");
             // COSTUME
             case 201: return _("<strong>If you reach 17[Star],</strong> you win the game");
             case 202: return _("At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>");
@@ -2017,23 +2007,23 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 137: return _("[6d6e71]Pandarwinism [231f20]Survival of the Cutest");
             case 138: return _("[6d6e71]Yin [231f20]& Yang");
             // cyberbunny : soft b67392 strong ec008c
-            case 141: return /*_TODODE*/ ("[b67392]Stroke [ec008c]Of Genius");
-            case 142: return /*_TODODE*/ ("[b67392]Emergency [ec008c]Battery");
-            case 143: return /*_TODODE*/ ("[b67392]Rabbit's [ec008c]Foot");
-            case 144: return /*_TODODE*/ ("[b67392]Heart [ec008c]of the Rabbit");
-            case 145: return /*_TODODE*/ ("[b67392]Secret [ec008c]Laboratory");
-            case 146: return /*_TODODE*/ ("[b67392]King [ec008c]of the Gizmo");
-            case 147: return /*_TODODE*/ ("[b67392]Energy [ec008c]Sword");
-            case 148: return /*_TODODE*/ ("[b67392]Electric [ec008c]Carrot");
+            case 141: return _("[b67392]Stroke [ec008c]Of Genius");
+            case 142: return _("[b67392]Emergency [ec008c]Battery");
+            case 143: return _("[b67392]Rabbit's [ec008c]Foot");
+            case 144: return _("[b67392]Heart [ec008c]of the Rabbit");
+            case 145: return _("[b67392]Secret [ec008c]Laboratory");
+            case 146: return _("[b67392]King [ec008c]of the Gizmo");
+            case 147: return _("[b67392]Energy [ec008c]Sword");
+            case 148: return _("[b67392]Electric [ec008c]Carrot");
             // kraken : blue 2384c6 gray 4c7c96
-            case 151: return /*_TODODE*/ ("[2384c6]Healing [4c7c96]Rain");
-            case 152: return /*_TODODE*/ ("[2384c6]Destructive [4c7c96]Wave");
-            case 153: return /*_TODODE*/ ("[2384c6]Cult [4c7c96]Worshippers");
-            case 154: return /*_TODODE*/ ("[2384c6]High [4c7c96]Tide");
-            case 155: return /*_TODODE*/ ("[2384c6]Terror [4c7c96]of the Deep");
-            case 156: return /*_TODODE*/ ("[2384c6]Eater [4c7c96]of Souls");
-            case 157: return /*_TODODE*/ ("[2384c6]Sunken [4c7c96]Temple");
-            case 158: return /*_TODODE*/ ("[2384c6]Mandibles [4c7c96]of Dread");
+            case 151: return _("[2384c6]Healing [4c7c96]Rain");
+            case 152: return _("[2384c6]Destructive [4c7c96]Wave");
+            case 153: return _("[2384c6]Cult [4c7c96]Worshippers");
+            case 154: return _("[2384c6]High [4c7c96]Tide");
+            case 155: return _("[2384c6]Terror [4c7c96]of the Deep");
+            case 156: return _("[2384c6]Eater [4c7c96]of Souls");
+            case 157: return _("[2384c6]Sunken [4c7c96]Temple");
+            case 158: return _("[2384c6]Mandibles [4c7c96]of Dread");
             // Baby Gigazaur : dark a5416f light f05a7d
             case 181: return /*_TODOPUBG*/ ("[a5416f]My [f05a7d]Toy");
             case 182: return /*_TODOPUBG*/ ("[a5416f]Growing [f05a7d]Fast");
@@ -2161,23 +2151,23 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 137: return _("If you roll at least [diceHeart][diceHeart][diceHeart], gain 1[Star]. Also gain 1[Star] for each extra [diceHeart] you roll.");
             case 138: return _("Before resolving your dice, you can choose to flip all your dice to the opposite side.") + "<div>[dice1]\u2194[dice3] &nbsp; [dice2]\u2194[diceHeart] &nbsp; [diceSmash]\u2194[diceEnergy]</div>";
             // Cyber Bunny
-            case 141: return /*_TODODE*/ ("Gain 1[Energy] for each [Energy] you already gained this turn.");
+            case 141: return _("Gain 1[Energy] for each [Energy] you already gained this turn.");
             case 142: return "+3[Energy]";
             // 143 same as 51
-            case 144: return /*_TODODE*/ ("Play when another Monster finishes Rolling. Reroll one of this Monster’s dice. Take back <i>Heart of the Rabbit</i> from your discard when you take control of <i>Tokyo</i>.");
-            case 145: return /*_TODODE*/ ("The price of Power cards you buy is reduced by 1[Energy].");
-            case 146: return /*_TODODE*/ ("Gain 1[Star] each time you buy a Power card.");
-            case 147: return /*_TODODE*/ ("Before rolling dice, you can pay 2[Energy]. If you do so and you roll at least 1 [diceSmash], add [diceSmash] to your Roll. Gain 1[Energy] for each [diceSmash] you rolled this turn.");
-            case 148: return /*_TODODE*/ ("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy].");
+            case 144: return _("Play when another Monster finishes Rolling. Reroll one of this Monster’s dice. Take back <i>Heart of the Rabbit</i> from your discard when you take control of <i>Tokyo</i>.");
+            case 145: return _("The price of Power cards you buy is reduced by 1[Energy].");
+            case 146: return _("Gain 1[Star] each time you buy a Power card.");
+            case 147: return _("Before rolling dice, you can pay 2[Energy]. If you do so and you roll at least 1 [diceSmash], add [diceSmash] to your Roll. Gain 1[Energy] for each [diceSmash] you rolled this turn.");
+            case 148: return _("If you are in <i>Tokyo</i>, Monsters you wound lose one extra [Heart] unless they give you 1[Energy].");
             // Kraken
             case 151: return "+2[Heart]";
-            case 152: return /*_TODODE*/ ("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart].");
-            case 153: return /*_TODODE*/ ("Gain 1[Star] for each [Heart] gained this turn.");
-            case 154: return /*_TODODE*/ ("For each [diceHeart] you rolled, add [diceHeart] to your Roll");
-            case 155: return /*_TODODE*/ ("Roll one die for each [Heart] you lost this turn. Don’t lose [Heart] for each [diceHeart] you roll.");
-            case 156: return /*_TODODE*/ ("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
-            case 157: return /*_TODODE*/ ("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
-            case 158: return /*_TODODE*/ ("Monsters you wound lose 1[Star].");
+            case 152: return _("Play when you enter <i>Tokyo</i>. All other Monsters lose 2[Heart].");
+            case 153: return _("Gain 1[Star] for each [Heart] gained this turn.");
+            case 154: return _("For each [diceHeart] you rolled, add [diceHeart] to your Roll");
+            case 155: return _("Roll one die for each [Heart] you lost this turn. Don’t lose [Heart] for each [diceHeart] you roll.");
+            case 156: return _("Gain 1[Heart] each time you enter <i>Tokyo</i>. You can have up to 12[Heart] as long as you own this card.");
+            case 157: return _("Before rolling dice, if you are not in <i>Tokyo</i>, you can pass your turn to gain 3[Heart] and 3[Energy].");
+            case 158: return _("Monsters you wound lose 1[Star].");
             // Baby Gigazaur
             case 181: return /*_TODOPUBG*/ ("Take one of the three face-up Power cards and put it under this card. It is reserved for your purchase. Once purchased, choose another card to reserve."); // TODOPUBG
             case 182: return /*_TODOPUBG*/ ("If you roll no [diceHeart], gain 1[Heart].");
@@ -4570,7 +4560,7 @@ var RULEBOOK_LINKS = [
         'fr': 'http://iello.fr/regles/KOT%20DARK_rulebook.pdf',
     },
 ];
-var EXPANSION_NUMBER = 7; // TODODE
+var EXPANSION_NUMBER = 8;
 var ActivatedExpansionsPopin = /** @class */ (function () {
     function ActivatedExpansionsPopin(gamedatas, language) {
         var _this = this;
@@ -4623,7 +4613,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 5: return _('“Nature vs. Machine: the Comeback!” event (Berserk)');
             case 6: return _('“Even more wicked!” event');
             case 7: return _('Power-Up! (Evolutions)');
-            case 8: return /*TODODE*/ ('Dark Edition');
+            case 8: return _('Dark Edition');
         }
     };
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
@@ -4635,7 +4625,7 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(_("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
-            case 8: return /*TODODE_*/ ("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
+            case 8: return _("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
         }
         return '';
     };
@@ -5806,8 +5796,8 @@ var KingOfTokyo = /** @class */ (function () {
                 case 'resolveDice':
                     var argsResolveDice = args;
                     if (argsResolveDice.canLeaveHibernation) {
-                        this.addActionButton('stayInHibernation_button', /*_TODODE*/ ("Stay in Hibernation"), function () { return _this.stayInHibernation(); });
-                        this.addActionButton('leaveHibernation_button', /*_TODODE*/ ("Leave Hibernation"), function () { return _this.leaveHibernation(); }, null, null, 'red');
+                        this.addActionButton('stayInHibernation_button', _("Stay in Hibernation"), function () { return _this.stayInHibernation(); });
+                        this.addActionButton('leaveHibernation_button', _("Leave Hibernation"), function () { return _this.leaveHibernation(); }, null, null, 'red');
                     }
                     break;
                 case 'prepareResolveDice':

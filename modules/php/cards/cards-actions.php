@@ -404,7 +404,7 @@ trait CardsActionTrait {
 
         if ($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) {
 
-            $this->notifyAllPlayers("drawCardHibernationInTokyo", /*client TODODE translate(*/'${player_name} draws ${card_name} while in Tokyo, the card is discarded'/*)*/, [
+            $this->notifyAllPlayers("drawCardHibernationInTokyo", clienttranslate('${player_name} draws ${card_name} while in Tokyo, the card is discarded'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => $card->type,
@@ -1015,7 +1015,7 @@ trait CardsActionTrait {
             $this->changeMaxHealth($exchangedCardOwner);
         }
 
-        $this->notifyAllPlayers("exchangeCard", /*client TODODE translate(*/'${player_name} exchange ${card_name} with ${card_name2} taken from ${player_name2}'/*)*/, [
+        $this->notifyAllPlayers("exchangeCard", clienttranslate('${player_name} exchange ${card_name} with ${card_name2} taken from ${player_name2}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'previousOwner' => $exchangedCardOwner,

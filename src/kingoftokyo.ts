@@ -1220,8 +1220,8 @@ class KingOfTokyo implements KingOfTokyoGame {
                 case 'resolveDice': 
                     const argsResolveDice = args as EnteringResolveDiceArgs;
                     if (argsResolveDice.canLeaveHibernation) {
-                        (this as any).addActionButton('stayInHibernation_button', /*_TODODE*/("Stay in Hibernation"), () => this.stayInHibernation());
-                        (this as any).addActionButton('leaveHibernation_button', /*_TODODE*/("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
+                        (this as any).addActionButton('stayInHibernation_button',_("Stay in Hibernation"), () => this.stayInHibernation());
+                        (this as any).addActionButton('leaveHibernation_button',_("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
                     }
                     break;
                 case 'prepareResolveDice':

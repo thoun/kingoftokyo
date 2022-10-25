@@ -176,8 +176,8 @@ trait EvolutionCardsStateTrait {
 
             $question = new Question(
                 'SunkenTemple',
-                /* client TODODE translate(*/'${actplayer} can pass turn to gain 3[Heart] and 3[Energy]'/*)*/,
-                /* client TODODE translate(*/'${you} can pass your turn to gain 3[Heart] and 3[Energy]'/*)*/,
+                clienttranslate('${actplayer} can pass turn to gain 3[Heart] and 3[Energy]'),
+                clienttranslate('${you} can pass your turn to gain 3[Heart] and 3[Energy]'),
                 [$playerId],
                 ST_QUESTIONS_BEFORE_START_TURN,
                 []

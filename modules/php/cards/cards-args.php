@@ -335,7 +335,7 @@ trait CardsArgTrait {
 
             $rapidHealingHearts = $this->cancellableDamageWithRapidHealing($playerId);
             $countSuperJump = $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD);
-            $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId); // TODODE use potentialEnergy
+            $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId);
             $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
             $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($effectiveDamage, $this->getPlayerHealth($playerId));
             $healWithEvolutions = 0;
