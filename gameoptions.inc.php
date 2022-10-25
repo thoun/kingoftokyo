@@ -170,8 +170,8 @@ $game_options = [
                 'tmdisplay' => totranslate('Dark edition') . ' ' . totranslate('(random mix)'),
             ],
         ],
-        'default' => 1,
-        'startcondition' => [
+        'default' => 2,
+        /*'startcondition' => [
             2 => [
                 [ 
                     'type' => 'minplayers',
@@ -193,7 +193,7 @@ $game_options = [
                     'message' => 'Dark edition will be available soon',
                 ] 
             ],
-        ],
+        ],*/
     ],
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
@@ -227,7 +227,7 @@ $game_options = [
                 'description' => totranslate("Include bonus/promo monsters"),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
     ],
 
     110 => [
