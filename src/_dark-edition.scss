@@ -91,7 +91,7 @@ html[data-dark-edition="true"] {
     }
     
     .card-stock {
-        .stockitem.kot-card[data-design="dark-edition"], #deck {
+        .kot-card[data-design="dark-edition"], #deck {
             --main-color: #f6d445;
 
             .card-token {    
@@ -194,7 +194,7 @@ html[data-dark-edition="true"] {
         }
     }
 
-    .wickedness-tile-stock .stockitem, #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile {
+    .kot-tile, #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile {
         background-image: url('img/dark/wickedness-tiles.jpg');
 
         .name-wrapper {

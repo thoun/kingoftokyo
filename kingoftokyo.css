@@ -2572,35 +2572,35 @@ html[data-dark-edition=true] .highlight-evolution, html[data-dark-edition=true] 
 html[data-dark-edition=true] #table #table-center #table-power-cards #deck-wrapper #deck #card-deck-hidden-deck-back {
   background: url("img/dark/card-back.jpg");
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition], html[data-dark-edition=true] .card-stock #deck {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition], html[data-dark-edition=true] .card-stock #deck {
   --main-color: #f6d445;
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .card-token.mimic-tile, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .card-token.mimic-tile, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile {
   background-image: url("img/dark/wickedness-tiles.jpg");
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .card-token.mimic-tile .name-wrapper, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile .name-wrapper {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .card-token.mimic-tile .name-wrapper, html[data-dark-edition=true] .card-stock #deck .card-token.mimic-tile .name-wrapper {
   font-size: 10pt;
   font-family: "young-frankenstein-italic";
   color: #f6d445;
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .bottom, html[data-dark-edition=true] .card-stock #deck .bottom {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .bottom, html[data-dark-edition=true] .card-stock #deck .bottom {
   background-image: url("img/dark/card-bottom.png");
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .name-wrapper, html[data-dark-edition=true] .card-stock #deck .name-wrapper {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .name-wrapper, html[data-dark-edition=true] .card-stock #deck .name-wrapper {
   font-size: 13pt;
   font-family: "young-frankenstein-italic";
   color: black;
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper, html[data-dark-edition=true] .card-stock #deck .type-wrapper {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper, html[data-dark-edition=true] .card-stock #deck .type-wrapper {
   transform: unset;
   font-family: "young-frankenstein";
   font-size: 11pt;
   margin-top: -5px;
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.keep .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline {
   -webkit-text-stroke: 0;
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.keep .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline::before {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.keep .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.keep .outline::before {
   top: -4px;
   left: -4px;
   bottom: -4px;
@@ -2611,10 +2611,10 @@ html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-ed
   mask: url("img/dark/keep-mask.png") no-repeat center/contain;
   background-color: var(--main-color);
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.discard .outline, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline {
   -webkit-text-stroke: 0;
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .type-wrapper.discard .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline::before {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .type-wrapper.discard .outline::before, html[data-dark-edition=true] .card-stock #deck .type-wrapper.discard .outline::before {
   top: -6px;
   left: 0px;
   bottom: -4px;
@@ -2625,7 +2625,7 @@ html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-ed
   mask: url("img/dark/discard-mask.png") no-repeat center/contain;
   background-color: var(--main-color);
 }
-html[data-dark-edition=true] .card-stock .stockitem.kot-card[data-design=dark-edition] .description-wrapper, html[data-dark-edition=true] .card-stock #deck .description-wrapper {
+html[data-dark-edition=true] .card-stock .kot-card[data-design=dark-edition] .description-wrapper, html[data-dark-edition=true] .card-stock #deck .description-wrapper {
   color: white;
 }
 html[data-dark-edition=true] .kot-tile {
@@ -2652,20 +2652,20 @@ html[data-dark-edition=true] .kot-card[data-design=dark-edition] .card-keep-text
   color: #f6d445;
   letter-spacing: unset;
 }
-html[data-dark-edition=true] .wickedness-tile-stock .stockitem, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile {
+html[data-dark-edition=true] .kot-tile, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile {
   background-image: url("img/dark/wickedness-tiles.jpg");
 }
-html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper {
+html[data-dark-edition=true] .kot-tile .name-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper {
   font-family: "young-frankenstein-expanded-italic";
   color: #f6d445;
 }
-html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side0, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side0 {
+html[data-dark-edition=true] .kot-tile .name-wrapper .outline.wickedness-tile-side0, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side0 {
   -webkit-text-stroke: 4px #231f20;
 }
-html[data-dark-edition=true] .wickedness-tile-stock .stockitem .name-wrapper .outline.wickedness-tile-side1, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side1 {
+html[data-dark-edition=true] .kot-tile .name-wrapper .outline.wickedness-tile-side1, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .name-wrapper .outline.wickedness-tile-side1 {
   -webkit-text-stroke: 4px #231f20;
 }
-html[data-dark-edition=true] .wickedness-tile-stock .stockitem .description-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .description-wrapper {
+html[data-dark-edition=true] .kot-tile .description-wrapper, html[data-dark-edition=true] #table #table-center #full-board #wickedness-board-wrapper #wickedness-board .wickedness-tiles-pile .wickedness-tile .description-wrapper {
   color: white;
 }
 html[data-dark-edition=true] #table #table-center #full-board #board {
