@@ -367,7 +367,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup(array_keys($players));
+        //$this->debugSetup(array_keys($players));
 
         /************ End of the game initialization *****/
     }
@@ -418,6 +418,7 @@ class KingOfTokyo extends Table {
         $activePlayerId = $this->getActivePlayerId();
         $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true, true, true) : [];
 
+        $result['deckCardsCount'] = intval($this->cards->countCardInLocation('deck'));
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
 
@@ -498,6 +499,8 @@ class KingOfTokyo extends Table {
         if ($isAnubisExpansion) {
             $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab(true);
             $result['curseCard'] = $this->getCurseCard();
+            $result['hiddenCurseCardCount'] = intval($this->curseCards->countCardInLocation('deck'));
+            $result['visibleCurseCardCount'] = intval($this->curseCards->countCardInLocation('table')) + intval($this->curseCards->countCardInLocation('discard'));
         }
 
         if ($isWickednessExpansion) {

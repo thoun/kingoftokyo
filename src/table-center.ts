@@ -26,6 +26,11 @@ const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
     [37, 29],
 ];
 
+const DECK_SETTINGS = {
+    width: 132,
+    height: 185,
+};
+
 class TableCenter {
     private deck: HiddenDeck<Card>;
     private visibleCards: SlotStock<Card>;
@@ -36,8 +41,8 @@ class TableCenter {
     private tokyoTower: TokyoTower;
     private wickednessPoints = new Map<number, number>();
 
-    constructor(private game: KingOfTokyoGame, players: KingOfTokyoPlayer[], visibleCards: Card[], topDeckCardBackType: string, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card) {        
-        this.createVisibleCards(visibleCards, topDeckCardBackType);
+    constructor(private game: KingOfTokyoGame, players: KingOfTokyoPlayer[], visibleCards: Card[], topDeckCardBackType: string, deckCardsCount: number, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card, hiddenCurseCardCount: number, visibleCurseCardCount: number) {        
+        this.createVisibleCards(visibleCards, topDeckCardBackType, deckCardsCount);
 
         if (game.isWickednessExpansion()) {
             dojo.place(`
@@ -63,14 +68,18 @@ class TableCenter {
         }
 
         if (game.isAnubisExpansion()) {
-            this.createCurseCard(curseCard);
+            this.createCurseCard(curseCard,  hiddenCurseCardCount, visibleCurseCardCount);
         } else {
             document.getElementById('table-curse-cards').style.display = 'none';
         }
     }
 
-    public createVisibleCards(visibleCards: Card[], topDeckCardBackType: string) {
-        this.deck = new HiddenDeck<Card>(this.game.cardsManager, document.getElementById('deck'));
+    public createVisibleCards(visibleCards: Card[], topDeckCardBackType: string, deckCardsCount: number) {
+        this.deck = new HiddenDeck<Card>(this.game.cardsManager, document.getElementById('deck'), {
+            ...DECK_SETTINGS,
+            cardNumber: deckCardsCount,
+            shadowDirection: 'top-right',
+        });
 
         this.visibleCards = new SlotStock<Card>(this.game.cardsManager, document.getElementById('visible-cards'), {
             slotsIds: [1, 2, 3],
@@ -83,16 +92,22 @@ class TableCenter {
         this.setTopDeckCardBackType(topDeckCardBackType);
     }
 
-    public createCurseCard(curseCard: Card) {
+    public createCurseCard(curseCard: Card, hiddenCurseCardCount: number, visibleCurseCardCount: number) {
         dojo.place(`<div id="curse-wrapper">
             <div id="curse-deck"></div>
             <div id="curse-card"></div>
         </div>`, 'table-curse-cards');
 
 
-        this.curseCard = new VisibleDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-card'));
+        this.curseCard = new VisibleDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-card'), {
+            ...DECK_SETTINGS,
+            cardNumber: visibleCurseCardCount,
+        });
         this.curseCard.addCard(curseCard);
-        this.curseDeck = new HiddenDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'));
+        this.curseDeck = new HiddenDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'), {
+            ...DECK_SETTINGS,
+            cardNumber: hiddenCurseCardCount,
+        });
 
         (this.game as any).addTooltipHtml(`curse-deck`, `
         <strong>${_("Curse card pile.")}</strong>

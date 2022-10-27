@@ -10,6 +10,10 @@ $description-left: 4px;
 $description-width: 124px;
 $description-size: 7pt;
 
+.card, .card-side {
+    border-radius: 10px;
+}
+
 .kot-curse-card, .kot-tile, .kot-evolution, .kot-card {
     border-radius: 10px;
     text-align: center;

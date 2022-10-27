@@ -163,6 +163,7 @@ interface KingOfTokyoGamedatas {
     dice: Die[];
     visibleCards: Card[];
     topDeckCardBackType: string;
+    deckCardsCount: number;
     mimickedCards: {
         card: Card | null;
         tile: Card | null;
@@ -184,6 +185,8 @@ interface KingOfTokyoGamedatas {
     darkEdition: boolean;
     playerWithGoldenScarab?: number;
     curseCard?: Card;
+    hiddenCurseCardCount?: number;
+    visibleCurseCardCount?: number;
     wickednessTiles: WickednessTile[];
     EVOLUTION_CARDS_TYPES?: number[];
     EVOLUTION_CARDS_SINGLE_STATE?: { [stateName: string]: number[] };

@@ -84,6 +84,12 @@ function formatTextIcons(rawText) {
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
+/**
+ * Linear slide of the card from origin to destination.
+ *
+ * @param settings an `AnimationSettings` object
+ * @returns a promise when animation ends
+ */
 function stockSlideAnimation(settings) {
     var promise = new Promise(function (success) {
         var _a;
@@ -117,45 +123,6 @@ function stockSlideAnimation(settings) {
     });
     return promise;
 }
-/* example
-function stockSlideWithDoubleLoopAnimation(settings: AnimationSettings): Promise<boolean> {
-    const promise = new Promise<boolean>((success) => {
-
-        const originBR = settings.fromElement.getBoundingClientRect();
-        const destinationBR = settings.element.getBoundingClientRect();
-
-        const deltaX = (destinationBR.left + destinationBR.right)/2 - (originBR.left + originBR.right)/2;
-        const deltaY = (destinationBR.top + destinationBR.bottom)/2 - (originBR.top+ originBR.bottom)/2;
-
-        settings.element.style.zIndex = '10';
-        settings.element.style.transform = `translate(${-deltaX}px, ${-deltaY}px) rotate(${(settings.rotationDelta ?? 0) + 720}deg)`;
-
-        const side = settings.element.dataset.side;
-        if (settings.originalSide && settings.originalSide != side) {
-            const cardSides = settings.element.getElementsByClassName('card-sides')[0] as HTMLDivElement;
-            cardSides.style.transition = 'none';
-            settings.element.dataset.side = settings.originalSide;
-            setTimeout(() => {
-                cardSides.style.transition = null;
-                settings.element.dataset.side = side;
-            });
-        }
-
-        setTimeout(() => {
-            settings.element.offsetHeight;
-            settings.element.style.transition = `transform 0.5s linear`;
-            settings.element.offsetHeight;
-            settings.element.style.transform = null;
-        }, 10);
-        setTimeout(() => {
-            settings.element.style.zIndex = null;
-            settings.element.style.transition = null;
-            success(true);
-        }, 600);
-    });
-    return promise;
-}
-*/ 
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -167,7 +134,14 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+/**
+ * The abstract stock. It shouldn't be used directly, use stocks that extends it.
+ */
 var CardStock = /** @class */ (function () {
+    /**
+     * @param manager the card manager
+     * @param element the stock element (should be an empty HTML Element)
+     */
     function CardStock(manager, element) {
         this.manager = manager;
         this.element = element;
@@ -178,15 +152,28 @@ var CardStock = /** @class */ (function () {
         element === null || element === void 0 ? void 0 : element.classList.add('card-stock' /*, this.constructor.name.split(/(?=[A-Z])/).join('-').toLowerCase()* doesn't work in production because of minification */);
         this.bindClick();
     }
+    /**
+     * @returns the cards on the stock
+     */
     CardStock.prototype.getCards = function () {
         return this.cards.slice();
     };
+    /**
+     * @returns if the stock is empty
+     */
     CardStock.prototype.isEmpty = function () {
         return !this.cards.length;
     };
+    /**
+     * @returns the selected cards
+     */
     CardStock.prototype.getSelection = function () {
         return this.selectedCards.slice();
     };
+    /**
+     * @param card a card
+     * @returns if the card is present in the stock
+     */
     CardStock.prototype.contains = function (card) {
         var _this = this;
         return this.cards.some(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
@@ -199,9 +186,21 @@ var CardStock = /** @class */ (function () {
     CardStock.prototype.cardElementInStock = function (element) {
         return (element === null || element === void 0 ? void 0 : element.parentElement) == this.element;
     };
+    /**
+     * @param card a card in the stock
+     * @returns the HTML element generated for the card
+     */
     CardStock.prototype.getCardElement = function (card) {
         return document.getElementById(this.manager.getId(card));
     };
+    /**
+     * Add a card to the stock.
+     *
+     * @param card the card to add
+     * @param animation a `CardAnimation` object
+     * @param settings a `AddCardSettings` object
+     * @returns the promise when the animation is done (true if it was animated, false if it wasn't)
+     */
     CardStock.prototype.addCard = function (card, animation, settings) {
         var _a, _b;
         if (this.cardInStock(card)) {
@@ -269,6 +268,14 @@ var CardStock = /** @class */ (function () {
         }
         return promise;
     };
+    /**
+     * Add an array of cards to the stock.
+     *
+     * @param cards the cards to add
+     * @param animation a `CardAnimation` object
+     * @param settings a `AddCardSettings` object
+     * @param shift if number, the number of milliseconds between each card. if true, chain animations
+     */
     CardStock.prototype.addCards = function (cards, animation, settings, shift) {
         var _this = this;
         if (shift === void 0) { shift = false; }
@@ -290,6 +297,11 @@ var CardStock = /** @class */ (function () {
             cards.forEach(function (card) { return _this.addCard(card, animation, settings); });
         }
     };
+    /**
+     * Remove a card from the stock.
+     *
+     * @param card the card to remove
+     */
     CardStock.prototype.removeCard = function (card) {
         if (this.cardInStock(card)) {
             this.manager.removeCard(card);
@@ -303,6 +315,9 @@ var CardStock = /** @class */ (function () {
             this.cards.splice(index, 1);
         }
     };
+    /**
+     * Remove all cards from the stock.
+     */
     CardStock.prototype.removeAll = function () {
         var _this = this;
         var cards = this.getCards(); // use a copy of the array as we iterate and modify it at the same time
@@ -312,12 +327,26 @@ var CardStock = /** @class */ (function () {
         var element = this.getCardElement(card);
         element.classList.toggle('selectable', selectable);
     };
+    /**
+     * Set if the stock is selectable, and if yes if it can be multiple.
+     * If set to 'none', it will unselect all selected cards.
+     *
+     * @param selectionMode the selection mode
+     */
     CardStock.prototype.setSelectionMode = function (selectionMode) {
         var _this = this;
+        if (selectionMode === 'none') {
+            this.unselectAll(true);
+        }
         this.cards.forEach(function (card) { return _this.setSelectableCard(card, selectionMode != 'none'); });
         this.element.classList.toggle('selectable', selectionMode != 'none');
         this.selectionMode = selectionMode;
     };
+    /**
+     * Set selected state to a card.
+     *
+     * @param card the card to select
+     */
     CardStock.prototype.selectCard = function (card, silent) {
         var _this = this;
         var _a;
@@ -335,6 +364,11 @@ var CardStock = /** @class */ (function () {
             (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), card);
         }
     };
+    /**
+     * Set unselected state to a card.
+     *
+     * @param card the card to unselect
+     */
     CardStock.prototype.unselectCard = function (card, silent) {
         var _this = this;
         var _a;
@@ -349,6 +383,9 @@ var CardStock = /** @class */ (function () {
             (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), card);
         }
     };
+    /**
+     * Select all cards
+     */
     CardStock.prototype.selectAll = function (silent) {
         var _this = this;
         var _a;
@@ -361,6 +398,9 @@ var CardStock = /** @class */ (function () {
             (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, this.selectedCards.slice(), null);
         }
     };
+    /**
+     * Unelect all cards
+     */
     CardStock.prototype.unselectAll = function (silent) {
         var _this = this;
         var _a;
@@ -427,8 +467,63 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+/**
+ * Abstract stock to represent a deck. (pile of cards, with a fake 3d effect of thickness).
+ */
+var Deck = /** @class */ (function (_super) {
+    __extends(Deck, _super);
+    function Deck(manager, element, settings) {
+        var _a, _b, _c, _d;
+        var _this = _super.call(this, manager, element) || this;
+        _this.manager = manager;
+        _this.element = element;
+        element.classList.add('deck');
+        _this.element.style.setProperty('--width', settings.width + 'px');
+        _this.element.style.setProperty('--height', settings.height + 'px');
+        _this.thicknesses = (_a = settings.thicknesses) !== null && _a !== void 0 ? _a : [0, 2, 5, 10, 20, 30];
+        _this.setCardNumber((_b = settings.cardNumber) !== null && _b !== void 0 ? _b : 52);
+        _this.autoUpdateCardNumber = (_c = settings.autoUpdateCardNumber) !== null && _c !== void 0 ? _c : true;
+        var shadowDirection = (_d = settings.shadowDirection) !== null && _d !== void 0 ? _d : 'bottom-right';
+        var shadowDirectionSplit = shadowDirection.split('-');
+        var xShadowShift = shadowDirectionSplit.includes('right') ? 1 : (shadowDirectionSplit.includes('left') ? -1 : 0);
+        var yShadowShift = shadowDirectionSplit.includes('bottom') ? 1 : (shadowDirectionSplit.includes('top') ? -1 : 0);
+        _this.element.style.setProperty('--xShadowShift', '' + xShadowShift);
+        _this.element.style.setProperty('--yShadowShift', '' + yShadowShift);
+        return _this;
+    }
+    Deck.prototype.setCardNumber = function (cardNumber) {
+        var _this = this;
+        this.cardNumber = cardNumber;
+        this.element.dataset.empty = (this.cardNumber == 0).toString();
+        var thickness = 0;
+        this.thicknesses.forEach(function (threshold, index) {
+            if (_this.cardNumber >= threshold) {
+                thickness = index;
+            }
+        });
+        this.element.style.setProperty('--thickness', thickness + 'px');
+    };
+    Deck.prototype.addCard = function (card, animation, settings) {
+        return _super.prototype.addCard.call(this, card, animation, settings);
+    };
+    Deck.prototype.cardRemoved = function (card) {
+        if (this.autoUpdateCardNumber) {
+            this.setCardNumber(this.cardNumber - 1);
+        }
+        _super.prototype.cardRemoved.call(this, card);
+    };
+    return Deck;
+}(CardStock));
+/**
+ * A basic stock for a list of cards, based on flex.
+ */
 var LineStock = /** @class */ (function (_super) {
     __extends(LineStock, _super);
+    /**
+     * @param manager the card manager
+     * @param element the stock element (should be an empty HTML Element)
+     * @param settings a `LineStockSettings` object
+     */
     function LineStock(manager, element, settings) {
         var _a, _b, _c, _d;
         var _this = _super.call(this, manager, element) || this;
@@ -452,8 +547,16 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+/**
+ * A stock with fixed slots (some can be empty)
+ */
 var SlotStock = /** @class */ (function (_super) {
     __extends(SlotStock, _super);
+    /**
+     * @param manager the card manager
+     * @param element the stock element (should be an empty HTML Element)
+     * @param settings a `SlotStockSettings` object
+     */
     function SlotStock(manager, element, settings) {
         var _a, _b;
         var _this = _super.call(this, manager, element, settings) || this;
@@ -477,6 +580,14 @@ var SlotStock = /** @class */ (function (_super) {
         this.element.appendChild(this.slots[slotId]);
         (_a = this.slots[slotId].classList).add.apply(_a, __spreadArray(['slot'], this.slotClasses, true));
     };
+    /**
+     * Add a card to the stock.
+     *
+     * @param card the card to add
+     * @param animation a `CardAnimation` object
+     * @param settings a `AddCardToSlotSettings` object
+     * @returns the promise when the animation is done (true if it was animated, false if it wasn't)
+     */
     SlotStock.prototype.addCard = function (card, animation, settings) {
         var _a, _b;
         var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
@@ -489,6 +600,11 @@ var SlotStock = /** @class */ (function (_super) {
         var newSettings = __assign(__assign({}, settings), { forceToElement: this.slots[slotId] });
         return _super.prototype.addCard.call(this, card, animation, newSettings);
     };
+    /**
+     * Change the slots ids. Will empty the stock before re-creating the slots.
+     *
+     * @param slotsIds the new slotsIds. Will replace the old ones.
+     */
     SlotStock.prototype.setSlotsIds = function (slotsIds) {
         var _this = this;
         if (slotsIds.length == this.slotsIds.length && slotsIds.every(function (slotId, index) { return _this.slotsIds[index] === slotId; })) {
@@ -512,30 +628,25 @@ var SlotStock = /** @class */ (function (_super) {
 }(LineStock));
 var HiddenDeck = /** @class */ (function (_super) {
     __extends(HiddenDeck, _super);
-    function HiddenDeck(manager, element, empty) {
-        if (empty === void 0) { empty = false; }
-        var _this = _super.call(this, manager, element) || this;
+    function HiddenDeck(manager, element, settings) {
+        var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
         element.classList.add('hidden-deck');
-        _this.setEmpty(empty);
         _this.element.appendChild(_this.manager.createCardElement({ id: element.id + "-hidden-deck-back" }, false));
         return _this;
     }
-    HiddenDeck.prototype.setEmpty = function (empty) {
-        this.element.dataset.empty = empty.toString();
-    };
     HiddenDeck.prototype.addCard = function (card, animation, settings) {
         var _a;
         var newSettings = __assign(__assign({}, settings), { visible: (_a = settings === null || settings === void 0 ? void 0 : settings.visible) !== null && _a !== void 0 ? _a : false });
         return _super.prototype.addCard.call(this, card, animation, newSettings);
     };
     return HiddenDeck;
-}(CardStock));
+}(Deck));
 var VisibleDeck = /** @class */ (function (_super) {
     __extends(VisibleDeck, _super);
-    function VisibleDeck(manager, element) {
-        var _this = _super.call(this, manager, element) || this;
+    function VisibleDeck(manager, element, settings) {
+        var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
         element.classList.add('visible-deck');
@@ -545,23 +656,30 @@ var VisibleDeck = /** @class */ (function (_super) {
         var _this = this;
         var currentCard = this.cards[this.cards.length - 1];
         if (currentCard) {
-            document.getElementById(this.manager.getId(currentCard)).classList.add('under');
-            setTimeout(function () { return _this.removeCard(currentCard); }, 600);
+            // we remove the card under, only when the animation is done. TODO use promise result
+            setTimeout(function () {
+                _this.removeCard(currentCard);
+                // counter the autoUpdateCardNumber as the card isn't really removed, we just remove it from the dom so player cannot see it's content.
+                if (_this.autoUpdateCardNumber) {
+                    _this.setCardNumber(_this.cardNumber + 1);
+                }
+            }, 600);
         }
         return _super.prototype.addCard.call(this, card, animation, settings);
     };
     return VisibleDeck;
-}(CardStock));
+}(Deck));
 var AllVisibleDeck = /** @class */ (function (_super) {
     __extends(AllVisibleDeck, _super);
-    function AllVisibleDeck(manager, element, width, height, shift) {
+    function AllVisibleDeck(manager, element, settings) {
+        var _a;
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
         element.classList.add('all-visible-deck');
-        element.style.setProperty('--width', width);
-        element.style.setProperty('--height', height);
-        element.style.setProperty('--shift', shift);
+        element.style.setProperty('--width', settings.width);
+        element.style.setProperty('--height', settings.height);
+        element.style.setProperty('--shift', (_a = settings.shift) !== null && _a !== void 0 ? _a : '3px');
         return _this;
     }
     AllVisibleDeck.prototype.addCard = function (card, animation, settings) {
@@ -574,6 +692,11 @@ var AllVisibleDeck = /** @class */ (function (_super) {
         this.element.style.setProperty('--tile-count', '' + this.cards.length);
         return promise;
     };
+    /**
+     * Set opened state. If true, all cards will be entirely visible.
+     *
+     * @param opened indicate if deck must be always opened. If false, will open only on hover/touch
+     */
     AllVisibleDeck.prototype.setOpened = function (opened) {
         this.element.classList.toggle('opened', opened);
     };
@@ -590,6 +713,10 @@ var AllVisibleDeck = /** @class */ (function (_super) {
     return AllVisibleDeck;
 }(CardStock));
 var CardManager = /** @class */ (function () {
+    /**
+     * @param game the BGA game class, usually it will be `this`
+     * @param settings: a `CardManagerSettings` object
+     */
     function CardManager(game, settings) {
         this.game = game;
         this.settings = settings;
@@ -598,6 +725,10 @@ var CardManager = /** @class */ (function () {
     CardManager.prototype.addStock = function (stock) {
         this.stocks.push(stock);
     };
+    /**
+     * @param card the card informations
+     * @return the id for a card
+     */
     CardManager.prototype.getId = function (card) {
         var _a, _b, _c;
         return (_c = (_b = (_a = this.settings).getId) === null || _b === void 0 ? void 0 : _b.call(_a, card)) !== null && _c !== void 0 ? _c : "card-" + card.id;
@@ -620,6 +751,10 @@ var CardManager = /** @class */ (function () {
         document.body.removeChild(element);
         return element;
     };
+    /**
+     * @param card the card informations
+     * @return the HTML element of an existing card
+     */
     CardManager.prototype.getCardElement = function (card) {
         return document.getElementById(this.getId(card));
     };
@@ -633,6 +768,10 @@ var CardManager = /** @class */ (function () {
         // TODO this.removeVisibleInformations(div);
         div.remove();
     };
+    /**
+     * @param card the card informations
+     * @return the stock containing the card
+     */
     CardManager.prototype.getCardStock = function (card) {
         return this.stocks.find(function (stock) { return stock.contains(card); });
     };
@@ -2395,7 +2534,11 @@ var WickednessDecks = /** @class */ (function (_super) {
         _this.decks = [];
         WICKEDNESS_LEVELS.forEach(function (level) {
             dojo.place("<div id=\"wickedness-tiles-pile-" + level + "\" class=\"wickedness-tiles-pile wickedness-tile-stock\"></div>", 'wickedness-board');
-            _this.decks[level] = new AllVisibleDeck(manager, document.getElementById("wickedness-tiles-pile-" + level), '132px', '81px', '3px');
+            _this.decks[level] = new AllVisibleDeck(manager, document.getElementById("wickedness-tiles-pile-" + level), {
+                width: '132px',
+                height: '81px',
+                shift: '3px',
+            });
             _this.decks[level].onSelectionChange = function (selection, lastChange) { return _this.selectionChange(selection, lastChange); };
         });
         return _this;
@@ -4344,12 +4487,16 @@ var WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
     [1, 70],
     [37, 29],
 ];
+var DECK_SETTINGS = {
+    width: 132,
+    height: 185,
+};
 var TableCenter = /** @class */ (function () {
-    function TableCenter(game, players, visibleCards, topDeckCardBackType, wickednessTiles, tokyoTowerLevels, curseCard) {
+    function TableCenter(game, players, visibleCards, topDeckCardBackType, deckCardsCount, wickednessTiles, tokyoTowerLevels, curseCard, hiddenCurseCardCount, visibleCurseCardCount) {
         var _this = this;
         this.game = game;
         this.wickednessPoints = new Map();
-        this.createVisibleCards(visibleCards, topDeckCardBackType);
+        this.createVisibleCards(visibleCards, topDeckCardBackType, deckCardsCount);
         if (game.isWickednessExpansion()) {
             dojo.place("\n            <div id=\"wickedness-board-wrapper\">\n                <div id=\"wickedness-board\"></div>\n            </div>", 'full-board');
             this.createWickednessTiles(wickednessTiles);
@@ -4367,15 +4514,15 @@ var TableCenter = /** @class */ (function () {
             this.tokyoTower = new TokyoTower('tokyo-tower-0', tokyoTowerLevels);
         }
         if (game.isAnubisExpansion()) {
-            this.createCurseCard(curseCard);
+            this.createCurseCard(curseCard, hiddenCurseCardCount, visibleCurseCardCount);
         }
         else {
             document.getElementById('table-curse-cards').style.display = 'none';
         }
     }
-    TableCenter.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType) {
+    TableCenter.prototype.createVisibleCards = function (visibleCards, topDeckCardBackType, deckCardsCount) {
         var _this = this;
-        this.deck = new HiddenDeck(this.game.cardsManager, document.getElementById('deck'));
+        this.deck = new HiddenDeck(this.game.cardsManager, document.getElementById('deck'), __assign(__assign({}, DECK_SETTINGS), { cardNumber: deckCardsCount, shadowDirection: 'top-right' }));
         this.visibleCards = new SlotStock(this.game.cardsManager, document.getElementById('visible-cards'), {
             slotsIds: [1, 2, 3],
             mapCardToSlot: function (card) { return card.location_arg; },
@@ -4384,11 +4531,11 @@ var TableCenter = /** @class */ (function () {
         this.setVisibleCards(visibleCards, true);
         this.setTopDeckCardBackType(topDeckCardBackType);
     };
-    TableCenter.prototype.createCurseCard = function (curseCard) {
+    TableCenter.prototype.createCurseCard = function (curseCard, hiddenCurseCardCount, visibleCurseCardCount) {
         dojo.place("<div id=\"curse-wrapper\">\n            <div id=\"curse-deck\"></div>\n            <div id=\"curse-card\"></div>\n        </div>", 'table-curse-cards');
-        this.curseCard = new VisibleDeck(this.game.curseCardsManager, document.getElementById('curse-card'));
+        this.curseCard = new VisibleDeck(this.game.curseCardsManager, document.getElementById('curse-card'), __assign(__assign({}, DECK_SETTINGS), { cardNumber: visibleCurseCardCount }));
         this.curseCard.addCard(curseCard);
-        this.curseDeck = new HiddenDeck(this.game.curseCardsManager, document.getElementById('curse-deck'));
+        this.curseDeck = new HiddenDeck(this.game.curseCardsManager, document.getElementById('curse-deck'), __assign(__assign({}, DECK_SETTINGS), { cardNumber: hiddenCurseCardCount }));
         this.game.addTooltipHtml("curse-deck", "\n        <strong>" + _("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
@@ -4804,7 +4951,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
         this.animationManager = new AnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard);
+        this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint

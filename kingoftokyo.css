@@ -733,6 +733,10 @@
   left: 15px;
 }
 
+.card, .card-side {
+  border-radius: 10px;
+}
+
 .kot-curse-card, .kot-tile, .kot-evolution, .kot-card {
   border-radius: 10px;
   text-align: center;
@@ -1006,7 +1010,6 @@ body > .card {
   /* Safari */
   backface-visibility: hidden;
   transform-origin: center center;
-  border-radius: 5px;
   box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
@@ -1055,32 +1058,24 @@ body > .card {
   justify-content: center;
 }
 
-.card-stock.hidden-deck {
+.card-stock.deck {
   position: relative;
+  width: var(--width);
+  height: var(--height);
 }
 
-.card-stock.hidden-deck > .card[id$=-hidden-deck-back] {
-  box-shadow: 4px 4px 0px 0px #111, 5px 5px 2px 1px rgba(0, 0, 0, 0.5);
-}
-
-.card-stock.hidden-deck > .card:not([id$=-hidden-deck-back]) {
+.card-stock.deck > .card {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: calc(var(--thickness) * var(--xShadowShift) * -1);
+  left: calc(var(--thickness) * var(--yShadowShift) * -1);
 }
 
-.card-stock.hidden-deck[data-empty=true] {
+.card-stock.deck > .card:first-child {
+  box-shadow: calc(var(--thickness) * var(--xShadowShift)) calc(var(--thickness) * var(--yShadowShift)) 0px 0px #111, calc(var(--thickness) * var(--xShadowShift)) calc(var(--thickness) * var(--yShadowShift)) 2px 1px rgba(0, 0, 0, 0.5);
+}
+
+.card-stock.deck[data-empty=true] > .card {
   visibility: hidden;
-}
-
-.card-stock.visible-deck {
-  position: relative;
-}
-
-.card-stock.visible-deck > .card.under {
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .card-stock.all-visible-deck {
