@@ -379,7 +379,7 @@ trait DiceActionTrait {
         $this->notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
-            'card_name' => $cardType,
+            'card_name' => $cardType === FLUXLING_WICKEDNESS_TILE ? 2000 + $cardType : $cardType,
             'dieId' => $die->id,
             'toValue' => $value,
             'roll' => true,

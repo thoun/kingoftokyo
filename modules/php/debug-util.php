@@ -28,7 +28,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343493, 1);
-        $this->debugSetPlayerHealth(2343493, 1);
+       // $this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -113,7 +113,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerHealth(2343492, 11);
         //$this->debugSetCardInHand(NOVA_BREATH_CARD, 2343493);
         //$this->debugSetCardInHand(PLOT_TWIST_CARD, 2343493);
-        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
+        $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(HERBIVORE_CARD, 2343492);
         //$this->debugSetCardInHand(COMPLETE_DESTRUCTION_CARD, 2343492);
         //$this->debugSetCardInHand(WE_RE_ONLY_MAKING_IT_STRONGER_CARD, 2343493);
@@ -202,8 +202,8 @@ trait DebugUtilTrait {
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
-            //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
-            //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(EVEN_BIGGER_CARD, 2343493));
+            $this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
+            $this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492));
             //$this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
             //$this->debugSetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343492);
             //$this->debugSetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
