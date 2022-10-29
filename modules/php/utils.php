@@ -963,7 +963,7 @@ trait UtilTrait {
                 }
             }
 
-            if ($this->countCardOfType($playerId, ZOMBIFY_CARD) > 0 && $this->getPlayerHealth($playerId) == 0) {
+            if ($this->countCardOfType($playerId, ZOMBIFY_CARD) > 0 && $this->getPlayerHealth($playerId) == 0 && !$this->getPlayer($playerId)->zombified) {
                 $this->applyZombify($playerId);
             }
     

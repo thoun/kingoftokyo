@@ -19,7 +19,7 @@ class Player {
     public int $shrinkRayTokens;
     public int $poisonTokens;
     public int $wickedness;
-    public int $zombified;
+    public bool $zombified;
     public bool $turnEnteredTokyo;
     public int $askPlayEvolution;
 
