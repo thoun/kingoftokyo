@@ -200,7 +200,7 @@ trait EvolutionCardsStateTrait {
 
         if ($cardBeingBought->allowed) {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, false, $cardBeingBought->cost, $cardBeingBought->useSuperiorAlienTechnology, $cardBeingBought->useBobbingForApples);
+            $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, $cardBeingBought->cost, $cardBeingBought->useSuperiorAlienTechnology, $cardBeingBought->useBobbingForApples);
         } else {
             $this->goToState(ST_PLAYER_BUY_CARD);
         }

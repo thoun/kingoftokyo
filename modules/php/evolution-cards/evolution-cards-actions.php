@@ -322,7 +322,7 @@ trait EvolutionCardsActionTrait {
         ]);
 
         // applyBuyCard do the redirection
-        $this->applyBuyCard($activePlayerId, $id, $from, false);
+        $this->applyBuyCard($activePlayerId, $id, $from);
     }
   	
     public function giveSymbol(int $symbol) {
@@ -459,7 +459,6 @@ trait EvolutionCardsActionTrait {
             $playerId,
             $card->id,
             0,
-            false,
             $cost,
             $useSuperiorAlienTechnology,
             false,

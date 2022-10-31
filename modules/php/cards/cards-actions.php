@@ -112,7 +112,7 @@ trait CardsActionTrait {
         $this->goToState($this->redirectAfterStealCostume($playerId));
     }
 
-    function applyBuyCard(int $playerId, int $id, int $from, bool $opportunist, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
+    function applyBuyCard(int $playerId, int $id, int $from, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
         $card = $this->getCardFromDb($this->cards->getCard($id));
         $cardLocationArg = $card->location_arg;
         $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
@@ -272,7 +272,7 @@ trait CardsActionTrait {
             ]);
         }
 
-        $damages = $this->applyEffects($card->type, $playerId, $opportunist);
+        $damages = $this->applyEffects($card->type, $playerId);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -314,9 +314,7 @@ trait CardsActionTrait {
     function buyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
         $this->checkAction('buyCard');
 
-        $stateName = $this->gamestate->state()['name'];
-        $opportunist = $stateName === 'opportunistBuyCard';
-        $playerId = intval($opportunist ? $this->getCurrentPlayerId() : $this->getActivePlayerId());
+        $playerId = $this->getCurrentPlayerId();
 
         $card = $this->getCardFromDb($this->cards->getCard($id));
 
@@ -355,7 +353,7 @@ trait CardsActionTrait {
 
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
         
-        $canPreventBuying = !$opportunist && $this->isPowerUpExpansion()
+        $canPreventBuying = ($playerId == intval($this->getActivePlayerId())) && $this->isPowerUpExpansion()
             && count($this->getPlayersIdsWhoCouldPlayEvolutions($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT)) > 0;
 
         if ($canPreventBuying && (
@@ -371,7 +369,7 @@ trait CardsActionTrait {
             $this->jumpToState(ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT);
         } else {
             // applyBuyCard do the redirection
-            $this->applyBuyCard($playerId, $id, $from, $opportunist, $cost, $useSuperiorAlienTechnology, $useBobbingForApples);
+            $this->applyBuyCard($playerId, $id, $from, $cost, $useSuperiorAlienTechnology, $useBobbingForApples);
         }
     }
 
@@ -417,7 +415,7 @@ trait CardsActionTrait {
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
-        $damages = $this->applyEffects($card->type, $playerId, false);
+        $damages = $this->applyEffects($card->type, $playerId);
 
         $this->setGameStateValue('newCardId', 0);
 
