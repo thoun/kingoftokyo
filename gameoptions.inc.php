@@ -108,7 +108,8 @@ $game_options = [
                 'tmdisplay' => totranslate('Mutant Evolutions variant (Transformation card)'),
             ],
         ],
-        'default' => 1
+        'default' => 1,
+        'level' => 'additional',
     ],
 
     WICKEDNESS_EXPANSION_OPTION => [
@@ -149,6 +150,7 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'level' => 'major',
     ],
 
     DARK_EDITION_OPTION => [
@@ -212,6 +214,7 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'level' => 'additional',
     ],
 
     BONUS_MONSTERS_OPTION => [
@@ -228,6 +231,7 @@ $game_options = [
             ],
         ],
         'default' => 1,
+        'level' => 'additional',
     ],
 
     110 => [
@@ -244,7 +248,8 @@ $game_options = [
             ],
         ],
         'default' => 1,
-        'nobeginner' => true
+        'nobeginner' => true,
+        'level' => 'additional',
     ],
 
     120 => [
@@ -262,7 +267,8 @@ $game_options = [
         'displaycondition' => [[
             'type' => 'maxplayers',
             'value' => 2,
-        ]]
+        ]],
+        'level' => 'additional',
     ],
 ];
 
