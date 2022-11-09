@@ -985,6 +985,10 @@ body > .card {
   top: -9999px;
 }
 
+.card {
+  flex-shrink: 0;
+}
+
 .card[data-side=back] .card-sides {
   transform: rotateY(180deg);
 }
@@ -1056,6 +1060,44 @@ body > .card {
 
 .card-stock.slot-stock[data-center=true] {
   justify-content: center;
+}
+
+.card-stock.scrollable-stock {
+  display: flex;
+  gap: var(--button-gap);
+}
+
+.card-stock.scrollable-stock[data-scrollbar-visible=false] {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.card-stock.scrollable-stock[data-scrollbar-visible=false]::-webkit-scrollbar {
+  display: none;
+}
+
+.card-stock.scrollable-stock .scrollable-stock-inner {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: var(--gap);
+}
+
+.card-stock.scrollable-stock .scrollable-stock-inner[data-center=true] {
+  justify-content: center;
+}
+
+.card-stock.hand-stock {
+  display: flex;
+  justify-content: center;
+}
+
+.card-stock.hand-stock .card {
+  transform: translateY(calc(var(--card-shift) * var(--hand-stock-middle-index-abs))) rotate(calc(var(--hand-stock-middle-index) * var(--card-inclination)));
+}
+
+.card-stock.hand-stock .card:not(:first-child) {
+  margin-left: calc(-1 * var(--card-overlap));
 }
 
 .card-stock.deck {
@@ -1948,6 +1990,21 @@ body > .card {
 }
 #table .player-table .monster-board-wrapper .monster-board.monster38 {
   background-image: url("img/monster-board-38.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster41 {
+  background-image: url("img/monster-board-41.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster42 {
+  background-image: url("img/monster-board-42.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster43 {
+  background-image: url("img/monster-board-43.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster44 {
+  background-image: url("img/monster-board-44.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster45 {
+  background-image: url("img/monster-board-45.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster102 {
   background-image: url("img/dark/monster-board-102.png");
@@ -3007,6 +3064,21 @@ html, .mode_3d #game_play_area_background {
 }
 .monster-figure.monster38 {
   background-image: url("img/monster-figure-38.png");
+}
+.monster-figure.monster41 {
+  background-image: url("img/monster-figure-41.png");
+}
+.monster-figure.monster42 {
+  background-image: url("img/monster-figure-42.png");
+}
+.monster-figure.monster43 {
+  background-image: url("img/monster-figure-43.png");
+}
+.monster-figure.monster44 {
+  background-image: url("img/monster-figure-44.png");
+}
+.monster-figure.monster45 {
+  background-image: url("img/monster-figure-45.png");
 }
 .monster-figure.monster102 {
   background-image: url("img/dark/monster-figure-102.png");

@@ -314,6 +314,9 @@ var CardStock = /** @class */ (function () {
         if (index !== -1) {
             this.cards.splice(index, 1);
         }
+        if (this.selectedCards.find(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); })) {
+            this.unselectCard(card);
+        }
     };
     /**
      * Remove all cards from the stock.
@@ -609,17 +612,14 @@ var SlotStock = /** @class */ (function (_super) {
         var _this = this;
         if (slotsIds.length == this.slotsIds.length && slotsIds.every(function (slotId, index) { return _this.slotsIds[index] === slotId; })) {
             // no change
-            console.warn('no change', slotsIds, this.slotsIds);
             return;
         }
-        console.warn('change!');
         this.removeAll();
         this.element.innerHTML = '';
         this.slotsIds = slotsIds !== null && slotsIds !== void 0 ? slotsIds : [];
         this.slotsIds.forEach(function (slotId) {
             _this.createSlot(slotId);
         });
-        console.log('setSlotsIds', this.element.innerHTML);
     };
     SlotStock.prototype.cardElementInStock = function (element) {
         return (element === null || element === void 0 ? void 0 : element.parentElement.parentElement) == this.element;
@@ -4833,6 +4833,7 @@ var MonsterSelector = /** @class */ (function () {
             new MonsterGroup([9, 10, 11, 12], _('Monster Packs'), '#a9e9ae'),
             new MonsterGroup([13], _('Power-Up! expansion'), '#5d7b38'),
             new MonsterGroup([21, 22, 23, 24, 25, 26], 'King of New-York', '#645195'),
+            new MonsterGroup([41, 42, 43, 44, 45], 'King of Monster Island', '#e82519'),
         ];
     }
     MonsterSelector.prototype.onEnteringPickMonster = function (args) {
@@ -4908,7 +4909,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 31, 32, 33, 34, 35, 36, 37, 38, 41, 42, 43, 44, 45].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
             _this.dontPreloadImage("monster-board-" + i + ".png");
             _this.dontPreloadImage("monster-figure-" + i + ".png");
         });

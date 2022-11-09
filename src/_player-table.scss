@@ -140,6 +140,11 @@
                     background-image: url('img/monster-board-#{$i}.png');
                 }
             }
+            @for $i from 41 through 45 {
+                &.monster#{$i} {
+                    background-image: url('img/monster-board-#{$i}.png');
+                }
+            }
             @each $i in $darkEditionMonstersNumbers {
                 &.monster#{$i} {
                     background-image: url('img/dark/monster-board-#{$i}.png');

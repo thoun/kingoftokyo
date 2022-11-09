@@ -181,6 +181,11 @@ html, .mode_3d #game_play_area_background {
           background-image: url('img/monster-figure-#{$i}.png');
       }
   }
+  @for $i from 41 through 45 {
+      &.monster#{$i} {
+          background-image: url('img/monster-figure-#{$i}.png');
+      }
+  }
   @each $i in $darkEditionMonstersNumbers {
     &.monster#{$i} {
         background-image: url('img/dark/monster-figure-#{$i}.png');

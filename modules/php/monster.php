@@ -62,9 +62,9 @@ trait MonsterTrait {
             $monsters = [...$monsters, 21];
         }
 
-        // World tour
         if ($bonusMonsters) {
-            if ($this->releaseDatePassed("2022-07-01T00:00:00", 2) && !$this->releaseDatePassed("2022-07-08T00:00:00", 2)) {
+            // World tour
+            /*if ($this->releaseDatePassed("2022-07-01T00:00:00", 2) && !$this->releaseDatePassed("2022-07-08T00:00:00", 2)) {
                 $monsters = [...$monsters, 31];
             }
             if ($this->releaseDatePassed("2022-07-08T00:00:00", 2) && !$this->releaseDatePassed("2022-07-15T00:00:00", 2)) {
@@ -87,6 +87,10 @@ trait MonsterTrait {
             }
             if ($this->releaseDatePassed("2022-08-19T00:00:00", 2) && !$this->releaseDatePassed("2022-08-26T00:00:00", 2)) {
                 $monsters = [...$monsters, 38];
+            }*/
+            // KoMI
+            if ($this->releaseDatePassed("2022-11-18T00:00:00", 1) && !$this->releaseDatePassed("2022-12-18T00:00:00", 1)) {
+                $monsters = [...$monsters, 41, 42, 43, 44, 45];
             }
         }
 

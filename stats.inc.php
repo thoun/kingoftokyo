@@ -83,6 +83,12 @@ $monstersNames = [
     36 => "Marhanagy Szürke",
     37 => "Lutoborshch",
     38 => "Mech-Armor Ikari-Oh",
+    // KOMI
+    41 => "Purple Reign",
+    42 => "Pagurah",
+    43 => "Rex Florae",
+    44 => "H.A.D.E.S.",
+    45 => "Megamoth",
     // Dark edition
     102 => "Dark Alienoid", 
     104 => "Dark The King", 
