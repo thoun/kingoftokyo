@@ -172,7 +172,7 @@ $game_options = [
                 'tmdisplay' => totranslate('Dark edition') . ' ' . totranslate('(random mix)'),
             ],
         ],
-        'default' => 2,
+        'default' => 1,
         /*'startcondition' => [
             2 => [
                 [ 
@@ -230,7 +230,7 @@ $game_options = [
                 'description' => totranslate("Include bonus/promo monsters"),
             ],
         ],
-        'default' => 1,
+        'default' => 2,
         'level' => 'additional',
     ],
 
