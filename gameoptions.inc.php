@@ -213,7 +213,7 @@ $game_options = [
                 'tmdisplay' => totranslate('Players can pick a monster'),
             ],
         ],
-        'default' => 1,
+        'default' => 2,
         'level' => 'additional',
     ],
 
