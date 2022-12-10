@@ -5190,15 +5190,16 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.onEnteringBeforeEndTurn = function (args) {
-        var _a;
-        (_a = Object.keys(args._private)) === null || _a === void 0 ? void 0 : _a.forEach(function (key) {
-            var div = document.getElementById("hand-evolution-cards_item_" + key);
-            if (div) {
-                var counter = args._private[key];
-                var symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
-                dojo.place(formatTextIcons("<div class=\"evolution-inner-counter\">" + counter[0] + " " + symbol + "</div>"), div);
-            }
-        });
+        if (args._private) {
+            Object.keys(args._private).forEach(function (key) {
+                var div = document.getElementById("hand-evolution-cards_item_" + key);
+                if (div) {
+                    var counter = args._private[key];
+                    var symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
+                    dojo.place(formatTextIcons("<div class=\"evolution-inner-counter\">" + counter[0] + " " + symbol + "</div>"), div);
+                }
+            });
+        }
     };
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
         var _this = this;

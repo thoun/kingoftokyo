@@ -407,14 +407,16 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private onEnteringBeforeEndTurn(args: EnteringBeforeEndTurnArgs) {
-        Object.keys(args._private)?.forEach(key => {
-            const div = document.getElementById(`hand-evolution-cards_item_${key}`);
-            if (div) {
-                const counter = args._private[key];
-                const symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
-                dojo.place(formatTextIcons(`<div class="evolution-inner-counter">${counter[0]} ${symbol}</div>`), div);
-            }
-        });
+        if (args._private) {
+            Object.keys(args._private).forEach(key => {
+                const div = document.getElementById(`hand-evolution-cards_item_${key}`);
+                if (div) {
+                    const counter = args._private[key];
+                    const symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
+                    dojo.place(formatTextIcons(`<div class="evolution-inner-counter">${counter[0]} ${symbol}</div>`), div);
+                }
+            });
+        }
     }
 
     private onEnteringThrowDice(args: EnteringThrowDiceArgs) {

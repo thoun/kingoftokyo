@@ -22,9 +22,9 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 9);
-        $this->debugSetEnergy(10);
+        //$this->debugSetEnergy(10);
         //$this->debugSetPlayerPoints(2343493, 17);
-        $this->debugSetPoints(5);
+        //$this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343493, 1);
@@ -135,13 +135,13 @@ trait DebugUtilTrait {
 
         // halloween
         if ($this->isHalloweenExpansion()) {
-            $this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
-            $this->debugSetCardInHand(GHOST_CARD, 2343494);
+            //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
+            //$this->debugSetCardInHand(GHOST_CARD, 2343494);
             $this->debugSetCardInHand(CLOWN_CARD, 2343492);
             //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
-            //$this->debugSetCardInHand(PRINCESS_CARD, 2343493);
+            $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
             //$this->debugSetCardInHand(WITCH_CARD, 2343493);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
             //$this->debugSetCardInHand(PIRATE_CARD, 2343494);
@@ -217,11 +217,11 @@ trait DebugUtilTrait {
             $this->DbQuery("UPDATE player SET `ask_play_evolution` = 1");
             // set monster
             //$this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343492"); // space penguin
-            //$this->DbQuery("UPDATE player SET `player_monster` = 2 where `player_id` = 2343492"); // alienoid
+            $this->DbQuery("UPDATE player SET `player_monster` = 2 where `player_id` = 2343493"); // alienoid
             //$this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343493"); // cyber kitty
-            $this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
+            //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
             //$this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343492"); // gigazaur
-            $this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
+            //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
             //$this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343492"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 7 where `player_id` = 2343492"); // boogie woogie
             //$this->DbQuery("UPDATE player SET `player_monster` = 8 where `player_id` = 2343492"); // pumpkin jack
@@ -231,7 +231,8 @@ trait DebugUtilTrait {
 
             // dummy card to avoid initial card selection
             $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
@@ -265,7 +266,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(HEART_OF_THE_RABBIT_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(HEART_OF_THE_RABBIT_EVOLUTION, 2343493, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
@@ -414,7 +415,7 @@ trait DebugUtilTrait {
 
 		// These are the id's from the BGAtable I need to debug.
         // SELECT JSON_ARRAYAGG(`player_id`) FROM `player`
-		$ids = [91001241, 91010555, 91010601, 91401171, 91836593];
+		$ids = [85136910, 85358567, 86251986, 91307910];
 
 		// Id of the first player in BGA Studio
 		$sid = 2343492;
