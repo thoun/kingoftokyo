@@ -250,7 +250,8 @@ trait EvolutionCardsUtilTrait {
         $playersAskPlayEvolution = [];
         foreach($playersIds as $playerId) {
             $player = $this->getPlayer($playerId);
-            $playersAskPlayEvolution[$playerId] = $player->askPlayEvolution;
+            // ignore dead players
+            $playersAskPlayEvolution[$playerId] = $this->getPlayer($playerId)->eliminated ? 99 : $player->askPlayEvolution;
         }
         // ignore a player if he don't want to be asked
         $playersIds = array_values(array_filter($playersIds, fn($playerId) => $playersAskPlayEvolution[$playerId] < 2));

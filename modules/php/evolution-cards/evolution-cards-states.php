@@ -299,7 +299,9 @@ trait EvolutionCardsStateTrait {
         $playersIds = $this->getPlayersIds();
         $playersWithPotentialEvolution = $this->getPlayersIdsWhoCouldPlayEvolutions($playersIds, $this->EVOLUTION_TO_PLAY_BEFORE_END_MULTI);
 
-        if ($this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE) && !in_array($playerId, $playersWithPotentialEvolution)) {
+        $activePlayersWithPotentialEvolution = $this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE);
+        $activePlayersWithPotentialEvolution = array_values(array_filter($activePlayersWithPotentialEvolution, fn($pId) => $pId == $playerId));
+        if (count($activePlayersWithPotentialEvolution) > 0 && !in_array($playerId, $playersWithPotentialEvolution)) {
             $playersWithPotentialEvolution[] = $playerId;
         }
 
