@@ -238,6 +238,7 @@ class PlayerTable {
     public eliminatePlayer() {
         this.setEnergy(0);
         this.cards.getCards().filter(card => card.id !== 999).forEach(card => this.cards.removeCard(card));
+        this.wickednessTiles?.removeAll();
         this.visibleEvolutionCards?.removeAll();
         if (document.getElementById(`monster-figure-${this.playerId}`)) {
             (this.game as any).fadeOutAndDestroy(`monster-figure-${this.playerId}`);

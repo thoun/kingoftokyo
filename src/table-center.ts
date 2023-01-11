@@ -212,7 +212,7 @@ class TableCenter {
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {
         this.wickednessDecks = new WickednessDecks(this.game.wickednessTilesManager);
-        this.wickednessDecks.onSelectionChange = (selection: WickednessTile[], lastChange: WickednessTile) => this.game.takeWickednessTile(lastChange.id);
+        this.wickednessDecks.onTileClick = (card: WickednessTile) => this.game.takeWickednessTile(card.id);
         this.wickednessDecks.addCards(wickednessTiles);
     }
 
@@ -253,7 +253,6 @@ class TableCenter {
     public setWickednessTilesSelectable(level: number, show: boolean, selectable: boolean) {
         this.showWickednessTiles(show ? level : null);
         this.wickednessDecks.setSelectableLevel(selectable ? level : null);
-        console.log($('wickedness-tiles-pile-6').innerHTML);
     }
 
     public removeWickednessTileFromPile(level: number, removedTile: WickednessTile) {

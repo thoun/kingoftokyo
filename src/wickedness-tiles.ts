@@ -6,6 +6,12 @@ const wickenessTilesIndex = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2];
 
 class WickednessDecks extends CardStock<WickednessTile> {
     private decks: AllVisibleDeck<WickednessTile>[] = [];
+
+    set onTileClick(callback: (card: WickednessTile) => void) {
+        WICKEDNESS_LEVELS.forEach(level => 
+            this.decks[level].onCardClick = callback
+        );
+    }
     
     constructor(protected manager: CardManager<WickednessTile>) {
         super(manager, null);
