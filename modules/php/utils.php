@@ -370,7 +370,9 @@ trait UtilTrait {
             $evolutions = $this->getEvolutionCardsByLocation('discard'.$playerId, null, HEART_OF_THE_RABBIT_EVOLUTION);
             if (count($evolutions) > 0) {
                 foreach($evolutions as $evolution) {
-                    $this->getEvolutionFromDiscard($playerId, $evolution->id);
+                    if ($evolution->tokens > 0) {
+                        $this->getEvolutionFromDiscard($playerId, $evolution->id);
+                    }
                 }
             }
         }

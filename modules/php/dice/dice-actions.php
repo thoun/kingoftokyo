@@ -359,6 +359,8 @@ trait DiceActionTrait {
         if ($cardType == 3000 + HEART_OF_THE_RABBIT_EVOLUTION) {
             $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
             $this->applyPlayEvolution($playerId, $heartOfTheRabbitEvolutions[0]);
+            // we store evolution as played with type_arg. To know if the evolution is in the discard after being played, or just discarded when choosing between 2 new evolutions
+            $this->setEvolutionTokens($playerId, $heartOfTheRabbitEvolutions[0], 1, true);
         }
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');

@@ -261,13 +261,13 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
             //$this->debugSetEvolutionInHand(EATS_SHOOTS_AND_LEAVES_EVOLUTION, 2343492, false);
-            $this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343495);
+            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343492);
             //$this->debugSetEvolutionInHand(WORST_NIGHTMARE_EVOLUTION, 2343492, true, 2343493);
             //$this->debugSetEvolutionInHand(TRICK_OR_THREAT_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(HEART_OF_THE_RABBIT_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(HEART_OF_THE_RABBIT_EVOLUTION, 2343493, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }

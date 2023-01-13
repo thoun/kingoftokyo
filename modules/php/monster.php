@@ -89,9 +89,9 @@ trait MonsterTrait {
                 $monsters = [...$monsters, 38];
             }*/
             // KoMI
-            if (/*$this->releaseDatePassed("2022-11-18T00:00:00", 1) && */!$this->releaseDatePassed("2023-01-02T00:00:00", 1)) {
+            /*if ($this->releaseDatePassed("2022-11-18T00:00:00", 1) && !$this->releaseDatePassed("2023-01-02T00:00:00", 1)) {
                 $monsters = [...$monsters, 41, 42, 43, 44, 45];
-            }
+            }*/
         }
 
         if ($this->isWickednessExpansion()) {
