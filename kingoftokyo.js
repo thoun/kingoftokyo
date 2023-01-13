@@ -3280,7 +3280,7 @@ var PlayerTable = /** @class */ (function () {
         if (!this.pickEvolutionCards) {
             this.pickEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("pick-evolution"));
             this.pickEvolutionCards.setSelectionMode('single');
-            this.pickEvolutionCards.onSelectionChange = function (_, card) { return _this.game.chooseEvolutionCardClick(card.id); };
+            this.pickEvolutionCards.onCardClick = function (card) { return _this.game.chooseEvolutionCardClick(card.id); };
         }
         document.getElementById("pick-evolution").style.display = null;
         this.pickEvolutionCards.addCards(cards);

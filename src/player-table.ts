@@ -421,7 +421,7 @@ class PlayerTable {
         if (!this.pickEvolutionCards) { 
             this.pickEvolutionCards = new LineStock<EvolutionCard>(this.game.evolutionCardsManager, document.getElementById(`pick-evolution`));
             this.pickEvolutionCards.setSelectionMode('single');
-            this.pickEvolutionCards.onSelectionChange = (_, card: EvolutionCard) => this.game.chooseEvolutionCardClick(card.id);
+            this.pickEvolutionCards.onCardClick = card => this.game.chooseEvolutionCardClick(card.id);
         }
             
         document.getElementById(`pick-evolution`).style.display = null;

@@ -167,6 +167,8 @@ trait EvolutionCardsStateTrait {
 
                 $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
                 return;
+            } else {
+                $this->setEvolutionTokens($playerId, $unusedEnergySwordCard, 0, true);
             }
         }
 

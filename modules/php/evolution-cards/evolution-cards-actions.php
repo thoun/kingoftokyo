@@ -675,9 +675,9 @@ trait EvolutionCardsActionTrait {
                 throw new \BgaUserException("Not enough energy");
             }
             $this->applyLoseEnergy($playerId, 2, 0);
-            $this->setEvolutionTokens($playerId, $unusedEvolutionCard, 2);
+            $this->setEvolutionTokens($playerId, $unusedEvolutionCard, 2, true);
         } else {
-            $this->setEvolutionTokens($playerId, $unusedEvolutionCard, 0);
+            $this->setEvolutionTokens($playerId, $unusedEvolutionCard, 0, true);
         }
         
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);

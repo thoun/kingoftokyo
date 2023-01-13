@@ -28,7 +28,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerPoints(2343493, 4);
         //$this->debugSetHealth(5);
         //$this->debugSetPlayerHealth(2343492, 1);
-        $this->debugSetPlayerHealth(2343493, 1);
+        //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
         //$this->debugSetPlayerHealth($playersIds[1], 6);
         //$this->debugSetPlayerHealth($playersIds[2], 3);
@@ -267,7 +267,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(HEART_OF_THE_RABBIT_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(ENERGY_SWORD_EVOLUTION, 2343492, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
