@@ -99,7 +99,14 @@ trait CardsUtilTrait {
                 $this->applyGetHealth($playerId, 2, $cardType, $playerId);
                 $this->changeMaxHealth($playerId);
                 break;
-            
+            case FREEZE_TIME_CARD:
+                if ($playerId == intval($this->getActivePlayerId())) {
+                    $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
+                    if ($diceCounts[1] >= 3) {
+                        $this->incGameStateValue(FREEZE_TIME_MAX_TURNS, 1);
+                    }
+                }
+                break;
             // DISCARD
             case APPARTMENT_BUILDING_CARD: 
                 $this->applyGetPoints($playerId, 3, $cardType);

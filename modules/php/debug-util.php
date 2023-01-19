@@ -51,6 +51,7 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
         //$this->debugSetCardInTable(TANK_CARD);
         //$this->debugSetCardInTable(GAS_REFINERY_CARD);
+        $this->debugSetCardInTable(FREEZE_TIME_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".MIMIC_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
@@ -310,7 +311,7 @@ trait DebugUtilTrait {
     }
 
     function debugSetCardInTable($cardType) {
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0])->id, 'table');
+        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0])->id, 'table', 1);
     }
 
     // debugSetCardInDiscard(110)
