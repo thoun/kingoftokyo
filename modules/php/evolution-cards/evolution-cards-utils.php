@@ -1277,6 +1277,11 @@ trait EvolutionCardsUtilTrait {
     }
 
     function applyFelineMotor(int $playerId) {
+        $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
+        if (in_array($playerId, $startedTurnInTokyo)) {
+            throw new \BgaUserException(self::_("You started your turn in Tokyo"));
+        }
+        
         $this->moveToTokyoFreeSpot($playerId);
         $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
         $this->goToState($this->redirectAfterHalfMovePhase());

@@ -6331,7 +6331,7 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'ElectricCarrot':
                 this.addActionButton('answerElectricCarrot5_button', formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]' })), function () { return _this.answerElectricCarrot(5); });
-                dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
+                dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 1);
                 document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
                 this.addActionButton('answerElectricCarrot4_button', formatTextIcons(_("Lose 1 extra [Heart]")), function () { return _this.answerElectricCarrot(4); });
                 break;

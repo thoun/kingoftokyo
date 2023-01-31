@@ -1475,7 +1475,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 break;
             case 'ElectricCarrot':
                 (this as any).addActionButton('answerElectricCarrot5_button',  formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: '[Energy]'})), () => this.answerElectricCarrot(5));
-                dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 4);
+                dojo.toggleClass('answerElectricCarrot5_button', 'disabled', this.getPlayerEnergy(this.getPlayerId()) < 1);
                 document.getElementById('answerElectricCarrot5_button').dataset.enableAtEnergy = '1';
                 (this as any).addActionButton('answerElectricCarrot4_button',  formatTextIcons(_("Lose 1 extra [Heart]")), () => this.answerElectricCarrot(4));
                 break;
