@@ -3324,6 +3324,7 @@ var PlayerTable = /** @class */ (function () {
                 this.visibleEvolutionCards.addCard(card, { fromElement: document.getElementById("playerhand-counter-wrapper-" + this.playerId) });
             }
         }
+        this.game.evolutionCardsManager.getCardElement(card).classList.remove('highlight-evolution');
         this.checkHandEmpty();
     };
     PlayerTable.prototype.highlightHiddenEvolutions = function (cards) {

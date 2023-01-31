@@ -17,7 +17,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
@@ -271,6 +271,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
             $this->debugSetEvolutionInHand(ENERGY_SWORD_EVOLUTION, 2343492, false);
+            $this->debugSetEvolutionInHand(SUNKEN_TEMPLE_EVOLUTION, 2343492, true);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }

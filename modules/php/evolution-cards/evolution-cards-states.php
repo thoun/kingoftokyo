@@ -186,6 +186,9 @@ trait EvolutionCardsStateTrait {
             );
             $this->setQuestion($question);
             $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+            $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+            return;
         }
         $this->goToState(ST_START_TURN);
     }
