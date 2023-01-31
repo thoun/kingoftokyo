@@ -51,13 +51,14 @@ trait DebugUtilTrait {
         //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
         //$this->debugSetCardInTable(TANK_CARD);
         //$this->debugSetCardInTable(GAS_REFINERY_CARD);
-        $this->debugSetCardInTable(FREEZE_TIME_CARD);
+        //$this->debugSetCardInTable(FREEZE_TIME_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".MIMIC_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(RAPID_HEALING_CARD);
         //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
         //$this->debugSetCardInTable(MIMIC_CARD);
         //$this->debugSetCardInTable(WINGS_CARD);
+        //$this->debugSetCardInTable(BATTERY_MONSTER_CARD);
         //$this->debugSetCardInHand(MIMIC_CARD, 2343493);
         //$this->DbQuery("UPDATE card SET `card_location` = 'deck'");
         //foreach ($this->KEEP_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable($cardType);
@@ -75,6 +76,7 @@ trait DebugUtilTrait {
         //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 3, true);
         //$this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343492);
         //$this->setCardTokens(2343493, $this->debugSetCardInHand(BATTERY_MONSTER_CARD, 2343493), 2, true);
+        //$this->setCardTokens(2343493, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343493), 2, true);
         //$this->debugSetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debugSetCardInHand(MEDIA_FRIENDLY_CARD, 2343492);
         //$this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492);

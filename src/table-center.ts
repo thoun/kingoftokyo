@@ -129,7 +129,7 @@ class TableCenter {
 
             this.pickCard = new LineStock<Card>(this.game.cardsManager, document.getElementById('pick-stock'));
             this.pickCard.setSelectionMode('single');
-            this.pickCard.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.pickCard, card);
+            this.pickCard.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.pickCard, card);
         } else {
             document.getElementById('pick-stock').style.display = null;
         }

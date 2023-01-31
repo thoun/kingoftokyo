@@ -72,7 +72,7 @@ class PlayerTable {
         this.setMonsterFigureBeastMode(player.cards.find(card => card.type === 301)?.side === 1);
 
         this.cards = new LineStock<Card>(this.game.cardsManager, document.getElementById(`cards-${this.player.id}`));
-        this.cards.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.cards, card, this.playerId);
+        this.cards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.cards, card, this.playerId);
 
         this.cards.addCards(player.cards);
         if (playerWithGoldenScarab) {
@@ -85,7 +85,7 @@ class PlayerTable {
         if (game.isPowerUpExpansion()) {            
             // TODOPUBG
             this.reservedCards = new LineStock<Card>(this.game.cardsManager, document.getElementById(`reserved-cards-${this.player.id}`));
-            this.cards.onSelectionChange = (_, card: Card) => this.game.onVisibleCardClick(this.reservedCards, card, this.playerId);
+            this.cards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.reservedCards, card, this.playerId);
             
             this.reservedCards.addCards(player.reservedCards);
         }
@@ -145,7 +145,7 @@ class PlayerTable {
 
                 this.hiddenEvolutionCards = new LineStock<EvolutionCard>(this.game.evolutionCardsManager, document.getElementById(`hand-evolution-cards`));
                 this.hiddenEvolutionCards.setSelectionMode('multiple');
-                this.hiddenEvolutionCards.onSelectionChange = (_, card: EvolutionCard) => this.game.onHiddenEvolutionClick(card.id);
+                this.hiddenEvolutionCards.onCardClick = (card: EvolutionCard) => this.game.onHiddenEvolutionClick(card.id);
 
                 if (player.hiddenEvolutions) {
                     this.hiddenEvolutionCards.addCards(player.hiddenEvolutions);
@@ -159,7 +159,7 @@ class PlayerTable {
             }
 
             this.visibleEvolutionCards = new LineStock<EvolutionCard>(this.game.evolutionCardsManager, document.getElementById(`visible-evolution-cards-${player.id}`));
-            this.visibleEvolutionCards.onSelectionChange = (_, card: EvolutionCard) => this.game.onVisibleEvolutionClick(card.id);
+            this.visibleEvolutionCards.onCardClick = (card: EvolutionCard) => this.game.onVisibleEvolutionClick(card.id);
             if (player.visibleEvolutions) {
                 this.visibleEvolutionCards.addCards(player.visibleEvolutions);
             }

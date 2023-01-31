@@ -481,15 +481,20 @@ class CardsManager extends CardManager<Card> {
     }
 
     public placeTokensOnCard(card: Card, playerId?: number) {
+        const cardType = card.mimicType || card.type;
+
+        if (![28, 41].includes(cardType)) {
+            return;
+        }
+
         const divId = this.getId(card);
-        const div = document.getElementById(divId);
+        const div = document.getElementById(divId).getElementsByClassName('front')[0] as HTMLDivElement;
         if (!div) {
             return;
         }
         const cardPlaced: CardPlacedTokens = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: []};
         const placed: PlacedTokens[] = cardPlaced.tokens;
 
-        const cardType = card.mimicType || card.type;
 
         // remove tokens
         for (let i = card.tokens; i < placed.length; i++) {
@@ -513,7 +518,7 @@ class CardsManager extends CardManager<Card> {
                 html += `smoke-cloud token`;
             }
             html += `"></div>`;
-            dojo.place(html, divId);
+            div.insertAdjacentHTML('beforeend', html);
         }
 
         div.dataset.placed = JSON.stringify(cardPlaced);

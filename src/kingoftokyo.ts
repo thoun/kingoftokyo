@@ -365,7 +365,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
             this.choseEvolutionInStock = new LineStock<EvolutionCard>(this.evolutionCardsManager, document.getElementById(`choose-evolution-in`));
             this.choseEvolutionInStock.setSelectionMode('single');
-            this.choseEvolutionInStock.onSelectionChange = (_, card: EvolutionCard) => this.pickEvolutionForDeck(card.id);
+            this.choseEvolutionInStock.onCardClick = (card: EvolutionCard) => this.pickEvolutionForDeck(card.id);
             
             this.inDeckEvolutionsStock = new LineStock<EvolutionCard>(this.evolutionCardsManager, document.getElementById(`evolutions-in-deck`));
         }
@@ -3637,27 +3637,32 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
         const card = notif.args.card;
+        const playerId = notif.args.playerId;
+        const playerTable = this.getPlayerTable(playerId);
 
         if (notif.args.energy !== undefined) {
-            this.setEnergy(notif.args.playerId, notif.args.energy);
+            this.setEnergy(playerId, notif.args.energy);
         }
 
         if (notif.args.discardCard) { // initial card
-            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
+            playerTable.cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
         } else if (notif.args.newCard) {
             const newCard = notif.args.newCard;
-            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }).then(() => {
+            playerTable.cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }).then(() => {
                 this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
             });
         } else if (notif.args.from > 0) {
-            const fromStock = notif.args.from == notif.args.playerId ? this.getPlayerTable(notif.args.playerId).reservedCards : this.getPlayerTable(notif.args.from).cards;
-            this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock });
+            const fromStock = notif.args.from == playerId ? playerTable.reservedCards : this.getPlayerTable(notif.args.from).cards;
+            playerTable.cards.addCard(card, { fromStock });
         } else { // from Made in a lab Pick
-            if (this.tableCenter.getPickCard()) { // active player
-                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromStock: this.tableCenter.getPickCard() });
-            } else {
-                this.getPlayerTable(notif.args.playerId).cards.addCard(card, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
-            }
+            const settings: CardAnimation<Card> = this.tableCenter.getPickCard() ? // active player
+                { fromStock: this.tableCenter.getPickCard() } :
+                { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 };
+            playerTable.cards.addCard(card, settings);
+        }
+        //this.cardsManager.settings.setupFrontDiv(card, this.cardsManager.getCardElement(card).getElementsByClassName('front')[0]);
+        if (card.tokens) {
+            this.cardsManager.placeTokensOnCard(card, playerId);
         }
 
         this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
