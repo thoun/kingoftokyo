@@ -463,12 +463,6 @@ trait EvolutionCardsUtilTrait {
             case CULT_WORSHIPPERS_EVOLUTION:
                 $this->applyGetPoints($playerId, $this->getPlayer($playerId)->turnGainedHealth, $logCardType);
                 break;
-            case SUNKEN_TEMPLE_EVOLUTION:
-                $this->applyGetHealth($playerId, 3, $logCardType, $playerId);
-                $this->applyGetEnergy($playerId, 3, $logCardType);
-                $this->removeCard($playerId, $card, false, 5000);
-                $this->goToState(ST_NEXT_PLAYER);
-                break;
             // Baby Gigazaur
             case MY_TOY_EVOLUTION:
                 $this->myToyQuestion($playerId, $card);

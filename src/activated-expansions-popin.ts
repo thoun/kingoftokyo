@@ -24,7 +24,7 @@ const RULEBOOK_LINKS = [
         'fr': 'https://cdn.1j1ju.com/medias/80/e7/99-king-of-tokyo-new-york-monster-pack-cybertooth-regle.pdf',
     },
     { // Even more wicked
-        'en': 'https://boardgamegeek.com/file/download_redirect/3d766a927a5baa69f0c801f9c94075980ad22892161e1f12/KOT_Wickedness_Rules_EN.pdf',
+        'en': 'https://boardgamegeek.com/filepage/241513/english-rulebook',
         'fr': 'https://iello.fr/regles/KOT_mechancete_Rules_FR.pdf',
     },
     { // Power-Up!
