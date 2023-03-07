@@ -443,7 +443,8 @@ trait CardsArgTrait {
 
         $woundedPlayersIds = array_values(array_filter($this->playersWoundedByActivePlayerThisTurn($playerId), fn($pId) => $pId != $playerId));
         $canBuyFromPlayers = false;
-        if ($diceCounts[6] >= 3 && $this->isHalloweenExpansion()) {
+        $canStealCostumes = $diceCounts[6] >= 3 && $this->isHalloweenExpansion();
+        if ($canStealCostumes) {
             
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
@@ -476,6 +477,7 @@ trait CardsArgTrait {
         return [
             'disabledIds' => $disabledIds,
             'woundedPlayersIds' => $woundedPlayersIds,
+            'canStealCostumes' => $canStealCostumes,
             'canBuyFromPlayers' => $canBuyFromPlayers,
             'cardsCosts' => $cardsCosts,
             'canGiveGift' => $canGiveGift,

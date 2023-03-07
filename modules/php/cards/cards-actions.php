@@ -71,6 +71,15 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
 
+
+        $args = $this->argStealCostumeCard();
+        if (!$args['canStealCostumes']) {
+            throw new \BgaUserException("You can't steal Costume cards");
+        }
+        if (in_array($id, $args['disabledIds'])) {
+            throw new \BgaUserException("You can't steal this card");
+        }
+
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->removeCard($from, $card, true, false, true);
