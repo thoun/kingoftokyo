@@ -84,45 +84,6 @@ function formatTextIcons(rawText) {
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
-/**
- * Linear slide of the card from origin to destination.
- *
- * @param settings an `AnimationSettings` object
- * @returns a promise when animation ends
- */
-function stockSlideAnimation(settings) {
-    var promise = new Promise(function (success) {
-        var _a;
-        var originBR = settings.fromElement.getBoundingClientRect();
-        var destinationBR = settings.element.getBoundingClientRect();
-        var deltaX = (destinationBR.left + destinationBR.right) / 2 - (originBR.left + originBR.right) / 2;
-        var deltaY = (destinationBR.top + destinationBR.bottom) / 2 - (originBR.top + originBR.bottom) / 2;
-        settings.element.style.zIndex = '10';
-        settings.element.style.transform = "translate(" + -deltaX + "px, " + -deltaY + "px) rotate(" + ((_a = settings.rotationDelta) !== null && _a !== void 0 ? _a : 0) + "deg)";
-        var side = settings.element.dataset.side;
-        if (settings.originalSide && settings.originalSide != side) {
-            var cardSides_1 = settings.element.getElementsByClassName('card-sides')[0];
-            cardSides_1.style.transition = 'none';
-            settings.element.dataset.side = settings.originalSide;
-            setTimeout(function () {
-                cardSides_1.style.transition = null;
-                settings.element.dataset.side = side;
-            });
-        }
-        setTimeout(function () {
-            settings.element.offsetHeight;
-            settings.element.style.transition = "transform 0.5s linear";
-            settings.element.offsetHeight;
-            settings.element.style.transform = null;
-        }, 10);
-        setTimeout(function () {
-            settings.element.style.zIndex = null;
-            settings.element.style.transition = null;
-            success(true);
-        }, 600);
-    });
-    return promise;
-}
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -277,9 +238,7 @@ var CardStock = /** @class */ (function () {
         var promise;
         this.addCardElementToParent(cardElement, settings);
         cardElement.classList.remove('selectable', 'selected', 'disabled');
-        promise = this.animationFromElement({
-            element: cardElement,
-            fromElement: animation.fromStock.element,
+        promise = this.animationFromElement(cardElement, animation.fromStock.element, {
             originalSide: animation.originalSide,
             rotationDelta: animation.rotationDelta,
             animation: animation.animation,
@@ -299,9 +258,7 @@ var CardStock = /** @class */ (function () {
         this.addCardElementToParent(cardElement, settings);
         if (animation) {
             if (animation.fromStock) {
-                promise = this.animationFromElement({
-                    element: cardElement,
-                    fromElement: animation.fromStock.element,
+                promise = this.animationFromElement(cardElement, animation.fromStock.element, {
                     originalSide: animation.originalSide,
                     rotationDelta: animation.rotationDelta,
                     animation: animation.animation,
@@ -309,9 +266,7 @@ var CardStock = /** @class */ (function () {
                 animation.fromStock.removeCard(card);
             }
             else if (animation.fromElement) {
-                promise = this.animationFromElement({
-                    element: cardElement,
-                    fromElement: animation.fromElement,
+                promise = this.animationFromElement(cardElement, animation.fromElement, {
                     originalSide: animation.originalSide,
                     rotationDelta: animation.rotationDelta,
                     animation: animation.animation,
@@ -511,15 +466,24 @@ var CardStock = /** @class */ (function () {
         }
         (_a = this.onCardClick) === null || _a === void 0 ? void 0 : _a.call(this, card);
     };
-    CardStock.prototype.animationFromElement = function (settings) {
-        var _a;
-        if (document.visibilityState !== 'hidden' && !this.manager.game.instantaneousMode) {
-            var animation = (_a = settings.animation) !== null && _a !== void 0 ? _a : stockSlideAnimation;
-            return animation(settings);
+    /**
+     * @param element The element to animate. The element is added to the destination stock before the animation starts.
+     * @param fromElement The HTMLElement to animate from.
+     */
+    CardStock.prototype.animationFromElement = function (element, fromElement, settings) {
+        var _a, _b, _c, _d, _e, _f;
+        var side = element.dataset.side;
+        if (settings.originalSide && settings.originalSide != side) {
+            var cardSides_1 = element.getElementsByClassName('card-sides')[0];
+            cardSides_1.style.transition = 'none';
+            element.dataset.side = settings.originalSide;
+            setTimeout(function () {
+                cardSides_1.style.transition = null;
+                element.dataset.side = side;
+            });
         }
-        else {
-            return Promise.resolve(false);
-        }
+        var animation = (_a = settings.animation) !== null && _a !== void 0 ? _a : slideAnimation;
+        return (_f = animation(element, __assign(__assign({ duration: (_c = (_b = this.manager.animationManager.getSettings()) === null || _b === void 0 ? void 0 : _b.duration) !== null && _c !== void 0 ? _c : 500, scale: (_e = (_d = this.manager.animationManager.getZoomManager()) === null || _d === void 0 ? void 0 : _d.zoom) !== null && _e !== void 0 ? _e : undefined }, settings !== null && settings !== void 0 ? settings : {}), { game: this.manager.game, fromElement: fromElement }))) !== null && _f !== void 0 ? _f : Promise.resolve(false);
     };
     /**
      * Set the card to its front (visible) or back (not visible) side.
@@ -813,9 +777,11 @@ var CardManager = /** @class */ (function () {
      * @param settings: a `CardManagerSettings` object
      */
     function CardManager(game, settings) {
+        var _a;
         this.game = game;
         this.settings = settings;
         this.stocks = [];
+        this.animationManager = (_a = settings.animationManager) !== null && _a !== void 0 ? _a : new AnimationManager(game);
     }
     CardManager.prototype.addStock = function (stock) {
         this.stocks.push(stock);
@@ -8259,7 +8225,10 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.notif_updateAskPlayEvolution = function (notif) {
-        document.querySelector("input[name=\"autoSkipPlayEvolution\"][value=\"" + notif.args.value + "\"]").checked = true;
+        var input = document.querySelector("input[name=\"autoSkipPlayEvolution\"][value=\"" + notif.args.value + "\"]");
+        if (input) {
+            input.checked = true;
+        }
     };
     KingOfTokyo.prototype.notif_changeTokyoTowerOwner = function (notif) {
         var playerId = notif.args.playerId;

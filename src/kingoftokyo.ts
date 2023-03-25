@@ -3876,7 +3876,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_updateAskPlayEvolution(notif: Notif<NotifUpdateAskPlayEvolutionArgs>) {  
-        (document.querySelector(`input[name="autoSkipPlayEvolution"][value="${notif.args.value}"]`) as HTMLInputElement).checked = true;  
+        const input = document.querySelector(`input[name="autoSkipPlayEvolution"][value="${notif.args.value}"]`) as HTMLInputElement;
+        if (input) {
+            input.checked = true;  
+        }
     }
 
     notif_changeTokyoTowerOwner(notif: Notif<NotifChangeTokyoTowerOwnerArgs>) {   
