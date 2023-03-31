@@ -1,7 +1,7 @@
 const SPACE_BETWEEN_ANIMATION_AT_START = 43;
 const ANIMATION_FULL_SIZE = 220;
 
-class AnimationManager {
+class KingOfTokyoAnimationManager {
 
     constructor(private game: KingOfTokyoGame, private diceManager: DiceManager) {
     }

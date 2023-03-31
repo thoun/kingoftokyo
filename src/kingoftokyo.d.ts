@@ -206,6 +206,7 @@ interface KingOfTokyoGame extends Game {
     isDefaultFont(): boolean;
     
     tableManager: TableManager;
+    animationManager: AnimationManager;
     cardsManager: CardsManager;
     curseCardsManager: CurseCardsManager;
     wickednessTilesManager: WickednessTilesManager;

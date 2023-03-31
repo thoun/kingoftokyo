@@ -84,6 +84,296 @@ function formatTextIcons(rawText) {
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>");
 }
+var DEFAULT_ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
+var ZoomManager = /** @class */ (function () {
+    /**
+     * Place the settings.element in a zoom wrapper and init zoomControls.
+     *
+     * @param settings: a `ZoomManagerSettings` object
+     */
+    function ZoomManager(settings) {
+        var _this = this;
+        var _a, _b, _c, _d, _e;
+        this.settings = settings;
+        if (!settings.element) {
+            throw new DOMException('You need to set the element to wrap in the zoom element');
+        }
+        this.zoomLevels = (_a = settings.zoomLevels) !== null && _a !== void 0 ? _a : DEFAULT_ZOOM_LEVELS;
+        this._zoom = this.settings.defaultZoom || 1;
+        if (this.settings.localStorageZoomKey) {
+            var zoomStr = localStorage.getItem(this.settings.localStorageZoomKey);
+            if (zoomStr) {
+                this._zoom = Number(zoomStr);
+            }
+        }
+        this.wrapper = document.createElement('div');
+        this.wrapper.id = 'bga-zoom-wrapper';
+        this.wrapElement(this.wrapper, settings.element);
+        this.wrapper.appendChild(settings.element);
+        settings.element.classList.add('bga-zoom-inner');
+        if ((_b = settings.smooth) !== null && _b !== void 0 ? _b : true) {
+            settings.element.dataset.smooth = 'true';
+            settings.element.addEventListener('transitionend', function () { return _this.zoomOrDimensionChanged(); });
+        }
+        if ((_d = (_c = settings.zoomControls) === null || _c === void 0 ? void 0 : _c.visible) !== null && _d !== void 0 ? _d : true) {
+            this.initZoomControls(settings);
+        }
+        if (this._zoom !== 1) {
+            this.setZoom(this._zoom);
+        }
+        window.addEventListener('resize', function () {
+            var _a;
+            _this.zoomOrDimensionChanged();
+            if ((_a = _this.settings.autoZoom) === null || _a === void 0 ? void 0 : _a.expectedWidth) {
+                _this.setAutoZoom();
+            }
+        });
+        if (window.ResizeObserver) {
+            new ResizeObserver(function () { return _this.zoomOrDimensionChanged(); }).observe(settings.element);
+        }
+        if ((_e = this.settings.autoZoom) === null || _e === void 0 ? void 0 : _e.expectedWidth) {
+            this.setAutoZoom();
+        }
+    }
+    Object.defineProperty(ZoomManager.prototype, "zoom", {
+        /**
+         * Returns the zoom level
+         */
+        get: function () {
+            return this._zoom;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    ZoomManager.prototype.setAutoZoom = function () {
+        var _this = this;
+        var _a, _b, _c;
+        var zoomWrapperWidth = document.getElementById('bga-zoom-wrapper').clientWidth;
+        if (!zoomWrapperWidth) {
+            setTimeout(function () { return _this.setAutoZoom(); }, 200);
+            return;
+        }
+        var expectedWidth = (_a = this.settings.autoZoom) === null || _a === void 0 ? void 0 : _a.expectedWidth;
+        var newZoom = this.zoom;
+        while (newZoom > this.zoomLevels[0] && newZoom > ((_c = (_b = this.settings.autoZoom) === null || _b === void 0 ? void 0 : _b.minZoomLevel) !== null && _c !== void 0 ? _c : 0) && zoomWrapperWidth / newZoom < expectedWidth) {
+            newZoom = this.zoomLevels[this.zoomLevels.indexOf(newZoom) - 1];
+        }
+        if (this._zoom == newZoom) {
+            if (this.settings.localStorageZoomKey) {
+                localStorage.setItem(this.settings.localStorageZoomKey, '' + this._zoom);
+            }
+        }
+        else {
+            this.setZoom(newZoom);
+        }
+    };
+    /**
+     * Set the zoom level. Ideally, use a zoom level in the zoomLevels range.
+     * @param zoom zool level
+     */
+    ZoomManager.prototype.setZoom = function (zoom) {
+        var _a, _b, _c, _d;
+        if (zoom === void 0) { zoom = 1; }
+        this._zoom = zoom;
+        if (this.settings.localStorageZoomKey) {
+            localStorage.setItem(this.settings.localStorageZoomKey, '' + this._zoom);
+        }
+        var newIndex = this.zoomLevels.indexOf(this._zoom);
+        (_a = this.zoomInButton) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', newIndex === this.zoomLevels.length - 1);
+        (_b = this.zoomOutButton) === null || _b === void 0 ? void 0 : _b.classList.toggle('disabled', newIndex === 0);
+        this.settings.element.style.transform = zoom === 1 ? '' : "scale(" + zoom + ")";
+        (_d = (_c = this.settings).onZoomChange) === null || _d === void 0 ? void 0 : _d.call(_c, this._zoom);
+        this.zoomOrDimensionChanged();
+    };
+    /**
+     * Call this method for the browsers not supporting ResizeObserver, everytime the table height changes, if you know it.
+     * If the browsert is recent enough (>= Safari 13.1) it will just be ignored.
+     */
+    ZoomManager.prototype.manualHeightUpdate = function () {
+        if (!window.ResizeObserver) {
+            this.zoomOrDimensionChanged();
+        }
+    };
+    /**
+     * Everytime the element dimensions changes, we update the style. And call the optional callback.
+     */
+    ZoomManager.prototype.zoomOrDimensionChanged = function () {
+        var _a, _b;
+        this.settings.element.style.width = this.wrapper.getBoundingClientRect().width / this._zoom + "px";
+        this.wrapper.style.height = this.settings.element.getBoundingClientRect().height + "px";
+        (_b = (_a = this.settings).onDimensionsChange) === null || _b === void 0 ? void 0 : _b.call(_a, this._zoom);
+    };
+    /**
+     * Simulates a click on the Zoom-in button.
+     */
+    ZoomManager.prototype.zoomIn = function () {
+        if (this._zoom === this.zoomLevels[this.zoomLevels.length - 1]) {
+            return;
+        }
+        var newIndex = this.zoomLevels.indexOf(this._zoom) + 1;
+        this.setZoom(newIndex === -1 ? 1 : this.zoomLevels[newIndex]);
+    };
+    /**
+     * Simulates a click on the Zoom-out button.
+     */
+    ZoomManager.prototype.zoomOut = function () {
+        if (this._zoom === this.zoomLevels[0]) {
+            return;
+        }
+        var newIndex = this.zoomLevels.indexOf(this._zoom) - 1;
+        this.setZoom(newIndex === -1 ? 1 : this.zoomLevels[newIndex]);
+    };
+    /**
+     * Changes the color of the zoom controls.
+     */
+    ZoomManager.prototype.setZoomControlsColor = function (color) {
+        if (this.zoomControls) {
+            this.zoomControls.dataset.color = color;
+        }
+    };
+    /**
+     * Set-up the zoom controls
+     * @param settings a `ZoomManagerSettings` object.
+     */
+    ZoomManager.prototype.initZoomControls = function (settings) {
+        var _this = this;
+        var _a, _b, _c, _d, _e, _f;
+        this.zoomControls = document.createElement('div');
+        this.zoomControls.id = 'bga-zoom-controls';
+        this.zoomControls.dataset.position = (_b = (_a = settings.zoomControls) === null || _a === void 0 ? void 0 : _a.position) !== null && _b !== void 0 ? _b : 'top-right';
+        this.zoomOutButton = document.createElement('button');
+        this.zoomOutButton.type = 'button';
+        this.zoomOutButton.addEventListener('click', function () { return _this.zoomOut(); });
+        if ((_c = settings.zoomControls) === null || _c === void 0 ? void 0 : _c.customZoomOutElement) {
+            settings.zoomControls.customZoomOutElement(this.zoomOutButton);
+        }
+        else {
+            this.zoomOutButton.classList.add("bga-zoom-out-icon");
+        }
+        this.zoomInButton = document.createElement('button');
+        this.zoomInButton.type = 'button';
+        this.zoomInButton.addEventListener('click', function () { return _this.zoomIn(); });
+        if ((_d = settings.zoomControls) === null || _d === void 0 ? void 0 : _d.customZoomInElement) {
+            settings.zoomControls.customZoomInElement(this.zoomInButton);
+        }
+        else {
+            this.zoomInButton.classList.add("bga-zoom-in-icon");
+        }
+        this.zoomControls.appendChild(this.zoomOutButton);
+        this.zoomControls.appendChild(this.zoomInButton);
+        this.wrapper.appendChild(this.zoomControls);
+        this.setZoomControlsColor((_f = (_e = settings.zoomControls) === null || _e === void 0 ? void 0 : _e.color) !== null && _f !== void 0 ? _f : 'black');
+    };
+    /**
+     * Wraps an element around an existing DOM element
+     * @param wrapper the wrapper element
+     * @param element the existing element
+     */
+    ZoomManager.prototype.wrapElement = function (wrapper, element) {
+        element.parentNode.insertBefore(wrapper, element);
+        wrapper.appendChild(element);
+    };
+    return ZoomManager;
+}());
+/**
+ * Linear slide of the card from origin to destination.
+ *
+ * @param element the element to animate. The element should be attached to the destination element before the animation starts.
+ * @param settings an `AnimationSettings` object
+ * @returns a promise when animation ends
+ */
+function slideAnimation(element, settings) {
+    var promise = new Promise(function (success) {
+        var _a, _b, _c, _d, _e;
+        // should be checked at the beginning of every animation
+        if (!shouldAnimate(settings)) {
+            success(false);
+            return promise;
+        }
+        var _f = getDeltaCoordinates(element, settings), x = _f.x, y = _f.y;
+        var duration = (_a = settings === null || settings === void 0 ? void 0 : settings.duration) !== null && _a !== void 0 ? _a : 500;
+        var originalZIndex = element.style.zIndex;
+        var originalTransition = element.style.transition;
+        element.style.zIndex = "" + ((_b = settings === null || settings === void 0 ? void 0 : settings.zIndex) !== null && _b !== void 0 ? _b : 10);
+        element.style.transition = null;
+        element.offsetHeight;
+        element.style.transform = "translate(" + -x + "px, " + -y + "px) rotate(" + ((_c = settings === null || settings === void 0 ? void 0 : settings.rotationDelta) !== null && _c !== void 0 ? _c : 0) + "deg)";
+        (_d = settings.animationStart) === null || _d === void 0 ? void 0 : _d.call(settings, element);
+        var timeoutId = null;
+        var cleanOnTransitionEnd = function () {
+            var _a;
+            element.style.zIndex = originalZIndex;
+            element.style.transition = originalTransition;
+            (_a = settings.animationEnd) === null || _a === void 0 ? void 0 : _a.call(settings, element);
+            success(true);
+            element.removeEventListener('transitioncancel', cleanOnTransitionEnd);
+            element.removeEventListener('transitionend', cleanOnTransitionEnd);
+            document.removeEventListener('visibilitychange', cleanOnTransitionEnd);
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+        var cleanOnTransitionCancel = function () {
+            var _a;
+            element.style.transition = "";
+            element.offsetHeight;
+            element.style.transform = (_a = settings === null || settings === void 0 ? void 0 : settings.finalTransform) !== null && _a !== void 0 ? _a : null;
+            element.offsetHeight;
+            cleanOnTransitionEnd();
+        };
+        element.addEventListener('transitioncancel', cleanOnTransitionCancel);
+        element.addEventListener('transitionend', cleanOnTransitionEnd);
+        document.addEventListener('visibilitychange', cleanOnTransitionCancel);
+        element.offsetHeight;
+        element.style.transition = "transform " + duration + "ms linear";
+        element.offsetHeight;
+        element.style.transform = (_e = settings === null || settings === void 0 ? void 0 : settings.finalTransform) !== null && _e !== void 0 ? _e : null;
+        // safety in case transitionend and transitioncancel are not called
+        timeoutId = setTimeout(cleanOnTransitionEnd, duration + 100);
+    });
+    return promise;
+}
+function shouldAnimate(settings) {
+    var _a;
+    return document.visibilityState !== 'hidden' && !((_a = settings === null || settings === void 0 ? void 0 : settings.game) === null || _a === void 0 ? void 0 : _a.instantaneousMode);
+}
+/**
+ * Return the x and y delta, based on the animation settings;
+ *
+ * @param settings an `AnimationSettings` object
+ * @returns a promise when animation ends
+ */
+function getDeltaCoordinates(element, settings) {
+    var _a;
+    if (!settings.fromDelta && !settings.fromRect && !settings.fromElement) {
+        throw new Error("[bga-animation] fromDelta, fromRect or fromElement need to be set");
+    }
+    var x = 0;
+    var y = 0;
+    if (settings.fromDelta) {
+        x = settings.fromDelta.x;
+        y = settings.fromDelta.y;
+    }
+    else {
+        var originBR = (_a = settings.fromRect) !== null && _a !== void 0 ? _a : settings.fromElement.getBoundingClientRect();
+        // TODO make it an option ?
+        var originalTransform = element.style.transform;
+        element.style.transform = '';
+        var destinationBR = element.getBoundingClientRect();
+        element.style.transform = originalTransform;
+        x = (destinationBR.left + destinationBR.right) / 2 - (originBR.left + originBR.right) / 2;
+        y = (destinationBR.top + destinationBR.bottom) / 2 - (originBR.top + originBR.bottom) / 2;
+    }
+    if (settings.scale) {
+        x /= settings.scale;
+        y /= settings.scale;
+    }
+    return { x: x, y: y };
+}
+function logAnimation(element, settings) {
+    console.log(element, element.getBoundingClientRect(), element.style.transform, settings);
+    return Promise.resolve(false);
+}
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -95,6 +385,82 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var AnimationManager = /** @class */ (function () {
+    /**
+     * @param game the BGA game class, usually it will be `this`
+     * @param settings: a `AnimationManagerSettings` object
+     */
+    function AnimationManager(game, settings) {
+        this.game = game;
+        this.settings = settings;
+        this.zoomManager = settings === null || settings === void 0 ? void 0 : settings.zoomManager;
+    }
+    /**
+     * Attach an element to a parent, then play animation from element's origin to its new position.
+     *
+     * @param element the element to animate
+     * @param toElement the destination parent
+     * @param fn the animation function
+     * @param settings the animation settings
+     * @returns a promise when animation ends
+     */
+    AnimationManager.prototype.attachWithAnimation = function (element, toElement, fn, settings) {
+        var _a, _b, _c, _d, _e, _f;
+        var fromRect = element.getBoundingClientRect();
+        toElement.appendChild(element);
+        (_a = settings === null || settings === void 0 ? void 0 : settings.afterAttach) === null || _a === void 0 ? void 0 : _a.call(settings, element, toElement);
+        return (_f = fn(element, __assign(__assign({ duration: (_c = (_b = this.settings) === null || _b === void 0 ? void 0 : _b.duration) !== null && _c !== void 0 ? _c : 500, scale: (_e = (_d = this.zoomManager) === null || _d === void 0 ? void 0 : _d.zoom) !== null && _e !== void 0 ? _e : undefined }, settings !== null && settings !== void 0 ? settings : {}), { game: this.game, fromRect: fromRect }))) !== null && _f !== void 0 ? _f : Promise.resolve(false);
+    };
+    /**
+     * Attach an element to a parent with a slide animation.
+     *
+     * @param card the card informations
+     */
+    AnimationManager.prototype.attachWithSlideAnimation = function (element, toElement, settings) {
+        return this.attachWithAnimation(element, toElement, slideAnimation, settings);
+    };
+    /**
+     * Attach an element to a parent with a slide animation.
+     *
+     * @param card the card informations
+     */
+    AnimationManager.prototype.attachWithShowToScreenAnimation = function (element, toElement, settingsOrSettingsArray) {
+        var _this = this;
+        var cumulatedAnimation = function (element, settings) { return cumulatedAnimations(element, [
+            showScreenCenterAnimation,
+            pauseAnimation,
+            function (element) { return _this.attachWithSlideAnimation(element, toElement); },
+        ], settingsOrSettingsArray); };
+        return this.attachWithAnimation(element, toElement, cumulatedAnimation, null);
+    };
+    /**
+     * Slide from an element.
+     *
+     * @param element the element to animate
+     * @param fromElement the origin element
+     * @param settings the animation settings
+     * @returns a promise when animation ends
+     */
+    AnimationManager.prototype.slideFromElement = function (element, fromElement, settings) {
+        var _a, _b, _c, _d, _e;
+        return (_e = slideAnimation(element, __assign(__assign({ duration: (_b = (_a = this.settings) === null || _a === void 0 ? void 0 : _a.duration) !== null && _b !== void 0 ? _b : 500, scale: (_d = (_c = this.zoomManager) === null || _c === void 0 ? void 0 : _c.zoom) !== null && _d !== void 0 ? _d : undefined }, settings !== null && settings !== void 0 ? settings : {}), { game: this.game, fromElement: fromElement }))) !== null && _e !== void 0 ? _e : Promise.resolve(false);
+    };
+    AnimationManager.prototype.getZoomManager = function () {
+        return this.zoomManager;
+    };
+    /**
+     * Set the zoom manager, to get the scale of the current game.
+     *
+     * @param zoomManager the zoom manager
+     */
+    AnimationManager.prototype.setZoomManager = function (zoomManager) {
+        this.zoomManager = zoomManager;
+    };
+    AnimationManager.prototype.getSettings = function () {
+        return this.settings;
+    };
+    return AnimationManager;
+}());
 /**
  * The abstract stock. It shouldn't be used directly, use stocks that extends it.
  */
@@ -1196,6 +1562,7 @@ var CardsManager = /** @class */ (function (_super) {
     __extends(CardsManager, _super);
     function CardsManager(game) {
         var _this = _super.call(this, game, {
+            animationManager: game.animationManager,
             getId: function (card) { return "card-" + card.id; },
             setupDiv: function (card, div) {
                 div.classList.add('kot-card');
@@ -1959,6 +2326,7 @@ var CurseCardsManager = /** @class */ (function (_super) {
     __extends(CurseCardsManager, _super);
     function CurseCardsManager(game) {
         var _this = _super.call(this, game, {
+            animationManager: game.animationManager,
             getId: function (card) { return "curse-card-" + card.id; },
             setupDiv: function (card, div) { return div.classList.add('kot-curse-card'); },
             setupFrontDiv: function (card, div) {
@@ -2116,6 +2484,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
     __extends(EvolutionCardsManager, _super);
     function EvolutionCardsManager(game) {
         var _this = _super.call(this, game, {
+            animationManager: game.animationManager,
             getId: function (card) { return "evolution-card-" + card.id; },
             setupDiv: function (card, div) { return div.classList.add('kot-evolution'); },
             setupFrontDiv: function (card, div) {
@@ -2703,6 +3072,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
     __extends(WickednessTilesManager, _super);
     function WickednessTilesManager(game) {
         var _this = _super.call(this, game, {
+            animationManager: game.animationManager,
             getId: function (card) { return "wickedness-tile-" + card.id; },
             setupDiv: function (card, div) { return div.classList.add('kot-tile'); },
             setupFrontDiv: function (card, div) {
@@ -4244,21 +4614,21 @@ var DiceManager = /** @class */ (function () {
 }());
 var SPACE_BETWEEN_ANIMATION_AT_START = 43;
 var ANIMATION_FULL_SIZE = 220;
-var AnimationManager = /** @class */ (function () {
-    function AnimationManager(game, diceManager) {
+var KingOfTokyoAnimationManager = /** @class */ (function () {
+    function KingOfTokyoAnimationManager(game, diceManager) {
         this.game = game;
         this.diceManager = diceManager;
     }
-    AnimationManager.prototype.getDice = function (dieValue) {
+    KingOfTokyoAnimationManager.prototype.getDice = function (dieValue) {
         var dice = this.diceManager.getDice();
         var filteredDice = this.getDiceShowingFace(dice, dieValue);
         return filteredDice.length ? filteredDice : dice;
     };
-    AnimationManager.prototype.resolveNumberDice = function (args) {
+    KingOfTokyoAnimationManager.prototype.resolveNumberDice = function (args) {
         var dice = this.getDice(args.diceValue);
         this.game.displayScoring("dice" + (dice[Math.floor(dice.length / 2)] || dice[0]).id, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     };
-    AnimationManager.prototype.getDiceShowingFace = function (allDice, face) {
+    KingOfTokyoAnimationManager.prototype.getDiceShowingFace = function (allDice, face) {
         var dice = allDice.filter(function (die) { var _a; return !die.type && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
@@ -4276,7 +4646,7 @@ var AnimationManager = /** @class */ (function () {
             }
         }
     };
-    AnimationManager.prototype.addDiceAnimation = function (diceValue, playerIds, number, targetToken) {
+    KingOfTokyoAnimationManager.prototype.addDiceAnimation = function (diceValue, playerIds, number, targetToken) {
         var _this = this;
         if (document.visibilityState === 'hidden' || this.game.instantaneousMode) {
             return;
@@ -4328,16 +4698,16 @@ var AnimationManager = /** @class */ (function () {
             }
         });
     };
-    AnimationManager.prototype.resolveHealthDice = function (playerId, number, targetToken) {
+    KingOfTokyoAnimationManager.prototype.resolveHealthDice = function (playerId, number, targetToken) {
         this.addDiceAnimation(4, [playerId], number, targetToken);
     };
-    AnimationManager.prototype.resolveEnergyDice = function (args) {
+    KingOfTokyoAnimationManager.prototype.resolveEnergyDice = function (args) {
         this.addDiceAnimation(5, [args.playerId], args.deltaEnergy);
     };
-    AnimationManager.prototype.resolveSmashDice = function (args) {
+    KingOfTokyoAnimationManager.prototype.resolveSmashDice = function (args) {
         this.addDiceAnimation(6, args.smashedPlayersIds, args.number);
     };
-    return AnimationManager;
+    return KingOfTokyoAnimationManager;
 }());
 var HeartActionSelector = /** @class */ (function () {
     function HeartActionSelector(game, nodeId, args) {
@@ -5058,6 +5428,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (gamedatas.twoPlayersVariant) {
             this.addTwoPlayerVariantNotice(gamedatas);
         }
+        this.animationManager = new AnimationManager(this);
         this.cardsManager = new CardsManager(this);
         this.curseCardsManager = new CurseCardsManager(this);
         this.wickednessTilesManager = new WickednessTilesManager(this);
@@ -5068,7 +5439,7 @@ var KingOfTokyo = /** @class */ (function () {
         setTimeout(function () { var _a, _b; return new ActivatedExpansionsPopin(gamedatas, (_b = (_a = _this.players_metadata) === null || _a === void 0 ? void 0 : _a[_this.getPlayerId()]) === null || _b === void 0 ? void 0 : _b.language); }, 500);
         this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
-        this.animationManager = new AnimationManager(this, this.diceManager);
+        this.kotAnimationManager = new KingOfTokyoAnimationManager(this, this.diceManager);
         this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -7960,26 +8331,26 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_resolveNumberDice = function (notif) {
         this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);
-        this.animationManager.resolveNumberDice(notif.args);
+        this.kotAnimationManager.resolveNumberDice(notif.args);
         this.diceManager.resolveNumberDice(notif.args);
     };
     KingOfTokyo.prototype.notif_resolveHealthDice = function (notif) {
-        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
+        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
         this.diceManager.resolveHealthDice(notif.args.deltaHealth);
     };
     KingOfTokyo.prototype.notif_resolveHealthDiceInTokyo = function (notif) {
         this.diceManager.resolveHealthDiceInTokyo();
     };
     KingOfTokyo.prototype.notif_resolveHealingRay = function (notif) {
-        this.animationManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
+        this.kotAnimationManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
         this.diceManager.resolveHealthDice(notif.args.healNumber);
     };
     KingOfTokyo.prototype.notif_resolveEnergyDice = function (notif) {
-        this.animationManager.resolveEnergyDice(notif.args);
+        this.kotAnimationManager.resolveEnergyDice(notif.args);
         this.diceManager.resolveEnergyDice();
     };
     KingOfTokyo.prototype.notif_resolveSmashDice = function (notif) {
-        this.animationManager.resolveSmashDice(notif.args);
+        this.kotAnimationManager.resolveSmashDice(notif.args);
         this.diceManager.resolveSmashDice();
         if (notif.args.smashedPlayersIds.length > 0) {
             for (var delayIndex = 0; delayIndex < notif.args.number; delayIndex++) {
@@ -8128,13 +8499,13 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_removeShrinkRayToken = function (notif) {
         var _this = this;
-        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
+        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
         this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(function () { return _this.notif_shrinkRayToken(notif); }, ANIMATION_MS);
     };
     KingOfTokyo.prototype.notif_removePoisonToken = function (notif) {
         var _this = this;
-        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
+        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
         this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(function () { return _this.notif_poisonToken(notif); }, ANIMATION_MS);
     };

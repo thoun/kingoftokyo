@@ -24,9 +24,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     private handCounters: Counter[] = [];
     private monsterSelector: MonsterSelector;
     private diceManager: DiceManager;
-    private animationManager: AnimationManager;
+    private kotAnimationManager: KingOfTokyoAnimationManager;
     private playerTables: PlayerTable[] = [];
     private preferencesManager: PreferencesManager;
+    public animationManager: AnimationManager;
     public tableManager: TableManager;
     public cardsManager: CardsManager;
     public curseCardsManager: CurseCardsManager;
@@ -102,6 +103,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.addTwoPlayerVariantNotice(gamedatas);
         }
 
+        this.animationManager = new AnimationManager(this);
         this.cardsManager = new CardsManager(this);
         this.curseCardsManager = new CurseCardsManager(this);
         this.wickednessTilesManager = new WickednessTilesManager(this);
@@ -113,7 +115,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         setTimeout(() => new ActivatedExpansionsPopin(gamedatas, (this as any).players_metadata?.[this.getPlayerId()]?.language), 500);
         this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
-        this.animationManager = new AnimationManager(this, this.diceManager);
+        this.kotAnimationManager = new KingOfTokyoAnimationManager(this, this.diceManager);
         this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
@@ -3568,29 +3570,29 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
         this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);
-        this.animationManager.resolveNumberDice(notif.args);
+        this.kotAnimationManager.resolveNumberDice(notif.args);
         this.diceManager.resolveNumberDice(notif.args);
     }
 
     notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
-        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
+        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
         this.diceManager.resolveHealthDice(notif.args.deltaHealth);
     }
     notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
         this.diceManager.resolveHealthDiceInTokyo();
     }
     notif_resolveHealingRay(notif: Notif<NotifResolveHealingRayArgs>) {
-        this.animationManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
+        this.kotAnimationManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
         this.diceManager.resolveHealthDice(notif.args.healNumber);
     }
 
     notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
-        this.animationManager.resolveEnergyDice(notif.args);
+        this.kotAnimationManager.resolveEnergyDice(notif.args);
         this.diceManager.resolveEnergyDice();
     }
 
     notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
-        this.animationManager.resolveSmashDice(notif.args);
+        this.kotAnimationManager.resolveSmashDice(notif.args);
         this.diceManager.resolveSmashDice();
 
         if (notif.args.smashedPlayersIds.length > 0) {
@@ -3767,13 +3769,13 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     notif_removeShrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
+        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
         this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(() => this.notif_shrinkRayToken(notif), ANIMATION_MS);
     }
 
     notif_removePoisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.animationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
+        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
         this.diceManager.resolveHealthDice(notif.args.deltaTokens);
         setTimeout(() => this.notif_poisonToken(notif), ANIMATION_MS);
     }

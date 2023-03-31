@@ -334,6 +334,7 @@ class CardsManager extends CardManager<Card> {
     EVOLUTION_CARDS_TYPES: number[];
     constructor (public game: KingOfTokyoGame) {
         super(game, {
+            animationManager: game.animationManager,
             getId: (card) => `card-${card.id}`,
             setupDiv: (card: Card, div: HTMLElement) => {
                 div.classList.add('kot-card');

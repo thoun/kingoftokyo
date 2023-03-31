@@ -71,6 +71,7 @@ class WickednessDecks extends CardStock<WickednessTile> {
 class WickednessTilesManager extends CardManager<WickednessTile> {
     constructor (public game: KingOfTokyoGame) {
         super(game, {
+            animationManager: game.animationManager,
             getId: (card) => `wickedness-tile-${card.id}`,
             setupDiv: (card: WickednessTile, div: HTMLElement) => div.classList.add('kot-tile'),
             setupFrontDiv: (card: WickednessTile, div: HTMLElement) => {

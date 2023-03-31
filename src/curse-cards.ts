@@ -1,6 +1,7 @@
 class CurseCardsManager extends CardManager<CurseCard> {
     constructor (public game: KingOfTokyoGame) {
         super(game, {
+            animationManager: game.animationManager,
             getId: (card) => `curse-card-${card.id}`,
             setupDiv: (card: CurseCard, div: HTMLElement) => div.classList.add('kot-curse-card'),
             setupFrontDiv: (card: CurseCard, div: HTMLElement) => {

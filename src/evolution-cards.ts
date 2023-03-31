@@ -4,6 +4,7 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
     EVOLUTION_CARDS_TYPES: number[];
     constructor (public game: KingOfTokyoGame) {
         super(game, {
+            animationManager: game.animationManager,
             getId: (card) => `evolution-card-${card.id}`,
             setupDiv: (card: EvolutionCard, div: HTMLElement) => div.classList.add('kot-evolution'),
             setupFrontDiv: (card: EvolutionCard, div: HTMLElement) => {
