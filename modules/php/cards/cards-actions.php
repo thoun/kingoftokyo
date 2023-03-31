@@ -345,12 +345,12 @@ trait CardsActionTrait {
         }
 
         if ($from > 0) {
-            if ($from !== $playerId) {
+            if ($from != $playerId) {
                 if ($this->countCardOfType($playerId, PARASITIC_TENTACLES_CARD) == 0) {
                     throw new \BgaUserException("You can't buy from other players without Parasitic Tentacles");
                 }
-            } else if ($from === $playerId) {
-                if ($card->location_arg !== 'reserved'.$playerId) {
+            } else if ($from == $playerId) {
+                if ($card->location !== 'reserved'.$playerId) {
                     throw new \BgaUserException("You can't buy this card");
                 }
             }
