@@ -67,7 +67,7 @@ html[data-dark-edition="true"] {
     }
 
     .double-selection {
-      .no-visible-selection-except-double-selection, .selected {
+      .no-visible-selection-except-double-selection, .bga-cards_selected-card {
         box-shadow: 0px 0px 5px 5px $darkEditionYellow !important;
       }
     }

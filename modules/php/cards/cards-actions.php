@@ -192,7 +192,7 @@ trait CardsActionTrait {
             $this->applyGetEnergy($from, $cost, 0);
             
         } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {
-            $topDeckCardBackType = $this->getTopDeckCardBackType();
+            $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
             
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -202,7 +202,9 @@ trait CardsActionTrait {
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
-                'topDeckCardBackType' => $topDeckCardBackType,
+                'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
+                'deckCardsCount' => $this->getDeckCardCount(),
+                'topDeckCard' => $this->getTopDeckCard(),
             ]);
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
@@ -212,7 +214,7 @@ trait CardsActionTrait {
             $newCard = $numberOfCardsInTable < 3 ?
                 $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg)) :
                 null;
-            $topDeckCardBackType = $this->getTopDeckCardBackType();
+            $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
     
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -222,7 +224,9 @@ trait CardsActionTrait {
                 'newCard' => $newCard,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
-                'topDeckCardBackType' => $topDeckCardBackType,
+                'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
+                'deckCardsCount' => $this->getDeckCardCount(),
+                'topDeckCard' => $this->getTopDeckCard(),
             ]);
 
             if ($useBobbingForApples) {
@@ -399,14 +403,16 @@ trait CardsActionTrait {
         // astronaut
         $this->applyAstronaut($playerId);
 
-        $topDeckCardBackType = $this->getTopDeckCardBackType();
+        $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
 
         $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} draws ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,
             'card_name' => $card->type,
-            'topDeckCardBackType' => $topDeckCardBackType,
+            'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
+            'deckCardsCount' => $this->getDeckCardCount(),
+            'topDeckCard' => $this->getTopDeckCard(),
         ]);
 
         if ($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) {
@@ -519,14 +525,16 @@ trait CardsActionTrait {
         $this->cards->moveAllCardsInLocation('table', 'discard');
         $cards = $this->placeNewCardsOnTable();
         
-        $topDeckCardBackType = $this->getTopDeckCardBackType();
+        $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
 
         $notifArgs = [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
             'energy' => $this->getPlayerEnergy($playerId),
-            'topDeckCardBackType' => $topDeckCardBackType,
+            'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
+            'deckCardsCount' => $this->getDeckCardCount(),
+            'topDeckCard' => $this->getTopDeckCard(),
         ];        
         if ($cardType == 3024) {
             $this->notifyAllPlayers("renewCards", /*client TODOPUtranslate(*/'${player_name} renews visible cards using ${card_name}'/*)*/, 

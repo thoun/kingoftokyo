@@ -257,6 +257,8 @@ trait CurseCardsUtilTrait {
 
         $this->notifyAllPlayers('changeCurseCard', clienttranslate('Die of fate is on [dieFateEye], Curse card is changed'), [
             'card' => $card,
+            'hiddenCurseCardCount' => intval($this->curseCards->countCardInLocation('deck')),
+            'topCurseDeckCard' => $this->getTopCurseDeckCard(),
         ]);
         
         $this->applyCursePermanentEffectOnReveal();

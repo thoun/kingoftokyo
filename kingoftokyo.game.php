@@ -367,7 +367,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup(array_keys($players));
+        //$this->debugSetup(array_keys($players));
 
         /************ End of the game initialization *****/
     }
@@ -418,9 +418,10 @@ class KingOfTokyo extends Table {
         $activePlayerId = $this->getActivePlayerId();
         $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true, true, true) : [];
 
-        $result['deckCardsCount'] = intval($this->cards->countCardInLocation('deck'));
+        $result['deckCardsCount'] = $this->getDeckCardCount();
         $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
-        $result['topDeckCardBackType'] = $this->getTopDeckCardBackType();
+        $result['topDeckCardBackType'] = $this->getTopDeckCardBackType(); // TODOCA remove
+        $result['topDeckCard'] = $this->getTopDeckCard();
 
         if ($isKingKongExpansion) {
             $result['tokyoTowerLevels'] = $this->getTokyoTowerLevels(0);
@@ -501,6 +502,7 @@ class KingOfTokyo extends Table {
             $result['curseCard'] = $this->getCurseCard();
             $result['hiddenCurseCardCount'] = intval($this->curseCards->countCardInLocation('deck'));
             $result['visibleCurseCardCount'] = intval($this->curseCards->countCardInLocation('table')) + intval($this->curseCards->countCardInLocation('discard'));
+            $result['topCurseDeckCard'] = $this->getTopCurseDeckCard();
         }
 
         if ($isWickednessExpansion) {
@@ -563,10 +565,12 @@ class KingOfTokyo extends Table {
         // TODO $this->debugSetupBeforePlaceCard();
         $cards = $this->placeNewCardsOnTable();
         // TODO 
-        $this->debugSetupAfterPlaceCard();
+        // $this->debugSetupAfterPlaceCard();
 
         $this->notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,
+            'deckCardsCount' => $this->getDeckCardCount(),
+            'topDeckCard' => $this->getTopDeckCard(),
         ]);
 
         $this->gamestate->nextState('start');

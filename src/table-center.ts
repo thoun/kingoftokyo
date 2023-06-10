@@ -26,23 +26,18 @@ const WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
     [37, 29],
 ];
 
-const DECK_SETTINGS = {
-    width: 132,
-    height: 185,
-};
-
 class TableCenter {
-    private deck: HiddenDeck<Card>;
+    private deck: Deck<Card>;
     private visibleCards: SlotStock<Card>;
-    private curseCard: VisibleDeck<CurseCard>;
-    private curseDeck: HiddenDeck<CurseCard>;
+    private curseCard: Deck<CurseCard>;
+    private curseDeck: Deck<CurseCard>;
     private pickCard: LineStock<Card>;
     public wickednessDecks: WickednessDecks;
     private tokyoTower: TokyoTower;
     private wickednessPoints = new Map<number, number>();
 
-    constructor(private game: KingOfTokyoGame, players: KingOfTokyoPlayer[], visibleCards: Card[], topDeckCardBackType: string, deckCardsCount: number, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card, hiddenCurseCardCount: number, visibleCurseCardCount: number) {        
-        this.createVisibleCards(visibleCards, topDeckCardBackType, deckCardsCount);
+    constructor(private game: KingOfTokyoGame, players: KingOfTokyoPlayer[], visibleCards: Card[], topDeckCard: Card | null, deckCardsCount: number, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card, hiddenCurseCardCount: number, visibleCurseCardCount: number, topCurseDeckCard?: Card) {
+        this.createVisibleCards(visibleCards, topDeckCard, deckCardsCount);
 
         if (game.isWickednessExpansion()) {
             dojo.place(`
@@ -68,16 +63,16 @@ class TableCenter {
         }
 
         if (game.isAnubisExpansion()) {
-            this.createCurseCard(curseCard,  hiddenCurseCardCount, visibleCurseCardCount);
+            this.createCurseCard(curseCard,  hiddenCurseCardCount, visibleCurseCardCount, topCurseDeckCard);
         } else {
             document.getElementById('table-curse-cards').style.display = 'none';
         }
     }
 
-    public createVisibleCards(visibleCards: Card[], topDeckCardBackType: string, deckCardsCount: number) {
-        this.deck = new HiddenDeck<Card>(this.game.cardsManager, document.getElementById('deck'), {
-            ...DECK_SETTINGS,
+    public createVisibleCards(visibleCards: Card[], topDeckCard: Card | null, deckCardsCount: number) {
+        this.deck = new Deck<Card>(this.game.cardsManager, document.getElementById('deck'), {
             cardNumber: deckCardsCount,
+            topCard: topDeckCard,
             shadowDirection: 'top-right',
         });
 
@@ -88,25 +83,21 @@ class TableCenter {
         this.visibleCards.onCardClick = (card: Card) => this.game.onVisibleCardClick(this.visibleCards, card);
 
         this.setVisibleCards(visibleCards, true);
-
-        this.setTopDeckCardBackType(topDeckCardBackType);
     }
 
-    public createCurseCard(curseCard: Card, hiddenCurseCardCount: number, visibleCurseCardCount: number) {
+    public createCurseCard(curseCard: Card, hiddenCurseCardCount: number, visibleCurseCardCount: number, topCurseDeckCard: Card | null) {
         dojo.place(`<div id="curse-wrapper">
             <div id="curse-deck"></div>
             <div id="curse-card"></div>
         </div>`, 'table-curse-cards');
 
-
-        this.curseCard = new VisibleDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-card'), {
-            ...DECK_SETTINGS,
+        this.curseCard = new Deck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-card'), {
             cardNumber: visibleCurseCardCount,
+            topCard: curseCard,
         });
-        this.curseCard.addCard(curseCard);
-        this.curseDeck = new HiddenDeck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'), {
-            ...DECK_SETTINGS,
+        this.curseDeck = new Deck<CurseCard>(this.game.curseCardsManager, document.getElementById('curse-deck'), {
             cardNumber: hiddenCurseCardCount,
+            topCard: topCurseDeckCard,
         });
 
         (this.game as any).addTooltipHtml(`curse-deck`, `
@@ -145,39 +136,40 @@ class TableCenter {
         }
     }
     
-    public renewCards(cards: Card[], topDeckCardBackType: string) {
+    public renewCards(cards: Card[], topDeckCard: Card | null, deckCount: number): Promise<any> {
         this.visibleCards.removeAll();
 
-        this.setVisibleCards(cards);
+        const promise = this.setVisibleCards(cards, false, deckCount, topDeckCard);
 
-        this.setTopDeckCardBackType(topDeckCardBackType);
+        return promise;
     }
 
-    public setTopDeckCardBackType(topDeckCardBackType: string) {
-        if (topDeckCardBackType !== undefined && topDeckCardBackType !== null) {
-            document.getElementById('card-deck-hidden-deck-back').dataset.type = topDeckCardBackType;
-        }
+    public setTopDeckCard(topDeckCard: Card | null, deckCount: number) {
+        this.deck.setCardNumber(deckCount, topDeckCard);
     }
     
-    public setInitialCards(cards: Card[]) {   
-        this.deck.addCards(cards);
+    public setInitialCards(cards: Card[]): Promise<any> {   
+        this.deck.addCards(cards, undefined, { visible: false });
         this.visibleCards.removeAll();
         this.visibleCards.setSlotsIds([0, 1]);
         const cardsWithSlot = cards.map((card, index) => ({ ...card, location_arg: index }));
-        this.visibleCards.addCards(cardsWithSlot, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
+        return this.visibleCards.addCards(cardsWithSlot, { fromStock: this.deck, rotationDelta: 90 }, undefined, true);
     }
 
-    public setVisibleCards(cards: Card[], init: boolean = false) {
+    public setVisibleCards(cards: Card[], init: boolean, deckCount: number = null, topDeckCard: Card | null = null): Promise<any> {
         if (init) {
-            this.visibleCards.addCards(cards);
+            return this.visibleCards.addCards(cards);
         } else {
+            this.setTopDeckCard(topDeckCard, deckCount);
             const cardsForDeck = cards.slice();
             cardsForDeck.sort((a, b) => b.location_arg - a.location_arg);
             // add 3 - 2 - 1
-            this.deck.addCards(cardsForDeck);
+            this.deck.addCards(cardsForDeck, undefined, { visible: false, autoUpdateCardNumber: false, autoRemovePreviousCards: false } as AddCardToDeckSettings);
             // reveal 1 - 2 - 3
             this.visibleCards.setSlotsIds([1, 2, 3]);
-            this.visibleCards.addCards(cards, { fromStock: this.deck, originalSide: 'back', rotationDelta: 90 }, undefined, /* TODOST true */ 800);
+            return this.visibleCards.addCards(cards, { fromStock: this.deck, rotationDelta: 90 }, undefined, true).then(() => 
+                this.setTopDeckCard(topDeckCard, deckCount)
+            );
         }
     }
     
@@ -194,7 +186,7 @@ class TableCenter {
         return this.visibleCards;
     }
     
-    public getDeck(): HiddenDeck<Card> {
+    public getDeck(): Deck<Card> {
         return this.deck;
     }
     
@@ -206,8 +198,12 @@ class TableCenter {
         return this.tokyoTower;
     }
     
-    public changeCurseCard(card: Card) {
-        this.curseCard.addCard(card, { fromStock: this.curseDeck, originalSide: 'back' });
+    public changeCurseCard(card: Card, hiddenCurseCardCount: number, topCurseDeckCard?: Card): Promise<any> {
+        const promise = this.curseCard.addCard(card, { fromStock: this.curseDeck, originalSide: 'back' });
+
+        this.curseDeck.setCardNumber(hiddenCurseCardCount, topCurseDeckCard);
+
+        return promise;
     }
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {

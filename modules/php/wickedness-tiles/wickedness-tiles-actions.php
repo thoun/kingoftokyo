@@ -30,7 +30,7 @@ trait WickednessTilesActionTrait {
 
         $tableTiles = $this->getTableWickednessTiles($level);
         if (!$this->array_some($tableTiles, fn($t) => $t->id === $tile->id)) {
-            throw new \BgaUserException("This tile is not ont the table");
+            throw new \BgaUserException("This tile is not on the table");
         }
 
         $this->wickednessTiles->moveCard($id, 'hand', $playerId);

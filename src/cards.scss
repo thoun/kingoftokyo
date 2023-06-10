@@ -181,11 +181,6 @@ $description-size: 7pt;
         pointer-events: none;
     }
 
-    &.disabled {
-        filter: contrast(0.6);
-        cursor: not-allowed;
-    }
-
     .card-token {
         position: absolute;
         z-index: 12;
@@ -244,60 +239,5 @@ $description-size: 7pt;
         position: absolute;
         left: 0;
         top: 0;
-    }
-}
-
-.card-inner {
-    position: absolute;
-    transition: transform 0.8s;
-    transform-style: preserve-3d;
-  
-    &[data-side="1"] {
-      transform: rotateY(180deg);
-    }
-  
-    &[data-side="0"] {
-      .card-back {
-        display: none;
-      }
-    }
-
-    &[data-side] {
-        background: unset !important; // to counter stock inline style
-        box-shadow: unset;
-        overflow: visible;
-    }
-
-    &[data-type="301"] {
-        .card-side {
-            background-image: url('img/transformation-cards.jpg');
-            &.front {
-                background-position: 0% 0%;
-            }
-            &.back {
-                background-position: 100% 0%;
-            }
-        }
-    }
-
-    .card-side {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border-radius: 10px;
-      box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
-      overflow: hidden;
-    
-      transition: transform 0.8s;
-      transform-style: preserve-3d;
-    
-      -webkit-backface-visibility: hidden; /* Safari */
-      backface-visibility: hidden;
-    
-      &.back {  
-        transform: rotateY(180deg);
-      }
     }
 }

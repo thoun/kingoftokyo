@@ -82,10 +82,10 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(MADE_IN_A_LAB_CARD, 2343492);
         //$this->debugSetCardInHand(METAMORPH_CARD, 2343492);
         //$this->debugSetCardInHand(BACKGROUND_DWELLER_CARD, 2343493);
-        $this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
+        //$this->debugSetCardInHand(FRIEND_OF_CHILDREN_CARD, 2343492);
         //$this->debugSetCardInHand(JETS_CARD, 2343493);
         //$this->debugSetCardInHand(POISON_QUILLS_CARD, 2343492);
-        $this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
+        //$this->debugSetCardInHand(PARASITIC_TENTACLES_CARD, 2343492);
         //$this->debugSetCardInHand(SOLAR_POWERED_CARD, 2343492);
         //$this->debugSetCardInHand(FREEZE_TIME_CARD, 2343492);
         //$this->debugSetCardInHand(OPPORTUNIST_CARD, 2343493);
@@ -96,8 +96,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(ALPHA_MONSTER_CARD, 2343493);
         //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
-        //$this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
-        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343493);
+        $this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
+        //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
         //$this->debugSetCardInHand(BURROWING_CARD, 2343493);
@@ -213,6 +213,14 @@ trait DebugUtilTrait {
             //$this->debugSetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343493);
             //$this->debugSetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
             //$this->debugSetWickednessTileInHand(DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 2343492);
+            $this->debugSetWickednessTileInHand(TIRELESS_WICKEDNESS_TILE, 2343492);
+            $this->debugSetWickednessTileInHand(CYBERBRAIN_WICKEDNESS_TILE, 2343492);
+
+            $this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343493");
+
+            $this->debugSetWickednessTileInHand(DEVIOUS_WICKEDNESS_TILE, 2343494);
+            $this->debugSetWickednessTileInHand(ETERNAL_WICKEDNESS_TILE, 2343494);
+            $this->debugSetWickednessTileInHand(SKULKING_WICKEDNESS_TILE, 2343494);
         }
 
         // power up
@@ -277,7 +285,7 @@ trait DebugUtilTrait {
 
         // player order
 
-        $this->gamestate->changeActivePlayer(2343492);
+        $this->gamestate->changeActivePlayer(2343493);
         //$this->gamestate->changeActivePlayer($playersIds[1]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);

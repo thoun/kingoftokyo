@@ -18,5 +18,23 @@ class Card {
         $this->tokens = $this->type < 100 ? intval($dbCard['type_arg']) : 0;
         $this->side = $this->type > 300 ? intval($dbCard['type_arg']) : 0;
     } 
+
+    public static function onlyId(?Card $card) {
+        if ($card == null) {
+            return null;
+        }
+        
+        return new Card([
+            'id' => $card->id,
+            'location' => $card->location,
+            'location_arg' => $card->location_arg,
+            'type' => $card->type < 200 ? 0 : -floor($card->type / 100) * 100,
+            'type_arg' => 0,
+        ]);
+    }
+
+    public static function onlyIds(array $cards) {
+        return array_map(fn($card) => self::onlyId($card), $cards);
+    }
 }
 ?>

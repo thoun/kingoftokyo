@@ -349,7 +349,6 @@ class CardsManager extends CardManager<Card> {
                 } else if (card.type < 999) {
                     this.setDivAsCard(div as HTMLDivElement, card.type + (card.side || 0));
                 }
-                div.id = `${super.getId(card)}-front`;
                 (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, card.side));
                 if (card.tokens > 0) {
                     this.placeTokensOnCard(card);
@@ -357,18 +356,21 @@ class CardsManager extends CardManager<Card> {
             },
             setupBackDiv: (card: Card, div: HTMLElement) => {
                 const darkEdition = this.game.isDarkEdition();
-                if (card.type < 200) {
+                if (card.type >= 0 && card.type < 200) {
                     div.style.backgroundImage = `url('${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}card-back.jpg')`;
-                } else if (card.type < 300) {
+                } else if ((card.type >= 200 && card.type < 300) || card.type == -200) {
                     div.style.backgroundImage = `url('${g_gamethemeurl}img/card-back-costume.jpg')`;
                 } else if (FLIPPABLE_CARDS.includes(card.type)) {
                     this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
                     this.setDivAsCard(div as HTMLDivElement, 301, 1);
-                    (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, card.side));
+                    (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type, 1));
                 } else if (card.type == 999) {
                     this.setFrontBackground(div as HTMLDivElement, card.type, card.side);
                 }
-            }
+            },
+            isCardVisible: card => FLIPPABLE_CARDS.includes(card.type) ? card.side == 0 : card.type > 0,
+            cardWidth: 132,
+            cardHeight: 185,
         });
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
     }
@@ -958,26 +960,6 @@ class CardsManager extends CardManager<Card> {
 
         tooltip += `</div>`;
         return tooltip;
-    }
-
-    public setupNewCard(cardDiv: HTMLDivElement, cardType: number) {
-        if (FLIPPABLE_CARDS.includes(cardType)) {
-            cardDiv.dataset.type = ''+cardType;
-            cardDiv.classList.add('card-inner');
-            dojo.place(`
-                <div class="card-side front"></div>
-                <div class="card-side back"></div>
-            `, cardDiv);
-            this.setDivAsCard(cardDiv.getElementsByClassName('front')[0] as HTMLDivElement, 301, 0); 
-            this.setDivAsCard(cardDiv.getElementsByClassName('back')[0] as HTMLDivElement, 301, 1);
-        } else {
-            if (cardType !== 999) { // no text for golden scarab
-                this.setDivAsCard(cardDiv, cardType); 
-            }
-            (this.game as any).addTooltipHtml(cardDiv.id, this.getTooltip(cardType));
-        }
-        cardDiv.dataset.cardId = cardDiv.id.split('_')[2];
-        cardDiv.dataset.cardType = ''+cardType;
     }
 
     private getCardTypeName(cardType: number) {

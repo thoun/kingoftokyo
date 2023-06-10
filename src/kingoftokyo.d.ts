@@ -162,7 +162,7 @@ interface KingOfTokyoGamedatas {
     // Add here variables you set up in getAllDatas
     dice: Die[];
     visibleCards: Card[];
-    topDeckCardBackType: string;
+    topDeckCard?: Card;
     deckCardsCount: number;
     mimickedCards: {
         card: Card | null;
@@ -185,6 +185,7 @@ interface KingOfTokyoGamedatas {
     darkEdition: boolean;
     playerWithGoldenScarab?: number;
     curseCard?: Card;
+    topCurseDeckCard?: Card;
     hiddenCurseCardCount?: number;
     visibleCurseCardCount?: number;
     wickednessTiles: WickednessTile[];
@@ -469,6 +470,8 @@ interface NotifPickMonsterArgs {
 
 interface NotifSetInitialCardsArgs {
     cards: Card[];
+    topDeckCard?: Card;
+    deckCardsCount: number;
 }
 
 interface NotifResolveArgs {
@@ -532,7 +535,8 @@ interface NotifBuyCardArgs {
     energy: number;
     from: number;
     discardCard?: Card;
-    topDeckCardBackType: string;
+    topDeckCard?: Card;
+    deckCardsCount: number;
 }
 
 interface NotifRenewCardsArgs {
@@ -540,7 +544,8 @@ interface NotifRenewCardsArgs {
     player_name: string;
     cards: Card[];
     energy: number;
-    topDeckCardBackType: string;
+    topDeckCard?: Card;
+    deckCardsCount: number;
 }
 
 interface NotifRemoveCardsArgs {
@@ -673,6 +678,8 @@ interface NotifCultistArgs {
 
 interface NotifChangeCurseCardArgs {
     card: Card;
+    hiddenCurseCardCount: number;
+    topCurseDeckCard: Card;
 }
 
 interface NotifTakeWickednessTileArgs {

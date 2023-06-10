@@ -739,7 +739,7 @@ trait EvolutionCardsActionTrait {
         $this->cards->moveCard($id, 'reserved'.$playerId, $evolution->id);
 
         $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
-        $topDeckCardBackType = $this->getTopDeckCardBackType();
+        $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
 
         $this->notifyAllPlayers("reserveCard", /*client TODOPUBG translate(*/'${player_name} puts ${card_name} to reserve'/*)*/, [
             'playerId' => $playerId,
@@ -747,7 +747,9 @@ trait EvolutionCardsActionTrait {
             'card' => $card,
             'card_name' => $card->type,
             'newCard' => $newCard,
-            'topDeckCardBackType' => $topDeckCardBackType,
+            'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
+            'deckCardsCount' => $this->getDeckCardCount(),
+            'topDeckCard' => $this->getTopDeckCard(),
         ]);
 
         $this->removeStackedStateAndRedirect();

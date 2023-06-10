@@ -116,7 +116,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
         this.kotAnimationManager = new KingOfTokyoAnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCardBackType, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount);
+        this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCard, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount, gamedatas.topCurseDeckCard);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -1952,8 +1952,14 @@ class KingOfTokyo implements KingOfTokyoGame {
         disabledCardsIds.forEach(id => {
             const disabled = disabledIds.some(disabledId => disabledId == id) || cardsCosts[id] > playerEnergy;
             const cardDiv = this.cardsManager.getCardElement({ id } as Card);
-            cardDiv?.classList.toggle('disabled', disabled);
+            cardDiv?.classList.toggle('bga-cards_disabled-card', disabled);
         });
+
+        const selectableCards = this.tableCenter.getVisibleCards().getCards().filter(card => {
+            const disabled = disabledIds.some(disabledId => disabledId == card.id) || cardsCosts[card.id] > playerEnergy;
+            return !disabled;
+        });
+        this.tableCenter.getVisibleCards().setSelectableCards(selectableCards);
     }
 
     // called on state enter and when energy number is changed
@@ -3468,7 +3474,7 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const notifs = [
             ['pickMonster', 500],
-            ['setInitialCards', ANIMATION_MS * 3],
+            ['setInitialCards', undefined],
             ['resolveNumberDice', ANIMATION_MS],
             ['resolveHealthDice', ANIMATION_MS],
             ['resolveHealingRay', ANIMATION_MS],
@@ -3479,7 +3485,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['resolveSmashDice', ANIMATION_MS],
             ['playerEliminated', ANIMATION_MS],
             ['playerEntersTokyo', ANIMATION_MS],
-            ['renewCards', ANIMATION_MS * 3],
+            ['renewCards', undefined],
             ['buyCard', ANIMATION_MS],
             ['reserveCard', ANIMATION_MS],
             ['leaveTokyo', ANIMATION_MS],
@@ -3488,7 +3494,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['changeDie', ANIMATION_MS],
             ['changeDice', ANIMATION_MS],
             ['rethrow3changeDie', ANIMATION_MS],
-            ['changeCurseCard', ANIMATION_MS],
+            ['changeCurseCard', undefined],
             ['takeWickednessTile', ANIMATION_MS],
             ['changeGoldenScarabOwner', ANIMATION_MS],
             ['discardedDie', ANIMATION_MS],
@@ -3536,125 +3542,146 @@ class KingOfTokyo implements KingOfTokyoGame {
         ];
     
         notifs.forEach((notif) => {
-            dojo.subscribe(notif[0], this, `notif_${notif[0]}`);
+            dojo.subscribe(notif[0], this, (notifDetails: Notif<any>) => {
+                log(`notif_${notif[0]}`, notifDetails.args);
+
+                const promise = this[`notif_${notif[0]}`](notifDetails.args);
+
+                // tell the UI notification ends, if the function returned a promise
+                promise?.then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
+            });
             (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
         });
+
+        if (isDebug) {
+            notifs.forEach((notif) => {
+                if (!this[`notif_${notif[0]}`]) {
+                    console.warn(`notif_${notif[0]} function is not declared, but listed in setupNotifications`);
+                }
+            });
+
+            Object.getOwnPropertyNames(KingOfTokyo.prototype).filter(item => item.startsWith('notif_')).map(item => item.slice(6)).forEach(item => {
+                if (!notifs.some(notif => notif[0] == item)) {
+                    console.warn(`notif_${item} function is declared, but not listed in setupNotifications`);
+                }
+            });
+        }
     }
 
     notif_log500() {
         // nothing, it's just for the delay
     }
 
-    notif_pickMonster(notif: Notif<NotifPickMonsterArgs>) {
-       const monsterDiv = document.getElementById(`pick-monster-figure-${notif.args.monster}`); 
-       const destinationId = `player-board-monster-figure-${notif.args.playerId}`;
+    notif_pickMonster(args: NotifPickMonsterArgs) {
+       const monsterDiv = document.getElementById(`pick-monster-figure-${args.monster}`); 
+       const destinationId = `player-board-monster-figure-${args.playerId}`;
        const animation = (this as any).slideToObject(monsterDiv, destinationId);
 
         dojo.connect(animation, 'onEnd', dojo.hitch(this, () => {
             (this as any).fadeOutAndDestroy(monsterDiv);
             dojo.removeClass(destinationId, 'monster0');
-            dojo.addClass(destinationId, `monster${notif.args.monster}`);
+            dojo.addClass(destinationId, `monster${args.monster}`);
         }));
         animation.play();
 
-        this.getPlayerTable(notif.args.playerId).setMonster(notif.args.monster);
+        this.getPlayerTable(args.playerId).setMonster(args.monster);
     }
 
-    notif_evolutionPickedForDeck(notif: Notif<any>) {
-        this.inDeckEvolutionsStock.addCard(notif.args.card, { fromStock: this.choseEvolutionInStock });
+    notif_evolutionPickedForDeck(args: any) {
+        this.inDeckEvolutionsStock.addCard(args.card, { fromStock: this.choseEvolutionInStock });
     }
 
-    notif_setInitialCards(notif: Notif<NotifSetInitialCardsArgs>) {
-        this.tableCenter.setVisibleCards(notif.args.cards);
+    notif_setInitialCards(args: NotifSetInitialCardsArgs) {
+        return this.tableCenter.setVisibleCards(args.cards, false, args.deckCardsCount, args.topDeckCard);
     }
 
-    notif_resolveNumberDice(notif: Notif<NotifResolveNumberDiceArgs>) {
-        this.setPoints(notif.args.playerId, notif.args.points, ANIMATION_MS);
-        this.kotAnimationManager.resolveNumberDice(notif.args);
-        this.diceManager.resolveNumberDice(notif.args);
+    notif_resolveNumberDice(args: NotifResolveNumberDiceArgs) {
+        this.setPoints(args.playerId, args.points, ANIMATION_MS);
+        this.kotAnimationManager.resolveNumberDice(args);
+        this.diceManager.resolveNumberDice(args);
     }
 
-    notif_resolveHealthDice(notif: Notif<NotifResolveHealthDiceArgs>) {
-        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaHealth);
-        this.diceManager.resolveHealthDice(notif.args.deltaHealth);
+    notif_resolveHealthDice(args: NotifResolveHealthDiceArgs) {
+        this.kotAnimationManager.resolveHealthDice(args.playerId, args.deltaHealth);
+        this.diceManager.resolveHealthDice(args.deltaHealth);
     }
-    notif_resolveHealthDiceInTokyo(notif: Notif<NotifResolveHealthDiceInTokyoArgs>) {
+    notif_resolveHealthDiceInTokyo(args: NotifResolveHealthDiceInTokyoArgs) {
         this.diceManager.resolveHealthDiceInTokyo();
     }
-    notif_resolveHealingRay(notif: Notif<NotifResolveHealingRayArgs>) {
-        this.kotAnimationManager.resolveHealthDice(notif.args.healedPlayerId, notif.args.healNumber);
-        this.diceManager.resolveHealthDice(notif.args.healNumber);
+    notif_resolveHealingRay(args: NotifResolveHealingRayArgs) {
+        this.kotAnimationManager.resolveHealthDice(args.healedPlayerId, args.healNumber);
+        this.diceManager.resolveHealthDice(args.healNumber);
     }
 
-    notif_resolveEnergyDice(notif: Notif<NotifResolveEnergyDiceArgs>) {
-        this.kotAnimationManager.resolveEnergyDice(notif.args);
+    notif_resolveEnergyDice(args: NotifResolveEnergyDiceArgs) {
+        this.kotAnimationManager.resolveEnergyDice(args);
         this.diceManager.resolveEnergyDice();
     }
 
-    notif_resolveSmashDice(notif: Notif<NotifResolveSmashDiceArgs>) {
-        this.kotAnimationManager.resolveSmashDice(notif.args);
+    notif_resolveSmashDice(args: NotifResolveSmashDiceArgs) {
+        this.kotAnimationManager.resolveSmashDice(args);
         this.diceManager.resolveSmashDice();
 
-        if (notif.args.smashedPlayersIds.length > 0) {
-            for (let delayIndex = 0; delayIndex < notif.args.number; delayIndex++) {
+        if (args.smashedPlayersIds.length > 0) {
+            for (let delayIndex = 0; delayIndex < args.number; delayIndex++) {
                 setTimeout(() => playSound('kot-punch'), ANIMATION_MS -(PUNCH_SOUND_DURATION * delayIndex - 1));
             }
         }
     }
 
-    notif_playerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {
-        const playerId = Number(notif.args.who_quits);
+    notif_playerEliminated(args: NotifPlayerEliminatedArgs) {
+        const playerId = Number(args.who_quits);
         this.setPoints(playerId, 0);
         this.eliminatePlayer(playerId);
     }
 
-    notif_kotPlayerEliminated(notif: Notif<NotifPlayerEliminatedArgs>) {
-        this.notif_playerEliminated(notif);
+    notif_kotPlayerEliminated(args: NotifPlayerEliminatedArgs) {
+        this.notif_playerEliminated(args);
     }
 
-    notif_leaveTokyo(notif: Notif<NotifPlayerLeavesTokyoArgs>) {
-        this.getPlayerTable(notif.args.playerId).leaveTokyo();
-        dojo.removeClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
-        dojo.removeClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
-        if (notif.args.playerId == this.getPlayerId()) {
+    notif_leaveTokyo(args: NotifPlayerLeavesTokyoArgs) {
+        this.getPlayerTable(args.playerId).leaveTokyo();
+        dojo.removeClass(`overall_player_board_${args.playerId}`, 'intokyo');
+        dojo.removeClass(`monster-board-wrapper-${args.playerId}`, 'intokyo');
+        if (args.playerId == this.getPlayerId()) {
             this.removeAutoLeaveUnderButton();
         }
 
         if (this.smashedPlayersStillInTokyo) {
-            this.smashedPlayersStillInTokyo = this.smashedPlayersStillInTokyo.filter((playerId) => playerId != notif.args.playerId);
+            this.smashedPlayersStillInTokyo = this.smashedPlayersStillInTokyo.filter((playerId) => playerId != args.playerId);
         }
 
-        const useChestThumpingButton = document.getElementById(`useChestThumping_button${notif.args.playerId}`);
+        const useChestThumpingButton = document.getElementById(`useChestThumping_button${args.playerId}`);
         useChestThumpingButton?.parentElement.removeChild(useChestThumpingButton);
     }
 
-    notif_playerEntersTokyo(notif: Notif<NotifPlayerEntersTokyoArgs>) {
-        this.getPlayerTable(notif.args.playerId).enterTokyo(notif.args.location);
-        dojo.addClass(`overall_player_board_${notif.args.playerId}`, 'intokyo');
-        dojo.addClass(`monster-board-wrapper-${notif.args.playerId}`, 'intokyo');
-        if (notif.args.playerId == this.getPlayerId()) {
+    notif_playerEntersTokyo(args: NotifPlayerEntersTokyoArgs) {
+        this.getPlayerTable(args.playerId).enterTokyo(args.location);
+        dojo.addClass(`overall_player_board_${args.playerId}`, 'intokyo');
+        dojo.addClass(`monster-board-wrapper-${args.playerId}`, 'intokyo');
+        if (args.playerId == this.getPlayerId()) {
             this.addAutoLeaveUnderButton();
         }  
     }
 
-    notif_buyCard(notif: Notif<NotifBuyCardArgs>) {
-        const card = notif.args.card;
-        const playerId = notif.args.playerId;
+    notif_buyCard(args: NotifBuyCardArgs) {
+        const card = args.card;
+        const playerId = args.playerId;
         const playerTable = this.getPlayerTable(playerId);
 
-        if (notif.args.energy !== undefined) {
-            this.setEnergy(playerId, notif.args.energy);
+        if (args.energy !== undefined) {
+            this.setEnergy(playerId, args.energy);
         }
 
-        if (notif.args.discardCard) { // initial card
+        if (args.discardCard) { // initial card
             playerTable.cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() });
-        } else if (notif.args.newCard) {
-            const newCard = notif.args.newCard;
+        } else if (args.newCard) {
+            const newCard = args.newCard;
             playerTable.cards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }).then(() => {
                 this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
             });
-        } else if (notif.args.from > 0) {
-            const fromStock = notif.args.from == playerId ? playerTable.reservedCards : this.getPlayerTable(notif.args.from).cards;
+        } else if (args.from > 0) {
+            const fromStock = args.from == playerId ? playerTable.reservedCards : this.getPlayerTable(args.from).cards;
             playerTable.cards.addCard(card, { fromStock });
         } else { // from Made in a lab Pick
             const settings: CardAnimation<Card> = this.tableCenter.getPickCard() ? // active player
@@ -3667,184 +3694,181 @@ class KingOfTokyo implements KingOfTokyoGame {
             this.cardsManager.placeTokensOnCard(card, playerId);
         }
 
-        this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
+        this.tableCenter.setTopDeckCard(args.topDeckCard, args.deckCardsCount);
 
         this.tableManager.tableHeightChange(); // adapt to new card
     }
 
-    notif_reserveCard(notif: Notif<NotifBuyCardArgs>) {
-        const card = notif.args.card;
+    notif_reserveCard(args: NotifBuyCardArgs) {
+        const card = args.card;
 
-        const newCard = notif.args.newCard;
-        this.getPlayerTable(notif.args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
+        const newCard = args.newCard;
+        this.getPlayerTable(args.playerId).reservedCards.addCard(card, { fromStock: this.tableCenter.getVisibleCards() }); // TODOPUBG add under evolution
         this.tableCenter.getVisibleCards().addCard(newCard, { fromElement: document.getElementById('deck'), originalSide: 'back', rotationDelta: 90 });
         
 
-        this.tableCenter.setTopDeckCardBackType(notif.args.topDeckCardBackType);
+        this.tableCenter.setTopDeckCard(args.topDeckCard, args.deckCardsCount);
 
         this.tableManager.tableHeightChange(); // adapt to new card
     }
 
-    notif_removeCards(notif: Notif<NotifRemoveCardsArgs>) {
-        if (notif.args.delay) {
-            notif.args.delay = false;
-            setTimeout(() => this.notif_removeCards(notif), ANIMATION_MS);
+    notif_removeCards(args: NotifRemoveCardsArgs) {
+        if (args.delay) {
+            args.delay = false;
+            setTimeout(() => this.notif_removeCards(args), ANIMATION_MS);
         } else {
-            this.getPlayerTable(notif.args.playerId).removeCards(notif.args.cards);
+            this.getPlayerTable(args.playerId).removeCards(args.cards);
             this.tableManager.tableHeightChange(); // adapt after removed cards
         }
     }
 
-    notif_removeEvolutions(notif: Notif<NotifRemoveEvolutionsArgs>) {
-        if (notif.args.delay) {
+    notif_removeEvolutions(args: NotifRemoveEvolutionsArgs) {
+        if (args.delay) {
             setTimeout(() => this.notif_removeEvolutions({
-                args: {
-                    ...notif.args,
-                    delay: 0,
-                }
-            } as Notif<NotifRemoveEvolutionsArgs>), notif.args.delay);
+                ...args,
+                delay: 0,
+            } as NotifRemoveEvolutionsArgs), args.delay);
         } else {
-            console.log(notif.args, notif.args.cards[0].location);
-            this.getPlayerTable(notif.args.playerId).removeEvolutions(notif.args.cards);
-            this.handCounters[notif.args.playerId].incValue(-notif.args.cards.filter(card => card.location === 'hand').length);
+            this.getPlayerTable(args.playerId).removeEvolutions(args.cards);
+            this.handCounters[args.playerId].incValue(-args.cards.filter(card => card.location === 'hand').length);
             this.tableManager.tableHeightChange(); // adapt after removed cards
         }
     }
 
-    notif_setMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
-        this.setMimicToken(notif.args.type, notif.args.card as Card);
+    notif_setMimicToken(args: NotifSetCardTokensArgs) {
+        this.setMimicToken(args.type, args.card as Card);
     }
 
-    notif_removeMimicToken(notif: Notif<NotifSetCardTokensArgs>) {
-        this.removeMimicToken(notif.args.type, notif.args.card as Card);
+    notif_removeMimicToken(args: NotifSetCardTokensArgs) {
+        this.removeMimicToken(args.type, args.card as Card);
     }
 
-    notif_removeMimicEvolutionToken(notif: Notif<NotifSetCardTokensArgs>) {
-        this.removeMimicEvolutionToken(notif.args.card as EvolutionCard);
+    notif_removeMimicEvolutionToken(args: NotifSetCardTokensArgs) {
+        this.removeMimicEvolutionToken(args.card as EvolutionCard);
     }
 
-    notif_setMimicEvolutionToken(notif: Notif<NotifSetCardTokensArgs>) {
-        this.setMimicEvolutionToken(notif.args.card as EvolutionCard);
+    notif_setMimicEvolutionToken(args: NotifSetCardTokensArgs) {
+        this.setMimicEvolutionToken(args.card as EvolutionCard);
     }
 
-    notif_renewCards(notif: Notif<NotifRenewCardsArgs>) {
-        this.setEnergy(notif.args.playerId, notif.args.energy);
+    notif_renewCards(args: NotifRenewCardsArgs) {
+        this.setEnergy(args.playerId, args.energy);
 
-        this.tableCenter.renewCards(notif.args.cards, notif.args.topDeckCardBackType);
+        return this.tableCenter.renewCards(args.cards, args.topDeckCard, args.deckCardsCount);
     }
 
-    notif_points(notif: Notif<NotifPointsArgs>) {
-        this.setPoints(notif.args.playerId, notif.args.points);
+    notif_points(args: NotifPointsArgs) {
+        this.setPoints(args.playerId, args.points);
     }
 
-    notif_health(notif: Notif<NotifHealthArgs>) {
-        this.setHealth(notif.args.playerId, notif.args.health);
+    notif_health(args: NotifHealthArgs) {
+        this.setHealth(args.playerId, args.health);
 
         /*const rapidHealingSyncButton = document.getElementById('rapidHealingSync_button');
-        if (rapidHealingSyncButton && notif.args.playerId === this.getPlayerId()) {
-            this.rapidHealingSyncHearts = Math.max(0, this.rapidHealingSyncHearts - notif.args.delta_health);
+        if (rapidHealingSyncButton && args.playerId === this.getPlayerId()) {
+            this.rapidHealingSyncHearts = Math.max(0, this.rapidHealingSyncHearts - args.delta_health);
             rapidHealingSyncButton.innerHTML = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(`${_('Gain ${hearts}[Heart]')} (${2*this.rapidHealingSyncHearts}[Energy])`), { 'card_name': this.cards.getCardName(37, 'text-only'), 'hearts': this.rapidHealingSyncHearts });
         }*/
     }
 
-    notif_maxHealth(notif: Notif<NotifMaxHealthArgs>) {
-        this.setMaxHealth(notif.args.playerId, notif.args.maxHealth);
-        this.setHealth(notif.args.playerId, notif.args.health);
+    notif_maxHealth(args: NotifMaxHealthArgs) {
+        this.setMaxHealth(args.playerId, args.maxHealth);
+        this.setHealth(args.playerId, args.health);
     }
 
-    notif_energy(notif: Notif<NotifEnergyArgs>) {
-        this.setEnergy(notif.args.playerId, notif.args.energy);
+    notif_energy(args: NotifEnergyArgs) {
+        this.setEnergy(args.playerId, args.energy);
     }
 
-    notif_wickedness(notif: Notif<NotifWickednessArgs>) {
-        this.setWickedness(notif.args.playerId, notif.args.wickedness);
+    notif_wickedness(args: NotifWickednessArgs) {
+        this.setWickedness(args.playerId, args.wickedness);
     }
 
-    notif_shrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.setShrinkRayTokens(notif.args.playerId, notif.args.tokens);
+    notif_shrinkRayToken(args: NotifSetPlayerTokensArgs) {
+        this.setShrinkRayTokens(args.playerId, args.tokens);
     }
 
-    notif_poisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.setPoisonTokens(notif.args.playerId, notif.args.tokens);
+    notif_poisonToken(args: NotifSetPlayerTokensArgs) {
+        this.setPoisonTokens(args.playerId, args.tokens);
     }
 
-    notif_removeShrinkRayToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'shrink-ray');
-        this.diceManager.resolveHealthDice(notif.args.deltaTokens);
-        setTimeout(() => this.notif_shrinkRayToken(notif), ANIMATION_MS);
+    notif_removeShrinkRayToken(args: NotifSetPlayerTokensArgs) {
+        this.kotAnimationManager.resolveHealthDice(args.playerId, args.deltaTokens, 'shrink-ray');
+        this.diceManager.resolveHealthDice(args.deltaTokens);
+        setTimeout(() => this.notif_shrinkRayToken(args), ANIMATION_MS);
     }
 
-    notif_removePoisonToken(notif: Notif<NotifSetPlayerTokensArgs>) {
-        this.kotAnimationManager.resolveHealthDice(notif.args.playerId, notif.args.deltaTokens, 'poison');
-        this.diceManager.resolveHealthDice(notif.args.deltaTokens);
-        setTimeout(() => this.notif_poisonToken(notif), ANIMATION_MS);
+    notif_removePoisonToken(args: NotifSetPlayerTokensArgs) {
+        this.kotAnimationManager.resolveHealthDice(args.playerId, args.deltaTokens, 'poison');
+        this.diceManager.resolveHealthDice(args.deltaTokens);
+        setTimeout(() => this.notif_poisonToken(args), ANIMATION_MS);
     }
 
-    notif_setCardTokens(notif: Notif<NotifSetCardTokensArgs>) {
-        this.cardsManager.placeTokensOnCard(notif.args.card as Card, notif.args.playerId);
+    notif_setCardTokens(args: NotifSetCardTokensArgs) {
+        this.cardsManager.placeTokensOnCard(args.card as Card, args.playerId);
     }
 
-    notif_setEvolutionTokens(notif: Notif<NotifSetEvolutionTokensArgs>) {
-        this.evolutionCardsManager.placeTokensOnCard(notif.args.card, notif.args.playerId);
+    notif_setEvolutionTokens(args: NotifSetEvolutionTokensArgs) {
+        this.evolutionCardsManager.placeTokensOnCard(args.card, args.playerId);
     }
 
-    notif_setTileTokens(notif: Notif<NotifSetWickednessTileTokensArgs>) {
-        this.wickednessTilesManager.placeTokensOnTile(notif.args.card, notif.args.playerId);
+    notif_setTileTokens(args: NotifSetWickednessTileTokensArgs) {
+        this.wickednessTilesManager.placeTokensOnTile(args.card, args.playerId);
     }
 
-    notif_toggleRapidHealing(notif: Notif<NotifToggleRapidHealingArgs>) {
-        if (notif.args.active) {
-            this.addRapidHealingButton(notif.args.playerEnergy, notif.args.isMaxHealth);
+    notif_toggleRapidHealing(args: NotifToggleRapidHealingArgs) {
+        if (args.active) {
+            this.addRapidHealingButton(args.playerEnergy, args.isMaxHealth);
         } else {
             this.removeRapidHealingButton();
         }
     }
 
-    notif_toggleMothershipSupport(notif: Notif<NotifToggleRapidHealingArgs>) {
-        if (notif.args.active) {
-            this.addMothershipSupportButton(notif.args.playerEnergy, notif.args.isMaxHealth);
+    notif_toggleMothershipSupport(args: NotifToggleRapidHealingArgs) {
+        if (args.active) {
+            this.addMothershipSupportButton(args.playerEnergy, args.isMaxHealth);
         } else {
             this.removeMothershipSupportButton();
         }
     }
 
-    notif_toggleMothershipSupportUsed(notif: Notif<NotifToggleMothershipSupportUsedArgs>) {
-        this.gamedatas.players[notif.args.playerId].mothershipSupportUsed = notif.args.used;
+    notif_toggleMothershipSupportUsed(args: NotifToggleMothershipSupportUsedArgs) {
+        this.gamedatas.players[args.playerId].mothershipSupportUsed = args.used;
         this.checkMothershipSupportButtonState();
     }
 
-    notif_useCamouflage(notif: Notif<NotifUpdateCancelDamageArgs>) {
-        this.notif_updateCancelDamage(notif);
-        this.diceManager.showCamouflageRoll(notif.args.diceValues);
+    notif_useCamouflage(args: NotifUpdateCancelDamageArgs) {
+        this.notif_updateCancelDamage(args);
+        this.diceManager.showCamouflageRoll(args.diceValues);
     }
 
-    notif_updateCancelDamage(notif: Notif<NotifUpdateCancelDamageArgs>) {
-        if (notif.args.cancelDamageArgs) { 
-            this.gamedatas.gamestate.args = notif.args.cancelDamageArgs;
+    notif_updateCancelDamage(args: NotifUpdateCancelDamageArgs) {
+        if (args.cancelDamageArgs) { 
+            this.gamedatas.gamestate.args = args.cancelDamageArgs;
             (this as any).updatePageTitle();
-            this.onEnteringCancelDamage(notif.args.cancelDamageArgs, (this as any).isCurrentPlayerActive());
+            this.onEnteringCancelDamage(args.cancelDamageArgs, (this as any).isCurrentPlayerActive());
         }
     }
 
-    notif_useLightningArmor(notif: Notif<NotifUpdateCancelDamageArgs>) {
-        this.diceManager.showCamouflageRoll(notif.args.diceValues);
+    notif_useLightningArmor(args: NotifUpdateCancelDamageArgs) {
+        this.diceManager.showCamouflageRoll(args.diceValues);
     }
 
-    notif_changeDie(notif: Notif<NotifChangeDieArgs>) {
-        if (notif.args.psychicProbeRollDieArgs) {
-            this.onEnteringPsychicProbeRollDie(notif.args.psychicProbeRollDieArgs);
+    notif_changeDie(args: NotifChangeDieArgs) {
+        if (args.psychicProbeRollDieArgs) {
+            this.onEnteringPsychicProbeRollDie(args.psychicProbeRollDieArgs);
         } else {
-            this.diceManager.changeDie(notif.args.dieId, notif.args.canHealWithDice, notif.args.toValue, notif.args.roll);
+            this.diceManager.changeDie(args.dieId, args.canHealWithDice, args.toValue, args.roll);
         }
     }
 
-    notif_rethrow3changeDie(notif: Notif<NotifChangeDieArgs>) {
-        this.diceManager.changeDie(notif.args.dieId, notif.args.canHealWithDice, notif.args.toValue, notif.args.roll);
+    notif_rethrow3changeDie(args: NotifChangeDieArgs) {
+        this.diceManager.changeDie(args.dieId, args.canHealWithDice, args.toValue, args.roll);
     }
 
-    notif_changeDice(notif: Notif<NotifChangeDiceArgs>) {
-        Object.keys(notif.args.dieIdsToValues).forEach(key => 
-            this.diceManager.changeDie(Number(key), notif.args.canHealWithDice, notif.args.dieIdsToValues[key], false)
+    notif_changeDice(args: NotifChangeDiceArgs) {
+        Object.keys(args.dieIdsToValues).forEach(key => 
+            this.diceManager.changeDie(Number(key), args.canHealWithDice, args.dieIdsToValues[key], false)
         );
     }
 
@@ -3852,107 +3876,107 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.diceManager.lockAll();
     }
 
-    notif_updateLeaveTokyoUnder(notif: Notif<NotifUpdateLeaveTokyoUnderArgs>) {                    
+    notif_updateLeaveTokyoUnder(args: NotifUpdateLeaveTokyoUnderArgs) {                    
         dojo.query('.autoLeaveButton').removeClass('bgabutton_blue');
         dojo.query('.autoLeaveButton').addClass('bgabutton_gray');
         const popinId = `discussion_bubble_autoLeaveUnder`;
-        if (document.getElementById(`${popinId}_set${notif.args.under}`)) {
-            dojo.removeClass(`${popinId}_set${notif.args.under}`, 'bgabutton_gray');
-            dojo.addClass(`${popinId}_set${notif.args.under}`, 'bgabutton_blue');
+        if (document.getElementById(`${popinId}_set${args.under}`)) {
+            dojo.removeClass(`${popinId}_set${args.under}`, 'bgabutton_gray');
+            dojo.addClass(`${popinId}_set${args.under}`, 'bgabutton_blue');
         }
         for (let i = 1; i<=15; i++) {
             if (document.getElementById(`${popinId}_setStay${i}`)) {
-                dojo.toggleClass(`${popinId}_setStay${i}`, 'disabled', notif.args.under > 0 && i <= notif.args.under);
+                dojo.toggleClass(`${popinId}_setStay${i}`, 'disabled', args.under > 0 && i <= args.under);
             }
         }
     }
 
-    notif_updateStayTokyoOver(notif: Notif<NotifUpdateStayTokyoOverArgs>) {                    
+    notif_updateStayTokyoOver(args: NotifUpdateStayTokyoOverArgs) {                    
         dojo.query('.autoStayButton').removeClass('bgabutton_blue');
         dojo.query('.autoStayButton').addClass('bgabutton_gray');
         const popinId = `discussion_bubble_autoLeaveUnder`;
-        if (document.getElementById(`${popinId}_setStay${notif.args.over}`)) {
-            dojo.removeClass(`${popinId}_setStay${notif.args.over}`, 'bgabutton_gray');
-            dojo.addClass(`${popinId}_setStay${notif.args.over}`, 'bgabutton_blue');
+        if (document.getElementById(`${popinId}_setStay${args.over}`)) {
+            dojo.removeClass(`${popinId}_setStay${args.over}`, 'bgabutton_gray');
+            dojo.addClass(`${popinId}_setStay${args.over}`, 'bgabutton_blue');
         }
     }
 
-    notif_updateAskPlayEvolution(notif: Notif<NotifUpdateAskPlayEvolutionArgs>) {  
-        const input = document.querySelector(`input[name="autoSkipPlayEvolution"][value="${notif.args.value}"]`) as HTMLInputElement;
+    notif_updateAskPlayEvolution(args: NotifUpdateAskPlayEvolutionArgs) {  
+        const input = document.querySelector(`input[name="autoSkipPlayEvolution"][value="${args.value}"]`) as HTMLInputElement;
         if (input) {
             input.checked = true;  
         }
     }
 
-    notif_changeTokyoTowerOwner(notif: Notif<NotifChangeTokyoTowerOwnerArgs>) {   
-        const playerId = notif.args.playerId;
-        const previousOwner = this.towerLevelsOwners[notif.args.level];
-        this.towerLevelsOwners[notif.args.level] = playerId;
+    notif_changeTokyoTowerOwner(args: NotifChangeTokyoTowerOwnerArgs) {   
+        const playerId = args.playerId;
+        const previousOwner = this.towerLevelsOwners[args.level];
+        this.towerLevelsOwners[args.level] = playerId;
 
         const newLevelTower = playerId == 0 ? this.tableCenter.getTokyoTower() : this.getPlayerTable(playerId).getTokyoTower();
 
-        transitionToObjectAndAttach(this, document.getElementById(`tokyo-tower-level${notif.args.level}`), `${newLevelTower.divId}-level${notif.args.level}`, this.getZoom());
+        transitionToObjectAndAttach(this, document.getElementById(`tokyo-tower-level${args.level}`), `${newLevelTower.divId}-level${args.level}`, this.getZoom());
 
         if (previousOwner != 0) {
-            document.getElementById(`tokyo-tower-icon-${previousOwner}-level-${notif.args.level}`).dataset.owned = 'false';
+            document.getElementById(`tokyo-tower-icon-${previousOwner}-level-${args.level}`).dataset.owned = 'false';
         }
         if (playerId != 0) {
-            document.getElementById(`tokyo-tower-icon-${playerId}-level-${notif.args.level}`).dataset.owned = 'true';
+            document.getElementById(`tokyo-tower-icon-${playerId}-level-${args.level}`).dataset.owned = 'true';
         }
     }
 
-    notif_setPlayerBerserk(notif: Notif<NotifSetPlayerBerserkArgs>) { 
-        this.getPlayerTable(notif.args.playerId).setBerserk(notif.args.berserk);
-        dojo.toggleClass(`player-panel-berserk-${notif.args.playerId}`, 'active', notif.args.berserk);
+    notif_setPlayerBerserk(args: NotifSetPlayerBerserkArgs) { 
+        this.getPlayerTable(args.playerId).setBerserk(args.berserk);
+        dojo.toggleClass(`player-panel-berserk-${args.playerId}`, 'active', args.berserk);
     }
 
-    notif_changeForm(notif: Notif<NotifChangeFormArgs>) { 
-        this.getPlayerTable(notif.args.playerId).changeForm(notif.args.card);
-        this.setEnergy(notif.args.playerId, notif.args.energy);
+    notif_changeForm(args: NotifChangeFormArgs) { 
+        this.getPlayerTable(args.playerId).changeForm(args.card);
+        this.setEnergy(args.playerId, args.energy);
     }
 
-    notif_cultist(notif: Notif<NotifCultistArgs>) {
-        this.setCultists(notif.args.playerId, notif.args.cultists, notif.args.isMaxHealth);
+    notif_cultist(args: NotifCultistArgs) {
+        this.setCultists(args.playerId, args.cultists, args.isMaxHealth);
     }
 
-    notif_changeCurseCard(notif: Notif<NotifChangeCurseCardArgs>) {
-        this.tableCenter.changeCurseCard(notif.args.card);
+    notif_changeCurseCard(args: NotifChangeCurseCardArgs) {
+        return this.tableCenter.changeCurseCard(args.card, args.hiddenCurseCardCount, args.topCurseDeckCard);
     }
 
-    notif_takeWickednessTile(notif: Notif<NotifTakeWickednessTileArgs>) {
-        const tile = notif.args.tile;
-        this.getPlayerTable(notif.args.playerId).wickednessTiles.addCard(tile, {
+    notif_takeWickednessTile(args: NotifTakeWickednessTileArgs) {
+        const tile = args.tile;
+        this.getPlayerTable(args.playerId).wickednessTiles.addCard(tile, {
             fromStock: this.tableCenter.wickednessDecks.getStock(tile)
         });
-        this.tableCenter.removeWickednessTileFromPile(notif.args.level, tile);
+        this.tableCenter.removeWickednessTileFromPile(args.level, tile);
 
         this.tableManager.tableHeightChange(); // adapt to new card
     }
 
-    notif_removeWickednessTiles(notif: Notif<NotifRemoveWickednessTilesArgs>) {
-        this.getPlayerTable(notif.args.playerId).removeWickednessTiles(notif.args.tiles);
+    notif_removeWickednessTiles(args: NotifRemoveWickednessTilesArgs) {
+        this.getPlayerTable(args.playerId).removeWickednessTiles(args.tiles);
         this.tableManager.tableHeightChange(); // adapt after removed cards
     }
 
-    notif_changeGoldenScarabOwner(notif: Notif<NotifChangeGoldenScarabOwnerArgs>) {
-        this.getPlayerTable(notif.args.playerId).takeGoldenScarab();
+    notif_changeGoldenScarabOwner(args: NotifChangeGoldenScarabOwnerArgs) {
+        this.getPlayerTable(args.playerId).takeGoldenScarab();
         this.tableManager.tableHeightChange(); // adapt after moved card
     }
 
-    notif_discardedDie(notif: Notif<NotifDiscardedDieArgs>) {
-        this.diceManager.discardDie(notif.args.die);
+    notif_discardedDie(args: NotifDiscardedDieArgs) {
+        this.diceManager.discardDie(args.die);
     }
 
-    notif_exchangeCard(notif: Notif<NotifExchangeCardArgs>) {
-        const previousOwnerCards = this.getPlayerTable(notif.args.previousOwner).cards;
-        const playerCards = this.getPlayerTable(notif.args.playerId).cards;
-        previousOwnerCards.addCard(notif.args.unstableDnaCard, { fromStock: playerCards });
-        playerCards.addCard(notif.args.exchangedCard, { fromStock: playerCards });
+    notif_exchangeCard(args: NotifExchangeCardArgs) {
+        const previousOwnerCards = this.getPlayerTable(args.previousOwner).cards;
+        const playerCards = this.getPlayerTable(args.playerId).cards;
+        previousOwnerCards.addCard(args.unstableDnaCard, { fromStock: playerCards });
+        playerCards.addCard(args.exchangedCard, { fromStock: playerCards });
     }
     
-    notif_addEvolutionCardInHand(notif: Notif<NotifAddEvolutionCardInHandArgs>) {
-        const playerId = notif.args.playerId;
-        const card = notif.args.card;
+    notif_addEvolutionCardInHand(args: NotifAddEvolutionCardInHandArgs) {
+        const playerId = args.playerId;
+        const card = args.card;
         const isCurrentPlayer = this.getPlayerId() === playerId;
         const playerTable = this.getPlayerTable(playerId);
         if (isCurrentPlayer) {
@@ -3970,35 +3994,35 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.tableManager.tableHeightChange(); // adapt to new card
     }
     
-    notif_playEvolution(notif: Notif<NotifPlayEvolutionArgs>) {
-        this.handCounters[notif.args.playerId].incValue(-1);
+    notif_playEvolution(args: NotifPlayEvolutionArgs) {
+        this.handCounters[args.playerId].incValue(-1);
         let fromStock: CardStock<EvolutionCard> | null = null;
-        if (notif.args.fromPlayerId) {
-            fromStock = this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards;
+        if (args.fromPlayerId) {
+            fromStock = this.getPlayerTable(args.fromPlayerId).visibleEvolutionCards;
         }
-        this.getPlayerTable(notif.args.playerId).playEvolution(notif.args.card, fromStock);
-        if (notif.args.fromPlayerId) {
-            this.getPlayerTable(notif.args.fromPlayerId).visibleEvolutionCards.removeCard(notif.args.card);
+        this.getPlayerTable(args.playerId).playEvolution(args.card, fromStock);
+        if (args.fromPlayerId) {
+            this.getPlayerTable(args.fromPlayerId).visibleEvolutionCards.removeCard(args.card);
         }
 
         this.tableManager.tableHeightChange(); // adapt to new card
     }
     
-    notif_addSuperiorAlienTechnologyToken(notif: Notif<NotifAddSuperiorAlienTechnologyTokenArgs>) {
-        this.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(notif.args.card);
+    notif_addSuperiorAlienTechnologyToken(args: NotifAddSuperiorAlienTechnologyTokenArgs) {
+        this.cardsManager.placeSuperiorAlienTechnologyTokenOnCard(args.card);
     }
     
-    notif_giveTarget(notif: Notif<NotifGiveTargetArgs>) {
-        if (notif.args.previousOwner) {
-            this.getPlayerTable(notif.args.previousOwner).removeTarget();
-            this.setPlayerTokens(notif.args.previousOwner, 0, 'target');
+    notif_giveTarget(args: NotifGiveTargetArgs) {
+        if (args.previousOwner) {
+            this.getPlayerTable(args.previousOwner).removeTarget();
+            this.setPlayerTokens(args.previousOwner, 0, 'target');
         }
-        this.getPlayerTable(notif.args.playerId).giveTarget();
-        this.setPlayerTokens(notif.args.playerId, 1, 'target');
+        this.getPlayerTable(args.playerId).giveTarget();
+        this.setPlayerTokens(args.playerId, 1, 'target');
     }
     
-    notif_ownedEvolutions(notif: Notif<NotifOwnedEvolutionsArgs>) {
-        this.gamedatas.players[notif.args.playerId].ownedEvolutions = notif.args.evolutions;
+    notif_ownedEvolutions(args: NotifOwnedEvolutionsArgs) {
+        this.gamedatas.players[args.playerId].ownedEvolutions = args.evolutions;
     }
 
     private setTitleBarSuperiorAlienTechnologyCard(card: Card, parent: string = `maintitlebar_content`) {
@@ -4009,13 +4033,13 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.titleBarStock.onCardClick = () => this.throwDieSuperiorAlienTechnology();
     }
     
-    notif_superiorAlienTechnologyRolledDie(notif: Notif<NotifSuperiorAlienTechnologyRolledDieArgs>) {
-        this.setTitleBarSuperiorAlienTechnologyCard(notif.args.card, 'gameaction_status_wrap');
+    notif_superiorAlienTechnologyRolledDie(args: NotifSuperiorAlienTechnologyRolledDieArgs) {
+        this.setTitleBarSuperiorAlienTechnologyCard(args.card, 'gameaction_status_wrap');
         this.setDiceSelectorVisibility(true);
 
         this.diceManager.showCamouflageRoll([{
             id: 0,
-            value: notif.args.dieValue,
+            value: args.dieValue,
             extra: false,
             locked: false,
             rolled: true,
@@ -4024,22 +4048,22 @@ class KingOfTokyo implements KingOfTokyoGame {
         }]);
     }
     
-    notif_superiorAlienTechnologyLog(notif: Notif<NotifSuperiorAlienTechnologyRolledDieArgs>) {
-        //this.setTitleBarSuperiorAlienTechnologyCard(notif.args.card, 'gameaction_status_wrap');
+    notif_superiorAlienTechnologyLog(args: NotifSuperiorAlienTechnologyRolledDieArgs) {
+        //this.setTitleBarSuperiorAlienTechnologyCard(args.card, 'gameaction_status_wrap');
 
         if (document.getElementById('dice0')) {
-            const message = notif.args.dieValue == 6 ? 
+            const message = args.dieValue == 6 ? 
                 _('<strong>${card_name}</strong> card removed!') : 
                 _('<strong>${card_name}</strong> card kept!');
             (this as any).doShowBubble('dice0', dojo.string.substitute(message, {
-                'card_name': this.cardsManager.getCardName(notif.args.card.type, 'text-only')
+                'card_name': this.cardsManager.getCardName(args.card.type, 'text-only')
             }), 'superiorAlienTechnologyBubble');
         }
     }
 
-    notif_resurrect(notif: Notif<NotifResurrectArgs>) {
-        if (notif.args.zombified) {
-            this.getPlayerTable(notif.args.playerId).zombify();
+    notif_resurrect(args: NotifResurrectArgs) {
+        if (args.zombified) {
+            this.getPlayerTable(args.playerId).zombify();
         }
     }
     

@@ -974,6 +974,18 @@ trait CardsUtilTrait {
         }
     }
 
+    function getTopDeckCard() {
+        return Card::onlyId($this->getCardFromDb($this->cards->getCardOnTop('deck')));
+    }
+
+    function getDeckCardCount() {
+        return intval($this->cards->countCardInLocation('deck'));
+    }
+
+    function getTopCurseDeckCard() {
+        return Card::onlyId($this->getCardFromDb($this->curseCards->getCardOnTop('deck')));
+    }
+
     function willBeWounded(int $playerId, int $activePlayerId) {
         $activePlayerInTokyo = $this->inTokyo($activePlayerId);
 

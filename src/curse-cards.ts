@@ -9,6 +9,9 @@ class CurseCardsManager extends CardManager<CurseCard> {
                 div.id = `${super.getId(card)}-front`;
                 (this.game as any).addTooltipHtml(div.id, this.getTooltip(card.type));
             },
+            isCardVisible: card => Boolean(card.type),
+            cardWidth: 132,
+            cardHeight: 185,
         });
     }
 
