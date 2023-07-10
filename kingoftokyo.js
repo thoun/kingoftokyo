@@ -4208,7 +4208,7 @@ var PlayerTable = /** @class */ (function () {
         }
         this.monster = monster;
         this.setPoints(0);
-        this.setHealth(10);
+        this.setHealth(this.game.getPlayerHealth(this.playerId));
     };
     PlayerTable.prototype.getPlaceToken = function (placed) {
         var _this = this;
@@ -9437,6 +9437,9 @@ var KingOfTokyo = /** @class */ (function () {
         if (document.getElementById(popinId)) {
             this.updateAutoLeavePopinButtons();
         }
+    };
+    KingOfTokyo.prototype.getPlayerHealth = function (playerId) {
+        return this.healthCounters[playerId].getValue();
     };
     KingOfTokyo.prototype.getPlayerEnergy = function (playerId) {
         return this.energyCounters[playerId].getValue();

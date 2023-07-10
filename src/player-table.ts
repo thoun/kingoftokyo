@@ -327,7 +327,7 @@ class PlayerTable {
 
         this.monster = monster;
         this.setPoints(0);
-        this.setHealth(10);
+        this.setHealth(this.game.getPlayerHealth(this.playerId));
     }
 
     private getPlaceToken(placed: PlacedTokens[]): PlacedTokens {

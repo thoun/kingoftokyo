@@ -4091,6 +4091,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
     }
 
+    public getPlayerHealth(playerId: number): number {
+        return this.healthCounters[playerId].getValue();
+    }
+
     public getPlayerEnergy(playerId: number): number {
         return this.energyCounters[playerId].getValue();
     }

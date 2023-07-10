@@ -237,6 +237,7 @@ interface KingOfTokyoGame extends Game {
     toggleRerollDiceButton(): void;
     getPlayer(playerId: number): KingOfTokyoPlayer;
     getPlayerEnergy(playerId: number): number;
+    getPlayerHealth(playerId: number): number;
     onHiddenEvolutionClick: (cardId: number) => void;
     onVisibleEvolutionClick: (cardId: number) => void;
     addAutoSkipPlayEvolutionButton(): void;
