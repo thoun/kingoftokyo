@@ -629,6 +629,9 @@ trait CardsActionTrait {
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
+        if ($card->location != 'hand') {
+            throw new \BgaUserException("You must select a player card");
+        }
 
         $question = $this->getQuestion();
         $this->setMimickedCardId($question->args->mimicCardType, $playerId, $mimickedCardId);
@@ -644,6 +647,9 @@ trait CardsActionTrait {
         $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
+        }
+        if ($card->location != 'hand') {
+            throw new \BgaUserException("You must select a player card");
         }
 
         if ($this->getPlayerEnergy($playerId) < 1) {

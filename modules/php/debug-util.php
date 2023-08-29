@@ -95,8 +95,8 @@ trait DebugUtilTrait {
         //$this->debugSetCardInHand(HEALING_RAY_CARD, 2343492);
         //$this->debugSetCardInHand(REGENERATION_CARD, 2343493);
         //$this->debugSetCardInHand(ALPHA_MONSTER_CARD, 2343493);
-        //$this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
-        $this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343492);
+        $this->debugSetCardInHand(EXTRA_HEAD_1_CARD, 2343492);
+        $this->debugSetCardInHand(EXTRA_HEAD_2_CARD, 2343493);
         //$this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
         //$this->debugSetCardInHand(IT_HAS_A_CHILD_CARD, 2343493);
         //$this->debugSetCardInHand(EATER_OF_THE_DEAD_CARD, 2343493);
@@ -206,21 +206,21 @@ trait DebugUtilTrait {
             //$this->initWickednessTiles(3); // 2=orange, 3=green, 4=mix
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
-            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
+            $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492));
             //$this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
             //$this->debugSetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343493);
             //$this->debugSetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
             //$this->debugSetWickednessTileInHand(DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 2343492);
-            $this->debugSetWickednessTileInHand(TIRELESS_WICKEDNESS_TILE, 2343492);
-            $this->debugSetWickednessTileInHand(CYBERBRAIN_WICKEDNESS_TILE, 2343492);
+            //$this->debugSetWickednessTileInHand(TIRELESS_WICKEDNESS_TILE, 2343492);
+            //$this->debugSetWickednessTileInHand(CYBERBRAIN_WICKEDNESS_TILE, 2343492);
 
-            $this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343493");
+            //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343493");
 
-            $this->debugSetWickednessTileInHand(DEVIOUS_WICKEDNESS_TILE, 2343494);
-            $this->debugSetWickednessTileInHand(ETERNAL_WICKEDNESS_TILE, 2343494);
-            $this->debugSetWickednessTileInHand(SKULKING_WICKEDNESS_TILE, 2343494);
+            //$this->debugSetWickednessTileInHand(DEVIOUS_WICKEDNESS_TILE, 2343494);
+            //$this->debugSetWickednessTileInHand(ETERNAL_WICKEDNESS_TILE, 2343494);
+            //$this->debugSetWickednessTileInHand(SKULKING_WICKEDNESS_TILE, 2343494);
         }
 
         // power up
