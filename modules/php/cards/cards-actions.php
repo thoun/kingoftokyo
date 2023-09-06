@@ -157,6 +157,10 @@ trait CardsActionTrait {
                 throw new \BgaUserException("This player doesn't own this card");
             }
 
+            if ($card->type >= 100) { // You can only buy Keep cards with Parasitic Tentacles
+                throw new \BgaUserException("Not a Keep card");
+            }
+
             if ($from != $playerId) {
                 // If card bought from player, when having mimic token, card keep mimic token
                 $this->removeCard($from, $card, true, false, true);
