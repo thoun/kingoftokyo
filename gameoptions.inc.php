@@ -27,71 +27,112 @@ require_once("modules/constants.inc.php");
 
 $game_options = [
 
-    HALLOWEEN_EXPANSION_OPTION => [
-        'name' => totranslate('“Halloween” event (Costume cards)'),
+    POWERUP_EXPANSION_OPTION => [
+        'name' => totranslate('Power-Up! (Evolutions)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('“Halloween” event (Costume cards)'),
+                'tmdisplay' => totranslate('Power-Up! (Evolutions)'),
+            ],
+            3 => [
+                'name' => totranslate('Enabled, with Mutant Evolution variant'),
+                'tmdisplay' => totranslate('Power-Up! (Evolutions) with Mutant Evolution'),
+            ],
+        ],
+        'default' => 1,
+        'level' => 'major',
+    ],
+
+    HALLOWEEN_EXPANSION_OPTION => [
+        'name' => totranslate('Halloween'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Halloween'),
+            ],
+        ],
+        'default' => 1,
+    ],
+
+    WICKEDNESS_EXPANSION_OPTION => [
+        'name' => totranslate('Micro expansion : Even more wicked!'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled') . ' ' . totranslate('(orange side)'),
+                'tmdisplay' => totranslate('Even more wicked!') . ' ' . totranslate('(orange side)'),
+            ],
+            3 => [
+                'name' => totranslate('Enabled') . ' ' . totranslate('(green side)'),
+                'tmdisplay' => totranslate('Even more wicked!') . ' ' . totranslate('(green side)'),
+            ],
+            4 => [
+                'name' => totranslate('Enabled') . ' ' . totranslate('(random mix)'),
+                'tmdisplay' => totranslate('Even more wicked!') . ' ' . totranslate('(random mix)'),
             ],
         ],
         'default' => 1,
     ],
 
     CTHULHU_EXPANSION_OPTION => [
-        'name' => totranslate('“Battle of the Gods, part I” event (Cultists)'),
+        'name' => totranslate('Monster Pack : Cthulhu (Cultists)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('“Battle of the Gods, part I” event (Cultists)'),
+                'tmdisplay' => totranslate('Monster Pack : Cthulhu (Cultists)'),
             ],
         ],
         'default' => 1,
     ],
 
     KINGKONG_EXPANSION_OPTION => [
-        'name' => totranslate('“Nature vs. Machine, part I” event (Tokyo Tower)'),
+        'name' => totranslate('Monster Pack : King Kong (Tokyo Tower)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('“Nature vs. Machine, part I” event (Tokyo Tower)'),
+                'tmdisplay' => totranslate('Monster Pack : King Kong (Tokyo Tower)'),
             ],
         ],
         'default' => 1,
     ],
 
     ANUBIS_EXPANSION_OPTION => [
-        'name' => totranslate('“Battle of the Gods: the Revenge!” event (Curse cards)'),
+        'name' => totranslate('Monster Pack : Anubis (Curse cards)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('“Battle of the Gods: the Revenge!” event (Curse cards)'),
+                'tmdisplay' => totranslate('Monster Pack : Anubis (Curse cards)'),
             ],
         ],
         'default' => 1,
     ],
 
     CYBERTOOTH_EXPANSION_OPTION => [
-        'name' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
+        'name' => totranslate('Monster Pack : Cybertooth (Berserk)'),
         'values' => [
             1 => [
                 'name' => totranslate('Disabled'),
             ],
             2 => [
                 'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('“Nature vs. Machine: the Comeback!” event (Berserk)'),
+                'tmdisplay' => totranslate('Monster Pack : Cybertooth (Berserk)'),
             ],
         ],
         'default' => 1
@@ -110,47 +151,6 @@ $game_options = [
         ],
         'default' => 1,
         'level' => 'additional',
-    ],
-
-    WICKEDNESS_EXPANSION_OPTION => [
-        'name' => totranslate('“Even more wicked!” event'),
-        'values' => [
-            1 => [
-                'name' => totranslate('Disabled'),
-            ],
-            2 => [
-                'name' => totranslate('Enabled') . ' ' . totranslate('(orange side)'),
-                'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(orange side)'),
-            ],
-            3 => [
-                'name' => totranslate('Enabled') . ' ' . totranslate('(green side)'),
-                'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(green side)'),
-            ],
-            4 => [
-                'name' => totranslate('Enabled') . ' ' . totranslate('(random mix)'),
-                'tmdisplay' => totranslate('“Even more wicked!” event') . ' ' . totranslate('(random mix)'),
-            ],
-        ],
-        'default' => 1,
-    ],
-
-    POWERUP_EXPANSION_OPTION => [
-        'name' => totranslate('Power-Up! (Evolutions)'),
-        'values' => [
-            1 => [
-                'name' => totranslate('Disabled'),
-            ],
-            2 => [
-                'name' => totranslate('Enabled'),
-                'tmdisplay' => totranslate('Power-Up! (Evolutions)'),
-            ],
-            3 => [
-                'name' => totranslate('Enabled, with Mutant Evolution variant'),
-                'tmdisplay' => totranslate('Power-Up! (Evolutions) with Mutant Evolution'),
-            ],
-        ],
-        'default' => 1,
-        'level' => 'major',
     ],
 
     DARK_EDITION_OPTION => [
