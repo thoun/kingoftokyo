@@ -134,6 +134,7 @@ class KingOfTokyo extends Table {
             WICKEDNESS_EXPANSION_OPTION => WICKEDNESS_EXPANSION_OPTION,
             POWERUP_EXPANSION_OPTION => POWERUP_EXPANSION_OPTION,
             DARK_EDITION_OPTION => DARK_EDITION_OPTION,
+            ORIGINS_OPTION => ORIGINS_OPTION,
 
             AUTO_SKIP_OPTION => 110,
             TWO_PLAYERS_VARIANT_OPTION => 120,
@@ -220,8 +221,9 @@ class KingOfTokyo extends Table {
         }
 
         /************ Start the game initialization *****/
-        $darkEdition = intval($this->getGameStateValue(DARK_EDITION_OPTION));
-        $wickednessExpansion = intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
+        $origins = intval($this->getGameStateValue(ORIGINS_OPTION));
+        $darkEdition = $origins ? 1 : intval($this->getGameStateValue(DARK_EDITION_OPTION));
+        $wickednessExpansion = $origins ? 1 : intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
 
         // Init global values with their initial values
         $this->setGameStateInitialValue('throwNumber', 0);
@@ -390,6 +392,7 @@ class KingOfTokyo extends Table {
         $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();
         $isPowerUpExpansion = $this->isPowerUpExpansion();
         $isDarkEdition = $this->isDarkEdition();
+        $isOrigins = $this->isOrigins();
 
         $result = ['players' => []];
 
@@ -497,6 +500,7 @@ class KingOfTokyo extends Table {
         $result['mutantEvolutionVariant'] = $isMutantEvolutionVariant;
         $result['powerUpExpansion'] = $isPowerUpExpansion;
         $result['darkEdition'] = $isDarkEdition;
+        $result['origins'] = $isOrigins;
         if ($isAnubisExpansion) {
             $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab(true);
             $result['curseCard'] = $this->getCurseCard();

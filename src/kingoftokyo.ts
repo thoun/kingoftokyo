@@ -4,6 +4,7 @@ declare const $;
 declare const dojo: Dojo;
 declare const _;
 declare const g_gamethemeurl;
+declare const g_img_preload;
 declare const playSound;
 
 declare const board: HTMLDivElement;
@@ -63,13 +64,18 @@ class KingOfTokyo implements KingOfTokyoGame {
     */
 
     public setup(gamedatas: KingOfTokyoGamedatas) {
+        if (gamedatas.origins) {
+            document.getElementsByTagName('html')[0].dataset.origins = 'true';
+        } else if (gamedatas.darkEdition) {
+            document.getElementsByTagName('html')[0].dataset.darkEdition = 'true';
+        }
+
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21,31,32,33,34,35,36,37,38,41,42,43,44,45].filter(i => !players.some(player => Number(player.monster) === i)).forEach(i => {
             (this as any).dontPreloadImage(`monster-board-${i}.png`);
             (this as any).dontPreloadImage(`monster-figure-${i}.png`);
         });
-        (this as any).dontPreloadImage(`tokyo-2pvariant.jpg`);
         (this as any).dontPreloadImage(`background-halloween.jpg`);
         (this as any).dontPreloadImage(`background-christmas.jpg`);
         (this as any).dontPreloadImage(`animations-halloween.jpg`);
@@ -84,6 +90,12 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).dontPreloadImage(`animations-powerup.jpg`);
             (this as any).dontPreloadImage(`powerup_dice.png`);
         }
+
+        // load main board
+        const boardDir = gamedatas.origins ? `origins` : (gamedatas.darkEdition ? `dark-edition` : `base`);
+        const boardFile = gamedatas.twoPlayersVariant ? `2pvariant.jpg` : `standard.jpg`;
+        const boardImgUrl = `boards/${boardDir}/${boardFile}`;
+        //g_img_preload.push(boardImgUrl);
 
         log( "Starting game setup" );
         
@@ -116,7 +128,7 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
         this.kotAnimationManager = new KingOfTokyoAnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCard, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount, gamedatas.topCurseDeckCard);
+        this.tableCenter = new TableCenter(this, players, boardImgUrl, gamedatas.visibleCards, gamedatas.topDeckCard, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount, gamedatas.topCurseDeckCard);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -171,10 +183,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             <p>${_("After resolving your dice, if you rolled four identical faces, take a Cultist tile")}</p>
             <p>${_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.")}</p>`);
             (this as any).addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
-        }
-
-        if (gamedatas.darkEdition) {
-            document.getElementsByTagName('html')[0].dataset.darkEdition = 'true';
         }
 
         // override to allow icons in messages
@@ -1553,8 +1561,6 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
 
     private addTwoPlayerVariantNotice(gamedatas: KingOfTokyoGamedatas) {
-        dojo.addClass('board', 'twoPlayersVariant');
-
         // 2-players variant notice
         if (Object.keys(gamedatas.players).length == 2 && (this as any).prefs[203]?.value == 1) {
             dojo.place(`

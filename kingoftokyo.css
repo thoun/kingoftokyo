@@ -1646,13 +1646,9 @@ body > .card {
   position: relative;
   width: 400px;
   height: 400px;
-  background: url("img/tokyo.jpg");
   background-size: cover;
   box-shadow: 2px 2px 5px 2px black;
   display: inline-block;
-}
-#table #table-center #full-board #board.twoPlayersVariant {
-  background: url("img/tokyo-2pvariant.jpg");
 }
 #table #table-center #full-board #board #tokyo-city {
   position: absolute;
@@ -2728,10 +2724,6 @@ html[data-dark-edition=true] .kot-tile .description-wrapper, html[data-dark-edit
 html[data-dark-edition=true] #table #table-center #full-board #board {
   width: 470px;
   height: 470px;
-  background-image: url("img/dark/tokyo.jpg");
-}
-html[data-dark-edition=true] #table #table-center #full-board #board.twoPlayersVariant {
-  background: url("img/dark/tokyo-2pvariant.jpg");
 }
 html[data-dark-edition=true] #table #table-center #full-board #board #tokyo-city {
   top: 61px;
@@ -2856,6 +2848,11 @@ html[data-dice="5"] .log .dice-icon:not(.berserk):not(.die-of-fate), html[data-d
 }
 html[data-dice="5"] .animation {
   background-image: url("img/dark/animations.png");
+}
+
+html[data-origins=true] #table #table-center #full-board #board #tokyo-city {
+  top: 113px;
+  left: 52px;
 }
 
 @font-face {

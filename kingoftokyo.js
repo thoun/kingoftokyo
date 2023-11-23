@@ -5626,10 +5626,11 @@ var WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION = [
     [37, 29],
 ];
 var TableCenter = /** @class */ (function () {
-    function TableCenter(game, players, visibleCards, topDeckCard, deckCardsCount, wickednessTiles, tokyoTowerLevels, curseCard, hiddenCurseCardCount, visibleCurseCardCount, topCurseDeckCard) {
+    function TableCenter(game, players, boardImgUrl, visibleCards, topDeckCard, deckCardsCount, wickednessTiles, tokyoTowerLevels, curseCard, hiddenCurseCardCount, visibleCurseCardCount, topCurseDeckCard) {
         var _this = this;
         this.game = game;
         this.wickednessPoints = new Map();
+        document.getElementById("board").style.backgroundImage = "url(".concat(g_gamethemeurl, "img/").concat(boardImgUrl, ")");
         this.createVisibleCards(visibleCards, topDeckCard, deckCardsCount);
         if (game.isWickednessExpansion()) {
             dojo.place("\n            <div id=\"wickedness-board-wrapper\">\n                <div id=\"wickedness-board\"></div>\n            </div>", 'full-board');
@@ -6053,13 +6054,18 @@ var KingOfTokyo = /** @class */ (function () {
     */
     KingOfTokyo.prototype.setup = function (gamedatas) {
         var _this = this;
+        if (gamedatas.origins) {
+            document.getElementsByTagName('html')[0].dataset.origins = 'true';
+        }
+        else if (gamedatas.darkEdition) {
+            document.getElementsByTagName('html')[0].dataset.darkEdition = 'true';
+        }
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 31, 32, 33, 34, 35, 36, 37, 38, 41, 42, 43, 44, 45].filter(function (i) { return !players.some(function (player) { return Number(player.monster) === i; }); }).forEach(function (i) {
             _this.dontPreloadImage("monster-board-".concat(i, ".png"));
             _this.dontPreloadImage("monster-figure-".concat(i, ".png"));
         });
-        this.dontPreloadImage("tokyo-2pvariant.jpg");
         this.dontPreloadImage("background-halloween.jpg");
         this.dontPreloadImage("background-christmas.jpg");
         this.dontPreloadImage("animations-halloween.jpg");
@@ -6074,6 +6080,11 @@ var KingOfTokyo = /** @class */ (function () {
             this.dontPreloadImage("animations-powerup.jpg");
             this.dontPreloadImage("powerup_dice.png");
         }
+        // load main board
+        var boardDir = gamedatas.origins ? "origins" : (gamedatas.darkEdition ? "dark-edition" : "base");
+        var boardFile = gamedatas.twoPlayersVariant ? "2pvariant.jpg" : "standard.jpg";
+        var boardImgUrl = "boards/".concat(boardDir, "/").concat(boardFile);
+        //g_img_preload.push(boardImgUrl);
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
@@ -6099,7 +6110,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.monsterSelector = new MonsterSelector(this);
         this.diceManager = new DiceManager(this);
         this.kotAnimationManager = new KingOfTokyoAnimationManager(this, this.diceManager);
-        this.tableCenter = new TableCenter(this, players, gamedatas.visibleCards, gamedatas.topDeckCard, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount, gamedatas.topCurseDeckCard);
+        this.tableCenter = new TableCenter(this, players, boardImgUrl, gamedatas.visibleCards, gamedatas.topDeckCard, gamedatas.deckCardsCount, gamedatas.wickednessTiles, gamedatas.tokyoTowerLevels, gamedatas.curseCard, gamedatas.hiddenCurseCardCount, gamedatas.visibleCurseCardCount, gamedatas.topCurseDeckCard);
         this.createPlayerTables(gamedatas);
         this.tableManager = new TableManager(this, this.playerTables);
         // placement of monster must be after TableManager first paint
@@ -6136,9 +6147,6 @@ var KingOfTokyo = /** @class */ (function () {
         if (gamedatas.cthulhuExpansion) {
             this.CULTIST_TOOLTIP = formatTextIcons("\n            <h3>".concat(_("Cultists"), "</h3>\n            <p>").concat(_("After resolving your dice, if you rolled four identical faces, take a Cultist tile"), "</p>\n            <p>").concat(_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll."), "</p>"));
             this.addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
-        }
-        if (gamedatas.darkEdition) {
-            document.getElementsByTagName('html')[0].dataset.darkEdition = 'true';
         }
         // override to allow icons in messages
         var oldShowMessage = this.showMessage;
@@ -7387,7 +7395,6 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.addTwoPlayerVariantNotice = function (gamedatas) {
         var _a;
-        dojo.addClass('board', 'twoPlayersVariant');
         // 2-players variant notice
         if (Object.keys(gamedatas.players).length == 2 && ((_a = this.prefs[203]) === null || _a === void 0 ? void 0 : _a.value) == 1) {
             dojo.place("\n                    <div id=\"board-corner-highlight\"></div>\n                    <div id=\"twoPlayersVariant-message\">\n                        ".concat(_("You are playing the 2-players variant."), "<br>\n                        ").concat(_("When entering or starting a turn on Tokyo, you gain 1 energy instead of points"), ".<br>\n                        ").concat(_("You can check if variant is activated in the bottom left corner of the table."), "<br>\n                        <div style=\"text-align: center\"><a id=\"hide-twoPlayersVariant-message\">").concat(_("Dismiss"), "</a></div>\n                    </div>\n                "), 'board');

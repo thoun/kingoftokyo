@@ -220,11 +220,6 @@ html[data-dark-edition="true"] {
         #board {
             width: 470px;
             height: 470px;
-            background-image: url('img/dark/tokyo.jpg');
-            
-            &.twoPlayersVariant {
-                background: url('img/dark/tokyo-2pvariant.jpg');
-            }
 
             #tokyo-city {
                 top: 61px;

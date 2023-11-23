@@ -183,6 +183,7 @@ interface KingOfTokyoGamedatas {
     wickednessExpansion: boolean;
     powerUpExpansion: boolean;
     darkEdition: boolean;
+    origins: boolean;
     playerWithGoldenScarab?: number;
     curseCard?: Card;
     topCurseDeckCard?: Card;

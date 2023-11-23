@@ -100,14 +100,9 @@
                 position: relative;
                 width: 400px;
                 height: 400px;
-                background: url('img/tokyo.jpg');
                 background-size: cover;
                 box-shadow: 2px 2px 5px 2px black;
                 display: inline-block;
-
-                &.twoPlayersVariant {
-                    background: url('img/tokyo-2pvariant.jpg');
-                }
         
                 #tokyo-city {
                     position: absolute;

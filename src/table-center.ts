@@ -36,7 +36,22 @@ class TableCenter {
     private tokyoTower: TokyoTower;
     private wickednessPoints = new Map<number, number>();
 
-    constructor(private game: KingOfTokyoGame, players: KingOfTokyoPlayer[], visibleCards: Card[], topDeckCard: Card | null, deckCardsCount: number, wickednessTiles: WickednessTile[], tokyoTowerLevels: number[], curseCard: Card, hiddenCurseCardCount: number, visibleCurseCardCount: number, topCurseDeckCard?: Card) {
+    constructor(
+        private game: KingOfTokyoGame, 
+        players: KingOfTokyoPlayer[],
+        boardImgUrl: string,
+        visibleCards: Card[], 
+        topDeckCard: Card | null, 
+        deckCardsCount: number, 
+        wickednessTiles: WickednessTile[], 
+        tokyoTowerLevels: number[], 
+        curseCard: Card, 
+        hiddenCurseCardCount: number, 
+        visibleCurseCardCount: number, 
+        topCurseDeckCard: Card | null
+    ) {
+        document.getElementById(`board`).style.backgroundImage = `url(${g_gamethemeurl}img/${boardImgUrl})`;
+
         this.createVisibleCards(visibleCards, topDeckCard, deckCardsCount);
 
         if (game.isWickednessExpansion()) {
