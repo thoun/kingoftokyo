@@ -79,7 +79,7 @@
             transition: transform 1s;
 
             &.blue {
-                background-image: url('img/blue-wheel.png');
+                background-image: url('img/monsters/blue-wheel.png');
                 width: 165px;
                 height: 165px;
                 top: 7px;
@@ -88,7 +88,7 @@
             }
 
             &.red {
-                background-image: url('img/red-wheel.png');
+                background-image: url('img/monsters/red-wheel.png');
                 width: 122px;
                 height: 122px;    
                 right: -5px;
@@ -101,11 +101,11 @@
             &.monster#{$i} {
                 .wheel {    
                     &.blue {
-                        background-image: url('img/dark/yellow-wheel.png');
+                        background-image: url('img/monsters/dark/yellow-wheel.png');
                     }
         
                     &.red {
-                        background-image: url('img/dark/red-wheel.png');
+                        background-image: url('img/monsters/dark/red-wheel.png');
                     }
                 }
             }
@@ -130,24 +130,14 @@
                 height: 150px;
             }
 
-            @for $i from 1 through 21 {
+            @each $i in $monstersNumbers {
                 &.monster#{$i} {
-                    background-image: url('img/monster-board-#{$i}.png');
-                }
-            }
-            @for $i from 31 through 38 {
-                &.monster#{$i} {
-                    background-image: url('img/monster-board-#{$i}.png');
-                }
-            }
-            @for $i from 41 through 45 {
-                &.monster#{$i} {
-                    background-image: url('img/monster-board-#{$i}.png');
+                    background-image: url('img/monsters/monster-board-#{$i}.png');
                 }
             }
             @each $i in $darkEditionMonstersNumbers {
                 &.monster#{$i} {
-                    background-image: url('img/dark/monster-board-#{$i}.png');
+                    background-image: url('img/monsters/dark/monster-board-#{$i}.png');
                 }
             }
 

@@ -13,7 +13,7 @@ trait DebugUtilTrait {
             return;
         } 
 
-        // $this->setGameStateValue(ORIGINS_OPTION, 2);
+        //$this->setGameStateValue(ORIGINS_OPTION, 2);
 
         //$playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
 

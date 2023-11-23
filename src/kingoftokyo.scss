@@ -1,6 +1,18 @@
 $tokyoGreen: #a6c136;
 $tokyoBlack: #211D1F;
 
+$monstersNumbers: 
+  1, 2, 3, 4, 5, 6, //base
+  7, 8, // halloween
+  9, 10, 11, 12, // monster packs
+  13, // powerUp
+  16, 17, 18, 19, // bonus & baby gigazaur
+  21, // KONY
+  // 31, 32, 33, 34, 35, 36, 37, 38, // World tour event
+  41, 42, 43, 44, 45, // KOMI
+  51, 52, 53, 54 // Origins
+  ; 
+
 $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115; 
 
 @import 'playerboards';
@@ -173,29 +185,19 @@ html, .mode_3d #game_play_area_background {
   background-position: center center;
   background-repeat: no-repeat;
 
-  @for $i from 1 through 21 {
+  @each $i in $monstersNumbers {
       &.monster#{$i} {
-          background-image: url('img/monster-figure-#{$i}.png');
-      }
-  }
-  @for $i from 31 through 38 {
-      &.monster#{$i} {
-          background-image: url('img/monster-figure-#{$i}.png');
-      }
-  }
-  @for $i from 41 through 45 {
-      &.monster#{$i} {
-          background-image: url('img/monster-figure-#{$i}.png');
+          background-image: url('img/monsters/monster-figure-#{$i}.png');
       }
   }
   @each $i in $darkEditionMonstersNumbers {
     &.monster#{$i} {
-        background-image: url('img/dark/monster-figure-#{$i}.png');
+        background-image: url('img/monsters/dark/monster-figure-#{$i}.png');
     }
   }
 
   &.monster12.beast-mode {
-    background-image: url('img/monster-figure-12-beast.png');
+    background-image: url('img/monsters/monster-figure-12-beast.png');
   }
 }
 

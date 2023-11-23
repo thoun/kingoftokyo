@@ -1836,7 +1836,7 @@ body > .card {
   transition: transform 1s;
 }
 #table .player-table .monster-board-wrapper .wheel.blue {
-  background-image: url("img/blue-wheel.png");
+  background-image: url("img/monsters/blue-wheel.png");
   width: 165px;
   height: 165px;
   top: 7px;
@@ -1844,7 +1844,7 @@ body > .card {
   transform: rotate(25deg);
 }
 #table .player-table .monster-board-wrapper .wheel.red {
-  background-image: url("img/red-wheel.png");
+  background-image: url("img/monsters/red-wheel.png");
   width: 122px;
   height: 122px;
   right: -5px;
@@ -1852,40 +1852,40 @@ body > .card {
   transform: rotate(98deg);
 }
 #table .player-table .monster-board-wrapper.monster102 .wheel.blue {
-  background-image: url("img/dark/yellow-wheel.png");
+  background-image: url("img/monsters/dark/yellow-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster102 .wheel.red {
-  background-image: url("img/dark/red-wheel.png");
+  background-image: url("img/monsters/dark/red-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster104 .wheel.blue {
-  background-image: url("img/dark/yellow-wheel.png");
+  background-image: url("img/monsters/dark/yellow-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster104 .wheel.red {
-  background-image: url("img/dark/red-wheel.png");
+  background-image: url("img/monsters/dark/red-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster105 .wheel.blue {
-  background-image: url("img/dark/yellow-wheel.png");
+  background-image: url("img/monsters/dark/yellow-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster105 .wheel.red {
-  background-image: url("img/dark/red-wheel.png");
+  background-image: url("img/monsters/dark/red-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster106 .wheel.blue {
-  background-image: url("img/dark/yellow-wheel.png");
+  background-image: url("img/monsters/dark/yellow-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster106 .wheel.red {
-  background-image: url("img/dark/red-wheel.png");
+  background-image: url("img/monsters/dark/red-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster114 .wheel.blue {
-  background-image: url("img/dark/yellow-wheel.png");
+  background-image: url("img/monsters/dark/yellow-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster114 .wheel.red {
-  background-image: url("img/dark/red-wheel.png");
+  background-image: url("img/monsters/dark/red-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster115 .wheel.blue {
-  background-image: url("img/dark/yellow-wheel.png");
+  background-image: url("img/monsters/dark/yellow-wheel.png");
 }
 #table .player-table .monster-board-wrapper.monster115 .wheel.red {
-  background-image: url("img/dark/red-wheel.png");
+  background-image: url("img/monsters/dark/red-wheel.png");
 }
 #table .player-table .monster-board-wrapper .monster-board {
   width: 280px;
@@ -1906,124 +1906,103 @@ body > .card {
   height: 150px;
 }
 #table .player-table .monster-board-wrapper .monster-board.monster1 {
-  background-image: url("img/monster-board-1.png");
+  background-image: url("img/monsters/monster-board-1.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster2 {
-  background-image: url("img/monster-board-2.png");
+  background-image: url("img/monsters/monster-board-2.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster3 {
-  background-image: url("img/monster-board-3.png");
+  background-image: url("img/monsters/monster-board-3.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster4 {
-  background-image: url("img/monster-board-4.png");
+  background-image: url("img/monsters/monster-board-4.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster5 {
-  background-image: url("img/monster-board-5.png");
+  background-image: url("img/monsters/monster-board-5.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster6 {
-  background-image: url("img/monster-board-6.png");
+  background-image: url("img/monsters/monster-board-6.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster7 {
-  background-image: url("img/monster-board-7.png");
+  background-image: url("img/monsters/monster-board-7.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster8 {
-  background-image: url("img/monster-board-8.png");
+  background-image: url("img/monsters/monster-board-8.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster9 {
-  background-image: url("img/monster-board-9.png");
+  background-image: url("img/monsters/monster-board-9.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster10 {
-  background-image: url("img/monster-board-10.png");
+  background-image: url("img/monsters/monster-board-10.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster11 {
-  background-image: url("img/monster-board-11.png");
+  background-image: url("img/monsters/monster-board-11.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster12 {
-  background-image: url("img/monster-board-12.png");
+  background-image: url("img/monsters/monster-board-12.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster13 {
-  background-image: url("img/monster-board-13.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster14 {
-  background-image: url("img/monster-board-14.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster15 {
-  background-image: url("img/monster-board-15.png");
+  background-image: url("img/monsters/monster-board-13.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster16 {
-  background-image: url("img/monster-board-16.png");
+  background-image: url("img/monsters/monster-board-16.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster17 {
-  background-image: url("img/monster-board-17.png");
+  background-image: url("img/monsters/monster-board-17.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster18 {
-  background-image: url("img/monster-board-18.png");
+  background-image: url("img/monsters/monster-board-18.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster19 {
-  background-image: url("img/monster-board-19.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster20 {
-  background-image: url("img/monster-board-20.png");
+  background-image: url("img/monsters/monster-board-19.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster21 {
-  background-image: url("img/monster-board-21.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster31 {
-  background-image: url("img/monster-board-31.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster32 {
-  background-image: url("img/monster-board-32.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster33 {
-  background-image: url("img/monster-board-33.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster34 {
-  background-image: url("img/monster-board-34.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster35 {
-  background-image: url("img/monster-board-35.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster36 {
-  background-image: url("img/monster-board-36.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster37 {
-  background-image: url("img/monster-board-37.png");
-}
-#table .player-table .monster-board-wrapper .monster-board.monster38 {
-  background-image: url("img/monster-board-38.png");
+  background-image: url("img/monsters/monster-board-21.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster41 {
-  background-image: url("img/monster-board-41.png");
+  background-image: url("img/monsters/monster-board-41.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster42 {
-  background-image: url("img/monster-board-42.png");
+  background-image: url("img/monsters/monster-board-42.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster43 {
-  background-image: url("img/monster-board-43.png");
+  background-image: url("img/monsters/monster-board-43.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster44 {
-  background-image: url("img/monster-board-44.png");
+  background-image: url("img/monsters/monster-board-44.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster45 {
-  background-image: url("img/monster-board-45.png");
+  background-image: url("img/monsters/monster-board-45.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster51 {
+  background-image: url("img/monsters/monster-board-51.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster52 {
+  background-image: url("img/monsters/monster-board-52.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster53 {
+  background-image: url("img/monsters/monster-board-53.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster54 {
+  background-image: url("img/monsters/monster-board-54.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster102 {
-  background-image: url("img/dark/monster-board-102.png");
+  background-image: url("img/monsters/dark/monster-board-102.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster104 {
-  background-image: url("img/dark/monster-board-104.png");
+  background-image: url("img/monsters/dark/monster-board-104.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster105 {
-  background-image: url("img/dark/monster-board-105.png");
+  background-image: url("img/monsters/dark/monster-board-105.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster106 {
-  background-image: url("img/dark/monster-board-106.png");
+  background-image: url("img/monsters/dark/monster-board-106.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster114 {
-  background-image: url("img/dark/monster-board-114.png");
+  background-image: url("img/monsters/dark/monster-board-114.png");
 }
 #table .player-table .monster-board-wrapper .monster-board.monster115 {
-  background-image: url("img/dark/monster-board-115.png");
+  background-image: url("img/monsters/dark/monster-board-115.png");
 }
 #table .player-table .monster-board-wrapper .monster-board .target.token {
   position: absolute;
@@ -2981,127 +2960,106 @@ html, .mode_3d #game_play_area_background {
   background-repeat: no-repeat;
 }
 .monster-figure.monster1 {
-  background-image: url("img/monster-figure-1.png");
+  background-image: url("img/monsters/monster-figure-1.png");
 }
 .monster-figure.monster2 {
-  background-image: url("img/monster-figure-2.png");
+  background-image: url("img/monsters/monster-figure-2.png");
 }
 .monster-figure.monster3 {
-  background-image: url("img/monster-figure-3.png");
+  background-image: url("img/monsters/monster-figure-3.png");
 }
 .monster-figure.monster4 {
-  background-image: url("img/monster-figure-4.png");
+  background-image: url("img/monsters/monster-figure-4.png");
 }
 .monster-figure.monster5 {
-  background-image: url("img/monster-figure-5.png");
+  background-image: url("img/monsters/monster-figure-5.png");
 }
 .monster-figure.monster6 {
-  background-image: url("img/monster-figure-6.png");
+  background-image: url("img/monsters/monster-figure-6.png");
 }
 .monster-figure.monster7 {
-  background-image: url("img/monster-figure-7.png");
+  background-image: url("img/monsters/monster-figure-7.png");
 }
 .monster-figure.monster8 {
-  background-image: url("img/monster-figure-8.png");
+  background-image: url("img/monsters/monster-figure-8.png");
 }
 .monster-figure.monster9 {
-  background-image: url("img/monster-figure-9.png");
+  background-image: url("img/monsters/monster-figure-9.png");
 }
 .monster-figure.monster10 {
-  background-image: url("img/monster-figure-10.png");
+  background-image: url("img/monsters/monster-figure-10.png");
 }
 .monster-figure.monster11 {
-  background-image: url("img/monster-figure-11.png");
+  background-image: url("img/monsters/monster-figure-11.png");
 }
 .monster-figure.monster12 {
-  background-image: url("img/monster-figure-12.png");
+  background-image: url("img/monsters/monster-figure-12.png");
 }
 .monster-figure.monster13 {
-  background-image: url("img/monster-figure-13.png");
-}
-.monster-figure.monster14 {
-  background-image: url("img/monster-figure-14.png");
-}
-.monster-figure.monster15 {
-  background-image: url("img/monster-figure-15.png");
+  background-image: url("img/monsters/monster-figure-13.png");
 }
 .monster-figure.monster16 {
-  background-image: url("img/monster-figure-16.png");
+  background-image: url("img/monsters/monster-figure-16.png");
 }
 .monster-figure.monster17 {
-  background-image: url("img/monster-figure-17.png");
+  background-image: url("img/monsters/monster-figure-17.png");
 }
 .monster-figure.monster18 {
-  background-image: url("img/monster-figure-18.png");
+  background-image: url("img/monsters/monster-figure-18.png");
 }
 .monster-figure.monster19 {
-  background-image: url("img/monster-figure-19.png");
-}
-.monster-figure.monster20 {
-  background-image: url("img/monster-figure-20.png");
+  background-image: url("img/monsters/monster-figure-19.png");
 }
 .monster-figure.monster21 {
-  background-image: url("img/monster-figure-21.png");
-}
-.monster-figure.monster31 {
-  background-image: url("img/monster-figure-31.png");
-}
-.monster-figure.monster32 {
-  background-image: url("img/monster-figure-32.png");
-}
-.monster-figure.monster33 {
-  background-image: url("img/monster-figure-33.png");
-}
-.monster-figure.monster34 {
-  background-image: url("img/monster-figure-34.png");
-}
-.monster-figure.monster35 {
-  background-image: url("img/monster-figure-35.png");
-}
-.monster-figure.monster36 {
-  background-image: url("img/monster-figure-36.png");
-}
-.monster-figure.monster37 {
-  background-image: url("img/monster-figure-37.png");
-}
-.monster-figure.monster38 {
-  background-image: url("img/monster-figure-38.png");
+  background-image: url("img/monsters/monster-figure-21.png");
 }
 .monster-figure.monster41 {
-  background-image: url("img/monster-figure-41.png");
+  background-image: url("img/monsters/monster-figure-41.png");
 }
 .monster-figure.monster42 {
-  background-image: url("img/monster-figure-42.png");
+  background-image: url("img/monsters/monster-figure-42.png");
 }
 .monster-figure.monster43 {
-  background-image: url("img/monster-figure-43.png");
+  background-image: url("img/monsters/monster-figure-43.png");
 }
 .monster-figure.monster44 {
-  background-image: url("img/monster-figure-44.png");
+  background-image: url("img/monsters/monster-figure-44.png");
 }
 .monster-figure.monster45 {
-  background-image: url("img/monster-figure-45.png");
+  background-image: url("img/monsters/monster-figure-45.png");
+}
+.monster-figure.monster51 {
+  background-image: url("img/monsters/monster-figure-51.png");
+}
+.monster-figure.monster52 {
+  background-image: url("img/monsters/monster-figure-52.png");
+}
+.monster-figure.monster53 {
+  background-image: url("img/monsters/monster-figure-53.png");
+}
+.monster-figure.monster54 {
+  background-image: url("img/monsters/monster-figure-54.png");
 }
 .monster-figure.monster102 {
-  background-image: url("img/dark/monster-figure-102.png");
+  background-image: url("img/monsters/dark/monster-figure-102.png");
 }
 .monster-figure.monster104 {
-  background-image: url("img/dark/monster-figure-104.png");
+  background-image: url("img/monsters/dark/monster-figure-104.png");
 }
 .monster-figure.monster105 {
-  background-image: url("img/dark/monster-figure-105.png");
+  background-image: url("img/monsters/dark/monster-figure-105.png");
 }
 .monster-figure.monster106 {
-  background-image: url("img/dark/monster-figure-106.png");
+  background-image: url("img/monsters/dark/monster-figure-106.png");
 }
 .monster-figure.monster114 {
-  background-image: url("img/dark/monster-figure-114.png");
+  background-image: url("img/monsters/dark/monster-figure-114.png");
 }
 .monster-figure.monster115 {
-  background-image: url("img/dark/monster-figure-115.png");
+  background-image: url("img/monsters/dark/monster-figure-115.png");
 }
 .monster-figure.monster12.beast-mode {
-  background-image: url("img/monster-figure-12-beast.png");
+  background-image: url("img/monsters/monster-figure-12-beast.png");
 }
 
 #kot-table.pickMonsterOrEvolutionDeck {

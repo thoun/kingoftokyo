@@ -40,7 +40,7 @@ trait CardsUtilTrait {
     function initCards() {
         $cards = [];
 
-        $gameVersion = $this->isDarkEdition() ? 'dark' : 'base';        
+        $gameVersion = $this->isOrigins() ? 'origins' : ($this->isDarkEdition() ? 'dark' : 'base');
         
         foreach($this->KEEP_CARDS_LIST[$gameVersion] as $value) { // keep  
             $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
