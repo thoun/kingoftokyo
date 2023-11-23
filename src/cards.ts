@@ -669,6 +669,9 @@ class CardsManager extends CardManager<Card> {
             case 117: return 4;
             case 118: return 6;
             case 119: return 0;
+            case 120: return 5;
+            case 121: return 4;
+            case 122: return 7;
 
             // COSTUME
             case 201: return 4;
@@ -764,6 +767,9 @@ class CardsManager extends CardManager<Card> {
             case 117: return _("[AF966B]Tank");
             case 118: return _("[847443]Vast [8D7F4E]Storm");
             case 119: return _("[83aa50]Monster [41813c]pets");
+            case 120: return /*_TODOORI*/("[775b43]Barricades");
+            case 121: return /*_TODOORI*/("[6b9957]Ice Cream Truck");
+            case 122: return /*_TODOORI*/("[f89c4c]Supertower");
 
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
@@ -888,13 +894,16 @@ class CardsManager extends CardManager<Card> {
             case 110: return _("<strong>+ 2[Star] and all other monsters lose 3[Heart].</strong>");
             case 111: return "<strong>+ 2[Heart]</strong>";
             case 112: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Heart].</strong>");
-            case 113: return "<strong>+ 5[Star] -4[Heart].</strong>";
-            case 114: return "<strong>+ 2[Star] -2[Heart].</strong>";
-            case 115: return "<strong>+ 2[Star] +3[Heart].</strong>";
-            case 116: return "<strong>+ 4[Star].";
-            case 117: return "<strong>+ 4[Star] -3[Heart].</strong>";
+            case 113: return "<strong>+5[Star] -4[Heart].</strong>";
+            case 114: return "<strong>+2[Star] -2[Heart].</strong>";
+            case 115: return "<strong>+2[Star] +3[Heart].</strong>";
+            case 116: return "<strong>+4[Star].";
+            case 117: return "<strong>+4[Star] -3[Heart].</strong>";
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
             case 119: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Star].</strong>");
+            case 120: return /*_TODOORI*/("<strong>All other Monsters lose 3[Star].</strong>");
+            case 121: return "<strong>+1[Star] +2[Heart].</strong>";
+            case 122: return "<strong>+5[Star].";
 
             // COSTUME
             case 201: return _("<strong>If you reach 17[Star],</strong> you win the game");

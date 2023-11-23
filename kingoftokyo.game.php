@@ -85,8 +85,6 @@ class KingOfTokyo extends Table {
     use KOT\States\DebugUtilTrait;
 
 	function __construct(){
-
-
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
         //  You can use any number of global variables with IDs between 10 and 99.
@@ -167,7 +165,7 @@ class KingOfTokyo extends Table {
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
     */
-    protected function setupNewGame($players, $options = []) {
+    protected function setupNewGame($players, $options = []) {       
 
         $sql = "DELETE FROM player WHERE 1 ";
         $this->DbQuery( $sql );
@@ -221,9 +219,13 @@ class KingOfTokyo extends Table {
         }
 
         /************ Start the game initialization *****/
-        $origins = intval($this->getGameStateValue(ORIGINS_OPTION));
-        $darkEdition = $origins ? 1 : intval($this->getGameStateValue(DARK_EDITION_OPTION));
-        $wickednessExpansion = $origins ? 1 : intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
+        if ($this->getBgaEnvironment() == 'studio') {
+            $this->setGameStateValue(ORIGINS_OPTION, 2);  // TODOORI TEMP
+        } 
+        
+        $isOrigins = $this->isOrigins();
+        $darkEdition = $isOrigins ? 1 : intval($this->getGameStateValue(DARK_EDITION_OPTION));
+        $wickednessExpansion = $isOrigins ? 1 : intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
 
         // Init global values with their initial values
         $this->setGameStateInitialValue('throwNumber', 0);
@@ -335,7 +337,7 @@ class KingOfTokyo extends Table {
         }
 
         // setup the initial game situation here
-        $this->initCards();
+        $this->initCards($isOrigins, $darkEdition > 1);
         if ($this->isAnubisExpansion()) {
             $lastPlayer = array_key_last($players);
             $this->setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);

@@ -233,6 +233,18 @@ define('REFLECTIVE_HIDE_CARD', 52);
 define('SUPER_JUMP_CARD', 53);
 define('UNSTABLE_DNA_CARD', 54);
 define('ZOMBIFY_CARD', 55);
+// Origins :
+define('BIOFUEL_CARD', 56); // TODO
+define('DRAINING_RAY_CARD', 57); // TODO
+define('ELECTRIC_ARMOR_CARD', 58); // TODO
+define('FLAMING_AURA_CARD', 59); // TODO
+define('GAMMA_BLAST_CARD', 60); // TODO
+define('HUNGRY_URBAVORE_CARD', 61); // TODO
+define('JAGGED_TACTICIAN_CARD', 62); // TODO
+define('ORB_OF_DOM_CARD', 63); // TODO
+define('SCAVENGER_CARD', 64); // TODO
+define('SHRINKY_CARD', 65); // TODO
+define('BULL_HEADED_CARD', 66); // TODO
 
 // discard
 define('APPARTMENT_BUILDING_CARD', 101);
@@ -255,6 +267,10 @@ define('TANK_CARD', 117);
 define('VAST_STORM_CARD', 118);
 //Dark edition :
 define('MONSTER_PETS_CARD', 119);
+// Origins :
+define('BARRICADES_CARD', 120);
+define('ICE_CREAM_TRUCK_CARD', 121);
+define('SUPERTOWER_CARD', 122);
 
 // costume
 define('ASTRONAUT_CARD', 201);

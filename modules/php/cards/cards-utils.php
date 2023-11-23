@@ -37,17 +37,17 @@ trait CardsUtilTrait {
         return $cost;
     }
 
-    function initCards() {
+    function initCards(bool $isOrigins, bool $isDarkEdition) {
         $cards = [];
 
-        $gameVersion = $this->isOrigins() ? 'origins' : ($this->isDarkEdition() ? 'dark' : 'base');
+        $gameVersion = $isOrigins ? 'origins' : ($isDarkEdition ? 'dark' : 'base');
         
         foreach($this->KEEP_CARDS_LIST[$gameVersion] as $value) { // keep  
             $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
         }
         
         foreach($this->DISCARD_CARDS_LIST[$gameVersion] as $value) { // discard
-            $type = 100 + $value;
+            $type = ($isOrigins ? 0 : 100) + $value;
             $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
         }
 
@@ -107,6 +107,11 @@ trait CardsUtilTrait {
                     }
                 }
                 break;
+            case NATURAL_SELECTION_CARD:
+                $this->applyGetEnergy($playerId, 4, $cardType);
+                $this->applyGetHealth($playerId, 4, $cardType, $playerId);
+                break;
+
             // DISCARD
             case APPARTMENT_BUILDING_CARD: 
                 $this->applyGetPoints($playerId, 3, $cardType);
@@ -189,15 +194,18 @@ trait CardsUtilTrait {
                     $this->applyLoseEnergy($otherPlayerId, $lostEnergy, $cardType);
                 }
                 break;
-            case MONSTER_PETS_CARD:
-                $playersIds = $this->getPlayersIds();
-                foreach ($playersIds as $pId) {
-                    $this->applyLosePoints($pId, 3, $cardType);
+            case BARRICADES_CARD:
+                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                foreach ($otherPlayersIds as $otherPlayerId) {
+                    $this->applyLosePoints($otherPlayerId, 3, $cardType);
                 }
                 break;
-            case NATURAL_SELECTION_CARD:
-                $this->applyGetEnergy($playerId, 4, $cardType);
-                $this->applyGetHealth($playerId, 4, $cardType, $playerId);
+            case ICE_CREAM_TRUCK_CARD:
+                $this->applyGetPoints($playerId, 1, $cardType);
+                $this->applyGetHealth($playerId, 2, $cardType, $playerId);
+                break;
+            case SUPERTOWER_CARD:
+                $this->applyGetPoints($playerId, 5, $cardType);
                 break;
         }
     }

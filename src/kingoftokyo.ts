@@ -72,10 +72,6 @@ class KingOfTokyo implements KingOfTokyoGame {
 
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21,31,32,33,34,35,36,37,38,41,42,43,44,45].filter(i => !players.some(player => Number(player.monster) === i)).forEach(i => {
-            (this as any).dontPreloadImage(`monster-board-${i}.png`);
-            (this as any).dontPreloadImage(`monster-figure-${i}.png`);
-        });
         (this as any).dontPreloadImage(`background-halloween.jpg`);
         (this as any).dontPreloadImage(`background-christmas.jpg`);
         (this as any).dontPreloadImage(`animations-halloween.jpg`);
