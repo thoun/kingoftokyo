@@ -349,6 +349,11 @@ trait UtilTrait {
 
         $this->incStat(1, 'tokyoEnters', $playerId);
 
+        $countHungryUrbavore = $this->countCardOfType($playerId, HUNGRY_URBAVORE_CARD);
+        if ($countHungryUrbavore > 0) {
+            $this->applyGetPoints($playerId, $countHungryUrbavore, HUNGRY_URBAVORE_CARD);
+        }
+
         if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
             $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 1);
         }

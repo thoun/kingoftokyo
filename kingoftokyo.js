@@ -2521,6 +2521,17 @@ var CardsManager = /** @class */ (function (_super) {
             case 53: return 4;
             case 54: return 3;
             case 55: return 4;
+            case 56: return 4;
+            case 57: return 5;
+            case 58: return 5;
+            case 59: return 5;
+            case 60: return 4;
+            case 61: return 4;
+            case 62: return 3;
+            case 63: return 9;
+            case 64: return 3;
+            case 65: return 4;
+            case 66: return 3;
             // DISCARD
             case 101: return 5;
             case 102: return 4;
@@ -2619,6 +2630,17 @@ var CardsManager = /** @class */ (function (_super) {
             case 53: return _("[f2633b]Super [faa73b]Jump");
             case 54: return _("[4f7f3a]Unstable [a9d154]DNA");
             case 55: return _("[659640]Zombify");
+            case 56: return /*_TODOORI*/ ("[8ba121]Biofuel");
+            case 57: return /*_TODOORI*/ ("[b34c9c]Draining Ray");
+            case 58: return /*_TODOORI*/ ("[bed62f]Electric Armor");
+            case 59: return /*_TODOORI*/ ("[de6428]Flaming Aura");
+            case 60: return /*_TODOORI*/ ("[6db446]Gamma Blast");
+            case 61: return /*_TODOORI*/ ("[b34c9c]Hungry Urbavore");
+            case 62: return /*_TODOORI*/ ("[1f7e7f]Jagged Tactician");
+            case 63: return /*_TODOORI*/ ("[a65096]Orb of Doom");
+            case 64: return /*_TODOORI*/ ("[806f52]Scavenger");
+            case 65: return /*_TODOORI*/ ("[1c9c85]Shrinky");
+            case 66: return /*_TODOORI*/ ("[693a3a]Bull Headed");
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -2751,6 +2773,17 @@ var CardsManager = /** @class */ (function (_super) {
             case 53: return _("Once each player’s turn, you may spend 1[Energy] <strong>to negate the loss of 1[Heart].</strong>");
             case 54: return _("When you Yield Tokyo, <strong>you may exchange this card</strong> with a card of your choice from the Monster who Smashed you.");
             case 55: return _("If you reach [Skull] for the first time in this game, <strong>discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star], Yield Tokyo, gain 12[Heart] and continue playing.</strong> For the rest of the game, your maximum [Heart] is increased to 12[Heart] and <strong>you can’t use [diceHeart] anymore.</strong>");
+            case 56: return /*_TODOORI*/ ("You may use [diceHeart] as [diceEnergy].");
+            case 57: return /*_TODOORI*/ ("When you roll 4 of a kind, <strong>steal 1[Star] from the Monster(s) with the most [Star].</strong>");
+            case 58: return /*_TODOORI*/ ("When you lose any [Heart], you may spend 1[Energy] to <strong>reduce the loss of [Heart] by 1.</strong>");
+            case 59: return /*_TODOORI*/ ("When you roll 4 of a kind, <strong>all other Monsters lose 1[Heart].</strong>");
+            case 60: return /*_TODOORI*/ ("When you take control of Tokyo, <strong>all other Monsters lose 1[Heart].</strong>");
+            case 61: return /*_TODOORI*/ ("<strong>Gain 1[Star]</strong> when you take control of Tokyo.");
+            case 62: return /*_TODOORI*/ ("When you Yield Tokyo, <strong>the Monster taking it loses 1[Heart]</strong> and you <strong>gain 1[Energy].</strong>");
+            case 63: return /*_TODOORI*/ ("<strong>Other Monsters lose 1[Heart]</strong> each time they reroll.");
+            case 64: return /*_TODOORI*/ ("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck."); // TODOORI check if discard writes fine
+            case 65: return /*_TODOORI*/ ("<strong>You may use [dice2] as [dice1].");
+            case 66: return /*_TODOORI*/ ("<strong>Gain 1[Star]</strong> when you are able to Yield Tokyo but choose not to.");
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
