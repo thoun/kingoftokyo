@@ -13,9 +13,10 @@ trait DebugUtilTrait {
             return;
         } 
 
-        $this->debugSetCardInTable(120);
-        $this->debugSetCardInTable(121);
-        $this->debugSetCardInTable(122);
+        //$this->debugSetCardInTable(120);
+        //$this->debugSetCardInTable(121);
+        //$this->debugSetCardInTable(122);
+        //$this->debugSetCardInTable(REGENERATION_CARD);
 
         //$playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
 
@@ -430,8 +431,7 @@ trait DebugUtilTrait {
         } 
 
 		// These are the id's from the BGAtable I need to debug.
-        // SELECT JSON_ARRAYAGG(`player_id`) FROM `player`
-		$ids = [85136910, 85358567, 86251986, 91307910];
+        $ids = array_map(fn($dbPlayer) => intval($dbPlayer['player_id']), array_values($this->getCollectionFromDb('select player_id from player order by player_no')));
 
 		// Id of the first player in BGA Studio
 		$sid = 2343492;

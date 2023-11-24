@@ -187,6 +187,7 @@ class KingOfTokyo extends Table {
         $monsters = $this->getGameMonsters();
         $pickMonster = $this->canPickMonster();
 
+        $playersIds = array_keys($players);
         foreach ($players as $playerId => $player) {
             $playerMonster = 0;
 
@@ -219,7 +220,9 @@ class KingOfTokyo extends Table {
         }
 
         /************ Start the game initialization *****/
-        if ($this->getBgaEnvironment() == 'studio') {
+        $canTestOrigins = count($playersIds) == 2 && in_array(86175279 /*thoun*/, $playersIds) &&
+            (in_array(86175575 /*Mimi la terreur*/, $playersIds) || in_array(91350005 /*Quentin54*/, $playersIds));
+        if (/*$this->getBgaEnvironment() == 'studio' ||*/ $canTestOrigins) {
             $this->setGameStateValue(ORIGINS_OPTION, 2);  // TODOORI TEMP
         } 
         
@@ -358,7 +361,7 @@ class KingOfTokyo extends Table {
         }
 
         if ($this->isMutantEvolutionVariant()) {
-            foreach (array_keys($players) as $playerId) {
+            foreach ($playersIds as $playerId) {
                 $this->cards->pickCardForLocation('mutantdeck', 'hand', $playerId);
             }
         }
@@ -371,7 +374,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup(array_keys($players));
+        $this->debugSetup($playersIds);
 
         /************ End of the game initialization *****/
     }

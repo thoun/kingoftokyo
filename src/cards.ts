@@ -374,45 +374,6 @@ class CardsManager extends CardManager<Card> {
         });
         this.EVOLUTION_CARDS_TYPES = (game as any).gamedatas.EVOLUTION_CARDS_TYPES;
     }
-    
-    public setupCards(stocks: Stock[]) {
-        const darkEdition = this.game.isDarkEdition();
-        const version: 'base' | 'dark' = darkEdition ? 'dark' : 'base';
-        const costumes = this.game.isHalloweenExpansion();
-        const transformation = this.game.isMutantEvolutionVariant();
-        const goldenscarab = this.game.isAnubisExpansion();
-
-        stocks.forEach(stock => {
-            const keepcardsurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}keep-cards.jpg`;
-            KEEP_CARDS_LIST[version].forEach((id, index) => {  // keep
-                stock.addItemType(id, id, keepcardsurl, index);
-            });
-
-            const discardcardsurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}discard-cards.jpg`;
-            DISCARD_CARDS_LIST[version].forEach((id, index) => {  // discard
-                stock.addItemType(100 + id, 100 + id, discardcardsurl, index);
-            });
-
-            if (costumes) {
-                const costumecardsurl = `${g_gamethemeurl}img/costume-cards.jpg`;
-                COSTUME_CARDS_LIST.forEach((id, index) => {  // costume
-                    stock.addItemType(200 + id, 200 + id, costumecardsurl, index);
-                });
-            }
-
-            if (transformation) {
-                const transformationcardsurl = `${g_gamethemeurl}img/transformation-cards.jpg`;
-                COSTUME_CARDS_LIST.forEach((id, index) => {  // costume
-                    stock.addItemType(300 + id, 300 + id, transformationcardsurl, index);
-                });
-            }
-
-            if (goldenscarab) {
-                const anubiscardsurl = `${g_gamethemeurl}img/anubis-cards.jpg`;
-                stock.addItemType(999, 999, anubiscardsurl, 0);
-            }
-        });
-    }
 
     private getDistance(p1: PlacedTokens, p2: PlacedTokens): number {
         return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
@@ -569,7 +530,7 @@ class CardsManager extends CardManager<Card> {
             case 17: return [0, 85];
             case 19: return [0, 50];
             case 27: return [35, 65];
-            case 38: return [0, 100];
+            case 38: return this.game.isOrigins() ? null : [0, 100];
             case 43: return [35, 100];
             case 45: return [0, 85];
             // TODODE
@@ -1074,14 +1035,33 @@ class CardsManager extends CardManager<Card> {
         const version: 'base' | 'dark' = darkEdition ? 'dark' : 'base';
 
         if (cardType < 100) {
-            const keepcardsurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}keep-cards.jpg`;
+            const originsCard = cardType >= 56;
+            const keepcardsurl =  originsCard ? 
+                `${g_gamethemeurl}img/cards/cards-keep-origins.jpg` : 
+                `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}keep-cards.jpg`;
             cardDiv.style.backgroundImage = `url('${keepcardsurl}')`;
-            const index = KEEP_CARDS_LIST[version].findIndex(type => type == cardType);
+            
+            const index = originsCard ?
+                cardType - 56 : 
+                KEEP_CARDS_LIST[version].findIndex(type => type == cardType);
+
             cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
             cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100 / 4}%`;
+
+            if (cardType == 38 && this.game.isOrigins()) {
+                cardDiv.style.backgroundImage = `url('${g_gamethemeurl}img/cards/cards-regeneration-origins.jpg')`;
+                cardDiv.style.backgroundPosition = `0% 0%`;
+            }
         } else if (cardType < 200) {
-            const index = DISCARD_CARDS_LIST[version].findIndex(type => type == cardType % 100);
-            const discardcardsurl = `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}discard-cards.jpg`;
+            const originsCard = cardType >= 120;
+            const discardcardsurl = originsCard ? 
+                `${g_gamethemeurl}img/cards/cards-discard-origins.jpg` : 
+                `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}discard-cards.jpg`;
+
+            const index = originsCard ?
+                cardType - 120 : 
+                DISCARD_CARDS_LIST[version].findIndex(type => type == cardType % 100);
+
             cardDiv.style.backgroundImage = `url('${discardcardsurl}')`;
             cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
             cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100}%`;

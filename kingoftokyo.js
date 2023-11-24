@@ -2268,39 +2268,6 @@ var CardsManager = /** @class */ (function (_super) {
         _this.EVOLUTION_CARDS_TYPES = game.gamedatas.EVOLUTION_CARDS_TYPES;
         return _this;
     }
-    CardsManager.prototype.setupCards = function (stocks) {
-        var darkEdition = this.game.isDarkEdition();
-        var version = darkEdition ? 'dark' : 'base';
-        var costumes = this.game.isHalloweenExpansion();
-        var transformation = this.game.isMutantEvolutionVariant();
-        var goldenscarab = this.game.isAnubisExpansion();
-        stocks.forEach(function (stock) {
-            var keepcardsurl = "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "keep-cards.jpg");
-            KEEP_CARDS_LIST[version].forEach(function (id, index) {
-                stock.addItemType(id, id, keepcardsurl, index);
-            });
-            var discardcardsurl = "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "discard-cards.jpg");
-            DISCARD_CARDS_LIST[version].forEach(function (id, index) {
-                stock.addItemType(100 + id, 100 + id, discardcardsurl, index);
-            });
-            if (costumes) {
-                var costumecardsurl_1 = "".concat(g_gamethemeurl, "img/costume-cards.jpg");
-                COSTUME_CARDS_LIST.forEach(function (id, index) {
-                    stock.addItemType(200 + id, 200 + id, costumecardsurl_1, index);
-                });
-            }
-            if (transformation) {
-                var transformationcardsurl_1 = "".concat(g_gamethemeurl, "img/transformation-cards.jpg");
-                COSTUME_CARDS_LIST.forEach(function (id, index) {
-                    stock.addItemType(300 + id, 300 + id, transformationcardsurl_1, index);
-                });
-            }
-            if (goldenscarab) {
-                var anubiscardsurl = "".concat(g_gamethemeurl, "img/anubis-cards.jpg");
-                stock.addItemType(999, 999, anubiscardsurl, 0);
-            }
-        });
-    };
     CardsManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
     };
@@ -2440,7 +2407,7 @@ var CardsManager = /** @class */ (function (_super) {
             case 17: return [0, 85];
             case 19: return [0, 50];
             case 27: return [35, 65];
-            case 38: return [0, 100];
+            case 38: return this.game.isOrigins() ? null : [0, 100];
             case 43: return [35, 100];
             case 45: return [0, 85];
             // TODODE
@@ -2923,15 +2890,29 @@ var CardsManager = /** @class */ (function (_super) {
         var darkEdition = this.game.isDarkEdition();
         var version = darkEdition ? 'dark' : 'base';
         if (cardType < 100) {
-            var keepcardsurl = "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "keep-cards.jpg");
+            var originsCard = cardType >= 56;
+            var keepcardsurl = originsCard ?
+                "".concat(g_gamethemeurl, "img/cards/cards-keep-origins.jpg") :
+                "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "keep-cards.jpg");
             cardDiv.style.backgroundImage = "url('".concat(keepcardsurl, "')");
-            var index = KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
+            var index = originsCard ?
+                cardType - 56 :
+                KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
             cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
             cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100 / 4, "%");
+            if (cardType == 38 && this.game.isOrigins()) {
+                cardDiv.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/cards/cards-regeneration-origins.jpg')");
+                cardDiv.style.backgroundPosition = "0% 0%";
+            }
         }
         else if (cardType < 200) {
-            var index = DISCARD_CARDS_LIST[version].findIndex(function (type) { return type == cardType % 100; });
-            var discardcardsurl = "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "discard-cards.jpg");
+            var originsCard = cardType >= 120;
+            var discardcardsurl = originsCard ?
+                "".concat(g_gamethemeurl, "img/cards/cards-discard-origins.jpg") :
+                "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "discard-cards.jpg");
+            var index = originsCard ?
+                cardType - 120 :
+                DISCARD_CARDS_LIST[version].findIndex(function (type) { return type == cardType % 100; });
             cardDiv.style.backgroundImage = "url('".concat(discardcardsurl, "')");
             cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
             cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100, "%");
@@ -7412,6 +7393,9 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.isPowerUpExpansion = function () {
         return this.gamedatas.powerUpExpansion;
+    };
+    KingOfTokyo.prototype.isOrigins = function () {
+        return this.gamedatas.origins;
     };
     KingOfTokyo.prototype.isDarkEdition = function () {
         return this.gamedatas.darkEdition;

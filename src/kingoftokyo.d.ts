@@ -196,6 +196,7 @@ interface KingOfTokyoGamedatas {
 }
 
 interface KingOfTokyoGame extends Game {
+    isOrigins(): boolean;
     isDarkEdition(): boolean;
     isHalloweenExpansion(): boolean;
     isKingkongExpansion(): boolean;

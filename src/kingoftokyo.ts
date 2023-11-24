@@ -1533,6 +1533,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.powerUpExpansion;
     }
 
+    public isOrigins(): boolean {
+        return this.gamedatas.origins;
+    }
+
     public isDarkEdition(): boolean {
         return this.gamedatas.darkEdition;
     }
