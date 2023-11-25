@@ -327,6 +327,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasTailSweep: boolean;
     hasTinyTail: boolean;
     hasYinYang: boolean;
+    hasBiofuel: boolean;
     rethrow3: Rethrow3;
 }
 

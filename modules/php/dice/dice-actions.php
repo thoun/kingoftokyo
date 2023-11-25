@@ -220,6 +220,10 @@ trait DiceActionTrait {
             $this->removeCards($playerId, $cards);
         } else if ($cardType == STRETCHY_CARD) {
             $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
+        } else if ($cardType == BIOFUEL_CARD) {
+            if ($selectedDie->value != 4) {
+                throw new \BgaUserException('You can only change a Heart die');
+            }
         } else if ($cardType == 3000 + SAURIAN_ADAPTABILITY_EVOLUTION) {
             $saurianAdaptabilityCard = $this->getEvolutionsOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
             $this->playEvolutionToTable($playerId, $saurianAdaptabilityCard, '');

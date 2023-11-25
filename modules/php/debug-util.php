@@ -8,17 +8,18 @@ trait DebugUtilTrait {
 //////////// Utility functions
 ////////////
 
-    function debugSetup() {
+    function debugSetup($playersIds) {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         } 
 
-        //$this->debugSetCardInTable(120);
-        //$this->debugSetCardInTable(121);
-        //$this->debugSetCardInTable(122);
-        //$this->debugSetCardInTable(REGENERATION_CARD);
-
-        //$playersIds = array_values(array_map(fn($player) => intval($player['player_id']), $this->getCollectionFromDb("SELECT player_id FROM player order by player_no ")));
+        if ($this->isOrigins()) {
+            $this->debugSetCardInHand(ELECTRIC_ARMOR_CARD, 2343492);
+            //$this->debugSetCardInTable(120);
+            //$this->debugSetCardInTable(121);
+            //$this->debugSetCardInTable(122);
+            //$this->debugSetCardInTable(REGENERATION_CARD);
+        }
 
         // base game
 
@@ -290,7 +291,7 @@ trait DebugUtilTrait {
 
         // player order
 
-        $this->gamestate->changeActivePlayer(2343493);
+        $this->gamestate->changeActivePlayer(2343492);
         //$this->gamestate->changeActivePlayer($playersIds[1]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);

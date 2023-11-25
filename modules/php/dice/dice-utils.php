@@ -602,6 +602,9 @@ trait DiceUtilTrait {
     }
 
     function getChangeDieCards(int $playerId) {
+        $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
+        $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
+        
         // Herd Culler
         $hasHerdCuller = false;
         $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
@@ -616,11 +619,12 @@ trait DiceUtilTrait {
         $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
         $hasStretchy = $this->countCardOfType($playerId, STRETCHY_CARD) > 0 && $potentialEnergy >= 2;
 
+        // Biofuel
+        $hasBiofuel = $this->countCardOfType($playerId, BIOFUEL_CARD) > 0 && $diceCounts[4] >= 1 && !$this->inTokyo($playerId);
+
         $hasClown = boolval($this->getGameStateValue(CLOWN_ACTIVATED));
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
-            $dice = $this->getPlayerRolledDice($playerId, true, false, false); 
-            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, true);
             $detail = $this->addSmashesFromCards($playerId, $diceCounts, $this->inTokyo($playerId));
 
             $rolledFaces = $this->getRolledDiceFaces($playerId, $dice, true);
@@ -682,6 +686,7 @@ trait DiceUtilTrait {
             'hasTailSweep' => $hasTailSweep,
             'hasTinyTail' => $hasTinyTail,
             'hasYinYang' => $hasYinYang,
+            'hasBiofuel' => $hasBiofuel,
         ];
     }
 
@@ -694,7 +699,8 @@ trait DiceUtilTrait {
             || $cards['hasGammaBreath'] 
             || $cards['hasTailSweep'] 
             || $cards['hasTinyTail'] 
-            || $cards['hasYinYang'];
+            || $cards['hasYinYang'] 
+            || $cards['hasBiofuel'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        

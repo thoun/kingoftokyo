@@ -93,6 +93,12 @@ trait MonsterTrait {
             /*if ($this->releaseDatePassed("2022-11-18T00:00:00", 1) && !$this->releaseDatePassed("2023-01-02T00:00:00", 1)) {
                 $monsters = [...$monsters, 41, 42, 43, 44, 45];
             }*/
+
+            /* TODOORI if ($isOrigins) {
+                $monsters = [...$monsters, 1,2,3,4,5,6];
+            } else {
+                $monsters = [...$monsters, 51,52,53,54];
+            }*/
         }
 
         if ($this->isWickednessExpansion()) {

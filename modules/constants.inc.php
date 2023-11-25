@@ -234,8 +234,8 @@ define('SUPER_JUMP_CARD', 53);
 define('UNSTABLE_DNA_CARD', 54);
 define('ZOMBIFY_CARD', 55);
 // Origins :
-define('BIOFUEL_CARD', 56); // TODOORI
-define('DRAINING_RAY_CARD', 57); // TODOORI
+define('BIOFUEL_CARD', 56);
+define('DRAINING_RAY_CARD', 57);
 define('ELECTRIC_ARMOR_CARD', 58); // TODOORI
 define('FLAMING_AURA_CARD', 59); // TODOORI
 define('GAMMA_BLAST_CARD', 60); // TODOORI

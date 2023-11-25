@@ -91,7 +91,8 @@ trait DiceStateTrait {
         $diceCountsWithoutAddedSmashes = $diceCounts; // clone
 
         $detail = $this->addSmashesFromCards($playerId, $diceCounts, $playerInTokyo);
-        $diceCounts[6] += $detail->addedSmashes;
+        $diceAndCardsCounts = $diceCounts; // copy
+        $diceAndCardsCounts[6] += $detail->addedSmashes;
 
         if ($detail->addedSmashes > 0) {
             $diceStr = '';
@@ -140,7 +141,7 @@ trait DiceStateTrait {
 
         $fireBreathingDamages = [];
         // fire breathing
-        if ($diceCounts[6] >= 1) {
+        if ($diceAndCardsCounts[6] >= 1) {
             $countFireBreathing = $this->countCardOfType($playerId, FIRE_BREATHING_CARD);
             if ($countFireBreathing > 0) {
                 $playersIds = $this->getPlayersIds();
@@ -165,15 +166,30 @@ trait DiceStateTrait {
         
         $isCthulhuExpansion = $this->isCthulhuExpansion();
         $fourOfAKind = false;
+        $fourOfAKindWithCards = false;
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
-            if ($diceCounts[$diceFace] >= 4 && $this->canUseSymbol($playerId, $diceFace) && $this->canUseFace($playerId, $diceFace)) {
-                $fourOfAKind = true;
+            $canUseSymbolAndFace = $this->canUseSymbol($playerId, $diceFace) && $this->canUseFace($playerId, $diceFace);
+            if ($diceAndCardsCounts[$diceFace] >= 4 && $canUseSymbolAndFace) {
+                $fourOfAKindWithCards = true;
                 if ($isCthulhuExpansion) {
                     $this->applyGetCultist($playerId, $diceFace);
                 }
             }
+            if ($diceCounts[$diceFace] >= 4 && $canUseSymbolAndFace) {
+                $fourOfAKind = true;
+                $countDrainingRay = $this->countCardOfType($playerId, DRAINING_RAY_CARD);
+                if ($countDrainingRay > 0) {
+                    $playersIds = $this->getPlayersIdsWithMaxColumn('player_score');
+                    foreach ($playersIds as $pId) {
+                        if ($pId != $playerId) {
+                            $this->applyLosePoints($pId, $countDrainingRay, DRAINING_RAY_CARD);
+                            $this->applyGetPoints($playerId, $countDrainingRay, DRAINING_RAY_CARD);
+                        }
+                    }
+                }
+            }
         }
-        if ($isPowerUpExpansion && $fourOfAKind) {
+        if ($isPowerUpExpansion && $fourOfAKindWithCards) {
             $count8thWonderOfTheWorld = $this->countEvolutionOfType($playerId, EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION);
             if ($count8thWonderOfTheWorld > 0) {
                 $this->applyGetPoints($playerId, $count8thWonderOfTheWorld, 3000 + EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION);
@@ -210,7 +226,7 @@ trait DiceStateTrait {
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, $funnyLookingButDangerousDamages);
-        $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
+        $this->setGlobalVariable(DICE_COUNTS, $diceAndCardsCounts);
     }
 
     function stResolveDice() {

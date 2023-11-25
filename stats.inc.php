@@ -89,6 +89,8 @@ $monstersNames = [
     43 => "Rex Florae",
     44 => "H.A.D.E.S.",
     45 => "Megamoth",
+    // Origins
+    // TODOORI
     // Dark edition
     102 => "Dark Alienoid", 
     104 => "Dark The King", 

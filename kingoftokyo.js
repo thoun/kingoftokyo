@@ -4710,7 +4710,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice, frozenFaces) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             this.setSelectableDice(selectableDice);
@@ -5143,6 +5143,7 @@ var DiceManager = /** @class */ (function () {
             var tinyTailButtonId_1 = "".concat(bubbleActionButtonsId, "-tinyTail");
             var plotTwistButtonId_1 = "".concat(bubbleActionButtonsId, "-plotTwist");
             var stretchyButtonId_1 = "".concat(bubbleActionButtonsId, "-stretchy");
+            var biofuelButtonId_1 = "".concat(bubbleActionButtonsId, "-biofuel");
             var saurianAdaptabilityButtonId_1 = "".concat(bubbleActionButtonsId, "-saurianAdaptability");
             var clownButtonId_1 = "".concat(bubbleActionButtonsId, "-clown");
             var args_1 = this.changeDieArgs;
@@ -5195,6 +5196,12 @@ var DiceManager = /** @class */ (function () {
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
+                    if (args_1.hasBiofuel) {
+                        this.game.createButton(bubbleActionButtonsId, biofuelButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(56, 'text-only'), "</strong>") }), function () {
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 56),
+                                _this.toggleBubbleChangeDie(die);
+                        }, true);
+                    }
                     if (args_1.hasSaurianAdaptability) {
                         var saurianAdaptabilityButtonLabel = dojo.string.substitute(_("Change all ${die_face} with ${card_name}"), {
                             'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(54, 'text-only'), "</strong>"),
@@ -5236,6 +5243,9 @@ var DiceManager = /** @class */ (function () {
                                 document.getElementById(stretchyButtonId_1).removeAttribute('data-enable-at-energy');
                             }
                         }
+                        if (args_1.hasBiofuel && die.value == 4) {
+                            dojo.toggleClass(biofuelButtonId_1, 'disabled', value != 5);
+                        }
                         if (args_1.hasSaurianAdaptability) {
                             dojo.removeClass(saurianAdaptabilityButtonId_1, 'disabled');
                         }
@@ -5269,6 +5279,9 @@ var DiceManager = /** @class */ (function () {
                     }
                     if (args_1.hasSaurianAdaptability) {
                         dojo.addClass(saurianAdaptabilityButtonId_1, 'disabled');
+                    }
+                    if (args_1.hasBiofuel) {
+                        dojo.addClass(biofuelButtonId_1, 'disabled');
                     }
                 }
             }
