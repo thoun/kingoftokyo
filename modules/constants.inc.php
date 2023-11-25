@@ -244,7 +244,7 @@ define('JAGGED_TACTICIAN_CARD', 62); // TODOORI
 define('ORB_OF_DOM_CARD', 63); // TODOORI
 define('SCAVENGER_CARD', 64); // TODOORI
 define('SHRINKY_CARD', 65);
-define('BULL_HEADED_CARD', 66); // TODOORI
+define('BULL_HEADED_CARD', 66);
 
 // discard
 define('APPARTMENT_BUILDING_CARD', 101);

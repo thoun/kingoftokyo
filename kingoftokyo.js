@@ -2899,7 +2899,7 @@ var CardsManager = /** @class */ (function (_super) {
                 cardType - 56 :
                 KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
             cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
-            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100 / 4, "%");
+            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100 / (originsCard ? 1 : 4), "%");
             if (cardType == 38 && this.game.isOrigins()) {
                 cardDiv.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/cards/cards-regeneration-origins.jpg')");
                 cardDiv.style.backgroundPosition = "0% 0%";

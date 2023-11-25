@@ -1046,7 +1046,7 @@ class CardsManager extends CardManager<Card> {
                 KEEP_CARDS_LIST[version].findIndex(type => type == cardType);
 
             cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
-            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100 / 4}%`;
+            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100 / (originsCard ? 1 : 4)}%`;
 
             if (cardType == 38 && this.game.isOrigins()) {
                 cardDiv.style.backgroundImage = `url('${g_gamethemeurl}img/cards/cards-regeneration-origins.jpg')`;

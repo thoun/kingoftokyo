@@ -48,6 +48,11 @@ trait PlayerActionTrait {
                 $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
             }
         }
+
+        $countBullHeaded = $this->countCardOfType($playerId, BULL_HEADED_CARD);
+        if ($countBullHeaded > 0) {
+            $this->applyGetPoints($playerId, $countBullHeaded, BULL_HEADED_CARD);
+        }
         
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
