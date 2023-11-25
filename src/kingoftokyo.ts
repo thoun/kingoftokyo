@@ -70,10 +70,11 @@ class KingOfTokyo implements KingOfTokyoGame {
             document.getElementsByTagName('html')[0].dataset.darkEdition = 'true';
         }
 
+        // needd to preload background
+        this.preferencesManager = new PreferencesManager(this);
+
         const players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        (this as any).dontPreloadImage(`background-halloween.jpg`);
-        (this as any).dontPreloadImage(`background-christmas.jpg`);
         (this as any).dontPreloadImage(`animations-halloween.jpg`);
         (this as any).dontPreloadImage(`animations-christmas.jpg`);
         (this as any).dontPreloadImage(`christmas_dice.png`);
@@ -82,7 +83,6 @@ class KingOfTokyo implements KingOfTokyoGame {
             (this as any).dontPreloadImage(`orange_dice.png`);
         }
         if (!gamedatas.powerUpExpansion) {
-            (this as any).dontPreloadImage(`background-powerup.jpg`);
             (this as any).dontPreloadImage(`animations-powerup.jpg`);
             (this as any).dontPreloadImage(`powerup_dice.png`);
         }
@@ -91,7 +91,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         const boardDir = gamedatas.origins ? `origins` : (gamedatas.darkEdition ? `dark-edition` : `base`);
         const boardFile = gamedatas.twoPlayersVariant ? `2pvariant.jpg` : `standard.jpg`;
         const boardImgUrl = `boards/${boardDir}/${boardFile}`;
-        //g_img_preload.push(boardImgUrl);
+        g_img_preload.push(boardImgUrl);
+        g_img_preload.push(`backgrounds/${this.preferencesManager.getBackgroundFilename()}`);
+
 
         log( "Starting game setup" );
         
@@ -150,7 +152,6 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.setupNotifications();
-        this.preferencesManager = new PreferencesManager(this);
 
         document.getElementById('zoom-out').addEventListener('click', () => this.tableManager?.zoomOut());
         document.getElementById('zoom-in').addEventListener('click', () => this.tableManager?.zoomIn());

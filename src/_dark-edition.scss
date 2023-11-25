@@ -339,12 +339,12 @@ html[data-dark-edition="true"] {
 }
 
 html[data-background="5"] {
-    background: url('img/dark/background.jpg') #13141a;
+    background: url('img/backgrounds/dark.jpg') #13141a;
     background-size: 100% auto;
     background-repeat: no-repeat;
 
     .mode_3d #game_play_area_background {
-        background: url('img/dark/background.jpg') #13141a;
+        background: url('img/backgrounds/dark.jpg') #13141a;
         background-size: 100% auto;
         background-repeat: no-repeat;
     }

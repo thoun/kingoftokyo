@@ -5573,6 +5573,13 @@ var SmashActionSelector = /** @class */ (function () {
     };
     return SmashActionSelector;
 }());
+var BACKGROUND_FILENAME = {
+    1: 'base.jpg',
+    2: 'halloween.jpg',
+    3: 'christmas.jpg',
+    4: 'powerup.jpg',
+    5: 'dark.jpg',
+};
 var PreferencesManager = /** @class */ (function () {
     function PreferencesManager(game) {
         this.game = game;
@@ -5617,6 +5624,10 @@ var PreferencesManager = /** @class */ (function () {
             }
             return 1;
         }
+    };
+    PreferencesManager.prototype.getBackgroundFilename = function () {
+        var prefId = this.getGameVersionNumber(this.game.prefs[205].value);
+        return BACKGROUND_FILENAME[prefId];
     };
     PreferencesManager.prototype.onPreferenceChange = function (prefId, prefValue) {
         switch (prefId) {
@@ -6111,10 +6122,10 @@ var KingOfTokyo = /** @class */ (function () {
         else if (gamedatas.darkEdition) {
             document.getElementsByTagName('html')[0].dataset.darkEdition = 'true';
         }
+        // needd to preload background
+        this.preferencesManager = new PreferencesManager(this);
         var players = Object.values(gamedatas.players);
         // ignore loading of some pictures
-        this.dontPreloadImage("background-halloween.jpg");
-        this.dontPreloadImage("background-christmas.jpg");
         this.dontPreloadImage("animations-halloween.jpg");
         this.dontPreloadImage("animations-christmas.jpg");
         this.dontPreloadImage("christmas_dice.png");
@@ -6123,7 +6134,6 @@ var KingOfTokyo = /** @class */ (function () {
             this.dontPreloadImage("orange_dice.png");
         }
         if (!gamedatas.powerUpExpansion) {
-            this.dontPreloadImage("background-powerup.jpg");
             this.dontPreloadImage("animations-powerup.jpg");
             this.dontPreloadImage("powerup_dice.png");
         }
@@ -6131,7 +6141,8 @@ var KingOfTokyo = /** @class */ (function () {
         var boardDir = gamedatas.origins ? "origins" : (gamedatas.darkEdition ? "dark-edition" : "base");
         var boardFile = gamedatas.twoPlayersVariant ? "2pvariant.jpg" : "standard.jpg";
         var boardImgUrl = "boards/".concat(boardDir, "/").concat(boardFile);
-        //g_img_preload.push(boardImgUrl);
+        g_img_preload.push(boardImgUrl);
+        g_img_preload.push("backgrounds/".concat(this.preferencesManager.getBackgroundFilename()));
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
@@ -6180,7 +6191,6 @@ var KingOfTokyo = /** @class */ (function () {
             this.addAutoLeaveUnderButton();
         }
         this.setupNotifications();
-        this.preferencesManager = new PreferencesManager(this);
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
         if (gamedatas.kingkongExpansion) {

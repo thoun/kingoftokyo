@@ -1,3 +1,11 @@
+const BACKGROUND_FILENAME = {
+    1: 'base.jpg',
+    2: 'halloween.jpg',
+    3: 'christmas.jpg',
+    4: 'powerup.jpg',
+    5: 'dark.jpg',
+}
+
 class PreferencesManager {
 
     constructor(private game: KingOfTokyoGame) { 
@@ -46,6 +54,11 @@ class PreferencesManager {
             return 1;
         }
     }
+
+    public getBackgroundFilename() {
+        const prefId = this.getGameVersionNumber((this.game as any).prefs[205].value);
+        return BACKGROUND_FILENAME[prefId];
+    }
       
     private onPreferenceChange(prefId: number, prefValue: number) {
         switch (prefId) {
@@ -67,7 +80,7 @@ class PreferencesManager {
         }
     }
     
-    public getDiceScoringColor(): any {
+    public getDiceScoringColor(): string {
         const prefId = this.getGameVersionNumber((this.game as any).prefs[205].value);
         switch (prefId) {
             case 2: return '000000';
