@@ -90,7 +90,10 @@ $monstersNames = [
     44 => "H.A.D.E.S.",
     45 => "Megamoth",
     // Origins
-    // TODOORI
+    51 => "Mechamster",
+    52 => "Gigarex",
+    53 => "Cosmic Joe",
+    54 => "Iron back",
     // Dark edition
     102 => "Dark Alienoid", 
     104 => "Dark The King", 
