@@ -6410,22 +6410,23 @@ var KingOfTokyo = /** @class */ (function () {
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
         this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         if (isCurrentPlayerActive) {
+            var orbOfDoomsSuffix = args.opponentsOrbOfDooms ? formatTextIcons(" (-".concat(args.opponentsOrbOfDooms, "[Heart])")) : '';
             if (args.throwNumber < args.maxThrowNumber) {
-                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }), function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
+                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }) + orbOfDoomsSuffix, function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
                 this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to reroll the others"), "".concat(_("Ctrl+click to move all dice with same value"), "<br>\n                    ").concat(_("Alt+click to move all dice but clicked die")));
             }
             if (args.rethrow3.hasCard) {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' (' + this.cardsManager.getCardName(5, 'text-only') + ')', function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
             }
             if (((_a = args.energyDrink) === null || _a === void 0 ? void 0 : _a.hasCard) && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(" ( 1[Energy])"), function () { return _this.buyEnergyDrink(); });
+                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(" ( 1[Energy])") + orbOfDoomsSuffix, function () { return _this.buyEnergyDrink(); });
                 this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
             }
             if (args.hasSmokeCloud && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + " (<span class=\"smoke-cloud token\"></span>)", function () { return _this.useSmokeCloud(); });
+                this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + " (<span class=\"smoke-cloud token\"></span>)" + orbOfDoomsSuffix, function () { return _this.useSmokeCloud(); });
             }
             if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + " (".concat(_('Cultist'), ")"), function () { return _this.useCultist(); });
+                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + " (".concat(_('Cultist'), ")") + orbOfDoomsSuffix, function () { return _this.useCultist(); });
             }
             if (args.rerollDie.isBeastForm) {
                 dojo.place("<div id=\"beast-form-dice-actions\"></div>", 'dice-actions');

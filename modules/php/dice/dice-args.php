@@ -47,6 +47,13 @@ trait DiceArgTrait {
             $canUseBeastForm = !$this->isUsedCard($this->getFormCard($playerId)->id);
         }
 
+        $opponentsOrbOfDooms = 0;
+        $playersIds = $this->getOtherPlayersIds($playerId);
+        foreach($playersIds as $pId) {
+            $countOrbOfDoom = $this->countCardOfType($pId, ORB_OF_DOM_CARD);
+            $opponentsOrbOfDooms += $countOrbOfDoom;
+        }
+
         $hasActions = $throwNumber < $maxThrowNumber 
             || ($hasEnergyDrink && $playerEnergy >= 1) 
             || $hasDice3 
@@ -79,6 +86,7 @@ trait DiceArgTrait {
             'hasSmokeCloud' => $hasSmokeCloud,
             'hasCultist' => $hasCultist,
             'hasActions' => $hasActions,
+            'opponentsOrbOfDooms' => $opponentsOrbOfDooms,
         ];
     }
 

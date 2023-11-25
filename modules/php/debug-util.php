@@ -14,7 +14,9 @@ trait DebugUtilTrait {
         } 
 
         if ($this->isOrigins()) {
-            $this->debugSetCardInHand(JAGGED_TACTICIAN_CARD, 2343492);
+            $this->debugSetCardInHand(SCAVENGER_CARD, 2343493);
+            //$this->setCardTokens(2343492, $this->debugSetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
+            //$this->debugSetCardInHand(ELECTRIC_ARMOR_CARD, 2343492);
             //$this->debugSetCardInTable(120);
             //$this->debugSetCardInTable(121);
             //$this->debugSetCardInTable(122);
@@ -32,7 +34,7 @@ trait DebugUtilTrait {
         //$this->debugSetPlayerPoints(2343493, 17);
         $this->debugSetPoints(5);
         //$this->debugSetPlayerPoints(2343493, 4);
-        $this->debugSetHealth(5);
+        $this->debugSetHealth(8);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
@@ -291,7 +293,7 @@ trait DebugUtilTrait {
 
         // player order
 
-        $this->gamestate->changeActivePlayer(2343493);
+        $this->gamestate->changeActivePlayer(2343492);
         //$this->gamestate->changeActivePlayer($playersIds[1]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);

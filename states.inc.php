@@ -279,7 +279,6 @@ $playerActionsGameStates = [
         "args" => "argThrowDice",
         "possibleactions" => [ "rethrow", "goToChangeDie", "buyEnergyDrink", "rethrow3", "useSmokeCloud", "useCultist", "rerollDie" ],
         "transitions" => [
-            "rethrow" => ST_PLAYER_THROW_DICE,
             "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
             "psychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
             //"zombiePass" => ST_NEXT_PLAYER,

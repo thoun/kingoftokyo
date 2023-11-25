@@ -435,8 +435,9 @@ class KingOfTokyo implements KingOfTokyoGame {
         this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         
         if (isCurrentPlayerActive) {
+            const orbOfDoomsSuffix = args.opponentsOrbOfDooms ? formatTextIcons(` (-${args.opponentsOrbOfDooms}[Heart])`)  : '';
             if (args.throwNumber < args.maxThrowNumber) {
-                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber-args.throwNumber }), () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
+                this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber-args.throwNumber }) + orbOfDoomsSuffix, () => this.onRethrow(), !args.dice.some(dice => !dice.locked));
 
                 (this as any).addTooltip(
                     'rethrow_button', 
@@ -450,16 +451,16 @@ class KingOfTokyo implements KingOfTokyoGame {
             }
 
             if (args.energyDrink?.hasCard && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(` ( 1[Energy])`), () => this.buyEnergyDrink());
+                this.createButton('dice-actions', 'buy_energy_drink_button', _("Get extra die Roll") + formatTextIcons(` ( 1[Energy])`) + orbOfDoomsSuffix, () => this.buyEnergyDrink());
                 this.checkBuyEnergyDrinkState(args.energyDrink.playerEnergy);
             }
 
             if (args.hasSmokeCloud && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + ` (<span class="smoke-cloud token"></span>)`, () => this.useSmokeCloud());
+                this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + ` (<span class="smoke-cloud token"></span>)` + orbOfDoomsSuffix, () => this.useSmokeCloud());
             }
 
             if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + ` (${_('Cultist')})`, () => this.useCultist());
+                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + ` (${_('Cultist')})` + orbOfDoomsSuffix, () => this.useCultist());
             }
 
             if (args.rerollDie.isBeastForm) {

@@ -60,7 +60,7 @@ trait DiceActionTrait {
             'die_face_after' => $this->getDieFaceLogName($newValue, 0),
         ]);
 
-        $this->gamestate->nextState('rethrow');
+        $this->goToState(ST_PLAYER_THROW_DICE);
     }
 
     public function rerollDie(int $id, string $diceIds) {
