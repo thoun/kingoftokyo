@@ -243,7 +243,7 @@ define('HUNGRY_URBAVORE_CARD', 61); // TODOORI TEST
 define('JAGGED_TACTICIAN_CARD', 62); // TODOORI
 define('ORB_OF_DOM_CARD', 63); // TODOORI
 define('SCAVENGER_CARD', 64); // TODOORI
-define('SHRINKY_CARD', 65); // TODOORI
+define('SHRINKY_CARD', 65);
 define('BULL_HEADED_CARD', 66); // TODOORI
 
 // discard

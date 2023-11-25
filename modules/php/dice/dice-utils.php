@@ -622,6 +622,9 @@ trait DiceUtilTrait {
         // Biofuel
         $hasBiofuel = $this->countCardOfType($playerId, BIOFUEL_CARD) > 0 && $diceCounts[4] >= 1 && !$this->inTokyo($playerId);
 
+        // Biofuel
+        $hasShrinky = $this->countCardOfType($playerId, SHRINKY_CARD) > 0 && $diceCounts[2] >= 1;
+
         $hasClown = boolval($this->getGameStateValue(CLOWN_ACTIVATED));
         // Clown
         if (!$hasClown && $this->countCardOfType($playerId, CLOWN_CARD) > 0) {
@@ -687,6 +690,7 @@ trait DiceUtilTrait {
             'hasTinyTail' => $hasTinyTail,
             'hasYinYang' => $hasYinYang,
             'hasBiofuel' => $hasBiofuel,
+            'hasShrinky' => $hasShrinky,
         ];
     }
 
@@ -700,7 +704,8 @@ trait DiceUtilTrait {
             || $cards['hasTailSweep'] 
             || $cards['hasTinyTail'] 
             || $cards['hasYinYang'] 
-            || $cards['hasBiofuel'];
+            || $cards['hasBiofuel'] 
+            || $cards['hasShrinky'];
     }
 
     function getSelectHeartDiceUse(int $playerId) {        

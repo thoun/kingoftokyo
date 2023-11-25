@@ -14,7 +14,7 @@ trait DebugUtilTrait {
         } 
 
         if ($this->isOrigins()) {
-            $this->debugSetCardInHand(ELECTRIC_ARMOR_CARD, 2343492);
+            $this->debugSetCardInHand(SHRINKY_CARD, 2343492);
             //$this->debugSetCardInTable(120);
             //$this->debugSetCardInTable(121);
             //$this->debugSetCardInTable(122);

@@ -76,7 +76,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean, frozenFaces: number[]) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -545,6 +545,7 @@ class DiceManager {
             const plotTwistButtonId = `${bubbleActionButtonsId}-plotTwist`;
             const stretchyButtonId = `${bubbleActionButtonsId}-stretchy`;
             const biofuelButtonId = `${bubbleActionButtonsId}-biofuel`;
+            const shrinkyButtonId = `${bubbleActionButtonsId}-shrinky`;
             const saurianAdaptabilityButtonId = `${bubbleActionButtonsId}-saurianAdaptability`;
             const clownButtonId = `${bubbleActionButtonsId}-clown`;
 
@@ -655,6 +656,18 @@ class DiceManager {
                             true
                         );
                     }
+                    if (args.hasShrinky) {
+                        this.game.createButton(
+                            bubbleActionButtonsId, 
+                            shrinkyButtonId, 
+                            dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.cardsManager.getCardName(65, 'text-only')}</strong>` }),
+                            () => {
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 65),
+                                this.toggleBubbleChangeDie(die);
+                            },
+                            true
+                        );
+                    }
                     if (args.hasSaurianAdaptability) {
                         const saurianAdaptabilityButtonLabel = dojo.string.substitute(_("Change all ${die_face} with ${card_name}"), {
                             'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(54, 'text-only')}</strong>`, 
@@ -704,6 +717,9 @@ class DiceManager {
                         if (args.hasBiofuel && die.value == 4) {
                             dojo.toggleClass(biofuelButtonId, 'disabled', value != 5);
                         }
+                        if (args.hasShrinky && die.value == 2) {
+                            dojo.toggleClass(shrinkyButtonId, 'disabled', value != 1);
+                        }
                         if (args.hasSaurianAdaptability) {
                             dojo.removeClass(saurianAdaptabilityButtonId, 'disabled');
                         }
@@ -742,6 +758,9 @@ class DiceManager {
                     }
                     if (args.hasBiofuel) {
                         dojo.addClass(biofuelButtonId, 'disabled');
+                    }
+                    if (args.hasShrinky) {
+                        dojo.addClass(shrinkyButtonId, 'disabled');
                     }
                 }
             }

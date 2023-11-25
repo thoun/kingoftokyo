@@ -224,6 +224,10 @@ trait DiceActionTrait {
             if ($selectedDie->value != 4) {
                 throw new \BgaUserException('You can only change a Heart die');
             }
+        } else if ($cardType == SHRINKY_CARD) {
+            if ($selectedDie->value != 2) {
+                throw new \BgaUserException('You can only change a 2 die');
+            }
         } else if ($cardType == 3000 + SAURIAN_ADAPTABILITY_EVOLUTION) {
             $saurianAdaptabilityCard = $this->getEvolutionsOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
             $this->playEvolutionToTable($playerId, $saurianAdaptabilityCard, '');
