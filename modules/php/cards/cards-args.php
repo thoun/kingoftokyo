@@ -120,7 +120,12 @@ trait CardsArgTrait {
 
         // made in a lab
         $canPick = $this->countCardOfType($playerId, MADE_IN_A_LAB_CARD);
-        $pickArgs = [];
+        $privateArgs = [
+            '_private' => [          // Using "_private" keyword, all data inside this array will be made private
+                'active' => [       // Using "active" keyword inside "_private", you select active player(s)
+                ]
+            ],
+        ];
         if ($canPick > 0) {
             $pickCards = $this->getCardsFromDb($this->cards->getCardsOnTop($canPick, 'deck'));
             $this->setMadeInALabCardIds($playerId, array_map(fn($card) => $card->id, $pickCards));
@@ -144,13 +149,34 @@ trait CardsArgTrait {
                 $this->setWarningIcon($playerId, $warningIds, $card);
             }
 
-            $pickArgs = [
-                '_private' => [          // Using "_private" keyword, all data inside this array will be made private
-                    'active' => [       // Using "active" keyword inside "_private", you select active player(s)
-                        'pickCards' => $pickCards,   // will be send only to active player(s)
-                    ]
-                ],
-            ];
+            $privateArgs['_private']['active']['pickCards'] = $pickCards;
+        }
+
+        // scavenger
+        $canBuyFromDiscard = $this->countCardOfType($playerId, SCAVENGER_CARD);
+        if ($canBuyFromDiscard > 0) {
+            $discardCards = $this->getCardsFromDb($this->cards->getCardsInLocation('discard'));
+
+            foreach ($discardCards as $card) {
+                $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
+                if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
+                    $canBuyOrNenew = true;
+                }
+                if ($gotSuperiorAlienTechnology && $card->type < 100) {
+                    $cardsCostsSuperiorAlienTechnology[$card->id] = ceil($cardsCosts[$card->id] / 2);
+    
+                    if ($canBuyPowerCards && $cardsCostsSuperiorAlienTechnology[$card->id] <= $potentialEnergy) {
+                        $canBuyOrNenew = true;
+                    }
+                }
+                if (!$canBuyPowerCards) {
+                    $disabledIds[] = $card->id;
+                }
+
+                $this->setWarningIcon($playerId, $warningIds, $card);
+            }
+
+            $privateArgs['_private']['active']['discardCards'] = $discardCards;
         }
 
         $canUseAdaptingTechnology = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, ADAPTING_TECHNOLOGY_EVOLUTION, true, true) > 0;
@@ -173,7 +199,7 @@ trait CardsArgTrait {
             'gotSuperiorAlienTechnology' => $gotSuperiorAlienTechnology,
             'canUseSuperiorAlienTechnology' => $canUseSuperiorAlienTechnology,
             'canUseBobbingForApples' => $canUseBobbingForApples,
-        ] + $pickArgs;
+        ] + $privateArgs;
     }
 
     function argBuyCard() {

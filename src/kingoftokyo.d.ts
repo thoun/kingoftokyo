@@ -413,8 +413,9 @@ interface EnteringBuyCardArgs {
     unusedMiraculousCatch: boolean;
     gotSuperiorAlienTechnology: boolean;
     canUseSuperiorAlienTechnology: boolean;
-    _private: {
+    _private?: {
         pickCards: Card[];
+        discardCards: Card[];
     };
     cardsCosts: { [cardId: number]: number };
     warningIds: { [cardId: number]: string };

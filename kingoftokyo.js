@@ -82,7 +82,8 @@ function formatTextIcons(rawText) {
         .replace(/\[ufoToken\]/ig, '<span class="ufo token"></span>')
         .replace(/\[alienoidToken\]/ig, '<span class="alienoid token"></span>')
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
-        .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"));
+        .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"))
+        .replace(/\[discard\]/ig, "<span class=\"card-discard-text\"><span class=\"outline\">".concat(_('Discard'), "</span><span class=\"text\">").concat(_('Discard'), "</span></span>"));
 }
 var DEFAULT_ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
 var ZoomManager = /** @class */ (function () {
@@ -6992,7 +6993,7 @@ var KingOfTokyo = /** @class */ (function () {
     //
     KingOfTokyo.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c;
         switch (stateName) {
             case 'beforeStartTurn':
             case 'beforeResolveDice':
@@ -7249,6 +7250,17 @@ var KingOfTokyo = /** @class */ (function () {
                         this.addActionButton('useMiraculousCatch_button', dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(12, 'text-only') }), function () { return _this.useMiraculousCatch(); });
                         if (!argsBuyCard.unusedMiraculousCatch) {
                             dojo.addClass('useMiraculousCatch_button', 'disabled');
+                        }
+                    }
+                    var discardCards_1 = (_c = args._private) === null || _c === void 0 ? void 0 : _c.discardCards;
+                    if (discardCards_1) {
+                        var label_1 = dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.cardsManager.getCardName(64, 'text-only') });
+                        if (!discardCards_1.length) {
+                            label_1 += " (".concat(/*_TODOORI*/ ('discard is empty'), ")");
+                        }
+                        this.addActionButton('useScavenger_button', label_1, function () { return _this.showDiscardCards(discardCards_1, args); });
+                        if (!discardCards_1.length) {
+                            dojo.addClass('useScavenger_button', 'disabled');
                         }
                     }
                     if (argsBuyCard.canUseAdaptingTechnology) {
@@ -7777,6 +7789,9 @@ var KingOfTokyo = /** @class */ (function () {
         }
     };
     KingOfTokyo.prototype.setBuyDisabledCardByCost = function (disabledIds, cardsCosts, playerEnergy) {
+        this.setBuyDisabledCardByCostForStock(disabledIds, cardsCosts, playerEnergy, this.tableCenter.getVisibleCards());
+    };
+    KingOfTokyo.prototype.setBuyDisabledCardByCostForStock = function (disabledIds, cardsCosts, playerEnergy, stock) {
         var _this = this;
         var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds, true), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }), true);
         disabledCardsIds.forEach(function (id) {
@@ -7784,11 +7799,26 @@ var KingOfTokyo = /** @class */ (function () {
             var cardDiv = _this.cardsManager.getCardElement({ id: id });
             cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.toggle('bga-cards_disabled-card', disabled);
         });
-        var selectableCards = this.tableCenter.getVisibleCards().getCards().filter(function (card) {
+        var selectableCards = stock.getCards().filter(function (card) {
             var disabled = disabledIds.some(function (disabledId) { return disabledId == card.id; }) || cardsCosts[card.id] > playerEnergy;
             return !disabled;
         });
-        this.tableCenter.getVisibleCards().setSelectableCards(selectableCards);
+        stock.setSelectableCards(selectableCards);
+    };
+    KingOfTokyo.prototype.getCardCosts = function (args) {
+        var cardsCosts = __assign({}, args.cardsCosts);
+        var argsBuyCard = args;
+        if (argsBuyCard.gotSuperiorAlienTechnology) {
+            cardsCosts = __assign(__assign({}, cardsCosts), argsBuyCard.cardsCostsSuperiorAlienTechnology);
+        }
+        if (argsBuyCard.cardsCostsBobbingForApples) {
+            Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(function (cardId) {
+                if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
+                    cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
+                }
+            });
+        }
+        return cardsCosts;
     };
     // called on state enter and when energy number is changed
     KingOfTokyo.prototype.setBuyDisabledCard = function (args, playerEnergy) {
@@ -7817,18 +7847,7 @@ var KingOfTokyo = /** @class */ (function () {
         if (playerEnergy === null) {
             playerEnergy = this.energyCounters[playerId].getValue();
         }
-        var cardsCosts = __assign({}, args.cardsCosts);
-        var argsBuyCard = args;
-        if (argsBuyCard.gotSuperiorAlienTechnology) {
-            cardsCosts = __assign(__assign({}, cardsCosts), argsBuyCard.cardsCostsSuperiorAlienTechnology);
-        }
-        if (argsBuyCard.cardsCostsBobbingForApples) {
-            Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(function (cardId) {
-                if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
-                    cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
-                }
-            });
-        }
+        var cardsCosts = this.getCardCosts(args);
         this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
         // renew button
         if (buyState && document.getElementById('renew_button')) {
@@ -8147,6 +8166,31 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.showPlayerEvolutions = function (playerId) {
         var cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(function (evolution) { return evolution.type; });
         this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(_("Evolution cards owned by ${player_name}"), { 'player_name': this.gamedatas.players[playerId].name }));
+    };
+    KingOfTokyo.prototype.showDiscardCards = function (cards, args) {
+        var _this = this;
+        var buyCardFromDiscardDialog = new ebg.popindialog();
+        buyCardFromDiscardDialog.create('kotDiscardCardsDialog');
+        buyCardFromDiscardDialog.setTitle(/*_TODOORI*/ ('Discard cards'));
+        var html = "<div id=\"see-monster-evolutions\"></div>";
+        // Show the dialog
+        buyCardFromDiscardDialog.setContent(html);
+        buyCardFromDiscardDialog.show();
+        var stock = new LineStock(this.cardsManager, document.getElementById('see-monster-evolutions'));
+        stock.addCards(cards);
+        stock.onCardClick = function (card) {
+            _this.onVisibleCardClick(stock, card);
+            stock.removeAll();
+            buyCardFromDiscardDialog.destroy();
+        };
+        stock.setSelectionMode('single');
+        this.setBuyDisabledCardByCostForStock(args.disabledIds, this.getCardCosts(args), this.energyCounters[this.getPlayerId()].getValue(), this.tableCenter.getVisibleCards());
+        buyCardFromDiscardDialog.show();
+        // Replace the function call when it's clicked
+        buyCardFromDiscardDialog.replaceCloseCallback(function () {
+            stock.removeAll();
+            buyCardFromDiscardDialog.destroy();
+        });
     };
     KingOfTokyo.prototype.pickMonster = function (monster) {
         if (!this.checkAction('pickMonster')) {

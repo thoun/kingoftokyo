@@ -241,3 +241,22 @@ $description-size: 7pt;
         top: 0;
     }
 }
+
+.card-discard-text {
+    position: relative;
+    color: white;
+    font-family: 'goodgirl';
+    font-size: 7pt;
+    margin: 2px;
+    text-align: center;
+
+    .outline {
+        -webkit-text-stroke: 3px #ef1923;
+    }
+
+    .text {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}

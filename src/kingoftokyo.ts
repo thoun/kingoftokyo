@@ -1344,6 +1344,19 @@ class KingOfTokyo implements KingOfTokyoGame {
                             dojo.addClass('useMiraculousCatch_button', 'disabled');
                         }
                     }
+
+                    const discardCards = args._private?.discardCards;
+                    if (discardCards) {
+                        let label = dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.cardsManager.getCardName(64, 'text-only')});
+                        if (!discardCards.length) {
+                            label += ` (${/*_TODOORI*/('discard is empty')})`;
+                        }
+                        (this as any).addActionButton('useScavenger_button', label, () => this.showDiscardCards(discardCards, args));
+                        if (!discardCards.length) {
+                            dojo.addClass('useScavenger_button', 'disabled');
+                        }
+                    }
+
                     if (argsBuyCard.canUseAdaptingTechnology) {
                         (this as any).addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only')}) + ')', () => this.onRenew(3024));
                     }
@@ -1969,6 +1982,10 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     private setBuyDisabledCardByCost(disabledIds: number[], cardsCosts: { [cardId: number]: number }, playerEnergy: number) {
+        this.setBuyDisabledCardByCostForStock(disabledIds, cardsCosts, playerEnergy, this.tableCenter.getVisibleCards());
+    }
+    
+    private setBuyDisabledCardByCostForStock(disabledIds: number[], cardsCosts: { [cardId: number]: number }, playerEnergy: number, stock: CardStock<Card>) {
         const disabledCardsIds = [...disabledIds, ...Object.keys(cardsCosts).map(cardId => Number(cardId))];
         disabledCardsIds.forEach(id => {
             const disabled = disabledIds.some(disabledId => disabledId == id) || cardsCosts[id] > playerEnergy;
@@ -1976,11 +1993,28 @@ class KingOfTokyo implements KingOfTokyoGame {
             cardDiv?.classList.toggle('bga-cards_disabled-card', disabled);
         });
 
-        const selectableCards = this.tableCenter.getVisibleCards().getCards().filter(card => {
+        const selectableCards = stock.getCards().filter(card => {
             const disabled = disabledIds.some(disabledId => disabledId == card.id) || cardsCosts[card.id] > playerEnergy;
             return !disabled;
         });
-        this.tableCenter.getVisibleCards().setSelectableCards(selectableCards);
+        stock.setSelectableCards(selectableCards);
+    }
+
+    private getCardCosts(args: EnteringBuyCardArgs | EnteringStealCostumeCardArgs) {
+        let cardsCosts = {...args.cardsCosts};
+        const argsBuyCard = args as EnteringBuyCardArgs;
+        if (argsBuyCard.gotSuperiorAlienTechnology) {
+            cardsCosts = {...cardsCosts, ...argsBuyCard.cardsCostsSuperiorAlienTechnology};
+        }
+        if (argsBuyCard.cardsCostsBobbingForApples) {
+            Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(cardId => {
+                if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
+                    cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
+                }
+            });
+        }
+
+        return cardsCosts;
     }
 
     // called on state enter and when energy number is changed
@@ -2010,18 +2044,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             playerEnergy = this.energyCounters[playerId].getValue();
         }
 
-        let cardsCosts = {...args.cardsCosts};
-        const argsBuyCard = args as EnteringBuyCardArgs;
-        if (argsBuyCard.gotSuperiorAlienTechnology) {
-            cardsCosts = {...cardsCosts, ...argsBuyCard.cardsCostsSuperiorAlienTechnology};
-        }
-        if (argsBuyCard.cardsCostsBobbingForApples) {
-            Object.keys(argsBuyCard.cardsCostsBobbingForApples).forEach(cardId => {
-                if (argsBuyCard.cardsCostsBobbingForApples[cardId] < cardsCosts[cardId]) {
-                    cardsCosts[cardId] = argsBuyCard.cardsCostsBobbingForApples[cardId];
-                }
-            });
-        }
+        let cardsCosts = this.getCardCosts(args);
 
         this.setBuyDisabledCardByCost(args.disabledIds, cardsCosts, playerEnergy);
 
@@ -2452,6 +2475,37 @@ class KingOfTokyo implements KingOfTokyoGame {
     private showPlayerEvolutions(playerId: number) {
         const cardsTypes = this.gamedatas.players[playerId].ownedEvolutions.map(evolution => evolution.type);
         this.showEvolutionsPopin(cardsTypes, dojo.string.substitute(_("Evolution cards owned by ${player_name}"), {'player_name': this.gamedatas.players[playerId].name}));
+    }
+    
+    public showDiscardCards(cards: Card[], args: EnteringBuyCardArgs): void {
+        
+        const buyCardFromDiscardDialog = new ebg.popindialog();
+        buyCardFromDiscardDialog.create('kotDiscardCardsDialog');
+        buyCardFromDiscardDialog.setTitle(/*_TODOORI*/('Discard cards'));
+        
+        var html = `<div id="see-monster-evolutions"></div>`;
+        
+        // Show the dialog
+        buyCardFromDiscardDialog.setContent(html);        
+        buyCardFromDiscardDialog.show();
+
+        const stock = new LineStock<Card>(this.cardsManager, document.getElementById('see-monster-evolutions'));
+        stock.addCards(cards);
+        stock.onCardClick = (card: Card) => {
+            this.onVisibleCardClick(stock, card);
+            stock.removeAll();          
+            buyCardFromDiscardDialog.destroy();
+        };
+        stock.setSelectionMode('single');
+        this.setBuyDisabledCardByCostForStock(args.disabledIds, this.getCardCosts(args), this.energyCounters[this.getPlayerId()].getValue(), this.tableCenter.getVisibleCards());
+        
+        buyCardFromDiscardDialog.show();
+
+        // Replace the function call when it's clicked
+        buyCardFromDiscardDialog.replaceCloseCallback(() => {  
+            stock.removeAll();          
+            buyCardFromDiscardDialog.destroy();
+        });
     }
 
     public pickMonster(monster: number): void {

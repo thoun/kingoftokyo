@@ -244,7 +244,7 @@ define('GAMMA_BLAST_CARD', 60);
 define('HUNGRY_URBAVORE_CARD', 61);
 define('JAGGED_TACTICIAN_CARD', 62);
 define('ORB_OF_DOM_CARD', 63);
-define('SCAVENGER_CARD', 64); // TODOORI
+define('SCAVENGER_CARD', 64);
 define('SHRINKY_CARD', 65);
 define('BULL_HEADED_CARD', 66);
 

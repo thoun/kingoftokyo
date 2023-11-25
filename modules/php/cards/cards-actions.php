@@ -123,6 +123,7 @@ trait CardsActionTrait {
 
     function applyBuyCard(int $playerId, int $id, int $from, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
         $card = $this->getCardFromDb($this->cards->getCard($id));
+        $cardLocation = $card->location;
         $cardLocationArg = $card->location_arg;
         $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
 
@@ -178,7 +179,25 @@ trait CardsActionTrait {
 
         $newCard = null;
 
-        if ($from > 0) {
+        if ($cardLocation == 'discard') { // scavenger
+            $this->notifyAllPlayers("buyCard", /*client TODOORI translate*/('${player_name} buys ${card_name} from the discard'), [
+                'playerId' => $playerId,
+                'player_name' => $this->getPlayerName($playerId),
+                'card' => $card,
+                'card_name' => $card->type,
+                'newCard' => null,
+                'energy' => $this->getPlayerEnergy($playerId), 
+                'cost' => $cost,
+            ]);
+
+            if ($card->type >= 100 && $card->type <= 200) {
+                $this->removeCard($playerId, $card, false, true);
+                
+                $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1 WHERE `card_location` = 'deck'");
+                $this->cards->moveCard($card->id, 'deck', 0);
+            }
+            
+        } else if ($from > 0) {
             $message = $from == $playerId ? /*client TODOPUBG translate(*/'${player_name} buys ${card_name} from reserved cards ${cost} [energy]'/*)*/ : 
             clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
             $this->notifyAllPlayers("buyCard", $message, [

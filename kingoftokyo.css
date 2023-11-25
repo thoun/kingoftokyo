@@ -931,6 +931,23 @@
   top: 0;
 }
 
+.card-discard-text {
+  position: relative;
+  color: white;
+  font-family: "goodgirl";
+  font-size: 7pt;
+  margin: 2px;
+  text-align: center;
+}
+.card-discard-text .outline {
+  -webkit-text-stroke: 3px #ef1923;
+}
+.card-discard-text .text {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 body > .card {
   position: absolute;
   left: -9999px;
@@ -3518,12 +3535,6 @@ button .icon, a .icon {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-}
-#popin_kotViewEvolutionsDialog #see-monster-evolutions .stockitem {
-  position: relative;
-  width: 198px;
-  height: 198px;
-  background-image: url("img/evolution-cards.jpg");
 }
 
 .pick-evolution-cards {
