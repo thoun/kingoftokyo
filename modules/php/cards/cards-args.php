@@ -330,6 +330,8 @@ trait CardsArgTrait {
             $canUseRabbitsFoot = $isPowerUpExpansion && $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0;
             $canUseCandy = $isPowerUpExpansion && $clawDamage !== null && $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0;
             $canUseRobot = $this->countCardOfType($playerId, ROBOT_CARD) > 0;
+            $playersUsedElectricArmor = property_exists($intervention, 'electricArmorUsed') ? $intervention->electricArmorUsed : false;
+            $canUseElectricArmor = !$playersUsedElectricArmor && $this->countCardOfType($playerId, ELECTRIC_ARMOR_CARD) > 0;
 
             $effectiveDamageDetail = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId, $clawDamage);
             $effectiveDamage = $effectiveDamageDetail->effectiveDamage;
@@ -367,7 +369,7 @@ trait CardsArgTrait {
             }
 
             $replaceHeartByEnergyCost = [];
-            if ($canUseRobot || $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0) {
+            if ($canUseRobot || $canUseElectricArmor || $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0) {
                 for ($damageReducedBy=1; $damageReducedBy<=$remainingDamage; $damageReducedBy++) {
                     $replaceHeartByEnergyCost[$damageReducedBy] = $this->getEffectiveDamage($remainingDamage - $damageReducedBy, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
                 }
@@ -383,6 +385,7 @@ trait CardsArgTrait {
                 $canUseRabbitsFoot || 
                 $canUseCandy ||
                 ($canUseRobot && $potentialEnergy >= 1) ||
+                ($canUseElectricArmor && $potentialEnergy >= 1) ||
                 ($superJumpHearts && $potentialEnergy >= 1);
 
             $canHealToAvoidDeath = !$cancelHealWithEnergyCards;
@@ -403,6 +406,7 @@ trait CardsArgTrait {
                 'canUseRabbitsFoot' => $canUseRabbitsFoot,
                 'canUseCandy' => $canUseCandy,
                 'canUseRobot' => $canUseRobot,
+                'canUseElectricArmor' => $canUseElectricArmor,
                 'countSuperJump' => $countSuperJump,
                 'rapidHealingHearts' => $rapidHealingHearts,
                 'superJumpHearts' => $superJumpHearts,

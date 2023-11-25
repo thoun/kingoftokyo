@@ -959,6 +959,60 @@ trait CardsActionTrait {
         $this->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
+    function useElectricArmor(int $energy) {        
+        $this->checkAction('useElectricArmor');
+
+        $playerId = $this->getCurrentPlayerId();
+
+        $countElectricArmor = $this->countCardOfType($playerId, ELECTRIC_ARMOR_CARD);
+        if ($countElectricArmor == 0) {
+            throw new \BgaUserException('No Electric Armor card');
+        }
+
+        if ($energy > 1) {
+            throw new \BgaUserException('You can only save 1 Heart with Electric Armor');
+        }
+
+        if ($this->getPlayerEnergy($playerId) < $energy) {
+            throw new \BgaUserException('Not enough energy');
+        }
+
+        $intervention = $this->getDamageIntervention();
+        $intervention->electricArmorUsed = true;
+
+        $remainingDamage = $this->createRemainingDamage($playerId, $intervention->damages)->damage - $energy;
+
+        $this->applyLoseEnergy($playerId, $energy, 0);
+
+        $this->reduceInterventionDamages($playerId, $intervention, $energy);
+        $this->setDamageIntervention($intervention);
+
+        $args = $this->argCancelDamage($playerId, $intervention);
+
+        // if player also have wings, and some damages aren't cancelled, we stay on state and reduce remaining damages
+        $stayOnState = false;
+        if ($remainingDamage > 0) {
+            $stayOnState = $args['canCancelDamage'];
+            //$this->debug($args);
+        }
+
+        $this->notifyAllPlayers('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerName($playerId),
+            'card_name' => ELECTRIC_ARMOR_CARD,
+            'energy' => $energy,
+            'cancelDamageArgs' => $args,
+        ]);
+
+        if (!$stayOnState) {
+            if ($this->applyDamages($intervention, $playerId) === 0) {
+                $this->removePlayerFromSmashedPlayersInTokyo($playerId);
+            }
+        }
+        
+        $this->resolveRemainingDamages($intervention, !$stayOnState, false);
+    }
+
     function useSuperJump(int $energy) {        
         $this->checkAction('useSuperJump');
 

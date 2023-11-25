@@ -6606,6 +6606,18 @@ var KingOfTokyo = /** @class */ (function () {
                     }
                 });
             }
+            if (args.canUseElectricArmor && !document.getElementById('useElectricArmor_button')) {
+                Object.keys(args.replaceHeartByEnergyCost).forEach(function (energy) {
+                    var energyCost = Number(energy);
+                    var remainingDamage = args.replaceHeartByEnergyCost[energy];
+                    var id = "useElectricArmor".concat(energyCost, "_button");
+                    if (!document.getElementById(id) && energyCost == 1) {
+                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(58, 'text-only') }) + (remainingDamage > 0 ? " (-".concat(remainingDamage, "[Heart])") : '')), function () { return _this.useElectricArmor(energyCost); });
+                        document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
+                        dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
+                    }
+                });
+            }
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 var canAvoidDeath_1 = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
                 this.addActionButton('skipWings_button', args.canUseWings ? dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.cardsManager.getCardName(48, 'text-only') }) : _("Skip"), function () {
@@ -8633,6 +8645,14 @@ var KingOfTokyo = /** @class */ (function () {
             return;
         }
         this.takeAction('useRobot', {
+            energy: energy
+        });
+    };
+    KingOfTokyo.prototype.useElectricArmor = function (energy) {
+        if (!this.checkAction('useElectricArmor')) {
+            return;
+        }
+        this.takeAction('useElectricArmor', {
             energy: energy
         });
     };

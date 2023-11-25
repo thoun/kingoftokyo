@@ -431,6 +431,7 @@ interface EnteringCancelDamageArgs {
     canUseRabbitsFoot: boolean;
     canUseCandy: boolean;
     canUseRobot: boolean;
+    canUseElectricArmor: boolean;
     countSuperJump: number;
     playerEnergy: number;
     dice: Die[];

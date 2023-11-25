@@ -666,6 +666,20 @@ class KingOfTokyo implements KingOfTokyoGame {
                 });
             }
 
+            if (args.canUseElectricArmor && !document.getElementById('useElectricArmor_button')) {
+                Object.keys(args.replaceHeartByEnergyCost).forEach(energy => {
+                    const energyCost = Number(energy);
+                    const remainingDamage = args.replaceHeartByEnergyCost[energy];
+
+                    const id = `useElectricArmor${energyCost}_button`;
+                    if (!document.getElementById(id) && energyCost == 1) {
+                        (this as any).addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': this.cardsManager.getCardName(58, 'text-only')}) + (remainingDamage > 0 ? ` (-${remainingDamage}[Heart])` : '')), () => this.useElectricArmor(energyCost));
+                        document.getElementById(id).dataset.enableAtEnergy = ''+energyCost;
+                        dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
+                    }
+                });
+            }
+
             if (!args.canThrowDices && !document.getElementById('skipWings_button')) {
                 const canAvoidDeath = args.canDoAction && args.skipMeansDeath && (args.canCancelDamage || args.canHealToAvoidDeath);
                 (this as any).addActionButton(
@@ -3091,6 +3105,16 @@ class KingOfTokyo implements KingOfTokyoGame {
         }
 
         this.takeAction('useRobot', {
+            energy
+        });
+    }
+
+    public useElectricArmor(energy: number) {
+        if(!(this as any).checkAction('useElectricArmor')) {
+            return;
+        }
+
+        this.takeAction('useElectricArmor', {
             energy
         });
     }

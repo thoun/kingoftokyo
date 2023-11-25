@@ -236,7 +236,7 @@ define('ZOMBIFY_CARD', 55);
 // Origins :
 define('BIOFUEL_CARD', 56);
 define('DRAINING_RAY_CARD', 57);
-define('ELECTRIC_ARMOR_CARD', 58); // TODOORI
+define('ELECTRIC_ARMOR_CARD', 58);
 define('FLAMING_AURA_CARD', 59); // TODOORI
 define('GAMMA_BLAST_CARD', 60); // TODOORI
 define('HUNGRY_URBAVORE_CARD', 61); // TODOORI TEST

@@ -56,6 +56,7 @@ class CancelDamageIntervention extends PlayerIntervention {
     public /*array int[]*/ $remainingPlayersIds;
     public /*array Damage[], playerId as key*/ $damagesToResolve = [];
     public /*array Damage[], playerId as key*/ $resolvedDamages = [];
+    public bool $electricArmorUsed = false;
 
     public function __construct(array $remainingPlayersId, array $damages, array $allDamages) {
         parent::__construct(ST_MULTIPLAYER_CANCEL_DAMAGE, $remainingPlayersId);
