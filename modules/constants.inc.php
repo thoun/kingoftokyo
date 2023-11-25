@@ -167,6 +167,7 @@ define('USED_WINGS', 'UsedWings');
 define('MADE_IN_A_LAB', 'MadeInALab');
 define('BURROWING_PLAYERS', 'BurrowingPlayers');
 define('UNSTABLE_DNA_PLAYERS', 'UnstableDNAPlayers');
+define('JAGGED_TACTICIAN_PLAYERS', 'JaggedTacticianPlayers');
 define('QUESTION', 'Question');
 define('CARD_BEING_BOUGHT', 'CardBeingBought');
 define('STACKED_STATES', 'StackedStates');
@@ -240,7 +241,7 @@ define('DRAINING_RAY_CARD', 57);
 define('ELECTRIC_ARMOR_CARD', 58);
 define('FLAMING_AURA_CARD', 59);
 define('GAMMA_BLAST_CARD', 60);
-define('HUNGRY_URBAVORE_CARD', 61); // TODOORI TEST
+define('HUNGRY_URBAVORE_CARD', 61);
 define('JAGGED_TACTICIAN_CARD', 62); // TODOORI
 define('ORB_OF_DOM_CARD', 63); // TODOORI
 define('SCAVENGER_CARD', 64); // TODOORI

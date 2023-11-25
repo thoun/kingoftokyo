@@ -63,6 +63,11 @@ trait PlayerUtilTrait {
         return $leaversWithUnstableDNA !== null ? $leaversWithUnstableDNA : [];
     }
 
+    function getLeaversWithJaggedTactician() {
+        $leaversWithJaggedTactician = $this->getGlobalVariable(JAGGED_TACTICIAN_PLAYERS, true);
+        return $leaversWithJaggedTactician !== null ? $leaversWithJaggedTactician : [];
+    }
+
     function addLeaverWithBurrowingOrUnstableDNA(int $playerId) {
         $countBurrowing = $this->countCardOfType($playerId, BURROWING_CARD);
         if ($countBurrowing > 0) {
@@ -76,6 +81,13 @@ trait PlayerUtilTrait {
             $playersIds = $this->getLeaversWithBurrowing();
             $playersIds[] = $playerId;
             $this->setGlobalVariable(UNSTABLE_DNA_PLAYERS, $playersIds);
+        }
+
+        $countJaggedTactician = $this->countCardOfType($playerId, JAGGED_TACTICIAN_CARD);
+        if ($countJaggedTactician > 0) {
+            $playersIds = $this->getLeaversWithJaggedTactician();
+            $playersIds[] = $playerId;
+            $this->setGlobalVariable(JAGGED_TACTICIAN_PLAYERS, $playersIds);
         }
     }
 

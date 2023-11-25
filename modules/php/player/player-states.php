@@ -381,8 +381,20 @@ trait PlayerStateTrait {
                 $damages[] = new Damage($playerId, $countBurrowing, $leaverWithBurrowingId, BURROWING_CARD);
             }
         }
+
+        // jagged tactician
+        $leaversWithJaggedTactician = $this->getLeaversWithJaggedTactician();  
+        $damages = [];  
+        foreach($leaversWithJaggedTactician as $leaverWithJaggedTacticianId) {
+            $countJaggedTactician = $this->countCardOfType($leaverWithJaggedTacticianId, JAGGED_TACTICIAN_CARD);
+            if ($countJaggedTactician > 0) {
+                $damages[] = new Damage($playerId, $countJaggedTactician, $leaverWithJaggedTacticianId, JAGGED_TACTICIAN_CARD);
+                $this->applyGetEnergy($leaverWithJaggedTacticianId, $countJaggedTactician, JAGGED_TACTICIAN_CARD);
+            }
+        }
         
         $this->setGlobalVariable(BURROWING_PLAYERS, []); 
+        $this->setGlobalVariable(JAGGED_TACTICIAN_PLAYERS, []); 
 
         $this->goToState($nextState, $damages);
     }

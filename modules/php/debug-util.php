@@ -14,7 +14,7 @@ trait DebugUtilTrait {
         } 
 
         if ($this->isOrigins()) {
-            $this->debugSetCardInHand(HUNGRY_URBAVORE_CARD, 2343492);
+            $this->debugSetCardInHand(JAGGED_TACTICIAN_CARD, 2343492);
             //$this->debugSetCardInTable(120);
             //$this->debugSetCardInTable(121);
             //$this->debugSetCardInTable(122);
@@ -23,7 +23,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
@@ -291,7 +291,7 @@ trait DebugUtilTrait {
 
         // player order
 
-        $this->gamestate->changeActivePlayer(2343492);
+        $this->gamestate->changeActivePlayer(2343493);
         //$this->gamestate->changeActivePlayer($playersIds[1]);
         //$this->eliminatePlayer(2343493);
         //$this->eliminatePlayer(2343494);
