@@ -167,6 +167,7 @@ trait DiceStateTrait {
         $isCthulhuExpansion = $this->isCthulhuExpansion();
         $fourOfAKind = false;
         $fourOfAKindWithCards = false;
+        $flamingAuraDamages = [];
         for ($diceFace = 1; $diceFace <= 6; $diceFace++) {
             $canUseSymbolAndFace = $this->canUseSymbol($playerId, $diceFace) && $this->canUseFace($playerId, $diceFace);
             if ($diceAndCardsCounts[$diceFace] >= 4 && $canUseSymbolAndFace) {
@@ -177,6 +178,7 @@ trait DiceStateTrait {
             }
             if ($diceCounts[$diceFace] >= 4 && $canUseSymbolAndFace) {
                 $fourOfAKind = true;
+
                 $countDrainingRay = $this->countCardOfType($playerId, DRAINING_RAY_CARD);
                 if ($countDrainingRay > 0) {
                     $playersIds = $this->getPlayersIdsWithMaxColumn('player_score');
@@ -185,6 +187,14 @@ trait DiceStateTrait {
                             $this->applyLosePoints($pId, $countDrainingRay, DRAINING_RAY_CARD);
                             $this->applyGetPoints($playerId, $countDrainingRay, DRAINING_RAY_CARD);
                         }
+                    }
+                }
+
+                $countFlamingAura = $this->countCardOfType($playerId, FLAMING_AURA_CARD);
+                if ($countFlamingAura > 0) {
+                    $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                    foreach ($otherPlayersIds as $otherPlayerId) {
+                        $flamingAuraDamages[$otherPlayerId] = $countFlamingAura;
                     }
                 }
             }
@@ -226,6 +236,7 @@ trait DiceStateTrait {
 
         $this->setGlobalVariable(FIRE_BREATHING_DAMAGES, $fireBreathingDamages);
         $this->setGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, $funnyLookingButDangerousDamages);
+        $this->setGlobalVariable(FLAMING_AURA_DAMAGES, $flamingAuraDamages);
         $this->setGlobalVariable(DICE_COUNTS, $diceAndCardsCounts);
     }
 

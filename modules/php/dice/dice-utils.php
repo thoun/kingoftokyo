@@ -389,6 +389,7 @@ trait DiceUtilTrait {
     
     function resolveSmashDice(int $playerId, int $diceCount, array $playersSmashesWithReducedDamage) {
         $funnyLookingButDangerousDamages = $this->getGlobalVariable(FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES, true);
+        $flamingAuraDamages = $this->getGlobalVariable(FLAMING_AURA_DAMAGES, true);
         $exoticArmsDamages = [];
         $smashedPlayersIds = [];
         $isPowerUpExpansion = $this->isPowerUpExpansion();
@@ -496,6 +497,8 @@ trait DiceUtilTrait {
                 $damageAmount += $fireBreathingDamage;
                 $funnyLookingButDangerousDamage = array_key_exists($smashedPlayerId, $funnyLookingButDangerousDamages) ? $funnyLookingButDangerousDamages[$smashedPlayerId] : 0;
                 $damageAmount += $funnyLookingButDangerousDamage;
+                $flamingAuraDamage = array_key_exists($smashedPlayerId, $flamingAuraDamages) ? $flamingAuraDamages[$smashedPlayerId] : 0;
+                $damageAmount += $flamingAuraDamage;
                 $exoticArmsDamage = array_key_exists($smashedPlayerId, $exoticArmsDamages) ? $exoticArmsDamages[$smashedPlayerId] : 0;
                 $damageAmount += $exoticArmsDamage;
 
@@ -580,6 +583,21 @@ trait DiceUtilTrait {
             // we add damage only if it's not already counted in smashed players (without tokens)
             if (!in_array($damagePlayerId, $smashedPlayersIds)) {
                 $damages[] = new Damage($damagePlayerId, $funnyLookingButDangerousDamage, $playerId, -(3000 + FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION));
+            }
+        }
+
+        // flaming aura
+        foreach ($flamingAuraDamages as $damagePlayerId => $flamingAuraDamage) {
+            $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+                'playerId' => $damagePlayerId,
+                'player_name' => $this->getPlayerName($damagePlayerId),
+                'number' => $flamingAuraDamage,
+                'card_name' => FLAMING_AURA_CARD,
+            ]);
+
+            // we add damage only if it's not already counted in smashed players (without tokens)
+            if (!in_array($damagePlayerId, $smashedPlayersIds)) {
+                $damages[] = new Damage($damagePlayerId, $flamingAuraDamage, $playerId, -FLAMING_AURA_CARD);
             }
         }
 

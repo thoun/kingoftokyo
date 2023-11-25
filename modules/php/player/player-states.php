@@ -374,17 +374,17 @@ trait PlayerStateTrait {
 
         // burrowing
         $leaversWithBurrowing = $this->getLeaversWithBurrowing();  
-        $burrowingDamages = [];  
+        $damages = [];  
         foreach($leaversWithBurrowing as $leaverWithBurrowingId) {
             $countBurrowing = $this->countCardOfType($leaverWithBurrowingId, BURROWING_CARD);
             if ($countBurrowing > 0) {
-                $burrowingDamages[] = new Damage($playerId, $countBurrowing, $leaverWithBurrowingId, BURROWING_CARD);
+                $damages[] = new Damage($playerId, $countBurrowing, $leaverWithBurrowingId, BURROWING_CARD);
             }
         }
         
         $this->setGlobalVariable(BURROWING_PLAYERS, []); 
 
-        $this->goToState($nextState, $burrowingDamages);
+        $this->goToState($nextState, $damages);
     }
 
         
@@ -392,20 +392,30 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
 
         $playerId = $this->getActivePlayerId();
+        $damages = [];
 
         $preventEnterTokyo = boolval($this->getGameStateValue(PREVENT_ENTER_TOKYO));
         if (!$this->getPlayer($playerId)->eliminated && !$this->inTokyo($playerId) && !$preventEnterTokyo) { // enter only if burrowing doesn't kill player
             $this->moveToTokyoFreeSpot($playerId);
+
+            if ($this->getPlayer($playerId)->turnEnteredTokyo) {
+                // gamma blast
+                $countGammaBlast = $this->countCardOfType($playerId, GAMMA_BLAST_CARD);
+                if ($countGammaBlast > 0) {
+                    $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                    foreach($otherPlayersIds as $pId) {
+                        $damages[] = new Damage($pId, $countGammaBlast, $playerId, GAMMA_BLAST_CARD);
+                    }
+                }
+            }
         }        
         if ($preventEnterTokyo) {
             $this->setGameStateValue(PREVENT_ENTER_TOKYO, 0);
         }
 
-        if ($this->isPowerUpExpansion()) {
-            $this->goToState(ST_PLAYER_AFTER_ENTERING_TOKYO);
-        } else {
-            $this->goToState($this->redirectAfterEnterTokyo($playerId));
-        }
+        $nextState = $this->isPowerUpExpansion() ? ST_PLAYER_AFTER_ENTERING_TOKYO : $this->redirectAfterEnterTokyo($playerId);
+
+        $this->goToState($nextState, $damages);
     }
 
     function stAfterEnteringTokyo() {

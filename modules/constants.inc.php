@@ -158,6 +158,7 @@ define('TARGETED_PLAYER', 'TargetedPlayer');
 
 define('FIRE_BREATHING_DAMAGES', 'FireBreathingDamages');
 define('FUNNY_LOOKING_BUT_DANGEROUS_DAMAGES', 'FunnyLookingButDangerousDamages');
+define('FLAMING_AURA_DAMAGES', 'FlamingAuraDamages');
 define('DICE_COUNTS', 'DiceCounts');
 define('USED_CARDS', 'UsedCards');
 define('JETS_DAMAGES', 'JetsDamages'); // also contains Simian Scamper damages
@@ -237,8 +238,8 @@ define('ZOMBIFY_CARD', 55);
 define('BIOFUEL_CARD', 56);
 define('DRAINING_RAY_CARD', 57);
 define('ELECTRIC_ARMOR_CARD', 58);
-define('FLAMING_AURA_CARD', 59); // TODOORI
-define('GAMMA_BLAST_CARD', 60); // TODOORI
+define('FLAMING_AURA_CARD', 59);
+define('GAMMA_BLAST_CARD', 60);
 define('HUNGRY_URBAVORE_CARD', 61); // TODOORI TEST
 define('JAGGED_TACTICIAN_CARD', 62); // TODOORI
 define('ORB_OF_DOM_CARD', 63); // TODOORI
