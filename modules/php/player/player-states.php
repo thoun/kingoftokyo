@@ -384,7 +384,6 @@ trait PlayerStateTrait {
 
         // jagged tactician
         $leaversWithJaggedTactician = $this->getLeaversWithJaggedTactician();  
-        $damages = [];  
         foreach($leaversWithJaggedTactician as $leaverWithJaggedTacticianId) {
             $countJaggedTactician = $this->countCardOfType($leaverWithJaggedTacticianId, JAGGED_TACTICIAN_CARD);
             if ($countJaggedTactician > 0) {
