@@ -25,12 +25,12 @@ $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115;
 @import 'wickedness-tiles';
 @import 'table';
 @import 'halloween';
-@import 'christmas';
-@import 'power-up';
 @import 'tokyo-tower';
 @import 'activated-expansions-popin';
 @import 'dark-edition';
 @import 'origins';
+@import 'backgrounds';
+@import 'die-skins';
 
 @font-face {
     font-family: 'goodgirl';
@@ -70,12 +70,6 @@ $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115;
     margin-bottom: 8px;
     margin-top: 8px;
   }
-}
-
-html, .mode_3d #game_play_area_background {
-  background: url('img/backgrounds/base.jpg') #102f50;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
 }
 
 .whiteblock {
@@ -588,7 +582,7 @@ button, a {
 }
 
 .anubis-icon {
-  background: url('img/anubis_die_icons.png');
+  background: url('img/dice/anubis_die_icons.png');
   background-size: auto 100%;
   width: 32px;
   height: 32px;

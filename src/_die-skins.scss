@@ -1,0 +1,133 @@
+
+html[data-dice="2"] {
+    .die-item {
+        &.black {
+            background-color: $halloweenOrange;
+            border-color: $halloweenOrange;
+            background-image: url('img/dice/halloween/standard.png');
+        }
+    }
+
+    .log {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/halloween/standard.png');
+        }
+    }
+
+    .gamelogreview {
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/halloween/standard.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/dice/halloween/animations.png');
+    }
+}
+
+html[data-dice="3"] {
+    .die-item {
+        &.black {
+            background-color: #6cc1e3;
+            border-color: #6cc1e3;
+            background-image: url('img/dice/christmas/standard.png');
+        }
+    }
+
+    .log {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/christmas/standard.png');
+        }
+    }
+
+    .gamelogreview {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/christmas/standard.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/dice/christmas/animations.png');
+    }
+}
+
+html[data-dice="4"] {
+    .die-item {
+        &.black {
+            background-color: #157597;
+            border-color: #157597;
+            background-image: url('img/dice/powerup/standard.png');
+        }
+    }
+
+    .log {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/powerup/standard.png');
+        }
+    }
+
+    .gamelogreview {        
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/powerup/standard.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/dice/powerup/animations.png');
+    }
+}
+
+html[data-dice="5"] {
+    .die-item {
+        &.black {
+            background-color: $darkEditionBlack;
+            border-color: $darkEditionBlack;
+            background-image: url('img/dice/dark/standard.png');
+        }
+
+        &.green {
+            background-color: $darkEditionGrey;
+            border-color: $darkEditionGrey;
+            background-image: url('img/dice/dark/inverted.png');  
+        }
+    }
+
+    .log, .gamelogreview, .dijitTooltipContainer, .kot-card[data-design="dark-edition"], .kot-tile {
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/dark/standard.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/dice/dark/animations.png');
+    }
+}
+
+$originsGreen: #129447;
+$originsYellow: #FFE621;
+
+html[data-dice="6"] {
+    .die-item {
+        &.black {
+            background-color: $originsGreen;
+            border-color: $originsGreen;
+            background-image: url('img/dice/origins/standard.png');
+        }
+
+        &.green {
+            background-color: $originsYellow;
+            border-color: $originsYellow;
+            background-image: url('img/dice/origins/inverted.png');  
+        }
+    }
+
+    .log, .gamelogreview, .dijitTooltipContainer, .kot-card[data-design="dark-edition"], .kot-tile {
+        .dice-icon:not(.berserk):not(.die-of-fate) {
+            background-image: url('img/dice/origins/standard.png');
+        }
+    }
+    
+    .animation {
+        background-image: url('img/dice/origins/animations.png');
+    }
+}

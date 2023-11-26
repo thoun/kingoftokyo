@@ -1,0 +1,53 @@
+html, .mode_3d #game_play_area_background {
+    background: url('img/backgrounds/base.jpg') #102f50;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+}
+
+html[data-background="2"] {
+    background: url('img/backgrounds/halloween.jpg') #2e4d0a;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/backgrounds/halloween.jpg') #2e4d0a;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}
+
+html[data-background="3"] {
+    background: url('img/backgrounds/christmas.jpg') #e6f5fc;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/backgrounds/christmas.jpg') #e6f5fc;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}
+
+html[data-background="4"] {
+    background: url('img/backgrounds/powerup.jpg') #06557a;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/backgrounds/powerup.jpg') #06557a;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}
+
+html[data-background="5"] {
+    background: url('img/backgrounds/dark.jpg') #13141a;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+
+    .mode_3d #game_play_area_background {
+        background: url('img/backgrounds/dark.jpg') #13141a;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+}

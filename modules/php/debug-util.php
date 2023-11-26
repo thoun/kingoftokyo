@@ -180,7 +180,7 @@ trait DebugUtilTrait {
             //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_MIGHTY_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
             //$this->debugSetCurseCardInTable(PHARAONIC_SKIN_CURSE_CARD);
-            $this->debugSetCurseCardInTable(ISIS_S_DISGRACE_CURSE_CARD);
+            //$this->debugSetCurseCardInTable(ISIS_S_DISGRACE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
             //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
             //$this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);

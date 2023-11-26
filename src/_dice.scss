@@ -3,7 +3,7 @@
   height: 14px;
   border-radius: 20%;
   background-color: black;
-  background-image: url('img/black_dice.png');
+  background-image: url('img/dice/base/standard.png');
   background-size: auto 100%;
   display: inline-block;
   margin-bottom: -4px;
@@ -16,12 +16,12 @@
 
   &.berserk {
     background-color: #E55204;
-    background-image: url('img/berserk_dice.png');
+    background-image: url('img/dice/berserk_dice.png');
   }
 
   &.die-of-fate {
     background-color: #DAC971;
-    background-image: url('img/anubis_die_icons.png');
+    background-image: url('img/dice/anubis_die_icons.png');
 
     &.eye {
       background-position: 0% 0%;
@@ -181,13 +181,13 @@ $size: 0.25em;
     &.black {
         background-color: black;
         border-color: black;
-        background-image: url('img/black_dice.png');
+        background-image: url('img/dice/base/standard.png');
     }
 
     &.green {
         background-color: $tokyoGreen;
         border-color: $tokyoGreen;
-        background-image: url('img/green_dice.png');  
+        background-image: url('img/dice/base/inverted.png');  
     }
 
     &.berserk {
@@ -317,7 +317,7 @@ $size: 0.25em;
     z-index: 10;
     width: 220px;
     height: 220px;
-    background-image: url('img/animations.png');
+    background-image: url('img/dice/base/animations.png');
     background-size: auto 100%;
     transform: scale(0.15);
     transition: transform 0.5s ease-out;
@@ -524,7 +524,7 @@ $distFromCenter: 1em;
       //border-top: 0;
       //border-bottom: $die4height solid transparent;
 
-      background: url('img/anubis_die_background.jpg');
+      background: url('img/dice/anubis_die_background.jpg');
       border: 0;
       height: $die4height;
       width: $die4size;

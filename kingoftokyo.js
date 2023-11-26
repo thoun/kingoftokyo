@@ -5579,6 +5579,7 @@ var BACKGROUND_FILENAME = {
     3: 'christmas.jpg',
     4: 'powerup.jpg',
     5: 'dark.jpg',
+    6: 'base.jpg', // no special background for Origins
 };
 var PreferencesManager = /** @class */ (function () {
     function PreferencesManager(game) {
@@ -5613,7 +5614,10 @@ var PreferencesManager = /** @class */ (function () {
             return versionNumber;
         }
         else {
-            if (this.game.isDarkEdition()) {
+            if (this.game.isOrigins()) {
+                return 6;
+            }
+            else if (this.game.isDarkEdition()) {
                 return 5;
             }
             else if (this.game.isPowerUpExpansion()) {
@@ -5655,6 +5659,7 @@ var PreferencesManager = /** @class */ (function () {
             case 3: return '0096CC';
             case 4: return '157597';
             case 5: return 'ecda5f';
+            case 6: return '129447';
         }
         return '96c93c';
     };
