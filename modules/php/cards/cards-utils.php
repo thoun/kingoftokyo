@@ -194,6 +194,12 @@ trait CardsUtilTrait {
                     $this->applyLoseEnergy($otherPlayerId, $lostEnergy, $cardType);
                 }
                 break;
+            case MONSTER_PETS_CARD:
+                $playersIds = $this->getPlayersIds();
+                foreach ($playersIds as $pId) {
+                    $this->applyLosePoints($pId, 3, $cardType);
+                }
+                break;
             case BARRICADES_CARD:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 foreach ($otherPlayersIds as $otherPlayerId) {
