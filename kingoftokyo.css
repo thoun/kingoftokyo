@@ -307,7 +307,7 @@
 .dice .die-item.berserk {
   background-color: #E55204;
   border-color: #E55204;
-  background-image: url("img/berserk_dice.png");
+  background-image: url("img/dice/berserk_dice.png");
 }
 .dice .die-item.side1 {
   background-position: 0% 100%;
