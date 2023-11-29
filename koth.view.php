@@ -26,11 +26,11 @@
   
   require_once(APP_BASE_PATH."view/common/game.view.php");
   
-  class view_kingoftokyo_kingoftokyo extends game_view {
+  class view_koth_koth extends game_view {
     function getGameName() {
-        return "kingoftokyo";
-    }
-    
+        return "koth";
+    }    
+
   	function build_page($viewArgs) {		
   	    // Get players & players number
         $players = $this->game->loadPlayersBasicInfos();

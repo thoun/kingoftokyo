@@ -5,7 +5,7 @@
       "module": "none",
       "lib": ["dom", "esnext"],  
       "sourceMap": false,
-      "outFile": "kingoftokyo.js",
+      "outFile": "koth.js",
     },
     "files": [
         "src/framework.d.ts",
