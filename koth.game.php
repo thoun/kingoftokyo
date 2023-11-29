@@ -52,7 +52,7 @@ require_once('modules/php/evolution-cards/evolution-cards-states.php');
 require_once('modules/php/intervention.php');
 require_once('modules/php/debug-util.php');
 
-class KingOfTokyo extends Table {
+class Koth extends Table {
     use KOT\States\UtilTrait;
     use KOT\States\RedirectionTrait;
     use KOT\States\MonsterTrait;
@@ -155,7 +155,7 @@ class KingOfTokyo extends Table {
 	}
 
     protected function getGameName() {
-        return "kingoftokyo";
+        return "koth";
     }
 
     /*

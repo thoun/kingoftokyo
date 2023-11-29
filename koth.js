@@ -43,7 +43,7 @@ function transitionToObjectAndAttach(game, object, destinationId, zoom) {
             var deltaY = destinationBR.top - originBR.top;
             object.style.zIndex = '10';
             object.style.transition = "transform 0.5s linear";
-            object.style.transform = "translate(".concat(deltaX / zoom, "px, ").concat(deltaY / zoom, "px)");
+            object.style.transform = "translate(" + deltaX / zoom + "px, " + deltaY / zoom + "px)";
             setTimeout(function () {
                 object.style.zIndex = null;
                 object.style.transition = null;
@@ -83,233 +83,9 @@ function formatTextIcons(rawText) {
         .replace(/\[ufoToken\]/ig, '<span class="ufo token"></span>')
         .replace(/\[alienoidToken\]/ig, '<span class="alienoid token"></span>')
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
-        .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"))
-        .replace(/\[discard\]/ig, "<span class=\"card-discard-text\"><span class=\"outline\">".concat(_('Discard'), "</span><span class=\"text\">").concat(_('Discard'), "</span></span>"));
+        .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">" + _('Keep') + "</span><span class=\"text\">" + _('Keep') + "</span></span>")
+        .replace(/\[discard\]/ig, "<span class=\"card-discard-text\"><span class=\"outline\">" + _('Discard') + "</span><span class=\"text\">" + _('Discard') + "</span></span>");
 }
-var DEFAULT_ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
-var ZoomManager = /** @class */ (function () {
-    /**
-     * Place the settings.element in a zoom wrapper and init zoomControls.
-     *
-     * @param settings: a `ZoomManagerSettings` object
-     */
-    function ZoomManager(settings) {
-        var _this = this;
-        var _a, _b, _c, _d, _e;
-        this.settings = settings;
-        if (!settings.element) {
-            throw new DOMException('You need to set the element to wrap in the zoom element');
-        }
-        this._zoomLevels = (_a = settings.zoomLevels) !== null && _a !== void 0 ? _a : DEFAULT_ZOOM_LEVELS;
-        this._zoom = this.settings.defaultZoom || 1;
-        if (this.settings.localStorageZoomKey) {
-            var zoomStr = localStorage.getItem(this.settings.localStorageZoomKey);
-            if (zoomStr) {
-                this._zoom = Number(zoomStr);
-            }
-        }
-        this.wrapper = document.createElement('div');
-        this.wrapper.id = 'bga-zoom-wrapper';
-        this.wrapElement(this.wrapper, settings.element);
-        this.wrapper.appendChild(settings.element);
-        settings.element.classList.add('bga-zoom-inner');
-        if ((_b = settings.smooth) !== null && _b !== void 0 ? _b : true) {
-            settings.element.dataset.smooth = 'true';
-            settings.element.addEventListener('transitionend', function () { return _this.zoomOrDimensionChanged(); });
-        }
-        if ((_d = (_c = settings.zoomControls) === null || _c === void 0 ? void 0 : _c.visible) !== null && _d !== void 0 ? _d : true) {
-            this.initZoomControls(settings);
-        }
-        if (this._zoom !== 1) {
-            this.setZoom(this._zoom);
-        }
-        window.addEventListener('resize', function () {
-            var _a;
-            _this.zoomOrDimensionChanged();
-            if ((_a = _this.settings.autoZoom) === null || _a === void 0 ? void 0 : _a.expectedWidth) {
-                _this.setAutoZoom();
-            }
-        });
-        if (window.ResizeObserver) {
-            new ResizeObserver(function () { return _this.zoomOrDimensionChanged(); }).observe(settings.element);
-        }
-        if ((_e = this.settings.autoZoom) === null || _e === void 0 ? void 0 : _e.expectedWidth) {
-            this.setAutoZoom();
-        }
-    }
-    Object.defineProperty(ZoomManager.prototype, "zoom", {
-        /**
-         * Returns the zoom level
-         */
-        get: function () {
-            return this._zoom;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ZoomManager.prototype, "zoomLevels", {
-        /**
-         * Returns the zoom levels
-         */
-        get: function () {
-            return this._zoomLevels;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    ZoomManager.prototype.setAutoZoom = function () {
-        var _this = this;
-        var _a, _b, _c;
-        var zoomWrapperWidth = document.getElementById('bga-zoom-wrapper').clientWidth;
-        if (!zoomWrapperWidth) {
-            setTimeout(function () { return _this.setAutoZoom(); }, 200);
-            return;
-        }
-        var expectedWidth = (_a = this.settings.autoZoom) === null || _a === void 0 ? void 0 : _a.expectedWidth;
-        var newZoom = this.zoom;
-        while (newZoom > this._zoomLevels[0] && newZoom > ((_c = (_b = this.settings.autoZoom) === null || _b === void 0 ? void 0 : _b.minZoomLevel) !== null && _c !== void 0 ? _c : 0) && zoomWrapperWidth / newZoom < expectedWidth) {
-            newZoom = this._zoomLevels[this._zoomLevels.indexOf(newZoom) - 1];
-        }
-        if (this._zoom == newZoom) {
-            if (this.settings.localStorageZoomKey) {
-                localStorage.setItem(this.settings.localStorageZoomKey, '' + this._zoom);
-            }
-        }
-        else {
-            this.setZoom(newZoom);
-        }
-    };
-    /**
-     * Sets the available zoomLevels and new zoom to the provided values.
-     * @param zoomLevels the new array of zoomLevels that can be used.
-     * @param newZoom if provided the zoom will be set to this value, if not the last element of the zoomLevels array will be set as the new zoom
-     */
-    ZoomManager.prototype.setZoomLevels = function (zoomLevels, newZoom) {
-        if (!zoomLevels || zoomLevels.length <= 0) {
-            return;
-        }
-        this._zoomLevels = zoomLevels;
-        var zoomIndex = newZoom && zoomLevels.includes(newZoom) ? this._zoomLevels.indexOf(newZoom) : this._zoomLevels.length - 1;
-        this.setZoom(this._zoomLevels[zoomIndex]);
-    };
-    /**
-     * Set the zoom level. Ideally, use a zoom level in the zoomLevels range.
-     * @param zoom zool level
-     */
-    ZoomManager.prototype.setZoom = function (zoom) {
-        var _a, _b, _c, _d;
-        if (zoom === void 0) { zoom = 1; }
-        this._zoom = zoom;
-        if (this.settings.localStorageZoomKey) {
-            localStorage.setItem(this.settings.localStorageZoomKey, '' + this._zoom);
-        }
-        var newIndex = this._zoomLevels.indexOf(this._zoom);
-        (_a = this.zoomInButton) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', newIndex === this._zoomLevels.length - 1);
-        (_b = this.zoomOutButton) === null || _b === void 0 ? void 0 : _b.classList.toggle('disabled', newIndex === 0);
-        this.settings.element.style.transform = zoom === 1 ? '' : "scale(".concat(zoom, ")");
-        (_d = (_c = this.settings).onZoomChange) === null || _d === void 0 ? void 0 : _d.call(_c, this._zoom);
-        this.zoomOrDimensionChanged();
-    };
-    /**
-     * Call this method for the browsers not supporting ResizeObserver, everytime the table height changes, if you know it.
-     * If the browsert is recent enough (>= Safari 13.1) it will just be ignored.
-     */
-    ZoomManager.prototype.manualHeightUpdate = function () {
-        if (!window.ResizeObserver) {
-            this.zoomOrDimensionChanged();
-        }
-    };
-    /**
-     * Everytime the element dimensions changes, we update the style. And call the optional callback.
-     */
-    ZoomManager.prototype.zoomOrDimensionChanged = function () {
-        var _a, _b;
-        this.settings.element.style.width = "".concat(this.wrapper.getBoundingClientRect().width / this._zoom, "px");
-        this.wrapper.style.height = "".concat(this.settings.element.getBoundingClientRect().height, "px");
-        (_b = (_a = this.settings).onDimensionsChange) === null || _b === void 0 ? void 0 : _b.call(_a, this._zoom);
-    };
-    /**
-     * Simulates a click on the Zoom-in button.
-     */
-    ZoomManager.prototype.zoomIn = function () {
-        if (this._zoom === this._zoomLevels[this._zoomLevels.length - 1]) {
-            return;
-        }
-        var newIndex = this._zoomLevels.indexOf(this._zoom) + 1;
-        this.setZoom(newIndex === -1 ? 1 : this._zoomLevels[newIndex]);
-    };
-    /**
-     * Simulates a click on the Zoom-out button.
-     */
-    ZoomManager.prototype.zoomOut = function () {
-        if (this._zoom === this._zoomLevels[0]) {
-            return;
-        }
-        var newIndex = this._zoomLevels.indexOf(this._zoom) - 1;
-        this.setZoom(newIndex === -1 ? 1 : this._zoomLevels[newIndex]);
-    };
-    /**
-     * Changes the color of the zoom controls.
-     */
-    ZoomManager.prototype.setZoomControlsColor = function (color) {
-        if (this.zoomControls) {
-            this.zoomControls.dataset.color = color;
-        }
-    };
-    /**
-     * Set-up the zoom controls
-     * @param settings a `ZoomManagerSettings` object.
-     */
-    ZoomManager.prototype.initZoomControls = function (settings) {
-        var _this = this;
-        var _a, _b, _c, _d, _e, _f;
-        this.zoomControls = document.createElement('div');
-        this.zoomControls.id = 'bga-zoom-controls';
-        this.zoomControls.dataset.position = (_b = (_a = settings.zoomControls) === null || _a === void 0 ? void 0 : _a.position) !== null && _b !== void 0 ? _b : 'top-right';
-        this.zoomOutButton = document.createElement('button');
-        this.zoomOutButton.type = 'button';
-        this.zoomOutButton.addEventListener('click', function () { return _this.zoomOut(); });
-        if ((_c = settings.zoomControls) === null || _c === void 0 ? void 0 : _c.customZoomOutElement) {
-            settings.zoomControls.customZoomOutElement(this.zoomOutButton);
-        }
-        else {
-            this.zoomOutButton.classList.add("bga-zoom-out-icon");
-        }
-        this.zoomInButton = document.createElement('button');
-        this.zoomInButton.type = 'button';
-        this.zoomInButton.addEventListener('click', function () { return _this.zoomIn(); });
-        if ((_d = settings.zoomControls) === null || _d === void 0 ? void 0 : _d.customZoomInElement) {
-            settings.zoomControls.customZoomInElement(this.zoomInButton);
-        }
-        else {
-            this.zoomInButton.classList.add("bga-zoom-in-icon");
-        }
-        this.zoomControls.appendChild(this.zoomOutButton);
-        this.zoomControls.appendChild(this.zoomInButton);
-        this.wrapper.appendChild(this.zoomControls);
-        this.setZoomControlsColor((_f = (_e = settings.zoomControls) === null || _e === void 0 ? void 0 : _e.color) !== null && _f !== void 0 ? _f : 'black');
-    };
-    /**
-     * Wraps an element around an existing DOM element
-     * @param wrapper the wrapper element
-     * @param element the existing element
-     */
-    ZoomManager.prototype.wrapElement = function (wrapper, element) {
-        element.parentNode.insertBefore(wrapper, element);
-        wrapper.appendChild(element);
-    };
-    return ZoomManager;
-}());
-var BgaAnimation = /** @class */ (function () {
-    function BgaAnimation(animationFunction, settings) {
-        this.animationFunction = animationFunction;
-        this.settings = settings;
-        this.played = null;
-        this.result = null;
-        this.playWhenNoAnimation = false;
-    }
-    return BgaAnimation;
-}());
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -2409,7 +2185,7 @@ var CardsManager = /** @class */ (function (_super) {
     function CardsManager(game) {
         var _this = _super.call(this, game, {
             animationManager: game.animationManager,
-            getId: function (card) { return "card-".concat(card.id); },
+            getId: function (card) { return "card-" + card.id; },
             setupDiv: function (card, div) {
                 div.classList.add('kot-card');
                 div.dataset.cardId = '' + card.id;
@@ -2431,10 +2207,10 @@ var CardsManager = /** @class */ (function (_super) {
             setupBackDiv: function (card, div) {
                 var darkEdition = _this.game.isDarkEdition();
                 if (card.type >= 0 && card.type < 200) {
-                    div.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "card-back.jpg')");
+                    div.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "card-back.jpg')";
                 }
                 else if ((card.type >= 200 && card.type < 300) || card.type == -200) {
-                    div.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/card-back-costume.jpg')");
+                    div.style.backgroundImage = "url('" + g_gamethemeurl + "img/card-back-costume.jpg')";
                 }
                 else if (FLIPPABLE_CARDS.includes(card.type)) {
                     _this.setFrontBackground(div, card.type, card.side);
@@ -2460,16 +2236,16 @@ var CardsManager = /** @class */ (function (_super) {
         var divId = this.getId(card);
         var div = document.getElementById(divId);
         if (type === 'tile') {
-            var html = "<div id=\"".concat(divId, "-mimic-token-tile\" class=\"card-token mimic-tile stockitem\"></div>");
+            var html = "<div id=\"" + divId + "-mimic-token-tile\" class=\"card-token mimic-tile stockitem\"></div>";
             dojo.place(html, divId);
             div.classList.add('wickedness-tile-stock');
-            wickednessTiles.setDivAsCard(document.getElementById("".concat(divId, "-mimic-token-tile")), 106);
+            wickednessTiles.setDivAsCard(document.getElementById(divId + "-mimic-token-tile"), 106);
         }
         else {
             var div_1 = document.getElementById(divId);
             var cardPlaced = div_1.dataset.placed ? JSON.parse(div_1.dataset.placed) : { tokens: [] };
             cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
-            var html = "<div id=\"".concat(divId, "-mimic-token\" style=\"left: ").concat(cardPlaced.mimicToken.x - 16, "px; top: ").concat(cardPlaced.mimicToken.y - 16, "px;\" class=\"card-token mimic token\"></div>");
+            var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token mimic token\"></div>";
             dojo.place(html, divId);
             div_1.dataset.placed = JSON.stringify(cardPlaced);
         }
@@ -2478,16 +2254,16 @@ var CardsManager = /** @class */ (function (_super) {
         var divId = this.getId(card);
         var div = document.getElementById(divId);
         if (type === 'tile') {
-            if (document.getElementById("".concat(divId, "-mimic-token-tile"))) {
-                this.game.fadeOutAndDestroy("".concat(divId, "-mimic-token-tile"));
+            if (document.getElementById(divId + "-mimic-token-tile")) {
+                this.game.fadeOutAndDestroy(divId + "-mimic-token-tile");
             }
             div.classList.remove('wickedness-tile-stock');
         }
         else {
             var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
             cardPlaced.mimicToken = null;
-            if (document.getElementById("".concat(divId, "-mimic-token"))) {
-                this.game.fadeOutAndDestroy("".concat(divId, "-mimic-token"));
+            if (document.getElementById(divId + "-mimic-token")) {
+                this.game.fadeOutAndDestroy(divId + "-mimic-token");
             }
             div.dataset.placed = JSON.stringify(cardPlaced);
         }
@@ -2528,10 +2304,10 @@ var CardsManager = /** @class */ (function (_super) {
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
-                this.game.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
+                this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
             }
             else {
-                this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+                this.game.fadeOutAndDestroy(divId + "-token" + i);
             }
         }
         placed.splice(card.tokens, placed.length - card.tokens);
@@ -2539,9 +2315,9 @@ var CardsManager = /** @class */ (function (_super) {
         for (var i = placed.length; i < card.tokens; i++) {
             var newPlace = this.getPlaceOnCard(cardPlaced);
             placed.push(newPlace);
-            var html = "<div id=\"".concat(divId, "-token").concat(i, "\" style=\"left: ").concat(newPlace.x - 16, "px; top: ").concat(newPlace.y - 16, "px;\" class=\"card-token ");
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
             if (cardType === 28) {
-                html += "energy-cube cube-shape-".concat(Math.floor(Math.random() * 5));
+                html += "energy-cube cube-shape-" + Math.floor(Math.random() * 5);
             }
             else if (cardType === 41) {
                 html += "smoke-cloud token";
@@ -2557,8 +2333,8 @@ var CardsManager = /** @class */ (function (_super) {
             return;
         }
         cards.forEach(function (card) {
-            stock.addToStockWithId(card.type, "".concat(card.id), from);
-            var cardDiv = document.getElementById("".concat(stock.container_div.id, "_item_").concat(card.id));
+            stock.addToStockWithId(card.type, "" + card.id, from);
+            var cardDiv = document.getElementById(stock.container_div.id + "_item_" + card.id);
             cardDiv.dataset.side = '' + card.side;
             if (card.side !== null) {
                 _this.game.cardsManager.updateFlippableCardTooltip(cardDiv);
@@ -2570,14 +2346,14 @@ var CardsManager = /** @class */ (function (_super) {
         if (sourceStock === destinationStock) {
             return;
         }
-        var sourceStockItemId = "".concat(sourceStock.container_div.id, "_item_").concat(card.id);
+        var sourceStockItemId = sourceStock.container_div.id + "_item_" + card.id;
         if (document.getElementById(sourceStockItemId)) {
             this.addCardsToStock(destinationStock, [card], sourceStockItemId);
             //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
-            sourceStock.removeFromStockById("".concat(card.id));
+            sourceStock.removeFromStockById("" + card.id);
         }
         else {
-            console.warn("".concat(sourceStockItemId, " not found in "), sourceStock);
+            console.warn(sourceStockItemId + " not found in ", sourceStock);
             //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
@@ -2852,7 +2628,7 @@ var CardsManager = /** @class */ (function (_super) {
                 if (colorMapping_1 === null || colorMapping_1 === void 0 ? void 0 : colorMapping_1[color]) {
                     mappedColor = colorMapping_1[color];
                 }
-                var span = "<span style=\"-webkit-text-stroke-color: #".concat(mappedColor, ";\">");
+                var span = "<span style=\"-webkit-text-stroke-color: #" + mappedColor + ";\">";
                 if (first_1) {
                     first_1 = false;
                 }
@@ -2860,7 +2636,7 @@ var CardsManager = /** @class */ (function (_super) {
                     span = "</span>" + span;
                 }
                 return span;
-            })) + "".concat(first_1 ? '' : '</span>');
+            })) + ("" + (first_1 ? '' : '</span>'));
         }
         return null;
     };
@@ -2918,7 +2694,7 @@ var CardsManager = /** @class */ (function (_super) {
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
             case 47: return _("When you lose at least 2[Heart] you <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
-            case 49: return "<div><i>".concat(_("You CANNOT buy this card while in TOKYO"), "</i></div>") + _("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
+            case 49: return "<div><i>" + _("You CANNOT buy this card while in TOKYO") + "</i></div>" + _("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
             case 50: return _("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
             case 51: return '<div><strong>+4[Energy] +4[Heart]</strong></div>' + _("<strong>Use an extra die.</strong> If you ever end one of your turns with at least [dice3], you lose all your [Heart].");
             case 52: return _("<strong>Any Monster who makes you lose [Heart] loses 1[Heart]</strong> as well.");
@@ -2993,24 +2769,24 @@ var CardsManager = /** @class */ (function (_super) {
             return _("The Golden Scarab affects certain Curse cards. At the start of the game, the player who will play last gets the Golden Scarab.");
         }
         var cost = this.getCardCost(cardTypeId);
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>".concat(this.getCardName(cardTypeId, 'text-only', side), "</strong></p>");
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only', side) + "</strong></p>";
         if (cost !== null) {
-            tooltip += "<p class=\"cost\">".concat(dojo.string.substitute(_("Cost : ${cost}"), { 'cost': cost }), " <span class=\"icon energy\"></span></p>");
+            tooltip += "<p class=\"cost\">" + dojo.string.substitute(_("Cost : ${cost}"), { 'cost': cost }) + " <span class=\"icon energy\"></span></p>";
         }
-        tooltip += "<p>".concat(formatTextIcons(this.getCardDescription(cardTypeId, side)), "</p>");
+        tooltip += "<p>" + formatTextIcons(this.getCardDescription(cardTypeId, side)) + "</p>";
         if (FLIPPABLE_CARDS.includes(cardTypeId) && side !== null) {
             var otherSide = side == 1 ? 0 : 1;
             var tempDiv = document.createElement('div');
             tempDiv.classList.add('stockitem');
-            tempDiv.style.width = "".concat(CARD_WIDTH, "px");
-            tempDiv.style.height = "".concat(CARD_HEIGHT, "px");
+            tempDiv.style.width = CARD_WIDTH + "px";
+            tempDiv.style.height = CARD_HEIGHT + "px";
             tempDiv.style.position = "relative";
-            tempDiv.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/").concat(this.getImageName(cardTypeId), "-cards.jpg')");
-            tempDiv.style.backgroundPosition = "-".concat(otherSide * 100, "% 0%");
+            tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + this.getImageName(cardTypeId) + "-cards.jpg')";
+            tempDiv.style.backgroundPosition = "-" + otherSide * 100 + "% 0%";
             document.body.appendChild(tempDiv);
             this.setDivAsCard(tempDiv, cardTypeId, otherSide);
             document.body.removeChild(tempDiv);
-            tooltip += "<p>".concat(_("Other side :"), "<br>").concat(tempDiv.outerHTML, "</p>");
+            tooltip += "<p>" + _("Other side :") + "<br>" + tempDiv.outerHTML + "</p>";
         }
         tooltip += "</div>";
         return tooltip;
@@ -3050,7 +2826,7 @@ var CardsManager = /** @class */ (function (_super) {
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType, side));
         var position = this.getCardNamePosition(cardType, side);
-        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" ".concat(position ? "style=\"left: ".concat(position[0], "px; top: ").concat(position[1], "px;\"") : '', ">\n            <div class=\"outline\">").concat(this.getCardName(cardType, 'span', side), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType, 'text-only', side), "</div>\n        </div>\n        <div class=\"type-wrapper ").concat(this.getCardTypeClass(cardType), "\">\n            <div class=\"outline\">").concat(type, "</div>\n            <div class=\"text\">").concat(type, "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">").concat(description, "</div>");
+        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" " + (position ? "style=\"left: " + position[0] + "px; top: " + position[1] + "px;\"" : '') + ">\n            <div class=\"outline\">" + this.getCardName(cardType, 'span', side) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType, 'text-only', side) + "</div>\n        </div>\n        <div class=\"type-wrapper " + this.getCardTypeClass(cardType) + "\">\n            <div class=\"outline\">" + type + "</div>\n            <div class=\"text\">" + type + "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">" + description + "</div>";
         if (this.game.isDarkEdition() && DARK_EDITION_CARDS_MAIN_COLOR[cardType]) {
             cardDiv.style.setProperty('--main-color', DARK_EDITION_CARDS_MAIN_COLOR[cardType]);
         }
@@ -3060,14 +2836,14 @@ var CardsManager = /** @class */ (function (_super) {
             textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         }
         var height = Math.min(textHeight, 116);
-        cardDiv.getElementsByClassName('bottom')[0].style.top = "".concat(166 - height, "px");
-        cardDiv.getElementsByClassName('type-wrapper')[0].style.top = "".concat(168 - height, "px");
+        cardDiv.getElementsByClassName('bottom')[0].style.top = 166 - height + "px";
+        cardDiv.getElementsByClassName('type-wrapper')[0].style.top = 168 - height + "px";
         var nameTopPosition = (position === null || position === void 0 ? void 0 : position[1]) || 14;
         var nameWrapperDiv = cardDiv.getElementsByClassName('name-wrapper')[0];
         var nameDiv = nameWrapperDiv.getElementsByClassName('text')[0];
         var spaceBetweenDescriptionAndName = (155 - height) - (nameTopPosition + nameDiv.clientHeight);
         if (spaceBetweenDescriptionAndName < 0) {
-            nameWrapperDiv.style.top = "".concat(Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName), "px");
+            nameWrapperDiv.style.top = Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName) + "px";
         }
     };
     CardsManager.prototype.setFrontBackground = function (cardDiv, cardType, side) {
@@ -3077,47 +2853,47 @@ var CardsManager = /** @class */ (function (_super) {
         if (cardType < 100) {
             var originsCard = cardType >= 56;
             var keepcardsurl = originsCard ?
-                "".concat(g_gamethemeurl, "img/cards/cards-keep-origins.jpg") :
-                "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "keep-cards.jpg");
-            cardDiv.style.backgroundImage = "url('".concat(keepcardsurl, "')");
+                g_gamethemeurl + "img/cards/cards-keep-origins.jpg" :
+                g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "keep-cards.jpg";
+            cardDiv.style.backgroundImage = "url('" + keepcardsurl + "')";
             var index = originsCard ?
                 cardType - 56 :
                 KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
-            cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
-            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100 / (originsCard ? 1 : 4), "%");
+            cardDiv.style.backgroundPositionX = (index % 10) * 100 / 9 + "%";
+            cardDiv.style.backgroundPositionY = Math.floor(index / 10) * 100 / (originsCard ? 1 : 4) + "%";
             if (cardType == 38 && this.game.isOrigins()) {
-                cardDiv.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/cards/cards-regeneration-origins.jpg')");
+                cardDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/cards/cards-regeneration-origins.jpg')";
                 cardDiv.style.backgroundPosition = "0% 0%";
             }
         }
         else if (cardType < 200) {
             var originsCard = cardType >= 120;
             var discardcardsurl = originsCard ?
-                "".concat(g_gamethemeurl, "img/cards/cards-discard-origins.jpg") :
-                "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "discard-cards.jpg");
+                g_gamethemeurl + "img/cards/cards-discard-origins.jpg" :
+                g_gamethemeurl + "img/" + (darkEdition ? 'dark/' : '') + "discard-cards.jpg";
             var index = originsCard ?
                 cardType - 120 :
                 DISCARD_CARDS_LIST[version].findIndex(function (type) { return type == cardType % 100; });
-            cardDiv.style.backgroundImage = "url('".concat(discardcardsurl, "')");
-            cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
-            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100, "%");
+            cardDiv.style.backgroundImage = "url('" + discardcardsurl + "')";
+            cardDiv.style.backgroundPositionX = (index % 10) * 100 / 9 + "%";
+            cardDiv.style.backgroundPositionY = Math.floor(index / 10) * 100 + "%";
         }
         else if (cardType < 300) {
             var index = COSTUME_CARDS_LIST.findIndex(function (type) { return type == cardType % 100; });
-            var costumecardsurl = "".concat(g_gamethemeurl, "img/costume-cards.jpg");
-            cardDiv.style.backgroundImage = "url('".concat(costumecardsurl, "')");
-            cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
-            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100, "%");
+            var costumecardsurl = g_gamethemeurl + "img/costume-cards.jpg";
+            cardDiv.style.backgroundImage = "url('" + costumecardsurl + "')";
+            cardDiv.style.backgroundPositionX = (index % 10) * 100 / 9 + "%";
+            cardDiv.style.backgroundPositionY = Math.floor(index / 10) * 100 + "%";
         }
         else if (cardType < 400) {
-            var transformationcardsurl = "".concat(g_gamethemeurl, "img/transformation-cards.jpg");
-            cardDiv.style.backgroundImage = "url('".concat(transformationcardsurl, "')");
-            cardDiv.style.backgroundPositionX = "".concat(side * 100, "%");
+            var transformationcardsurl = g_gamethemeurl + "img/transformation-cards.jpg";
+            cardDiv.style.backgroundImage = "url('" + transformationcardsurl + "')";
+            cardDiv.style.backgroundPositionX = side * 100 + "%";
             cardDiv.style.backgroundPositionY = '0%';
         }
         else if (cardType == 999) {
-            var anubiscardsurl = "".concat(g_gamethemeurl, "img/anubis-cards.jpg");
-            cardDiv.style.backgroundImage = "url(".concat(anubiscardsurl);
+            var anubiscardsurl = g_gamethemeurl + "img/anubis-cards.jpg";
+            cardDiv.style.backgroundImage = "url(" + anubiscardsurl;
             cardDiv.style.backgroundPositionX = '0%';
             cardDiv.style.backgroundPositionY = '0%';
         }
@@ -3139,16 +2915,16 @@ var CardsManager = /** @class */ (function (_super) {
     CardsManager.prototype.generateCardDiv = function (card) {
         var tempDiv = document.createElement('div');
         tempDiv.classList.add('stockitem');
-        tempDiv.style.width = "".concat(CARD_WIDTH, "px");
-        tempDiv.style.height = "".concat(CARD_HEIGHT, "px");
+        tempDiv.style.width = CARD_WIDTH + "px";
+        tempDiv.style.height = CARD_HEIGHT + "px";
         tempDiv.style.position = "relative";
-        tempDiv.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/").concat(this.getImageName(card.type), "-cards.jpg')");
+        tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/" + this.getImageName(card.type) + "-cards.jpg')";
         var imagePosition = ((card.type + card.side) % 100) - 1;
         var image_items_per_row = 10;
         var row = Math.floor(imagePosition / image_items_per_row);
         var xBackgroundPercent = (imagePosition - (row * image_items_per_row)) * 100;
         var yBackgroundPercent = row * 100;
-        tempDiv.style.backgroundPosition = "-".concat(xBackgroundPercent, "% -").concat(yBackgroundPercent, "%");
+        tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% -" + yBackgroundPercent + "%";
         document.body.appendChild(tempDiv);
         this.setDivAsCard(tempDiv, card.type + (card.side || 0));
         document.body.removeChild(tempDiv);
@@ -3158,19 +2934,19 @@ var CardsManager = /** @class */ (function (_super) {
         var mimickedCardText = '-';
         if (mimickedCard) {
             var tempDiv = this.generateCardDiv(mimickedCard);
-            mimickedCardText = "<br>".concat(tempDiv.outerHTML);
+            mimickedCardText = "<br>" + tempDiv.outerHTML;
         }
         return mimickedCardText;
     };
     CardsManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
-        this.game.addTooltipHtml(mimicCardId, this.getTooltip(27) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
+        this.game.addTooltipHtml(mimicCardId, this.getTooltip(27) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
     CardsManager.prototype.placeSuperiorAlienTechnologyTokenOnCard = function (card) {
         var divId = this.getId(card);
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.superiorAlienTechnologyToken = this.getPlaceOnCard(cardPlaced);
-        var html = "<div id=\"".concat(divId, "-superior-alien-technology-token\" style=\"left: ").concat(cardPlaced.superiorAlienTechnologyToken.x - 16, "px; top: ").concat(cardPlaced.superiorAlienTechnologyToken.y - 16, "px;\" class=\"card-token ufo token\"></div>");
+        var html = "<div id=\"" + divId + "-superior-alien-technology-token\" style=\"left: " + (cardPlaced.superiorAlienTechnologyToken.x - 16) + "px; top: " + (cardPlaced.superiorAlienTechnologyToken.y - 16) + "px;\" class=\"card-token ufo token\"></div>";
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
@@ -3181,11 +2957,11 @@ var CurseCardsManager = /** @class */ (function (_super) {
     function CurseCardsManager(game) {
         var _this = _super.call(this, game, {
             animationManager: game.animationManager,
-            getId: function (card) { return "curse-card-".concat(card.id); },
+            getId: function (card) { return "curse-card-" + card.id; },
             setupDiv: function (card, div) { return div.classList.add('kot-curse-card'); },
             setupFrontDiv: function (card, div) {
                 _this.setDivAsCard(div, card.type);
-                div.id = "".concat(_super.prototype.getId.call(_this, card), "-front");
+                div.id = _super.prototype.getId.call(_this, card) + "-front";
                 _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
             },
             isCardVisible: function (card) { return Boolean(card.type); },
@@ -3312,7 +3088,7 @@ var CurseCardsManager = /** @class */ (function (_super) {
         return null;
     };
     CurseCardsManager.prototype.getTooltip = function (cardTypeId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>".concat(this.getCardName(cardTypeId), "</strong></p>\n            <p><strong>").concat(_("Permanent effect"), " :</strong> ").concat(formatTextIcons(this.getPermanentEffect(cardTypeId)), "</p>\n            <p><strong>").concat(_("Ankh effect"), " :</strong> ").concat(formatTextIcons(this.getAnkhEffect(cardTypeId)), "</p>\n            <p><strong>").concat(_("Snake effect"), " :</strong> ").concat(formatTextIcons(this.getSnakeEffect(cardTypeId)), "</p>\n        </div>");
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId) + "</strong></p>\n            <p><strong>" + _("Permanent effect") + " :</strong> " + formatTextIcons(this.getPermanentEffect(cardTypeId)) + "</p>\n            <p><strong>" + _("Ankh effect") + " :</strong> " + formatTextIcons(this.getAnkhEffect(cardTypeId)) + "</p>\n            <p><strong>" + _("Snake effect") + " :</strong> " + formatTextIcons(this.getSnakeEffect(cardTypeId)) + "</p>\n        </div>";
         return tooltip;
     };
     CurseCardsManager.prototype.setDivAsCard = function (cardDiv, cardType) {
@@ -3320,14 +3096,14 @@ var CurseCardsManager = /** @class */ (function (_super) {
         var permanentEffect = formatTextIcons(this.getPermanentEffect(cardType));
         var ankhEffect = formatTextIcons(this.getAnkhEffect(cardType));
         var snakeEffect = formatTextIcons(this.getSnakeEffect(cardType));
-        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">".concat(this.getCardName(cardType), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType), "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div class=\"effect-text\">").concat(permanentEffect, "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div class=\"effect-text\">").concat(ankhEffect, "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div class=\"effect-text\">").concat(snakeEffect, "</div></div>");
+        cardDiv.innerHTML = "\n        <div class=\"name-wrapper\">\n            <div class=\"outline curse\">" + this.getCardName(cardType) + "</div>\n            <div class=\"text\">" + this.getCardName(cardType) + "</div>\n        </div>\n        \n        <div class=\"effect-wrapper permanent-effect-wrapper\"><div class=\"effect-text\">" + permanentEffect + "</div></div>\n        <div class=\"effect-wrapper ankh-effect-wrapper\"><div class=\"effect-text\">" + ankhEffect + "</div></div>\n        <div class=\"effect-wrapper snake-effect-wrapper\"><div class=\"effect-text\">" + snakeEffect + "</div></div>";
         Array.from(cardDiv.getElementsByClassName('effect-wrapper')).forEach(function (wrapperDiv) {
             if (wrapperDiv.children[0].clientHeight > wrapperDiv.clientHeight) {
                 wrapperDiv.style.fontSize = '6pt';
             }
         });
         ['permanent', 'ankh', 'snake'].forEach(function (effectType) {
-            var effectWrapper = cardDiv.getElementsByClassName("".concat(effectType, "-effect-wrapper"))[0];
+            var effectWrapper = cardDiv.getElementsByClassName(effectType + "-effect-wrapper")[0];
             var effectText = effectWrapper.getElementsByClassName('effect-text')[0];
             if (effectText.clientHeight > effectWrapper.clientHeight) {
                 effectText.classList.add('overflow', effectType);
@@ -3342,12 +3118,12 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
     function EvolutionCardsManager(game) {
         var _this = _super.call(this, game, {
             animationManager: game.animationManager,
-            getId: function (card) { return "evolution-card-".concat(card.id); },
+            getId: function (card) { return "evolution-card-" + card.id; },
             setupDiv: function (card, div) { return div.classList.add('kot-evolution'); },
             setupFrontDiv: function (card, div) {
-                div.style.backgroundPositionX = "".concat((MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1) * 100 / MONSTERS_WITH_POWER_UP_CARDS.length, "%");
+                div.style.backgroundPositionX = (MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1) * 100 / MONSTERS_WITH_POWER_UP_CARDS.length + "%";
                 _this.setDivAsCard(div, card.type);
-                div.id = "".concat(_super.prototype.getId.call(_this, card), "-front");
+                div.id = _super.prototype.getId.call(_this, card) + "-front";
                 _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
                 if (card.tokens > 0) {
                     _this.placeTokensOnCard(card);
@@ -3366,17 +3142,17 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         var _this = this;
         var html = "<div id=\"all-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">";
         MONSTERS_WITH_POWER_UP_CARDS.forEach(function (monster) {
-            return html += "<div id=\"all-evolution-cards-".concat(monster, "\" style=\"display: flex; flex-wrap: nowrap;\"></div>");
+            return html += "<div id=\"all-evolution-cards-" + monster + "\" style=\"display: flex; flex-wrap: nowrap;\"></div>";
         });
         html += "</div>";
         dojo.place(html, 'kot-table', 'before');
         MONSTERS_WITH_POWER_UP_CARDS.forEach(function (monster) {
-            var evolutionRow = document.getElementById("all-evolution-cards-".concat(monster));
+            var evolutionRow = document.getElementById("all-evolution-cards-" + monster);
             for (var i = 1; i <= 8; i++) {
                 var tempDiv = _this.generateCardDiv({
                     type: monster * 10 + i
                 });
-                tempDiv.id = "all-evolution-cards-".concat(monster, "-").concat(i);
+                tempDiv.id = "all-evolution-cards-" + monster + "-" + i;
                 evolutionRow.appendChild(tempDiv);
                 _this.game.addTooltipHtml(tempDiv.id, _this.getTooltip(monster * 10 + i));
             }
@@ -3515,7 +3291,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         else if (state == 'span') {
             var first_2 = true;
             return (coloredCardName === null || coloredCardName === void 0 ? void 0 : coloredCardName.replace(/\[(\w+)\]/g, function (index, color) {
-                var span = "<span style=\"-webkit-text-stroke-color: #".concat(color, ";\">");
+                var span = "<span style=\"-webkit-text-stroke-color: #" + color + ";\">";
                 if (first_2) {
                     first_2 = false;
                 }
@@ -3523,7 +3299,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
                     span = "</span>" + span;
                 }
                 return span;
-            })) + "".concat(first_2 ? '' : '</span>');
+            })) + ("" + (first_2 ? '' : '</span>'));
         }
         return null;
     };
@@ -3659,7 +3435,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = this.getPlaceOnCard(cardPlaced);
-        var html = "<div id=\"".concat(divId, "-mimic-token\" style=\"left: ").concat(cardPlaced.mimicToken.x - 16, "px; top: ").concat(cardPlaced.mimicToken.y - 16, "px;\" class=\"card-token icy-reflection token\"></div>");
+        var html = "<div id=\"" + divId + "-mimic-token\" style=\"left: " + (cardPlaced.mimicToken.x - 16) + "px; top: " + (cardPlaced.mimicToken.y - 16) + "px;\" class=\"card-token icy-reflection token\"></div>";
         dojo.place(html, divId);
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
@@ -3668,8 +3444,8 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         var div = document.getElementById(divId);
         var cardPlaced = div.dataset.placed ? JSON.parse(div.dataset.placed) : { tokens: [] };
         cardPlaced.mimicToken = null;
-        if (document.getElementById("".concat(divId, "-mimic-token"))) {
-            this.game.fadeOutAndDestroy("".concat(divId, "-mimic-token"));
+        if (document.getElementById(divId + "-mimic-token")) {
+            this.game.fadeOutAndDestroy(divId + "-mimic-token");
         }
         div.dataset.placed = JSON.stringify(cardPlaced);
     };
@@ -3703,10 +3479,10 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         // remove tokens
         for (var i = card.tokens; i < placed.length; i++) {
             if ([136, 87].includes(cardType) && playerId) {
-                this.game.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
+                this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
             }
             else {
-                this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+                this.game.fadeOutAndDestroy(divId + "-token" + i);
             }
         }
         placed.splice(card.tokens, placed.length - card.tokens);
@@ -3714,12 +3490,12 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         for (var i = placed.length; i < card.tokens; i++) {
             var newPlace = this.getPlaceOnCard(cardPlaced);
             placed.push(newPlace);
-            var html = "<div id=\"".concat(divId, "-token").concat(i, "\" style=\"left: ").concat(newPlace.x - 16, "px; top: ").concat(newPlace.y - 16, "px;\" class=\"card-token ");
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
             if (cardType === 24) {
                 html += "ufo token";
             }
             else if ([26, 136, 87].includes(cardType)) {
-                html += "energy-cube cube-shape-".concat(Math.floor(Math.random() * 5));
+                html += "energy-cube cube-shape-" + Math.floor(Math.random() * 5);
             }
             html += "\"></div>";
             dojo.place(html, divId);
@@ -3730,7 +3506,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         cardDiv.classList.add('kot-evolution');
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
-        cardDiv.innerHTML = "\n        <div class=\"evolution-type\">".concat(type, "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">").concat(this.getCardName(cardType, 'span'), "</div>\n                    <div class=\"text\">").concat(this.getCardName(cardType, 'text-only'), "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">").concat(description, "</div>\n            </div>\n        </div>      \n        ");
+        cardDiv.innerHTML = "\n        <div class=\"evolution-type\">" + type + "</div>\n        <div class=\"name-and-description\">\n            <div class=\"name-row\">\n                <div class=\"name-wrapper\">\n                    <div class=\"outline\">" + this.getCardName(cardType, 'span') + "</div>\n                    <div class=\"text\">" + this.getCardName(cardType, 'text-only') + "</div>\n                </div>\n            </div>\n            <div class=\"description-row\">\n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        </div>      \n        ";
         var nameWrapper = cardDiv.getElementsByClassName('name-wrapper')[0];
         var outline = cardDiv.getElementsByClassName('outline')[0];
         var descriptionWrapper = cardDiv.getElementsByClassName('description-wrapper')[0];
@@ -3771,12 +3547,12 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         }
     };
     EvolutionCardsManager.prototype.getTooltip = function (cardTypeId, ownerId) {
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>".concat(this.getCardName(cardTypeId, 'text-only'), "</strong></p>\n            <p>").concat(this.getCardTypeName(cardTypeId), "</p>");
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardTypeId, 'text-only') + "</strong></p>\n            <p>" + this.getCardTypeName(cardTypeId) + "</p>";
         if (ownerId) {
             var owner = this.game.getPlayer(ownerId);
-            tooltip += "<p>".concat(_('Owner:'), " <strong style=\"color: #").concat(owner.color, ";\">").concat(owner.name, "</strong></p>");
+            tooltip += "<p>" + _('Owner:') + " <strong style=\"color: #" + owner.color + ";\">" + owner.name + "</strong></p>";
         }
-        tooltip += "<p>".concat(formatTextIcons(this.getCardDescription(cardTypeId).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>')), "</p>\n        </div>");
+        tooltip += "<p>" + formatTextIcons(this.getCardDescription(cardTypeId).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>')) + "</p>\n        </div>";
         return tooltip;
     };
     EvolutionCardsManager.prototype.setupNewCard = function (cardDiv, cardType) {
@@ -3803,8 +3579,8 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             return;
         }
         cards.forEach(function (card) {
-            stock.addToStockWithId(card.type, "".concat(card.id), from);
-            var cardDiv = document.getElementById("".concat(stock.container_div.id, "_item_").concat(card.id));
+            stock.addToStockWithId(card.type, "" + card.id, from);
+            var cardDiv = document.getElementById(stock.container_div.id + "_item_" + card.id);
             _this.game.addTooltipHtml(cardDiv.id, _this.getTooltip(card.type, card.ownerId));
         });
         cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnCard(card); });
@@ -3813,14 +3589,14 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         if (sourceStock === destinationStock) {
             return;
         }
-        var sourceStockItemId = "".concat(sourceStock.container_div.id, "_item_").concat(card.id);
+        var sourceStockItemId = sourceStock.container_div.id + "_item_" + card.id;
         if (document.getElementById(sourceStockItemId)) {
             this.addCardsToStock(destinationStock, [card], sourceStockItemId);
             //destinationStock.addToStockWithId(uniqueId, cardId, sourceStockItemId);
-            sourceStock.removeFromStockById("".concat(card.id));
+            sourceStock.removeFromStockById("" + card.id);
         }
         else {
-            console.warn("".concat(sourceStockItemId, " not found in "), sourceStock);
+            console.warn(sourceStockItemId + " not found in ", sourceStock);
             //destinationStock.addToStockWithId(uniqueId, cardId, sourceStock.container_div.id);
             this.addCardsToStock(destinationStock, [card], sourceStock.container_div.id);
         }
@@ -3829,13 +3605,13 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
     EvolutionCardsManager.prototype.generateCardDiv = function (card) {
         var tempDiv = document.createElement('div');
         tempDiv.classList.add('stockitem');
-        tempDiv.style.width = "".concat(EVOLUTION_SIZE, "px");
-        tempDiv.style.height = "".concat(EVOLUTION_SIZE, "px");
+        tempDiv.style.width = EVOLUTION_SIZE + "px";
+        tempDiv.style.height = EVOLUTION_SIZE + "px";
         tempDiv.style.position = "relative";
-        tempDiv.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/evolution-cards.jpg')");
+        tempDiv.style.backgroundImage = "url('" + g_gamethemeurl + "img/evolution-cards.jpg')";
         var imagePosition = MONSTERS_WITH_POWER_UP_CARDS.indexOf(Math.floor(card.type / 10)) + 1;
         var xBackgroundPercent = imagePosition * 100;
-        tempDiv.style.backgroundPosition = "-".concat(xBackgroundPercent, "% 0%");
+        tempDiv.style.backgroundPosition = "-" + xBackgroundPercent + "% 0%";
         document.body.appendChild(tempDiv);
         this.setDivAsCard(tempDiv, card.type);
         document.body.removeChild(tempDiv);
@@ -3845,12 +3621,12 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
         var mimickedCardText = '-';
         if (mimickedCard) {
             var tempDiv = this.generateCardDiv(mimickedCard);
-            mimickedCardText = "<br><div class=\"player-evolution-cards\">".concat(tempDiv.outerHTML, "</div>");
+            mimickedCardText = "<br><div class=\"player-evolution-cards\">" + tempDiv.outerHTML + "</div>";
         }
         return mimickedCardText;
     };
     EvolutionCardsManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
-        this.game.addTooltipHtml(mimicCardId, this.getTooltip(18) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
+        this.game.addTooltipHtml(mimicCardId, this.getTooltip(18) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
     return EvolutionCardsManager;
 }(CardManager));
@@ -3865,8 +3641,8 @@ var WickednessDecks = /** @class */ (function (_super) {
         _this.manager = manager;
         _this.decks = [];
         WICKEDNESS_LEVELS.forEach(function (level) {
-            dojo.place("<div id=\"wickedness-tiles-pile-".concat(level, "\" class=\"wickedness-tiles-pile wickedness-tile-stock\"></div>"), 'wickedness-board');
-            _this.decks[level] = new AllVisibleDeck(manager, document.getElementById("wickedness-tiles-pile-".concat(level)), {
+            dojo.place("<div id=\"wickedness-tiles-pile-" + level + "\" class=\"wickedness-tiles-pile wickedness-tile-stock\"></div>", 'wickedness-board');
+            _this.decks[level] = new AllVisibleDeck(manager, document.getElementById("wickedness-tiles-pile-" + level), {
                 shift: '3px',
             });
             _this.decks[level].onSelectionChange = function (selection, lastChange) { return _this.selectionChange(selection, lastChange); };
@@ -3928,13 +3704,13 @@ var WickednessTilesManager = /** @class */ (function (_super) {
     function WickednessTilesManager(game) {
         var _this = _super.call(this, game, {
             animationManager: game.animationManager,
-            getId: function (card) { return "wickedness-tile-".concat(card.id); },
+            getId: function (card) { return "wickedness-tile-" + card.id; },
             setupDiv: function (card, div) { return div.classList.add('kot-tile'); },
             setupFrontDiv: function (card, div) {
                 div.dataset.color = card.type >= 100 ? 'green' : 'orange';
-                div.dataset.level = "".concat(_this.getCardLevel(card.type));
+                div.dataset.level = "" + _this.getCardLevel(card.type);
                 _this.setDivAsCard(div, card.type);
-                div.id = "".concat(_super.prototype.getId.call(_this, card), "-front");
+                div.id = _super.prototype.getId.call(_this, card) + "-front";
                 _this.game.addTooltipHtml(div.id, _this.getTooltip(card.type));
                 if (card.tokens > 0) {
                     _this.placeTokensOnTile(card);
@@ -3951,18 +3727,18 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         var _this = this;
         var html = "<div id=\"all-wickedness-tiles\" class=\"wickedness-tile-stock player-wickedness-tiles\">";
         [0, 1].forEach(function (side) {
-            return html += "<div id=\"all-wickedness-tiles-".concat(side, "\" style=\"display: flex; flex-wrap: nowrap;\"></div>");
+            return html += "<div id=\"all-wickedness-tiles-" + side + "\" style=\"display: flex; flex-wrap: nowrap;\"></div>";
         });
         html += "</div>";
         dojo.place(html, 'kot-table', 'before');
         [0, 1].forEach(function (side) {
-            var evolutionRow = document.getElementById("all-wickedness-tiles-".concat(side));
+            var evolutionRow = document.getElementById("all-wickedness-tiles-" + side);
             for (var i = 1; i <= 10; i++) {
                 var tempDiv = _this.generateCardDiv({
                     type: side * 100 + i,
                     side: side
                 });
-                tempDiv.id = "all-wickedness-tiles-".concat(side, "-").concat(i);
+                tempDiv.id = "all-wickedness-tiles-" + side + "-" + i;
                 evolutionRow.appendChild(tempDiv);
                 _this.game.addTooltipHtml(tempDiv.id, _this.getTooltip(side * 100 + i));
             }
@@ -3980,14 +3756,14 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         cards.filter(function (card) { return card.tokens > 0; }).forEach(function (card) { return _this.placeTokensOnTile(card); });
     };
     WickednessTilesManager.prototype.generateCardDiv = function (card) {
-        var wickednesstilessurl = "".concat(g_gamethemeurl, "img/").concat(this.game.isDarkEdition() ? 'dark/' : '', "wickedness-tiles.jpg");
+        var wickednesstilessurl = g_gamethemeurl + "img/" + (this.game.isDarkEdition() ? 'dark/' : '') + "wickedness-tiles.jpg";
         var tempDiv = document.createElement('div');
         tempDiv.classList.add('stockitem');
-        tempDiv.style.width = "".concat(WICKEDNESS_TILES_WIDTH, "px");
-        tempDiv.style.height = "".concat(WICKEDNESS_TILES_HEIGHT, "px");
+        tempDiv.style.width = WICKEDNESS_TILES_WIDTH + "px";
+        tempDiv.style.height = WICKEDNESS_TILES_HEIGHT + "px";
         tempDiv.style.position = "relative";
-        tempDiv.style.backgroundImage = "url('".concat(wickednesstilessurl, "')");
-        tempDiv.style.backgroundPosition = "-".concat(wickenessTilesIndex[card.type % 100] * 50, "% ").concat(card.side > 0 ? 100 : 0, "%");
+        tempDiv.style.backgroundImage = "url('" + wickednesstilessurl + "')";
+        tempDiv.style.backgroundPosition = "-" + wickenessTilesIndex[card.type % 100] * 50 + "% " + (card.side > 0 ? 100 : 0) + "%";
         document.body.appendChild(tempDiv);
         this.setDivAsCard(tempDiv, card.type);
         document.body.removeChild(tempDiv);
@@ -4062,7 +3838,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
     WickednessTilesManager.prototype.getTooltip = function (cardType) {
         var level = this.getCardLevel(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
-        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>".concat(this.getCardName(cardType), "</strong></p>\n            <p class=\"level\">").concat(dojo.string.substitute(_("Level : ${level}"), { 'level': level }), "</p>\n            <p>").concat(description, "</p>\n        </div>");
+        var tooltip = "<div class=\"card-tooltip\">\n            <p><strong>" + this.getCardName(cardType) + "</strong></p>\n            <p class=\"level\">" + dojo.string.substitute(_("Level : ${level}"), { 'level': level }) + "</p>\n            <p>" + description + "</p>\n        </div>";
         return tooltip;
     };
     WickednessTilesManager.prototype.setupNewCard = function (cardDiv, cardType) {
@@ -4073,7 +3849,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         cardDiv.classList.add('kot-tile');
         var name = this.getCardName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType).replace(/\[strong\]/g, '<strong>').replace(/\[\/strong\]/g, '</strong>'));
-        cardDiv.innerHTML = "\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"outline ".concat(cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0', "\">").concat(name, "</div>\n                    <div class=\"text\">").concat(name, "</div>\n                </div>\n            </div>\n            <div>        \n                <div class=\"description-wrapper\">").concat(description, "</div>\n            </div>\n        ");
+        cardDiv.innerHTML = "\n        <div class=\"name-and-description\">\n            <div>\n                <div class=\"name-wrapper\">\n                    <div class=\"outline " + (cardType > 100 ? 'wickedness-tile-side1' : 'wickedness-tile-side0') + "\">" + name + "</div>\n                    <div class=\"text\">" + name + "</div>\n                </div>\n            </div>\n            <div>        \n                <div class=\"description-wrapper\">" + description + "</div>\n            </div>\n        ";
         var textHeight = cardDiv.getElementsByClassName('description-wrapper')[0].clientHeight;
         if (textHeight > 50) {
             cardDiv.getElementsByClassName('description-wrapper')[0].style.width = '100%';
@@ -4093,7 +3869,7 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         }
     };
     WickednessTilesManager.prototype.changeMimicTooltip = function (mimicCardId, mimickedCardText) {
-        this.game.addTooltipHtml(mimicCardId, this.getTooltip(106) + "<br>".concat(_('Mimicked card:'), " ").concat(mimickedCardText));
+        this.game.addTooltipHtml(mimicCardId, this.getTooltip(106) + ("<br>" + _('Mimicked card:') + " " + mimickedCardText));
     };
     WickednessTilesManager.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
@@ -4128,10 +3904,10 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         // remove tokens
         for (var i = tile.tokens; i < placed.length; i++) {
             if (cardType === 28 && playerId) {
-                this.game.slideToObjectAndDestroy("".concat(divId, "-token").concat(i), "energy-counter-".concat(playerId));
+                this.game.slideToObjectAndDestroy(divId + "-token" + i, "energy-counter-" + playerId);
             }
             else {
-                this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+                this.game.fadeOutAndDestroy(divId + "-token" + i);
             }
         }
         placed.splice(tile.tokens, placed.length - tile.tokens);
@@ -4139,9 +3915,9 @@ var WickednessTilesManager = /** @class */ (function (_super) {
         for (var i = placed.length; i < tile.tokens; i++) {
             var newPlace = this.getPlaceOnCard(cardPlaced);
             placed.push(newPlace);
-            var html = "<div id=\"".concat(divId, "-token").concat(i, "\" style=\"left: ").concat(newPlace.x - 16, "px; top: ").concat(newPlace.y - 16, "px;\" class=\"card-token ");
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"card-token ";
             if (cardType === 28) {
-                html += "energy-cube cube-shape-".concat(Math.floor(Math.random() * 5));
+                html += "energy-cube cube-shape-" + Math.floor(Math.random() * 5);
             }
             else if (cardType === 41) {
                 html += "smoke-cloud token";
@@ -4155,12 +3931,12 @@ var WickednessTilesManager = /** @class */ (function (_super) {
 }(CardManager));
 var TokyoTower = /** @class */ (function () {
     function TokyoTower(divId, levels) {
-        this.divId = "".concat(divId, "-tokyo-tower");
-        var html = "\n        <div id=\"".concat(this.divId, "\" class=\"tokyo-tower tokyo-tower-tooltip\">");
+        this.divId = divId + "-tokyo-tower";
+        var html = "\n        <div id=\"" + this.divId + "\" class=\"tokyo-tower tokyo-tower-tooltip\">";
         for (var i = 3; i >= 1; i--) {
-            html += "<div id=\"".concat(this.divId, "-level").concat(i, "\">");
+            html += "<div id=\"" + this.divId + "-level" + i + "\">";
             if (levels.includes(i)) {
-                html += "<div id=\"tokyo-tower-level".concat(i, "\" class=\"level level").concat(i, "\">");
+                html += "<div id=\"tokyo-tower-level" + i + "\" class=\"level level" + i + "\">";
                 if (i == 1 || i == 2) {
                     html += "<div class=\"icon health\"></div>";
                 }
@@ -4200,19 +3976,19 @@ var PlayerTable = /** @class */ (function () {
         this.playerNo = Number(player.player_no);
         this.monster = Number(player.monster);
         var eliminated = Number(player.eliminated) > 0;
-        var html = "\n        <div id=\"player-table-".concat(player.id, "\" class=\"player-table whiteblock ").concat(eliminated ? 'eliminated' : '', "\">\n            <div id=\"player-name-").concat(player.id, "\" class=\"player-name ").concat(game.isDefaultFont() ? 'standard' : 'goodgirl', "\" style=\"color: #").concat(player.color, "\">\n                <div class=\"outline").concat(player.color === '000000' ? ' white' : '', "\">").concat(player.name, "</div>\n                <div class=\"text\">").concat(player.name, "</div>\n            </div> \n            <div id=\"monster-board-wrapper-").concat(player.id, "\" class=\"monster-board-wrapper monster").concat(this.monster, " ").concat(player.location > 0 ? 'intokyo' : '', "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-").concat(player.id, "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-").concat(player.id, "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-").concat(player.id, "\" class=\"monster-board monster").concat(this.monster, "\">\n                    <div id=\"monster-board-").concat(player.id, "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-").concat(player.id, "\" class=\"monster-figure monster").concat(this.monster, "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-").concat(this.playerId, "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-").concat(player.id, "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-").concat(player.id, "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">");
+        var html = "\n        <div id=\"player-table-" + player.id + "\" class=\"player-table whiteblock " + (eliminated ? 'eliminated' : '') + "\">\n            <div id=\"player-name-" + player.id + "\" class=\"player-name " + (game.isDefaultFont() ? 'standard' : 'goodgirl') + "\" style=\"color: #" + player.color + "\">\n                <div class=\"outline" + (player.color === '000000' ? ' white' : '') + "\">" + player.name + "</div>\n                <div class=\"text\">" + player.name + "</div>\n            </div> \n            <div id=\"monster-board-wrapper-" + player.id + "\" class=\"monster-board-wrapper monster" + this.monster + " " + (player.location > 0 ? 'intokyo' : '') + "\">\n                <div class=\"blue wheel\" id=\"blue-wheel-" + player.id + "\"></div>\n                <div class=\"red wheel\" id=\"red-wheel-" + player.id + "\"></div>\n                <div class=\"kot-token\"></div>\n                <div id=\"monster-board-" + player.id + "\" class=\"monster-board monster" + this.monster + "\">\n                    <div id=\"monster-board-" + player.id + "-figure-wrapper\" class=\"monster-board-figure-wrapper\">\n                        <div id=\"monster-figure-" + player.id + "\" class=\"monster-figure monster" + this.monster + "\"><div class=\"stand\"></div></div>\n                    </div>\n                </div>\n                <div id=\"token-wrapper-" + this.playerId + "-poison\" class=\"token-wrapper poison\"></div>\n                <div id=\"token-wrapper-" + this.playerId + "-shrink-ray\" class=\"token-wrapper shrink-ray\"></div>\n            </div> \n            <div id=\"energy-wrapper-" + player.id + "-left\" class=\"energy-wrapper left\"></div>\n            <div id=\"energy-wrapper-" + player.id + "-right\" class=\"energy-wrapper right\"></div>\n            <div class=\"cards-stocks\">";
         if (game.isPowerUpExpansion()) {
-            html += "\n            <div id=\"visible-evolution-cards-".concat(player.id, "\" class=\"evolution-card-stock player-evolution-cards ").concat(((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty', "\"></div>\n            ");
+            html += "\n            <div id=\"visible-evolution-cards-" + player.id + "\" class=\"evolution-card-stock player-evolution-cards " + (((_a = player.visibleEvolutions) === null || _a === void 0 ? void 0 : _a.length) ? '' : 'empty') + "\"></div>\n            ";
             // TODOPUBG
-            html += "\n            <div id=\"reserved-cards-".concat(player.id, "\" class=\"reserved card-stock player-cards ").concat(player.cards.length ? '' : 'empty', "\"></div>\n            ");
+            html += "\n            <div id=\"reserved-cards-" + player.id + "\" class=\"reserved card-stock player-cards " + (player.cards.length ? '' : 'empty') + "\"></div>\n            ";
         }
         if (game.isWickednessExpansion()) {
-            html += "<div id=\"wickedness-tiles-".concat(player.id, "\" class=\"wickedness-tile-stock player-wickedness-tiles ").concat(((_b = player.wickednessTiles) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty', "\"></div>");
+            html += "<div id=\"wickedness-tiles-" + player.id + "\" class=\"wickedness-tile-stock player-wickedness-tiles " + (((_b = player.wickednessTiles) === null || _b === void 0 ? void 0 : _b.length) ? '' : 'empty') + "\"></div>";
         }
-        html += "    <div id=\"cards-".concat(player.id, "\" class=\"card-stock player-cards ").concat(player.reservedCards.length ? '' : 'empty', "\"></div>\n            </div>\n        </div>\n        ");
+        html += "    <div id=\"cards-" + player.id + "\" class=\"card-stock player-cards " + (player.reservedCards.length ? '' : 'empty') + "\"></div>\n            </div>\n        </div>\n        ";
         dojo.place(html, 'table');
         this.setMonsterFigureBeastMode(((_c = player.cards.find(function (card) { return card.type === 301; })) === null || _c === void 0 ? void 0 : _c.side) === 1);
-        this.cards = new LineStock(this.game.cardsManager, document.getElementById("cards-".concat(this.player.id)));
+        this.cards = new LineStock(this.game.cardsManager, document.getElementById("cards-" + this.player.id));
         this.cards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.cards, card, _this.playerId); };
         this.cards.addCards(player.cards);
         if (playerWithGoldenScarab) {
@@ -4223,7 +3999,7 @@ var PlayerTable = /** @class */ (function () {
         }
         if (game.isPowerUpExpansion()) {
             // TODOPUBG
-            this.reservedCards = new LineStock(this.game.cardsManager, document.getElementById("reserved-cards-".concat(this.player.id)));
+            this.reservedCards = new LineStock(this.game.cardsManager, document.getElementById("reserved-cards-" + this.player.id));
             this.cards.onCardClick = function (card) { return _this.game.onVisibleCardClick(_this.reservedCards, card, _this.playerId); };
             this.reservedCards.addCards(player.reservedCards);
         }
@@ -4236,27 +4012,27 @@ var PlayerTable = /** @class */ (function () {
             this.setShrinkRayTokens(Number(player.shrinkRayTokens));
         }
         if (this.game.isKingkongExpansion()) {
-            dojo.place("<div id=\"tokyo-tower-".concat(player.id, "\" class=\"tokyo-tower-wrapper\"></div>"), "player-table-".concat(player.id));
-            this.tokyoTower = new TokyoTower("tokyo-tower-".concat(player.id), player.tokyoTowerLevels);
+            dojo.place("<div id=\"tokyo-tower-" + player.id + "\" class=\"tokyo-tower-wrapper\"></div>", "player-table-" + player.id);
+            this.tokyoTower = new TokyoTower("tokyo-tower-" + player.id, player.tokyoTowerLevels);
         }
         if (this.game.isCybertoothExpansion()) {
-            dojo.place("<div id=\"berserk-token-".concat(player.id, "\" class=\"berserk-token berserk-tooltip\" data-visible=\"").concat(player.berserk ? 'true' : 'false', "\"></div>"), "monster-board-".concat(player.id));
+            dojo.place("<div id=\"berserk-token-" + player.id + "\" class=\"berserk-token berserk-tooltip\" data-visible=\"" + (player.berserk ? 'true' : 'false') + "\"></div>", "monster-board-" + player.id);
         }
         if (this.game.isCthulhuExpansion()) {
-            dojo.place("<div id=\"player-table-cultist-tokens-".concat(player.id, "\" class=\"cultist-tokens\"></div>"), "monster-board-".concat(player.id));
+            dojo.place("<div id=\"player-table-cultist-tokens-" + player.id + "\" class=\"cultist-tokens\"></div>", "monster-board-" + player.id);
             if (!eliminated) {
                 this.setCultistTokens(player.cultists);
             }
         }
         if (this.game.isWickednessExpansion()) {
-            this.wickednessTiles = new LineStock(this.game.wickednessTilesManager, document.getElementById("wickedness-tiles-".concat(player.id)));
+            this.wickednessTiles = new LineStock(this.game.wickednessTilesManager, document.getElementById("wickedness-tiles-" + player.id));
             this.game.wickednessTilesManager.addCardsToStock(this.wickednessTiles, player.wickednessTiles);
         }
         if (game.isPowerUpExpansion()) {
             this.showHand = this.playerId == this.game.getPlayerId();
             if (this.showHand) {
                 document.getElementById("hand-wrapper").classList.add('whiteblock');
-                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div class=\"hand-title\">\n                        <div>\n                            <div id=\"myhand\">".concat(_('My hand'), "</div>\n                        </div>\n                        <div id=\"autoSkipPlayEvolution-wrapper\"></div>\n                    </div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">").concat(_('Your hand is empty'), "</div>\n                    </div>\n                </div>\n                "), "hand-wrapper");
+                dojo.place("\n                <div id=\"pick-evolution\" class=\"evolution-card-stock player-evolution-cards pick-evolution-cards\"></div>\n                <div id=\"hand-evolution-cards-wrapper\">\n                    <div class=\"hand-title\">\n                        <div>\n                            <div id=\"myhand\">" + _('My hand') + "</div>\n                        </div>\n                        <div id=\"autoSkipPlayEvolution-wrapper\"></div>\n                    </div>\n                    <div id=\"hand-evolution-cards\" class=\"evolution-card-stock player-evolution-cards\">\n                        <div id=\"empty-message\">" + _('Your hand is empty') + "</div>\n                    </div>\n                </div>\n                ", "hand-wrapper");
                 this.game.addAutoSkipPlayEvolutionButton();
                 this.hiddenEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("hand-evolution-cards"));
                 this.hiddenEvolutionCards.setSelectionMode('multiple');
@@ -4271,7 +4047,7 @@ var PlayerTable = /** @class */ (function () {
                 });
                 this.checkHandEmpty();
             }
-            this.visibleEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("visible-evolution-cards-".concat(player.id)));
+            this.visibleEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("visible-evolution-cards-" + player.id));
             this.visibleEvolutionCards.onCardClick = function (card) { return _this.game.onVisibleEvolutionClick(card.id); };
             if (player.visibleEvolutions) {
                 this.visibleEvolutionCards.addCards(player.visibleEvolutions);
@@ -4287,14 +4063,14 @@ var PlayerTable = /** @class */ (function () {
         }
     };
     PlayerTable.prototype.enterTokyo = function (location) {
-        transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-".concat(this.playerId)), "tokyo-".concat(location == 2 ? 'bay' : 'city'), this.game.getZoom());
+        transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "tokyo-" + (location == 2 ? 'bay' : 'city'), this.game.getZoom());
     };
     PlayerTable.prototype.leaveTokyo = function () {
-        transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-".concat(this.playerId)), "monster-board-".concat(this.playerId, "-figure-wrapper"), this.game.getZoom());
+        transitionToObjectAndAttach(this.game, document.getElementById("monster-figure-" + this.playerId), "monster-board-" + this.playerId + "-figure-wrapper", this.game.getZoom());
     };
     PlayerTable.prototype.setVisibleCardsSelectionClass = function (visible) {
         document.getElementById("hand-wrapper").classList.toggle('double-selection', visible);
-        document.getElementById("player-table-".concat(this.playerId)).classList.toggle('double-selection', visible);
+        document.getElementById("player-table-" + this.playerId).classList.toggle('double-selection', visible);
     };
     PlayerTable.prototype.removeCards = function (cards) {
         var _this = this;
@@ -4317,13 +4093,13 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         if (delay === void 0) { delay = 0; }
         var deg = this.monster > 100 ? POINTS_DEG_DARK_EDITION : POINTS_DEG;
-        setTimeout(function () { return document.getElementById("blue-wheel-".concat(_this.playerId)).style.transform = "rotate(".concat(deg[Math.min(20, points)], "deg)"); }, delay);
+        setTimeout(function () { return document.getElementById("blue-wheel-" + _this.playerId).style.transform = "rotate(" + deg[Math.min(20, points)] + "deg)"; }, delay);
     };
     PlayerTable.prototype.setHealth = function (health, delay) {
         var _this = this;
         if (delay === void 0) { delay = 0; }
         var deg = this.monster > 100 ? HEALTH_DEG_DARK_EDITION : HEALTH_DEG;
-        setTimeout(function () { return document.getElementById("red-wheel-".concat(_this.playerId)).style.transform = "rotate(".concat(health > 12 ? 22 : deg[health], "deg)"); }, delay);
+        setTimeout(function () { return document.getElementById("red-wheel-" + _this.playerId).style.transform = "rotate(" + (health > 12 ? 22 : deg[health]) + "deg)"; }, delay);
     };
     PlayerTable.prototype.setEnergy = function (energy, delay) {
         var _this = this;
@@ -4345,22 +4121,22 @@ var PlayerTable = /** @class */ (function () {
         this.cards.getCards().filter(function (card) { return card.id !== 999; }).forEach(function (card) { return _this.cards.removeCard(card); });
         (_a = this.wickednessTiles) === null || _a === void 0 ? void 0 : _a.removeAll();
         (_b = this.visibleEvolutionCards) === null || _b === void 0 ? void 0 : _b.removeAll();
-        if (document.getElementById("monster-figure-".concat(this.playerId))) {
-            this.game.fadeOutAndDestroy("monster-figure-".concat(this.playerId));
+        if (document.getElementById("monster-figure-" + this.playerId)) {
+            this.game.fadeOutAndDestroy("monster-figure-" + this.playerId);
         }
         if (this.game.isCybertoothExpansion()) {
             this.setBerserk(false);
         }
-        dojo.addClass("player-table-".concat(this.playerId), 'eliminated');
+        dojo.addClass("player-table-" + this.playerId, 'eliminated');
     };
     PlayerTable.prototype.setActivePlayer = function (active) {
-        dojo.toggleClass("player-table-".concat(this.playerId), 'active', active);
-        dojo.toggleClass("overall_player_board_".concat(this.playerId), 'active', active);
+        dojo.toggleClass("player-table-" + this.playerId, 'active', active);
+        dojo.toggleClass("overall_player_board_" + this.playerId, 'active', active);
     };
     PlayerTable.prototype.setFont = function (prefValue) {
         var defaultFont = prefValue === 1;
-        dojo.toggleClass("player-name-".concat(this.playerId), 'standard', defaultFont);
-        dojo.toggleClass("player-name-".concat(this.playerId), 'goodgirl', !defaultFont);
+        dojo.toggleClass("player-name-" + this.playerId, 'standard', defaultFont);
+        dojo.toggleClass("player-name-" + this.playerId, 'goodgirl', !defaultFont);
     };
     PlayerTable.prototype.getDistance = function (p1, p2) {
         return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
@@ -4380,7 +4156,7 @@ var PlayerTable = /** @class */ (function () {
         return newPlace;
     };
     PlayerTable.prototype.setEnergyOnSide = function (side, energy) {
-        var divId = "energy-wrapper-".concat(this.playerId, "-").concat(side);
+        var divId = "energy-wrapper-" + this.playerId + "-" + side;
         var div = document.getElementById(divId);
         if (!div) {
             return;
@@ -4388,27 +4164,27 @@ var PlayerTable = /** @class */ (function () {
         var placed = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
         // remove tokens
         for (var i = energy; i < placed.length; i++) {
-            this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+            this.game.fadeOutAndDestroy(divId + "-token" + i);
         }
         placed.splice(energy, placed.length - energy);
         // add tokens
         for (var i = placed.length; i < energy; i++) {
             var newPlace = this.getPlaceEnergySide(placed);
             placed.push(newPlace);
-            var html = "<div id=\"".concat(divId, "-token").concat(i, "\" style=\"left: ").concat(newPlace.x - 16, "px; top: ").concat(newPlace.y - 16, "px;\" class=\"energy-cube cube-shape-").concat(Math.floor(Math.random() * 5), "\"></div>");
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"energy-cube cube-shape-" + Math.floor(Math.random() * 5) + "\"></div>";
             dojo.place(html, divId);
         }
         div.dataset.placed = JSON.stringify(placed);
     };
     PlayerTable.prototype.setMonster = function (monster) {
-        var newMonsterClass = "monster".concat(monster);
-        dojo.removeClass("monster-figure-".concat(this.playerId), 'monster0');
-        dojo.addClass("monster-figure-".concat(this.playerId), newMonsterClass);
-        dojo.removeClass("monster-board-".concat(this.playerId), 'monster0');
-        dojo.addClass("monster-board-".concat(this.playerId), newMonsterClass);
-        dojo.removeClass("monster-board-wrapper-".concat(this.playerId), 'monster0');
-        dojo.addClass("monster-board-wrapper-".concat(this.playerId), newMonsterClass);
-        var wickednessMarkerDiv = document.getElementById("monster-icon-".concat(this.playerId, "-wickedness"));
+        var newMonsterClass = "monster" + monster;
+        dojo.removeClass("monster-figure-" + this.playerId, 'monster0');
+        dojo.addClass("monster-figure-" + this.playerId, newMonsterClass);
+        dojo.removeClass("monster-board-" + this.playerId, 'monster0');
+        dojo.addClass("monster-board-" + this.playerId, newMonsterClass);
+        dojo.removeClass("monster-board-wrapper-" + this.playerId, 'monster0');
+        dojo.addClass("monster-board-wrapper-" + this.playerId, newMonsterClass);
+        var wickednessMarkerDiv = document.getElementById("monster-icon-" + this.playerId + "-wickedness");
         wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.remove('monster0');
         wickednessMarkerDiv === null || wickednessMarkerDiv === void 0 ? void 0 : wickednessMarkerDiv.classList.add(newMonsterClass);
         if (monster > 100) {
@@ -4432,7 +4208,7 @@ var PlayerTable = /** @class */ (function () {
         return newPlace;
     };
     PlayerTable.prototype.setTokens = function (type, tokens) {
-        var divId = "token-wrapper-".concat(this.playerId, "-").concat(type);
+        var divId = "token-wrapper-" + this.playerId + "-" + type;
         var div = document.getElementById(divId);
         if (!div) {
             return;
@@ -4440,16 +4216,16 @@ var PlayerTable = /** @class */ (function () {
         var placed = div.dataset.placed ? JSON.parse(div.dataset.placed) : [];
         // remove tokens
         for (var i = tokens; i < placed.length; i++) {
-            this.game.fadeOutAndDestroy("".concat(divId, "-token").concat(i));
+            this.game.fadeOutAndDestroy(divId + "-token" + i);
         }
         placed.splice(tokens, placed.length - tokens);
         // add tokens
         for (var i = placed.length; i < tokens; i++) {
             var newPlace = this.getPlaceToken(placed);
             placed.push(newPlace);
-            var html = "<div id=\"".concat(divId, "-token").concat(i, "\" style=\"left: ").concat(newPlace.x - 16, "px; top: ").concat(newPlace.y - 16, "px;\" class=\"").concat(type, " token\"></div>");
+            var html = "<div id=\"" + divId + "-token" + i + "\" style=\"left: " + (newPlace.x - 16) + "px; top: " + (newPlace.y - 16) + "px;\" class=\"" + type + " token\"></div>";
             dojo.place(html, divId);
-            this.game.addTooltipHtml("".concat(divId, "-token").concat(i), type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP);
+            this.game.addTooltipHtml(divId + "-token" + i, type === 'poison' ? this.game.POISON_TOKEN_TOOLTIP : this.game.SHINK_RAY_TOKEN_TOOLTIP);
         }
         div.dataset.placed = JSON.stringify(placed);
     };
@@ -4463,7 +4239,7 @@ var PlayerTable = /** @class */ (function () {
         return this.tokyoTower;
     };
     PlayerTable.prototype.setBerserk = function (berserk) {
-        document.getElementById("berserk-token-".concat(this.playerId)).dataset.visible = berserk ? 'true' : 'false';
+        document.getElementById("berserk-token-" + this.playerId).dataset.visible = berserk ? 'true' : 'false';
     };
     PlayerTable.prototype.changeForm = function (card) {
         var cardDiv = this.cards.getCardElement(card);
@@ -4473,18 +4249,18 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setMonsterFigureBeastMode = function (beastMode) {
         if (this.monster === 12) {
-            document.getElementById("monster-figure-".concat(this.playerId)).classList.toggle('beast-mode', beastMode);
+            document.getElementById("monster-figure-" + this.playerId).classList.toggle('beast-mode', beastMode);
         }
     };
     PlayerTable.prototype.setCultistTokens = function (tokens) {
-        var containerId = "player-table-cultist-tokens-".concat(this.playerId);
+        var containerId = "player-table-cultist-tokens-" + this.playerId;
         var container = document.getElementById(containerId);
         while (container.childElementCount > tokens) {
             container.removeChild(container.lastChild);
         }
         for (var i = container.childElementCount; i < tokens; i++) {
-            dojo.place("<div id=\"".concat(containerId, "-").concat(i, "\" class=\"cultist-token cultist-tooltip\"></div>"), containerId);
-            this.game.addTooltipHtml("".concat(containerId, "-").concat(i), this.game.CULTIST_TOOLTIP);
+            dojo.place("<div id=\"" + containerId + "-" + i + "\" class=\"cultist-token cultist-tooltip\"></div>", containerId);
+            this.game.addTooltipHtml(containerId + "-" + i, this.game.CULTIST_TOOLTIP);
         }
     };
     PlayerTable.prototype.takeGoldenScarab = function () {
@@ -4515,7 +4291,7 @@ var PlayerTable = /** @class */ (function () {
                 this.visibleEvolutionCards.addCard(card, { fromStock: fromStock });
             }
             else {
-                this.visibleEvolutionCards.addCard(card, { fromElement: document.getElementById("playerhand-counter-wrapper-".concat(this.playerId)) });
+                this.visibleEvolutionCards.addCard(card, { fromElement: document.getElementById("playerhand-counter-wrapper-" + this.playerId) });
             }
         }
         this.game.evolutionCardsManager.getCardElement(card).classList.remove('highlight-evolution');
@@ -4564,11 +4340,11 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.removeTarget = function () {
         var _a;
-        var target = document.getElementById("player-table".concat(this.playerId, "-target"));
+        var target = document.getElementById("player-table" + this.playerId + "-target");
         (_a = target === null || target === void 0 ? void 0 : target.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(target);
     };
     PlayerTable.prototype.giveTarget = function () {
-        dojo.place("<div id=\"player-table".concat(this.playerId, "-target\" class=\"target token\"></div>"), "monster-board-".concat(this.playerId));
+        dojo.place("<div id=\"player-table" + this.playerId + "-target\" class=\"target token\"></div>", "monster-board-" + this.playerId);
     };
     PlayerTable.prototype.setEvolutionCardsSingleState = function (evolutionCardsSingleState, enabled) {
         var _this = this;
@@ -4585,10 +4361,15 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.zombify = function () {
         var _a;
-        (_a = document.querySelector("#cards-".concat(this.player.id, " [data-card-type=\"55\"]"))) === null || _a === void 0 ? void 0 : _a.classList.add('highlight-zombify');
+        (_a = document.querySelector("#cards-" + this.player.id + " [data-card-type=\"55\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('highlight-zombify');
     };
     return PlayerTable;
 }());
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 var PLAYER_TABLE_WIDTH = 420;
 var PLAYER_BOARD_HEIGHT = 247;
 var CARDS_PER_ROW = 3;
@@ -4633,7 +4414,7 @@ var TableManager = /** @class */ (function () {
             if (document.body.classList.contains('mobile_version')) {
                 backgroundPositionY = 62 + document.getElementById('right-side').getBoundingClientRect().height;
             }
-            document.getElementsByTagName(('html'))[0].style.backgroundPositionY = "".concat(backgroundPositionY, "px");
+            document.getElementsByTagName(('html'))[0].style.backgroundPositionY = backgroundPositionY + "px";
         };
     }
     TableManager.prototype.setPlayerTables = function (playerTables) {
@@ -4641,7 +4422,7 @@ var TableManager = /** @class */ (function () {
         var playerTablesOrdered = playerTables.sort(function (a, b) { return a.playerNo - b.playerNo; });
         var playerIndex = playerTablesOrdered.findIndex(function (playerTable) { return playerTable.playerId === currentPlayerId; });
         if (playerIndex > 0) { // not spectator (or 0)            
-            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex), true), playerTablesOrdered.slice(0, playerIndex), true);
+            this.playerTables = __spreadArray(__spreadArray([], playerTablesOrdered.slice(playerIndex)), playerTablesOrdered.slice(0, playerIndex));
         }
         else { // spectator
             this.playerTables = playerTablesOrdered;
@@ -4718,7 +4499,7 @@ var TableManager = /** @class */ (function () {
             var playerOverTable = centerColumn && disposition[columnIndex].length;
             var dispositionColumn = disposition[columnIndex];
             dispositionColumn.forEach(function (id, index) {
-                var playerTableDiv = document.getElementById("player-table-".concat(id));
+                var playerTableDiv = document.getElementById("player-table-" + id);
                 var columnId = 'center-column';
                 if (rightColumn) {
                     columnId = 'right-column';
@@ -4737,18 +4518,18 @@ var TableManager = /** @class */ (function () {
     TableManager.prototype.tableHeightChange = function () {
         this.playerTables.forEach(function (playerTable) {
             if (playerTable.visibleEvolutionCards) {
-                dojo.toggleClass("visible-evolution-cards-".concat(playerTable.playerId), 'empty', playerTable.visibleEvolutionCards.isEmpty());
+                dojo.toggleClass("visible-evolution-cards-" + playerTable.playerId, 'empty', playerTable.visibleEvolutionCards.isEmpty());
             }
             if (playerTable.wickednessTiles) {
-                dojo.toggleClass("wickedness-tiles-".concat(playerTable.playerId), 'empty', playerTable.wickednessTiles.isEmpty());
+                dojo.toggleClass("wickedness-tiles-" + playerTable.playerId, 'empty', playerTable.wickednessTiles.isEmpty());
             }
             if (playerTable.reservedCards) {
-                dojo.toggleClass("reserved-cards-".concat(playerTable.playerId), 'empty', playerTable.reservedCards.isEmpty());
+                dojo.toggleClass("reserved-cards-" + playerTable.playerId, 'empty', playerTable.reservedCards.isEmpty());
             }
-            dojo.toggleClass("cards-".concat(playerTable.playerId), 'empty', playerTable.cards.isEmpty());
+            dojo.toggleClass("cards-" + playerTable.playerId, 'empty', playerTable.cards.isEmpty());
         });
         var zoomWrapper = document.getElementById('zoom-wrapper');
-        zoomWrapper.style.height = "".concat(document.getElementById('table').clientHeight * this.zoom, "px");
+        zoomWrapper.style.height = document.getElementById('table').clientHeight * this.zoom + "px";
     };
     TableManager.prototype.setZoom = function (zoom) {
         if (zoom === void 0) { zoom = 1; }
@@ -4763,8 +4544,8 @@ var TableManager = /** @class */ (function () {
             div.style.margin = '';
         }
         else {
-            div.style.transform = "scale(".concat(zoom, ")");
-            div.style.margin = "0 ".concat(ZOOM_LEVELS_MARGIN[newIndex], "% ").concat((1 - zoom) * -100, "% 0");
+            div.style.transform = "scale(" + zoom + ")";
+            div.style.margin = "0 " + ZOOM_LEVELS_MARGIN[newIndex] + "% " + (1 - zoom) * -100 + "% 0";
         }
         this.placePlayerTable();
     };
@@ -4790,9 +4571,9 @@ var DieFaceSelector = /** @class */ (function () {
         this.nodeId = nodeId;
         this.dieValue = die.value;
         var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
-        var _loop_3 = function (face) {
-            var faceId = "".concat(nodeId, "-face").concat(face);
-            var html = "<div id=\"".concat(faceId, "\" class=\"die-item dice-icon dice").concat(face, " ").concat(colorClass, " ").concat(this_1.dieValue == face ? 'disabled' : '', "\">");
+        var _loop_1 = function (face) {
+            var faceId = nodeId + "-face" + face;
+            var html = "<div id=\"" + faceId + "\" class=\"die-item dice-icon dice" + face + " " + colorClass + " " + (this_1.dieValue == face ? 'disabled' : '') + "\">";
             if (!die.type && face === 4 && !canHealWithDice) {
                 html += "<div class=\"icon forbidden\"></div>";
             }
@@ -4807,25 +4588,25 @@ var DieFaceSelector = /** @class */ (function () {
                     _this.reset();
                 }
                 _this.value = face;
-                dojo.addClass("".concat(nodeId, "-face").concat(_this.value), 'selected');
+                dojo.addClass(nodeId + "-face" + _this.value, 'selected');
                 (_a = _this.onChange) === null || _a === void 0 ? void 0 : _a.call(_this, face);
                 event.stopImmediatePropagation();
             });
         };
         var this_1 = this;
         for (var face = 1; face <= 6; face++) {
-            _loop_3(face);
+            _loop_1(face);
         }
     }
     DieFaceSelector.prototype.getValue = function () {
         return this.value;
     };
     DieFaceSelector.prototype.reset = function (dieValue) {
-        dojo.removeClass("".concat(this.nodeId, "-face").concat(this.value), 'selected');
+        dojo.removeClass(this.nodeId + "-face" + this.value, 'selected');
         if (dieValue && dieValue != this.dieValue) {
-            dojo.removeClass("".concat(this.nodeId, "-face").concat(this.dieValue), 'disabled');
+            dojo.removeClass(this.nodeId + "-face" + this.dieValue, 'disabled');
             this.dieValue = dieValue;
-            dojo.addClass("".concat(this.nodeId, "-face").concat(this.dieValue), 'disabled');
+            dojo.addClass(this.nodeId + "-face" + this.dieValue, 'disabled');
         }
     };
     return DieFaceSelector;
@@ -4887,7 +4668,7 @@ var DiceManager = /** @class */ (function () {
         this.action = undefined;
     };
     DiceManager.prototype.getLockedDiceId = function (die) {
-        return "locked-dice".concat(this.getDieFace(die));
+        return "locked-dice" + this.getDieFace(die);
     };
     DiceManager.prototype.discardDie = function (die) {
         this.removeDice(die, ANIMATION_MS);
@@ -4954,12 +4735,12 @@ var DiceManager = /** @class */ (function () {
     };
     DiceManager.prototype.changeDie = function (dieId, canHealWithDice, toValue, roll) {
         var die = this.dice.find(function (die) { return die.id == dieId; });
-        var divId = "dice".concat(dieId);
+        var divId = "dice" + dieId;
         var div = document.getElementById(divId);
         if (div) {
-            dojo.removeClass(div, "dice".concat(div.dataset.diceValue));
+            dojo.removeClass(div, "dice" + div.dataset.diceValue);
             div.dataset.diceValue = '' + toValue;
-            dojo.addClass(div, "dice".concat(toValue));
+            dojo.addClass(div, "dice" + toValue);
             var list = div.getElementsByTagName('ol')[0];
             list.dataset.rollType = roll ? 'odd' : 'change';
             if (roll) {
@@ -5002,7 +4783,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.clearDiceHtml = function () {
         var ids = [];
         for (var i = 1; i <= 7; i++) {
-            ids.push("locked-dice".concat(i));
+            ids.push("locked-dice" + i);
         }
         ids.push("locked-dice10", "dice-selector");
         ids.forEach(function (id) {
@@ -5040,17 +4821,17 @@ var DiceManager = /** @class */ (function () {
         }
     };
     DiceManager.prototype.getDiceShowingFace = function (face) {
-        var dice = this.dice.filter(function (die) { var _a; return !die.type && die.value === face && ((_a = document.getElementById("dice".concat(die.id))) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
+        var dice = this.dice.filter(function (die) { var _a; return !die.type && die.value === face && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
         }
         else {
             var berserkDice = this.dice.filter(function (die) { return die.type === 1; });
             if (face == 5) { // energy
-                return berserkDice.filter(function (die) { var _a; return die.value >= 1 && die.value <= 2 && ((_a = document.getElementById("dice".concat(die.id))) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 1 && die.value <= 2 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else if (face == 6) { // smash
-                return berserkDice.filter(function (die) { var _a; return die.value >= 3 && die.value <= 5 && ((_a = document.getElementById("dice".concat(die.id))) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 3 && die.value <= 5 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else {
                 return [];
@@ -5064,7 +4845,7 @@ var DiceManager = /** @class */ (function () {
             dice = dice.slice(0, number);
         }
         dice.forEach(function (die) {
-            document.getElementById("dice".concat(die.id)).dataset.animated !== 'true';
+            document.getElementById("dice" + die.id).dataset.animated !== 'true';
             _this.removeDice(die, 500, 2500);
         });
     };
@@ -5098,15 +4879,15 @@ var DiceManager = /** @class */ (function () {
             return;
         }
         die.locked = forcedLockValue === null ? !die.locked : forcedLockValue;
-        var dieDivId = "dice".concat(die.id);
+        var dieDivId = "dice" + die.id;
         var dieDiv = document.getElementById(dieDivId);
         dieDiv.dataset.rolled = 'false';
         var destinationId = die.locked ? this.getLockedDiceId(die) : "dice-selector";
-        var tempDestinationId = "temp-destination-wrapper-".concat(destinationId, "-").concat(die.id);
-        var tempOriginId = "temp-origin-wrapper-".concat(destinationId, "-").concat(die.id);
+        var tempDestinationId = "temp-destination-wrapper-" + destinationId + "-" + die.id;
+        var tempOriginId = "temp-origin-wrapper-" + destinationId + "-" + die.id;
         if (document.getElementById(destinationId)) {
-            dojo.place("<div id=\"".concat(tempDestinationId, "\" style=\"width: 0px; height: ").concat(dieDiv.clientHeight, "px; display: inline-block; margin: 0;\"></div>"), destinationId);
-            dojo.place("<div id=\"".concat(tempOriginId, "\" style=\"width: ").concat(dieDiv.clientWidth, "px; height: ").concat(dieDiv.clientHeight, "px; display: inline-block; margin: -3px 6px 3px -3px;\"></div>"), dieDivId, 'after');
+            dojo.place("<div id=\"" + tempDestinationId + "\" style=\"width: 0px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: 0;\"></div>", destinationId);
+            dojo.place("<div id=\"" + tempOriginId + "\" style=\"width: " + dieDiv.clientWidth + "px; height: " + dieDiv.clientHeight + "px; display: inline-block; margin: -3px 6px 3px -3px;\"></div>", dieDivId, 'after');
             var destination_1 = document.getElementById(destinationId);
             var tempDestination_1 = document.getElementById(tempDestinationId);
             var tempOrigin_1 = document.getElementById(tempOriginId);
@@ -5157,10 +4938,10 @@ var DiceManager = /** @class */ (function () {
         return this.dice.some(function (die) { return !die.locked; });
     };
     DiceManager.prototype.createAndPlaceDie4Html = function (die, destinationId) {
-        var html = "\n        <div id=\"dice".concat(die.id, "\" class=\"die4\" data-dice-id=\"").concat(die.id, "\" data-dice-value=\"").concat(die.value, "\">\n            <ol class=\"die-list\" data-roll=\"").concat(die.value, "\">");
+        var html = "\n        <div id=\"dice" + die.id + "\" class=\"die4\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n            <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
         for (var dieFace = 1; dieFace <= 4; dieFace++) {
-            html += "<li class=\"face\" data-side=\"".concat(dieFace, "\">");
-            DIE4_ICONS[dieFace].forEach(function (icon) { return html += "<span class=\"number face".concat(icon, "\"><div class=\"anubis-icon anubis-icon").concat(icon, "\"></div></span>"); });
+            html += "<li class=\"face\" data-side=\"" + dieFace + "\">";
+            DIE4_ICONS[dieFace].forEach(function (icon) { return html += "<span class=\"number face" + icon + "\"><div class=\"anubis-icon anubis-icon" + icon + "\"></div></span>"; });
             html += "</li>";
         }
         html += "    </ol>";
@@ -5169,13 +4950,13 @@ var DiceManager = /** @class */ (function () {
         }
         html += "</div>";
         dojo.place(html, destinationId);
-        this.game.addTooltipHtml("dice".concat(die.id), "\n        <strong>".concat(_("Die of Fate effects"), "</strong>\n        <div><div class=\"anubis-icon anubis-icon1\"></div> ").concat(_("Change Curse: Discard the current Curse and reveal the next one."), "</div>\n        <div><div class=\"anubis-icon anubis-icon2\"></div> ").concat(_("No effect. The card's permanent effect remains active, however."), "</div>\n        <div><div class=\"anubis-icon anubis-icon3\"></div> ").concat(_("Suffer the Snake effect."), "</div>\n        <div><div class=\"anubis-icon anubis-icon4\"></div> ").concat(_("Receive the blessing of the Ankh effect."), "</div>\n        "));
+        this.game.addTooltipHtml("dice" + die.id, "\n        <strong>" + _("Die of Fate effects") + "</strong>\n        <div><div class=\"anubis-icon anubis-icon1\"></div> " + _("Change Curse: Discard the current Curse and reveal the next one.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon2\"></div> " + _("No effect. The card's permanent effect remains active, however.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon3\"></div> " + _("Suffer the Snake effect.") + "</div>\n        <div><div class=\"anubis-icon anubis-icon4\"></div> " + _("Receive the blessing of the Ankh effect.") + "</div>\n        ");
     };
     DiceManager.prototype.createAndPlaceDie6Html = function (die, canHealWithDice, frozenFaces, destinationId) {
-        var html = "<div id=\"dice".concat(die.id, "\" class=\"dice dice").concat(die.value, "\" data-dice-id=\"").concat(die.id, "\" data-dice-value=\"").concat(die.value, "\">\n        <ol class=\"die-list\" data-roll=\"").concat(die.value, "\">");
+        var html = "<div id=\"dice" + die.id + "\" class=\"dice dice" + die.value + "\" data-dice-id=\"" + die.id + "\" data-dice-value=\"" + die.value + "\">\n        <ol class=\"die-list\" data-roll=\"" + die.value + "\">";
         var colorClass = die.type === 1 ? 'berserk' : (die.extra ? 'green' : 'black');
         for (var dieFace = 1; dieFace <= 6; dieFace++) {
-            html += "<li class=\"die-item ".concat(colorClass, " side").concat(dieFace, "\" data-side=\"").concat(dieFace, "\"></li>");
+            html += "<li class=\"die-item " + colorClass + " side" + dieFace + "\" data-side=\"" + dieFace + "\"></li>";
         }
         html += "</ol>";
         if (!die.type && (frozenFaces === null || frozenFaces === void 0 ? void 0 : frozenFaces.includes(die.value))) {
@@ -5189,7 +4970,7 @@ var DiceManager = /** @class */ (function () {
         }
         html += "</div>";
         // security to destroy pre-existing die with same id
-        var dieDiv = document.getElementById("dice".concat(die.id));
+        var dieDiv = document.getElementById("dice" + die.id);
         dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
         dojo.place(html, destinationId);
     };
@@ -5204,7 +4985,7 @@ var DiceManager = /** @class */ (function () {
         this.getDieDiv(die).addEventListener('click', function (event) { return _this.dieClick(die, event); });
     };
     DiceManager.prototype.getDieDiv = function (die) {
-        return document.getElementById("dice".concat(die.id));
+        return document.getElementById("dice" + die.id);
     };
     DiceManager.prototype.createDice = function (die, canHealWithDice, frozenFaces) {
         this.createAndPlaceDiceHtml(die, canHealWithDice, frozenFaces, die.locked ? this.getLockedDiceId(die) : "dice-selector");
@@ -5282,15 +5063,15 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.removeDice = function (die, duration, delay) {
         this.dice.splice(this.dice.findIndex(function (d) { return d.id == die.id; }), 1);
         if (duration) {
-            this.game.fadeOutAndDestroy("dice".concat(die.id), duration, delay);
+            this.game.fadeOutAndDestroy("dice" + die.id, duration, delay);
         }
         else {
-            var dieDiv = document.getElementById("dice".concat(die.id));
+            var dieDiv = document.getElementById("dice" + die.id);
             dieDiv === null || dieDiv === void 0 ? void 0 : dieDiv.parentNode.removeChild(dieDiv);
         }
     };
     DiceManager.prototype.hideBubble = function (dieId) {
-        var bubble = document.getElementById("discussion_bubble_dice".concat(dieId));
+        var bubble = document.getElementById("discussion_bubble_dice" + dieId);
         if (bubble) {
             bubble.style.display = 'none';
             bubble.dataset.visible = 'false';
@@ -5306,32 +5087,32 @@ var DiceManager = /** @class */ (function () {
             // die of fate cannot be changed by power cards
             return;
         }
-        var divId = "dice".concat(die.id);
-        if (!document.getElementById("discussion_bubble_".concat(divId))) {
-            dojo.place("<div id=\"discussion_bubble_".concat(divId, "\" class=\"discussion_bubble change-die-discussion_bubble\"></div>"), divId);
+        var divId = "dice" + die.id;
+        if (!document.getElementById("discussion_bubble_" + divId)) {
+            dojo.place("<div id=\"discussion_bubble_" + divId + "\" class=\"discussion_bubble change-die-discussion_bubble\"></div>", divId);
         }
-        var bubble = document.getElementById("discussion_bubble_".concat(divId));
+        var bubble = document.getElementById("discussion_bubble_" + divId);
         var visible = bubble.dataset.visible == 'true';
         if (visible) {
             this.hideBubble(die.id);
         }
         else {
-            var bubbleActionButtonsId = "discussion_bubble_".concat(divId, "-action-buttons");
-            var bubbleDieFaceSelectorId = "discussion_bubble_".concat(divId, "-die-face-selector");
+            var bubbleActionButtonsId = "discussion_bubble_" + divId + "-action-buttons";
+            var bubbleDieFaceSelectorId = "discussion_bubble_" + divId + "-die-face-selector";
             var creation = bubble.innerHTML == '';
             if (creation) {
-                dojo.place("\n                <div id=\"".concat(bubbleDieFaceSelectorId, "\" class=\"die-face-selector\"></div>\n                <div id=\"").concat(bubbleActionButtonsId, "\" class=\"action-buttons\"></div>\n                "), bubble.id);
+                dojo.place("\n                <div id=\"" + bubbleDieFaceSelectorId + "\" class=\"die-face-selector\"></div>\n                <div id=\"" + bubbleActionButtonsId + "\" class=\"action-buttons\"></div>\n                ", bubble.id);
             }
-            var herdCullerButtonId_1 = "".concat(bubbleActionButtonsId, "-herdCuller");
-            var gammaBreathButtonId_1 = "".concat(bubbleActionButtonsId, "-gammaBreath");
-            var tailSweepButtonId_1 = "".concat(bubbleActionButtonsId, "-tailSweep");
-            var tinyTailButtonId_1 = "".concat(bubbleActionButtonsId, "-tinyTail");
-            var plotTwistButtonId_1 = "".concat(bubbleActionButtonsId, "-plotTwist");
-            var stretchyButtonId_1 = "".concat(bubbleActionButtonsId, "-stretchy");
-            var biofuelButtonId_1 = "".concat(bubbleActionButtonsId, "-biofuel");
-            var shrinkyButtonId_1 = "".concat(bubbleActionButtonsId, "-shrinky");
-            var saurianAdaptabilityButtonId_1 = "".concat(bubbleActionButtonsId, "-saurianAdaptability");
-            var clownButtonId_1 = "".concat(bubbleActionButtonsId, "-clown");
+            var herdCullerButtonId_1 = bubbleActionButtonsId + "-herdCuller";
+            var gammaBreathButtonId_1 = bubbleActionButtonsId + "-gammaBreath";
+            var tailSweepButtonId_1 = bubbleActionButtonsId + "-tailSweep";
+            var tinyTailButtonId_1 = bubbleActionButtonsId + "-tinyTail";
+            var plotTwistButtonId_1 = bubbleActionButtonsId + "-plotTwist";
+            var stretchyButtonId_1 = bubbleActionButtonsId + "-stretchy";
+            var biofuelButtonId_1 = bubbleActionButtonsId + "-biofuel";
+            var shrinkyButtonId_1 = bubbleActionButtonsId + "-shrinky";
+            var saurianAdaptabilityButtonId_1 = bubbleActionButtonsId + "-saurianAdaptability";
+            var clownButtonId_1 = bubbleActionButtonsId + "-clown";
             var args_1 = this.changeDieArgs;
             if (!this.dieFaceSelectors[die.id]) {
                 this.dieFaceSelectors[die.id] = new DieFaceSelector(bubbleDieFaceSelectorId, die, args_1.canHealWithDice);
@@ -5340,63 +5121,63 @@ var DiceManager = /** @class */ (function () {
             if (creation) {
                 var buttonText = _("Change die face with ${card_name}");
                 if (args_1.hasClown) {
-                    this.game.createButton(bubbleActionButtonsId, clownButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(212, 'text-only'), "</strong>") }), function () {
+                    this.game.createButton(bubbleActionButtonsId, clownButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(212, 'text-only') + "</strong>" }), function () {
                         _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 212),
                             _this.toggleBubbleChangeDie(die);
                     }, true);
                 }
                 else {
                     if (args_1.hasHerdCuller) {
-                        this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(22, 'text-only'), "</strong>") }), function () {
+                        this.game.createButton(bubbleActionButtonsId, herdCullerButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(22, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 22);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasGammaBreath) {
-                        this.game.createButton(bubbleActionButtonsId, gammaBreathButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(57, 'text-only'), "</strong>") }), function () {
+                        this.game.createButton(bubbleActionButtonsId, gammaBreathButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.evolutionCardsManager.getCardName(57, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3057);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasTailSweep) {
-                        this.game.createButton(bubbleActionButtonsId, tailSweepButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(58, 'text-only'), "</strong>") }), function () {
+                        this.game.createButton(bubbleActionButtonsId, tailSweepButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.evolutionCardsManager.getCardName(58, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3058);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasTinyTail) {
-                        this.game.createButton(bubbleActionButtonsId, tinyTailButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(184, 'text-only'), "</strong>") }), function () {
+                        this.game.createButton(bubbleActionButtonsId, tinyTailButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.evolutionCardsManager.getCardName(184, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3058);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasPlotTwist) {
-                        this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(33, 'text-only'), "</strong>") }), function () {
+                        this.game.createButton(bubbleActionButtonsId, plotTwistButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(33, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 33),
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasStretchy) {
-                        this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(44, 'text-only'), "</strong>") }) + formatTextIcons(' (2 [Energy])'), function () {
+                        this.game.createButton(bubbleActionButtonsId, stretchyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(44, 'text-only') + "</strong>" }) + formatTextIcons(' (2 [Energy])'), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 44),
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasBiofuel) {
-                        this.game.createButton(bubbleActionButtonsId, biofuelButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(56, 'text-only'), "</strong>") }), function () {
+                        this.game.createButton(bubbleActionButtonsId, biofuelButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(56, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 56),
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasShrinky) {
-                        this.game.createButton(bubbleActionButtonsId, shrinkyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.cardsManager.getCardName(65, 'text-only'), "</strong>") }), function () {
+                        this.game.createButton(bubbleActionButtonsId, shrinkyButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>" + this.game.cardsManager.getCardName(65, 'text-only') + "</strong>" }), function () {
                             _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 65),
                                 _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
                     if (args_1.hasSaurianAdaptability) {
                         var saurianAdaptabilityButtonLabel = dojo.string.substitute(_("Change all ${die_face} with ${card_name}"), {
-                            'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(54, 'text-only'), "</strong>"),
+                            'card_name': "<strong>" + this.game.evolutionCardsManager.getCardName(54, 'text-only') + "</strong>",
                             'die_face': formatTextIcons(DICE_STRINGS[die.value]),
                         });
                         this.game.createButton(bubbleActionButtonsId, saurianAdaptabilityButtonId_1, saurianAdaptabilityButtonLabel, function () {
@@ -5510,20 +5291,20 @@ var KingOfTokyoAnimationManager = /** @class */ (function () {
     };
     KingOfTokyoAnimationManager.prototype.resolveNumberDice = function (args) {
         var dice = this.getDice(args.diceValue);
-        this.game.displayScoring("dice".concat((dice[Math.floor(dice.length / 2)] || dice[0]).id), this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
+        this.game.displayScoring("dice" + (dice[Math.floor(dice.length / 2)] || dice[0]).id, this.game.getPreferencesManager().getDiceScoringColor(), args.deltaPoints, 1500);
     };
     KingOfTokyoAnimationManager.prototype.getDiceShowingFace = function (allDice, face) {
-        var dice = allDice.filter(function (die) { var _a; return !die.type && ((_a = document.getElementById("dice".concat(die.id))) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
+        var dice = allDice.filter(function (die) { var _a; return !die.type && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
         if (dice.length > 0 || !this.game.isCybertoothExpansion()) {
             return dice;
         }
         else {
             var berserkDice = this.diceManager.getBerserkDice();
             if (face == 5) { // energy
-                return berserkDice.filter(function (die) { var _a; return die.value >= 1 && die.value <= 2 && ((_a = document.getElementById("dice".concat(die.id))) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 1 && die.value <= 2 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else if (face == 6) { // smash
-                return berserkDice.filter(function (die) { var _a; return die.value >= 3 && die.value <= 5 && ((_a = document.getElementById("dice".concat(die.id))) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
+                return berserkDice.filter(function (die) { var _a; return die.value >= 3 && die.value <= 5 && ((_a = document.getElementById("dice" + die.id)) === null || _a === void 0 ? void 0 : _a.dataset.animated) !== 'true'; });
             }
             else {
                 return [];
@@ -5536,29 +5317,29 @@ var KingOfTokyoAnimationManager = /** @class */ (function () {
             return;
         }
         var dice = this.getDice(diceValue);
-        var originTop = (document.getElementById(dice[0] ? "dice".concat(dice[0].id) : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect().top;
-        var leftDieBR = (document.getElementById(dice[0] ? "dice".concat(dice[0].id) : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
-        var rightDieBR = (document.getElementById(dice.length ? "dice".concat(dice[dice.length - 1].id) : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
+        var originTop = (document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect().top;
+        var leftDieBR = (document.getElementById(dice[0] ? "dice" + dice[0].id : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
+        var rightDieBR = (document.getElementById(dice.length ? "dice" + dice[dice.length - 1].id : 'dice-selector') || document.getElementById('dice-selector')).getBoundingClientRect();
         var originCenter = (leftDieBR.left + rightDieBR.right) / 2;
         playerIds.forEach(function (playerId) {
             var maxSpaces = SPACE_BETWEEN_ANIMATION_AT_START * number;
             var halfMaxSpaces = maxSpaces / 2;
             var shift = targetToken ? 16 : 59;
-            var _loop_4 = function (i) {
+            var _loop_2 = function (i) {
                 var originLeft = originCenter - halfMaxSpaces + SPACE_BETWEEN_ANIMATION_AT_START * i;
-                var animationId = "animation".concat(diceValue, "-").concat(i, "-player").concat(playerId, "-").concat(new Date().getTime());
-                dojo.place("<div id=\"".concat(animationId, "\" class=\"animation animation").concat(diceValue, "\" style=\"left: ").concat(originLeft + window.scrollX - 94, "px; top: ").concat(originTop + window.scrollY - 94, "px;\"></div>"), document.body);
+                var animationId = "animation" + diceValue + "-" + i + "-player" + playerId + "-" + new Date().getTime();
+                dojo.place("<div id=\"" + animationId + "\" class=\"animation animation" + diceValue + "\" style=\"left: " + (originLeft + window.scrollX - 94) + "px; top: " + (originTop + window.scrollY - 94) + "px;\"></div>", document.body);
                 var animationDiv = document.getElementById(animationId);
                 setTimeout(function () {
                     var middleIndex = number / 2;
                     var deltaX = (i - middleIndex) * ANIMATION_FULL_SIZE;
-                    animationDiv.style.transform = "translate(".concat(deltaX, "px, 100px) scale(1)");
+                    animationDiv.style.transform = "translate(" + deltaX + "px, 100px) scale(1)";
                 }, 50);
                 setTimeout(function () {
                     var _a, _b;
-                    var targetId = "monster-figure-".concat(playerId);
+                    var targetId = "monster-figure-" + playerId;
                     if (targetToken) {
-                        var tokensDivs = document.querySelectorAll("div[id^='token-wrapper-".concat(playerId, "-").concat(targetToken, "-token'"));
+                        var tokensDivs = document.querySelectorAll("div[id^='token-wrapper-" + playerId + "-" + targetToken + "-token'");
                         targetId = tokensDivs[tokensDivs.length - (i + 1)].id;
                     }
                     var destination = (_a = document.getElementById(targetId)) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect();
@@ -5566,7 +5347,7 @@ var KingOfTokyoAnimationManager = /** @class */ (function () {
                         var deltaX = destination.left - originLeft + shift * _this.game.getZoom();
                         var deltaY = destination.top - originTop + shift * _this.game.getZoom();
                         animationDiv.style.transition = "transform 0.5s ease-in";
-                        animationDiv.style.transform = "translate(".concat(deltaX, "px, ").concat(deltaY, "px) scale(").concat(0.3 * _this.game.getZoom(), ")");
+                        animationDiv.style.transform = "translate(" + deltaX + "px, " + deltaY + "px) scale(" + 0.3 * _this.game.getZoom() + ")";
                         animationDiv.addEventListener('transitionend', function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); });
                         // security
                         setTimeout(function () { var _a; return (_a = animationDiv === null || animationDiv === void 0 ? void 0 : animationDiv.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(animationDiv); }, 1050);
@@ -5578,7 +5359,7 @@ var KingOfTokyoAnimationManager = /** @class */ (function () {
                 }, 1000);
             };
             for (var i = 0; i < number; i++) {
-                _loop_4(i);
+                _loop_2(i);
             }
         });
     };
@@ -5601,47 +5382,47 @@ var HeartActionSelector = /** @class */ (function () {
         this.args = args;
         this.selections = [];
         this.createToggleButtons(nodeId, args);
-        dojo.place("<div id=\"".concat(nodeId, "-apply-wrapper\" class=\"action-selector-apply-wrapper\"><button class=\"bgabutton bgabutton_blue action-selector-apply\" id=\"").concat(nodeId, "-apply\">").concat(_('Apply'), "</button></div>"), nodeId);
-        document.getElementById("".concat(nodeId, "-apply")).addEventListener('click', function () { return _this.game.applyHeartActions(_this.selections); });
+        dojo.place("<div id=\"" + nodeId + "-apply-wrapper\" class=\"action-selector-apply-wrapper\"><button class=\"bgabutton bgabutton_blue action-selector-apply\" id=\"" + nodeId + "-apply\">" + _('Apply') + "</button></div>", nodeId);
+        document.getElementById(nodeId + "-apply").addEventListener('click', function () { return _this.game.applyHeartActions(_this.selections); });
     }
     HeartActionSelector.prototype.createToggleButtons = function (nodeId, args) {
         var _this = this;
         args.dice.filter(function (die) { return die.value === 4; }).forEach(function (die, index) {
-            var html = "<div class=\"row\">\n                <div class=\"legend\">\n                    <div class=\"dice-icon dice4\"></div>\n                </div>\n                <div id=\"".concat(nodeId, "-die").concat(index, "\" class=\"toggle-buttons\"></div>\n            </div>");
+            var html = "<div class=\"row\">\n                <div class=\"legend\">\n                    <div class=\"dice-icon dice4\"></div>\n                </div>\n                <div id=\"" + nodeId + "-die" + index + "\" class=\"toggle-buttons\"></div>\n            </div>";
             dojo.place(html, nodeId);
-            _this.createToggleButton("".concat(nodeId, "-die").concat(index), "".concat(nodeId, "-die").concat(index, "-heal"), _('Heal'), function () { return _this.healSelected(index); }, false, true);
+            _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-heal", _('Heal'), function () { return _this.healSelected(index); }, false, true);
             if (!args.canHealWithDice) {
-                var buttonDiv = document.getElementById("".concat(nodeId, "-die").concat(index, "-heal"));
+                var buttonDiv = document.getElementById(nodeId + "-die" + index + "-heal");
                 buttonDiv.style.position = 'relative';
                 buttonDiv.innerHTML += "<div class=\"icon forbidden\"></div>";
             }
             _this.selections[index] = { action: 'heal' };
             if (args.shrinkRayTokens > 0) {
-                _this.createToggleButton("".concat(nodeId, "-die").concat(index), "".concat(nodeId, "-die").concat(index, "-shrink-ray"), _('Remove Shrink Ray token'), function () { return _this.shrinkRaySelected(index); }, !args.canHealWithDice);
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-shrink-ray", _('Remove Shrink Ray token'), function () { return _this.shrinkRaySelected(index); }, !args.canHealWithDice);
                 if (!args.canHealWithDice) {
-                    var buttonDiv = document.getElementById("".concat(nodeId, "-die").concat(index, "-shrink-ray"));
+                    var buttonDiv = document.getElementById(nodeId + "-die" + index + "-shrink-ray");
                     buttonDiv.style.position = 'relative';
                     buttonDiv.innerHTML += "<div class=\"icon forbidden\"></div>";
                 }
             }
             if (args.poisonTokens > 0) {
-                _this.createToggleButton("".concat(nodeId, "-die").concat(index), "".concat(nodeId, "-die").concat(index, "-poison"), _('Remove Poison token'), function () { return _this.poisonSelected(index); }, !args.canHealWithDice);
+                _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-poison", _('Remove Poison token'), function () { return _this.poisonSelected(index); }, !args.canHealWithDice);
                 if (!args.canHealWithDice) {
-                    var buttonDiv = document.getElementById("".concat(nodeId, "-die").concat(index, "-poison"));
+                    var buttonDiv = document.getElementById(nodeId + "-die" + index + "-poison");
                     buttonDiv.style.position = 'relative';
                     buttonDiv.innerHTML += "<div class=\"icon forbidden\"></div>";
                 }
             }
             if (args.hasHealingRay) {
                 args.healablePlayers.forEach(function (healablePlayer) {
-                    return _this.createToggleButton("".concat(nodeId, "-die").concat(index), "".concat(nodeId, "-die").concat(index, "-heal-player-").concat(healablePlayer.id), dojo.string.substitute(_('Heal player ${player_name}'), { 'player_name': "<span style=\"color: #".concat(healablePlayer.color, "\">").concat(healablePlayer.name, "</span>") }), function () { return _this.healPlayerSelected(index, healablePlayer.id); }, false);
+                    return _this.createToggleButton(nodeId + "-die" + index, nodeId + "-die" + index + "-heal-player-" + healablePlayer.id, dojo.string.substitute(_('Heal player ${player_name}'), { 'player_name': "<span style=\"color: #" + healablePlayer.color + "\">" + healablePlayer.name + "</span>" }), function () { return _this.healPlayerSelected(index, healablePlayer.id); }, false);
                 });
             }
         });
     };
     HeartActionSelector.prototype.createToggleButton = function (destinationId, id, text, callback, disabled, selected) {
         if (selected === void 0) { selected = false; }
-        var html = "<div class=\"toggle-button\" id=\"".concat(id, "\">\n            ").concat(text, "\n        </button>");
+        var html = "<div class=\"toggle-button\" id=\"" + id + "\">\n            " + text + "\n        </button>";
         dojo.place(html, destinationId);
         if (disabled) {
             dojo.addClass(id, 'disabled');
@@ -5652,7 +5433,7 @@ var HeartActionSelector = /** @class */ (function () {
         document.getElementById(id).addEventListener('click', function () { return callback(); });
     };
     HeartActionSelector.prototype.removeOldSelection = function (index) {
-        var oldSelectionId = this.selections[index].action == 'heal-player' ? "".concat(this.nodeId, "-die").concat(index, "-heal-player-").concat(this.selections[index].playerId) : "".concat(this.nodeId, "-die").concat(index, "-").concat(this.selections[index].action);
+        var oldSelectionId = this.selections[index].action == 'heal-player' ? this.nodeId + "-die" + index + "-heal-player-" + this.selections[index].playerId : this.nodeId + "-die" + index + "-" + this.selections[index].action;
         dojo.removeClass(oldSelectionId, 'selected');
     };
     HeartActionSelector.prototype.healSelected = function (index) {
@@ -5661,7 +5442,7 @@ var HeartActionSelector = /** @class */ (function () {
         }
         this.removeOldSelection(index);
         this.selections[index].action = 'heal';
-        dojo.addClass("".concat(this.nodeId, "-die").concat(index, "-").concat(this.selections[index].action), 'selected');
+        dojo.addClass(this.nodeId + "-die" + index + "-" + this.selections[index].action, 'selected');
         this.checkDisabled();
     };
     HeartActionSelector.prototype.shrinkRaySelected = function (index) {
@@ -5670,7 +5451,7 @@ var HeartActionSelector = /** @class */ (function () {
         }
         this.removeOldSelection(index);
         this.selections[index].action = 'shrink-ray';
-        dojo.addClass("".concat(this.nodeId, "-die").concat(index, "-").concat(this.selections[index].action), 'selected');
+        dojo.addClass(this.nodeId + "-die" + index + "-" + this.selections[index].action, 'selected');
         this.checkDisabled();
     };
     HeartActionSelector.prototype.poisonSelected = function (index) {
@@ -5679,7 +5460,7 @@ var HeartActionSelector = /** @class */ (function () {
         }
         this.removeOldSelection(index);
         this.selections[index].action = 'poison';
-        dojo.addClass("".concat(this.nodeId, "-die").concat(index, "-").concat(this.selections[index].action), 'selected');
+        dojo.addClass(this.nodeId + "-die" + index + "-" + this.selections[index].action, 'selected');
         this.checkDisabled();
     };
     HeartActionSelector.prototype.healPlayerSelected = function (index, playerId) {
@@ -5689,7 +5470,7 @@ var HeartActionSelector = /** @class */ (function () {
         this.removeOldSelection(index);
         this.selections[index].action = 'heal-player';
         this.selections[index].playerId = playerId;
-        dojo.addClass("".concat(this.nodeId, "-die").concat(index, "-heal-player-").concat(playerId), 'selected');
+        dojo.addClass(this.nodeId + "-die" + index + "-heal-player-" + playerId, 'selected');
         this.checkDisabled();
     };
     HeartActionSelector.prototype.checkDisabled = function () {
@@ -5700,13 +5481,13 @@ var HeartActionSelector = /** @class */ (function () {
         this.args.healablePlayers.forEach(function (player) { return healedPlayers[player.id] = _this.selections.filter(function (selection) { return selection.action === 'heal-player' && selection.playerId == player.id; }).length; });
         this.selections.forEach(function (selection, index) {
             if (_this.args.shrinkRayTokens > 0) {
-                dojo.toggleClass("".concat(_this.nodeId, "-die").concat(index, "-shrink-ray"), 'disabled', selection.action != 'shrink-ray' && removedShrinkRays >= _this.args.shrinkRayTokens);
+                dojo.toggleClass(_this.nodeId + "-die" + index + "-shrink-ray", 'disabled', selection.action != 'shrink-ray' && removedShrinkRays >= _this.args.shrinkRayTokens);
             }
             if (_this.args.poisonTokens > 0) {
-                dojo.toggleClass("".concat(_this.nodeId, "-die").concat(index, "-poison"), 'disabled', selection.action != 'poison' && removedPoisons >= _this.args.poisonTokens);
+                dojo.toggleClass(_this.nodeId + "-die" + index + "-poison", 'disabled', selection.action != 'poison' && removedPoisons >= _this.args.poisonTokens);
             }
             if (_this.args.hasHealingRay) {
-                _this.args.healablePlayers.forEach(function (player) { return dojo.toggleClass("".concat(_this.nodeId, "-die").concat(index, "-heal-player-").concat(player.id), 'disabled', selection.action != 'heal-player' && selection.playerId != player.id && healedPlayers[player.id] >= player.missingHearts); });
+                _this.args.healablePlayers.forEach(function (player) { return dojo.toggleClass(_this.nodeId + "-die" + index + "-heal-player-" + player.id, 'disabled', selection.action != 'heal-player' && selection.playerId != player.id && healedPlayers[player.id] >= player.missingHearts); });
             }
         });
     };
@@ -5720,23 +5501,23 @@ var SmashActionSelector = /** @class */ (function () {
         this.args = args;
         this.selections = [];
         this.createToggleButtons(nodeId, args);
-        dojo.place("<div id=\"".concat(nodeId, "-apply-wrapper\" class=\"action-selector-apply-wrapper\"><button class=\"bgabutton bgabutton_blue action-selector-apply\" id=\"").concat(nodeId, "-apply\">").concat(_('Apply'), "</button></div>"), nodeId);
-        document.getElementById("".concat(nodeId, "-apply")).addEventListener('click', function () { return _this.game.applySmashActions(_this.selections); });
+        dojo.place("<div id=\"" + nodeId + "-apply-wrapper\" class=\"action-selector-apply-wrapper\"><button class=\"bgabutton bgabutton_blue action-selector-apply\" id=\"" + nodeId + "-apply\">" + _('Apply') + "</button></div>", nodeId);
+        document.getElementById(nodeId + "-apply").addEventListener('click', function () { return _this.game.applySmashActions(_this.selections); });
     }
     SmashActionSelector.prototype.createToggleButtons = function (nodeId, args) {
         var _this = this;
         args.willBeWoundedIds.forEach(function (playerId) {
             var player = _this.game.getPlayer(playerId);
-            var html = "<div class=\"row\">\n                <div class=\"legend\" style=\"color: #".concat(player.color, "\">\n                    ").concat(player.name, "\n                </div>\n                <div id=\"").concat(nodeId, "-player").concat(playerId, "\" class=\"toggle-buttons\"></div>\n            </div>");
+            var html = "<div class=\"row\">\n                <div class=\"legend\" style=\"color: #" + player.color + "\">\n                    " + player.name + "\n                </div>\n                <div id=\"" + nodeId + "-player" + playerId + "\" class=\"toggle-buttons\"></div>\n            </div>";
             dojo.place(html, nodeId);
             _this.selections[playerId] = 'smash';
-            _this.createToggleButton("".concat(nodeId, "-player").concat(playerId), "".concat(nodeId, "-player").concat(playerId, "-smash"), _("Don't steal"), function () { return _this.setSelectedAction(playerId, 'smash'); }, true);
-            _this.createToggleButton("".concat(nodeId, "-player").concat(playerId), "".concat(nodeId, "-player").concat(playerId, "-steal"), formatTextIcons(_('Steal 1[Star] and 1[Energy]')), function () { return _this.setSelectedAction(playerId, 'steal'); });
+            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-smash", _("Don't steal"), function () { return _this.setSelectedAction(playerId, 'smash'); }, true);
+            _this.createToggleButton(nodeId + "-player" + playerId, nodeId + "-player" + playerId + "-steal", formatTextIcons(_('Steal 1[Star] and 1[Energy]')), function () { return _this.setSelectedAction(playerId, 'steal'); });
         });
     };
     SmashActionSelector.prototype.createToggleButton = function (destinationId, id, text, callback, selected) {
         if (selected === void 0) { selected = false; }
-        var html = "<div class=\"toggle-button\" id=\"".concat(id, "\">\n            ").concat(text, "\n        </button>");
+        var html = "<div class=\"toggle-button\" id=\"" + id + "\">\n            " + text + "\n        </button>";
         dojo.place(html, destinationId);
         if (selected) {
             dojo.addClass(id, 'selected');
@@ -5744,7 +5525,7 @@ var SmashActionSelector = /** @class */ (function () {
         document.getElementById(id).addEventListener('click', function () { return callback(); });
     };
     SmashActionSelector.prototype.removeOldSelection = function (playerId) {
-        var oldSelectionId = "".concat(this.nodeId, "-player").concat(playerId, "-").concat(this.selections[playerId]);
+        var oldSelectionId = this.nodeId + "-player" + playerId + "-" + this.selections[playerId];
         dojo.removeClass(oldSelectionId, 'selected');
     };
     SmashActionSelector.prototype.setSelectedAction = function (playerId, action) {
@@ -5753,7 +5534,7 @@ var SmashActionSelector = /** @class */ (function () {
         }
         this.removeOldSelection(playerId);
         this.selections[playerId] = action;
-        dojo.addClass("".concat(this.nodeId, "-player").concat(playerId, "-").concat(action), 'selected');
+        dojo.addClass(this.nodeId + "-player" + playerId + "-" + action, 'selected');
     };
     return SmashActionSelector;
 }());
@@ -5849,6 +5630,17 @@ var PreferencesManager = /** @class */ (function () {
     };
     return PreferencesManager;
 }());
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var WICKEDNESS_MONSTER_ICON_POSITION = [
     [2, 270],
     [32, 317],
@@ -5880,7 +5672,7 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         this.game = game;
         this.wickednessPoints = new Map();
-        document.getElementById("board").style.backgroundImage = "url(".concat(g_gamethemeurl, "img/").concat(boardImgUrl, ")");
+        document.getElementById("board").style.backgroundImage = "url(" + g_gamethemeurl + "img/" + boardImgUrl + ")";
         this.createVisibleCards(visibleCards, topDeckCard, deckCardsCount);
         if (game.isWickednessExpansion()) {
             dojo.place("\n            <div id=\"wickedness-board-wrapper\">\n                <div id=\"wickedness-board\"></div>\n            </div>", 'full-board');
@@ -5889,7 +5681,7 @@ var TableCenter = /** @class */ (function () {
                 document.getElementById("table-cards").dataset.wickednessBoard = 'true';
             }
             players.forEach(function (player) {
-                dojo.place("<div id=\"monster-icon-".concat(player.id, "-wickedness\" class=\"monster-icon monster").concat(player.monster, "\" style=\"background-color: ").concat(player.monster > 100 ? 'unset' : '#' + player.color, ";\"></div>"), 'wickedness-board');
+                dojo.place("<div id=\"monster-icon-" + player.id + "-wickedness\" class=\"monster-icon monster" + player.monster + "\" style=\"background-color: " + (player.monster > 100 ? 'unset' : '#' + player.color) + ";\"></div>", 'wickedness-board');
                 _this.wickednessPoints.set(Number(player.id), Number(player.wickedness));
             });
             this.moveWickednessPoints();
@@ -5929,7 +5721,7 @@ var TableCenter = /** @class */ (function () {
             cardNumber: hiddenCurseCardCount,
             topCard: topCurseDeckCard,
         });
-        this.game.addTooltipHtml("curse-deck", "\n        <strong>".concat(_("Curse card pile."), "</strong>\n        <div> ").concat(dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }), "</div>\n        "));
+        this.game.addTooltipHtml("curse-deck", "\n        <strong>" + _("Curse card pile.") + "</strong>\n        <div> " + dojo.string.substitute(_("Discard the current Curse and reveal the next one by rolling ${changeCurseCard}."), { 'changeCurseCard': '<div class="anubis-icon anubis-icon1"></div>' }) + "</div>\n        ");
     };
     TableCenter.prototype.setVisibleCardsSelectionMode = function (mode) {
         this.visibleCards.setSelectionMode(mode);
@@ -6028,7 +5820,7 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.moveWickednessPoints = function () {
         var _this = this;
         this.wickednessPoints.forEach(function (wickedness, playerId) {
-            var markerDiv = document.getElementById("monster-icon-".concat(playerId, "-wickedness"));
+            var markerDiv = document.getElementById("monster-icon-" + playerId + "-wickedness");
             markerDiv.dataset.wickedness = '' + wickedness;
             var positionArray = _this.game.isDarkEdition() ? WICKEDNESS_MONSTER_ICON_POSITION_DARK_EDITION : WICKEDNESS_MONSTER_ICON_POSITION;
             var position = positionArray[wickedness];
@@ -6040,8 +5832,8 @@ var TableCenter = /** @class */ (function () {
                     leftShift += 5;
                 }
             });
-            markerDiv.style.left = "".concat(position[0] + leftShift, "px");
-            markerDiv.style.top = "".concat(position[1] + topShift, "px");
+            markerDiv.style.left = position[0] + leftShift + "px";
+            markerDiv.style.top = position[1] + topShift + "px";
         });
     };
     TableCenter.prototype.setWickedness = function (playerId, wickedness) {
@@ -6107,8 +5899,8 @@ var RULEBOOK_LINKS = [
 var EXPANSION_NUMBER = 8;
 var ActivatedExpansionsPopin = /** @class */ (function () {
     function ActivatedExpansionsPopin(gamedatas, language) {
-        if (language === void 0) { language = 'en'; }
         var _this = this;
+        if (language === void 0) { language = 'en'; }
         this.gamedatas = gamedatas;
         this.language = language;
         this.activatedExpansions = [];
@@ -6137,10 +5929,10 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
             this.activatedExpansions.push(8);
         }
         if (this.activatedExpansions.length) {
-            var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">".concat(_('Active expansions'), "</div>\n                    <div class=\"expansion-zone-list\">");
+            var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">" + _('Active expansions') + "</div>\n                    <div class=\"expansion-zone-list\">";
             for (var i = 1; i <= EXPANSION_NUMBER; i++) {
                 var activated = this.activatedExpansions.includes(i);
-                html += "<div class=\"expansion-zone\" data-expansion=\"".concat(i, "\" data-activated=\"").concat(activated.toString(), "\"><div class=\"expansion-icon\"></div></div>");
+                html += "<div class=\"expansion-zone\" data-expansion=\"" + i + "\" data-activated=\"" + activated.toString() + "\"><div class=\"expansion-icon\"></div></div>";
             }
             html += "        </div>\n                </button>\n            </div>";
             dojo.place(html, "player_boards");
@@ -6163,10 +5955,10 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
     ActivatedExpansionsPopin.prototype.getDescription = function (index) {
         switch (index) {
             case 1: return formatTextIcons(_('Halloween expansion brings a new set of Costume cards. Each player start with a Costume card (chosen between 2). When you smash a player with at least 3 [diceSmash], you can steal their Costumes cards (by paying its cost).'));
-            case 2: return formatTextIcons("<p>".concat(_("After resolving your dice, if you rolled four identical faces, take a Cultist tile"), "</p>\n            <p>").concat(_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll."), "</p>"));
-            case 3: return formatTextIcons("<p>".concat(_("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo."), "</p>\n            <p>").concat(_("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative)."), "</p>\n            <p><strong>").concat(_("Claiming the top level automatically wins the game."), "</strong></p>"));
+            case 2: return formatTextIcons("<p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");
+            case 3: return formatTextIcons("<p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>");
             case 4: return formatTextIcons(_("Anubis brings the Curse cards and the Die of Fate. The Curse card on the table show a permanent effect, applied to all players, and the Die of Fate can trigger the Ankh effect or the Snake effect."));
-            case 5: return formatTextIcons("<p>".concat(_("When you roll 4 or more [diceSmash], you are in Berserk mode!"), "</p>\n            <p>").concat(_("You play with the additional Berserk die, until you heal yourself."), "</p>"));
+            case 5: return formatTextIcons("<p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
             case 6: return formatTextIcons(_("When you roll 3 or more [dice1] or [dice2], gain Wickeness points to get special Tiles."));
             case 7: return formatTextIcons(_("Power-Up! expansion brings new sets of Evolution cards, giving each Monster special abilities. Each player start with an Evolution card (chosen between 2). You can play this Evolution card any time. When you roll 3 or more [diceHeart], you can choose a new Evolution card."));
             case 8: return _("Dark Edition brings gorgeous art, and the wickedness track is included in the game, with a new set of cards.");
@@ -6175,30 +5967,30 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
     };
     ActivatedExpansionsPopin.prototype.viewRulebook = function (index) {
         var _a;
-        var rulebookContainer = document.getElementById("rulebook-".concat(index));
+        var rulebookContainer = document.getElementById("rulebook-" + index);
         var show = rulebookContainer.innerHTML === '';
         if (show) {
             var url = (_a = RULEBOOK_LINKS[index][this.language]) !== null && _a !== void 0 ? _a : RULEBOOK_LINKS[index]['en'];
-            var html = "<iframe src=\"".concat(url, "\" style=\"width: 100%; height: 60vh\"></iframe>");
+            var html = "<iframe src=\"" + url + "\" style=\"width: 100%; height: 60vh\"></iframe>";
             rulebookContainer.innerHTML = html;
         }
         else {
             rulebookContainer.innerHTML = '';
         }
-        document.getElementById("show-rulebook-".concat(index)).innerHTML = show ? _('Hide rulebook') : _('Show rulebook');
+        document.getElementById("show-rulebook-" + index).innerHTML = show ? _('Hide rulebook') : _('Show rulebook');
     };
     ActivatedExpansionsPopin.prototype.createBlock = function (index) {
         var _this = this;
         var _a;
         var url = (_a = RULEBOOK_LINKS[index][this.language]) !== null && _a !== void 0 ? _a : RULEBOOK_LINKS[index]['en'];
         var activated = this.activatedExpansions.includes(index);
-        var html = "\n        <details data-expansion=\"".concat(index, "\" data-activated=\"").concat(activated.toString(), "\">\n            <summary><span class=\"activation-status\">").concat(activated ? _('Enabled') : _('Disabled'), "</span>").concat(this.getTitle(index), "</summary>\n            <div class=\"description\">").concat(this.getDescription(index), "</div>\n            <p class=\"block-buttons\">\n                <button id=\"show-rulebook-").concat(index, "\" class=\"bgabutton bgabutton_blue\">").concat(_('Show rulebook'), "</button>\n                <a href=\"").concat(url, "\" target=\"_blank\" class=\"bgabutton bgabutton_blue\">").concat(_('Open rulebook in a new tab'), "</a>\n            </p>\n            <div id=\"rulebook-").concat(index, "\"></div>\n        </details>");
+        var html = "\n        <details data-expansion=\"" + index + "\" data-activated=\"" + activated.toString() + "\">\n            <summary><span class=\"activation-status\">" + (activated ? _('Enabled') : _('Disabled')) + "</span>" + this.getTitle(index) + "</summary>\n            <div class=\"description\">" + this.getDescription(index) + "</div>\n            <p class=\"block-buttons\">\n                <button id=\"show-rulebook-" + index + "\" class=\"bgabutton bgabutton_blue\">" + _('Show rulebook') + "</button>\n                <a href=\"" + url + "\" target=\"_blank\" class=\"bgabutton bgabutton_blue\">" + _('Open rulebook in a new tab') + "</a>\n            </p>\n            <div id=\"rulebook-" + index + "\"></div>\n        </details>";
         dojo.place(html, "playermat-container-modal");
-        document.getElementById("show-rulebook-".concat(index)).addEventListener("click", function () { return _this.viewRulebook(index); });
+        document.getElementById("show-rulebook-" + index).addEventListener("click", function () { return _this.viewRulebook(index); });
     };
     ActivatedExpansionsPopin.prototype.createPopin = function () {
         var _this = this;
-        var html = "\n        <div id=\"popin_showActivatedExpansions_container\" class=\"kingoftokyo_popin_container\">\n            <div id=\"popin_showActivatedExpansions_underlay\" class=\"kingoftokyo_popin_underlay\"></div>\n                <div id=\"popin_showActivatedExpansions_wrapper\" class=\"kingoftokyo_popin_wrapper\">\n                <div id=\"popin_showActivatedExpansions\" class=\"kingoftokyo_popin\">\n                    <a id=\"popin_showActivatedExpansions_close\" class=\"closeicon\"><i class=\"fa fa-times fa-2x\" aria-hidden=\"true\"></i></a>\n                                \n                    <h2>".concat(_('Active expansions'), "</h2>\n                    <div id=\"playermat-container-modal\"></div>\n                </div>\n            </div>\n        </div>");
+        var html = "\n        <div id=\"popin_showActivatedExpansions_container\" class=\"kingoftokyo_popin_container\">\n            <div id=\"popin_showActivatedExpansions_underlay\" class=\"kingoftokyo_popin_underlay\"></div>\n                <div id=\"popin_showActivatedExpansions_wrapper\" class=\"kingoftokyo_popin_wrapper\">\n                <div id=\"popin_showActivatedExpansions\" class=\"kingoftokyo_popin\">\n                    <a id=\"popin_showActivatedExpansions_close\" class=\"closeicon\"><i class=\"fa fa-times fa-2x\" aria-hidden=\"true\"></i></a>\n                                \n                    <h2>" + _('Active expansions') + "</h2>\n                    <div id=\"playermat-container-modal\"></div>\n                </div>\n            </div>\n        </div>";
         dojo.place(html, $(document.body));
         document.getElementById("popin_showActivatedExpansions_close").addEventListener("click", function () { return _this.closePopin(); });
         document.getElementById("popin_showActivatedExpansions_underlay").addEventListener("click", function () { return _this.closePopin(); });
@@ -6239,17 +6031,17 @@ var MonsterSelector = /** @class */ (function () {
         // TODO clean only needed
         var html = "";
         var bonusMonsters = args.availableMonsters.filter(function (monster) { return !_this.MONSTER_GROUPS.some(function (monsterGroup) { return monsterGroup.monsters.includes(monster); }); });
-        __spreadArray(__spreadArray([], this.MONSTER_GROUPS, true), [this.BONUS_GROUP], false).filter(function (group) {
+        __spreadArray(__spreadArray([], this.MONSTER_GROUPS), [this.BONUS_GROUP]).filter(function (group) {
             var bonus = !group.monsters.length;
             return args.availableMonsters.some(function (monster) { return (bonus ? bonusMonsters : group.monsters).includes(monster); });
         }).forEach(function (group) {
             var bonus = !group.monsters.length;
-            html += "\n            <div class=\"monster-group\">\n                <div class=\"title\" style=\"--title-color: ".concat(group.color, ";\">").concat(group.title, "</div>      \n                <div class=\"monster-group-monsters\">");
+            html += "\n            <div class=\"monster-group\">\n                <div class=\"title\" style=\"--title-color: " + group.color + ";\">" + group.title + "</div>      \n                <div class=\"monster-group-monsters\">";
             var groupMonsters = args.availableMonsters.filter(function (monster) { return (bonus ? bonusMonsters : group.monsters).includes(monster); });
             groupMonsters.forEach(function (monster) {
-                html += "\n                    <div id=\"pick-monster-figure-".concat(monster, "-wrapper\">\n                        <div id=\"pick-monster-figure-").concat(monster, "\" class=\"monster-figure monster").concat(monster, "\"></div>");
+                html += "\n                    <div id=\"pick-monster-figure-" + monster + "-wrapper\">\n                        <div id=\"pick-monster-figure-" + monster + "\" class=\"monster-figure monster" + monster + "\"></div>";
                 if (_this.game.isPowerUpExpansion()) {
-                    html += "<div><button id=\"see-monster-evolution-".concat(monster, "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>").concat(_('Show Evolutions'), "</button></div>");
+                    html += "<div><button id=\"see-monster-evolution-" + monster + "\" class=\"bgabutton bgabutton_blue see-evolutions-button\"><div class=\"player-evolution-card\"></div>" + _('Show Evolutions') + "</button></div>";
                 }
                 html += "</div>";
             });
@@ -6257,9 +6049,9 @@ var MonsterSelector = /** @class */ (function () {
         });
         document.getElementById('monster-pick').innerHTML = html;
         args.availableMonsters.forEach(function (monster) {
-            document.getElementById("pick-monster-figure-".concat(monster)).addEventListener('click', function () { return _this.game.pickMonster(monster); });
+            document.getElementById("pick-monster-figure-" + monster).addEventListener('click', function () { return _this.game.pickMonster(monster); });
             if (_this.game.isPowerUpExpansion()) {
-                document.getElementById("see-monster-evolution-".concat(monster)).addEventListener('click', function () { return _this.showMonsterEvolutions(monster % 100); });
+                document.getElementById("see-monster-evolution-" + monster).addEventListener('click', function () { return _this.showMonsterEvolutions(monster % 100); });
             }
         });
         var isCurrentPlayerActive = this.game.isCurrentPlayerActive();
@@ -6329,9 +6121,9 @@ var KingOfTokyo = /** @class */ (function () {
         // load main board
         var boardDir = gamedatas.origins ? "origins" : (gamedatas.darkEdition ? "dark-edition" : "base");
         var boardFile = gamedatas.twoPlayersVariant ? "2pvariant.jpg" : "standard.jpg";
-        var boardImgUrl = "boards/".concat(boardDir, "/").concat(boardFile);
+        var boardImgUrl = "boards/" + boardDir + "/" + boardFile;
         g_img_preload.push(boardImgUrl);
-        g_img_preload.push("backgrounds/".concat(this.preferencesManager.getBackgroundFilename()));
+        g_img_preload.push("backgrounds/" + this.preferencesManager.getBackgroundFilename());
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
@@ -6383,15 +6175,15 @@ var KingOfTokyo = /** @class */ (function () {
         document.getElementById('zoom-out').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomOut(); });
         document.getElementById('zoom-in').addEventListener('click', function () { var _a; return (_a = _this.tableManager) === null || _a === void 0 ? void 0 : _a.zoomIn(); });
         if (gamedatas.kingkongExpansion) {
-            var tooltip = formatTextIcons("\n            <h3>".concat(_("Tokyo Tower"), "</h3>\n            <p>").concat(_("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo."), "</p>\n            <p>").concat(_("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative)."), "</p>\n            <p><strong>").concat(_("Claiming the top level automatically wins the game."), "</strong></p>\n            "));
+            var tooltip = formatTextIcons("\n            <h3>" + _("Tokyo Tower") + "</h3>\n            <p>" + _("Claim a tower level by rolling at least [dice1][dice1][dice1][dice1] while in Tokyo.") + "</p>\n            <p>" + _("<strong>Monsters who control one or more levels</strong> gain the bonuses at the beginning of their turn: 1[Heart] for the bottom level, 1[Heart] and 1[Energy] for the middle level (the bonuses are cumulative).") + "</p>\n            <p><strong>" + _("Claiming the top level automatically wins the game.") + "</strong></p>\n            ");
             this.addTooltipHtmlToClass('tokyo-tower-tooltip', tooltip);
         }
         if (gamedatas.cybertoothExpansion) {
-            var tooltip = formatTextIcons("\n            <h3>".concat(_("Berserk mode"), "</h3>\n            <p>").concat(_("When you roll 4 or more [diceSmash], you are in Berserk mode!"), "</p>\n            <p>").concat(_("You play with the additional Berserk die, until you heal yourself."), "</p>"));
+            var tooltip = formatTextIcons("\n            <h3>" + _("Berserk mode") + "</h3>\n            <p>" + _("When you roll 4 or more [diceSmash], you are in Berserk mode!") + "</p>\n            <p>" + _("You play with the additional Berserk die, until you heal yourself.") + "</p>");
             this.addTooltipHtmlToClass('berserk-tooltip', tooltip);
         }
         if (gamedatas.cthulhuExpansion) {
-            this.CULTIST_TOOLTIP = formatTextIcons("\n            <h3>".concat(_("Cultists"), "</h3>\n            <p>").concat(_("After resolving your dice, if you rolled four identical faces, take a Cultist tile"), "</p>\n            <p>").concat(_("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll."), "</p>"));
+            this.CULTIST_TOOLTIP = formatTextIcons("\n            <h3>" + _("Cultists") + "</h3>\n            <p>" + _("After resolving your dice, if you rolled four identical faces, take a Cultist tile") + "</p>\n            <p>" + _("At any time, you can discard one of your Cultist tiles to gain either: 1[Heart], 1[Energy], or one extra Roll.") + "</p>");
             this.addTooltipHtmlToClass('cultist-tooltip', this.CULTIST_TOOLTIP);
         }
         // override to allow icons in messages
@@ -6531,7 +6323,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.showEvolutionsPopinPlayerButtons = function () {
         if (this.isPowerUpExpansion()) {
-            Object.keys(this.gamedatas.players).forEach(function (playerId) { return document.getElementById("see-monster-evolution-player-".concat(playerId)).classList.toggle('visible', true); });
+            Object.keys(this.gamedatas.players).forEach(function (playerId) { return document.getElementById("see-monster-evolution-player-" + playerId).classList.toggle('visible', true); });
         }
     };
     KingOfTokyo.prototype.showActivePlayer = function (playerId) {
@@ -6540,9 +6332,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.setGamestateDescription = function (property) {
         if (property === void 0) { property = ''; }
         var originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
-        if (this.gamedatas.gamestate.description !== "".concat(originalState['description' + property])) {
-            this.gamedatas.gamestate.description = "".concat(originalState['description' + property]);
-            this.gamedatas.gamestate.descriptionmyturn = "".concat(originalState['descriptionmyturn' + property]);
+        if (this.gamedatas.gamestate.description !== "" + originalState['description' + property]) {
+            this.gamedatas.gamestate.description = "" + originalState['description' + property];
+            this.gamedatas.gamestate.descriptionmyturn = "" + originalState['descriptionmyturn' + property];
             this.updatePageTitle();
         }
     };
@@ -6554,7 +6346,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringPickEvolutionForDeck = function (args) {
         var _this = this;
         if (!document.getElementById('choose-evolution-in')) {
-            dojo.place("\n                <div class=\"whiteblock\">\n                    <h3>".concat(_("Choose an Evolution in"), "</h3>\n                    <div id=\"choose-evolution-in\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n                <div class=\"whiteblock\">\n                    <h3>").concat(_("Evolutions in your deck"), "</h3>\n                    <div id=\"evolutions-in-deck\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n            "), 'mutant-evolution-choice');
+            dojo.place("\n                <div class=\"whiteblock\">\n                    <h3>" + _("Choose an Evolution in") + "</h3>\n                    <div id=\"choose-evolution-in\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n                <div class=\"whiteblock\">\n                    <h3>" + _("Evolutions in your deck") + "</h3>\n                    <div id=\"evolutions-in-deck\" class=\"evolution-card-stock player-evolution-cards\"></div>\n                </div>\n            ", 'mutant-evolution-choice');
             this.choseEvolutionInStock = new LineStock(this.evolutionCardsManager, document.getElementById("choose-evolution-in"));
             this.choseEvolutionInStock.setSelectionMode('single');
             this.choseEvolutionInStock.onCardClick = function (card) { return _this.pickEvolutionForDeck(card.id); };
@@ -6593,11 +6385,11 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringBeforeEndTurn = function (args) {
         if (args._private) {
             Object.keys(args._private).forEach(function (key) {
-                var div = document.getElementById("hand-evolution-cards_item_".concat(key));
+                var div = document.getElementById("hand-evolution-cards_item_" + key);
                 if (div) {
                     var counter = args._private[key];
                     var symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
-                    dojo.place(formatTextIcons("<div class=\"evolution-inner-counter\">".concat(counter[0], " ").concat(symbol, "</div>")), div);
+                    dojo.place(formatTextIcons("<div class=\"evolution-inner-counter\">" + counter[0] + " " + symbol + "</div>"), div);
                 }
             });
         }
@@ -6610,10 +6402,10 @@ var KingOfTokyo = /** @class */ (function () {
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
         this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
         if (isCurrentPlayerActive) {
-            var orbOfDoomsSuffix = args.opponentsOrbOfDooms ? formatTextIcons(" (-".concat(args.opponentsOrbOfDooms, "[Heart])")) : '';
+            var orbOfDoomsSuffix = args.opponentsOrbOfDooms ? formatTextIcons(" (-" + args.opponentsOrbOfDooms + "[Heart])") : '';
             if (args.throwNumber < args.maxThrowNumber) {
                 this.createButton('dice-actions', 'rethrow_button', dojo.string.substitute(_("Reroll dice (${number} roll(s) remaining)"), { 'number': args.maxThrowNumber - args.throwNumber }) + orbOfDoomsSuffix, function () { return _this.onRethrow(); }, !args.dice.some(function (dice) { return !dice.locked; }));
-                this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to reroll the others"), "".concat(_("Ctrl+click to move all dice with same value"), "<br>\n                    ").concat(_("Alt+click to move all dice but clicked die")));
+                this.addTooltip('rethrow_button', _("Click on dice you want to keep to lock them, then click this button to reroll the others"), _("Ctrl+click to move all dice with same value") + "<br>\n                    " + _("Alt+click to move all dice but clicked die"));
             }
             if (args.rethrow3.hasCard) {
                 this.createButton('dice-actions', 'rethrow3_button', _("Reroll") + formatTextIcons(' [dice3]') + ' (' + this.cardsManager.getCardName(5, 'text-only') + ')', function () { return _this.rethrow3(); }, !args.rethrow3.hasDice3);
@@ -6626,7 +6418,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.createButton('dice-actions', 'use_smoke_cloud_button', _("Get extra die Roll") + " (<span class=\"smoke-cloud token\"></span>)" + orbOfDoomsSuffix, function () { return _this.useSmokeCloud(); });
             }
             if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
-                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + " (".concat(_('Cultist'), ")") + orbOfDoomsSuffix, function () { return _this.useCultist(); });
+                this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + (" (" + _('Cultist') + ")") + orbOfDoomsSuffix, function () { return _this.useCultist(); });
             }
             if (args.rerollDie.isBeastForm) {
                 dojo.place("<div id=\"beast-form-dice-actions\"></div>", 'dice-actions');
@@ -6634,7 +6426,7 @@ var KingOfTokyo = /** @class */ (function () {
                 args.dice.filter(function (die) { return die.type < 2; }).forEach(function (die) {
                     if (die.canReroll && (die.type > 0 || !simpleFaces_1.includes(die.value))) {
                         var faceText = die.type == 1 ? BERSERK_DIE_STRINGS[die.value] : DICE_STRINGS[die.value];
-                        _this.createButton('beast-form-dice-actions', "rerollDie".concat(die.id, "_button"), _("Reroll") + formatTextIcons(' ' + faceText) + ' (' + _this.cardsManager.getCardName(301, 'text-only', 1) + ')', function () { return _this.rerollDie(die.id); }, !args.rerollDie.canUseBeastForm);
+                        _this.createButton('beast-form-dice-actions', "rerollDie" + die.id + "_button", _("Reroll") + formatTextIcons(' ' + faceText) + ' (' + _this.cardsManager.getCardName(301, 'text-only', 1) + ')', function () { return _this.rerollDie(die.id); }, !args.rerollDie.canUseBeastForm);
                         if (die.type == 0) {
                             simpleFaces_1.push(die.value);
                         }
@@ -6711,7 +6503,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
             this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
-            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_".concat(id, "\"]"))) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringResolveNumberDice = function (args) {
@@ -6800,9 +6592,9 @@ var KingOfTokyo = /** @class */ (function () {
                 Object.keys(args.replaceHeartByEnergyCost).filter(function (energy) { return Number(energy) <= args.countSuperJump; }).forEach(function (energy) {
                     var energyCost = Number(energy);
                     var remainingDamage = args.replaceHeartByEnergyCost[energy];
-                    var id = "useSuperJump".concat(energyCost, "_button");
+                    var id = "useSuperJump" + energyCost + "_button";
                     if (!document.getElementById(id)) {
-                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(53, 'text-only') }) + (remainingDamage > 0 ? " (-".concat(remainingDamage, "[Heart])") : '')), function () { return _this.useSuperJump(energyCost); });
+                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(53, 'text-only') }) + (remainingDamage > 0 ? " (-" + remainingDamage + "[Heart])" : '')), function () { return _this.useSuperJump(energyCost); });
                         document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -6812,9 +6604,9 @@ var KingOfTokyo = /** @class */ (function () {
                 Object.keys(args.replaceHeartByEnergyCost).forEach(function (energy) {
                     var energyCost = Number(energy);
                     var remainingDamage = args.replaceHeartByEnergyCost[energy];
-                    var id = "useRobot".concat(energyCost, "_button");
+                    var id = "useRobot" + energyCost + "_button";
                     if (!document.getElementById(id)) {
-                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(210, 'text-only') }) + (remainingDamage > 0 ? " (-".concat(remainingDamage, "[Heart])") : '')), function () { return _this.useRobot(energyCost); });
+                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(210, 'text-only') }) + (remainingDamage > 0 ? " (-" + remainingDamage + "[Heart])" : '')), function () { return _this.useRobot(energyCost); });
                         document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -6824,9 +6616,9 @@ var KingOfTokyo = /** @class */ (function () {
                 Object.keys(args.replaceHeartByEnergyCost).forEach(function (energy) {
                     var energyCost = Number(energy);
                     var remainingDamage = args.replaceHeartByEnergyCost[energy];
-                    var id = "useElectricArmor".concat(energyCost, "_button");
+                    var id = "useElectricArmor" + energyCost + "_button";
                     if (!document.getElementById(id) && energyCost == 1) {
-                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(58, 'text-only') }) + (remainingDamage > 0 ? " (-".concat(remainingDamage, "[Heart])") : '')), function () { return _this.useElectricArmor(energyCost); });
+                        _this.addActionButton(id, formatTextIcons(dojo.string.substitute(_("Use ${card_name}") + ' : ' + _("lose ${number}[energy] instead of ${number}[heart]"), { 'number': energyCost, 'card_name': _this.cardsManager.getCardName(58, 'text-only') }) + (remainingDamage > 0 ? " (-" + remainingDamage + "[Heart])" : '')), function () { return _this.useElectricArmor(energyCost); });
                         document.getElementById(id).dataset.enableAtEnergy = '' + energyCost;
                         dojo.toggleClass(id, 'disabled', args.playerEnergy < energyCost);
                     }
@@ -6849,7 +6641,7 @@ var KingOfTokyo = /** @class */ (function () {
             var rapidHealingSyncButtons = document.querySelectorAll("[id^='rapidHealingSync_button'");
             rapidHealingSyncButtons.forEach(function (rapidHealingSyncButton) { return rapidHealingSyncButton.parentElement.removeChild(rapidHealingSyncButton); });
             if (args.canHeal && args.damageToCancelToSurvive > 0) {
-                var _loop_5 = function (i) {
+                var _loop_3 = function (i) {
                     var cultistCount = i;
                     var rapidHealingCount = args.rapidHealingHearts > 0 ? args.canHeal - cultistCount : 0;
                     var cardsNames = [];
@@ -6860,14 +6652,14 @@ var KingOfTokyo = /** @class */ (function () {
                         cardsNames.push(_(this_2.cardsManager.getCardName(37, 'text-only')));
                     }
                     if (cultistCount + rapidHealingCount >= args.damageToCancelToSurvive && 2 * rapidHealingCount <= args.playerEnergy) {
-                        var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("".concat(_('Gain ${hearts}[Heart]')) + (rapidHealingCount > 0 ? " (".concat(2 * rapidHealingCount, "[Energy])") : '')), { 'card_name': cardsNames.join(', '), 'hearts': cultistCount + rapidHealingCount });
-                        this_2.addActionButton("rapidHealingSync_button_".concat(i), text, function () { return _this.useRapidHealingSync(cultistCount, rapidHealingCount); });
+                        var text = dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("" + _('Gain ${hearts}[Heart]') + (rapidHealingCount > 0 ? " (" + 2 * rapidHealingCount + "[Energy])" : '')), { 'card_name': cardsNames.join(', '), 'hearts': cultistCount + rapidHealingCount });
+                        this_2.addActionButton("rapidHealingSync_button_" + i, text, function () { return _this.useRapidHealingSync(cultistCount, rapidHealingCount); });
                     }
                 };
                 var this_2 = this;
                 //this.rapidHealingSyncHearts = args.rapidHealingHearts;
                 for (var i = Math.min(args.rapidHealingCultists, args.canHeal); i >= 0; i--) {
-                    _loop_5(i);
+                    _loop_3(i);
                 }
             }
         }
@@ -6938,7 +6730,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _this = this;
         if (this.isCurrentPlayerActive()) {
             this.playerTables.filter(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
-            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_".concat(id, "\"]"))) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
+            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_" + id + "\"]")) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
         }
     };
     KingOfTokyo.prototype.onEnteringAnswerQuestion = function (args) {
@@ -6965,7 +6757,7 @@ var KingOfTokyo = /** @class */ (function () {
                     var icyReflectionArgs = question.args;
                     this.playerTables.forEach(function (playerTable) { return playerTable.visibleEvolutionCards.setSelectionMode('single'); });
                     icyReflectionArgs.disabledEvolutions.forEach(function (evolution) {
-                        var cardDiv = document.querySelector("div[id$=\"_item_".concat(evolution.id, "\"]"));
+                        var cardDiv = document.querySelector("div[id$=\"_item_" + evolution.id + "\"]");
                         if (cardDiv && cardDiv.closest('.player-evolution-cards') !== null) {
                             dojo.addClass(cardDiv, 'disabled');
                         }
@@ -7000,8 +6792,8 @@ var KingOfTokyo = /** @class */ (function () {
                 var argsFreezeRayChooseOpponent = question.args;
                 argsFreezeRayChooseOpponent.smashedPlayersIds.forEach(function (playerId) {
                     var player = _this.gamedatas.players[playerId];
-                    var label = "<div class=\"monster-icon monster".concat(player.monster, "\" style=\"background-color: ").concat(player.monster > 100 ? 'unset' : '#' + player.color, ";\"></div> ").concat(player.name);
-                    _this.addActionButton("freezeRayChooseOpponent_button_".concat(playerId), label, function () { return _this.freezeRayChooseOpponent(playerId); });
+                    var label = "<div class=\"monster-icon monster" + player.monster + "\" style=\"background-color: " + (player.monster > 100 ? 'unset' : '#' + player.color) + ";\"></div> " + player.name;
+                    _this.addActionButton("freezeRayChooseOpponent_button_" + playerId, label, function () { return _this.freezeRayChooseOpponent(playerId); });
                 });
                 break;
         }
@@ -7284,9 +7076,9 @@ var KingOfTokyo = /** @class */ (function () {
                     var argsGiveSymbolToActivePlayer_1 = args;
                     var SYMBOL_AS_STRING_1 = ['[Heart]', '[Energy]', '[Star]'];
                     [4, 5, 0].forEach(function (symbol, symbolIndex) {
-                        _this.addActionButton("giveSymbolToActivePlayer_button".concat(symbol), formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_1[symbolIndex] })), function () { return _this.giveSymbolToActivePlayer(symbol); });
+                        _this.addActionButton("giveSymbolToActivePlayer_button" + symbol, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_1[symbolIndex] })), function () { return _this.giveSymbolToActivePlayer(symbol); });
                         if (!argsGiveSymbolToActivePlayer_1.canGive[symbol]) {
-                            dojo.addClass("giveSymbolToActivePlayer_button".concat(symbol), 'disabled');
+                            dojo.addClass("giveSymbolToActivePlayer_button" + symbol, 'disabled');
                         }
                     });
                     document.getElementById("giveSymbolToActivePlayer_button5").dataset.enableAtEnergy = '1';
@@ -7317,24 +7109,24 @@ var KingOfTokyo = /** @class */ (function () {
                     var argsGiveGoldenScarab = args;
                     argsGiveGoldenScarab.playersIds.forEach(function (playerId) {
                         var player = _this.gamedatas.players[playerId];
-                        var label = "<div class=\"monster-icon monster".concat(player.monster, "\" style=\"background-color: ").concat(player.monster > 100 ? 'unset' : '#' + player.color, ";\"></div> ").concat(player.name);
-                        _this.addActionButton("giveGoldenScarab_button_".concat(playerId), label, function () { return _this.giveGoldenScarab(playerId); });
+                        var label = "<div class=\"monster-icon monster" + player.monster + "\" style=\"background-color: " + (player.monster > 100 ? 'unset' : '#' + player.color) + ";\"></div> " + player.name;
+                        _this.addActionButton("giveGoldenScarab_button_" + playerId, label, function () { return _this.giveGoldenScarab(playerId); });
                     });
                     break;
                 case 'giveSymbols':
                     var argsGiveSymbols = args;
                     argsGiveSymbols.combinations.forEach(function (combination, combinationIndex) {
                         var symbols = SYMBOL_AS_STRING_PADDED[combination[0]] + (combination.length > 1 ? SYMBOL_AS_STRING_PADDED[combination[1]] : '');
-                        _this.addActionButton("giveSymbols_button".concat(combinationIndex), formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: symbols })), function () { return _this.giveSymbols(combination); });
+                        _this.addActionButton("giveSymbols_button" + combinationIndex, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: symbols })), function () { return _this.giveSymbols(combination); });
                     });
                     break;
                 case 'selectExtraDie':
-                    var _loop_6 = function (face) {
-                        this_3.addActionButton("selectExtraDie_button".concat(face), formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
+                    var _loop_4 = function (face) {
+                        this_3.addActionButton("selectExtraDie_button" + face, formatTextIcons(DICE_STRINGS[face]), function () { return _this.selectExtraDie(face); });
                     };
                     var this_3 = this;
                     for (var face = 1; face <= 6; face++) {
-                        _loop_6(face);
+                        _loop_4(face);
                     }
                     break;
                 case 'rerollOrDiscardDie':
@@ -7392,7 +7184,7 @@ var KingOfTokyo = /** @class */ (function () {
                         }
                         this.smashedPlayersStillInTokyo.forEach(function (playerId) {
                             var player = _this.gamedatas.players[playerId];
-                            _this.addActionButton("useChestThumping_button".concat(playerId), dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': "<span style=\"color: #".concat(player.color, "\">").concat(player.name, "</span>") }), function () { return _this.useChestThumping(playerId); });
+                            _this.addActionButton("useChestThumping_button" + playerId, dojo.string.substitute(_("Force ${player_name} to Yield Tokyo"), { 'player_name': "<span style=\"color: #" + player.color + "\">" + player.name + "</span>" }), function () { return _this.useChestThumping(playerId); });
                         });
                         if (this.smashedPlayersStillInTokyo.length) {
                             this.addActionButton('skipChestThumping_button', dojo.string.substitute(_("Don't use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(45, 'text-only') }), function () { return _this.skipChestThumping(); });
@@ -7402,7 +7194,7 @@ var KingOfTokyo = /** @class */ (function () {
                         var playerHasJets_1 = (_a = argsLeaveTokyo.jetsPlayers) === null || _a === void 0 ? void 0 : _a.includes(this.getPlayerId());
                         var playerHasSimianScamper = (_b = argsLeaveTokyo.simianScamperPlayers) === null || _b === void 0 ? void 0 : _b.includes(this.getPlayerId());
                         if (playerHasJets_1 || playerHasSimianScamper) {
-                            label += formatTextIcons(" (- ".concat(argsLeaveTokyo.jetsDamage, " [heart])"));
+                            label += formatTextIcons(" (- " + argsLeaveTokyo.jetsDamage + " [heart])");
                         }
                         this.addActionButton('stayInTokyo_button', label, function () { return _this.onStayInTokyo(); });
                         this.addActionButton('leaveTokyo_button', _("Leave Tokyo"), function () { return _this.onLeaveTokyo(playerHasJets_1 ? 24 : undefined); });
@@ -7459,7 +7251,7 @@ var KingOfTokyo = /** @class */ (function () {
                     if (discardCards_1) {
                         var label_1 = dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.cardsManager.getCardName(64, 'text-only') });
                         if (!discardCards_1.length) {
-                            label_1 += " (".concat(/*_TODOORI*/ ('discard is empty'), ")");
+                            label_1 += " (" + ('discard is empty') + ")";
                         }
                         this.addActionButton('useScavenger_button', label_1, function () { return _this.showDiscardCards(discardCards_1, args); });
                         if (!discardCards_1.length) {
@@ -7520,10 +7312,10 @@ var KingOfTokyo = /** @class */ (function () {
                 break;
             case 'GazeOfTheSphinxAnkh':
                 this.addActionButton('gazeOfTheSphinxDrawEvolution_button', _("Draw Evolution"), function () { return _this.gazeOfTheSphinxDrawEvolution(); });
-                this.addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons("".concat(dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3 }))), function () { return _this.gazeOfTheSphinxGainEnergy(); });
+                this.addActionButton('gazeOfTheSphinxGainEnergy_button', formatTextIcons("" + dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 3 })), function () { return _this.gazeOfTheSphinxGainEnergy(); });
                 break;
             case 'GazeOfTheSphinxSnake':
-                this.addActionButton('gazeOfTheSphinxLoseEnergy_button', formatTextIcons("".concat(dojo.string.substitute(_('Lose ${energy}[Energy]'), { energy: 3 }))), function () { return _this.gazeOfTheSphinxLoseEnergy(); });
+                this.addActionButton('gazeOfTheSphinxLoseEnergy_button', formatTextIcons("" + dojo.string.substitute(_('Lose ${energy}[Energy]'), { energy: 3 })), function () { return _this.gazeOfTheSphinxLoseEnergy(); });
                 var gazeOfTheSphinxLoseEnergyQuestionArgs = question.args;
                 if (!gazeOfTheSphinxLoseEnergyQuestionArgs.canLoseEnergy) {
                     dojo.addClass('gazeOfTheSphinxLoseEnergy_button', 'disabled');
@@ -7533,9 +7325,9 @@ var KingOfTokyo = /** @class */ (function () {
                 var giveSymbolPlayerId_1 = this.getPlayerId();
                 var giveSymbolQuestionArgs = question.args;
                 giveSymbolQuestionArgs.symbols.forEach(function (symbol) {
-                    _this.addActionButton("giveSymbol_button".concat(symbol), formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[symbol] })), function () { return _this.giveSymbol(symbol); });
-                    if (!question.args["canGive".concat(symbol)].includes(giveSymbolPlayerId_1)) {
-                        dojo.addClass("giveSymbol_button".concat(symbol), 'disabled');
+                    _this.addActionButton("giveSymbol_button" + symbol, formatTextIcons(dojo.string.substitute(_("Give ${symbol}"), { symbol: SYMBOL_AS_STRING_PADDED[symbol] })), function () { return _this.giveSymbol(symbol); });
+                    if (!question.args["canGive" + symbol].includes(giveSymbolPlayerId_1)) {
+                        dojo.addClass("giveSymbol_button" + symbol, 'disabled');
                     }
                     if (symbol == 5) {
                         var giveEnergyButton_1 = document.getElementById("giveSymbol_button5");
@@ -7554,15 +7346,15 @@ var KingOfTokyo = /** @class */ (function () {
                 if (!giveEnergyOrLoseHeartsQuestionArgs.canGiveEnergy.includes(giveEnergyOrLoseHeartsPlayerId)) {
                     giveEnergyButton.classList.add('disabled');
                 }
-                this.addActionButton("loseHearts_button", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: "".concat(giveEnergyOrLoseHeartsQuestionArgs.heartNumber, "[Heart]") })), function () { return _this.loseHearts(); });
+                this.addActionButton("loseHearts_button", formatTextIcons(dojo.string.substitute(_("Lose ${symbol}"), { symbol: giveEnergyOrLoseHeartsQuestionArgs.heartNumber + "[Heart]" })), function () { return _this.loseHearts(); });
                 break;
             case 'FreezeRay':
-                var _loop_7 = function (face) {
-                    this_4.addActionButton("selectFrozenDieFace_button".concat(face), formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
+                var _loop_5 = function (face) {
+                    this_4.addActionButton("selectFrozenDieFace_button" + face, formatTextIcons(DICE_STRINGS[face]), function () { return _this.chooseFreezeRayDieFace(face); });
                 };
                 var this_4 = this;
                 for (var face = 1; face <= 6; face++) {
-                    _loop_7(face);
+                    _loop_5(face);
                 }
                 break;
             case 'MiraculousCatch':
@@ -7578,7 +7370,7 @@ var KingOfTokyo = /** @class */ (function () {
             case 'DeepDive':
                 var deepDiveCatchArgs = question.args;
                 deepDiveCatchArgs.cards.forEach(function (card) {
-                    _this.addActionButton("playCardDeepDive_button".concat(card.id), formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: _this.cardsManager.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
+                    _this.addActionButton("playCardDeepDive_button" + card.id, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: _this.cardsManager.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
                 });
                 break;
             case 'ExoticArms':
@@ -7663,7 +7455,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.createButton = function (destinationId, id, text, callback, disabled, dojoPlace) {
         if (disabled === void 0) { disabled = false; }
         if (dojoPlace === void 0) { dojoPlace = undefined; }
-        var html = "<button class=\"action-button bgabutton bgabutton_blue\" id=\"".concat(id, "\">\n            ").concat(text, "\n        </button>");
+        var html = "<button class=\"action-button bgabutton bgabutton_blue\" id=\"" + id + "\">\n            " + text + "\n        </button>";
         dojo.place(html, destinationId, dojoPlace);
         if (disabled) {
             dojo.addClass(id, 'disabled');
@@ -7674,7 +7466,7 @@ var KingOfTokyo = /** @class */ (function () {
         var _a;
         // 2-players variant notice
         if (Object.keys(gamedatas.players).length == 2 && ((_a = this.prefs[203]) === null || _a === void 0 ? void 0 : _a.value) == 1) {
-            dojo.place("\n                    <div id=\"board-corner-highlight\"></div>\n                    <div id=\"twoPlayersVariant-message\">\n                        ".concat(_("You are playing the 2-players variant."), "<br>\n                        ").concat(_("When entering or starting a turn on Tokyo, you gain 1 energy instead of points"), ".<br>\n                        ").concat(_("You can check if variant is activated in the bottom left corner of the table."), "<br>\n                        <div style=\"text-align: center\"><a id=\"hide-twoPlayersVariant-message\">").concat(_("Dismiss"), "</a></div>\n                    </div>\n                "), 'board');
+            dojo.place("\n                    <div id=\"board-corner-highlight\"></div>\n                    <div id=\"twoPlayersVariant-message\">\n                        " + _("You are playing the 2-players variant.") + "<br>\n                        " + _("When entering or starting a turn on Tokyo, you gain 1 energy instead of points") + ".<br>\n                        " + _("You can check if variant is activated in the bottom left corner of the table.") + "<br>\n                        <div style=\"text-align: center\"><a id=\"hide-twoPlayersVariant-message\">" + _("Dismiss") + "</a></div>\n                    </div>\n                ", 'board');
             document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', function () {
                 var select = document.getElementById('preference_control_203');
                 select.value = '2';
@@ -7692,74 +7484,74 @@ var KingOfTokyo = /** @class */ (function () {
             var playerId = Number(player.id);
             var eliminated = Number(player.eliminated) > 0 || player.playerDead > 0;
             // health & energy counters
-            var html = "<div class=\"counters\">\n                <div id=\"health-counter-wrapper-".concat(player.id, "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-").concat(player.id, "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-").concat(player.id, "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-").concat(player.id, "\"></span>\n                </div>");
+            var html = "<div class=\"counters\">\n                <div id=\"health-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon health\"></div> \n                    <span id=\"health-counter-" + player.id + "\"></span>\n                </div>\n                <div id=\"energy-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon energy\"></div> \n                    <span id=\"energy-counter-" + player.id + "\"></span>\n                </div>";
             if (gamedatas.wickednessExpansion) {
-                html += "\n                <div id=\"wickedness-counter-wrapper-".concat(player.id, "\" class=\"counter\">\n                    <div class=\"icon wickedness\"></div> \n                    <span id=\"wickedness-counter-").concat(player.id, "\"></span>\n                </div>");
+                html += "\n                <div id=\"wickedness-counter-wrapper-" + player.id + "\" class=\"counter\">\n                    <div class=\"icon wickedness\"></div> \n                    <span id=\"wickedness-counter-" + player.id + "\"></span>\n                </div>";
             }
             html += "</div>";
-            dojo.place(html, "player_board_".concat(player.id));
-            _this.addTooltipHtml("health-counter-wrapper-".concat(player.id), _("Health"));
-            _this.addTooltipHtml("energy-counter-wrapper-".concat(player.id), _("Energy"));
+            dojo.place(html, "player_board_" + player.id);
+            _this.addTooltipHtml("health-counter-wrapper-" + player.id, _("Health"));
+            _this.addTooltipHtml("energy-counter-wrapper-" + player.id, _("Energy"));
             if (gamedatas.wickednessExpansion) {
-                _this.addTooltipHtml("wickedness-counter-wrapper-".concat(player.id), _("Wickedness points"));
+                _this.addTooltipHtml("wickedness-counter-wrapper-" + player.id, _("Wickedness points"));
             }
             if (gamedatas.kingkongExpansion || gamedatas.cybertoothExpansion || gamedatas.cthulhuExpansion) {
                 var html_1 = "<div class=\"counters\">";
                 if (gamedatas.cthulhuExpansion) {
-                    html_1 += "\n                    <div id=\"cultist-counter-wrapper-".concat(player.id, "\" class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-").concat(player.id, "\"></span>\n                    </div>");
+                    html_1 += "\n                    <div id=\"cultist-counter-wrapper-" + player.id + "\" class=\"counter cultist-tooltip\">\n                        <div class=\"icon cultist\"></div>\n                        <span id=\"cultist-counter-" + player.id + "\"></span>\n                    </div>";
                 }
                 if (gamedatas.kingkongExpansion) {
-                    html_1 += "<div id=\"tokyo-tower-counter-wrapper-".concat(player.id, "\" class=\"counter tokyo-tower-tooltip\">");
+                    html_1 += "<div id=\"tokyo-tower-counter-wrapper-" + player.id + "\" class=\"counter tokyo-tower-tooltip\">";
                     for (var level = 1; level <= 3; level++) {
-                        html_1 += "<div id=\"tokyo-tower-icon-".concat(player.id, "-level-").concat(level, "\" class=\"tokyo-tower-icon level").concat(level, "\" data-owned=\"").concat(player.tokyoTowerLevels.includes(level).toString(), "\"></div>");
+                        html_1 += "<div id=\"tokyo-tower-icon-" + player.id + "-level-" + level + "\" class=\"tokyo-tower-icon level" + level + "\" data-owned=\"" + player.tokyoTowerLevels.includes(level).toString() + "\"></div>";
                     }
                     html_1 += "</div>";
                 }
                 if (gamedatas.cybertoothExpansion) {
-                    html_1 += "\n                    <div id=\"berserk-counter-wrapper-".concat(player.id, "\" class=\"counter berserk-tooltip\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-").concat(player.id, "\" class=\"berserk icon ").concat(player.berserk ? 'active' : '', "\"></div>\n                        </div>\n                    </div>");
+                    html_1 += "\n                    <div id=\"berserk-counter-wrapper-" + player.id + "\" class=\"counter berserk-tooltip\">\n                        <div class=\"berserk-icon-wrapper\">\n                            <div id=\"player-panel-berserk-" + player.id + "\" class=\"berserk icon " + (player.berserk ? 'active' : '') + "\"></div>\n                        </div>\n                    </div>";
                 }
                 html_1 += "</div>";
-                dojo.place(html_1, "player_board_".concat(player.id));
+                dojo.place(html_1, "player_board_" + player.id);
                 if (gamedatas.cthulhuExpansion) {
                     var cultistCounter = new ebg.counter();
-                    cultistCounter.create("cultist-counter-".concat(player.id));
+                    cultistCounter.create("cultist-counter-" + player.id);
                     cultistCounter.setValue(player.cultists);
                     _this.cultistCounters[playerId] = cultistCounter;
                 }
             }
             var healthCounter = new ebg.counter();
-            healthCounter.create("health-counter-".concat(player.id));
+            healthCounter.create("health-counter-" + player.id);
             healthCounter.setValue(player.health);
             _this.healthCounters[playerId] = healthCounter;
             var energyCounter = new ebg.counter();
-            energyCounter.create("energy-counter-".concat(player.id));
+            energyCounter.create("energy-counter-" + player.id);
             energyCounter.setValue(player.energy);
             _this.energyCounters[playerId] = energyCounter;
             if (gamedatas.wickednessExpansion) {
                 var wickednessCounter = new ebg.counter();
-                wickednessCounter.create("wickedness-counter-".concat(player.id));
+                wickednessCounter.create("wickedness-counter-" + player.id);
                 wickednessCounter.setValue(player.wickedness);
                 _this.wickednessCounters[playerId] = wickednessCounter;
             }
             if (gamedatas.powerUpExpansion) {
                 // hand cards counter
-                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-".concat(player.id, "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                    </div>\n                    <div class=\"show-evolutions-button\">\n                    <button id=\"see-monster-evolution-player-").concat(playerId, "\" class=\"bgabutton bgabutton_gray ").concat(_this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : '', "\">\n                        ").concat(_('Show Evolutions'), "\n                    </button>\n                    </div>\n                </div>"), "player_board_".concat(player.id));
+                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-" + player.id + "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-" + player.id + "\"></span>\n                    </div>\n                    <div class=\"show-evolutions-button\">\n                    <button id=\"see-monster-evolution-player-" + playerId + "\" class=\"bgabutton bgabutton_gray " + (_this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : '') + "\">\n                        " + _('Show Evolutions') + "\n                    </button>\n                    </div>\n                </div>", "player_board_" + player.id);
                 var handCounter = new ebg.counter();
-                handCounter.create("playerhand-counter-".concat(playerId));
+                handCounter.create("playerhand-counter-" + playerId);
                 handCounter.setValue(player.hiddenEvolutions.length);
                 _this.handCounters[playerId] = handCounter;
-                _this.addTooltipHtml("playerhand-counter-wrapper-".concat(player.id), _("Number of Evolution cards in hand."));
-                document.getElementById("see-monster-evolution-player-".concat(playerId)).addEventListener('click', function () { return _this.showPlayerEvolutions(playerId); });
+                _this.addTooltipHtml("playerhand-counter-wrapper-" + player.id, _("Number of Evolution cards in hand."));
+                document.getElementById("see-monster-evolution-player-" + playerId).addEventListener('click', function () { return _this.showPlayerEvolutions(playerId); });
             }
-            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-target-tokens-".concat(player.id, "\" class=\"player-token target-tokens\"></div>\n                <div id=\"player-board-shrink-ray-tokens-").concat(player.id, "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-").concat(player.id, "\" class=\"player-token poison-tokens\"></div>\n            </div>"), "player_board_".concat(player.id));
+            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-target-tokens-" + player.id + "\" class=\"player-token target-tokens\"></div>\n                <div id=\"player-board-shrink-ray-tokens-" + player.id + "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-" + player.id + "\" class=\"player-token poison-tokens\"></div>\n            </div>", "player_board_" + player.id);
             if (!eliminated) {
                 _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
                 _this.setPoisonTokens(playerId, player.poisonTokens);
                 _this.setPlayerTokens(playerId, gamedatas.targetedPlayer == playerId ? 1 : 0, 'target');
             }
-            dojo.place("<div id=\"player-board-monster-figure-".concat(player.id, "\" class=\"monster-figure monster").concat(player.monster, "\"><div class=\"kot-token\"></div></div>"), "player_board_".concat(player.id));
+            dojo.place("<div id=\"player-board-monster-figure-" + player.id + "\" class=\"monster-figure monster" + player.monster + "\"><div class=\"kot-token\"></div></div>", "player_board_" + player.id);
             if (player.location > 0) {
-                dojo.addClass("overall_player_board_".concat(playerId), 'intokyo');
+                dojo.addClass("overall_player_board_" + playerId, 'intokyo');
             }
             if (eliminated) {
                 setTimeout(function () { return _this.eliminatePlayer(playerId); }, 200);
@@ -7771,7 +7563,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
         var evolutionCardsWithSingleState = this.isPowerUpExpansion() ?
-            Object.values(this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE).reduce(function (a1, a2) { return __spreadArray(__spreadArray([], a1, true), a2, true); }, []) :
+            Object.values(this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE).reduce(function (a1, a2) { return __spreadArray(__spreadArray([], a1), a2); }, []) :
             null;
         this.playerTables = this.getOrderedPlayers().map(function (player) {
             var playerId = Number(player.id);
@@ -7903,10 +7695,10 @@ var KingOfTokyo = /** @class */ (function () {
                         document.getElementById("choice_btn_0").classList.add('disabled');
                     }
                     if (canUseBobbingForApplesForCard_1 && cardCostBobbingForApples > this.getPlayerEnergy(this.getPlayerId())) {
-                        document.getElementById("choice_btn_".concat((both_1 ? 1 : 0))).classList.add('disabled');
+                        document.getElementById("choice_btn_" + (both_1 ? 1 : 0)).classList.add('disabled');
                     }
                     if (buyCardArgs.cardsCosts[card.id] > this.getPlayerEnergy(this.getPlayerId())) {
-                        document.getElementById("choice_btn_".concat((both_1 ? 2 : 1))).classList.add('disabled');
+                        document.getElementById("choice_btn_" + (both_1 ? 2 : 1)).classList.add('disabled');
                     }
                 }
                 else {
@@ -7956,9 +7748,9 @@ var KingOfTokyo = /** @class */ (function () {
         var args = this.gamedatas.gamestate.args;
         args.woundedPlayersIds.slice().reverse().forEach(function (woundedPlayerId) {
             var woundedPlayer = _this.getPlayer(woundedPlayerId);
-            var cardType = Number(document.querySelector("[data-evolution-id=\"".concat(cardId, "\"]")).dataset.evolutionType);
-            var label = /*TODOPUHA_*/ ('Give ${card_name} to ${player_name}').replace('${card_name}', _this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', "<strong style=\"color: #".concat(woundedPlayer.color, ";\">").concat(woundedPlayer.name, "</strong>"));
-            _this.createButton('endStealCostume_button', "giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button"), label, function () { return _this.giveGiftEvolution(cardId, woundedPlayerId); }, false, 'before');
+            var cardType = Number(document.querySelector("[data-evolution-id=\"" + cardId + "\"]").dataset.evolutionType);
+            var label = /*TODOPUHA_*/ ('Give ${card_name} to ${player_name}').replace('${card_name}', _this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', "<strong style=\"color: #" + woundedPlayer.color + ";\">" + woundedPlayer.name + "</strong>");
+            _this.createButton('endStealCostume_button', "giveGift" + cardId + "to" + woundedPlayerId + "_button", label, function () { return _this.giveGiftEvolution(cardId, woundedPlayerId); }, false, 'before');
         });
     };
     KingOfTokyo.prototype.onHiddenEvolutionClick = function (cardId) {
@@ -7996,7 +7788,7 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.setBuyDisabledCardByCostForStock = function (disabledIds, cardsCosts, playerEnergy, stock) {
         var _this = this;
-        var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds, true), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }), true);
+        var disabledCardsIds = __spreadArray(__spreadArray([], disabledIds), Object.keys(cardsCosts).map(function (cardId) { return Number(cardId); }));
         disabledCardsIds.forEach(function (id) {
             var disabled = disabledIds.some(function (disabledId) { return disabledId == id; }) || cardsCosts[id] > playerEnergy;
             var cardDiv = _this.cardsManager.getCardElement({ id: id });
@@ -8060,7 +7852,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addRapidHealingButton = function (userEnergy, isMaxHealth) {
         var _this = this;
         if (!document.getElementById('rapidHealingButton')) {
-            this.createButton('rapid-actions-wrapper', 'rapidHealingButton', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("".concat(_('Gain ${hearts}[Heart]'), " (2[Energy])")), { card_name: this.cardsManager.getCardName(37, 'text-only'), hearts: 1 }), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
+            this.createButton('rapid-actions-wrapper', 'rapidHealingButton', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (2[Energy])"), { card_name: this.cardsManager.getCardName(37, 'text-only'), hearts: 1 }), function () { return _this.useRapidHealing(); }, userEnergy < 2 || isMaxHealth);
         }
     };
     KingOfTokyo.prototype.removeRapidHealingButton = function () {
@@ -8071,7 +7863,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addMothershipSupportButton = function (userEnergy, isMaxHealth) {
         var _this = this;
         if (!document.getElementById('mothershipSupportButton')) {
-            this.createButton('rapid-actions-wrapper', 'mothershipSupportButton', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons("".concat(_('Gain ${hearts}[Heart]'), " (1[Energy])")), { card_name: this.evolutionCardsManager.getCardName(27, 'text-only'), hearts: 1 }), function () { return _this.useMothershipSupport(); }, this.gamedatas.players[this.getPlayerId()].mothershipSupportUsed || userEnergy < 1 || isMaxHealth);
+            this.createButton('rapid-actions-wrapper', 'mothershipSupportButton', dojo.string.substitute(_("Use ${card_name}") + " : " + formatTextIcons(_('Gain ${hearts}[Heart]') + " (1[Energy])"), { card_name: this.evolutionCardsManager.getCardName(27, 'text-only'), hearts: 1 }), function () { return _this.useMothershipSupport(); }, this.gamedatas.players[this.getPlayerId()].mothershipSupportUsed || userEnergy < 1 || isMaxHealth);
         }
     };
     KingOfTokyo.prototype.removeMothershipSupportButton = function () {
@@ -8082,9 +7874,9 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addRapidCultistButtons = function (isMaxHealth) {
         var _this = this;
         if (!document.getElementById('rapidCultistButtons')) {
-            dojo.place("<div id=\"rapidCultistButtons\"><span>".concat(dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') }), " :</span></div>"), 'rapid-actions-wrapper');
-            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("".concat(dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 }))), function () { return _this.useRapidCultist(4); }, isMaxHealth);
-            this.createButton('rapidCultistButtons', 'rapidCultistEnergyButton', formatTextIcons("".concat(dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1 }))), function () { return _this.useRapidCultist(5); });
+            dojo.place("<div id=\"rapidCultistButtons\"><span>" + dojo.string.substitute(_('Use ${card_name}'), { card_name: _('Cultist') }) + " :</span></div>", 'rapid-actions-wrapper');
+            this.createButton('rapidCultistButtons', 'rapidCultistHealthButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 1 })), function () { return _this.useRapidCultist(4); }, isMaxHealth);
+            this.createButton('rapidCultistButtons', 'rapidCultistEnergyButton', formatTextIcons("" + dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 1 })), function () { return _this.useRapidCultist(5); });
         }
     };
     KingOfTokyo.prototype.removeRapidCultistButtons = function () {
@@ -8122,7 +7914,7 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.addSkipBuyPhaseToggle = function (active) {
         var _this = this;
         if (!document.getElementById('skipBuyPhaseWrapper')) {
-            dojo.place("<div id=\"skipBuyPhaseWrapper\">\n                <label class=\"switch\">\n                    <input id=\"skipBuyPhaseCheckbox\" type=\"checkbox\" ".concat(active ? 'checked' : '', ">\n                    <span class=\"slider round\"></span>\n                </label>\n                <label for=\"skipBuyPhaseCheckbox\" class=\"text-label\">").concat(_("Skip buy phase"), "</label>\n            </div>"), 'rapid-actions-wrapper');
+            dojo.place("<div id=\"skipBuyPhaseWrapper\">\n                <label class=\"switch\">\n                    <input id=\"skipBuyPhaseCheckbox\" type=\"checkbox\" " + (active ? 'checked' : '') + ">\n                    <span class=\"slider round\"></span>\n                </label>\n                <label for=\"skipBuyPhaseCheckbox\" class=\"text-label\">" + _("Skip buy phase") + "</label>\n            </div>", 'rapid-actions-wrapper');
             document.getElementById('skipBuyPhaseCheckbox').addEventListener('change', function (e) { return _this.setSkipBuyPhase(e.target.checked); });
         }
     };
@@ -8157,36 +7949,36 @@ var KingOfTokyo = /** @class */ (function () {
         var bubble = document.getElementById(popinId);
         if (!bubble) {
             var maxHealth = this.gamedatas.players[this.getPlayerId()].maxHealth;
-            var html = "<div id=\"".concat(popinId, "\" class=\"discussion_bubble autoLeaveUnderBubble\">\n                <div>").concat(_("Automatically leave tokyo when life goes down to, or under"), "</div>\n                <div id=\"").concat(popinId, "-buttons\" class=\"button-grid\">");
+            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoLeaveUnderBubble\">\n                <div>" + _("Automatically leave tokyo when life goes down to, or under") + "</div>\n                <div id=\"" + popinId + "-buttons\" class=\"button-grid\">";
             for (var i = maxHealth; i > 0; i--) {
-                html += "<button class=\"action-button bgabutton ".concat(this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray', " autoLeaveButton ").concat(i == 1 ? 'disable' : '', "\" id=\"").concat(popinId, "_set").concat(i, "\">\n                    ").concat(i == 1 ? _('Disabled') : i - 1, "\n                </button>");
+                html += "<button class=\"action-button bgabutton " + (this.gamedatas.leaveTokyoUnder === i || (i == 1 && !this.gamedatas.leaveTokyoUnder) ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton " + (i == 1 ? 'disable' : '') + "\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i == 1 ? _('Disabled') : i - 1) + "\n                </button>";
             }
-            html += "</div>\n            <div>".concat(_("If your life is over it, or if disabled, you'll be asked if you want to stay or leave"), "</div>\n            <hr>\n            <div>").concat(_("Automatically stay in tokyo when life is at least"), "</div>\n                <div id=\"").concat(popinId, "-stay-buttons\" class=\"button-grid\">");
+            html += "</div>\n            <div>" + _("If your life is over it, or if disabled, you'll be asked if you want to stay or leave") + "</div>\n            <hr>\n            <div>" + _("Automatically stay in tokyo when life is at least") + "</div>\n                <div id=\"" + popinId + "-stay-buttons\" class=\"button-grid\">";
             for (var i = maxHealth + 1; i > 2; i--) {
-                html += "<button class=\"action-button bgabutton ".concat(this.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton ").concat(this.gamedatas.leaveTokyoUnder > 0 && i <= this.gamedatas.leaveTokyoUnder ? 'disabled' : '', "\" id=\"").concat(popinId, "_setStay").concat(i, "\">").concat(i - 1, "</button>");
+                html += "<button class=\"action-button bgabutton " + (this.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this.gamedatas.leaveTokyoUnder > 0 && i <= this.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">" + (i - 1) + "</button>";
             }
-            html += "<button class=\"action-button bgabutton ".concat(!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton disable\" id=\"").concat(popinId, "_setStay0\">").concat(_('Disabled'), "</button>");
+            html += "<button class=\"action-button bgabutton " + (!this.gamedatas.stayTokyoOver ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton disable\" id=\"" + popinId + "_setStay0\">" + _('Disabled') + "</button>";
             html += "</div>\n            </div>";
             dojo.place(html, 'autoLeaveUnderButton');
-            var _loop_8 = function (i) {
-                document.getElementById("".concat(popinId, "_set").concat(i)).addEventListener('click', function () {
+            var _loop_6 = function (i) {
+                document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth; i > 0; i--) {
-                _loop_8(i);
+                _loop_6(i);
             }
-            var _loop_9 = function (i) {
-                document.getElementById("".concat(popinId, "_setStay").concat(i)).addEventListener('click', function () {
+            var _loop_7 = function (i) {
+                document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
             };
             for (var i = maxHealth + 1; i > 2; i--) {
-                _loop_9(i);
+                _loop_7(i);
             }
-            document.getElementById("".concat(popinId, "_setStay0")).addEventListener('click', function () {
+            document.getElementById(popinId + "_setStay0").addEventListener('click', function () {
                 _this.setStayTokyoOver(0);
                 setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
             });
@@ -8200,17 +7992,17 @@ var KingOfTokyo = /** @class */ (function () {
         var popinId = "discussion_bubble_autoLeaveUnder";
         var maxHealth = this.gamedatas.players[this.getPlayerId()].maxHealth;
         for (var i = maxHealth + 1; i <= 14; i++) {
-            if (document.getElementById("".concat(popinId, "_set").concat(i))) {
-                dojo.destroy("".concat(popinId, "_set").concat(i));
+            if (document.getElementById(popinId + "_set" + i)) {
+                dojo.destroy(popinId + "_set" + i);
             }
-            if (document.getElementById("".concat(popinId, "_setStay").concat(i))) {
-                dojo.destroy("".concat(popinId, "_setStay").concat(i));
+            if (document.getElementById(popinId + "_setStay" + i)) {
+                dojo.destroy(popinId + "_setStay" + i);
             }
         }
-        var _loop_10 = function (i) {
-            if (!document.getElementById("".concat(popinId, "_set").concat(i))) {
-                dojo.place("<button class=\"action-button bgabutton ".concat(this_5.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoLeaveButton\" id=\"").concat(popinId, "_set").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-buttons"), 'first');
-                document.getElementById("".concat(popinId, "_set").concat(i)).addEventListener('click', function () {
+        var _loop_8 = function (i) {
+            if (!document.getElementById(popinId + "_set" + i)) {
+                dojo.place("<button class=\"action-button bgabutton " + (this_5.gamedatas.leaveTokyoUnder === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoLeaveButton\" id=\"" + popinId + "_set" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-buttons", 'first');
+                document.getElementById(popinId + "_set" + i).addEventListener('click', function () {
                     _this.setLeaveTokyoUnder(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
@@ -8218,12 +8010,12 @@ var KingOfTokyo = /** @class */ (function () {
         };
         var this_5 = this;
         for (var i = 11; i <= maxHealth; i++) {
-            _loop_10(i);
+            _loop_8(i);
         }
-        var _loop_11 = function (i) {
-            if (!document.getElementById("".concat(popinId, "_setStay").concat(i))) {
-                dojo.place("<button class=\"action-button bgabutton ".concat(this_6.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray', " autoStayButton ").concat(this_6.gamedatas.leaveTokyoUnder > 0 && i <= this_6.gamedatas.leaveTokyoUnder ? 'disabled' : '', "\" id=\"").concat(popinId, "_setStay").concat(i, "\">\n                    ").concat(i - 1, "\n                </button>"), "".concat(popinId, "-stay-buttons"), 'first');
-                document.getElementById("".concat(popinId, "_setStay").concat(i)).addEventListener('click', function () {
+        var _loop_9 = function (i) {
+            if (!document.getElementById(popinId + "_setStay" + i)) {
+                dojo.place("<button class=\"action-button bgabutton " + (this_6.gamedatas.stayTokyoOver === i ? 'bgabutton_blue' : 'bgabutton_gray') + " autoStayButton " + (this_6.gamedatas.leaveTokyoUnder > 0 && i <= this_6.gamedatas.leaveTokyoUnder ? 'disabled' : '') + "\" id=\"" + popinId + "_setStay" + i + "\">\n                    " + (i - 1) + "\n                </button>", popinId + "-stay-buttons", 'first');
+                document.getElementById(popinId + "_setStay" + i).addEventListener('click', function () {
                     _this.setStayTokyoOver(i);
                     setTimeout(function () { return _this.closeAutoLeaveUnderPopin(); }, 100);
                 });
@@ -8231,7 +8023,7 @@ var KingOfTokyo = /** @class */ (function () {
         };
         var this_6 = this;
         for (var i = 12; i <= maxHealth + 1; i++) {
-            _loop_11(i);
+            _loop_9(i);
         }
     };
     KingOfTokyo.prototype.closeAutoLeaveUnderPopin = function () {
@@ -8261,7 +8053,7 @@ var KingOfTokyo = /** @class */ (function () {
         var popinId = "discussion_bubble_autoSkipPlayEvolution";
         var bubble = document.getElementById(popinId);
         if (!bubble) {
-            var html = "<div id=\"".concat(popinId, "\" class=\"discussion_bubble autoSkipPlayEvolutionBubble\">\n                <h3>").concat(_("Ask to play Evolution, for Evolutions playable on specific occasions"), "</h3>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"0\" id=\"autoSkipPlayEvolution-all\" />\n                    <label for=\"autoSkipPlayEvolution-all\">\n                        ").concat(_("Ask for every specific occasion even if I don't have the card in my hand."), "\n                        <div class=\"label-detail\">\n                            ").concat(_("Recommended. You won't be asked when your hand is empty"), "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"1\" id=\"autoSkipPlayEvolution-real\" />\n                    <label for=\"autoSkipPlayEvolution-real\">\n                        ").concat(_("Ask only if I have in my hand an Evolution matching the specific occasion."), "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>").concat(_("Warning:"), "</strong> ").concat(_("Your opponent can deduce what you have in hand with this option."), "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"2\" id=\"autoSkipPlayEvolution-turn\" />\n                    <label for=\"autoSkipPlayEvolution-turn\">\n                        ").concat(_("Do not ask until my next turn."), "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>").concat(_("Warning:"), "</strong> ").concat(_("Do it only if you're sure you won't need an Evolution soon."), "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"3\" id=\"autoSkipPlayEvolution-off\" />\n                    <label for=\"autoSkipPlayEvolution-off\">\n                        ").concat(_("Do not ask until I turn it back on."), "\n                        <div class=\"label-detail spe-warning\">\n                            <strong>").concat(_("Warning:"), "</strong> ").concat(_("Do it only if you're sure you won't need an Evolution soon."), "\n                        </div>\n                    </label>\n                </div>\n            </div>");
+            var html = "<div id=\"" + popinId + "\" class=\"discussion_bubble autoSkipPlayEvolutionBubble\">\n                <h3>" + _("Ask to play Evolution, for Evolutions playable on specific occasions") + "</h3>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"0\" id=\"autoSkipPlayEvolution-all\" />\n                    <label for=\"autoSkipPlayEvolution-all\">\n                        " + _("Ask for every specific occasion even if I don't have the card in my hand.") + "\n                        <div class=\"label-detail\">\n                            " + _("Recommended. You won't be asked when your hand is empty") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"1\" id=\"autoSkipPlayEvolution-real\" />\n                    <label for=\"autoSkipPlayEvolution-real\">\n                        " + _("Ask only if I have in my hand an Evolution matching the specific occasion.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Your opponent can deduce what you have in hand with this option.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"2\" id=\"autoSkipPlayEvolution-turn\" />\n                    <label for=\"autoSkipPlayEvolution-turn\">\n                        " + _("Do not ask until my next turn.") + "<br>\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n                <div class=\"autoSkipPlayEvolution-option\">\n                    <input type=\"radio\" name=\"autoSkipPlayEvolution\" value=\"3\" id=\"autoSkipPlayEvolution-off\" />\n                    <label for=\"autoSkipPlayEvolution-off\">\n                        " + _("Do not ask until I turn it back on.") + "\n                        <div class=\"label-detail spe-warning\">\n                            <strong>" + _("Warning:") + "</strong> " + _("Do it only if you're sure you won't need an Evolution soon.") + "\n                        </div>\n                    </label>\n                </div>\n            </div>";
             dojo.place(html, 'autoSkipPlayEvolutionButton');
             Array.from(document.querySelectorAll('input[name="autoSkipPlayEvolution"]')).forEach(function (input) {
                 input.addEventListener('change', function () {
@@ -9175,11 +8967,11 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.takeAction = function (action, data) {
         data = data || {};
         data.lock = true;
-        this.ajaxcall("/kingoftokyo/kingoftokyo/".concat(action, ".html"), data, this, function () { });
+        this.ajaxcall("/koth/koth/" + action + ".html", data, this, function () { });
     };
     KingOfTokyo.prototype.takeNoLockAction = function (action, data) {
         data = data || {};
-        this.ajaxcall("/kingoftokyo/kingoftokyo/".concat(action, ".html"), data, this, function () { });
+        this.ajaxcall("/koth/koth/" + action + ".html", data, this, function () { });
     };
     KingOfTokyo.prototype.setFont = function (prefValue) {
         this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
@@ -9293,8 +9085,8 @@ var KingOfTokyo = /** @class */ (function () {
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
-                log("notif_".concat(notif[0]), notifDetails.args);
-                var promise = _this["notif_".concat(notif[0])](notifDetails.args);
+                log("notif_" + notif[0], notifDetails.args);
+                var promise = _this["notif_" + notif[0]](notifDetails.args);
                 // tell the UI notification ends, if the function returned a promise
                 promise === null || promise === void 0 ? void 0 : promise.then(function () { return _this.notifqueue.onSynchronousNotificationEnd(); });
             });
@@ -9302,13 +9094,13 @@ var KingOfTokyo = /** @class */ (function () {
         });
         if (isDebug) {
             notifs.forEach(function (notif) {
-                if (!_this["notif_".concat(notif[0])]) {
-                    console.warn("notif_".concat(notif[0], " function is not declared, but listed in setupNotifications"));
+                if (!_this["notif_" + notif[0]]) {
+                    console.warn("notif_" + notif[0] + " function is not declared, but listed in setupNotifications");
                 }
             });
             Object.getOwnPropertyNames(KingOfTokyo.prototype).filter(function (item) { return item.startsWith('notif_'); }).map(function (item) { return item.slice(6); }).forEach(function (item) {
                 if (!notifs.some(function (notif) { return notif[0] == item; })) {
-                    console.warn("notif_".concat(item, " function is declared, but not listed in setupNotifications"));
+                    console.warn("notif_" + item + " function is declared, but not listed in setupNotifications");
                 }
             });
         }
@@ -9318,13 +9110,13 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_pickMonster = function (args) {
         var _this = this;
-        var monsterDiv = document.getElementById("pick-monster-figure-".concat(args.monster));
-        var destinationId = "player-board-monster-figure-".concat(args.playerId);
+        var monsterDiv = document.getElementById("pick-monster-figure-" + args.monster);
+        var destinationId = "player-board-monster-figure-" + args.playerId;
         var animation = this.slideToObject(monsterDiv, destinationId);
         dojo.connect(animation, 'onEnd', dojo.hitch(this, function () {
             _this.fadeOutAndDestroy(monsterDiv);
             dojo.removeClass(destinationId, 'monster0');
-            dojo.addClass(destinationId, "monster".concat(args.monster));
+            dojo.addClass(destinationId, "monster" + args.monster);
         }));
         animation.play();
         this.getPlayerTable(args.playerId).setMonster(args.monster);
@@ -9374,21 +9166,21 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.notif_leaveTokyo = function (args) {
         this.getPlayerTable(args.playerId).leaveTokyo();
-        dojo.removeClass("overall_player_board_".concat(args.playerId), 'intokyo');
-        dojo.removeClass("monster-board-wrapper-".concat(args.playerId), 'intokyo');
+        dojo.removeClass("overall_player_board_" + args.playerId, 'intokyo');
+        dojo.removeClass("monster-board-wrapper-" + args.playerId, 'intokyo');
         if (args.playerId == this.getPlayerId()) {
             this.removeAutoLeaveUnderButton();
         }
         if (this.smashedPlayersStillInTokyo) {
             this.smashedPlayersStillInTokyo = this.smashedPlayersStillInTokyo.filter(function (playerId) { return playerId != args.playerId; });
         }
-        var useChestThumpingButton = document.getElementById("useChestThumping_button".concat(args.playerId));
+        var useChestThumpingButton = document.getElementById("useChestThumping_button" + args.playerId);
         useChestThumpingButton === null || useChestThumpingButton === void 0 ? void 0 : useChestThumpingButton.parentElement.removeChild(useChestThumpingButton);
     };
     KingOfTokyo.prototype.notif_playerEntersTokyo = function (args) {
         this.getPlayerTable(args.playerId).enterTokyo(args.location);
-        dojo.addClass("overall_player_board_".concat(args.playerId), 'intokyo');
-        dojo.addClass("monster-board-wrapper-".concat(args.playerId), 'intokyo');
+        dojo.addClass("overall_player_board_" + args.playerId, 'intokyo');
+        dojo.addClass("monster-board-wrapper-" + args.playerId, 'intokyo');
         if (args.playerId == this.getPlayerId()) {
             this.addAutoLeaveUnderButton();
         }
@@ -9579,13 +9371,13 @@ var KingOfTokyo = /** @class */ (function () {
         dojo.query('.autoLeaveButton').removeClass('bgabutton_blue');
         dojo.query('.autoLeaveButton').addClass('bgabutton_gray');
         var popinId = "discussion_bubble_autoLeaveUnder";
-        if (document.getElementById("".concat(popinId, "_set").concat(args.under))) {
-            dojo.removeClass("".concat(popinId, "_set").concat(args.under), 'bgabutton_gray');
-            dojo.addClass("".concat(popinId, "_set").concat(args.under), 'bgabutton_blue');
+        if (document.getElementById(popinId + "_set" + args.under)) {
+            dojo.removeClass(popinId + "_set" + args.under, 'bgabutton_gray');
+            dojo.addClass(popinId + "_set" + args.under, 'bgabutton_blue');
         }
         for (var i = 1; i <= 15; i++) {
-            if (document.getElementById("".concat(popinId, "_setStay").concat(i))) {
-                dojo.toggleClass("".concat(popinId, "_setStay").concat(i), 'disabled', args.under > 0 && i <= args.under);
+            if (document.getElementById(popinId + "_setStay" + i)) {
+                dojo.toggleClass(popinId + "_setStay" + i, 'disabled', args.under > 0 && i <= args.under);
             }
         }
     };
@@ -9593,13 +9385,13 @@ var KingOfTokyo = /** @class */ (function () {
         dojo.query('.autoStayButton').removeClass('bgabutton_blue');
         dojo.query('.autoStayButton').addClass('bgabutton_gray');
         var popinId = "discussion_bubble_autoLeaveUnder";
-        if (document.getElementById("".concat(popinId, "_setStay").concat(args.over))) {
-            dojo.removeClass("".concat(popinId, "_setStay").concat(args.over), 'bgabutton_gray');
-            dojo.addClass("".concat(popinId, "_setStay").concat(args.over), 'bgabutton_blue');
+        if (document.getElementById(popinId + "_setStay" + args.over)) {
+            dojo.removeClass(popinId + "_setStay" + args.over, 'bgabutton_gray');
+            dojo.addClass(popinId + "_setStay" + args.over, 'bgabutton_blue');
         }
     };
     KingOfTokyo.prototype.notif_updateAskPlayEvolution = function (args) {
-        var input = document.querySelector("input[name=\"autoSkipPlayEvolution\"][value=\"".concat(args.value, "\"]"));
+        var input = document.querySelector("input[name=\"autoSkipPlayEvolution\"][value=\"" + args.value + "\"]");
         if (input) {
             input.checked = true;
         }
@@ -9609,17 +9401,17 @@ var KingOfTokyo = /** @class */ (function () {
         var previousOwner = this.towerLevelsOwners[args.level];
         this.towerLevelsOwners[args.level] = playerId;
         var newLevelTower = playerId == 0 ? this.tableCenter.getTokyoTower() : this.getPlayerTable(playerId).getTokyoTower();
-        transitionToObjectAndAttach(this, document.getElementById("tokyo-tower-level".concat(args.level)), "".concat(newLevelTower.divId, "-level").concat(args.level), this.getZoom());
+        transitionToObjectAndAttach(this, document.getElementById("tokyo-tower-level" + args.level), newLevelTower.divId + "-level" + args.level, this.getZoom());
         if (previousOwner != 0) {
-            document.getElementById("tokyo-tower-icon-".concat(previousOwner, "-level-").concat(args.level)).dataset.owned = 'false';
+            document.getElementById("tokyo-tower-icon-" + previousOwner + "-level-" + args.level).dataset.owned = 'false';
         }
         if (playerId != 0) {
-            document.getElementById("tokyo-tower-icon-".concat(playerId, "-level-").concat(args.level)).dataset.owned = 'true';
+            document.getElementById("tokyo-tower-icon-" + playerId + "-level-" + args.level).dataset.owned = 'true';
         }
     };
     KingOfTokyo.prototype.notif_setPlayerBerserk = function (args) {
         this.getPlayerTable(args.playerId).setBerserk(args.berserk);
-        dojo.toggleClass("player-panel-berserk-".concat(args.playerId), 'active', args.berserk);
+        dojo.toggleClass("player-panel-berserk-" + args.playerId, 'active', args.berserk);
     };
     KingOfTokyo.prototype.notif_changeForm = function (args) {
         this.getPlayerTable(args.playerId).changeForm(args.card);
@@ -9794,13 +9586,13 @@ var KingOfTokyo = /** @class */ (function () {
         this.tableCenter.setWickedness(playerId, wickedness);
     };
     KingOfTokyo.prototype.setPlayerTokens = function (playerId, tokens, tokenName) {
-        var containerId = "player-board-".concat(tokenName, "-tokens-").concat(playerId);
+        var containerId = "player-board-" + tokenName + "-tokens-" + playerId;
         var container = document.getElementById(containerId);
         while (container.childElementCount > tokens) {
             container.removeChild(container.lastChild);
         }
         for (var i = container.childElementCount; i < tokens; i++) {
-            dojo.place("<div class=\"".concat(tokenName, " token\"></div>"), containerId);
+            dojo.place("<div class=\"" + tokenName + " token\"></div>", containerId);
         }
     };
     KingOfTokyo.prototype.setShrinkRayTokens = function (playerId, tokens) {
@@ -9850,17 +9642,17 @@ var KingOfTokyo = /** @class */ (function () {
     };
     KingOfTokyo.prototype.eliminatePlayer = function (playerId) {
         this.gamedatas.players[playerId].eliminated = 1;
-        document.getElementById("overall_player_board_".concat(playerId)).classList.add('eliminated-player');
-        if (!document.getElementById("dead-icon-".concat(playerId))) {
-            dojo.place("<div id=\"dead-icon-".concat(playerId, "\" class=\"icon dead\"></div>"), "player_board_".concat(playerId));
+        document.getElementById("overall_player_board_" + playerId).classList.add('eliminated-player');
+        if (!document.getElementById("dead-icon-" + playerId)) {
+            dojo.place("<div id=\"dead-icon-" + playerId + "\" class=\"icon dead\"></div>", "player_board_" + playerId);
         }
         this.getPlayerTable(playerId).eliminatePlayer();
         this.tableManager.tableHeightChange(); // because all player's card were removed
-        if (document.getElementById("player-board-monster-figure-".concat(playerId))) {
-            this.fadeOutAndDestroy("player-board-monster-figure-".concat(playerId));
+        if (document.getElementById("player-board-monster-figure-" + playerId)) {
+            this.fadeOutAndDestroy("player-board-monster-figure-" + playerId);
         }
-        dojo.removeClass("overall_player_board_".concat(playerId), 'intokyo');
-        dojo.removeClass("monster-board-wrapper-".concat(playerId), 'intokyo');
+        dojo.removeClass("overall_player_board_" + playerId, 'intokyo');
+        dojo.removeClass("monster-board-wrapper-" + playerId, 'intokyo');
         if (playerId == this.getPlayerId()) {
             this.removeAutoLeaveUnderButton();
         }
@@ -9918,8 +9710,8 @@ var KingOfTokyo = /** @class */ (function () {
                         if (types !== null) {
                             var tags = types.map(function (cardType) {
                                 var cardLogId = _this.cardLogId++;
-                                setTimeout(function () { return _this.addTooltipHtml("card-log-".concat(cardLogId), _this.getLogCardTooltip(cardType)); }, 500);
-                                return "<strong id=\"card-log-".concat(cardLogId, "\" data-log-type=\"").concat(cardType, "\">").concat(_this.getLogCardName(cardType), "</strong>");
+                                setTimeout(function () { return _this.addTooltipHtml("card-log-" + cardLogId, _this.getLogCardTooltip(cardType)); }, 500);
+                                return "<strong id=\"card-log-" + cardLogId + "\" data-log-type=\"" + cardType + "\">" + _this.getLogCardName(cardType) + "</strong>";
                             });
                             args[cardArg] = tags.join(', ');
                         }
@@ -9932,7 +9724,7 @@ var KingOfTokyo = /** @class */ (function () {
                 }
                 if (args.player_name && typeof args.player_name[0] === 'string' && args.player_name.indexOf('<') === -1) {
                     var player = Object.values(this.gamedatas.players).find(function (player) { return player.name == args.player_name; });
-                    args.player_name = "<span style=\"font-weight:bold;color:#".concat(player.color, ";\">").concat(args.player_name, "</span>");
+                    args.player_name = "<span style=\"font-weight:bold;color:#" + player.color + ";\">" + args.player_name + "</span>";
                 }
                 if (args.symbolsToGive && typeof args.symbolsToGive === 'object') {
                     var symbolsStr = args.symbolsToGive.map(function (symbol) { return SYMBOL_AS_STRING_PADDED[symbol]; });
@@ -9956,5 +9748,5 @@ define([
     "ebg/counter",
     "ebg/stock"
 ], function (dojo, declare) {
-    return declare("bgagame.kingoftokyo", ebg.core.gamegui, new KingOfTokyo());
+    return declare("bgagame.koth", ebg.core.gamegui, new KingOfTokyo());
 });

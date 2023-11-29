@@ -2,10 +2,10 @@
   "name": "kingoftokyo",
   "version": "1.0.0",
   "description": "",
-  "main": "kingoftokyo.js",
+  "main": "koth.js",
   "scripts": {
     "build:ts": "tsc",
-    "build:scss": "sass --no-source-map src/kingoftokyo.scss kingoftokyo.css"
+    "build:scss": "sass --no-source-map src/kingoftokyo.scss koth.css"
   },
   "author": "",
   "license": "ISC",
