@@ -2817,6 +2817,15 @@ html[data-origins=true] #table #table-center #full-board #board #tokyo-city {
   top: 113px;
   left: 52px;
 }
+html[data-origins=true] #table #table-center #full-board #board #board-corner-highlight {
+  bottom: 28px;
+  left: 16px;
+}
+html[data-origins=true] #table #table-center #full-board #board #twoPlayersVariant-message {
+  position: absolute;
+  bottom: 57px;
+  left: 13px;
+}
 
 html, .mode_3d #game_play_area_background {
   background: url("img/backgrounds/base.jpg") #102f50;

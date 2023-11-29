@@ -8,9 +8,19 @@ html[data-origins="true"] {
                         top: 113px;
                         left: 52px;
                     }
+
+                    #board-corner-highlight {
+                        bottom: 28px;
+                        left: 16px;
+    
+                    }
+                    #twoPlayersVariant-message {
+                        position: absolute;
+                        bottom: 57px;
+                        left: 13px;
+                    }
                 }
             }
         }
     }
-
 }
