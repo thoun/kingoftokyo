@@ -51,6 +51,15 @@ trait CardsUtilTrait {
             $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
         }
 
+        if (!$isOrigins && !$isDarkEdition && intval($this->getGameStateValue(ORIGINS_EXCLUSIVE_CARDS_OPTION)) == 2) {        
+            foreach($this->ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST as $value) { // keep  
+                $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+            }            
+            foreach($this->ORIGINS_CARDS_EXCLUSIVE_DISCARD_CARDS_LIST as $value) { // discard
+                $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
+            }
+        }
+
         $this->cards->createCards($cards, 'deck');
 
         if ($this->isHalloweenExpansion()) { 

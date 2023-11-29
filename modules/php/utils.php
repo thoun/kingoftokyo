@@ -85,11 +85,11 @@ trait UtilTrait {
     }
 
     function isWickednessExpansion() {
-        return intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition();
+        return !$this->isOrigins() && (intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition());
     }
 
     function isPowerUpExpansion() {
-        return intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return !$this->isOrigins() && intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
