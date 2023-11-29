@@ -220,10 +220,10 @@ class KingOfTokyo extends Table {
         }
 
         /************ Start the game initialization *****/
-        $canTestOrigins = count($playersIds) == 2 && in_array(86175279 /*thoun*/, $playersIds) && in_array(91350005 /*Quentin54*/, $playersIds);
-        if ($this->getBgaEnvironment() == 'studio' || $canTestOrigins) {
-            $this->setGameStateValue(ORIGINS_OPTION, 2);  // TODOORI TEMP
-        } 
+        //$canTestOrigins = count($playersIds) == 2 && in_array(86175279 /*thoun*/, $playersIds) && in_array(91350005 /*Quentin54*/, $playersIds);
+        //if ($this->getBgaEnvironment() == 'studio' || $canTestOrigins) {
+        //    $this->setGameStateValue(ORIGINS_OPTION, 2);  // TODOORI TEMP
+        //}
         
         $isOrigins = $this->isOrigins();
         $darkEdition = $isOrigins ? 1 : intval($this->getGameStateValue(DARK_EDITION_OPTION));
