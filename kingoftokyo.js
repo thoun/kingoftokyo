@@ -6295,7 +6295,7 @@ var KingOfTokyo = /** @class */ (function () {
                 this.onEnteringRerollOrDiscardDie(args.args);
                 this.diceManager.hideLock();
                 var argsResolveDice = args.args;
-                if (argsResolveDice.canLeaveHibernation) {
+                if (argsResolveDice.isInHibernation) {
                     this.setGamestateDescription('Hibernation');
                 }
                 break;
@@ -7174,9 +7174,11 @@ var KingOfTokyo = /** @class */ (function () {
                     break;
                 case 'resolveDice':
                     var argsResolveDice = args;
-                    if (argsResolveDice.canLeaveHibernation) {
+                    if (argsResolveDice.isInHibernation) {
                         this.addActionButton('stayInHibernation_button', _("Stay in Hibernation"), function () { return _this.stayInHibernation(); });
-                        this.addActionButton('leaveHibernation_button', _("Leave Hibernation"), function () { return _this.leaveHibernation(); }, null, null, 'red');
+                        if (argsResolveDice.canLeaveHibernation) {
+                            this.addActionButton('leaveHibernation_button', _("Leave Hibernation"), function () { return _this.leaveHibernation(); }, null, null, 'red');
+                        }
                     }
                     break;
                 case 'prepareResolveDice':

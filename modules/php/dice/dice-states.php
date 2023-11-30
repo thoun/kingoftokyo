@@ -248,8 +248,14 @@ trait DiceStateTrait {
 
         $this->DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
 
-        $countHibernation = $this->countCardOfType($playerId, HIBERNATION_CARD);
-        if ($countHibernation == 0) {
+        $args = $this->argResolveDice();
+        if ($args['isInHibernation']) {
+            if (!$args['canLeaveHibernation']) {
+                $this->applyResolveDice($playerId);
+                
+                $this->goToState($this->redirectAfterResolveDice());
+            }
+        } else {
             $this->applyResolveDice($playerId);
             
             $this->goToState($this->redirectAfterResolveDice());

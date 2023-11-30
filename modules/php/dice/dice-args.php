@@ -225,13 +225,15 @@ trait DiceArgTrait {
         $activePlayerId = $this->getActivePlayerId();
         $dice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
 
-        $canLeaveHibernation = $this->canLeaveHibernation($activePlayerId, $dice);
+        $isInHibernation = $this->countCardOfType($activePlayerId, HIBERNATION_CARD) > 0;
+        $canLeaveHibernation = $isInHibernation && $this->canLeaveHibernation($activePlayerId, $dice);
 
         return [
             'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),
             'frozenFaces' => $this->frozenFaces($activePlayerId),
             'selectableDice' => [],
+            'isInHibernation' => $isInHibernation,
             'canLeaveHibernation' => $canLeaveHibernation,
         ];
     }

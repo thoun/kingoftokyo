@@ -274,7 +274,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                 this.onEnteringRerollOrDiscardDie(args.args);
                 this.diceManager.hideLock();
                 const argsResolveDice = args.args as EnteringResolveDiceArgs;
-                if (argsResolveDice.canLeaveHibernation) {
+                if (argsResolveDice.isInHibernation) {
                     this.setGamestateDescription('Hibernation');
                 }
                 break;
@@ -1243,9 +1243,11 @@ class KingOfTokyo implements KingOfTokyoGame {
                 
                 case 'resolveDice': 
                     const argsResolveDice = args as EnteringResolveDiceArgs;
-                    if (argsResolveDice.canLeaveHibernation) {
+                    if (argsResolveDice.isInHibernation) {
                         (this as any).addActionButton('stayInHibernation_button',_("Stay in Hibernation"), () => this.stayInHibernation());
-                        (this as any).addActionButton('leaveHibernation_button',_("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
+                        if (argsResolveDice.canLeaveHibernation) {
+                            (this as any).addActionButton('leaveHibernation_button',_("Leave Hibernation"), () => this.leaveHibernation(), null, null, 'red');
+                        }
                     }
                     break;
                 case 'prepareResolveDice':

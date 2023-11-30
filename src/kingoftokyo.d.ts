@@ -488,6 +488,7 @@ interface NotifResolveArgs {
 }
 
 interface EnteringResolveDiceArgs extends EnteringDiceArgs {
+    isInHibernation: boolean;
     canLeaveHibernation: boolean;
 }
 

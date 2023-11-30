@@ -25,7 +25,7 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
+        $this->debugSetPlayerInLocation(2343493, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
@@ -136,7 +136,7 @@ trait DebugUtilTrait {
         // dark edition
 
         if ($this->isDarkEdition()) {
-            //$this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
+            $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
             //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
             //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
             //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
