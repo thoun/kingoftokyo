@@ -386,6 +386,25 @@ $size: 0.25em;
   [data-roll-type="change"][data-roll="6"] {
     transform: rotateX(360.1deg) rotateY(900.1deg) rotateZ(540.1deg);
   }
+
+  [data-side="1"] {
+    transform: rotate3d(0, 0, 0, 90.1deg) translateZ(4*$size);
+  }
+  [data-side="2"] {
+    transform: rotate3d(-1, 0, 0, 90.1deg) translateZ(4*$size);
+  }
+  [data-side="3"] {
+    transform: rotate3d(0, 1, 0, 90.1deg) translateZ(4*$size);
+  }
+  [data-side="4"] {
+    transform: rotate3d(0, -1, 0, 90.1deg) translateZ(4*$size);
+  }
+  [data-side="5"] {
+    transform: rotate3d(1, 0, 0, 90.1deg) translateZ(4*$size);
+  }
+  [data-side="6"] {
+    transform: rotate3d(1, 0, 0, 180.1deg) translateZ(4*$size);
+  }
 }
 
 .animation {
