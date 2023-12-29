@@ -312,8 +312,8 @@ $size: 0.25em;
 
 }
 
-// dirty patch for iOs 17
-.dj_ios .dice {
+// dirty patch for iOs 17 / macOS Safari
+.dj_ios .dice, .dj_safari .dice {
   [data-roll-type="even"][data-roll="1"] {
     transform: rotateX(360.1deg) rotateY(720.1deg) rotateZ(360.1deg);
   }
