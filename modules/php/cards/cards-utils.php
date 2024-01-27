@@ -1039,7 +1039,14 @@ trait CardsUtilTrait {
         if ($countAstronaut > 0) {
             $playerScore = $this->getPlayerScore($playerId);
             if ($playerScore >= 17) {
-                $this->applyGetPointsIgnoreCards($playerId, MAX_POINT - $playerScore, ASTRONAUT_CARD);
+                $this->applyGetPointsIgnoreCards($playerId, WIN_GAME, 0);
+            
+                $this->notifyAllPlayers("log", clienttranslate('${player_name} reached ${points} [Star] and wins the game with ${card_name}'), [
+                    'playerId' => $playerId,
+                    'player_name' => $this->getPlayerName($playerId),
+                    'card_name' => ASTRONAUT_CARD,
+                    'points' => 17,
+                ]);
             }
         }
     }

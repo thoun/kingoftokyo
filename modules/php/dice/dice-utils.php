@@ -303,8 +303,7 @@ trait DiceUtilTrait {
                 $countClimbTokyoTower = $this->countEvolutionOfType($playerId, CLIMB_TOKYO_TOWER_EVOLUTION);
                 if ($countClimbTokyoTower > 0) {
                     if ($diceCount >= 6) {
-                        $playerScore = $this->getPlayerScore($playerId);
-                        $this->applyGetPointsIgnoreCards($playerId, MAX_POINT - $playerScore, 0);
+                        $this->applyGetPointsIgnoreCards($playerId, WIN_GAME, 0);
             
                         $this->notifyAllPlayers("climbTokyoTower", /*client TODOPUKKtranslate*/('${player_name} rolled [dice1][dice1][dice1][dice1][dice1][dice1] and wins the game with ${card_name}'), [
                             'playerId' => $playerId,
@@ -1076,8 +1075,7 @@ trait DiceUtilTrait {
         $this->changeTokyoTowerOwner($playerId, $newLevel);
 
         if ($newLevel === 3) {
-            $playerScore = $this->getPlayerScore($playerId);
-            $this->applyGetPointsIgnoreCards($playerId, MAX_POINT - $playerScore, 0);
+            $this->applyGetPointsIgnoreCards($playerId, WIN_GAME, 0);
             
             $this->notifyAllPlayers("fullTokyoTower", clienttranslate('${player_name} claims Tokyo Tower top level and wins the game'), [
                 'playerId' => $playerId,

@@ -25,16 +25,16 @@ trait DebugUtilTrait {
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343493, 1);
+        $this->debugSetPlayerInLocation(2343492, 1);
         //$this->debugSetPlayerInLocation(2343494, 2);
         //$this->debugSetPlayerInLocation($playersIds[0], 1);
         //$this->debugSetPlayerInLocation($playersIds[1], 2);
         //$this->debugSetPlayerEnergy(2343492, 9);
         $this->debugSetEnergy(20);
         //$this->debugSetPlayerPoints(2343493, 17);
-        $this->debugSetPoints(5);
+        $this->debugSetPoints(16);
         //$this->debugSetPlayerPoints(2343493, 4);
-        $this->debugSetHealth(8);
+        $this->debugSetHealth(1);
         //$this->debugSetPlayerHealth(2343492, 1);
         //$this->debugSetPlayerHealth(2343493, 1);
         //$this->debugSetPlayerHealth($playersIds[0], 7);
@@ -148,7 +148,7 @@ trait DebugUtilTrait {
         if ($this->isHalloweenExpansion()) {
             //$this->debugSetCardInHand(ZOMBIE_CARD, 2343493);
             //$this->debugSetCardInHand(GHOST_CARD, 2343494);
-            $this->debugSetCardInHand(CLOWN_CARD, 2343492);
+            $this->debugSetCardInHand(ASTRONAUT_CARD, 2343492);
             //$this->debugSetCardInHand(DEVIL_CARD, 2343492);
             //$this->debugSetCardInHand(CHEERLEADER_CARD, 2343493);
             //$this->debugSetCardInHand(ROBOT_CARD, 2343493);
@@ -191,8 +191,8 @@ trait DebugUtilTrait {
 
         // king kong
         if ($this->isKingKongExpansion()) {
-            //$this->changeTokyoTowerOwner(2343492, 1);
-            //$this->changeTokyoTowerOwner(2343492, 2);
+            $this->changeTokyoTowerOwner(2343492, 1);
+            $this->changeTokyoTowerOwner(2343492, 2);
         }
 
         // cybertooth
@@ -214,11 +214,11 @@ trait DebugUtilTrait {
             //$this->initWickednessTiles(3); // 2=orange, 3=green, 4=mix
             //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
-            $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
+            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
             //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debugSetCardInHand(PSYCHIC_PROBE_CARD, 2343492));
             //$this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
-            //$this->debugSetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343493);
+            $this->debugSetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343493);
             //$this->debugSetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
             //$this->debugSetWickednessTileInHand(DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 2343492);
             //$this->debugSetWickednessTileInHand(TIRELESS_WICKEDNESS_TILE, 2343492);
@@ -240,9 +240,9 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 2 where `player_id` = 2343493"); // alienoid
             $this->DbQuery("UPDATE player SET `player_monster` = 3 where `player_id` = 2343492"); // cyber kitty
             //$this->DbQuery("UPDATE player SET `player_monster` = 4 where `player_id` = 2343493"); // the king
-            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343494"); // gigazaur
+            $this->DbQuery("UPDATE player SET `player_monster` = 5 where `player_id` = 2343493"); // gigazaur
             //$this->DbQuery("UPDATE player SET `player_monster` = 6 where `player_id` = 2343492"); // meka dragon
-            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343493"); // pandakai
+            $this->DbQuery("UPDATE player SET `player_monster` = 13 where `player_id` = 2343494"); // pandakai
             //$this->DbQuery("UPDATE player SET `player_monster` = 7 where `player_id` = 2343492"); // boogie woogie
             //$this->DbQuery("UPDATE player SET `player_monster` = 8 where `player_id` = 2343492"); // pumpkin jack
             //$this->DbQuery("UPDATE player SET `player_monster` = 14 where `player_id` = 2343493"); // cyber bunny
@@ -252,7 +252,7 @@ trait DebugUtilTrait {
             // dummy card to avoid initial card selection
             $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343493, false);
+            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
             $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
             $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
             $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
@@ -286,7 +286,7 @@ trait DebugUtilTrait {
             //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
             //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
             //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            $this->debugSetEvolutionInHand(SUNKEN_TEMPLE_EVOLUTION, 2343493, false);
+            //$this->debugSetEvolutionInHand(SUNKEN_TEMPLE_EVOLUTION, 2343493, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }

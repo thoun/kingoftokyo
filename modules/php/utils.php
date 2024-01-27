@@ -170,7 +170,7 @@ trait UtilTrait {
     }
 
     function getPlayerScore(int $playerId) {
-        return intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
+        return min(20, intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId")));
     }
 
     function getPlayerHealth(int $playerId) {
@@ -591,7 +591,14 @@ trait UtilTrait {
             if ($player->health == 0 && !$player->eliminated && $this->countCardOfType($player->id, ZOMBIE_CARD) == 0) { // ignore players with Zombie
                 // Final Roar
                 if ($this->isWickednessExpansion() && $this->gotWickednessTile($player->id, FINAL_ROAR_WICKEDNESS_TILE) && $player->score >= 16) {
-                    $this->applyGetPointsIgnoreCards($player->id, MAX_POINT - $player->score, 2000 + FINAL_ROAR_WICKEDNESS_TILE);
+                    $this->applyGetPointsIgnoreCards($player->id, WIN_GAME, 0);
+            
+                    $this->notifyAllPlayers("log", clienttranslate('${player_name} is eliminated with ${points} [Star] or more and wins the game with ${card_name}'), [
+                        'playerId' => $player->id,
+                        'player_name' => $this->getPlayerName($player->id),
+                        'card_name' => 2000 + FINAL_ROAR_WICKEDNESS_TILE,
+                        'points' => 16,
+                    ]);
                 } else {
                     $this->eliminateAPlayer($player, $currentTurnPlayerId);
                 }
@@ -689,8 +696,15 @@ trait UtilTrait {
     }
 
     function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
-        $actualScore = $this->getPlayerScore($playerId);
-        $newScore = min(MAX_POINT, $actualScore + $points);
+        //$actualScore = $this->getPlayerScore($playerId);
+        $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
+        if ($actualScore == WIN_GAME) {
+            return;
+        } else {
+            $actualScore = min(20, $actualScore);
+        }
+
+        $newScore = $points == WIN_GAME ? WIN_GAME : min(MAX_POINT, $actualScore + $points);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
         if ($cardType >= 0) {
@@ -698,7 +712,7 @@ trait UtilTrait {
             $this->notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
-                'points' => $newScore,
+                'points' => min(20, $newScore),
                 'delta_points' => $points,
                 'card_name' => $cardType == 0 ? null : $cardType,
             ]);
@@ -706,7 +720,13 @@ trait UtilTrait {
     }
 
     function applyLosePoints(int $playerId, int $points, int $cardType) {
-        $actualScore = $this->getPlayerScore($playerId);
+        //$actualScore = $this->getPlayerScore($playerId);
+        $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
+        if ($actualScore == WIN_GAME) {
+            // can't lose points if the player made an action saying win the game
+            return;
+        }
+
         $newScore = max($actualScore - $points, 0);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 

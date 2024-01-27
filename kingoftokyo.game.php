@@ -435,6 +435,10 @@ class KingOfTokyo extends Table {
         }
 
         foreach ($result['players'] as $playerId => &$playerDb) {
+            if (intval($playerDb['score']) > MAX_POINT) {
+                $playerDb['score'] = MAX_POINT;
+            }
+
             $playerDb['cards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
             $playerDb['reservedCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('reserved'.$playerId));
 
@@ -589,8 +593,12 @@ class KingOfTokyo extends Table {
         $playerCount = count($players);
         $remainingPlayers = $this->getRemainingPlayers();
         $pointsWin = false;
-        foreach($players as $player) {
+        foreach($players as &$player) {
             if ($player->score >= MAX_POINT) {
+                if ($player->score > MAX_POINT) {
+                    $player->score = MAX_POINT;
+                    $this->DbQuery("UPDATE player SET `player_score` = ".MAX_POINT." WHERE player_id = ".$player->id);
+                }
                 $pointsWin = true;
             } 
         }

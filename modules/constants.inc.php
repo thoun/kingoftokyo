@@ -1,5 +1,7 @@
 <?php
 
+const WIN_GAME = 100;
+
 if(!defined('MAX_POINT')) {
 
 define('MAX_POINT', 20);
