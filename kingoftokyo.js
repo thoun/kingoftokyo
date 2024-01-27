@@ -6718,8 +6718,10 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.onEnteringExchangeCard = function (args, isCurrentPlayerActive) {
         var _this = this;
         if (isCurrentPlayerActive) {
-            this.playerTables.filter(function (playerTable) { return playerTable.playerId != _this.getPlayerId(); }).forEach(function (playerTable) { return playerTable.cards.setSelectionMode('single'); });
-            args.disabledIds.forEach(function (id) { var _a; return (_a = document.querySelector("div[id$=\"_item_".concat(id, "\"]"))) === null || _a === void 0 ? void 0 : _a.classList.add('disabled'); });
+            args.disabledIds.forEach(function (id) {
+                var cardDiv = _this.cardsManager.getCardElement({ id: id });
+                cardDiv === null || cardDiv === void 0 ? void 0 : cardDiv.classList.add('bga-cards_disabled-card');
+            });
         }
     };
     KingOfTokyo.prototype.onEnteringBuyCard = function (args, isCurrentPlayerActive) {

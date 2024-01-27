@@ -136,10 +136,10 @@ trait DebugUtilTrait {
         // dark edition
 
         if ($this->isDarkEdition()) {
-            $this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
+            //$this->debugSetCardInHand(HIBERNATION_CARD, 2343492);
             //$this->debugSetCardInHand(NANOBOTS_CARD, 2343492);
             //$this->debugSetCardInHand(SUPER_JUMP_CARD, 2343493);
-            //$this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
+            $this->debugSetCardInHand(UNSTABLE_DNA_CARD, 2343493);
             //$this->debugSetCardInHand(ZOMBIFY_CARD, 2343493);
             //$this->debugSetCardInHand(REFLECTIVE_HIDE_CARD, 2343493);
         }
@@ -155,7 +155,7 @@ trait DebugUtilTrait {
             $this->debugSetCardInHand(PRINCESS_CARD, 2343493);
             //$this->debugSetCardInHand(WITCH_CARD, 2343493);
             //$this->debugSetCardInHand(VAMPIRE_CARD, 2343492);
-            //$this->debugSetCardInHand(PIRATE_CARD, 2343494);
+            $this->debugSetCardInHand(PIRATE_CARD, 2343494);
         }
 
         // cthulhu

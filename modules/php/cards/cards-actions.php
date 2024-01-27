@@ -1087,6 +1087,11 @@ trait CardsActionTrait {
     function exchangeCard(int $exchangedCardId) {
         $this->checkAction('exchangeCard');
 
+        $args = $this->argLeaveTokyoExchangeCard();
+        if (in_array($exchangedCardId, $args['disabledIds'])) {
+            throw new \BgaUserException("You can't exchange this card");
+        }
+
         $playerId = intval($this->getCurrentPlayerId());
         
         $unstableDnaCards = $this->getCardsOfType($playerId, UNSTABLE_DNA_CARD); // TODODE unstable DNA can be mimicked. create an intervention for this.

@@ -764,8 +764,10 @@ class KingOfTokyo implements KingOfTokyoGame {
 
     private onEnteringExchangeCard(args: EnteringExchangeCardArgs, isCurrentPlayerActive: boolean) {
         if (isCurrentPlayerActive) {
-            this.playerTables.filter(playerTable => playerTable.playerId != this.getPlayerId()).forEach(playerTable => playerTable.cards.setSelectionMode('single'));
-            args.disabledIds.forEach(id => document.querySelector(`div[id$="_item_${id}"]`)?.classList.add('disabled'));
+            args.disabledIds.forEach(id => {
+                const cardDiv = this.cardsManager.getCardElement({ id } as Card);
+                cardDiv?.classList.add('bga-cards_disabled-card');
+            });
         }
     }
 

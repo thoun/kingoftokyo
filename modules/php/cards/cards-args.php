@@ -526,10 +526,10 @@ trait CardsArgTrait {
         $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
         $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
 
-        $otherPlayersIds = $this->getOtherPlayersIds($currentPlayerId);
-        foreach($otherPlayersIds as $otherPlayerId) {
+        $playersIds = $this->getPlayersIds();
+        foreach($playersIds as $otherPlayerId) {
             $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
-            $isSmashingPlayer = $playerId === $otherPlayerId; // TODODE check it's not currentPlayer, else skip (if player left Tokyo with anubis card)
+            $isSmashingPlayer = $playerId === $otherPlayerId && $otherPlayerId != $currentPlayerId; // TODODE check it's not currentPlayer, else skip (if player left Tokyo with anubis card)
 
             foreach ($cardsOfPlayer as $card) {
                 if ($isSmashingPlayer && $card->type < 300) {
