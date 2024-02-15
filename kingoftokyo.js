@@ -1340,9 +1340,8 @@ var SlideAndBackAnimation = /** @class */ (function (_super) {
 var Deck = /** @class */ (function (_super) {
     __extends(Deck, _super);
     function Deck(manager, element, settings) {
-        var _this = this;
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-        _this = _super.call(this, manager, element) || this;
+        var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
         element.classList.add('deck');
@@ -1507,9 +1506,8 @@ var LineStock = /** @class */ (function (_super) {
      * @param settings a `LineStockSettings` object
      */
     function LineStock(manager, element, settings) {
-        var _this = this;
         var _a, _b, _c, _d;
-        _this = _super.call(this, manager, element, settings) || this;
+        var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
         element.classList.add('line-stock');
@@ -1532,9 +1530,8 @@ var SlotStock = /** @class */ (function (_super) {
      * @param settings a `SlotStockSettings` object
      */
     function SlotStock(manager, element, settings) {
-        var _this = this;
         var _a, _b;
-        _this = _super.call(this, manager, element, settings) || this;
+        var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
         _this.slotsIds = [];
@@ -1651,9 +1648,8 @@ var SlotStock = /** @class */ (function (_super) {
 var AllVisibleDeck = /** @class */ (function (_super) {
     __extends(AllVisibleDeck, _super);
     function AllVisibleDeck(manager, element, settings) {
-        var _this = this;
         var _a;
-        _this = _super.call(this, manager, element, settings) || this;
+        var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
         element.classList.add('all-visible-deck');
