@@ -5,15 +5,6 @@ $gameinfos = [
     // Name of the game in English (will serve as the basis for translation) 
     'game_name' => "King of Tokyo",
 
-    // Game designer (or game designers, separated by commas)
-    'designer' => 'Richard Garfield',
-
-    // Game artist (or game artists, separated by commas)
-    'artist' => 'Régis Torres',
-
-    // Year of FIRST publication of this game. Can be negative.
-    'year' => 2011,
-
     // Game publisher
     'publisher' => 'IELLO',
 
@@ -75,18 +66,6 @@ $gameinfos = [
     // NB: the default will be the first language in this list spoken by the player, so you should list them by popularity/preference.
     'language_dependency' => false,
 
-    // Complexity of the game, from 0 (extremely simple) to 5 (extremely complex)
-    'complexity' => 2,
-
-    // Luck of the game, from 0 (absolutely no luck in this game) to 5 (totally luck driven)
-    'luck' => 3,
-
-    // Strategy of the game, from 0 (no strategy can be setup) to 5 (totally based on strategy)
-    'strategy' => 2,
-
-    // Diplomacy of the game, from 0 (no interaction in this game) to 5 (totally based on interaction and discussion between players)
-    'diplomacy' => 0,
-
     // Colors attributed to players
     'player_colors' => ['ff0000', '008000', '0000ff', 'ffa500', '000000', 'e94190', '982fff', '72c3b1', 'f07f16', 'bdd002', '7b7b7b'],
     
@@ -114,21 +93,6 @@ $gameinfos = [
         //  minimum possible value: 740
         'max' => null
     ],
-    
-    // Game presentation
-    // Short game presentation text that will appear on the game description page, structured as an array of paragraphs.
-    // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
-    // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
-    'presentation' => [
-        totranslate("King of Tokyo is a game for 2 to 6 players where you play as mutant monsters, rampaging robots, or even abominable aliens battling in a fun, chaotic atmosphere. Roll dice and choose your strategy: Will you attack your enemies? Heal your wounds? Improve your Monster? Stomp your path to victory!"),
-        totranslate("You are a gigantic Monster willing to do anything to become King of Tokyo. Your rampage brings you glory in the form of Victory Points. To win, be the first Monster to gain 20 Victory Points. Or, get your claws out and eliminate your enemies. The last one standing claims victory!"),
-    ],
-
-    // Games categories
-    //  You can attribute any number of "tags" to your game.
-    //  Each tag has a specific ID (ex: 22 for the category "Prototype", 101 for the tag "Science-fiction theme game")
-    'tags' => array( 2, 11, 20, 101, 201 ),
-
 
     //////// BGA SANDBOX ONLY PARAMETERS (DO NOT MODIFY)
     
