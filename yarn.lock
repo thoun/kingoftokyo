@@ -124,12 +124,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bga-cards@thoun/bga-cards#2.0.3":
-  version: 2.0.2
-  resolution: "bga-cards@https://github.com/thoun/bga-cards.git#commit=017177b51043787645f345ca8a95f420a8a2be1c"
+"bga-cards@thoun/bga-cards#3.1.5":
+  version: 3.1.1
+  resolution: "bga-cards@https://github.com/thoun/bga-cards.git#commit=5f3e5e6d3f1795728bf3b71ef646eaffa7579b84"
   peerDependencies:
     bga-animations: "*"
-  checksum: bb7b2c061041eff3c0b589485449e046910dc26f95ea082f316ed773a5861c5e26af1bc25012429a6b7a2aeff56ee878fb9ce61234e0471ef8dda1b9c2f2c507
+  checksum: 77a9a6853de1a9223b2c21b7b16125d4b0c6c698fcbaa3fc0c1d2b6a23d65785d818b3ecde0887db999746f3202cde59712dca17b547d6bc12932c58d6850a0e
   languageName: node
   linkType: hard
 
@@ -579,7 +579,7 @@ __metadata:
   resolution: "kingoftokyo@workspace:."
   dependencies:
     bga-animations: "thoun/bga-animations#1.0.2"
-    bga-cards: "thoun/bga-cards#2.0.3"
+    bga-cards: "thoun/bga-cards#3.1.5"
     bga-zoom: "thoun/bga-zoom#0.2.0"
     sass: ^1.70.0
     typescript: ^5.3.3

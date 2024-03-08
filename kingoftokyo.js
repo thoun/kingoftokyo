@@ -63,12 +63,13 @@ function formatTextIcons(rawText) {
         .replace(/\[Heart\]/ig, '<span class="icon health"></span>')
         .replace(/\[Energy\]/ig, '<span class="icon energy"></span>')
         .replace(/\[Skull\]/ig, '<span class="icon dead"></span>')
-        .replace(/\[dice1\]/ig, '<span class="dice-icon dice1"></span>')
-        .replace(/\[dice2\]/ig, '<span class="dice-icon dice2"></span>')
-        .replace(/\[dice3\]/ig, '<span class="dice-icon dice3"></span>')
-        .replace(/\[diceHeart\]/ig, '<span class="dice-icon dice4"></span>')
-        .replace(/\[diceEnergy\]/ig, '<span class="dice-icon dice5"></span>')
-        .replace(/\[diceSmash\]/ig, '<span class="dice-icon dice6"></span>')
+        .replace(/\[dic?e1\]/ig, '<span class="dice-icon dice1"></span>')
+        .replace(/\[dic?e2\]/ig, '<span class="dice-icon dice2"></span>')
+        .replace(/\[dic?e3\]/ig, '<span class="dice-icon dice3"></span>')
+        .replace(/\[dic?eHeart\]/ig, '<span class="dice-icon dice4"></span>')
+        .replace(/\[dic?eEnergy\]/ig, '<span class="dice-icon dice5"></span>')
+        .replace(/\[dic?eSmash\]/ig, '<span class="dice-icon dice6"></span>')
+        .replace(/\[dic?eClaw\]/ig, '<span class="dice-icon dice6"></span>')
         .replace(/\[dieFateEye\]/ig, '<span class="dice-icon die-of-fate eye"></span>')
         .replace(/\[dieFateRiver\]/ig, '<span class="dice-icon die-of-fate river"></span>')
         .replace(/\[dieFateSnake\]/ig, '<span class="dice-icon die-of-fate snake"></span>')
@@ -484,6 +485,29 @@ var BgaSlideAnimation = /** @class */ (function (_super) {
     }
     return BgaSlideAnimation;
 }(BgaAnimation));
+/**
+ * Just does nothing for the duration
+ *
+ * @param animationManager the animation manager
+ * @param animation a `BgaAnimation` object
+ * @returns a promise when animation ends
+ */
+function pauseAnimation(animationManager, animation) {
+    var promise = new Promise(function (success) {
+        var _a;
+        var settings = animation.settings;
+        var duration = (_a = settings === null || settings === void 0 ? void 0 : settings.duration) !== null && _a !== void 0 ? _a : 500;
+        setTimeout(function () { return success(); }, duration);
+    });
+    return promise;
+}
+var BgaPauseAnimation = /** @class */ (function (_super) {
+    __extends(BgaPauseAnimation, _super);
+    function BgaPauseAnimation(settings) {
+        return _super.call(this, pauseAnimation, settings) || this;
+    }
+    return BgaPauseAnimation;
+}(BgaAnimation));
 function shouldAnimate(settings) {
     var _a;
     return document.visibilityState !== 'hidden' && !((_a = settings === null || settings === void 0 ? void 0 : settings.game) === null || _a === void 0 ? void 0 : _a.instantaneousMode);
@@ -780,6 +804,8 @@ function sortFunction() {
  */
 var CardStock = /** @class */ (function () {
     /**
+     * Creates the stock and register it on the manager.
+     *
      * @param manager the card manager
      * @param element the stock element (should be an empty HTML Element)
      */
@@ -795,6 +821,14 @@ var CardStock = /** @class */ (function () {
         this.bindClick();
         this.sort = settings === null || settings === void 0 ? void 0 : settings.sort;
     }
+    /**
+     * Removes the stock and unregister it on the manager.
+     */
+    CardStock.prototype.remove = function () {
+        var _a;
+        this.manager.removeStock(this);
+        (_a = this.element) === null || _a === void 0 ? void 0 : _a.remove();
+    };
     /**
      * @returns the cards on the stock
      */
@@ -855,7 +889,7 @@ var CardStock = /** @class */ (function () {
      */
     CardStock.prototype.addCard = function (card, animation, settings) {
         var _this = this;
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         if (!this.canAddCard(card, settings)) {
             return Promise.resolve(false);
         }
@@ -865,20 +899,34 @@ var CardStock = /** @class */ (function () {
         var index = this.getNewCardIndex(card);
         var settingsWithIndex = __assign({ index: index }, (settings !== null && settings !== void 0 ? settings : {}));
         var updateInformations = (_a = settingsWithIndex.updateInformations) !== null && _a !== void 0 ? _a : true;
+        var needsCreation = true;
         if (originStock === null || originStock === void 0 ? void 0 : originStock.contains(card)) {
             var element = this.getCardElement(card);
-            promise = this.moveFromOtherStock(card, element, __assign(__assign({}, animation), { fromStock: originStock }), settingsWithIndex);
-            if (!updateInformations) {
-                element.dataset.side = ((_b = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _b !== void 0 ? _b : this.manager.isCardVisible(card)) ? 'front' : 'back';
+            if (element) {
+                promise = this.moveFromOtherStock(card, element, __assign(__assign({}, animation), { fromStock: originStock }), settingsWithIndex);
+                needsCreation = false;
+                if (!updateInformations) {
+                    element.dataset.side = ((_b = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _b !== void 0 ? _b : this.manager.isCardVisible(card)) ? 'front' : 'back';
+                }
             }
         }
-        else if ((animation === null || animation === void 0 ? void 0 : animation.fromStock) && animation.fromStock.contains(card)) {
+        else if ((_c = animation === null || animation === void 0 ? void 0 : animation.fromStock) === null || _c === void 0 ? void 0 : _c.contains(card)) {
             var element = this.getCardElement(card);
-            promise = this.moveFromOtherStock(card, element, animation, settingsWithIndex);
+            if (element) {
+                promise = this.moveFromOtherStock(card, element, animation, settingsWithIndex);
+                needsCreation = false;
+            }
         }
-        else {
-            var element = this.manager.createCardElement(card, ((_c = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _c !== void 0 ? _c : this.manager.isCardVisible(card)));
-            promise = this.moveFromElement(card, element, animation, settingsWithIndex);
+        if (needsCreation) {
+            var element = this.getCardElement(card);
+            if (needsCreation && element) {
+                console.warn("Card ".concat(this.manager.getId(card), " already exists, not re-created."));
+            }
+            // if the card comes from a stock but is not found in this stock, the card is probably hudden (deck with a fake top card)
+            var fromBackSide = !(settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) && !(animation === null || animation === void 0 ? void 0 : animation.originalSide) && (animation === null || animation === void 0 ? void 0 : animation.fromStock) && !((_d = animation === null || animation === void 0 ? void 0 : animation.fromStock) === null || _d === void 0 ? void 0 : _d.contains(card));
+            var createdVisible = fromBackSide ? false : (_e = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _e !== void 0 ? _e : this.manager.isCardVisible(card);
+            var newElement = element !== null && element !== void 0 ? element : this.manager.createCardElement(card, createdVisible);
+            promise = this.moveFromElement(card, newElement, animation, settingsWithIndex);
         }
         if (settingsWithIndex.index !== null && settingsWithIndex.index !== undefined) {
             this.cards.splice(index, 0, card);
@@ -927,14 +975,14 @@ var CardStock = /** @class */ (function () {
     CardStock.prototype.moveFromOtherStock = function (card, cardElement, animation, settings) {
         var promise;
         var element = animation.fromStock.contains(card) ? this.manager.getCardElement(card) : animation.fromStock.element;
-        var fromRect = element.getBoundingClientRect();
+        var fromRect = element === null || element === void 0 ? void 0 : element.getBoundingClientRect();
         this.addCardElementToParent(cardElement, settings);
         this.removeSelectionClassesFromElement(cardElement);
-        promise = this.animationFromElement(cardElement, fromRect, {
+        promise = fromRect ? this.animationFromElement(cardElement, fromRect, {
             originalSide: animation.originalSide,
             rotationDelta: animation.rotationDelta,
             animation: animation.animation,
-        });
+        }) : Promise.resolve(false);
         // in the case the card was move inside the same stock we don't remove it
         if (animation.fromStock && animation.fromStock != this) {
             animation.fromStock.removeCard(card);
@@ -1007,7 +1055,9 @@ var CardStock = /** @class */ (function () {
                     case 4:
                         if (typeof shift === 'number') {
                             _loop_2 = function (i) {
-                                setTimeout(function () { return promises.push(_this.addCard(cards[i], animation, settings)); }, i * shift);
+                                promises.push(new Promise(function (resolve) {
+                                    setTimeout(function () { return _this.addCard(cards[i], animation, settings).then(function (result) { return resolve(result); }); }, i * shift);
+                                }));
                             };
                             for (i = 0; i < cards.length; i++) {
                                 _loop_2(i);
@@ -1032,10 +1082,15 @@ var CardStock = /** @class */ (function () {
      * @param settings a `RemoveCardSettings` object
      */
     CardStock.prototype.removeCard = function (card, settings) {
+        var promise;
         if (this.contains(card) && this.element.contains(this.getCardElement(card))) {
-            this.manager.removeCard(card, settings);
+            promise = this.manager.removeCard(card, settings);
+        }
+        else {
+            promise = Promise.resolve(false);
         }
         this.cardRemoved(card, settings);
+        return promise;
     };
     /**
      * Notify the stock that a card is removed.
@@ -1060,17 +1115,33 @@ var CardStock = /** @class */ (function () {
      * @param settings a `RemoveCardSettings` object
      */
     CardStock.prototype.removeCards = function (cards, settings) {
-        var _this = this;
-        cards.forEach(function (card) { return _this.removeCard(card, settings); });
+        return __awaiter(this, void 0, void 0, function () {
+            var promises, results;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        promises = cards.map(function (card) { return _this.removeCard(card, settings); });
+                        return [4 /*yield*/, Promise.all(promises)];
+                    case 1:
+                        results = _a.sent();
+                        return [2 /*return*/, results.some(function (result) { return result; })];
+                }
+            });
+        });
     };
     /**
      * Remove all cards from the stock.
      * @param settings a `RemoveCardSettings` object
      */
     CardStock.prototype.removeAll = function (settings) {
-        var _this = this;
-        var cards = this.getCards(); // use a copy of the array as we iterate and modify it at the same time
-        cards.forEach(function (card) { return _this.removeCard(card, settings); });
+        return __awaiter(this, void 0, void 0, function () {
+            var cards;
+            return __generator(this, function (_a) {
+                cards = this.getCards();
+                return [2 /*return*/, this.removeCards(cards, settings)];
+            });
+        });
     };
     /**
      * Set if the stock is selectable, and if yes if it can be multiple.
@@ -1340,7 +1411,7 @@ var SlideAndBackAnimation = /** @class */ (function (_super) {
 var Deck = /** @class */ (function (_super) {
     __extends(Deck, _super);
     function Deck(manager, element, settings) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         var _this = _super.call(this, manager, element) || this;
         _this.manager = manager;
         _this.element = element;
@@ -1354,34 +1425,33 @@ var Deck = /** @class */ (function (_super) {
         else {
             throw new Error("You need to set cardWidth and cardHeight in the card manager to use Deck.");
         }
-        _this.thicknesses = (_a = settings.thicknesses) !== null && _a !== void 0 ? _a : [0, 2, 5, 10, 20, 30];
-        _this.setCardNumber((_b = settings.cardNumber) !== null && _b !== void 0 ? _b : 52);
-        _this.autoUpdateCardNumber = (_c = settings.autoUpdateCardNumber) !== null && _c !== void 0 ? _c : true;
-        _this.autoRemovePreviousCards = (_d = settings.autoRemovePreviousCards) !== null && _d !== void 0 ? _d : true;
-        var shadowDirection = (_e = settings.shadowDirection) !== null && _e !== void 0 ? _e : 'bottom-right';
+        _this.fakeCardGenerator = (_a = settings === null || settings === void 0 ? void 0 : settings.fakeCardGenerator) !== null && _a !== void 0 ? _a : manager.getFakeCardGenerator();
+        _this.thicknesses = (_b = settings.thicknesses) !== null && _b !== void 0 ? _b : [0, 2, 5, 10, 20, 30];
+        _this.setCardNumber((_c = settings.cardNumber) !== null && _c !== void 0 ? _c : 0);
+        _this.autoUpdateCardNumber = (_d = settings.autoUpdateCardNumber) !== null && _d !== void 0 ? _d : true;
+        _this.autoRemovePreviousCards = (_e = settings.autoRemovePreviousCards) !== null && _e !== void 0 ? _e : true;
+        var shadowDirection = (_f = settings.shadowDirection) !== null && _f !== void 0 ? _f : 'bottom-right';
         var shadowDirectionSplit = shadowDirection.split('-');
         var xShadowShift = shadowDirectionSplit.includes('right') ? 1 : (shadowDirectionSplit.includes('left') ? -1 : 0);
         var yShadowShift = shadowDirectionSplit.includes('bottom') ? 1 : (shadowDirectionSplit.includes('top') ? -1 : 0);
         _this.element.style.setProperty('--xShadowShift', '' + xShadowShift);
         _this.element.style.setProperty('--yShadowShift', '' + yShadowShift);
         if (settings.topCard) {
-            _this.addCard(settings.topCard, undefined);
+            _this.addCard(settings.topCard);
         }
         else if (settings.cardNumber > 0) {
-            console.warn("Deck is defined with ".concat(settings.cardNumber, " cards but no top card !"));
+            _this.addCard(_this.getFakeCard());
         }
-        if (settings.counter && ((_f = settings.counter.show) !== null && _f !== void 0 ? _f : true)) {
+        if (settings.counter && ((_g = settings.counter.show) !== null && _g !== void 0 ? _g : true)) {
             if (settings.cardNumber === null || settings.cardNumber === undefined) {
-                throw new Error("You need to set cardNumber if you want to show the counter");
+                console.warn("Deck card counter created without a cardNumber");
             }
-            else {
-                _this.createCounter((_g = settings.counter.position) !== null && _g !== void 0 ? _g : 'bottom', (_h = settings.counter.extraClasses) !== null && _h !== void 0 ? _h : 'round', settings.counter.counterId);
-                if ((_j = settings.counter) === null || _j === void 0 ? void 0 : _j.hideWhenEmpty) {
-                    _this.element.querySelector('.bga-cards_deck-counter').classList.add('hide-when-empty');
-                }
+            _this.createCounter((_h = settings.counter.position) !== null && _h !== void 0 ? _h : 'bottom', (_j = settings.counter.extraClasses) !== null && _j !== void 0 ? _j : 'round', settings.counter.counterId);
+            if ((_k = settings.counter) === null || _k === void 0 ? void 0 : _k.hideWhenEmpty) {
+                _this.element.querySelector('.bga-cards_deck-counter').classList.add('hide-when-empty');
             }
         }
-        _this.setCardNumber((_k = settings.cardNumber) !== null && _k !== void 0 ? _k : 52);
+        _this.setCardNumber((_l = settings.cardNumber) !== null && _l !== void 0 ? _l : 0);
         return _this;
     }
     Deck.prototype.createCounter = function (counterPosition, extraClasses, counterId) {
@@ -1403,12 +1473,21 @@ var Deck = /** @class */ (function (_super) {
      * Set the the cards number.
      *
      * @param cardNumber the cards number
+     * @param topCard the deck top card. If unset, will generated a fake card (default). Set it to null to not generate a new topCard.
      */
     Deck.prototype.setCardNumber = function (cardNumber, topCard) {
         var _this = this;
-        if (topCard === void 0) { topCard = null; }
-        if (topCard) {
-            this.addCard(topCard);
+        if (topCard === void 0) { topCard = undefined; }
+        var promise = Promise.resolve(false);
+        var oldTopCard = this.getTopCard();
+        if (topCard !== null && cardNumber > 0) {
+            var newTopCard = topCard || this.getFakeCard();
+            if (!oldTopCard || this.manager.getId(newTopCard) != this.manager.getId(oldTopCard)) {
+                promise = this.addCard(newTopCard, undefined, { autoUpdateCardNumber: false });
+            }
+        }
+        else if (cardNumber == 0 && oldTopCard) {
+            promise = this.removeCard(oldTopCard, { autoUpdateCardNumber: false });
         }
         this.cardNumber = cardNumber;
         this.element.dataset.empty = (this.cardNumber == 0).toString();
@@ -1423,12 +1502,13 @@ var Deck = /** @class */ (function (_super) {
         if (counterDiv) {
             counterDiv.innerHTML = "".concat(cardNumber);
         }
+        return promise;
     };
     Deck.prototype.addCard = function (card, animation, settings) {
         var _this = this;
         var _a, _b;
         if ((_a = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _a !== void 0 ? _a : this.autoUpdateCardNumber) {
-            this.setCardNumber(this.cardNumber + 1);
+            this.setCardNumber(this.cardNumber + 1, null);
         }
         var promise = _super.prototype.addCard.call(this, card, animation, settings);
         if ((_b = settings === null || settings === void 0 ? void 0 : settings.autoRemovePreviousCards) !== null && _b !== void 0 ? _b : this.autoRemovePreviousCards) {
@@ -1446,6 +1526,19 @@ var Deck = /** @class */ (function (_super) {
         }
         _super.prototype.cardRemoved.call(this, card, settings);
     };
+    Deck.prototype.removeAll = function (settings) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function () {
+            var promise;
+            return __generator(this, function (_c) {
+                promise = _super.prototype.removeAll.call(this, __assign(__assign({}, settings), { autoUpdateCardNumber: (_a = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _a !== void 0 ? _a : false }));
+                if ((_b = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _b !== void 0 ? _b : true) {
+                    this.setCardNumber(0, null);
+                }
+                return [2 /*return*/, promise];
+            });
+        });
+    };
     Deck.prototype.getTopCard = function () {
         var cards = this.getCards();
         return cards.length ? cards[cards.length - 1] : null;
@@ -1457,28 +1550,39 @@ var Deck = /** @class */ (function (_super) {
      * @param fakeCardSetter a function to generate a fake card for animation. Required if the card id is not based on a numerci `id` field, or if you want to set custom card back
      * @returns promise when animation ends
      */
-    Deck.prototype.shuffle = function (animatedCardsMax, fakeCardSetter) {
-        if (animatedCardsMax === void 0) { animatedCardsMax = 10; }
+    Deck.prototype.shuffle = function (settings) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
-            var animatedCards, elements, i, newCard, newElement;
+            var animatedCardsMax, animatedCards, elements, getFakeCard, uid, i, newCard, newElement, pauseDelayAfterAnimation;
             var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
+                        animatedCardsMax = (_a = settings === null || settings === void 0 ? void 0 : settings.animatedCardsMax) !== null && _a !== void 0 ? _a : 10;
+                        this.addCard((_b = settings === null || settings === void 0 ? void 0 : settings.newTopCard) !== null && _b !== void 0 ? _b : this.getFakeCard(), undefined, { autoUpdateCardNumber: false });
                         if (!this.manager.animationsActive()) {
                             return [2 /*return*/, Promise.resolve(false)]; // we don't execute as it's just visual temporary stuff
                         }
                         animatedCards = Math.min(10, animatedCardsMax, this.getCardNumber());
-                        if (!(animatedCards > 1)) return [3 /*break*/, 2];
+                        if (!(animatedCards > 1)) return [3 /*break*/, 4];
                         elements = [this.getCardElement(this.getTopCard())];
-                        for (i = elements.length; i <= animatedCards; i++) {
-                            newCard = {};
-                            if (fakeCardSetter) {
-                                fakeCardSetter(newCard, i);
+                        getFakeCard = function (uid) {
+                            var newCard;
+                            if (settings === null || settings === void 0 ? void 0 : settings.fakeCardSetter) {
+                                newCard = {};
+                                settings === null || settings === void 0 ? void 0 : settings.fakeCardSetter(newCard, uid);
                             }
                             else {
-                                newCard.id = -100000 + i;
+                                newCard = _this.fakeCardGenerator("".concat(_this.element.id, "-shuffle-").concat(uid));
                             }
+                            return newCard;
+                        };
+                        uid = 0;
+                        for (i = elements.length; i <= animatedCards; i++) {
+                            newCard = void 0;
+                            do {
+                                newCard = getFakeCard(uid++);
+                            } while (this.manager.getCardElement(newCard)); // To make sure there isn't a fake card remaining with the same uid
                             newElement = this.manager.createCardElement(newCard, false);
                             newElement.dataset.tempCardForShuffleAnimation = 'true';
                             this.element.prepend(newElement);
@@ -1486,12 +1590,21 @@ var Deck = /** @class */ (function (_super) {
                         }
                         return [4 /*yield*/, this.manager.animationManager.playWithDelay(elements.map(function (element) { return new SlideAndBackAnimation(_this.manager, element, element.dataset.tempCardForShuffleAnimation == 'true'); }), 50)];
                     case 1:
-                        _a.sent();
-                        return [2 /*return*/, true];
-                    case 2: return [2 /*return*/, Promise.resolve(false)];
+                        _d.sent();
+                        pauseDelayAfterAnimation = (_c = settings === null || settings === void 0 ? void 0 : settings.pauseDelayAfterAnimation) !== null && _c !== void 0 ? _c : 500;
+                        if (!(pauseDelayAfterAnimation > 0)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this.manager.animationManager.play(new BgaPauseAnimation({ duration: pauseDelayAfterAnimation }))];
+                    case 2:
+                        _d.sent();
+                        _d.label = 3;
+                    case 3: return [2 /*return*/, true];
+                    case 4: return [2 /*return*/, Promise.resolve(false)];
                 }
             });
         });
+    };
+    Deck.prototype.getFakeCard = function () {
+        return this.fakeCardGenerator(this.element.id);
     };
     return Deck;
 }(CardStock));
@@ -1590,15 +1703,38 @@ var SlotStock = /** @class */ (function (_super) {
             _this.createSlot(slotId);
         });
     };
+    /**
+     * Add new slots ids. Will not change nor empty the existing ones.
+     *
+     * @param slotsIds the new slotsIds. Will be merged with the old ones.
+     */
+    SlotStock.prototype.addSlotsIds = function (newSlotsIds) {
+        var _a;
+        var _this = this;
+        if (newSlotsIds.length == 0) {
+            // no change
+            return;
+        }
+        (_a = this.slotsIds).push.apply(_a, newSlotsIds);
+        newSlotsIds.forEach(function (slotId) {
+            _this.createSlot(slotId);
+        });
+    };
     SlotStock.prototype.canAddCard = function (card, settings) {
         var _a, _b;
         if (!this.contains(card)) {
             return true;
         }
         else {
-            var currentCardSlot = this.getCardElement(card).closest('.slot').dataset.slotId;
-            var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
-            return currentCardSlot != slotId;
+            var closestSlot = this.getCardElement(card).closest('.slot');
+            if (closestSlot) {
+                var currentCardSlot = closestSlot.dataset.slotId;
+                var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
+                return currentCardSlot != slotId;
+            }
+            else {
+                return true;
+            }
         }
     };
     /**
@@ -1648,11 +1784,11 @@ var SlotStock = /** @class */ (function (_super) {
 var AllVisibleDeck = /** @class */ (function (_super) {
     __extends(AllVisibleDeck, _super);
     function AllVisibleDeck(manager, element, settings) {
-        var _a;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         var _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
-        element.classList.add('all-visible-deck');
+        element.classList.add('all-visible-deck', (_a = settings.direction) !== null && _a !== void 0 ? _a : 'vertical');
         var cardWidth = _this.manager.getCardWidth();
         var cardHeight = _this.manager.getCardHeight();
         if (cardWidth && cardHeight) {
@@ -1662,7 +1798,15 @@ var AllVisibleDeck = /** @class */ (function (_super) {
         else {
             throw new Error("You need to set cardWidth and cardHeight in the card manager to use Deck.");
         }
-        element.style.setProperty('--shift', (_a = settings.shift) !== null && _a !== void 0 ? _a : '3px');
+        element.style.setProperty('--vertical-shift', (_c = (_b = settings.verticalShift) !== null && _b !== void 0 ? _b : settings.shift) !== null && _c !== void 0 ? _c : '3px');
+        element.style.setProperty('--horizontal-shift', (_e = (_d = settings.horizontalShift) !== null && _d !== void 0 ? _d : settings.shift) !== null && _e !== void 0 ? _e : '3px');
+        if (settings.counter && ((_f = settings.counter.show) !== null && _f !== void 0 ? _f : true)) {
+            _this.createCounter((_g = settings.counter.position) !== null && _g !== void 0 ? _g : 'bottom', (_h = settings.counter.extraClasses) !== null && _h !== void 0 ? _h : 'round', settings.counter.counterId);
+            if ((_j = settings.counter) === null || _j === void 0 ? void 0 : _j.hideWhenEmpty) {
+                _this.element.querySelector('.bga-cards_deck-counter').classList.add('hide-when-empty');
+                _this.element.dataset.empty = 'true';
+            }
+        }
         return _this;
     }
     AllVisibleDeck.prototype.addCard = function (card, animation, settings) {
@@ -1672,7 +1816,7 @@ var AllVisibleDeck = /** @class */ (function (_super) {
         var cardId = this.manager.getId(card);
         var cardDiv = document.getElementById(cardId);
         cardDiv.style.setProperty('--order', '' + order);
-        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+        this.cardNumberUpdated();
         return promise;
     };
     /**
@@ -1691,7 +1835,26 @@ var AllVisibleDeck = /** @class */ (function (_super) {
             var cardDiv = document.getElementById(cardId);
             cardDiv.style.setProperty('--order', '' + index);
         });
-        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+        this.cardNumberUpdated();
+    };
+    AllVisibleDeck.prototype.createCounter = function (counterPosition, extraClasses, counterId) {
+        var left = counterPosition.includes('right') ? 100 : (counterPosition.includes('left') ? 0 : 50);
+        var top = counterPosition.includes('bottom') ? 100 : (counterPosition.includes('top') ? 0 : 50);
+        this.element.style.setProperty('--bga-cards-deck-left', "".concat(left, "%"));
+        this.element.style.setProperty('--bga-cards-deck-top', "".concat(top, "%"));
+        this.element.insertAdjacentHTML('beforeend', "\n            <div ".concat(counterId ? "id=\"".concat(counterId, "\"") : '', " class=\"bga-cards_deck-counter ").concat(extraClasses, "\"></div>\n        "));
+    };
+    /**
+     * Updates the cards number, if the counter is visible.
+     */
+    AllVisibleDeck.prototype.cardNumberUpdated = function () {
+        var cardNumber = this.cards.length;
+        this.element.style.setProperty('--tile-count', '' + cardNumber);
+        this.element.dataset.empty = (cardNumber == 0).toString();
+        var counterDiv = this.element.querySelector('.bga-cards_deck-counter');
+        if (counterDiv) {
+            counterDiv.innerHTML = "".concat(cardNumber);
+        }
     };
     return AllVisibleDeck;
 }(CardStock));
@@ -1705,6 +1868,7 @@ var CardManager = /** @class */ (function () {
         this.game = game;
         this.settings = settings;
         this.stocks = [];
+        this.updateMainTimeoutId = [];
         this.updateFrontTimeoutId = [];
         this.updateBackTimeoutId = [];
         this.animationManager = (_a = settings.animationManager) !== null && _a !== void 0 ? _a : new AnimationManager(game);
@@ -1719,6 +1883,12 @@ var CardManager = /** @class */ (function () {
     };
     CardManager.prototype.addStock = function (stock) {
         this.stocks.push(stock);
+    };
+    CardManager.prototype.removeStock = function (stock) {
+        var index = this.stocks.indexOf(stock);
+        if (index !== -1) {
+            this.stocks.splice(index, 1);
+        }
     };
     /**
      * @param card the card informations
@@ -1766,13 +1936,13 @@ var CardManager = /** @class */ (function () {
         var id = this.getId(card);
         var div = document.getElementById(id);
         if (!div) {
-            return false;
+            return Promise.resolve(false);
         }
         div.id = "deleted".concat(id);
         div.remove();
         // if the card is in a stock, notify the stock about removal
         (_a = this.getCardStock(card)) === null || _a === void 0 ? void 0 : _a.cardRemoved(card, settings);
-        return true;
+        return Promise.resolve(true);
     };
     /**
      * Returns the stock containing the card.
@@ -1803,7 +1973,7 @@ var CardManager = /** @class */ (function () {
      */
     CardManager.prototype.setCardVisible = function (card, visible, settings) {
         var _this = this;
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         var element = this.getCardElement(card);
         if (!element) {
             return;
@@ -1811,33 +1981,46 @@ var CardManager = /** @class */ (function () {
         var isVisible = visible !== null && visible !== void 0 ? visible : this.isCardVisible(card);
         element.dataset.side = isVisible ? 'front' : 'back';
         var stringId = JSON.stringify(this.getId(card));
-        if ((_a = settings === null || settings === void 0 ? void 0 : settings.updateFront) !== null && _a !== void 0 ? _a : true) {
+        if ((_a = settings === null || settings === void 0 ? void 0 : settings.updateMain) !== null && _a !== void 0 ? _a : false) {
+            if (this.updateMainTimeoutId[stringId]) { // make sure there is not a delayed animation that will overwrite the last flip request
+                clearTimeout(this.updateMainTimeoutId[stringId]);
+                delete this.updateMainTimeoutId[stringId];
+            }
+            var updateMainDelay = (_b = settings === null || settings === void 0 ? void 0 : settings.updateMainDelay) !== null && _b !== void 0 ? _b : 0;
+            if (isVisible && updateMainDelay > 0 && this.animationsActive()) {
+                this.updateMainTimeoutId[stringId] = setTimeout(function () { var _a, _b; return (_b = (_a = _this.settings).setupDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element); }, updateMainDelay);
+            }
+            else {
+                (_d = (_c = this.settings).setupDiv) === null || _d === void 0 ? void 0 : _d.call(_c, card, element);
+            }
+        }
+        if ((_e = settings === null || settings === void 0 ? void 0 : settings.updateFront) !== null && _e !== void 0 ? _e : true) {
             if (this.updateFrontTimeoutId[stringId]) { // make sure there is not a delayed animation that will overwrite the last flip request
                 clearTimeout(this.updateFrontTimeoutId[stringId]);
                 delete this.updateFrontTimeoutId[stringId];
             }
-            var updateFrontDelay = (_b = settings === null || settings === void 0 ? void 0 : settings.updateFrontDelay) !== null && _b !== void 0 ? _b : 500;
+            var updateFrontDelay = (_f = settings === null || settings === void 0 ? void 0 : settings.updateFrontDelay) !== null && _f !== void 0 ? _f : 500;
             if (!isVisible && updateFrontDelay > 0 && this.animationsActive()) {
                 this.updateFrontTimeoutId[stringId] = setTimeout(function () { var _a, _b; return (_b = (_a = _this.settings).setupFrontDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element.getElementsByClassName('front')[0]); }, updateFrontDelay);
             }
             else {
-                (_d = (_c = this.settings).setupFrontDiv) === null || _d === void 0 ? void 0 : _d.call(_c, card, element.getElementsByClassName('front')[0]);
+                (_h = (_g = this.settings).setupFrontDiv) === null || _h === void 0 ? void 0 : _h.call(_g, card, element.getElementsByClassName('front')[0]);
             }
         }
-        if ((_e = settings === null || settings === void 0 ? void 0 : settings.updateBack) !== null && _e !== void 0 ? _e : false) {
+        if ((_j = settings === null || settings === void 0 ? void 0 : settings.updateBack) !== null && _j !== void 0 ? _j : false) {
             if (this.updateBackTimeoutId[stringId]) { // make sure there is not a delayed animation that will overwrite the last flip request
                 clearTimeout(this.updateBackTimeoutId[stringId]);
                 delete this.updateBackTimeoutId[stringId];
             }
-            var updateBackDelay = (_f = settings === null || settings === void 0 ? void 0 : settings.updateBackDelay) !== null && _f !== void 0 ? _f : 0;
+            var updateBackDelay = (_k = settings === null || settings === void 0 ? void 0 : settings.updateBackDelay) !== null && _k !== void 0 ? _k : 0;
             if (isVisible && updateBackDelay > 0 && this.animationsActive()) {
                 this.updateBackTimeoutId[stringId] = setTimeout(function () { var _a, _b; return (_b = (_a = _this.settings).setupBackDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element.getElementsByClassName('back')[0]); }, updateBackDelay);
             }
             else {
-                (_h = (_g = this.settings).setupBackDiv) === null || _h === void 0 ? void 0 : _h.call(_g, card, element.getElementsByClassName('back')[0]);
+                (_m = (_l = this.settings).setupBackDiv) === null || _m === void 0 ? void 0 : _m.call(_l, card, element.getElementsByClassName('back')[0]);
             }
         }
-        if ((_j = settings === null || settings === void 0 ? void 0 : settings.updateData) !== null && _j !== void 0 ? _j : true) {
+        if ((_o = settings === null || settings === void 0 ? void 0 : settings.updateData) !== null && _o !== void 0 ? _o : true) {
             // card data has changed
             var stock = this.getCardStock(card);
             var cards = stock.getCards();
@@ -1901,6 +2084,11 @@ var CardManager = /** @class */ (function () {
     CardManager.prototype.getSelectedCardClass = function () {
         var _a, _b;
         return ((_a = this.settings) === null || _a === void 0 ? void 0 : _a.selectedCardClass) === undefined ? 'bga-cards_selected-card' : (_b = this.settings) === null || _b === void 0 ? void 0 : _b.selectedCardClass;
+    };
+    CardManager.prototype.getFakeCardGenerator = function () {
+        var _this = this;
+        var _a, _b;
+        return (_b = (_a = this.settings) === null || _a === void 0 ? void 0 : _a.fakeCardGenerator) !== null && _b !== void 0 ? _b : (function (deckId) { return ({ id: _this.getId({ id: "".concat(deckId, "-fake-top-card") }) }); });
     };
     return CardManager;
 }());
@@ -2682,44 +2870,44 @@ var CardsManager = /** @class */ (function (_super) {
             // KEEP
             case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
             case 2: return _("<strong>Buying cards costs you 1 less [Energy].</strong>");
-            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least one [diceSmash].");
+            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least [dieClaw].");
             case 4: return _("<strong>Do not lose [heart] when you lose exactly 1[heart].</strong>");
             case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
             case 6: return _("<strong>Add [diceSmash] to your Roll while you are in Tokyo. When you Yield Tokyo, the monster taking it loses 1[heart].</strong>");
             case 7: return _("If you lose [heart], roll a die for each [heart] you lost. <strong>Each [diceHeart] reduces the loss by 1[heart].</strong>");
             case 8: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy] <strong>gain 9[Star]</strong> in addition to the regular effects.");
             case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
-            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
+            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to [Skull].");
             case 11: return _("<strong>You gain 1[Star]</strong> for every 6[Energy] you have at the end of your turn.");
             case 12: return _("<strong>+2[Heart] when you buy this card.</strong> Your maximum [Heart] is increased to 12[Heart] as long as you own this card.");
             case 13:
             case 14: return _("<strong>You get 1 extra die.</strong>");
-            case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
-            case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
+            case 15: return _("<strong>when you roll at least [dieClaw]</strong>, your neighbor(s) at the table lose 1 extra [heart].");
+            case 16: return _("On a turn where you roll at least [die1][die1][die1] or more, <strong>you can take another turn</strong> with one less die.");
             case 17: return _("When you gain any [Energy] <strong>gain 1 extra [Energy].</strong>");
-            case 18: return _("<strong>You have one extra die Roll</strong> each turn.");
-            case 19: return _("When you roll [dice1][dice1][dice1] or more <strong>gain 2 extra [Star].</strong>");
+            case 18: return _("<strong>You have 1 extra die Roll</strong> each turn.");
+            case 19: return _("When you roll at least [die1][die1][die1] <strong>gain 2 extra [Star]</strong> in addition to the regular effects.");
             case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
             case 21: return _("<strong>Gain 1[Star]</strong> at the end of your turn if you don't make anyone lose [Heart].");
             case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
             case 23: return this.game.isDarkEdition() ?
                 _("If you reach [Skull], discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star] and Yield Tokyo. <strong>Gain 10[Heart] and continue playing.</strong>") :
-                _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
+                _("If you reach [Skull], discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
             case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
             case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
             case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
             case 27: return _("<strong>Choose a [keep] card any monster has in play</strong> and put a Mimic token on it. <strong>This card counts as a duplicate of that card as if you had just bought it.</strong> Spend 1[Energy] at the start of your turn to move the Mimic token and change the card you are mimicking.");
-            case 28: return dojo.string.substitute(_("When you buy <i>${card_name}</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card."), { 'card_name': this.getCardName(cardTypeId, 'text-only') });
-            case 29: return _("<strong>Your [diceSmash] damage all other Monsters.</strong>");
-            case 30: return _("<strong>When you roll at least [dice1][dice2][dice3] gain 2[Star].</strong> You can also use these dice in other combinations.");
+            case 28: return _("When you buy <i>${card_name}</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card.").replace('${card_name}', this.getCardName(cardTypeId, 'text-only'));
+            case 29: return _("<strong>All of your [dieClaw] Smash all other Monsters.</strong>");
+            case 30: return _("<strong>When you roll at least [die1][die2][die3], gain 2[Star],</strong> in addition to the regular effects.");
             case 31: return _("<strong>Whenever a Power card is revealed you have the option of buying it</strong> immediately.");
-            case 32: return _("<strong>You may buy [keep] cards from other monsters.</strong> Pay them the [Energy] cost.");
+            case 32: return _("<strong>You can buy Power cards from other monsters.</strong> Pay them the [Energy] cost.");
             case 33: return _("Before resolving your dice, you may <strong>change one die to any result</strong>. Discard when used.");
-            case 34: return _("When you score [dice2][dice2][dice2] or more, <strong>add [diceSmash][diceSmash] to your Roll</strong>.");
+            case 34: return _("When you roll at least [dice2][dice2][dice2] or more, <strong>add [dieClaw][dieClaw] to your Roll</strong>.");
             case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
-            case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the reroll [diceHeart], discard this card.");
-            case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong>");
-            case 38: return _("When gain [Heart], <strong>gain 1 extra [Heart].</strong>");
+            case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the result of your reroll is [dieHeart], discard this card.");
+            case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong> This may be used to prevent your health from being reduced to [Skull].");
+            case 38: return _("When you gain [Heart], you <strong>gain 1 extra [Heart].</strong>");
             case 39: return _("At the end of your turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
             case 40: return _("Give 1 <i>Shrink Ray</i> to each Monster you Smash with your [diceSmash]. <strong>At the beginning of their turn, Monster roll 1 less dice for each <i>Shrink Ray</i> token they have on them</strong>. A <i>Shrink Ray</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 41: return _("Place 3 <i>Smoke</i> counters on this card. <strong>Spend 1 <i>Smoke</i> counter for an extra Roll.</strong> Discard this card when all <i>Smoke</i> counters are spent.");
@@ -2728,7 +2916,7 @@ var CardsManager = /** @class */ (function (_super) {
             case 44: return _("Before resolving your dice, you can spend 2[Energy] to <strong>change one of your dice to any result.</strong>");
             case 45: return _("Spend 1[Energy] to <strong>get 1 extra die Roll.</strong>");
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
-            case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
+            case 47: return _("When you lose at least 2[Heart] you <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
             case 49: return "<div><i>".concat(_("You CANNOT buy this card while in TOKYO"), "</i></div>") + _("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
             case 50: return _("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
@@ -2737,22 +2925,22 @@ var CardsManager = /** @class */ (function (_super) {
             case 53: return _("Once each player’s turn, you may spend 1[Energy] <strong>to negate the loss of 1[Heart].</strong>");
             case 54: return _("When you Yield Tokyo, <strong>you may exchange this card</strong> with a card of your choice from the Monster who Smashed you.");
             case 55: return _("If you reach [Skull] for the first time in this game, <strong>discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star], Yield Tokyo, gain 12[Heart] and continue playing.</strong> For the rest of the game, your maximum [Heart] is increased to 12[Heart] and <strong>you can’t use [diceHeart] anymore.</strong>");
-            case 56: return /*_TODOORI*/ ("You may use [diceHeart] as [diceEnergy].");
-            case 57: return /*_TODOORI*/ ("When you roll 4 of a kind, <strong>steal 1[Star] from the Monster(s) with the most [Star].</strong>");
+            case 56: return /*_TODOORI*/ ("You may use [dieHeart] as [dieEnergy].");
+            case 57: return /*_TODOORI*/ ("When you roll at least 4 of a kind, <strong>steal 1[Star] from the Monster(s) with the most [Star].</strong>");
             case 58: return /*_TODOORI*/ ("When you lose any [Heart], you may spend 1[Energy] to <strong>reduce the loss of [Heart] by 1.</strong>");
-            case 59: return /*_TODOORI*/ ("When you roll 4 of a kind, <strong>all other Monsters lose 1[Heart].</strong>");
+            case 59: return /*_TODOORI*/ ("When you roll at least 4 of a kind, <strong>all other Monsters lose 1[Heart].</strong>");
             case 60: return /*_TODOORI*/ ("When you take control of Tokyo, <strong>all other Monsters lose 1[Heart].</strong>");
             case 61: return /*_TODOORI*/ ("<strong>Gain 1[Star]</strong> when you take control of Tokyo.");
             case 62: return /*_TODOORI*/ ("When you Yield Tokyo, <strong>the Monster taking it loses 1[Heart]</strong> and you <strong>gain 1[Energy].</strong>");
             case 63: return /*_TODOORI*/ ("<strong>Other Monsters lose 1[Heart]</strong> each time they reroll.");
-            case 64: return /*_TODOORI*/ ("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck."); // TODOORI check if discard writes fine
-            case 65: return /*_TODOORI*/ ("<strong>You may use [dice2] as [dice1].");
+            case 64: return /*_TODOORI*/ ("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck.");
+            case 65: return /*_TODOORI*/ ("<strong>You may use [die2] as [die1].");
             case 66: return /*_TODOORI*/ ("<strong>Gain 1[Star]</strong> when you are able to Yield Tokyo but choose not to.");
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
             case 103: return "<strong>+ 1[Star].</strong>";
-            case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it.");
+            case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it. All other Monsters must Yield Tokyo.");
             case 105: return "<strong>+ 9[Energy].</strong>";
             case 106:
             case 107: return _("<strong>All other Monsters lose 5[Star].</strong>");
@@ -3724,11 +3912,11 @@ var WickednessDecks = /** @class */ (function (_super) {
         var _a;
         (_a = this.onSelectionChange) === null || _a === void 0 ? void 0 : _a.call(this, selection, lastChange);
     };
-    WickednessDecks.prototype.removeCard = function (card) {
+    WickednessDecks.prototype.removeCard = function (card, settings) {
         var _this = this;
-        WICKEDNESS_LEVELS.forEach(function (l) {
-            _this.decks[l].removeCard(card);
-        });
+        return Promise.all(WICKEDNESS_LEVELS.map(function (l) {
+            _this.decks[l].removeCard(card, settings);
+        })).then(function () { return true; });
     };
     WickednessDecks.prototype.getStock = function (card) {
         return this.decks[this.getCardLevel(card.type)];
@@ -8175,6 +8363,7 @@ var KingOfTokyo = /** @class */ (function () {
         viewCardsDialog.show();
         // Replace the function call when it's clicked
         viewCardsDialog.replaceCloseCallback(function () {
+            stock.remove();
             viewCardsDialog.destroy();
         });
     };

@@ -809,44 +809,44 @@ class CardsManager extends CardManager<Card> {
             // KEEP
             case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
             case 2: return _("<strong>Buying cards costs you 1 less [Energy].</strong>");
-            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least one [diceSmash].");
+            case 3: return _("<strong>Gain 1[Star]</strong> when you roll at least [dieClaw].");
             case 4: return _("<strong>Do not lose [heart] when you lose exactly 1[heart].</strong>");
             case 5: return _("<strong>You can always reroll any [dice3]</strong> you have.");
             case 6: return _("<strong>Add [diceSmash] to your Roll while you are in Tokyo. When you Yield Tokyo, the monster taking it loses 1[heart].</strong>");
             case 7: return _("If you lose [heart], roll a die for each [heart] you lost. <strong>Each [diceHeart] reduces the loss by 1[heart].</strong>");
             case 8: return _("If you roll [dice1][dice2][dice3][diceHeart][diceSmash][diceEnergy] <strong>gain 9[Star]</strong> in addition to the regular effects.");
             case 9: return _("<strong>Gain 1[Star]</strong> whenever you buy a Power card.");
-            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to 0.");
+            case 10: return _("<strong>Gain 3[Star]</strong> every time a Monster's [Heart] goes to [Skull].");
             case 11: return _("<strong>You gain 1[Star]</strong> for every 6[Energy] you have at the end of your turn.");
             case 12: return _("<strong>+2[Heart] when you buy this card.</strong> Your maximum [Heart] is increased to 12[Heart] as long as you own this card.");
             case 13: case 14: return _("<strong>You get 1 extra die.</strong>");
-            case 15: return _("<strong>Your neighbors lose 1[heart]</strong> when you roll at least one [diceSmash].");
-            case 16: return _("On a turn where you score [dice1][dice1][dice1], <strong>you can take another turn</strong> with one less die.");
+            case 15: return _("<strong>when you roll at least [dieClaw]</strong>, your neighbor(s) at the table lose 1 extra [heart].");
+            case 16: return _("On a turn where you roll at least [die1][die1][die1] or more, <strong>you can take another turn</strong> with one less die.");
             case 17: return _("When you gain any [Energy] <strong>gain 1 extra [Energy].</strong>");
-            case 18: return _("<strong>You have one extra die Roll</strong> each turn.");
-            case 19: return _("When you roll [dice1][dice1][dice1] or more <strong>gain 2 extra [Star].</strong>");
+            case 18: return _("<strong>You have 1 extra die Roll</strong> each turn.");
+            case 19: return _("When you roll at least [die1][die1][die1] <strong>gain 2 extra [Star]</strong> in addition to the regular effects.");
             case 20: return _("<strong>You can use your [diceHeart] to make other Monsters gain [Heart].</strong> Each Monster must pay you 2[Energy] (or 1[Energy] if it's their last one) for each [Heart] they gain this way");
             case 21: return _("<strong>Gain 1[Star]</strong> at the end of your turn if you don't make anyone lose [Heart].");
             case 22: return _("You can <strong>change one of your dice to a [dice1]</strong> each turn.");
             case 23: return this.game.isDarkEdition() ?
                 _("If you reach [Skull], discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star] and Yield Tokyo. <strong>Gain 10[Heart] and continue playing.</strong>") :
-                _("If you reach 0[Heart] discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
+                _("If you reach [Skull], discard all your cards and lose all your [Star]. <strong>Gain 10[Heart] and continue playing outside Tokyo.</strong>");
             
             case 24: return _("<strong>You don't lose [Heart]<strong> if you decide to Yield Tokyo.");
             case 25: return _("During the Buy Power cards step, you can <strong>peek at the top card of the deck and buy it</strong> or put it back on top of the deck.");
             case 26: return _("At the end of your turn you can <strong>discard any [keep] cards you have to gain their full cost in [Energy].</strong>");
             case 27: return _("<strong>Choose a [keep] card any monster has in play</strong> and put a Mimic token on it. <strong>This card counts as a duplicate of that card as if you had just bought it.</strong> Spend 1[Energy] at the start of your turn to move the Mimic token and change the card you are mimicking.");
-            case 28: return dojo.string.substitute(_("When you buy <i>${card_name}</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card."), {'card_name': this.getCardName(cardTypeId, 'text-only')});
-            case 29: return _("<strong>Your [diceSmash] damage all other Monsters.</strong>");
-            case 30: return _("<strong>When you roll at least [dice1][dice2][dice3] gain 2[Star].</strong> You can also use these dice in other combinations.");
+            case 28: return _("When you buy <i>${card_name}</i>, put 6[Energy] on it from the bank. At the start of your turn <strong>take 2[Energy] off and add them to your pool.</strong> When there are no [Energy] left discard this card.").replace('${card_name}', this.getCardName(cardTypeId, 'text-only'));
+            case 29: return _("<strong>All of your [dieClaw] Smash all other Monsters.</strong>");
+            case 30: return _("<strong>When you roll at least [die1][die2][die3], gain 2[Star],</strong> in addition to the regular effects.");
             case 31: return _("<strong>Whenever a Power card is revealed you have the option of buying it</strong> immediately.");
-            case 32: return _("<strong>You may buy [keep] cards from other monsters.</strong> Pay them the [Energy] cost.");
+            case 32: return _("<strong>You can buy Power cards from other monsters.</strong> Pay them the [Energy] cost.");
             case 33: return _("Before resolving your dice, you may <strong>change one die to any result</strong>. Discard when used.");
-            case 34: return _("When you score [dice2][dice2][dice2] or more, <strong>add [diceSmash][diceSmash] to your Roll</strong>.");
+            case 34: return _("When you roll at least [dice2][dice2][dice2] or more, <strong>add [dieClaw][dieClaw] to your Roll</strong>.");
             case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
-            case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the reroll [diceHeart], discard this card.");
-            case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong>");
-            case 38: return _("When gain [Heart], <strong>gain 1 extra [Heart].</strong>");
+            case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the result of your reroll is [dieHeart], discard this card.");
+            case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong> This may be used to prevent your health from being reduced to [Skull].");
+            case 38: return _("When you gain [Heart], you <strong>gain 1 extra [Heart].</strong>");
             case 39: return _("At the end of your turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
             case 40: return _("Give 1 <i>Shrink Ray</i> to each Monster you Smash with your [diceSmash]. <strong>At the beginning of their turn, Monster roll 1 less dice for each <i>Shrink Ray</i> token they have on them</strong>. A <i>Shrink Ray</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
             case 41: return _("Place 3 <i>Smoke</i> counters on this card. <strong>Spend 1 <i>Smoke</i> counter for an extra Roll.</strong> Discard this card when all <i>Smoke</i> counters are spent.");
@@ -855,7 +855,7 @@ class CardsManager extends CardManager<Card> {
             case 44: return _("Before resolving your dice, you can spend 2[Energy] to <strong>change one of your dice to any result.</strong>");
             case 45: return _("Spend 1[Energy] to <strong>get 1 extra die Roll.</strong>");
             case 46: return _("<strong>Gain 1 extra [Star]</strong> when beginning your turn in Tokyo. If you are in Tokyo and you roll at least one [diceSmash], <strong>add [diceSmash] to your Roll.</strong>");
-            case 47: return _("When you lose 2[Heart] or more <strong>gain 1[Energy].</strong>");
+            case 47: return _("When you lose at least 2[Heart] you <strong>gain 1[Energy].</strong>");
             case 48: return _("<strong>Spend 2[Energy] to not lose [Heart]<strong> this turn.");
             case 49: return `<div><i>${_("You CANNOT buy this card while in TOKYO")}</i></div>` + _("<strong>You no longer take damage.</strong> You cannot move, even if Tokyo is empty. You can no longer buy cards. <strong>The only results you can use are [diceHeart] and [diceEnergy].</strong> Discard this card to end its effects and restrictions immediately.");
             case 50: return _("At the start of your turn, if you have fewer than 3[Heart], <strong>gain 2[Heart].</strong>");
@@ -864,23 +864,23 @@ class CardsManager extends CardManager<Card> {
             case 53: return _("Once each player’s turn, you may spend 1[Energy] <strong>to negate the loss of 1[Heart].</strong>");
             case 54: return _("When you Yield Tokyo, <strong>you may exchange this card</strong> with a card of your choice from the Monster who Smashed you.");
             case 55: return _("If you reach [Skull] for the first time in this game, <strong>discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star], Yield Tokyo, gain 12[Heart] and continue playing.</strong> For the rest of the game, your maximum [Heart] is increased to 12[Heart] and <strong>you can’t use [diceHeart] anymore.</strong>");
-            case 56: return /*_TODOORI*/("You may use [diceHeart] as [diceEnergy].");
-            case 57: return /*_TODOORI*/("When you roll 4 of a kind, <strong>steal 1[Star] from the Monster(s) with the most [Star].</strong>");
+            case 56: return /*_TODOORI*/("You may use [dieHeart] as [dieEnergy].");
+            case 57: return /*_TODOORI*/("When you roll at least 4 of a kind, <strong>steal 1[Star] from the Monster(s) with the most [Star].</strong>");
             case 58: return /*_TODOORI*/("When you lose any [Heart], you may spend 1[Energy] to <strong>reduce the loss of [Heart] by 1.</strong>");
-            case 59: return /*_TODOORI*/("When you roll 4 of a kind, <strong>all other Monsters lose 1[Heart].</strong>");
+            case 59: return /*_TODOORI*/("When you roll at least 4 of a kind, <strong>all other Monsters lose 1[Heart].</strong>");
             case 60: return /*_TODOORI*/("When you take control of Tokyo, <strong>all other Monsters lose 1[Heart].</strong>");
             case 61: return /*_TODOORI*/("<strong>Gain 1[Star]</strong> when you take control of Tokyo.");
             case 62: return /*_TODOORI*/("When you Yield Tokyo, <strong>the Monster taking it loses 1[Heart]</strong> and you <strong>gain 1[Energy].</strong>");
             case 63: return /*_TODOORI*/("<strong>Other Monsters lose 1[Heart]</strong> each time they reroll.");
-            case 64: return /*_TODOORI*/("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck."); // TODOORI check if discard writes fine
-            case 65: return /*_TODOORI*/("<strong>You may use [dice2] as [dice1].");
+            case 64: return /*_TODOORI*/("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck.");
+            case 65: return /*_TODOORI*/("<strong>You may use [die2] as [die1].");
             case 66: return /*_TODOORI*/("<strong>Gain 1[Star]</strong> when you are able to Yield Tokyo but choose not to.");
 
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
             case 103: return "<strong>+ 1[Star].</strong>";
-            case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it.");
+            case 104: return _("<strong>+ 2[Star] and take control of Tokyo</strong> if you don't already control it. All other Monsters must Yield Tokyo.");
             case 105: return "<strong>+ 9[Energy].</strong>";
             case 106: case 107: return _("<strong>All other Monsters lose 5[Star].</strong>");
             case 108: return _("<strong>All other Monsters lose 2[Heart].</strong>");

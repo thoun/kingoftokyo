@@ -43,26 +43,8 @@ TODO check psychic probe with Background Dweller allowing to reroll a 3 that's n
 
 log no energy/heart/points won
 
-## PU Evolutions to play a timing :
-before resolving :
- - 33 mecha blast (meka dragon)
- - 92 grande marée (kraken)
-after resolving
- - 34 analyse impitoyable (meka dragon) (or everytime ?)
- electric carrot
-when tokyo monster is damaged by this player
- - 29 jouer avec sa nourriture (Cyber Kitty)
-during move phase (after leaving, before entering) :
- - 30 propulseur félin (Cyber Kitty)
- - 57 ruée du grand singe (The King)
-after move phase active player turn :
- - 59 gare au gorille (The King)
- - 66 panda guerilla (Pandakai)
- - 90 vague dévastatrice (Kraken)
-at the end of active player turn :
- - 44 vague de froid (space penguin) (or everytime ?)
- - 45 pris dans la glace (space penguin) (or everytime ?)
- - 46 blizzard (space penguin) (or everytime in player's turn ?)
- - 51 convertisseur d'énergie (alienoid) (or everytime ?)
- - 81 coup de génie (cyber bunny) (or everytime ?)
- - 91 adorateurs cultistes (Kraken) (or everytime ?)
+Questions to Florent :
+Parasitic Tentacles : can buy Keep cards => can buy Power cards : are costumes considered Power cards ?
+Rooting for the Underdog : At the end of your turn => At the end of a turn => the turn of every monster, or just ours ?
+It has a child : and continue playing outside Tokyo. => and continue playing. Does the player now stays in Tokyo ? adapt Dark Edition text as well ?
+Alien Origin : Buying cards => Buying Power cards => does it still applies to costumes ?

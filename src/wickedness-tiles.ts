@@ -55,10 +55,10 @@ class WickednessDecks extends CardStock<WickednessTile> {
         this.onSelectionChange?.(selection, lastChange);
     }
 
-    public removeCard(card: WickednessTile) {
-        WICKEDNESS_LEVELS.forEach(l => {
-            this.decks[l].removeCard(card);
-        });
+    public removeCard(card: WickednessTile, settings?: RemoveCardSettings) {
+        return Promise.all(WICKEDNESS_LEVELS.map(l => {
+            this.decks[l].removeCard(card, settings);
+        })).then(() => true);
     }
     
     public getStock(card: WickednessTile): CardStock<WickednessTile> {

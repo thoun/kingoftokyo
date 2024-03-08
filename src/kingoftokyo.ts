@@ -2472,7 +2472,8 @@ class KingOfTokyo implements KingOfTokyoGame {
         viewCardsDialog.show();
 
         // Replace the function call when it's clicked
-        viewCardsDialog.replaceCloseCallback(() => {            
+        viewCardsDialog.replaceCloseCallback(() => {  
+            stock.remove();  
             viewCardsDialog.destroy();
         });
     }
