@@ -844,7 +844,7 @@ class CardsManager extends CardManager<Card> {
             case 33: return _("Before resolving your dice, you may <strong>change one die to any result</strong>. Discard when used.");
             case 34: return _("When you roll at least [dice2][dice2][dice2] or more, <strong>add [dieClaw][dieClaw] to your Roll</strong>.");
             case 35: return _("Give one <i>Poison</i> token to each Monster you Smash with your [diceSmash]. <strong>At the end of their turn, Monsters lose 1[Heart] for each <i>Poison</i> token they have on them.</strong> A <i>Poison</i> token can be discarded by using a [diceHeart] instead of gaining 1[Heart].");
-            case 36: return _("You can reroll a die of your choice after the last Roll of each other Monster. If the result of your reroll is [dieHeart], discard this card.");
+            case 36: return _("<strong>You can reroll a die of your choice after the last Roll of each other Monster.</strong> If the result of your reroll is [dieHeart], discard this card.");
             case 37: return _("Spend 2[Energy] at any time to <strong>gain 1[Heart].</strong> This may be used to prevent your health from being reduced to [Skull].");
             case 38: return _("When you gain [Heart], you <strong>gain 1 extra [Heart].</strong>");
             case 39: return _("At the end of your turn, if you have the fewest [Star], <strong>gain 1 [Star].</strong>");
