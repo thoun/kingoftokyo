@@ -373,7 +373,7 @@ class KingOfTokyo extends Table {
         $this->activeNextPlayer();
 
         // TODO TEMP card to test
-        $this->debugSetup($playersIds);
+        //$this->debugSetup($playersIds);
 
         /************ End of the game initialization *****/
     }

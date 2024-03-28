@@ -59,7 +59,13 @@ trait CardsActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $dbCard = $this->cards->getCard($id);
+        if (!$dbCard) {
+            throw new \BgaUserException('Invalid card id (stealCostumeCard)');
+        }
+
+        $card = $this->getCardFromDb($dbCard);
+
         $from = $card->location_arg;
 
         if ($card->type < 200 || $card->type > 300) {
@@ -352,7 +358,12 @@ trait CardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $dbCard = $this->cards->getCard($id);
+        if (!$dbCard) {
+            throw new \BgaUserException('Invalid card id (buyCard)');
+        }
+
+        $card = $this->getCardFromDb($dbCard);
 
         $cost = $this->getCardCost($playerId, $card->type);
         if ($useSuperiorAlienTechnology) {
