@@ -86,6 +86,9 @@ trait CardsActionTrait {
             throw new \BgaUserException("You can't steal this card");
         }
 
+        if ($this->getPlayerEnergy($playerId) < $cost) {
+            throw new \BgaUserException('Not enough energy');
+        }
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->removeCard($from, $card, true, false, true);
@@ -137,6 +140,9 @@ trait CardsActionTrait {
         
         $this->removeDiscardCards($playerId);
 
+        if ($this->getPlayerEnergy($playerId) < $cost) {
+            throw new \BgaUserException('Not enough energy');
+        }
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         // media friendly
