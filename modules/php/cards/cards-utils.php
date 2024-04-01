@@ -1145,7 +1145,7 @@ trait CardsUtilTrait {
             }
             
             // electric carrot
-            if ($clawDamage !== null && $clawDamage->electricCarrotChoice !== null && array_key_exists($playerId, $clawDamage->electricCarrotChoice) && $clawDamage->electricCarrotChoice[$playerId] == 4) {
+            if ($clawDamage !== null && $clawDamage->electricCarrotChoice !== null && array_key_exists($playerId, (array)($clawDamage->electricCarrotChoice)) && $clawDamage->electricCarrotChoice[$playerId] == 4) {
                 $effectiveDamage += 1;
                 $logs[] = new LoseHealthLog($this, $playerId, 1, 3000 + ELECTRIC_CARROT_EVOLUTION);
             }

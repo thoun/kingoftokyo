@@ -274,9 +274,10 @@ trait EvolutionCardsActionTrait {
 
         $unusedBambooSupplyCard = $this->getFirstUnusedEvolution($playerId, BAMBOO_SUPPLY_EVOLUTION);
 
-        $this->setEvolutionTokens($playerId, $unusedBambooSupplyCard, $unusedBambooSupplyCard->tokens + 1);
-
-        $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
+        if ($unusedBambooSupplyCard) {
+            $this->setEvolutionTokens($playerId, $unusedBambooSupplyCard, $unusedBambooSupplyCard->tokens + 1);
+            $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
+        }
 
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }

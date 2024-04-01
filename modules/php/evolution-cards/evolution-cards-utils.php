@@ -685,6 +685,11 @@ trait EvolutionCardsUtilTrait {
 
     function playBamboozleEvolution(int $playerId, EvolutionCard $card) {
         $cardBeingBought = $this->getGlobalVariable(CARD_BEING_BOUGHT);
+        if (!$cardBeingBought) {
+            $this->warn('playBamboozleEvolution cardBeingBought is null');
+            $this->dump('$cardBeingBought', $cardBeingBought);
+        }
+
         $cardBeingBought->allowed = false;
         $this->setGlobalVariable(CARD_BEING_BOUGHT, $cardBeingBought);
 
