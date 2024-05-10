@@ -81,7 +81,7 @@ trait WickednessTilesActionTrait {
 
         $this->removeFirstTakeWickednessTileLevel($playerId);
 
-        $this->goToState($this->redirectAfterResolveNumberDice());
+        $this->goToState($this->redirectAfterResolveNumberDice(true));
     }
 
     function chooseMimickedCardWickednessTile(int $mimickedCardId) {

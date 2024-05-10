@@ -95,10 +95,10 @@ trait RedirectionTrait {
         return ST_RESOLVE_NUMBER_DICE;
     }
 
-    function redirectAfterResolveNumberDice() {
+    function redirectAfterResolveNumberDice(bool $skipWickednessTile = false) {
         $playerId = $this->getActivePlayerId();
 
-        if ($this->isWickednessExpansion() && $this->canTakeWickednessTile($playerId) > 0) {
+        if (!$skipWickednessTile && $this->isWickednessExpansion() && $this->canTakeWickednessTile($playerId) > 0) {
             return ST_PLAYER_TAKE_WICKEDNESS_TILE;
         }
 
