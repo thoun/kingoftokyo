@@ -428,18 +428,16 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 1");
     }
 
-    public function debugReplacePlayersIds() {
-        if ($this->getBgaEnvironment() != 'studio') { 
-            return;
-        } 
+    function d() {
+        $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
+    }
 
-		// These are the id's from the BGAtable I need to debug.
-        $ids = array_map(fn($dbPlayer) => intval($dbPlayer['player_id']), array_values($this->getCollectionFromDb('select player_id from player order by player_no')));
-
-		// Id of the first player in BGA Studio
-		$sid = 2343492;
+    public function loadBugReportSQL(int $reportId, array $studioPlayersIds): void {
+        $players = $this->getObjectListFromDb('SELECT player_id FROM player', true);
 		
-		foreach ($ids as $id) {
+        $this->DbQuery('UPDATE global SET global_value=22 WHERE global_id=1 AND global_value=99');
+        foreach ($players as $index => $id) {
+            $sid = $studioPlayersIds[$index];
 			// basic tables
 			$this->DbQuery("UPDATE player SET player_id=$sid WHERE player_id = $id" );
 			$this->DbQuery("UPDATE global SET global_value=$sid WHERE global_value = $id" );
@@ -454,9 +452,9 @@ trait DebugUtilTrait {
 			$this->DbQuery("UPDATE evolution_card SET card_location='deck$sid' WHERE card_location='deck$id'" );
 			$this->DbQuery("UPDATE evolution_card SET card_location='discard$sid' WHERE card_location='discard$id'" );
             $this->DbQuery("UPDATE global_variables set `value` = REPLACE(`value`, '$id', '$sid')" );
-			
-			++$sid;
 		}
+
+        $this->reloadPlayersBasicInfos();
 	}
 
     function debug($debugData) {
