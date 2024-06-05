@@ -43,7 +43,6 @@ $game_options = [
             ],
         ],
         'default' => 1,
-        'level' => 'major',
     ],
 
     HALLOWEEN_EXPANSION_OPTION => [
