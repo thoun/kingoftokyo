@@ -152,6 +152,30 @@ $game_options = [
         'level' => 'additional',
     ],
 
+    ORIGINS_OPTION => [
+        'name' => totranslate('Origins edition'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Origins edition'),
+            ],
+        ],
+        'default' => 1,
+        'startcondition' => [
+            2 => [
+                [
+                    'type' => 'otheroptionisnot',
+                    'id' => DARK_EDITION_OPTION,
+                    'value' => [2,3,4],
+                    'message' => 'Origins exclusive cards cannot be played with Dark Edition',
+                ],
+            ],
+        ],
+    ],
+
     DARK_EDITION_OPTION => [
         'name' => totranslate('Dark edition'),
         'values' => [
@@ -195,6 +219,20 @@ $game_options = [
                 ] 
             ],
         ],*/
+    ],
+
+    ORIGINS_EXCLUSIVE_CARDS_OPTION => [
+        'name' => totranslate('King of Tokyo Origins exclusive cards'),
+        'values' => [
+            1 => [
+                'name' => totranslate('Disabled'),
+            ],
+            2 => [
+                'name' => totranslate('Enabled'),
+                'description' => totranslate("King of Tokyo Origins exclusive cards"),
+            ],
+        ],
+        'default' => 1,
     ],
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/

@@ -251,11 +251,31 @@ $this->CARD_COST = [
 
 ];
 
+$this->ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST = [
+    BIOFUEL_CARD,
+    DRAINING_RAY_CARD,
+    ELECTRIC_ARMOR_CARD,
+    FLAMING_AURA_CARD,
+    GAMMA_BLAST_CARD,
+    HUNGRY_URBAVORE_CARD,
+    JAGGED_TACTICIAN_CARD,
+    ORB_OF_DOM_CARD,
+    SCAVENGER_CARD,
+    SHRINKY_CARD,
+    BULL_HEADED_CARD,
+];
+
+$this->ORIGINS_CARDS_EXCLUSIVE_DISCARD_CARDS_LIST = [
+    BARRICADES_CARD,
+    ICE_CREAM_TRUCK_CARD,
+    SUPERTOWER_CARD,
+];
+
 // JSON.stringify(Array.from(Array(48)).map((_, index) => index + 1))
 $this->KEEP_CARDS_LIST = [
     'base' => [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],
     'dark' => [1,2,3,4,5,6,7,8,9,10,11,12,13,  15,16,17,18,19,  21,22,23,24,25,26,  29,30,31,32,33,34,  36,37,38,  40,41,42,43,44,45,46,47,48, 49,50,51,52,53,54,55],
-    'origins' => [
+    'origins' => array_merge([
         DETRITIVORE_CARD,
         MEDIA_FRIENDLY_CARD,
         ACID_ATTACK_CARD,
@@ -281,25 +301,13 @@ $this->KEEP_CARDS_LIST = [
         NOVA_BREATH_CARD,
         ROOTING_FOR_THE_UNDERDOG_CARD,
         BACKGROUND_DWELLER_CARD,
-        // exclusives
-        BIOFUEL_CARD,
-        DRAINING_RAY_CARD,
-        ELECTRIC_ARMOR_CARD,
-        FLAMING_AURA_CARD,
-        GAMMA_BLAST_CARD,
-        HUNGRY_URBAVORE_CARD,
-        JAGGED_TACTICIAN_CARD,
-        ORB_OF_DOM_CARD,
-        SCAVENGER_CARD,
-        SHRINKY_CARD,
-        BULL_HEADED_CARD,
-    ],
+    ], $this->ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST),
 ];
 
 $this->DISCARD_CARDS_LIST = [
     'base' => [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],
     'dark' => [1,2,3,4,5,6,7,8,9,10,  12,13,  15,16,17,18,19],
-    'origins' => [
+    'origins' => array_merge([
         CORNER_STORE_CARD,
         TANK_CARD,
         SKYSCRAPER_CARD,
@@ -311,9 +319,5 @@ $this->DISCARD_CARDS_LIST = [
         EVACUATION_ORDER_1_CARD,
         HIGH_ALTITUDE_BOMBING_CARD,
         FRENZY_CARD,
-        // exclusives
-        BARRICADES_CARD,
-        ICE_CREAM_TRUCK_CARD,
-        SUPERTOWER_CARD,
-    ],
+    ], $this->ORIGINS_CARDS_EXCLUSIVE_DISCARD_CARDS_LIST),
 ];
