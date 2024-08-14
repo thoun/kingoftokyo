@@ -94,11 +94,11 @@ trait MonsterTrait {
                 $monsters = [...$monsters, 41, 42, 43, 44, 45];
             }*/
 
-            /* TODOORI if ($isOrigins) {
+            if ($isOrigins) {
                 $monsters = [...$monsters, 1,2,3,4,5,6];
             } else {
                 $monsters = [...$monsters, 51,52,53,54];
-            }*/
+            }
         }
 
         if ($this->isWickednessExpansion()) {

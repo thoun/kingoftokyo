@@ -192,7 +192,7 @@ trait CardsActionTrait {
         $newCard = null;
 
         if ($cardLocation == 'discard') { // scavenger
-            $this->notifyAllPlayers("buyCard", /*client TODOORI translate*/('${player_name} buys ${card_name} from the discard'), [
+            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from the discard'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card' => $card,

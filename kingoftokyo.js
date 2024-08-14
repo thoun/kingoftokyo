@@ -6231,7 +6231,7 @@ var MonsterSelector = /** @class */ (function () {
             new MonsterGroup([13], _('Power-Up! expansion'), '#5d7b38'),
             new MonsterGroup([21, 22, 23, 24, 25, 26], 'King of New-York', '#645195'),
             new MonsterGroup([41, 42, 43, 44, 45], 'King of Monster Island', '#e82519'),
-            new MonsterGroup([51, 52, 53, 54], /*_ TODOORI*/ ('King of Tokyo Origins'), '#f78d33'),
+            new MonsterGroup([51, 52, 53, 54], _('King of Tokyo Origins'), '#f78d33'),
         ];
     }
     MonsterSelector.prototype.onEnteringPickMonster = function (args) {
