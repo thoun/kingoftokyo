@@ -86,7 +86,72 @@ function formatTextIcons(rawText) {
         .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"))
         .replace(/\[discard\]/ig, "<span class=\"card-discard-text\"><span class=\"outline\">".concat(_('Discard'), "</span><span class=\"text\">").concat(_('Discard'), "</span></span>"));
 }
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var DEFAULT_ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
+function throttle(callback, delay) {
+    var last;
+    var timer;
+    return function () {
+        var context = this;
+        var now = +new Date();
+        var args = arguments;
+        if (last && now < last + delay) {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                last = now;
+                callback.apply(context, args);
+            }, delay);
+        }
+        else {
+            last = now;
+            callback.apply(context, args);
+        }
+    };
+}
+var advThrottle = function (func, delay, options) {
+    if (options === void 0) { options = { leading: true, trailing: false }; }
+    var timer = null, lastRan = null, trailingArgs = null;
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        if (timer) { //called within cooldown period
+            lastRan = this; //update context
+            trailingArgs = args; //save for later
+            return;
+        }
+        if (options.leading) { // if leading
+            func.call.apply(// if leading
+            func, __spreadArray([this], args, false)); //call the 1st instance
+        }
+        else { // else it's trailing
+            lastRan = this; //update context
+            trailingArgs = args; //save for later
+        }
+        var coolDownPeriodComplete = function () {
+            if (options.trailing && trailingArgs) { // if trailing and the trailing args exist
+                func.call.apply(// if trailing and the trailing args exist
+                func, __spreadArray([lastRan], trailingArgs, false)); //invoke the instance with stored context "lastRan"
+                lastRan = null; //reset the status of lastRan
+                trailingArgs = null; //reset trailing arguments
+                timer = setTimeout(coolDownPeriodComplete, delay); //clear the timout
+            }
+            else {
+                timer = null; // reset timer
+            }
+        };
+        timer = setTimeout(coolDownPeriodComplete, delay);
+    };
+};
 var ZoomManager = /** @class */ (function () {
     /**
      * Place the settings.element in a zoom wrapper and init zoomControls.
@@ -95,7 +160,7 @@ var ZoomManager = /** @class */ (function () {
      */
     function ZoomManager(settings) {
         var _this = this;
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         this.settings = settings;
         if (!settings.element) {
             throw new DOMException('You need to set the element to wrap in the zoom element');
@@ -115,7 +180,7 @@ var ZoomManager = /** @class */ (function () {
         settings.element.classList.add('bga-zoom-inner');
         if ((_b = settings.smooth) !== null && _b !== void 0 ? _b : true) {
             settings.element.dataset.smooth = 'true';
-            settings.element.addEventListener('transitionend', function () { return _this.zoomOrDimensionChanged(); });
+            settings.element.addEventListener('transitionend', advThrottle(function () { return _this.zoomOrDimensionChanged(); }, this.throttleTime, { leading: true, trailing: true, }));
         }
         if ((_d = (_c = settings.zoomControls) === null || _c === void 0 ? void 0 : _c.visible) !== null && _d !== void 0 ? _d : true) {
             this.initZoomControls(settings);
@@ -123,17 +188,18 @@ var ZoomManager = /** @class */ (function () {
         if (this._zoom !== 1) {
             this.setZoom(this._zoom);
         }
-        window.addEventListener('resize', function () {
+        this.throttleTime = (_e = settings.throttleTime) !== null && _e !== void 0 ? _e : 100;
+        window.addEventListener('resize', advThrottle(function () {
             var _a;
             _this.zoomOrDimensionChanged();
             if ((_a = _this.settings.autoZoom) === null || _a === void 0 ? void 0 : _a.expectedWidth) {
                 _this.setAutoZoom();
             }
-        });
+        }, this.throttleTime, { leading: true, trailing: true, }));
         if (window.ResizeObserver) {
-            new ResizeObserver(function () { return _this.zoomOrDimensionChanged(); }).observe(settings.element);
+            new ResizeObserver(advThrottle(function () { return _this.zoomOrDimensionChanged(); }, this.throttleTime, { leading: true, trailing: true, })).observe(settings.element);
         }
-        if ((_e = this.settings.autoZoom) === null || _e === void 0 ? void 0 : _e.expectedWidth) {
+        if ((_f = this.settings.autoZoom) === null || _f === void 0 ? void 0 : _f.expectedWidth) {
             this.setAutoZoom();
         }
     }
@@ -221,11 +287,12 @@ var ZoomManager = /** @class */ (function () {
     };
     /**
      * Everytime the element dimensions changes, we update the style. And call the optional callback.
+     * Unsafe method as this is not protected by throttle. Surround with  `advThrottle(() => this.zoomOrDimensionChanged(), this.throttleTime, { leading: true, trailing: true, })` to avoid spamming recomputation.
      */
     ZoomManager.prototype.zoomOrDimensionChanged = function () {
         var _a, _b;
-        this.settings.element.style.width = "".concat(this.wrapper.getBoundingClientRect().width / this._zoom, "px");
-        this.wrapper.style.height = "".concat(this.settings.element.getBoundingClientRect().height, "px");
+        this.settings.element.style.width = "".concat(this.wrapper.offsetWidth / this._zoom, "px");
+        this.wrapper.style.height = "".concat(this.settings.element.offsetHeight * this._zoom, "px");
         (_b = (_a = this.settings).onDimensionsChange) === null || _b === void 0 ? void 0 : _b.call(_a, this._zoom);
     };
     /**
@@ -603,15 +670,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var AnimationManager = /** @class */ (function () {
     /**
      * @param game the BGA game class, usually it will be `this`
@@ -654,24 +712,24 @@ var AnimationManager = /** @class */ (function () {
      * @returns the animation promise.
      */
     AnimationManager.prototype.play = function (animation) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         return __awaiter(this, void 0, void 0, function () {
-            var settings, _m;
+            var settings, _a;
+            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
             return __generator(this, function (_o) {
                 switch (_o.label) {
                     case 0:
                         animation.played = animation.playWhenNoAnimation || this.animationsActive();
                         if (!animation.played) return [3 /*break*/, 2];
                         settings = animation.settings;
-                        (_a = settings.animationStart) === null || _a === void 0 ? void 0 : _a.call(settings, animation);
-                        (_b = settings.element) === null || _b === void 0 ? void 0 : _b.classList.add((_c = settings.animationClass) !== null && _c !== void 0 ? _c : 'bga-animations_animated');
-                        animation.settings = __assign(__assign({}, animation.settings), { duration: (_e = (_d = this.settings) === null || _d === void 0 ? void 0 : _d.duration) !== null && _e !== void 0 ? _e : 500, scale: (_g = (_f = this.zoomManager) === null || _f === void 0 ? void 0 : _f.zoom) !== null && _g !== void 0 ? _g : undefined });
-                        _m = animation;
+                        (_b = settings.animationStart) === null || _b === void 0 ? void 0 : _b.call(settings, animation);
+                        (_c = settings.element) === null || _c === void 0 ? void 0 : _c.classList.add((_d = settings.animationClass) !== null && _d !== void 0 ? _d : 'bga-animations_animated');
+                        animation.settings = __assign(__assign({}, animation.settings), { duration: (_f = (_e = this.settings) === null || _e === void 0 ? void 0 : _e.duration) !== null && _f !== void 0 ? _f : 500, scale: (_h = (_g = this.zoomManager) === null || _g === void 0 ? void 0 : _g.zoom) !== null && _h !== void 0 ? _h : undefined });
+                        _a = animation;
                         return [4 /*yield*/, animation.animationFunction(this, animation)];
                     case 1:
-                        _m.result = _o.sent();
-                        (_j = (_h = animation.settings).animationEnd) === null || _j === void 0 ? void 0 : _j.call(_h, animation);
-                        (_k = settings.element) === null || _k === void 0 ? void 0 : _k.classList.remove((_l = settings.animationClass) !== null && _l !== void 0 ? _l : 'bga-animations_animated');
+                        _a.result = _o.sent();
+                        (_k = (_j = animation.settings).animationEnd) === null || _k === void 0 ? void 0 : _k.call(_j, animation);
+                        (_l = settings.element) === null || _l === void 0 ? void 0 : _l.classList.remove((_m = settings.animationClass) !== null && _m !== void 0 ? _m : 'bga-animations_animated');
                         return [3 /*break*/, 3];
                     case 2: return [2 /*return*/, Promise.resolve(animation)];
                     case 3: return [2 /*return*/];
@@ -1030,11 +1088,11 @@ var CardStock = /** @class */ (function () {
      * @param settings a `AddCardSettings` object
      * @param shift if number, the number of milliseconds between each card. if true, chain animations
      */
-    CardStock.prototype.addCards = function (cards, animation, settings, shift) {
-        if (shift === void 0) { shift = false; }
-        return __awaiter(this, void 0, void 0, function () {
+    CardStock.prototype.addCards = function (cards_1, animation_1, settings_1) {
+        return __awaiter(this, arguments, void 0, function (cards, animation, settings, shift) {
             var promises, result, others, _loop_2, i, results;
             var _this = this;
+            if (shift === void 0) { shift = false; }
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1306,9 +1364,9 @@ var CardStock = /** @class */ (function () {
      * @param fromElement The HTMLElement to animate from.
      */
     CardStock.prototype.animationFromElement = function (element, fromRect, settings) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var side, cardSides_1, animation, result;
+            var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -1527,9 +1585,9 @@ var Deck = /** @class */ (function (_super) {
         _super.prototype.cardRemoved.call(this, card, settings);
     };
     Deck.prototype.removeAll = function (settings) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var promise;
+            var _a, _b;
             return __generator(this, function (_c) {
                 promise = _super.prototype.removeAll.call(this, __assign(__assign({}, settings), { autoUpdateCardNumber: (_a = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _a !== void 0 ? _a : false }));
                 if ((_b = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _b !== void 0 ? _b : true) {
@@ -1551,10 +1609,10 @@ var Deck = /** @class */ (function (_super) {
      * @returns promise when animation ends
      */
     Deck.prototype.shuffle = function (settings) {
-        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
             var animatedCardsMax, animatedCards, elements, getFakeCard, uid, i, newCard, newElement, pauseDelayAfterAnimation;
             var _this = this;
+            var _a, _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:

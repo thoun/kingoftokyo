@@ -12,7 +12,7 @@
   "dependencies": {
     "bga-animations": "thoun/bga-animations#1.0.2",
     "bga-cards": "thoun/bga-cards#3.1.5",
-    "bga-zoom": "thoun/bga-zoom#0.2.0"
+    "bga-zoom": "thoun/bga-zoom#1.0.4"
   },
   "devDependencies": {
     "sass": "^1.70.0",
