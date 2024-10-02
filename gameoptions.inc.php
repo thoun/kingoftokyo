@@ -172,6 +172,11 @@ $game_options = [
                     'value' => [2,3,4],
                     'message' => 'Origins exclusive cards cannot be played with Dark Edition',
                 ],
+                [ 
+                    'type' => 'maxplayers',
+                    'value' => 4,
+                    'message' => 'King of Tokyo Origins cannot be played with more than 4 players',
+                ] 
             ],
         ],
     ],
