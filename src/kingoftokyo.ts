@@ -194,6 +194,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         }*/
     }
 
+    public onGameUserPreferenceChanged(pref_id: number, pref_value: number) {
+        this.preferencesManager.onPreferenceChange(pref_id, pref_value);
+    }
+
     ///////////////////////////////////////////////////
     //// Game & client states
 
@@ -1582,20 +1586,17 @@ class KingOfTokyo implements KingOfTokyoGame {
         return this.gamedatas.players[playerId];
     }
 
-    public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false, dojoPlace: string = undefined) {
-        const html = `<button class="action-button bgabutton bgabutton_blue" id="${id}">
-            ${text}
-        </button>`;
-        dojo.place(html, destinationId, dojoPlace);
-        if (disabled) {
-            dojo.addClass(id, 'disabled');
-        }
-        document.getElementById(id).addEventListener('click', () => callback());
+    public createButton(destinationId: string, id: string, text: string, callback: Function, disabled: boolean = false, dojoPlace: string = undefined): HTMLElement {
+        return (this as any).statusBar.addActionButton(text, callback, {
+            id,
+            classes: disabled ? 'disabled' : '',
+            destination: $(destinationId),
+        });
     }
 
     private addTwoPlayerVariantNotice(gamedatas: KingOfTokyoGamedatas) {
         // 2-players variant notice
-        if (Object.keys(gamedatas.players).length == 2 && (this as any).prefs[203]?.value == 1) {
+        if (Object.keys(gamedatas.players).length == 2 && (this as any).getGameUserPreference(203) == 1) {
             dojo.place(`
                     <div id="board-corner-highlight"></div>
                     <div id="twoPlayersVariant-message">
@@ -1606,13 +1607,7 @@ class KingOfTokyo implements KingOfTokyoGame {
                     </div>
                 `, 'board');
 
-            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', () => {
-                const select = document.getElementById('preference_control_203') as HTMLSelectElement;
-                select.value = '2';
-
-                var event = new Event('change');
-                select.dispatchEvent(event);
-            });
+            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', () => (this as any).setGameUserPreference(203, 2));
         }
     }
 
@@ -1952,7 +1947,8 @@ class KingOfTokyo implements KingOfTokyoGame {
             const woundedPlayer = this.getPlayer(woundedPlayerId);
             const cardType = Number((document.querySelector(`[data-evolution-id="${cardId}"]`) as HTMLDivElement).dataset.evolutionType);
             const label = /*TODOPUHA_*/('Give ${card_name} to ${player_name}').replace('${card_name}', this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', `<strong style="color: #${woundedPlayer.color};">${woundedPlayer.name}</strong>`);
-            this.createButton('endStealCostume_button', `giveGift${cardId}to${woundedPlayerId}_button`, label, () => this.giveGiftEvolution(cardId, woundedPlayerId), false, 'before')
+            const button = this.createButton('endStealCostume_button', `giveGift${cardId}to${woundedPlayerId}_button`, label, () => this.giveGiftEvolution(cardId, woundedPlayerId), false, 'before')
+            document.getElementById(`giveGift${cardId}to${woundedPlayerId}_button`).insertAdjacentElement('beforebegin', button);
         });
     }
 
@@ -3509,14 +3505,11 @@ class KingOfTokyo implements KingOfTokyoGame {
     }
     
     public takeAction(action: string, data?: any) {
-        data = data || {};
-        data.lock = true;
-        (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
+        (this as any).bgaPerformAction(action, data);
     }
 
     public takeNoLockAction(action: string, data?: any) {
-        data = data || {};
-        (this as any).ajaxcall(`/kingoftokyo/kingoftokyo/${action}.html`, data, this, () => {});
+        (this as any).bgaPerformAction(action, data, { lock: false, checkAction: false });
     }
 
     public setFont(prefValue: number): void {

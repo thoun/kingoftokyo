@@ -5829,22 +5829,6 @@ var PreferencesManager = /** @class */ (function () {
         this.setupPreferences();
     }
     PreferencesManager.prototype.setupPreferences = function () {
-        var _this = this;
-        // Extract the ID and value from the UI control
-        var onchange = function (e) {
-            var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-            if (!match) {
-                return;
-            }
-            var prefId = +match[1];
-            var prefValue = +e.target.value;
-            _this.game.prefs[prefId].value = prefValue;
-            _this.onPreferenceChange(prefId, prefValue);
-        };
-        // Call onPreferenceChange() when any value changes
-        dojo.query(".preference_control").connect("onchange", onchange);
-        // Call onPreferenceChange() now
-        dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
         try {
             document.getElementById('preference_control_203').closest(".preference_choice").style.display = 'none';
             document.getElementById('preference_fontrol_203').closest(".preference_choice").style.display = 'none';
@@ -5872,7 +5856,7 @@ var PreferencesManager = /** @class */ (function () {
         }
     };
     PreferencesManager.prototype.getBackgroundFilename = function () {
-        var prefId = this.getGameVersionNumber(this.game.prefs[205].value);
+        var prefId = this.getGameVersionNumber(this.game.getGameUserPreference(205));
         return BACKGROUND_FILENAME[prefId];
     };
     PreferencesManager.prototype.onPreferenceChange = function (prefId, prefValue) {
@@ -5895,7 +5879,7 @@ var PreferencesManager = /** @class */ (function () {
         }
     };
     PreferencesManager.prototype.getDiceScoringColor = function () {
-        var prefId = this.getGameVersionNumber(this.game.prefs[205].value);
+        var prefId = this.getGameVersionNumber(this.game.getGameUserPreference(205));
         switch (prefId) {
             case 2: return '000000';
             case 3: return '0096CC';
@@ -6460,6 +6444,9 @@ var KingOfTokyo = /** @class */ (function () {
             //this.isPowerUpExpansion() && this.evolutionCards.debugSeeAllCards();
             //this.isWickednessExpansion() && this.wickednessTiles.debugSeeAllCards();
         }*/
+    };
+    KingOfTokyo.prototype.onGameUserPreferenceChanged = function (pref_id, pref_value) {
+        this.preferencesManager.onPreferenceChange(pref_id, pref_value);
     };
     ///////////////////////////////////////////////////
     //// Game & client states
@@ -7721,24 +7708,18 @@ var KingOfTokyo = /** @class */ (function () {
     KingOfTokyo.prototype.createButton = function (destinationId, id, text, callback, disabled, dojoPlace) {
         if (disabled === void 0) { disabled = false; }
         if (dojoPlace === void 0) { dojoPlace = undefined; }
-        var html = "<button class=\"action-button bgabutton bgabutton_blue\" id=\"".concat(id, "\">\n            ").concat(text, "\n        </button>");
-        dojo.place(html, destinationId, dojoPlace);
-        if (disabled) {
-            dojo.addClass(id, 'disabled');
-        }
-        document.getElementById(id).addEventListener('click', function () { return callback(); });
+        return this.statusBar.addActionButton(text, callback, {
+            id: id,
+            classes: disabled ? 'disabled' : '',
+            destination: $(destinationId),
+        });
     };
     KingOfTokyo.prototype.addTwoPlayerVariantNotice = function (gamedatas) {
-        var _a;
+        var _this = this;
         // 2-players variant notice
-        if (Object.keys(gamedatas.players).length == 2 && ((_a = this.prefs[203]) === null || _a === void 0 ? void 0 : _a.value) == 1) {
+        if (Object.keys(gamedatas.players).length == 2 && this.getGameUserPreference(203) == 1) {
             dojo.place("\n                    <div id=\"board-corner-highlight\"></div>\n                    <div id=\"twoPlayersVariant-message\">\n                        ".concat(_("You are playing the 2-players variant."), "<br>\n                        ").concat(_("When entering or starting a turn on Tokyo, you gain 1 energy instead of points"), ".<br>\n                        ").concat(_("You can check if variant is activated in the bottom left corner of the table."), "<br>\n                        <div style=\"text-align: center\"><a id=\"hide-twoPlayersVariant-message\">").concat(_("Dismiss"), "</a></div>\n                    </div>\n                "), 'board');
-            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', function () {
-                var select = document.getElementById('preference_control_203');
-                select.value = '2';
-                var event = new Event('change');
-                select.dispatchEvent(event);
-            });
+            document.getElementById('hide-twoPlayersVariant-message').addEventListener('click', function () { return _this.setGameUserPreference(203, 2); });
         }
     };
     KingOfTokyo.prototype.getOrderedPlayers = function () {
@@ -8016,7 +7997,8 @@ var KingOfTokyo = /** @class */ (function () {
             var woundedPlayer = _this.getPlayer(woundedPlayerId);
             var cardType = Number(document.querySelector("[data-evolution-id=\"".concat(cardId, "\"]")).dataset.evolutionType);
             var label = /*TODOPUHA_*/ ('Give ${card_name} to ${player_name}').replace('${card_name}', _this.evolutionCardsManager.getCardName(cardType, 'text-only')).replace('${player_name}', "<strong style=\"color: #".concat(woundedPlayer.color, ";\">").concat(woundedPlayer.name, "</strong>"));
-            _this.createButton('endStealCostume_button', "giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button"), label, function () { return _this.giveGiftEvolution(cardId, woundedPlayerId); }, false, 'before');
+            var button = _this.createButton('endStealCostume_button', "giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button"), label, function () { return _this.giveGiftEvolution(cardId, woundedPlayerId); }, false, 'before');
+            document.getElementById("giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button")).insertAdjacentElement('beforebegin', button);
         });
     };
     KingOfTokyo.prototype.onHiddenEvolutionClick = function (cardId) {
@@ -9231,13 +9213,10 @@ var KingOfTokyo = /** @class */ (function () {
         this.takeAction('loseHearts');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
-        data = data || {};
-        data.lock = true;
-        this.ajaxcall("/kingoftokyo/kingoftokyo/".concat(action, ".html"), data, this, function () { });
+        this.bgaPerformAction(action, data);
     };
     KingOfTokyo.prototype.takeNoLockAction = function (action, data) {
-        data = data || {};
-        this.ajaxcall("/kingoftokyo/kingoftokyo/".concat(action, ".html"), data, this, function () { });
+        this.bgaPerformAction(action, data, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.setFont = function (prefValue) {
         this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });

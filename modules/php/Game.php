@@ -16,73 +16,80 @@
   *
   */
 
-require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php');
+namespace Bga\Games\KingOfTokyo;
 
-require_once('modules/constants.inc.php');
-require_once('modules/php/objects/dice.php');
-require_once('modules/php/objects/card.php');
-require_once('modules/php/utils.php');
-require_once('modules/php/redirections.php');
-require_once('modules/php/monster.php');
-require_once('modules/php/initial-card.php');
-require_once('modules/php/player/player-utils.php');
-require_once('modules/php/player/player-actions.php');
-require_once('modules/php/player/player-args.php');
-require_once('modules/php/player/player-states.php');
-require_once('modules/php/dice/dice-utils.php');
-require_once('modules/php/dice/dice-actions.php');
-require_once('modules/php/dice/dice-args.php');
-require_once('modules/php/dice/dice-states.php');
-require_once('modules/php/cards/cards-utils.php');
-require_once('modules/php/cards/cards-actions.php');
-require_once('modules/php/cards/cards-args.php');
-require_once('modules/php/cards/cards-states.php');
-require_once('modules/php/wickedness-tiles/wickedness-tiles-utils.php');
-require_once('modules/php/wickedness-tiles/wickedness-tiles-actions.php');
-require_once('modules/php/wickedness-tiles/wickedness-tiles-args.php');
-require_once('modules/php/wickedness-tiles/wickedness-tiles-states.php');
-require_once('modules/php/curse-cards/curse-cards-utils.php');
-require_once('modules/php/curse-cards/curse-cards-actions.php');
-require_once('modules/php/curse-cards/curse-cards-args.php');
-require_once('modules/php/curse-cards/curse-cards-states.php');
-require_once('modules/php/evolution-cards/evolution-cards-utils.php');
-require_once('modules/php/evolution-cards/evolution-cards-actions.php');
-require_once('modules/php/evolution-cards/evolution-cards-args.php');
-require_once('modules/php/evolution-cards/evolution-cards-states.php');
-require_once('modules/php/intervention.php');
-require_once('modules/php/debug-util.php');
+require_once('constants.inc.php');
+require_once('objects/dice.php');
+require_once('objects/card.php');
+require_once('utils.php');
+require_once('redirections.php');
+require_once('monster.php');
+require_once('initial-card.php');
+require_once('player/player-utils.php');
+require_once('player/player-actions.php');
+require_once('player/player-args.php');
+require_once('player/player-states.php');
+require_once('dice/dice-utils.php');
+require_once('dice/dice-actions.php');
+require_once('dice/dice-args.php');
+require_once('dice/dice-states.php');
+require_once('cards/cards-utils.php');
+require_once('cards/cards-actions.php');
+require_once('cards/cards-args.php');
+require_once('cards/cards-states.php');
+require_once('wickedness-tiles/wickedness-tiles-utils.php');
+require_once('wickedness-tiles/wickedness-tiles-actions.php');
+require_once('wickedness-tiles/wickedness-tiles-args.php');
+require_once('wickedness-tiles/wickedness-tiles-states.php');
+require_once('curse-cards/curse-cards-utils.php');
+require_once('curse-cards/curse-cards-actions.php');
+require_once('curse-cards/curse-cards-args.php');
+require_once('curse-cards/curse-cards-states.php');
+require_once('evolution-cards/evolution-cards-utils.php');
+require_once('evolution-cards/evolution-cards-actions.php');
+require_once('evolution-cards/evolution-cards-args.php');
+require_once('evolution-cards/evolution-cards-states.php');
+require_once('intervention.php');
+require_once('debug-util.php');
 
-class KingOfTokyo extends Table {
-    use KOT\States\UtilTrait;
-    use KOT\States\RedirectionTrait;
-    use KOT\States\MonsterTrait;
-    use KOT\States\InitialCardTrait;
-    use KOT\States\PlayerUtilTrait;
-    use KOT\States\PlayerActionTrait;
-    use KOT\States\PlayerArgTrait;
-    use KOT\States\PlayerStateTrait;
-    use KOT\States\DiceUtilTrait;
-    use KOT\States\DiceActionTrait;
-    use KOT\States\DiceArgTrait;
-    use KOT\States\DiceStateTrait;
-    use KOT\States\CardsUtilTrait;
-    use KOT\States\CardsActionTrait;
-    use KOT\States\CardsArgTrait;
-    use KOT\States\CardsStateTrait;
-    use KOT\States\WickednessTilesUtilTrait;
-    use KOT\States\WickednessTilesActionTrait;
-    use KOT\States\WickednessTilesArgTrait;
-    use KOT\States\WickednessTilesStateTrait;
-    use KOT\States\CurseCardsUtilTrait;
-    use KOT\States\CurseCardsActionTrait;
-    use KOT\States\CurseCardsArgTrait;
-    use KOT\States\CurseCardsStateTrait;
-    use KOT\States\EvolutionCardsUtilTrait;
-    use KOT\States\EvolutionCardsActionTrait;
-    use KOT\States\EvolutionCardsArgTrait;
-    use KOT\States\EvolutionCardsStateTrait;
-    use KOT\States\InterventionTrait;
-    use KOT\States\DebugUtilTrait;
+use \feException;
+
+class Game extends \Bga\GameFramework\Table {
+    use \KOT\States\UtilTrait;
+    use \KOT\States\RedirectionTrait;
+    use \KOT\States\MonsterTrait;
+    use \KOT\States\InitialCardTrait;
+    use \KOT\States\PlayerUtilTrait;
+    use \KOT\States\PlayerActionTrait;
+    use \KOT\States\PlayerArgTrait;
+    use \KOT\States\PlayerStateTrait;
+    use \KOT\States\DiceUtilTrait;
+    use \KOT\States\DiceActionTrait;
+    use \KOT\States\DiceArgTrait;
+    use \KOT\States\DiceStateTrait;
+    use \KOT\States\CardsUtilTrait;
+    use \KOT\States\CardsActionTrait;
+    use \KOT\States\CardsArgTrait;
+    use \KOT\States\CardsStateTrait;
+    use \KOT\States\WickednessTilesUtilTrait;
+    use \KOT\States\WickednessTilesActionTrait;
+    use \KOT\States\WickednessTilesArgTrait;
+    use \KOT\States\WickednessTilesStateTrait;
+    use \KOT\States\CurseCardsUtilTrait;
+    use \KOT\States\CurseCardsActionTrait;
+    use \KOT\States\CurseCardsArgTrait;
+    use \KOT\States\CurseCardsStateTrait;
+    use \KOT\States\EvolutionCardsUtilTrait;
+    use \KOT\States\EvolutionCardsActionTrait;
+    use \KOT\States\EvolutionCardsArgTrait;
+    use \KOT\States\EvolutionCardsStateTrait;
+    use \KOT\States\InterventionTrait;
+    use \KOT\States\DebugUtilTrait;
+
+    public \Deck $cards;
+	public \Deck $curseCards;
+    public \Deck $wickednessTiles;
+    public \Deck $evolutionCards;
 
 	function __construct(){
         // Your global variables labels:
@@ -384,7 +391,7 @@ class KingOfTokyo extends Table {
         _ when the game starts
         _ when a player refreshes the game page (F5)
     */
-    protected function getAllDatas() {
+    protected function getAllDatas(): array {
         $isCthulhuExpansion = $this->isCthulhuExpansion();
         $isKingKongExpansion = $this->isKingKongExpansion();
         $isCybertoothExpansion = $this->isCybertoothExpansion();
@@ -644,7 +651,7 @@ class KingOfTokyo extends Table {
         (ex: pass).
     */
 
-    function zombieTurn($state, $active_player) {
+    function zombieTurn($state, $active_player): void {
     	$statename = $state['name'];
 
         if ($state['type'] == "activeplayer") {

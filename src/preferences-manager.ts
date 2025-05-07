@@ -14,27 +14,6 @@ class PreferencesManager {
     }
 
     private setupPreferences() {
-        // Extract the ID and value from the UI control
-        const onchange = (e) => {
-          var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-          if (!match) {
-            return;
-          }
-          var prefId = +match[1];
-          var prefValue = +e.target.value;
-          (this.game as any).prefs[prefId].value = prefValue;
-          this.onPreferenceChange(prefId, prefValue);
-        }
-        
-        // Call onPreferenceChange() when any value changes
-        dojo.query(".preference_control").connect("onchange", onchange);
-        
-        // Call onPreferenceChange() now
-        dojo.forEach(
-          dojo.query("#ingame_menu_content .preference_control"),
-          el => onchange({ target: el })
-        );
-
         try {
             (document.getElementById('preference_control_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
             (document.getElementById('preference_fontrol_203').closest(".preference_choice") as HTMLDivElement).style.display = 'none';
@@ -59,11 +38,11 @@ class PreferencesManager {
     }
 
     public getBackgroundFilename() {
-        const prefId = this.getGameVersionNumber((this.game as any).prefs[205].value);
+        const prefId = this.getGameVersionNumber((this.game as any).getGameUserPreference(205));
         return BACKGROUND_FILENAME[prefId];
     }
       
-    private onPreferenceChange(prefId: number, prefValue: number) {
+    public onPreferenceChange(prefId: number, prefValue: number) {
         switch (prefId) {
             case 201: 
                 this.game.setFont(prefValue);
@@ -84,7 +63,7 @@ class PreferencesManager {
     }
     
     public getDiceScoringColor(): string {
-        const prefId = this.getGameVersionNumber((this.game as any).prefs[205].value);
+        const prefId = this.getGameVersionNumber((this.game as any).getGameUserPreference(205));
         switch (prefId) {
             case 2: return '000000';
             case 3: return '0096CC';

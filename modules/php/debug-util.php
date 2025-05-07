@@ -17,60 +17,60 @@ trait DebugUtilTrait {
             $this->debug_SetCardInHand(SCAVENGER_CARD, 2343493);
             //$this->setCardTokens(2343492, $this->debug_SetCardInHand(SMOKE_CLOUD_CARD, 2343492), 4);
             //$this->debug_SetCardInHand(ELECTRIC_ARMOR_CARD, 2343492);
-            //$this->debugSetCardInTable(120);
-            //$this->debugSetCardInTable(121);
-            //$this->debugSetCardInTable(122);
-            //$this->debugSetCardInTable(REGENERATION_CARD);
+            //$this->debug_SetCardInTable(120);
+            //$this->debug_SetCardInTable(121);
+            //$this->debug_SetCardInTable(122);
+            //$this->debug_SetCardInTable(REGENERATION_CARD);
         }
 
         // base game
 
-        $this->debugSetPlayerInLocation(2343492, 1);
-        //$this->debugSetPlayerInLocation(2343494, 2);
-        //$this->debugSetPlayerInLocation($playersIds[0], 1);
-        //$this->debugSetPlayerInLocation($playersIds[1], 2);
-        //$this->debugSetPlayerEnergy(2343492, 9);
+        $this->debug_SetPlayerInLocation(2343492, 1);
+        //$this->debug_SetPlayerInLocation(2343494, 2);
+        //$this->debug_SetPlayerInLocation($playersIds[0], 1);
+        //$this->debug_SetPlayerInLocation($playersIds[1], 2);
+        //$this->debug_SetPlayerEnergy(2343492, 9);
         $this->debug_SetEnergy(20);
-        //$this->debugSetPlayerPoints(2343493, 17);
-        $this->debugSetPoints(16);
-        //$this->debugSetPlayerPoints(2343493, 4);
-        $this->debugSetHealth(1);
-        //$this->debugSetPlayerHealth(2343492, 1);
-        //$this->debugSetPlayerHealth(2343493, 1);
-        //$this->debugSetPlayerHealth($playersIds[0], 7);
-        //$this->debugSetPlayerHealth($playersIds[1], 6);
-        //$this->debugSetPlayerHealth($playersIds[2], 3);
-        //$this->debugSetPlayerHealth($playersIds[3], 1);
-        //$this->debugSetPlayerHealth($playersIds[4], 5);
+        //$this->debug_SetPlayerPoints(2343493, 17);
+        $this->debug_SetPoints(16);
+        //$this->debug_SetPlayerPoints(2343493, 4);
+        $this->debug_SetHealth(1);
+        //$this->debug_SetPlayerHealth(2343492, 1);
+        //$this->debug_SetPlayerHealth(2343493, 1);
+        //$this->debug_SetPlayerHealth($playersIds[0], 7);
+        //$this->debug_SetPlayerHealth($playersIds[1], 6);
+        //$this->debug_SetPlayerHealth($playersIds[2], 3);
+        //$this->debug_SetPlayerHealth($playersIds[3], 1);
+        //$this->debug_SetPlayerHealth($playersIds[4], 5);
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 2 where `player_id` = 2343493");
         //$this->DbQuery("UPDATE player SET `player_poison_tokens` = 1");        
         //$this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = 1");
-        //$this->debugSetCardInTable(FRENZY_CARD);
-        //$this->debugSetCardInTable(DEATH_FROM_ABOVE_CARD);
-        //$this->debugSetCardInTable(HEAL_CARD);
-        //$this->debugSetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
-        //$this->debugSetCardInTable(ENERGIZE_CARD);
-        //$this->debugSetCardInTable(JET_FIGHTERS_CARD);
-        //$this->debugSetCardInTable(SMOKE_CLOUD_CARD);
-        //$this->debugSetCardInTable(BATTERY_MONSTER_CARD);
-        //$this->debugSetCardInTable(ASTRONAUT_CARD);
-        //$this->debugSetCardInTable(ARMOR_PLATING_CARD);
-        //$this->debugSetCardInTable(EVEN_BIGGER_CARD);
-        //$this->debugSetCardInTable(EXTRA_HEAD_1_CARD);
-        //$this->debugSetCardInTable(TANK_CARD);
-        //$this->debugSetCardInTable(GAS_REFINERY_CARD);
-        //$this->debugSetCardInTable(FREEZE_TIME_CARD);
+        //$this->debug_SetCardInTable(FRENZY_CARD);
+        //$this->debug_SetCardInTable(DEATH_FROM_ABOVE_CARD);
+        //$this->debug_SetCardInTable(HEAL_CARD);
+        //$this->debug_SetCardInTable(HIGH_ALTITUDE_BOMBING_CARD);
+        //$this->debug_SetCardInTable(ENERGIZE_CARD);
+        //$this->debug_SetCardInTable(JET_FIGHTERS_CARD);
+        //$this->debug_SetCardInTable(SMOKE_CLOUD_CARD);
+        //$this->debug_SetCardInTable(BATTERY_MONSTER_CARD);
+        //$this->debug_SetCardInTable(ASTRONAUT_CARD);
+        //$this->debug_SetCardInTable(ARMOR_PLATING_CARD);
+        //$this->debug_SetCardInTable(EVEN_BIGGER_CARD);
+        //$this->debug_SetCardInTable(EXTRA_HEAD_1_CARD);
+        //$this->debug_SetCardInTable(TANK_CARD);
+        //$this->debug_SetCardInTable(GAS_REFINERY_CARD);
+        //$this->debug_SetCardInTable(FREEZE_TIME_CARD);
         //$this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".MIMIC_CARD);
-        //$this->debugSetCardInTable(MIMIC_CARD);
-        //$this->debugSetCardInTable(RAPID_HEALING_CARD);
-        //$this->debugSetCardInTable(MADE_IN_A_LAB_CARD);
-        //$this->debugSetCardInTable(MIMIC_CARD);
-        //$this->debugSetCardInTable(WINGS_CARD);
-        //$this->debugSetCardInTable(BATTERY_MONSTER_CARD);
+        //$this->debug_SetCardInTable(MIMIC_CARD);
+        //$this->debug_SetCardInTable(RAPID_HEALING_CARD);
+        //$this->debug_SetCardInTable(MADE_IN_A_LAB_CARD);
+        //$this->debug_SetCardInTable(MIMIC_CARD);
+        //$this->debug_SetCardInTable(WINGS_CARD);
+        //$this->debug_SetCardInTable(BATTERY_MONSTER_CARD);
         //$this->debug_SetCardInHand(MIMIC_CARD, 2343493);
         //$this->DbQuery("UPDATE card SET `card_location` = 'deck'");
-        //foreach ($this->KEEP_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable($cardType);
-        //foreach ($this->DISCARD_CARDS_LIST['dark'] as $cardType) $this->debugSetCardInTable(100+$cardType);
+        //foreach ($this->KEEP_CARDS_LIST['dark'] as $cardType) $this->debug_SetCardInTable($cardType);
+        //foreach ($this->DISCARD_CARDS_LIST['dark'] as $cardType) $this->debug_SetCardInTable(100+$cardType);
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debug_SetCardInHand(REGENERATION_CARD, 2343492));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debug_SetCardInHand(EVEN_BIGGER_CARD, 2343493));
         //$this->setMimickedCard(MIMIC_CARD, 2343493, $this->debug_SetCardInHand(OPPORTUNIST_CARD, 2343494));
@@ -121,7 +121,7 @@ trait DebugUtilTrait {
         //$this->debug_SetCardInHand(FIRE_BREATHING_CARD, 2343492);
         //$this->debug_SetCardInHand(ARMOR_PLATING_CARD, 2343493);
         //$this->debug_SetCardInHand(EVEN_BIGGER_CARD, 2343492);
-        //$this->debugSetPlayerHealth(2343492, 11);
+        //$this->debug_SetPlayerHealth(2343492, 11);
         //$this->debug_SetCardInHand(NOVA_BREATH_CARD, 2343493);
         //$this->debug_SetCardInHand(PLOT_TWIST_CARD, 2343493);
         //$this->debug_SetCardInHand(PSYCHIC_PROBE_CARD, 2343492);
@@ -160,30 +160,30 @@ trait DebugUtilTrait {
 
         // cthulhu
         if ($this->isCthulhuExpansion()) {
-            $this->debugSetCultists(5);
-            //$this->debugSetPlayerCultists(2343492, 10);
-            //$this->debugSetPlayerCultists($playersIds[2], 1);
-            //$this->debugSetPlayerCultists($playersIds[3], 3);
-            //$this->debugSetPlayerCultists($playersIds[4], 2);
+            $this->debug_SetCultists(5);
+            //$this->debug_SetPlayerCultists(2343492, 10);
+            //$this->debug_SetPlayerCultists($playersIds[2], 1);
+            //$this->debug_SetPlayerCultists($playersIds[3], 3);
+            //$this->debug_SetPlayerCultists($playersIds[4], 2);
         }
 
         // anubis
         if ($this->isAnubisExpansion()) {
-            //$this->debugSetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(SET_S_STORM_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(ORDEAL_OF_THE_MIGHTY_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(PHARAONIC_SKIN_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(ISIS_S_DISGRACE_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
-            //$this->debugSetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(SET_S_STORM_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(RAGING_FLOOD_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(CONFUSED_SENSES_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(BODY_SPIRIT_AND_KA_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(SCRIBE_S_PERSEVERANCE_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(ORDEAL_OF_THE_SPIRITUAL_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(ORDEAL_OF_THE_MIGHTY_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(PHARAONIC_EGO_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(PHARAONIC_SKIN_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(ISIS_S_DISGRACE_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(GAZE_OF_THE_SPHINX_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(HOTEP_S_PEACE_CURSE_CARD);
+            //$this->debug_SetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
             $this->changeGoldenScarabOwner(2343494);
@@ -212,23 +212,23 @@ trait DebugUtilTrait {
         // wickedness
         if ($this->isWickednessExpansion()) {
             //$this->initWickednessTiles(3); // 2=orange, 3=green, 4=mix
-            //$this->debugSetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
+            //$this->debug_SetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
-            //$this->debugSetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
+            //$this->debug_SetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
             //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debug_SetCardInHand(PSYCHIC_PROBE_CARD, 2343492));
-            //$this->debugSetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
-            $this->debugSetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343493);
-            //$this->debugSetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
-            //$this->debugSetWickednessTileInHand(DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 2343492);
-            //$this->debugSetWickednessTileInHand(TIRELESS_WICKEDNESS_TILE, 2343492);
-            //$this->debugSetWickednessTileInHand(CYBERBRAIN_WICKEDNESS_TILE, 2343492);
+            //$this->debug_SetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
+            $this->debug_SetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343493);
+            //$this->debug_SetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
+            //$this->debug_SetWickednessTileInHand(DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 2343492);
+            //$this->debug_SetWickednessTileInHand(TIRELESS_WICKEDNESS_TILE, 2343492);
+            //$this->debug_SetWickednessTileInHand(CYBERBRAIN_WICKEDNESS_TILE, 2343492);
 
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343493");
 
-            //$this->debugSetWickednessTileInHand(DEVIOUS_WICKEDNESS_TILE, 2343494);
-            //$this->debugSetWickednessTileInHand(ETERNAL_WICKEDNESS_TILE, 2343494);
-            //$this->debugSetWickednessTileInHand(SKULKING_WICKEDNESS_TILE, 2343494);
+            //$this->debug_SetWickednessTileInHand(DEVIOUS_WICKEDNESS_TILE, 2343494);
+            //$this->debug_SetWickednessTileInHand(ETERNAL_WICKEDNESS_TILE, 2343494);
+            //$this->debug_SetWickednessTileInHand(SKULKING_WICKEDNESS_TILE, 2343494);
         }
 
         // power up
@@ -250,43 +250,43 @@ trait DebugUtilTrait {
             //$this->DbQuery("UPDATE player SET `player_monster` = 18 where `player_id` = 2343492"); // baby gigazaur
 
             // dummy card to avoid initial card selection
-            $this->debugSetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
-            $this->debugSetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
-            $this->debugSetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
-            $this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
-            /*$this->debugSetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
+            $this->debug_SetEvolutionInHand(PRECISION_FIELD_SUPPORT_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343493, false);
+            $this->debug_SetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343493, false);
+            $this->debug_SetEvolutionInHand(RADIOACTIVE_WASTE_EVOLUTION, 2343494, false);
+            $this->debug_SetEvolutionInHand(ADAPTING_TECHNOLOGY_EVOLUTION, 2343495, false);
+            $this->debug_SetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343496, false);
+            /*$this->debug_SetEvolutionInHand(HEAT_VISION_EVOLUTION, 2343497, false);*/
 
             // cards to test
-            //$this->debugSetEvolutionInHand(CLIMB_TOKYO_TOWER_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
-            //$this->debugSetEvolutionInHand(24, 2343493, true);
-            //$this->debugSetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
-            //$this->debugSetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343493, true);
-            //$this->debugSetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
-            //$this->debugSetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
-            //$this->debugSetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
-            //$this->setMimickedEvolution(2343492, $this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
-            //$this->debugSetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
-            //$this->debugSetEvolutionInHand(EATS_SHOOTS_AND_LEAVES_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343492);
-            //$this->debugSetEvolutionInHand(WORST_NIGHTMARE_EVOLUTION, 2343492, true, 2343493);
-            //$this->debugSetEvolutionInHand(TRICK_OR_THREAT_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
-            //$this->debugSetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
-            //$this->debugSetEvolutionInHand(SUNKEN_TEMPLE_EVOLUTION, 2343493, false);
+            //$this->debug_SetEvolutionInHand(CLIMB_TOKYO_TOWER_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(KING_OF_THE_GIZMO_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(LIGHTNING_ARMOR_EVOLUTION, 2343493, true);
+            //$this->debug_SetEvolutionInHand(24, 2343493, true);
+            //$this->debug_SetEvolutionInHand(PANDA_EXPRESS_EVOLUTION, 2343493, true);
+            //$this->debug_SetEvolutionInHand(ELECTRIC_CARROT_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(TUNE_UP_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(BAMBOO_SUPPLY_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343493, true);
+            //$this->debug_SetEvolutionInHand(DEEP_DIVE_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(MIRACULOUS_CATCH_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(BREATH_OF_DOOM_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(SO_SMALL_EVOLUTION, 2343493, true);
+            //$this->debug_SetEvolutionInHand(TERROR_OF_THE_DEEP_EVOLUTION, 2343493, true);
+            //$this->debug_SetEvolutionInHand(ICY_REFLECTION_EVOLUTION, 2343492, true);
+            //$this->setMimickedEvolution(2343492, $this->debug_SetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true));
+            //$this->debug_SetEvolutionInHand(ANGER_BATTERIES_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(BAMBOOZLE_EVOLUTION, 2343493, false);
+            //$this->debug_SetEvolutionInHand(EATS_SHOOTS_AND_LEAVES_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(FREEZE_RAY_EVOLUTION, 2343492, true, 2343492);
+            //$this->debug_SetEvolutionInHand(WORST_NIGHTMARE_EVOLUTION, 2343492, true, 2343493);
+            //$this->debug_SetEvolutionInHand(TRICK_OR_THREAT_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(ENCASED_IN_ICE_EVOLUTION, 2343492, false);
+            //$this->debug_SetEvolutionInHand(SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(MOTHERSHIP_SUPPORT_EVOLUTION, 2343492, true);
+            //$this->debug_SetEvolutionInHand(SUNKEN_TEMPLE_EVOLUTION, 2343493, false);
 
             //$this->setGameStateValue(TARGETED_PLAYER, 2343493);
         }
@@ -301,7 +301,7 @@ trait DebugUtilTrait {
         //$this->eliminatePlayer(2343496);
     }
 
-    function debugSetupBeforePlaceCard() {
+    function debug_SetupBeforePlaceCard() {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         } 
@@ -309,7 +309,7 @@ trait DebugUtilTrait {
         $this->debug_SetCardInHand(HIBERNATION_CARD, 2343492);
     }
 
-    function debugSetupAfterPlaceCard() {
+    function debug_SetupAfterPlaceCard() {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         } 
@@ -318,32 +318,42 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
     }
 
-    function debugSetWickednessTileInTable($cardType) {
+    function debug_SetWickednessTileInTable(int $cardType) {
         $this->wickednessTiles->moveCard( $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0])->id, 'table');
     }
 
-    function debugSetWickednessTileInHand($cardType, $playerId) {
+    function debug_SetWickednessTileInHand(int $cardType, int $playerId) {
         $card = $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0]);
         $this->wickednessTiles->moveCard($card->id, 'hand', $playerId);
         return $card;
     }
 
-    function debugSetCardInTable($cardType) {
+    function debug_SetCardInTable(int $cardType) {
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0])->id, 'table', 1);
     }
 
-    // debugSetCardInDiscard(110)
-    function debugSetCardInDiscard($cardType) {
+    // debug_SetCardInDiscard(110)
+    function debug_SetCardInDiscard(int $cardType) {
         $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0])->id, 'discard');
     }
 
-    public function debug_SetCardInHand($cardType, $playerId) {
+    function debug_SetCardIn(int $cardId, bool $other = true) {
+        $this->notifyAllPlayers("log", 'other = ${otherLog}', [
+            'other' => $other,
+            'otherLog' => $other,
+        ]);
+
+        $this->cards->moveCard($cardId, 'hand', $other ? 23 : 13);
+        //return $card;
+    }
+
+    public function debug_SetCardInHand(int $cardType, int $playerId) {
         $card = $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0]);
         $this->cards->moveCard($card->id, 'hand', $playerId);
         return $card;
     }
 
-    function debugSetEvolutionInHand(int $cardType, int $playerId, bool $visible, $owner = null) {
+    function debug_SetEvolutionInHand(int $cardType, int $playerId, bool $visible, $owner = null) {
         $card = $this->getEvolutionCardById(intval(array_values($this->evolutionCards->getCardsOfType($cardType))[0]['id']));
         $this->evolutionCards->moveCard($card->id, $visible ? 'table' : 'hand', $playerId);
         $ownerId = $owner === null ? $playerId : $owner;
@@ -351,111 +361,82 @@ trait DebugUtilTrait {
         return $card;
     }
 
-    function debugSetPlayerInLocation($playerId, $location) {
+    function debug_SetPlayerInLocation(int $playerId, int $location) {
         $this->DbQuery("UPDATE player SET `player_location` = $location where `player_id` = $playerId");
     }
 
-    function debugSetHealth($health) {
+    function debug_SetHealth($health) {
         $this->DbQuery("UPDATE player SET `player_health` = $health");
     }
 
-    function debugSetPlayerHealth($playerId, $health) {
+    function debug_SetPlayerHealth(int $playerId, int $health) {
         $this->DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
     }
 
-    function debugSetPlayerEnergy($playerId, $energy) {
+    function debug_SetPlayerEnergy(int $playerId, int $energy) {
         $this->DbQuery("UPDATE player SET `player_energy` = $energy where `player_id` = $playerId");
     }
 
-    function debug_SetEnergy($energy) {
+    function debug_SetEnergy(int $energy) {
         $this->DbQuery("UPDATE player SET `player_energy` = $energy");
     }
 
-    function debugSetPlayerPoints($playerId, $points) {
+    function debug_SetPlayerPoints(int $playerId, int $points) {
         $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
     }
 
-    function debugSetPoints($points) {
+    function debug_SetPoints(int $points) {
         $this->DbQuery("UPDATE player SET `player_score` = $points");
     }
 
-    function debugSetCultists($cultists) {
+    function debug_SetCultists(int $cultists) {
         $this->DbQuery("UPDATE player SET `player_cultists` = $cultists");
     }
 
-    function debugSetPlayerCultists($playerId, $cultists) {
+    function debug_SetPlayerCultists(int $playerId, int $cultists) {
         $this->DbQuery("UPDATE player SET `player_cultists` = $cultists where `player_id` = $playerId");
     }
 
-    function debugSetCurseCardInTable($cardType) {
+    function debug_SetCurseCardInTable(int $cardType) {
         if ($this->isAnubisExpansion()) {
             $this->curseCards->moveAllCardsInLocation('table', 'discard');
             $this->curseCards->moveCard($this->getCardFromDb(array_values($this->curseCards->getCardsOfType($cardType))[0])->id, 'table');
         }
     }
 
-    // debugSetDieOfFate(1)
-    // debugSetDieOfFate(2)
-    // debugSetDieOfFate(3)
-    // debugSetDieOfFate(4)
-    function debugSetDieOfFate($face) {
+    // debug_SetDieOfFate(1)
+    // debug_SetDieOfFate(2)
+    // debug_SetDieOfFate(3)
+    // debug_SetDieOfFate(4)
+    function debug_SetDieOfFate(int $face) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 2");
     }
     
-    // debugSetDieFaces(1)
-    // debugSetDieFaces(2, 3)
-    // debugSetDieFaces(4, 3)
-    // debugSetDieFaces(6, 3)
-    // debugSetDieFaces(6)
-    function debugSetDieFaces($face, $limit = 99) {
+    // debug_SetDieFaces(1)
+    // debug_SetDieFaces(2, 3)
+    // debug_SetDieFaces(4, 3)
+    // debug_SetDieFaces(6, 3)
+    // debug_SetDieFaces(6)
+    function debug_SetDieFaces(int $face, int $limit = 99) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
     }
 
     function debugClownRoll() {
         for ($i=6;$i>0;$i--) {
-            $this->debugSetDieFaces($i, $i);
+            $this->debug_SetDieFaces($i, $i);
         }
     }
 
-    function debugAlmostClownRoll() {
+    function debug_AlmostClownRoll() {
         for ($i=6;$i>0;$i--) {
-            $this->debugSetDieFaces(7-$i, $i);
+            $this->debug_SetDieFaces(7-$i, $i);
         }
-        $this->debugSetDieFaces(5, 2);
+        $this->debug_SetDieFaces(5, 2);
     }
 
-    function debugSetBerserkDie($face) {
+    function debug_SetBerserkDie(int $face) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 1");
     }
-
-    function d() {
-        $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
-
-    public function loadBugReportSQL(int $reportId, array $studioPlayersIds): void {
-        $players = $this->getObjectListFromDb('SELECT player_id FROM player', true);
-		
-        $this->DbQuery('UPDATE global SET global_value=22 WHERE global_id=1 AND global_value=99');
-        foreach ($players as $index => $id) {
-            $sid = $studioPlayersIds[$index];
-			// basic tables
-			$this->DbQuery("UPDATE player SET player_id=$sid WHERE player_id = $id" );
-			$this->DbQuery("UPDATE global SET global_value=$sid WHERE global_value = $id" );
-			$this->DbQuery("UPDATE stats SET stats_player_id=$sid WHERE stats_player_id = $id" );
-
-			// 'other' game specific tables. example:
-			// tables specific to your schema that use player_ids
-			$this->DbQuery("UPDATE card SET card_location_arg=$sid WHERE card_location_arg = $id" );
-			$this->DbQuery("UPDATE wickedness_tile SET card_location_arg=$sid WHERE card_location_arg = $id" );
-			$this->DbQuery("UPDATE evolution_card SET card_location_arg=$sid WHERE card_location_arg = $id" );
-			$this->DbQuery("UPDATE evolution_card SET owner_id=$sid WHERE owner_id = $id" );
-			$this->DbQuery("UPDATE evolution_card SET card_location='deck$sid' WHERE card_location='deck$id'" );
-			$this->DbQuery("UPDATE evolution_card SET card_location='discard$sid' WHERE card_location='discard$id'" );
-            $this->DbQuery("UPDATE global_variables set `value` = REPLACE(`value`, '$id', '$sid')" );
-		}
-
-        $this->reloadPlayersBasicInfos();
-	}
 
     function debug($debugData) {
         if ($this->getBgaEnvironment() != 'studio') { 
