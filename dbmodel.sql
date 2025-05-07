@@ -94,15 +94,6 @@ CREATE TABLE IF NOT EXISTS `curse_card` (
   PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `wickedness_tile` (
-  `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `card_type` smallint unsigned NOT NULL,
-  `card_type_arg` tinyint unsigned NOT NULL,
-  `card_location` varchar(16) NOT NULL,
-  `card_location_arg` INT(10) unsigned NOT NULL,
-  PRIMARY KEY (`card_id`)
-) ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS `evolution_card` (
   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `card_type` smallint unsigned NOT NULL,

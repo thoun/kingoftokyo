@@ -1,22 +1,29 @@
 <?php
 namespace KOT\Objects;
 
+use \Bga\GameFrameworkPrototype\Item\Item;
+use \Bga\GameFrameworkPrototype\Item\ItemField;
+
+#[Item('wickedness_tile')]
 class WickednessTile {
-    public $id;
-    public $location;
-    public $location_arg;
-    public $type;
+    #[ItemField(kind: 'id', dbField: 'card_id')]
+    public int $id;
+    #[ItemField(kind: 'location', dbField: 'card_location')]
+    public string $location;
+    #[ItemField(kind: 'location_arg', dbField: 'card_location_arg')]
+    public ?int $location_arg;
+    #[ItemField(dbField: 'card_type')]
+    public int $type;
     public $side; // 0 front, 1 back
-    public $tokens;
+    #[ItemField(dbField: 'card_type_arg')]
+    public int $tokens;
     public $mimicType;
 
-    public function __construct($dbCard) {
-        $this->id = intval($dbCard['id']);
-        $this->location = $dbCard['location'];
-        $this->location_arg = intval($dbCard['location_arg']);
-        $this->type = intval($dbCard['type']);
+    #[ItemField(kind: 'order')]
+    public ?int $order;
+
+    public function setup($dbCard) {
         $this->side = $this->type >= 100 ? 1 : 0;
-        $this->tokens = intval($dbCard['type_arg']);
     } 
 }
 ?>

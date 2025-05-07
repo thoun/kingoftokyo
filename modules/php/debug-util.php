@@ -211,7 +211,7 @@ trait DebugUtilTrait {
 
         // wickedness
         if ($this->isWickednessExpansion()) {
-            //$this->initWickednessTiles(3); // 2=orange, 3=green, 4=mix
+            //$this->wickednessTiles->setup(3); // 2=orange, 3=green, 4=mix
             //$this->debug_SetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
             //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
             //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
@@ -319,12 +319,15 @@ trait DebugUtilTrait {
     }
 
     function debug_SetWickednessTileInTable(int $cardType) {
-        $this->wickednessTiles->moveCard( $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0])->id, 'table');
+        $cards = $this->wickednessTiles->getItemsByFieldName('type', $cardType);
+        $card = $cards[0];
+        $this->wickednessTiles->moveItem($card, 'table');
     }
 
     function debug_SetWickednessTileInHand(int $cardType, int $playerId) {
-        $card = $this->getCardFromDb(array_values($this->wickednessTiles->getCardsOfType($cardType))[0]);
-        $this->wickednessTiles->moveCard($card->id, 'hand', $playerId);
+        $cards = $this->wickednessTiles->getItemsByFieldName('type', $cardType);
+        $card = $cards[0];
+        $this->wickednessTiles->moveItem($card, 'hand', $playerId);
         return $card;
     }
 

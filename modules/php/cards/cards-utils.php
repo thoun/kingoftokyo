@@ -245,7 +245,8 @@ trait CardsUtilTrait {
                 $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
             }
         } else if ($mimicCardType == FLUXLING_WICKEDNESS_TILE) {
-            $mimicCard = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsOfType(FLUXLING_WICKEDNESS_TILE))[0];
+            $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', FLUXLING_WICKEDNESS_TILE);
+            $mimicCard = $mimicCards[0] ?? null;
 
             if ($mimicCard && $mimicCard->tokens > 0) {
                 $this->setTileTokens($mimicCard->location_arg, $mimicCard, 0);
@@ -297,7 +298,8 @@ trait CardsUtilTrait {
                 $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
                 $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
             } else if ($mimicCardType === FLUXLING_WICKEDNESS_TILE) {
-                $mimicCard = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsOfType(FLUXLING_WICKEDNESS_TILE))[0];
+                $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', FLUXLING_WICKEDNESS_TILE);
+                $mimicCard = $mimicCards[0] ?? null;
                 $this->setTileTokens($mimicOwnerId, $mimicCard, $tokens);
             }
         }
@@ -419,7 +421,7 @@ trait CardsUtilTrait {
         $this->removeCards($playerId, $cards);
         // discard all tiles
         if ($this->isWickednessExpansion()) {
-            $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
+            $tiles = $this->wickednessTiles->getItemsInLocation('hand', $playerId);
             $this->removeWickednessTiles($playerId, $tiles);
         }
 

@@ -643,7 +643,7 @@ trait UtilTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         if ($this->isWickednessExpansion()) {
-            $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $player->id));
+            $tiles = $this->wickednessTiles->getItemsInLocation('hand', $player->id);
             $this->removeWickednessTiles($player->id, $tiles);
         }
         if ($this->isPowerUpExpansion()) {

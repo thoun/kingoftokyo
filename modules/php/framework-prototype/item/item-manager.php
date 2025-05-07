@@ -233,7 +233,12 @@ class ItemManager {
                     $attributeInstance->dbField = $attributeInstance->name;
                 }
                 if (empty($attributeInstance->type)) {
-                    $attributeInstance->type = $property->getType()->getName();
+                    $reflectionType = $property->getType();
+                    if ($reflectionType) {
+                        $attributeInstance->type = $reflectionType->getName();
+                    } else {
+                        throw new ItemManagerConfigurationException("#[ItemField] for {$this->className}->{$attributeInstance->name} should set a type if the property isn't typed");
+                    }
                 }
                 $this->fields[] = $attributeInstance;
             }

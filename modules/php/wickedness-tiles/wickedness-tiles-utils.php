@@ -3,7 +3,9 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/../objects/wickedness-tile.php');
+require_once(__DIR__.'/../framework-prototype/Helpers/Arrays.php');
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use KOT\Objects\WickednessTile;
 
 trait WickednessTilesUtilTrait {
@@ -11,38 +13,6 @@ trait WickednessTilesUtilTrait {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
-
-    function initWickednessTiles(int $side) {
-        for($value=1; $value<=10; $value++) { // curse cards
-            $cardSide = $side === 4 ? bga_rand(0, 1) : $side - 2;
-            $cards[] = ['type' => $value + 100 * $cardSide, 'type_arg' => 0, 'nbr' => 1];
-        }
-        $this->wickednessTiles->createCards($cards, 'deck');
-
-        $allTiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('deck'));
-
-        foreach ([3, 6, 10] as $level) {
-            $levelTiles = array_values(array_filter($allTiles, fn($tile) =>
-                $level === (($tile->type % 100) > 8 ? 10 : (($tile->type % 100) > 4 ? 6 : 3))
-            ));
-            $levelTilesIds = array_map(fn($tile) => $tile->id, $levelTiles);
-            $this->wickednessTiles->moveCards($levelTilesIds, 'table', $level);
-        }
-    }
-
-    function getWickednessTileFromDb(array $dbCard) {
-        if (!$dbCard || !array_key_exists('id', $dbCard)) {
-            throw new \Error('card doesn\'t exists '.json_encode($dbCard));
-        }
-        if (!$dbCard || !array_key_exists('location', $dbCard)) {
-            throw new \Error('location doesn\'t exists '.json_encode($dbCard));
-        }
-        return new WickednessTile($dbCard);
-    }
-
-    function getWickednessTilesFromDb(array $dbCards) {
-        return array_map(fn($dbCard) => $this->getWickednessTileFromDb($dbCard), array_values($dbCards));
-    }
 
     function getPlayerWickedness(int $playerId) {
         return intval($this->getUniqueValueFromDB("SELECT player_wickedness FROM `player` where `player_id` = $playerId"));
@@ -124,7 +94,7 @@ trait WickednessTilesUtilTrait {
 
     function removeWickednessTiles(int $playerId, array $tiles) {
 
-        $this->wickednessTiles->moveCards(array_map(fn($tile) => $tile->id, $tiles), 'discard');
+        $this->wickednessTiles->moveItems($tiles, 'discard');
 
         $this->notifyAllPlayers("removeWickednessTiles", '', [
             'playerId' => $playerId,
@@ -132,18 +102,17 @@ trait WickednessTilesUtilTrait {
         ]);
     }
 
-    function getTableWickednessTiles(int $level) {
-        return $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('table', $level));
+    function getTableWickednessTiles(int $level): array {
+        return $this->wickednessTiles->getItemsInLocation('table', $level);
     }
 
-    function getWickednessTileByType(int $playerId, int $cardType) {
-        $tiles = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
-
-        return count($tiles) > 0 ? $tiles[0] : null;
+    function getWickednessTileByType(int $playerId, int $cardType): ?WickednessTile {
+        $handTiles = $this->wickednessTiles->getItemsInLocation('hand', $playerId);
+        return Arrays::find($handTiles, fn($tile) => $tile->type == $cardType);
     }
 
-    function gotWickednessTile(int $playerId, int $cardType) {
-        return count($this->wickednessTiles->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId)) > 0;
+    function gotWickednessTile(int $playerId, int $cardType): bool {
+        return $this->getWickednessTileByType($playerId, $cardType) !== null;
     }
     
     function applyDefenderOfTokyo(int $playerId, int $logCardType, int $count) {

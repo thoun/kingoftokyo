@@ -88,7 +88,7 @@ class Game extends \Bga\GameFramework\Table {
 
     public \Deck $cards;
 	public \Deck $curseCards;
-    public \Deck $wickednessTiles;
+    public WickednessTileManager $wickednessTiles;
     public \Deck $evolutionCards;
 
 	function __construct(){
@@ -154,8 +154,7 @@ class Game extends \Bga\GameFramework\Table {
         $this->curseCards->init("curse_card");
         $this->curseCards->autoreshuffle = true;
 		
-        $this->wickednessTiles = $this->getNew("module.common.deck");
-        $this->wickednessTiles->init("wickedness_tile");
+        $this->wickednessTiles = new WickednessTileManager($this);
 		
         $this->evolutionCards = $this->getNew("module.common.deck");
         $this->evolutionCards->init("evolution_card");
@@ -173,7 +172,8 @@ class Game extends \Bga\GameFramework\Table {
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
     */
-    protected function setupNewGame($players, $options = []) {       
+    protected function setupNewGame($players, $options = []) { 
+        $this->wickednessTiles->initDb();      
 
         $sql = "DELETE FROM player WHERE 1 ";
         $this->DbQuery( $sql );
@@ -354,9 +354,9 @@ class Game extends \Bga\GameFramework\Table {
         }
         
         if ($darkEdition > 1) {
-            $this->initWickednessTiles($darkEdition);
+            $this->wickednessTiles->setup($darkEdition);
         } else if ($wickednessExpansion > 1) {
-            $this->initWickednessTiles($wickednessExpansion);
+            $this->wickednessTiles->setup($wickednessExpansion);
         }
 
         if ($this->isKingKongExpansion()) {
@@ -471,7 +471,7 @@ class Game extends \Bga\GameFramework\Table {
             }
             if ($isWickednessExpansion) {
                 $playerDb['wickedness'] = intval($playerDb['wickedness']);
-                $playerDb['wickednessTiles'] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('hand', $playerId));
+                $playerDb['wickednessTiles'] = $this->wickednessTiles->getItemsInLocation('hand', $playerId);
 
                 foreach($playerDb['wickednessTiles'] as &$card) {
                     if ($card->type == FLUXLING_WICKEDNESS_TILE) {
@@ -522,7 +522,7 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         if ($isWickednessExpansion) {
-            $result['wickednessTiles'] = $this->getWickednessTilesFromDb($this->wickednessTiles->getCardsInLocation('table'));
+            $result['wickednessTiles'] = $this->wickednessTiles->getItemsInLocation('table');
         }
 
         if ($isPowerUpExpansion) {
@@ -840,6 +840,11 @@ class Game extends \Bga\GameFramework\Table {
                 $sql = "ALTER TABLE `DBPREFIX_turn_damages` ADD `claw_damages` tinyint unsigned NOT NULL DEFAULT 0";
                 self::applyDbUpgradeToAllDB($sql);
             }
+        }
+
+        if ($from_version <= 9999999999) {
+            $sql = "ALTER TABLE `DBPREFIX_wickedness_tile` ADD `order` INT DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
         }
     }
 }
