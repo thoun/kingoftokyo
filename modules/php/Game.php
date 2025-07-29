@@ -52,6 +52,7 @@ require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
 require_once('debug-util.php');
 
+use Bga\GameFramework\Components\Deck;
 use \feException;
 
 class Game extends \Bga\GameFramework\Table {
@@ -86,10 +87,35 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\InterventionTrait;
     use \KOT\States\DebugUtilTrait;
 
-    public \Deck $cards;
-	public \Deck $curseCards;
+    public Deck $cards;
+	public Deck $curseCards;
     public WickednessTileManager $wickednessTiles;
-    public \Deck $evolutionCards;
+    public Deck $evolutionCards;
+
+    // from material file
+    public array $MONSTERS_WITH_ICON;
+    public array $MONSTERS_WITH_POWER_UP_CARDS;
+    public array $EVOLUTION_CARDS_TYPES;
+    public array $EVOLUTION_CARDS_TYPES_FOR_STATS;
+    public array $AUTO_DISCARDED_EVOLUTIONS;
+    public array $EVOLUTION_TO_PLAY_BEFORE_START_PERMANENT;
+    public array $EVOLUTION_TO_PLAY_BEFORE_START_TEMPORARY;
+    public array $EVOLUTION_TO_PLAY_BEFORE_START;
+    public array $EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE;
+    public array $EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO;
+    public array $EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO;
+    public array $EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO;
+    public array $EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT;
+    public array $EVOLUTION_TO_PLAY_BEFORE_END_MULTI;
+    public array $EVOLUTION_TO_PLAY_BEFORE_END_ACTIVE;
+    public array $EVOLUTION_TO_PLAY_BEFORE_END;
+    public array $EVOLUTIONS_TO_HEAL;
+    public array $EVOLUTION_GIFTS;
+    public array $CARD_COST;
+    public array $ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST;
+    public array $ORIGINS_CARDS_EXCLUSIVE_DISCARD_CARDS_LIST;
+    public array $KEEP_CARDS_LIST;
+    public array $DISCARD_CARDS_LIST;
 
 	function __construct(){
         // Your global variables labels:
@@ -592,7 +618,7 @@ class Game extends \Bga\GameFramework\Table {
         $this->gamestate->nextState('start');
     }
 
-    function stGameEnd() {
+    function stEndScore() {
         $players = $this->getPlayers(true);
         $playerCount = count($players);
         $remainingPlayers = $this->getRemainingPlayers();
@@ -636,7 +662,7 @@ class Game extends \Bga\GameFramework\Table {
             }            
         }
 
-        parent::stGameEnd();
+        $this->gamestate->nextState('');
     }
 
 //////////////////////////////////////////////////////////////////////////////

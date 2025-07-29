@@ -642,7 +642,7 @@ trait PlayerStateTrait {
         }
 
         if ($this->getRemainingPlayers() <= 1 || $this->getMaxPlayerScore() >= MAX_POINT) {
-            $this->jumpToState(ST_END_GAME);
+            $this->jumpToState(ST_END_SCORE);
         } else {
             $this->giveExtraTime($playerId);
 

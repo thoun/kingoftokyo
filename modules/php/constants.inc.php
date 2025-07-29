@@ -92,8 +92,7 @@ define('ST_RESOLVE_END_TURN', 80);
 define('ST_END_TURN', 81);
 define('ST_NEXT_PLAYER', 90);
 
-define('ST_END_GAME', 99);
-define('END_SCORE', 100);
+define('ST_END_SCORE', 98);
 
 /*
  * Interventions

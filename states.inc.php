@@ -14,6 +14,9 @@
  *
  */
 
+use Bga\GameFramework\GameStateBuilder;
+use Bga\GameFramework\StateType;
+
 /*
    Game state machine is a tool used to facilitate game developpement by doing common stuff that can be set up
    in a very easy way from this configuration file.
@@ -54,65 +57,48 @@ require_once("modules/php/constants.inc.php");
 $basicGameStates = [
 
     // The initial state. Please do not modify.
-    ST_BGA_GAME_SETUP => [
-        "name" => "gameSetup",
-        "description" => clienttranslate("Game setup"),
-        "type" => "manager",
-        "action" => "stGameSetup",
-        "transitions" => [ "" => ST_START ]
-    ],
+    ST_BGA_GAME_SETUP => GameStateBuilder::gameSetup(ST_START)->build(),
 
-    ST_START => [
-        "name" => "start",
-        "description" => "",
-        "type" => "game",
-        "action" => "stStart",
-        "transitions" => [],
-    ],
+    ST_START => GameStateBuilder::create()
+        ->name("start")
+        ->description("")
+        ->type(StateType::GAME)
+        ->action("stStart")
+        ->build(),
 
-    ST_PICK_MONSTER_NEXT_PLAYER => [
-        "name" => "pickMonsterNextPlayer",
-        "description" => "",
-        "type" => "game",
-        "action" => "stPickMonsterNextPlayer",
-        "transitions" => [
+    ST_PICK_MONSTER_NEXT_PLAYER => GameStateBuilder::create()
+        ->name("pickMonsterNextPlayer")
+        ->description("")
+        ->type(StateType::GAME)
+        ->action("stPickMonsterNextPlayer")
+        ->transitions([
             "nextPlayer" => ST_PLAYER_PICK_MONSTER,
-        ],
-    ],
+        ])
+        ->build(),
 
-    ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER => [
-        "name" => "chooseInitialCardNextPlayer",
-        "description" => "",
-        "type" => "game",
-        "action" => "stChooseInitialCardNextPlayer",
-        "transitions" => [
+    ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER => GameStateBuilder::create()
+        ->name("chooseInitialCardNextPlayer")
+        ->description("")
+        ->type(StateType::GAME)
+        ->action("stChooseInitialCardNextPlayer")
+        ->transitions([
             "nextPlayer" => ST_PLAYER_CHOOSE_INITIAL_CARD,
             "start" => ST_START_GAME,
-        ],
-    ],
+        ])
+        ->build(),
 
-    ST_NEXT_PLAYER => [
-        "name" => "nextPlayer",
-        "description" => "",
-        "type" => "game",
-        "action" => "stNextPlayer",
-        "updateGameProgression" => true,
-        "transitions" => [
+    ST_NEXT_PLAYER => GameStateBuilder::create()
+        ->name("nextPlayer")
+        ->description("")
+        ->type(StateType::GAME)
+        ->action("stNextPlayer")
+        ->updateGameProgression(true)
+        ->transitions([
             "nextPlayer" => ST_PLAYER_BEFORE_START_TURN, 
-            "endGame" => ST_END_GAME,
-        ],
-    ],
-   
-    // Final state.
-    // Please do not modify.
-    ST_END_GAME => [
-        "name" => "gameEnd",
-        "description" => clienttranslate("End of game"),
-        "type" => "manager",
-        "action" => "stGameEnd",
-        "args" => "argGameEnd",
-        "updateGameProgression" => true,
-    ],
+        ])
+        ->build(),
+
+    ST_END_SCORE => GameStateBuilder::endScore()->build(),
 ];
 
 $playerActionsGameStates = [
