@@ -245,7 +245,7 @@ trait CardsUtilTrait {
                 $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
             }
         } else if ($mimicCardType == FLUXLING_WICKEDNESS_TILE) {
-            $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', FLUXLING_WICKEDNESS_TILE);
+            $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', [FLUXLING_WICKEDNESS_TILE]);
             $mimicCard = $mimicCards[0] ?? null;
 
             if ($mimicCard && $mimicCard->tokens > 0) {
@@ -298,7 +298,7 @@ trait CardsUtilTrait {
                 $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
                 $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
             } else if ($mimicCardType === FLUXLING_WICKEDNESS_TILE) {
-                $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', FLUXLING_WICKEDNESS_TILE);
+                $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', [FLUXLING_WICKEDNESS_TILE]);
                 $mimicCard = $mimicCards[0] ?? null;
                 $this->setTileTokens($mimicOwnerId, $mimicCard, $tokens);
             }

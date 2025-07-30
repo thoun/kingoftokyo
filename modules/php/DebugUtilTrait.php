@@ -325,13 +325,13 @@ trait DebugUtilTrait {
     }
 
     function debug_SetWickednessTileInTable(int $cardType) {
-        $cards = $this->wickednessTiles->getItemsByFieldName('type', $cardType);
+        $cards = $this->wickednessTiles->getItemsByFieldName('type', [$cardType]);
         $card = $cards[0];
         $this->wickednessTiles->moveItem($card, 'table');
     }
 
     function debug_SetWickednessTileInHand(int $cardType, int $playerId) {
-        $cards = $this->wickednessTiles->getItemsByFieldName('type', $cardType);
+        $cards = $this->wickednessTiles->getItemsByFieldName('type', [$cardType]);
         $card = $cards[0];
         $this->wickednessTiles->moveItem($card, 'hand', $playerId);
         return $card;
