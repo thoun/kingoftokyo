@@ -867,7 +867,7 @@ class Game extends \Bga\GameFramework\Table {
             }
         }
 
-        if ($from_version <= 9999999999) {
+        if ($from_version <= 2411291203) {
             $sql = "ALTER TABLE `DBPREFIX_wickedness_tile` ADD `order` INT DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }

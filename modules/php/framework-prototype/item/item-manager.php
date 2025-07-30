@@ -458,7 +458,7 @@ class ItemManager {
             $item->{$locationArgField->name} = $toLocationArg;
         }
         $updates = $this->db->sqlEqualValue($locationField, $toLocation) . ', ' . $this->db->sqlEqualValue($locationArgField, $toLocationArg);
-        $this->db->sqlUpdate($updates, $this->db->sqlInValues($idField, array_map(fn($item) => $item->id, $items)));
+        $this->db->sqlUpdate($updates, $this->db->sqlInValues($idField, array_map(fn($item) => $item->{$idField->name}, $items)));
     }
 
     public function getItemsByFieldName(string $fieldName, array $values, ?int $limit = null): array {
