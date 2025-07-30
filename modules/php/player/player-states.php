@@ -2,9 +2,11 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/damage.php');
+require_once(__DIR__.'/../Objects/damage.php');
 
 use KOT\Objects\Damage;
+
+use function Bga\Games\KingOfTokyo\debug;
 
 trait PlayerStateTrait {
 
@@ -609,7 +611,8 @@ trait PlayerStateTrait {
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FINAL_PUSH_EXTRA_TURN)) == 1) { // extra turn for current player
                 $anotherTimeWithCard = 2000 + FINAL_PUSH_WICKEDNESS_TILE; // Final push
                 $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0); 
-                $this->removeWickednessTiles($playerId, [$this->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE)]);
+                $finalPushTile = $this->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE);
+                $this->removeWickednessTiles($playerId, [$finalPushTile]);
             }
 
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bga\GameFrameworkPrototype\Item;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 function array_find(array $array, callable $fn) {
     foreach ($array as $value) {
         if($fn($value)) {
@@ -29,18 +31,22 @@ class ItemManagerDbService {
     ) {}
 
     public function sqlCreate(string $columns) {
-        \APP_DbObject::DbQuery("CREATE TABLE IF NOT EXISTS `{$this->tableName}` ($columns) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
+        /** @disregard */
+        \APP_DbObject::DbQuery("CREATE TABLE `{$this->tableName}` ($columns) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
     }
 
     public function sqlInsert(string $columns, string $values) {
+        /** @disregard */
         \APP_DbObject::DbQuery("INSERT INTO `{$this->tableName}` ($columns) VALUES $values");
     }
 
     public function sqlUpdate(string $updates, string $condition) {
+        /** @disregard */
         \APP_DbObject::DbQuery("UPDATE `{$this->tableName}` SET $updates WHERE $condition");
     }
 
     public function sqlGetValue(string $column, string $condition) {
+        /** @disregard */
         return \APP_DbObject::getUniqueValueFromDB("SELECT $column FROM `{$this->tableName}` WHERE $condition");
     }
 
@@ -55,6 +61,7 @@ class ItemManagerDbService {
         if ($limit !== null) {
             $sql .= " LIMIT $limit";
         }
+        /** @disregard */
         return \APP_DbObject::getCollectionFromDb($sql);
     }
 
@@ -64,6 +71,16 @@ class ItemManagerDbService {
 
     public function sqlEqualValue(ItemField $field, mixed $value): string {
         return "`{$field->dbField}` = ".$this->getSqlValue($field, $value);
+    }
+
+    public function sqlGreaterValue(ItemField $field, mixed $value, bool $orEqual = false): string {
+        $operator = $orEqual ? '>=' : '>';
+        return "`{$field->dbField}` $operator ".$this->getSqlValue($field, $value);
+    }
+
+    public function sqlLowerValue(ItemField $field, mixed $value, bool $orEqual = false): string {
+        $operator = $orEqual ? '<=' : '<';
+        return "`{$field->dbField}` $operator ".$this->getSqlValue($field, $value);
     }
 
     public function sqlInValues(ItemField $field, array $values): string {
@@ -233,12 +250,7 @@ class ItemManager {
                     $attributeInstance->dbField = $attributeInstance->name;
                 }
                 if (empty($attributeInstance->type)) {
-                    $reflectionType = $property->getType();
-                    if ($reflectionType) {
-                        $attributeInstance->type = $reflectionType->getName();
-                    } else {
-                        throw new ItemManagerConfigurationException("#[ItemField] for {$this->className}->{$attributeInstance->name} should set a type if the property isn't typed");
-                    }
+                    $attributeInstance->type = $property->getType()->getName();
                 }
                 $this->fields[] = $attributeInstance;
             }
@@ -288,7 +300,7 @@ class ItemManager {
      * $itemsTypes should be like this :
      * [
      *   ['location' => 'deck', 'type' => 0, 'item_nbr' => 2],
-     *   ['location' => 'table', 'type' => 1, 'flipped' => true],
+     *   ['location' => 'table', 'locationArg' => 1, 'type' => 1, 'flipped' => true],
      * ]
      * 
      * item_nbr is a special field, that will create this number of items. If unset, defaults to 1.
@@ -399,14 +411,26 @@ class ItemManager {
         $this->updateItem($item, [$orderField->name]);
     }
 
-    public function moveItem(mixed $item, string $toLocation, int $toLocationArg = 0): void {
+    public function moveItem(mixed $item, string $toLocation, int $toLocationArg = 0, ?int $order = null): void {
         $locationField = $this->getItemFieldByKind('location');
         $locationArgField = $this->getItemFieldByKind('location_arg');
         $orderField = $this->getItemFieldByKind('order');
         
-        $item->location = $toLocation;
-        $item->locationArg = $toLocationArg;
-        $item->order = $this->countItemsInLocation($toLocation, $toLocationArg) > 0 ? ($this->getMaxOrderInLocation($toLocation, $toLocationArg) + 1) : 0;
+        $item->{$locationField->name} = $toLocation;
+        $item->{$locationArgField->name} = $toLocationArg;
+        if ($order !== null) {
+            $where = $this->db->sqlEqualValue($locationField, $item->{$locationField->name})." AND ".$this->db->sqlEqualValue($locationArgField, $item->{$locationArgField->name})." AND ".$this->db->sqlEqualValue($orderField, $order);
+            if (intval($this->db->sqlGetValue("count(*)", $where)) > 0) {
+                // there is already an item with the specified order in this location & location_arg
+                // update all orders >= $order
+                $update = "`{$orderField->dbField}` = `{$orderField->dbField}` + 1";
+                $this->db->sqlUpdate($update, $this->db->sqlEqualValue($locationField, $item->{$locationField->name})." AND ".$this->db->sqlEqualValue($locationArgField, $item->{$locationArgField->name})." AND ".$this->db->sqlGreaterValue($orderField, $order, orEqual: true));
+            }
+
+            $item->{$orderField->name} = $order;
+        } else {
+            $item->{$orderField->name} = $this->countItemsInLocation($toLocation, $toLocationArg) > 0 ? ($this->getMaxOrderInLocation($toLocation, $toLocationArg) + 1) : 0;
+        }
         $this->updateItem($item, [$locationField->name, $locationArgField->name, $orderField->name]);
     }
 
@@ -430,8 +454,8 @@ class ItemManager {
         $locationArgField = $this->getItemFieldByKind('location_arg');
 
         foreach ($items as &$item) {
-            $item->location = $toLocation;
-            $item->locationArg = $toLocationArg;
+            $item->{$locationField->name} = $toLocation;
+            $item->{$locationArgField->name} = $toLocationArg;
         }
         $updates = $this->db->sqlEqualValue($locationField, $toLocation) . ', ' . $this->db->sqlEqualValue($locationArgField, $toLocationArg);
         $this->db->sqlUpdate($updates, $this->db->sqlInValues($idField, array_map(fn($item) => $item->id, $items)));
@@ -502,6 +526,11 @@ class ItemManager {
         return array_map(fn($dbItem) => $this->getItemFromDb($dbItem), array_values($dbResults));
     }
 
+    public function getAllItems(?int $limit = null): array {
+        $dbResults = $this->db->sqlGetList("*", limit: $limit);
+        return array_map(fn($dbItem) => $this->getItemFromDb($dbItem), array_values($dbResults));
+    }
+
 	public function getItemOnTop(string $location, ?int $locationArg = null): mixed {
         $items = $this->getItemsOnTop(1, $location, $locationArg);
         return count($items) > 0 ? $items[0] : null;
@@ -542,12 +571,16 @@ class ItemManager {
         return array_find($this->fields, fn($field) => $field->kind === $kind);
     }
 
+    protected function getClassName(?array $dbItem): ?string {
+        return $this->className;
+    }
+
     protected function getItemFromDb(?array $dbItem): mixed {
         if (!$dbItem) {
             return null;
         }
 
-        $className = $this->className;
+        $className = $this->getClassName($dbItem) ?? $this->className;
         $item = new $className();
 
         foreach ($this->fields as &$field) {

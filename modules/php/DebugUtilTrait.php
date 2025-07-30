@@ -1,6 +1,12 @@
 <?php
 
-namespace KOT\States;
+namespace Bga\Games\KingOfTokyo;
+
+function debug(...$debugData) {
+    if (Game::getBgaEnvironment() != 'studio') { 
+        return;
+    }die('debug data : <pre>'.substr(json_encode($debugData, JSON_PRETTY_PRINT), 1, -1).'</pre>');
+}
 
 trait DebugUtilTrait {
 
@@ -441,10 +447,8 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 1");
     }
 
-    function debug($debugData) {
-        if ($this->getBgaEnvironment() != 'studio') { 
-            return;
-        }die('debug data : '.json_encode($debugData));
+    function debug_SetTakeWickednessTile(int $playerId, int $level = 3) {
+        $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[$level]' where `player_id` = $playerId");
     }
 
     function log(...$debugData) { // debug with infinite arguments

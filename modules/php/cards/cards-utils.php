@@ -2,11 +2,11 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/card.php');
-require_once(__DIR__.'/../objects/evolution-card.php');
-require_once(__DIR__.'/../objects/damage.php');
-require_once(__DIR__.'/../objects/question.php');
-require_once(__DIR__.'/../objects/log.php');
+require_once(__DIR__.'/../Objects/card.php');
+require_once(__DIR__.'/../Objects/evolution-card.php');
+require_once(__DIR__.'/../Objects/damage.php');
+require_once(__DIR__.'/../Objects/question.php');
+require_once(__DIR__.'/../Objects/log.php');
 
 use KOT\Objects\Card;
 use KOT\Objects\EvolutionCard;

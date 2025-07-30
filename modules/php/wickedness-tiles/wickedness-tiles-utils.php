@@ -2,11 +2,14 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/wickedness-tile.php');
+require_once(__DIR__.'/../Objects/wickedness-tile.php');
 require_once(__DIR__.'/../framework-prototype/Helpers/Arrays.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
-use KOT\Objects\WickednessTile;
+use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
+use Bga\Games\KingOfTokyo\Objects\Context;
+
+use function Bga\Games\KingOfTokyo\debug;
 
 trait WickednessTilesUtilTrait {
 
@@ -80,20 +83,15 @@ trait WickednessTilesUtilTrait {
                 $keepCardsCount = count(array_filter($cardsOfPlayer, fn($card) => $card->type < 100));
                 $this->applyGetPoints($playerId, $keepCardsCount, $logTileType);
                 break;
-            case FINAL_PUSH_WICKEDNESS_TILE:
-                $this->applyGetHealth($playerId, 2, $logTileType, $playerId);
-                $this->applyGetEnergy($playerId, 2, $logTileType);
-                $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 1);
-                break;
-            case STARBURST_WICKEDNESS_TILE:
-                $this->applyGetEnergy($playerId, 12, $logTileType);
-                $this->removeWickednessTiles($playerId, [$tile]);
+            default:
+                if (method_exists($tile, 'immediateEffect')) {
+                    $tile->immediateEffect($this, new Context(currentPlayerId: $playerId));
+                }
                 break;
         }
     }
 
     function removeWickednessTiles(int $playerId, array $tiles) {
-
         $this->wickednessTiles->moveItems($tiles, 'discard');
 
         $this->notifyAllPlayers("removeWickednessTiles", '', [

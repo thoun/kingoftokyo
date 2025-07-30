@@ -2,9 +2,9 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/evolution-card.php');
-require_once(__DIR__.'/../objects/damage.php');
-require_once(__DIR__.'/../objects/question.php');
+require_once(__DIR__.'/../Objects/evolution-card.php');
+require_once(__DIR__.'/../Objects/damage.php');
+require_once(__DIR__.'/../Objects/question.php');
 
 use KOT\Objects\EvolutionCard;
 use KOT\Objects\Damage;

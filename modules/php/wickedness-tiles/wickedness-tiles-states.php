@@ -2,6 +2,8 @@
 
 namespace KOT\States;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 trait WickednessTilesStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////

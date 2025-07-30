@@ -2,8 +2,8 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../objects/player-intervention.php');
-require_once(__DIR__.'/../objects/card-being-bought.php');
+require_once(__DIR__.'/../Objects/player-intervention.php');
+require_once(__DIR__.'/../Objects/card-being-bought.php');
 
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\PlayersUsedDice;
@@ -1029,7 +1029,6 @@ trait CardsActionTrait {
         $stayOnState = false;
         if ($remainingDamage > 0) {
             $stayOnState = $args['canCancelDamage'];
-            //$this->debug($args);
         }
 
         $this->notifyAllPlayers('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [

@@ -19,8 +19,8 @@
 namespace Bga\Games\KingOfTokyo;
 
 require_once('constants.inc.php');
-require_once('objects/dice.php');
-require_once('objects/card.php');
+require_once('Objects/dice.php');
+require_once('Objects/card.php');
 require_once('utils.php');
 require_once('redirections.php');
 require_once('monster.php');
@@ -50,7 +50,6 @@ require_once('evolution-cards/evolution-cards-actions.php');
 require_once('evolution-cards/evolution-cards-args.php');
 require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
-require_once('debug-util.php');
 
 use Bga\GameFramework\Components\Deck;
 use \feException;
@@ -85,7 +84,7 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\EvolutionCardsArgTrait;
     use \KOT\States\EvolutionCardsStateTrait;
     use \KOT\States\InterventionTrait;
-    use \KOT\States\DebugUtilTrait;
+    use DebugUtilTrait;
 
     public Deck $cards;
 	public Deck $curseCards;

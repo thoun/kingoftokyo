@@ -1,5 +1,5 @@
 <?php
-namespace KOT\Objects;
+namespace Bga\Games\KingOfTokyo\WickednessTiles;
 
 use \Bga\GameFrameworkPrototype\Item\Item;
 use \Bga\GameFrameworkPrototype\Item\ItemField;
@@ -14,13 +14,13 @@ class WickednessTile {
     public ?int $location_arg;
     #[ItemField(dbField: 'card_type')]
     public int $type;
-    public $side; // 0 front, 1 back
     #[ItemField(dbField: 'card_type_arg')]
     public int $tokens;
-    public $mimicType;
-
     #[ItemField(kind: 'order')]
     public ?int $order;
+    
+    public $mimicType;
+    public $side; // 0 front, 1 back
 
     public function setup($dbCard) {
         $this->side = $this->type >= 100 ? 1 : 0;
