@@ -14,6 +14,17 @@ class Barbs extends WickednessTile {
             $context->game->setGlobalVariable(DICE_COUNTS, $diceCounts);
         }
     }
+
+    public function addSmashesOrder(): int {
+        return 1;
+    }
+
+    public function addSmashes(Context $context): int {
+        if ($context->dieSmashes + $context->addedSmashes >= 2) {
+            return 1;
+        }
+        return 0;
+    }
 }
 
 ?>

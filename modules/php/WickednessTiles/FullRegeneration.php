@@ -15,6 +15,10 @@ class FullRegeneration extends WickednessTile {
             $context->game->applyGetHealthIgnoreCards($playerId, $context->game->getPlayerMaxHealth($playerId), $logTileType, $playerId);
         }
     }
+
+    public function incMaxHealth(Context $context) {
+        return 2;
+    }
 }
 
 ?>

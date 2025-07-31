@@ -5,12 +5,12 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/player-intervention.php');
 require_once(__DIR__.'/../Objects/card-being-bought.php');
 
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\PlayersUsedDice;
 use KOT\Objects\CardBeingBought;
 
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
-use const Bga\Games\KingOfTokyo\HAVE_IT_ALL_WICKEDNESS_TILE;
 
 trait CardsActionTrait {
 
@@ -153,9 +153,12 @@ trait CardsActionTrait {
         if ($countMediaFriendly > 0) {
             $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
         }
-        // have it all!
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, HAVE_IT_ALL_WICKEDNESS_TILE)) {
-            $this->applyGetPoints($playerId, 1, 2000 + HAVE_IT_ALL_WICKEDNESS_TILE);
+
+        if ($this->isWickednessExpansion()) {
+            $this->wickednessTiles->onBuyCard(new Context(
+                $this, 
+                currentPlayerId: $playerId,
+            ));
         }
         // King of the gizmo
         $countKingOfTheGizmo = $this->countEvolutionOfType($playerId, KING_OF_THE_GIZMO_EVOLUTION);

@@ -6,15 +6,12 @@ require_once(__DIR__.'/../Objects/dice.php');
 require_once(__DIR__.'/../Objects/player-intervention.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Dice;
 use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\ClawDamage;
 use KOT\Objects\Damage;
-
-use const Bga\Games\KingOfTokyo\ANTIMATTER_BEAM_WICKEDNESS_TILE;
-use const Bga\Games\KingOfTokyo\BARBS_WICKEDNESS_TILE;
-use const Bga\Games\KingOfTokyo\POISON_SPIT_WICKEDNESS_TILE;
 
 trait DiceUtilTrait {
 
@@ -473,12 +470,15 @@ trait DiceUtilTrait {
                 }
             }
 
-            // Shrink Ray
-            $giveShrinkRayToken = $this->countCardOfType($playerId, SHRINK_RAY_CARD);
-            // Poison Spit
-            $givePoisonSpitToken = $this->countCardOfType($playerId, POISON_SPIT_CARD);
-            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, POISON_SPIT_WICKEDNESS_TILE)) {
-                $givePoisonSpitToken += 1;
+            $addSmashTokens = new AddSmashTokens(
+                shrinkRay: $this->countCardOfType($playerId, SHRINK_RAY_CARD), // Shrink Ray
+                poison: $this->countCardOfType($playerId, POISON_SPIT_CARD), // Poison Spit
+            );
+
+            if ($this->isWickednessExpansion()) {
+                $addSmashTokens->add(
+                    $this->wickednessTiles->onAddingSmashTokens(new Context($this, currentPlayerId: $playerId))
+                );
             }
             
             $playerScore = $this->getPlayerScore($playerId);
@@ -524,7 +524,7 @@ trait DiceUtilTrait {
                     $countSimianScamper = $this->countEvolutionOfType($smashedPlayerId, SIMIAN_SCAMPER_EVOLUTION, true, true);
                 }
 
-                $clawDamage = new ClawDamage($playerScore, $giveShrinkRayToken, $givePoisonSpitToken, $electricCarrotChoices);
+                $clawDamage = new ClawDamage($playerScore, $addSmashTokens->shrinkRay, $addSmashTokens->poison, $electricCarrotChoices);
                 $newDamage = new Damage($smashedPlayerId, $damageAmount, $playerId, 0, $clawDamage);
                 if (($countJets > 0 || $countSimianScamper > 0) && $smashedPlayerIsInTokyo) {                
                     $jetsDamages[] = $newDamage;
@@ -1010,16 +1010,16 @@ trait DiceUtilTrait {
                 }
             }
 
-            // Barbs
-            if (($diceCounts[6] + $addedSmashes) >= 2 && $this->isWickednessExpansion() && $this->gotWickednessTile($playerId, BARBS_WICKEDNESS_TILE)) {
-                $addedSmashes += 1;
-                $cardsAddingSmashes[] = 2000 + BARBS_WICKEDNESS_TILE;
-            }
+            if ($this->isWickednessExpansion()) {
+                [$addedByTiles, $addingTiles] = $this->wickednessTiles->onAddSmashes(new Context(
+                    $this, 
+                    currentPlayerId: $playerId,
+                    dieSmashes: $diceCounts[6],
+                    addedSmashes: $addedSmashes,
+                ));
 
-            // antimatter beam (must be last)
-            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, ANTIMATTER_BEAM_WICKEDNESS_TILE)) {
-                $addedSmashes += ($diceCounts[6] + $addedSmashes);
-                $cardsAddingSmashes[] = 2000 + ANTIMATTER_BEAM_WICKEDNESS_TILE;
+                $addedSmashes += $addedByTiles;
+                $cardsAddingSmashes = array_merge($cardsAddingSmashes, $addingTiles);
             }
         }
 

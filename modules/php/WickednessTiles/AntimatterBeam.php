@@ -12,6 +12,14 @@ class AntimatterBeam extends WickednessTile {
         $diceCounts[6] *= 2;
         $context->game->setGlobalVariable(DICE_COUNTS, $diceCounts);
     }
+
+    public function addSmashesOrder(): int {
+        return 2;
+    }
+
+    public function addSmashes(Context $context): int {
+        return $context->dieSmashes + $context->addedSmashes;
+    }
 }
 
 ?>

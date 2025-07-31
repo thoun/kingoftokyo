@@ -10,6 +10,7 @@ require_once(__DIR__.'/framework-prototype/item/item-manager.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use \Bga\GameFrameworkPrototype\Item\ItemManager;
+use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 
@@ -33,7 +34,7 @@ const DEFENDER_OF_TOKYO_WICKEDNESS_TILE = 105;
 const FLUXLING_WICKEDNESS_TILE = 106;
 const HAVE_IT_ALL_WICKEDNESS_TILE = 107;
 const SONIC_BOOMER_WICKEDNESS_TILE = 108;
-const FINAL_PUSH_WICKEDNESS_TILE = 109;
+const FINAL_PUSH_WICKEDNESS_TILE = 109; // used on another class
 const STARBURST_WICKEDNESS_TILE = 110;
 
 const EVOLUTION_CLASSES = [
@@ -51,10 +52,10 @@ const EVOLUTION_CLASSES = [
     // Green 
     BARBS_WICKEDNESS_TILE => 'Barbs',
     FINAL_ROAR_WICKEDNESS_TILE => 'FinalRoar',
-    // TODO POISON_SPIT_WICKEDNESS_TILE => 'PoisonSpit',
-    // TODO UNDERDOG_WICKEDNESS_TILE => 'Underdog',
-    // TODO DEFENDER_OF_TOKYO_WICKEDNESS_TILE => 'DefenderOfTokyo',
-    // TODO FLUXLING_WICKEDNESS_TILE => 'Fluxling',
+    POISON_SPIT_WICKEDNESS_TILE => 'PoisonSpit',
+    UNDERDOG_WICKEDNESS_TILE => 'Underdog',
+    DEFENDER_OF_TOKYO_WICKEDNESS_TILE => 'DefenderOfTokyo',
+    FLUXLING_WICKEDNESS_TILE => 'Fluxling',
     HAVE_IT_ALL_WICKEDNESS_TILE => 'HaveItAll',
     SONIC_BOOMER_WICKEDNESS_TILE => 'SonicBoomer',
     FINAL_PUSH_WICKEDNESS_TILE => 'FinalPush',
@@ -92,12 +93,13 @@ class WickednessTileManager extends ItemManager {
 
     protected function getClassName(?array $dbItem): ?string {
         $cardType = intval($dbItem['card_type']);
-        if (array_key_exists($cardType, EVOLUTION_CLASSES)) {
-            $className = WickednessTile::class;
-            $namespace = substr($className, 0, strrpos($className, '\\'));
-            return $namespace . '\\' . EVOLUTION_CLASSES[$cardType];
+        if (!array_key_exists($cardType, EVOLUTION_CLASSES)) {
+            throw new \BgaSystemException('Unexisting WickednessTile class');
         }
-        return null;
+
+        $className = WickednessTile::class;
+        $namespace = substr($className, 0, strrpos($className, '\\'));
+        return $namespace . '\\' . EVOLUTION_CLASSES[$cardType];
     }
 
     public function getTable(?int $level = null): array {
@@ -151,12 +153,35 @@ class WickednessTileManager extends ItemManager {
         return $inc;
     }
 
+    public function onIncMaxHealth(Context $context): int {
+        $tiles = $this->getPlayerTiles($context->currentPlayerId);
+        $inc = 0;
+
+        foreach ($tiles as $tile) {
+            if (method_exists($tile, 'incMaxHealth')) {
+                $inc += $tile->incMaxHealth($context);
+            }
+        }
+
+        return $inc;
+    }
+
     public function onResolvingDieSymbol(Context $context) {
         $tiles = $this->getPlayerTiles($context->currentPlayerId);
 
         foreach ($tiles as $tile) {
             if (method_exists($tile, 'resolvingDiceEffect')) {
                 $tile->resolvingDiceEffect($context);
+            }
+        }
+    }
+
+    public function onEnteringTokyo(Context $context) {
+        $tiles = $this->getPlayerTiles($context->currentPlayerId);
+
+        foreach ($tiles as $tile) {
+            if (method_exists($tile, 'enteringTokyoEffect')) {
+                $tile->enteringTokyoEffect($context);
             }
         }
     }
@@ -186,6 +211,55 @@ class WickednessTileManager extends ItemManager {
         }
 
         return null;
+    }
+
+    public function onAddSmashes(Context $context): array {
+        $tiles = $this->getPlayerTiles($context->currentPlayerId);
+        $tiles = Arrays::filter($tiles, fn($tile) => method_exists($tile, 'addSmashesOrder') && method_exists($tile, 'addSmashes'));
+        $addedByTiles = 0;
+        $addingTiles = [];
+
+        // to make sure antimatter beam multiplication is done after barbs addition
+        usort($tiles, 
+            // Sort by the return value of addSmashesOrder, smaller order first
+            fn($a, $b) => $a->addSmashesOrder() <=> $b->addSmashesOrder()
+        );
+
+        foreach ($tiles as $tile) {
+            if (method_exists($tile, 'addSmashes')) {
+                $addedByTile = $tile->addSmashes($context);
+                $addedByTiles += $addedByTile;
+                $context->addedSmashes += $addedByTile;
+                if ($addedByTile > 0) {
+                    $addingTiles[] = 2000 + $tile->type;
+                }
+            }
+        }
+
+        return [$addedByTiles, $addingTiles];
+    }
+
+    public function onAddingSmashTokens(Context $context): AddSmashTokens {
+        $tiles = $this->getPlayerTiles($context->currentPlayerId);
+        $result = new AddSmashTokens();
+
+        foreach ($tiles as $tile) {
+            if (method_exists($tile, 'addSmashTokens')) {
+                $result->add($tile->addSmashTokens($context));
+            }
+        }
+
+        return $result;
+    }
+
+    public function onBuyCard(Context $context) {
+        $tiles = $this->getPlayerTiles($context->currentPlayerId);
+
+        foreach ($tiles as $tile) {
+            if (method_exists($tile, 'buyCardEffect')) {
+                $tile->buyCardEffect($context);
+            }
+        }
     }
 
 }

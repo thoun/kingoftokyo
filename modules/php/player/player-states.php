@@ -7,7 +7,6 @@ require_once(__DIR__.'/../Objects/damage.php');
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
-use const Bga\Games\KingOfTokyo\DEFENDER_OF_TOKYO_WICKEDNESS_TILE;
 use const Bga\Games\KingOfTokyo\FINAL_PUSH_WICKEDNESS_TILE;
 
 trait PlayerStateTrait {
@@ -65,6 +64,8 @@ trait PlayerStateTrait {
         $this->incStat(1, 'turnsNumber');
         $this->incStat(1, 'turnsNumber', $playerId);
 
+        $activePlayerInTokyo = $this->inTokyo($playerId);
+
         // apply monster effects
 
         // battery monster
@@ -89,7 +90,11 @@ trait PlayerStateTrait {
 
         // Sonic boomer
         if ($this->isWickednessExpansion()) {
-            $this->wickednessTiles->onStartTurn(new Context($this, currentPlayerId: $playerId));
+            $this->wickednessTiles->onStartTurn(new Context(
+                $this, 
+                currentPlayerId: $playerId,
+                currentPlayerInTokyo: $activePlayerInTokyo
+            ));
         }
 
         if ($this->isKingKongExpansion()) {
@@ -164,7 +169,7 @@ trait PlayerStateTrait {
         }
 
         // apply in tokyo at start
-        if ($this->inTokyo($playerId)) {
+        if ($activePlayerInTokyo) {
             // start turn in tokyo
 
             if ($this->isTwoPlayersVariant()) {
@@ -202,9 +207,6 @@ trait PlayerStateTrait {
                 $this->applyGetPoints($playerId, $countUrbavore, URBAVORE_CARD);
             }
 
-            if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-                $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 1);
-            }
             if ($this->isPowerUpExpansion()) {
                 $countIAmTheKing = $this->countEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION);
                 if ($countIAmTheKing > 0) {

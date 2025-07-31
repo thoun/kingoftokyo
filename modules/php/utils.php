@@ -11,12 +11,6 @@ use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
 
-use const Bga\Games\KingOfTokyo\DEFENDER_OF_TOKYO_WICKEDNESS_TILE;
-use const Bga\Games\KingOfTokyo\FULL_REGENERATION_WICKEDNESS_TILE;
-use const Bga\Games\KingOfTokyo\UNDERDOG_WICKEDNESS_TILE;
-
-use function Bga\Games\KingOfTokyo\debug;
-
 trait UtilTrait {
 
     //////////////////////////////////////////////////////////////////////////////
@@ -264,8 +258,9 @@ trait UtilTrait {
     function getPlayerMaxHealth(int $playerId) {
         $add = 0;
         $remove = 0;
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, FULL_REGENERATION_WICKEDNESS_TILE)) {
-            $add += 2;
+
+        if ($this->isWickednessExpansion()) {
+            $add += $this->wickednessTiles->onIncMaxHealth(new Context($this, currentPlayerId: $playerId));
         }
         
         $add += 2 * $this->countCardOfType($playerId, EVEN_BIGGER_CARD);
@@ -361,8 +356,11 @@ trait UtilTrait {
             $this->applyGetPoints($playerId, $countHungryUrbavore, HUNGRY_URBAVORE_CARD);
         }
 
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEFENDER_OF_TOKYO_WICKEDNESS_TILE)) {
-            $this->applyDefenderOfTokyo($playerId, 2000 + DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 1);
+        if ($this->isWickednessExpansion()) {
+            $this->wickednessTiles->onEnteringTokyo(new Context(
+                $this, 
+                currentPlayerId: $playerId,
+            ));
         }
 
         if ($this->isPowerUpExpansion()) {
@@ -963,9 +961,13 @@ trait UtilTrait {
             $this->applyGetPoisonToken($playerId, $damage->givePoisonSpitToken);
         }
 
-        if ($smasherPoints !== null && $this->isWickednessExpansion() && $this->gotWickednessTile($damageDealerId, UNDERDOG_WICKEDNESS_TILE) && $this->getPlayerScore($playerId) > $smasherPoints) {
-            $this->applyLosePoints($playerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
-            $this->applyGetPoints($damageDealerId, 1, 2000 + UNDERDOG_WICKEDNESS_TILE);
+        if ($this->isWickednessExpansion()) {
+            $this->wickednessTiles->onApplyDamage(new Context(
+                $this, 
+                attackerPlayerId: $$damageDealerId,
+                targetPlayerId: $playerId,
+                smasherPoints: $smasherPoints,
+            ));
         }
         
         $clawDamages = $damage->clawDamage !== null ? 1 : 0;
