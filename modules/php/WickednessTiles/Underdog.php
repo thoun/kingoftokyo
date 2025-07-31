@@ -7,7 +7,7 @@ use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class Underdog extends WickednessTile {
-    public function startTurnEffect(Context $context) {
+    public function onApplyDamageEffect(Context $context) {
         if ($context->smasherPoints === null) {
             return; // only apply on smashes
         }

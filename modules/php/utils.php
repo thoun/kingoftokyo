@@ -964,7 +964,7 @@ trait UtilTrait {
         if ($this->isWickednessExpansion()) {
             $this->wickednessTiles->onApplyDamage(new Context(
                 $this, 
-                attackerPlayerId: $$damageDealerId,
+                attackerPlayerId: $damageDealerId,
                 targetPlayerId: $playerId,
                 smasherPoints: $smasherPoints,
             ));

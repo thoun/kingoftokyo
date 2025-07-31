@@ -252,6 +252,16 @@ class WickednessTileManager extends ItemManager {
         return $result;
     }
 
+    public function onApplyDamage(Context $context) {
+        $tiles = $this->getPlayerTiles($context->attackerPlayerId);
+
+        foreach ($tiles as $tile) {
+            if (method_exists($tile, 'onApplyDamageEffect')) {
+                $tile->onApplyDamageEffect($context);
+            }
+        }
+    }
+
     public function onBuyCard(Context $context) {
         $tiles = $this->getPlayerTiles($context->currentPlayerId);
 
