@@ -11,6 +11,10 @@ use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
 
+use const Bga\Games\KingOfTokyo\DEFENDER_OF_TOKYO_WICKEDNESS_TILE;
+use const Bga\Games\KingOfTokyo\FULL_REGENERATION_WICKEDNESS_TILE;
+use const Bga\Games\KingOfTokyo\UNDERDOG_WICKEDNESS_TILE;
+
 use function Bga\Games\KingOfTokyo\debug;
 
 trait UtilTrait {

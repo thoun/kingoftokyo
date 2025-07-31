@@ -12,6 +12,10 @@ use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\ClawDamage;
 use KOT\Objects\Damage;
 
+use const Bga\Games\KingOfTokyo\ANTIMATTER_BEAM_WICKEDNESS_TILE;
+use const Bga\Games\KingOfTokyo\BARBS_WICKEDNESS_TILE;
+use const Bga\Games\KingOfTokyo\POISON_SPIT_WICKEDNESS_TILE;
+
 trait DiceUtilTrait {
 
     //////////////////////////////////////////////////////////////////////////////

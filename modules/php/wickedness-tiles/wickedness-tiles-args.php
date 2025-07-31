@@ -2,6 +2,8 @@
 
 namespace KOT\States;
 
+use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
+
 trait WickednessTilesArgTrait {
 
 //////////////////////////////////////////////////////////////////////////////

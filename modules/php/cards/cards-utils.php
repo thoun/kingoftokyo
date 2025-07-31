@@ -15,6 +15,8 @@ use KOT\Objects\Damage;
 use KOT\Objects\Question;
 use KOT\Objects\LoseHealthLog;
 
+use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
+
 trait CardsUtilTrait {
 
     //////////////////////////////////////////////////////////////////////////////

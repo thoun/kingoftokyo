@@ -8,6 +8,8 @@ require_once(__DIR__.'/../framework-prototype/Helpers/Arrays.php');
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 
+use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
+
 trait WickednessTilesUtilTrait {
 
     //////////////////////////////////////////////////////////////////////////////

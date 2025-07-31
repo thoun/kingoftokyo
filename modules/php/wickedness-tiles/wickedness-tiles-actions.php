@@ -4,6 +4,8 @@ namespace KOT\States;
 
 use Bga\Games\KingOfTokyo\Objects\Context;
 
+use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
+
 trait WickednessTilesActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////

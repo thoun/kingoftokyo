@@ -7,7 +7,8 @@ require_once(__DIR__.'/../Objects/damage.php');
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
-use function Bga\Games\KingOfTokyo\debug;
+use const Bga\Games\KingOfTokyo\DEFENDER_OF_TOKYO_WICKEDNESS_TILE;
+use const Bga\Games\KingOfTokyo\FINAL_PUSH_WICKEDNESS_TILE;
 
 trait PlayerStateTrait {
 

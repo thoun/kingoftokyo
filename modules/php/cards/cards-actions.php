@@ -9,6 +9,9 @@ use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\PlayersUsedDice;
 use KOT\Objects\CardBeingBought;
 
+use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
+use const Bga\Games\KingOfTokyo\HAVE_IT_ALL_WICKEDNESS_TILE;
+
 trait CardsActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////
