@@ -8,6 +8,7 @@ require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/log.php');
 
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Card;
 use KOT\Objects\EvolutionCard;
 use KOT\Objects\Damage;
@@ -390,8 +391,8 @@ trait CardsUtilTrait {
 
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
-        // evil lair
-        $countEvilLair = ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, EVIL_LAIR_WICKEDNESS_TILE)) ? 1 : 0;
+        
+        $wickenessTilesDec = $this->isWickednessExpansion() ? $this->wickednessTiles->onIncPowerCardsReduction(new Context($this, currentPlayerId: $playerId)) : 0;
         // inadequate offering
         $inadequateOffering = $this->isAnubisExpansion() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
         // secret laboratory
@@ -400,7 +401,7 @@ trait CardsUtilTrait {
             $countSecretLaboratory = $this->countEvolutionOfType($playerId, SECRET_LABORATORY_EVOLUTION);
         }
 
-        return max($cardCost + $inadequateOffering - $countAlienOrigin - $countEvilLair - $countSecretLaboratory, 0);
+        return max($cardCost + $inadequateOffering - $countAlienOrigin - $wickenessTilesDec - $countSecretLaboratory, 0);
     }
 
     function canBuyCard(int $playerId, int $cardType, int $cost) {
@@ -421,7 +422,7 @@ trait CardsUtilTrait {
         $this->removeCards($playerId, $cards);
         // discard all tiles
         if ($this->isWickednessExpansion()) {
-            $tiles = $this->wickednessTiles->getItemsInLocation('hand', $playerId);
+            $tiles = $this->wickednessTiles->getPlayerTiles($playerId);
             $this->removeWickednessTiles($playerId, $tiles);
         }
 

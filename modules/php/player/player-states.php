@@ -4,6 +4,7 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 use function Bga\Games\KingOfTokyo\debug;
@@ -87,15 +88,7 @@ trait PlayerStateTrait {
 
         // Sonic boomer
         if ($this->isWickednessExpansion()) {
-            if ($this->gotWickednessTile($playerId, TIRELESS_WICKEDNESS_TILE)) {
-                $this->applyGetEnergy($playerId, 1, 2000 + TIRELESS_WICKEDNESS_TILE);
-            }
-            if ($this->gotWickednessTile($playerId, ETERNAL_WICKEDNESS_TILE)) {
-                $this->applyGetHealth($playerId, 1, 2000 + ETERNAL_WICKEDNESS_TILE, $playerId);
-            }
-            if ($this->gotWickednessTile($playerId, SONIC_BOOMER_WICKEDNESS_TILE)) {
-                $this->applyGetPoints($playerId, 1, 2000 + SONIC_BOOMER_WICKEDNESS_TILE);
-            }
+            $this->wickednessTiles->onStartTurn(new Context($this, currentPlayerId: $playerId));
         }
 
         if ($this->isKingKongExpansion()) {

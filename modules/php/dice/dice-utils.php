@@ -6,6 +6,7 @@ require_once(__DIR__.'/../Objects/dice.php');
 require_once(__DIR__.'/../Objects/player-intervention.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Dice;
 use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\ClawDamage;
@@ -191,8 +192,8 @@ trait DiceUtilTrait {
         $add = $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD) + $this->countCardOfType($playerId, NATURAL_SELECTION_CARD);
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, CYBERBRAIN_WICKEDNESS_TILE)) {
-            $add += 1;
+        if ($this->isWickednessExpansion()) {
+            $add += $this->wickednessTiles->onIncDieCount(new Context($this, currentPlayerId: $playerId));
         }
 
         if ($this->isAnubisExpansion()) {
@@ -281,8 +282,8 @@ trait DiceUtilTrait {
                 }
                 
                 // Skulking
-                if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, SKULKING_WICKEDNESS_TILE)) {
-                    $this->applyGetPoints($playerId, 1, 2000 + SKULKING_WICKEDNESS_TILE);
+                if ($this->isWickednessExpansion()) {
+                    $this->wickednessTiles->onResolvingDieSymbol(new Context($this, currentPlayerId: $playerId, dieSymbol: $number, dieCount: $diceCount));
                 }
             }
             
@@ -354,8 +355,8 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, SKYBEAM_WICKEDNESS_TILE)) {
-            $this->applyGetHealth($playerId, $diceCount, 2000 + SKYBEAM_WICKEDNESS_TILE, $playerId);
+        if ($this->isWickednessExpansion()) {
+            $this->wickednessTiles->onResolvingDieSymbol(new Context($this, currentPlayerId: $playerId, dieSymbol: 4, dieCount: $diceCount));
         }
     }
 
@@ -380,8 +381,8 @@ trait DiceUtilTrait {
         
         $this->applyGetEnergy($playerId, $diceCount, 0);
 
-        if ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, SKYBEAM_WICKEDNESS_TILE)) {
-            $this->applyGetEnergy($playerId, $diceCount, 2000 + SKYBEAM_WICKEDNESS_TILE);
+        if ($this->isWickednessExpansion()) {
+            $this->wickednessTiles->onResolvingDieSymbol(new Context($this, currentPlayerId: $playerId, dieSymbol: 5, dieCount: $diceCount));
         }
     }
 

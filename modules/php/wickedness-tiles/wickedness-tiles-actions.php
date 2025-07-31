@@ -2,6 +2,8 @@
 
 namespace KOT\States;
 
+use Bga\Games\KingOfTokyo\Objects\Context;
+
 trait WickednessTilesActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -28,7 +30,7 @@ trait WickednessTilesActionTrait {
         $level = $this->canTakeWickednessTile($playerId);
         $tile = $this->wickednessTiles->getItemById($id);
 
-        $tableTiles = $this->getTableWickednessTiles($level);
+        $tableTiles = $this->wickednessTiles->getTable($level);
         if (!$this->array_some($tableTiles, fn($t) => $t->id === $tile->id)) {
             throw new \BgaUserException("This tile is not on the table");
         }
@@ -47,7 +49,7 @@ trait WickednessTilesActionTrait {
 
         $this->removeFirstTakeWickednessTileLevel($playerId);
 
-        $damages = $this->applyWickednessTileEffect($tile, $playerId);
+        $damages = $this->wickednessTiles->immediateEffect($tile, new Context($this, currentPlayerId: $playerId));
 
         $mimic = false;
         if ($tile->type === FLUXLING_WICKEDNESS_TILE) {

@@ -214,29 +214,6 @@ trait DebugUtilTrait {
             //$this->setBeastForm(2343492, true);
         }
 
-
-        // wickedness
-        if ($this->isWickednessExpansion()) {
-            //$this->wickednessTiles->setup(3); // 2=orange, 3=green, 4=mix
-            //$this->debug_SetWickednessTileInTable(FLUXLING_WICKEDNESS_TILE);
-            //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343492");
-            //$this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[6]' where `player_id` = 2343492");
-            //$this->debug_SetWickednessTileInHand(FLUXLING_WICKEDNESS_TILE, 2343493);
-            //$this->setMimickedCard(FLUXLING_WICKEDNESS_TILE, 2343492, $this->debug_SetCardInHand(PSYCHIC_PROBE_CARD, 2343492));
-            //$this->debug_SetWickednessTileInHand(UNDERDOG_WICKEDNESS_TILE, 2343492);
-            $this->debug_SetWickednessTileInHand(FINAL_ROAR_WICKEDNESS_TILE, 2343493);
-            //$this->debug_SetWickednessTileInHand(BARBS_WICKEDNESS_TILE, 2343492);
-            //$this->debug_SetWickednessTileInHand(DEFENDER_OF_TOKYO_WICKEDNESS_TILE, 2343492);
-            //$this->debug_SetWickednessTileInHand(TIRELESS_WICKEDNESS_TILE, 2343492);
-            //$this->debug_SetWickednessTileInHand(CYBERBRAIN_WICKEDNESS_TILE, 2343492);
-
-            //$this->DbQuery("UPDATE player SET `player_wickedness` = 2 where `player_id` = 2343493");
-
-            //$this->debug_SetWickednessTileInHand(DEVIOUS_WICKEDNESS_TILE, 2343494);
-            //$this->debug_SetWickednessTileInHand(ETERNAL_WICKEDNESS_TILE, 2343494);
-            //$this->debug_SetWickednessTileInHand(SKULKING_WICKEDNESS_TILE, 2343494);
-        }
-
         // power up
 
         if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
@@ -335,6 +312,12 @@ trait DebugUtilTrait {
         $card = $cards[0];
         $this->wickednessTiles->moveItem($card, 'hand', $playerId);
         return $card;
+    }
+
+    function debug_SetWickednessTilesInHand(int $playerId, int $side = 0) {
+        for ($i = 1; $i <= 10; $i++) {
+            $this->debug_SetWickednessTileInHand($side * 100 + $i, $playerId);
+        }
     }
 
     function debug_SetCardInTable(int $cardType) {

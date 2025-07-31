@@ -7,9 +7,6 @@ require_once(__DIR__.'/../framework-prototype/Helpers/Arrays.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
-use Bga\Games\KingOfTokyo\Objects\Context;
-
-use function Bga\Games\KingOfTokyo\debug;
 
 trait WickednessTilesUtilTrait {
 
@@ -50,47 +47,6 @@ trait WickednessTilesUtilTrait {
         return count($levels) > 0 ? min($levels) : 0;
     }
 
-    function applyWickednessTileEffect(object $tile, int $playerId) { // return $damages
-        $tileType = $tile->type;
-        $logTileType = 2000 + $tileType;
-        switch($tileType) {
-            case FULL_REGENERATION_WICKEDNESS_TILE:
-                if ($this->canGainHealth($playerId)) {
-                    $this->applyGetHealthIgnoreCards($playerId, $this->getPlayerMaxHealth($playerId), $logTileType, $playerId);
-                }
-                break;
-            case WIDESPREAD_PANIC_WICKEDNESS_TILE:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyLosePoints($otherPlayerId, 4, $logTileType);
-                }
-                $this->removeWickednessTiles($playerId, [$tile]);
-                break;
-            case ANTIMATTER_BEAM_WICKEDNESS_TILE:
-                $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-                $diceCounts[6] *= 2;
-                $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
-                break;
-            case BARBS_WICKEDNESS_TILE:
-                $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-                if ($diceCounts[6] >= 2) {
-                    $diceCounts[6] += 1;
-                    $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
-                }
-                break;
-            case HAVE_IT_ALL_WICKEDNESS_TILE:
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-                $keepCardsCount = count(array_filter($cardsOfPlayer, fn($card) => $card->type < 100));
-                $this->applyGetPoints($playerId, $keepCardsCount, $logTileType);
-                break;
-            default:
-                if (method_exists($tile, 'immediateEffect')) {
-                    $tile->immediateEffect($this, new Context(currentPlayerId: $playerId));
-                }
-                break;
-        }
-    }
-
     function removeWickednessTiles(int $playerId, array $tiles) {
         $this->wickednessTiles->moveItems($tiles, 'discard');
 
@@ -100,12 +56,8 @@ trait WickednessTilesUtilTrait {
         ]);
     }
 
-    function getTableWickednessTiles(int $level): array {
-        return $this->wickednessTiles->getItemsInLocation('table', $level);
-    }
-
     function getWickednessTileByType(int $playerId, int $cardType): ?WickednessTile {
-        $handTiles = $this->wickednessTiles->getItemsInLocation('hand', $playerId);
+        $handTiles = $this->wickednessTiles->getPlayerTiles($playerId);
         return Arrays::find($handTiles, fn($tile) => $tile->type == $cardType);
     }
 

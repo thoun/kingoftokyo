@@ -18,7 +18,7 @@ trait WickednessTilesArgTrait {
         $playerId = $this->getActivePlayerId();
         
         $level = $this->canTakeWickednessTile($playerId);
-        $tableTiles = $this->getTableWickednessTiles($level);
+        $tableTiles = $this->wickednessTiles->getTable($level);
 
         $dice = $this->getPlayerRolledDice($playerId, false, false, false);
         $canHealWithDice = $this->canHealWithDice($playerId);

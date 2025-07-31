@@ -496,7 +496,7 @@ class Game extends \Bga\GameFramework\Table {
             }
             if ($isWickednessExpansion) {
                 $playerDb['wickedness'] = intval($playerDb['wickedness']);
-                $playerDb['wickednessTiles'] = $this->wickednessTiles->getItemsInLocation('hand', $playerId);
+                $playerDb['wickednessTiles'] = $this->wickednessTiles->getPlayerTiles($playerId);
 
                 foreach($playerDb['wickednessTiles'] as &$card) {
                     if ($card->type == FLUXLING_WICKEDNESS_TILE) {
@@ -547,7 +547,7 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         if ($isWickednessExpansion) {
-            $result['wickednessTiles'] = $this->wickednessTiles->getItemsInLocation('table');
+            $result['wickednessTiles'] = $this->wickednessTiles->getTable();
         }
 
         if ($isPowerUpExpansion) {

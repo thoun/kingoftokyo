@@ -6,9 +6,12 @@ require_once(__DIR__.'/Objects/player.php');
 require_once(__DIR__.'/Objects/player-intervention.php');
 require_once(__DIR__.'/Objects/damage.php');
 
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
+
+use function Bga\Games\KingOfTokyo\debug;
 
 trait UtilTrait {
 
@@ -227,7 +230,7 @@ trait UtilTrait {
         $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
         // energy drink
         $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS));
-        $deviousTile = ($this->isWickednessExpansion() && $this->gotWickednessTile($playerId, DEVIOUS_WICKEDNESS_TILE)) ? 1 : 0;
+        $wickenessTilesInc = $this->isWickednessExpansion() ? $this->wickednessTiles->onIncDieRollCount(new Context($this, currentPlayerId: $playerId)) : 0;
 
         $removedDieByBuriedInSand = false;
         $falseBlessing = 0;
@@ -247,7 +250,7 @@ trait UtilTrait {
             }
         }
 
-        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $deviousTile + $falseBlessing - $ignisFatus;
+        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $wickenessTilesInc + $falseBlessing - $ignisFatus;
         if ($rollNumber > 1 && $removedDieByBuriedInSand) {
             $rollNumber--;
         }
@@ -589,16 +592,12 @@ trait UtilTrait {
 
         foreach($orderedPlayers as $player) {
             if ($player->health == 0 && !$player->eliminated && $this->countCardOfType($player->id, ZOMBIE_CARD) == 0) { // ignore players with Zombie
-                // Final Roar
-                if ($this->isWickednessExpansion() && $this->gotWickednessTile($player->id, FINAL_ROAR_WICKEDNESS_TILE) && $player->score >= 16) {
-                    $this->applyGetPointsIgnoreCards($player->id, WIN_GAME, 0);
-            
-                    $this->notifyAllPlayers("log", clienttranslate('${player_name} is eliminated with ${points} [Star] or more and wins the game with ${card_name}'), [
-                        'playerId' => $player->id,
-                        'player_name' => $this->getPlayerName($player->id),
-                        'card_name' => 2000 + FINAL_ROAR_WICKEDNESS_TILE,
-                        'points' => 16,
-                    ]);
+                
+                $context = new Context($this, currentPlayerId: $player->id);
+                $winOnEliminationWickednessTile = $this->isWickednessExpansion() ? $this->wickednessTiles->winOnElimination($context) : null;
+
+                if ($winOnEliminationWickednessTile !== null) {
+                    $winOnEliminationWickednessTile->onTrigger($context);
                 } else {
                     $this->eliminateAPlayer($player, $currentTurnPlayerId);
                 }
@@ -643,7 +642,7 @@ trait UtilTrait {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
         if ($this->isWickednessExpansion()) {
-            $tiles = $this->wickednessTiles->getItemsInLocation('hand', $player->id);
+            $tiles = $this->wickednessTiles->getPlayerTiles($player->id);
             $this->removeWickednessTiles($player->id, $tiles);
         }
         if ($this->isPowerUpExpansion()) {
@@ -978,8 +977,7 @@ trait UtilTrait {
         // must be done before player eliminations
         $finalRoarWillActivate = $this->getPlayerHealth($playerId) == 0 
             && $this->isWickednessExpansion() 
-            && $this->gotWickednessTile($playerId, FINAL_ROAR_WICKEDNESS_TILE) 
-            && $this->getPlayerScore($playerId) >= 16;
+            && $this->wickednessTiles->winOnElimination(new Context($this, currentPlayerId: $playerId)) !== null;
 
         if (!$finalRoarWillActivate) {
             if ($this->isPowerUpExpansion()) {

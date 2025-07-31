@@ -21,7 +21,7 @@ trait WickednessTilesStateTrait {
 
         if ($this->autoSkipImpossibleActions()) {      
             $level = $this->canTakeWickednessTile($playerId);
-            $tableTiles = $this->getTableWickednessTiles($level);
+            $tableTiles = $this->wickednessTiles->getTable($level);
         
             if (count($tableTiles) == 0) {
                 $this->skipTakeWickednessTile(true);
