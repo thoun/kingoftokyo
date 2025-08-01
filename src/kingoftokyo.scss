@@ -10,7 +10,8 @@ $monstersNumbers:
   21, // KONY
   // 31, 32, 33, 34, 35, 36, 37, 38, // World tour event
   41, 42, 43, 44, 45, // KOMI
-  51, 52, 53, 54 // Origins
+  51, 52, 53, 54, // Origins
+  61, 62, 63, //Mindbug
   ; 
 
 $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115; 
@@ -18,7 +19,6 @@ $darkEditionMonstersNumbers: 102, 104, 105, 106, 114, 115;
 @import 'playerboards';
 @import 'dice';
 @import 'cards';
-//@import '../node_modules/bga-zoom/bga-zoom';
 @import '../node_modules/bga-cards/bga-cards';
 @import 'curse-cards';
 @import 'evolution-cards';
@@ -549,12 +549,18 @@ button, a {
     @for $i from 1 through 15 {
         &.monster#{$i} {
           background-image: url('img/monster-icons.png'); // here and not in .monster-icon, so monsters with no icon will get the background-color set in JS instead of first monster icon
-          background-position: (($i - 1) * 100% / 15) 50%;
+          background-position: (($i - 1) * 100% / 18) 50%;
         }
     }
     &.monster18 {
       background-image: url('img/monster-icons.png');
-      background-position: 100% 50%;
+      background-position: (15 * 100% / 18) 50%;
+    }
+    @for $i from 61 through 63 {
+        &.monster#{$i} {
+          background-image: url('img/monster-icons.png');
+          background-position: (($i - 45) * 100% / 18) 50%;
+        }
     }
     @each $darkEditionMonstersNumber in $darkEditionMonstersNumbers {
       $i: index($darkEditionMonstersNumbers, $darkEditionMonstersNumber);

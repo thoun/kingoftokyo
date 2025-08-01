@@ -2,6 +2,8 @@
 
 namespace KOT\States;
 
+const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
+
 trait MonsterTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,8 +103,14 @@ trait MonsterTrait {
             }
         }
 
+        // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
+        // TODOMB activate it
+        //*if ($bonusMonsters || $this->isMindbugExpansion()) {
+        //    $monsters = [...$monsters, /*61,*/ 62, /*63*/];
+        //}
+
         if ($this->isWickednessExpansion()) {
-            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, $this->MONSTERS_WITH_ICON)));            
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, MONSTERS_WITH_ICON)));            
         }
 
         if ($this->isPowerUpExpansion()) {

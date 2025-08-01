@@ -17,6 +17,7 @@ class MonsterSelector {
             new MonsterGroup([21,22,23,24,25,26], 'King of New-York', '#645195'),
             new MonsterGroup([41, 42, 43, 44, 45], 'King of Monster Island', '#e82519'),
             new MonsterGroup([51,52,53,54], _('King of Tokyo Origins'), '#f78d33'),
+            new MonsterGroup([61,62,63], _('Mindbug expansion'), '#b14e85'),
         ];
     }
 

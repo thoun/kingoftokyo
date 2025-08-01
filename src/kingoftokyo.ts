@@ -3622,6 +3622,7 @@ class KingOfTokyo implements KingOfTokyoGame {
             ['updateCancelDamage', 1],
             ['ownedEvolutions', 1],
             ['resurrect', 1],
+            ['mindbugPlayer', 1],
             ['log500', 500],
         ];
     
@@ -4149,6 +4150,10 @@ class KingOfTokyo implements KingOfTokyoGame {
         if (args.zombified) {
             this.getPlayerTable(args.playerId).zombify();
         }
+    }
+
+    notif_mindbugPlayer() {
+        // TODOMB
     }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {

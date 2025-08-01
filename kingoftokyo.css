@@ -2116,6 +2116,15 @@ body > .card {
 #table .player-table .monster-board-wrapper .monster-board.monster54 {
   background-image: url("img/monsters/monster-board-54.png");
 }
+#table .player-table .monster-board-wrapper .monster-board.monster61 {
+  background-image: url("img/monsters/monster-board-61.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster62 {
+  background-image: url("img/monsters/monster-board-62.png");
+}
+#table .player-table .monster-board-wrapper .monster-board.monster63 {
+  background-image: url("img/monsters/monster-board-63.png");
+}
 #table .player-table .monster-board-wrapper .monster-board.monster102 {
   background-image: url("img/monsters/dark/monster-board-102.png");
 }
@@ -3196,6 +3205,15 @@ html[data-dice="6"] .animation {
 .monster-figure.monster54 {
   background-image: url("img/monsters/monster-figure-54.png");
 }
+.monster-figure.monster61 {
+  background-image: url("img/monsters/monster-figure-61.png");
+}
+.monster-figure.monster62 {
+  background-image: url("img/monsters/monster-figure-62.png");
+}
+.monster-figure.monster63 {
+  background-image: url("img/monsters/monster-figure-63.png");
+}
 .monster-figure.monster102 {
   background-image: url("img/monsters/dark/monster-figure-102.png");
 }
@@ -3520,61 +3538,73 @@ button .icon, a .icon {
 }
 .monster-icon.monster2 {
   background-image: url("img/monster-icons.png");
-  background-position: 6.6666666667% 50%;
+  background-position: 5.5555555556% 50%;
 }
 .monster-icon.monster3 {
   background-image: url("img/monster-icons.png");
-  background-position: 13.3333333333% 50%;
+  background-position: 11.1111111111% 50%;
 }
 .monster-icon.monster4 {
   background-image: url("img/monster-icons.png");
-  background-position: 20% 50%;
+  background-position: 16.6666666667% 50%;
 }
 .monster-icon.monster5 {
   background-image: url("img/monster-icons.png");
-  background-position: 26.6666666667% 50%;
+  background-position: 22.2222222222% 50%;
 }
 .monster-icon.monster6 {
   background-image: url("img/monster-icons.png");
-  background-position: 33.3333333333% 50%;
+  background-position: 27.7777777778% 50%;
 }
 .monster-icon.monster7 {
   background-image: url("img/monster-icons.png");
-  background-position: 40% 50%;
+  background-position: 33.3333333333% 50%;
 }
 .monster-icon.monster8 {
   background-image: url("img/monster-icons.png");
-  background-position: 46.6666666667% 50%;
+  background-position: 38.8888888889% 50%;
 }
 .monster-icon.monster9 {
   background-image: url("img/monster-icons.png");
-  background-position: 53.3333333333% 50%;
+  background-position: 44.4444444444% 50%;
 }
 .monster-icon.monster10 {
   background-image: url("img/monster-icons.png");
-  background-position: 60% 50%;
+  background-position: 50% 50%;
 }
 .monster-icon.monster11 {
   background-image: url("img/monster-icons.png");
-  background-position: 66.6666666667% 50%;
+  background-position: 55.5555555556% 50%;
 }
 .monster-icon.monster12 {
   background-image: url("img/monster-icons.png");
-  background-position: 73.3333333333% 50%;
+  background-position: 61.1111111111% 50%;
 }
 .monster-icon.monster13 {
   background-image: url("img/monster-icons.png");
-  background-position: 80% 50%;
+  background-position: 66.6666666667% 50%;
 }
 .monster-icon.monster14 {
   background-image: url("img/monster-icons.png");
-  background-position: 86.6666666667% 50%;
+  background-position: 72.2222222222% 50%;
 }
 .monster-icon.monster15 {
   background-image: url("img/monster-icons.png");
-  background-position: 93.3333333333% 50%;
+  background-position: 77.7777777778% 50%;
 }
 .monster-icon.monster18 {
+  background-image: url("img/monster-icons.png");
+  background-position: 83.3333333333% 50%;
+}
+.monster-icon.monster61 {
+  background-image: url("img/monster-icons.png");
+  background-position: 88.8888888889% 50%;
+}
+.monster-icon.monster62 {
+  background-image: url("img/monster-icons.png");
+  background-position: 94.4444444444% 50%;
+}
+.monster-icon.monster63 {
   background-image: url("img/monster-icons.png");
   background-position: 100% 50%;
 }

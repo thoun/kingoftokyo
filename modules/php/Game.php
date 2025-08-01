@@ -18,6 +18,8 @@
 
 namespace Bga\Games\KingOfTokyo;
 
+require_once('framework-prototype/counters/player-counter.php');
+
 require_once('constants.inc.php');
 require_once('Objects/dice.php');
 require_once('Objects/card.php');
@@ -52,6 +54,7 @@ require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
 
 use Bga\GameFramework\Components\Deck;
+use Bga\GameFrameworkPrototype\Counters\PlayerCounter;
 use \feException;
 
 class Game extends \Bga\GameFramework\Table {
@@ -91,8 +94,9 @@ class Game extends \Bga\GameFramework\Table {
     public WickednessTileManager $wickednessTiles;
     public Deck $evolutionCards;
 
+    public PlayerCounter $mindbugTokens;
+
     // from material file
-    public array $MONSTERS_WITH_ICON;
     public array $MONSTERS_WITH_POWER_UP_CARDS;
     public array $EVOLUTION_CARDS_TYPES;
     public array $EVOLUTION_CARDS_TYPES_FOR_STATS;
@@ -124,6 +128,9 @@ class Game extends \Bga\GameFramework\Table {
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
+
+        require_once('material.inc.php');
+
         $this->initGameStateLabels([
             'throwNumber' => 10,
             FRENZY_EXTRA_TURN => 11,
@@ -184,11 +191,9 @@ class Game extends \Bga\GameFramework\Table {
         $this->evolutionCards = $this->getNew("module.common.deck");
         $this->evolutionCards->init("evolution_card");
         $this->evolutionCards->autoreshuffle = true;
-	}
 
-    protected function getGameName() {
-        return "kingoftokyo";
-    }
+        $this->mindbugTokens = new PlayerCounter($this, 'mindbugTokens', 'mindbugTokens', 0);
+	}
 
     /*
         setupNewGame:
@@ -198,7 +203,8 @@ class Game extends \Bga\GameFramework\Table {
         the game is ready to be played.
     */
     protected function setupNewGame($players, $options = []) { 
-        $this->wickednessTiles->initDb();      
+        $this->wickednessTiles->initDb();  
+        $this->mindbugTokens->initDb(array_keys($players));  
 
         $sql = "DELETE FROM player WHERE 1 ";
         $this->DbQuery( $sql );

@@ -152,7 +152,7 @@ define('MUTANT_EVOLUTION_TURN', 'MutantEvolutionTurn');
 define('PREVENT_ENTER_TOKYO', 'PreventEnterTokyo');
 define('ENCASED_IN_ICE_DIE_ID', 'EncasedInIceDieId');
 define('TARGETED_PLAYER', 'TargetedPlayer');
-
+define('MINDBUGGED_PLAYER', 'MindbuggedPlayer');
 
 /*
  * Global variables

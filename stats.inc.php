@@ -94,6 +94,10 @@ $monstersNames = [
     52 => "Gigarex",
     53 => "Cosmic Joe",
     54 => "Iron back",
+    // Mindbug
+    61 => "Gigasnail Hydra",
+    62 => "MasterMindbug",
+    63 => "Sharky Crab-dog Mummypus-Zilla",
     // Dark edition
     102 => "Dark Alienoid", 
     104 => "Dark The King", 

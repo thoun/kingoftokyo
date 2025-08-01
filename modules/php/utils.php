@@ -106,6 +106,10 @@ trait UtilTrait {
         return intval($this->getGameStateValue(ORIGINS_OPTION)) > 1;
     }
 
+    function isMindbugExpansion(): bool {
+        return false; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+    }
+
     function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
         $currentdate = new \DateTimeImmutable();
         $activationdate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $activationDateStr.'+00:00')->sub(new \DateInterval("PT${hourShift}H")); // "2021-12-30T21:41:00+00:00"
@@ -1336,11 +1340,32 @@ trait UtilTrait {
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
     }
-  	
-    // TODOBUG
-    public function debugBlockedTable(int $tableId) {
-        if ($tableId == 277711940 || $tableId == 277304366) {
-            $this->goToState(ST_MULTIPLAYER_LEAVE_TOKYO);
-        }
+
+    public function setMindbuggedPlayer(int $activePlayerId, ?int $mindbuggedPlayerId) { // active player must be changed before
+        $this->globals->set(MINDBUGGED_PLAYER, $mindbuggedPlayerId);
+
+        $this->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} mindbugs ${player_name2}!'), [
+            'activePlayerId' => $activePlayerId,
+            'mindbuggedPlayerId' => $mindbuggedPlayerId,
+            'player_name' => $this->getPlayerNameById($activePlayerId),
+            'player_name2' => $this->getPlayerNameById($mindbuggedPlayerId),
+        ]);
+    }
+
+    public function endMindbuggedPlayer(int $activePlayerId) { // active player must be changed before
+        $mindbuggedPlayerId = $this->getMindbuggedPlayer();
+        
+        $this->globals->set(MINDBUGGED_PLAYER, null);
+
+        $this->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} finishes his mindbugged turn, ${player_name2} can start again his turn at tge Roll dice phase'), [
+            'activePlayerId' => $activePlayerId,
+            'mindbuggedPlayerId' => null,
+            'player_name' => $this->getPlayerNameById($activePlayerId),
+            'player_name2' => $this->getPlayerNameById($mindbuggedPlayerId),
+        ]);
+    }
+
+    public function getMindbuggedPlayer(): ?int {
+        return $this->globals->get(MINDBUGGED_PLAYER);
     }
 }
