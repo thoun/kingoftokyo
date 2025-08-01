@@ -10,7 +10,7 @@ class SonicBoomer extends WickednessTile {
     public function startTurnEffect(Context $context) {
         $playerId = $context->currentPlayerId;
 
-        $context->game->applyGetPoints($playerId, 1, 2000 + $this->type);
+        $context->game->applyGetPoints($playerId, 1, $this);
     }
 }
 

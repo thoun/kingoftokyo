@@ -10,7 +10,7 @@ class Eternal extends WickednessTile {
     public function startTurnEffect(Context $context) {
         $playerId = $context->currentPlayerId;
 
-        $context->game->applyGetHealth($playerId, 1, 2000 + $this->type, $playerId);
+        $context->game->applyGetHealth($playerId, 1, $this, $playerId);
     }
 }
 

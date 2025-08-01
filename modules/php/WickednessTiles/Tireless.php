@@ -10,7 +10,7 @@ class Tireless extends WickednessTile {
     public function startTurnEffect(Context $context) {
         $playerId = $context->currentPlayerId;
 
-        $context->game->applyGetEnergy($playerId, 1, 2000 + $this->type);
+        $context->game->applyGetEnergy($playerId, 1, $this);
     }
 }
 

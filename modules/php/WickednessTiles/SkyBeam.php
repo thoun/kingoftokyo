@@ -11,10 +11,10 @@ class SkyBeam extends WickednessTile {
         $playerId = $context->currentPlayerId;
 
         if ($context->dieSymbol == 4 && $context->dieCount > 0) {
-            $context->game->applyGetHealth($playerId, $context->dieCount, 2000 + $this->type, $playerId);
+            $context->game->applyGetHealth($playerId, $context->dieCount, $this, $playerId);
         }
         if ($context->dieSymbol == 5 && $context->dieCount > 0) {
-            $context->game->applyGetEnergy($playerId, $context->dieCount, 2000 + $this->type, $playerId);
+            $context->game->applyGetEnergy($playerId, $context->dieCount, $this, $playerId);
         }
     }
 }

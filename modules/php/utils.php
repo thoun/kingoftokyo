@@ -7,6 +7,7 @@ require_once(__DIR__.'/Objects/player-intervention.php');
 require_once(__DIR__.'/Objects/damage.php');
 
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
@@ -680,7 +681,7 @@ trait UtilTrait {
 
     // $cardType = 0 => notification with no message
     // $cardType = -1 => no notification
-    function applyGetPoints(int $playerId, int $points, int $cardType) {
+    function applyGetPoints(int $playerId, int $points, int | WickednessTile $cardType) {
         $canGainPoints = $this->canGainPoints($playerId);
         if ($canGainPoints !== null) {
             return $canGainPoints;
@@ -688,7 +689,7 @@ trait UtilTrait {
 
         $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
 
-        if ($cardType != ASTRONAUT_CARD) { // to avoid infinite loop
+        if (gettype($cardType) !== 'int' || $cardType != ASTRONAUT_CARD) { // to avoid infinite loop
             // Astronaut
             $this->applyAstronaut($playerId);
         }
@@ -696,7 +697,7 @@ trait UtilTrait {
         return null;
     }
 
-    function applyGetPointsIgnoreCards(int $playerId, int $points, int $cardType) {
+    function applyGetPointsIgnoreCards(int $playerId, int $points, int | WickednessTile $cardType) {
         //$actualScore = $this->getPlayerScore($playerId);
         $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
         if ($actualScore == WIN_GAME) {
@@ -708,6 +709,9 @@ trait UtilTrait {
         $newScore = $points == WIN_GAME ? WIN_GAME : min(MAX_POINT, $actualScore + $points);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
+        if ($cardType instanceof WickednessTile) {
+            $cardType = 2000 + $cardType->type;
+        }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_points} [Star] with ${card_name}');
             $this->notifyAllPlayers('points', $message, [
@@ -720,7 +724,7 @@ trait UtilTrait {
         }
     }
 
-    function applyLosePoints(int $playerId, int $points, int $cardType) {
+    function applyLosePoints(int $playerId, int $points, int | WickednessTile $cardType) {
         //$actualScore = $this->getPlayerScore($playerId);
         $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
         if ($actualScore == WIN_GAME) {
@@ -731,6 +735,9 @@ trait UtilTrait {
         $newScore = max($actualScore - $points, 0);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
+        if ($cardType instanceof WickednessTile) {
+            $cardType = 2000 + $cardType->type;
+        }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_points} [Star] with ${card_name}');
             $this->notifyAllPlayers('points', $message, [
@@ -743,7 +750,7 @@ trait UtilTrait {
         }
     }
 
-    function applyGetHealth(int $playerId, int $health, int $cardType, int $healerId) {
+    function applyGetHealth(int $playerId, int $health, int | WickednessTile $cardType, int $healerId) {
         if (!$this->canGainHealth($playerId)) {
             return;
         }
@@ -761,7 +768,7 @@ trait UtilTrait {
         return $playerGettingHealth;
     }
 
-    function applyGetHealthIgnoreCards(int $playerId, int $health, int $cardType, int $healerId) {
+    function applyGetHealthIgnoreCards(int $playerId, int $health, int | WickednessTile $cardType, int $healerId) {
         $maxHealth = $this->getPlayerMaxHealth($playerId);
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -776,6 +783,9 @@ trait UtilTrait {
 
         $this->incStat($health, 'heal', $playerId);
 
+        if ($cardType instanceof WickednessTile) {
+            $cardType = 2000 + $cardType->type;
+        }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_health} [Heart] with ${card_name}');
             $this->notifyAllPlayers('health', $message, [
@@ -1033,7 +1043,7 @@ trait UtilTrait {
         return $playerGettingEnergyOrHeart;
     }
 
-    function applyGetEnergy(int $playerId, int $energy, int $cardType) {
+    function applyGetEnergy(int $playerId, int $energy, int | WickednessTile $cardType) {
         if (!$this->canGainEnergy($playerId)) {
             return;
         }
@@ -1051,9 +1061,12 @@ trait UtilTrait {
         return $playerGettingEnergy;
     }
 
-    function applyGetEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
+    function applyGetEnergyIgnoreCards(int $playerId, int $energy, int | WickednessTile $cardType) {
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy, `player_turn_energy` = `player_turn_energy` + $energy where `player_id` = $playerId");
         
+        if ($cardType instanceof WickednessTile) {
+            $cardType = 2000 + $cardType->type;
+        }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
             $this->notifyAllPlayers('energy', $message, [

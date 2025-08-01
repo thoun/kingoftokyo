@@ -11,7 +11,7 @@ class Skulking extends WickednessTile {
         $playerId = $context->currentPlayerId;
 
         if ($context->dieSymbol == 1 && $context->dieCount >= 3) {
-            $context->game->applyGetPoints($playerId, 1, 2000 + $this->type);
+            $context->game->applyGetPoints($playerId, 1, $this);
         }
     }
 }

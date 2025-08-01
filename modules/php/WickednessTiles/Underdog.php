@@ -13,8 +13,8 @@ class Underdog extends WickednessTile {
         }
 
         if ($context->smasherPoints < $context->game->getPlayerScore($context->targetPlayerId)) {
-            $context->game->applyLosePoints($context->targetPlayerId, 1, 2000 + $this->type);
-            $context->game->applyGetPoints($context->attackerPlayerId, 1, 2000 + $this->type);
+            $context->game->applyLosePoints($context->targetPlayerId, 1, $this);
+            $context->game->applyGetPoints($context->attackerPlayerId, 1, $this);
         }
     }
 }
