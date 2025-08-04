@@ -54,7 +54,7 @@ trait CardsUtilTrait {
             $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
         }
 
-        if (!$isOrigins && !$isDarkEdition && intval($this->getGameStateValue(ORIGINS_EXCLUSIVE_CARDS_OPTION)) == 2) {        
+        if (!$isOrigins && !$isDarkEdition && $this->tableOptions->get(ORIGINS_EXCLUSIVE_CARDS_OPTION) == 2) {        
             foreach($this->ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST as $value) { // keep  
                 $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
             }            
@@ -1008,10 +1008,6 @@ trait CardsUtilTrait {
 
     function getDeckCardCount() {
         return intval($this->cards->countCardInLocation('deck'));
-    }
-
-    function getTopCurseDeckCard() {
-        return Card::onlyId($this->getCardFromDb($this->curseCards->getCardOnTop('deck')));
     }
 
     function willBeWounded(int $playerId, int $activePlayerId) {

@@ -31,7 +31,7 @@ trait CurseCardsStateTrait {
         $cardType = $dieOfFate->value > 1 ? $this->getCurseCardType() : null;
         switch($dieOfFate->value) {
             case 1: 
-                $this->changeCurseCard($playerId);
+                $this->curseCards->changeCurseCard($playerId);
 
                 $this->incStat(1, 'dieOfFateEye', $playerId);
                 break;

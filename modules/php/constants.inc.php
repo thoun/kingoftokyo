@@ -107,9 +107,9 @@ define('SMASHED_PLAYERS_IN_TOKYO', 'SmashedPlayersInTokyo');
  * Options
  */
 
-define('PICK_MONSTER_OPTION', 'PickMonsterOption'); // 100
-define('AUTO_SKIP_OPTION', 'AutoSkipOption'); // 110
-define('TWO_PLAYERS_VARIANT_OPTION', 'TwoPlayersVariantOption'); // 120
+define('PICK_MONSTER_OPTION', 100);
+define('AUTO_SKIP_OPTION', 110);
+define('TWO_PLAYERS_VARIANT_OPTION', 120);
 define('BONUS_MONSTERS_OPTION', 102);
 define('HALLOWEEN_EXPANSION_OPTION', 103);
 define('KINGKONG_EXPANSION_OPTION', 104);

@@ -391,8 +391,10 @@ trait DebugUtilTrait {
 
     function debug_SetCurseCardInTable(int $cardType) {
         if ($this->isAnubisExpansion()) {
-            $this->curseCards->moveAllCardsInLocation('table', 'discard');
-            $this->curseCards->moveCard($this->getCardFromDb(array_values($this->curseCards->getCardsOfType($cardType))[0])->id, 'table');
+            $cards = $this->curseCards->getItemsByFieldName('type', [$cardType]);
+            $card = $cards[0];
+            $this->curseCards->moveAllItemsInLocation('table', 'discard');
+            $this->curseCards->moveItem($card, 'table');
         }
     }
 

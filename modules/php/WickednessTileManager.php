@@ -37,7 +37,7 @@ const SONIC_BOOMER_WICKEDNESS_TILE = 108;
 const FINAL_PUSH_WICKEDNESS_TILE = 109; // used on another class
 const STARBURST_WICKEDNESS_TILE = 110;
 
-const EVOLUTION_CLASSES = [
+const WICKEDNESS_TILE_CLASSES = [
     // Orange
     DEVIOUS_WICKEDNESS_TILE => 'Devious',
     ETERNAL_WICKEDNESS_TILE => 'Eternal',
@@ -93,13 +93,13 @@ class WickednessTileManager extends ItemManager {
 
     protected function getClassName(?array $dbItem): ?string {
         $cardType = intval($dbItem['card_type']);
-        if (!array_key_exists($cardType, EVOLUTION_CLASSES)) {
+        if (!array_key_exists($cardType, WICKEDNESS_TILE_CLASSES)) {
             throw new \BgaSystemException('Unexisting WickednessTile class');
         }
 
         $className = WickednessTile::class;
         $namespace = substr($className, 0, strrpos($className, '\\'));
-        return $namespace . '\\' . EVOLUTION_CLASSES[$cardType];
+        return $namespace . '\\' . WICKEDNESS_TILE_CLASSES[$cardType];
     }
 
     public function getTable(?int $level = null): array {

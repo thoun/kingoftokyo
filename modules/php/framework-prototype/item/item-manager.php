@@ -358,7 +358,7 @@ class ItemManager {
             $where .= " AND ".$this->db->sqlEqualValue($locationArgField, $locationArg);
         }
         $item_ids = $this->db->sqlGetList("`{$idField->dbField}`", $where);
-        $item_ids = array_values(array_map(fn($dbObject) => intval($dbObject['id']), $item_ids));
+        $item_ids = array_values(array_map(fn($dbObject) => intval($dbObject[$idField->dbField]), $item_ids));
         
         array_shuffle_bga_rand( $item_ids );
         

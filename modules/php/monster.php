@@ -12,7 +12,7 @@ trait MonsterTrait {
 
 
     private function getGameMonsters() {
-        $bonusMonsters = intval($this->getGameStateValue(BONUS_MONSTERS_OPTION)) == 2;
+        $bonusMonsters = $this->tableOptions->get(BONUS_MONSTERS_OPTION) == 2;
         $isDarkEdition = $this->isDarkEdition();
         $isOrigins = $this->isOrigins();
 
@@ -121,7 +121,7 @@ trait MonsterTrait {
     }
 
     function canPickMonster() {
-        return intval($this->getGameStateValue(PICK_MONSTER_OPTION)) === 2;
+        return $this->tableOptions->get(PICK_MONSTER_OPTION) === 2;
     }
 
     function getAvailableMonsters() {

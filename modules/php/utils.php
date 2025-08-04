@@ -59,51 +59,51 @@ trait UtilTrait {
     }
 
     function isTwoPlayersVariant() {
-        return intval($this->getGameStateValue(TWO_PLAYERS_VARIANT_OPTION)) === 2 && $this->getPlayersNumber() == 2;
+        return $this->tableOptions->get(TWO_PLAYERS_VARIANT_OPTION) === 2 && $this->getPlayersNumber() == 2;
     }
 
     function isHalloweenExpansion() {
-        return intval($this->getGameStateValue(HALLOWEEN_EXPANSION_OPTION)) === 2;
+        return $this->tableOptions->get(HALLOWEEN_EXPANSION_OPTION) === 2;
     }
 
     function isKingKongExpansion() {
-        return intval($this->getGameStateValue(KINGKONG_EXPANSION_OPTION)) === 2;
+        return $this->tableOptions->get(KINGKONG_EXPANSION_OPTION) === 2;
     }
 
     function isCybertoothExpansion() {
-        return intval($this->getGameStateValue(CYBERTOOTH_EXPANSION_OPTION)) === 2;
+        return $this->tableOptions->get(CYBERTOOTH_EXPANSION_OPTION) === 2;
     }
 
     function isMutantEvolutionVariant() {
-        return intval($this->getGameStateValue(MUTANT_EVOLUTION_VARIANT_OPTION)) === 2;
+        return $this->tableOptions->get(MUTANT_EVOLUTION_VARIANT_OPTION) === 2;
     }
 
     function isCthulhuExpansion() {
-        return intval($this->getGameStateValue(CTHULHU_EXPANSION_OPTION)) === 2;
+        return $this->tableOptions->get(CTHULHU_EXPANSION_OPTION) === 2;
     }
 
     function isAnubisExpansion() {
-        return intval($this->getGameStateValue(ANUBIS_EXPANSION_OPTION)) === 2;
+        return $this->tableOptions->get(ANUBIS_EXPANSION_OPTION) === 2;
     }
 
     function isWickednessExpansion() {
-        return !$this->isOrigins() && (intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION)) > 1 || $this->isDarkEdition());
+        return !$this->isOrigins() && ($this->tableOptions->get(WICKEDNESS_EXPANSION_OPTION) > 1 || $this->isDarkEdition());
     }
 
     function isPowerUpExpansion() {
-        return !$this->isOrigins() && intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) >= 2;
+        return !$this->isOrigins() && $this->tableOptions->get(POWERUP_EXPANSION_OPTION) >= 2;
     }
 
     function isPowerUpMutantEvolution() {
-        return !$this->isOrigins() && intval($this->getGameStateValue(POWERUP_EXPANSION_OPTION)) === 3;
+        return !$this->isOrigins() && $this->tableOptions->get(POWERUP_EXPANSION_OPTION) === 3;
     }
 
     function isDarkEdition() {
-        return !$this->isOrigins() && intval($this->getGameStateValue(DARK_EDITION_OPTION)) > 1;
+        return !$this->isOrigins() && $this->tableOptions->get(DARK_EDITION_OPTION) > 1;
     }
 
     function isOrigins() {
-        return intval($this->getGameStateValue(ORIGINS_OPTION)) > 1;
+        return $this->tableOptions->get(ORIGINS_OPTION) > 1;
     }
 
     function isMindbugExpansion(): bool {
@@ -118,7 +118,7 @@ trait UtilTrait {
     }
 
     function autoSkipImpossibleActions() {
-        return $this->isTurnBased() || intval($this->getGameStateValue(AUTO_SKIP_OPTION)) === 2;
+        return $this->isTurnBased() || $this->tableOptions->get(AUTO_SKIP_OPTION) === 2;
     }
 
     function setGlobalVariable(string $name, /*object|array*/ $obj) {

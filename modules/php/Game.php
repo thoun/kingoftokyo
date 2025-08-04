@@ -55,6 +55,7 @@ require_once('intervention.php');
 
 use Bga\GameFramework\Components\Deck;
 use Bga\GameFrameworkPrototype\Counters\PlayerCounter;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use \feException;
 
 class Game extends \Bga\GameFramework\Table {
@@ -90,7 +91,7 @@ class Game extends \Bga\GameFramework\Table {
     use DebugUtilTrait;
 
     public Deck $cards;
-	public Deck $curseCards;
+	public CurseCardManager $curseCards;
     public WickednessTileManager $wickednessTiles;
     public Deck $evolutionCards;
 
@@ -129,7 +130,7 @@ class Game extends \Bga\GameFramework\Table {
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
 
-        require_once('material.inc.php');
+        include(__DIR__.'/material.inc.php');
 
         $this->initGameStateLabels([
             'throwNumber' => 10,
@@ -159,32 +160,13 @@ class Game extends \Bga\GameFramework\Table {
             JUNGLE_FRENZY_EXTRA_TURN => 39,
             ENCASED_IN_ICE_DIE_ID => 40,
             TARGETED_PLAYER => 41,
-
-            PICK_MONSTER_OPTION => 100,
-            BONUS_MONSTERS_OPTION => BONUS_MONSTERS_OPTION,
-            HALLOWEEN_EXPANSION_OPTION => HALLOWEEN_EXPANSION_OPTION,
-            KINGKONG_EXPANSION_OPTION => KINGKONG_EXPANSION_OPTION,
-            CYBERTOOTH_EXPANSION_OPTION => CYBERTOOTH_EXPANSION_OPTION,
-            MUTANT_EVOLUTION_VARIANT_OPTION => MUTANT_EVOLUTION_VARIANT_OPTION,
-            CTHULHU_EXPANSION_OPTION => CTHULHU_EXPANSION_OPTION,
-            ANUBIS_EXPANSION_OPTION => ANUBIS_EXPANSION_OPTION,
-            WICKEDNESS_EXPANSION_OPTION => WICKEDNESS_EXPANSION_OPTION,
-            POWERUP_EXPANSION_OPTION => POWERUP_EXPANSION_OPTION,
-            DARK_EDITION_OPTION => DARK_EDITION_OPTION,
-            ORIGINS_OPTION => ORIGINS_OPTION,
-            ORIGINS_EXCLUSIVE_CARDS_OPTION => ORIGINS_EXCLUSIVE_CARDS_OPTION,
-
-            AUTO_SKIP_OPTION => 110,
-            TWO_PLAYERS_VARIANT_OPTION => 120,
         ]);      
 		
         $this->cards = $this->getNew("module.common.deck");
         $this->cards->init("card");
         $this->cards->autoreshuffle = true;
 		
-        $this->curseCards = $this->getNew("module.common.deck");
-        $this->curseCards->init("curse_card");
-        $this->curseCards->autoreshuffle = true;
+        $this->curseCards = new CurseCardManager($this);
 		
         $this->wickednessTiles = new WickednessTileManager($this);
 		
@@ -203,7 +185,8 @@ class Game extends \Bga\GameFramework\Table {
         the game is ready to be played.
     */
     protected function setupNewGame($players, $options = []) { 
-        $this->wickednessTiles->initDb();  
+        $this->wickednessTiles->initDb();
+        $this->curseCards->initDb();
         $this->mindbugTokens->initDb(array_keys($players));  
 
         $sql = "DELETE FROM player WHERE 1 ";
@@ -261,8 +244,8 @@ class Game extends \Bga\GameFramework\Table {
         /************ Start the game initialization *****/
         
         $isOrigins = $this->isOrigins();
-        $darkEdition = $isOrigins ? 1 : intval($this->getGameStateValue(DARK_EDITION_OPTION));
-        $wickednessExpansion = $isOrigins ? 1 : intval($this->getGameStateValue(WICKEDNESS_EXPANSION_OPTION));
+        $darkEdition = $isOrigins ? 1 : $this->tableOptions->get(DARK_EDITION_OPTION);
+        $wickednessExpansion = $isOrigins ? 1 : $this->tableOptions->get(WICKEDNESS_EXPANSION_OPTION);
 
         // Init global values with their initial values
         $this->setGameStateInitialValue('throwNumber', 0);
@@ -378,10 +361,8 @@ class Game extends \Bga\GameFramework\Table {
         if ($this->isAnubisExpansion()) {
             $lastPlayer = array_key_last($players);
             $this->setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);
-            $this->initCurseCards();
-            // init first curse card
-            $this->curseCards->pickCardForLocation('deck', 'table');
-            $this->applyCursePermanentEffectOnReveal();
+            $this->curseCards->setup();
+            $this->curseCards->immediateEffect($this->curseCards->getCurrent(), new Context($this));
         }
         
         if ($darkEdition > 1) {
@@ -546,10 +527,10 @@ class Game extends \Bga\GameFramework\Table {
         $result['origins'] = $isOrigins;
         if ($isAnubisExpansion) {
             $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab(true);
-            $result['curseCard'] = $this->getCurseCard();
-            $result['hiddenCurseCardCount'] = intval($this->curseCards->countCardInLocation('deck'));
-            $result['visibleCurseCardCount'] = intval($this->curseCards->countCardInLocation('table')) + intval($this->curseCards->countCardInLocation('discard'));
-            $result['topCurseDeckCard'] = $this->getTopCurseDeckCard();
+            $result['curseCard'] = $this->curseCards->getCurrent();
+            $result['hiddenCurseCardCount'] = intval($this->curseCards->countItemsInLocation('deck'));
+            $result['visibleCurseCardCount'] = intval($this->curseCards->countItemsInLocation('table')) + intval($this->curseCards->countItemsInLocation('discard'));
+            $result['topCurseDeckCard'] = $this->curseCards->getTopDeck();
         }
 
         if ($isWickednessExpansion) {
@@ -875,6 +856,11 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($from_version <= 2411291203) {
             $sql = "ALTER TABLE `DBPREFIX_wickedness_tile` ADD `order` INT DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+
+        if ($from_version <= 2508011620) {
+            $sql = "ALTER TABLE `DBPREFIX_curse_card` ADD `order` INT DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

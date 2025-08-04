@@ -5,6 +5,7 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
 
@@ -13,15 +14,6 @@ trait CurseCardsUtilTrait {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
-
-
-    function initCurseCards() {
-        for($value=1; $value<=24; $value++) { // curse cards
-            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
-        }
-        $this->curseCards->createCards($cards, 'deck');
-        $this->curseCards->shuffle('deck'); 
-    }
 
     function getDieOfFate() {
         return $this->getDiceByType(2)[0];
@@ -106,6 +98,8 @@ trait CurseCardsUtilTrait {
                     $this->applyGetEnergy($playerId, $rolled1s, $logCardType);
                 }
                 break;
+            default:
+                $this->curseCards->applyAnkhEffect(new Context($this, currentPlayerId: $playerId));
         }
     }
     
@@ -217,6 +211,8 @@ trait CurseCardsUtilTrait {
                     $this->applyDiscardDie($first1die->id);
                 }
                 break;
+            default:
+                $this->curseCards->applySnakeEffect(new Context($this, currentPlayerId: $playerId));
 
         }
 
@@ -235,37 +231,8 @@ trait CurseCardsUtilTrait {
         }
     }
 
-    function getCurseCard() {
-        return $this->getCardsFromDb($this->curseCards->getCardsInLocation('table'))[0];
-    }
-
     function getCurseCardType() {
-        return $this->getCurseCard()->type;
-    }
-    
-    function changeCurseCard(int $playerId) {
-        $countRapidHealingBefore = 0;
-        if ($playerId > 0) {
-            $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
-        }        
-
-        $this->removeCursePermanentEffectOnReplace();
-
-        $this->curseCards->moveAllCardsInLocation('table', 'discard');
-
-        $card = $this->getCardFromDb($this->curseCards->pickCardForLocation('deck', 'table'));
-
-        $this->notifyAllPlayers('changeCurseCard', clienttranslate('Die of fate is on [dieFateEye], Curse card is changed'), [
-            'card' => $card,
-            'hiddenCurseCardCount' => intval($this->curseCards->countCardInLocation('deck')),
-            'topCurseDeckCard' => $this->getTopCurseDeckCard(),
-        ]);
-        
-        $this->applyCursePermanentEffectOnReveal();
-        
-        if ($playerId > 0) {
-            $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
-        }
+        return $this->curseCards->getCurrent()->type;
     }
 
     function changeGoldenScarabOwner(int $playerId) {
@@ -316,14 +283,6 @@ trait CurseCardsUtilTrait {
         $playerIds = $this->getPlayersIds();
         foreach($playerIds as $playerId) {
             $this->changeMaxHealth($playerId);
-        }
-    }
-
-    function applyCursePermanentEffectOnReveal() {
-        $curseCardType = $this->getCurseCardType();
-
-        if ($curseCardType == BOW_BEFORE_RA_CURSE_CARD) {
-            $this->changeAllPlayersMaxHealth();
         }
     }
 
