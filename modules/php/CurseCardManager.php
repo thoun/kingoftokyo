@@ -63,7 +63,7 @@ class CurseCardManager extends ItemManager {
         return CurseCard::onlyId($this->getItemOnTop('deck'));
     }
     
-    function changeCurseCard(int $playerId) {
+    function changeCurseCard(int $playerId): CurseCard {
         $countRapidHealingBefore = 0;
         if ($playerId > 0) {
             $countRapidHealingBefore = $this->game->countCardOfType($playerId, RAPID_HEALING_CARD);
@@ -86,6 +86,8 @@ class CurseCardManager extends ItemManager {
         if ($playerId > 0) {
             $this->game->toggleRapidHealing($playerId, $countRapidHealingBefore);
         }
+
+        return $card;
     }
 
     public function immediateEffect(CurseCard $card, Context $context) {

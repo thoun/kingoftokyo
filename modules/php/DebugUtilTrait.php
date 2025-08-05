@@ -436,9 +436,7 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[$level]' where `player_id` = $playerId");
     }
 
-    function log(...$debugData) { // debug with infinite arguments
-        if ($this->getBgaEnvironment() != 'studio') { 
-            return;
-        }die('debug data : '.implode(', ', array_map(fn($d) => json_encode($d), $debugData)));
+    public function debug_goToState(int $state = ST_NEXT_PLAYER) {
+      $this->gamestate->jumpToState($state);
     }
 }

@@ -28,37 +28,37 @@ trait CurseCardsStateTrait {
         $dieOfFate = $this->getDieOfFate();
 
         $damagesOrState = null;
-        $cardType = $dieOfFate->value > 1 ? $this->getCurseCardType() : null;
+        $curseCard = $this->curseCards->getCurrent();
         switch($dieOfFate->value) {
             case 1: 
-                $this->curseCards->changeCurseCard($playerId);
+                $curseCard = $this->curseCards->changeCurseCard($playerId);
 
                 $this->incStat(1, 'dieOfFateEye', $playerId);
                 break;
             case 2:
                 $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'), [
-                    'card_name' => 1000 + $cardType,
+                    'card_name' => 1000 + $curseCard->type,
                 ]);
 
                 $this->incStat(1, 'dieOfFateRiver', $playerId);
                 break;
             case 3:
                 $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateSnake], Snake effect of ${card_name} is applied'), [
-                    'card_name' => 1000 + $cardType,
+                    'card_name' => 1000 + $curseCard->type,
                 ]);
 
                 $this->incStat(1, 'dieOfFateSnake', $playerId);
 
-                $damagesOrState = $this->applySnakeEffect($playerId, $cardType);
+                $damagesOrState = $this->applySnakeEffect($playerId, $curseCard);
                 break;
             case 4:
                 $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'), [
-                   'card_name' => 1000 + $cardType,
+                   'card_name' => 1000 + $curseCard->type,
                 ]);
 
                 $this->incStat(1, 'dieOfFateAnkh', $playerId);
 
-                $damagesOrState = $this->applyAnkhEffect($playerId, $cardType);
+                $damagesOrState = $this->applyAnkhEffect($playerId, $curseCard);
                 break;
         }
 
@@ -71,7 +71,7 @@ trait CurseCardsStateTrait {
 
         $nextState = ST_RESOLVE_DICE;
         $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
-        if ($this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD && $playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab) {
+        if ($curseCard->type == CONFUSED_SENSES_CURSE_CARD && $playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab) {
             $nextState = ST_MULTIPLAYER_REROLL_DICE;
         }
 

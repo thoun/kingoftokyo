@@ -5,6 +5,7 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 
+use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
@@ -19,7 +20,8 @@ trait CurseCardsUtilTrait {
         return $this->getDiceByType(2)[0];
     }
 
-    function applyAnkhEffect(int $playerId, int $cardType) {
+    function applyAnkhEffect(int $playerId, CurseCard $curseCard) {
+        $cardType = $curseCard->type;
         $logCardType = 1000 + $cardType;
 
         switch($cardType) {
@@ -99,11 +101,12 @@ trait CurseCardsUtilTrait {
                 }
                 break;
             default:
-                $this->curseCards->applyAnkhEffect(new Context($this, currentPlayerId: $playerId));
+                $this->curseCards->applyAnkhEffect($curseCard, new Context($this, currentPlayerId: $playerId));
         }
     }
     
-    function applySnakeEffect(int $playerId, int $cardType) { // return damages or state
+    function applySnakeEffect(int $playerId, CurseCard $curseCard) { // return damages or state
+        $cardType = $curseCard->type;
         $logCardType = 1000 + $cardType;
 
         switch($cardType) {
@@ -212,7 +215,7 @@ trait CurseCardsUtilTrait {
                 }
                 break;
             default:
-                $this->curseCards->applySnakeEffect(new Context($this, currentPlayerId: $playerId));
+                $this->curseCards->applySnakeEffect($curseCard, new Context($this, currentPlayerId: $playerId));
 
         }
 
