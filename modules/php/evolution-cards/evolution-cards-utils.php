@@ -499,7 +499,6 @@ trait EvolutionCardsUtilTrait {
 
     function getEvolutionsOfTypeInLocation(int $playerId, int $cardType, string $location) {
         $evolutions = $this->getEvolutionCardsByLocation($location, $playerId, $cardType);
-        
         if ($location === 'table' && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
             $mimickedCardType = $this->getMimickedEvolutionType();
             if ($mimickedCardType == $cardType) {
@@ -1144,7 +1143,7 @@ trait EvolutionCardsUtilTrait {
     function askTargetAcquired(array $allDamages) {
         $activePlayerId = intval($this->getActivePlayerId());
         // if damages is a smash from active player
-        if (count($allDamages) > 0 && $allDamages[0]->cardType == 0 && $allDamages[0]->damageDealerId == $activePlayerId && intval($this->getGameStateValue(TARGETED_PLAYER)) != $activePlayerId) {
+        if (count($allDamages) > 0 && gettype($allDamages[0]->cardType) == 'int' &&  $allDamages[0]->cardType == 0 && $allDamages[0]->damageDealerId == $activePlayerId && intval($this->getGameStateValue(TARGETED_PLAYER)) != $activePlayerId) {
             $playersIds = array_unique(array_map(fn($damage) => $damage->playerId, $allDamages));
             $playersWithTargetAcquired = array_values(array_filter($playersIds, fn($playerId) => $this->countEvolutionOfType($playerId, TARGET_ACQUIRED_EVOLUTION) > 0));
 

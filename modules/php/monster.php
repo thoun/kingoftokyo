@@ -25,7 +25,7 @@ trait MonsterTrait {
         }
 
         // Cthulhu, Anubis
-        if ($bonusMonsters || $this->isCthulhuExpansion() || $this->isAnubisExpansion()) {
+        if ($bonusMonsters || $this->isCthulhuExpansion() || $this->anubisExpansion->isActive()) {
             $monsters = [...$monsters, 9, 10];
         }
 

@@ -222,7 +222,7 @@ trait PlayerStateTrait {
         }
 
         $damages = [];
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             $curseCardType = $this->getCurseCardType();
             $logCardType = 1000 + $curseCardType;
             switch($curseCardType) {
@@ -318,7 +318,7 @@ trait PlayerStateTrait {
             if ($this->isPowerUpExpansion()) {
                 $playerId = $this->getActivePlayerId();
                 $countChestThumping = $this->countEvolutionOfType($playerId, CHEST_THUMPING_EVOLUTION);
-                if ($countChestThumping > 0 && $this->isAnubisExpansion() && $this->getCurseCardType() == PHARAONIC_EGO_CURSE_CARD) {
+                if ($countChestThumping > 0 && $this->anubisExpansion->isActive() && $this->getCurseCardType() == PHARAONIC_EGO_CURSE_CARD) {
                     $countChestThumping = 0; // impossible to use Chest Thumping with Pharaonic Ego 
                 }
                 if ($countChestThumping > 0) {

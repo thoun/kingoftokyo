@@ -396,7 +396,7 @@ trait CardsUtilTrait {
         
         $wickenessTilesDec = $this->isWickednessExpansion() ? $this->wickednessTiles->onIncPowerCardsReduction(new Context($this, currentPlayerId: $playerId)) : 0;
         // inadequate offering
-        $inadequateOffering = $this->isAnubisExpansion() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
+        $inadequateOffering = $this->anubisExpansion->isActive() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
         // secret laboratory
         $countSecretLaboratory = 0;
         if ($this->isPowerUpExpansion()) {

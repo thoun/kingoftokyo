@@ -90,6 +90,8 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\InterventionTrait;
     use DebugUtilTrait;
 
+    public AnubisExpansion $anubisExpansion;
+
     public Deck $cards;
 	public CurseCardManager $curseCards;
     public WickednessTileManager $wickednessTiles;
@@ -162,6 +164,9 @@ class Game extends \Bga\GameFramework\Table {
             TARGETED_PLAYER => 41,
         ]);      
 		
+        
+        $this->anubisExpansion = new AnubisExpansion($this);
+
         $this->cards = $this->getNew("module.common.deck");
         $this->cards->init("card");
         $this->cards->autoreshuffle = true;
@@ -237,7 +242,7 @@ class Game extends \Bga\GameFramework\Table {
         if ($this->isCybertoothExpansion()) {
             $this->DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 1)");
         }
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
            $this->DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 2)");
         }
 
@@ -313,7 +318,7 @@ class Game extends \Bga\GameFramework\Table {
             $this->initStat('player', 'cultistHeal', 0);
             $this->initStat('player', 'cultistEnergy', 0);
         }
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             $this->initStat('player', 'dieOfFateEye', 0);
             $this->initStat('player', 'dieOfFateRiver', 0);
             $this->initStat('player', 'dieOfFateSnake', 0);
@@ -358,7 +363,7 @@ class Game extends \Bga\GameFramework\Table {
 
         // setup the initial game situation here
         $this->initCards($isOrigins, $darkEdition > 1);
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             $lastPlayer = array_key_last($players);
             $this->setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);
             $this->curseCards->setup();
@@ -407,7 +412,7 @@ class Game extends \Bga\GameFramework\Table {
         $isCthulhuExpansion = $this->isCthulhuExpansion();
         $isKingKongExpansion = $this->isKingKongExpansion();
         $isCybertoothExpansion = $this->isCybertoothExpansion();
-        $isAnubisExpansion = $this->isAnubisExpansion();
+        $isAnubisExpansion = $this->anubisExpansion->isActive();
         $isWickednessExpansion = $this->isWickednessExpansion();
         $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();
         $isPowerUpExpansion = $this->isPowerUpExpansion();

@@ -174,7 +174,7 @@ trait DebugUtilTrait {
         }
 
         // anubis
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             //$this->debug_SetCurseCardInTable(INADEQUATE_OFFERING_CURSE_CARD);
             //$this->debug_SetCurseCardInTable(SET_S_STORM_CURSE_CARD);
             //$this->debug_SetCurseCardInTable(FALSE_BLESSING_CURSE_CARD);
@@ -390,7 +390,7 @@ trait DebugUtilTrait {
     }
 
     function debug_SetCurseCardInTable(int $cardType) {
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             $cards = $this->curseCards->getItemsByFieldName('type', [$cardType]);
             $card = $cards[0];
             $this->curseCards->moveAllItemsInLocation('table', 'discard');

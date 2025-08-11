@@ -87,14 +87,14 @@ trait DiceUtilTrait {
         return array_map(fn($dbDice) => new Dice($dbDice), array_values($dbDices));
     }
 
-    private function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate, bool $setCanReroll) {
+    public function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate, bool $setCanReroll) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
         if ($includeBerserkDie && $this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
             $dice = array_merge($dice, $this->getDiceByType(1)); // type 1 at the end
         }
 
-        if ($setCanReroll && $this->isAnubisExpansion()) {
+        if ($setCanReroll && $this->anubisExpansion->isActive()) {
             foreach ($dice as &$die) {
                 $symbol = getDieFace($die);
 
@@ -114,7 +114,7 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($includeDieOfFate && $this->isAnubisExpansion() && intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) != 2) {
+        if ($includeDieOfFate && $this->anubisExpansion->isActive() && intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) != 2) {
             $dice = array_merge($this->getDiceByType(2), $dice); // type 2 at the start
         }
 
@@ -197,7 +197,7 @@ trait DiceUtilTrait {
             $add += $this->wickednessTiles->onIncDieCount(new Context($this, currentPlayerId: $playerId));
         }
 
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             $curseCardType = $this->getCurseCardType();
 
             if ($curseCardType == RAGING_FLOOD_CURSE_CARD) {
@@ -331,7 +331,7 @@ trait DiceUtilTrait {
 
         if (!$this->canHealWithDice($playerId)) {
             $message = clienttranslate('${player_name} gains no [Heart] (player in Tokyo)');
-            if ($this->isAnubisExpansion() && $this->getCurseCardType() == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
+            if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
                 $message = clienttranslate('${player_name} gains no [Heart] (player outside Tokyo)');
             }
 

@@ -77,7 +77,7 @@ trait RedirectionTrait {
 
     function redirectAfterChangeMimick(int $playerId) {
         $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
-        if ($this->isAnubisExpansion() && $this->getCurseCardType() == KHEPRI_S_REBELLION_CURSE_CARD && $playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab) {
+        if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == KHEPRI_S_REBELLION_CURSE_CARD && $playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab) {
             return ST_MULTIPLAYER_GIVE_SYMBOL_TO_ACTIVE_PLAYER;
         }
         return ST_INITIAL_DICE_ROLL;

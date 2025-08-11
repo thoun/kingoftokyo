@@ -6,6 +6,7 @@ require_once(__DIR__.'/Objects/player.php');
 require_once(__DIR__.'/Objects/player-intervention.php');
 require_once(__DIR__.'/Objects/damage.php');
 
+use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 use KOT\Objects\Player;
@@ -80,10 +81,6 @@ trait UtilTrait {
 
     function isCthulhuExpansion() {
         return $this->tableOptions->get(CTHULHU_EXPANSION_OPTION) === 2;
-    }
-
-    function isAnubisExpansion() {
-        return $this->tableOptions->get(ANUBIS_EXPANSION_OPTION) === 2;
     }
 
     function isWickednessExpansion() {
@@ -237,7 +234,7 @@ trait UtilTrait {
 
         $removedDieByBuriedInSand = false;
         $falseBlessing = 0;
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             $cardType = $this->getCurseCardType();
 
             if ($cardType == BURIED_IN_SAND_CURSE_CARD) {
@@ -277,7 +274,7 @@ trait UtilTrait {
             $add += 2 * $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
         }
 
-        if ($this->isAnubisExpansion() && $this->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
+        if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
             $remove += 2;
         }
 
@@ -685,7 +682,7 @@ trait UtilTrait {
 
     // $cardType = 0 => notification with no message
     // $cardType = -1 => no notification
-    function applyGetPoints(int $playerId, int $points, int | WickednessTile $cardType) {
+    function applyGetPoints(int $playerId, int $points, int | CurseCard | WickednessTile $cardType) {
         $canGainPoints = $this->canGainPoints($playerId);
         if ($canGainPoints !== null) {
             return $canGainPoints;
@@ -701,7 +698,7 @@ trait UtilTrait {
         return null;
     }
 
-    function applyGetPointsIgnoreCards(int $playerId, int $points, int | WickednessTile $cardType) {
+    function applyGetPointsIgnoreCards(int $playerId, int $points, int | CurseCard | WickednessTile $cardType) {
         //$actualScore = $this->getPlayerScore($playerId);
         $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
         if ($actualScore == WIN_GAME) {
@@ -713,6 +710,9 @@ trait UtilTrait {
         $newScore = $points == WIN_GAME ? WIN_GAME : min(MAX_POINT, $actualScore + $points);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
+        if ($cardType instanceof CurseCard) {
+            $cardType = 1000 + $cardType->type;
+        }
         if ($cardType instanceof WickednessTile) {
             $cardType = 2000 + $cardType->type;
         }
@@ -728,7 +728,7 @@ trait UtilTrait {
         }
     }
 
-    function applyLosePoints(int $playerId, int $points, int | WickednessTile $cardType) {
+    function applyLosePoints(int $playerId, int $points, int | CurseCard | WickednessTile $cardType) {
         //$actualScore = $this->getPlayerScore($playerId);
         $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
         if ($actualScore == WIN_GAME) {
@@ -739,6 +739,9 @@ trait UtilTrait {
         $newScore = max($actualScore - $points, 0);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
+        if ($cardType instanceof CurseCard) {
+            $cardType = 1000 + $cardType->type;
+        }
         if ($cardType instanceof WickednessTile) {
             $cardType = 2000 + $cardType->type;
         }
@@ -754,7 +757,7 @@ trait UtilTrait {
         }
     }
 
-    function applyGetHealth(int $playerId, int $health, int | WickednessTile $cardType, int $healerId) {
+    function applyGetHealth(int $playerId, int $health, int | CurseCard | WickednessTile $cardType, int $healerId) {
         if (!$this->canGainHealth($playerId)) {
             return;
         }
@@ -772,7 +775,7 @@ trait UtilTrait {
         return $playerGettingHealth;
     }
 
-    function applyGetHealthIgnoreCards(int $playerId, int $health, int | WickednessTile $cardType, int $healerId) {
+    function applyGetHealthIgnoreCards(int $playerId, int $health, int | CurseCard | WickednessTile $cardType, int $healerId) {
         $maxHealth = $this->getPlayerMaxHealth($playerId);
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -787,6 +790,9 @@ trait UtilTrait {
 
         $this->incStat($health, 'heal', $playerId);
 
+        if ($cardType instanceof CurseCard) {
+            $cardType = 1000 + $cardType->type;
+        }
         if ($cardType instanceof WickednessTile) {
             $cardType = 2000 + $cardType->type;
         }
@@ -871,7 +877,7 @@ trait UtilTrait {
         }
 
         // only smashes
-        if ($damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
+        if (gettype($damage->cardType) == 'int' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
             $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
             if ($countHeatVision > 0) {
                 $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
@@ -892,7 +898,7 @@ trait UtilTrait {
         }
 
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
-        if ($countReflectiveHide > 0 && $damage->cardType != REFLECTIVE_HIDE_CARD && $damageDealerId > 0) { // we avoid infinite loop if mimicked, and reflective on poison tokens
+        if ($countReflectiveHide > 0 && (gettype($damage->cardType) != 'int' || $damage->cardType != REFLECTIVE_HIDE_CARD) && $damageDealerId > 0) { // we avoid infinite loop if mimicked, and reflective on poison tokens
             $reflectiveDamage = new Damage($damageDealerId, $countReflectiveHide, $playerId, REFLECTIVE_HIDE_CARD);
             $this->applyDamage($reflectiveDamage);
         }
@@ -918,7 +924,7 @@ trait UtilTrait {
         }
 
         // only smashes
-        if ($damage->cardType == 0 && $damageDealerId != 0 && $playerId != 0) {
+        if (gettype($damage->cardType) == 'int' && $damage->cardType == 0 && $damageDealerId != 0 && $playerId != 0) {
             $this->incStat($damage->damage, 'smashesGiven');
             $this->incStat($damage->damage, 'smashesGiven', $damageDealerId);
             $this->incStat($damage->damage, 'smashesReceived', $playerId);
@@ -951,6 +957,10 @@ trait UtilTrait {
             $this->incStat($effectiveDamage, 'damageDealt', $damageDealerId);
         }
         $this->incStat($effectiveDamage, 'damage', $playerId);
+
+        if ($cardType instanceof CurseCard) {
+            $cardType = 1000 + $cardType->type;
+        }
 
         $message = $cardType <= 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
         $this->notifyAllPlayers('health', $message, [
@@ -1034,7 +1044,7 @@ trait UtilTrait {
     function getPlayerGettingEnergyOrHeart(int $playerId) {
         $playerGettingEnergyOrHeart = $playerId;
 
-        if ($this->isAnubisExpansion() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
+        if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
             $dieOfFate = $this->getDieOfFate();
             if ($dieOfFate->value == 3 && $playerId == intval($this->getActivePlayerId())) {
                 $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
@@ -1047,7 +1057,7 @@ trait UtilTrait {
         return $playerGettingEnergyOrHeart;
     }
 
-    function applyGetEnergy(int $playerId, int $energy, int | WickednessTile $cardType) {
+    function applyGetEnergy(int $playerId, int $energy, int | CurseCard | WickednessTile $cardType) {
         if (!$this->canGainEnergy($playerId)) {
             return;
         }
@@ -1065,9 +1075,12 @@ trait UtilTrait {
         return $playerGettingEnergy;
     }
 
-    function applyGetEnergyIgnoreCards(int $playerId, int $energy, int | WickednessTile $cardType) {
+    function applyGetEnergyIgnoreCards(int $playerId, int $energy, int | CurseCard | WickednessTile $cardType) {
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy, `player_turn_energy` = `player_turn_energy` + $energy where `player_id` = $playerId");
         
+        if ($cardType instanceof CurseCard) {
+            $cardType = 1000 + $cardType->type;
+        }
         if ($cardType instanceof WickednessTile) {
             $cardType = 2000 + $cardType->type;
         }
@@ -1085,14 +1098,18 @@ trait UtilTrait {
         $this->incStat($energy, 'wonEnergyCubes', $playerId);
     }
 
-    function applyLoseEnergy(int $playerId, int $energy, int $cardType) {
+    function applyLoseEnergy(int $playerId, int $energy, int | CurseCard $cardType) {
         $this->applyLoseEnergyIgnoreCards($playerId, $energy, $cardType);
     }
 
-    function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int $cardType) {
+    function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int | CurseCard $cardType) {
         $actualEnergy = $this->getPlayerEnergy($playerId);
         $newEnergy = max($actualEnergy - $energy, 0);
         $this->DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
+
+        if ($cardType instanceof CurseCard) {
+            $cardType = 1000 + $cardType->type;
+        }
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_energy} [Energy] with ${card_name}');

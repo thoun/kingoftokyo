@@ -370,14 +370,15 @@ class ItemManager {
         }
     }
 
-    public function moveAllItemsInLocation(string $fromLocation, string $toLocation, ?int $toLocationArg = 0): void {
+    public function moveAllItemsInLocation(?string $fromLocation, string $toLocation, ?int $toLocationArg = 0): void {
         $locationField = $this->getItemFieldByKind('location');
         $locationArgField = $this->getItemFieldByKind('location_arg');
 
-        $where = $this->db->sqlEqualValue($locationField, $fromLocation);
+        $update = $this->db->sqlEqualValue($locationField, $toLocation);
         if ($toLocationArg !== null) {
-            $where .= " AND ".$this->db->sqlEqualValue($locationArgField, $toLocationArg);
+            $update .= ", ".$this->db->sqlEqualValue($locationArgField, $toLocationArg);
         }
+        $where = $fromLocation === null ? '1' : $this->db->sqlEqualValue($locationField, $fromLocation);
         $this->db->sqlUpdate($this->db->sqlEqualValue($locationField, $toLocation), $where);
     }
 

@@ -18,7 +18,7 @@ trait CurseCardsStateTrait {
     }
 
     function stResolveDieOfFate() {
-        if (!$this->isAnubisExpansion() || intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) { // no Die of Fate
+        if (!$this->anubisExpansion->isActive() || intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) { // no Die of Fate
             $this->goToState(ST_RESOLVE_DICE);
             return;
         }

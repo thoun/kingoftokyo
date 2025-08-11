@@ -414,7 +414,7 @@ trait DiceStateTrait {
             $damages[] = new Damage($playerId, $diceCounts[7], $playerId, -1);
         }
 
-        if ($this->isAnubisExpansion()) {
+        if ($this->anubisExpansion->isActive()) {
             $curseCardType = $this->getCurseCardType();
 
             if ($curseCardType == FALSE_BLESSING_CURSE_CARD) {
