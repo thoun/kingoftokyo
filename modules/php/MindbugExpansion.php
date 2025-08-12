@@ -89,6 +89,10 @@ class MindbugExpansion {
     }
 
     private function getPlayersThatCanMindbug(int $activePlayerId): array {
+        if (!$this->isActive()) {
+            return [];
+        }
+        
         $otherPlayerIds = $this->game->getOtherPlayersIds($activePlayerId);
         $mindbugTokens = $this->mindbugTokens->getAll();
 
