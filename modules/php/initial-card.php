@@ -82,7 +82,7 @@ trait InitialCardTrait {
     private function everyPlayerHasEvolutionCard() {
         $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
-            if ($this->evolutionCards->countItemsInLocation('hand', $playerId) == 0) {
+            if ($this->powerUpExpansion->evolutionCards->countItemsInLocation('hand', $playerId) == 0) {
                 return false;
             }
         }

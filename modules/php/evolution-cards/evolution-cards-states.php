@@ -18,11 +18,11 @@ trait EvolutionCardsStateTrait {
             // give 8 random evolutions to each players mutant deck
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $playerId) {
-                $this->evolutionCards->moveAllItemsInLocation('deck'.$playerId, 'mutantdeck');
+                $this->powerUpExpansion->evolutionCards->moveAllItemsInLocation('deck'.$playerId, 'mutantdeck');
             }
-            $this->evolutionCards->shuffle('mutantdeck');
+            $this->powerUpExpansion->evolutionCards->shuffle('mutantdeck');
             foreach($playersIds as $index => $playerId) {
-                $this->evolutionCards->pickItemsForLocation(8, 'mutantdeck', null, 'mutant'.$index);
+                $this->powerUpExpansion->evolutionCards->pickItemsForLocation(8, 'mutantdeck', null, 'mutant'.$index);
             }
         }
 

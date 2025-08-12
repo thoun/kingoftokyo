@@ -53,7 +53,6 @@ require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
 
 use Bga\GameFramework\Components\Deck;
-use Bga\Games\KingOfTokyo\Objects\Context;
 use \feException;
 
 class Game extends \Bga\GameFramework\Table {
@@ -95,7 +94,6 @@ class Game extends \Bga\GameFramework\Table {
 
     public Deck $cards;
     public WickednessTileManager $wickednessTiles;
-    public EvolutionCardManager $evolutionCards;
 
     // from material file
     public array $MONSTERS_WITH_POWER_UP_CARDS;
@@ -175,7 +173,6 @@ class Game extends \Bga\GameFramework\Table {
         $this->cards->autoreshuffle = true;
 		
         $this->wickednessTiles = new WickednessTileManager($this);
-        $this->evolutionCards = new EvolutionCardManager($this);
 	}
 
     /*
@@ -187,7 +184,7 @@ class Game extends \Bga\GameFramework\Table {
     */
     protected function setupNewGame($players, $options = []) { 
         $this->wickednessTiles->initDb();
-        $this->evolutionCards->initDb();
+        $this->powerUpExpansion->initDb();
         $this->anubisExpansion->initDb();
         $this->mindbugExpansion->initDb(array_keys($players));
 
@@ -378,7 +375,7 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         if ($this->powerUpExpansion->isActive()) {
-            $this->evolutionCards->setup($affectedPlayersMonsters);
+            $this->powerUpExpansion->setup($affectedPlayersMonsters);
         }
 
         if ($this->mindbugExpansion->isActive()) {

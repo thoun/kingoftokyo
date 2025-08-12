@@ -153,8 +153,8 @@ trait MonsterTrait {
         ]);
 
         if ($this->powerUpExpansion->isActive()) {
-            $this->evolutionCards->moveAllItemsInLocation('monster'.($monsterId % 100), 'deck'.$playerId);
-            $this->evolutionCards->shuffle('deck'.$playerId);
+            $this->powerUpExpansion->evolutionCards->moveAllItemsInLocation('monster'.($monsterId % 100), 'deck'.$playerId);
+            $this->powerUpExpansion->evolutionCards->shuffle('deck'.$playerId);
         }
     }
 

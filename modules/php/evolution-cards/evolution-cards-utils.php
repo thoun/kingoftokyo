@@ -52,11 +52,11 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getEvolutionCardById(int $id) {
-        return $this->evolutionCards->getItemById($id);
+        return $this->powerUpExpansion->evolutionCards->getItemById($id);
     }
 
     function getEvolutionCardsByLocation(string $location, ?int $location_arg = null, ?int $type = null) {
-        $cards = $this->evolutionCards->getItemsInLocation($location, $location_arg, true, sortByField: 'location_arg');
+        $cards = $this->powerUpExpansion->evolutionCards->getItemsInLocation($location, $location_arg, true, sortByField: 'location_arg');
         if ($type !== null) {
             $cards = Arrays::filter($cards, fn($card) => $card->type === $type);
         }
@@ -64,26 +64,26 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getEvolutionCardsByType(int $type) {
-        return $this->evolutionCards->getItemsByFieldName('type', [$type]);
+        return $this->powerUpExpansion->evolutionCards->getItemsByFieldName('type', [$type]);
     }
 
     function getEvolutionCardsByOwner(int $ownerId) {
-        return $this->evolutionCards->getItemsByFieldName('ownerId', [$ownerId]);
+        return $this->powerUpExpansion->evolutionCards->getItemsByFieldName('ownerId', [$ownerId]);
     }
 
     function getEvolutionCardsOnDeckTop(int $playerId, int $number) {
-        return $this->evolutionCards->getItemsInLocation("deck$playerId", null, true, $number, sortByField: 'location_arg');
+        return $this->powerUpExpansion->evolutionCards->getItemsInLocation("deck$playerId", null, true, $number, sortByField: 'location_arg');
     }
 
     function pickEvolutionCards(int $playerId, int $number = 2) {
-        $remainingInDeck = $this->evolutionCards->countItemsInLocation('deck'.$playerId);
+        $remainingInDeck = $this->powerUpExpansion->evolutionCards->countItemsInLocation('deck'.$playerId);
         if ($remainingInDeck >= $number) {
             return $this->getEvolutionCardsOnDeckTop($playerId, $number);
         } else {
             $cards = $this->getEvolutionCardsOnDeckTop($playerId, $remainingInDeck);
 
-            $this->evolutionCards->moveAllItemsInLocation('discard'.$playerId, 'deck'.$playerId);
-            $this->evolutionCards->shuffle('deck'.$playerId);
+            $this->powerUpExpansion->evolutionCards->moveAllItemsInLocation('discard'.$playerId, 'deck'.$playerId);
+            $this->powerUpExpansion->evolutionCards->shuffle('deck'.$playerId);
 
             $cards = array_merge(
                 $cards,
@@ -194,7 +194,7 @@ trait EvolutionCardsUtilTrait {
             $message = clienttranslate('${player_name} plays ${card_name}');
         }
 
-        $this->evolutionCards->moveItem($card, 'table', $playerId);
+        $this->powerUpExpansion->evolutionCards->moveItem($card, 'table', $playerId);
         $card->location = 'table';
 
         $this->notifyAllPlayers("playEvolution", $message, [
@@ -213,7 +213,7 @@ trait EvolutionCardsUtilTrait {
         $playersIds = $isPowerUpMutantEvolution ? $this->getPlayersIds(true) : $playersIds;
 
         // ignore a player if its hand is empty
-        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->evolutionCards->countItemsInLocation('hand', $playerId) > 0));
+        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->powerUpExpansion->evolutionCards->countItemsInLocation('hand', $playerId) > 0));
 
         if (count($playersIds) == 0) {
             return [];
@@ -448,7 +448,7 @@ trait EvolutionCardsUtilTrait {
                 $this->applyGetEnergy($playerId, 1, $logCardType);
                 break;
             default:
-                return $this->evolutionCards->immediateEffect($card, new Context($this, currentPlayerId: $playerId));
+                return $this->powerUpExpansion->evolutionCards->immediateEffect($card, new Context($this, currentPlayerId: $playerId));
         }
     }
 
@@ -526,7 +526,7 @@ trait EvolutionCardsUtilTrait {
         } else if ($card->id == $this->getMimickedEvolutionId() && !$ignoreMimicToken) {
             $this->removeMimicEvolutionToken($playerId);
         }
-        $this->evolutionCards->moveItem($card, 'discard'.$playerId);
+        $this->powerUpExpansion->evolutionCards->moveItem($card, 'discard'.$playerId);
 
         if ($card->type == MY_TOY_EVOLUTION || ($card->type == ICY_REFLECTION_EVOLUTION && $this->getMimickedEvolutionType() == MY_TOY_EVOLUTION)) {
             // if My Toy is removed, reserved card is put to discard
@@ -640,7 +640,7 @@ trait EvolutionCardsUtilTrait {
 
     function setEvolutionTokens(int $playerId, $card, int $tokens, bool $silent = false) {
         $card->tokens = $tokens;
-        $this->evolutionCards->updateItem($card, ['tokens']);
+        $this->powerUpExpansion->evolutionCards->updateItem($card, ['tokens']);
 
         if (!$silent) {
             /*TODOPU if ($card->type == MIMIC_CARD) {
@@ -745,7 +745,7 @@ trait EvolutionCardsUtilTrait {
     function drawEvolution(int $playerId) {
         $card = $this->pickEvolutionCards($playerId, 1)[0];
 
-        $this->evolutionCards->moveItem($card, 'hand', $playerId);
+        $this->powerUpExpansion->evolutionCards->moveItem($card, 'hand', $playerId);
 
         $this->notifNewEvolutionCard($playerId, $card);
 
@@ -755,7 +755,7 @@ trait EvolutionCardsUtilTrait {
     function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
         $card = $this->getEvolutionCardById($evolutionId);
 
-        $this->evolutionCards->moveItem($card, 'hand', $playerId);
+        $this->powerUpExpansion->evolutionCards->moveItem($card, 'hand', $playerId);
 
         $this->notifNewEvolutionCard($playerId, $card);
 
@@ -1056,7 +1056,7 @@ trait EvolutionCardsUtilTrait {
         }
 
         $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
-        $this->evolutionCards->moveItem($evolution, 'table', $toPlayerId);
+        $this->powerUpExpansion->evolutionCards->moveItem($evolution, 'table', $toPlayerId);
         $movedEvolution = $this->getEvolutionCardById($evolution->id); // so we relaad location
         $this->playEvolutionToTable($toPlayerId, $movedEvolution, '', $fromPlayerId);
 
