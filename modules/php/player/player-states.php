@@ -97,51 +97,8 @@ trait PlayerStateTrait {
             ));
         }
 
-        if ($this->isKingKongExpansion()) {
-            $towerLevels = $this->getTokyoTowerLevels($playerId);
-
-            foreach ($towerLevels as $level) {
-                if ($level == 1 || $level == 2) {
-                    $playerGettingHearts = $this->getPlayerGettingEnergyOrHeart($playerId);
-
-                    if ($this->canGainHealth($playerGettingHearts)) {
-                        
-                        if ($playerId == $playerGettingHearts) {
-                            $this->notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Heart]'), [
-                                'playerId' => $playerId,
-                                'player_name' => $this->getPlayerName($playerId),
-                                'level' => $level,
-                            ]);
-                        }
-
-                        $this->applyGetHealth($playerGettingHearts, 1, 0, $playerId);
-                    }
-                }
-
-                if ($level == 2) {
-                    $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
-
-                    if ($this->canGainEnergy($playerGettingEnergy)) {
-        
-                        if ($playerId == $playerGettingEnergy) {
-                            $this->notifyAllPlayers('log', clienttranslate('${player_name} starts turn with Tokyo Tower level ${level} and gains 1[Energy]'), [
-                                'playerId' => $playerId,
-                                'player_name' => $this->getPlayerName($playerId),
-                                'level' => $level,
-                            ]);
-                        }
-
-                        $this->applyGetEnergy($playerGettingEnergy, 1, 0);
-                    }
-                }
-
-                if ($level == 1) {
-                    $this->incStat(1, 'bonusFromTokyoTowerLevel1applied', $playerId);
-                }
-                if ($level == 2) {
-                    $this->incStat(1, 'bonusFromTokyoTowerLevel2applied', $playerId);
-                }
-            }
+        if ($this->kingKongExpansion->isActive()) {
+            $this->kingKongExpansion->onPlayerStartTurn($playerId);
         }
 
         if ($this->isPlayerBerserk($playerId)) {

@@ -30,7 +30,7 @@ trait MonsterTrait {
         }
 
         // King Kong, Cybertooth
-        if ($bonusMonsters || $this->isKingKongExpansion() || $this->isCybertoothExpansion()) {
+        if ($bonusMonsters || $this->kingKongExpansion->isActive() || $this->isCybertoothExpansion()) {
             $monsters = [...$monsters, 11, 12];
         }
 

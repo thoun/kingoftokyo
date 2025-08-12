@@ -6,7 +6,7 @@ namespace Bga\Games\KingOfTokyo;
 class AnubisExpansion {
 
     function __construct(
-        protected $game,
+        protected Game $game,
     ) {}
 
     public function isActive(): bool {

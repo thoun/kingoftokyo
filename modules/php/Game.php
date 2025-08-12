@@ -89,6 +89,7 @@ class Game extends \Bga\GameFramework\Table {
     use DebugUtilTrait;
 
     public AnubisExpansion $anubisExpansion;
+    public KingKongExpansion $kingKongExpansion;
     public WickednessExpansion $wickednessExpansion;
     public PowerUpExpansion $powerUpExpansion;
     public MindbugExpansion $mindbugExpansion;
@@ -165,6 +166,7 @@ class Game extends \Bga\GameFramework\Table {
 		
         
         $this->anubisExpansion = new AnubisExpansion($this);
+        $this->kingKongExpansion = new KingKongExpansion($this);
         $this->wickednessExpansion = new WickednessExpansion($this);
         $this->powerUpExpansion = new PowerUpExpansion($this);
         $this->mindbugExpansion = new MindbugExpansion($this);
@@ -332,7 +334,7 @@ class Game extends \Bga\GameFramework\Table {
             $this->initStat('player', 'wickednessTilesTaken', 0);
         }
 
-        if ($this->isKingKongExpansion()) {
+        if ($this->kingKongExpansion->isActive()) {
             $this->initStat('player', 'tokyoTowerLevel1claimed', 0);
             $this->initStat('player', 'tokyoTowerLevel2claimed', 0);
             $this->initStat('player', 'tokyoTowerLevel3claimed', 0);
@@ -374,8 +376,8 @@ class Game extends \Bga\GameFramework\Table {
             $this->wickednessTiles->setup($wickednessExpansion);
         }
 
-        if ($this->isKingKongExpansion()) {
-            $this->DbQuery("INSERT INTO tokyo_tower(`level`) VALUES (1), (2), (3)");
+        if ($this->kingKongExpansion->isActive()) {
+            $this->kingKongExpansion->setup();
         }
 
         if ($this->isMutantEvolutionVariant()) {
@@ -412,7 +414,7 @@ class Game extends \Bga\GameFramework\Table {
     */
     protected function getAllDatas(): array {
         $isCthulhuExpansion = $this->isCthulhuExpansion();
-        $isKingKongExpansion = $this->isKingKongExpansion();
+        $isKingKongExpansion = $this->kingKongExpansion->isActive();
         $isCybertoothExpansion = $this->isCybertoothExpansion();
         $isAnubisExpansion = $this->anubisExpansion->isActive();
         $isWickednessExpansion = $this->wickednessExpansion->isActive();
@@ -453,10 +455,6 @@ class Game extends \Bga\GameFramework\Table {
         $result['topDeckCardBackType'] = $this->getTopDeckCardBackType(); // TODOCA remove
         $result['topDeckCard'] = $this->getTopDeckCard();
 
-        if ($isKingKongExpansion) {
-            $result['tokyoTowerLevels'] = $this->getTokyoTowerLevels(0);
-        }
-
         foreach ($result['players'] as $playerId => &$playerDb) {
             if (intval($playerDb['score']) > MAX_POINT) {
                 $playerDb['score'] = MAX_POINT;
@@ -478,10 +476,7 @@ class Game extends \Bga\GameFramework\Table {
 
             $playerDb['rapidHealing'] = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
             $playerDb['maxHealth'] = $this->getPlayerMaxHealth($playerId);
-
-            if ($isKingKongExpansion) {
-                $playerDb['tokyoTowerLevels'] = $this->getTokyoTowerLevels($playerId);
-            }
+            
             if ($isCybertoothExpansion) {
                 $playerDb['berserk'] = boolval($playerDb['berserk']);
             }
@@ -566,6 +561,9 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($this->mindbugExpansion->isActive()) {
             $this->mindbugExpansion->fillResult($result);
+        }
+        if ($isKingKongExpansion) {
+            $this->kingKongExpansion->fillResult($result);
         }
 
         return $result;

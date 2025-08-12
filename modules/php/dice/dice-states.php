@@ -160,8 +160,8 @@ trait DiceStateTrait {
             }
         }
 
-        if ($diceCounts[1] >= 4 && $this->isKingKongExpansion() && $this->inTokyo($playerId) && $this->canUseSymbol($playerId, 1) && $this->canUseFace($playerId, 1)) {
-            $this->getNewTokyoTowerLevel($playerId);
+        if ($diceCounts[1] >= 4 && $this->kingKongExpansion->isActive() && $this->inTokyo($playerId) && $this->canUseSymbol($playerId, 1) && $this->canUseFace($playerId, 1)) {
+            $this->kingKongExpansion->getNewTokyoTowerLevel($playerId);
         }
         
         $isCthulhuExpansion = $this->isCthulhuExpansion();

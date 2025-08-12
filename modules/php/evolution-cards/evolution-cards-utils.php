@@ -11,8 +11,6 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
 
-use function Bga\Games\KingOfTokyo\debug;
-
 trait EvolutionCardsUtilTrait {
 
     //////////////////////////////////////////////////////////////////////////////

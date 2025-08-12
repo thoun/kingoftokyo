@@ -196,9 +196,9 @@ trait DebugUtilTrait {
         }
 
         // king kong
-        if ($this->isKingKongExpansion()) {
-            $this->changeTokyoTowerOwner(2343492, 1);
-            $this->changeTokyoTowerOwner(2343492, 2);
+        if ($this->kingKongExpansion->isActive()) {
+            $this->kingKongExpansion->changeTokyoTowerOwner(2343492, 1);
+            $this->kingKongExpansion->changeTokyoTowerOwner(2343492, 2);
         }
 
         // cybertooth

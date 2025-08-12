@@ -1068,27 +1068,6 @@ trait DiceUtilTrait {
         return $unusedCards;
     }
 
-    function getNewTokyoTowerLevel(int $playerId) {
-        $levels = $this->getTokyoTowerLevels($playerId);
-        $newLevel = 1;
-        for ($i=1; $i<3;$i++) {
-            if (in_array($newLevel, $levels)) {
-                $newLevel++;
-            }
-        }
-
-        $this->changeTokyoTowerOwner($playerId, $newLevel);
-
-        if ($newLevel === 3) {
-            $this->applyGetPointsIgnoreCards($playerId, WIN_GAME, 0);
-            
-            $this->notifyAllPlayers("fullTokyoTower", clienttranslate('${player_name} claims Tokyo Tower top level and wins the game'), [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-            ]);
-        }
-    }
-
     function getRolledDiceCounts(int $playerId, array $dice, $ignoreCanUseFace = true, $ignoreCanUseSymbol = true) {
         $diceCounts = [0,0,0,0,0,0,0,0];
 

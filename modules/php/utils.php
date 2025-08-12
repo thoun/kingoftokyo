@@ -67,10 +67,6 @@ trait UtilTrait {
         return $this->tableOptions->get(HALLOWEEN_EXPANSION_OPTION) === 2;
     }
 
-    function isKingKongExpansion() {
-        return $this->tableOptions->get(KINGKONG_EXPANSION_OPTION) === 2;
-    }
-
     function isCybertoothExpansion() {
         return $this->tableOptions->get(CYBERTOOTH_EXPANSION_OPTION) === 2;
     }
@@ -607,12 +603,8 @@ trait UtilTrait {
     }
 
     function eliminateAPlayer(object $player, int $currentTurnPlayerId) {
-        if ($this->isKingKongExpansion()) {
-            // Tokyo Tower levels go back to the table
-            $levels = $this->getTokyoTowerLevels($player->id);
-            foreach($levels as $level) {
-                $this->changeTokyoTowerOwner(0, $level);
-            }
+        if ($this->kingKongExpansion->isActive()) {
+            $this->kingKongExpansion->onPlayerEliminated($player->id);
         }
 
         // if player is killing himself
@@ -1314,26 +1306,6 @@ trait UtilTrait {
         }
 
         return $cards;
-    }
-
-    function getTokyoTowerLevels(int $playerId) {
-        $dbResults = $this->getCollectionFromDb("SELECT `level` FROM `tokyo_tower` WHERE `owner` = $playerId order by `level`");
-        return array_map(fn($dbResult) => intval($dbResult['level']), array_values($dbResults));
-    }
-
-    function changeTokyoTowerOwner(int $playerId, int $level) {
-        $this->DbQuery("UPDATE `tokyo_tower` SET  `owner` = $playerId where `level` = $level");
-
-        $message = $playerId == 0 ? '' : clienttranslate('${player_name} claims Tokyo Tower level ${level}');
-        $this->notifyAllPlayers("changeTokyoTowerOwner", $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'level' => $level,
-        ]);
-
-        if ($playerId > 0) {
-            $this->incStat(1, 'tokyoTowerLevel'.$level.'claimed', $playerId);
-        }
     }
 
     function getPlayersIdsWithMaxColumn(string $column) {
