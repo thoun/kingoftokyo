@@ -34,7 +34,7 @@ trait RedirectionTrait {
     }
 
     function redirectAfterPickMonster() {
-        if ($this->isPowerUpMutantEvolution()) {
+        if ($this->powerUpExpansion->isPowerUpMutantEvolution()) {
             return ST_NEXT_PICK_EVOLUTION_DECK; 
         } else {
             return $this->redirectAfterPickEvolutionDeck();
@@ -42,7 +42,7 @@ trait RedirectionTrait {
     }
 
     function redirectAfterPickEvolutionDeck() {
-        if ($this->isHalloweenExpansion() || $this->isPowerUpExpansion()) {
+        if ($this->isHalloweenExpansion() || $this->powerUpExpansion->isActive()) {
             return ST_PLAYER_CHOOSE_INITIAL_CARD; 
         } else {
             return $this->redirectAfterChooseInitialCard();
@@ -54,7 +54,7 @@ trait RedirectionTrait {
     }
 
     function redirectAfterBeforeStartTurn() {
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             return ST_QUESTIONS_BEFORE_START_TURN;
         } else {
             return ST_START_TURN;
@@ -84,7 +84,7 @@ trait RedirectionTrait {
     }
 
     function redirectAfterResolveDice() {
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             return ST_PLAYER_BEFORE_RESOLVE_DICE;
         } else {
             return ST_RESOLVE_NUMBER_DICE;
@@ -149,7 +149,7 @@ trait RedirectionTrait {
     }
 
     function redirectAfterEnterTokyo(int $playerId) {
-        if ($this->isHalloweenExpansion() || ($this->isPowerUpExpansion() && $this->isGiftCardsInPlay())) { 
+        if ($this->isHalloweenExpansion() || ($this->powerUpExpansion->isActive() && $this->isGiftCardsInPlay())) { 
             return ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION;
         } else {
             return $this->redirectAfterStealCostume($playerId);
@@ -173,7 +173,7 @@ trait RedirectionTrait {
     }*/
 
     function redirectAfterSellCard() {
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             return ST_MULTIPLAYER_BEFORE_END_TURN;
         } else {
             return $this->redirectAfterBeforeEndTurn();

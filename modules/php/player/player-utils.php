@@ -338,7 +338,7 @@ trait PlayerUtilTrait {
             return WINGS_CARD;
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             if ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION) > 0) {
                 return 3000 + DETACHABLE_TAIL_EVOLUTION;
             }
@@ -423,7 +423,7 @@ trait PlayerUtilTrait {
                 return false;
             }
         }
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $blizzardOwner = $this->isEvolutionOnTable(BLIZZARD_EVOLUTION);
             if ($blizzardOwner != null && $blizzardOwner != $playerId) {
                 return false;
@@ -451,7 +451,7 @@ trait PlayerUtilTrait {
     }
 
     function frozenFaces(int $playerId) {
-        if (!$this->isPowerUpExpansion()) {
+        if (!$this->powerUpExpansion->isActive()) {
             return [];
         }
 
@@ -543,7 +543,7 @@ trait PlayerUtilTrait {
             return false;
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
             foreach ($freezeRayCards as $freezeRayCard) {
                 if ($freezeRayCard->tokens == $face) {

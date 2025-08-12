@@ -53,7 +53,7 @@ trait DiceStateTrait {
 
     function stPrepareResolveDice() {
         $playerId = $this->getActivePlayerId();
-        $hasEncasedInIce = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
+        $hasEncasedInIce = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
 
         if ($hasEncasedInIce) {
             $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
@@ -69,7 +69,7 @@ trait DiceStateTrait {
     }
 
     function applyResolveDice(int $playerId) {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $playerInTokyo = $this->inTokyo($playerId);
         $dice = $this->getPlayerRolledDice($playerId, true, true, false);
@@ -129,7 +129,7 @@ trait DiceStateTrait {
                     $this->applyGetPoints($playerId, 9 * $countCompleteDestruction, COMPLETE_DESTRUCTION_CARD);
                 }
 
-                if ($this->isPowerUpExpansion()) {
+                if ($this->powerUpExpansion->isActive()) {
                     $countPandaExpress = $this->countEvolutionOfType($playerId, PANDA_EXPRESS_EVOLUTION);
                     if ($countPandaExpress > 0) {
                         $this->applyGetPoints($playerId, 2 * $countPandaExpress, 3000 + PANDA_EXPRESS_EVOLUTION);
@@ -284,7 +284,7 @@ trait DiceStateTrait {
     }
 
     function addHighTideDice(int $playerId, int $diceCount) {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         
         $highTideEvolutions = $isPowerUpExpansion ? $this->getEvolutionsOfType($playerId, HIGH_TIDE_EVOLUTION) : [];
         
@@ -330,7 +330,7 @@ trait DiceStateTrait {
         if ($diceCount > 0) {
             $this->resolveHealthDice($playerId, $diceCount);
         } else {
-            if ($this->isPowerUpExpansion()) {
+            if ($this->powerUpExpansion->isActive()) {
                 $countGrowingFast = $this->countEvolutionOfType($playerId, GROWING_FAST_EVOLUTION);
                 if ($countGrowingFast > 0) {
                     $this->applyGetHealth($playerId, $countGrowingFast, 3000 + GROWING_FAST_EVOLUTION, $playerId);
@@ -393,7 +393,7 @@ trait DiceStateTrait {
         $playerId = $this->getActivePlayerId();
 
         $pickEvolutionCards = false;        
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $dice = $this->getPlayerRolledDice($playerId, true, true, false);
             $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
             $pickEvolutionCards = $diceCounts[4] >= 3;

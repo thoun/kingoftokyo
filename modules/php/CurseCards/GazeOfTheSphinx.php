@@ -10,7 +10,7 @@ use KOT\Objects\Question;
 class GazeOfTheSphinx extends CurseCard {
 
     public function applyAnkhEffect(Context $context) {
-        if ($context->game->isPowerUpExpansion()) {
+        if ($context->game->powerUpExpansion->isActive()) {
             $question = new Question(
                 'GazeOfTheSphinxAnkh',
                 clienttranslate('${actplayer} must choose to draw an Evolution card or gain 3[Energy]'),
@@ -29,10 +29,10 @@ class GazeOfTheSphinx extends CurseCard {
 
     public function applySnakeEffect(Context $context) {
         $canLoseEvolution = false;
-        if ($context->game->isPowerUpExpansion()) {
+        if ($context->game->powerUpExpansion->isActive()) {
             $canLoseEvolution = (
-                intval($context->game->evolutionCards->countCardInLocation('table', $context->currentPlayerId)) +
-                intval($context->game->evolutionCards->countCardInLocation('hand', $context->currentPlayerId))
+                $context->game->evolutionCards->countItemsInLocation('table', $context->currentPlayerId) +
+                $context->game->evolutionCards->countItemsInLocation('hand', $context->currentPlayerId)
             ) > 0;
         }
         if ($canLoseEvolution) {

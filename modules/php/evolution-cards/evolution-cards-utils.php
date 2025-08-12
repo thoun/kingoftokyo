@@ -2,13 +2,16 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../Objects/evolution-card.php');
 require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 
-use KOT\Objects\EvolutionCard;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
+use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
+
+use function Bga\Games\KingOfTokyo\debug;
 
 trait EvolutionCardsUtilTrait {
 
@@ -50,67 +53,38 @@ trait EvolutionCardsUtilTrait {
         $this->setGlobalVariable(QUESTION.$this->getStackedStateSuffix(), $question);
     }
 
-    function initEvolutionCards(array $affectedPlayersMonsters) {
-        foreach($this->MONSTERS_WITH_POWER_UP_CARDS as $monster) {
-            $cards = [];
-            for($card=1; $card<=8; $card++) {
-                $type = $monster * 10 + $card;
-                $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
-            }
-            $location = array_key_exists($monster, $affectedPlayersMonsters) ? 'deck'.$affectedPlayersMonsters[$monster] : 'monster'.$monster;
-            $this->evolutionCards->createCards($cards, $location);
-            $this->evolutionCards->shuffle($location); 
-        }
-
-        if (count($affectedPlayersMonsters) > 0) {
-            $this->setOwnerIdForAllEvolutions();
-        }
-    }
-
     function getEvolutionCardById(int $id) {
-        $sql = "SELECT * FROM `evolution_card` WHERE `card_id` = $id";
-        $dbResults = $this->getCollectionFromDb($sql);
-        return new EvolutionCard(array_values($dbResults)[0]);
+        return $this->evolutionCards->getItemById($id);
     }
 
-    function getEvolutionCardsByLocation(string $location, /*int|null*/ $location_arg = null, /*int|null*/ $type = null) {
-        $sql = "SELECT * FROM `evolution_card` WHERE `card_location` = '$location'";
-        if ($location_arg !== null) {
-            $sql .= " AND `card_location_arg` = $location_arg";
-        }
+    function getEvolutionCardsByLocation(string $location, ?int $location_arg = null, ?int $type = null) {
+        $cards = $this->evolutionCards->getItemsInLocation($location, $location_arg, true, sortByField: 'location_arg');
         if ($type !== null) {
-            $sql .= " AND `card_type` = $type";
+            $cards = Arrays::filter($cards, fn($card) => $card->type === $type);
         }
-        $dbResults = $this->getCollectionFromDb($sql);
-        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
+        return $cards;
     }
 
     function getEvolutionCardsByType(int $type) {
-        $sql = "SELECT * FROM `evolution_card` WHERE `card_type` = $type";
-        $dbResults = $this->getCollectionFromDb($sql);
-        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
+        return $this->evolutionCards->getItemsByFieldName('type', [$type]);
     }
 
     function getEvolutionCardsByOwner(int $ownerId) {
-        $sql = "SELECT * FROM `evolution_card` WHERE `owner_id` = $ownerId";
-        $dbResults = $this->getCollectionFromDb($sql);
-        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
+        return $this->evolutionCards->getItemsByFieldName('ownerId', [$ownerId]);
     }
 
     function getEvolutionCardsOnDeckTop(int $playerId, int $number) {
-        $sql = "SELECT * FROM `evolution_card` WHERE `card_location` = 'deck$playerId' ORDER BY `card_location_arg` DESC LIMIT $number";
-        $dbResults = $this->getCollectionFromDb($sql);
-        return array_map(fn($dbCard) => new EvolutionCard($dbCard), array_values($dbResults));
+        return $this->evolutionCards->getItemsInLocation("deck$playerId", null, true, $number, sortByField: 'location_arg');
     }
 
     function pickEvolutionCards(int $playerId, int $number = 2) {
-        $remainingInDeck = intval($this->evolutionCards->countCardInLocation('deck'.$playerId));
+        $remainingInDeck = $this->evolutionCards->countItemsInLocation('deck'.$playerId);
         if ($remainingInDeck >= $number) {
             return $this->getEvolutionCardsOnDeckTop($playerId, $number);
         } else {
             $cards = $this->getEvolutionCardsOnDeckTop($playerId, $remainingInDeck);
 
-            $this->evolutionCards->moveAllCardsInLocation('discard'.$playerId, 'deck'.$playerId);
+            $this->evolutionCards->moveAllItemsInLocation('discard'.$playerId, 'deck'.$playerId);
             $this->evolutionCards->shuffle('deck'.$playerId);
 
             $cards = array_merge(
@@ -222,7 +196,7 @@ trait EvolutionCardsUtilTrait {
             $message = clienttranslate('${player_name} plays ${card_name}');
         }
 
-        $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+        $this->evolutionCards->moveItem($card, 'table', $playerId);
         $card->location = 'table';
 
         $this->notifyAllPlayers("playEvolution", $message, [
@@ -237,11 +211,11 @@ trait EvolutionCardsUtilTrait {
     }
 
     function getPlayersIdsWhoCouldPlayEvolutions(array $playersIds, array $stepCardsIds) { // return array of players able to play
-        $isPowerUpMutantEvolution = $this->isPowerUpMutantEvolution();
+        $isPowerUpMutantEvolution = $this->powerUpExpansion->isPowerUpMutantEvolution();
         $playersIds = $isPowerUpMutantEvolution ? $this->getPlayersIds(true) : $playersIds;
 
         // ignore a player if its hand is empty
-        $playersIds = array_values(array_filter($playersIds, fn($playerId) => intval($this->evolutionCards->countCardInLocation('hand', $playerId)) > 0));
+        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->evolutionCards->countItemsInLocation('hand', $playerId) > 0));
 
         if (count($playersIds) == 0) {
             return [];
@@ -326,9 +300,6 @@ trait EvolutionCardsUtilTrait {
                 $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId);
                 break;
             // Cyber Kitty
-            case MEGA_PURR_EVOLUTION:
-                $this->applyMegaPurr($playerId, $card);
-                break;
             case ELECTRO_SCRATCH_EVOLUTION:
                 $otherPlayersIds = $this->getOtherPlayersIds($playerId);
                 $damages = [];
@@ -478,6 +449,8 @@ trait EvolutionCardsUtilTrait {
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 $this->applyGetEnergy($playerId, 1, $logCardType);
                 break;
+            default:
+                return $this->evolutionCards->immediateEffect($card, new Context($this, currentPlayerId: $playerId));
         }
     }
 
@@ -555,7 +528,7 @@ trait EvolutionCardsUtilTrait {
         } else if ($card->id == $this->getMimickedEvolutionId() && !$ignoreMimicToken) {
             $this->removeMimicEvolutionToken($playerId);
         }
-        $this->evolutionCards->moveCard($card->id, 'discard'.$playerId);
+        $this->evolutionCards->moveItem($card, 'discard'.$playerId);
 
         if ($card->type == MY_TOY_EVOLUTION || ($card->type == ICY_REFLECTION_EVOLUTION && $this->getMimickedEvolutionType() == MY_TOY_EVOLUTION)) {
             // if My Toy is removed, reserved card is put to discard
@@ -669,7 +642,7 @@ trait EvolutionCardsUtilTrait {
 
     function setEvolutionTokens(int $playerId, $card, int $tokens, bool $silent = false) {
         $card->tokens = $tokens;
-        $this->DbQuery("UPDATE `evolution_card` SET `card_type_arg` = $tokens where `card_id` = ".$card->id);
+        $this->evolutionCards->updateItem($card, ['tokens']);
 
         if (!$silent) {
             /*TODOPU if ($card->type == MIMIC_CARD) {
@@ -774,7 +747,7 @@ trait EvolutionCardsUtilTrait {
     function drawEvolution(int $playerId) {
         $card = $this->pickEvolutionCards($playerId, 1)[0];
 
-        $this->evolutionCards->moveCard($card->id, 'hand', $playerId);
+        $this->evolutionCards->moveItem($card, 'hand', $playerId);
 
         $this->notifNewEvolutionCard($playerId, $card);
 
@@ -784,7 +757,7 @@ trait EvolutionCardsUtilTrait {
     function getEvolutionFromDiscard(int $playerId, int $evolutionId) {
         $card = $this->getEvolutionCardById($evolutionId);
 
-        $this->evolutionCards->moveCard($card->id, 'hand', $playerId);
+        $this->evolutionCards->moveItem($card, 'hand', $playerId);
 
         $this->notifNewEvolutionCard($playerId, $card);
 
@@ -862,11 +835,6 @@ trait EvolutionCardsUtilTrait {
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive($otherPlayersIds, 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
-
-    function applyMegaPurr(int $playerId, EvolutionCard $card) {
-        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->score > 0);
-        $this->applyGiveSymbolQuestion($playerId, $card, $otherPlayers, [5, 0]);
     }
 
     function applyFeastOfCrows(int $playerId, EvolutionCard $card) {
@@ -1090,7 +1058,7 @@ trait EvolutionCardsUtilTrait {
         }
 
         $this->removeEvolution($fromPlayerId, $evolution, true, false, true);
-        $this->evolutionCards->moveCard($evolution->id, 'table', $toPlayerId);
+        $this->evolutionCards->moveItem($evolution, 'table', $toPlayerId);
         $movedEvolution = $this->getEvolutionCardById($evolution->id); // so we relaad location
         $this->playEvolutionToTable($toPlayerId, $movedEvolution, '', $fromPlayerId);
 

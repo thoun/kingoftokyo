@@ -2,11 +2,10 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../Objects/evolution-card.php');
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
-use KOT\Objects\EvolutionCard;
+use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use KOT\Objects\Question;
 use KOT\Objects\Damage;
 
@@ -32,7 +31,7 @@ trait EvolutionCardsActionTrait {
             throw new \BgaUserException("Card is not selectable");
         }
 
-        $this->evolutionCards->moveCard($id, 'deck'.$playerId);
+        $this->evolutionCards->moveItem($card, 'deck'.$playerId);
 
         $this->notifyPlayer($playerId, 'evolutionPickedForDeck', '', [
             'card' => $card,
@@ -85,8 +84,8 @@ trait EvolutionCardsActionTrait {
         }
         $otherCard = $this->array_find($topCards, fn($topCard) => $topCard->id != $id);
 
-        $this->evolutionCards->moveCard($id, 'hand', $playerId);
-        $this->evolutionCards->moveCard($otherCard->id, 'discard'.$playerId);
+        $this->evolutionCards->moveItem($card, 'hand', $playerId);
+        $this->evolutionCards->moveItem($otherCard, 'discard'.$playerId);
 
         $this->incStat(1, 'picked'.$this->EVOLUTION_CARDS_TYPES_FOR_STATS[$this->EVOLUTION_CARDS_TYPES[$card->type]], $playerId);
 
@@ -109,7 +108,7 @@ trait EvolutionCardsActionTrait {
     function applyPlayEvolution(int $playerId, EvolutionCard $card) {
         $countMothershipSupportBefore = $this->countEvolutionOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
 
-        $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+        $this->evolutionCards->moveItem($card, 'table', $playerId);
 
         $this->playEvolutionToTable($playerId, $card);
         
@@ -142,7 +141,7 @@ trait EvolutionCardsActionTrait {
         $this->applyPlayEvolution($playerId, $card);
 
         // if the player has no more evolution cards, we skip the state for him
-        if (intval(($this->evolutionCards->countCardInLocation('hand', $playerId))) == 0) {
+        if ($this->evolutionCards->countItemsInLocation('hand', $playerId) == 0) {
             $stateId = intval($this->gamestate->state_id());
 
             switch($stateId) {
@@ -182,7 +181,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $hasYinYang = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
+        $hasYinYang = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
         if (!$hasYinYang) {
             throw new \BgaUserException("You can't play Yin & Yang without this Evolution.");
         }
@@ -209,7 +208,7 @@ trait EvolutionCardsActionTrait {
 
         $card = $this->getEvolutionsOfType($playerId, $evolutionType, true, true)[0];
 
-        $this->evolutionCards->moveCard($card->id, 'table', $playerId);
+        $this->evolutionCards->moveItem($card, 'table', $playerId);
 
         $this->playEvolutionToTable($playerId, $card, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
@@ -235,7 +234,7 @@ trait EvolutionCardsActionTrait {
 
         $evolution = $this->getEvolutionsOfType($playerId, CANDY_EVOLUTION, true, true)[0];
 
-        $this->evolutionCards->moveCard($evolution->id, 'table', $playerId);
+        $this->evolutionCards->moveItem($evolution, 'table', $playerId);
 
         $this->playEvolutionToTable($playerId, $evolution, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
@@ -256,7 +255,7 @@ trait EvolutionCardsActionTrait {
         $fromPlayerId = $playerId;
         $toPlayerId = $damageDealerId;
         $this->removeEvolution($fromPlayerId, $evolution);
-        $this->evolutionCards->moveCard($evolution->id, 'hand', $toPlayerId);
+        $this->evolutionCards->moveItem($evolution, 'hand', $toPlayerId);
         $message = /*client TODOPUHA translate*/('${player_name2} use ${card_name} to avoid damages and gives ${card_name} to ${player_name}');
         $this->notifNewEvolutionCard($toPlayerId, $evolution, $message, [
             'card_name' => 3000 + $evolution->type,

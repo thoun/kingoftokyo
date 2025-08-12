@@ -25,7 +25,7 @@ trait CardsArgTrait {
     }
 
     function getArgBuyCard(int $playerId, bool $includeCultistsEnergy) {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $potentialEnergy = $includeCultistsEnergy ? $this->getPlayerPotentialEnergy($playerId) : $this->getPlayerEnergy($playerId);
 
@@ -333,7 +333,7 @@ trait CardsArgTrait {
         }
         
         if ($playerId != null && $intervention !== null) {
-            $isPowerUpExpansion = $this->isPowerUpExpansion();
+            $isPowerUpExpansion = $this->powerUpExpansion->isActive();
             
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
@@ -370,7 +370,7 @@ trait CardsArgTrait {
             $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
             $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($effectiveDamage, $this->getPlayerHealth($playerId));
             $healWithEvolutions = 0;
-            if ($damageToCancelToSurvive > 0 && $this->isPowerUpExpansion()) {
+            if ($damageToCancelToSurvive > 0 && $this->powerUpExpansion->isActive()) {
                 foreach($this->EVOLUTIONS_TO_HEAL as $evolutionType => $amount) {
                     $count = $this->countEvolutionOfType($playerId, $evolutionType, false, true);
 
@@ -498,7 +498,7 @@ trait CardsArgTrait {
         $tableGifts = [];
         $canGiveGift = false;
         $highlighted = [];
-        if ($diceCounts[6] >= 1 && $this->isPowerUpExpansion() && $this->isGiftCardsInPlay()) {
+        if ($diceCounts[6] >= 1 && $this->powerUpExpansion->isActive() && $this->isGiftCardsInPlay()) {
             $tableGifts = array_values(array_filter($this->getEvolutionCardsByLocation('table', $playerId), fn($evolution) => $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 3));
             $canGiveGift = count($tableGifts) > 0 || count($this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_GIFTS)) > 0;
             $highlighted = $this->getHighlightedEvolutions($this->EVOLUTION_GIFTS);

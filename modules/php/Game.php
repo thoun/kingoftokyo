@@ -90,12 +90,13 @@ class Game extends \Bga\GameFramework\Table {
 
     public AnubisExpansion $anubisExpansion;
     public WickednessExpansion $wickednessExpansion;
+    public PowerUpExpansion $powerUpExpansion;
     public MindbugExpansion $mindbugExpansion;
 
     public Deck $cards;
 	public CurseCardManager $curseCards;
     public WickednessTileManager $wickednessTiles;
-    public Deck $evolutionCards;
+    public EvolutionCardManager $evolutionCards;
 
     // from material file
     public array $MONSTERS_WITH_POWER_UP_CARDS;
@@ -165,6 +166,7 @@ class Game extends \Bga\GameFramework\Table {
         
         $this->anubisExpansion = new AnubisExpansion($this);
         $this->wickednessExpansion = new WickednessExpansion($this);
+        $this->powerUpExpansion = new PowerUpExpansion($this);
         $this->mindbugExpansion = new MindbugExpansion($this);
 
         $this->cards = $this->getNew("module.common.deck");
@@ -174,10 +176,7 @@ class Game extends \Bga\GameFramework\Table {
         $this->curseCards = new CurseCardManager($this);
 		
         $this->wickednessTiles = new WickednessTileManager($this);
-		
-        $this->evolutionCards = $this->getNew("module.common.deck");
-        $this->evolutionCards->init("evolution_card");
-        $this->evolutionCards->autoreshuffle = true;
+        $this->evolutionCards = new EvolutionCardManager($this);
 	}
 
     /*
@@ -190,6 +189,7 @@ class Game extends \Bga\GameFramework\Table {
     protected function setupNewGame($players, $options = []) { 
         $this->wickednessTiles->initDb();
         $this->curseCards->initDb();
+        $this->evolutionCards->initDb();
         $this->mindbugExpansion->initDb(array_keys($players));
 
         $sql = "DELETE FROM player WHERE 1 ";
@@ -344,7 +344,7 @@ class Game extends \Bga\GameFramework\Table {
             $this->initStat('player', 'turnsInBipedForm', 0);
             $this->initStat('player', 'turnsInBeastForm', 0);
         }
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $this->initStat('player', 'pickedPermanentEvolution', 0);
             $this->initStat('player', 'pickedTemporaryEvolution', 0);
             $this->initStat('player', 'pickedGiftEvolution', 0);
@@ -384,8 +384,8 @@ class Game extends \Bga\GameFramework\Table {
             }
         }
 
-        if ($this->isPowerUpExpansion()) {
-            $this->initEvolutionCards($affectedPlayersMonsters);
+        if ($this->powerUpExpansion->isActive()) {
+            $this->evolutionCards->setup($affectedPlayersMonsters);
         }
 
         if ($this->mindbugExpansion->isActive()) {
@@ -417,7 +417,7 @@ class Game extends \Bga\GameFramework\Table {
         $isAnubisExpansion = $this->anubisExpansion->isActive();
         $isWickednessExpansion = $this->wickednessExpansion->isActive();
         $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         $isDarkEdition = $this->isDarkEdition();
         $isOrigins = $this->isOrigins();
 
@@ -885,6 +885,11 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($from_version <= 2508011620) {
             $sql = "ALTER TABLE `DBPREFIX_curse_card` ADD `order` INT DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+
+        if ($from_version <= 2508121245) {
+            $sql = "ALTER TABLE `DBPREFIX_evolution_card` ADD `order` INT DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

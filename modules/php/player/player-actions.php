@@ -42,7 +42,7 @@ trait PlayerActionTrait {
 
         $this->notifStayInTokyo($playerId);
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $countBlackDiamond = $this->countEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION);
             if ($countBlackDiamond > 0) {
                 $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);

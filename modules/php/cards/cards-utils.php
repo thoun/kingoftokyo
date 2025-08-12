@@ -3,14 +3,13 @@
 namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/card.php');
-require_once(__DIR__.'/../Objects/evolution-card.php');
 require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/log.php');
 
+use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Card;
-use KOT\Objects\EvolutionCard;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
 use KOT\Objects\LoseHealthLog;
@@ -399,7 +398,7 @@ trait CardsUtilTrait {
         $inadequateOffering = $this->anubisExpansion->isActive() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
         // secret laboratory
         $countSecretLaboratory = 0;
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $countSecretLaboratory = $this->countEvolutionOfType($playerId, SECRET_LABORATORY_EVOLUTION);
         }
 
@@ -737,7 +736,7 @@ trait CardsUtilTrait {
 
         $this->cards->moveCard($card->id, $card->type < 300 ? 'discard' : 'void'); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
 
-        if ($this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
+        if ($this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
             $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
             $superiorAlienTechnologyTokens = array_values(array_filter($superiorAlienTechnologyTokens, fn($token) => $token != $card->id));
             $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, $superiorAlienTechnologyTokens);
@@ -959,7 +958,7 @@ trait CardsUtilTrait {
             }
         }
         
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $twasBeautyKilledTheBeastCards = $this->getEvolutionCardsByType(TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
             foreach($twasBeautyKilledTheBeastCards as $twasBeautyKilledTheBeastCard) {
                 if ($twasBeautyKilledTheBeastCard->location == 'table') {
@@ -1125,7 +1124,7 @@ trait CardsUtilTrait {
                 $logs[] = new LoseHealthLog($this, $playerId, $countDevil, DEVIL_CARD);
             }
 
-            $isPowerUpExpansion = $this->isPowerUpExpansion();
+            $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
             // target acquired
             $countTargetAcquired = 0;

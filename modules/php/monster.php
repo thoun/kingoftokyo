@@ -35,7 +35,7 @@ trait MonsterTrait {
         }
 
         // Pandakaï
-        if ($bonusMonsters || $this->isPowerUpExpansion()) {
+        if ($bonusMonsters || $this->powerUpExpansion->isActive()) {
             if ($isDarkEdition) {
                 if ($bonusMonsters) {
                     $monsters = [...$monsters, 13];
@@ -113,7 +113,7 @@ trait MonsterTrait {
             $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, MONSTERS_WITH_ICON)));            
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster % 100, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
         }
         
@@ -152,8 +152,8 @@ trait MonsterTrait {
             'monster' => $monsterId,
         ]);
 
-        if ($this->isPowerUpExpansion()) {
-            $this->evolutionCards->moveAllCardsInLocationKeepOrder('monster'.($monsterId % 100), 'deck'.$playerId);
+        if ($this->powerUpExpansion->isActive()) {
+            $this->evolutionCards->moveAllItemsInLocation('monster'.($monsterId % 100), 'deck'.$playerId);
             $this->evolutionCards->shuffle('deck'.$playerId);
         }
     }
@@ -288,7 +288,7 @@ trait MonsterTrait {
 
         if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
 
-            if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
+            if ($this->powerUpExpansion->isActive() && !$this->powerUpExpansion->isPowerUpMutantEvolution()) {
                 $this->setOwnerIdForAllEvolutions();
             }
 

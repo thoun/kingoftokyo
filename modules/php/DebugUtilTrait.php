@@ -216,7 +216,7 @@ trait DebugUtilTrait {
 
         // power up
 
-        if ($this->isPowerUpExpansion() && !$this->isPowerUpMutantEvolution()) {
+        if ($this->powerUpExpansion->isActive() && !$this->powerUpExpansion->isPowerUpMutantEvolution()) {
             //$this->DbQuery("UPDATE player SET `ask_play_evolution` = 1");
             // set monster
             $this->DbQuery("UPDATE player SET `player_monster` = 1 where `player_id` = 2343495"); // space penguin
@@ -347,7 +347,7 @@ trait DebugUtilTrait {
 
     function debug_SetEvolutionInHand(int $cardType, int $playerId, bool $visible, $owner = null) {
         $card = $this->getEvolutionCardById(intval(array_values($this->evolutionCards->getCardsOfType($cardType))[0]['id']));
-        $this->evolutionCards->moveCard($card->id, $visible ? 'table' : 'hand', $playerId);
+        $this->evolutionCards->moveItem($card, $visible ? 'table' : 'hand', $playerId);
         $ownerId = $owner === null ? $playerId : $owner;
         $this->DbQuery("UPDATE evolution_card SET owner_id=$ownerId WHERE card_id = $card->id");
         return $card;

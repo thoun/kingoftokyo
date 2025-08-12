@@ -549,10 +549,10 @@ class ItemManager {
     /**
      * @return T[] An array of objects of the type specified by $this->className.
      */
-    public function getItemsInLocation(string $location, ?int $locationArg = null, bool $reversed = false, ?int $limit = null): array {
+    public function getItemsInLocation(string $location, ?int $locationArg = null, bool $reversed = false, ?int $limit = null, ?string $sortByField = null): array {
         $locationField = $this->getItemFieldByKind('location');
         $locationArgField = $this->getItemFieldByKind('location_arg');
-        $orderField = $this->getItemFieldByKind('order');
+        $orderField = $sortByField !== null ?  $this->getItemField($sortByField) : $this->getItemFieldByKind('order');
 
         $where = $this->db->sqlEqualValue($locationField, $location);
         if ($locationArg !== null) {
@@ -652,7 +652,17 @@ class ItemManager {
         $item = new $className();
 
         foreach ($this->fields as &$field) {
-            $item->{$field->name} = $this->db->getValueFromSql($field, $dbItem[$field->dbField] ?? null);
+            $valueFromSql = $this->db->getValueFromSql($field, $dbItem[$field->dbField] ?? null);
+
+            if ($valueFromSql === null) {
+                // check if the property can be set to null
+                $reflectionProperty = new \ReflectionProperty($this->className, $field->name);
+                if (!$reflectionProperty->getType()->allowsNull()) {
+                    $valueFromSql = $reflectionProperty->getDefaultValue();
+                }
+            }
+
+            $item->{$field->name} = $valueFromSql;
         }
         
         if (method_exists($item, 'setup')) {

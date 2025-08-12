@@ -24,7 +24,7 @@ trait InitialCardTrait {
     }
 
     function isInitialCardDistributionComplete() {
-        return ($this->isHalloweenExpansion() && $this->everyPlayerHasCostumeCard()) || ($this->isPowerUpExpansion() && $this->everyPlayerHasEvolutionCard());
+        return ($this->isHalloweenExpansion() && $this->everyPlayerHasCostumeCard()) || ($this->powerUpExpansion->isActive() && $this->everyPlayerHasEvolutionCard());
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ trait InitialCardTrait {
     private function everyPlayerHasEvolutionCard() {
         $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
-            if (intval($this->evolutionCards->countCardInLocation('hand', $playerId)) == 0) {
+            if ($this->evolutionCards->countItemsInLocation('hand', $playerId) == 0) {
                 return false;
             }
         }
@@ -104,7 +104,7 @@ trait InitialCardTrait {
         $activePlayerId = $this->getActivePlayerId();
 
         $chooseCostume = $this->isHalloweenExpansion();
-        $chooseEvolution = $this->isPowerUpExpansion();
+        $chooseEvolution = $this->powerUpExpansion->isActive();
 
         $args = [
             'chooseCostume' => $chooseCostume,

@@ -264,7 +264,7 @@ trait DiceArgTrait {
     function argPrepareResolveDice() {
         $playerId = $this->getActivePlayerId();
 
-        $hasEncasedInIce = $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
+        $hasEncasedInIce = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
 
         $dice = $this->getPlayerRolledDice($playerId, true, true, false);
         $selectableDice = $this->getSelectableDice($dice, false, false);

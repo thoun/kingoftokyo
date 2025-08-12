@@ -83,14 +83,6 @@ trait UtilTrait {
         return $this->tableOptions->get(CTHULHU_EXPANSION_OPTION) === 2;
     }
 
-    function isPowerUpExpansion() {
-        return !$this->isOrigins() && $this->tableOptions->get(POWERUP_EXPANSION_OPTION) >= 2;
-    }
-
-    function isPowerUpMutantEvolution() {
-        return !$this->isOrigins() && $this->tableOptions->get(POWERUP_EXPANSION_OPTION) === 3;
-    }
-
     function isDarkEdition() {
         return !$this->isOrigins() && $this->tableOptions->get(DARK_EDITION_OPTION) > 1;
     }
@@ -197,7 +189,7 @@ trait UtilTrait {
     }
 
     function getRollNumber(int $playerId) {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $ignisFatus = 0;
         if ($isPowerUpExpansion) {
@@ -262,7 +254,7 @@ trait UtilTrait {
         if ($this->isZombified($playerId)) {
             $add += 2;
         }
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $add += 2 * $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
         }
 
@@ -357,7 +349,7 @@ trait UtilTrait {
             ));
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $countBlackDiamond = $this->countEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION);
             if ($countBlackDiamond > 0) {
                 $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
@@ -427,7 +419,7 @@ trait UtilTrait {
 
         $this->incStat(1, 'tokyoLeaves', $playerId);
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $twasBeautyKilledTheBeastCards = $this->getEvolutionsOfType($playerId, TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION);
             if (count($twasBeautyKilledTheBeastCards) > 0 && !$this->getPlayer($playerId)->eliminated) {
                 $this->applyLeaveWithTwasBeautyKilledTheBeast($playerId, $twasBeautyKilledTheBeastCards);
@@ -641,7 +633,7 @@ trait UtilTrait {
             $tiles = $this->wickednessTiles->getPlayerTiles($player->id);
             $this->wickednessExpansion->removeWickednessTiles($player->id, $tiles);
         }
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $cards = $this->getEvolutionCardsByLocation('hand', $player->id);
             $this->removeEvolutions($player->id, $cards, true);
             $cards = $this->getEvolutionCardsByLocation('table', $player->id);
@@ -830,7 +822,7 @@ trait UtilTrait {
 
         $newHealth = $this->applyDamageIgnoreCards($damage);
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         if ($newHealth == 0 && $actualHealth > 0) {
             // eater of the dead 
@@ -869,7 +861,7 @@ trait UtilTrait {
         }
 
         // only smashes
-        if (gettype($damage->cardType) == 'integer' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
+        if (gettype($damage->cardType) == 'integer' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->powerUpExpansion->isActive()) {
             $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
             if ($countHeatVision > 0) {
                 $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
@@ -1002,7 +994,7 @@ trait UtilTrait {
             && $this->wickednessTiles->winOnElimination(new Context($this, currentPlayerId: $playerId)) !== null;
 
         if (!$finalRoarWillActivate) {
-            if ($this->isPowerUpExpansion()) {
+            if ($this->powerUpExpansion->isActive()) {
                 if ($this->getPlayerHealth($playerId) == 0) {
                     $sonOfKongKikoEvolutions = $this->getEvolutionsOfType($playerId, SON_OF_KONG_KIKO_EVOLUTION, true, true);
                     if (count($sonOfKongKikoEvolutions) > 0) {
@@ -1185,7 +1177,7 @@ trait UtilTrait {
             $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
             $this->countCardOfType($playerId, ELECTRIC_ARMOR_CARD) > 0 || 
             ($this->countCardOfType($playerId, WINGS_CARD) > 0 && $this->canLoseHealth($playerId, $damage) == null) ||
-            ($this->isPowerUpExpansion() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0)) ||
+            ($this->powerUpExpansion->isActive() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0)) ||
             $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
 
         if ($canDo) {
@@ -1201,7 +1193,7 @@ trait UtilTrait {
                 $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
                 $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($totalDamage, $playerHealth);
                 $healWithEvolutions = 0;
-                if ($damageToCancelToSurvive > 0 && $this->isPowerUpExpansion()) {
+                if ($damageToCancelToSurvive > 0 && $this->powerUpExpansion->isActive()) {
                     foreach($this->EVOLUTIONS_TO_HEAL as $evolutionType => $amount) {
                         $count = $this->countEvolutionOfType($playerId, $evolutionType, false, true);
     
@@ -1225,7 +1217,7 @@ trait UtilTrait {
     function resolveRemainingDamages(object $intervention, bool $endOfCurrentPlayer = false, bool $fromCancelDamageState = false) {
         // if there is no more player to handle, end this state
         if (count($intervention->remainingPlayersId) == 0) {
-            if ($this->isPowerUpExpansion()) {
+            if ($this->powerUpExpansion->isActive()) {
                 $this->setDamageIntervention($intervention);
                 $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
                 return;

@@ -24,7 +24,7 @@ trait PlayerArgTrait {
         $simianScamperPlayers = [];
         $canYieldTokyo = [];
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
             if ($this->countCardOfType($smashedPlayerInTokyo, JETS_CARD) > 0) {
                 $jetsPlayers[] = $smashedPlayerInTokyo;

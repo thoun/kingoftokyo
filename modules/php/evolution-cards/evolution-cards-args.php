@@ -45,7 +45,7 @@ trait EvolutionCardsArgTrait {
     }
 
     function argBeforeStartTurn() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START) : [];
 
@@ -55,7 +55,7 @@ trait EvolutionCardsArgTrait {
     }
 
     function argBeforeResolveDice() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) : [];
 
@@ -65,7 +65,7 @@ trait EvolutionCardsArgTrait {
     }
 
     function argBeforeEnteringTokyo() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $highlighted = $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) : [];
 
@@ -96,7 +96,7 @@ trait EvolutionCardsArgTrait {
     }
 
     function argCardIsBought() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) : [];
 
@@ -120,7 +120,7 @@ trait EvolutionCardsArgTrait {
     }
 
     function argBeforeEndTurn() {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         $highlighted = [];
         $privatePlayers = [];

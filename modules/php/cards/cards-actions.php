@@ -348,7 +348,7 @@ trait CardsActionTrait {
             $this->goToMimicSelection($playerId, MIMIC_CARD);
             return;
         }
-        if ($from === $playerId && $this->isPowerUpExpansion()) {
+        if ($from === $playerId && $this->powerUpExpansion->isActive()) {
             $myToyEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
             if (count($myToyEvolutions) > 0) {
                 $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => intval($this->cards->countCardInLocation('reserved'.$playerId, $myToyEvolution->id)) === 0));
@@ -412,7 +412,7 @@ trait CardsActionTrait {
 
         $cardsIds = $this->getSuperiorAlienTechnologyTokens($playerId);
         
-        $canPreventBuying = ($playerId == intval($this->getActivePlayerId())) && $this->isPowerUpExpansion()
+        $canPreventBuying = ($playerId == intval($this->getActivePlayerId())) && $this->powerUpExpansion->isActive()
             && count($this->getPlayersIdsWhoCouldPlayEvolutions($this->getOtherPlayersIds($playerId), $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT)) > 0;
 
         if ($canPreventBuying && (
@@ -723,7 +723,7 @@ trait CardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         $countSoSmall = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) : 0;
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
         $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;
@@ -754,7 +754,7 @@ trait CardsActionTrait {
     }
 
     function endThrowCamouflageDice(int $playerId, object $intervention, array $dice, bool $incCamouflageRolls) {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         $countSoSmall = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) : 0;
         $countCamouflage = $this->countCardOfType($playerId, CAMOUFLAGE_CARD);
         $countTerrorOfTheDeep = $isPowerUpExpansion ? $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) : 0;

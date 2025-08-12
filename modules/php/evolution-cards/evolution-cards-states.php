@@ -18,11 +18,11 @@ trait EvolutionCardsStateTrait {
             // give 8 random evolutions to each players mutant deck
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $playerId) {
-                $this->evolutionCards->moveAllCardsInLocation('deck'.$playerId, 'mutantdeck');
+                $this->evolutionCards->moveAllItemsInLocation('deck'.$playerId, 'mutantdeck');
             }
             $this->evolutionCards->shuffle('mutantdeck');
             foreach($playersIds as $index => $playerId) {
-                $this->evolutionCards->pickCardsForLocation(8, 'mutantdeck', 'mutant'.$index);
+                $this->evolutionCards->pickItemsForLocation(8, 'mutantdeck', null, 'mutant'.$index);
             }
         }
 
@@ -236,7 +236,7 @@ trait EvolutionCardsStateTrait {
     }
 
     function stBeforeResolveDice() {
-        if (!$this->isPowerUpExpansion()) {
+        if (!$this->powerUpExpansion->isActive()) {
             $this->goToState($this->redirectAfterBeforeResolveDice());
             return;
         }

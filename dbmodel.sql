@@ -84,13 +84,3 @@ CREATE TABLE IF NOT EXISTS `tokyo_tower` (
   `owner` INT(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`level`)
 ) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS `evolution_card` (
-  `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `card_type` smallint unsigned NOT NULL,
-  `card_type_arg` tinyint unsigned NULL,
-  `card_location` varchar(16) NOT NULL,
-  `card_location_arg` INT(10) unsigned NOT NULL,
-  `owner_id` INT(10) unsigned NULL,
-  PRIMARY KEY (`card_id`)
-) ENGINE=InnoDB;

@@ -34,7 +34,7 @@ trait PlayerStateTrait {
         $this->setGlobalVariable(CARD_BEING_BOUGHT, null);
         $this->setGlobalVariable(STARTED_TURN_IN_TOKYO, $this->getPlayersIdsInTokyo());
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         if ($isPowerUpExpansion) {
             $blizzardCards = $this->getEvolutionsOfType($playerId, BLIZZARD_EVOLUTION);
@@ -148,7 +148,7 @@ trait PlayerStateTrait {
             $this->incStat(1, 'turnsInBerserk', $playerId);
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $coldWaveCards = $this->getEvolutionsOfType($playerId, COLD_WAVE_EVOLUTION);
             if (count($coldWaveCards) > 0) {
                 $this->removeEvolutions($playerId, $coldWaveCards);
@@ -207,7 +207,7 @@ trait PlayerStateTrait {
                 $this->applyGetPoints($playerId, $countUrbavore, URBAVORE_CARD);
             }
 
-            if ($this->isPowerUpExpansion()) {
+            if ($this->powerUpExpansion->isActive()) {
                 $countIAmTheKing = $this->countEvolutionOfType($playerId, I_AM_THE_KING_EVOLUTION);
                 if ($countIAmTheKing > 0) {
                     $this->applyGetPoints($playerId, $countIAmTheKing, 3000 + I_AM_THE_KING_EVOLUTION);
@@ -316,7 +316,7 @@ trait PlayerStateTrait {
         }
 
         if (count($aliveSmashedPlayersInTokyo) > 0) {
-            if ($this->isPowerUpExpansion()) {
+            if ($this->powerUpExpansion->isActive()) {
                 $playerId = $this->getActivePlayerId();
                 $countChestThumping = $this->countEvolutionOfType($playerId, CHEST_THUMPING_EVOLUTION);
                 if ($countChestThumping > 0 && $this->anubisExpansion->isActive() && $this->getCurseCardType() == PHARAONIC_EGO_CURSE_CARD) {
@@ -340,7 +340,7 @@ trait PlayerStateTrait {
     }
 
     function stBeforeEnteringTokyo() {
-        if (!$this->isPowerUpExpansion() || !$this->tokyoHasFreeSpot()) {
+        if (!$this->powerUpExpansion->isActive() || !$this->tokyoHasFreeSpot()) {
             $this->goToState($this->redirectAfterHalfMovePhase());
             return;
         }
@@ -423,7 +423,7 @@ trait PlayerStateTrait {
             $this->setGameStateValue(PREVENT_ENTER_TOKYO, 0);
         }
 
-        $nextState = $this->isPowerUpExpansion() ? ST_PLAYER_AFTER_ENTERING_TOKYO : $this->redirectAfterEnterTokyo($playerId);
+        $nextState = $this->powerUpExpansion->isActive() ? ST_PLAYER_AFTER_ENTERING_TOKYO : $this->redirectAfterEnterTokyo($playerId);
 
         $this->goToState($nextState, $damages);
     }
@@ -445,7 +445,7 @@ trait PlayerStateTrait {
     function stResolveEndTurn() {
         $playerId = $this->getActivePlayerId();
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
             foreach ($freezeRayEvolutions as $freezeRayEvolution) {
                 $this->giveBackFreezeRay($playerId, $freezeRayEvolution);
@@ -508,7 +508,7 @@ trait PlayerStateTrait {
     function stEndTurn() {
         $playerId = $this->getActivePlayerId();
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $EVOLUTION_TYPES_TO_REMOVE = [
                 CAT_NIP_EVOLUTION, 
                 MECHA_BLAST_EVOLUTION,

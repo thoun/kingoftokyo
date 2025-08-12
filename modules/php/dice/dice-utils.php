@@ -212,7 +212,7 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             $coldWaveOwner = $this->isEvolutionOnTable(COLD_WAVE_EVOLUTION);
             if ($coldWaveOwner != null && $coldWaveOwner != $playerId) {
                 $remove++;
@@ -227,7 +227,7 @@ trait DiceUtilTrait {
     }
 
     function resolveNumberDice(int $playerId, int $number, int $diceCount) {
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         // number
         if ($diceCount >= 3) {
@@ -323,7 +323,7 @@ trait DiceUtilTrait {
     }
 
     function resolveHealthDice(int $playerId, int $diceCount) { 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
             }
@@ -366,7 +366,7 @@ trait DiceUtilTrait {
             return;
         }
 
-        if ($this->isPowerUpExpansion()) {
+        if ($this->powerUpExpansion->isActive()) {
             if ($this->countEvolutionOfType($playerId, CAT_NIP_EVOLUTION) > 0) {  
                 $diceCount *= 2;
             }
@@ -393,7 +393,7 @@ trait DiceUtilTrait {
         $flamingAuraDamages = $this->getGlobalVariable(FLAMING_AURA_DAMAGES, true);
         $exoticArmsDamages = [];
         $smashedPlayersIds = [];
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         // Nova breath
         $countNovaBreath = $this->countCardOfType($playerId, NOVA_BREATH_CARD);
@@ -666,7 +666,7 @@ trait DiceUtilTrait {
             }
         }
 
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         // Gamma Breath & Tail Sweep
         $hasGammaBreath = false;
@@ -917,7 +917,7 @@ trait DiceUtilTrait {
     function addSmashesFromCards(int $playerId, array $diceCounts, bool $playerInTokyo) {
         $addedSmashes = 0;
         $cardsAddingSmashes = [];
-        $isPowerUpExpansion = $this->isPowerUpExpansion();
+        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
         // cheerleader
         if (intval($this->getGameStateValue(CHEERLEADER_SUPPORT)) == 1) {
@@ -1200,7 +1200,7 @@ trait DiceUtilTrait {
     }
 
     function canUsePlayWithYourFood(int $playerId, array $diceCounts) { // players concerned by the effect, null if can't be used
-        if ($diceCounts[6] >= 2 && $this->isPowerUpExpansion() && $this->countEvolutionOfType($playerId, PLAY_WITH_YOUR_FOOD_EVOLUTION) > 0) {
+        if ($diceCounts[6] >= 2 && $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, PLAY_WITH_YOUR_FOOD_EVOLUTION) > 0) {
             $otherPlayersIds = $this->getPlayersIds();
             $willBeWoundedIds = [];
             foreach ($otherPlayersIds as $otherPlayerId) {
