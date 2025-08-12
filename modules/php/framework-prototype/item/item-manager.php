@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Bga\GameFrameworkPrototype\Item;
 
-use function Bga\Games\KingOfTokyo\debug;
-
 function array_find(array $array, callable $fn) {
     foreach ($array as $value) {
         if($fn($value)) {
@@ -182,6 +180,9 @@ class ItemManagerDbService {
     }
 }
 
+/**
+ * @template T of object
+ */
 class ItemManager {
     protected ItemManagerDbService $db;
 
@@ -192,19 +193,17 @@ class ItemManager {
 
     /**
      * The Item object fields
+     * @var ItemField[]
      */
-    protected array $fields = []; // array of ItemField
+    protected array $fields = [];
 
+    /**
+     * @param class-string<T> $className The Item object class. Defaults to stdClass.
+     * @param ItemLocation[] $locations The different possible locations, used for autoReshuffle.
+     */
     public function __construct(
-        /**
-         * The Item Object class
-         */
         protected string $className = \stdClass::class,
-
-        /**
-         * The different possible locations. Used for autoResuffle
-         */
-        protected array $locations, // array of ItemLocation
+        protected array $locations = [],
     ) {
         $this->readTableName();
         $this->readFields();
@@ -221,7 +220,7 @@ class ItemManager {
     /**
      * Read the DB table name with #[Item]
      */
-    protected function readTableName() {
+    protected function readTableName(): void {
         $reflectionClass = new \ReflectionClass($this->className);
         $attributes = $reflectionClass->getAttributes(Item::class);
         if (empty($attributes)) {
@@ -237,9 +236,9 @@ class ItemManager {
     }
 
     /**
-     * Read the fiels of the item with #[ItemField]
+     * Read the fields of the item with #[ItemField]
      */
-    protected function readFields() {
+    protected function readFields(): void {
         $reflectionClass = new \ReflectionClass($this->className);
         foreach ($reflectionClass->getProperties() as $property) {
             $attributes = $property->getAttributes(ItemField::class);
@@ -261,7 +260,7 @@ class ItemManager {
      * Create the DB table. 
      * Should be called at the beginning of Game::setupNewGame.
      */
-    public function initDb() {
+    public function initDb(): void {
         $columns = "";
         $idFieldName = null;
 
@@ -304,6 +303,8 @@ class ItemManager {
      * ]
      * 
      * item_nbr is a special field, that will create this number of items. If unset, defaults to 1.
+     * 
+     * @param array[] $itemsTypes An array of arrays, where each inner array follows the described structure.
      */
     public function createItems(array $itemsTypes): void {
         $columns = [];
@@ -373,20 +374,43 @@ class ItemManager {
     public function moveAllItemsInLocation(?string $fromLocation, string $toLocation, ?int $toLocationArg = 0): void {
         $locationField = $this->getItemFieldByKind('location');
         $locationArgField = $this->getItemFieldByKind('location_arg');
+        $orderField = $this->getItemFieldByKind('order');
 
         $update = $this->db->sqlEqualValue($locationField, $toLocation);
         if ($toLocationArg !== null) {
             $update .= ", ".$this->db->sqlEqualValue($locationArgField, $toLocationArg);
         }
+        $update .= ", ".$this->db->sqlEqualValue($orderField, 0);
         $where = $fromLocation === null ? '1' : $this->db->sqlEqualValue($locationField, $fromLocation);
         $this->db->sqlUpdate($this->db->sqlEqualValue($locationField, $toLocation), $where);
     }
 
-    public function pickItemForLocation(string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): mixed {
+    /**
+     * Pick an item from a location into another location.
+     *
+     * @param string $fromLocation location to pick the item
+     * @param int|null $fromLocationArg locationArg to pick the item
+     * @param string $toLocation location to put the picked item
+     * @param int $toLocationArg locationArg to put the picked item
+     * 
+     * @return T|null An object of the type specified by $this->className, or null if no item is picked.
+     */
+    public function pickItemForLocation(string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): ?object {
         $items = $this->pickItemsForLocation(1, $fromLocation, $fromLocationArg, $toLocation, $toLocationArg);
         return count($items) > 0 ? $items[0] : null;
     }
 
+    /**
+     * Pick items from a location into another location.
+     *
+     * @param int $number the nbumber of items to pick
+     * @param string $fromLocation location to pick the items
+     * @param int|null $fromLocationArg locationArg to pick the items
+     * @param string $toLocation location to put the picked items
+     * @param int $toLocationArg locationArg to put the picked items
+     * 
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
     public function pickItemsForLocation(int $number, string $fromLocation, ?int $fromLocationArg = null, string $toLocation, int $toLocationArg = 0): array {
         $items = $this->getItemsInLocation($fromLocation, $fromLocationArg, reversed: true, limit: $number);
         if (count($items) < $number) {
@@ -405,14 +429,14 @@ class ItemManager {
         return $items;
     }
 
-    public function setItemOrder(mixed $item, int $order): void {
+    public function setItemOrder(object $item, int $order): void {
         $orderField = $this->getItemFieldByKind('order');
 
         $item->{$orderField->name} = $order;
         $this->updateItem($item, [$orderField->name]);
     }
 
-    public function moveItem(mixed $item, string $toLocation, int $toLocationArg = 0, ?int $order = null): void {
+    public function moveItem(object $item, string $toLocation, int $toLocationArg = 0, ?int $order = null): void {
         $locationField = $this->getItemFieldByKind('location');
         $locationArgField = $this->getItemFieldByKind('location_arg');
         $orderField = $this->getItemFieldByKind('order');
@@ -441,7 +465,7 @@ class ItemManager {
         }
     }
 
-    public function moveItemKeepOrder(mixed $item, string $toLocation, int $toLocationArg = 0): void {
+    public function moveItemKeepOrder(object $item, string $toLocation, int $toLocationArg = 0): void {
         $this->moveItemsKeepOrder([$item], $toLocation, $toLocationArg);
     }
 
@@ -462,11 +486,17 @@ class ItemManager {
         $this->db->sqlUpdate($updates, $this->db->sqlInValues($idField, array_map(fn($item) => $item->{$idField->name}, $items)));
     }
 
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
     public function getItemsByFieldName(string $fieldName, array $values, ?int $limit = null): array {
         $field = array_find($this->fields, fn($f) => $f->name === $fieldName);
         return $this->getItemsByField($field, $values, $limit);
     }
 
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
     public function getItemsByField(ItemField $field, array $values, ?int $limit = null): array {
         if (count($values) === 0) {
             return [];
@@ -477,7 +507,10 @@ class ItemManager {
         return array_map(fn($dbItem) => $this->getItemFromDb($dbItem), array_values($dbResults));
     }
 
-    public function getItemById(int $id): mixed {
+    /**
+     * @return T|null An object of the type specified by $this->className, or null if no item is picked.
+     */
+    public function getItemById(int $id): ?object {
         $items = $this->getItemsByIds([$id]);
         return count($items) > 0 ? $items[0] : null;
     }
@@ -513,6 +546,9 @@ class ItemManager {
         return (int)$dbResult;
     }
 
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
     public function getItemsInLocation(string $location, ?int $locationArg = null, bool $reversed = false, ?int $limit = null): array {
         $locationField = $this->getItemFieldByKind('location');
         $locationArgField = $this->getItemFieldByKind('location_arg');
@@ -527,17 +563,26 @@ class ItemManager {
         return array_map(fn($dbItem) => $this->getItemFromDb($dbItem), array_values($dbResults));
     }
 
+    /**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
     public function getAllItems(?int $limit = null): array {
         $dbResults = $this->db->sqlGetList("*", limit: $limit);
         return array_map(fn($dbItem) => $this->getItemFromDb($dbItem), array_values($dbResults));
     }
 
-	public function getItemOnTop(string $location, ?int $locationArg = null): mixed {
+	/**
+     * @return T|null An object of the type specified by $this->className, or null if no item is picked.
+     */
+    public function getItemOnTop(string $location, ?int $locationArg = null): ?object {
         $items = $this->getItemsOnTop(1, $location, $locationArg);
         return count($items) > 0 ? $items[0] : null;
 	}
 
-	public function getItemsOnTop(int $number, string $location, ?int $locationArg = null): array {
+	/**
+     * @return T[] An array of objects of the type specified by $this->className.
+     */
+    public function getItemsOnTop(int $number, string $location, ?int $locationArg = null): array {
         return $this->getItemsInLocation($location, $locationArg, true, $number);
 	}
 
@@ -545,7 +590,7 @@ class ItemManager {
      * Update the DB value based on the Item fields.
      * Set $fields to set which fields to update (all if null)
      */
-    public function updateItem(mixed $item, ?array $fields = null) {
+    public function updateItem(object $item, ?array $fields = null): void {
         $idField = $this->getItemFieldByKind('id');
 
         $changes = [];
@@ -564,6 +609,25 @@ class ItemManager {
         $this->db->sqlUpdate(implode(",", $changes), $this->db->sqlEqual($idField, $item));
     }
 
+    /**
+     * Update the DB value based on the Item fields.
+     * Set $fields to set which fields to update (all if null)
+     */
+    public function updateAllItems(string $fieldName, mixed $value): void {
+
+        foreach ($this->fields as &$field) {
+            if ($field->name === $fieldName && $field->kind !== 'id') {
+                $changes[] = $this->db->sqlEqualValue($field, $value);
+            }
+        }
+
+        if (count($changes) === 0) {
+            return;
+        }
+
+        $this->db->sqlUpdate(implode(",", $changes), '1');
+    }
+
     protected function getItemField(string $name): ?ItemField {
         return array_find($this->fields, fn($field) => $field->name === $name);
     }
@@ -576,7 +640,10 @@ class ItemManager {
         return $this->className;
     }
 
-    protected function getItemFromDb(?array $dbItem): mixed {
+    /**
+     * @return T|null An object of the type specified by $this->className, or null if no item is picked.
+     */
+    protected function getItemFromDb(?array $dbItem): ?object {
         if (!$dbItem) {
             return null;
         }

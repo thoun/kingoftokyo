@@ -62,7 +62,7 @@ trait RedirectionTrait {
     }
 
     function redirectAfterStartTurn(int $playerId) {
-        if ($this->canChangeMimickedCardWickednessTile($playerId)) {
+        if ($this->wickednessExpansion->canChangeMimickedCardWickednessTile($playerId)) {
             return ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE;
         }
         return $this->redirectAfterChangeMimickWickednessTile($playerId);
@@ -98,7 +98,7 @@ trait RedirectionTrait {
     function redirectAfterResolveNumberDice(bool $skipWickednessTile = false) {
         $playerId = $this->getActivePlayerId();
 
-        if (!$skipWickednessTile && $this->isWickednessExpansion() && $this->canTakeWickednessTile($playerId) > 0) {
+        if (!$skipWickednessTile && $this->wickednessExpansion->isActive() && $this->wickednessExpansion->canTakeWickednessTile($playerId) > 0) {
             return ST_PLAYER_TAKE_WICKEDNESS_TILE;
         }
 
@@ -141,6 +141,8 @@ trait RedirectionTrait {
     function redirectAfterPrepareResolveDice() {
         if ($this->isHalloweenExpansion()) {
             return ST_MULTIPLAYER_CHEERLEADER_SUPPORT;
+        } else if ($this->mindbugExpansion->isActive()) {
+            return ST_MULTIPLAYER_ASK_MINDBUG;
         } else {
             return ST_RESOLVE_DIE_OF_FATE;
         }

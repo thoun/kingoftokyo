@@ -252,7 +252,7 @@ trait CardsUtilTrait {
             $mimicCard = $mimicCards[0] ?? null;
 
             if ($mimicCard && $mimicCard->tokens > 0) {
-                $this->setTileTokens($mimicCard->location_arg, $mimicCard, 0);
+                $this->wickednessExpansion->setTileTokens($mimicCard->location_arg, $mimicCard, 0);
             }
         }
 
@@ -303,7 +303,7 @@ trait CardsUtilTrait {
             } else if ($mimicCardType === FLUXLING_WICKEDNESS_TILE) {
                 $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', [FLUXLING_WICKEDNESS_TILE]);
                 $mimicCard = $mimicCards[0] ?? null;
-                $this->setTileTokens($mimicOwnerId, $mimicCard, $tokens);
+                $this->wickednessExpansion->setTileTokens($mimicOwnerId, $mimicCard, $tokens);
             }
         }
         
@@ -371,7 +371,7 @@ trait CardsUtilTrait {
                 $cards = array_merge($cards, $this->getCardsOfType($playerId, MIMIC_CARD, false)); // mimick
             }
             if ($mimickedCardTypeWickednessTile == $cardType) {
-                $tile = $this->getWickednessTileByType($playerId, FLUXLING_WICKEDNESS_TILE);
+                $tile = $this->wickednessExpansion->getWickednessTileByType($playerId, FLUXLING_WICKEDNESS_TILE);
                     if ($tile != null) {
                     $tile->id = 2000 + $tile->id; // To avoid id conflict with cards 
                     $cards = array_merge($cards, [$tile]);
@@ -394,7 +394,7 @@ trait CardsUtilTrait {
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
         
-        $wickenessTilesDec = $this->isWickednessExpansion() ? $this->wickednessTiles->onIncPowerCardsReduction(new Context($this, currentPlayerId: $playerId)) : 0;
+        $wickenessTilesDec = $this->wickednessExpansion->isActive() ? $this->wickednessTiles->onIncPowerCardsReduction(new Context($this, currentPlayerId: $playerId)) : 0;
         // inadequate offering
         $inadequateOffering = $this->anubisExpansion->isActive() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
         // secret laboratory
@@ -423,9 +423,9 @@ trait CardsUtilTrait {
         }
         $this->removeCards($playerId, $cards);
         // discard all tiles
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $tiles = $this->wickednessTiles->getPlayerTiles($playerId);
-            $this->removeWickednessTiles($playerId, $tiles);
+            $this->wickednessExpansion->removeWickednessTiles($playerId, $tiles);
         }
 
         if ($removeEvolutions) {
@@ -548,7 +548,7 @@ trait CardsUtilTrait {
         $energyOnBatteryMonster = $card->tokens - 2;
         if ($card->type == FLUXLING_WICKEDNESS_TILE) {
             $card->id = $card->id - 2000;
-            $this->setTileTokens($playerId, $card, $energyOnBatteryMonster);
+            $this->wickednessExpansion->setTileTokens($playerId, $card, $energyOnBatteryMonster);
         } else { // mimic or battery monster
             $this->setCardTokens($playerId, $card, $energyOnBatteryMonster);
         }
@@ -606,7 +606,7 @@ trait CardsUtilTrait {
         $tokensOnCard = $card->tokens - 1;
         if ($card->type == FLUXLING_WICKEDNESS_TILE) {
             $card->id = $card->id - 2000;
-            $this->setTileTokens($playerId, $card, $tokensOnCard);
+            $this->wickednessExpansion->setTileTokens($playerId, $card, $tokensOnCard);
         } else {
             $this->setCardTokens($playerId, $card, $tokensOnCard);
         }

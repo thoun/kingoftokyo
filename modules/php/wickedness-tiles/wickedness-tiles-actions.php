@@ -29,7 +29,7 @@ trait WickednessTilesActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $level = $this->canTakeWickednessTile($playerId);
+        $level = $this->wickednessExpansion->canTakeWickednessTile($playerId);
         $tile = $this->wickednessTiles->getItemById($id);
 
         $tableTiles = $this->wickednessTiles->getTable($level);

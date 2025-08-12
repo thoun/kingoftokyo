@@ -154,7 +154,7 @@ trait CardsActionTrait {
             $this->applyGetPoints($playerId, $countMediaFriendly, MEDIA_FRIENDLY_CARD);
         }
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $this->wickednessTiles->onBuyCard(new Context(
                 $this, 
                 currentPlayerId: $playerId,

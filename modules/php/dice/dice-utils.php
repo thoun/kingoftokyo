@@ -193,7 +193,7 @@ trait DiceUtilTrait {
         $add = $this->countCardOfType($playerId, EXTRA_HEAD_1_CARD) + $this->countCardOfType($playerId, EXTRA_HEAD_2_CARD) + $this->countCardOfType($playerId, NATURAL_SELECTION_CARD);
         $remove = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN)) + $this->getPlayerShrinkRayTokens($playerId);
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $add += $this->wickednessTiles->onIncDieCount(new Context($this, currentPlayerId: $playerId));
         }
 
@@ -283,15 +283,15 @@ trait DiceUtilTrait {
                 }
                 
                 // Skulking
-                if ($this->isWickednessExpansion()) {
+                if ($this->wickednessExpansion->isActive()) {
                     $this->wickednessTiles->onResolvingDieSymbol(new Context($this, currentPlayerId: $playerId, dieSymbol: $number, dieCount: $diceCount));
                 }
             }
             
 
-            if (($number == 1 || $number == 2) && $this->isWickednessExpansion()) {
+            if (($number == 1 || $number == 2) && $this->wickednessExpansion->isActive()) {
                 $wickednessPoints = (3 - $number) * floor($diceCount / 3);
-                $this->applyGetWickedness($playerId, $wickednessPoints);
+                $this->wickednessExpansion->applyGetWickedness($playerId, $wickednessPoints);
             }
         }
 
@@ -356,7 +356,7 @@ trait DiceUtilTrait {
             }
         }
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $this->wickednessTiles->onResolvingDieSymbol(new Context($this, currentPlayerId: $playerId, dieSymbol: 4, dieCount: $diceCount));
         }
     }
@@ -382,7 +382,7 @@ trait DiceUtilTrait {
         
         $this->applyGetEnergy($playerId, $diceCount, 0);
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $this->wickednessTiles->onResolvingDieSymbol(new Context($this, currentPlayerId: $playerId, dieSymbol: 5, dieCount: $diceCount));
         }
     }
@@ -475,7 +475,7 @@ trait DiceUtilTrait {
                 poison: $this->countCardOfType($playerId, POISON_SPIT_CARD), // Poison Spit
             );
 
-            if ($this->isWickednessExpansion()) {
+            if ($this->wickednessExpansion->isActive()) {
                 $addSmashTokens->add(
                     $this->wickednessTiles->onAddingSmashTokens(new Context($this, currentPlayerId: $playerId))
                 );
@@ -1010,7 +1010,7 @@ trait DiceUtilTrait {
                 }
             }
 
-            if ($this->isWickednessExpansion()) {
+            if ($this->wickednessExpansion->isActive()) {
                 [$addedByTiles, $addingTiles] = $this->wickednessTiles->onAddSmashes(new Context(
                     $this, 
                     currentPlayerId: $playerId,

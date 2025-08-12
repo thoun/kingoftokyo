@@ -9,12 +9,19 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 class DefenderOfTokyo extends WickednessTile {
     public function startTurnEffect(Context $context) {
         if ($context->currentPlayerInTokyo) {
-            $context->game->applyDefenderOfTokyo($context->currentPlayerId, 2000 + $this->type, 1);
+            $this->applyDefenderOfTokyo($context);
         }
     }
     
     public function enteringTokyoEffect(Context $context) {
-        $context->game->applyDefenderOfTokyo($context->currentPlayerId, 2000 + $this->type, 1);
+        $this->applyDefenderOfTokyo($context);
+    }
+
+    private function applyDefenderOfTokyo(Context $context) {
+        $otherPlayersIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
+        foreach ($otherPlayersIds as $otherPlayerId) {
+            $context->game->applyLosePoints($otherPlayerId, 1, $this);
+        }
     }
 }
 

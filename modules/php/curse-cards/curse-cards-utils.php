@@ -15,14 +15,6 @@ trait CurseCardsUtilTrait {
         return $this->getDiceByType(2)[0];
     }
 
-    function applyAnkhEffect(int $playerId, CurseCard $curseCard) {
-        return $this->curseCards->applyAnkhEffect($curseCard, new Context($this, currentPlayerId: $playerId));
-    }
-    
-    function applySnakeEffect(int $playerId, CurseCard $curseCard) { // return damages or state
-        return $this->curseCards->applySnakeEffect($curseCard, new Context($this, currentPlayerId: $playerId));
-    }
-
     function snakeEffectDiscardKeepCard(int $playerId) {
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
         $keepCards = array_values(array_filter($cards, fn($card) => $card->type < 100));

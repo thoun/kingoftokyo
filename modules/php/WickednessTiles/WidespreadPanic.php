@@ -14,7 +14,7 @@ class WidespreadPanic extends WickednessTile {
         foreach ($otherPlayersIds as $otherPlayerId) {
             $context->game->applyLosePoints($otherPlayerId, 4, $this);
         }
-        $context->game->removeWickednessTiles($playerId, [$this]);
+        $context->game->wickednessExpansion->removeWickednessTiles($playerId, [$this]);
     }
 }
 

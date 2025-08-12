@@ -109,7 +109,7 @@ trait MonsterTrait {
         //    $monsters = [...$monsters, /*61,*/ 62, /*63*/];
         //}
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, MONSTERS_WITH_ICON)));            
         }
 

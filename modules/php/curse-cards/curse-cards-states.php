@@ -2,6 +2,8 @@
 
 namespace KOT\States;
 
+use Bga\Games\KingOfTokyo\Objects\Context;
+
 trait CurseCardsStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,7 +51,7 @@ trait CurseCardsStateTrait {
 
                 $this->incStat(1, 'dieOfFateSnake', $playerId);
 
-                $damagesOrState = $this->applySnakeEffect($playerId, $curseCard);
+                $damagesOrState = $this->curseCards->applySnakeEffect($curseCard, new Context($this, currentPlayerId: $playerId));
                 break;
             case 4:
                 $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'), [
@@ -58,7 +60,7 @@ trait CurseCardsStateTrait {
 
                 $this->incStat(1, 'dieOfFateAnkh', $playerId);
 
-                $damagesOrState = $this->applyAnkhEffect($playerId, $curseCard);
+                $damagesOrState = $this->curseCards->applyAnkhEffect($curseCard, new Context($this, currentPlayerId: $playerId));
                 break;
         }
 

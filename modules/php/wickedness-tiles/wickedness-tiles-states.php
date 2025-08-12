@@ -20,7 +20,7 @@ trait WickednessTilesStateTrait {
         }
 
         if ($this->autoSkipImpossibleActions()) {      
-            $level = $this->canTakeWickednessTile($playerId);
+            $level = $this->wickednessExpansion->canTakeWickednessTile($playerId);
             $tableTiles = $this->wickednessTiles->getTable($level);
         
             if (count($tableTiles) == 0) {

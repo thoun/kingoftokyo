@@ -89,7 +89,7 @@ trait PlayerStateTrait {
         }
 
         // Sonic boomer
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $this->wickednessTiles->onStartTurn(new Context(
                 $this, 
                 currentPlayerId: $playerId,
@@ -214,10 +214,11 @@ trait PlayerStateTrait {
                 }
                 $countDefenderOfTokyo = $this->countEvolutionOfType($playerId, DEFENDER_OF_TOKYO_EVOLUTION);
                 if ($countDefenderOfTokyo > 0) {
-                    $this->applyDefenderOfTokyo($playerId, 3000 + DEFENDER_OF_TOKYO_EVOLUTION, $countDefenderOfTokyo);
-                }
-
-                
+                    $otherPlayersIds = $this->getOtherPlayersIds($playerId);
+                    foreach ($otherPlayersIds as $otherPlayerId) {
+                        $this->applyLosePoints($otherPlayerId, $countDefenderOfTokyo, 3000 + DEFENDER_OF_TOKYO_EVOLUTION);
+                    }
+                }                
             }
         }
 
@@ -607,8 +608,8 @@ trait PlayerStateTrait {
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FINAL_PUSH_EXTRA_TURN)) == 1) { // extra turn for current player
                 $anotherTimeWithCard = 2000 + FINAL_PUSH_WICKEDNESS_TILE; // Final push
                 $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0); 
-                $finalPushTile = $this->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE);
-                $this->removeWickednessTiles($playerId, [$finalPushTile]);
+                $finalPushTile = $this->wickednessExpansion->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE);
+                $this->wickednessExpansion->removeWickednessTiles($playerId, [$finalPushTile]);
             }
 
             if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player

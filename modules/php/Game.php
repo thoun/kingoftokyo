@@ -18,6 +18,7 @@
 
 namespace Bga\Games\KingOfTokyo;
 
+require_once('framework-prototype/Helpers/Arrays.php');
 require_once('framework-prototype/counters/player-counter.php');
 
 require_once('constants.inc.php');
@@ -39,7 +40,6 @@ require_once('cards/cards-utils.php');
 require_once('cards/cards-actions.php');
 require_once('cards/cards-args.php');
 require_once('cards/cards-states.php');
-require_once('wickedness-tiles/wickedness-tiles-utils.php');
 require_once('wickedness-tiles/wickedness-tiles-actions.php');
 require_once('wickedness-tiles/wickedness-tiles-args.php');
 require_once('wickedness-tiles/wickedness-tiles-states.php');
@@ -54,7 +54,6 @@ require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
 
 use Bga\GameFramework\Components\Deck;
-use Bga\GameFrameworkPrototype\Counters\PlayerCounter;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use \feException;
 
@@ -75,7 +74,6 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\CardsActionTrait;
     use \KOT\States\CardsArgTrait;
     use \KOT\States\CardsStateTrait;
-    use \KOT\States\WickednessTilesUtilTrait;
     use \KOT\States\WickednessTilesActionTrait;
     use \KOT\States\WickednessTilesArgTrait;
     use \KOT\States\WickednessTilesStateTrait;
@@ -91,13 +89,13 @@ class Game extends \Bga\GameFramework\Table {
     use DebugUtilTrait;
 
     public AnubisExpansion $anubisExpansion;
+    public WickednessExpansion $wickednessExpansion;
+    public MindbugExpansion $mindbugExpansion;
 
     public Deck $cards;
 	public CurseCardManager $curseCards;
     public WickednessTileManager $wickednessTiles;
     public Deck $evolutionCards;
-
-    public PlayerCounter $mindbugTokens;
 
     // from material file
     public array $MONSTERS_WITH_POWER_UP_CARDS;
@@ -166,6 +164,8 @@ class Game extends \Bga\GameFramework\Table {
 		
         
         $this->anubisExpansion = new AnubisExpansion($this);
+        $this->wickednessExpansion = new WickednessExpansion($this);
+        $this->mindbugExpansion = new MindbugExpansion($this);
 
         $this->cards = $this->getNew("module.common.deck");
         $this->cards->init("card");
@@ -178,8 +178,6 @@ class Game extends \Bga\GameFramework\Table {
         $this->evolutionCards = $this->getNew("module.common.deck");
         $this->evolutionCards->init("evolution_card");
         $this->evolutionCards->autoreshuffle = true;
-
-        $this->mindbugTokens = new PlayerCounter($this, 'mindbugTokens', 'mindbugTokens', 0);
 	}
 
     /*
@@ -192,7 +190,7 @@ class Game extends \Bga\GameFramework\Table {
     protected function setupNewGame($players, $options = []) { 
         $this->wickednessTiles->initDb();
         $this->curseCards->initDb();
-        $this->mindbugTokens->initDb(array_keys($players));  
+        $this->mindbugExpansion->initDb(array_keys($players));
 
         $sql = "DELETE FROM player WHERE 1 ";
         $this->DbQuery( $sql );
@@ -389,6 +387,10 @@ class Game extends \Bga\GameFramework\Table {
         if ($this->isPowerUpExpansion()) {
             $this->initEvolutionCards($affectedPlayersMonsters);
         }
+
+        if ($this->mindbugExpansion->isActive()) {
+            $this->mindbugExpansion->setup();
+        }
         
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -413,7 +415,7 @@ class Game extends \Bga\GameFramework\Table {
         $isKingKongExpansion = $this->isKingKongExpansion();
         $isCybertoothExpansion = $this->isCybertoothExpansion();
         $isAnubisExpansion = $this->anubisExpansion->isActive();
-        $isWickednessExpansion = $this->isWickednessExpansion();
+        $isWickednessExpansion = $this->wickednessExpansion->isActive();
         $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();
         $isPowerUpExpansion = $this->isPowerUpExpansion();
         $isDarkEdition = $this->isDarkEdition();
@@ -560,7 +562,11 @@ class Game extends \Bga\GameFramework\Table {
             if (array_key_exists($current_player_id, $result['players'])) {
                 $result['askPlayEvolution'] = intval($result['players'][$current_player_id]['askPlayEvolution']);
             }
-        }      
+        }
+
+        if ($this->mindbugExpansion->isActive()) {
+            $this->mindbugExpansion->fillResult($result);
+        }
 
         return $result;
     }
@@ -654,6 +660,19 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         $this->gamestate->nextState('');
+    }
+
+    public function argAskMindbug(): array {
+        return $this->mindbugExpansion->argAskMindbug();
+    }
+    public function stAskMindbug(): void {
+        $this->mindbugExpansion->stAskMindbug($this->mindbugExpansion->argAskMindbug());
+    }    
+    public function actMindbug() {
+        $this->mindbugExpansion->actMindbug((int)$this->getCurrentPlayerId());
+    }
+    public function actPassMindbug() {
+        $this->mindbugExpansion->actPassMindbug((int)$this->getCurrentPlayerId());
     }
 
 //////////////////////////////////////////////////////////////////////////////

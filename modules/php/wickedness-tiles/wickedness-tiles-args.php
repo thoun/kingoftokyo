@@ -19,7 +19,7 @@ trait WickednessTilesArgTrait {
     function argTakeWickednessTile() {
         $playerId = $this->getActivePlayerId();
         
-        $level = $this->canTakeWickednessTile($playerId);
+        $level = $this->wickednessExpansion->canTakeWickednessTile($playerId);
         $tableTiles = $this->wickednessTiles->getTable($level);
 
         $dice = $this->getPlayerRolledDice($playerId, false, false, false);

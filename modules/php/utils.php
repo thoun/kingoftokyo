@@ -83,10 +83,6 @@ trait UtilTrait {
         return $this->tableOptions->get(CTHULHU_EXPANSION_OPTION) === 2;
     }
 
-    function isWickednessExpansion() {
-        return !$this->isOrigins() && ($this->tableOptions->get(WICKEDNESS_EXPANSION_OPTION) > 1 || $this->isDarkEdition());
-    }
-
     function isPowerUpExpansion() {
         return !$this->isOrigins() && $this->tableOptions->get(POWERUP_EXPANSION_OPTION) >= 2;
     }
@@ -101,10 +97,6 @@ trait UtilTrait {
 
     function isOrigins() {
         return $this->tableOptions->get(ORIGINS_OPTION) > 1;
-    }
-
-    function isMindbugExpansion(): bool {
-        return false; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
     }
 
     function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
@@ -230,7 +222,7 @@ trait UtilTrait {
         $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
         // energy drink
         $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS));
-        $wickenessTilesInc = $this->isWickednessExpansion() ? $this->wickednessTiles->onIncDieRollCount(new Context($this, currentPlayerId: $playerId)) : 0;
+        $wickenessTilesInc = $this->wickednessExpansion->isActive() ? $this->wickednessTiles->onIncDieRollCount(new Context($this, currentPlayerId: $playerId)) : 0;
 
         $removedDieByBuriedInSand = false;
         $falseBlessing = 0;
@@ -261,7 +253,7 @@ trait UtilTrait {
         $add = 0;
         $remove = 0;
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $add += $this->wickednessTiles->onIncMaxHealth(new Context($this, currentPlayerId: $playerId));
         }
         
@@ -358,7 +350,7 @@ trait UtilTrait {
             $this->applyGetPoints($playerId, $countHungryUrbavore, HUNGRY_URBAVORE_CARD);
         }
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $this->wickednessTiles->onEnteringTokyo(new Context(
                 $this, 
                 currentPlayerId: $playerId,
@@ -598,7 +590,7 @@ trait UtilTrait {
             if ($player->health == 0 && !$player->eliminated && $this->countCardOfType($player->id, ZOMBIE_CARD) == 0) { // ignore players with Zombie
                 
                 $context = new Context($this, currentPlayerId: $player->id);
-                $winOnEliminationWickednessTile = $this->isWickednessExpansion() ? $this->wickednessTiles->winOnElimination($context) : null;
+                $winOnEliminationWickednessTile = $this->wickednessExpansion->isActive() ? $this->wickednessTiles->winOnElimination($context) : null;
 
                 if ($winOnEliminationWickednessTile !== null) {
                     $winOnEliminationWickednessTile->onTrigger($context);
@@ -645,9 +637,9 @@ trait UtilTrait {
 
         $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
         $this->removeCards($player->id, $cards, true);
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $tiles = $this->wickednessTiles->getPlayerTiles($player->id);
-            $this->removeWickednessTiles($player->id, $tiles);
+            $this->wickednessExpansion->removeWickednessTiles($player->id, $tiles);
         }
         if ($this->isPowerUpExpansion()) {
             $cards = $this->getEvolutionCardsByLocation('hand', $player->id);
@@ -985,7 +977,7 @@ trait UtilTrait {
             $this->applyGetPoisonToken($playerId, $damage->givePoisonSpitToken);
         }
 
-        if ($this->isWickednessExpansion()) {
+        if ($this->wickednessExpansion->isActive()) {
             $this->wickednessTiles->onApplyDamage(new Context(
                 $this, 
                 attackerPlayerId: $damageDealerId,
@@ -1006,7 +998,7 @@ trait UtilTrait {
 
         // must be done before player eliminations
         $finalRoarWillActivate = $this->getPlayerHealth($playerId) == 0 
-            && $this->isWickednessExpansion() 
+            && $this->wickednessExpansion->isActive() 
             && $this->wickednessTiles->winOnElimination(new Context($this, currentPlayerId: $playerId)) !== null;
 
         if (!$finalRoarWillActivate) {
@@ -1356,33 +1348,5 @@ trait UtilTrait {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select max(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
-    }
-
-    public function setMindbuggedPlayer(int $activePlayerId, ?int $mindbuggedPlayerId) { // active player must be changed before
-        $this->globals->set(MINDBUGGED_PLAYER, $mindbuggedPlayerId);
-
-        $this->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} mindbugs ${player_name2}!'), [
-            'activePlayerId' => $activePlayerId,
-            'mindbuggedPlayerId' => $mindbuggedPlayerId,
-            'player_name' => $this->getPlayerNameById($activePlayerId),
-            'player_name2' => $this->getPlayerNameById($mindbuggedPlayerId),
-        ]);
-    }
-
-    public function endMindbuggedPlayer(int $activePlayerId) { // active player must be changed before
-        $mindbuggedPlayerId = $this->getMindbuggedPlayer();
-        
-        $this->globals->set(MINDBUGGED_PLAYER, null);
-
-        $this->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} finishes his mindbugged turn, ${player_name2} can start again his turn at tge Roll dice phase'), [
-            'activePlayerId' => $activePlayerId,
-            'mindbuggedPlayerId' => null,
-            'player_name' => $this->getPlayerNameById($activePlayerId),
-            'player_name2' => $this->getPlayerNameById($mindbuggedPlayerId),
-        ]);
-    }
-
-    public function getMindbuggedPlayer(): ?int {
-        return $this->globals->get(MINDBUGGED_PLAYER);
     }
 }

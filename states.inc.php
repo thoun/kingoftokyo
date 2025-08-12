@@ -324,9 +324,19 @@ $playerActionsGameStates = [
         "action" => "stCheerleaderSupport",
         "possibleactions" => [ "support", "dontSupport" ],
         "transitions" => [
-            "end" => ST_RESOLVE_DIE_OF_FATE,
+            "end" => ST_MULTIPLAYER_ASK_MINDBUG,
         ],
     ],
+
+    ST_MULTIPLAYER_ASK_MINDBUG => GameStateBuilder::create()
+        ->name('askMindbug')
+        ->description(/*TODOMB clienttranslate*/('Player with Mindbug tokens can mindbug the active player'))
+        ->descriptionMyTurn(/*TODOMB clienttranslate*/('${you} can mindbug the active player'))
+        ->type(StateType::MULTIPLE_ACTIVE_PLAYER)
+        ->action('stAskMindbug')
+        ->possibleActions([ 'actMindbug', 'actPassMindbug' ])
+        ->transitions(['end' => ST_RESOLVE_DIE_OF_FATE])
+        ->build(),
 
     ST_RESOLVE_DIE_OF_FATE => [
         "name" => "resolveDieOfFate",

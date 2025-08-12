@@ -12,6 +12,7 @@ class GlobalCounter {
 
     public function initDb() {
         if (self::$tableExists === null) {
+            /** @disregard */
             self::$tableExists = (bool)\APP_DbObject::getUniqueValueFromDB("SHOW TABLES LIKE 'bga_global_counters'");
         }
         if (!self::$tableExists) {
@@ -22,15 +23,18 @@ class GlobalCounter {
                     PRIMARY KEY (`player_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
             SQL;
+            /** @disregard */
             \APP_DbObject::DbQuery( $sql );
 
             self::$tableExists = true;
         }
 
+        /** @disregard */
         \APP_DbObject::DbQuery("INSERT INTO `bga_global_counters` (`name`, `value`) VALUES  ('`{$this->dbField}`', {$this->defaultValue})");
     }
 
     function get(): int {
+        /** @disregard */
         return (int)\APP_DbObject::getUniqueValueFromDB("SELECT `value` FROM `bga_player_counters` WHERE `name` = '{$this->dbField}'");
     }
 
@@ -44,6 +48,7 @@ class GlobalCounter {
             $after = min($this->max, $after);
         }
 
+        /** @disregard */
         \APP_DbObject::DbQuery("UPDATE `bga_global_counters` SET `value` = $after WHERE `name` = '{$this->dbField}'");
 
         $args = $customArgs + [ // $customArgs before, + doesn't erase

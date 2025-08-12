@@ -12,7 +12,7 @@ class Starburst extends WickednessTile {
         $logTileType = 2000 + $this->type;
 
         $context->game->applyGetEnergy($playerId, 12, $logTileType);
-        $context->game->removeWickednessTiles($playerId, [$this]);
+        $context->game->wickednessExpansion->removeWickednessTiles($playerId, [$this]);
     }
 }
 
