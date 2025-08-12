@@ -90,7 +90,7 @@ trait DiceUtilTrait {
     public function getPlayerRolledDice(int $playerId, bool $includeBerserkDie, bool $includeDieOfFate, bool $setCanReroll) {
         $dice = $this->getDice($this->getDiceNumber($playerId));
 
-        if ($includeBerserkDie && $this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
+        if ($includeBerserkDie && $this->cybertoothExpansion->isActive() && $this->cybertoothExpansion->isPlayerBerserk($playerId)) {
             $dice = array_merge($dice, $this->getDiceByType(1)); // type 1 at the end
         }
 
@@ -453,8 +453,8 @@ trait DiceUtilTrait {
 
         if ($diceCount > 0) {
             // ony here and not in stResolveDice, so player can heal and then activate Berserk
-            if ($diceCount >= 4 && $this->isCybertoothExpansion() && !$this->isPlayerBerserk($playerId) && $this->canUseFace($playerId, 6)) {
-                $this->setPlayerBerserk($playerId, true);
+            if ($this->cybertoothExpansion->isActive()) {
+                $this->cybertoothExpansion->onPlayerResolveSmashDice($playerId, $diceCount);
             }
             
             if ($isPowerUpExpansion) {

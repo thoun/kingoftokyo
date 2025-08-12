@@ -101,8 +101,8 @@ trait PlayerStateTrait {
             $this->kingKongExpansion->onPlayerStartTurn($playerId);
         }
 
-        if ($this->isPlayerBerserk($playerId)) {
-            $this->incStat(1, 'turnsInBerserk', $playerId);
+        if ($this->cybertoothExpansion->isActive()) {
+            $this->cybertoothExpansion->onPlayerStartTurn($playerId);
         }
 
         if ($this->powerUpExpansion->isActive()) {

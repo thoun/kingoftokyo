@@ -213,26 +213,6 @@ trait PlayerUtilTrait {
         return $killActive;
     }
 
-    function isPlayerBerserk(int $playerId) {
-        return boolval($this->getUniqueValueFromDB("SELECT player_berserk FROM `player` where `player_id` = $playerId"));
-    }
-
-    function setPlayerBerserk(int $playerId, bool $active) {
-        $this->DbQuery("UPDATE player SET `player_berserk` = ".intval($active)." where `player_id` = $playerId");
-
-        $message = $active ? 
-          clienttranslate('${player_name} is now in Berserk mode!') :
-          clienttranslate('${player_name} is no longer in Berserk mode');
-
-        $this->notifyAllPlayers('setPlayerBerserk', $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'berserk' => $active,
-        ]);
-        
-        $this->incStat(1, 'berserkActivated', $playerId);
-    }
-
     function getPlayerCultists(int $playerId) {
         return intval($this->getUniqueValueFromDB("SELECT player_cultists FROM `player` where `player_id` = $playerId"));
     }

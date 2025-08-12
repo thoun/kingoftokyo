@@ -90,6 +90,7 @@ class Game extends \Bga\GameFramework\Table {
 
     public AnubisExpansion $anubisExpansion;
     public KingKongExpansion $kingKongExpansion;
+    public CybertoothExpansion $cybertoothExpansion;
     public WickednessExpansion $wickednessExpansion;
     public PowerUpExpansion $powerUpExpansion;
     public MindbugExpansion $mindbugExpansion;
@@ -167,6 +168,7 @@ class Game extends \Bga\GameFramework\Table {
         
         $this->anubisExpansion = new AnubisExpansion($this);
         $this->kingKongExpansion = new KingKongExpansion($this);
+        $this->cybertoothExpansion = new CybertoothExpansion($this);
         $this->wickednessExpansion = new WickednessExpansion($this);
         $this->powerUpExpansion = new PowerUpExpansion($this);
         $this->mindbugExpansion = new MindbugExpansion($this);
@@ -239,11 +241,11 @@ class Game extends \Bga\GameFramework\Table {
         $this->DbQuery("INSERT INTO dice (`dice_value`) VALUES (0), (0), (0), (0), (0), (0)");
         $this->DbQuery("INSERT INTO dice (`dice_value`, `extra`) VALUES (0, true), (0, true), (0, true)");
 
-        if ($this->isCybertoothExpansion()) {
-            $this->DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 1)");
+        if ($this->cybertoothExpansion->isActive()) {
+            $this->cybertoothExpansion->setup();
         }
         if ($this->anubisExpansion->isActive()) {
-           $this->DbQuery("INSERT INTO dice (`dice_value`, `type`) VALUES (0, 2)");
+            $this->anubisExpansion->setup();
         }
 
         /************ Start the game initialization *****/
@@ -324,7 +326,7 @@ class Game extends \Bga\GameFramework\Table {
             $this->initStat('player', 'dieOfFateSnake', 0);
             $this->initStat('player', 'dieOfFateAnkh', 0);
         }
-        if ($this->isCybertoothExpansion()) {
+        if ($this->cybertoothExpansion->isActive()) {
             $this->initStat('player', 'berserkActivated', 0);
             $this->initStat('player', 'turnsInBerserk', 0);
         }
@@ -415,7 +417,7 @@ class Game extends \Bga\GameFramework\Table {
     protected function getAllDatas(): array {
         $isCthulhuExpansion = $this->isCthulhuExpansion();
         $isKingKongExpansion = $this->kingKongExpansion->isActive();
-        $isCybertoothExpansion = $this->isCybertoothExpansion();
+        $isCybertoothExpansion = $this->cybertoothExpansion->isActive();
         $isAnubisExpansion = $this->anubisExpansion->isActive();
         $isWickednessExpansion = $this->wickednessExpansion->isActive();
         $isMutantEvolutionVariant = $this->isMutantEvolutionVariant();

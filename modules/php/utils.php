@@ -55,20 +55,12 @@ trait UtilTrait {
         return true;
     }
 
-    function isTurnBased() {
-        return intval($this->gamestate->table_globals[200]) >= 10;
-    }
-
     function isTwoPlayersVariant() {
         return $this->tableOptions->get(TWO_PLAYERS_VARIANT_OPTION) === 2 && $this->getPlayersNumber() == 2;
     }
 
     function isHalloweenExpansion() {
         return $this->tableOptions->get(HALLOWEEN_EXPANSION_OPTION) === 2;
-    }
-
-    function isCybertoothExpansion() {
-        return $this->tableOptions->get(CYBERTOOTH_EXPANSION_OPTION) === 2;
     }
 
     function isMutantEvolutionVariant() {
@@ -89,13 +81,13 @@ trait UtilTrait {
 
     function releaseDatePassed(string $activationDateStr, int $hourShift) { // 1 for paris winter time, 2 for paris summer time
         $currentdate = new \DateTimeImmutable();
-        $activationdate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $activationDateStr.'+00:00')->sub(new \DateInterval("PT${hourShift}H")); // "2021-12-30T21:41:00+00:00"
+        $activationdate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $activationDateStr.'+00:00')->sub(new \DateInterval("PT{$hourShift}H")); // "2021-12-30T21:41:00+00:00"
         $diff = $currentdate->diff($activationdate);
         return $diff->invert;
     }
 
     function autoSkipImpossibleActions() {
-        return $this->isTurnBased() || $this->tableOptions->get(AUTO_SKIP_OPTION) === 2;
+        return $this->tableOptions->isTurnBased() || $this->tableOptions->get(AUTO_SKIP_OPTION) === 2;
     }
 
     function setGlobalVariable(string $name, /*object|array*/ $obj) {
@@ -783,8 +775,8 @@ trait UtilTrait {
             ]);
         }
 
-        if ($playerId == $healerId && $this->isCybertoothExpansion() && $this->isPlayerBerserk($playerId)) {
-            $this->setPlayerBerserk($playerId, false);
+        if ($playerId == $healerId && $this->cybertoothExpansion->isActive()) {
+            $this->cybertoothExpansion->onPlayerHealHimself($playerId);
         }
     }
 

@@ -203,7 +203,7 @@ trait DebugUtilTrait {
 
         // cybertooth
 
-        if ($this->isCybertoothExpansion()) {
+        if ($this->cybertoothExpansion->isActive()) {
             //$this->setPlayerBerserk(2343492, true);
             //$this->setPlayerBerserk(2343493, true);
         }
