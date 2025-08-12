@@ -182,6 +182,7 @@ interface KingOfTokyoGamedatas {
     anubisExpansion: boolean;
     wickednessExpansion: boolean;
     powerUpExpansion: boolean;
+    mindbugExpansion: boolean;
     darkEdition: boolean;
     origins: boolean;
     playerWithGoldenScarab?: number;

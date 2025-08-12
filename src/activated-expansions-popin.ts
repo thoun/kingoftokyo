@@ -67,6 +67,10 @@ class ActivatedExpansionsPopin {
         if (this.gamedatas.darkEdition) {
             this.activatedExpansions.push(8);
         }
+        if (this.gamedatas.mindbugExpansion) {
+            // TODOMB this.activatedExpansions.push(9);
+        }
+        
 
         if (this.activatedExpansions.length) {
             let html = `

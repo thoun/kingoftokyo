@@ -15,7 +15,7 @@ trait CurseCardsArgTrait {
     */
 
     function argGiveSymbolToActivePlayer() {
-        $playerId = $this->getPlayerIdWithGoldenScarab();
+        $playerId = $this->anubisExpansion->getPlayerIdWithGoldenScarab();
 
         $canGiveHeart = $this->getPlayerHealth($playerId) > 0;
         $canGiveEnergy = $this->getPlayerEnergy($playerId) > 0;
@@ -138,11 +138,11 @@ trait CurseCardsArgTrait {
         $activePlayerDice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
         $selectableDice = $this->getSelectableDice($activePlayerDice, false, false);
 
-        $playerId = $this->getRerollDicePlayerId();
+        $playerId = $this->anubisExpansion->getRerollDicePlayerId();
 
         $diceCount = count(array_filter($activePlayerDice, fn($die) => $die->type < 2));
 
-        $forceRerollTwoDice = $this->getCurseCardType() == FALSE_BLESSING_CURSE_CARD;
+        $forceRerollTwoDice = $this->anubisExpansion->getCurseCardType() == FALSE_BLESSING_CURSE_CARD;
         $min = min($forceRerollTwoDice ? 2 : 0, $diceCount);
         $max = min(2, $diceCount);
 

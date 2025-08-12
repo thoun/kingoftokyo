@@ -157,7 +157,7 @@ trait DiceArgTrait {
         $dice = $this->getPlayerRolledDice($activePlayerId, true, true, true);
         $canReroll = false;
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
+            $curseCardType = $this->anubisExpansion->getCurseCardType();
             if ($curseCardType === VENGEANCE_OF_HORUS_CURSE_CARD) {
                 $canReroll = false;
             } else if ($curseCardType === SCRIBE_S_PERSEVERANCE_CURSE_CARD) {

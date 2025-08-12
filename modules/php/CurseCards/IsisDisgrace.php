@@ -10,7 +10,7 @@ use KOT\Objects\Damage;
 class IsisDisgrace extends CurseCard {
 
     public function applyAnkhEffect(Context $context) {
-        $context->game->changeGoldenScarabOwner($context->currentPlayerId);
+        $context->game->anubisExpansion->changeGoldenScarabOwner($context->currentPlayerId);
     }
 
     public function applySnakeEffect(Context $context) {

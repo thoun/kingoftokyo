@@ -43,7 +43,6 @@ require_once('cards/cards-states.php');
 require_once('wickedness-tiles/wickedness-tiles-actions.php');
 require_once('wickedness-tiles/wickedness-tiles-args.php');
 require_once('wickedness-tiles/wickedness-tiles-states.php');
-require_once('curse-cards/curse-cards-utils.php');
 require_once('curse-cards/curse-cards-actions.php');
 require_once('curse-cards/curse-cards-args.php');
 require_once('curse-cards/curse-cards-states.php');
@@ -77,7 +76,6 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\WickednessTilesActionTrait;
     use \KOT\States\WickednessTilesArgTrait;
     use \KOT\States\WickednessTilesStateTrait;
-    use \KOT\States\CurseCardsUtilTrait;
     use \KOT\States\CurseCardsActionTrait;
     use \KOT\States\CurseCardsArgTrait;
     use \KOT\States\CurseCardsStateTrait;
@@ -96,7 +94,6 @@ class Game extends \Bga\GameFramework\Table {
     public MindbugExpansion $mindbugExpansion;
 
     public Deck $cards;
-	public CurseCardManager $curseCards;
     public WickednessTileManager $wickednessTiles;
     public EvolutionCardManager $evolutionCards;
 
@@ -177,8 +174,6 @@ class Game extends \Bga\GameFramework\Table {
         $this->cards->init("card");
         $this->cards->autoreshuffle = true;
 		
-        $this->curseCards = new CurseCardManager($this);
-		
         $this->wickednessTiles = new WickednessTileManager($this);
         $this->evolutionCards = new EvolutionCardManager($this);
 	}
@@ -192,8 +187,8 @@ class Game extends \Bga\GameFramework\Table {
     */
     protected function setupNewGame($players, $options = []) { 
         $this->wickednessTiles->initDb();
-        $this->curseCards->initDb();
         $this->evolutionCards->initDb();
+        $this->anubisExpansion->initDb();
         $this->mindbugExpansion->initDb(array_keys($players));
 
         $sql = "DELETE FROM player WHERE 1 ";
@@ -245,7 +240,7 @@ class Game extends \Bga\GameFramework\Table {
             $this->cybertoothExpansion->setup();
         }
         if ($this->anubisExpansion->isActive()) {
-            $this->anubisExpansion->setup();
+            $this->anubisExpansion->setup($players);
         }
 
         /************ Start the game initialization *****/
@@ -365,12 +360,6 @@ class Game extends \Bga\GameFramework\Table {
 
         // setup the initial game situation here
         $this->initCards($isOrigins, $darkEdition > 1);
-        if ($this->anubisExpansion->isActive()) {
-            $lastPlayer = array_key_last($players);
-            $this->setGameStateInitialValue(PLAYER_WITH_GOLDEN_SCARAB, $lastPlayer);
-            $this->curseCards->setup();
-            $this->curseCards->immediateEffect($this->curseCards->getCurrent(), new Context($this));
-        }
         
         if ($darkEdition > 1) {
             $this->wickednessTiles->setup($darkEdition);
@@ -527,15 +516,9 @@ class Game extends \Bga\GameFramework\Table {
         $result['wickednessExpansion'] = $isWickednessExpansion;
         $result['mutantEvolutionVariant'] = $isMutantEvolutionVariant;
         $result['powerUpExpansion'] = $isPowerUpExpansion;
+        $result['mindbugExpansion'] = $this->mindbugExpansion->isActive();
         $result['darkEdition'] = $isDarkEdition;
         $result['origins'] = $isOrigins;
-        if ($isAnubisExpansion) {
-            $result['playerWithGoldenScarab'] = $this->getPlayerIdWithGoldenScarab(true);
-            $result['curseCard'] = $this->curseCards->getCurrent();
-            $result['hiddenCurseCardCount'] = intval($this->curseCards->countItemsInLocation('deck'));
-            $result['visibleCurseCardCount'] = intval($this->curseCards->countItemsInLocation('table')) + intval($this->curseCards->countItemsInLocation('discard'));
-            $result['topCurseDeckCard'] = $this->curseCards->getTopDeck();
-        }
 
         if ($isWickednessExpansion) {
             $result['wickednessTiles'] = $this->wickednessTiles->getTable();
@@ -563,6 +546,9 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($this->mindbugExpansion->isActive()) {
             $this->mindbugExpansion->fillResult($result);
+        }
+        if ($isAnubisExpansion) {
+            $this->anubisExpansion->fillResult($result);
         }
         if ($isKingKongExpansion) {
             $this->kingKongExpansion->fillResult($result);

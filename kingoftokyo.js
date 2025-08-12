@@ -6178,6 +6178,9 @@ var ActivatedExpansionsPopin = /** @class */ (function () {
         if (this.gamedatas.darkEdition) {
             this.activatedExpansions.push(8);
         }
+        if (this.gamedatas.mindbugExpansion) {
+            // TODOMB this.activatedExpansions.push(9);
+        }
         if (this.activatedExpansions.length) {
             var html = "\n            <div>\t\t\t\t\t\n                <button id=\"active-expansions-button\" class=\"bgabutton bgabutton_gray\">\n                    <div class=\"title\">".concat(_('Active expansions'), "</div>\n                    <div class=\"expansion-zone-list\">");
             for (var i = 1; i <= EXPANSION_NUMBER; i++) {

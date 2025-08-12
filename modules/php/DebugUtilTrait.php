@@ -192,7 +192,7 @@ trait DebugUtilTrait {
             //$this->debug_SetCurseCardInTable(TUTANKHAMUN_S_CURSE_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".CONFUSED_SENSES_CURSE_CARD);
             //$this->DbQuery("UPDATE curse_card SET `card_location_arg` = card_location_arg + 200 where `card_type` = ".RAGING_FLOOD_CURSE_CARD);
-            $this->changeGoldenScarabOwner(2343494);
+            $this->anubisExpansion->changeGoldenScarabOwner(2343494);
         }
 
         // king kong
@@ -391,10 +391,10 @@ trait DebugUtilTrait {
 
     function debug_SetCurseCardInTable(int $cardType) {
         if ($this->anubisExpansion->isActive()) {
-            $cards = $this->curseCards->getItemsByFieldName('type', [$cardType]);
+            $cards = $this->anubisExpansion->curseCards->getItemsByFieldName('type', [$cardType]);
             $card = $cards[0];
-            $this->curseCards->moveAllItemsInLocation('table', 'discard');
-            $this->curseCards->moveItem($card, 'table');
+            $this->anubisExpansion->curseCards->moveAllItemsInLocation('table', 'discard');
+            $this->anubisExpansion->curseCards->moveItem($card, 'table');
         }
     }
 

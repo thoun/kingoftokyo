@@ -16,7 +16,7 @@ trait CurseCardsStateTrait {
             return;
         }
 
-        $this->gamestate->setPlayersMultiactive([$this->getPlayerIdWithGoldenScarab()], '', true);
+        $this->gamestate->setPlayersMultiactive([$this->anubisExpansion->getPlayerIdWithGoldenScarab()], '', true);
     }
 
     function stResolveDieOfFate() {
@@ -25,44 +25,9 @@ trait CurseCardsStateTrait {
             return;
         }
 
-        $playerId = $this->getActivePlayerId();
+        $playerId = (int)$this->getActivePlayerId();
 
-        $dieOfFate = $this->getDieOfFate();
-
-        $damagesOrState = null;
-        $curseCard = $this->curseCards->getCurrent();
-        switch($dieOfFate->value) {
-            case 1: 
-                $curseCard = $this->curseCards->changeCurseCard($playerId);
-
-                $this->incStat(1, 'dieOfFateEye', $playerId);
-                break;
-            case 2:
-                $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateRiver], ${card_name} is kept (with no effect except permanent effect)'), [
-                    'card_name' => 1000 + $curseCard->type,
-                ]);
-
-                $this->incStat(1, 'dieOfFateRiver', $playerId);
-                break;
-            case 3:
-                $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateSnake], Snake effect of ${card_name} is applied'), [
-                    'card_name' => 1000 + $curseCard->type,
-                ]);
-
-                $this->incStat(1, 'dieOfFateSnake', $playerId);
-
-                $damagesOrState = $this->curseCards->applySnakeEffect($curseCard, new Context($this, currentPlayerId: $playerId));
-                break;
-            case 4:
-                $this->notifyAllPlayers('dieOfFateResolution', clienttranslate('Die of fate is on [dieFateAnkh], Ankh effect of ${card_name} is applied'), [
-                   'card_name' => 1000 + $curseCard->type,
-                ]);
-
-                $this->incStat(1, 'dieOfFateAnkh', $playerId);
-
-                $damagesOrState = $this->curseCards->applyAnkhEffect($curseCard, new Context($this, currentPlayerId: $playerId));
-                break;
-        }
+        $damagesOrState = $this->anubisExpansion->resolveDieOfFate($playerId);
 
         if (gettype($damagesOrState) === 'integer') {
             if ($damagesOrState != -1) {
@@ -72,8 +37,9 @@ trait CurseCardsStateTrait {
         }
 
         $nextState = ST_RESOLVE_DICE;
-        $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
-        if ($curseCard->type == CONFUSED_SENSES_CURSE_CARD && $playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab) {
+
+        $playerIdWithGoldenScarab = $this->anubisExpansion->getPlayerIdWithGoldenScarab();
+        if ($this->anubisExpansion->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD && $playerIdWithGoldenScarab != null && $playerId != $playerIdWithGoldenScarab) {
             $nextState = ST_MULTIPLAYER_REROLL_DICE;
         }
 
@@ -89,7 +55,7 @@ trait CurseCardsStateTrait {
     }
 
     function stRerollDice() {
-        $playerId = $this->getRerollDicePlayerId();
+        $playerId = $this->anubisExpansion->getRerollDicePlayerId();
 
         $this->gamestate->setPlayersMultiactive([$playerId], 'end', true);
     }

@@ -415,7 +415,7 @@ trait DiceStateTrait {
         }
 
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
+            $curseCardType = $this->anubisExpansion->getCurseCardType();
 
             if ($curseCardType == FALSE_BLESSING_CURSE_CARD) {
                 $dice = $this->getPlayerRolledDice($playerId, true, false, false);

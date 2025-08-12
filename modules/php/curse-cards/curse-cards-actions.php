@@ -37,7 +37,7 @@ trait CurseCardsActionTrait {
     function discardDie(int $dieId) {
         $this->checkAction('discardDie');  
 
-        $this->applyDiscardDie($dieId);
+        $this->anubisExpansion->applyDiscardDie($dieId);
 
         $this->gamestate->nextState('next');
     }
@@ -47,7 +47,7 @@ trait CurseCardsActionTrait {
         $playerId = $this->getActivePlayerId(); 
 
         $card = $this->getCardFromDb($this->cards->getCard($cardId));
-        $this->applyDiscardKeepCard($playerId, $card);
+        $this->anubisExpansion->applyDiscardKeepCard($playerId, $card);
 
         $this->gamestate->nextState('next');
     }
@@ -55,7 +55,7 @@ trait CurseCardsActionTrait {
     function giveGoldenScarab(int $playerId) {
         $this->checkAction('giveGoldenScarab');   
         
-        $this->changeGoldenScarabOwner($playerId);
+        $this->anubisExpansion->changeGoldenScarabOwner($playerId);
 
         $this->gamestate->nextState('next');
     }
@@ -94,7 +94,7 @@ trait CurseCardsActionTrait {
         $this->checkAction('giveSymbols');  
 
         $playerId = $this->getActivePlayerId(); 
-        $playerWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
+        $playerWithGoldenScarab = $this->anubisExpansion->getPlayerIdWithGoldenScarab();
 
         $this->applyGiveSymbols($symbols, $playerId, $playerWithGoldenScarab, 1000 + PHARAONIC_SKIN_CURSE_CARD);
 
@@ -166,7 +166,7 @@ trait CurseCardsActionTrait {
             throw new \BgaUserException(self::_('You already made an action for this die'));
         }
 
-        $this->applyDiscardDie($dieId);
+        $this->anubisExpansion->applyDiscardDie($dieId);
 
         $this->endFalseBlessingAction($dieId);
     }

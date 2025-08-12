@@ -5,7 +5,6 @@ namespace Bga\Games\KingOfTokyo\CurseCards;
 
 use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
-use KOT\Objects\Damage;
 
 class KhepriRebellion extends CurseCard {
 
@@ -14,7 +13,7 @@ class KhepriRebellion extends CurseCard {
     }
 
     public function applySnakeEffect(Context $context) {
-        $context->game->changeGoldenScarabOwner($context->currentPlayerId);
+        $context->game->anubisExpansion->changeGoldenScarabOwner($context->currentPlayerId);
     }
 }
 

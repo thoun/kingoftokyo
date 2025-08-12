@@ -83,33 +83,6 @@ class CurseCardManager extends ItemManager {
     function getTopDeck() {
         return CurseCard::onlyId($this->getItemOnTop('deck'));
     }
-    
-    function changeCurseCard(int $playerId): CurseCard {
-        $countRapidHealingBefore = 0;
-        if ($playerId > 0) {
-            $countRapidHealingBefore = $this->game->countCardOfType($playerId, RAPID_HEALING_CARD);
-        }        
-
-        $this->game->removeCursePermanentEffectOnReplace();
-
-        $this->moveAllItemsInLocation('table', 'discard');
-
-        $card = $this->pickItemForLocation('deck', null, 'table');
-
-        $this->game->notify->all('changeCurseCard', clienttranslate('Die of fate is on [dieFateEye], Curse card is changed'), [
-            'card' => $card,
-            'hiddenCurseCardCount' => $this->countItemsInLocation('deck'),
-            'topCurseDeckCard' => $this->getTopDeck(),
-        ]);
-
-        $this->immediateEffect($card, new Context($this->game));
-        
-        if ($playerId > 0) {
-            $this->game->toggleRapidHealing($playerId, $countRapidHealingBefore);
-        }
-
-        return $card;
-    }
 
     public function immediateEffect(CurseCard $card, Context $context) {
         if (method_exists($card, 'immediateEffect')) {

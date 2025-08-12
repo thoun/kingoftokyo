@@ -120,7 +120,7 @@ class PlayerCounter {
 
     public function setAll(int $value, ?string $message = '', array $customArgs = []): int {
         /** @disregard */
-        \APP_DbObject::DbQuery("UPDATE `{$this->getTable()}` SET `{$this->dbField}` = $after");
+        \APP_DbObject::DbQuery("UPDATE `{$this->getTable()}` SET `{$this->dbField}` = $value");
 
         if ($message !== null) {
             $args = $customArgs + [ // $customArgs before, + doesn't erase

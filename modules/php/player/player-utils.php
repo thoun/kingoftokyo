@@ -290,27 +290,18 @@ trait PlayerUtilTrait {
         }
     }
 
-    function canGainHealth(int $playerId) {
+    function canGainHealth(int $playerId): bool {
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
-
-            if ($curseCardType == ISIS_S_DISGRACE_CURSE_CARD) {
-                if ($playerId != $this->getPlayerIdWithGoldenScarab()) {
-                    return false;
-                }
-            }
+            return $this->anubisExpansion->canGainHealth($playerId);
         }
         return true;
     }
 
     function canLoseHealth(int $playerId, int $damage) {
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
-
-            if ($curseCardType == PHARAONIC_SKIN_CURSE_CARD) {
-                if ($playerId == $this->getPlayerIdWithGoldenScarab()) {
-                    return 1000 + PHARAONIC_SKIN_CURSE_CARD;
-                }
+            $result = $this->anubisExpansion->canLoseHealth($playerId);
+            if ($result !== null) {
+                return $result;
             }
         }
 
@@ -343,49 +334,26 @@ trait PlayerUtilTrait {
         return null;
     }
 
-    function canGainEnergy(int $playerId) {
+    function canGainEnergy(int $playerId): bool {
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
-
-            if ($curseCardType == THOT_S_BLINDNESS_CURSE_CARD) {
-                if ($playerId != $this->getPlayerIdWithGoldenScarab()) {
-                    return false;
-                }
-            }
+            return $this->anubisExpansion->canGainEnergy($playerId);
         }
         return true;
     }
 
-    function canGainPoints(int $playerId) {
+    function canGainPoints(int $playerId): ?int {
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
-
-            if ($curseCardType == TUTANKHAMUN_S_CURSE_CURSE_CARD) {
-                if ($playerId != $this->getPlayerIdWithGoldenScarab()) {
-                    return 1000 + TUTANKHAMUN_S_CURSE_CURSE_CARD;
-                }
+            $result = $this->anubisExpansion->canGainPoints($playerId);
+            if ($result !== null) {
+                return $result;
             }
         }
         return null;
     }
 
-    function canEnterTokyo(int $playerId) {
-        if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
-
-            if ($curseCardType == PHARAONIC_EGO_CURSE_CARD) {
-                $dieOfFate = $this->getDieOfFate();
-                if ($dieOfFate->value == 4) {
-                    return false;
-                }
-            }
-
-            if ($curseCardType == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
-                $dieOfFate = $this->getDieOfFate();
-                if ($dieOfFate->value == 3) {
-                    return false;
-                }
-            }
+    function canEnterTokyo(int $playerId): bool {
+        if ($this->anubisExpansion->isActive() && !$this->anubisExpansion->canEnterTokyo()) {
+            return false;
         }
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
@@ -396,12 +364,8 @@ trait PlayerUtilTrait {
     }
 
     function canYieldTokyo(int $playerId) {
-        if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
-
-            if ($curseCardType == PHARAONIC_EGO_CURSE_CARD) {
-                return false;
-            }
+        if ($this->anubisExpansion->isActive() && !$this->anubisExpansion->canYieldTokyo()) {
+            return false;
         }
         if ($this->powerUpExpansion->isActive()) {
             $blizzardOwner = $this->isEvolutionOnTable(BLIZZARD_EVOLUTION);
@@ -412,14 +376,13 @@ trait PlayerUtilTrait {
         return true;
     }
 
-    function canHealWithDice(int $playerId) {
+    function canHealWithDice(int $playerId): bool {
         $inTokyo = $this->inTokyo($playerId);
 
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
-
-            if ($curseCardType == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
-                return $inTokyo;
+            $result = $this->anubisExpansion->canHealWithDice($inTokyo);
+            if ($result !== null) {
+                return $result;
             }
         }
 
@@ -446,12 +409,11 @@ trait PlayerUtilTrait {
         return $frozenFaces;
     }
 
-    function canBuyPowerCard(int $playerId) {
-        $canBuyCards = true;
-        if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == FORBIDDEN_LIBRARY_CURSE_CARD) {
-            $canBuyCards = $playerId == $this->getPlayerIdWithGoldenScarab();
+    function canBuyPowerCard(int $playerId): bool {
+        if ($this->anubisExpansion->isActive()) {
+            return $this->anubisExpansion->canBuyPowerCard($playerId);
         }
-        return $canBuyCards;
+        return true;
     }
 
     function replacePlayersInTokyo(int $playerId) {
@@ -480,15 +442,15 @@ trait PlayerUtilTrait {
     function canUseSymbol(int $playerId, int $symbol) {
 
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
+            $curseCardType = $this->anubisExpansion->getCurseCardType();
 
             if ($symbol == 6 && $curseCardType == BURIED_IN_SAND_CURSE_CARD) {
-                $dieOfFate = $this->getDieOfFate();
+                $dieOfFate = $this->anubisExpansion->getDieOfFate();
                 return $dieOfFate->value != 3;
             }
 
             if ($symbol == 6 && $curseCardType == HOTEP_S_PEACE_CURSE_CARD) {
-                return $playerId == $this->getPlayerIdWithGoldenScarab();
+                return $playerId == $this->anubisExpansion->getPlayerIdWithGoldenScarab();
             }
         }
 
@@ -502,10 +464,10 @@ trait PlayerUtilTrait {
     function canUseFace(int $playerId, int $face) {
 
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
+            $curseCardType = $this->anubisExpansion->getCurseCardType();
 
             if ($curseCardType == BODY_SPIRIT_AND_KA_CURSE_CARD) {
-                $dieOfFate = $this->getDieOfFate();
+                $dieOfFate = $this->anubisExpansion->getDieOfFate();
                 if ($dieOfFate->value == 3) {
                     if (in_array($face, [4, 5, 6])) {
                         return false;
@@ -538,7 +500,7 @@ trait PlayerUtilTrait {
     function canRerollSymbol(int $playerId, int $symbol, bool $isChangeActivePlayerDie = false) {
 
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
+            $curseCardType = $this->anubisExpansion->getCurseCardType();
 
             if ($symbol == 6 && $curseCardType == VENGEANCE_OF_HORUS_CURSE_CARD) {
                 return false;

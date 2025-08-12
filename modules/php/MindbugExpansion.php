@@ -12,7 +12,7 @@ class MindbugExpansion {
     function __construct(
         protected Game $game,
     ) {
-        $this->mindbugTokens = new PlayerCounter($this, 'mindbugTokens', 'mindbugTokens', 0);
+        $this->mindbugTokens = new PlayerCounter($game, 'mindbugTokens', 'mindbugTokens', 0);
     }
 
     public function isActive(): bool {

@@ -207,10 +207,10 @@ trait UtilTrait {
         $removedDieByBuriedInSand = false;
         $falseBlessing = 0;
         if ($this->anubisExpansion->isActive()) {
-            $cardType = $this->getCurseCardType();
+            $cardType = $this->anubisExpansion->getCurseCardType();
 
             if ($cardType == BURIED_IN_SAND_CURSE_CARD) {
-                $dieOfFate = $this->getDieOfFate();
+                $dieOfFate = $this->anubisExpansion->getDieOfFate();
 
                 if ($dieOfFate->value != 4) {
                     $removedDieByBuriedInSand = true;
@@ -246,7 +246,7 @@ trait UtilTrait {
             $add += 2 * $this->countEvolutionOfType($playerId, EATER_OF_SOULS_EVOLUTION);
         }
 
-        if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
+        if ($this->anubisExpansion->isActive() && $this->anubisExpansion->getCurseCardType() == BOW_BEFORE_RA_CURSE_CARD) {
             $remove += 2;
         }
 
@@ -1012,10 +1012,10 @@ trait UtilTrait {
     function getPlayerGettingEnergyOrHeart(int $playerId) {
         $playerGettingEnergyOrHeart = $playerId;
 
-        if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
-            $dieOfFate = $this->getDieOfFate();
+        if ($this->anubisExpansion->isActive() && $this->anubisExpansion->getCurseCardType() == CONFUSED_SENSES_CURSE_CARD) {
+            $dieOfFate = $this->anubisExpansion->getDieOfFate();
             if ($dieOfFate->value == 3 && $playerId == intval($this->getActivePlayerId())) {
-                $playerIdWithGoldenScarab = $this->getPlayerIdWithGoldenScarab();
+                $playerIdWithGoldenScarab = $this->anubisExpansion->getPlayerIdWithGoldenScarab();
                 if ($playerIdWithGoldenScarab != null) {
                     $playerGettingEnergyOrHeart = $playerIdWithGoldenScarab;
                 }
@@ -1304,5 +1304,20 @@ trait UtilTrait {
         $sql = "SELECT player_id FROM player WHERE player_eliminated = 0 AND player_dead = 0 AND `$column` = (select max(`$column`) FROM player WHERE player_eliminated = 0 AND player_dead = 0) ORDER BY player_no";
         $dbResults = $this->getCollectionFromDb($sql);
         return array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
+    }
+
+    function keepAndEvolutionCardsHaveEffect(): bool {
+        if ($this->anubisExpansion->isActive()) {
+            return $this->anubisExpansion->keepAndEvolutionCardsHaveEffect();
+        }
+
+        return true;
+    }
+
+    function changeAllPlayersMaxHealth(): void {
+        $playerIds = $this->getPlayersIds();
+        foreach($playerIds as $playerId) {
+            $this->changeMaxHealth($playerId);
+        }
     }
 }

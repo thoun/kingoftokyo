@@ -15,7 +15,7 @@ class InadequateOffering extends CurseCard {
     }
 
     public function applySnakeEffect(Context $context) {
-        return $context->game->snakeEffectDiscardKeepCard($context->currentPlayerId);
+        return $context->game->anubisExpansion->snakeEffectDiscardKeepCard($context->currentPlayerId);
     }
 }
 

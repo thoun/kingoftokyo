@@ -198,7 +198,7 @@ trait DiceUtilTrait {
         }
 
         if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->getCurseCardType();
+            $curseCardType = $this->anubisExpansion->getCurseCardType();
 
             if ($curseCardType == RAGING_FLOOD_CURSE_CARD) {
                 $remove++;
@@ -331,7 +331,7 @@ trait DiceUtilTrait {
 
         if (!$this->canHealWithDice($playerId)) {
             $message = clienttranslate('${player_name} gains no [Heart] (player in Tokyo)');
-            if ($this->anubisExpansion->isActive() && $this->getCurseCardType() == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
+            if ($this->anubisExpansion->isActive() && $this->anubisExpansion->getCurseCardType() == RESURRECTION_OF_OSIRIS_CURSE_CARD) {
                 $message = clienttranslate('${player_name} gains no [Heart] (player outside Tokyo)');
             }
 

@@ -21,7 +21,7 @@ class ScribePerseverance extends CurseCard {
     public function applySnakeEffect(Context $context) {
         $first1die = $context->game->getFirstDieOfValue($context->currentPlayerId, 1);
         if ($first1die != null) {
-            $context->game->applyDiscardDie($first1die->id);
+            $context->game->anubisExpansion->applyDiscardDie($first1die->id);
         }
     }
 }

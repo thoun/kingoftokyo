@@ -395,7 +395,7 @@ trait CardsUtilTrait {
         
         $wickenessTilesDec = $this->wickednessExpansion->isActive() ? $this->wickednessTiles->onIncPowerCardsReduction(new Context($this, currentPlayerId: $playerId)) : 0;
         // inadequate offering
-        $inadequateOffering = $this->anubisExpansion->isActive() && $this->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
+        $inadequateOffering = $this->anubisExpansion->isActive() && $this->anubisExpansion->getCurseCardType() == INADEQUATE_OFFERING_CURSE_CARD ? 2 : 0;        
         // secret laboratory
         $countSecretLaboratory = 0;
         if ($this->powerUpExpansion->isActive()) {
@@ -1023,7 +1023,7 @@ trait CardsUtilTrait {
         if (!$this->canUseSymbol($activePlayerId, 6)) {
             $willBeAbleToSmashBecauseOfAnkh = false;
             if ($this->isHalloweenExpansion()) {
-                $dieOfFate = $this->getDieOfFate();
+                $dieOfFate = $this->anubisExpansion->getDieOfFate();
                 $willBeAbleToSmashBecauseOfAnkh = $dieOfFate->value == 4;                
             }
 
