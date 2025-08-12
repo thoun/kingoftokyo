@@ -1143,7 +1143,7 @@ trait EvolutionCardsUtilTrait {
     function askTargetAcquired(array $allDamages) {
         $activePlayerId = intval($this->getActivePlayerId());
         // if damages is a smash from active player
-        if (count($allDamages) > 0 && gettype($allDamages[0]->cardType) == 'int' &&  $allDamages[0]->cardType == 0 && $allDamages[0]->damageDealerId == $activePlayerId && intval($this->getGameStateValue(TARGETED_PLAYER)) != $activePlayerId) {
+        if (count($allDamages) > 0 && gettype($allDamages[0]->cardType) == 'integer' &&  $allDamages[0]->cardType == 0 && $allDamages[0]->damageDealerId == $activePlayerId && intval($this->getGameStateValue(TARGETED_PLAYER)) != $activePlayerId) {
             $playersIds = array_unique(array_map(fn($damage) => $damage->playerId, $allDamages));
             $playersWithTargetAcquired = array_values(array_filter($playersIds, fn($playerId) => $this->countEvolutionOfType($playerId, TARGET_ACQUIRED_EVOLUTION) > 0));
 

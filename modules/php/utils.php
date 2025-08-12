@@ -682,7 +682,7 @@ trait UtilTrait {
 
         $this->applyGetPointsIgnoreCards($playerId, $points, $cardType);
 
-        if (gettype($cardType) !== 'int' || $cardType != ASTRONAUT_CARD) { // to avoid infinite loop
+        if (gettype($cardType) !== 'integer' || $cardType != ASTRONAUT_CARD) { // to avoid infinite loop
             // Astronaut
             $this->applyAstronaut($playerId);
         }
@@ -869,7 +869,7 @@ trait UtilTrait {
         }
 
         // only smashes
-        if (gettype($damage->cardType) == 'int' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
+        if (gettype($damage->cardType) == 'integer' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->isPowerUpExpansion()) {
             $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
             if ($countHeatVision > 0) {
                 $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
@@ -890,7 +890,7 @@ trait UtilTrait {
         }
 
         $countReflectiveHide = $this->countCardOfType($playerId, REFLECTIVE_HIDE_CARD);
-        if ($countReflectiveHide > 0 && (gettype($damage->cardType) != 'int' || $damage->cardType != REFLECTIVE_HIDE_CARD) && $damageDealerId > 0) { // we avoid infinite loop if mimicked, and reflective on poison tokens
+        if ($countReflectiveHide > 0 && (gettype($damage->cardType) != 'integer' || $damage->cardType != REFLECTIVE_HIDE_CARD) && $damageDealerId > 0) { // we avoid infinite loop if mimicked, and reflective on poison tokens
             $reflectiveDamage = new Damage($damageDealerId, $countReflectiveHide, $playerId, REFLECTIVE_HIDE_CARD);
             $this->applyDamage($reflectiveDamage);
         }
@@ -916,7 +916,7 @@ trait UtilTrait {
         }
 
         // only smashes
-        if (gettype($damage->cardType) == 'int' && $damage->cardType == 0 && $damageDealerId != 0 && $playerId != 0) {
+        if (gettype($damage->cardType) == 'integer' && $damage->cardType == 0 && $damageDealerId != 0 && $playerId != 0) {
             $this->incStat($damage->damage, 'smashesGiven');
             $this->incStat($damage->damage, 'smashesGiven', $damageDealerId);
             $this->incStat($damage->damage, 'smashesReceived', $playerId);
