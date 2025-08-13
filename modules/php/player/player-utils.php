@@ -213,81 +213,12 @@ trait PlayerUtilTrait {
         return $killActive;
     }
 
-    function getPlayerCultists(int $playerId) {
-        return intval($this->getUniqueValueFromDB("SELECT player_cultists FROM `player` where `player_id` = $playerId"));
-    }
-    
-    function applyGetCultist(int $playerId, int $dieValue) {
-        $this->DbQuery("UPDATE player SET `player_cultists` = `player_cultists` + 1 where `player_id` = $playerId");
-
-        $diceStr = $this->getDieFaceLogName($dieValue, 0);
-
-        $message = clienttranslate('${player_name} gains 1 cultist with 4 or more ${dice}');
-        $this->notifyAllPlayers('cultist', $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'cultists' => $this->getPlayerCultists($playerId),
-            'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
-            'dice' => $diceStr,
-        ]);
-
-        $this->incStat(1, 'gainedCultists', $playerId);
-    }
-
-    function applyLoseCultist(int $playerId, string $message) {
-        $this->DbQuery("UPDATE player SET `player_cultists` = `player_cultists` - 1 where `player_id` = $playerId");
-
-        $this->notifyAllPlayers('cultist', $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'cultists' => $this->getPlayerCultists($playerId),
-            'isMaxHealth' => $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId),
-        ]);
-    }
-
     function useRapidCultist(int $type) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
-        $this->applyUseRapidCultist($playerId, $type);
+        $this->cthulhuExpansion->applyUseRapidCultist($playerId, $type);
 
         $this->updateCancelDamageIfNeeded($playerId);
-    }
-
-    function applyUseRapidCultist(int $playerId, int $type) {
-
-        if ($type != 4 && $type != 5) {
-            throw new \BgaUserException('Wrong type for cultist');
-        }
-
-        if ($this->getPlayerCultists($playerId) == 0) {
-            throw new \BgaUserException('No cultist');
-        }
-
-        if ($this->getPlayer($playerId)->eliminated) {
-            throw new \BgaUserException('You can\'t heal when you\'re dead');
-        }
-
-        if ($type == 4 && $this->getPlayerHealth($playerId) >= $this->getPlayerMaxHealth($playerId)) {
-            throw new \BgaUserException('You can\'t heal when you\'re already at full life');
-        }
-
-        if ($type == 4 && !$this->canGainHealth($playerId)) {
-            throw new \BgaUserException(self::_('You cannot gain [Heart]'));
-        }
-
-        if ($type == 5 && !$this->canGainEnergy($playerId)) {
-            throw new \BgaUserException(self::_('You cannot gain [Energy]'));
-        }
-
-        if ($type == 4) {
-            $this->applyGetHealth($playerId, 1, 0, $playerId);
-            $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1[Heart]'));
-            $this->incStat(1, 'cultistHeal', $playerId);
-        } else if ($type == 5) {
-            $this->applyGetEnergy($playerId, 1, 0);
-            $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1[Energy]'));
-            $this->incStat(1, 'cultistEnergy', $playerId);
-        }
     }
 
     function canGainHealth(int $playerId): bool {

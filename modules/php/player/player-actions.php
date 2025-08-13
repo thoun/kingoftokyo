@@ -96,11 +96,11 @@ trait PlayerActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        if ($this->getPlayerCultists($playerId) == 0) {
+        if ($this->cthulhuExpansion->getPlayerCultists($playerId) == 0) {
             throw new \BgaUserException('No cultist');
         }
         
-        $this->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1 extra roll'));
+        $this->cthulhuExpansion->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1 extra roll'));
         $this->incStat(1, 'cultistReroll', $playerId);
         
         $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;

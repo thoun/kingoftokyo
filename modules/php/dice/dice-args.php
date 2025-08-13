@@ -39,7 +39,7 @@ trait DiceArgTrait {
             $smokeCloudsTokens += $smokeCloudCard->tokens;
         }
         $hasSmokeCloud = $smokeCloudsTokens > 0;
-        $hasCultist = $this->isCthulhuExpansion() && $this->getPlayerCultists($playerId) > 0;
+        $hasCultist = $this->cthulhuExpansion->isActive() && $this->cthulhuExpansion->getPlayerCultists($playerId) > 0;
 
         $isBeastForm = $this->isMutantEvolutionVariant() && $this->isBeastForm($playerId);
         $canUseBeastForm = false;

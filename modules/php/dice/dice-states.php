@@ -164,7 +164,7 @@ trait DiceStateTrait {
             $this->kingKongExpansion->getNewTokyoTowerLevel($playerId);
         }
         
-        $isCthulhuExpansion = $this->isCthulhuExpansion();
+        $isCthulhuExpansion = $this->cthulhuExpansion->isActive();
         $fourOfAKind = false;
         $fourOfAKindWithCards = false;
         $flamingAuraDamages = [];
@@ -173,7 +173,7 @@ trait DiceStateTrait {
             if ($diceAndCardsCounts[$diceFace] >= 4 && $canUseSymbolAndFace) {
                 $fourOfAKindWithCards = true;
                 if ($isCthulhuExpansion) {
-                    $this->applyGetCultist($playerId, $diceFace);
+                    $this->cthulhuExpansion->applyGetCultist($playerId, $diceFace);
                 }
             }
             if ($diceCounts[$diceFace] >= 4 && $canUseSymbolAndFace) {

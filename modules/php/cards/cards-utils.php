@@ -907,10 +907,6 @@ trait CardsUtilTrait {
         return 0;
     }
 
-    function cancellableDamageWithCultists(int $playerId) {
-        return $this->getPlayerCultists($playerId);
-    }
-
     function isSureWin(int $playerId) {
         $eliminationWin = $this->getRemainingPlayers() === 1 && !$this->getPlayer($playerId)->eliminated;
         $scoreWin = $this->getPlayerScore($playerId) >= MAX_POINT;

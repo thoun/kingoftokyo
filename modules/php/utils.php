@@ -67,10 +67,6 @@ trait UtilTrait {
         return $this->tableOptions->get(MUTANT_EVOLUTION_VARIANT_OPTION) === 2;
     }
 
-    function isCthulhuExpansion() {
-        return $this->tableOptions->get(CTHULHU_EXPANSION_OPTION) === 2;
-    }
-
     function isDarkEdition() {
         return !$this->isOrigins() && $this->tableOptions->get(DARK_EDITION_OPTION) > 1;
     }
@@ -158,8 +154,8 @@ trait UtilTrait {
 
     function getPlayerPotentialEnergy(int $playerId) {
         $potentialEnergy = $this->getPlayerEnergy($playerId);
-        if ($this->isCthulhuExpansion()) {
-            $cultists = $this->getPlayerCultists($playerId);
+        if ($this->cthulhuExpansion->isActive()) {
+            $cultists = $this->cthulhuExpansion->getPlayerCultists($playerId);
             if ($cultists > 0) {
                 $countFriendOfChildren = $this->countCardOfType($playerId, FRIEND_OF_CHILDREN_CARD);
                 $potentialEnergy += (1 + $countFriendOfChildren) * $cultists;
@@ -1174,7 +1170,7 @@ trait UtilTrait {
             if ($playerHealth <= $totalDamage) {
                 $rapidHealingHearts = $this->cancellableDamageWithRapidHealing($playerId);
                 $superJumpHearts = $this->cancellableDamageWithSuperJump($playerId);
-                $rapidHealingCultists = $this->isCthulhuExpansion() ? $this->cancellableDamageWithCultists($playerId) : 0;
+                $rapidHealingCultists = $this->cthulhuExpansion->isActive() ? $this->cthulhuExpansion->cancellableDamageWithCultists($playerId) : 0;
                 $damageToCancelToSurvive = $this->getDamageToCancelToSurvive($totalDamage, $playerHealth);
                 $healWithEvolutions = 0;
                 if ($damageToCancelToSurvive > 0 && $this->powerUpExpansion->isActive()) {

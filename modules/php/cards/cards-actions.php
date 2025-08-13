@@ -865,8 +865,8 @@ trait CardsActionTrait {
         }
 
         for ($i=0; $i<$cultistCount; $i++) {
-            if ($this->getPlayerCultists($playerId) >= 1) {
-                $this->applyUseRapidCultist($playerId, 4);
+            if ($this->cthulhuExpansion->getPlayerCultists($playerId) >= 1) {
+                $this->cthulhuExpansion->applyUseRapidCultist($playerId, 4);
                 $remainingDamage--;
             } else {
                 break;

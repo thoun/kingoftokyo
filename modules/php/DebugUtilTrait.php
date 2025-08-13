@@ -165,7 +165,7 @@ trait DebugUtilTrait {
         }
 
         // cthulhu
-        if ($this->isCthulhuExpansion()) {
+        if ($this->cthulhuExpansion->isActive()) {
             $this->debug_SetCultists(5);
             //$this->debug_SetPlayerCultists(2343492, 10);
             //$this->debug_SetPlayerCultists($playersIds[2], 1);

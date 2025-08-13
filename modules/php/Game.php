@@ -88,6 +88,7 @@ class Game extends \Bga\GameFramework\Table {
     public AnubisExpansion $anubisExpansion;
     public KingKongExpansion $kingKongExpansion;
     public CybertoothExpansion $cybertoothExpansion;
+    public CthulhuExpansion $cthulhuExpansion;
     public WickednessExpansion $wickednessExpansion;
     public PowerUpExpansion $powerUpExpansion;
     public MindbugExpansion $mindbugExpansion;
@@ -164,6 +165,7 @@ class Game extends \Bga\GameFramework\Table {
         $this->anubisExpansion = new AnubisExpansion($this);
         $this->kingKongExpansion = new KingKongExpansion($this);
         $this->cybertoothExpansion = new CybertoothExpansion($this);
+        $this->cthulhuExpansion = new CthulhuExpansion($this);
         $this->wickednessExpansion = new WickednessExpansion($this);
         $this->powerUpExpansion = new PowerUpExpansion($this);
         $this->mindbugExpansion = new MindbugExpansion($this);
@@ -306,7 +308,7 @@ class Game extends \Bga\GameFramework\Table {
         $this->initStat('player', 'pointsWonWith1Dice', 0);
         $this->initStat('player', 'pointsWonWith2Dice', 0);
         $this->initStat('player', 'pointsWonWith3Dice', 0);
-        if ($this->isCthulhuExpansion()) {
+        if ($this->cthulhuExpansion->isActive()) {
             $this->initStat('player', 'gainedCultists', 0);
             $this->initStat('player', 'cultistReroll', 0);
             $this->initStat('player', 'cultistHeal', 0);
@@ -401,7 +403,7 @@ class Game extends \Bga\GameFramework\Table {
         _ when a player refreshes the game page (F5)
     */
     protected function getAllDatas(): array {
-        $isCthulhuExpansion = $this->isCthulhuExpansion();
+        $isCthulhuExpansion = $this->cthulhuExpansion->isActive();
         $isKingKongExpansion = $this->kingKongExpansion->isActive();
         $isCybertoothExpansion = $this->cybertoothExpansion->isActive();
         $isAnubisExpansion = $this->anubisExpansion->isActive();
