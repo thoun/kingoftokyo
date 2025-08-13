@@ -201,7 +201,7 @@ class AnubisExpansion {
         return true;
     }
 
-    public function canYieldTokyo(int $playerId): bool {
+    public function canYieldTokyo(): bool {
         $curseCardType = $this->getCurseCardType();
 
         return $curseCardType != PHARAONIC_EGO_CURSE_CARD;

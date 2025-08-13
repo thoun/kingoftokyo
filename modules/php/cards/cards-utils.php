@@ -997,8 +997,12 @@ trait CardsUtilTrait {
         }
     }
 
-    function getTopDeckCard() {
-        return Card::onlyId($this->getCardFromDb($this->cards->getCardOnTop('deck')));
+    function getTopDeckCard(): ?Card {
+        $dbCard = $this->cards->getCardOnTop('deck');
+        if ($dbCard === null) {
+            return null;
+        }
+        return Card::onlyId($this->getCardFromDb($dbCard));
     }
 
     function getDeckCardCount() {
