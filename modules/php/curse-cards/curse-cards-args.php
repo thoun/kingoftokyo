@@ -57,7 +57,7 @@ trait CurseCardsArgTrait {
     function argDiscardKeepCard() {
         $playerId = $this->getActivePlayerId();
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $cards = $this->powerCards->getPlayer($playerId);
 
         $disabledIds = [];         
         foreach ($cards as $card) {

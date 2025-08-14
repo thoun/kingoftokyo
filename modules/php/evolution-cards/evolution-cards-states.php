@@ -117,7 +117,7 @@ trait EvolutionCardsStateTrait {
             }
         }
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $cards = $this->powerCards->getPlayer($playerId);
         $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
         $cardsWithSuperiorAlienTechnologyTokens = array_values(array_filter($cards, fn($card) => in_array($card->id, $superiorAlienTechnologyTokens)));
         $usedCardsIds = $this->getUsedCard();

@@ -556,7 +556,7 @@ trait DiceActionTrait {
         
         $playerId = $this->getActivePlayerId();
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsOfType(HIBERNATION_CARD));
+        $cards = $this->powerCards->getCardsOfType(HIBERNATION_CARD);
         $this->removeCards($playerId, $cards);
 
         $this->applyResolveDice($playerId);

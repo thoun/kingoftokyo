@@ -530,9 +530,9 @@ trait EvolutionCardsUtilTrait {
 
         if ($card->type == MY_TOY_EVOLUTION || ($card->type == ICY_REFLECTION_EVOLUTION && $this->getMimickedEvolutionType() == MY_TOY_EVOLUTION)) {
             // if My Toy is removed, reserved card is put to discard
-            $reservedCards = $this->getCardsFromDb($this->cards->getCardsInLocation('reserve'.$playerId, $card->id));
+            $reservedCards = $this->powerCards->getReserved($playerId, $card->id);
             if (count($reservedCards) > 0) {
-                $this->cards->moveCards(array_map(fn($reservedCard) => $reservedCard->id, $reservedCards), 'discard');
+                $this->powerCards->moveItems($reservedCards, 'discard');
             }
         }
 
@@ -702,7 +702,7 @@ trait EvolutionCardsUtilTrait {
         } else {
             $activePlayerId = $this->getActivePlayerId();
 
-            $forbiddenCard = $this->getCardFromDb($this->cards->getCard($cardBeingBought->cardId));
+            $forbiddenCard = $this->powerCards->getItemById($cardBeingBought->cardId);
 
             $this->notifyAllPlayers('log', clienttranslate('${player_name} prevents ${player_name2} to buy ${card_name}. ${player_name2} is not forced to buy another card, as player energy is too low to buy another card. '), [
                 'player_name' => $this->getPlayerName($playerId),
@@ -715,7 +715,7 @@ trait EvolutionCardsUtilTrait {
     }
     
     function applyPrecisionFieldSupport(int $playerId) {
-        $topCard = $this->getCardsFromDb($this->cards->getCardsOnTop(1, 'deck'))[0];
+        $topCard = $this->powerCards->getTopDeckCard(false);
 
         if ($topCard->type > 100) {
 
@@ -724,17 +724,17 @@ trait EvolutionCardsUtilTrait {
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => $topCard->type,
             ]);
-            $this->cards->moveCard($topCard->id, 'discard');
+            $this->powerCards->moveItem($topCard, 'discard');
             $this->applyPrecisionFieldSupport($playerId);
 
-        } else if ($this->getCardBaseCost($topCard->type) > 4) {
+        } else if ($this->powerCards->getCardBaseCost($topCard->type) > 4) {
 
             $this->notifyAllPlayers('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
                 'card_name' => $topCard->type,
             ]);
-            $this->cards->moveCard($topCard->id, 'discard');
+            $this->powerCards->moveItem($topCard, 'discard');
             $this->applyPrecisionFieldSupport($playerId);
 
         } else {
@@ -891,12 +891,12 @@ trait EvolutionCardsUtilTrait {
     }
 
     function applyDeepDive(int $playerId) {
-        if (intval($this->cards->countCardInLocation('deck')) === 0) {
+        if ($this->powerCards->countItemsInLocation('deck') === 0) {
             throw new \BgaUserException("No cards in deck pile");
         }
 
-        $this->cards->shuffle('discard');
-        $cards = $this->getCardsFromDb($this->cards->getCardsOnTop(3, 'deck'));
+        $this->powerCards->shuffle('discard');
+        $cards = $this->powerCards->getCardsOnTop(3, 'deck');
 
         $question = new Question(
             'DeepDive',
@@ -1099,7 +1099,7 @@ trait EvolutionCardsUtilTrait {
         $cardsIds[] = $cardId;
         $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, $cardsIds);
 
-        $card = $this->cards->getCard($cardId);
+        $card = $this->powerCards->getItemById($cardId);
         $this->notifyAllPlayers("addSuperiorAlienTechnologyToken", '', [
             'playerId' => $playerId,
             'card' => $card,

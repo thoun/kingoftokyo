@@ -59,7 +59,7 @@ trait WickednessTilesActionTrait {
 
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $pId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $pId));
+                $cardsOfPlayer = $this->powerCards->getPlayer($pId);
                 $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
             }
 
@@ -93,7 +93,7 @@ trait WickednessTilesActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
+        $card = $this->powerCards->getItemById($mimickedCardId);        
         if ($card->type > 100) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -111,7 +111,7 @@ trait WickednessTilesActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
+        $card = $this->powerCards->getItemById($mimickedCardId);        
         if ($card->type > 100) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }

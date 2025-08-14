@@ -2,17 +2,20 @@
 
 namespace KOT\States;
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
+
 trait InitialCardTrait {
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Utility functions
 ////////////
 
-    function setInitialCostumeCard(int $playerId, int $id, object $otherCard) {
-        $card = $this->getCardFromDb($this->cards->getCard($id));
+    function setInitialCostumeCard(int $playerId, int $id, PowerCard $otherCard) {
+        $card = $this->powerCards->getItemById($id);
         
-        $this->cards->moveCard($id, 'hand', $playerId);
-        $this->cards->moveCard($otherCard->id, 'costumediscard');
+        $this->powerCards->moveItem($card, 'hand', $playerId);
+        $this->powerCards->moveItem($otherCard, 'costumediscard');
 
         $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,
@@ -48,11 +51,11 @@ trait InitialCardTrait {
                 throw new \BgaUserException('No selected Costume card');
             }
 
-            $topCards = $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck'));
-            if (!$this->array_some($topCards, fn($topCard) => $topCard->id == $costumeId)) {
+            $topCards = $this->powerCards->getCardsOnTop(2, 'costumedeck');
+            if (!Arrays::some($topCards, fn($topCard) => $topCard->id == $costumeId)) {
                 throw new \BgaUserException('Card not available');
             }
-            $otherCard = $this->array_find($topCards, fn($topCard) => $topCard->id != $costumeId);
+            $otherCard = Arrays::find($topCards, fn($topCard) => $topCard->id != $costumeId);
 
             $this->setInitialCostumeCard($playerId, $costumeId, $otherCard);
         }
@@ -71,7 +74,7 @@ trait InitialCardTrait {
     private function everyPlayerHasCostumeCard() {
         $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
-            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            $cardsOfPlayer = $this->powerCards->getPlayer($playerId);
             if (!$this->array_some($cardsOfPlayer, fn($card) => $card->type > 200 && $card->type < 300)) {
                 return false;
             }
@@ -112,7 +115,7 @@ trait InitialCardTrait {
         ];
 
         if ($chooseCostume) {
-            $args['cards'] = $this->getCardsFromDb($this->cards->getCardsOnTop(2, 'costumedeck'));
+            $args['cards'] = $this->powerCards->getCardsOnTop(2, 'costumedeck');
         }
 
         if ($chooseEvolution) {

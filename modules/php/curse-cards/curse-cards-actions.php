@@ -46,7 +46,7 @@ trait CurseCardsActionTrait {
         $this->checkAction('discardKeepCard');   
         $playerId = $this->getActivePlayerId(); 
 
-        $card = $this->getCardFromDb($this->cards->getCard($cardId));
+        $card = $this->powerCards->getItemById($cardId);
         $this->anubisExpansion->applyDiscardKeepCard($playerId, $card);
 
         $this->gamestate->nextState('next');

@@ -881,7 +881,7 @@ trait DiceUtilTrait {
         $playersWithHeartOfTheRabbit = $this->getPlayersWithHeartOfTheRabbit($playerId);
         $playersWithActivatedWitch = [];
         
-        $witchCards = $this->getCardsFromDb($this->cards->getCardsOfType(WITCH_CARD));
+        $witchCards = $this->powerCards->getCardsOfType(WITCH_CARD);
         $witchCard = null;
         if (count($witchCards) > 0) {
             $witchCard = $witchCards[0];

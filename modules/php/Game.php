@@ -93,7 +93,7 @@ class Game extends \Bga\GameFramework\Table {
     public PowerUpExpansion $powerUpExpansion;
     public MindbugExpansion $mindbugExpansion;
 
-    public Deck $cards;
+    public PowerCardManager $powerCards;
     public WickednessTileManager $wickednessTiles;
 
     // from material file
@@ -114,11 +114,6 @@ class Game extends \Bga\GameFramework\Table {
     public array $EVOLUTION_TO_PLAY_BEFORE_END;
     public array $EVOLUTIONS_TO_HEAL;
     public array $EVOLUTION_GIFTS;
-    public array $CARD_COST;
-    public array $ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST;
-    public array $ORIGINS_CARDS_EXCLUSIVE_DISCARD_CARDS_LIST;
-    public array $KEEP_CARDS_LIST;
-    public array $DISCARD_CARDS_LIST;
 
 	function __construct(){
         // Your global variables labels:
@@ -169,11 +164,8 @@ class Game extends \Bga\GameFramework\Table {
         $this->wickednessExpansion = new WickednessExpansion($this);
         $this->powerUpExpansion = new PowerUpExpansion($this);
         $this->mindbugExpansion = new MindbugExpansion($this);
-
-        $this->cards = $this->getNew("module.common.deck");
-        $this->cards->init("card");
-        $this->cards->autoreshuffle = true;
 		
+        $this->powerCards = new PowerCardManager($this);
         $this->wickednessTiles = new WickednessTileManager($this);
 	}
 
@@ -184,7 +176,8 @@ class Game extends \Bga\GameFramework\Table {
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
     */
-    protected function setupNewGame($players, $options = []) { 
+    protected function setupNewGame($players, $options = []) {  
+        $this->powerCards->initDb();
         $this->wickednessTiles->initDb();
         $this->powerUpExpansion->initDb();
         $this->anubisExpansion->initDb();
@@ -358,7 +351,7 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         // setup the initial game situation here
-        $this->initCards($isOrigins, $darkEdition > 1);
+        $this->powerCards->setup($isOrigins, $darkEdition > 1);
         
         if ($darkEdition > 1) {
             $this->wickednessTiles->setup($darkEdition);
@@ -372,7 +365,7 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($this->isMutantEvolutionVariant()) {
             foreach ($playersIds as $playerId) {
-                $this->cards->pickCardForLocation('mutantdeck', 'hand', $playerId);
+                $this->powerCards->pickItemForLocation('mutantdeck', null, 'hand', $playerId);
             }
         }
 
@@ -440,18 +433,17 @@ class Game extends \Bga\GameFramework\Table {
         $activePlayerId = $this->getActivePlayerId();
         $result['dice'] = $activePlayerId ? $this->getPlayerRolledDice($activePlayerId, true, true, true) : [];
 
-        $result['deckCardsCount'] = $this->getDeckCardCount();
-        $result['visibleCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('table', null, 'location_arg'));
-        $result['topDeckCardBackType'] = $this->getTopDeckCardBackType(); // TODOCA remove
-        $result['topDeckCard'] = $this->getTopDeckCard();
+        $result['deckCardsCount'] = $this->powerCards->getDeckCount();
+        $result['visibleCards'] = $this->powerCards->getTable();
+        $result['topDeckCard'] = $this->powerCards->getTopDeckCard();
 
         foreach ($result['players'] as $playerId => &$playerDb) {
             if (intval($playerDb['score']) > MAX_POINT) {
                 $playerDb['score'] = MAX_POINT;
             }
 
-            $playerDb['cards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-            $playerDb['reservedCards'] = $this->getCardsFromDb($this->cards->getCardsInLocation('reserved'.$playerId));
+            $playerDb['cards'] = $this->powerCards->getItemsInLocation('hand', $playerId);
+            $playerDb['reservedCards'] = $this->powerCards->getItemsInLocation('reserved'.$playerId);
 
             foreach($playerDb['cards'] as &$card) {
                 if ($card->type == MIMIC_CARD) {
@@ -581,10 +573,10 @@ class Game extends \Bga\GameFramework\Table {
 
     function stStartGame() {
         if ($this->isHalloweenExpansion()) {
-            $this->cards->moveAllCardsInLocation('costumedeck', 'deck');
-            $this->cards->moveAllCardsInLocation('costumediscard', 'deck');
+            $this->powerCards->moveAllItemsInLocation('costumedeck', 'deck');
+            $this->powerCards->moveAllItemsInLocation('costumediscard', 'deck');
         }
-        $this->cards->shuffle('deck'); 
+        $this->powerCards->shuffle('deck'); 
 
         // TODO $this->debugSetupBeforePlaceCard();
         $cards = $this->placeNewCardsOnTable();
@@ -593,8 +585,8 @@ class Game extends \Bga\GameFramework\Table {
 
         $this->notifyAllPlayers("setInitialCards", '', [
             'cards' => $cards,
-            'deckCardsCount' => $this->getDeckCardCount(),
-            'topDeckCard' => $this->getTopDeckCard(),
+            'deckCardsCount' => $this->powerCards->getDeckCount(),
+            'topDeckCard' => $this->powerCards->getTopDeckCard(),
         ]);
 
         $this->gamestate->nextState('start');
@@ -878,6 +870,11 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($from_version <= 2508121245) {
             $sql = "ALTER TABLE `DBPREFIX_evolution_card` ADD `order` INT DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+
+        if ($from_version <= 2508131511) {
+            $sql = "ALTER TABLE `DBPREFIX_card` ADD `order` INT DEFAULT 0";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

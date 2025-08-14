@@ -47,7 +47,7 @@ class AnubisExpansion {
     }
 
     public function snakeEffectDiscardKeepCard(int $playerId): ?int {
-        $cards = $this->game->getCardsFromDb($this->game->cards->getCardsInLocation('hand', $playerId));
+        $cards = $this->game->powerCards->getPlayer($playerId);
         $keepCards = Arrays::filter($cards, fn($card) => $card->type < 100);
         $count = count($keepCards);
         if ($count > 1) {

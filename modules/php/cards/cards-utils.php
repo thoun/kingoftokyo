@@ -7,6 +7,7 @@ require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/log.php');
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Card;
@@ -22,69 +23,6 @@ trait CardsUtilTrait {
     //////////// Utility functions
     ////////////
 
-    function getCardBaseCost(int $cardType) {
-        $cost = $this->CARD_COST[$cardType];
-
-        // new costs for the Dark Edition
-        if (($cardType ===  16 || $cardType ===  19) && $this->isDarkEdition()) {
-            return 6;
-        }
-        if ($cardType ===  22 && $this->isDarkEdition()) {
-            return 5;
-        }
-        if ($cardType ===  42 && $this->isDarkEdition()) {
-            return 3;
-        }
-
-        return $cost;
-    }
-
-    function initCards(bool $isOrigins, bool $isDarkEdition) {
-        $cards = [];
-
-        $gameVersion = $isOrigins ? 'origins' : ($isDarkEdition ? 'dark' : 'base');
-        
-        foreach($this->KEEP_CARDS_LIST[$gameVersion] as $value) { // keep  
-            $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
-        }
-        
-        foreach($this->DISCARD_CARDS_LIST[$gameVersion] as $value) { // discard
-            $type = ($isOrigins ? 0 : 100) + $value;
-            $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
-        }
-
-        if (!$isOrigins && !$isDarkEdition && $this->tableOptions->get(ORIGINS_EXCLUSIVE_CARDS_OPTION) == 2) {        
-            foreach($this->ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST as $value) { // keep  
-                $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
-            }            
-            foreach($this->ORIGINS_CARDS_EXCLUSIVE_DISCARD_CARDS_LIST as $value) { // discard
-                $cards[] = ['type' => $value, 'type_arg' => 0, 'nbr' => 1];
-            }
-        }
-
-        $this->cards->createCards($cards, 'deck');
-
-        if ($this->isHalloweenExpansion()) { 
-            $cards = [];
-
-            for($value=1; $value<=12; $value++) { // costume
-                $type = 200 + $value;
-                $cards[] = ['type' => $type, 'type_arg' => 0, 'nbr' => 1];
-            }
-
-            $this->cards->createCards($cards, 'costumedeck');
-            $this->cards->shuffle('costumedeck'); 
-        }
-
-        if ($this->isMutantEvolutionVariant()) {            
-            $cards = [ // transformation
-                ['type' => 301, 'type_arg' => 0, 'nbr' => 6]
-            ];
-
-            $this->cards->createCards($cards, 'mutantdeck');
-        }
-    }
-
     function getCardFromDb(array $dbCard) {
         if (!$dbCard || !array_key_exists('id', $dbCard)) {
             throw new \Error('card doesn\'t exists '.json_encode($dbCard));
@@ -99,7 +37,8 @@ trait CardsUtilTrait {
         return array_map(fn($dbCard) => $this->getCardFromDb($dbCard), array_values($dbCards));
     }
 
-    function applyEffects(int $cardType, int $playerId) { // return $damages
+    function applyEffects(/*PowerCard*/$card, int $playerId) { // return $damages
+        $cardType = $card->type;
         if ($cardType < 100 && !$this->keepAndEvolutionCardsHaveEffect()) {
             return;
         }
@@ -241,7 +180,7 @@ trait CardsUtilTrait {
 
         $mimicCard = null;
         if ($mimicCardType == MIMIC_CARD) {
-            $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
+            $mimicCard = $this->powerCards->getCardsOfType(MIMIC_CARD)[0];
 
             if ($mimicCard && $mimicCard->tokens > 0) {
                 $this->setCardTokens($mimicCard->location_arg, $mimicCard, 0);
@@ -263,7 +202,7 @@ trait CardsUtilTrait {
     }
 
     function setMimickedCardId(int $mimicCard, int $mimicOwnerId, int $cardId) {
-        $card = $this->getCardFromDb($this->cards->getCard($cardId));
+        $card = $this->powerCards->getItemById($cardId);
         $this->setMimickedCard($mimicCard, $mimicOwnerId, $card);
     }
 
@@ -292,12 +231,12 @@ trait CardsUtilTrait {
         ]);
 
         // no need to check for damage return, no discard card can be mimicked
-        $this->applyEffects($card->type, $mimicOwnerId);
+        $this->applyEffects($card, $mimicOwnerId);
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
             if ($mimicCardType === MIMIC_CARD) {
-                $mimicCard = $this->getCardsFromDb($this->cards->getCardsOfType(MIMIC_CARD))[0];
+                $mimicCard = $this->powerCards->getCardsOfType(MIMIC_CARD)[0];
                 $this->setCardTokens($mimicOwnerId, $mimicCard, $tokens);
             } else if ($mimicCardType === FLUXLING_WICKEDNESS_TILE) {
                 $mimicCards = $this->wickednessTiles->getItemsByFieldName('type', [FLUXLING_WICKEDNESS_TILE]);
@@ -361,7 +300,7 @@ trait CardsUtilTrait {
             return [];
         }
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId));
+        $cards = $this->powerCards->getPlayerCardsOfType($cardType, $playerId);
 
         if ($cardType < 100 && $includeMimick && $cardType != MIMIC_CARD) { // don't search for mimick mimicking itself, nor discard/costume cards
             $mimickedCardType = $this->getMimickedCardType(MIMIC_CARD);
@@ -388,7 +327,7 @@ trait CardsUtilTrait {
     }
 
     function getCardCost(int $playerId, int $cardType) {
-        $cardCost = $this->getCardBaseCost($cardType);
+        $cardCost = $this->powerCards->getCardBaseCost($cardType);
 
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);
@@ -416,7 +355,7 @@ trait CardsUtilTrait {
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $zombified = $this->getPlayer($playerId)->zombified;
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $cards = $this->powerCards->getPlayer($playerId);
         if ($zombified) {
             $cards = array_filter($cards, fn($card) => $card->type != ZOMBIFY_CARD);
         }
@@ -734,7 +673,7 @@ trait CardsUtilTrait {
             $this->removeMimicToken(FLUXLING_WICKEDNESS_TILE, $playerId);
         }
 
-        $this->cards->moveCard($card->id, $card->type < 300 ? 'discard' : 'void'); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
+        $this->powerCards->moveItem($card, $card->type < 300 ? 'discard' : 'void'); // we don't want transformation/golden scarab cards in the discard, for Miraculous Catch
 
         if ($this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION) > 0) {
             $superiorAlienTechnologyTokens = $this->getSuperiorAlienTechnologyTokens($playerId);
@@ -813,7 +752,7 @@ trait CardsUtilTrait {
     }
 
     function removeCardByType(int $playerId, int $cardType, bool $silent = false) {
-        $card = $this->getCardFromDb(array_values($this->cards->getCardsOfTypeInLocation($cardType, null, 'hand', $playerId))[0]);
+        $card = $this->powerCards->getPlayerCardsOfType($cardType, $playerId)[0];
 
         $this->removeCard($playerId, $card, $silent);
     }
@@ -859,7 +798,7 @@ trait CardsUtilTrait {
         $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
 
         foreach($playersIds as $playerId) {
-            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+            $cardsOfPlayer = $this->powerCards->getPlayer($playerId);
             foreach($cardsOfPlayer as $card) {
                 if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) {
                     return true;
@@ -880,7 +819,7 @@ trait CardsUtilTrait {
 
     
     function removeDiscardCards(int $playerId) {
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $cards = $this->powerCards->getPlayer($playerId);
         $discardCards = array_values(array_filter($cards, fn($card) => $card->type >= 100 && $card->type < 200));
         $this->removeCards($playerId, $discardCards);
     }
@@ -929,7 +868,7 @@ trait CardsUtilTrait {
     }
 
     function applyEndOfEachMonsterCards() {
-        $ghostCards = $this->getCardsFromDb($this->cards->getCardsOfType(GHOST_CARD));
+        $ghostCards = $this->powerCards->getCardsOfType(GHOST_CARD);
         if (count($ghostCards) > 0) {
             $ghostCard = $ghostCards[0];
             if ($ghostCard->location == 'hand') {
@@ -941,7 +880,7 @@ trait CardsUtilTrait {
             }
         }
         
-        $vampireCards = $this->getCardsFromDb($this->cards->getCardsOfType(VAMPIRE_CARD));
+        $vampireCards = $this->powerCards->getCardsOfType(VAMPIRE_CARD);
         if (count($vampireCards) > 0) {
             $vampireCard = $vampireCards[0];
         
@@ -985,28 +924,6 @@ trait CardsUtilTrait {
                 }
             }
         }
-    }
-
-    function getTopDeckCardBackType() {
-        $topCardsDb = $this->cards->getCardsOnTop(1, 'deck');
-        if (count($topCardsDb) > 0) {
-            $topCard = $this->getCardsFromDb($topCardsDb)[0];
-            return floor($topCard->type / 100) == 2 ? 'costume' : 'base';
-        } else {
-            return null;
-        }
-    }
-
-    function getTopDeckCard(): ?Card {
-        $dbCard = $this->cards->getCardOnTop('deck');
-        if ($dbCard === null) {
-            return null;
-        }
-        return Card::onlyId($this->getCardFromDb($dbCard));
-    }
-
-    function getDeckCardCount() {
-        return intval($this->cards->countCardInLocation('deck'));
     }
 
     function willBeWounded(int $playerId, int $activePlayerId) {
@@ -1061,8 +978,8 @@ trait CardsUtilTrait {
     }
 
     function getFormCard(int $playerId) {
-        $playerCards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
-        $formCard = $this->array_find($playerCards, fn($card) => $card->type == FORM_CARD);
+        $playerCards = $this->powerCards->getPlayer($playerId);
+        $formCard = Arrays::find($playerCards, fn($card) => $card->type == FORM_CARD);
         return $formCard;
     }
 

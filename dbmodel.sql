@@ -30,19 +30,6 @@ CREATE TABLE IF NOT EXISTS `dice` (
   PRIMARY KEY (`dice_id`)
 ) ENGINE=InnoDB;
 
--- card_type : 0..100 for keep power, 100..200 for discard power
--- card_type_arg : tokens
--- card_location : deck / player / discard
--- card_location_arg : player id
-CREATE TABLE IF NOT EXISTS `card` (
-  `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `card_type` smallint unsigned NOT NULL,
-  `card_type_arg` tinyint unsigned NULL,
-  `card_location` varchar(16) NOT NULL,
-  `card_location_arg` INT(10) unsigned NOT NULL,
-  PRIMARY KEY (`card_id`)
-) ENGINE=InnoDB;
-
 -- player_location : 0 : outside tokyo, 1 : tokyo city, 2: tokyo bay
 ALTER TABLE `player` ADD `player_location` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_health` tinyint UNSIGNED NOT NULL DEFAULT 10;

@@ -5,7 +5,9 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/player-intervention.php');
 require_once(__DIR__.'/../Objects/card-being-bought.php');
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\PlayersUsedDice;
 use KOT\Objects\CardBeingBought;
@@ -62,12 +64,10 @@ trait CardsActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $dbCard = $this->cards->getCard($id);
-        if (!$dbCard) {
+        $card = $this->powerCards->getItemById($id);
+        if (!$card) {
             throw new \BgaUserException('Invalid card id (stealCostumeCard)');
         }
-
-        $card = $this->getCardFromDb($dbCard);
 
         $from = $card->location_arg;
 
@@ -95,7 +95,7 @@ trait CardsActionTrait {
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
 
         $this->removeCard($from, $card, true, false, true);
-        $this->cards->moveCard($id, 'hand', $playerId);
+        $this->powerCards->moveItem($card, 'hand', $playerId);
 
         $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
             'playerId' => $playerId,
@@ -134,7 +134,7 @@ trait CardsActionTrait {
     }
 
     function applyBuyCard(int $playerId, int $id, int $from, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
-        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $card = $this->powerCards->getItemById($id);
         $cardLocation = $card->location;
         $cardLocationArg = $card->location_arg;
         $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
@@ -185,7 +185,7 @@ trait CardsActionTrait {
                 $this->removeCard($from, $card, true, false, true);
             }
         }
-        $this->cards->moveCard($id, 'hand', $playerId);
+        $this->powerCards->moveItem($card, 'hand', $playerId);
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
@@ -212,7 +212,7 @@ trait CardsActionTrait {
                 $this->removeCard($playerId, $card, false, true);
                 
                 $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1 WHERE `card_location` = 'deck'");
-                $this->cards->moveCard($card->id, 'deck', 0);
+                $this->powerCards->moveItem($card->id, 'deck', 0);
             }
             
         } else if ($from > 0) {
@@ -232,9 +232,7 @@ trait CardsActionTrait {
 
             $this->applyGetEnergy($from, $cost, 0);
             
-        } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {
-            $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
-            
+        } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {            
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerName($playerId),
@@ -243,19 +241,17 @@ trait CardsActionTrait {
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
-                'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
-                'deckCardsCount' => $this->getDeckCardCount(),
-                'topDeckCard' => $this->getTopDeckCard(),
+                'deckCardsCount' => $this->powerCards->getDeckCount(),
+                'topDeckCard' => $this->powerCards->getTopDeckCard(),
             ]);
 
             $this->setMadeInALabCardIds($playerId, [0]); // To not pick another one on same turn
         } else {
-            $numberOfCardsInTable = intval($this->cards->countCardInLocation('table'));
+            $numberOfCardsInTable = $this->powerCards->countItemsInLocation('table');
 
             $newCard = $numberOfCardsInTable < 3 ?
-                $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg)) :
+                $this->powerCards->pickCardForLocation('deck', 'table', $cardLocationArg) :
                 null;
-            $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
     
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
@@ -265,9 +261,8 @@ trait CardsActionTrait {
                 'newCard' => $newCard,
                 'energy' => $this->getPlayerEnergy($playerId), 
                 'cost' => $cost,
-                'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
-                'deckCardsCount' => $this->getDeckCardCount(),
-                'topDeckCard' => $this->getTopDeckCard(),
+                'deckCardsCount' => $this->powerCards->getDeckCount(),
+                'topDeckCard' => $this->powerCards->getTopDeckCard(),
             ]);
 
             if ($useBobbingForApples) {
@@ -280,7 +275,7 @@ trait CardsActionTrait {
                 if ($newCard == null) {
                     throw new \BgaUserException("You can't buy with Bobbing for Apples when there is no new card revealed");
                 } else {
-                    $newCardCost = $this->getCardBaseCost($newCard->type);
+                    $newCardCost = $this->powerCards->getCardBaseCost($newCard->type);
 
                     if ($newCardCost % 2 == 0) {
                         $this->notifyAllPlayers("log", /*client TODOPUHA translate*/('The newly revealed card has an even cost, ${player_name} can keep ${card_name}'), [
@@ -326,7 +321,7 @@ trait CardsActionTrait {
             ]);
         }
 
-        $damages = $this->applyEffects($card->type, $playerId);
+        $damages = $this->applyEffects($card, $playerId);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -351,7 +346,7 @@ trait CardsActionTrait {
         if ($from === $playerId && $this->powerUpExpansion->isActive()) {
             $myToyEvolutions = $this->getEvolutionCardsByLocation('table', $playerId);
             if (count($myToyEvolutions) > 0) {
-                $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => intval($this->cards->countCardInLocation('reserved'.$playerId, $myToyEvolution->id)) === 0));
+                $myToyEvolutions = array_values(array_filter($myToyEvolutions, fn($myToyEvolution) => $this->powerCards->countItemsInLocation('reserved'.$playerId, $myToyEvolution->id) === 0));
 
                 if (count($myToyEvolutions) > 0) {
                     $this->myToyQuestion($playerId, $myToyEvolutions[0]);
@@ -370,12 +365,10 @@ trait CardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $dbCard = $this->cards->getCard($id);
-        if (!$dbCard) {
+        $card = $this->powerCards->getItemById($id);
+        if (!$card) {
             throw new \BgaUserException('Invalid card id (buyCard)');
         }
-
-        $card = $this->getCardFromDb($dbCard);
 
         $cost = $this->getCardCost($playerId, $card->type);
         if ($useSuperiorAlienTechnology) {
@@ -432,14 +425,14 @@ trait CardsActionTrait {
         }
     }
 
-    function applyPlayCard(int $playerId, object $card) {
+    function applyPlayCard(int $playerId, PowerCard $card) {
         $this->updateKillPlayersScoreAux();        
         
         $this->removeDiscardCards($playerId);
         
         $countRapidHealingBefore = $this->countCardOfType($playerId, RAPID_HEALING_CARD);
 
-        $this->cards->moveCard($card->id, 'hand', $playerId);
+        $this->powerCards->moveItem($card, 'hand', $playerId);
 
         $tokens = $this->getTokensByCardType($card->type);
         if ($tokens > 0) {
@@ -449,16 +442,13 @@ trait CardsActionTrait {
         // astronaut
         $this->applyAstronaut($playerId);
 
-        $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
-
         $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} draws ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'card' => $card,
             'card_name' => $card->type,
-            'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
-            'deckCardsCount' => $this->getDeckCardCount(),
-            'topDeckCard' => $this->getTopDeckCard(),
+            'deckCardsCount' => $this->powerCards->getDeckCount(),
+            'topDeckCard' => $this->powerCards->getTopDeckCard(),
         ]);
 
         if ($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) {
@@ -476,7 +466,7 @@ trait CardsActionTrait {
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
-        $damages = $this->applyEffects($card->type, $playerId);
+        $damages = $this->applyEffects($card, $playerId);
 
         $this->setGameStateValue('newCardId', 0);
 
@@ -484,7 +474,7 @@ trait CardsActionTrait {
     }
 
     function drawCard(int $playerId, $stateAfter = null) {
-        $card = $this->getCardFromDb($this->cards->getCardOnTop('deck'));
+        $card = $this->powerCards->getTopDeckCard(false);
 
         $damages = $this->applyPlayCard($playerId, $card);
 
@@ -494,8 +484,8 @@ trait CardsActionTrait {
 
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $pId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $pId));
-                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
+                $cardsOfPlayer = $this->powerCards->getPlayer($pId);
+                $countAvailableCardsForMimic += Arrays::count($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100);
             }
 
             $mimic = $countAvailableCardsForMimic > 0;
@@ -568,19 +558,16 @@ trait CardsActionTrait {
 
         $this->removeDiscardCards($playerId);
 
-        $this->cards->moveAllCardsInLocation('table', 'discard');
+        $this->powerCards->moveAllItemsInLocation('table', 'discard');
         $cards = $this->placeNewCardsOnTable();
-        
-        $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
 
         $notifArgs = [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerName($playerId),
             'cards' => $cards,
             'energy' => $this->getPlayerEnergy($playerId),
-            'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
-            'deckCardsCount' => $this->getDeckCardCount(),
-            'topDeckCard' => $this->getTopDeckCard(),
+            'deckCardsCount' => $this->powerCards->getDeckCount(),
+            'topDeckCard' => $this->powerCards->getTopDeckCard(),
         ];        
         if ($cardType == 3024) {
             $this->notifyAllPlayers("renewCards", /*client TODOPUtranslate(*/'${player_name} renews visible cards using ${card_name}'/*)*/, 
@@ -639,7 +626,7 @@ trait CardsActionTrait {
             throw new \BgaUserException("You can't sell cards without Metamorph");
         }
 
-        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $card = $this->powerCards->getItemById($id);
         
         if ($card->location != 'hand' || $card->location_arg != $playerId) {
             throw new \BgaUserException("You can't sell cards that you don't own");
@@ -649,7 +636,7 @@ trait CardsActionTrait {
             throw new \BgaUserException("You can only sell Keep cards");
         }
 
-        $fullCost = $this->getCardBaseCost($card->type);
+        $fullCost = $this->powerCards->getCardBaseCost($card->type);
 
         $this->removeCard($playerId, $card, true);
 
@@ -671,7 +658,7 @@ trait CardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));
+        $card = $this->powerCards->getItemById($mimickedCardId);
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -690,7 +677,7 @@ trait CardsActionTrait {
 
         $playerId = $this->getActivePlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($mimickedCardId));        
+        $card = $this->powerCards->getItemById($mimickedCardId);        
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -1117,10 +1104,10 @@ trait CardsActionTrait {
         $playerId = intval($this->getCurrentPlayerId());
         
         $unstableDnaCards = $this->getCardsOfType($playerId, UNSTABLE_DNA_CARD); // TODODE unstable DNA can be mimicked. create an intervention for this.
-        $unstableDnaCards = array_values(array_filter($unstableDnaCards, fn($card) => $card->id < 2000)); // to remove mimic tile, as you can't exchange a cand with a tile
+        $unstableDnaCards = Arrays::filter($unstableDnaCards, fn($card) => $card->id < 2000); // to remove mimic tile, as you can't exchange a cand with a tile
         $unstableDnaCard = $unstableDnaCards[0];
 
-        $exchangedCard = $this->getCardFromDb($this->cards->getCard($exchangedCardId));
+        $exchangedCard = $this->powerCards->getItemById($exchangedCardId);
         $exchangedCardOwner = $exchangedCard->location_arg;
 
         if ($exchangedCard->type > 300) {
@@ -1131,8 +1118,8 @@ trait CardsActionTrait {
         $countRapidHealingBeforeOtherPlayer = $this->countCardOfType($exchangedCardOwner, RAPID_HEALING_CARD);
         $countEvenBiggerBeforeOtherPlayer = $this->countCardOfType($exchangedCardOwner, EVEN_BIGGER_CARD);
 
-        $this->cards->moveCard($unstableDnaCard->id, 'hand', $exchangedCardOwner);
-        $this->cards->moveCard($exchangedCard->id, 'hand', $playerId);
+        $this->powerCards->moveItem($unstableDnaCard, 'hand', $exchangedCardOwner);
+        $this->powerCards->moveItem($exchangedCard, 'hand', $playerId);
 
         $this->toggleRapidHealing($playerId, $countRapidHealingBeforeCurrentPlayer);
         $this->toggleRapidHealing($exchangedCardOwner, $countRapidHealingBeforeOtherPlayer);

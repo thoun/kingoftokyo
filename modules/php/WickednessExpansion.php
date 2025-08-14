@@ -77,7 +77,7 @@ class WickednessExpansion {
         $mimickedCardId = $this->game->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
 
         foreach($playersIds as $playerId) {
-            $cardsOfPlayer = $this->game->getCardsFromDb($this->game->cards->getCardsInLocation('hand', $playerId));
+            $cardsOfPlayer = $this->game->powerCards->getPlayer($playerId);
             foreach($cardsOfPlayer as $card) {
                 if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) {
                     return true;

@@ -17,7 +17,7 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return true; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+        return false; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
     }
 
     public function initDb(array $playerIds): void {

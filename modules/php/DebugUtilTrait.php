@@ -321,12 +321,12 @@ trait DebugUtilTrait {
     }
 
     function debug_SetCardInTable(int $cardType) {
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0])->id, 'table', 1);
+        $this->powerCards->moveItem($this->powerCards->getCardsOfType($cardType)[0], 'table', 1);
     }
 
     // debug_SetCardInDiscard(110)
     function debug_SetCardInDiscard(int $cardType) {
-        $this->cards->moveCard( $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0])->id, 'discard');
+        $this->powerCards->moveItem($this->powerCards->getCardsOfType($cardType)[0], 'discard');
     }
 
     function debug_SetCardIn(int $cardId, bool $other = true) {
@@ -335,13 +335,13 @@ trait DebugUtilTrait {
             'otherLog' => $other,
         ]);
 
-        $this->cards->moveCard($cardId, 'hand', $other ? 23 : 13);
+        $this->powerCards->moveItem($this->powerCards->getItemById($cardId), 'hand', $other ? 23 : 13);
         //return $card;
     }
 
     public function debug_SetCardInHand(int $cardType, int $playerId) {
-        $card = $this->getCardFromDb(array_values($this->cards->getCardsOfType($cardType))[0]);
-        $this->cards->moveCard($card->id, 'hand', $playerId);
+        $card = $this->powerCards->getCardsOfType($cardType)[0];
+        $this->powerCards->moveItem($card, 'hand', $playerId);
         return $card;
     }
 

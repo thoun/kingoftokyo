@@ -5,6 +5,7 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use KOT\Objects\Question;
 use KOT\Objects\Damage;
@@ -311,8 +312,8 @@ trait EvolutionCardsActionTrait {
         $currentPlayerId = $this->getCurrentPlayerId();
         $activePlayerId = $this->getActivePlayerId();
 
-        $forcedCard = $this->getCardFromDb($this->cards->getCard($id));
-        $forbiddenCard = $this->getCardFromDb($this->cards->getCard($this->getGlobalVariable(CARD_BEING_BOUGHT)->cardId));
+        $forcedCard = $this->powerCards->getItemById($id);
+        $forbiddenCard = $this->powerCards->getItemById($this->getGlobalVariable(CARD_BEING_BOUGHT)->cardId);
 
         $this->notifyAllPlayers('log', clienttranslate('${player_name} force ${player_name2} to buy ${card_name} instead of ${card_name2}. ${player_name2} cannot buy ${card_name2} this turn'), [
             'player_name' => $this->getPlayerName($currentPlayerId),
@@ -403,7 +404,7 @@ trait EvolutionCardsActionTrait {
         if ($evolution === null) {
             throw new \BgaUserException("No unused Miraculous catch");
         }
-        if (intval($this->cards->countCardInLocation('discard')) === 0) {
+        if ($this->powerCards->countItemsInLocation('discard') === 0) {
             throw new \BgaUserException("No cards in discard pile");
         }
         
@@ -411,8 +412,8 @@ trait EvolutionCardsActionTrait {
             $this->applyPlayEvolution($playerId, $evolution);
         }
 
-        $this->cards->shuffle('discard');
-        $card = $this->getCardFromDb($this->cards->getCardOnTop('discard'));
+        $this->powerCards->shuffle('discard');
+        $card = $this->powerCards->getCardOnTop('discard');
 
         $cost = $this->getCardCost($playerId, $card->type) - 1;
         $canUseSuperiorAlienTechnology = $card->type < 100 && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION);
@@ -444,10 +445,10 @@ trait EvolutionCardsActionTrait {
         $playerId = $this->getCurrentPlayerId();
         $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
 
-        $card = $this->getCardFromDb($this->cards->getCardOnTop('discard'));
+        $card = $this->powerCards->getCardOnTop('discard');
 
         $this->setUsedCard(3000 + $evolution->id);
-        $this->cards->shuffle('discard');
+        $this->powerCards->shuffle('discard');
 
         $cost = $this->getCardCost($playerId, $card->type) - 1;        
         if ($useSuperiorAlienTechnology) {
@@ -472,7 +473,7 @@ trait EvolutionCardsActionTrait {
         $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
 
         $this->setUsedCard(3000 + $evolution->id);
-        $this->cards->shuffle('discard');
+        $this->powerCards->shuffle('discard');
 
         $this->goToState(ST_PLAYER_BUY_CARD);
     }
@@ -481,7 +482,7 @@ trait EvolutionCardsActionTrait {
         $this->checkAction('playCardDeepDive');
 
         $playerId = $this->getCurrentPlayerId();
-        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $card = $this->powerCards->getItemById($id);
 
         $evolutions = $this->getEvolutionCardsByType(DEEP_DIVE_EVOLUTION);
         foreach($evolutions as $evolution) {
@@ -492,11 +493,11 @@ trait EvolutionCardsActionTrait {
 
         // move other cards to bottom deck
         $question = $this->getQuestion();
-        $cards = $question->args->cards;
-        $otherCards = array_values(array_filter($cards, fn($otherCard) => $otherCard->id != $card->id));
-        $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + ".count($otherCards)." WHERE `card_location` = 'deck'");
+        $cards = $this->powerCards->getItemsByIds(Arrays::map($question->args->cards, fn($card) => $card->id));
+        $otherCards = Arrays::filter($cards, fn($otherCard) => $otherCard->id != $card->id);
+        $this->DbQuery("UPDATE `card` SET `card_location_arg` = card_location_arg + ".count($otherCards)." WHERE `card_location` = 'deck'");
         foreach($otherCards as $index => $otherCard) {
-            $this->cards->moveCard($otherCard->id, 'deck', $index);
+            $this->powerCards->moveItem($otherCard, 'deck', $index);
         }
 
         $mimic = false;
@@ -505,8 +506,8 @@ trait EvolutionCardsActionTrait {
 
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $pId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $pId));
-                $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
+                $cardsOfPlayer = $this->powerCards->getPlayer($pId);
+                $countAvailableCardsForMimic += Arrays::count($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100);
             }
 
             $mimic = $countAvailableCardsForMimic > 0;
@@ -732,7 +733,7 @@ trait EvolutionCardsActionTrait {
 
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->getCardFromDb($this->cards->getCard($id));
+        $card = $this->powerCards->getItemById($id);
         $cardLocationArg = $card->location_arg;
         if ($card->location !== 'table') {
             throw new \BgaUserException("Card is not on table");
@@ -741,10 +742,9 @@ trait EvolutionCardsActionTrait {
         $question = $this->getQuestion();
         $evolution = $question->args->card;
 
-        $this->cards->moveCard($id, 'reserved'.$playerId, $evolution->id);
+        $this->powerCards->moveItem($card, 'reserved'.$playerId, $evolution->id);
 
-        $newCard = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $cardLocationArg));
-        $topDeckCardBackType = $this->getTopDeckCardBackType(); // TODOCA remove
+        $newCard = $this->powerCards->pickCardForLocation('deck', 'table', $cardLocationArg);
 
         $this->notifyAllPlayers("reserveCard", /*client TODOPUBG translate(*/'${player_name} puts ${card_name} to reserve'/*)*/, [
             'playerId' => $playerId,
@@ -752,9 +752,8 @@ trait EvolutionCardsActionTrait {
             'card' => $card,
             'card_name' => $card->type,
             'newCard' => $newCard,
-            'topDeckCardBackType' => $topDeckCardBackType, // TODOCA remove
-            'deckCardsCount' => $this->getDeckCardCount(),
-            'topDeckCard' => $this->getTopDeckCard(),
+            'deckCardsCount' => $this->powerCards->getDeckCount(),
+            'topDeckCard' => $this->powerCards->getTopDeckCard(),
         ]);
 
         $this->removeStackedStateAndRedirect();

@@ -2,6 +2,8 @@
 
 namespace KOT\States;
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
+
 trait CardsArgTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,9 +51,9 @@ trait CardsArgTrait {
         $canUseSuperiorAlienTechnology = $gotSuperiorAlienTechnology && (count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION));
         $canUseBobbingForApples = $isPowerUpExpansion && $this->getFirstUnusedEvolution($playerId, BOBBING_FOR_APPLES_EVOLUTION) != null;
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $cards = $this->powerCards->getTable();
         if ($isPowerUpExpansion) {
-            $cards = array_merge($cards, $this->getCardsFromDb($this->cards->getCardsInLocation('reserved'.$playerId)));
+            $cards = array_merge($cards, $this->powerCards->getReserved($playerId));
         }
         $cardsCosts = [];
         $cardsCostsSuperiorAlienTechnology = [];
@@ -94,8 +96,8 @@ trait CardsArgTrait {
         if ($canBuyFromPlayers) {
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
-                $buyableCardsOfPlayer = array_values(array_filter($cardsOfPlayer, fn($card) => $card->type < 300));
+                $cardsOfPlayer = $this->powerCards->getPlayer($otherPlayerId);
+                $buyableCardsOfPlayer = Arrays::filter($cardsOfPlayer, fn($card) => $card->type < 300);
 
                 foreach ($buyableCardsOfPlayer as $card) {
                     $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
@@ -127,7 +129,7 @@ trait CardsArgTrait {
             ],
         ];
         if ($canPick > 0) {
-            $pickCards = $this->getCardsFromDb($this->cards->getCardsOnTop($canPick, 'deck'));
+            $pickCards = $this->powerCards->getCardsOnTop($canPick, 'deck');
             $this->setMadeInALabCardIds($playerId, array_map(fn($card) => $card->id, $pickCards));
 
             foreach ($pickCards as $card) {
@@ -155,7 +157,7 @@ trait CardsArgTrait {
         // scavenger
         $canBuyFromDiscard = $this->countCardOfType($playerId, SCAVENGER_CARD);
         if ($canBuyFromDiscard > 0) {
-            $discardCards = $this->getCardsFromDb($this->cards->getCardsInLocation('discard'));
+            $discardCards = $this->powerCards->getCardsInLocation('discard');
 
             foreach ($discardCards as $card) {
                 $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
@@ -216,7 +218,7 @@ trait CardsArgTrait {
 
         $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $cards = $this->powerCards->getTable();
         $cardsCosts = [];
         
         $disabledIds = [];
@@ -261,7 +263,7 @@ trait CardsArgTrait {
     function argSellCard() {
         $playerId = $this->getActivePlayerId();
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $playerId));
+        $cards = $this->powerCards->getPlayer($playerId);
         
         $disabledIds = [];
         foreach ($cards as $card) {
@@ -285,13 +287,13 @@ trait CardsArgTrait {
 
         $playersIds = $this->getPlayersIds();
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $cards = $this->powerCards->getTable();
         $disabledIds = array_map(fn($card) => $card->id, $cards);
         $mimickedCardId = $this->getMimickedCardId($mimicCardType);
         $cardsCosts = [];
 
         foreach($playersIds as $iPlayerId) {
-            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $iPlayerId));
+            $cardsOfPlayer = $this->powerCards->getPlayer($iPlayerId);
             foreach($cardsOfPlayer as $card) {
                 $canMimickCard = false;
                 if ($canChange) {
@@ -467,7 +469,7 @@ trait CardsArgTrait {
 
         $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
-        $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $tableCards = $this->powerCards->getTable();
         $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
         $cardsCosts = [];
 
@@ -478,7 +480,7 @@ trait CardsArgTrait {
             
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
-                $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+                $cardsOfPlayer = $this->powerCards->getPlayer($otherPlayerId);
                 $isWoundedPlayer = in_array($otherPlayerId, $woundedPlayersIds);
 
                 foreach ($cardsOfPlayer as $card) {
@@ -523,12 +525,12 @@ trait CardsArgTrait {
         $currentPlayerId = $leaversWithUnstableDNA[0];
 
         $canExchange = false;
-        $tableCards = $this->getCardsFromDb($this->cards->getCardsInLocation('table'));
+        $tableCards = $this->powerCards->getTable();
         $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
 
         $playersIds = $this->getPlayersIds();
         foreach($playersIds as $otherPlayerId) {
-            $cardsOfPlayer = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $otherPlayerId));
+            $cardsOfPlayer = $this->powerCards->getPlayer($otherPlayerId);
             $isSmashingPlayer = $playerId === $otherPlayerId && $otherPlayerId != $currentPlayerId; // TODODE check it's not currentPlayer, else skip (if player left Tokyo with anubis card)
 
             foreach ($cardsOfPlayer as $card) {

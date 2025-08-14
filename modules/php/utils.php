@@ -607,7 +607,7 @@ trait UtilTrait {
             $this->safeEliminatePlayer($player->id);
         }
 
-        $cards = $this->getCardsFromDb($this->cards->getCardsInLocation('hand', $player->id));
+        $cards = $this->powerCards->getPlayer($player->id);
         $this->removeCards($player->id, $cards, true);
         if ($this->wickednessExpansion->isActive()) {
             $tiles = $this->wickednessTiles->getPlayerTiles($player->id);
@@ -1290,7 +1290,7 @@ trait UtilTrait {
         $cards = [];
         
         for ($i=1; $i<=3; $i++) {
-            $cards[] = $this->getCardFromDb($this->cards->pickCardForLocation('deck', 'table', $i));
+            $cards[] = $this->powerCards->pickCardForLocation('deck', 'table', $i);
         }
 
         return $cards;

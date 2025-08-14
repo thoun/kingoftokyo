@@ -108,7 +108,7 @@ trait CardsStateTrait {
 
     function stCheerleaderSupport() {
         $cheerleaderSupportPlayerIds = [];
-        $cheerleaderCards = $this->getCardsFromDb($this->cards->getCardsOfType(CHEERLEADER_CARD));
+        $cheerleaderCards = $this->powerCards->getCardsOfType(CHEERLEADER_CARD);
         if (count($cheerleaderCards) > 0) {
             $cheerleaderCard = $cheerleaderCards[0];
         
