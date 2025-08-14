@@ -6324,18 +6324,26 @@ var ANIMATION_MS = 1500;
 var PUNCH_SOUND_DURATION = 250;
 var ACTION_TIMER_DURATION = 5;
 var SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
-var KingOfTokyo = /** @class */ (function () {
+// @ts-ignore
+GameGui = (function () {
+    function GameGui() { }
+    return GameGui;
+})();
+var KingOfTokyo = /** @class */ (function (_super) {
+    __extends(KingOfTokyo, _super);
     function KingOfTokyo() {
-        this.healthCounters = [];
-        this.energyCounters = [];
-        this.wickednessCounters = [];
-        this.cultistCounters = [];
-        this.handCounters = [];
-        this.playerTables = [];
+        var _this = _super.call(this) || this;
+        _this.healthCounters = [];
+        _this.energyCounters = [];
+        _this.wickednessCounters = [];
+        _this.cultistCounters = [];
+        _this.handCounters = [];
+        _this.playerTables = [];
         //private rapidHealingSyncHearts: number;
-        this.towerLevelsOwners = [];
-        this.falseBlessingAnkhAction = null;
-        this.cardLogId = 0;
+        _this.towerLevelsOwners = [];
+        _this.falseBlessingAnkhAction = null;
+        _this.cardLogId = 0;
+        return _this;
     }
     /*
         setup:
@@ -6443,12 +6451,12 @@ var KingOfTokyo = /** @class */ (function () {
         // override to allow icons in messages
         var oldShowMessage = this.showMessage;
         this.showMessage = function (msg, type) { return oldShowMessage(formatTextIcons(msg), type); };
+        if (gamedatas.mindbug) {
+            this.notif_mindbugPlayer(gamedatas.mindbug);
+        }
         log("Ending game setup");
-        /*if (window.location.host == 'studio.boardgamearena.com') {
-            //this.isPowerUpExpansion() && this.evolutionCards.debugSeeAllCards();
-            //this.isWickednessExpansion() && this.wickednessTiles.debugSeeAllCards();
-        }*/
     };
+    // @ts-ignore
     KingOfTokyo.prototype.onGameUserPreferenceChanged = function (pref_id, pref_value) {
         this.preferencesManager.onPreferenceChange(pref_id, pref_value);
     };
@@ -6646,7 +6654,7 @@ var KingOfTokyo = /** @class */ (function () {
                 if (div) {
                     var counter = args._private[key];
                     var symbol = SYMBOL_AS_STRING_PADDED[counter[1]];
-                    dojo.place(formatTextIcons("<div class=\"evolution-inner-counter\">".concat(counter[0], " ").concat(symbol, "</div>")), div);
+                    div.insertAdjacentHTML('beforeend', formatTextIcons("<div class=\"evolution-inner-counter\">".concat(counter[0], " ").concat(symbol, "</div>")));
                 }
             });
         }
@@ -7016,7 +7024,7 @@ var KingOfTokyo = /** @class */ (function () {
                     icyReflectionArgs.disabledEvolutions.forEach(function (evolution) {
                         var cardDiv = document.querySelector("div[id$=\"_item_".concat(evolution.id, "\"]"));
                         if (cardDiv && cardDiv.closest('.player-evolution-cards') !== null) {
-                            dojo.addClass(cardDiv, 'disabled');
+                            cardDiv.classList.add('disabled');
                         }
                     });
                 }
@@ -7286,18 +7294,6 @@ var KingOfTokyo = /** @class */ (function () {
                 var argsCancelDamage = args;
                 this.setDiceSelectorVisibility(argsCancelDamage.canThrowDices || !!argsCancelDamage.dice);
                 this.onEnteringCancelDamage(argsCancelDamage, this.isCurrentPlayerActive());
-                // TODOBUG
-                if (argsCancelDamage.canCancelDamage === undefined) {
-                    try {
-                        var tableId_1 = window.location.search.split('=')[1];
-                        if (tableId_1 === '277711940' || tableId_1 === '277304366') {
-                            this.addActionButton('debugBlockedTable_button', "Skip error message", function () { return _this.takeAction('debugBlockedTable', { tableId: tableId_1 }); });
-                        }
-                    }
-                    catch (e) {
-                        console.error(e);
-                    }
-                }
                 break;
         }
         if (this.isCurrentPlayerActive()) {
@@ -7406,6 +7402,10 @@ var KingOfTokyo = /** @class */ (function () {
                     if (argsRerollDice.min === 0) {
                         this.addActionButton('skipRerollDice_button', _("Skip"), function () { return _this.rerollDice([]); });
                     }
+                    break;
+                case 'askMindbug':
+                    this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug!'), function () { return _this.bgaPerformAction('actMindbug'); }, { color: 'alert' });
+                    this.statusBar.addActionButton(_('Skip'), function () { return _this.bgaPerformAction('actPassMindbug'); });
                     break;
                 case 'resolveDice':
                     var argsResolveDice = args;
@@ -7704,7 +7704,7 @@ var KingOfTokyo = /** @class */ (function () {
         return this.gamedatas.darkEdition;
     };
     KingOfTokyo.prototype.isDefaultFont = function () {
-        return Number(this.prefs[201].value) == 1;
+        return this.getGameUserPreference(201) == 1;
     };
     KingOfTokyo.prototype.getPlayer = function (playerId) {
         return this.gamedatas.players[playerId];
@@ -7786,7 +7786,7 @@ var KingOfTokyo = /** @class */ (function () {
             }
             if (gamedatas.powerUpExpansion) {
                 // hand cards counter
-                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-".concat(player.id, "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                    </div>\n                    <div class=\"show-evolutions-button\">\n                    <button id=\"see-monster-evolution-player-").concat(playerId, "\" class=\"bgabutton bgabutton_gray ").concat(_this.gamedatas.gamestate.id >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : '', "\">\n                        ").concat(_('Show Evolutions'), "\n                    </button>\n                    </div>\n                </div>"), "player_board_".concat(player.id));
+                dojo.place("<div class=\"counters\">\n                    <div id=\"playerhand-counter-wrapper-".concat(player.id, "\" class=\"playerhand-counter\">\n                        <div class=\"player-evolution-card\"></div>\n                        <div class=\"player-hand-card\"></div> \n                        <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                    </div>\n                    <div class=\"show-evolutions-button\">\n                    <button id=\"see-monster-evolution-player-").concat(playerId, "\" class=\"bgabutton bgabutton_gray ").concat(Number(_this.gamedatas.gamestate.id) >= 15 /*ST_PLAYER_CHOOSE_INITIAL_CARD*/ ? 'visible' : '', "\">\n                        ").concat(_('Show Evolutions'), "\n                    </button>\n                    </div>\n                </div>"), "player_board_".concat(player.id));
                 var handCounter = new ebg.counter();
                 handCounter.create("playerhand-counter-".concat(playerId));
                 handCounter.setValue(player.hiddenEvolutions.length);
@@ -9226,8 +9226,7 @@ var KingOfTokyo = /** @class */ (function () {
         this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
     };
     KingOfTokyo.prototype.startActionTimer = function (buttonId, time) {
-        var _a;
-        if (((_a = this.prefs[202]) === null || _a === void 0 ? void 0 : _a.value) === 2) {
+        if (this.getGameUserPreference(202) === 2) {
             return;
         }
         var button = document.getElementById(buttonId);
@@ -9781,8 +9780,21 @@ var KingOfTokyo = /** @class */ (function () {
             this.getPlayerTable(args.playerId).zombify();
         }
     };
-    KingOfTokyo.prototype.notif_mindbugPlayer = function () {
-        // TODOMB
+    KingOfTokyo.prototype.notif_mindbugPlayer = function (args) {
+        var _a, _b;
+        if (args.mindbuggedPlayerId) {
+            // start of mindbug
+            document.getElementById('rolled-dice-and-rapid-actions').insertAdjacentHTML('afterend', "\n                <div id=\"mindbug-notice\">\n                    ".concat(
+            /*_TODOMB*/ ('${player_name} mindbugs the turn of ${player_name2}')
+                .replace('${player_name}', this.getFormattedPlayerName(args.activePlayerId))
+                .replace('${player_name2}', this.getFormattedPlayerName(args.mindbuggedPlayerId)), "\n                </div>\n            "));
+            document.getElementById("player-table-".concat(args.mindbuggedPlayerId)).classList.add('mindbugged');
+        }
+        else {
+            // end of mindbug
+            (_a = document.querySelector('.player-table.mindbugged')) === null || _a === void 0 ? void 0 : _a.classList.remove('mindbugged');
+            (_b = document.getElementById('mindbug-notice')) === null || _b === void 0 ? void 0 : _b.remove();
+        }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
@@ -9831,7 +9843,7 @@ var KingOfTokyo = /** @class */ (function () {
         }
         Array.from(document.querySelectorAll("[data-enable-at-energy]")).forEach(function (button) {
             var enableAtEnergy = Number(button.dataset.enableAtEnergy);
-            dojo.toggleClass(button, 'disabled', energy < enableAtEnergy);
+            button.classList.toggle('disabled', energy < enableAtEnergy);
         });
     };
     KingOfTokyo.prototype.setWickedness = function (playerId, wickedness) {
@@ -9994,7 +10006,7 @@ var KingOfTokyo = /** @class */ (function () {
         return this.inherited(arguments);
     };
     return KingOfTokyo;
-}());
+}(GameGui));
 define([
     "dojo", "dojo/_base/declare",
     "ebg/core/gamegui",

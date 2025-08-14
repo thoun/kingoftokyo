@@ -212,13 +212,7 @@ trait PlayerStateTrait {
         }
 
         // throw dice
-
-        $this->setGameStateValue('throwNumber', 1);
-
-
-
-        $encaseInIceDieId = intval($this->getGameStateValue(ENCASED_IN_ICE_DIE_ID));
-        $this->DbQuery("UPDATE dice SET `dice_value` = 0, `locked` = false, `rolled` = true, `discarded` = false WHERE `dice_id` <> $encaseInIceDieId");
+        $this->startTurnInitDice();
 
         $redirectAfterStartTurn = $this->redirectAfterStartTurn($playerId);
 

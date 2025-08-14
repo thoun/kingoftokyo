@@ -330,10 +330,11 @@ $playerActionsGameStates = [
 
     ST_MULTIPLAYER_ASK_MINDBUG => GameStateBuilder::create()
         ->name('askMindbug')
-        ->description(/*TODOMB clienttranslate*/('Player with Mindbug tokens can mindbug the active player'))
-        ->descriptionMyTurn(/*TODOMB clienttranslate*/('${you} can mindbug the active player'))
+        ->description(/*TODOMB clienttranslate*/('Player with Mindbug tokens can mindbug ${player_name}'))
+        ->descriptionMyTurn(/*TODOMB clienttranslate*/('${you} can mindbug ${player_name}'))
         ->type(StateType::MULTIPLE_ACTIVE_PLAYER)
         ->action('stAskMindbug')
+        ->args('argAskMindbug')
         ->possibleActions([ 'actMindbug', 'actPassMindbug' ])
         ->transitions(['end' => ST_RESOLVE_DIE_OF_FATE])
         ->build(),
@@ -842,6 +843,12 @@ $playerActionsGameStates = [
         "action" => "stAfterAnswerQuestion",
         "transitions" => [],
     ],
+
+    ST_END_MINDBUG => GameStateBuilder::create()
+        ->name('endMindbug')
+        ->type(StateType::GAME)
+        ->action('stEndMindbug')
+        ->build(),
 
     ST_MULTIPLAYER_BEFORE_END_TURN => [
         "name" => "beforeEndTurn",

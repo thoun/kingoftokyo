@@ -194,9 +194,10 @@ interface KingOfTokyoGamedatas {
     EVOLUTION_CARDS_TYPES?: number[];
     EVOLUTION_CARDS_SINGLE_STATE?: { [stateName: string]: number[] };
     targetedPlayer?: number;
+    mindbug: NotifMindbugPlayerArgs | null;
 }
 
-interface KingOfTokyoGame extends Game {
+interface KingOfTokyoGame extends GameGui {
     isOrigins(): boolean;
     isDarkEdition(): boolean;
     isHalloweenExpansion(): boolean;
@@ -757,4 +758,9 @@ interface NotifSuperiorAlienTechnologyRolledDieArgs {
 interface NotifResurrectArgs {
     playerId: number;
     zombified: boolean;
+}
+
+interface NotifMindbugPlayerArgs {
+    activePlayerId: number;
+    mindbuggedPlayerId: number | null;
 }

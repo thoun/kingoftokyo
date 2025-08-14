@@ -8,9 +8,7 @@
       "outFile": "kingoftokyo.js",
     },
     "files": [
-        "src/framework.d.ts",
-        "src/counter.d.ts",
-        "src/stock.d.ts",
+        "bga-framework.d.ts",
         "src/kingoftokyo.d.ts",
         "src/slide-utils.ts",
         "src/text-icons-formatter.ts",

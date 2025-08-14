@@ -659,6 +659,9 @@ class Game extends \Bga\GameFramework\Table {
     public function actPassMindbug() {
         $this->mindbugExpansion->actPassMindbug((int)$this->getCurrentPlayerId());
     }
+    public function stEndMindbug(): void {
+        $this->mindbugExpansion->stEndMindbug((int)$this->getActivePlayerId());
+    }   
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie

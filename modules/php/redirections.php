@@ -173,6 +173,11 @@ trait RedirectionTrait {
     }*/
 
     function redirectAfterSellCard() {
+        // no end of turn for mindbuggers!
+        if ($this->mindbugExpansion->isActive() && $this->mindbugExpansion->getMindbuggedPlayer() !== null) {
+            return ST_END_MINDBUG;
+        }
+
         if ($this->powerUpExpansion->isActive()) {
             return ST_MULTIPLAYER_BEFORE_END_TURN;
         } else {

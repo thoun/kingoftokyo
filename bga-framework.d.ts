@@ -2,7 +2,17 @@ type ElementOrId = Element | string;
 
 declare const define: Function;
 
-declare const ebg: any;
+declare const ebg: {
+  core: {
+    gamegui: any;
+  }
+  counter: {
+    new (): Counter;
+  };
+  popindialog: {
+    new (): PopinDialog;
+  };
+};
 
 declare const dojo: Dojo;
 
@@ -120,7 +130,7 @@ declare class StatusBar {
    * 
    * @param {string} label the button text
    * @param {Function} callback the function to trigger when clicked
-   * @param {Object} params the optional parameters, by default { color: 'primary', id: null, classes: '', destination: document.getElementById('generalactions'), title: undefined, disabled: false, tooltip: undefined, confirm: undefined }. 
+   * @param {Object} params the optional parameters, by default { color: 'primary', id: null, classes: '', destination: document.getElementById('generalactions'), title: undefined, disabled: false, tooltip: undefined, confirm: undefined, autoclick: false }. 
    *   `color` can be primary (default) (blue), secondary (gray), alert (red)
    *   `id` is the id to set. If null/undefined, the button will not have an id, but you can still manipulate it by storing the reference to the DOM Element returned by the function
    *   `classes` can be a string or an array, so `'disabled blinking'` and `['disabled', 'blinking']` are both possible.
@@ -133,7 +143,17 @@ declare class StatusBar {
    * 
    * @returns the button DOM element
    */
-  addActionButton(label: string, callback: Function, params?: any): HTMLButtonElement;
+  addActionButton(label: string, callback: Function, params?: {
+    color?: 'primary' | 'secondary' | 'alert';
+    id?: string;
+    classes?: string | string[];
+    destination?: HTMLElement;
+    title?: string;
+    disabled?: boolean;
+    tooltip?: string;
+    confirm?: string | (() => string | undefined | null); 
+    autoclick?: boolean;
+  }): HTMLButtonElement;
 
   /**
    * Remove all buttons on the status bar
@@ -305,7 +325,9 @@ declare class GameGui<G = Gamedatas> {
    * @param {Object} params the call parameters, by default { replaceByYou: false }.
    * @return {string} the formatted player name
    */
-  getFormattedPlayerName(playerId: number, params: any): string;
+  getFormattedPlayerName(playerId: number, params?: {
+    replaceByYou?: boolean;
+  }): string;
 
   /**
    * This function allows to update the current page title and turn description according to the game state arguments. 
@@ -399,7 +421,16 @@ declare class GameGui<G = Gamedatas> {
    * 
    * @param {Object} params the call parameters, by default { prefix: 'notif_', minDuration: 500, minDurationNoText: 1, logger: null, ignoreNotifications: [], onStart: undefined, onEnd: undefined, }.
    */
-  bgaSetupPromiseNotifications(params?: any): void;
+  bgaSetupPromiseNotifications(params?: {
+    prefix?: string;
+    minDuration?: number;
+    minDurationNoText?: number;
+    handlers?: Object[];
+    logger?: Function;
+    ignoreNotifications?: string[];
+    onStart?: (notifName: string, msg: string, args: any) => any;
+    onEnd?: (notifName: string, msg: string, args: any) => any;
+  }): void;
 
   /**
    * Play a dojo animation and returns a promise resolved when it ends.
@@ -431,7 +462,11 @@ declare class GameGui<G = Gamedatas> {
    * @param {Object} params the call parameters, by default { lock: true, checkAction: true, checkPossibleActions: false }. Must be overriden to disable interface lock, or to disable checkAction.
    * @returns Promise of the ajax call, or undefined if there is no call (prevented by checkAction/checkPossibleActions)
    */
-  bgaPerformAction(action: string, args?: any, params?: any): Promise<any>;
+  bgaPerformAction(action: string, args?: any, params?: {
+    lock?: boolean;
+    checkAction?: boolean;
+    checkPossibleActions?: boolean; 
+  }): Promise<any>;
 
   /**
    * Return the Game Area div (for all displayed game components).
@@ -645,9 +680,13 @@ declare class GameGui<G = Gamedatas> {
    *
    * @param {number} id the automata id, used to setup scoreCtrl and getPlayerPanelElement. 0 or negative value is recommended, to avoid conflict with real player ids.
    * @param {string} name the name of the automata
-   * @param {Object} params an object with optional params: color (default black), iconClass (default unset) to set a background image (32px x 32px)
+   * @param {Object} params an object with optional params: color (default black), iconClass (default unset) to set a background image (32px x 32px), score (default undefined)
    */
-  addAutomataPlayerPanel(id: number, name: string, params: any): void;
+  addAutomataPlayerPanel(id: number, name: string, params: {
+      color?: string;
+      iconClass?: string;
+      score?: number;
+  }): void;
 }
 
 declare interface Notif<T = any> {
@@ -661,6 +700,8 @@ declare interface Notif<T = any> {
 }
 
 declare class Counter {
+  constructor();
+
   /**
    * Associate the counter with an existing HTML element.
    * 
@@ -703,6 +744,63 @@ declare class Counter {
    * Note it just changes display value once, it does not actually disable it, i.e. if you set it again, it will be shown again.
    */
   disable(): void;
+}
+
+declare class PopinDialog {
+  /**
+   * Create the popin on the DOM.
+   * 
+   * @param {string} id popin id
+   */
+  create(id: string): void;
+
+  /**
+   * Remove the popin.
+   */
+  destroy(): void;
+
+  /**
+   * Replace the close callback (top right corner 'close' icon) by a custom one.
+   * 
+   * @param {Function} callback the new callback
+   */
+  replaceCloseCallback(callback: Function): void;
+  
+  /**
+   * Hide the close button.
+   */
+  hideCloseIcon(): void;
+
+  /**
+   * Set the popin title.
+   * 
+   * @param {string} title the title
+   */
+  setTitle(title: string): void;
+
+  /**
+   * Set the popin max width.
+   * 
+   * @param {number} maxwidth the max width, in px
+   */
+  setMaxWidth(maxwidth: number): void;
+  
+  /**
+   * Set the content of the popin.
+   * 
+   * @param {string} html the popin content
+   */
+  setContent(html: string): void;
+
+  /**
+   * Show the popin.
+   */
+  show(): void;
+  
+  /**
+   * Hide the popin.
+   */
+  hide(): void;
 }
 
 declare interface StockItems {

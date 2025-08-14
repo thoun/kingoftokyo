@@ -1037,7 +1037,7 @@ namespace Bga\GameFramework {
          *
          * @return int the new active player id
          */
-        final protected function activePrevPlayer(): void
+        final public function activePrevPlayer(): void
         {
             //
         }
@@ -1051,7 +1051,7 @@ namespace Bga\GameFramework {
          *
          * @param array<int, ?int> $players
          */
-        final protected function createNextPlayerTable(array $players, bool $bLoop = true): void
+        final public function createNextPlayerTable(array $players, bool $bLoop = true): void
         {
             //
         }
@@ -1072,7 +1072,7 @@ namespace Bga\GameFramework {
          *
          * @throws \BgaSystemException if the current player is not at the table (i.e. spectator).
          */
-        final protected function getCurrentPlayerColor(): string
+        final public function getCurrentPlayerColor(): string
         {
             return '';
         }
@@ -1084,7 +1084,7 @@ namespace Bga\GameFramework {
          *
          * @throws \BgaSystemException if the current player is not at the table (i.e. spectator).
          */
-        final protected function getCurrentPlayerName($bReturnEmptyIfNotLogged = false): string
+        final public function getCurrentPlayerName($bReturnEmptyIfNotLogged = false): string
         {
             return '';
         }
@@ -1133,7 +1133,7 @@ namespace Bga\GameFramework {
          *
          * @throws \BgaSystemException if the current player is not at the table (i.e. spectator).
          */
-        final protected function isCurrentPlayerZombie(): bool
+        final public function isCurrentPlayerZombie(): bool
         {
             return false;
         }
@@ -1652,11 +1652,6 @@ namespace {
         {
             return ''; 
         }
-
-        /**
-         * @return string
-         */
-        abstract protected function getGameName();
 
         final protected function raw(string $string): array
         {

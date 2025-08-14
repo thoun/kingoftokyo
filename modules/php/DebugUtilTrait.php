@@ -437,6 +437,6 @@ trait DebugUtilTrait {
     }
 
     public function debug_goToState(int $state = ST_NEXT_PLAYER) {
-      $this->gamestate->jumpToState($state);
+        $this->gamestate->jumpToState($state);
     }
 }

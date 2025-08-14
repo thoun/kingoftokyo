@@ -5,6 +5,7 @@ namespace Bga\Games\KingOfTokyo;
 
 use Bga\GameFrameworkPrototype\Counters\PlayerCounter;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
+use BgaUserException;
 
 class MindbugExpansion {
     public PlayerCounter $mindbugTokens;
@@ -16,7 +17,7 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return false; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+        return true; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
     }
 
     public function initDb(array $playerIds): void {
@@ -30,6 +31,15 @@ class MindbugExpansion {
 
     public function fillResult(array &$result): void {
         $this->mindbugTokens->fillResult($result);
+
+        $result['mindbug'] = null;
+        $mindbuggedPlayerId = $this->game->globals->get(MINDBUGGED_PLAYER);
+        if ($mindbuggedPlayerId !== null) {
+            $result['mindbug'] = [
+                'activePlayerId' => (int)$this->game->getActivePlayerId(),
+                'mindbuggedPlayerId' => $mindbuggedPlayerId,
+            ];
+        }
     }
 
     public function argAskMindbug(): array {
@@ -37,6 +47,7 @@ class MindbugExpansion {
         $playerIds = $this->getPlayersThatCanMindbug($activePlayerId);
 
         return [
+            'player_name' => $this->game->getPlayerNameById($activePlayerId),
             'playerIds' => $playerIds,
             '_no_notify' => count($playerIds) === 0,
         ];
@@ -51,7 +62,14 @@ class MindbugExpansion {
     }
     
     public function actMindbug(int $currentPlayerId) {
+        if ($this->mindbugTokens->get($currentPlayerId) < 1) {
+            throw new BgaUserException('No Mindbug tokens');
+        }
+        $this->mindbugTokens->inc($currentPlayerId, -1);
+
         $this->setMindbuggedPlayer($currentPlayerId, (int)$this->game->getActivePlayerId());
+
+        // first to click has the power!
         $this->game->gamestate->nextState('end');
     }
     public function actPassMindbug(int $currentPlayerId) {
@@ -71,17 +89,23 @@ class MindbugExpansion {
         ]);
     }
 
-    public function endMindbuggedPlayer(int $activePlayerId): void { // active player must be changed before
+    public function stEndMindbug(int $activePlayerId) {
         $mindbuggedPlayerId = $this->getMindbuggedPlayer();
+        $this->game->gamestate->changeActivePlayer($mindbuggedPlayerId);
         
         $this->game->globals->set(MINDBUGGED_PLAYER, null);
 
-        $this->game->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} finishes his mindbugged turn, ${player_name2} can start again his turn at tge Roll dice phase'), [
+        $this->game->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} finishes his mindbugged turn, ${player_name2} can start again his turn at the Roll dice phase'), [
             'activePlayerId' => $activePlayerId,
             'mindbuggedPlayerId' => null,
             'player_name' => $this->game->getPlayerNameById($activePlayerId),
             'player_name2' => $this->game->getPlayerNameById($mindbuggedPlayerId),
         ]);
+
+        // reinit some stuff for the player 
+        $this->game->startTurnInitDice();
+
+        $this->game->goToState(ST_INITIAL_DICE_ROLL);
     }
 
     public function getMindbuggedPlayer(): ?int {

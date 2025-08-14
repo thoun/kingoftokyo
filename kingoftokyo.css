@@ -1912,6 +1912,10 @@ body > .card {
   border: 3px solid #ffcf13;
   box-shadow: 0px 0px 5px 2px #ffcf13;
 }
+#table .player-table.mindbugged {
+  border: 3px solid #df80b5;
+  box-shadow: 0px 0px 5px 2px #df80b5;
+}
 #table .player-table .player-name {
   padding: 5px;
   position: relative;
@@ -3775,4 +3779,12 @@ button .icon, a .icon {
 }
 #hand-evolution-cards-wrapper.empty #hand-evolution-cards #empty-message {
   display: block;
+}
+
+#mindbug-notice {
+  background: #df80b5;
+  padding: 5px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
 }
