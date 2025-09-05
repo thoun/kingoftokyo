@@ -22,21 +22,6 @@ trait CardsUtilTrait {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
-
-    function getCardFromDb(array $dbCard) {
-        if (!$dbCard || !array_key_exists('id', $dbCard)) {
-            throw new \Error('card doesn\'t exists '.json_encode($dbCard));
-        }
-        if (!$dbCard || !array_key_exists('location', $dbCard)) {
-            throw new \Error('location doesn\'t exists '.json_encode($dbCard));
-        }
-        return new Card($dbCard);
-    }
-
-    function getCardsFromDb(array $dbCards) {
-        return array_map(fn($dbCard) => $this->getCardFromDb($dbCard), array_values($dbCards));
-    }
-
     function applyEffects(/*PowerCard*/$card, int $playerId) { // return $damages
         $cardType = $card->type;
         if ($cardType < 100 && !$this->keepAndEvolutionCardsHaveEffect()) {
@@ -119,9 +104,6 @@ trait CardsUtilTrait {
                     $damages[] = new Damage($pId, 3, $playerId, $cardType);
                 }
                 return $damages;
-            case JET_FIGHTERS_CARD: 
-                $this->applyGetPoints($playerId, 5, $cardType);
-                return [new Damage($playerId, 4, $playerId, $cardType)];
             case NATIONAL_GUARD_CARD:
                 $this->applyGetPoints($playerId, 2, $cardType);
                 return [new Damage($playerId, 2, $playerId, $cardType)];
@@ -163,6 +145,8 @@ trait CardsUtilTrait {
             case SUPERTOWER_CARD:
                 $this->applyGetPoints($playerId, 5, $cardType);
                 break;
+            default:
+                return $this->powerCards->immediateEffect($card, new Context($this, currentPlayerId: $playerId));
         }
     }
 

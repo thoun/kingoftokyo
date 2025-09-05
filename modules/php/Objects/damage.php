@@ -2,6 +2,7 @@
 namespace KOT\Objects;
 
 use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 
 class ClawDamage {
@@ -22,7 +23,7 @@ class Damage {
     public int $playerId;
     public int $damage;
     public int $damageDealerId;
-    public int | CurseCard $cardType; // 0 : smash, -1: skull dice, -card : unlogged card effect
+    public int $cardType; // 0 : smash, -1: skull dice, -card : unlogged card effect
     public int $giveShrinkRayToken;
     public int $givePoisonSpitToken;
     public ?int $smasherPoints;
@@ -31,11 +32,14 @@ class Damage {
     public /*int*/ $remainingDamage; // calculated from initialDamage, can be reduced by Camouflage, Robot, ...
     public /*int*/ $effectiveDamage = 0; // calculated from remainingDamage, if > 0, add Devil, ... Only set when applied
 
-    public function __construct(int $playerId, int $damageAmount, int $damageDealerId, int | CurseCard $cardType, $clawDamage = null) {
+    public function __construct(int $playerId, int $damageAmount, int $damageDealerId, int | PowerCard | CurseCard $cardType, $clawDamage = null) {
         $this->playerId = $playerId;
         $this->damage = $damageAmount;
         $this->damageDealerId = $damageDealerId;
 
+        if ($cardType instanceof PowerCard) {
+            $cardType = $cardType->type;
+        }
         if ($cardType instanceof CurseCard) {
             $cardType = 1000 + $cardType->type;
         }

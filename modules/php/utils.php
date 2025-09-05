@@ -8,6 +8,7 @@ require_once(__DIR__.'/Objects/damage.php');
 
 use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
@@ -646,7 +647,7 @@ trait UtilTrait {
 
     // $cardType = 0 => notification with no message
     // $cardType = -1 => no notification
-    function applyGetPoints(int $playerId, int $points, int | CurseCard | WickednessTile $cardType) {
+    function applyGetPoints(int $playerId, int $points, int | PowerCard | CurseCard | WickednessTile $cardType) {
         $canGainPoints = $this->canGainPoints($playerId);
         if ($canGainPoints !== null) {
             return $canGainPoints;
@@ -662,7 +663,7 @@ trait UtilTrait {
         return null;
     }
 
-    function applyGetPointsIgnoreCards(int $playerId, int $points, int | CurseCard | WickednessTile $cardType) {
+    function applyGetPointsIgnoreCards(int $playerId, int $points, int | PowerCard | CurseCard | WickednessTile $cardType) {
         //$actualScore = $this->getPlayerScore($playerId);
         $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
         if ($actualScore == WIN_GAME) {
@@ -674,6 +675,9 @@ trait UtilTrait {
         $newScore = $points == WIN_GAME ? WIN_GAME : min(MAX_POINT, $actualScore + $points);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
+        if ($cardType instanceof PowerCard) {
+            $cardType = $cardType->type;
+        }
         if ($cardType instanceof CurseCard) {
             $cardType = 1000 + $cardType->type;
         }

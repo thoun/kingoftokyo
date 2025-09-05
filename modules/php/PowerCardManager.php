@@ -11,7 +11,12 @@ require_once(__DIR__.'/framework-prototype/item/item-manager.php');
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\GameFrameworkPrototype\Item\ItemLocation;
 use \Bga\GameFrameworkPrototype\Item\ItemManager;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
+
+const POWER_CARD_CLASSES = [
+    JET_FIGHTERS_CARD => 'JetFighters',
+];
 
 class PowerCardManager extends ItemManager {
     static array $ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST = [
@@ -252,6 +257,18 @@ class PowerCardManager extends ItemManager {
         }
     }
 
+    protected function getClassName(?array $dbItem): ?string {
+        $cardType = intval($dbItem['card_type']);
+        if (!array_key_exists($cardType, POWER_CARD_CLASSES)) {
+            return null;
+            //throw new \BgaSystemException('Unexisting EvolutionCard class');
+        }
+
+        $className = PowerCard::class;
+        $namespace = substr($className, 0, strrpos($className, '\\'));
+        return $namespace . '\\' . POWER_CARD_CLASSES[$cardType];
+    }
+
     function getCardBaseCost(int $cardType): int {
         $cost = self::$CARD_COST[$cardType];
 
@@ -329,6 +346,13 @@ class PowerCardManager extends ItemManager {
 
     public function getReserved(int $playerId, ?int $locationArg = null): array {
         return $this->getItemsInLocation('reserved'.$playerId, $locationArg);
+    }
+
+    public function immediateEffect(PowerCard $card, Context $context) {
+        if (method_exists($card, 'immediateEffect')) {
+            /** @disregard */
+            return $card->immediateEffect($context);
+        }
     }
 
 }

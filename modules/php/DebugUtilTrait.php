@@ -284,7 +284,7 @@ trait DebugUtilTrait {
         //$this->eliminatePlayer(2343496);
     }
 
-    function debug_SetupBeforePlaceCard() {
+    function debugSetupBeforePlaceCard() {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         } 
@@ -292,7 +292,7 @@ trait DebugUtilTrait {
         $this->debug_SetCardInHand(HIBERNATION_CARD, 2343492);
     }
 
-    function debug_SetupAfterPlaceCard() {
+    function debugSetupAfterPlaceCard() {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         } 
@@ -329,7 +329,7 @@ trait DebugUtilTrait {
         $this->powerCards->moveItem($this->powerCards->getCardsOfType($cardType)[0], 'discard');
     }
 
-    function debug_SetCardIn(int $cardId, bool $other = true) {
+    /*function debug_SetCardIn(int $cardId, bool $other = true) {
         $this->notifyAllPlayers("log", 'other = ${otherLog}', [
             'other' => $other,
             'otherLog' => $other,
@@ -337,15 +337,15 @@ trait DebugUtilTrait {
 
         $this->powerCards->moveItem($this->powerCards->getItemById($cardId), 'hand', $other ? 23 : 13);
         //return $card;
-    }
+    }*/
 
-    public function debug_SetCardInHand(int $cardType, int $playerId) {
+    public function debug_SetCardInPlayerHand(int $cardType, int $playerId) {
         $card = $this->powerCards->getCardsOfType($cardType)[0];
         $this->powerCards->moveItem($card, 'hand', $playerId);
         return $card;
     }
 
-    function debug_SetEvolutionInHand(int $cardType, int $playerId, bool $visible, $owner = null) {
+    function debug_SetEvolutionInPlayerHand(int $cardType, int $playerId, bool $visible, $owner = null) {
         $card = $this->getEvolutionCardById(intval(array_values($this->powerUpExpansion->evolutionCards->getCardsOfType($cardType))[0]['id']));
         $this->powerUpExpansion->evolutionCards->moveItem($card, $visible ? 'table' : 'hand', $playerId);
         $ownerId = $owner === null ? $playerId : $owner;
@@ -415,7 +415,7 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 0 limit $limit");
     }
 
-    function debugClownRoll() {
+    /*function debugClownRoll() {
         for ($i=6;$i>0;$i--) {
             $this->debug_SetDieFaces($i, $i);
         }
@@ -426,7 +426,7 @@ trait DebugUtilTrait {
             $this->debug_SetDieFaces(7-$i, $i);
         }
         $this->debug_SetDieFaces(5, 2);
-    }
+    }*/
 
     function debug_SetBerserkDie(int $face) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 1");

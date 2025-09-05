@@ -380,9 +380,6 @@ class Game extends \Bga\GameFramework\Table {
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
 
-        // TODO TEMP card to test
-        //$this->debugSetup($playersIds);
-
         /************ End of the game initialization *****/
     }
 
