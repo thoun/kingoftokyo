@@ -36,7 +36,7 @@ class KingKongExpansion {
         $message = $playerId == 0 ? '' : clienttranslate('${player_name} claims Tokyo Tower level ${level}');
         $this->game->notify->all("changeTokyoTowerOwner", $message, [
             'playerId' => $playerId,
-            'player_name' => $this->game->getPlayerNameById($playerId),
+            'player_name' => $playerId == 0 ? '' : $this->game->getPlayerNameById($playerId),
             'level' => $level,
         ]);
 

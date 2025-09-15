@@ -345,8 +345,8 @@ trait DebugUtilTrait {
         return $card;
     }
 
-    function debug_SetEvolutionInPlayerHand(int $cardType, int $playerId, bool $visible, $owner = null) {
-        $card = $this->getEvolutionCardById(intval(array_values($this->powerUpExpansion->evolutionCards->getCardsOfType($cardType))[0]['id']));
+    function debug_SetEvolutionInPlayerHand(int $cardType, int $playerId, bool $visible, ?int $owner = null) {
+        $card = $this->powerUpExpansion->evolutionCards->getItemsByFieldName('type', [$cardType])[0];
         $this->powerUpExpansion->evolutionCards->moveItem($card, $visible ? 'table' : 'hand', $playerId);
         $ownerId = $owner === null ? $playerId : $owner;
         $this->DbQuery("UPDATE evolution_card SET owner_id=$ownerId WHERE card_id = $card->id");
