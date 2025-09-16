@@ -212,7 +212,7 @@ trait CardsActionTrait {
                 $this->removeCard($playerId, $card, false, true);
                 
                 $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1 WHERE `card_location` = 'deck'");
-                $this->powerCards->moveItem($card->id, 'deck', 0);
+                $this->powerCards->moveItem($card, 'deck', 0);
             }
             
         } else if ($from > 0) {

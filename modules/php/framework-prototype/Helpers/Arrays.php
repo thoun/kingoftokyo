@@ -41,7 +41,7 @@ class Arrays {
      * @template TKey of int|string
      * @template TValue
      * @param array<TKey, TValue> $array The array to iterate over
-     * @param (callable(TValue $value): bool)|(callable(TValue $value, TKey $key): bool)|null $compareFn the compare function
+     * @param (callable(TValue $value1, TValue $value2): bool)|null $compareFn the compare function
      * @return array<TValue> the filtered array.
      */
     public static function unique(array $array, ?callable $compareFn = null): array {
