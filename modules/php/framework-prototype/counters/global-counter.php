@@ -3,13 +3,27 @@ declare(strict_types=1);
 
 namespace Bga\GameFrameworkPrototype\Counters;
 
+/**
+ * Represents a game counter that is stored in DB. For example, the number of rounds.
+ */
 class GlobalCounter {
     protected static ?bool $tableExists = null;
 
-    function __construct(private $game, private string $dbField, private ?string $type = null, private ?int $min = null, private ?int $max = null, private int $defaultValue = 0) {
-        $this->type = $type ?? $dbField;
+    /**
+     * Instanciate the counter. Must be called during game `__construct`.
+     * 
+     * @param Table $game the Game class
+     * @param string $type the name of the counter. 'player_score' or 'player_score_aux' for the special counters.
+     * @param ?int $min the minimal value, default 0.
+     * @param ?int $max the maximal value, default unset (null).
+     * @param int $defaultValue the default value, default 0.
+     */
+    function __construct(protected \Bga\GameFramework\Table $game, protected string $type, private ?int $min = 0, protected ?int $max = null, protected int $defaultValue = 0) {
     }
 
+    /**
+     * Initialize the DB elements. Must be called during game `setupNewGame`.
+     */
     public function initDb() {
         if (self::$tableExists === null) {
             /** @disregard */
@@ -30,50 +44,84 @@ class GlobalCounter {
         }
 
         /** @disregard */
-        \APP_DbObject::DbQuery("INSERT INTO `bga_global_counters` (`name`, `value`) VALUES  ('`{$this->dbField}`', {$this->defaultValue})");
+        \APP_DbObject::DbQuery("INSERT INTO `bga_global_counters` (`name`, `value`) VALUES  ('`{$this->type}`', {$this->defaultValue})");
     }
 
+    /**
+     * Returns the current value of the counter.
+     * 
+     * @return int the value
+     */
     function get(): int {
         /** @disregard */
-        return (int)\APP_DbObject::getUniqueValueFromDB("SELECT `value` FROM `bga_player_counters` WHERE `name` = '{$this->dbField}'");
+        return (int)\APP_DbObject::getUniqueValueFromDB("SELECT `value` FROM `bga_player_counters` WHERE `name` = '{$this->type}'");
     }
 
+    /**
+     * Set the value of the counter, and send a notif to update the value on the front side.
+     * 
+     * @param int $value the new value
+     * @param ?string $message the next notif to send to the front. Empty for no log, null for no notif at all (the front will not be updated).
+     * @param array $customArgs the additional args to add to the notification message. `type`, `value` and `oldValue` are sent by default.
+     * @return int the new value
+     * @throws BgaSystemException if the value is outside the min/max
+     */
     function set(int $value, ?string $message = '', array $customArgs = []): int {
+        if ($this->min !== null && $value < $this->min) {
+            throw new \BgaSystemException("The counter value cannot be under {$this->min} (global counter: {$this->type}, value: {$value}, min: {$this->min})");
+        }
+        if ($this->max !== null && $value > $this->max) {
+            throw new \BgaSystemException("The counter value cannot be over {$this->max} (global counter: {$this->type}, value: {$value}, max: {$this->max})");
+        }
+
         $before = $this->get();
-        $after = $value;
-        if ($this->min !== null) {
-            $after = max($this->min, $after);
-        }
-        if ($this->max !== null) {
-            $after = min($this->max, $after);
-        }
 
         /** @disregard */
-        \APP_DbObject::DbQuery("UPDATE `bga_global_counters` SET `value` = $after WHERE `name` = '{$this->dbField}'");
+        \APP_DbObject::DbQuery("UPDATE `bga_global_counters` SET `value` = $value WHERE `name` = '{$this->type}'");
 
-        $args = $customArgs + [ // $customArgs before, + doesn't erase
-            'type' => $this->type, // for logs
-            'value_before' => $before, // for logs
-            'value' => $after, // for logs
-            'data' => [
-                'type' => $this->type,
-                'value_before' => $before,
-                'value' => $after,
-            ]
+        $notifArgs = [ // $customArgs before, + doesn't erase
+            'type' => $this->type,
+            'value' => $value,
+            'oldValue' => $before,
         ];
+
+        $args = $customArgs + $notifArgs; // $customArgs before, + doesn't erase;
             
         $this->game->notify->all('setGlobalCounter', $message, $args);
 
-        return $after;
+        return $value;
     }
 
+    /**
+     * Increment the value of the counter, and send a notif to update the value on the front side.
+     * 
+     * Note: if the inc is 0, no notif will be sent.
+     * 
+     * @param int $inc the value to add to the current value
+     * @param ?string $message the next notif to send to the front. Empty for no log, null for no notif at all (the front will not be updated).
+     * @param array $customArgs the additional args to add to the notification message. `type`, `value`, `oldValue`, `inc`, `absInc` are sent by default.
+     * @return int the new value
+     * @throws BgaSystemException if the value is outside the min/max
+     */
     function inc(int $inc, ?string $message = '', array $customArgs = []): int {
         $before = $this->get();
         if ($inc === 0) {
             // no change, no need to notif
             return $before;
         } else {
-            return $this->set($before + $inc, $message, ['inc' => $inc, 'abs_inc' => abs($inc), ] + $customArgs);
+            return $this->set($before + $inc, $message, ['inc' => $inc, 'absInc' => abs($inc), ] + $customArgs);
         } 
+    }
+
+    /**
+     * Updates the result object, to be used in the `getAllDatas` function.
+     * 
+     * @param array $result the object to update.
+     * @param ?string $fieldName the field name to set in $result, if different than the counter `type`.
+     */
+    public function fillResult(array &$result, ?string $fieldName = null) {
+        $value = $this->get();
+
+        $result[$fieldName ?? $this->type] = $value;
     }
 }

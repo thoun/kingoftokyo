@@ -13,11 +13,11 @@ class MindbugExpansion {
     function __construct(
         protected Game $game,
     ) {
-        $this->mindbugTokens = new PlayerCounter($game, 'mindbugTokens', 'mindbugTokens', 0);
+        $this->mindbugTokens = new PlayerCounter($game, 'mindbugTokens');
     }
 
     public function isActive(): bool {
-        return false; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+        return Game::getBgaEnvironment() === 'studio'; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
     }
 
     public function initDb(array $playerIds): void {
