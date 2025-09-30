@@ -10,8 +10,6 @@ require_once(__DIR__.'/../Objects/log.php');
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
-use KOT\Objects\Card;
-use KOT\Objects\Damage;
 use KOT\Objects\Question;
 use KOT\Objects\LoseHealthLog;
 
@@ -22,133 +20,6 @@ trait CardsUtilTrait {
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
     ////////////
-    function applyEffects(/*PowerCard*/$card, int $playerId) { // return $damages
-        $cardType = $card->type;
-        if ($cardType < 100 && !$this->keepAndEvolutionCardsHaveEffect()) {
-            return;
-        }
-
-        switch($cardType) {
-            // KEEP
-            case EVEN_BIGGER_CARD: 
-                $this->applyGetHealth($playerId, 2, $cardType, $playerId);
-                $this->changeMaxHealth($playerId);
-                break;
-            case FREEZE_TIME_CARD:
-                if ($playerId == intval($this->getActivePlayerId())) {
-                    $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-                    if ($diceCounts[1] >= 3) {
-                        $this->incGameStateValue(FREEZE_TIME_MAX_TURNS, 1);
-                    }
-                }
-                break;
-            case NATURAL_SELECTION_CARD:
-                $this->applyGetEnergy($playerId, 4, $cardType);
-                $this->applyGetHealth($playerId, 4, $cardType, $playerId);
-                break;
-
-            // DISCARD
-            case APPARTMENT_BUILDING_CARD: 
-                $this->applyGetPoints($playerId, 3, $cardType);
-                break;
-            case COMMUTER_TRAIN_CARD:
-                $this->applyGetPoints($playerId, 2, $cardType);
-                break;
-            case CORNER_STORE_CARD:
-                $this->applyGetPoints($playerId, 1, $cardType);
-                break;
-            case DEATH_FROM_ABOVE_CARD: 
-                $this->applyGetPoints($playerId, 2, $cardType);
-                $this->replacePlayersInTokyo($playerId);
-                break;
-            case ENERGIZE_CARD:
-                $this->applyGetEnergy($playerId, 9, $cardType);
-                break;
-            case EVACUATION_ORDER_1_CARD: case EVACUATION_ORDER_2_CARD:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyLosePoints($otherPlayerId, 5, $cardType);
-                }
-                break;
-            case FLAME_THROWER_CARD: 
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                $damages = [];
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 2, $playerId, $cardType);
-                }
-                return $damages;
-            case FRENZY_CARD: 
-                $activePlayerId = intval($this->getActivePlayerId());
-                if ($activePlayerId != $playerId) {
-                    $this->setGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, $playerId);
-                    $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, $activePlayerId);
-                } else {
-                    $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
-                }
-                break;
-            case GAS_REFINERY_CARD: 
-                $this->applyGetPoints($playerId, 2, $cardType);
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                $damages = [];
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 3, $playerId, $cardType);
-                }
-                return $damages;
-            case HEAL_CARD:
-                $this->applyGetHealth($playerId, 2, $cardType, $playerId);
-                break;
-            case HIGH_ALTITUDE_BOMBING_CARD: 
-                $playersIds = $this->getPlayersIds();
-                $damages = [];
-                foreach ($playersIds as $pId) {
-                    $damages[] = new Damage($pId, 3, $playerId, $cardType);
-                }
-                return $damages;
-            case NATIONAL_GUARD_CARD:
-                $this->applyGetPoints($playerId, 2, $cardType);
-                return [new Damage($playerId, 2, $playerId, $cardType)];
-            case NUCLEAR_POWER_PLANT_CARD:
-                $this->applyGetPoints($playerId, 2, $cardType);
-                $this->applyGetHealth($playerId, 3, $cardType, $playerId);
-                break;
-            case SKYSCRAPER_CARD:
-                $this->applyGetPoints($playerId, 4, $cardType);
-                break;
-            case TANK_CARD:
-                $this->applyGetPoints($playerId, 4, $cardType);
-                return [new Damage($playerId, 3, $playerId, $cardType)];
-            case VAST_STORM_CARD: 
-                $this->applyGetPoints($playerId, 2, $cardType);
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $energy = $this->getPlayerEnergy($otherPlayerId);
-                    $lostEnergy = floor($energy / 2);
-                    $this->applyLoseEnergy($otherPlayerId, $lostEnergy, $cardType);
-                }
-                break;
-            case MONSTER_PETS_CARD:
-                $playersIds = $this->getPlayersIds();
-                foreach ($playersIds as $pId) {
-                    $this->applyLosePoints($pId, 3, $cardType);
-                }
-                break;
-            case BARRICADES_CARD:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyLosePoints($otherPlayerId, 3, $cardType);
-                }
-                break;
-            case ICE_CREAM_TRUCK_CARD:
-                $this->applyGetPoints($playerId, 1, $cardType);
-                $this->applyGetHealth($playerId, 2, $cardType, $playerId);
-                break;
-            case SUPERTOWER_CARD:
-                $this->applyGetPoints($playerId, 5, $cardType);
-                break;
-            default:
-                return $this->powerCards->immediateEffect($card, new Context($this, currentPlayerId: $playerId));
-        }
-    }
 
     function removeMimicToken(int $mimicCardType, int $mimicOwnerId) {
         $countRapidHealingBefore = $this->countCardOfType($mimicOwnerId, RAPID_HEALING_CARD);
@@ -756,7 +627,7 @@ trait CardsUtilTrait {
         }
     }
 
-    function getPlayersWithOpportunist(int $playerId) {
+    function getPlayersWithOpportunist(int $playerId): array {
         $orderedPlayers = $this->getOrderedPlayers($playerId);
         $opportunistPlayerIds = [];
 
@@ -772,7 +643,7 @@ trait CardsUtilTrait {
         return $opportunistPlayerIds;
     }
 
-    function canChangeMimickedCard(int $playerId) {
+    function canChangeMimickedCard(int $playerId): bool {
         // check if player have mimic card
         if ($this->countCardOfType($playerId, MIMIC_CARD, false) == 0) {
             return false;
@@ -793,7 +664,7 @@ trait CardsUtilTrait {
         return false;
     }
 
-    function getTokensByCardType(int $cardType) {
+    function getTokensByCardType(int $cardType): int {
         switch($cardType) {
             case BATTERY_MONSTER_CARD: return 6;
             case SMOKE_CLOUD_CARD: return 3;
@@ -808,11 +679,11 @@ trait CardsUtilTrait {
         $this->removeCards($playerId, $discardCards);
     }
 
-    function getDamageToCancelToSurvive(int $remainingDamage, int $playerHealth) {
+    function getDamageToCancelToSurvive(int $remainingDamage, int $playerHealth): int {
         return $remainingDamage - $playerHealth + 1;
     }
 
-    function cancellableDamageWithRapidHealing(int $playerId) {
+    function cancellableDamageWithRapidHealing(int $playerId): int {
         $hasRapidHealing = $this->countCardOfType($playerId, RAPID_HEALING_CARD) > 0;
 
         if ($hasRapidHealing) {
@@ -821,7 +692,7 @@ trait CardsUtilTrait {
         return 0;
     }
 
-    function cancellableDamageWithSuperJump(int $playerId) {
+    function cancellableDamageWithSuperJump(int $playerId): int {
         $countSuperJump = $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD);
 
         if ($countSuperJump > 0) {
@@ -830,7 +701,7 @@ trait CardsUtilTrait {
         return 0;
     }
 
-    function isSureWin(int $playerId) {
+    function isSureWin(int $playerId): bool {
         $eliminationWin = $this->getRemainingPlayers() === 1 && !$this->getPlayer($playerId)->eliminated;
         $scoreWin = $this->getPlayerScore($playerId) >= MAX_POINT;
 

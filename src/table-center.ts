@@ -223,7 +223,17 @@ class TableCenter {
     
     private createWickednessTiles(wickednessTiles: WickednessTile[]) {
         this.wickednessDecks = new WickednessDecks(this.game.wickednessTilesManager);
-        this.wickednessDecks.onTileClick = (card: WickednessTile) => this.game.takeWickednessTile(card.id);
+        this.wickednessDecks.onTileClick = (card: WickednessTile) => {
+            const args = this.game.gamedatas.gamestate.args as EnteringTakeWickednessTileArgs;
+            if (args.noExtraTurnWarning.includes(card.type)) {
+                this.game.confirmationDialog(
+                    this.game.getNoExtraTurnWarningMessage(), 
+                    () => this.game.takeWickednessTile(card.id)
+                );
+            } else {
+                this.game.takeWickednessTile(card.id);
+            }
+        }
         this.wickednessDecks.addCards(wickednessTiles);
     }
 

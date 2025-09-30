@@ -133,7 +133,9 @@ trait DiceStateTrait {
                     $countPandaExpress = $this->countEvolutionOfType($playerId, PANDA_EXPRESS_EVOLUTION);
                     if ($countPandaExpress > 0) {
                         $this->applyGetPoints($playerId, 2 * $countPandaExpress, 3000 + PANDA_EXPRESS_EVOLUTION);
-                        $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 1);
+                        if ($this->mindbugExpansion->canGetExtraTurn()) {
+                            $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 1);
+                        }
                     }
                 }
             }

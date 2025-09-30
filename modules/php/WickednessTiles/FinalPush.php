@@ -12,7 +12,9 @@ class FinalPush extends WickednessTile {
         
         $context->game->applyGetHealth($playerId, 2, $this, $playerId);
         $context->game->applyGetEnergy($playerId, 2, $this);
-        $context->game->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 1);
+        if ($context->game->mindbugExpansion->canGetExtraTurn()) {
+            $context->game->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 1);
+        }
     }
 }
 

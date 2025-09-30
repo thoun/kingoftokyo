@@ -15,6 +15,7 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 
 const EVOLUTION_CARD_CLASSES = [
     MEGA_PURR_EVOLUTION => 'MegaPurr',
+    JUNGLE_FRENZY_EVOLUTION => 'JungleFrenzy',
 ];
 
 class EvolutionCardManager extends ItemManager {

@@ -242,7 +242,7 @@ interface KingOfTokyoGame extends GameGui {
     getPlayer(playerId: number): KingOfTokyoPlayer;
     getPlayerEnergy(playerId: number): number;
     getPlayerHealth(playerId: number): number;
-    onHiddenEvolutionClick: (cardId: number) => void;
+    onHiddenEvolutionClick: (card: EvolutionCard) => void;
     onVisibleEvolutionClick: (cardId: number) => void;
     addAutoSkipPlayEvolutionButton(): void;
     pickMonster(monster: number): void;
@@ -297,6 +297,7 @@ interface EnteringPickEvolutionForDeckArgs {
 
 interface EnteringStepEvolutionArgs {
     highlighted: EvolutionCard[];
+    noExtraTurnWarning?: number[];
 }
 
 interface EnteringBeforeEndTurnArgs extends EnteringStepEvolutionArgs {

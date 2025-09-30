@@ -282,22 +282,6 @@ trait MonsterTrait {
         }
     }
 
-    function stPickMonsterNextPlayer() {
-        $playerId = $this->activeNextPlayer();
-        $this->giveExtraTime($playerId);
-
-        if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
-
-            if ($this->powerUpExpansion->isActive() && !$this->powerUpExpansion->isPowerUpMutantEvolution()) {
-                $this->setOwnerIdForAllEvolutions();
-            }
-
-            $this->goToState($this->redirectAfterPickMonster());
-        } else {
-            $this->gamestate->nextState('nextPlayer');
-        }
-    }
-
     function stChangeForm() {
         $playerId = $this->getActivePlayerId();
         

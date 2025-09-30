@@ -42,41 +42,6 @@ class MindbugExpansion {
         }
     }
 
-    public function argAskMindbug(): array {
-        $activePlayerId = (int)$this->game->getActivePlayerId();
-        $playerIds = $this->getPlayersThatCanMindbug($activePlayerId);
-
-        return [
-            'player_name' => $this->game->getPlayerNameById($activePlayerId),
-            'playerIds' => $playerIds,
-            '_no_notify' => count($playerIds) === 0,
-        ];
-    }
-
-    public function stAskMindbug(array $args): void {
-        if ($args['_no_notify']) {
-            $this->game->gamestate->nextState('end');
-        } else {
-            $this->game->gamestate->setPlayersMultiactive($args['playerIds'], 'end', true);
-        }
-    }
-    
-    public function actMindbug(int $currentPlayerId) {
-        try {
-            $this->mindbugTokens->inc($currentPlayerId, -1);
-        } catch (\BgaSystemException $e) { // TODO replace by the new exception
-            throw new \BgaUserException('No Mindbug tokens');
-        }
-
-        $this->setMindbuggedPlayer($currentPlayerId, (int)$this->game->getActivePlayerId());
-
-        // first to click has the power!
-        $this->game->gamestate->nextState('end');
-    }
-    public function actPassMindbug(int $currentPlayerId) {
-        $this->game->gamestate->setPlayerNonMultiactive($currentPlayerId, 'end');
-    }
-
     public function setMindbuggedPlayer(int $newActivePlayerId, ?int $mindbuggedPlayerId): void {
         $this->game->gamestate->changeActivePlayer($newActivePlayerId);
 
@@ -90,30 +55,15 @@ class MindbugExpansion {
         ]);
     }
 
-    public function stEndMindbug(int $activePlayerId) {
-        $mindbuggedPlayerId = $this->getMindbuggedPlayer();
-        $this->game->gamestate->changeActivePlayer($mindbuggedPlayerId);
-        
-        $this->game->globals->set(MINDBUGGED_PLAYER, null);
-
-        $this->game->notify->all("mindbugPlayer", /*TODOMB clienttranslate*/('${player_name} finishes his mindbugged turn, ${player_name2} can start again his turn at the Roll dice phase'), [
-            'activePlayerId' => $activePlayerId,
-            'mindbuggedPlayerId' => null,
-            'player_name' => $this->game->getPlayerNameById($activePlayerId),
-            'player_name2' => $this->game->getPlayerNameById($mindbuggedPlayerId),
-        ]);
-
-        // reinit some stuff for the player 
-        $this->game->startTurnInitDice();
-
-        $this->game->goToState(ST_INITIAL_DICE_ROLL);
-    }
-
     public function getMindbuggedPlayer(): ?int {
         return $this->game->globals->get(MINDBUGGED_PLAYER);
     }
 
-    private function getPlayersThatCanMindbug(int $activePlayerId): array {
+    public function canGetExtraTurn(): bool {
+        return $this->getMindbuggedPlayer() === null;
+    }
+
+    public function getPlayersThatCanMindbug(int $activePlayerId): array {
         if (!$this->isActive()) {
             return [];
         }

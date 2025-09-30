@@ -387,6 +387,7 @@ trait PlayerStateTrait {
             [$playerId], 
             $player->location == 0 || !$player->turnEnteredTokyo ? $this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO : $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO
         );
+        $couldPlay = [$playerId];
 
         if (count($couldPlay) == 0) {
             $this->goToState($this->redirectAfterEnterTokyo($playerId));

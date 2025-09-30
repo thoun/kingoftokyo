@@ -321,7 +321,7 @@ trait CardsActionTrait {
             ]);
         }
 
-        $damages = $this->applyEffects($card, $playerId);
+        $damages = $this->powerCards->applyEffects($card, $playerId);
 
         $mimic = false;
         if ($card->type == MIMIC_CARD) {
@@ -466,7 +466,7 @@ trait CardsActionTrait {
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
-        $damages = $this->applyEffects($card, $playerId);
+        $damages = $this->powerCards->applyEffects($card, $playerId);
 
         $this->setGameStateValue('newCardId', 0);
 

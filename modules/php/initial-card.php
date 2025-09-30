@@ -139,15 +139,4 @@ trait InitialCardTrait {
         }
     }
 
-    function stChooseInitialCardNextPlayer() {
-        $playerId = $this->activeNextPlayer();
-        $this->giveExtraTime($playerId);
-
-        if ($this->isInitialCardDistributionComplete()) {
-            $this->gamestate->nextState('start');
-        } else {
-            $this->gamestate->nextState('nextPlayer');
-        }
-    }
-
 }

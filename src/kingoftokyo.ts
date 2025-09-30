@@ -1946,20 +1946,28 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         });
     }
 
-    public onHiddenEvolutionClick(cardId: number) {
+    public onHiddenEvolutionClick(card: EvolutionCard) {
         const stateName = this.getStateName();
         if (stateName === 'answerQuestion') {
             const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
             if (args.question.code === 'GazeOfTheSphinxSnake') {
-                this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
+                this.gazeOfTheSphinxDiscardEvolution(Number(card.id));
                 return;
             }
         } else if (stateName === 'stealCostumeCard') {
-            this.onSelectGiftEvolution(cardId);
+            this.onSelectGiftEvolution(card.id);
             return;
         }
         
-        this.playEvolution(cardId);
+        const args = this.gamedatas.gamestate.args as EnteringStepEvolutionArgs;
+        if (args.noExtraTurnWarning?.includes(card.type)) {
+            this.confirmationDialog(
+                'TODOMB',//this.getNoExtraTurnWarningMessage(), 
+                () => this.playEvolution(card.id)
+            );
+        } else {
+            this.playEvolution(card.id);
+        }
     }
 
     public onVisibleEvolutionClick(cardId: number) {
@@ -3244,9 +3252,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public playEvolution(id: number) {
-        this.takeNoLockAction('playEvolution', {
+        this.bgaPerformAction('playEvolution', {
             id
-        });
+        }, { checkAction: false, lock: false });
     }
 
     public giveGiftEvolution(id: number, toPlayerId: number) {

@@ -92,6 +92,7 @@ trait EvolutionCardsArgTrait {
 
         return [
             'highlighted' => $highlighted,
+            'noExtraTurnWarning' => $this->mindbugExpansion->canGetExtraTurn() ? [] : [JUNGLE_FRENZY_EVOLUTION],
         ];
     }
 

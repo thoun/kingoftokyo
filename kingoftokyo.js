@@ -2840,17 +2840,17 @@ var CardsManager = /** @class */ (function (_super) {
             case 53: return _("[f2633b]Super [faa73b]Jump");
             case 54: return _("[4f7f3a]Unstable [a9d154]DNA");
             case 55: return _("[659640]Zombify");
-            case 56: return /*_TODOORI*/ ("[8ba121]Biofuel");
-            case 57: return /*_TODOORI*/ ("[b34c9c]Draining Ray");
-            case 58: return /*_TODOORI*/ ("[bed62f]Electric Armor");
-            case 59: return /*_TODOORI*/ ("[de6428]Flaming Aura");
-            case 60: return /*_TODOORI*/ ("[6db446]Gamma Blast");
-            case 61: return /*_TODOORI*/ ("[b34c9c]Hungry Urbavore");
-            case 62: return /*_TODOORI*/ ("[1f7e7f]Jagged Tactician");
-            case 63: return /*_TODOORI*/ ("[a65096]Orb of Doom");
-            case 64: return /*_TODOORI*/ ("[806f52]Scavenger");
-            case 65: return /*_TODOORI*/ ("[1c9c85]Shrinky");
-            case 66: return /*_TODOORI*/ ("[693a3a]Bull Headed");
+            case 56: return _("[8ba121]Biofuel");
+            case 57: return _("[b34c9c]Draining Ray");
+            case 58: return _("[bed62f]Electric Armor");
+            case 59: return _("[de6428]Flaming Aura");
+            case 60: return _("[6db446]Gamma Blast");
+            case 61: return _("[b34c9c]Hungry Urbavore");
+            case 62: return _("[1f7e7f]Jagged Tactician");
+            case 63: return _("[a65096]Orb of Doom");
+            case 64: return _("[806f52]Scavenger");
+            case 65: return _("[1c9c85]Shrinky");
+            case 66: return _("[693a3a]Bull Headed");
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -2871,9 +2871,9 @@ var CardsManager = /** @class */ (function (_super) {
             case 117: return _("[AF966B]Tank");
             case 118: return _("[847443]Vast [8D7F4E]Storm");
             case 119: return _("[83aa50]Monster [41813c]pets");
-            case 120: return /*_TODOORI*/ ("[775b43]Barricades");
-            case 121: return /*_TODOORI*/ ("[6b9957]Ice Cream Truck");
-            case 122: return /*_TODOORI*/ ("[f89c4c]Supertower");
+            case 120: return _("[775b43]Barricades");
+            case 121: return _("[6b9957]Ice Cream Truck");
+            case 122: return _("[f89c4c]Supertower");
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
             case 202: return _("[005c98]Ghost");
@@ -2983,17 +2983,17 @@ var CardsManager = /** @class */ (function (_super) {
             case 53: return _("Once each player’s turn, you may spend 1[Energy] <strong>to negate the loss of 1[Heart].</strong>");
             case 54: return _("When you Yield Tokyo, <strong>you may exchange this card</strong> with a card of your choice from the Monster who Smashed you.");
             case 55: return _("If you reach [Skull] for the first time in this game, <strong>discard all your cards and tiles, remove your Counter from the Wickedness Gauge, lose all your [Star], Yield Tokyo, gain 12[Heart] and continue playing.</strong> For the rest of the game, your maximum [Heart] is increased to 12[Heart] and <strong>you can’t use [diceHeart] anymore.</strong>");
-            case 56: return /*_TODOORI*/ ("You may use [dieHeart] as [dieEnergy].");
-            case 57: return /*_TODOORI*/ ("When you roll at least 4 of a kind, <strong>steal 1[Star] from the Monster(s) with the most [Star].</strong>");
-            case 58: return /*_TODOORI*/ ("When you lose any [Heart], you may spend 1[Energy] to <strong>reduce the loss of [Heart] by 1.</strong>");
-            case 59: return /*_TODOORI*/ ("When you roll at least 4 of a kind, <strong>all other Monsters lose 1[Heart].</strong>");
-            case 60: return /*_TODOORI*/ ("When you take control of Tokyo, <strong>all other Monsters lose 1[Heart].</strong>");
-            case 61: return /*_TODOORI*/ ("<strong>Gain 1[Star]</strong> when you take control of Tokyo.");
-            case 62: return /*_TODOORI*/ ("When you Yield Tokyo, <strong>the Monster taking it loses 1[Heart]</strong> and you <strong>gain 1[Energy].</strong>");
-            case 63: return /*_TODOORI*/ ("<strong>Other Monsters lose 1[Heart]</strong> each time they reroll.");
-            case 64: return /*_TODOORI*/ ("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck.");
-            case 65: return /*_TODOORI*/ ("<strong>You may use [die2] as [die1].");
-            case 66: return /*_TODOORI*/ ("<strong>Gain 1[Star]</strong> when you are able to Yield Tokyo but choose not to.");
+            case 56: return _("You may use [dieHeart] as [dieEnergy].");
+            case 57: return _("When you roll at least 4 of a kind, <strong>steal 1[Star] from the Monster(s) with the most [Star].</strong>");
+            case 58: return _("When you lose any [Heart], you may spend 1[Energy] to <strong>reduce the loss of [Heart] by 1.</strong>");
+            case 59: return _("When you roll at least 4 of a kind, <strong>all other Monsters lose 1[Heart].</strong>");
+            case 60: return _("When you take control of Tokyo, <strong>all other Monsters lose 1[Heart].</strong>");
+            case 61: return _("<strong>Gain 1[Star]</strong> when you take control of Tokyo.");
+            case 62: return _("When you Yield Tokyo, <strong>the Monster taking it loses 1[Heart]</strong> and you <strong>gain 1[Energy].</strong>");
+            case 63: return _("<strong>Other Monsters lose 1[Heart]</strong> each time they reroll.");
+            case 64: return _("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck.");
+            case 65: return _("<strong>You may use [die2] as [die1].");
+            case 66: return _("<strong>Gain 1[Star]</strong> when you are able to Yield Tokyo but choose not to.");
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
@@ -3014,7 +3014,7 @@ var CardsManager = /** @class */ (function (_super) {
             case 117: return "<strong>+4[Star] -3[Heart].</strong>";
             case 118: return _("<strong>+ 2[Star] and all other Monsters lose 1[Energy] for every 2[Energy]</strong> they have.");
             case 119: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Star].</strong>");
-            case 120: return /*_TODOORI*/ ("<strong>All other Monsters lose 3[Star].</strong>");
+            case 120: return _("<strong>All other Monsters lose 3[Star].</strong>");
             case 121: return "<strong>+1[Star] +2[Heart].</strong>";
             case 122: return "<strong>+5[Star].";
             // COSTUME
@@ -4318,7 +4318,7 @@ var PlayerTable = /** @class */ (function () {
                 this.game.addAutoSkipPlayEvolutionButton();
                 this.hiddenEvolutionCards = new LineStock(this.game.evolutionCardsManager, document.getElementById("hand-evolution-cards"));
                 this.hiddenEvolutionCards.setSelectionMode('multiple');
-                this.hiddenEvolutionCards.onCardClick = function (card) { return _this.game.onHiddenEvolutionClick(card.id); };
+                this.hiddenEvolutionCards.onCardClick = function (card) { return _this.game.onHiddenEvolutionClick(card); };
                 if (player.hiddenEvolutions) {
                     this.hiddenEvolutionCards.addCards(player.hiddenEvolutions);
                 }
@@ -6064,7 +6064,15 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.createWickednessTiles = function (wickednessTiles) {
         var _this = this;
         this.wickednessDecks = new WickednessDecks(this.game.wickednessTilesManager);
-        this.wickednessDecks.onTileClick = function (card) { return _this.game.takeWickednessTile(card.id); };
+        this.wickednessDecks.onTileClick = function (card) {
+            var args = _this.game.gamedatas.gamestate.args;
+            if (args.noExtraTurnWarning.includes(card.type)) {
+                _this.game.confirmationDialog(_this.game.getNoExtraTurnWarningMessage(), function () { return _this.game.takeWickednessTile(card.id); });
+            }
+            else {
+                _this.game.takeWickednessTile(card.id);
+            }
+        };
         this.wickednessDecks.addCards(wickednessTiles);
     };
     TableCenter.prototype.moveWickednessPoints = function () {
@@ -8005,20 +8013,29 @@ var KingOfTokyo = /** @class */ (function (_super) {
             document.getElementById("giveGift".concat(cardId, "to").concat(woundedPlayerId, "_button")).insertAdjacentElement('beforebegin', button);
         });
     };
-    KingOfTokyo.prototype.onHiddenEvolutionClick = function (cardId) {
+    KingOfTokyo.prototype.onHiddenEvolutionClick = function (card) {
+        var _this = this;
+        var _a;
         var stateName = this.getStateName();
         if (stateName === 'answerQuestion') {
-            var args = this.gamedatas.gamestate.args;
-            if (args.question.code === 'GazeOfTheSphinxSnake') {
-                this.gazeOfTheSphinxDiscardEvolution(Number(cardId));
+            var args_2 = this.gamedatas.gamestate.args;
+            if (args_2.question.code === 'GazeOfTheSphinxSnake') {
+                this.gazeOfTheSphinxDiscardEvolution(Number(card.id));
                 return;
             }
         }
         else if (stateName === 'stealCostumeCard') {
-            this.onSelectGiftEvolution(cardId);
+            this.onSelectGiftEvolution(card.id);
             return;
         }
-        this.playEvolution(cardId);
+        var args = this.gamedatas.gamestate.args;
+        if ((_a = args.noExtraTurnWarning) === null || _a === void 0 ? void 0 : _a.includes(card.type)) {
+            this.confirmationDialog('TODOMB', //this.getNoExtraTurnWarningMessage(), 
+            function () { return _this.playEvolution(card.id); });
+        }
+        else {
+            this.playEvolution(card.id);
+        }
     };
     KingOfTokyo.prototype.onVisibleEvolutionClick = function (cardId) {
         var stateName = this.getStateName();
@@ -9021,9 +9038,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('leaveHibernation');
     };
     KingOfTokyo.prototype.playEvolution = function (id) {
-        this.takeNoLockAction('playEvolution', {
+        this.bgaPerformAction('playEvolution', {
             id: id
-        });
+        }, { checkAction: false, lock: false });
     };
     KingOfTokyo.prototype.giveGiftEvolution = function (id, toPlayerId) {
         this.takeAction('giveGiftEvolution', {

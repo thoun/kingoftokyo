@@ -696,7 +696,7 @@ trait UtilTrait {
         }
     }
 
-    function applyLosePoints(int $playerId, int $points, int | CurseCard | WickednessTile $cardType) {
+    function applyLosePoints(int $playerId, int $points, int | PowerCard | CurseCard | WickednessTile $cardType) {
         //$actualScore = $this->getPlayerScore($playerId);
         $actualScore = intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId"));
         if ($actualScore == WIN_GAME) {
@@ -707,6 +707,9 @@ trait UtilTrait {
         $newScore = max($actualScore - $points, 0);
         $this->DbQuery("UPDATE player SET `player_score` = $newScore where `player_id` = $playerId");
 
+        if ($cardType instanceof PowerCard) {
+            $cardType = $cardType->type;
+        }
         if ($cardType instanceof CurseCard) {
             $cardType = 1000 + $cardType->type;
         }
@@ -725,7 +728,7 @@ trait UtilTrait {
         }
     }
 
-    function applyGetHealth(int $playerId, int $health, int | CurseCard | WickednessTile $cardType, int $healerId) {
+    function applyGetHealth(int $playerId, int $health, int | PowerCard | CurseCard | WickednessTile $cardType, int $healerId) {
         if (!$this->canGainHealth($playerId)) {
             return;
         }
@@ -743,7 +746,7 @@ trait UtilTrait {
         return $playerGettingHealth;
     }
 
-    function applyGetHealthIgnoreCards(int $playerId, int $health, int | CurseCard | WickednessTile $cardType, int $healerId) {
+    function applyGetHealthIgnoreCards(int $playerId, int $health, int | PowerCard | CurseCard | WickednessTile $cardType, int $healerId) {
         $maxHealth = $this->getPlayerMaxHealth($playerId);
 
         $actualHealth = $this->getPlayerHealth($playerId);
@@ -758,6 +761,9 @@ trait UtilTrait {
 
         $this->incStat($health, 'heal', $playerId);
 
+        if ($cardType instanceof PowerCard) {
+            $cardType = $cardType->type;
+        }
         if ($cardType instanceof CurseCard) {
             $cardType = 1000 + $cardType->type;
         }
@@ -1025,7 +1031,7 @@ trait UtilTrait {
         return $playerGettingEnergyOrHeart;
     }
 
-    function applyGetEnergy(int $playerId, int $energy, int | CurseCard | WickednessTile $cardType) {
+    function applyGetEnergy(int $playerId, int $energy, int | PowerCard | CurseCard | WickednessTile $cardType) {
         if (!$this->canGainEnergy($playerId)) {
             return;
         }
@@ -1043,9 +1049,12 @@ trait UtilTrait {
         return $playerGettingEnergy;
     }
 
-    function applyGetEnergyIgnoreCards(int $playerId, int $energy, int | CurseCard | WickednessTile $cardType) {
+    function applyGetEnergyIgnoreCards(int $playerId, int $energy, int | PowerCard | CurseCard | WickednessTile $cardType) {
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` + $energy, `player_turn_energy` = `player_turn_energy` + $energy where `player_id` = $playerId");
         
+        if ($cardType instanceof PowerCard) {
+            $cardType = $cardType->type;
+        }
         if ($cardType instanceof CurseCard) {
             $cardType = 1000 + $cardType->type;
         }
@@ -1066,15 +1075,18 @@ trait UtilTrait {
         $this->incStat($energy, 'wonEnergyCubes', $playerId);
     }
 
-    function applyLoseEnergy(int $playerId, int $energy, int | CurseCard $cardType) {
+    function applyLoseEnergy(int $playerId, int $energy, int | PowerCard | CurseCard $cardType) {
         $this->applyLoseEnergyIgnoreCards($playerId, $energy, $cardType);
     }
 
-    function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int | CurseCard $cardType) {
+    function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int | PowerCard | CurseCard $cardType) {
         $actualEnergy = $this->getPlayerEnergy($playerId);
         $newEnergy = max($actualEnergy - $energy, 0);
         $this->DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
 
+        if ($cardType instanceof PowerCard) {
+            $cardType = $cardType->type;
+        }
         if ($cardType instanceof CurseCard) {
             $cardType = 1000 + $cardType->type;
         }
