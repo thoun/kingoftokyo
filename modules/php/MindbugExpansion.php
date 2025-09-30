@@ -62,10 +62,11 @@ class MindbugExpansion {
     }
     
     public function actMindbug(int $currentPlayerId) {
-        if ($this->mindbugTokens->get($currentPlayerId) < 1) {
-            throw new BgaUserException('No Mindbug tokens');
+        try {
+            $this->mindbugTokens->inc($currentPlayerId, -1);
+        } catch (\BgaSystemException $e) { // TODO replace by the new exception
+            throw new \BgaUserException('No Mindbug tokens');
         }
-        $this->mindbugTokens->inc($currentPlayerId, -1);
 
         $this->setMindbuggedPlayer($currentPlayerId, (int)$this->game->getActivePlayerId());
 

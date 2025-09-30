@@ -93,6 +93,32 @@ class Arrays {
     }
 
     /**
+     * Map a specific property from an array.
+     *
+     * @param array $array The input array containing objects or associative arrays.
+     * @param string $property The name of the property or key to extract.
+     * 
+     * @return array An array of values corresponding to the specified property.
+     *               If the property does not exist in an element, `null` is returned for that element.
+     *
+     * @example
+     * $objects = [
+     *     (object)['id' => 1, 'name' => 'Alice'],
+     *     (object)['id' => 2, 'name' => 'Bob']
+     * ];
+     * $ids = Arrays::pluck($objects, 'id'); // [1, 2]
+     *
+     * $arrays = [
+     *     ['id' => 1, 'name' => 'Alice'],
+     *     ['id' => 2, 'name' => 'Bob']
+     * ];
+     * $names = Arrays::pluck($arrays, 'name'); // ['Alice', 'Bob']
+     */
+    function pluck(array $array, string $property): array {
+        return array_map(fn($item) => is_object($item) ? $item->{$property} : ($item[$property] ?? null), $array);
+    }
+
+    /**
      * Returns the first element matching the predicate function.
      * 
      * @template TKey of int|string
