@@ -145,7 +145,7 @@ class PlayerTable {
 
                 this.hiddenEvolutionCards = new LineStock<EvolutionCard>(this.game.evolutionCardsManager, document.getElementById(`hand-evolution-cards`));
                 this.hiddenEvolutionCards.setSelectionMode('multiple');
-                this.hiddenEvolutionCards.onCardClick = (card: EvolutionCard) => this.game.onHiddenEvolutionClick(card.id);
+                this.hiddenEvolutionCards.onCardClick = (card: EvolutionCard) => this.game.onHiddenEvolutionClick(card);
 
                 if (player.hiddenEvolutions) {
                     this.hiddenEvolutionCards.addCards(player.hiddenEvolutions);

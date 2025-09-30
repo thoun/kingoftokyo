@@ -25,14 +25,6 @@ trait RedirectionTrait {
         }
     }
 
-    function redirectAfterStart() {
-        if ($this->canPickMonster()) {
-            return ST_PLAYER_PICK_MONSTER; 
-        } else {
-            return $this->redirectAfterPickMonster();
-        }
-    }
-
     function redirectAfterPickMonster() {
         if ($this->powerUpExpansion->isPowerUpMutantEvolution()) {
             return ST_NEXT_PICK_EVOLUTION_DECK; 

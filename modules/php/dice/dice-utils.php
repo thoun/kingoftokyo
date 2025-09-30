@@ -278,7 +278,7 @@ trait DiceUtilTrait {
 
                 // Freeze Time
                 $countFreezeTime = $this->countCardOfType($playerId, FREEZE_TIME_CARD);
-                if ($countFreezeTime > 0) {
+                if ($countFreezeTime > 0 && $this->mindbugExpansion->canGetExtraTurn()) {
                     $this->incGameStateValue(FREEZE_TIME_MAX_TURNS, 1);
                 }
                 

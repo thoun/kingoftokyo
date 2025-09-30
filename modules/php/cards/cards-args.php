@@ -67,6 +67,7 @@ trait CardsArgTrait {
         }
 
         $warningIds = [];
+
         foreach ($cards as $card) {
             $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
             if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
@@ -195,6 +196,7 @@ trait CardsArgTrait {
             'cardsCostsSuperiorAlienTechnology' => $cardsCostsSuperiorAlienTechnology,
             'cardsCostsBobbingForApples' => $cardsCostsBobbingForApples,
             'warningIds' => $warningIds,
+            'noExtraTurnWarning' => $this->mindbugExpansion->canGetExtraTurn() ? [] : [FRENZY_CARD],
             'canUseAdaptingTechnology' => $canUseAdaptingTechnology,
             'canUseMiraculousCatch' => $canUseMiraculousCatch,
             'unusedMiraculousCatch' => $unusedMiraculousCatch,

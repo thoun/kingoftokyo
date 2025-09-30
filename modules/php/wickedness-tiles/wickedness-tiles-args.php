@@ -2,6 +2,7 @@
 
 namespace KOT\States;
 
+use const Bga\Games\KingOfTokyo\FINAL_PUSH_WICKEDNESS_TILE;
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
 
 trait WickednessTilesArgTrait {
@@ -32,6 +33,7 @@ trait WickednessTilesArgTrait {
             'dice' => $dice,
             'canHealWithDice' => $canHealWithDice,
             'frozenFaces' => $this->frozenFaces($playerId),
+            'noExtraTurnWarning' => $this->mindbugExpansion->canGetExtraTurn() ? [] : [FINAL_PUSH_WICKEDNESS_TILE],
         ];
     }
 

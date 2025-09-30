@@ -432,6 +432,10 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 1");
     }
 
+    function debug_SetWickedness(int $playerId, int $value = 5) {
+        $this->DbQuery("UPDATE player SET `player_wickedness` = $value where `player_id` = $playerId");
+    }
+
     function debug_SetTakeWickednessTile(int $playerId, int $level = 3) {
         $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[$level]' where `player_id` = $playerId");
     }

@@ -10,7 +10,6 @@ require_once(__DIR__.'/../Objects/log.php');
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
-use KOT\Objects\Card;
 use KOT\Objects\Damage;
 use KOT\Objects\Question;
 use KOT\Objects\LoseHealthLog;
@@ -29,71 +28,6 @@ trait CardsUtilTrait {
         }
 
         switch($cardType) {
-            // KEEP
-            case EVEN_BIGGER_CARD: 
-                $this->applyGetHealth($playerId, 2, $cardType, $playerId);
-                $this->changeMaxHealth($playerId);
-                break;
-            case FREEZE_TIME_CARD:
-                if ($playerId == intval($this->getActivePlayerId())) {
-                    $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-                    if ($diceCounts[1] >= 3) {
-                        $this->incGameStateValue(FREEZE_TIME_MAX_TURNS, 1);
-                    }
-                }
-                break;
-            case NATURAL_SELECTION_CARD:
-                $this->applyGetEnergy($playerId, 4, $cardType);
-                $this->applyGetHealth($playerId, 4, $cardType, $playerId);
-                break;
-
-            // DISCARD
-            case APPARTMENT_BUILDING_CARD: 
-                $this->applyGetPoints($playerId, 3, $cardType);
-                break;
-            case COMMUTER_TRAIN_CARD:
-                $this->applyGetPoints($playerId, 2, $cardType);
-                break;
-            case CORNER_STORE_CARD:
-                $this->applyGetPoints($playerId, 1, $cardType);
-                break;
-            case DEATH_FROM_ABOVE_CARD: 
-                $this->applyGetPoints($playerId, 2, $cardType);
-                $this->replacePlayersInTokyo($playerId);
-                break;
-            case ENERGIZE_CARD:
-                $this->applyGetEnergy($playerId, 9, $cardType);
-                break;
-            case EVACUATION_ORDER_1_CARD: case EVACUATION_ORDER_2_CARD:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyLosePoints($otherPlayerId, 5, $cardType);
-                }
-                break;
-            case FLAME_THROWER_CARD: 
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                $damages = [];
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 2, $playerId, $cardType);
-                }
-                return $damages;
-            case FRENZY_CARD: 
-                $activePlayerId = intval($this->getActivePlayerId());
-                if ($activePlayerId != $playerId) {
-                    $this->setGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, $playerId);
-                    $this->setGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, $activePlayerId);
-                } else {
-                    $this->setGameStateValue(FRENZY_EXTRA_TURN, 1);
-                }
-                break;
-            case GAS_REFINERY_CARD: 
-                $this->applyGetPoints($playerId, 2, $cardType);
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                $damages = [];
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 3, $playerId, $cardType);
-                }
-                return $damages;
             case HEAL_CARD:
                 $this->applyGetHealth($playerId, 2, $cardType, $playerId);
                 break;

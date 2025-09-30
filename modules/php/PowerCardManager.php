@@ -15,7 +15,24 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 
 const POWER_CARD_CLASSES = [
+    // KEEP
+    EVEN_BIGGER_CARD => 'EvenBigger',
+    FREEZE_TIME_CARD => 'FreezeTime',
+    NATURAL_SELECTION_CARD => 'NaturalSelection',
+    // DISCARD
+    APPARTMENT_BUILDING_CARD => 'AppartmentBuilding',
+    COMMUTER_TRAIN_CARD => 'CommuterTrain',
+    CORNER_STORE_CARD => 'CornerStore',
+    DEATH_FROM_ABOVE_CARD => 'DeathFromAbove',
+    ENERGIZE_CARD => 'Energizer',
+    EVACUATION_ORDER_1_CARD => 'EvacuationOrder',
+    EVACUATION_ORDER_2_CARD => 'EvacuationOrder',
+    FLAME_THROWER_CARD => 'FlameThrower',
+    FRENZY_CARD => 'Frenzy',
+    GAS_REFINERY_CARD => 'GasRefinery',
+    //...
     JET_FIGHTERS_CARD => 'JetFighters',
+    //...
 ];
 
 class PowerCardManager extends ItemManager {

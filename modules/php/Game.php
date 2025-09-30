@@ -53,6 +53,7 @@ require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
 
 use Bga\GameFramework\Components\Deck;
+use Bga\Games\KingOfTokyo\States\Start;
 use \feException;
 
 class Game extends \Bga\GameFramework\Table {
@@ -380,6 +381,8 @@ class Game extends \Bga\GameFramework\Table {
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
 
+        return Start::class;
+
         /************ End of the game initialization *****/
     }
 
@@ -556,101 +559,13 @@ class Game extends \Bga\GameFramework\Table {
         (see states.inc.php)
     */
     function getGameProgression() {
-        $stateName = $this->gamestate->state()['name']; 
-        if ($stateName === 'gameEnd') {
+        $stateId = $this->gamestate->getCurrentMainStateId(); 
+        if ($stateId === 99) {
             return 100;
         }
 
         return $this->getMaxPlayerScore() * 5;
     }
-
-    function stStart() {
-        $this->goToState($this->redirectAfterStart());
-    }
-
-    function stStartGame() {
-        if ($this->isHalloweenExpansion()) {
-            $this->powerCards->moveAllItemsInLocation('costumedeck', 'deck');
-            $this->powerCards->moveAllItemsInLocation('costumediscard', 'deck');
-        }
-        $this->powerCards->shuffle('deck'); 
-
-        // TODO $this->debugSetupBeforePlaceCard();
-        $cards = $this->placeNewCardsOnTable();
-        // TODO 
-        // $this->debugSetupAfterPlaceCard();
-
-        $this->notifyAllPlayers("setInitialCards", '', [
-            'cards' => $cards,
-            'deckCardsCount' => $this->powerCards->getDeckCount(),
-            'topDeckCard' => $this->powerCards->getTopDeckCard(),
-        ]);
-
-        $this->gamestate->nextState('start');
-    }
-
-    function stEndScore() {
-        $players = $this->getPlayers(true);
-        $playerCount = count($players);
-        $remainingPlayers = $this->getRemainingPlayers();
-        $pointsWin = false;
-        foreach($players as &$player) {
-            if ($player->score >= MAX_POINT) {
-                if ($player->score > MAX_POINT) {
-                    $player->score = MAX_POINT;
-                    $this->DbQuery("UPDATE player SET `player_score` = ".MAX_POINT." WHERE player_id = ".$player->id);
-                }
-                $pointsWin = true;
-            } 
-        }
-
-        // in case everyone is dead, no ranking
-        if ($remainingPlayers == 0) {
-            $this->DbQuery("UPDATE player SET `player_score` = 0, `player_score_aux` = 0");
-        }
-
-        $eliminationWin = $remainingPlayers == 1;
-
-        $this->setStat($pointsWin ? 1 : 0, 'pointsWin');
-        $this->setStat($eliminationWin ? 1 : 0, 'eliminationWin');
-        $this->setStat($remainingPlayers / (float) $playerCount, 'survivorRatio');
-
-        foreach($players as $player) {            
-            $this->setStat($player->eliminated ? 0 : 1, 'survived', $player->id);
-
-            if (!$player->eliminated) {
-                if ($player->score >= MAX_POINT) {
-                    $this->setStat(1, 'pointsWin', $player->id);
-                }
-                if ($eliminationWin) {
-                    $this->setStat(1, 'eliminationWin', $player->id);
-                }
-
-                if ($pointsWin) {
-                    $this->setStat($player->score, 'endScore', $player->id);
-                }
-                $this->setStat($player->health, 'endHealth', $player->id);
-            }            
-        }
-
-        $this->gamestate->nextState('');
-    }
-
-    public function argAskMindbug(): array {
-        return $this->mindbugExpansion->argAskMindbug();
-    }
-    public function stAskMindbug(): void {
-        $this->mindbugExpansion->stAskMindbug($this->mindbugExpansion->argAskMindbug());
-    }    
-    public function actMindbug() {
-        $this->mindbugExpansion->actMindbug((int)$this->getCurrentPlayerId());
-    }
-    public function actPassMindbug() {
-        $this->mindbugExpansion->actPassMindbug((int)$this->getCurrentPlayerId());
-    }
-    public function stEndMindbug(): void {
-        $this->mindbugExpansion->stEndMindbug((int)$this->getActivePlayerId());
-    }   
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
