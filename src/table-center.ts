@@ -229,7 +229,7 @@ class TableCenter {
                 this.game.confirmationDialog(
                     this.game.getNoExtraTurnWarningMessage(), 
                     () => this.game.takeWickednessTile(card.id)
-                );
+                )
             } else {
                 this.game.takeWickednessTile(card.id);
             }

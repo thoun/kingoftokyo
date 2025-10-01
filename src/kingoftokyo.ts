@@ -209,8 +209,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
 
-        const pickMonsterPhase = ['pickMonster', 'pickMonsterNextPlayer'].includes(stateName);
-        const pickEvolutionForDeckPhase = ['pickEvolutionForDeck', 'nextPickEvolutionForDeck'].includes(stateName)
+        const pickMonsterPhase = ['pickMonster', 'PickMonsterNextPlayer'].includes(stateName);
+        const pickEvolutionForDeckPhase = ['pickEvolutionForDeck', 'NextPickEvolutionForDeck'].includes(stateName);
         
         if (!pickMonsterPhase) {
             this.removeMonsterChoice();
@@ -240,7 +240,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.onEnteringChooseInitialCard(args.args);
                 this.showEvolutionsPopinPlayerButtons();
                 break;
-            case 'startGame':
+            case 'StartGame':
                 this.showEvolutionsPopinPlayerButtons();
                 break;
             case 'changeMimickedCard':
@@ -329,7 +329,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.onEnteringAnswerQuestion(args.args);
                 break;
 
-            case 'endTurn':
+            case 'EndTurn':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
                 break;
@@ -1236,7 +1236,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     }
                     break;
 
-                case 'askMindbug':
+                case 'AskMindbug':
                     this.statusBar.addActionButton(/*TODOMB_*/('Mindbug!'), () => this.bgaPerformAction('actMindbug'), { color: 'alert' });
                     this.statusBar.addActionButton(_('Skip'), () => this.bgaPerformAction('actPassMindbug'));
                     break;
@@ -1253,18 +1253,19 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 case 'prepareResolveDice':
                     const argsPrepareResolveDice = args as EnteringPrepareResolveDiceArgs;
                     if (argsPrepareResolveDice.hasEncasedInIce) {
-                        this.addActionButton('skipFreezeDie_button', _("Skip"), () => this.skipFreezeDie());
+                        this.statusBar.addActionButton(_("Skip"), () => this.skipFreezeDie());
                     }
                     break;
                 case 'beforeResolveDice':
-                    this.addActionButton('skipBeforeResolveDice_button', _("Skip"), () => this.skipBeforeResolveDice());
+                    this.statusBar.addActionButton(_("Skip"), () => this.skipBeforeResolveDice());
                     break;
                 case 'takeWickednessTile':
-                    this.addActionButton('skipTakeWickednessTile_button', _("Skip"), () => this.skipTakeWickednessTile());
                     const argsTakeWickednessTile = args as EnteringTakeWickednessTileArgs;
-                    if (!argsTakeWickednessTile.canTake) {
-                        this.startActionTimer('skipTakeWickednessTile_button', ACTION_TIMER_DURATION);
-                    }
+                    this.statusBar.addActionButton(
+                        _("Skip"), 
+                        () => this.skipTakeWickednessTile(), 
+                        { autoclick: !argsTakeWickednessTile.canTake && this.getGameUserPreference(202) != 2 }
+                    );
                     break;
                 case 'leaveTokyo':
                     let label = _("Stay in Tokyo");
@@ -1727,12 +1728,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 <div id="player-board-target-tokens-${player.id}" class="player-token target-tokens"></div>
                 <div id="player-board-shrink-ray-tokens-${player.id}" class="player-token shrink-ray-tokens"></div>
                 <div id="player-board-poison-tokens-${player.id}" class="player-token poison-tokens"></div>
+                <div id="player-board-mindbug-tokens-${player.id}" class="player-token mindbug-tokens"></div>
             </div>`, `player_board_${player.id}`);
 
             if (!eliminated) {
                 this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
                 this.setPoisonTokens(playerId, player.poisonTokens);
                 this.setPlayerTokens(playerId, gamedatas.targetedPlayer == playerId ? 1 : 0, 'target');
+                this.setPlayerTokens(playerId, player.mindbugTokens, 'mindbug');
             }
 
             dojo.place(`<div id="player-board-monster-figure-${player.id}" class="monster-figure monster${player.monster}"><div class="kot-token"></div></div>`, `player_board_${player.id}`);
@@ -1854,7 +1857,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         } else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             const buyCardArgs = this.gamedatas.gamestate.args as EnteringBuyCardArgs;
             const warningIcon = !warningChecked && buyCardArgs.warningIds[card.id];
-            if (warningIcon) {
+            if (!warningChecked && buyCardArgs.noExtraTurnWarning.includes(card.type)) {
+                this.confirmationDialog(
+                    this.getNoExtraTurnWarningMessage(), 
+                    () => this.onVisibleCardClick(stock, card, from, true)
+                );
+            } else if (warningIcon) {
                 this.confirmationDialog(
                     formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon})), 
                     () => this.onVisibleCardClick(stock, card, from, true)
@@ -1952,9 +1960,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             const args = this.gamedatas.gamestate.args as EnteringAnswerQuestionArgs;
             if (args.question.code === 'GazeOfTheSphinxSnake') {
                 this.gazeOfTheSphinxDiscardEvolution(Number(card.id));
+                this.gazeOfTheSphinxDiscardEvolution(Number(card.id));
                 return;
             }
         } else if (stateName === 'stealCostumeCard') {
+            this.onSelectGiftEvolution(card.id);
             this.onSelectGiftEvolution(card.id);
             return;
         }
@@ -1962,7 +1972,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         const args = this.gamedatas.gamestate.args as EnteringStepEvolutionArgs;
         if (args.noExtraTurnWarning?.includes(card.type)) {
             this.confirmationDialog(
-                'TODOMB',//this.getNoExtraTurnWarningMessage(), 
+                this.getNoExtraTurnWarningMessage(), 
                 () => this.playEvolution(card.id)
             );
         } else {
@@ -2511,6 +2521,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             buyCardFromDiscardDialog.destroy();
         });
     }
+    
+    public getNoExtraTurnWarningMessage(): string {
+        return _('As you are in a Mindbug turn, you cannot befenit from the extra turn effect');
+    }
 
     public pickMonster(monster: number): void {
         if(!this.checkAction('pickMonster')) {
@@ -2864,12 +2878,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public takeWickednessTile(id: number) {
-        if(!this.checkAction('takeWickednessTile')) {
-            return;
-        }
-
-        this.takeAction('takeWickednessTile', {
-            id
+        this.bgaPerformAction('takeWickednessTile', {
+            id,
         });
     }
 
@@ -3625,6 +3635,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             ['ownedEvolutions', 1],
             ['resurrect', 1],
             ['mindbugPlayer', 1],
+            ['setPlayerCounter', 1],
             ['log500', 500],
         ];
     
@@ -4175,6 +4186,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             document.getElementById('mindbug-notice')?.remove();
         }
     }
+
+    notif_setPlayerCounter(args) {
+        if (args.type === 'mindbugTokens') {
+            this.setPlayerTokens(args.playerId, args.value, 'mindbug');
+        }
+    }
     
     private setPoints(playerId: number, points: number, delay: number = 0) {
         this.scoreCtrl[playerId]?.toValue(points);
@@ -4313,6 +4330,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }
         
         this.setShrinkRayTokens(playerId, 0);
+        this.setPlayerTokens(playerId, 0, 'mindbug');
         this.setPoisonTokens(playerId, 0);
         if (this.isCthulhuExpansion()) {
             this.setCultists(playerId, 0, false);

@@ -30,9 +30,18 @@ const POWER_CARD_CLASSES = [
     FLAME_THROWER_CARD => 'FlameThrower',
     FRENZY_CARD => 'Frenzy',
     GAS_REFINERY_CARD => 'GasRefinery',
-    //...
+    HEAL_CARD => 'Heal',
+    HIGH_ALTITUDE_BOMBING_CARD => 'HighAltitudeBombing',
     JET_FIGHTERS_CARD => 'JetFighters',
-    //...
+    NATIONAL_GUARD_CARD => 'NationalGuard',
+    NUCLEAR_POWER_PLANT_CARD => 'NuclearPowerPlant',
+    SKYSCRAPER_CARD => 'SkyScraper',
+    TANK_CARD => 'Tank',
+    VAST_STORM_CARD => 'VastStorm',
+    MONSTER_PETS_CARD => 'MonsterPets',
+    BARRICADES_CARD => 'Barricades',
+    ICE_CREAM_TRUCK_CARD => 'IceCreamTruck',
+    SUPERTOWER_CARD => 'Supertower',
 ];
 
 class PowerCardManager extends ItemManager {
@@ -363,6 +372,15 @@ class PowerCardManager extends ItemManager {
 
     public function getReserved(int $playerId, ?int $locationArg = null): array {
         return $this->getItemsInLocation('reserved'.$playerId, $locationArg);
+    }
+
+    function applyEffects(PowerCard $card, int $playerId) { // return $damages
+        $cardType = $card->type;
+        if ($cardType < 100 && !$this->game->keepAndEvolutionCardsHaveEffect()) {
+            return;
+        }
+
+        return $this->immediateEffect($card, new Context($this->game, currentPlayerId: $playerId));
     }
 
     public function immediateEffect(PowerCard $card, Context $context) {

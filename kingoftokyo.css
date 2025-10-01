@@ -2849,19 +2849,19 @@ html[data-dark-edition=true] .tundra .dijitTooltipContainer {
 }
 html[data-dark-edition=true] .token.shrink-ray {
   background-image: url("img/dark/tokens.png");
-  background-position: 0% 0%;
+  background-position-x: 0%;
   border-radius: unset;
   box-shadow: none !important;
 }
 html[data-dark-edition=true] .token.poison {
   background-image: url("img/dark/tokens.png");
-  background-position: 50% 0%;
+  background-position-x: 50%;
   border-radius: unset;
   box-shadow: none !important;
 }
 html[data-dark-edition=true] .token.smoke-cloud {
   background-image: url("img/dark/tokens.png");
-  background-position: 100% 0%;
+  background-position-x: 100%;
   border-radius: unset;
   box-shadow: none !important;
 }
@@ -3438,33 +3438,38 @@ button .icon, a .icon {
   box-shadow: 1px 1px 1px 1px black;
 }
 .token.shrink-ray {
-  background-position: 0% 0%;
+  background-position-x: 0%;
 }
 .token.poison {
-  background-position: 14.2857142857% 0%;
+  background-position-x: 12.5%;
 }
 .token.smoke-cloud {
-  background-position: 28.5714285714% 0%;
+  background-position-x: 25%;
   box-shadow: 0 0 4px 4px white;
 }
 .token.mimic {
-  background-position: 42.8571428571% 0%;
+  background-position-x: 37.5%;
   box-shadow: 0 0 4px 4px #9cc060;
 }
 .token.alienoid {
-  background-position: 57.1428571429% 0%;
+  background-position-x: 50%;
   box-shadow: 0 0 4px 4px #9cc3e8;
 }
 .token.ufo {
-  background-position: 71.4285714286% 0%;
+  background-position-x: 62.5%;
   box-shadow: 0 0 4px 4px #a7a64a;
 }
 .token.icy-reflection {
-  background-position: 85.7142857143% 0%;
+  background-position-x: 75%;
   box-shadow: 0 0 4px 4px #96e3fb;
 }
 .token.target {
-  background-position: 100% 0%;
+  background-position-x: 87.5%;
+}
+.token.mindbug {
+  background-position-x: 100%;
+  border-radius: unset;
+  box-shadow: none !important;
 }
 
 #skipBuyPhaseWrapper {

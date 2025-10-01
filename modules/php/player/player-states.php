@@ -394,88 +394,6 @@ trait PlayerStateTrait {
         }
     }
 
-    function stResolveEndTurn() {
-        $playerId = $this->getActivePlayerId();
-
-        if ($this->powerUpExpansion->isActive()) {
-            $freezeRayEvolutions = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
-            foreach ($freezeRayEvolutions as $freezeRayEvolution) {
-                $this->giveBackFreezeRay($playerId, $freezeRayEvolution);
-            }
-        }
-
-        // apply end of turn effects (after Selling Cards)
-        
-        // rooting for the underdog
-        $countRootingForTheUnderdog = $this->countCardOfType($playerId, ROOTING_FOR_THE_UNDERDOG_CARD);
-        if ($countRootingForTheUnderdog > 0 && $this->isFewestStars($playerId)) {
-            $this->applyGetPoints($playerId, $countRootingForTheUnderdog, ROOTING_FOR_THE_UNDERDOG_CARD);
-        }
-
-        // energy hoarder
-        $countEnergyHoarder = $this->countCardOfType($playerId, ENERGY_HOARDER_CARD);
-        if ($countEnergyHoarder > 0) {
-            $playerEnergy = $this->getPlayerEnergy($playerId);
-            $points = floor($playerEnergy / 6);
-            if ($points > 0) {
-                $this->applyGetPoints($playerId, $points * $countEnergyHoarder, ENERGY_HOARDER_CARD);
-            }
-        }
-
-        // herbivore
-        $countHerbivore = $this->countCardOfType($playerId, HERBIVORE_CARD);
-        if ($countHerbivore > 0 && $this->isDamageDealtThisTurn($playerId) == 0) {
-            $this->applyGetPoints($playerId, $countHerbivore, HERBIVORE_CARD);
-        }
-
-        // solar powered
-        $countSolarPowered = $this->countCardOfType($playerId, SOLAR_POWERED_CARD);
-        if ($countSolarPowered > 0 && $this->getPlayerEnergy($playerId) == 0) {
-            $this->applyGetEnergy($playerId, $countSolarPowered, SOLAR_POWERED_CARD);
-        }
-
-        // natural selection
-        $this->updateKillPlayersScoreAux();  
-        $countNaturalSelection = $this->countCardOfType($playerId, NATURAL_SELECTION_CARD);
-        if ($countNaturalSelection > 0) {
-            $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-            if ($diceCounts[3] > 0) {
-                $naturalSelectionDamage = new Damage($playerId, $this->getPlayerHealth($playerId), $playerId, NATURAL_SELECTION_CARD);
-                $this->applyDamage($naturalSelectionDamage);
-            }
-        }
-
-        // apply poison
-        $this->updateKillPlayersScoreAux();   
-        
-        $countPoison = $this->getPlayerPoisonTokens($playerId);
-        $damages = [];
-        if ($countPoison > 0) {
-            $damages[] = new Damage($playerId, $countPoison, 0, POISON_SPIT_CARD);
-        }
-
-        $this->goToState(ST_END_TURN, $damages);
-    }
-
-    function stEndTurn() {
-        $playerId = $this->getActivePlayerId();
-
-        if ($this->powerUpExpansion->isActive()) {
-            $EVOLUTION_TYPES_TO_REMOVE = [
-                CAT_NIP_EVOLUTION, 
-                MECHA_BLAST_EVOLUTION,
-            ];
-            foreach($EVOLUTION_TYPES_TO_REMOVE as $evolutionType) {
-                $evolutions = $this->getEvolutionsOfType($playerId, $evolutionType);
-                if (count($evolutions) > 0) {
-                    $this->removeEvolutions($playerId, $evolutions);
-                }
-            }
-        }
-
-        $this->gamestate->nextState('nextPlayer');
-    }
-
     private function activeNextAlivePlayer() {
         if ($this->getRemainingPlayers() < 1) { // to avoid infinite loop
             return $this->getActivePlayerId();
@@ -489,7 +407,7 @@ trait PlayerStateTrait {
         return $playerId;
     }
 
-    private function activateNextPlayer() {
+    public function activateNextPlayer() {
         $frenzyExtraTurnForOpportunist = intval($this->getGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST));
         $playerBeforeFrenzyExtraTurnForOpportunist = intval($this->getGameStateValue(PLAYER_BEFORE_FRENZY_EXTRA_TURN_FOR_OPPORTUNIST));
         if ($frenzyExtraTurnForOpportunist > 0 && !$this->getPlayer($frenzyExtraTurnForOpportunist)->eliminated) {
@@ -512,93 +430,5 @@ trait PlayerStateTrait {
         }
 
         return $playerId;
-    }
-
-    function stNextPlayer() {
-        $playerId = $this->getActivePlayerId();
-
-        $this->removeDiscardCards($playerId);
-
-        if (!$this->getPlayer($playerId)->eliminated) {
-            $this->applyEndOfEachMonsterCards();
-        }
-
-        // end of the extra turn with Builders' uprising (without die of fate)
-        if (intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) {
-            $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
-        } 
-
-        $killPlayer = $this->killDeadPlayers();
-
-        if ($killPlayer) {
-            $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
-            $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
-            $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);
-            $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0);
-            $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
-
-            $playerId = $this->activateNextPlayer();
-        } else {
-            $anotherTimeWithCard = 0;
-
-            $freezeTimeMaxTurns = intval($this->getGameStateValue(FREEZE_TIME_MAX_TURNS));
-            $freezeTimeCurrentTurn = intval($this->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
-
-            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 1000 + BUILDERS_UPRISING_CURSE_CARD; // Builders' uprising
-                $this->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 2); 
-            }
-
-            if ($anotherTimeWithCard == 0 && $freezeTimeMaxTurns > 0 && $freezeTimeCurrentTurn == $freezeTimeMaxTurns) {
-                $this->setGameStateValue(FREEZE_TIME_CURRENT_TURN, 0);
-                $this->setGameStateValue(FREEZE_TIME_MAX_TURNS, 0);
-            } if ($freezeTimeCurrentTurn < $freezeTimeMaxTurns) { // extra turn for current player with one less die
-                $anotherTimeWithCard = FREEZE_TIME_CARD;
-                $this->incGameStateValue(FREEZE_TIME_CURRENT_TURN, 1);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FINAL_PUSH_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 2000 + FINAL_PUSH_WICKEDNESS_TILE; // Final push
-                $this->setGameStateValue(FINAL_PUSH_EXTRA_TURN, 0); 
-                $finalPushTile = $this->wickednessExpansion->getWickednessTileByType($playerId, FINAL_PUSH_WICKEDNESS_TILE);
-                $this->wickednessExpansion->removeWickednessTiles($playerId, [$finalPushTile]);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = FRENZY_CARD; // Frenzy
-                $this->setGameStateValue(FRENZY_EXTRA_TURN, 0);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(PANDA_EXPRESS_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 3000 + PANDA_EXPRESS_EVOLUTION;
-                $this->setGameStateValue(PANDA_EXPRESS_EXTRA_TURN, 0);
-            }
-
-            if ($anotherTimeWithCard == 0 && intval($this->getGameStateValue(JUNGLE_FRENZY_EXTRA_TURN)) == 1) { // extra turn for current player
-                $anotherTimeWithCard = 3000 + JUNGLE_FRENZY_EVOLUTION;
-                $this->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 0);
-
-                $jungleFrenzyEvolutions = $this->getEvolutionsOfType($playerId, JUNGLE_FRENZY_EVOLUTION);
-                $this->removeEvolutions($playerId, $jungleFrenzyEvolutions);
-            }
-            
-            if ($anotherTimeWithCard > 0) {
-                $this->notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
-                    'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
-                    'card_name' => $anotherTimeWithCard,
-                ]);
-            } else {
-                $playerId = $this->activateNextPlayer();
-            }
-        }
-
-        if ($this->getRemainingPlayers() <= 1 || $this->getMaxPlayerScore() >= MAX_POINT) {
-            $this->jumpToState(ST_END_SCORE);
-        } else {
-            $this->giveExtraTime($playerId);
-
-            $this->gamestate->nextState('nextPlayer');
-        }
     }
 }

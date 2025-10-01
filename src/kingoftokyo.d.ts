@@ -124,6 +124,7 @@ interface KingOfTokyoPlayer extends Player {
     player_no: string;
     poisonTokens: number;
     shrinkRayTokens: number;
+    mindbugTokens: number;
     rapidHealing: boolean;
     mothershipSupport: boolean;
     mothershipSupportUsed: boolean;
@@ -247,6 +248,7 @@ interface KingOfTokyoGame extends GameGui {
     addAutoSkipPlayEvolutionButton(): void;
     pickMonster(monster: number): void;
     showEvolutionsPopin(cardsTypes: number[], title: string): void;
+    getNoExtraTurnWarningMessage(): string;
 }
 
 interface EnteringPickMonsterArgs {
@@ -359,6 +361,7 @@ interface EnteringPrepareResolveDiceArgs extends EnteringDiceArgs {
 interface EnteringTakeWickednessTileArgs extends EnteringDiceArgs {
     level: number;
     canTake: boolean;
+    noExtraTurnWarning: number[];
 }
 
 interface HealablePlayer {
@@ -424,6 +427,7 @@ interface EnteringBuyCardArgs {
     warningIds: { [cardId: number]: string };
     cardsCostsSuperiorAlienTechnology: { [cardId: number]: number };
     cardsCostsBobbingForApples: { [cardId: number]: number };
+    noExtraTurnWarning: number[];
 }
 
 interface EnteringCancelDamageArgs {

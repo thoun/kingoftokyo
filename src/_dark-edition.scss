@@ -317,21 +317,21 @@ html[data-dark-edition="true"] {
     .token {    
         &.shrink-ray {
             background-image: url('img/dark/tokens.png');
-            background-position: 0% 0%;
+            background-position-x: 0%;
             border-radius: unset;
             box-shadow: none !important;
         }
     
         &.poison {
             background-image: url('img/dark/tokens.png');
-            background-position: 50% 0%;
+            background-position-x: 50%;
             border-radius: unset;
             box-shadow: none !important;
         }
     
         &.smoke-cloud {
             background-image: url('img/dark/tokens.png');
-            background-position: 100% 0%;
+            background-position-x: 100%;
             border-radius: unset;
             box-shadow: none !important;
         }

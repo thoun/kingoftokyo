@@ -315,9 +315,6 @@ trait EvolutionCardsUtilTrait {
                     $this->goToState($this->redirectAfterHalfMovePhase());
                 }
                 break;
-            case JUNGLE_FRENZY_EVOLUTION:
-                $this->setGameStateValue(JUNGLE_FRENZY_EXTRA_TURN, 1);
-                break;
             case GIANT_BANANA_EVOLUTION:
                 $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
                 break;

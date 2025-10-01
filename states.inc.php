@@ -14,9 +14,6 @@
  *
  */
 
-use Bga\GameFramework\GameStateBuilder;
-use Bga\GameFramework\StateType;
-
 /*
    Game state machine is a tool used to facilitate game developpement by doing common stuff that can be set up
    in a very easy way from this configuration file.
@@ -54,53 +51,6 @@ use Bga\GameFramework\StateType;
 
 require_once("modules/php/constants.inc.php");
 
-$basicGameStates = [
-
-    // The initial state. Please do not modify.
-    ST_BGA_GAME_SETUP => GameStateBuilder::gameSetup(ST_START)->build(),
-
-    ST_START => GameStateBuilder::create()
-        ->name("start")
-        ->description("")
-        ->type(StateType::GAME)
-        ->action("stStart")
-        ->build(),
-
-    ST_PICK_MONSTER_NEXT_PLAYER => GameStateBuilder::create()
-        ->name("pickMonsterNextPlayer")
-        ->description("")
-        ->type(StateType::GAME)
-        ->action("stPickMonsterNextPlayer")
-        ->transitions([
-            "nextPlayer" => ST_PLAYER_PICK_MONSTER,
-        ])
-        ->build(),
-
-    ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER => GameStateBuilder::create()
-        ->name("chooseInitialCardNextPlayer")
-        ->description("")
-        ->type(StateType::GAME)
-        ->action("stChooseInitialCardNextPlayer")
-        ->transitions([
-            "nextPlayer" => ST_PLAYER_CHOOSE_INITIAL_CARD,
-            "start" => ST_START_GAME,
-        ])
-        ->build(),
-
-    ST_NEXT_PLAYER => GameStateBuilder::create()
-        ->name("nextPlayer")
-        ->description("")
-        ->type(StateType::GAME)
-        ->action("stNextPlayer")
-        ->updateGameProgression(true)
-        ->transitions([
-            "nextPlayer" => ST_PLAYER_BEFORE_START_TURN, 
-        ])
-        ->build(),
-
-    ST_END_SCORE => GameStateBuilder::endScore()->build(),
-];
-
 $playerActionsGameStates = [
 
     ST_PLAYER_PICK_MONSTER => [
@@ -132,16 +82,6 @@ $playerActionsGameStates = [
         ],
     ],
 
-    ST_NEXT_PICK_EVOLUTION_DECK => [
-        "name" => "nextPickEvolutionForDeck",
-        "description" => "",
-        "type" => "game",
-        "action" => "stNextPickEvolutionForDeck",
-        "transitions" => [ 
-            "nextPick" => ST_MULTIPLAYER_PICK_EVOLUTION_DECK,
-        ],
-    ],
-
 
     ST_PLAYER_CHOOSE_INITIAL_CARD => [
         "name" => "chooseInitialCard",
@@ -160,16 +100,6 @@ $playerActionsGameStates = [
             "start" => ST_START_GAME,
         ],
 
-    ],
-
-    ST_START_GAME => [
-        "name" => "startGame",
-        "description" => "",
-        "type" => "game",
-        "action" => "stStartGame",
-        "transitions" => [ 
-            "start" => ST_PLAYER_BEFORE_START_TURN,
-        ],
     ],
 
     ST_PLAYER_BEFORE_START_TURN => [
@@ -327,17 +257,6 @@ $playerActionsGameStates = [
             "end" => ST_MULTIPLAYER_ASK_MINDBUG,
         ],
     ],
-
-    ST_MULTIPLAYER_ASK_MINDBUG => GameStateBuilder::create()
-        ->name('askMindbug')
-        ->description(/*TODOMB clienttranslate*/('Player with Mindbug tokens can mindbug ${player_name}'))
-        ->descriptionMyTurn(/*TODOMB clienttranslate*/('${you} can mindbug ${player_name}'))
-        ->type(StateType::MULTIPLE_ACTIVE_PLAYER)
-        ->action('stAskMindbug')
-        ->args('argAskMindbug')
-        ->possibleActions([ 'actMindbug', 'actPassMindbug' ])
-        ->transitions(['end' => ST_RESOLVE_DIE_OF_FATE])
-        ->build(),
 
     ST_RESOLVE_DIE_OF_FATE => [
         "name" => "resolveDieOfFate",
@@ -844,12 +763,6 @@ $playerActionsGameStates = [
         "transitions" => [],
     ],
 
-    ST_END_MINDBUG => GameStateBuilder::create()
-        ->name('endMindbug')
-        ->type(StateType::GAME)
-        ->action('stEndMindbug')
-        ->build(),
-
     ST_MULTIPLAYER_BEFORE_END_TURN => [
         "name" => "beforeEndTurn",
         "description" => clienttranslate('${actplayer} may activate an Evolution card'),
@@ -863,35 +776,6 @@ $playerActionsGameStates = [
             "end" => ST_AFTER_BEFORE_END_TURN, // for zombie
         ],
     ],
-
-    ST_AFTER_BEFORE_END_TURN => [
-        "name" => "afterBeforeEndTurn",
-        "description" => "",
-        "type" => "game",
-        "action" => "stAfterBeforeEndTurn",
-        "transitions" => [],
-    ],
-
-    ST_RESOLVE_END_TURN => [
-        "name" => "resolveEndTurn",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveEndTurn",
-        "transitions" => [ 
-            "cancelDamage" => ST_MULTIPLAYER_CANCEL_DAMAGE,
-            "endTurn" => ST_END_TURN,
-        ],
-    ],
-
-    ST_END_TURN => [
-        "name" => "endTurn",
-        "description" => "",
-        "type" => "game",
-        "action" => "stEndTurn",
-        "transitions" => [ 
-            "nextPlayer" => ST_NEXT_PLAYER,
-        ],
-    ],
 ];
  
-$machinestates = $basicGameStates + $playerActionsGameStates;
+$machinestates = $playerActionsGameStates;

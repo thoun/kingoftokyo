@@ -6477,8 +6477,8 @@ var KingOfTokyo = /** @class */ (function (_super) {
         var _a;
         log('Entering state: ' + stateName, args.args);
         this.showActivePlayer(Number(args.active_player));
-        var pickMonsterPhase = ['pickMonster', 'pickMonsterNextPlayer'].includes(stateName);
-        var pickEvolutionForDeckPhase = ['pickEvolutionForDeck', 'nextPickEvolutionForDeck'].includes(stateName);
+        var pickMonsterPhase = ['pickMonster', 'PickMonsterNextPlayer'].includes(stateName);
+        var pickEvolutionForDeckPhase = ['pickEvolutionForDeck', 'NextPickEvolutionForDeck'].includes(stateName);
         if (!pickMonsterPhase) {
             this.removeMonsterChoice();
         }
@@ -6505,7 +6505,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.onEnteringChooseInitialCard(args.args);
                 this.showEvolutionsPopinPlayerButtons();
                 break;
-            case 'startGame':
+            case 'StartGame':
                 this.showEvolutionsPopinPlayerButtons();
                 break;
             case 'changeMimickedCard':
@@ -6588,7 +6588,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'answerQuestion':
                 this.onEnteringAnswerQuestion(args.args);
                 break;
-            case 'endTurn':
+            case 'EndTurn':
                 this.setDiceSelectorVisibility(false);
                 this.onEnteringEndTurn();
                 break;
@@ -7411,7 +7411,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                         this.addActionButton('skipRerollDice_button', _("Skip"), function () { return _this.rerollDice([]); });
                     }
                     break;
-                case 'askMindbug':
+                case 'AskMindbug':
                     this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug!'), function () { return _this.bgaPerformAction('actMindbug'); }, { color: 'alert' });
                     this.statusBar.addActionButton(_('Skip'), function () { return _this.bgaPerformAction('actPassMindbug'); });
                     break;
@@ -7427,18 +7427,15 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 case 'prepareResolveDice':
                     var argsPrepareResolveDice = args;
                     if (argsPrepareResolveDice.hasEncasedInIce) {
-                        this.addActionButton('skipFreezeDie_button', _("Skip"), function () { return _this.skipFreezeDie(); });
+                        this.statusBar.addActionButton(_("Skip"), function () { return _this.skipFreezeDie(); });
                     }
                     break;
                 case 'beforeResolveDice':
-                    this.addActionButton('skipBeforeResolveDice_button', _("Skip"), function () { return _this.skipBeforeResolveDice(); });
+                    this.statusBar.addActionButton(_("Skip"), function () { return _this.skipBeforeResolveDice(); });
                     break;
                 case 'takeWickednessTile':
-                    this.addActionButton('skipTakeWickednessTile_button', _("Skip"), function () { return _this.skipTakeWickednessTile(); });
                     var argsTakeWickednessTile = args;
-                    if (!argsTakeWickednessTile.canTake) {
-                        this.startActionTimer('skipTakeWickednessTile_button', ACTION_TIMER_DURATION);
-                    }
+                    this.statusBar.addActionButton(_("Skip"), function () { return _this.skipTakeWickednessTile(); }, { autoclick: !argsTakeWickednessTile.canTake && this.getGameUserPreference(202) != 2 });
                     break;
                 case 'leaveTokyo':
                     var label = _("Stay in Tokyo");
@@ -7802,11 +7799,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 _this.addTooltipHtml("playerhand-counter-wrapper-".concat(player.id), _("Number of Evolution cards in hand."));
                 document.getElementById("see-monster-evolution-player-".concat(playerId)).addEventListener('click', function () { return _this.showPlayerEvolutions(playerId); });
             }
-            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-target-tokens-".concat(player.id, "\" class=\"player-token target-tokens\"></div>\n                <div id=\"player-board-shrink-ray-tokens-").concat(player.id, "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-").concat(player.id, "\" class=\"player-token poison-tokens\"></div>\n            </div>"), "player_board_".concat(player.id));
+            dojo.place("<div class=\"player-tokens\">\n                <div id=\"player-board-target-tokens-".concat(player.id, "\" class=\"player-token target-tokens\"></div>\n                <div id=\"player-board-shrink-ray-tokens-").concat(player.id, "\" class=\"player-token shrink-ray-tokens\"></div>\n                <div id=\"player-board-poison-tokens-").concat(player.id, "\" class=\"player-token poison-tokens\"></div>\n                <div id=\"player-board-mindbug-tokens-").concat(player.id, "\" class=\"player-token mindbug-tokens\"></div>\n            </div>"), "player_board_".concat(player.id));
             if (!eliminated) {
                 _this.setShrinkRayTokens(playerId, player.shrinkRayTokens);
                 _this.setPoisonTokens(playerId, player.poisonTokens);
                 _this.setPlayerTokens(playerId, gamedatas.targetedPlayer == playerId ? 1 : 0, 'target');
+                _this.setPlayerTokens(playerId, player.mindbugTokens, 'mindbug');
             }
             dojo.place("<div id=\"player-board-monster-figure-".concat(player.id, "\" class=\"monster-figure monster").concat(player.monster, "\"><div class=\"kot-token\"></div></div>"), "player_board_".concat(player.id));
             if (player.location > 0) {
@@ -7923,7 +7921,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
         else if (stateName === 'buyCard' || stateName === 'opportunistBuyCard') {
             var buyCardArgs = this.gamedatas.gamestate.args;
             var warningIcon = !warningChecked && buyCardArgs.warningIds[card.id];
-            if (warningIcon) {
+            if (!warningChecked && buyCardArgs.noExtraTurnWarning.includes(card.type)) {
+                this.confirmationDialog(this.getNoExtraTurnWarningMessage(), function () { return _this.onVisibleCardClick(stock, card, from, true); });
+            }
+            else if (warningIcon) {
                 this.confirmationDialog(formatTextIcons(dojo.string.substitute(_("Are you sure you want to buy that card? You won't gain ${symbol}"), { symbol: warningIcon })), function () { return _this.onVisibleCardClick(stock, card, from, true); });
             }
             else {
@@ -8021,17 +8022,18 @@ var KingOfTokyo = /** @class */ (function (_super) {
             var args_2 = this.gamedatas.gamestate.args;
             if (args_2.question.code === 'GazeOfTheSphinxSnake') {
                 this.gazeOfTheSphinxDiscardEvolution(Number(card.id));
+                this.gazeOfTheSphinxDiscardEvolution(Number(card.id));
                 return;
             }
         }
         else if (stateName === 'stealCostumeCard') {
             this.onSelectGiftEvolution(card.id);
+            this.onSelectGiftEvolution(card.id);
             return;
         }
         var args = this.gamedatas.gamestate.args;
         if ((_a = args.noExtraTurnWarning) === null || _a === void 0 ? void 0 : _a.includes(card.type)) {
-            this.confirmationDialog('TODOMB', //this.getNoExtraTurnWarningMessage(), 
-            function () { return _this.playEvolution(card.id); });
+            this.confirmationDialog(this.getNoExtraTurnWarningMessage(), function () { return _this.playEvolution(card.id); });
         }
         else {
             this.playEvolution(card.id);
@@ -8457,6 +8459,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
             buyCardFromDiscardDialog.destroy();
         });
     };
+    KingOfTokyo.prototype.getNoExtraTurnWarningMessage = function () {
+        return _('As you are in a Mindbug turn, you cannot befenit from the extra turn effect');
+    };
     KingOfTokyo.prototype.pickMonster = function (monster) {
         if (!this.checkAction('pickMonster')) {
             return;
@@ -8732,11 +8737,8 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.takeWickednessTile = function (id) {
-        if (!this.checkAction('takeWickednessTile')) {
-            return;
-        }
-        this.takeAction('takeWickednessTile', {
-            id: id
+        this.bgaPerformAction('takeWickednessTile', {
+            id: id,
         });
     };
     KingOfTokyo.prototype.skipTakeWickednessTile = function () {
@@ -9347,6 +9349,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             ['ownedEvolutions', 1],
             ['resurrect', 1],
             ['mindbugPlayer', 1],
+            ['setPlayerCounter', 1],
             ['log500', 500],
         ];
         notifs.forEach(function (notif) {
@@ -9813,6 +9816,11 @@ var KingOfTokyo = /** @class */ (function (_super) {
             (_b = document.getElementById('mindbug-notice')) === null || _b === void 0 ? void 0 : _b.remove();
         }
     };
+    KingOfTokyo.prototype.notif_setPlayerCounter = function (args) {
+        if (args.type === 'mindbugTokens') {
+            this.setPlayerTokens(args.playerId, args.value, 'mindbug');
+        }
+    };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {
         var _a;
         if (delay === void 0) { delay = 0; }
@@ -9939,6 +9947,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
             this.removeAutoLeaveUnderButton();
         }
         this.setShrinkRayTokens(playerId, 0);
+        this.setPlayerTokens(playerId, 0, 'mindbug');
         this.setPoisonTokens(playerId, 0);
         if (this.isCthulhuExpansion()) {
             this.setCultists(playerId, 0, false);

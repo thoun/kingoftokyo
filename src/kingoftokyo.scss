@@ -429,40 +429,46 @@ button, a {
   box-shadow: 1px 1px 1px 1px black;
 
   &.shrink-ray {
-    background-position: #{0 * 100% / 7} 0%;
+    background-position-x: #{0 * 100% / 8};
   }
 
   &.poison {
-    background-position: #{1 * 100% / 7} 0%;
+    background-position-x: #{1 * 100% / 8};
   }
 
   &.smoke-cloud {
-    background-position: #{2 * 100% / 7} 0%;
+    background-position-x: #{2 * 100% / 8};
     box-shadow: 0 0 4px 4px white;
   }
 
   &.mimic {
-    background-position: #{3 * 100% / 7} 0%;
+    background-position-x: #{3 * 100% / 8};
     box-shadow: 0 0 4px 4px #9cc060;
   }
 
   &.alienoid {
-    background-position: #{4 * 100% / 7} 0%;
+    background-position-x: #{4 * 100% / 8};
     box-shadow: 0 0 4px 4px #9cc3e8;
   }
 
   &.ufo {
-    background-position: #{5 * 100% / 7} 0%;
+    background-position-x: #{5 * 100% / 8};
     box-shadow: 0 0 4px 4px #a7a64a;
   }
 
   &.icy-reflection {
-    background-position: #{6 * 100% / 7} 0%;
+    background-position-x: #{6 * 100% / 8};
     box-shadow: 0 0 4px 4px #96e3fb;
   }
 
   &.target {
-    background-position: #{7 * 100% / 7} 0%;
+    background-position-x: #{7 * 100% / 8};
+  }
+    
+  &.mindbug {
+    background-position-x: #{8 * 100% / 8};
+    border-radius: unset;
+    box-shadow: none !important;
   }
 }
 
