@@ -14,7 +14,10 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 const EVOLUTION_CARD_CLASSES = [
+    // Cyber Kitty
     MEGA_PURR_EVOLUTION => 'MegaPurr',
+    ELECTRO_SCRATCH_EVOLUTION => 'ElectroScratch',
+    // The King
     JUNGLE_FRENZY_EVOLUTION => 'JungleFrenzy',
 ];
 

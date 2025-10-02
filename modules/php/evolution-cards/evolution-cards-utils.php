@@ -298,13 +298,6 @@ trait EvolutionCardsUtilTrait {
                 $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId);
                 break;
             // Cyber Kitty
-            case ELECTRO_SCRATCH_EVOLUTION:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                $damages = [];
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 1, $playerId, $logCardType);
-                }
-                return $damages;
             case FELINE_MOTOR_EVOLUTION:
                 $this->applyFelineMotor($playerId);
                 break;
