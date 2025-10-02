@@ -2,6 +2,7 @@
 namespace KOT\Objects;
 
 use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
+use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 
@@ -32,7 +33,7 @@ class Damage {
     public /*int*/ $remainingDamage; // calculated from initialDamage, can be reduced by Camouflage, Robot, ...
     public /*int*/ $effectiveDamage = 0; // calculated from remainingDamage, if > 0, add Devil, ... Only set when applied
 
-    public function __construct(int $playerId, int $damageAmount, int $damageDealerId, int | PowerCard | CurseCard $cardType, $clawDamage = null) {
+    public function __construct(int $playerId, int $damageAmount, int $damageDealerId, int | PowerCard | CurseCard | EvolutionCard $cardType, $clawDamage = null) {
         $this->playerId = $playerId;
         $this->damage = $damageAmount;
         $this->damageDealerId = $damageDealerId;
@@ -45,6 +46,9 @@ class Damage {
         }
         if ($cardType instanceof WickednessTile) {
             $cardType = 2000 + $cardType->type;
+        }
+        if ($cardType instanceof EvolutionCard) {
+            $cardType = 3000 + $cardType->type;
         }
         $this->cardType = $cardType;
         $this->giveShrinkRayToken = $clawDamage !== null ? $clawDamage->shrinkRayTokens : 0;
