@@ -213,7 +213,7 @@ trait PlayerUtilTrait {
         return $killActive;
     }
 
-    function useRapidCultist(int $type) {
+    function actUseRapidCultist(int $type) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->cthulhuExpansion->applyUseRapidCultist($playerId, $type);

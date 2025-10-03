@@ -4,6 +4,7 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use KOT\Objects\Damage;
 
@@ -18,9 +19,7 @@ trait CurseCardsActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */   
   	
-    public function giveSymbolToActivePlayer(int $symbol) {
-        $this->checkAction('giveSymbolToActivePlayer');  
-
+    public function actGiveSymbolToActivePlayer(int $symbol) {
         $playerId = $this->getCurrentPlayerId(); 
         $activePlayerId = $this->getActivePlayerId(); 
         
@@ -35,16 +34,13 @@ trait CurseCardsActionTrait {
         }
     }
 
-    function discardDie(int $dieId) {
-        $this->checkAction('discardDie');  
-
+    function actDiscardDie(int $dieId) {
         $this->anubisExpansion->applyDiscardDie($dieId);
 
         $this->gamestate->nextState('next');
     }
 
-    function discardKeepCard(int $cardId) {
-        $this->checkAction('discardKeepCard');   
+    function actDiscardKeepCard(int $cardId) {
         $playerId = $this->getActivePlayerId(); 
 
         $card = $this->powerCards->getItemById($cardId);
@@ -53,9 +49,7 @@ trait CurseCardsActionTrait {
         $this->gamestate->nextState('next');
     }
 
-    function giveGoldenScarab(int $playerId) {
-        $this->checkAction('giveGoldenScarab');   
-        
+    function actGiveGoldenScarab(int $playerId) {
         $this->anubisExpansion->changeGoldenScarabOwner($playerId);
 
         $this->gamestate->nextState('next');
@@ -91,10 +85,8 @@ trait CurseCardsActionTrait {
         }
     }
 
-    function giveSymbols(array $symbols) {
-        $this->checkAction('giveSymbols');  
-
-        $playerId = $this->getActivePlayerId(); 
+    function actGiveSymbols(#[IntArrayParam(name: 'symbols')] array $symbols) {
+        $playerId = $this->getCurrentPlayerId(); 
         $playerWithGoldenScarab = $this->anubisExpansion->getPlayerIdWithGoldenScarab();
 
         $this->applyGiveSymbols($symbols, $playerId, $playerWithGoldenScarab, 1000 + PHARAONIC_SKIN_CURSE_CARD);
@@ -105,12 +97,10 @@ trait CurseCardsActionTrait {
             $this->eliminatePlayers($playerId);
         }
 
-        $this->gamestate->nextState('next');
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function selectExtraDie(int $face) {
-        $this->checkAction('selectExtraDie');  
-
+    function actSelectExtraDie(int $face) {
         $playerId = $this->getActivePlayerId(); 
 
         $this->setGameStateValue(RAGING_FLOOD_EXTRA_DIE_SELECTED, 1);

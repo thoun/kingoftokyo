@@ -844,16 +844,19 @@ trait DiceUtilTrait {
         }
     }
   	
-    function rethrowDice(string $diceIds) {
-        if ($diceIds == '') {
+    function rethrowDice(string | array $diceIds) {
+        if ($diceIds === '') {
             throw new \BgaUserException('No dice to reroll');
         }
+        if (gettype($diceIds) === 'string') {
+            $diceIds = explode(',', $diceIds);
+        }
+        $diceCount = count($diceIds);
 
         $playerId = $this->getActivePlayerId();
         $this->DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
-        $this->DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN ($diceIds)");
+        $this->DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN (".implode(',', $diceIds).")");
 
-        $diceCount = count(explode(',', $diceIds));
         $this->incStat($diceCount, 'rethrownDice', $playerId);
 
         $this->throwDice($playerId, false);

@@ -838,9 +838,7 @@ trait CardsActionTrait {
         $this->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
-    function useRapidHealingSync(int $cultistCount, int $rapidHealingCount) {
-        $this->checkAction('useRapidHealingSync');
-
+    function actUseRapidHealingSync(int $cultistCount, int $rapidHealingCount) {
         $playerId = $this->getCurrentPlayerId();
         $intervention = $this->getDamageIntervention();
 

@@ -2,6 +2,7 @@
 
 namespace KOT\States;
 
+use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 
@@ -39,9 +40,7 @@ trait InitialCardTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function chooseInitialCard(/*int | null*/ $costumeId, /*int | null*/ $evolutionId) {
-        $this->checkAction('chooseInitialCard');
-
+    function actChooseInitialCard(#[IntParam(name: 'id')] ?int $costumeId, ?int $evolutionId) { // TODOMB test!!!
         $playerId = $this->getActivePlayerId();
 
         $args = $this->argChooseInitialCard();

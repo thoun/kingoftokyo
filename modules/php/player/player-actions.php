@@ -4,6 +4,9 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFramework\Actions\Types\BoolParam;
+use Bga\GameFramework\Actions\Types\IntArrayParam;
+use Bga\GameFramework\Actions\Types\IntParam;
 use KOT\Objects\Damage;
 
 trait PlayerActionTrait {
@@ -17,10 +20,7 @@ trait PlayerActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function endTurn($skipActionCheck = false) {
-        if (!$skipActionCheck) {            
-            $this->checkAction('endTurn');
-        }
+    function actEndTurn() {
         
         $playerId = $this->getActivePlayerId();
         $this->removeDiscardCards($playerId);
@@ -35,9 +35,7 @@ trait PlayerActionTrait {
         ]);
     }
 
-    function stayInTokyo() {
-        $this->checkAction('stay');
-
+    function actStay() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->notifStayInTokyo($playerId);
@@ -58,9 +56,7 @@ trait PlayerActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
     }
 
-    function actionLeaveTokyo(/*int | null*/ $useCard) {
-        $this->checkAction('leave');
-
+    function actLeave(?int $useCard) {
         $playerId = $this->getCurrentPlayerId();
 
         $this->yieldTokyo($playerId, $useCard);
@@ -82,7 +78,7 @@ trait PlayerActionTrait {
         $this->checkOnlyChestThumpingRemaining();
     }
 
-    function setSkipBuyPhase(bool $skipBuyPhase) {
+    function actSetSkipBuyPhase(bool $skipBuyPhase) {
         if ($this->getCurrentPlayerId() == $this->getActivePlayerId()) {
             $this->setGameStateValue(SKIP_BUY_PHASE, $skipBuyPhase ? 1 : 0);
         }
@@ -91,9 +87,7 @@ trait PlayerActionTrait {
         $this->notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
     }
 
-    function useCultist($diceIds) {
-        $this->checkAction('useCultist');
-
+    function actUseCultist(#[IntArrayParam(name: 'diceIds')] $diceIds) {
         $playerId = $this->getActivePlayerId();
 
         if ($this->cthulhuExpansion->getPlayerCultists($playerId) == 0) {

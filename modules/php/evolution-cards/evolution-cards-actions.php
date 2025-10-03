@@ -5,6 +5,8 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFramework\Actions\Types\BoolParam;
+use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use KOT\Objects\Question;
@@ -21,9 +23,7 @@ trait EvolutionCardsActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */  
 
-    function pickEvolutionForDeck(int $id) {
-        $this->checkAction('pickEvolutionForDeck');
-
+    function actPickEvolutionForDeck(int $id) {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->getEvolutionCardById($id);
@@ -41,37 +41,21 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function skipBeforeStartTurn($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipBeforeStartTurn');
-        }        
-
+    function actSkipBeforeStartTurn() {
         $this->goToState($this->redirectAfterBeforeStartTurn());
     }
 
-    function skipBeforeEndTurn($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipBeforeEndTurn');
-        }        
-
+    function actSkipBeforeEndTurn() {
         $this->goToState($this->redirectAfterBeforeEndTurn());
     }
 
-    function skipBeforeEnteringTokyo($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipBeforeEnteringTokyo');
-        }
-
+    function actSkipBeforeEnteringTokyo() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function skipAfterEnteringTokyo($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipAfterEnteringTokyo');
-        }
-
+    function actSkipAfterEnteringTokyo() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->goToState($this->redirectAfterEnterTokyo($playerId));
@@ -95,9 +79,7 @@ trait EvolutionCardsActionTrait {
         
     } 
 
-    function chooseEvolutionCard(int $id) {
-        $this->checkAction('chooseEvolutionCard');
-
+    function actChooseEvolutionCard(int $id) {
         $playerId = $this->getActivePlayerId();
 
         $this->applyChooseEvolutionCard($playerId, $id, false);
@@ -128,7 +110,7 @@ trait EvolutionCardsActionTrait {
         }
     }
 
-    function playEvolution(int $id) {
+    function actPlayEvolution(int $id) {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->getEvolutionCardById($id);
@@ -165,9 +147,7 @@ trait EvolutionCardsActionTrait {
         }
     }
 
-    function giveGiftEvolution(int $id, int $toPlayerId) {
-        $this->checkAction('giveGiftEvolution');
-
+    function actGiveGiftEvolution(int $id, int $toPlayerId) {
         $fromPlayerId = $this->getCurrentPlayerId();
         $evolution = $this->getEvolutionCardById($id);
 
@@ -177,9 +157,7 @@ trait EvolutionCardsActionTrait {
     }
 
 
-    function useYinYang() {
-        $this->checkAction('useYinYang');
-
+    function actUseYinYang() {
         $playerId = $this->getActivePlayerId();
 
         $hasYinYang = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
@@ -192,9 +170,7 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->nextState('changeDie');
     }
     
-    function useInvincibleEvolution(int $evolutionType) {
-        $this->checkAction('useInvincibleEvolution');
-
+    function actUseInvincibleEvolution(int $evolutionType) {
         $playerId = $this->getCurrentPlayerId();
 
         if (!in_array($evolutionType, [DETACHABLE_TAIL_EVOLUTION, RABBIT_S_FOOT_EVOLUTION]) || $this->countEvolutionOfType($playerId, $evolutionType, false, true) == 0) {
@@ -218,9 +194,7 @@ trait EvolutionCardsActionTrait {
         $this->resolveRemainingDamages($intervention, true, false);
     }
     
-    function useCandyEvolution() {
-        $this->checkAction('useCandyEvolution');
-
+    function actUseCandyEvolution() {
         $playerId = $this->getCurrentPlayerId();
 
         if ($this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) == 0) {
@@ -267,9 +241,7 @@ trait EvolutionCardsActionTrait {
         $this->resolveRemainingDamages($intervention, true, false);
     }
   	
-    function putEnergyOnBambooSupply() {
-        $this->checkAction('putEnergyOnBambooSupply');
-
+    function actPutEnergyOnBambooSupply() {
         $playerId = $this->getCurrentPlayerId();
 
         $unusedBambooSupplyCard = $this->getFirstUnusedEvolution($playerId, BAMBOO_SUPPLY_EVOLUTION);
@@ -282,9 +254,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
   	
-    function takeEnergyOnBambooSupply() {
-        $this->checkAction('takeEnergyOnBambooSupply');
-
+    function actTakeEnergyOnBambooSupply() {
         $playerId = $this->getCurrentPlayerId();
 
         $unusedBambooSupplyCard = $this->getFirstUnusedEvolution($playerId, BAMBOO_SUPPLY_EVOLUTION);
@@ -297,18 +267,14 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
 
-    function skipCardIsBought($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipCardIsBought');
-        }
-
+    function actSkipCardIsBought() {
         $playerId = $this->getCurrentPlayerId();
 
         // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function buyCardBamboozle(int $id, int $from) {
+    function actBuyCardBamboozle(int $id, int $from) {
         $currentPlayerId = $this->getCurrentPlayerId();
         $activePlayerId = $this->getActivePlayerId();
 
@@ -326,9 +292,7 @@ trait EvolutionCardsActionTrait {
         $this->applyBuyCard($activePlayerId, $id, $from);
     }
   	
-    public function giveSymbol(int $symbol) {
-        $this->checkAction('giveSymbol');  
-
+    public function actGiveSymbol(int $symbol) {
         $playerId = $this->getCurrentPlayerId(); 
 
         $question = $this->getQuestion();
@@ -343,9 +307,7 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function chooseMimickedEvolution(int $mimickedEvolutionId) {
-        $this->checkAction('chooseMimickedEvolution');
-
+    function actChooseMimickedEvolution(#[IntParam(name: 'id')] int $mimickedEvolutionId) {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->getEvolutionCardById($mimickedEvolutionId);
@@ -361,9 +323,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(-1);
     }
   	
-    public function useChestThumping(int $playerId) {
-        $this->checkAction('useChestThumping');
-
+    public function actUseChestThumping(#[IntParam(name: 'id')] int $playerId) {
         $this->leaveTokyo($playerId);
         
         $this->gamestate->setPlayerNonMultiactive($playerId, 'resume');
@@ -371,17 +331,13 @@ trait EvolutionCardsActionTrait {
         $this->checkOnlyChestThumpingRemaining();
     }
   	
-    public function skipChestThumping() {
-        $this->checkAction('skipChestThumping');
-
+    public function actSkipChestThumping() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'resume');
     }
   	
-    public function chooseFreezeRayDieFace(int $symbol) {
-        $this->checkAction('chooseFreezeRayDieFace');
-
+    public function actChooseFreezeRayDieFace(int $symbol) {
         $question = $this->getQuestion();
         $evolutionId = $question->args->card->id;
         $evolution = $this->getEvolutionCardById($evolutionId);
@@ -395,9 +351,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
   	
-    public function useMiraculousCatch() {
-        $this->checkAction('useMiraculousCatch');
-
+    public function actUseMiraculousCatch() {
         $playerId = $this->getActivePlayerId();
 
         $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
@@ -439,9 +393,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 
-    public function buyCardMiraculousCatch(bool $useSuperiorAlienTechnology) {
-        $this->checkAction('buyCardMiraculousCatch');
-
+    public function actBuyCardMiraculousCatch(bool $useSuperiorAlienTechnology) {
         $playerId = $this->getCurrentPlayerId();
         $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
 
@@ -478,9 +430,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_PLAYER_BUY_CARD);
     }
 
-    public function playCardDeepDive(int $id) {
-        $this->checkAction('playCardDeepDive');
-
+    public function actPlayCardDeepDive(int $id) {
         $playerId = $this->getCurrentPlayerId();
         $card = $this->powerCards->getItemById($id);
 
@@ -520,9 +470,7 @@ trait EvolutionCardsActionTrait {
         }        
     }
   	
-    public function freezeDie(int $id) {
-        $this->checkAction('freezeDie');
-
+    public function actFreezeDie(int $id) {
         $playerId = $this->getCurrentPlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
@@ -541,17 +489,13 @@ trait EvolutionCardsActionTrait {
         $this->goToState($this->redirectAfterPrepareResolveDice());
     }
   	
-    public function skipFreezeDie() {
-        $this->checkAction('skipFreezeDie');
-        
+    public function actSkipFreezeDie() {
         $this->goToState($this->redirectAfterPrepareResolveDice());
     }
 
     
   	
-    public function useExoticArms() {
-        $this->checkAction('useExoticArms');
-
+    public function actUseExoticArms() {
         $playerId = $this->getCurrentPlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
@@ -568,9 +512,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
   	
-    public function skipExoticArms() {
-        $this->checkAction('skipExoticArms');
-
+    public function actSkipExoticArms() {
         $question = $this->getQuestion();
         $evolutionId = $question->args->card->id;
 
@@ -578,17 +520,11 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
   	
-    public function skipBeforeResolveDice($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipBeforeResolveDice');
-        }
-
+    public function actSkipBeforeResolveDice() {
         $this->goToState($this->redirectAfterBeforeResolveDice());
     }    
   	
-    public function giveTarget() {
-        $this->checkAction('giveTarget');
-
+    public function actGiveTarget() {
         $playerId = $this->getCurrentPlayerId();
 
         $question = $this->getQuestion();
@@ -605,17 +541,13 @@ trait EvolutionCardsActionTrait {
         }
     }
   	
-    public function skipGiveTarget() {
-        $this->checkAction('skipGiveTarget');
-
+    public function actSkipGiveTarget() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
   	
-    public function useLightningArmor() {
-        $this->checkAction('useLightningArmor');
-
+    public function actUseLightningArmor() {
         $playerId = $this->getCurrentPlayerId();
 
         $question = $this->getQuestion();
@@ -660,17 +592,13 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
   	
-    public function skipLightningArmor() {
-        $this->checkAction('skipLightningArmor');
-
+    public function actSkipLightningArmor() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
   	
-    public function answerEnergySword(bool $use) {
-        $this->checkAction('answerEnergySword');
-
+    public function actAnswerEnergySword(bool $use) {
         $playerId = $this->getCurrentPlayerId();
 
         $unusedEvolutionCard = $this->getFirstUnusedEvolution($playerId, ENERGY_SWORD_EVOLUTION);
@@ -689,9 +617,7 @@ trait EvolutionCardsActionTrait {
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
   	
-    public function answerSunkenTemple(bool $use) {
-        $this->checkAction('answerSunkenTemple');
-
+    public function actAnswerSunkenTemple(bool $use) {
         $playerId = $this->getCurrentPlayerId();
 
         $unusedEvolutionCard = $this->getFirstUnusedEvolution($playerId, SUNKEN_TEMPLE_EVOLUTION);
@@ -706,9 +632,7 @@ trait EvolutionCardsActionTrait {
         }
     }
   	
-    public function answerElectricCarrot(int $choice) {
-        $this->checkAction('answerElectricCarrot');
-
+    public function actAnswerElectricCarrot(int $choice) {
         $playerId = $this->getCurrentPlayerId();
         
         if (!in_array($choice, [4, 5])) {
@@ -728,9 +652,7 @@ trait EvolutionCardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
   	
-    public function reserveCard(int $id) {
-        $this->checkAction('reserveCard');
-
+    public function actReserveCard(int $id) {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->powerCards->getItemById($id);
@@ -759,17 +681,13 @@ trait EvolutionCardsActionTrait {
         $this->removeStackedStateAndRedirect();
     }
 
-    public function useFelineMotor() {
-        $this->checkAction('useFelineMotor');
-
+    public function actUseFelineMotor() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->applyFelineMotor($playerId);
     }
 
-    public function throwDieSuperiorAlienTechnology() {
-        $this->checkAction('throwDieSuperiorAlienTechnology');
-
+    public function actThrowDieSuperiorAlienTechnology() {
         $playerId = $this->getCurrentPlayerId();
 
         $question = $this->getQuestion();
@@ -806,9 +724,7 @@ trait EvolutionCardsActionTrait {
         return;
     }
 
-    public function freezeRayChooseOpponent(int $toPlayerId) {
-        $this->checkAction('freezeRayChooseOpponent');
-
+    public function actFreezeRayChooseOpponent(#[IntParam(name: 'playerId')] int $toPlayerId) {
         $playerId = $this->getCurrentPlayerId();
 
         $question = $this->getQuestion();
@@ -818,9 +734,7 @@ trait EvolutionCardsActionTrait {
         $this->removeStackedStateAndRedirect();
     }
 
-    public function loseHearts() {
-        $this->checkAction('loseHearts');
-
+    public function actLoseHearts() {
         $playerId = $this->getCurrentPlayerId();
 
         $question = $this->getQuestion();

@@ -60,7 +60,11 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stPickMonster",
         "args" => "argPickMonster",
-        "possibleactions" => [ "pickMonster" ],
+        "possibleactions" => [
+            "pickMonster",
+
+            "actPickMonster",
+        ],
         "transitions" => [
             "next" => ST_PICK_MONSTER_NEXT_PLAYER,
             "start" => ST_START_GAME,
@@ -75,7 +79,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "args" => "argPickEvolutionForDeck",
         //"action" => "stCheerleaderSupport",
-        "possibleactions" => [ "pickEvolutionForDeck" ],
+        "possibleactions" => [ "pickEvolutionForDeck", "actPickEvolutionForDeck" ],
         "transitions" => [
             "next" => ST_NEXT_PICK_EVOLUTION_DECK,
             "end" => ST_NEXT_PICK_EVOLUTION_DECK, // for zombie
@@ -94,7 +98,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stChooseInitialCard",
         "args" => "argChooseInitialCard",
-        "possibleactions" => [ "chooseInitialCard" ],
+        "possibleactions" => [ "chooseInitialCard", "actChooseInitialCard" ],
         "transitions" => [
             "next" => ST_CHOOSE_INITIAL_CARD_NEXT_PLAYER,
             "start" => ST_START_GAME,
@@ -109,7 +113,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stBeforeStartTurn",
         "args" => "argBeforeStartTurn",
-        "possibleactions" => [ "skipBeforeStartTurn" ],
+        "possibleactions" => [ "skipBeforeStartTurn", "actSkipBeforeStartTurn" ],
         "transitions" => [],
     ],
 
@@ -167,7 +171,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "args" => "argGiveSymbolToActivePlayer",
         "action" => "stGiveSymbolToActivePlayer",
-        "possibleactions" => [ "giveSymbolToActivePlayer" ],
+        "possibleactions" => [ "giveSymbolToActivePlayer", "actGiveSymbolToActivePlayer" ],
         "transitions" => [
             "stay" => ST_INITIAL_DICE_ROLL, // needed for elimination
             "end" => ST_INITIAL_DICE_ROLL, // for zombie
@@ -193,7 +197,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stThrowDice",
         "args" => "argThrowDice",
-        "possibleactions" => [ "rethrow", "goToChangeDie", "buyEnergyDrink", "rethrow3", "useSmokeCloud", "useCultist", "rerollDie" ],
+        "possibleactions" => [ "rethrow", "actRethrow", "goToChangeDie", "actGoToChangeDie", "buyEnergyDrink", "actBuyEnergyDrink", "rethrow3", "actRethrow3", "useSmokeCloud", "actUseSmokeCloud", "useCultist", "actUseCultist", "rerollDie", "actRerollDie", "useRapidCultist", "actUseRapidCultist" ],
         "transitions" => [
             "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
             "psychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
@@ -208,7 +212,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stChangeDie",
         "args" => "argChangeDie",
-        "possibleactions" => [ "changeDie", "resolve", "rethrow3changeDie", "useYinYang" ],
+        "possibleactions" => [ "changeDie", "actChangeDie", "resolve", "actResolve", "rethrow3changeDie", "actRethrow3ChangeDie", "useYinYang", "actUseYinYang" ],
         "transitions" => [
             "changeDie" => ST_PLAYER_CHANGE_DIE,
             "changeDieWithPsychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
@@ -224,7 +228,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stChangeActivePlayerDie",
         "args" => "argChangeActivePlayerDie",
-        "possibleactions" => [ "psychicProbeRollDie", "changeActivePlayerDie", "psychicProbeSkip", "changeActivePlayerDieSkip", "rethrow3psychicProbe" ],
+        "possibleactions" => [ "psychicProbeRollDie", "actPsychicProbeRollDie", "changeActivePlayerDie", "psychicProbeSkip", "actPsychicProbeSkip", "changeActivePlayerDieSkip", "actChangeActivePlayerDieSkip", "rethrow3psychicProbe", "actRethrow3PsychicProbe" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
             "end" => ST_PREPARE_RESOLVE_DICE,
@@ -241,7 +245,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stPrepareResolveDice",
         "args" => "argPrepareResolveDice",
-        "possibleactions" => [ "freezeDie", "skipFreezeDie" ],
+        "possibleactions" => [ "freezeDie", "actFreezeDie", "skipFreezeDie", "actSkipFreezeDie" ],
         "transitions" => [],
     ],
 
@@ -275,7 +279,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stDiscardDie",
         "args" => "argDiscardDie",
-        "possibleactions" => [ "discardDie" ],
+        "possibleactions" => [ "discardDie", "actDiscardDie" ],
         "transitions" => [
             "next" => ST_RESOLVE_DICE,
         ],
@@ -287,7 +291,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} must discard a [keep] card'),
         "type" => "activeplayer",
         "args" => "argDiscardKeepCard",
-        "possibleactions" => [ "discardKeepCard" ],
+        "possibleactions" => [ "discardKeepCard", "actDiscardKeepCard" ],
         "transitions" => [
             "next" => ST_RESOLVE_DICE,
         ],
@@ -299,7 +303,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} must give Golden Scarab'),
         "type" => "activeplayer",
         "args" => "argGiveGoldenScarab",
-        "possibleactions" => [ "giveGoldenScarab" ],
+        "possibleactions" => [ "giveGoldenScarab", "actGiveGoldenScarab" ],
         "transitions" => [
             "next" => ST_RESOLVE_DICE,
         ],
@@ -311,7 +315,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} must give 2[Heart]/[Energy]/[Star]'),
         "type" => "activeplayer",
         "args" => "argGiveSymbols",
-        "possibleactions" => [ "giveSymbols" ],
+        "possibleactions" => [ "giveSymbols", "actGiveSymbols" ],
         "transitions" => [
             "next" => ST_RESOLVE_DICE,
         ],
@@ -363,7 +367,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stResolveDice",
         "args" => "argResolveDice",
-        "possibleactions" => [ "stayInHibernation", "leaveHibernation" ],
+        "possibleactions" => [ "stayInHibernation", "actStayInHibernation", "leaveHibernation", "actLeaveHibernation" ],
         "transitions" => [
             "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE, // TODOCY remove and test
         ],
@@ -376,7 +380,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stBeforeResolveDice",
         "args" => "argBeforeResolveDice",
-        "possibleactions" => [ "skipBeforeResolveDice" ],
+        "possibleactions" => [ "skipBeforeResolveDice", "actSkipBeforeResolveDice" ],
         "transitions" => [],
     ],
 
@@ -454,7 +458,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} can select effect of [diceSmash] dice'),
         "type" => "activeplayer",
         "args" => "argResolveSmashDiceAction",
-        "possibleactions" => [ "applySmashDieChoices" ],
+        "possibleactions" => [ "applySmashDieChoices", "actApplySmashDieChoices" ],
         "transitions" => [],
     ],
 
@@ -475,7 +479,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} must choose an Evolution card'),
         "type" => "activeplayer",
         "args" => "argChooseEvolutionCard",
-        "possibleactions" => [ "chooseEvolutionCard" ],
+        "possibleactions" => [ "chooseEvolutionCard", "actChooseEvolutionCard" ],
         "transitions" => [],
     ],
 
@@ -490,7 +494,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stCancelDamage",
         "args" => "argCancelDamage",
-        "possibleactions" => [ "throwCamouflageDice", "useWings", "skipWings", "useRobot", "useElectricArmor", "useSuperJump", "useRapidHealingSync", "rethrow3camouflage", "useInvincibleEvolution", "useCandyEvolution" ],
+        "possibleactions" => [ "throwCamouflageDice", "useWings", "skipWings", "useRobot", "useElectricArmor", "useSuperJump", "useRapidHealingSync", "actUseRapidHealingSync", "rethrow3camouflage", "actRethrow3Camouflage", "useInvincibleEvolution", "actUseInvincibleEvolution", "useCandyEvolution", "actUseCandyEvolution", "useRapidHealing", "actUseRapidHealing", "useMothershipSupport", "actUseMothershipSupport" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
@@ -518,7 +522,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stLeaveTokyo",
         "args" => "argLeaveTokyo",
-        "possibleactions" => [ "stay", "leave", "useChestThumping", "skipChestThumping" ],
+        "possibleactions" => [ "stay", "actStay", "leave", "actLeave", "useChestThumping", "actUseChestThumping", "skipChestThumping", "actSkipChestThumping" ],
         "transitions" => [
             "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
             "end" => ST_LEAVE_TOKYO_APPLY_JETS, // for zombie
@@ -566,7 +570,8 @@ $playerActionsGameStates = [
         "args" => "argBeforeEnteringTokyo",
         "possibleactions" => [ 
             "skipBeforeEnteringTokyo",
-            "useFelineMotor", 
+            "actSkipBeforeEnteringTokyo",
+            "useFelineMotor", "actUseFelineMotor", 
         ],
         "transitions" => [
             'next' => ST_ENTER_TOKYO,
@@ -592,7 +597,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stAfterEnteringTokyo",
         "args" => "argAfterEnteringTokyo",
-        "possibleactions" => [ "skipAfterEnteringTokyo" ],
+        "possibleactions" => [ "skipAfterEnteringTokyo", "actSkipAfterEnteringTokyo" ],
         "transitions" => [],        
     ],
 
@@ -607,7 +612,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argStealCostumeCard",
         "action" => "stStealCostumeCard",
-        "possibleactions" => [ "stealCostumeCard", 'giveGiftEvolution', "endStealCostume" ],
+        "possibleactions" => [ "stealCostumeCard", 'giveGiftEvolution', 'actGiveGiftEvolution', "endStealCostume" ],
         "transitions" => [],
     ],
 
@@ -631,7 +636,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argBuyCard",
         "action" => "stBuyCard",
-        "possibleactions" => [ "buyCard", "goToSellCard", "endTurn", "renew", "useMiraculousCatch" ],
+        "possibleactions" => [ "buyCard", "goToSellCard", "endTurn", "actEndTurn", "renew", "useMiraculousCatch", "actUseMiraculousCatch" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
             //"buyMimicCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD,
@@ -692,7 +697,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stCardIsBought",
         "args" => "argCardIsBought",
-        "possibleactions" => [ "skipCardIsBought" ],
+        "possibleactions" => [ "skipCardIsBought", "actSkipCardIsBought" ],
         "transitions" => [
             "next" => ST_AFTER_WHEN_CARD_IS_BOUGHT,
             "end" => ST_AFTER_WHEN_CARD_IS_BOUGHT, // for zombie
@@ -714,7 +719,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argSellCard",
         "action" => "stSellCard",
-        "possibleactions" => [ "sellCard", "endTurn" ],
+        "possibleactions" => [ "sellCard", "endTurn", "actEndTurn" ],
         "transitions" => [
             "sellCard" => ST_PLAYER_SELL_CARD,
         ]
@@ -731,23 +736,23 @@ $playerActionsGameStates = [
             "chooseMimickedCard",
             'gazeOfTheSphinxDrawEvolution', 'gazeOfTheSphinxGainEnergy',
             'gazeOfTheSphinxDiscardEvolution', 'gazeOfTheSphinxLoseEnergy',
-            "putEnergyOnBambooSupply", "takeEnergyOnBambooSupply",
-            "buyCardBamboozle",
+                         "putEnergyOnBambooSupply", "actPutEnergyOnBambooSupply", "takeEnergyOnBambooSupply", "actTakeEnergyOnBambooSupply",            "buyCardBamboozle", "actBuyCardBamboozle",
             "giveSymbol",
-            "chooseMimickedEvolution",
-            "chooseFreezeRayDieFace",
+            "actGiveSymbol",
+            "chooseMimickedEvolution", "actChooseMimickedEvolution",
+            "chooseFreezeRayDieFace", "actChooseFreezeRayDieFace",
             "buyCardMiraculousCatch", "skipMiraculousCatch",
-            "playCardDeepDive",
-            "useExoticArms", "skipExoticArms",
-            "giveTarget", "skipGiveTarget",
-            "useLightningArmor", "skipLightningArmor",
-            "answerEnergySword",
-            "answerSunkenTemple",
-            "answerElectricCarrot",
-            "reserveCard",
-            "throwDieSuperiorAlienTechnology",
-            "freezeRayChooseOpponent",
-            "loseHearts",
+            "playCardDeepDive", "actPlayCardDeepDive",
+            "useExoticArms", "actUseExoticArms", "skipExoticArms", "actSkipExoticArms",
+            "giveTarget", "actGiveTarget", "skipGiveTarget", "actSkipGiveTarget",
+            "useLightningArmor", "actUseLightningArmor", "skipLightningArmor", "actSkipLightningArmor",
+            "answerEnergySword", "actAnswerEnergySword",
+            "answerSunkenTemple", "actAnswerSunkenTemple",
+            "answerElectricCarrot", "actAnswerElectricCarrot",
+            "reserveCard", "actReserveCard",
+            "throwDieSuperiorAlienTechnology", "actThrowDieSuperiorAlienTechnology",
+            "freezeRayChooseOpponent", "actFreezeRayChooseOpponent",
+            "loseHearts", "actLoseHearts",
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,
@@ -770,7 +775,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stBeforeEndTurn",
         "args" => "argBeforeEndTurn",
-        "possibleactions" => [ "skipBeforeEndTurn" ],
+        "possibleactions" => [ "skipBeforeEndTurn", "actSkipBeforeEndTurn" ],
         "transitions" => [
             "next" => ST_AFTER_BEFORE_END_TURN,
             "end" => ST_AFTER_BEFORE_END_TURN, // for zombie

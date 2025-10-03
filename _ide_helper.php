@@ -93,6 +93,11 @@ namespace Bga\GameFramework\States {
         public \Bga\GameFramework\Legacy $legacy;
         public \Bga\GameFramework\TableOptions $tableOptions;
         public \Bga\GameFramework\UserPreferences $userPreferences;
+        public \Bga\GameFramework\Components\DeckFactory $deckFactory;
+        public \Bga\GameFramework\Components\Counters\CounterFactory $counterFactory;
+        public \Bga\GameFramework\Components\Counters\PlayerCounter $playerScore;
+        public \Bga\GameFramework\Components\Counters\PlayerCounter $playerScoreAux;
+
         public ?\Bga\GameFramework\GameStateMachine $gamestate = null;
 
         public function __construct(
@@ -914,6 +919,13 @@ namespace Bga\GameFramework {
         }
     }
 
+    class NotificationMessage {
+        public function __construct(
+            public string $message = '',
+            public array $args = [],
+        ) {}
+    }
+
     abstract class Table extends \APP_Object
     {
         /**
@@ -945,6 +957,26 @@ namespace Bga\GameFramework {
          * Access the underlying UserPreferences object.
          */
         readonly public \Bga\GameFramework\UserPreferences $userPreferences;
+
+        /**
+         * Access the underlying DeckFactory object.
+         */
+        readonly public \Bga\GameFramework\Components\DeckFactory $deckFactory;
+
+        /**
+         * Access the underlying CounterFactory object.
+         */
+        readonly public \Bga\GameFramework\Components\Counters\CounterFactory $counterFactory;
+
+        /**
+         * Access the underlying PlayerCounter object for player_score.
+         */
+        readonly public \Bga\GameFramework\Components\Counters\PlayerCounter $playerScore;
+
+        /**
+         * Access the underlying PlayerCounter object for player_score_aux.
+         */
+        readonly public \Bga\GameFramework\Components\Counters\PlayerCounter $playerScoreAux;
 
         /**
          * Default constructor.
@@ -1230,7 +1262,6 @@ namespace Bga\GameFramework {
          *     tie_breaker_description: string,
          *     losers_not_raned: bool,
          *     solo_mode_ranked: bool,
-         *     is_beta: int,
          *     is_coop: int,
          *     language_dependency: bool,
          *     player_colors: array<string>,
@@ -1889,6 +1920,8 @@ namespace Bga\GameFramework {
          * To get a Deck instance with `$this->getNew("module.common.deck")`
          * 
          * @param string $objectName must be 'module.common.deck'
+         * 
+         * @deprecated use $this->deckFactory->createDeck($tableName)
          */
         protected function getNew(string $objectName): \Bga\GameFramework\Components\Deck {
             return new \Bga\GameFramework\Components\Deck();
@@ -2223,6 +2256,217 @@ namespace Bga\GameFramework\Components {
             return [];
         }
     }
+
+    final class DeckFactory {
+        /**
+         * Create a Deck component and set the DB table name.
+         * 
+         * @param string $tableName name of the DB table
+         * @return Deck a new Deck object
+         */
+        public function createDeck(string $tableName): Deck {
+            return new Deck();
+        }
+    }
+
+}
+
+namespace Bga\GameFramework\Components\Counters {        
+    /**
+     * Factory to create counters.
+     */
+    final class CounterFactory {
+        /**
+         * Create a PlayerCounter component.
+         * 
+         * @param string $name the name of the counter, used to link it to the JS counter
+         * @param ?int $min the minimum value of the counter (null = no minimum)
+         * @param ?int $max the maximum value of the counter (null = no maximum)
+         * @return PlayerCounter a new PlayerCounter object
+         */
+        public function createPlayerCounter(string $name, ?int $min = 0, ?int $max = null): PlayerCounter {
+            return new PlayerCounter();
+        }
+
+        /**
+         * Create a TableCounter component.
+         * 
+         * @param string $name the name of the counter, used to link it to the JS counter
+         * @param ?int $min the minimum value of the counter (null = no minimum)
+         * @param ?int $max the maximum value of the counter (null = no maximum)
+         * @return TableCounter a new TableCounter object
+         */
+        public function createTableCounter(string $name, ?int $min = 0, ?int $max = null): TableCounter {
+            return new TableCounter();
+        }
+    }
+
+    abstract class OutOfRangeCounterException extends \BgaSystemException
+    {
+    }
+    
+    abstract class UnknownPlayerException extends \BgaSystemException
+    {
+    }
+
+    /**
+     * Represents a player counter that is stored in DB, one value for each player. For example, the money the player have.
+     */
+    abstract class PlayerCounter {
+        /**
+         * Initialize the DB elements. Must be called during game `setupNewGame`.
+         * 
+         * @param int $initialValue, if different than 0
+         */
+        public function initDb(array $playerIds, int $initialValue = 0) {
+        }
+
+        /**
+         * Returns the current value of the counter.
+         * 
+         * @param int $playerId the player id
+         * @return int the value
+         * @throws UnknownPlayerException if $playerId is not in the player ids initialized by initDb
+         */
+        public function get(int $playerId): int {
+            return 0;
+        }
+
+        /**
+         * Set the value of the counter, and send a notif to update the value on the front side.
+         * 
+         * @param int $playerId the player id
+         * @param int $value the new value
+         * @param ?NotificationMessage $message the notif to send to the front, with a message and optional args. Empty message for no log, null for no notif at all (the front will not be updated).
+         * @return int the new value
+         * @throws OutOfRangeCounterException if the value is outside the min/max
+         * @throws UnknownPlayerException if $playerId is not in the player ids initialized by initDb
+         */
+        public function set(int $playerId, int $value, ?\Bga\GameFramework\NotificationMessage $message = new \Bga\GameFramework\NotificationMessage()): int {
+            return 0;
+        }
+
+        /**
+         * Increment the value of the counter, and send a notif to update the value on the front side.
+         * 
+         * Note: if the inc is 0, no notif will be sent.
+         * 
+         * @param int $playerId the player id
+         * @param int $inc the value to add to the current value
+         * @param ?NotificationMessage $message the notif to send to the front, with a message and optional args. Empty message for no log, null for no notif at all (the front will not be updated).
+         * @return int the new value
+         * @throws OutOfRangeCounterException if the value is outside the min/max
+         * @throws UnknownPlayerException if $playerId is not in the player ids initialized by initDb
+         */
+        public function inc(int $playerId, int $inc, ?\Bga\GameFramework\NotificationMessage $message = new \Bga\GameFramework\NotificationMessage()): int {
+            return 0;
+        }
+
+        /**
+         * Return the lowest value.
+         * 
+         * @return int the lowest value
+         */
+        public function getMin(): int {
+            return 0;
+        }
+
+        /**
+         * Return the highest value.
+         * 
+         * @return int the highest value
+         */
+        public function getMax(): int {
+            return 0;
+        }
+        
+        /**
+         * Return the values for each player, as an associative array $playerId => $value.
+         * 
+         * @return array<int, int> the values
+         */
+        public function getAll(): array {
+            return [];
+        }
+
+        /**
+         * Set the value of the counter for all the players, and send a notif to update the value on the front side.
+         * 
+         * @param int $value the new value
+         * @param ?NotificationMessage $message the notif to send to the front, with a message and optional args. Empty message for no log, null for no notif at all (the front will not be updated).
+         * @return int the new value
+         * @throws OutOfRangeCounterException if the value is outside the min/max
+         */
+        public function setAll(int $value, ?\Bga\GameFramework\NotificationMessage $message = new \Bga\GameFramework\NotificationMessage()): int {
+            return 0;
+        }
+
+        /**
+         * Updates the result object, to be used in the `getAllDatas` function.
+         * Will set the value on each $result["players"] sub-array.
+         * 
+         * @param array $result the object to update.
+         * @param ?string $fieldName the field name to set in $result["players"], if different than the counter name.
+         */
+        public function fillResult(array &$result, ?string $fieldName = null) {
+        }
+    }
+
+    /**
+     * Represents a game counter that is stored in DB. For example, the number of rounds.
+     */
+    abstract class TableCounter {
+        /**
+         * Initialize the DB elements. Must be called during game `setupNewGame`.
+         * 
+         * @param int $initialValue, if different than 0
+         */
+        public function initDb(int $initialValue = 0) {}
+
+        /**
+         * Returns the current value of the counter.
+         * 
+         * @return int the value
+         */
+        public function get(): int {
+            return 0;
+        }
+
+        /**
+         * Set the value of the counter, and send a notif to update the value on the front side.
+         * 
+         * @param int $value the new value
+         * @param @param ?NotificationMessage $message the notif to send to the front, with a message and optional args. Empty message for no log, null for no notif at all (the front will not be updated).
+         * @return int the new value
+         * @throws OutOfRangeCounterException if the value is outside the min/max
+         */
+        public function set(int $value, ?\Bga\GameFramework\NotificationMessage $message = new \Bga\GameFramework\NotificationMessage()): int {
+            return 0;
+        }
+
+        /**
+         * Increment the value of the counter, and send a notif to update the value on the front side.
+         * 
+         * Note: if the inc is 0, no notif will be sent.
+         * 
+         * @param int $inc the value to add to the current value
+         * @param @param ?NotificationMessage $message the notif to send to the front, with a message and optional args. Empty message for no log, null for no notif at all (the front will not be updated).
+         * @return int the new value
+         * @throws OutOfRangeCounterException if the value is outside the min/max
+         */
+        public function inc(int $inc, ?\Bga\GameFramework\NotificationMessage $message = new \Bga\GameFramework\NotificationMessage()): int {
+            return 0;
+        }
+
+        /**
+         * Updates the result object, to be used in the `getAllDatas` function.
+         * 
+         * @param array $result the object to update.
+         * @param ?string $fieldName the field name to set in $result, if different than the counter name.
+         */
+        public function fillResult(array &$result, ?string $fieldName = null) {
+        }
+    }
 }
 
 namespace {
@@ -2264,6 +2508,9 @@ namespace {
         return 0;
     }
 
+    /**
+     * @deprecated  use APP_DbObject if you need the logging functions in it, or just don't extends APP_Object otherwise
+     */
     abstract class APP_Object
     {
         /**
@@ -2580,9 +2827,9 @@ namespace {
      * Base class to notify a user error.
      *
      * You must throw this exception when a player wants to do something that they are not allowed to do. The error
-     * message will be shown to the player as a "red message". The error message must be translated, make sure you use
-     * `_()` here and NOT `clientranslate()`. Throwing such an exception is NOT considered a bug, so it is not traced in
-     * BGA error logs.
+     * message will be shown to the player as a "red message". 
+     * The error message should be translated (with clientranslate() and args).
+     * Throwing such an exception is NOT considered a bug, so it is not traced in BGA error logs.
      */
     class BgaUserException extends BgaVisibleSystemException
     {

@@ -2527,84 +2527,48 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public pickMonster(monster: number): void {
-        if(!this.checkAction('pickMonster')) {
-            return;
-        }
-
-        this.takeAction('pickMonster', {
+        this.bgaPerformAction('actPickMonster', {
             monster
         });
     }
 
     public pickEvolutionForDeck(id: number) {
-        if(!this.checkAction('pickEvolutionForDeck')) {
-            return;
-        }
-
-        this.takeAction('pickEvolutionForDeck', {
+        this.bgaPerformAction('actPickEvolutionForDeck', {
             id
         });
     }
 
     public chooseInitialCard(id: number | null, evolutionId: number | null) {
-        if(!this.checkAction('chooseInitialCard')) {
-            return;
-        }
-
-        this.takeAction('chooseInitialCard', {
+        this.bgaPerformAction('actChooseInitialCard', {
             id,
             evolutionId,
         });
     }
 
     public skipBeforeStartTurn() {
-        if(!this.checkAction('skipBeforeStartTurn')) {
-            return;
-        }
-
-        this.takeAction('skipBeforeStartTurn');
+        this.bgaPerformAction('actSkipBeforeStartTurn');
     }
 
     public skipBeforeEndTurn() {
-        if(!this.checkAction('skipBeforeEndTurn')) {
-            return;
-        }
-
-        this.takeAction('skipBeforeEndTurn');
+        this.bgaPerformAction('actSkipBeforeEndTurn');
     }
 
     public skipBeforeEnteringTokyo() {
-        if(!this.checkAction('skipBeforeEnteringTokyo')) {
-            return;
-        }
-
-        this.takeAction('skipBeforeEnteringTokyo');
+        this.bgaPerformAction('actSkipBeforeEnteringTokyo');
     }
 
     public skipAfterEnteringTokyo() {
-        if(!this.checkAction('skipAfterEnteringTokyo')) {
-            return;
-        }
-
-        this.takeAction('skipAfterEnteringTokyo');
+        this.bgaPerformAction('actSkipAfterEnteringTokyo');
     }
 
     public giveSymbolToActivePlayer(symbol: number) {
-        if(!this.checkAction('giveSymbolToActivePlayer')) {
-            return;
-        }
-
-        this.takeAction('giveSymbolToActivePlayer', {
+        this.bgaPerformAction('actGiveSymbolToActivePlayer', {
             symbol
         });
     }
 
     public giveSymbol(symbol: number) {
-        if(!this.checkAction('giveSymbol')) {
-            return;
-        }
-
-        this.takeAction('giveSymbol', {
+        this.bgaPerformAction('actGiveSymbol', {
             symbol
         });
     }
@@ -2614,11 +2578,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public rethrowDice(diceIds: number[]) {
-        if(!this.checkAction('rethrow')) {
-            return;
-        }
-
-        this.takeAction('rethrow', {
+        this.bgaPerformAction('actRethrow', {
             diceIds: diceIds.join(',')
         });
     }
@@ -2626,7 +2586,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public rethrow3() {
         const lockedDice = this.diceManager.getLockedDice();
 
-        this.takeAction('rethrow3', {
+        this.bgaPerformAction('actRethrow3', {
             diceIds: lockedDice.map(die => die.id).join(',')
         });
     }
@@ -2634,28 +2594,28 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public rerollDie(id: number) {
         const lockedDice = this.diceManager.getLockedDice();
 
-        this.takeAction('rerollDie', {
+        this.bgaPerformAction('actRerollDie', {
             id,
             diceIds: lockedDice.map(die => die.id).join(',')
         });
     }
 
     public rethrow3camouflage() {
-        this.takeAction('rethrow3camouflage');
+        this.bgaPerformAction('actRethrow3Camouflage');
     }
 
     public rethrow3psychicProbe() {
-        this.takeAction('rethrow3psychicProbe');
+        this.bgaPerformAction('actRethrow3PsychicProbe');
     }
 
     public rethrow3changeDie() {
-        this.takeAction('rethrow3changeDie');
+        this.bgaPerformAction('actRethrow3ChangeDie');
     }
 
     public buyEnergyDrink() {
         const diceIds = this.diceManager.destroyFreeDice();
 
-        this.takeAction('buyEnergyDrink', {
+        this.bgaPerformAction('actBuyEnergyDrink', {
             diceIds: diceIds.join(',')
         });
     }
@@ -2663,7 +2623,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public useSmokeCloud() {
         const diceIds = this.diceManager.destroyFreeDice();
         
-        this.takeAction('useSmokeCloud', {
+        this.bgaPerformAction('actUseSmokeCloud', {
             diceIds: diceIds.join(',')
         });
     }
@@ -2671,27 +2631,27 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     public useCultist() {
         const diceIds = this.diceManager.destroyFreeDice();
         
-        this.takeAction('useCultist', {
+        this.bgaPerformAction('actUseCultist', {
             diceIds: diceIds.join(',')
         });
     }
 
     public useRapidHealing() {
-        this.takeNoLockAction('useRapidHealing');
+        this.bgaPerformAction('actUseRapidHealing', null, { lock: false, checkAction: false });
     }
 
     public useMothershipSupport() {
-        this.takeNoLockAction('useMothershipSupport');
+        this.bgaPerformAction('actUseMothershipSupport', null, { lock: false, checkAction: false });
     }
 
     public useRapidCultist(type: number) { // 4 for health, 5 for energy
-        this.takeNoLockAction('useRapidCultist', { type });
+        this.bgaPerformAction('actUseRapidCultist', { type }, { lock: false, checkAction: false });
     }
 
     public setSkipBuyPhase(skipBuyPhase: boolean) {
-        this.takeNoLockAction('setSkipBuyPhase', {
-            skipBuyPhase
-        });
+         this.bgaPerformAction('actSetSkipBuyPhase', {
+            skipBuyPhase: skipBuyPhase
+        }, { lock: false, checkAction: false });
     }
 
     public changeDie(id: number, value: number, card: number) {
@@ -2707,11 +2667,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public psychicProbeRollDie(id: number) {
-        if(!this.checkAction('psychicProbeRollDie')) {
-            return;
-        }
-
-        this.takeAction('psychicProbeRollDie', {
+        this.bgaPerformAction('actPsychicProbeRollDie', {
             id
         });
     }
@@ -2726,19 +2682,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             return;
         }
 
-        if(!this.checkAction('goToChangeDie', true)) {
-            return;
-        }
-
-        this.takeAction('goToChangeDie');
+        this.bgaPerformAction('actGoToChangeDie');
     }
 
     public resolveDice() {
-        if(!this.checkAction('resolve')) {
-            return;
-        }
-
-        this.takeAction('resolve');
+        this.bgaPerformAction('actResolve');
     }
 
     public support() {
@@ -2758,12 +2706,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public discardDie(id: number) {
-        if(!this.checkAction('discardDie')) {
-            return;
-        }
-
-        this.takeAction('discardDie', {
-            id
+        this.bgaPerformAction('actDiscardDie', {
+            id: id
         });
     }
 
@@ -2782,49 +2726,29 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public freezeDie(id: number) {
-        if(!this.checkAction('freezeDie')) {
-            return;
-        }
-
-        this.takeAction('freezeDie', {
+        this.bgaPerformAction('actFreezeDie', {
             id
         });
     }
 
     public skipFreezeDie() {
-        if(!this.checkAction('skipFreezeDie')) {
-            return;
-        }
-
-        this.takeAction('skipFreezeDie');
+        this.bgaPerformAction('actSkipFreezeDie');
     }
 
     public discardKeepCard(id: number) {
-        if(!this.checkAction('discardKeepCard')) {
-            return;
-        }
-
-        this.takeAction('discardKeepCard', {
+        this.bgaPerformAction('actDiscardKeepCard', {
             id
         });
     }
 
     public giveGoldenScarab(playerId: number) {
-        if(!this.checkAction('giveGoldenScarab')) {
-            return;
-        }
-
-        this.takeAction('giveGoldenScarab', {
+        this.bgaPerformAction('actGiveGoldenScarab', {
             playerId
         });
     }
 
     public giveSymbols(symbols: number[]) {
-        if(!this.checkAction('giveSymbols')) {
-            return;
-        }
-
-        this.takeAction('giveSymbols', {
+        this.bgaPerformAction('actGiveSymbols', {
             symbols: symbols.join(',')
         });
     }
@@ -2904,42 +2828,23 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public applySmashActions(selections: SmashAction[]) {
-        if(!this.checkAction('applySmashDieChoices')) {
-            return;
-        }
-
         const base64 = btoa(JSON.stringify({ ...selections }));
-
-        this.takeAction('applySmashDieChoices', {
+        this.bgaPerformAction('actApplySmashDieChoices', {
             selections: base64
         });
     }
 
     public chooseEvolutionCard(id: number) {
-        if(!this.checkAction('chooseEvolutionCard')) {
-            return;
-        }
-
-        this.takeAction('chooseEvolutionCard', {
+        this.bgaPerformAction('actChooseEvolutionCard', {
             id
         });
     }
 
     public onStayInTokyo() {
-        if(!this.checkAction('stay')) {
-            return;
-        }
-
-        this.takeAction('stay');
+        this.bgaPerformAction('actStay');
     }
     public onLeaveTokyo(useCard?: number) {
-        if(!this.checkAction('leave')) {
-            return;
-        }
-
-        this.takeAction('leave', {
-            useCard
-        });
+        this.bgaPerformAction('actLeave', { useCard });
     }
 
     public stealCostumeCard(id: number) {
@@ -2982,11 +2887,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public buyCardBamboozle(id: number, from: number) {
-        if(!this.checkAction('buyCardBamboozle')) {
-            return;
-        }
-
-        this.takeAction('buyCardBamboozle', {
+        this.bgaPerformAction('actBuyCardBamboozle', {
             id,
             from
         });
@@ -3003,12 +2904,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public chooseMimickedEvolution(id: number) {
-        if(!this.checkAction('chooseMimickedEvolution')) {
-            return;
-        }
-
-        this.takeAction('chooseMimickedEvolution', {
-            id
+        this.bgaPerformAction('actChooseMimickedEvolution', {
+            id: id
         });
     }
 
@@ -3063,11 +2960,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public skipCardIsBought() {
-        if(!this.checkAction('skipCardIsBought')) {
-            return;
-        }
-
-        this.takeAction('skipCardIsBought');
+        this.bgaPerformAction('actSkipCardIsBought');
     }
 
     public goToSellCard() {
@@ -3087,11 +2980,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public changeActivePlayerDieSkip() {
-        if(!this.checkAction('changeActivePlayerDieSkip')) {
-            return;
-        }
-
-        this.takeAction('changeActivePlayerDieSkip');
+        this.bgaPerformAction('actChangeActivePlayerDieSkip');
     }
 
     public skipChangeMimickedCard() {
@@ -3119,11 +3008,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public onEndTurn() {
-        if(!this.checkAction('endTurn')) {
-            return;
-        }
-
-        this.takeAction('endTurn');
+        this.bgaPerformAction('actEndTurn');
     }
 
     public throwCamouflageDice() {
@@ -3143,21 +3028,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public useInvincibleEvolution(evolutionType: number) {
-        if(!this.checkAction('useInvincibleEvolution')) {
-            return;
-        }
-
-        this.takeAction('useInvincibleEvolution', {
+        this.bgaPerformAction('actUseInvincibleEvolution', {
             evolutionType
         });
     }
 
     public useCandyEvolution() {
-        if(!this.checkAction('useCandyEvolution')) {
-            return;
-        }
-
-        this.takeAction('useCandyEvolution');
+        this.bgaPerformAction('actUseCandyEvolution');
     }
 
     public skipWings() {
@@ -3199,11 +3076,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public useRapidHealingSync(cultistCount: number, rapidHealingCount: number) {
-        if(!this.checkAction('useRapidHealingSync')) {
-            return;
-        }
-
-        this.takeAction('useRapidHealingSync', {
+        this.bgaPerformAction('actUseRapidHealingSync', {
             cultistCount, 
             rapidHealingCount
         });
@@ -3246,56 +3119,36 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     public stayInHibernation() {
-        if(!this.checkAction('stayInHibernation')) {
-            return;
-        }
-
-        this.takeAction('stayInHibernation');
+        this.bgaPerformAction('actStayInHibernation');
     }
     
     public leaveHibernation() {
-        if(!this.checkAction('leaveHibernation')) {
-            return;
-        }
-
-        this.takeAction('leaveHibernation');
+        this.bgaPerformAction('actLeaveHibernation');
     }
 
     public playEvolution(id: number) {
-        this.bgaPerformAction('playEvolution', {
+        this.bgaPerformAction('actPlayEvolution', {
             id
         }, { checkAction: false, lock: false });
     }
 
     public giveGiftEvolution(id: number, toPlayerId: number) {
-        this.takeAction('giveGiftEvolution', {
+        this.bgaPerformAction('actGiveGiftEvolution', {
             id,
             toPlayerId,
         });
     }
     
     public useYinYang() {
-        if(!this.checkAction('useYinYang')) {
-            return;
-        }
-
-        this.takeAction('useYinYang');
+        this.bgaPerformAction('actUseYinYang');
     }
     
     public putEnergyOnBambooSupply() {
-        if(!this.checkAction('putEnergyOnBambooSupply')) {
-            return;
-        }
-
-        this.takeAction('putEnergyOnBambooSupply');
+        this.bgaPerformAction('actPutEnergyOnBambooSupply');
     }
     
     public takeEnergyOnBambooSupply() {
-        if(!this.checkAction('takeEnergyOnBambooSupply')) {
-            return;
-        }
-
-        this.takeAction('takeEnergyOnBambooSupply');
+        this.bgaPerformAction('actTakeEnergyOnBambooSupply');
     }
     
     public gazeOfTheSphinxDrawEvolution() {
@@ -3333,39 +3186,23 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     public useChestThumping(id: number) {
-        if(!this.checkAction('useChestThumping')) {
-            return;
-        }
-
-        this.takeAction('useChestThumping', {
+        this.bgaPerformAction('actUseChestThumping', {
             id
         });
     }
     
     public skipChestThumping() {
-        if(!this.checkAction('skipChestThumping')) {
-            return;
-        }
-
-        this.takeAction('skipChestThumping');
+        this.bgaPerformAction('actSkipChestThumping');
     }
     
     public chooseFreezeRayDieFace(symbol: number) {
-        if(!this.checkAction('chooseFreezeRayDieFace')) {
-            return;
-        }
-
-        this.takeAction('chooseFreezeRayDieFace', {
+        this.bgaPerformAction('actChooseFreezeRayDieFace', {
             symbol
         });
     }
     
     public useMiraculousCatch() {
-        if(!this.checkAction('useMiraculousCatch')) {
-            return;
-        }
-
-        this.takeAction('useMiraculousCatch');
+        this.bgaPerformAction('actUseMiraculousCatch');
     }
     
     public buyCardMiraculousCatch(useSuperiorAlienTechnology: boolean = false) {
@@ -3387,133 +3224,69 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     public playCardDeepDive(id: number) {
-        if(!this.checkAction('playCardDeepDive')) {
-            return;
-        }
-
-        this.takeAction('playCardDeepDive', {
+        this.bgaPerformAction('actPlayCardDeepDive', {
             id
         });
     }
     
     public useExoticArms() {
-        if(!this.checkAction('useExoticArms')) {
-            return;
-        }
-
-        this.takeAction('useExoticArms');
+        this.bgaPerformAction('actUseExoticArms');
     }
     
     public skipExoticArms() {
-        if(!this.checkAction('skipExoticArms')) {
-            return;
-        }
-
-        this.takeAction('skipExoticArms');
+        this.bgaPerformAction('actSkipExoticArms');
     }
     
     public skipBeforeResolveDice() {
-        if(!this.checkAction('skipBeforeResolveDice')) {
-            return;
-        }
-
-        this.takeAction('skipBeforeResolveDice');
+        this.bgaPerformAction('actSkipBeforeResolveDice');
     }
     
     public giveTarget() {
-        if(!this.checkAction('giveTarget')) {
-            return;
-        }
-
-        this.takeAction('giveTarget');
+        this.bgaPerformAction('actGiveTarget');
     }
     
     public skipGiveTarget() {
-        if(!this.checkAction('skipGiveTarget')) {
-            return;
-        }
-
-        this.takeAction('skipGiveTarget');
+        this.bgaPerformAction('actSkipGiveTarget');
     }
     
     public useLightningArmor() {
-        if(!this.checkAction('useLightningArmor')) {
-            return;
-        }
-
-        this.takeAction('useLightningArmor');
+        this.bgaPerformAction('actUseLightningArmor');
     }
     
     public skipLightningArmor() {
-        if(!this.checkAction('skipLightningArmor')) {
-            return;
-        }
-
-        this.takeAction('skipLightningArmor');
+        this.bgaPerformAction('actSkipLightningArmor');
     }
     
     public answerEnergySword(use: boolean) {
-        if(!this.checkAction('answerEnergySword')) {
-            return;
-        }
-
-        this.takeAction('answerEnergySword', { use });
+        this.bgaPerformAction('actAnswerEnergySword', { use });
     }
     
     public answerSunkenTemple(use: boolean) {
-        if(!this.checkAction('answerSunkenTemple')) {
-            return;
-        }
-
-        this.takeAction('answerSunkenTemple', { use });
+        this.bgaPerformAction('actAnswerSunkenTemple', { use });
     }
     
     public answerElectricCarrot(choice: 4 | 5) {
-        if(!this.checkAction('answerElectricCarrot')) {
-            return;
-        }
-
-        this.takeAction('answerElectricCarrot', { choice });
+        this.bgaPerformAction('actAnswerElectricCarrot', { choice });
     }
     
     public reserveCard(id: number) {
-        if(!this.checkAction('reserveCard')) {
-            return;
-        }
-
-        this.takeAction('reserveCard', { id });
+        this.bgaPerformAction('actReserveCard', { id });
     }
     
     public useFelineMotor() {
-        if(!this.checkAction('useFelineMotor')) {
-            return;
-        }
-
-        this.takeAction('useFelineMotor');
+        this.bgaPerformAction('actUseFelineMotor');
     }
     
     public throwDieSuperiorAlienTechnology() {
-        if(!this.checkAction('throwDieSuperiorAlienTechnology')) {
-            return;
-        }
-
-        this.takeAction('throwDieSuperiorAlienTechnology');
+        this.bgaPerformAction('actThrowDieSuperiorAlienTechnology');
     }
     
     public freezeRayChooseOpponent(playerId: number) {
-        if(!this.checkAction('freezeRayChooseOpponent')) {
-            return;
-        }
-
-        this.takeAction('freezeRayChooseOpponent', { playerId });
+        this.bgaPerformAction('actFreezeRayChooseOpponent', { playerId });
     }
     
     public loseHearts() {
-        if(!this.checkAction('loseHearts')) {
-            return;
-        }
-
-        this.takeAction('loseHearts');
+        this.bgaPerformAction('actLoseHearts');
     }
     
     public takeAction(action: string, data?: any) {

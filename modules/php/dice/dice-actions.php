@@ -2,6 +2,10 @@
 
 namespace KOT\States;
 
+use Bga\GameFramework\Actions\Types\IntArrayParam;
+use Bga\GameFramework\Actions\Types\IntParam;
+use Bga\GameFramework\Actions\Types\StringParam;
+
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
 
 trait DiceActionTrait {
@@ -15,9 +19,7 @@ trait DiceActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
   	
-    public function actionRethrowDice(string $diceIds) {
-        $this->checkAction('rethrow');
-
+    public function actRethrow(#[IntArrayParam(name: 'diceIds')] string $diceIds) {
         $playerId = $this->getActivePlayerId();
 
         $throwNumber = intval($this->getGameStateValue('throwNumber'));
@@ -82,9 +84,7 @@ trait DiceActionTrait {
 
     }
 
-    public function rethrow3(string $diceIds = null) {
-        $this->checkAction('rethrow3');
-
+    public function actRethrow3(#[IntArrayParam(name: 'diceIds')] string $diceIds) {
         $playerId = $this->getActivePlayerId();
         $die = $this->getFirst3Die($playerId);
 
@@ -95,9 +95,7 @@ trait DiceActionTrait {
         $this->applyRerollDie($playerId, $die, $diceIds, BACKGROUND_DWELLER_CARD);
     }
 
-    public function rethrow3camouflage() {
-        $this->checkAction('rethrow3camouflage');
-
+    public function actRethrow3Camouflage() {
         $playerId = $this->getCurrentPlayerId();
 
         $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
@@ -122,9 +120,7 @@ trait DiceActionTrait {
         $this->endThrowCamouflageDice($playerId, $intervention, $dice, false);
     }
 
-    public function rethrow3changeActivePlayerDie() {
-        $this->checkAction('rethrow3psychicProbe');
-
+    public function actRethrow3PsychicProbe() {
         $playerId = $this->getCurrentPlayerId();
 
         $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
@@ -156,9 +152,7 @@ trait DiceActionTrait {
         $this->endChangeActivePlayerDie($intervention, $playerId, $die, BACKGROUND_DWELLER_CARD, $newValue);
     }
 
-    public function rethrow3changeDie() {
-        $this->checkAction('rethrow3changeDie');
-
+    public function actRethrow3ChangeDie() {
         $playerId = $this->getActivePlayerId();
         $dieId = intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3));
 
@@ -191,9 +185,7 @@ trait DiceActionTrait {
         }
     }
 
-    public function changeDie(int $id, int $value, int $cardType) {
-        $this->checkAction('changeDie');
-
+    public function actChangeDie(int $id,int $value, #[IntParam(name: 'card')] int $cardType) {
         $playerId = $this->getCurrentPlayerId();
 
         $selectedDie = $this->getDieById($id);
@@ -411,11 +403,7 @@ trait DiceActionTrait {
         }
     }
 
-    public function goToChangeDie($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('goToChangeDie');
-        }
-
+    public function actGoToChangeDie() {
         $playerId = $this->getActivePlayerId();
 
         $this->fixDices();
@@ -429,12 +417,10 @@ trait DiceActionTrait {
         }
     }
 
-    function changeActivePlayerDieSkip() {
-        $this->checkAction('changeActivePlayerDieSkip');
-
+    public function actChangeActivePlayerDieSkip() {
         $playerId = $this->getCurrentPlayerId();
 
-        $this->applyChangeActivePlayerDieSkip($playerId);
+        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
     function applyChangeActivePlayerDieSkip(int $playerId) {
@@ -518,14 +504,14 @@ trait DiceActionTrait {
         $this->gamestate->nextState('next');
     }
 
-    function applySmashDieChoices(array $smashDieChoices) {
-        $this->checkAction('applySmashDieChoices');
-
+    public function actApplySmashDieChoices(#[StringParam(name: 'selections')] string $selections) {
         $activePlayerId = $this->getActivePlayerId();
+
+        $selections = json_decode(base64_decode($selections), true);
 
         $playersSmashesWithReducedDamage = [];
 
-        foreach($smashDieChoices as $playerId => $smashDieChoice) {
+        foreach($selections as $playerId => $smashDieChoice) {
             if ($smashDieChoice == 'steal') {
                 $this->applyGiveSymbols([0, 5], $playerId, $activePlayerId, 3000 + PLAY_WITH_YOUR_FOOD_EVOLUTION);
                 $playersSmashesWithReducedDamage[$playerId] = 2;
@@ -535,15 +521,13 @@ trait DiceActionTrait {
         $this->stResolveSmashDice($playersSmashesWithReducedDamage);
     }
 
-    public function resolveDice() {
-        $this->checkAction('resolve');
+    public function actResolve() {
+        $playerId = $this->getActivePlayerId();
 
-        $this->gamestate->nextState('resolve');
+        $this->resolveDice($playerId);
     }
   	
-    public function stayInHibernation() {
-        $this->checkAction('stayInHibernation');
-        
+    public function actStayInHibernation() {
         $playerId = $this->getActivePlayerId();
 
         $this->applyResolveDice($playerId);
@@ -551,9 +535,7 @@ trait DiceActionTrait {
         $this->goToState($this->redirectAfterResolveDice());
     }
   	
-    public function leaveHibernation() {
-        $this->checkAction('leaveHibernation');
-        
+    public function actLeaveHibernation() {
         $playerId = $this->getActivePlayerId();
 
         $cards = $this->powerCards->getCardsOfType(HIBERNATION_CARD);

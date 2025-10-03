@@ -8517,67 +8517,40 @@ var KingOfTokyo = /** @class */ (function (_super) {
         return _('As you are in a Mindbug turn, you cannot befenit from the extra turn effect');
     };
     KingOfTokyo.prototype.pickMonster = function (monster) {
-        if (!this.checkAction('pickMonster')) {
-            return;
-        }
-        this.takeAction('pickMonster', {
+        this.bgaPerformAction('actPickMonster', {
             monster: monster
         });
     };
     KingOfTokyo.prototype.pickEvolutionForDeck = function (id) {
-        if (!this.checkAction('pickEvolutionForDeck')) {
-            return;
-        }
-        this.takeAction('pickEvolutionForDeck', {
+        this.bgaPerformAction('actPickEvolutionForDeck', {
             id: id
         });
     };
     KingOfTokyo.prototype.chooseInitialCard = function (id, evolutionId) {
-        if (!this.checkAction('chooseInitialCard')) {
-            return;
-        }
-        this.takeAction('chooseInitialCard', {
+        this.bgaPerformAction('actChooseInitialCard', {
             id: id,
             evolutionId: evolutionId,
         });
     };
     KingOfTokyo.prototype.skipBeforeStartTurn = function () {
-        if (!this.checkAction('skipBeforeStartTurn')) {
-            return;
-        }
-        this.takeAction('skipBeforeStartTurn');
+        this.bgaPerformAction('actSkipBeforeStartTurn');
     };
     KingOfTokyo.prototype.skipBeforeEndTurn = function () {
-        if (!this.checkAction('skipBeforeEndTurn')) {
-            return;
-        }
-        this.takeAction('skipBeforeEndTurn');
+        this.bgaPerformAction('actSkipBeforeEndTurn');
     };
     KingOfTokyo.prototype.skipBeforeEnteringTokyo = function () {
-        if (!this.checkAction('skipBeforeEnteringTokyo')) {
-            return;
-        }
-        this.takeAction('skipBeforeEnteringTokyo');
+        this.bgaPerformAction('actSkipBeforeEnteringTokyo');
     };
     KingOfTokyo.prototype.skipAfterEnteringTokyo = function () {
-        if (!this.checkAction('skipAfterEnteringTokyo')) {
-            return;
-        }
-        this.takeAction('skipAfterEnteringTokyo');
+        this.bgaPerformAction('actSkipAfterEnteringTokyo');
     };
     KingOfTokyo.prototype.giveSymbolToActivePlayer = function (symbol) {
-        if (!this.checkAction('giveSymbolToActivePlayer')) {
-            return;
-        }
-        this.takeAction('giveSymbolToActivePlayer', {
+        this.bgaPerformAction('actGiveSymbolToActivePlayer', {
             symbol: symbol
         });
     };
     KingOfTokyo.prototype.giveSymbol = function (symbol) {
-        if (!this.checkAction('giveSymbol')) {
-            return;
-        }
-        this.takeAction('giveSymbol', {
+        this.bgaPerformAction('actGiveSymbol', {
             symbol: symbol
         });
     };
@@ -8585,66 +8558,63 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.rethrowDice(this.diceManager.destroyFreeDice());
     };
     KingOfTokyo.prototype.rethrowDice = function (diceIds) {
-        if (!this.checkAction('rethrow')) {
-            return;
-        }
-        this.takeAction('rethrow', {
+        this.bgaPerformAction('actRethrow', {
             diceIds: diceIds.join(',')
         });
     };
     KingOfTokyo.prototype.rethrow3 = function () {
         var lockedDice = this.diceManager.getLockedDice();
-        this.takeAction('rethrow3', {
+        this.bgaPerformAction('actRethrow3', {
             diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
         });
     };
     KingOfTokyo.prototype.rerollDie = function (id) {
         var lockedDice = this.diceManager.getLockedDice();
-        this.takeAction('rerollDie', {
+        this.bgaPerformAction('actRerollDie', {
             id: id,
             diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
         });
     };
     KingOfTokyo.prototype.rethrow3camouflage = function () {
-        this.takeAction('rethrow3camouflage');
+        this.bgaPerformAction('actRethrow3Camouflage');
     };
     KingOfTokyo.prototype.rethrow3psychicProbe = function () {
-        this.takeAction('rethrow3psychicProbe');
+        this.bgaPerformAction('actRethrow3PsychicProbe');
     };
     KingOfTokyo.prototype.rethrow3changeDie = function () {
-        this.takeAction('rethrow3changeDie');
+        this.bgaPerformAction('actRethrow3ChangeDie');
     };
     KingOfTokyo.prototype.buyEnergyDrink = function () {
         var diceIds = this.diceManager.destroyFreeDice();
-        this.takeAction('buyEnergyDrink', {
+        this.bgaPerformAction('actBuyEnergyDrink', {
             diceIds: diceIds.join(',')
         });
     };
     KingOfTokyo.prototype.useSmokeCloud = function () {
         var diceIds = this.diceManager.destroyFreeDice();
-        this.takeAction('useSmokeCloud', {
+        this.bgaPerformAction('actUseSmokeCloud', {
             diceIds: diceIds.join(',')
         });
     };
     KingOfTokyo.prototype.useCultist = function () {
         var diceIds = this.diceManager.destroyFreeDice();
-        this.takeAction('useCultist', {
+        this.bgaPerformAction('actUseCultist', {
             diceIds: diceIds.join(',')
         });
     };
     KingOfTokyo.prototype.useRapidHealing = function () {
-        this.takeNoLockAction('useRapidHealing');
+        this.bgaPerformAction('actUseRapidHealing', null, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.useMothershipSupport = function () {
-        this.takeNoLockAction('useMothershipSupport');
+        this.bgaPerformAction('actUseMothershipSupport', null, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.useRapidCultist = function (type) {
-        this.takeNoLockAction('useRapidCultist', { type: type });
+        this.bgaPerformAction('actUseRapidCultist', { type: type }, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.setSkipBuyPhase = function (skipBuyPhase) {
-        this.takeNoLockAction('setSkipBuyPhase', {
+        this.bgaPerformAction('actSetSkipBuyPhase', {
             skipBuyPhase: skipBuyPhase
-        });
+        }, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.changeDie = function (id, value, card) {
         if (!this.checkAction('changeDie')) {
@@ -8657,10 +8627,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.psychicProbeRollDie = function (id) {
-        if (!this.checkAction('psychicProbeRollDie')) {
-            return;
-        }
-        this.takeAction('psychicProbeRollDie', {
+        this.bgaPerformAction('actPsychicProbeRollDie', {
             id: id
         });
     };
@@ -8672,16 +8639,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
             this.confirmationDialog(formatTextIcons(_('Are you sure you want to resolve dice without any reroll? If you want to change your dice, click on the dice you want to keep and use "Reroll dice" button to reroll the others.')), function () { return _this.goToChangeDie(true); });
             return;
         }
-        if (!this.checkAction('goToChangeDie', true)) {
-            return;
-        }
-        this.takeAction('goToChangeDie');
+        this.bgaPerformAction('actGoToChangeDie');
     };
     KingOfTokyo.prototype.resolveDice = function () {
-        if (!this.checkAction('resolve')) {
-            return;
-        }
-        this.takeAction('resolve');
+        this.bgaPerformAction('actResolve');
     };
     KingOfTokyo.prototype.support = function () {
         if (!this.checkAction('support')) {
@@ -8696,10 +8657,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('dontSupport');
     };
     KingOfTokyo.prototype.discardDie = function (id) {
-        if (!this.checkAction('discardDie')) {
-            return;
-        }
-        this.takeAction('discardDie', {
+        this.bgaPerformAction('actDiscardDie', {
             id: id
         });
     };
@@ -8715,40 +8673,25 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.freezeDie = function (id) {
-        if (!this.checkAction('freezeDie')) {
-            return;
-        }
-        this.takeAction('freezeDie', {
+        this.bgaPerformAction('actFreezeDie', {
             id: id
         });
     };
     KingOfTokyo.prototype.skipFreezeDie = function () {
-        if (!this.checkAction('skipFreezeDie')) {
-            return;
-        }
-        this.takeAction('skipFreezeDie');
+        this.bgaPerformAction('actSkipFreezeDie');
     };
     KingOfTokyo.prototype.discardKeepCard = function (id) {
-        if (!this.checkAction('discardKeepCard')) {
-            return;
-        }
-        this.takeAction('discardKeepCard', {
+        this.bgaPerformAction('actDiscardKeepCard', {
             id: id
         });
     };
     KingOfTokyo.prototype.giveGoldenScarab = function (playerId) {
-        if (!this.checkAction('giveGoldenScarab')) {
-            return;
-        }
-        this.takeAction('giveGoldenScarab', {
+        this.bgaPerformAction('actGiveGoldenScarab', {
             playerId: playerId
         });
     };
     KingOfTokyo.prototype.giveSymbols = function (symbols) {
-        if (!this.checkAction('giveSymbols')) {
-            return;
-        }
-        this.takeAction('giveSymbols', {
+        this.bgaPerformAction('actGiveSymbols', {
             symbols: symbols.join(',')
         });
     };
@@ -8811,35 +8754,21 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.applySmashActions = function (selections) {
-        if (!this.checkAction('applySmashDieChoices')) {
-            return;
-        }
         var base64 = btoa(JSON.stringify(__assign({}, selections)));
-        this.takeAction('applySmashDieChoices', {
+        this.bgaPerformAction('actApplySmashDieChoices', {
             selections: base64
         });
     };
     KingOfTokyo.prototype.chooseEvolutionCard = function (id) {
-        if (!this.checkAction('chooseEvolutionCard')) {
-            return;
-        }
-        this.takeAction('chooseEvolutionCard', {
+        this.bgaPerformAction('actChooseEvolutionCard', {
             id: id
         });
     };
     KingOfTokyo.prototype.onStayInTokyo = function () {
-        if (!this.checkAction('stay')) {
-            return;
-        }
-        this.takeAction('stay');
+        this.bgaPerformAction('actStay');
     };
     KingOfTokyo.prototype.onLeaveTokyo = function (useCard) {
-        if (!this.checkAction('leave')) {
-            return;
-        }
-        this.takeAction('leave', {
-            useCard: useCard
-        });
+        this.bgaPerformAction('actLeave', { useCard: useCard });
     };
     KingOfTokyo.prototype.stealCostumeCard = function (id) {
         if (!this.checkAction('stealCostumeCard')) {
@@ -8875,10 +8804,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.buyCardBamboozle = function (id, from) {
-        if (!this.checkAction('buyCardBamboozle')) {
-            return;
-        }
-        this.takeAction('buyCardBamboozle', {
+        this.bgaPerformAction('actBuyCardBamboozle', {
             id: id,
             from: from
         });
@@ -8892,10 +8818,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.chooseMimickedEvolution = function (id) {
-        if (!this.checkAction('chooseMimickedEvolution')) {
-            return;
-        }
-        this.takeAction('chooseMimickedEvolution', {
+        this.bgaPerformAction('actChooseMimickedEvolution', {
             id: id
         });
     };
@@ -8940,10 +8863,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.skipCardIsBought = function () {
-        if (!this.checkAction('skipCardIsBought')) {
-            return;
-        }
-        this.takeAction('skipCardIsBought');
+        this.bgaPerformAction('actSkipCardIsBought');
     };
     KingOfTokyo.prototype.goToSellCard = function () {
         if (!this.checkAction('goToSellCard', true)) {
@@ -8958,10 +8878,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('opportunistSkip');
     };
     KingOfTokyo.prototype.changeActivePlayerDieSkip = function () {
-        if (!this.checkAction('changeActivePlayerDieSkip')) {
-            return;
-        }
-        this.takeAction('changeActivePlayerDieSkip');
+        this.bgaPerformAction('actChangeActivePlayerDieSkip');
     };
     KingOfTokyo.prototype.skipChangeMimickedCard = function () {
         if (!this.checkAction('skipChangeMimickedCard', true)) {
@@ -8982,10 +8899,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('endStealCostume');
     };
     KingOfTokyo.prototype.onEndTurn = function () {
-        if (!this.checkAction('endTurn')) {
-            return;
-        }
-        this.takeAction('endTurn');
+        this.bgaPerformAction('actEndTurn');
     };
     KingOfTokyo.prototype.throwCamouflageDice = function () {
         if (!this.checkAction('throwCamouflageDice')) {
@@ -9000,18 +8914,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('useWings');
     };
     KingOfTokyo.prototype.useInvincibleEvolution = function (evolutionType) {
-        if (!this.checkAction('useInvincibleEvolution')) {
-            return;
-        }
-        this.takeAction('useInvincibleEvolution', {
+        this.bgaPerformAction('actUseInvincibleEvolution', {
             evolutionType: evolutionType
         });
     };
     KingOfTokyo.prototype.useCandyEvolution = function () {
-        if (!this.checkAction('useCandyEvolution')) {
-            return;
-        }
-        this.takeAction('useCandyEvolution');
+        this.bgaPerformAction('actUseCandyEvolution');
     };
     KingOfTokyo.prototype.skipWings = function () {
         if (!this.checkAction('skipWings')) {
@@ -9044,10 +8952,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.useRapidHealingSync = function (cultistCount, rapidHealingCount) {
-        if (!this.checkAction('useRapidHealingSync')) {
-            return;
-        }
-        this.takeAction('useRapidHealingSync', {
+        this.bgaPerformAction('actUseRapidHealingSync', {
             cultistCount: cultistCount,
             rapidHealingCount: rapidHealingCount
         });
@@ -9082,45 +8987,30 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('skipExchangeCard');
     };
     KingOfTokyo.prototype.stayInHibernation = function () {
-        if (!this.checkAction('stayInHibernation')) {
-            return;
-        }
-        this.takeAction('stayInHibernation');
+        this.bgaPerformAction('actStayInHibernation');
     };
     KingOfTokyo.prototype.leaveHibernation = function () {
-        if (!this.checkAction('leaveHibernation')) {
-            return;
-        }
-        this.takeAction('leaveHibernation');
+        this.bgaPerformAction('actLeaveHibernation');
     };
     KingOfTokyo.prototype.playEvolution = function (id) {
-        this.bgaPerformAction('playEvolution', {
+        this.bgaPerformAction('actPlayEvolution', {
             id: id
         }, { checkAction: false, lock: false });
     };
     KingOfTokyo.prototype.giveGiftEvolution = function (id, toPlayerId) {
-        this.takeAction('giveGiftEvolution', {
+        this.bgaPerformAction('actGiveGiftEvolution', {
             id: id,
             toPlayerId: toPlayerId,
         });
     };
     KingOfTokyo.prototype.useYinYang = function () {
-        if (!this.checkAction('useYinYang')) {
-            return;
-        }
-        this.takeAction('useYinYang');
+        this.bgaPerformAction('actUseYinYang');
     };
     KingOfTokyo.prototype.putEnergyOnBambooSupply = function () {
-        if (!this.checkAction('putEnergyOnBambooSupply')) {
-            return;
-        }
-        this.takeAction('putEnergyOnBambooSupply');
+        this.bgaPerformAction('actPutEnergyOnBambooSupply');
     };
     KingOfTokyo.prototype.takeEnergyOnBambooSupply = function () {
-        if (!this.checkAction('takeEnergyOnBambooSupply')) {
-            return;
-        }
-        this.takeAction('takeEnergyOnBambooSupply');
+        this.bgaPerformAction('actTakeEnergyOnBambooSupply');
     };
     KingOfTokyo.prototype.gazeOfTheSphinxDrawEvolution = function () {
         if (!this.checkAction('gazeOfTheSphinxDrawEvolution')) {
@@ -9149,32 +9039,20 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('gazeOfTheSphinxLoseEnergy');
     };
     KingOfTokyo.prototype.useChestThumping = function (id) {
-        if (!this.checkAction('useChestThumping')) {
-            return;
-        }
-        this.takeAction('useChestThumping', {
+        this.bgaPerformAction('actUseChestThumping', {
             id: id
         });
     };
     KingOfTokyo.prototype.skipChestThumping = function () {
-        if (!this.checkAction('skipChestThumping')) {
-            return;
-        }
-        this.takeAction('skipChestThumping');
+        this.bgaPerformAction('actSkipChestThumping');
     };
     KingOfTokyo.prototype.chooseFreezeRayDieFace = function (symbol) {
-        if (!this.checkAction('chooseFreezeRayDieFace')) {
-            return;
-        }
-        this.takeAction('chooseFreezeRayDieFace', {
+        this.bgaPerformAction('actChooseFreezeRayDieFace', {
             symbol: symbol
         });
     };
     KingOfTokyo.prototype.useMiraculousCatch = function () {
-        if (!this.checkAction('useMiraculousCatch')) {
-            return;
-        }
-        this.takeAction('useMiraculousCatch');
+        this.bgaPerformAction('actUseMiraculousCatch');
     };
     KingOfTokyo.prototype.buyCardMiraculousCatch = function (useSuperiorAlienTechnology) {
         if (useSuperiorAlienTechnology === void 0) { useSuperiorAlienTechnology = false; }
@@ -9192,102 +9070,54 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.takeAction('skipMiraculousCatch');
     };
     KingOfTokyo.prototype.playCardDeepDive = function (id) {
-        if (!this.checkAction('playCardDeepDive')) {
-            return;
-        }
-        this.takeAction('playCardDeepDive', {
+        this.bgaPerformAction('actPlayCardDeepDive', {
             id: id
         });
     };
     KingOfTokyo.prototype.useExoticArms = function () {
-        if (!this.checkAction('useExoticArms')) {
-            return;
-        }
-        this.takeAction('useExoticArms');
+        this.bgaPerformAction('actUseExoticArms');
     };
     KingOfTokyo.prototype.skipExoticArms = function () {
-        if (!this.checkAction('skipExoticArms')) {
-            return;
-        }
-        this.takeAction('skipExoticArms');
+        this.bgaPerformAction('actSkipExoticArms');
     };
     KingOfTokyo.prototype.skipBeforeResolveDice = function () {
-        if (!this.checkAction('skipBeforeResolveDice')) {
-            return;
-        }
-        this.takeAction('skipBeforeResolveDice');
+        this.bgaPerformAction('actSkipBeforeResolveDice');
     };
     KingOfTokyo.prototype.giveTarget = function () {
-        if (!this.checkAction('giveTarget')) {
-            return;
-        }
-        this.takeAction('giveTarget');
+        this.bgaPerformAction('actGiveTarget');
     };
     KingOfTokyo.prototype.skipGiveTarget = function () {
-        if (!this.checkAction('skipGiveTarget')) {
-            return;
-        }
-        this.takeAction('skipGiveTarget');
+        this.bgaPerformAction('actSkipGiveTarget');
     };
     KingOfTokyo.prototype.useLightningArmor = function () {
-        if (!this.checkAction('useLightningArmor')) {
-            return;
-        }
-        this.takeAction('useLightningArmor');
+        this.bgaPerformAction('actUseLightningArmor');
     };
     KingOfTokyo.prototype.skipLightningArmor = function () {
-        if (!this.checkAction('skipLightningArmor')) {
-            return;
-        }
-        this.takeAction('skipLightningArmor');
+        this.bgaPerformAction('actSkipLightningArmor');
     };
     KingOfTokyo.prototype.answerEnergySword = function (use) {
-        if (!this.checkAction('answerEnergySword')) {
-            return;
-        }
-        this.takeAction('answerEnergySword', { use: use });
+        this.bgaPerformAction('actAnswerEnergySword', { use: use });
     };
     KingOfTokyo.prototype.answerSunkenTemple = function (use) {
-        if (!this.checkAction('answerSunkenTemple')) {
-            return;
-        }
-        this.takeAction('answerSunkenTemple', { use: use });
+        this.bgaPerformAction('actAnswerSunkenTemple', { use: use });
     };
     KingOfTokyo.prototype.answerElectricCarrot = function (choice) {
-        if (!this.checkAction('answerElectricCarrot')) {
-            return;
-        }
-        this.takeAction('answerElectricCarrot', { choice: choice });
+        this.bgaPerformAction('actAnswerElectricCarrot', { choice: choice });
     };
     KingOfTokyo.prototype.reserveCard = function (id) {
-        if (!this.checkAction('reserveCard')) {
-            return;
-        }
-        this.takeAction('reserveCard', { id: id });
+        this.bgaPerformAction('actReserveCard', { id: id });
     };
     KingOfTokyo.prototype.useFelineMotor = function () {
-        if (!this.checkAction('useFelineMotor')) {
-            return;
-        }
-        this.takeAction('useFelineMotor');
+        this.bgaPerformAction('actUseFelineMotor');
     };
     KingOfTokyo.prototype.throwDieSuperiorAlienTechnology = function () {
-        if (!this.checkAction('throwDieSuperiorAlienTechnology')) {
-            return;
-        }
-        this.takeAction('throwDieSuperiorAlienTechnology');
+        this.bgaPerformAction('actThrowDieSuperiorAlienTechnology');
     };
     KingOfTokyo.prototype.freezeRayChooseOpponent = function (playerId) {
-        if (!this.checkAction('freezeRayChooseOpponent')) {
-            return;
-        }
-        this.takeAction('freezeRayChooseOpponent', { playerId: playerId });
+        this.bgaPerformAction('actFreezeRayChooseOpponent', { playerId: playerId });
     };
     KingOfTokyo.prototype.loseHearts = function () {
-        if (!this.checkAction('loseHearts')) {
-            return;
-        }
-        this.takeAction('loseHearts');
+        this.bgaPerformAction('actLoseHearts');
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         this.bgaPerformAction(action, data);

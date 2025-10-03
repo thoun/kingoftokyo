@@ -7,6 +7,7 @@ require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/log.php');
 
+use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -353,9 +354,7 @@ trait CardsUtilTrait {
         }
     }
 
-    function buyEnergyDrink($diceIds) {
-        $this->checkAction('buyEnergyDrink');
-
+    function actBuyEnergyDrink(#[IntArrayParam(name: 'diceIds')] $diceIds) {
         $playerId = $this->getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
@@ -376,9 +375,7 @@ trait CardsUtilTrait {
         $this->rethrowDice($diceIds);    
     }
 
-    function useSmokeCloud($diceIds) {
-        $this->checkAction('useSmokeCloud');
-
+    function actUseSmokeCloud(#[IntArrayParam(name: 'diceIds')] $diceIds) {
         $playerId = $this->getActivePlayerId();
 
         $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
@@ -420,7 +417,7 @@ trait CardsUtilTrait {
         $this->rethrowDice($diceIds);
     }
 
-    function useRapidHealing() {
+    function actUseRapidHealing() {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyRapidHealing($playerId);
@@ -428,7 +425,7 @@ trait CardsUtilTrait {
         $this->updateCancelDamageIfNeeded($playerId);
     }
 
-    function useMothershipSupport() {
+    function actUseMothershipSupport() {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyMothershipSupport($playerId);

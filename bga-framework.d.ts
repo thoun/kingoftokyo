@@ -706,8 +706,9 @@ declare class Counter {
    * Associate the counter with an existing HTML element.
    * 
    * @param {HTMLElement | string} target the HTML Element that will display the counter
+   * @param {Object | undefined} settings to set the initial value, define settings.value (null to disable). Set settings.tableCounter to link it to a TableCounter, or settings.playerCounter and settings.playerId to link it to a PlayerCounter.
    */
-  create(target: ElementOrId): void;
+  create(target: ElementOrId, settings?: { value?: number | null; tableCounter?: string; playerCounter?: string; playerId?: number; }): void;
 
   /**
    * Return the current value.
@@ -847,6 +848,8 @@ declare class DojoAnimation {
 }
 
 interface Dojo {
+    attr: Function;
+    create: Function;
     place: (html: string, nodeId: string, action?: string) => void;
     style: Function;
     hitch: Function;
@@ -854,16 +857,21 @@ interface Dojo {
     addClass: (nodeId: string, className: string) => void;
     removeClass: (nodeId: string, className?: string) => void;
     toggleClass: (nodeId: string, className: string, forceValue?: boolean) => void;
-    connect: Function;
+    connect: (node: HTMLElement, eventType: string, callback: Function) => any;
     disconnect: Function;
     query: Function;
     subscribe: Function;
     string: any;
     fx: any;
     marginBox: Function;
+    position: Function;
+    contentBox: Function;
+    clone: Function;
     fadeIn: Function;
     trim: Function;
     stopEvent: (evt) => void;
     destroy: (nodeId: string) => void;
     forEach: Function;
+    empty: (nodeId: ElementOrId) => void;
+    byId: (nodeId: ElementOrId) => HTMLElement;
 }
