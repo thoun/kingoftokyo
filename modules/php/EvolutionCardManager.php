@@ -29,7 +29,7 @@ const EVOLUTION_CARD_CLASSES = [
     MONKEY_RUSH_EVOLUTION => 'MonkeyRush',
     SIMIAN_SCAMPER_EVOLUTION => 'SimianScamper',
     GIANT_BANANA_EVOLUTION => 'GiantBanana',
-    TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION => 'LeaveWithTwasBeautyKilledTheBeast', // TODO!!!
+    TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION => 'TwasBeautyKilledTheBeast',
 
     // Gigazaur
     DETACHABLE_TAIL_EVOLUTION => 'DetachableTail',

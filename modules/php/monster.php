@@ -2,6 +2,8 @@
 
 namespace KOT\States;
 
+use Bga\Games\KingOfTokyo\Game;
+
 const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
 
 trait MonsterTrait {
@@ -104,10 +106,12 @@ trait MonsterTrait {
         }
 
         // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
-        // TODOMB activate it
-        //*if ($bonusMonsters || $this->isMindbugExpansion()) {
-        //    $monsters = [...$monsters, /*61,*/ 62, /*63*/];
-        //}
+        if ($bonusMonsters || $this->isMindbugExpansion()) {
+            // TODOMB activate it
+            if (Game::getBgaEnvironment() == 'studio') {                
+                $monsters = [...$monsters, /*61,*/ 62, /*63*/];
+            }
+        }
 
         if ($this->wickednessExpansion->isActive()) {
             $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, MONSTERS_WITH_ICON)));            

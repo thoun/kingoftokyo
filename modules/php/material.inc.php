@@ -19,7 +19,7 @@
  *
  */
 
-$this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,/* TODOPUHA 7,8,*//*TODOPUKK 11,*/13,14,15/* TODOPUBG ,18*/ /* TODOMB 61, 62, 63 */];
+$this->MONSTERS_WITH_POWER_UP_CARDS = [1,2,3,4,5,6,/* TODOPUHA 7,8,*//*TODOPUKK 11,*/13,14,15/* TODOPUBG ,18*/, 61, 62, 63];
 
 // 1 : permanent
 // 2 : temporary
@@ -38,6 +38,9 @@ $this->EVOLUTION_CARDS_TYPES = [
     141 => 2, 142 => 2, 143 => 2, 144 => 2, 145 => 1, 146 => 1, 147 => 1, 148 => 1, // Cyber Bunny
     151 => 2, 152 => 2, 153 => 2, 154 => 2, 155 => 1, 156 => 1, 157 => 1, 158 => 1, // Kraken
     181 => 1, 182 => 1, 183 => 2, 184 => 1, 185 => 1, 186 => 1, 187 => 2, 188 => 2, // Baby Gigazaur
+    611 => 2, 612 => 1, 613 => 1, 614 => 1, 615 => 2, 616 => 1, 617 => 2, 618 => 2, // Gigasnail Hydra
+    621 => 2, 622 => 1, 623 => 2, 624 => 1, 625 => 2, 626 => 1, 627 => 2, 628 => 2, // MasterMindbug
+    631 => 2, 632 => 2, 633 => 1, 634 => 2, 635 => 1, 636 => 1, 637 => 1, 638 => 1, // Sharky Crab-dog Mummypus-Zilla
 ];
 
 $this->EVOLUTION_CARDS_TYPES_FOR_STATS = [
