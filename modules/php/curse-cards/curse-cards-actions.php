@@ -4,6 +4,7 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use KOT\Objects\Damage;
 
 trait CurseCardsActionTrait {
@@ -60,7 +61,7 @@ trait CurseCardsActionTrait {
         $this->gamestate->nextState('next');
     }
 
-    function applyGiveSymbols(array $symbols, int $from, int $to, int $logCardType) {
+    function applyGiveSymbols(array $symbols, int $from, int $to, int | EvolutionCard $logCardType) {
         $symbolsCount = [];
         foreach($symbols as $symbol) {
             if (!array_key_exists($symbol, $symbolsCount)) {

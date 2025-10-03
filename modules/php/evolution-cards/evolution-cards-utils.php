@@ -269,177 +269,7 @@ trait EvolutionCardsUtilTrait {
             return; // TODOPU test
         }
 
-        $cardType = $card->type;
-        $logCardType = 3000 + $cardType;
-
-        switch($cardType) {
-            // Space Penguin
-            case DEEP_DIVE_EVOLUTION:
-                $this->applyDeepDive($playerId);
-                break;
-            case ICY_REFLECTION_EVOLUTION:
-                $this->applyIcyReflection($playerId);
-                break;
-            // Alienoid
-            case ALIEN_SCOURGE_EVOLUTION: 
-                $this->applyGetPoints($playerId, 2, $logCardType);
-                break;
-            case PRECISION_FIELD_SUPPORT_EVOLUTION: 
-                $this->applyPrecisionFieldSupport($playerId);
-                break;
-            case ANGER_BATTERIES_EVOLUTION:
-                $damageCount = $this->getDamageTakenThisTurn($playerId);
-                $this->applyGetEnergy($playerId, $damageCount, $logCardType);
-                break;
-            case ADAPTING_TECHNOLOGY_EVOLUTION:
-                $this->setEvolutionTokens($playerId, $card, $this->getTokensByEvolutionType(ADAPTING_TECHNOLOGY_EVOLUTION));
-                break;
-            case SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION: 
-                $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId);
-                break;
-            // Cyber Kitty
-            case FELINE_MOTOR_EVOLUTION:
-                $this->applyFelineMotor($playerId);
-                break;
-            // The King
-            case MONKEY_RUSH_EVOLUTION:
-                $this->moveToTokyoFreeSpot($playerId);
-                if (!$this->tokyoHasFreeSpot()) {
-                    $this->goToState($this->redirectAfterHalfMovePhase());
-                }
-                break;
-            case GIANT_BANANA_EVOLUTION:
-                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
-                break;
-            // Gigazaur
-            case RADIOACTIVE_WASTE_EVOLUTION:
-                $this->applyGetEnergy($playerId, 2, $logCardType);
-                $this->applyGetHealth($playerId, 1, $logCardType, $playerId);
-                break;
-            case PRIMAL_BELLOW_EVOLUTION:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyLosePoints($otherPlayerId, 2, $logCardType);
-                }
-                break;
-            // Meka Dragon
-            case DESTRUCTIVE_ANALYSIS_EVOLUTION:
-                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
-                $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false, false);
-                $rolledSmashes = $diceCounts[6];
-                if ($rolledSmashes > 0) {
-                    $this->applyGetEnergy($playerId, $rolledSmashes, $logCardType);
-                }
-                break;
-            case TUNE_UP_EVOLUTION:
-                $this->applyGetHealth($playerId, 4, $logCardType, $playerId);
-                $this->applyGetEnergy($playerId, 2, $logCardType);
-                $this->removeCard($playerId, $card, false, 5000);
-                $this->goToState(ST_NEXT_PLAYER);
-                break;
-            // Boogie Woogie
-            case WELL_OF_SHADOW_EVOLUTION:
-                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
-                break;
-            case WORM_INVADERS_EVOLUTION:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                $damages = [];
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 2, $playerId, $logCardType);
-                }
-                return $damages;
-            // Pumpkin Jack
-            case SMASHING_PUMPKIN_EVOLUTION:
-                $players = $this->getPlayers();
-                $damages = [];
-                foreach ($players as $player) {
-                    if ($player->score >= 12) {
-                        $damages[] = new Damage($player->id, 2, $playerId, $logCardType);
-                    }
-                }
-                return $damages;
-            case BOBBING_FOR_APPLES_EVOLUTION: 
-                $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId);
-                break;
-            case FEAST_OF_CROWS_EVOLUTION:
-                $this->applyFeastOfCrows($playerId, $card);
-                break;
-            case SCYTHE_EVOLUTION:
-                $this->setEvolutionTokens($playerId, $card, 1);
-                break;
-            case CANDY_EVOLUTION:
-                $this->applyGetHealth($playerId, 1, $logCardType, $playerId);
-                break;
-            // Cthulhu
-            // Anubis
-            // King Kong
-            // Cybertooth
-            // Pandakaï
-            case PANDA_MONIUM_EVOLUTION:
-                $this->applyGetEnergy($playerId, 6, $logCardType);
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->applyGetEnergy($otherPlayerId, 3, $logCardType);
-                }
-                $this->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($playerId, true);
-                break;
-            case EATS_SHOOTS_AND_LEAVES_EVOLUTION:
-                $outsideTokyoPlayersIds = $this->getPlayersIdsOutsideTokyo();
-                $damages = [];
-                foreach ($outsideTokyoPlayersIds as $outsideTokyoPlayerId) {
-                    $damages[] = new Damage($outsideTokyoPlayerId, 2, $playerId, $logCardType);
-                }
-
-                $this->applyGetEnergy($playerId, 1, $logCardType);
-                $this->leaveTokyo($playerId);
-                return $damages;
-            case BAMBOOZLE_EVOLUTION:
-                $this->playBamboozleEvolution($playerId, $card);
-                break;
-            case BEAR_NECESSITIES_EVOLUTION:
-                $this->applyLosePoints($playerId, 1, $logCardType);
-                $this->applyGetEnergy($playerId, 2, $logCardType);
-                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
-                break;
-            // cyberbunny
-            case STROKE_OF_GENIUS_EVOLUTION:
-                $this->applyGetEnergy($playerId, $this->getPlayer($playerId)->turnEnergy, $logCardType);
-                break;
-            case EMERGENCY_BATTERY_EVOLUTION:
-                $this->applyGetEnergy($playerId, 3, $logCardType);
-                break;
-            // kraken
-            case HEALING_RAIN_EVOLUTION:
-                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
-                break;
-            case DESTRUCTIVE_WAVE_EVOLUTION:
-                $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                $damages = [];
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $damages[] = new Damage($otherPlayerId, 2, $playerId, $logCardType);
-                }
-                return $damages;
-            case CULT_WORSHIPPERS_EVOLUTION:
-                $this->applyGetPoints($playerId, $this->getPlayer($playerId)->turnGainedHealth, $logCardType);
-                break;
-            // Baby Gigazaur
-            case MY_TOY_EVOLUTION:
-                $this->myToyQuestion($playerId, $card);
-                break;
-            case NURTURE_THE_YOUNG_EVOLUTION:
-                $dbResults = $this->getCollectionFromDb("SELECT `player_id` FROM `player` WHERE `player_score` > (SELECT `player_score` FROM `player` WHERE id = $playerId)");
-                $playersIdsWithMorePoints = array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));
-                foreach ($playersIdsWithMorePoints as $playerIdWithMorePoints) {
-                    $this->applyGiveSymbols([0], $playerIdWithMorePoints, $playerId, $logCardType);
-                }
-                break;
-            case YUMMY_YUMMY_EVOLUTION:
-                $this->applyGetHealth($playerId, 2, $logCardType, $playerId);
-                $this->applyGetEnergy($playerId, 1, $logCardType);
-                break;
-            default:
-                return $this->powerUpExpansion->evolutionCards->immediateEffect($card, new Context($this, currentPlayerId: $playerId));
-        }
+        return $this->powerUpExpansion->evolutionCards->immediateEffect($card, new Context($this, currentPlayerId: $playerId));
     }
 
     function notifNewEvolutionCard(int $playerId, EvolutionCard $evolution, $message = '', $args = []) {
@@ -642,67 +472,6 @@ trait EvolutionCardsUtilTrait {
             ]);
         }
     }
-
-    function playBamboozleEvolution(int $playerId, EvolutionCard $card) {
-        $cardBeingBought = $this->getGlobalVariable(CARD_BEING_BOUGHT);
-        if (!$cardBeingBought) {
-            $this->warn('playBamboozleEvolution cardBeingBought is null');
-            $this->dump('$cardBeingBought', $cardBeingBought);
-        }
-
-        $cardBeingBought->allowed = false;
-        $this->setGlobalVariable(CARD_BEING_BOUGHT, $cardBeingBought);
-
-        if (!$cardBeingBought->playerId) {
-            $this->warn('playBamboozleEvolution cardBeingBought playerId is null');
-            $this->dump('$cardBeingBought', $cardBeingBought);
-        }
-
-        $buyCardArgs = $this->getArgBuyCard($cardBeingBought->playerId, false);
-        $buyCardArgs['disabledIds'] = [...$buyCardArgs['disabledIds'], $cardBeingBought->cardId];
-
-        $canBuyAnother = false;
-        $playerEnergy = $this->getPlayerEnergy($cardBeingBought->playerId);
-        foreach($buyCardArgs['cardsCosts'] as $cardId => $cost) {
-            if (!in_array($cardId, $buyCardArgs['disabledIds']) && $cost <= $playerEnergy) {
-                $canBuyAnother = true;
-                break;
-            }
-        }
-
-        if ($canBuyAnother) {
-
-            $question = new Question(
-                'Bamboozle',
-                clienttranslate('${actplayer} must choose another card'),
-                clienttranslate('${you} must choose another card'),
-                [$playerId],
-                ST_PLAYER_BUY_CARD,
-                [ 
-                    'cardBeingBought' => $cardBeingBought, 
-                    'buyCardArgs' => $buyCardArgs,
-                ]
-            );
-            $this->setQuestion($question);
-            $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-            $this->removeEvolution($playerId, $card);
-
-            $this->jumpToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-
-        } else {
-            $activePlayerId = $this->getActivePlayerId();
-
-            $forbiddenCard = $this->powerCards->getItemById($cardBeingBought->cardId);
-
-            $this->notifyAllPlayers('log', clienttranslate('${player_name} prevents ${player_name2} to buy ${card_name}. ${player_name2} is not forced to buy another card, as player energy is too low to buy another card. '), [
-                'player_name' => $this->getPlayerName($playerId),
-                'player_name2' => $this->getPlayerName($activePlayerId),
-                'card_name' => $forbiddenCard->type,
-            ]);
-    
-            $this->skipCardIsBought(true);
-        }
-    }
     
     function applyPrecisionFieldSupport(int $playerId) {
         $topCard = $this->powerCards->getTopDeckCard(false);
@@ -825,11 +594,6 @@ trait EvolutionCardsUtilTrait {
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 
-    function applyFeastOfCrows(int $playerId, EvolutionCard $card) {
-        $otherPlayers = array_filter($this->getOtherPlayers($playerId), fn($player) => $player->energy > 0 || $player->score > 0 || $player->health > 0);
-        $this->applyGiveSymbolQuestion($playerId, $card, $otherPlayers, [4, 0, 5]);
-    }
-
     function applyGiveEnergyOrLoseHeartsQuestion(int $playerId, array $otherPlayers, EvolutionCard $card, int $heartNumber) {
         $otherPlayersIds = array_map(fn($player) => $player->id, $otherPlayers);
 
@@ -880,65 +644,6 @@ trait EvolutionCardsUtilTrait {
         return true;
     }
 
-    function applyDeepDive(int $playerId) {
-        if ($this->powerCards->countItemsInLocation('deck') === 0) {
-            throw new \BgaUserException("No cards in deck pile");
-        }
-
-        $this->powerCards->shuffle('discard');
-        $cards = $this->powerCards->getCardsOnTop(3, 'deck');
-
-        $question = new Question(
-            'DeepDive',
-            clienttranslate('${actplayer} can play a card from the bottom of the deck for free'),
-            clienttranslate('${you} can play a card from the bottom of the deck for free'),
-            [$playerId],
-            -1,
-            [
-                'cards' => $cards,
-            ]
-        );
-        $this->addStackedState();
-        $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-
-        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
-
-    function applyIcyReflection(int $playerId) {
-        $enabledEvolutions = [];
-        $disabledEvolutions = [];
-        $playersIds = $this->getPlayersIds();
-        foreach($playersIds as $pId) {
-            $evolutions = $this->getEvolutionCardsByLocation('table', $pId);
-            foreach($evolutions as $evolution) {
-                if ($evolution->type != ICY_REFLECTION_EVOLUTION && $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 1) {
-                    $enabledEvolutions[] = $evolution;
-                } else {
-                    $disabledEvolutions[] = $evolution;
-                }
-            }
-        }
-        
-        $question = new Question(
-            'IcyReflection',
-            clienttranslate('${player_name} must choose an Evolution card to copy'),
-            clienttranslate('${you} must choose an Evolution card to copy'),
-            [$playerId],
-            ST_AFTER_ANSWER_QUESTION,
-            [ 
-                'playerId' => $playerId,
-                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
-                'enabledEvolutions' => $enabledEvolutions,
-                'disabledEvolutions' => $disabledEvolutions,
-            ]
-        );
-
-        $this->addStackedState();
-        $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
 
     function setMimickedEvolution(int $mimicOwnerId, object $card) {
         $countMothershipSupportBefore = $this->countEvolutionOfType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);
@@ -1191,26 +896,6 @@ trait EvolutionCardsUtilTrait {
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 
-    function myToyQuestion(int $playerId, EvolutionCard $card) {
-        $question = new Question(
-            'MyToy',
-            /*client TODOPUBG translate(*/'${player_name} must choose a card to reserve'/*)*/,
-            /*client TODOPUBG translate(*/'${you} must choose a card to reserve'/*)*/,
-            [$playerId],
-            ST_AFTER_ANSWER_QUESTION,
-            [ 
-                'playerId' => $playerId,
-                '_args' => [ 'player_name' => $this->getPlayerName($playerId) ],
-                'card' => $card,
-            ]
-        );
-
-        $this->addStackedState();
-        $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
-
     function freezeRayChooseOpponentQuestion(int $playerId, array $smashedPlayersIds, EvolutionCard $card) {
         $question = new Question(
             'FreezeRayChooseOpponent',
@@ -1233,17 +918,6 @@ trait EvolutionCardsUtilTrait {
         $this->setQuestion($question);
         $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
         $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
-
-    function applyFelineMotor(int $playerId) {
-        $startedTurnInTokyo = $this->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
-        if (in_array($playerId, $startedTurnInTokyo)) {
-            throw new \BgaUserException(self::_("You started your turn in Tokyo"));
-        }
-        
-        $this->moveToTokyoFreeSpot($playerId);
-        $this->setGameStateValue(PREVENT_ENTER_TOKYO, 1);
-        $this->goToState($this->redirectAfterHalfMovePhase());
     }
 
     function isGiftCardsInPlay() {
