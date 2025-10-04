@@ -6,6 +6,7 @@ require_once(__DIR__.'/../Objects/dice.php');
 require_once(__DIR__.'/../Objects/player-intervention.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Dice;
@@ -667,18 +668,15 @@ trait DiceUtilTrait {
         }
 
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
-
+        $playerEvolutions = $isPowerUpExpansion ? $this->powerUpExpansion->evolutionManager->getPlayerVirtual($playerId, true, true) : [];
         // Gamma Breath & Tail Sweep
-        $hasGammaBreath = false;
+        $gammaBreathCardIds = [];
         $hasTailSweep = false;
         $hasTinyTail = false;
         if ($isPowerUpExpansion) {
-            $gammaBreathCards = $this->getEvolutionsOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);
-            if (count($gammaBreathCards) > 0) {
-                $usedCards = $this->getUsedCard();
-                $availableGammaBreath = array_values(array_filter($gammaBreathCards, fn($gammaBreathCard) => !in_array(3000 + $gammaBreathCard->id, $usedCards)));
-                $hasGammaBreath = count($availableGammaBreath) > 0;
-            }
+            $usedCards = $this->getUsedCard();
+            $gammaBreathCards = Arrays::filter($playerEvolutions, fn($evolution) => $evolution->type === GAMMA_BREATH_EVOLUTION && !in_array(3000 + $evolution->id, $usedCards));
+            $gammaBreathCardIds = Arrays::pluck($gammaBreathCards, 'id');
 
             $tailSweepCards = $this->getEvolutionsOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
             if (count($tailSweepCards) > 0) {
@@ -707,7 +705,7 @@ trait DiceUtilTrait {
             'hasStretchy' => $hasStretchy,
             'hasClown' => $hasClown,
             'hasSaurianAdaptability' => $hasSaurianAdaptability,
-            'hasGammaBreath' => $hasGammaBreath,
+            'gammaBreathCardIds' => $gammaBreathCardIds,
             'hasTailSweep' => $hasTailSweep,
             'hasTinyTail' => $hasTinyTail,
             'hasYinYang' => $hasYinYang,
@@ -722,7 +720,7 @@ trait DiceUtilTrait {
             || $cards['hasStretchy'] 
             || $cards['hasClown'] 
             || $cards['hasSaurianAdaptability'] 
-            || $cards['hasGammaBreath'] 
+            || count($cards['gammaBreathCardIds']) > 0
             || $cards['hasTailSweep'] 
             || $cards['hasTinyTail'] 
             || $cards['hasYinYang'] 

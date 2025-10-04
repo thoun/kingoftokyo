@@ -76,7 +76,7 @@ class DiceManager {
     }
 
     public setDiceForChangeDie(dice: Die[], selectableDice: Die[], args: EnteringChangeDieArgs, canHealWithDice: boolean, frozenFaces: number[]) {
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel || args.hasShrinky ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;
 
         if (this.dice.length) {
@@ -584,13 +584,13 @@ class DiceManager {
                             true
                         );
                     }
-                    if (args.hasGammaBreath) {
+                    if (args.gammaBreathCardIds.length) {
                         this.game.createButton(
                             bubbleActionButtonsId, 
                             gammaBreathButtonId, 
                             dojo.string.substitute(buttonText, {'card_name': `<strong>${this.game.evolutionCardsManager.getCardName(57, 'text-only')}</strong>` }),
                             () => {
-                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3057);
+                                this.game.changeDie(die.id, dieFaceSelector.getValue(), 3057, args.gammaBreathCardIds[0]);
                                 this.toggleBubbleChangeDie(die);
                             },
                             true
@@ -693,7 +693,7 @@ class DiceManager {
                         if (args.hasHerdCuller && die.value != 1) {
                             dojo.toggleClass(herdCullerButtonId, 'disabled', value != 1);
                         }
-                        if (args.hasGammaBreath && die.value != 6) {
+                        if (args.gammaBreathCardIds.length && die.value != 6) {
                             dojo.toggleClass(gammaBreathButtonId, 'disabled', value != 6);
                         }
                         if (args.hasTailSweep) {
@@ -738,7 +738,7 @@ class DiceManager {
                     if (args.hasHerdCuller) {
                         dojo.addClass(herdCullerButtonId, 'disabled');
                     }
-                    if (args.hasGammaBreath) {
+                    if (args.gammaBreathCardIds.length) {
                         dojo.addClass(gammaBreathButtonId, 'disabled');
                     }
                     if (args.hasTailSweep) {

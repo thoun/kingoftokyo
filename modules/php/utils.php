@@ -998,14 +998,14 @@ trait UtilTrait {
                 if ($this->getPlayerHealth($playerId) == 0) {
                     $sonOfKongKikoEvolutions = $this->getEvolutionsOfType($playerId, SON_OF_KONG_KIKO_EVOLUTION, true, true);
                     if (count($sonOfKongKikoEvolutions) > 0) {
-                        $this->applySonOfKongKiko($playerId, $sonOfKongKikoEvolutions[0]);
+                         $sonOfKongKikoEvolutions[0]->applyEffect(new Context($this, $playerId));
                     }
                 }
 
                 if ($this->getPlayerHealth($playerId) == 0) {
                     $nineLivesEvolutions = $this->getEvolutionsOfType($playerId, NINE_LIVES_EVOLUTION, true, true);
                     if (count($nineLivesEvolutions) > 0) {
-                        $this->applyNineLives($playerId, $nineLivesEvolutions[0]);
+                        $nineLivesEvolutions[0]->applyEffect(new Context($this, $playerId));
                     }
                 }
             }

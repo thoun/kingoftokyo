@@ -221,7 +221,7 @@ interface KingOfTokyoGame extends GameGui {
     SHINK_RAY_TOKEN_TOOLTIP: string;
     CULTIST_TOOLTIP: string;
 
-    changeDie: (id: number, value: number, card: number) => void;
+    changeDie: (id: number, value: number, card: number, cardId?: number) => void;
     psychicProbeRollDie: (id: number) => void;
     discardDie: (id: number) => void;
     rerollOrDiscardDie: (id: number) => void;
@@ -329,7 +329,7 @@ interface EnteringChangeDieArgs extends EnteringDiceArgs {
     hasStretchy: boolean;
     hasClown: boolean;
     hasSaurianAdaptability: boolean;
-    hasGammaBreath: boolean;
+    gammaBreathCardIds: number[];
     hasTailSweep: boolean;
     hasTinyTail: boolean;
     hasYinYang: boolean;

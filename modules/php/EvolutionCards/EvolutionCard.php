@@ -21,6 +21,9 @@ class EvolutionCard {
     
     #[ItemField(dbField: 'owner_id')]
     public ?int $ownerId;
+
+    // if this card is virtual, indicates the id of the icy reflection evolution. It's id will be negative the real card id.
+    public ?int $mimickingEvolutionId = null;
     
     public static function createBackCard(int $id) {
         $public = new EvolutionCard();

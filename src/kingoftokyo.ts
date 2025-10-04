@@ -2654,15 +2654,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }, { lock: false, checkAction: false });
     }
 
-    public changeDie(id: number, value: number, card: number) {
-        if(!this.checkAction('changeDie')) {
-            return;
-        }
-
-        this.takeAction('changeDie', {
+    public changeDie(id: number, value: number, card: number, cardId?: number) {
+        this.bgaPerformAction('actChangeDie', {
             id,
             value,
-            card
+            card,
+            cardId,
         });
     }
 

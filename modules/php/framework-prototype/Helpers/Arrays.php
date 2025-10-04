@@ -114,7 +114,7 @@ class Arrays {
      * ];
      * $names = Arrays::pluck($arrays, 'name'); // ['Alice', 'Bob']
      */
-    function pluck(array $array, string $property): array {
+    public static function pluck(array $array, string $property): array {
         return array_map(fn($item) => is_object($item) ? $item->{$property} : ($item[$property] ?? null), $array);
     }
 

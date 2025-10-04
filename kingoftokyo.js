@@ -5007,7 +5007,7 @@ var DiceManager = /** @class */ (function () {
     DiceManager.prototype.setDiceForChangeDie = function (dice, selectableDice, args, canHealWithDice, frozenFaces) {
         var _this = this;
         var _a;
-        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.hasGammaBreath || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel || args.hasShrinky ? 'change' : null;
+        this.action = args.hasHerdCuller || args.hasPlotTwist || args.hasStretchy || args.hasClown || args.hasSaurianAdaptability || args.gammaBreathCardIds.length || args.hasTailSweep || args.hasTinyTail || args.hasBiofuel || args.hasShrinky ? 'change' : null;
         this.changeDieArgs = args;
         if (this.dice.length) {
             this.setSelectableDice(selectableDice);
@@ -5464,9 +5464,9 @@ var DiceManager = /** @class */ (function () {
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
-                    if (args_1.hasGammaBreath) {
+                    if (args_1.gammaBreathCardIds.length) {
                         this.game.createButton(bubbleActionButtonsId, gammaBreathButtonId_1, dojo.string.substitute(buttonText, { 'card_name': "<strong>".concat(this.game.evolutionCardsManager.getCardName(57, 'text-only'), "</strong>") }), function () {
-                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3057);
+                            _this.game.changeDie(die.id, dieFaceSelector_1.getValue(), 3057, args_1.gammaBreathCardIds[0]);
                             _this.toggleBubbleChangeDie(die);
                         }, true);
                     }
@@ -5525,7 +5525,7 @@ var DiceManager = /** @class */ (function () {
                         if (args_1.hasHerdCuller && die.value != 1) {
                             dojo.toggleClass(herdCullerButtonId_1, 'disabled', value != 1);
                         }
-                        if (args_1.hasGammaBreath && die.value != 6) {
+                        if (args_1.gammaBreathCardIds.length && die.value != 6) {
                             dojo.toggleClass(gammaBreathButtonId_1, 'disabled', value != 6);
                         }
                         if (args_1.hasTailSweep) {
@@ -5569,7 +5569,7 @@ var DiceManager = /** @class */ (function () {
                     if (args_1.hasHerdCuller) {
                         dojo.addClass(herdCullerButtonId_1, 'disabled');
                     }
-                    if (args_1.hasGammaBreath) {
+                    if (args_1.gammaBreathCardIds.length) {
                         dojo.addClass(gammaBreathButtonId_1, 'disabled');
                     }
                     if (args_1.hasTailSweep) {
@@ -8616,14 +8616,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
             skipBuyPhase: skipBuyPhase
         }, { lock: false, checkAction: false });
     };
-    KingOfTokyo.prototype.changeDie = function (id, value, card) {
-        if (!this.checkAction('changeDie')) {
-            return;
-        }
-        this.takeAction('changeDie', {
+    KingOfTokyo.prototype.changeDie = function (id, value, card, cardId) {
+        this.bgaPerformAction('actChangeDie', {
             id: id,
             value: value,
-            card: card
+            card: card,
+            cardId: cardId,
         });
     };
     KingOfTokyo.prototype.psychicProbeRollDie = function (id) {
