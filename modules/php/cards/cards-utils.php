@@ -207,7 +207,11 @@ trait CardsUtilTrait {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
-    function applyResurrectCard(int $playerId, int $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, bool $removeEnergy, int $newHearts, /*int|null*/ $points) {
+    function applyResurrectCard(int $playerId, int | EvolutionCard $logCardType, string $message, bool $resetWickedness, bool $removeEvolutions, bool $removeEnergy, int $newHearts, /*int|null*/ $points) {
+        if ($logCardType instanceof EvolutionCard) {
+            $logCardType = 3000 + $logCardType->type;
+        }
+
         $playerName = $this->getPlayerName($playerId);
         // discard all cards
         $zombified = $this->getPlayer($playerId)->zombified;
@@ -304,37 +308,6 @@ trait CardsUtilTrait {
             false,
             12,
             0
-        );
-    }
-
-    function applyNineLives(int $playerId, EvolutionCard &$card) {
-        $this->playEvolutionToTable($playerId, $card, '');
-
-        $this->applyResurrectCard(
-            $playerId, 
-            3000 + $card->type, 
-            clienttranslate('${player_name} reached 0 [Heart]. With ${card_name}, all [Energy], [Star], cards and Evolutions are lost but player gets back 9[Heart] and 9[Star]'),
-            false, 
-            true,
-            true,
-            9,
-            9
-        );
-    }
-
-    function applySonOfKongKiko(int $playerId, EvolutionCard &$card) {
-        $this->playEvolutionToTable($playerId, $card, '');
-        $this->removeEvolution($playerId, $card, false, 5000);
-
-        $this->applyResurrectCard(
-            $playerId, 
-            3000 + $card->type, 
-            /*client TODOPUKK translate*/('${player_name} reached 0 [Heart]. With ${card_name}, ${player_name} gets back to 4[Heart], leave Tokyo, and continue playing'),
-            false, 
-            false,
-            false,
-            4,
-            null
         );
     }
 

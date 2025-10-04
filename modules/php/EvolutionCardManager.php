@@ -65,6 +65,9 @@ const EVOLUTION_CARD_CLASSES = [
     SCYTHE_EVOLUTION => 'Scythe',
     CANDY_EVOLUTION => 'Candy',
 
+    // King Kong
+    SON_OF_KONG_KIKO_EVOLUTION => 'SonOfKongKiko',
+
     // Pandakaï
     PANDA_MONIUM_EVOLUTION => 'PandaMonium',
     EATS_SHOOTS_AND_LEAVES_EVOLUTION => 'EatsShootsAndLeaves',
