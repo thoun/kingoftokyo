@@ -3083,21 +3083,21 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public setLeaveTokyoUnder(under: number) {
-        this.takeNoLockAction('setLeaveTokyoUnder', {
+        this.bgaPerformAction('setLeaveTokyoUnder', {
             under
-        });
+        }, { lock: false, checkAction: false });
     }
 
     public setStayTokyoOver(over: number) {
-        this.takeNoLockAction('setStayTokyoOver', {
+        this.bgaPerformAction('setStayTokyoOver', {
             over
-        });
+        }, { lock: false, checkAction: false });
     }
 
     public setAskPlayEvolution(value: number) {
-        this.takeNoLockAction('setAskPlayEvolution', {
+        this.bgaPerformAction('setAskPlayEvolution', {
             value
-        });
+        }, { lock: false, checkAction: false });
     }
     
     public exchangeCard(id: number) {
@@ -3293,10 +3293,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         this.bgaPerformAction(action, data);
     }
 
-    public takeNoLockAction(action: string, data?: any) {
-        this.bgaPerformAction(action, data, { lock: false, checkAction: false });
-    }
-
     public setFont(prefValue: number): void {
         this.playerTables.forEach(playerTable => playerTable.setFont(prefValue));
     }
@@ -3448,7 +3444,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
        const destinationId = `player-board-monster-figure-${args.playerId}`;
        const animation = this.slideToObject(monsterDiv, destinationId);
 
-        dojo.connect(animation, 'onEnd', dojo.hitch(this, () => {
+        dojo.connect(animation as any, 'onEnd', dojo.hitch(this, () => {
             this.fadeOutAndDestroy(monsterDiv);
             dojo.removeClass(destinationId, 'monster0');
             dojo.addClass(destinationId, `monster${args.monster}`);
@@ -3961,8 +3957,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     notif_setPlayerCounter(args) {
-        if (args.type === 'mindbugTokens') {
-            this.setPlayerTokens(args.playerId, args.value, 'mindbug');
+        const { name, playerId, value } = args;
+        if (name === 'mindbugTokens') {
+            this.setPlayerTokens(playerId, value, 'mindbug');
         }
     }
     

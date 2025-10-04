@@ -19,7 +19,6 @@
 namespace Bga\Games\KingOfTokyo;
 
 require_once('framework-prototype/Helpers/Arrays.php');
-require_once('framework-prototype/counters/player-counter.php');
 
 require_once('constants.inc.php');
 require_once('Objects/dice.php');

@@ -40,7 +40,7 @@ trait InitialCardTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function actChooseInitialCard(#[IntParam(name: 'id')] ?int $costumeId, ?int $evolutionId) { // TODOMB test!!!
+    function actChooseInitialCard(#[IntParam(name: 'id')] ?int $costumeId, ?int $evolutionId) {
         $playerId = $this->getActivePlayerId();
 
         $args = $this->argChooseInitialCard();

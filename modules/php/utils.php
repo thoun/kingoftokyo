@@ -1088,11 +1088,11 @@ trait UtilTrait {
         $this->incStat($energy, 'wonEnergyCubes', $playerId);
     }
 
-    function applyLoseEnergy(int $playerId, int $energy, int | PowerCard | CurseCard $cardType) {
+    function applyLoseEnergy(int $playerId, int $energy, int | PowerCard | CurseCard | EvolutionCard $cardType) {
         $this->applyLoseEnergyIgnoreCards($playerId, $energy, $cardType);
     }
 
-    function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int | PowerCard | CurseCard $cardType) {
+    function applyLoseEnergyIgnoreCards(int $playerId, int $energy, int | PowerCard | CurseCard | EvolutionCard $cardType) {
         $actualEnergy = $this->getPlayerEnergy($playerId);
         $newEnergy = max($actualEnergy - $energy, 0);
         $this->DbQuery("UPDATE player SET `player_energy` = $newEnergy where `player_id` = $playerId");
@@ -1102,6 +1102,9 @@ trait UtilTrait {
         }
         if ($cardType instanceof CurseCard) {
             $cardType = 1000 + $cardType->type;
+        }
+        if ($cardType instanceof EvolutionCard) {
+            $cardType = 3000 + $cardType->type;
         }
 
         if ($cardType >= 0) {

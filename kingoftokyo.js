@@ -3743,7 +3743,7 @@ var EvolutionCardsManager = /** @class */ (function (_super) {
             case 617: return /*_TODOMB*/ ("If you have exactly [dieHeart][dieHeart][dieHeart] among the dice in your Roll, gain 3[Heart] and the Monster with the least [Heart] gains 1[Heart]."); // TODOMB
             case 618: return /*_TODOMB*/ ("If you have exactly [dieEnergy][dieEnergy][dieEnergy] among the dice in your Roll, the first Power card you buy this turn costs 3[Energy] less."); // TODOMB
             // MasterMindbug
-            case 621: return /*_TODOMB*/ ("Pay 6[Energy]: Gain 1 Mindbug token."); // TODOMB
+            case 621: return /*_TODOMB*/ ("Pay 6[Energy]: Gain 1 Mindbug token.");
             case 622: return /*_TODOMB*/ ("Once per turn, you may reroll all your [dieEnergy]."); // TODOMB
             case 623: return /*_TODOMB*/ ("Each time another Monster gains 4[Star] or more, gain 1[Star]."); // TODOMB
             case 624: return /*_TODOMB*/ ("When you leave Tokyo, gain 2[Energy] or 2[Heart]."); // TODOMB
@@ -8958,19 +8958,19 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.setLeaveTokyoUnder = function (under) {
-        this.takeNoLockAction('setLeaveTokyoUnder', {
+        this.bgaPerformAction('setLeaveTokyoUnder', {
             under: under
-        });
+        }, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.setStayTokyoOver = function (over) {
-        this.takeNoLockAction('setStayTokyoOver', {
+        this.bgaPerformAction('setStayTokyoOver', {
             over: over
-        });
+        }, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.setAskPlayEvolution = function (value) {
-        this.takeNoLockAction('setAskPlayEvolution', {
+        this.bgaPerformAction('setAskPlayEvolution', {
             value: value
-        });
+        }, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.exchangeCard = function (id) {
         if (!this.checkAction('exchangeCard')) {
@@ -9121,9 +9121,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.takeAction = function (action, data) {
         this.bgaPerformAction(action, data);
-    };
-    KingOfTokyo.prototype.takeNoLockAction = function (action, data) {
-        this.bgaPerformAction(action, data, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.setFont = function (prefValue) {
         this.playerTables.forEach(function (playerTable) { return playerTable.setFont(prefValue); });
@@ -9701,8 +9698,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
         }
     };
     KingOfTokyo.prototype.notif_setPlayerCounter = function (args) {
-        if (args.type === 'mindbugTokens') {
-            this.setPlayerTokens(args.playerId, args.value, 'mindbug');
+        var name = args.name, playerId = args.playerId, value = args.value;
+        if (name === 'mindbugTokens') {
+            this.setPlayerTokens(playerId, value, 'mindbug');
         }
     };
     KingOfTokyo.prototype.setPoints = function (playerId, points, delay) {

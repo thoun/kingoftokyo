@@ -5,6 +5,7 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFramework\Actions\CheckAction;
 use Bga\GameFramework\Actions\Types\BoolParam;
 use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
@@ -110,6 +111,7 @@ trait EvolutionCardsActionTrait {
         }
     }
 
+    #[CheckAction(false)]
     function actPlayEvolution(int $id) {
         $playerId = $this->getCurrentPlayerId();
 

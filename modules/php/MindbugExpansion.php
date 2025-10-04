@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo;
 
-use Bga\GameFrameworkPrototype\Counters\PlayerCounter;
+use Bga\GameFramework\Components\Counters\PlayerCounter;
+use Bga\GameFramework\NotificationMessage;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
-use BgaUserException;
+use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 
 class MindbugExpansion {
     public PlayerCounter $mindbugTokens;
@@ -13,7 +15,7 @@ class MindbugExpansion {
     function __construct(
         protected Game $game,
     ) {
-        $this->mindbugTokens = new PlayerCounter($game, 'mindbugTokens');
+        $this->mindbugTokens = $game->counterFactory->createPlayerCounter('mindbugTokens');
     }
 
     public function isActive(): bool {
@@ -72,5 +74,20 @@ class MindbugExpansion {
         $mindbugTokens = $this->mindbugTokens->getAll();
 
         return Arrays::filter($otherPlayerIds, fn($playerId) => $mindbugTokens[$playerId] > 0);
+    }
+
+    function applyGetMindbugTokens(int $playerId, int $tokens, int | PowerCard | EvolutionCard $cardType) {
+        if ($cardType instanceof PowerCard) {
+            $cardType = $cardType->type;
+        }
+        if ($cardType instanceof EvolutionCard) {
+            $cardType = 3000 + $cardType->type;
+        }
+        if ($cardType >= 0) {
+            $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${inc} Mindbug token(s) with ${card_name}');
+            $this->mindbugTokens->inc($playerId, $tokens, new NotificationMessage($message, [
+                'card_name' => $cardType == 0 ? null : $cardType,
+            ]));
+        }
     }
 }

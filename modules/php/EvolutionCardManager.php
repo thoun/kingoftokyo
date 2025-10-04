@@ -87,6 +87,9 @@ const EVOLUTION_CARD_CLASSES = [
     MY_TOY_EVOLUTION => 'MyToy',
     NURTURE_THE_YOUNG_EVOLUTION => 'NurtureTheYoung',
     YUMMY_YUMMY_EVOLUTION => 'YummyYummy',
+
+    // MasterMindbug
+    MINDBUG_ACQUISITION_EVOLUTION => 'MindbugAcquisition',
 ];
 
 class EvolutionCardManager extends ItemManager {
