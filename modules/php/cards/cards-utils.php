@@ -81,7 +81,7 @@ trait CardsUtilTrait {
         $this->setGlobalVariable(MIMICKED_CARD . $mimicCardType, $mimickedCard);
         $this->notifyAllPlayers("setMimicToken", clienttranslate('${player_name} mimics ${card_name}'), [
             'card' => $card,
-            'player_name' => $this->getPlayerName($mimicOwnerId),
+            'player_name' => $this->getPlayerNameById($mimicOwnerId),
             'card_name' => $card->type,
             'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
         ]);
@@ -212,7 +212,7 @@ trait CardsUtilTrait {
             $logCardType = 3000 + $logCardType->type;
         }
 
-        $playerName = $this->getPlayerName($playerId);
+        $playerName = $this->getPlayerNameById($playerId);
         // discard all cards
         $zombified = $this->getPlayer($playerId)->zombified;
         $cards = $this->powerCards->getPlayer($playerId);
@@ -237,7 +237,7 @@ trait CardsUtilTrait {
             $this->DbQuery("UPDATE player SET `player_wickedness` = 0, player_take_wickedness_tiles = '[]' where `player_id` = $playerId");
             $this->notifyAllPlayers('wickedness', '', [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'wickedness' => 0,
             ]);
         }
@@ -383,7 +383,7 @@ trait CardsUtilTrait {
 
         $this->notifyAllPlayers('log', clienttranslate('${player_name} uses ${card_name} to gain 1 extra roll'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => SMOKE_CLOUD_CARD,
         ]);
 
@@ -794,7 +794,7 @@ trait CardsUtilTrait {
             
                 $this->notifyAllPlayers("log", clienttranslate('${player_name} reached ${points} [Star] and wins the game with ${card_name}'), [
                     'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
+                    'player_name' => $this->getPlayerNameById($playerId),
                     'card_name' => ASTRONAUT_CARD,
                     'points' => 17,
                 ]);
@@ -835,7 +835,7 @@ trait CardsUtilTrait {
                 'playerId' => $playerId,
                 '_args' => [ 
                     'player_id' => $playerId,
-                    'actplayer' => $this->getPlayerName($playerId) 
+                    'actplayer' => $this->getPlayerNameById($playerId) 
                 ],
                 'mimicCardType' => $mimicCardType,
                 'mimicArgs' => $this->getArgChooseMimickedCard($playerId, $mimicCardType),

@@ -23,7 +23,7 @@ class LoseHealthLog extends Log {
             clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}'), 
             [
                 'playerId' => $playerId,
-                'player_name' => $game->getPlayerName($playerId),
+                'player_name' => $game->getPlayerNameById($playerId),
                 'delta_health' => $deltaHealth,
                 'card_name' => $logCardName,
             ]

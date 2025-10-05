@@ -148,7 +148,7 @@ trait CurseCardsArgTrait {
 
         return [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'dice' => $activePlayerDice,
             'selectableDice' => $selectableDice,
             'canHealWithDice' => $this->canHealWithDice($activePlayerId),

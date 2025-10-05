@@ -144,7 +144,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stChooseMimickedCard",
         "args" => "argChangeMimickedCardWickednessTile",
-        "possibleactions" => [ "changeMimickedCardWickednessTile", "skipChangeMimickedCardWickednessTile" ],
+        "possibleactions" => [ "changeMimickedCardWickednessTile", "actChangeMimickedCardWickednessTile", "skipChangeMimickedCardWickednessTile", "actSkipChangeMimickedCardWickednessTile" ],
         "transitions" => [
             "next" => ST_INITIAL_DICE_ROLL,
             "changeMimickedCard" => ST_PLAYER_CHANGE_MIMICKED_CARD,
@@ -158,7 +158,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stChooseMimickedCard",
         "args" => "argChangeMimickedCard",
-        "possibleactions" => [ "changeMimickedCard", "skipChangeMimickedCard" ],
+        "possibleactions" => [ "changeMimickedCard", "actChangeMimickedCard", "skipChangeMimickedCard", "actSkipChangeMimickedCard" ],
         "transitions" => [
             "next" => ST_INITIAL_DICE_ROLL,
         ]
@@ -212,7 +212,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stChangeDie",
         "args" => "argChangeDie",
-        "possibleactions" => [ "actChangeDie", "resolve", "actResolve", "rethrow3changeDie", "actRethrow3ChangeDie", "useYinYang", "actUseYinYang" ],
+        "possibleactions" => [ "changeDie", "actChangeDie", "resolve", "actResolve", "rethrow3changeDie", "actRethrow3ChangeDie", "useYinYang", "actUseYinYang" ],
         "transitions" => [
             "changeDie" => ST_PLAYER_CHANGE_DIE,
             "changeDieWithPsychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
@@ -256,7 +256,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "args" => "argCheerleaderSupport",
         "action" => "stCheerleaderSupport",
-        "possibleactions" => [ "support", "dontSupport" ],
+        "possibleactions" => [ "support", "actSupport", "dontSupport", "actDontSupport" ],
         "transitions" => [
             "end" => ST_MULTIPLAYER_ASK_MINDBUG,
         ],
@@ -327,7 +327,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} must select the face of the extra die'),
         "type" => "activeplayer",
         "args" => "argSelectExtraDie",
-        "possibleactions" => [ "selectExtraDie" ],
+        "possibleactions" => [ "selectExtraDie", "actSelectExtraDie" ],
         "transitions" => [
             "next" => ST_RESOLVE_DICE,
         ],
@@ -339,7 +339,7 @@ $playerActionsGameStates = [
         "descriptionmyturn" => clienttranslate('${you} can reroll or discard a die (select action then die)'),
         "type" => "activeplayer",
         "args" => "argRerollOrDiscardDie",
-        "possibleactions" => [ "falseBlessingReroll", "falseBlessingDiscard", "falseBlessingSkip" ],
+        "possibleactions" => [ "falseBlessingReroll", "actFalseBlessingReroll", "falseBlessingDiscard", "actFalseBlessingDiscard", "falseBlessingSkip", "actFalseBlessingSkip" ],
         "transitions" => [
             "next" => ST_RESOLVE_DICE,
         ],
@@ -352,7 +352,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "args" => "argRerollDice",
         "action" => "stRerollDice",
-        "possibleactions" => [ "rerollDice" ],
+        "possibleactions" => [ "rerollDice", "actRerollDice" ],
         "transitions" => [
             "end" => ST_RESOLVE_DICE,
         ],
@@ -404,7 +404,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "action" => "stTakeWickednessTile",
         "args" => "argTakeWickednessTile",
-        "possibleactions" => [ "takeWickednessTile", "skipTakeWickednessTile" ],
+        "possibleactions" => [ "takeWickednessTile", "actTakeWickednessTile", "skipTakeWickednessTile", "actSkipTakeWickednessTile" ],
         "transitions" => [
             "next" => ST_RESOLVE_HEART_DICE,
             "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
@@ -428,7 +428,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argResolveHeartDiceAction",
         "action" => "stResolveHeartDiceAction",
-        "possibleactions" => [ "applyHeartDieChoices" ],
+        "possibleactions" => [ "applyHeartDieChoices", "actApplyHeartDieChoices" ],
         "transitions" => [
             "next" => ST_RESOLVE_ENERGY_DICE,
         ],
@@ -494,7 +494,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stCancelDamage",
         "args" => "argCancelDamage",
-        "possibleactions" => [ "throwCamouflageDice", "useWings", "skipWings", "useRobot", "useElectricArmor", "useSuperJump", "useRapidHealingSync", "actUseRapidHealingSync", "rethrow3camouflage", "actRethrow3Camouflage", "useInvincibleEvolution", "actUseInvincibleEvolution", "useCandyEvolution", "actUseCandyEvolution", "useRapidHealing", "actUseRapidHealing", "useMothershipSupport", "actUseMothershipSupport" ],
+        "possibleactions" => [ "throwCamouflageDice", "actThrowCamouflageDice", "useWings", "actUseWings", "skipWings", "actSkipWings", "useRobot", "actUseRobot", "useElectricArmor", "actUseElectricArmor", "useSuperJump", "actUseSuperJump", "useRapidHealingSync", "actUseRapidHealingSync", "rethrow3camouflage", "actRethrow3Camouflage", "useInvincibleEvolution", "actUseInvincibleEvolution", "useCandyEvolution", "actUseCandyEvolution", "useRapidHealing", "actUseRapidHealing", "useMothershipSupport", "actUseMothershipSupport" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
             "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
@@ -554,7 +554,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stLeaveTokyoExchangeCard",
         "args" => "argLeaveTokyoExchangeCard",
-        "possibleactions" => [ "exchangeCard", "skipExchangeCard" ],
+        "possibleactions" => [ "exchangeCard", "actExchangeCard", "skipExchangeCard", "actSkipExchangeCard" ],
         "transitions" => [
             "next" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO,
             "end" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO, // for zombie
@@ -612,7 +612,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argStealCostumeCard",
         "action" => "stStealCostumeCard",
-        "possibleactions" => [ "stealCostumeCard", 'giveGiftEvolution', 'actGiveGiftEvolution', "endStealCostume" ],
+        "possibleactions" => [ "stealCostumeCard", "actStealCostumeCard", 'giveGiftEvolution', 'actGiveGiftEvolution', "endStealCostume", "actEndStealCostume" ],
         "transitions" => [],
     ],
 
@@ -623,7 +623,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argChangeForm",
         "action" => "stChangeForm",
-        "possibleactions" => [ "changeForm", "skipChangeForm" ],
+        "possibleactions" => [ "changeForm", "actChangeForm", "skipChangeForm", "actSkipChangeForm" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
         ]
@@ -636,7 +636,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argBuyCard",
         "action" => "stBuyCard",
-        "possibleactions" => [ "buyCard", "goToSellCard", "endTurn", "actEndTurn", "renew", "useMiraculousCatch", "actUseMiraculousCatch" ],
+        "possibleactions" => [ "buyCard", "actBuyCard", "goToSellCard", "actGoToSellCard", "endTurn", "actEndTurn", "renew", "actRenew", "useMiraculousCatch", "actUseMiraculousCatch" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
             //"buyMimicCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD,
@@ -668,7 +668,7 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stOpportunistBuyCard",
         "args" => "argOpportunistBuyCard",
-        "possibleactions" => [ "buyCard", "opportunistSkip" ],
+        "possibleactions" => [ "buyCard", "actBuyCard", "opportunistSkip", "actOpportunistSkip" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             //"stayMimicCard" => ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD,
@@ -719,7 +719,7 @@ $playerActionsGameStates = [
         "type" => "activeplayer",
         "args" => "argSellCard",
         "action" => "stSellCard",
-        "possibleactions" => [ "sellCard", "endTurn", "actEndTurn" ],
+        "possibleactions" => [ "sellCard", "actSellCard", "endTurn", "actEndTurn" ],
         "transitions" => [
             "sellCard" => ST_PLAYER_SELL_CARD,
         ]
@@ -733,15 +733,15 @@ $playerActionsGameStates = [
         "action" => "stAnswerQuestion",
         "args" => "argAnswerQuestion",
         "possibleactions" => [ 
-            "chooseMimickedCard",
-            'gazeOfTheSphinxDrawEvolution', 'gazeOfTheSphinxGainEnergy',
-            'gazeOfTheSphinxDiscardEvolution', 'gazeOfTheSphinxLoseEnergy',
+            "chooseMimickedCard", "actChooseMimickedCard",
+            'gazeOfTheSphinxDrawEvolution', 'actGazeOfTheSphinxDrawEvolution', 'gazeOfTheSphinxGainEnergy', 'actGazeOfTheSphinxGainEnergy',
+            'gazeOfTheSphinxDiscardEvolution', 'actGazeOfTheSphinxDiscardEvolution', 'gazeOfTheSphinxLoseEnergy', 'actGazeOfTheSphinxLoseEnergy',
                          "putEnergyOnBambooSupply", "actPutEnergyOnBambooSupply", "takeEnergyOnBambooSupply", "actTakeEnergyOnBambooSupply",            "buyCardBamboozle", "actBuyCardBamboozle",
             "giveSymbol",
             "actGiveSymbol",
             "chooseMimickedEvolution", "actChooseMimickedEvolution",
             "chooseFreezeRayDieFace", "actChooseFreezeRayDieFace",
-            "buyCardMiraculousCatch", "skipMiraculousCatch",
+            "buyCardMiraculousCatch", "actBuyCardMiraculousCatch", "skipMiraculousCatch", "actSkipMiraculousCatch",
             "playCardDeepDive", "actPlayCardDeepDive",
             "useExoticArms", "actUseExoticArms", "skipExoticArms", "actSkipExoticArms",
             "giveTarget", "actGiveTarget", "skipGiveTarget", "actSkipGiveTarget",

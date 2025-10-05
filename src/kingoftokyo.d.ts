@@ -232,7 +232,7 @@ interface KingOfTokyoGame extends GameGui {
     chooseEvolutionCardClick(id: number): void;
     getPlayerId: () => number;
     applyHeartActions: (selections: HeartActionSelection[]) => void;
-    applySmashActions: (selections: SmashAction[]) => void;
+    applySmashActions: (selections: { [playerId: number]: SmashAction } ) => void;
     getZoom(): number;
     getPreferencesManager(): PreferencesManager;
     checkBuyEnergyDrinkState(): void;

@@ -8,7 +8,7 @@ const PUNCH_SOUND_DURATION = 250;
 const ACTION_TIMER_DURATION = 5;
 const SYMBOL_AS_STRING_PADDED = ['[Star]', null, null, null, '[Heart]', '[Energy]'];
 
-type FalseBlessingAnkhAction = 'falseBlessingReroll' | 'falseBlessingDiscard';
+type FalseBlessingAnkhAction = 'actFalseBlessingReroll' | 'actFalseBlessingDiscard';
 
 // @ts-ignore
 GameGui = (function () { // this hack required so we fake extend GameGui
@@ -1218,12 +1218,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     this.addActionButton('falseBlessingReroll_button', _("Reroll"), () => {
                         dojo.addClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
-                        this.falseBlessingAnkhAction = 'falseBlessingReroll';
+                        this.falseBlessingAnkhAction = 'actFalseBlessingReroll';
                     }, null, null, 'gray');
                     this.addActionButton('falseBlessingDiscard_button', _("Discard"), () => {
                         dojo.addClass('falseBlessingDiscard_button', 'action-button-toggle-button-selected');
                         dojo.removeClass('falseBlessingReroll_button', 'action-button-toggle-button-selected');
-                        this.falseBlessingAnkhAction = 'falseBlessingDiscard';
+                        this.falseBlessingAnkhAction = 'actFalseBlessingDiscard';
                     }, null, null, 'gray');
                     this.addActionButton('falseBlessingSkip_button', _("Skip"), () => this.falseBlessingSkip());
                     break;
@@ -2687,19 +2687,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public support() {
-        if(!this.checkAction('support')) {
-            return;
-        }
-
-        this.takeAction('support');
+        this.bgaPerformAction('actSupport');
     }
 
     public dontSupport() {
-        if(!this.checkAction('dontSupport')) {
-            return;
-        }
-
-        this.takeAction('dontSupport');
+        this.bgaPerformAction('actDontSupport');
     }
 
     public discardDie(id: number) {
@@ -2713,11 +2705,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             return;
         }
 
-        if(!this.checkAction(this.falseBlessingAnkhAction)) {
-            return;
-        }
-
-        this.takeAction(this.falseBlessingAnkhAction, {
+        this.bgaPerformAction(this.falseBlessingAnkhAction, {
             id
         });
     }
@@ -2751,83 +2739,53 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public selectExtraDie(face: number) {
-        if(!this.checkAction('selectExtraDie')) {
-            return;
-        }
-
-        this.takeAction('selectExtraDie', {
+        this.bgaPerformAction('actSelectExtraDie', {
             face
         });
     }
 
     public falseBlessingReroll(id: number) {
-        if(!this.checkAction('falseBlessingReroll')) {
-            return;
-        }
-
-        this.takeAction('falseBlessingReroll', {
+        this.bgaPerformAction('actFalseBlessingReroll', {
             id
         });
     }
 
     public falseBlessingDiscard(id: number) {
-        if(!this.checkAction('falseBlessingDiscard')) {
-            return;
-        }
-
-        this.takeAction('falseBlessingDiscard', {
+        this.bgaPerformAction('actFalseBlessingDiscard', {
             id
         });
     }
 
     public falseBlessingSkip() {
-        if(!this.checkAction('falseBlessingSkip')) {
-            return;
-        }
-
-        this.takeAction('falseBlessingSkip');
+        this.bgaPerformAction('actFalseBlessingSkip');
     }
 
     public rerollDice(diceIds: number[]) {
-        if(!this.checkAction('rerollDice')) {
-            return;
-        }
-
-        this.takeAction('rerollDice', {
+        this.bgaPerformAction('actRerollDice', {
             ids: diceIds.join(',')
         });
     }
 
     public takeWickednessTile(id: number) {
-        this.bgaPerformAction('takeWickednessTile', {
+        this.bgaPerformAction('actTakeWickednessTile', {
             id,
         });
     }
 
     public skipTakeWickednessTile() {
-        if(!this.checkAction('skipTakeWickednessTile')) {
-            return;
-        }
-
-        this.takeAction('skipTakeWickednessTile');
+        this.bgaPerformAction('actSkipTakeWickednessTile');
     }
 
     public applyHeartActions(selections: HeartActionSelection[]) {
-        if(!this.checkAction('applyHeartDieChoices')) {
-            return;
-        }
-
-        const base64 = btoa(JSON.stringify(selections));
-
-        this.takeAction('applyHeartDieChoices', {
-            selections: base64
+        this.bgaPerformAction('actApplyHeartDieChoices', {
+            heartDieChoices: JSON.stringify(selections)
         });
     }
 
-    public applySmashActions(selections: SmashAction[]) {
-        const base64 = btoa(JSON.stringify({ ...selections }));
+    public applySmashActions(selections: { [playerId: number]: SmashAction } ) {
+        console.warn(selections);
         this.bgaPerformAction('actApplySmashDieChoices', {
-            selections: base64
+            smashDieChoices: JSON.stringify(selections)
         });
     }
 
@@ -2845,37 +2803,21 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public stealCostumeCard(id: number) {
-        if(!this.checkAction('stealCostumeCard')) {
-            return;
-        }
-
-        this.takeAction('stealCostumeCard', {
+        this.bgaPerformAction('actStealCostumeCard', {
             id
         });
     }
 
     public changeForm() {
-        if(!this.checkAction('changeForm')) {
-            return;
-        }
-
-        this.takeAction('changeForm');
+        this.bgaPerformAction('actChangeForm');
     }
 
     public skipChangeForm() {
-        if(!this.checkAction('skipChangeForm')) {
-            return;
-        }
-
-        this.takeAction('skipChangeForm');
+        this.bgaPerformAction('actSkipChangeForm');
     }
 
     public buyCard(id: number, from: number, useSuperiorAlienTechnology: boolean = false, useBobbingForApples: boolean = false) {
-        if(!this.checkAction('buyCard')) {
-            return;
-        }
-
-        this.takeAction('buyCard', {
+        this.bgaPerformAction('actBuyCard', {
             id,
             from,
             useSuperiorAlienTechnology,
@@ -2891,11 +2833,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public chooseMimickedCard(id: number) {
-        if(!this.checkAction('chooseMimickedCard')) {
-            return;
-        }
-
-        this.takeAction('chooseMimickedCard', {
+        this.bgaPerformAction('actChooseMimickedCard', {
             id
         });
     }
@@ -2907,51 +2845,31 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public changeMimickedCard(id: number) {
-        if(!this.checkAction('changeMimickedCard')) {
-            return;
-        }
-
-        this.takeAction('changeMimickedCard', {
+        this.bgaPerformAction('actChangeMimickedCard', {
             id
         });
     }
 
     public chooseMimickedCardWickednessTile(id: number) {
-        if(!this.checkAction('chooseMimickedCardWickednessTile')) {
-            return;
-        }
-
-        this.takeAction('chooseMimickedCardWickednessTile', {
+        this.bgaPerformAction('actChooseMimickedCardWickednessTile', {
             id
         });
     }
 
     public changeMimickedCardWickednessTile(id: number) {
-        if(!this.checkAction('changeMimickedCardWickednessTile')) {
-            return;
-        }
-
-        this.takeAction('changeMimickedCardWickednessTile', {
+        this.bgaPerformAction('actChangeMimickedCardWickednessTile', {
             id
         });
     }
 
     public sellCard(id: number) {
-        if(!this.checkAction('sellCard')) {
-            return;
-        }
-
-        this.takeAction('sellCard', {
+        this.bgaPerformAction('actSellCard', {
             id
         });
     }
 
     public onRenew(cardType: number) {
-        if(!this.checkAction('renew')) {
-            return;
-        }
-
-        this.takeAction('renew', {
+        this.bgaPerformAction('actRenew', {
             cardType
         });
     }
@@ -2961,19 +2879,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public goToSellCard() {
-        if(!this.checkAction('goToSellCard', true)) {
-            return;
-        }
-
-        this.takeAction('goToSellCard');
+        this.bgaPerformAction('actGoToSellCard');
     }
 
     public opportunistSkip() {
-        if(!this.checkAction('opportunistSkip', true)) {
-            return;
-        }
-
-        this.takeAction('opportunistSkip');
+        this.bgaPerformAction('actOpportunistSkip');
     }
 
     public changeActivePlayerDieSkip() {
@@ -2981,27 +2891,15 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public skipChangeMimickedCard() {
-        if(!this.checkAction('skipChangeMimickedCard', true)) {
-            return;
-        }
-
-        this.takeAction('skipChangeMimickedCard');
+        this.bgaPerformAction('actSkipChangeMimickedCard');
     }
 
     public skipChangeMimickedCardWickednessTile() {
-        if(!this.checkAction('skipChangeMimickedCardWickednessTile', true)) {
-            return;
-        }
-
-        this.takeAction('skipChangeMimickedCardWickednessTile');
+        this.bgaPerformAction('actSkipChangeMimickedCardWickednessTile');
     }
 
     public endStealCostume() {
-        if(!this.checkAction('endStealCostume')) {
-            return;
-        }
-
-        this.takeAction('endStealCostume');
+        this.bgaPerformAction('actEndStealCostume');
     }
 
     public onEndTurn() {
@@ -3009,19 +2907,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public throwCamouflageDice() {
-        if(!this.checkAction('throwCamouflageDice')) {
-            return;
-        }
-
-        this.takeAction('throwCamouflageDice');
+        this.bgaPerformAction('actThrowCamouflageDice');
     }
 
     public useWings() {
-        if(!this.checkAction('useWings')) {
-            return;
-        }
-
-        this.takeAction('useWings');
+        this.bgaPerformAction('actUseWings');
     }
 
     public useInvincibleEvolution(evolutionType: number) {
@@ -3035,39 +2925,23 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public skipWings() {
-        if(!this.checkAction('skipWings')) {
-            return;
-        }
-
-        this.takeAction('skipWings');
+        this.bgaPerformAction('actSkipWings');
     }
 
     public useRobot(energy: number) {
-        if(!this.checkAction('useRobot')) {
-            return;
-        }
-
-        this.takeAction('useRobot', {
+        this.bgaPerformAction('actUseRobot', {
             energy
         });
     }
 
     public useElectricArmor(energy: number) {
-        if(!this.checkAction('useElectricArmor')) {
-            return;
-        }
-
-        this.takeAction('useElectricArmor', {
+        this.bgaPerformAction('actUseElectricArmor', {
             energy
         });
     }
 
     public useSuperJump(energy: number) {
-        if(!this.checkAction('useSuperJump')) {
-            return;
-        }
-
-        this.takeAction('useSuperJump', {
+        this.bgaPerformAction('actUseSuperJump', {
             energy
         });
     }
@@ -3098,21 +2972,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     public exchangeCard(id: number) {
-        if(!this.checkAction('exchangeCard')) {
-            return;
-        }
-
-        this.takeAction('exchangeCard', {
+        this.bgaPerformAction('actExchangeCard', {
             id
         });
     }
 
     public skipExchangeCard() {
-        if(!this.checkAction('skipExchangeCard')) {
-            return;
-        }
-
-        this.takeAction('skipExchangeCard');
+        this.bgaPerformAction('actSkipExchangeCard');
     }
     
     public stayInHibernation() {
@@ -3149,37 +3015,21 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     public gazeOfTheSphinxDrawEvolution() {
-        if(!this.checkAction('gazeOfTheSphinxDrawEvolution')) {
-            return;
-        }
-
-        this.takeAction('gazeOfTheSphinxDrawEvolution');
+        this.bgaPerformAction('actGazeOfTheSphinxDrawEvolution');
     }
     
     public gazeOfTheSphinxGainEnergy() {
-        if(!this.checkAction('gazeOfTheSphinxGainEnergy')) {
-            return;
-        }
-
-        this.takeAction('gazeOfTheSphinxGainEnergy');
+        this.bgaPerformAction('actGazeOfTheSphinxGainEnergy');
     }
     
     public gazeOfTheSphinxDiscardEvolution(id) {
-        if(!this.checkAction('gazeOfTheSphinxDiscardEvolution')) {
-            return;
-        }
-
-        this.takeAction('gazeOfTheSphinxDiscardEvolution', {
+        this.bgaPerformAction('actGazeOfTheSphinxDiscardEvolution', {
             id
         });
     }
     
     public gazeOfTheSphinxLoseEnergy() {
-        if(!this.checkAction('gazeOfTheSphinxLoseEnergy')) {
-            return;
-        }
-
-        this.takeAction('gazeOfTheSphinxLoseEnergy');
+        this.bgaPerformAction('actGazeOfTheSphinxLoseEnergy');
     }
     
     public useChestThumping(id: number) {
@@ -3203,21 +3053,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
     
     public buyCardMiraculousCatch(useSuperiorAlienTechnology: boolean = false) {
-        if(!this.checkAction('buyCardMiraculousCatch')) {
-            return;
-        }
-
-        this.takeAction('buyCardMiraculousCatch', {
+        this.bgaPerformAction('actBuyCardMiraculousCatch', {
             useSuperiorAlienTechnology,
         });
     }
     
     public skipMiraculousCatch() {
-        if(!this.checkAction('skipMiraculousCatch')) {
-            return;
-        }
-
-        this.takeAction('skipMiraculousCatch');
+        this.bgaPerformAction('actSkipMiraculousCatch');
     }
     
     public playCardDeepDive(id: number) {
@@ -3284,10 +3126,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     
     public loseHearts() {
         this.bgaPerformAction('actLoseHearts');
-    }
-    
-    public takeAction(action: string, data?: any) {
-        this.bgaPerformAction(action, data);
     }
 
     public setFont(prefValue: number): void {

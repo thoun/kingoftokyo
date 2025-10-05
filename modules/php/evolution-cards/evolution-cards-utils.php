@@ -199,7 +199,7 @@ trait EvolutionCardsUtilTrait {
 
         $this->notifyAllPlayers("playEvolution", $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card' => $card,
             'card_name' => 3000 + $card->type,
             'fromPlayerId' => $fromPlayerId,
@@ -280,7 +280,7 @@ trait EvolutionCardsUtilTrait {
 
         $this->notifyAllPlayers("addEvolutionCardInHand", $message, $args + [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
         ]);
     }
 
@@ -403,7 +403,7 @@ trait EvolutionCardsUtilTrait {
         $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
         $this->notifyAllPlayers('points', clienttranslate('${player_name} left Tokyo when ${card_name} is played, and loses all [Star].'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'points' => $points,
             'card_name' => 3000 + TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION,
         ]);
@@ -436,7 +436,7 @@ trait EvolutionCardsUtilTrait {
         $message = clienttranslate('${player_name} uses ${card_name} and change ${die_face_before} to ${die_face_after}');
         $this->notifyAllPlayers("changeDice", $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => 3000 + YIN_YANG_EVOLUTION,
             'dieIdsToValues' => $idToValue,
             'canHealWithDice' => $this->canHealWithDice($playerId),
@@ -480,7 +480,7 @@ trait EvolutionCardsUtilTrait {
 
             $this->notifyAllPlayers('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it is not a Keep card.'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $topCard->type,
             ]);
             $this->powerCards->moveItem($topCard, 'discard');
@@ -490,7 +490,7 @@ trait EvolutionCardsUtilTrait {
 
             $this->notifyAllPlayers('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $topCard->type,
             ]);
             $this->powerCards->moveItem($topCard, 'discard');
@@ -569,7 +569,7 @@ trait EvolutionCardsUtilTrait {
             'card' => $card,
             'playerId' => $playerId,
             '_args' => [ 
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'symbolsToGive' => $symbols,
             ],
             'symbols' => $symbols,
@@ -609,7 +609,7 @@ trait EvolutionCardsUtilTrait {
                 'card' => $card,
                 'playerId' => $playerId,
                 '_args' => [ 
-                    'player_name' => $this->getPlayerName($playerId),
+                    'player_name' => $this->getPlayerNameById($playerId),
                     'heartNumber' => $heartNumber,
                  ],
                 'canGiveEnergy' => $canGiveEnergy,
@@ -654,7 +654,7 @@ trait EvolutionCardsUtilTrait {
         $this->setGlobalVariable(MIMICKED_CARD . ICY_REFLECTION_EVOLUTION, $mimickedCard);
         $this->notifyAllPlayers("setMimicEvolutionToken", clienttranslate('${player_name} mimics ${card_name}'), [
             'card' => $card,
-            'player_name' => $this->getPlayerName($mimicOwnerId),
+            'player_name' => $this->getPlayerNameById($mimicOwnerId),
             'card_name' => 3000 + $card->type,
         ]);
 
@@ -818,7 +818,7 @@ trait EvolutionCardsUtilTrait {
                     [ 
                         'playerId' => $activePlayerId,
                         '_args' => [ 
-                            'player_name' => $this->getPlayerName($activePlayerId), 
+                            'player_name' => $this->getPlayerNameById($activePlayerId), 
                             'card_name' => 3000 + TARGET_ACQUIRED_EVOLUTION,
                         ],
                     ]
@@ -865,7 +865,7 @@ trait EvolutionCardsUtilTrait {
                         'damageDealerIdByPlayer' => $damageDealerIdByPlayer,
                         'playerId' => $activePlayerId,
                         '_args' => [ 
-                            'player_name' => $this->getPlayerName($activePlayerId), 
+                            'player_name' => $this->getPlayerNameById($activePlayerId), 
                             'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
                         ],
                     ]
@@ -906,7 +906,7 @@ trait EvolutionCardsUtilTrait {
             [ 
                 'playerId' => $playerId,
                 '_args' => [ 
-                    'player_name' => $this->getPlayerName($playerId),
+                    'player_name' => $this->getPlayerNameById($playerId),
                     'card_name' => 3000 + $card->type,
                 ],
                 'card' => $card,

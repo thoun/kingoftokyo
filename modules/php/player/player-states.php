@@ -138,7 +138,7 @@ trait PlayerStateTrait {
                     if ($playerId == $playerGettingEnergy) {
                         $this->notifyAllPlayers('log', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaEnergy} [Energy]'), [
                             'playerId' => $playerId,
-                            'player_name' => $this->getPlayerName($playerId),
+                            'player_name' => $this->getPlayerNameById($playerId),
                             'deltaEnergy' => $incEnergy,
                         ]);
                     }
@@ -151,7 +151,7 @@ trait PlayerStateTrait {
 
                     $this->notifyAllPlayers('points', clienttranslate('${player_name} starts turn in Tokyo and gains ${deltaPoints} [Star]'), [
                         'playerId' => $playerId,
-                        'player_name' => $this->getPlayerName($playerId),
+                        'player_name' => $this->getPlayerNameById($playerId),
                         'points' => $this->getPlayerScore($playerId),
                         'deltaPoints' => $incScore,
                     ]);
@@ -417,7 +417,7 @@ trait PlayerStateTrait {
 
             $this->notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => FRENZY_CARD,
             ]);
 

@@ -26,16 +26,15 @@ trait CardsActionTrait {
     */
    
   	
-    public function support() {
-        $this->checkAction('support');        
+    public function actSupport() {  
         $this->setGameStateValue(CHEERLEADER_SUPPORT, 1);
 
         $playerId = $this->getCurrentPlayerId();
 
         $this->notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to support ${player_name2} and adds [diceSmash]'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
+            'player_name' => $this->getPlayerNameById($playerId),
+            'player_name2' => $this->getPlayerNameById($this->getActivePlayerId()),
         ]);
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
@@ -44,24 +43,20 @@ trait CardsActionTrait {
     function applyDontSupport(int $playerId) {
         $this->notifyAllPlayers("cheerleaderChoice", clienttranslate('${player_name} chooses to not support ${player_name2}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
-            'player_name2' => $this->getPlayerName($this->getActivePlayerId()),
+            'player_name' => $this->getPlayerNameById($playerId),
+            'player_name2' => $this->getPlayerNameById($this->getActivePlayerId()),
         ]);
         
         $this->gamestate->setPlayerNonMultiactive($playerId, 'end');
     }
   	
-    public function dontSupport() {
-        $this->checkAction('dontSupport');
-
+    public function actDontSupport() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->applyDontSupport($playerId);
     }
     
-    function stealCostumeCard(int $id) {
-        $this->checkAction('stealCostumeCard');
-
+    function actStealCostumeCard(int $id) {
         $playerId = $this->getActivePlayerId();
 
         $card = $this->powerCards->getItemById($id);
@@ -99,13 +94,13 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card' => $card,
             'card_name' => $card->type,
             'newCard' => null,
             'energy' => $this->getPlayerEnergy($playerId),
             'from' => $from,
-            'player_name2' => $this->getPlayerName($from),   
+            'player_name2' => $this->getPlayerNameById($from),   
             'cost' => $cost,
         ]);
 
@@ -125,9 +120,7 @@ trait CardsActionTrait {
         $this->goToState(ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION);
     }
 
-    function endStealCostume() {
-        $this->checkAction('endStealCostume');
-
+    function actEndStealCostume() {
         $playerId = $this->getActivePlayerId();
      
         $this->goToState($this->redirectAfterStealCostume($playerId));
@@ -200,7 +193,7 @@ trait CardsActionTrait {
         if ($cardLocation == 'discard') { // scavenger
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from the discard'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => null,
@@ -220,13 +213,13 @@ trait CardsActionTrait {
             clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
             $this->notifyAllPlayers("buyCard", $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => null,
                 'energy' => $this->getPlayerEnergy($playerId),
                 'from' => $from,
-                'player_name2' => $this->getPlayerName($from),   
+                'player_name2' => $this->getPlayerNameById($from),   
                 'cost' => $cost,
             ]);
 
@@ -235,7 +228,7 @@ trait CardsActionTrait {
         } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {            
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => null,
@@ -255,7 +248,7 @@ trait CardsActionTrait {
     
             $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
                 'newCard' => $newCard,
@@ -279,12 +272,12 @@ trait CardsActionTrait {
 
                     if ($newCardCost % 2 == 0) {
                         $this->notifyAllPlayers("log", /*client TODOPUHA translate*/('The newly revealed card has an even cost, ${player_name} can keep ${card_name}'), [
-                            'player_name' => $this->getPlayerName($playerId),
+                            'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => $card->type,
                         ]);
                     } else {
                         $this->notifyAllPlayers("log500", /*client TODOPUHA translate*/('The newly revealed card has an odd cost, ${player_name} discard ${card_name} and regain [Energy] spent'), [
-                            'player_name' => $this->getPlayerName($playerId),
+                            'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => $card->type,
                         ]);
                         $this->removeCard($playerId, $card);
@@ -360,9 +353,7 @@ trait CardsActionTrait {
         $this->goToState($redirectAfterBuyCard, $damages);
     }
 
-    function buyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
-        $this->checkAction('buyCard');
-
+    function actBuyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->powerCards->getItemById($id);
@@ -413,7 +404,7 @@ trait CardsActionTrait {
         )) { // To avoid ask twice in the same turn if it has been played on first
             $this->notifyAllPlayers("log", /*clienttranslate(*/'${player_name} wants to buy ${card_name}'/*)*/, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
                 'card_name' => $card->type,
             ]);
@@ -444,7 +435,7 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} draws ${card_name}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card' => $card,
             'card_name' => $card->type,
             'deckCardsCount' => $this->powerCards->getDeckCount(),
@@ -455,7 +446,7 @@ trait CardsActionTrait {
 
             $this->notifyAllPlayers("drawCardHibernationInTokyo", clienttranslate('${player_name} draws ${card_name} while in Tokyo, the card is discarded'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $card->type,
             ]);
 
@@ -519,9 +510,7 @@ trait CardsActionTrait {
         }
     }
 
-    function renewCards($cardType) {
-        $this->checkAction('renew');
-
+    function actRenew(?int $cardType) {
         $playerId = $this->getActivePlayerId();
 
         if ($cardType == 3024) {
@@ -563,7 +552,7 @@ trait CardsActionTrait {
 
         $notifArgs = [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'cards' => $cards,
             'energy' => $this->getPlayerEnergy($playerId),
             'deckCardsCount' => $this->powerCards->getDeckCount(),
@@ -589,9 +578,7 @@ trait CardsActionTrait {
         }
     }
 
-    function opportunistSkip() {
-        $this->checkAction('opportunistSkip');
-   
+    function actOpportunistSkip() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->applyOpportunistSkip($playerId);
@@ -604,11 +591,7 @@ trait CardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
-    function goToSellCard($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('goToSellCard');
-        }
-   
+    function actGoToSellCard() {
         $playerId = $this->getActivePlayerId();  
            
         $this->removeDiscardCards($playerId);
@@ -617,9 +600,7 @@ trait CardsActionTrait {
     }
 
     
-    function sellCard(int $id) {
-        $this->checkAction('sellCard');
-   
+    function actSellCard(int $id) {
         $playerId = $this->getActivePlayerId();
         
         if ($this->countCardOfType($playerId, METAMORPH_CARD) == 0) {
@@ -642,7 +623,7 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers("removeCards", clienttranslate('${player_name} sells ${card_name}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'cards' => [$card],
             'card_name' =>$card->type,
             'energy' => $this->getPlayerEnergy($playerId),
@@ -653,9 +634,7 @@ trait CardsActionTrait {
         $this->gamestate->nextState('sellCard');
     }
 
-    function chooseMimickedCard(int $mimickedCardId) {
-        $this->checkAction('chooseMimickedCard');
-
+    function actChooseMimickedCard(int $mimickedCardId) {
         $playerId = $this->getCurrentPlayerId();
 
         $card = $this->powerCards->getItemById($mimickedCardId);
@@ -672,9 +651,7 @@ trait CardsActionTrait {
         $this->removeStackedStateAndRedirect();
     }
 
-    function changeMimickedCard(int $mimickedCardId) {
-        $this->checkAction('changeMimickedCard');
-
+    function actChangeMimickedCard(int $mimickedCardId) {
         $playerId = $this->getActivePlayerId();
 
         $card = $this->powerCards->getItemById($mimickedCardId);        
@@ -695,19 +672,13 @@ trait CardsActionTrait {
         $this->jumpToState($this->redirectAfterChangeMimick($playerId));
     }
 
-    function skipChangeMimickedCard($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipChangeMimickedCard');
-        }
-
+    function actSkipChangeMimickedCard() {
         $playerId = $this->getActivePlayerId();
 
         $this->jumpToState($this->redirectAfterChangeMimick($playerId));
     }    
 
-    function throwCamouflageDice() {
-        $this->checkAction('throwCamouflageDice');
-
+    function actThrowCamouflageDice() {
         $playerId = $this->getCurrentPlayerId();
 
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
@@ -809,7 +780,7 @@ trait CardsActionTrait {
         if ($canRethrow3) {
             $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and can rethrow [dice3]'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $cardLogType,
                 'diceValues' => $dice,
                 'cancelDamageArgs' => $args,
@@ -818,7 +789,7 @@ trait CardsActionTrait {
         } else {
             $this->notifyAllPlayers("useCamouflage", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and reduce [Heart] loss by ${cancelledDamage}'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $cardLogType,
                 'cancelledDamage' => $cancelledDamage,
                 'diceValues' => $dice,
@@ -872,9 +843,7 @@ trait CardsActionTrait {
         $this->resolveRemainingDamages($intervention, true, false);
     }
     
-    function useWings() {
-        $this->checkAction('useWings');
-
+    function actUseWings() {
         $playerId = $this->getCurrentPlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 2) {
@@ -896,7 +865,7 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers("log", clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => WINGS_CARD,
         ]);
 
@@ -905,9 +874,7 @@ trait CardsActionTrait {
         $this->resolveRemainingDamages($intervention, true, false);
     }
 
-    function skipWings() {
-        $this->checkAction('skipWings');
-
+    function actSkipWings() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->applySkipCancelDamage($playerId);
@@ -938,9 +905,7 @@ trait CardsActionTrait {
         }
     }
 
-    function useRobot(int $energy) {        
-        $this->checkAction('useRobot');
-
+    function actUseRobot(int $energy) { 
         $playerId = $this->getCurrentPlayerId();
 
         $countRobot = $this->countCardOfType($playerId, ROBOT_CARD);
@@ -971,7 +936,7 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => ROBOT_CARD,
             'energy' => $energy,
             'cancelDamageArgs' => $args,
@@ -986,9 +951,7 @@ trait CardsActionTrait {
         $this->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
-    function useElectricArmor(int $energy) {        
-        $this->checkAction('useElectricArmor');
-
+    function actUseElectricArmor(int $energy) {
         $playerId = $this->getCurrentPlayerId();
 
         $countElectricArmor = $this->countCardOfType($playerId, ELECTRIC_ARMOR_CARD);
@@ -1024,7 +987,7 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => ELECTRIC_ARMOR_CARD,
             'energy' => $energy,
             'cancelDamageArgs' => $args,
@@ -1039,9 +1002,7 @@ trait CardsActionTrait {
         $this->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
-    function useSuperJump(int $energy) {        
-        $this->checkAction('useSuperJump');
-
+    function actUseSuperJump(int $energy) {  
         $playerId = $this->getCurrentPlayerId();
 
         $superJumpCards = $this->getUnusedCardOfType($playerId, SUPER_JUMP_CARD);
@@ -1077,7 +1038,7 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers('updateCancelDamage', clienttranslate('${player_name} uses ${card_name}, and reduce [Heart] loss by losing ${energy} [energy]'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => SUPER_JUMP_CARD,
             'energy' => $energy,
             'cancelDamageArgs' => $args,
@@ -1091,9 +1052,7 @@ trait CardsActionTrait {
         $this->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
-    function exchangeCard(int $exchangedCardId) {
-        $this->checkAction('exchangeCard');
-
+    function actExchangeCard(int $exchangedCardId) {
         $args = $this->argLeaveTokyoExchangeCard();
         if (in_array($exchangedCardId, $args['disabledIds'])) {
             throw new \BgaUserException("You can't exchange this card");
@@ -1127,9 +1086,9 @@ trait CardsActionTrait {
 
         $this->notifyAllPlayers("exchangeCard", clienttranslate('${player_name} exchange ${card_name} with ${card_name2} taken from ${player_name2}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'previousOwner' => $exchangedCardOwner,
-            'player_name2' => $this->getPlayerName($exchangedCardOwner),
+            'player_name2' => $this->getPlayerNameById($exchangedCardOwner),
             'unstableDnaCard' => $unstableDnaCard,
             'card_name' => UNSTABLE_DNA_CARD,
             'exchangedCard' => $exchangedCard, 
@@ -1143,11 +1102,7 @@ trait CardsActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
-    function skipExchangeCard($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipExchangeCard');
-        }
-
+    function actSkipExchangeCard() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->applySkipExchangeCard($playerId);

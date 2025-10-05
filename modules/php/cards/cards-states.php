@@ -15,7 +15,7 @@ trait CardsStateTrait {
     function stChooseMimickedCard() {
         if (($this->autoSkipImpossibleActions() && !$this->argChooseMimickedCard(true)['canChange']) || $this->getPlayer($this->getActivePlayerId())->eliminated) {
             // skip state
-            $this->skipChangeMimickedCard(true);
+            $this->actSkipChangeMimickedCard();
         }
     }
 
@@ -26,17 +26,16 @@ trait CardsStateTrait {
 
         // if player is dead async, he can't buy or sell
         if ($this->getPlayer($playerId)->eliminated) {
-            $this->endTurn(true);
-            return;
+            return $this->actEndTurn();
         }
 
         $args = $this->argBuyCard();
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0 || boolval($this->getGameStateValue(SKIP_BUY_PHASE)) || ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId) || ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId))) {
             // skip state
             if ($args['canSell']) {
-                $this->goToSellCard(true);
+                return $this->actGoToSellCard();
             } else {
-                $this->endTurn(true);
+            return $this->actEndTurn();
             }
         }
     }

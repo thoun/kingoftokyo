@@ -1,6 +1,6 @@
 class SmashActionSelector {
 
-    private selections: SmashAction[] = [];
+    private selections: { [playerId: number]: SmashAction } = {};
 
     constructor(private game: KingOfTokyoGame, private nodeId: string, private args: EnteringResolveSmashDiceArgs) {
         this.createToggleButtons(nodeId, args);

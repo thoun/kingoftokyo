@@ -124,6 +124,10 @@
         self::setAjaxMode();
 
         $diceIds = self::getArg("diceIds", AT_numberlist, true);
+        if ($diceIds === '') {
+            throw new \BgaUserException('No dice to reroll');
+        }
+        $diceIds = array_map(fn($v) => intval($v), explode(',', $diceIds));
 
         $this->game->actRethrow($diceIds);
 
@@ -134,6 +138,10 @@
         self::setAjaxMode();
 
         $diceIds = self::getArg("diceIds", AT_numberlist, true);
+        if ($diceIds === '') {
+            throw new \BgaUserException('No dice to reroll');
+        }
+        $diceIds = array_map(fn($v) => intval($v), explode(',', $diceIds));
 
         $this->game->actBuyEnergyDrink($diceIds);
 
@@ -144,6 +152,10 @@
         self::setAjaxMode();
 
         $diceIds = self::getArg("diceIds", AT_numberlist, true);
+        if ($diceIds === '') {
+            throw new \BgaUserException('No dice to reroll');
+        }
+        $diceIds = array_map(fn($v) => intval($v), explode(',', $diceIds));
 
         $this->game->actUseSmokeCloud($diceIds);
 
@@ -154,6 +166,10 @@
         self::setAjaxMode();
 
         $diceIds = self::getArg("diceIds", AT_numberlist, true);
+        if ($diceIds === '') {
+            throw new \BgaUserException('No dice to reroll');
+        }
+        $diceIds = array_map(fn($v) => intval($v), explode(',', $diceIds));
 
         $this->game->actUseCultist($diceIds);
 
@@ -201,6 +217,10 @@
         self::setAjaxMode();
 
         $diceIds = self::getArg("diceIds", AT_numberlist, false);
+        if ($diceIds === '') {
+            throw new \BgaUserException('No dice to reroll');
+        }
+        $diceIds = array_map(fn($v) => intval($v), explode(',', $diceIds));
 
         $this->game->actRethrow3($diceIds);
 
@@ -236,6 +256,10 @@
 
         $id = self::getArg("id", AT_posint, true);
         $diceIds = self::getArg("diceIds", AT_numberlist, false);
+        if ($diceIds === '') {
+            throw new \BgaUserException('No dice to reroll');
+        }
+        $diceIds = array_map(fn($v) => intval($v), explode(',', $diceIds));
 
         $this->game->actRerollDie($id, $diceIds);
 
@@ -349,7 +373,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->falseBlessingReroll($id);
+        $this->game->actFalseBlessingReroll($id);
 
         self::ajaxResponse();
     }
@@ -359,7 +383,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->falseBlessingDiscard($id);
+        $this->game->actFalseBlessingDiscard($id);
 
         self::ajaxResponse();
     }
@@ -367,7 +391,7 @@
     public function falseBlessingSkip() {
         self::setAjaxMode();
 
-        $this->game->falseBlessingSkip();
+        $this->game->actFalseBlessingSkip();
 
         self::ajaxResponse();
     }
@@ -377,7 +401,7 @@
 
         $ids = self::getArg("ids", AT_numberlist, true);
 
-        $this->game->rerollDice(array_map(fn($idStr) => intval($idStr), explode(',', $ids)));
+        $this->game->actRerollDice(array_map(fn($idStr) => intval($idStr), explode(',', $ids)));
 
         self::ajaxResponse();
     }
@@ -385,7 +409,7 @@
     public function support() {
         self::setAjaxMode();
 
-        $this->game->support();
+        $this->game->actSupport();
 
         self::ajaxResponse();
     }
@@ -393,7 +417,7 @@
     public function dontSupport() {
         self::setAjaxMode();
 
-        $this->game->dontSupport();
+        $this->game->actDontSupport();
 
         self::ajaxResponse();
     }
@@ -403,7 +427,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->takeWickednessTile($id);
+        $this->game->actTakeWickednessTile($id);
 
         self::ajaxResponse();
     }
@@ -411,27 +435,7 @@
     public function skipTakeWickednessTile() {
         self::setAjaxMode();
 
-        $this->game->skipTakeWickednessTile();
-
-        self::ajaxResponse();
-    }
-
-    public function applyHeartDieChoices() {
-        self::setAjaxMode();
-
-        $heartDieChoices = json_decode(base64_decode(self::getArg("selections", AT_base64, true)));
-
-        $this->game->applyHeartDieChoices($heartDieChoices);
-
-        self::ajaxResponse();
-    }
-
-    public function applySmashDieChoices() {
-        self::setAjaxMode();
-
-        $smashDieChoices = json_decode(base64_decode(self::getArg("selections", AT_base64, true)), true);
-
-        $this->game->actApplySmashDieChoices($smashDieChoices);
+        $this->game->actSkipTakeWickednessTile();
 
         self::ajaxResponse();
     }
@@ -469,7 +473,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->stealCostumeCard($id);
+        $this->game->actStealCostumeCard($id);
 
         self::ajaxResponse();
     }
@@ -477,7 +481,7 @@
     public function endStealCostume() {
         self::setAjaxMode();
 
-        $this->game->endStealCostume();
+        $this->game->actEndStealCostume();
 
         self::ajaxResponse();
     }
@@ -490,7 +494,7 @@
         $useSuperiorAlienTechnology = self::getArg("useSuperiorAlienTechnology", AT_bool, true);
         $useBobbingForApples = self::getArg("useBobbingForApples", AT_bool, false); // TODOPUHA true
 
-        $this->game->buyCard($id, $from, $useSuperiorAlienTechnology, $useBobbingForApples);
+        $this->game->actBuyCard($id, $from, $useSuperiorAlienTechnology, $useBobbingForApples);
 
         self::ajaxResponse();
     }
@@ -511,7 +515,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->chooseMimickedCard($id);
+        $this->game->actChooseMimickedCard($id);
 
         self::ajaxResponse();
     }
@@ -531,7 +535,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->changeMimickedCard($id);
+        $this->game->actChangeMimickedCard($id);
 
         self::ajaxResponse();
     }
@@ -539,7 +543,7 @@
     public function skipChangeMimickedCard() {
         self::setAjaxMode();
 
-        $this->game->skipChangeMimickedCard();
+        $this->game->actSkipChangeMimickedCard();
 
         self::ajaxResponse();
     }
@@ -549,7 +553,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->changeMimickedCardWickednessTile($id);
+        $this->game->actChangeMimickedCardWickednessTile($id);
 
         self::ajaxResponse();
     }
@@ -557,7 +561,7 @@
     public function skipChangeMimickedCardWickednessTile() {
         self::setAjaxMode();
 
-        $this->game->skipChangeMimickedCardWickednessTile();
+        $this->game->actSkipChangeMimickedCardWickednessTile();
 
         self::ajaxResponse();
     }
@@ -567,7 +571,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->chooseMimickedCardWickednessTile($id);
+        $this->game->actChooseMimickedCardWickednessTile($id);
 
         self::ajaxResponse();
     }
@@ -585,7 +589,7 @@
     public function goToSellCard() {
         self::setAjaxMode();
 
-        $this->game->goToSellCard();
+        $this->game->actGoToSellCard();
 
         self::ajaxResponse();
     }
@@ -593,7 +597,7 @@
     public function opportunistSkip() {
         self::setAjaxMode();
 
-        $this->game->opportunistSkip();
+        $this->game->actOpportunistSkip();
 
         self::ajaxResponse();
     }
@@ -603,7 +607,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->sellCard($id);
+        $this->game->actSellCard($id);
 
         self::ajaxResponse();
     }
@@ -619,7 +623,7 @@
     public function throwCamouflageDice() {
         self::setAjaxMode();
 
-        $this->game->throwCamouflageDice();
+        $this->game->actThrowCamouflageDice();
 
         self::ajaxResponse();
     }
@@ -627,7 +631,7 @@
     public function useWings() {
         self::setAjaxMode();
 
-        $this->game->useWings();
+        $this->game->actUseWings();
 
         self::ajaxResponse();
     }
@@ -652,7 +656,7 @@
     public function skipWings() {
         self::setAjaxMode();
 
-        $this->game->skipWings();
+        $this->game->actSkipWings();
 
         self::ajaxResponse();
     }
@@ -662,7 +666,7 @@
 
         $energy = self::getArg("energy", AT_posint, true);
 
-        $this->game->useRobot($energy);
+        $this->game->actUseRobot($energy);
 
         self::ajaxResponse();
     }
@@ -672,7 +676,7 @@
 
         $energy = self::getArg("energy", AT_posint, true);
 
-        $this->game->useElectricArmor($energy);
+        $this->game->actUseElectricArmor($energy);
 
         self::ajaxResponse();
     }
@@ -682,7 +686,7 @@
 
         $energy = self::getArg("energy", AT_posint, true);
 
-        $this->game->useSuperJump($energy);
+        $this->game->actUseSuperJump($energy);
 
         self::ajaxResponse();
     }
@@ -692,7 +696,7 @@
 
         $under = self::getArg("under", AT_posint, true);
 
-        $this->game->setLeaveTokyoUnder($under);
+        $this->game->actSetLeaveTokyoUnder($under);
 
         self::ajaxResponse();
     }
@@ -702,7 +706,7 @@
 
         $over = self::getArg("over", AT_posint, true);
 
-        $this->game->setStayTokyoOver($over);
+        $this->game->actSetStayTokyoOver($over);
 
         self::ajaxResponse();
     }
@@ -712,7 +716,7 @@
 
         $value = self::getArg("value", AT_posint, true);
 
-        $this->game->setAskPlayEvolution($value);
+        $this->game->actSetAskPlayEvolution($value);
 
         self::ajaxResponse();
     }
@@ -730,7 +734,7 @@
     public function changeForm() {
         self::setAjaxMode();
 
-        $this->game->changeForm();
+        $this->game->actChangeForm();
 
         self::ajaxResponse();
     }
@@ -738,7 +742,7 @@
     public function skipChangeForm() {
         self::setAjaxMode();
 
-        $this->game->skipChangeForm();
+        $this->game->actSkipChangeForm();
 
         self::ajaxResponse();
     }
@@ -748,7 +752,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->exchangeCard($id);
+        $this->game->actExchangeCard($id);
 
         self::ajaxResponse();
     }
@@ -756,7 +760,7 @@
     public function skipExchangeCard() {
         self::setAjaxMode();
 
-        $this->game->skipExchangeCard();
+        $this->game->actSkipExchangeCard();
 
         self::ajaxResponse();
     }
@@ -833,7 +837,7 @@
     public function gazeOfTheSphinxDrawEvolution() {
         self::setAjaxMode();
 
-        $this->game->gazeOfTheSphinxDrawEvolution();
+        $this->game->actGazeOfTheSphinxDrawEvolution();
 
         self::ajaxResponse();
     }
@@ -841,7 +845,7 @@
     public function gazeOfTheSphinxGainEnergy() {
         self::setAjaxMode();
 
-        $this->game->gazeOfTheSphinxGainEnergy();
+        $this->game->actGazeOfTheSphinxGainEnergy();
 
         self::ajaxResponse();
     }
@@ -851,7 +855,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->gazeOfTheSphinxDiscardEvolution($id);
+        $this->game->actGazeOfTheSphinxDiscardEvolution($id);
 
         self::ajaxResponse();
     }
@@ -859,7 +863,7 @@
     public function gazeOfTheSphinxLoseEnergy() {
         self::setAjaxMode();
 
-        $this->game->gazeOfTheSphinxLoseEnergy();
+        $this->game->actGazeOfTheSphinxLoseEnergy();
 
         self::ajaxResponse();
     }
@@ -913,7 +917,7 @@
     public function skipMiraculousCatch() {
         self::setAjaxMode();
 
-        $this->game->skipMiraculousCatch();
+        $this->game->actSkipMiraculousCatch();
 
         self::ajaxResponse();
     }

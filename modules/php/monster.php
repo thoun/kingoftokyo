@@ -199,9 +199,7 @@ trait MonsterTrait {
 
     
   	
-    public function changeForm() {
-        $this->checkAction('changeForm');
-
+    public function actChangeForm() {
         $playerId = $this->getActivePlayerId();
 
         if ($this->getPlayerEnergy($playerId) < 1) {
@@ -217,7 +215,7 @@ trait MonsterTrait {
         $newForm = $isBeastForm ? clienttranslate('Beast form') : clienttranslate('Biped form');
         $this->notifyAllPlayers('changeForm', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card' => $this->getFormCard($playerId),
             'energy' => $this->getPlayerEnergy($playerId),
             'newForm' => $newForm,
@@ -229,11 +227,7 @@ trait MonsterTrait {
         $this->gamestate->nextState('buyCard');
     }
   	
-    public function skipChangeForm($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipChangeForm');
-        }
-
+    public function actSkipChangeForm() {
         $this->gamestate->nextState('buyCard');
     }
 
@@ -278,7 +272,7 @@ trait MonsterTrait {
         } else {
             $availableMonsters = $this->getAvailableMonsters();
             if (count($availableMonsters) == 1) {
-                $this->pickMonster($availableMonsters[0], true, true);
+                $this->actPickMonster($availableMonsters[0], true);
             }
         }
     }

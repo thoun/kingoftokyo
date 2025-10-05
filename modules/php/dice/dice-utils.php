@@ -9,12 +9,14 @@ require_once(__DIR__.'/../Objects/damage.php');
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\PowerUpExpansion;
 use KOT\Objects\Dice;
 use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\ClawDamage;
 use KOT\Objects\Damage;
 
 trait DiceUtilTrait {
+    public PowerUpExpansion $powerUpExpansion;
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
@@ -175,7 +177,7 @@ trait DiceUtilTrait {
 
             $this->notifyAllPlayers("diceLog", $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'rolledDice' => $rolledDiceStr,
                 'lockedDice' => $lockedDiceStr,
             ]);
@@ -254,7 +256,7 @@ trait DiceUtilTrait {
 
                 $this->notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} gains ${deltaPoints}[Star] with ${dice_value} dice'), [
                     'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
+                    'player_name' => $this->getPlayerNameById($playerId),
                     'deltaPoints' => $points,
                     'points' => $this->getPlayerScore($playerId),
                     'diceValue' => $number,
@@ -263,7 +265,7 @@ trait DiceUtilTrait {
             } else {
                 $this->notifyAllPlayers("log", clienttranslate('${player_name} gains no [Star] with ${dice_value} dice because of ${card_name}'), [
                     'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
+                    'player_name' => $this->getPlayerNameById($playerId),
                     'card_name' => $canGetPoints,
                     'diceValue' => $number,
                     'dice_value' => "[dice$number]",
@@ -310,7 +312,7 @@ trait DiceUtilTrait {
             
                         $this->notifyAllPlayers("climbTokyoTower", /*client TODOPUKKtranslate*/('${player_name} rolled [dice1][dice1][dice1][dice1][dice1][dice1] and wins the game with ${card_name}'), [
                             'playerId' => $playerId,
-                            'player_name' => $this->getPlayerName($playerId),
+                            'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => 3000 + CLIMB_TOKYO_TOWER_EVOLUTION,
                         ]);
                     } else {
@@ -338,7 +340,7 @@ trait DiceUtilTrait {
 
             $this->notifyAllPlayers( "resolveHealthDiceInTokyo",$message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
             ]);
         } else {
 
@@ -349,7 +351,7 @@ trait DiceUtilTrait {
 
                 $this->notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} gains ${deltaHealth} [Heart]'), [
                     'playerId' => $playerGettingHealth,
-                    'player_name' => $this->getPlayerName($playerGettingHealth),
+                    'player_name' => $this->getPlayerNameById($playerGettingHealth),
                     'deltaHealth' => $diceCount,
                 ]);
 
@@ -377,7 +379,7 @@ trait DiceUtilTrait {
 
         $this->notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [
             'playerId' => $playerGettingEnergy,
-            'player_name' => $this->getPlayerName($playerGettingEnergy),
+            'player_name' => $this->getPlayerNameById($playerGettingEnergy),
             'deltaEnergy' => $diceCount,
         ]);
         
@@ -546,7 +548,7 @@ trait DiceUtilTrait {
 
             $this->notifyAllPlayers("resolveSmashDice", $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'number' => $diceCount,
                 'smashedPlayersIds' => $smashedPlayersIds,
             ]);
@@ -561,7 +563,7 @@ trait DiceUtilTrait {
             foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
                 $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                     'playerId' => $damagePlayerId,
-                    'player_name' => $this->getPlayerName($damagePlayerId),
+                    'player_name' => $this->getPlayerNameById($damagePlayerId),
                     'number' => $fireBreathingDamage,
                     'card_name' => FIRE_BREATHING_CARD,
                 ]);
@@ -580,7 +582,7 @@ trait DiceUtilTrait {
         foreach ($funnyLookingButDangerousDamages as $damagePlayerId => $funnyLookingButDangerousDamage) {
             $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
-                'player_name' => $this->getPlayerName($damagePlayerId),
+                'player_name' => $this->getPlayerNameById($damagePlayerId),
                 'number' => $funnyLookingButDangerousDamage,
                 'card_name' => 3000 + FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION,
             ]);
@@ -595,7 +597,7 @@ trait DiceUtilTrait {
         foreach ($flamingAuraDamages as $damagePlayerId => $flamingAuraDamage) {
             $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
-                'player_name' => $this->getPlayerName($damagePlayerId),
+                'player_name' => $this->getPlayerNameById($damagePlayerId),
                 'number' => $flamingAuraDamage,
                 'card_name' => FLAMING_AURA_CARD,
             ]);
@@ -610,7 +612,7 @@ trait DiceUtilTrait {
         foreach ($exoticArmsDamages as $damagePlayerId => $exoticArmsDamage) {
             $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
-                'player_name' => $this->getPlayerName($damagePlayerId),
+                'player_name' => $this->getPlayerNameById($damagePlayerId),
                 'number' => $exoticArmsDamage,
                 'card_name' => 3000 + EXOTIC_ARMS_EVOLUTION,
             ]);
@@ -668,7 +670,7 @@ trait DiceUtilTrait {
         }
 
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
-        $playerEvolutions = $isPowerUpExpansion ? $this->powerUpExpansion->evolutionManager->getPlayerVirtual($playerId, true, true) : [];
+        $playerEvolutions = $isPowerUpExpansion ? $this->powerUpExpansion->evolutionCards->getPlayerVirtual($playerId, true, true) : [];
         // Gamma Breath & Tail Sweep
         $gammaBreathCardIds = [];
         $hasTailSweep = false;
@@ -842,13 +844,7 @@ trait DiceUtilTrait {
         }
     }
   	
-    function rethrowDice(string | array $diceIds) {
-        if ($diceIds === '') {
-            throw new \BgaUserException('No dice to reroll');
-        }
-        if (gettype($diceIds) === 'string') {
-            $diceIds = explode(',', $diceIds);
-        }
+    function rethrowDice(array $diceIds) {
         $diceCount = count($diceIds);
 
         $playerId = $this->getActivePlayerId();

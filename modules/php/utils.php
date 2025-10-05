@@ -138,10 +138,6 @@ trait UtilTrait {
         return intval($this->getUniqueValueFromDB("SELECT max(player_score) FROM player"));
     }
 
-    function getPlayerName(int $playerId) {
-        return $this->getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id = $playerId");
-    }
-
     function getPlayerScore(int $playerId) {
         return min(20, intval($this->getUniqueValueFromDB("SELECT player_score FROM player where `player_id` = $playerId")));
     }
@@ -309,7 +305,7 @@ trait UtilTrait {
         $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
         $this->notifyAllPlayers("playerEntersTokyo", $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'location' => $location,
             'locationName' => $locationName,
         ]);
@@ -378,7 +374,7 @@ trait UtilTrait {
 
         $this->notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
         ]);
         $this->notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
             'under' => 0,
@@ -442,7 +438,7 @@ trait UtilTrait {
         $locationName = _('Tokyo City');
         $this->notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} !'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'location' => $location,
             'locationName' => $locationName,
         ]);
@@ -587,7 +583,7 @@ trait UtilTrait {
             // but we don't really eliminate him as the framework don't like it and game will end anyway
             $this->notifyAllPlayers('playerEliminated', '', [
                 'who_quits' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
             ]);
         }
     }
@@ -692,7 +688,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_points} [Star] with ${card_name}');
             $this->notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'points' => min(20, $newScore),
                 'delta_points' => $points,
                 'card_name' => $cardType == 0 ? null : $cardType,
@@ -727,7 +723,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_points} [Star] with ${card_name}');
             $this->notifyAllPlayers('points', $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'points' => $newScore,
                 'delta_points' => $points,
                 'card_name' => $cardType == 0 ? null : $cardType,
@@ -784,7 +780,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_health} [Heart] with ${card_name}');
             $this->notifyAllPlayers('health', $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'health' => $newHealth,
                 'delta_health' => $health,
                 'card_name' => $cardType == 0 ? null : $cardType,
@@ -799,7 +795,7 @@ trait UtilTrait {
     private function logDamageBlocked(int $playerId, int $cardType) {
         $this->notifyAllPlayers('damageBlockedLog', clienttranslate('${player_name} prevents damage with ${card_name}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => $cardType,
         ]);
     }
@@ -949,7 +945,7 @@ trait UtilTrait {
         $message = $cardType <= 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
         $this->notifyAllPlayers('health', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'health' => $newHealth,
             'delta_health' => $effectiveDamage,
             'card_name' => $cardType == 0 ? null : $cardType,
@@ -1078,7 +1074,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
             $this->notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'energy' => $this->getPlayerEnergy($playerId),
                 'delta_energy' => $energy,
                 'card_name' => $cardType == 0 ? null : $cardType,
@@ -1111,7 +1107,7 @@ trait UtilTrait {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_energy} [Energy] with ${card_name}');
             $this->notifyAllPlayers('energy', $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'energy' => $newEnergy,
                 'delta_energy' => $energy,
                 'card_name' => $cardType == 0 ? null : $cardType,
@@ -1125,7 +1121,7 @@ trait UtilTrait {
         $message = clienttranslate('${player_name} gets ${delta_tokens} Shrink Ray token with ${card_name}');
         $this->notifyAllPlayers('shrinkRayToken', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'delta_tokens' => $deltaTokens,
             'card_name' => SHRINK_RAY_CARD,
             'tokens' => $this->getPlayerShrinkRayTokens($playerId),
@@ -1138,7 +1134,7 @@ trait UtilTrait {
         $message = clienttranslate('${player_name} gets ${delta_tokens} Poison token with ${card_name}');
         $this->notifyAllPlayers('poisonToken', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'delta_tokens' => $deltaTokens,
             'card_name' => POISON_SPIT_CARD,
             'tokens' => $this->getPlayerPoisonTokens($playerId),
@@ -1153,7 +1149,7 @@ trait UtilTrait {
 
         $this->notifyAllPlayers('removeShrinkRayToken', '', [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'deltaTokens' => $deltaTokens,
             'tokens' => $newTokens,
         ]);
@@ -1168,7 +1164,7 @@ trait UtilTrait {
 
         $this->notifyAllPlayers('removePoisonToken', '', [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'deltaTokens' => $deltaTokens,
             'tokens' => $newTokens,
         ]);

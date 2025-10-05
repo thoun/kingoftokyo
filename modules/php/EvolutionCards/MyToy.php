@@ -17,7 +17,7 @@ class MyToy extends EvolutionCard {
             ST_AFTER_ANSWER_QUESTION,
             [ 
                 'playerId' => $context->currentPlayerId,
-                '_args' => [ 'player_name' => $context->game->getPlayerName($context->currentPlayerId) ],
+                '_args' => [ 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId) ],
                 'card' => $this,
             ]
         );

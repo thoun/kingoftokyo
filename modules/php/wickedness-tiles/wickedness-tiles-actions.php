@@ -24,9 +24,7 @@ trait WickednessTilesActionTrait {
         $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '$levelsJson' where `player_id` = $playerId");
     }
   	
-    public function takeWickednessTile(int $id) {
-        $this->checkAction('takeWickednessTile');
-
+    public function actTakeWickednessTile(int $id) {
         $playerId = $this->getCurrentPlayerId();
 
         $level = $this->wickednessExpansion->canTakeWickednessTile($playerId);
@@ -41,7 +39,7 @@ trait WickednessTilesActionTrait {
 
         $this->notifyAllPlayers("takeWickednessTile", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'tile' => $tile,
             'card_name' => 2000 + $tile->type,
             'level' => $level,
@@ -76,11 +74,7 @@ trait WickednessTilesActionTrait {
         }
     }
   	
-    public function skipTakeWickednessTile($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipTakeWickednessTile');
-        }
-
+    public function actSkipTakeWickednessTile() {
         $playerId = $this->getCurrentPlayerId();
 
         $this->removeFirstTakeWickednessTileLevel($playerId);
@@ -88,9 +82,7 @@ trait WickednessTilesActionTrait {
         $this->goToState($this->redirectAfterResolveNumberDice(true));
     }
 
-    function chooseMimickedCardWickednessTile(int $mimickedCardId) {
-        $this->checkAction('chooseMimickedCardWickednessTile');
-
+    function actChooseMimickedCardWickednessTile(int $mimickedCardId) {
         $playerId = $this->getActivePlayerId();
 
         $card = $this->powerCards->getItemById($mimickedCardId);        
@@ -106,9 +98,7 @@ trait WickednessTilesActionTrait {
         $this->goToState($this->redirectAfterResolveNumberDice());
     }
 
-    function changeMimickedCardWickednessTile(int $mimickedCardId) {
-        $this->checkAction('changeMimickedCardWickednessTile');
-
+    function actChangeMimickedCardWickednessTile(int $mimickedCardId) {
         $playerId = $this->getActivePlayerId();
 
         $card = $this->powerCards->getItemById($mimickedCardId);        
@@ -124,11 +114,7 @@ trait WickednessTilesActionTrait {
         $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));
     }
 
-    function skipChangeMimickedCardWickednessTile($skipActionCheck = false) {
-        if (!$skipActionCheck) {
-            $this->checkAction('skipChangeMimickedCardWickednessTile');
-        }
-
+    function actSkipChangeMimickedCardWickednessTile() {
         $playerId = $this->getActivePlayerId();
 
         $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));

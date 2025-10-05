@@ -20,7 +20,7 @@ trait InitialCardTrait {
 
         $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card' => $card,
             'card_name' => $card->type,
             'discardCard' =>$otherCard,

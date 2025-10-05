@@ -4,6 +4,7 @@ namespace KOT\States;
 
 use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\GameFramework\Actions\Types\IntParam;
+use Bga\GameFramework\Actions\Types\JsonParam;
 use Bga\GameFramework\Actions\Types\StringParam;
 
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
@@ -19,7 +20,7 @@ trait DiceActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
   	
-    public function actRethrow(#[IntArrayParam(name: 'diceIds')] string $diceIds) {
+    public function actRethrow(#[IntArrayParam] array $diceIds) {
         $playerId = $this->getActivePlayerId();
 
         $throwNumber = intval($this->getGameStateValue('throwNumber'));
@@ -57,7 +58,7 @@ trait DiceActionTrait {
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         $this->notifyAllPlayers('rethrow3', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => $cardName,
             'dieId' => $die->id,
             'die_face_before' => $this->getDieFaceLogName($oldValue, 0),
@@ -67,9 +68,7 @@ trait DiceActionTrait {
         $this->goToState(ST_PLAYER_THROW_DICE);
     }
 
-    public function rerollDie(int $id, string $diceIds) {
-        $this->checkAction('rerollDie');
-
+    public function actRerollDie(int $id, string $diceIds) {
         $playerId = $this->getActivePlayerId();
         $die = $this->getDieById($id);
 
@@ -142,7 +141,7 @@ trait DiceActionTrait {
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         $this->notifyAllPlayers('rethrow3', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
             'dieId' => $die->id,
             'die_face_before' => $this->getDieFaceLogName($die->value, 0),
@@ -169,7 +168,7 @@ trait DiceActionTrait {
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
         $this->notifyAllPlayers('rethrow3changeDie', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => BACKGROUND_DWELLER_CARD,
             'dieId' => $dieId,
             'die_face_before' => $this->getDieFaceLogName(3, 0),
@@ -283,7 +282,7 @@ trait DiceActionTrait {
             $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
             $this->notifyAllPlayers("changeDie", $message, [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $cardType,
                 'dieId' => $die->id,
                 'canHealWithDice' => $this->canHealWithDice($activePlayerId),
@@ -305,9 +304,7 @@ trait DiceActionTrait {
         $this->gamestate->nextState('changeDie');
     }
 
-    public function changeActivePlayerDie(int $id) {
-        $this->checkAction('psychicProbeRollDie'); // /!\ on rename 
-
+    public function actChangeActivePlayerDie(int $id) {
         $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
         $playerId = $intervention->remainingPlayersId[0];
 
@@ -382,7 +379,7 @@ trait DiceActionTrait {
 
         $this->notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => $cardType === FLUXLING_WICKEDNESS_TILE ? 2000 + $cardType : $cardType,
             'dieId' => $die->id,
             'toValue' => $value,
@@ -429,9 +426,7 @@ trait DiceActionTrait {
         $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
     }
 
-    function applyHeartDieChoices(array $heartDieChoices) {
-        $this->checkAction('applyHeartDieChoices');
-
+    function actApplyHeartDieChoices(#[JsonParam(associative: false)] array $heartDieChoices) {
         $playerId = $this->getActivePlayerId();
 
         $heal = 0;
@@ -492,8 +487,8 @@ trait DiceActionTrait {
             $this->applyGetEnergy($playerId, $energyLoss, 0);
 
             $this->notifyAllPlayers("resolveHealingRay", clienttranslate('${player_name2} gains ${healNumber} [Heart] with ${card_name} and pays ${player_name} ${energy} [Energy]'), [
-                'player_name' => $this->getPlayerName($playerId),
-                'player_name2' => $this->getPlayerName($healPlayerId),
+                'player_name' => $this->getPlayerNameById($playerId),
+                'player_name2' => $this->getPlayerNameById($healPlayerId),
                 'energy' => $energyLoss,
                 'healedPlayerId' => $healPlayerId,
                 'healNumber' => $healNumber,
@@ -504,14 +499,12 @@ trait DiceActionTrait {
         $this->gamestate->nextState('next');
     }
 
-    public function actApplySmashDieChoices(#[StringParam(name: 'selections')] string $selections) {
+    public function actApplySmashDieChoices(#[JsonParam(associative: false)] $smashDieChoices) {
         $activePlayerId = $this->getActivePlayerId();
-
-        $selections = json_decode(base64_decode($selections), true);
 
         $playersSmashesWithReducedDamage = [];
 
-        foreach($selections as $playerId => $smashDieChoice) {
+        foreach($smashDieChoices as $playerId => $smashDieChoice) {
             if ($smashDieChoice == 'steal') {
                 $this->applyGiveSymbols([0, 5], $playerId, $activePlayerId, 3000 + PLAY_WITH_YOUR_FOOD_EVOLUTION);
                 $playersSmashesWithReducedDamage[$playerId] = 2;

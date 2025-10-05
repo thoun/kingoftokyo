@@ -14,7 +14,7 @@ class PrecisionFieldSupport extends EvolutionCard {
 
             $context->game->notify->all('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it is not a Keep card.'), [
                 'playerId' => $context->currentPlayerId,
-                'player_name' => $context->game->getPlayerName($context->currentPlayerId),
+                'player_name' => $context->game->getPlayerNameById($context->currentPlayerId),
                 'card_name' => $topCard->type,
             ]);
             $context->game->powerCards->moveItem($topCard, 'discard');
@@ -24,7 +24,7 @@ class PrecisionFieldSupport extends EvolutionCard {
 
             $context->game->notify->all('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'), [
                 'playerId' => $context->currentPlayerId,
-                'player_name' => $context->game->getPlayerName($context->currentPlayerId),
+                'player_name' => $context->game->getPlayerNameById($context->currentPlayerId),
                 'card_name' => $topCard->type,
             ]);
             $context->game->powerCards->moveItem($topCard, 'discard');

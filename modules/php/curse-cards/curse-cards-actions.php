@@ -85,7 +85,7 @@ trait CurseCardsActionTrait {
         }
     }
 
-    function actGiveSymbols(#[IntArrayParam(name: 'symbols')] array $symbols) {
+    function actGiveSymbols(#[IntArrayParam] array $symbols) {
         $playerId = $this->getCurrentPlayerId(); 
         $playerWithGoldenScarab = $this->anubisExpansion->getPlayerIdWithGoldenScarab();
 
@@ -112,16 +112,14 @@ trait CurseCardsActionTrait {
 
         $this->notifyAllPlayers("selectExtraDie", clienttranslate('${player_name} choses ${die_face} as the extra die'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'die_face' => $this->getDieFaceLogName($face, $die->type),
         ]);
 
         $this->gamestate->nextState('next');
     }
   	
-    public function falseBlessingReroll(int $dieId) {
-        $this->checkAction('falseBlessingReroll'); 
-
+    public function actFalseBlessingReroll(int $dieId) {
         if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
             throw new \BgaUserException(self::_('You already made an action for this die'));
         }
@@ -138,7 +136,7 @@ trait CurseCardsActionTrait {
 
         $this->notifyAllPlayers("changeDie", $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => 1000 + FALSE_BLESSING_CURSE_CARD,
             'dieId' => $die->id,
             'toValue' => $value,
@@ -150,9 +148,7 @@ trait CurseCardsActionTrait {
         $this->endFalseBlessingAction($dieId);
     }
   	
-    public function falseBlessingDiscard(int $dieId) {
-        $this->checkAction('falseBlessingDiscard'); 
-
+    public function actFalseBlessingDiscard(int $dieId) {
         if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
             throw new \BgaUserException(self::_('You already made an action for this die'));
         }
@@ -170,15 +166,11 @@ trait CurseCardsActionTrait {
         }
     }
   	
-    public function falseBlessingSkip() {
-        $this->checkAction('falseBlessingSkip'); 
-
+    public function actFalseBlessingSkip() {
         $this->gamestate->nextState('next');
     }
 
-    function rerollDice(array $diceIds) {
-        $this->checkAction('rerollDice'); 
-
+    function actRerollDice(#[IntArrayParam] array $diceIds) {
         $playerId = $this->getCurrentPlayerId();
         $activePlayerId = $this->getActivePlayerId();
 
@@ -194,8 +186,8 @@ trait CurseCardsActionTrait {
 
                 $this->notifyAllPlayers("changeDie", $message, [
                     'playerId' => $playerId,
-                    'player_name' => $this->getPlayerName($playerId),
-                    'player_name2' => $this->getPlayerName($activePlayerId),
+                    'player_name' => $this->getPlayerNameById($playerId),
+                    'player_name2' => $this->getPlayerNameById($activePlayerId),
                     'dieId' => $die->id,
                     'toValue' => $value,
                     'roll' => true,
@@ -210,9 +202,7 @@ trait CurseCardsActionTrait {
 
     
   	
-    public function gazeOfTheSphinxDrawEvolution() {
-        $this->checkAction('gazeOfTheSphinxDrawEvolution'); 
-
+    public function actGazeOfTheSphinxDrawEvolution() {
         $playerId = $this->getActivePlayerId();
 
         $this->drawEvolution($playerId);
@@ -220,9 +210,7 @@ trait CurseCardsActionTrait {
         $this->goToState(ST_RESOLVE_DICE);
     }
   	
-    public function gazeOfTheSphinxGainEnergy() {
-        $this->checkAction('gazeOfTheSphinxGainEnergy'); 
-
+    public function actGazeOfTheSphinxGainEnergy() {
         $playerId = $this->getActivePlayerId();
 
         $this->applyGetEnergy($playerId, 3, 1000 + GAZE_OF_THE_SPHINX_CURSE_CARD);
@@ -230,9 +218,7 @@ trait CurseCardsActionTrait {
         $this->goToState(ST_RESOLVE_DICE);
     }
   	
-    public function gazeOfTheSphinxDiscardEvolution(int $id) {
-        $this->checkAction('gazeOfTheSphinxDiscardEvolution');
-
+    public function actGazeOfTheSphinxDiscardEvolution(int $id) {
         $playerId = $this->getActivePlayerId(); 
 
         $card = $this->getEvolutionCardById($id);
@@ -242,9 +228,7 @@ trait CurseCardsActionTrait {
         $this->goToState(ST_RESOLVE_DICE);
     }
   	
-    public function gazeOfTheSphinxLoseEnergy() {
-        $this->checkAction('gazeOfTheSphinxLoseEnergy'); 
-
+    public function actGazeOfTheSphinxLoseEnergy() {
         $playerId = $this->getActivePlayerId(); 
 
         $this->applyLoseEnergy($playerId, 3, 1000 + GAZE_OF_THE_SPHINX_CURSE_CARD);

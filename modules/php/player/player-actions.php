@@ -31,7 +31,7 @@ trait PlayerActionTrait {
     function notifStayInTokyo($playerId) {
         $this->notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
         ]);
     }
 

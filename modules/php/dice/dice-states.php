@@ -32,7 +32,7 @@ trait DiceStateTrait {
         // disabled so player can see last roll
         /*if ($this->autoSkipImpossibleActions() && !$this->argThrowDice()['hasActions']) {
             // skip state
-            $this->goToChangeDie(true);
+            $this->actGoToChangeDie();
         }*/
     }
 
@@ -82,7 +82,7 @@ trait DiceStateTrait {
 
         $this->notifyAllPlayers("resolvePlayerDice", clienttranslate('${player_name} resolves dice ${dice}'), [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'dice' => $diceStr,
         ]);
 
@@ -104,7 +104,7 @@ trait DiceStateTrait {
 
             $this->notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'dice' => $diceStr,
                 'card_name' => $cardNamesStr,
             ]);
@@ -313,7 +313,7 @@ trait DiceStateTrait {
 
             $this->notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
+                'player_name' => $this->getPlayerNameById($playerId),
                 'dice' => $diceStr,
                 'card_name' => $cardNamesStr,
             ]);

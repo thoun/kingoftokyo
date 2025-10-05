@@ -131,19 +131,19 @@ trait EvolutionCardsActionTrait {
 
             switch($stateId) {
                 case ST_PLAYER_BEFORE_START_TURN:
-                    $this->skipBeforeStartTurn(true);
+                    $this->actSkipBeforeStartTurn();
                     break;
                 case ST_PLAYER_BEFORE_RESOLVE_DICE:
-                    $this->skipBeforeResolveDice(true);
+                    $this->actSkipBeforeResolveDice();
                     break;
                 case ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO:
-                    $this->skipBeforeEnteringTokyo(true);
+                    $this->actSkipBeforeEnteringTokyo();
                     break;
                 case ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT:
-                    $this->skipCardIsBought(true);
+                    $this->actSkipCardIsBought();
                     break;
                 case ST_MULTIPLAYER_BEFORE_END_TURN:
-                    $this->skipBeforeEndTurn(true);
+                    $this->actSkipBeforeEndTurn();
                     break;
             }
         }
@@ -236,7 +236,7 @@ trait EvolutionCardsActionTrait {
         $message = /*client TODOPUHA translate*/('${player_name2} use ${card_name} to avoid damages and gives ${card_name} to ${player_name}');
         $this->notifNewEvolutionCard($toPlayerId, $evolution, $message, [
             'card_name' => 3000 + $evolution->type,
-            'player_name2' => $this->getPlayerName($fromPlayerId),
+            'player_name2' => $this->getPlayerNameById($fromPlayerId),
         ]);
 
         $this->reduceInterventionDamages($playerId, $intervention, -1);
@@ -284,8 +284,8 @@ trait EvolutionCardsActionTrait {
         $forbiddenCard = $this->powerCards->getItemById($this->getGlobalVariable(CARD_BEING_BOUGHT)->cardId);
 
         $this->notifyAllPlayers('log', clienttranslate('${player_name} force ${player_name2} to buy ${card_name} instead of ${card_name2}. ${player_name2} cannot buy ${card_name2} this turn'), [
-            'player_name' => $this->getPlayerName($currentPlayerId),
-            'player_name2' => $this->getPlayerName($activePlayerId),
+            'player_name' => $this->getPlayerNameById($currentPlayerId),
+            'player_name2' => $this->getPlayerNameById($activePlayerId),
             'card_name' => $forcedCard->type,
             'card_name2' => $forbiddenCard->type,
         ]);
@@ -346,7 +346,7 @@ trait EvolutionCardsActionTrait {
         $this->setEvolutionTokens($this->getActivePlayerId(), $evolution, $symbol, true);
 
         $this->notifyAllPlayers('log', clienttranslate('${player_name} chooses that ${die_face} will have no effect this turn'), [
-            'player_name' => $this->getPlayerName($this->getCurrentPlayerId()),
+            'player_name' => $this->getPlayerNameById($this->getCurrentPlayerId()),
             'die_face' => $this->getDieFaceLogName($symbol, 0),
         ]);
 
@@ -420,9 +420,7 @@ trait EvolutionCardsActionTrait {
         );
     }
 
-    public function skipMiraculousCatch() {
-        $this->checkAction('skipMiraculousCatch');
-
+    public function actSkipMiraculousCatch() {
         $playerId = $this->getCurrentPlayerId();
         $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
 
@@ -484,7 +482,7 @@ trait EvolutionCardsActionTrait {
 
         $die = $this->getDieById($id);
         $this->notifyAllPlayers('log', clienttranslate('${player_name} freeze die ${die_face}'), [
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'die_face' => $this->getDieFaceLogName($die->value, $die->type),
         ]);
 
@@ -533,8 +531,8 @@ trait EvolutionCardsActionTrait {
         $this->notifyAllPlayers('giveTarget', clienttranslate('${player_name} gives target to ${player_name2}'), [
             'playerId' => $question->args->playerId,
             'previousOwner' => intval($this->getGameStateValue(TARGETED_PLAYER)),
-            'player_name' => $this->getPlayerName($playerId),
-            'player_name2' => $this->getPlayerName($question->args->playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
+            'player_name2' => $this->getPlayerNameById($question->args->playerId),
         ]);
         $this->setGameStateValue(TARGETED_PLAYER, $question->args->playerId);
 
@@ -575,8 +573,8 @@ trait EvolutionCardsActionTrait {
         if ($damageDealerIdForPlayer) {
             $this->notifyAllPlayers("useLightningArmor", clienttranslate('${player_name} uses ${card_name}, rolls ${dice} and makes ${player_name2} lose ${damage}[Heart]'), [
                 'playerId' => $playerId,
-                'player_name' => $this->getPlayerName($playerId),
-                'player_name2' => $this->getPlayerName($damageDealerIdForPlayer),
+                'player_name' => $this->getPlayerNameById($playerId),
+                'player_name2' => $this->getPlayerNameById($damageDealerIdForPlayer),
                 'card_name' => 3000 + LIGHTNING_ARMOR_EVOLUTION,
                 'damage' => $smashCount,
                 'diceValues' => $dice,
@@ -672,7 +670,7 @@ trait EvolutionCardsActionTrait {
 
         $this->notifyAllPlayers("reserveCard", /*client TODOPUBG translate(*/'${player_name} puts ${card_name} to reserve'/*)*/, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card' => $card,
             'card_name' => $card->type,
             'newCard' => $newCard,
@@ -709,7 +707,7 @@ trait EvolutionCardsActionTrait {
         ]);
         $this->notifyAllPlayers('superiorAlienTechnologyLog', $message, [
             'playerId' => $playerId,
-            'player_name' => $this->getPlayerName($playerId),
+            'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => $card->type,
             'die_face' => $this->getDieFaceLogName($dieFace, 0),
             'dieValue' => $dieFace,
