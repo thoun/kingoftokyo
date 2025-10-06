@@ -228,9 +228,10 @@ $playerActionsGameStates = [
         "type" => "multipleactiveplayer",
         "action" => "stChangeActivePlayerDie",
         "args" => "argChangeActivePlayerDie",
-        "possibleactions" => [ "psychicProbeRollDie", "actPsychicProbeRollDie", "changeActivePlayerDie", "psychicProbeSkip", "actPsychicProbeSkip", "changeActivePlayerDieSkip", "actChangeActivePlayerDieSkip", "rethrow3psychicProbe", "actRethrow3PsychicProbe" ],
+        "possibleactions" => [ "psychicProbeRollDie", "actPsychicProbeRollDie", "changeActivePlayerDie", "actChangeActivePlayerDie", "psychicProbeSkip", "actPsychicProbeSkip", "changeActivePlayerDieSkip", "actChangeActivePlayerDieSkip", "rethrow3psychicProbe", "actRethrow3PsychicProbe" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
+            "next" => ST_PREPARE_RESOLVE_DICE,
             "end" => ST_PREPARE_RESOLVE_DICE,
             "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
         ],

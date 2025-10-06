@@ -279,7 +279,7 @@
 
         $id = self::getArg("id", AT_posint, true);
 
-        $this->game->actPsychicProbeRollDie($id);
+        $this->game->actChangeActivePlayerDie($id);
 
         self::ajaxResponse();
     }

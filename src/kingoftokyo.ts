@@ -2664,7 +2664,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public psychicProbeRollDie(id: number) {
-        this.bgaPerformAction('actPsychicProbeRollDie', {
+        this.bgaPerformAction('actChangeActivePlayerDie', {
             id
         });
     }

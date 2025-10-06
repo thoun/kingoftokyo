@@ -8650,7 +8650,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.psychicProbeRollDie = function (id) {
-        this.bgaPerformAction('actPsychicProbeRollDie', {
+        this.bgaPerformAction('actChangeActivePlayerDie', {
             id: id
         });
     };
