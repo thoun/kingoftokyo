@@ -19,6 +19,9 @@ const POWER_CARD_CLASSES = [
     EVEN_BIGGER_CARD => 'EvenBigger',
     FREEZE_TIME_CARD => 'FreezeTime',
     NATURAL_SELECTION_CARD => 'NaturalSelection',
+    FREE_WILL_CARD => 'FreeWill',
+    EVASIVE_MINDBUG_CARD => 'EvasiveMindbug',
+    NO_BRAIN_CARD => 'NoBrain',
     // DISCARD
     APPARTMENT_BUILDING_CARD => 'AppartmentBuilding',
     COMMUTER_TRAIN_CARD => 'CommuterTrain',
@@ -42,6 +45,28 @@ const POWER_CARD_CLASSES = [
     BARRICADES_CARD => 'Barricades',
     ICE_CREAM_TRUCK_CARD => 'IceCreamTruck',
     SUPERTOWER_CARD => 'Supertower',
+    MINDBUG_CARD => 'Mindbug',
+    DYSFUNCTIONAL_MINDBUG_CARD => 'DysfunctionalMindbug',
+    TREASURE_CARD => 'Treasure',
+    MIRACULOUS_MINDBUG_CARD => 'MiraculousMindbug',
+    // CONSUMABLE
+    OVEREQUIPPED_TRAPPER_CARD => 'OverequippedTrapper',
+    LEGENDARY_HUNTER_CARD => 'LegendaryHunter',
+    UNRELIABLE_TARGETING_CARD => 'UnreliableTargeting',
+    SNEAKY_ALLOY_CARD => 'SneakyAlloy',
+    OFFENSIVE_PROTOCOL_CARD => 'OffensiveProtocol',
+    ARCANE_SCEPTER_CARD => 'ArcaneScepter',
+    ENERGY_ARMOR_CARD => 'EnergyArmor',
+    STRANGE_DESIGN_CARD => 'StrangeDesign',
+    ANCESTRAL_DEFENSE_CARD => 'AncestralDefense',
+    TOXIC_PETALS_CARD => 'ToxicPetals',
+    EXPLOSIVE_CRYSTALS_CARD => 'ExplosiveCrystals',
+    ELECTRO_WHIP_CARD => 'ElectroWhip',
+    BOLD_MANEUVER_CARD => 'BoldManeuver',
+    UNFAIR_GIFT_CARD => 'UnfairGift',
+    MAXIMUM_EFFORT_CARD => 'MaximumEffort',
+    DEADLY_SHELL_CARD => 'DeadlyShell',
+    SPATIAL_HUNTER_CARD => 'SpatialHunter',
 ];
 
 class PowerCardManager extends ItemManager {

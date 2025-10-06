@@ -252,6 +252,10 @@ define('ORB_OF_DOM_CARD', 63);
 define('SCAVENGER_CARD', 64);
 define('SHRINKY_CARD', 65);
 define('BULL_HEADED_CARD', 66);
+// Mindbug :
+define('FREE_WILL_CARD', 67);
+define('EVASIVE_MINDBUG_CARD', 68);
+define('NO_BRAIN_CARD', 69);
 
 // discard
 define('APPARTMENT_BUILDING_CARD', 101);
@@ -278,6 +282,11 @@ define('MONSTER_PETS_CARD', 119);
 define('BARRICADES_CARD', 120);
 define('ICE_CREAM_TRUCK_CARD', 121);
 define('SUPERTOWER_CARD', 122);
+// Mindbug :
+define('MINDBUG_CARD', 123);
+define('DYSFUNCTIONAL_MINDBUG_CARD', 124);
+define('TREASURE_CARD', 125);
+define('MIRACULOUS_MINDBUG_CARD', 126);
 
 // costume
 define('ASTRONAUT_CARD', 201);
@@ -295,6 +304,25 @@ define('CLOWN_CARD', 212);
 
 // transformation
 define('FORM_CARD', 301);
+
+// consumable
+define('OVEREQUIPPED_TRAPPER_CARD', 401);
+define('LEGENDARY_HUNTER_CARD', 402);
+define('UNRELIABLE_TARGETING_CARD', 403);
+define('SNEAKY_ALLOY_CARD', 404);
+define('OFFENSIVE_PROTOCOL_CARD', 405);
+define('ARCANE_SCEPTER_CARD', 406);
+define('ENERGY_ARMOR_CARD', 407);
+define('STRANGE_DESIGN_CARD', 408);
+define('ANCESTRAL_DEFENSE_CARD', 409);
+define('TOXIC_PETALS_CARD', 410);
+define('EXPLOSIVE_CRYSTALS_CARD', 411);
+define('ELECTRO_WHIP_CARD', 412);
+define('BOLD_MANEUVER_CARD', 413);
+define('UNFAIR_GIFT_CARD', 414);
+define('MAXIMUM_EFFORT_CARD', 415);
+define('DEADLY_SHELL_CARD', 416);
+define('SPATIAL_HUNTER_CARD', 417);
 
 // curse cards
 define('PHARAONIC_EGO_CURSE_CARD', 1);

@@ -2851,6 +2851,9 @@ var CardsManager = /** @class */ (function (_super) {
             case 64: return _("[806f52]Scavenger");
             case 65: return _("[1c9c85]Shrinky");
             case 66: return _("[693a3a]Bull Headed");
+            case 67: return /*TODOMB_*/ ("[xxx]Free [xxx]Will"); // TODOMB TODO: COLORs
+            case 68: return /*TODOMB_*/ ("[xxx]Evasive [xxx]Mindbug");
+            case 69: return /*TODOMB_*/ ("[xxx]No [xxx]Brain");
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -2874,6 +2877,10 @@ var CardsManager = /** @class */ (function (_super) {
             case 120: return _("[775b43]Barricades");
             case 121: return _("[6b9957]Ice Cream Truck");
             case 122: return _("[f89c4c]Supertower");
+            case 123: return /*TODOMB_*/ ("[xxx]Mindbug!"); // TODOMB TODO: COLORs
+            case 124: return /*TODOMB_*/ ("[xxx]Dysfunctional [xxx]Mindbug");
+            case 125: return /*TODOMB_*/ ("[xxx]Treasure");
+            case 126: return /*TODOMB_*/ ("[xxx]Miraculous [xxx]Mindbug");
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
             case 202: return _("[005c98]Ghost");
@@ -2893,6 +2900,24 @@ var CardsManager = /** @class */ (function (_super) {
                 1: _("[982620]Beast [de6526]Form"),
                 null: _("[982620]Beast [de6526]Form"),
             }[side];
+            // CONSUMABLE
+            case 401: return /*TODOMB_*/ ("[xxx]Overequipped [xxx]Trapper"); // TODOMB TODO: COLORs
+            case 402: return /*TODOMB_*/ ("[xxx]Legendary [xxx]Hunter");
+            case 403: return /*TODOMB_*/ ("[xxx]Unreliable [xxx]Targeting");
+            case 404: return /*TODOMB_*/ ("[xxx]Sneaky [xxx]Alloy");
+            case 405: return /*TODOMB_*/ ("[xxx]Offensive [xxx]Protocol");
+            case 406: return /*TODOMB_*/ ("[xxx]Arcane [xxx]Scepter");
+            case 407: return /*TODOMB_*/ ("[xxx]Energy [xxx]Armor");
+            case 408: return /*TODOMB_*/ ("[xxx]Strange [xxx]Design");
+            case 409: return /*TODOMB_*/ ("[xxx]Ancestral [xxx]Defense");
+            case 410: return /*TODOMB_*/ ("[xxx]Toxic [xxx]Petals");
+            case 411: return /*TODOMB_*/ ("[xxx]Explosive [xxx]Crystals");
+            case 412: return /*TODOMB_*/ ("[xxx]Electro-[xxx]Whip");
+            case 413: return /*TODOMB_*/ ("[xxx]Bold [xxx]Maneuver");
+            case 414: return /*TODOMB_*/ ("[xxx]Unfair [xxx]Gift");
+            case 415: return /*TODOMB_*/ ("[xxx]Maximum [xxx]Effort");
+            case 416: return /*TODOMB_*/ ("[xxx]Deadly [xxx]Shell");
+            case 417: return /*TODOMB_*/ ("[xxx]Spatial [xxx]Hunter");
         }
         return null;
     };
