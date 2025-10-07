@@ -35,16 +35,16 @@ trait CurseCardsActionTrait {
         }
     }
 
-    function actDiscardDie(int $dieId) {
-        $this->anubisExpansion->applyDiscardDie($dieId);
+    function actDiscardDie(int $id) {
+        $this->anubisExpansion->applyDiscardDie($id);
 
         $this->gamestate->nextState('next');
     }
 
-    function actDiscardKeepCard(int $cardId) {
+    function actDiscardKeepCard(int $id) {
         $playerId = $this->getActivePlayerId(); 
 
-        $card = $this->powerCards->getItemById($cardId);
+        $card = $this->powerCards->getItemById($id);
         $this->anubisExpansion->applyDiscardKeepCard($playerId, $card);
 
         $this->gamestate->nextState('next');
