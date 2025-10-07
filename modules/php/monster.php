@@ -107,7 +107,7 @@ trait MonsterTrait {
         }
 
         // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
-        if ($bonusMonsters || $this->isMindbugExpansion()) {
+        if ($bonusMonsters || $this->mindbugExpansion->isActive()) {
             // TODOMB activate it
             if (Game::getBgaEnvironment() == 'studio') {                
                 $monsters = [...$monsters, /*61,*/ 62, /*63*/];

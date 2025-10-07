@@ -98,7 +98,7 @@ trait CurseCardsActionTrait {
             $this->eliminatePlayers($playerId);
         }
 
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+        $this->gamestate->nextState('next');
     }
 
     function actSelectExtraDie(int $face) {
