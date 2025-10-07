@@ -190,13 +190,10 @@ trait UtilTrait {
             }
         }
 
-        // giant brain
-        $countGiantBrain = $this->countCardOfType($playerId, GIANT_BRAIN_CARD);
-        // statue of libery
-        $countStatueOfLiberty = $this->countCardOfType($playerId, STATUE_OF_LIBERTY_CARD);
+        $powerTilesInc = $this->powerCards->onIncDieRollCount(new Context($this, currentPlayerId: $playerId));
+        $wickenessTilesInc = $this->wickednessExpansion->isActive() ? $this->wickednessTiles->onIncDieRollCount(new Context($this, currentPlayerId: $playerId)) : 0;
         // energy drink
         $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS));
-        $wickenessTilesInc = $this->wickednessExpansion->isActive() ? $this->wickednessTiles->onIncDieRollCount(new Context($this, currentPlayerId: $playerId)) : 0;
 
         $removedDieByBuriedInSand = false;
         $falseBlessing = 0;
@@ -216,7 +213,7 @@ trait UtilTrait {
             }
         }
 
-        $rollNumber = 3 + $countGiantBrain + $countStatueOfLiberty + $extraRolls + $wickenessTilesInc + $falseBlessing - $ignisFatus;
+        $rollNumber = 3 + $powerTilesInc + $extraRolls + $wickenessTilesInc + $falseBlessing - $ignisFatus;
         if ($rollNumber > 1 && $removedDieByBuriedInSand) {
             $rollNumber--;
         }

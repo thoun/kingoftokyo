@@ -24,10 +24,18 @@ class AskMindbug extends GameState {
 
     public function getArgs(int $activePlayerId): array {
         $playerIds = $this->game->mindbugExpansion->getPlayersThatCanMindbug($activePlayerId);
+        $canUseEvasiveMindbug = [];
+        foreach ($playerIds as $playerId) {
+            $countEvasiveMindbug = $this->game->countCardOfType($playerId, EVASIVE_MINDBUG_CARD);
+            if ($countEvasiveMindbug > 0) {
+                $canUseEvasiveMindbug[] = $playerId;
+            }
+        }
 
         return [
             'player_name' => $this->game->getPlayerNameById($activePlayerId),
             'playerIds' => $playerIds,
+            'canUseEvasiveMindbug' => $canUseEvasiveMindbug,
             '_no_notify' => count($playerIds) === 0,
         ];
     }
@@ -41,7 +49,7 @@ class AskMindbug extends GameState {
     }
      
     #[PossibleAction]
-    public function actMindbug(int $currentPlayerId) {
+    public function actMindbug(bool $useEvasiveMindbug, int $currentPlayerId) {
         try {
             $this->game->mindbugExpansion->mindbugTokens->inc($currentPlayerId, -1);
         } catch (\BgaSystemException $e) { // TODO replace by the new exception
@@ -49,6 +57,32 @@ class AskMindbug extends GameState {
         }
 
         $this->game->mindbugExpansion->setMindbuggedPlayer($currentPlayerId, (int)$this->game->getActivePlayerId());
+
+        if ($useEvasiveMindbug) {
+            $mindbuggedPlayerId = $this->game->mindbugExpansion->getMindbuggedPlayer();
+            if ($mindbuggedPlayerId !== null) {
+                $evasiveMindbugCard = null;
+                foreach ($this->game->getCardsOfType($currentPlayerId, EVASIVE_MINDBUG_CARD) as $card) {
+                    if ($card->type === EVASIVE_MINDBUG_CARD) {
+                        $evasiveMindbugCard = $card;
+                        break;
+                    }
+                }
+
+                if ($evasiveMindbugCard !== null) {
+                    $this->game->powerCards->moveItem($evasiveMindbugCard, 'hand', $mindbuggedPlayerId);
+
+                    $this->game->notify->all("mindbugEvasiveTransfer", clienttranslate('${player_name} gives ${card_name} to ${player_name2}'), [
+                        'playerId' => $currentPlayerId,
+                        'player_name' => $this->game->getPlayerNameById($currentPlayerId),
+                        'mindbuggedPlayerId' => $mindbuggedPlayerId,
+                        'player_name2' => $this->game->getPlayerNameById($mindbuggedPlayerId),
+                        'card' => $evasiveMindbugCard,
+                        'card_name' => EVASIVE_MINDBUG_CARD,
+                    ]);
+                }
+            }
+        }
 
         // first to click has the power!
         return ST_RESOLVE_DIE_OF_FATE;

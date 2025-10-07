@@ -5,4 +5,5 @@ namespace Bga\Games\KingOfTokyo\PowerCards;
 
 class EvasiveMindbug extends PowerCard
 {
+    // TODOMB implement card
 }

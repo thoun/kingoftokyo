@@ -930,6 +930,14 @@ trait DiceUtilTrait {
             for ($i=0; $i<$countAcidAttack; $i++) { $cardsAddingSmashes[] = ACID_ATTACK_CARD; }
         }
 
+        // no brain
+        $countNoBrain = $this->countCardOfType($playerId, NO_BRAIN_CARD);
+        if ($countNoBrain > 0) {
+            $addedSmashes += $countNoBrain;
+
+            for ($i=0; $i<$countNoBrain; $i++) { $cardsAddingSmashes[] = NO_BRAIN_CARD; }
+        }
+
         // Jet club
         if ($isPowerUpExpansion && $playerInTokyo) {
             $jetClubEvolutions = $this->getEvolutionsOfType($playerId, JET_CLUB_EVOLUTION);

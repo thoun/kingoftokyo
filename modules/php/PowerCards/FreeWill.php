@@ -14,4 +14,8 @@ class FreeWill extends PowerCard
         }
         return null;
     }
+
+    public function incDieRollCount(Context $context) {
+        return 1;
+    }
 }

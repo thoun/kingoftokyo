@@ -19,6 +19,7 @@ const POWER_CARD_CLASSES = [
     // KEEP
     EVEN_BIGGER_CARD => 'EvenBigger',
     FREEZE_TIME_CARD => 'FreezeTime',
+    GIANT_BRAIN_CARD => 'GiantBrain',
     HIBERNATION_CARD => 'Hibernation',
     NATURAL_SELECTION_CARD => 'NaturalSelection',
     FREE_WILL_CARD => 'FreeWill',
@@ -51,6 +52,8 @@ const POWER_CARD_CLASSES = [
     DYSFUNCTIONAL_MINDBUG_CARD => 'DysfunctionalMindbug',
     TREASURE_CARD => 'Treasure',
     MIRACULOUS_MINDBUG_CARD => 'MiraculousMindbug',
+    // COSTUME
+    STATUE_OF_LIBERTY_CARD => 'StatueOfLiberty',
     // CONSUMABLE
     OVEREQUIPPED_TRAPPER_CARD => 'OverequippedTrapper',
     LEGENDARY_HUNTER_CARD => 'LegendaryHunter',
@@ -415,6 +418,19 @@ class PowerCardManager extends ItemManager {
             /** @disregard */
             return $card->immediateEffect($context);
         }
+    }
+
+    public function onIncDieRollCount(Context $context): int {
+        $cards = $this->getPlayer($context->currentPlayerId);
+        $inc = 0;
+
+        foreach ($cards as $card) {
+            if (method_exists($card, 'incDieRollCount')) {
+                $inc += $card->incDieRollCount($context);
+            }
+        }
+
+        return $inc;
     }
 
     public function getUnmetConditionRequirement(PowerCard $card, Context $context): ?NotificationMessage {

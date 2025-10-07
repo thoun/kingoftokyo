@@ -2851,9 +2851,9 @@ var CardsManager = /** @class */ (function (_super) {
             case 64: return _("[806f52]Scavenger");
             case 65: return _("[1c9c85]Shrinky");
             case 66: return _("[693a3a]Bull Headed");
-            case 67: return /*TODOMB_*/ ("[xxx]Free [xxx]Will"); // TODOMB TODO: COLORs
-            case 68: return /*TODOMB_*/ ("[xxx]Evasive [xxx]Mindbug");
-            case 69: return /*TODOMB_*/ ("[xxx]No [xxx]Brain");
+            case 67: return /*TODOMB_*/ ("[78d0ec]Free [d5312f]Will");
+            case 68: return /*TODOMB_*/ ("[e462a0]Evasive [9ad751]Mindbug");
+            case 69: return /*TODOMB_*/ ("[f8b82b]No [167e79]Brain");
             // DISCARD
             case 101: return _("[B180A0]Apartment [9F7595]Building");
             case 102: return _("[496787]Commuter [415C7A]Train");
@@ -2877,10 +2877,10 @@ var CardsManager = /** @class */ (function (_super) {
             case 120: return _("[775b43]Barricades");
             case 121: return _("[6b9957]Ice Cream Truck");
             case 122: return _("[f89c4c]Supertower");
-            case 123: return /*TODOMB_*/ ("[xxx]Mindbug!"); // TODOMB TODO: COLORs
-            case 124: return /*TODOMB_*/ ("[xxx]Dysfunctional [xxx]Mindbug");
-            case 125: return /*TODOMB_*/ ("[xxx]Treasure");
-            case 126: return /*TODOMB_*/ ("[xxx]Miraculous [xxx]Mindbug");
+            case 123: return /*TODOMB_*/ ("[e462a0]Mindbug!");
+            case 124: return /*TODOMB_*/ ("[e462a0]Dysfunctional [b956b2]Mindbug");
+            case 125: return /*TODOMB_*/ ("[e843aa]Treasure");
+            case 126: return /*TODOMB_*/ ("[f8b82b]Miraculous [e462a0]Mindbug");
             // COSTUME
             case 201: return _("[353d4b]Astronaut");
             case 202: return _("[005c98]Ghost");
@@ -2901,23 +2901,23 @@ var CardsManager = /** @class */ (function (_super) {
                 null: _("[982620]Beast [de6526]Form"),
             }[side];
             // CONSUMABLE
-            case 401: return /*TODOMB_*/ ("[xxx]Overequipped [xxx]Trapper"); // TODOMB TODO: COLORs
-            case 402: return /*TODOMB_*/ ("[xxx]Legendary [xxx]Hunter");
-            case 403: return /*TODOMB_*/ ("[xxx]Unreliable [xxx]Targeting");
-            case 404: return /*TODOMB_*/ ("[xxx]Sneaky [xxx]Alloy");
-            case 405: return /*TODOMB_*/ ("[xxx]Offensive [xxx]Protocol");
-            case 406: return /*TODOMB_*/ ("[xxx]Arcane [xxx]Scepter");
-            case 407: return /*TODOMB_*/ ("[xxx]Energy [xxx]Armor");
-            case 408: return /*TODOMB_*/ ("[xxx]Strange [xxx]Design");
-            case 409: return /*TODOMB_*/ ("[xxx]Ancestral [xxx]Defense");
-            case 410: return /*TODOMB_*/ ("[xxx]Toxic [xxx]Petals");
-            case 411: return /*TODOMB_*/ ("[xxx]Explosive [xxx]Crystals");
-            case 412: return /*TODOMB_*/ ("[xxx]Electro-[xxx]Whip");
-            case 413: return /*TODOMB_*/ ("[xxx]Bold [xxx]Maneuver");
-            case 414: return /*TODOMB_*/ ("[xxx]Unfair [xxx]Gift");
-            case 415: return /*TODOMB_*/ ("[xxx]Maximum [xxx]Effort");
-            case 416: return /*TODOMB_*/ ("[xxx]Deadly [xxx]Shell");
-            case 417: return /*TODOMB_*/ ("[xxx]Spatial [xxx]Hunter");
+            case 401: return /*TODOMB_*/ ("[e67628]Overequipped [78d0ec]Trapper");
+            case 402: return /*TODOMB_*/ ("[b35c5d]Legendary [64bf44]Hunter");
+            case 403: return /*TODOMB_*/ ("[b35c5d]Unreliable [f8b82b]Targeting");
+            case 404: return /*TODOMB_*/ ("[7f93cb]Sneaky [e67628]Alloy");
+            case 405: return /*TODOMB_*/ ("[7f93cb]Offensive [ed3d4e]Protocol");
+            case 406: return /*TODOMB_*/ ("[e5b549]Arcane [77ceea]Scepter");
+            case 407: return /*TODOMB_*/ ("[57506e]Energy [b956b2]Armor");
+            case 408: return /*TODOMB_*/ ("[57506e]Strange [e9683e]Design");
+            case 409: return /*TODOMB_*/ ("[504b65]Ancestral [badf2c]Defense");
+            case 410: return /*TODOMB_*/ ("[e462a0]Toxic [8ac784]Petals");
+            case 411: return /*TODOMB_*/ ("[50ab47]Explosive [f8b82b]Crystals");
+            case 412: return /*TODOMB_*/ ("[dade44]Electro-[50ab47]Whip");
+            case 413: return /*TODOMB_*/ ("[865ab3]Bold [e843aa]Maneuver");
+            case 414: return /*TODOMB_*/ ("[e9683e]Unfair [e843aa]Gift");
+            case 415: return /*TODOMB_*/ ("[f8b82b]Maximum [e843aa]Effort");
+            case 416: return /*TODOMB_*/ ("[57506e]Deadly [50ab47]Shell");
+            case 417: return /*TODOMB_*/ ("[b35c5d]Spatial [7f93cb]Hunter");
         }
         return null;
     };
@@ -3019,6 +3019,9 @@ var CardsManager = /** @class */ (function (_super) {
             case 64: return _("<strong>You may buy cards from the discard pile.</strong> [Discard] cards bought this way are put on the bottom of the deck.");
             case 65: return _("<strong>You may use [die2] as [die1].");
             case 66: return _("<strong>Gain 1[Star]</strong> when you are able to Yield Tokyo but choose not to.");
+            case 67: return '<i>' + /*TODOMB_*/ ('You cannot buy this card if you have a Mindbug Token.') + '</i><br>' + /*TODOMB_*/ ("<strong>You have 1 extra Roll</strong> each turn.");
+            case 68: return /*TODOMB_*/ ("<strong>Use this card as a Mindbug token.</strong> When used, give it to the player you Mindbugged.");
+            case 69: return '<i>' + /*TODOMB_*/ ('This card costs 2 extra [Energy] for each Mindbug token you have') + '</i><br>' + /*TODOMB_*/ ("<strong>Add [dieClaw]</strong> to your Roll.");
             // DISCARD
             case 101: return "<strong>+ 3[Star].</strong>";
             case 102: return "<strong>+ 2[Star].</strong>";
@@ -3041,7 +3044,11 @@ var CardsManager = /** @class */ (function (_super) {
             case 119: return _("<strong>All Monsters</strong> (including you) <strong>lose 3[Star].</strong>");
             case 120: return _("<strong>All other Monsters lose 3[Star].</strong>");
             case 121: return "<strong>+1[Star] +2[Heart].</strong>";
-            case 122: return "<strong>+5[Star].";
+            case 122: return "<strong>+5[Star].</strong>";
+            case 123: return /*TODOMB_*/ ("<strong>Gain 1 Mindbug token.</strong>");
+            case 124: return /*TODOMB_*/ ("Each Monster with at least 1 Mindbug token loses 3[Heart].");
+            case 125: return /*TODOMB_*/ ("<strong>Buy a [Consumable] card from the discard pile.</strong> It costs 3[Energy] less.");
+            case 126: return '<i>' + /*TODOMB_*/ ('You can only buy this card if you have 3[Heart] or fewer.') + '</i><br>' + /*TODOMB_*/ ("Lose all your [Star], <strong>return to 10[Heart]</strong>, and <strong>gain 1 Mindbug token</strong>");
             // COSTUME
             case 201: return _("<strong>If you reach 17[Star],</strong> you win the game");
             case 202: return _("At the end of each Monster's turn, if you lost at least 1[Heart] <strong>that turn, gain 1[Heart].</strong>");
@@ -7495,7 +7502,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     }
                     break;
                 case 'AskMindbug':
-                    this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug!'), function () { return _this.bgaPerformAction('actMindbug'); }, { color: 'alert' });
+                    this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug!'), function () { return _this.bgaPerformAction('actMindbug', { useEvasiveMindbug: false }); }, { color: 'alert' });
+                    if (args.canUseEvasiveMindbug.include(this.getPlayerId())) {
+                        this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug with ${card_name}').replace('${card_name}', this.cardsManager.getCardName(68, 'text-only')), function () { return _this.bgaPerformAction('actMindbug', { useEvasiveMindbug: true }); }, { color: 'alert' });
+                    }
                     this.statusBar.addActionButton(_('Skip'), function () { return _this.bgaPerformAction('actPassMindbug'); });
                     break;
                 case 'resolveDice':
