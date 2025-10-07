@@ -13,24 +13,6 @@ trait EvolutionCardsArgTrait {
         These methods function is to return some additional information that is specific to the current
         game state.
     */
-
-    function argPickEvolutionForDeck() {
-        $turn = intval($this->getGameStateValue(MUTANT_EVOLUTION_TURN));
-        $playersIds = $this->getPlayersIds();
-        $privateArgs = [];
-        foreach($playersIds as $index => $playerId) {
-            $chooseCardIn = $this->getEvolutionCardsByLocation('mutant'.(($index + $turn) % count($playersIds)));
-            $inDeck = $this->getEvolutionCardsByLocation('deck'.$playerId);
-            $privateArgs[$playerId] = [
-                'chooseCardIn' => $chooseCardIn,
-                'inDeck' => $inDeck,
-            ];
-        }
-
-        return [
-            '_private' => $privateArgs,
-        ];
-    }
     
     function argChooseEvolutionCard() {
         $activePlayerId = $this->getActivePlayerId();
@@ -41,16 +23,6 @@ trait EvolutionCardsArgTrait {
                     'evolutions' => $this->pickEvolutionCards($activePlayerId),
                 ],
             ],
-        ];
-    }
-
-    function argBeforeStartTurn() {
-        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
-
-        $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_START) : [];
-
-        return [
-            'highlighted' => $highlighted,
         ];
     }
 

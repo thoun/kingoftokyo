@@ -582,20 +582,8 @@ class Game extends \Bga\GameFramework\Table {
     	$statename = $state['name'];
 
         if ($state['type'] == "activeplayer") {
-            switch ($statename) {
-                case 'pickMonster':
-                    $this->setMonster($active_player, $this->getAvailableMonsters()[0]);
-                    $this->gamestate->nextState('next');
-                    return;
-                case 'chooseInitialCard':
-                    $this->gamestate->nextState('next');
-                    return;
-                default:
-                    $this->jumpToState(ST_NEXT_PLAYER);
-                    //$this->gamestate->nextState( "zombiePass" );
-                	break;
-            }
-
+            $this->jumpToState(ST_NEXT_PLAYER);
+            //$this->gamestate->nextState( "zombiePass" );
             return;
         } else if ($state['type'] == "multipleactiveplayer") {
             switch ($statename) {
@@ -628,9 +616,6 @@ class Game extends \Bga\GameFramework\Table {
 
                     $this->gamestate->updateMultiactiveOrNextState('end');
                     return;
-
-                    // TODO ST_MULTIPLAYER_PICK_EVOLUTION_DECK pick random evolution
-                    //answerQuestion : skip if possible
             }
         }
 

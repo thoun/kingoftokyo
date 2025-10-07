@@ -6709,11 +6709,15 @@ var KingOfTokyo = /** @class */ (function (_super) {
         this.inDeckEvolutionsStock.addCards(args._private.inDeck.filter(function (card) { return !_this.inDeckEvolutionsStock.contains(card); }));
     };
     KingOfTokyo.prototype.onEnteringChooseInitialCard = function (args) {
-        var suffix = '';
-        if (args.chooseEvolution) {
-            suffix = args.chooseCostume ? 'evocostume' : 'evo';
+        if (args.chooseEvolution && args.chooseCostume) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a Costume and an Evolution card') : _('${actplayer} must choose a Costume and an Evolution card'), args);
         }
-        this.setGamestateDescription(suffix);
+        else if (args.chooseEvolution) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose an Evolution card') : _('${actplayer} must choose an Evolution card'), args);
+        }
+        else if (args.chooseCostume) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a Costume card') : _('${actplayer} must choose a Costume card'), args);
+        }
         if (args.chooseCostume) {
             this.tableCenter.setInitialCards(args.cards);
             this.tableCenter.setVisibleCardsSelectionClass(args.chooseEvolution);

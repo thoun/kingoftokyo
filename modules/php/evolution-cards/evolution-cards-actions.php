@@ -24,28 +24,6 @@ trait EvolutionCardsActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */  
 
-    function actPickEvolutionForDeck(int $id) {
-        $playerId = $this->getCurrentPlayerId();
-
-        $card = $this->getEvolutionCardById($id);
-
-        if (strpos($card->location, 'mutant') !== 0) {
-            throw new \BgaUserException("Card is not selectable");
-        }
-
-        $this->powerUpExpansion->evolutionCards->moveItem($card, 'deck'.$playerId);
-
-        $this->notifyPlayer($playerId, 'evolutionPickedForDeck', '', [
-            'card' => $card,
-        ]);
-
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
-    }
-
-    function actSkipBeforeStartTurn() {
-        $this->goToState($this->redirectAfterBeforeStartTurn());
-    }
-
     function actSkipBeforeEndTurn() {
         $this->goToState($this->redirectAfterBeforeEndTurn());
     }
@@ -131,7 +109,7 @@ trait EvolutionCardsActionTrait {
 
             switch($stateId) {
                 case ST_PLAYER_BEFORE_START_TURN:
-                    $this->actSkipBeforeStartTurn();
+                    $this->goToState($this->redirectAfterBeforeStartTurn());
                     break;
                 case ST_PLAYER_BEFORE_RESOLVE_DICE:
                     $this->actSkipBeforeResolveDice();

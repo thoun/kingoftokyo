@@ -2,7 +2,6 @@
 
 namespace KOT\States;
 
-use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\Games\KingOfTokyo\Game;
 
 const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
@@ -188,17 +187,6 @@ trait MonsterTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function actPickMonster(#[IntParam(name: 'monster')] int $monsterId, $automatic = false) {
-        $playerId = $this->getActivePlayerId();
-
-        $this->setMonster($playerId, $monsterId);
-        $this->saveMonsterStat($playerId, $monsterId, $automatic);
-
-        $this->gamestate->nextState('next');
-    }
-
-    
-  	
     public function actChangeForm() {
         $playerId = $this->getActivePlayerId();
 
@@ -242,12 +230,6 @@ trait MonsterTrait {
         game state.
     */
 
-    function argPickMonster() {
-        return [
-            'availableMonsters' => $this->getAvailableMonsters(),
-        ];
-    }
-
     function argChangeForm() {
         $playerId = $this->getActivePlayerId();
 
@@ -265,17 +247,6 @@ trait MonsterTrait {
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
-
-    function stPickMonster() {
-        if (intval($this->getUniqueValueFromDB( "SELECT count(*) FROM player WHERE player_monster = 0")) == 0) {
-            $this->goToState($this->redirectAfterPickMonster());
-        } else {
-            $availableMonsters = $this->getAvailableMonsters();
-            if (count($availableMonsters) == 1) {
-                $this->actPickMonster($availableMonsters[0], true);
-            }
-        }
-    }
 
     function stChangeForm() {
         $playerId = $this->getActivePlayerId();

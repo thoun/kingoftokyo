@@ -388,11 +388,22 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onEnteringChooseInitialCard(args: EnteringChooseInitialCardArgs) {
-        let suffix = '';
-        if (args.chooseEvolution) {
-            suffix = args.chooseCostume ? 'evocostume' : 'evo';
+        if (args.chooseEvolution && args.chooseCostume) {
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} must choose a Costume and an Evolution card') : _('${actplayer} must choose a Costume and an Evolution card'), 
+                args
+            );
+        } else if (args.chooseEvolution) {
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} must choose an Evolution card') : _('${actplayer} must choose an Evolution card'),
+                args
+            );
+        } else if (args.chooseCostume) {
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} must choose a Costume card') : _('${actplayer} must choose a Costume card'),
+                args
+            );
         }
-        this.setGamestateDescription(suffix);
 
         if (args.chooseCostume) {
             this.tableCenter.setInitialCards(args.cards);

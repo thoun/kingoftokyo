@@ -7,7 +7,7 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
 
-class NextPickEvolutionDeck extends GameState {
+class NextPickEvolutionForDeck extends GameState {
     public function __construct(protected Game $game)
     {
         parent::__construct($game,
