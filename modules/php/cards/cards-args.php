@@ -246,6 +246,7 @@ trait CardsArgTrait {
             'canBuy' => $canBuy,
             'cardsCosts' => $cardsCosts,
             'warningIds' => $warningIds,
+            'noExtraTurnWarning' => $this->mindbugExpansion->canGetExtraTurn() ? [] : [FRENZY_CARD],
         ];
     }
 
