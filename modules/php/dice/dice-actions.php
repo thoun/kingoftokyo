@@ -515,9 +515,7 @@ trait DiceActionTrait {
     }
 
     public function actResolve() {
-        $playerId = $this->getActivePlayerId();
-
-        $this->applyResolveDice($playerId);
+        $this->gamestate->nextState('resolve');
     }
   	
     public function actStayInHibernation() {
