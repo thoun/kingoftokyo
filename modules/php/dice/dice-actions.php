@@ -36,12 +36,10 @@ trait DiceActionTrait {
         $this->rethrowDice($diceIds);
     }
 
-    public function applyRerollDie(int $playerId, object $die, string $diceIds, int $cardName) {
-        if ($diceIds !== null) {
-            $this->DbQuery("UPDATE dice SET `locked` = false");
-            if ($diceIds != '') {
-                $this->DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN ($diceIds)");
-            }
+    public function applyRerollDie(int $playerId, object $die, array $diceIds, int $cardName) {
+        $this->DbQuery("UPDATE dice SET `locked` = false");
+        if (count($diceIds) > 0) {
+            $this->DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN (".implode(',', $diceIds).")");
         }
 
         $oldValue = $die->value;
@@ -68,7 +66,7 @@ trait DiceActionTrait {
         $this->goToState(ST_PLAYER_THROW_DICE);
     }
 
-    public function actRerollDie(int $id, string $diceIds) {
+    public function actRerollDie(int $id, #[IntArrayParam] array $diceIds) {
         $playerId = $this->getActivePlayerId();
         $die = $this->getDieById($id);
 
@@ -83,7 +81,7 @@ trait DiceActionTrait {
 
     }
 
-    public function actRethrow3(#[IntArrayParam(name: 'diceIds')] string $diceIds) {
+    public function actRethrow3(#[IntArrayParam] array $diceIds) {
         $playerId = $this->getActivePlayerId();
         $die = $this->getFirst3Die($playerId);
 

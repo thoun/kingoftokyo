@@ -5,6 +5,7 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/damage.php');
 
 use Bga\GameFramework\Actions\Types\IntArrayParam;
+use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use KOT\Objects\Damage;
 
@@ -119,7 +120,7 @@ trait CurseCardsActionTrait {
         $this->gamestate->nextState('next');
     }
   	
-    public function actFalseBlessingReroll(int $dieId) {
+    public function actFalseBlessingReroll(#[IntParam('id')] int $dieId) {
         if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
             throw new \BgaUserException(self::_('You already made an action for this die'));
         }
@@ -148,7 +149,7 @@ trait CurseCardsActionTrait {
         $this->endFalseBlessingAction($dieId);
     }
   	
-    public function actFalseBlessingDiscard(int $dieId) {
+    public function actFalseBlessingDiscard(#[IntParam('id')] int $dieId) {
         if ($dieId == intval($this->getGameStateValue(FALSE_BLESSING_USED_DIE))) {
             throw new \BgaUserException(self::_('You already made an action for this die'));
         }
