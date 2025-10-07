@@ -7600,9 +7600,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
                         }
                     }
                     if (argsBuyCard.canUseAdaptingTechnology) {
-                        this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only') }) + ')', function () { return _this.onRenew(3024); });
+                        this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only') }) + ')', function () { return _this.renewPowerCards(3024); });
                     }
-                    this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(" ( 2 [Energy])"), function () { return _this.onRenew(4); });
+                    this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(" ( 2 [Energy])"), function () { return _this.renewPowerCards(4); });
                     document.getElementById('renew_button').dataset.enableAtEnergy = '2';
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
@@ -8819,8 +8819,8 @@ var KingOfTokyo = /** @class */ (function (_super) {
             id: id
         });
     };
-    KingOfTokyo.prototype.onRenew = function (cardType) {
-        this.bgaPerformAction('actRenew', {
+    KingOfTokyo.prototype.renewPowerCards = function (cardType) {
+        this.bgaPerformAction('actRenewPowerCards', {
             cardType: cardType
         });
     };

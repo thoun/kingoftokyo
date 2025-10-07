@@ -4,6 +4,7 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFramework\Actions\CheckAction;
 use KOT\Objects\Damage;
 
 trait PlayerUtilTrait {
@@ -134,6 +135,7 @@ trait PlayerUtilTrait {
         return $stay;
     }
 
+    #[CheckAction(false)]
     function setLeaveTokyoUnder(int $under) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
@@ -152,6 +154,7 @@ trait PlayerUtilTrait {
         }
     }
 
+    #[CheckAction(false)]
     function setStayTokyoOver(int $over) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
@@ -175,6 +178,7 @@ trait PlayerUtilTrait {
         ]);
     }
 
+    #[CheckAction(false)]
     function setAskPlayEvolution(int $value) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
@@ -213,6 +217,7 @@ trait PlayerUtilTrait {
         return $killActive;
     }
 
+    #[CheckAction(false)]
     function actUseRapidCultist(int $type) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 

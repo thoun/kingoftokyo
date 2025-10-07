@@ -4,6 +4,7 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/damage.php');
 
+use Bga\GameFramework\Actions\CheckAction;
 use Bga\GameFramework\Actions\Types\BoolParam;
 use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\GameFramework\Actions\Types\IntParam;
@@ -78,6 +79,7 @@ trait PlayerActionTrait {
         $this->checkOnlyChestThumpingRemaining();
     }
 
+    #[CheckAction(false)]
     function actSetSkipBuyPhase(bool $skipBuyPhase) {
         if ($this->getCurrentPlayerId() == $this->getActivePlayerId()) {
             $this->setGameStateValue(SKIP_BUY_PHASE, $skipBuyPhase ? 1 : 0);

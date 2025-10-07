@@ -510,7 +510,7 @@ trait CardsActionTrait {
         }
     }
 
-    function actRenew(?int $cardType) {
+    function actRenewPowerCards(?int $cardType) {
         $playerId = $this->getActivePlayerId();
 
         if ($cardType == 3024) {

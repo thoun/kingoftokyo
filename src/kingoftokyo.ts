@@ -1362,9 +1362,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     }
 
                     if (argsBuyCard.canUseAdaptingTechnology) {
-                        this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only')}) + ')', () => this.onRenew(3024));
+                        this.addActionButton('renewAdaptiveTechnology_button', _("Renew cards") + ' (' + dojo.string.substitute(_("Use ${card_name}"), { 'card_name': this.evolutionCardsManager.getCardName(24, 'text-only')}) + ')', () => this.renewPowerCards(3024));
                     }
-                    this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.onRenew(4));
+                    this.addActionButton('renew_button', _("Renew cards") + formatTextIcons(` ( 2 [Energy])`), () => this.renewPowerCards(4));
                     document.getElementById('renew_button').dataset.enableAtEnergy = '2';
                     if (this.energyCounters[this.getPlayerId()].getValue() < 2) {
                         dojo.addClass('renew_button', 'disabled');
@@ -2645,11 +2645,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public useRapidCultist(type: number) { // 4 for health, 5 for energy
-        this.bgaPerformAction('actUseRapidCultist', { type }, { lock: false, checkAction: false });
+       this.bgaPerformAction('actUseRapidCultist', { type }, { lock: false, checkAction: false });
     }
 
     public setSkipBuyPhase(skipBuyPhase: boolean) {
-         this.bgaPerformAction('actSetSkipBuyPhase', {
+        this.bgaPerformAction('actSetSkipBuyPhase', {
             skipBuyPhase: skipBuyPhase
         }, { lock: false, checkAction: false });
     }
@@ -2868,8 +2868,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         });
     }
 
-    public onRenew(cardType: number) {
-        this.bgaPerformAction('actRenew', {
+    public renewPowerCards(cardType: number) {
+        this.bgaPerformAction('actRenewPowerCards', {
             cardType
         });
     }
