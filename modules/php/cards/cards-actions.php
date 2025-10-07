@@ -634,10 +634,10 @@ trait CardsActionTrait {
         $this->gamestate->nextState('sellCard');
     }
 
-    function actChooseMimickedCard(int $mimickedCardId) {
+    function actChooseMimickedCard(int $id) {
         $playerId = $this->getCurrentPlayerId();
 
-        $card = $this->powerCards->getItemById($mimickedCardId);
+        $card = $this->powerCards->getItemById($id);
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -646,15 +646,15 @@ trait CardsActionTrait {
         }
 
         $question = $this->getQuestion();
-        $this->setMimickedCardId($question->args->mimicCardType, $playerId, $mimickedCardId);
+        $this->setMimickedCardId($question->args->mimicCardType, $playerId, $id);
 
         $this->removeStackedStateAndRedirect();
     }
 
-    function actChangeMimickedCard(int $mimickedCardId) {
+    function actChangeMimickedCard(int $id) {
         $playerId = $this->getActivePlayerId();
 
-        $card = $this->powerCards->getItemById($mimickedCardId);        
+        $card = $this->powerCards->getItemById($id);        
         if ($card->type > 100 || $card->type == MIMIC_CARD) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -667,7 +667,7 @@ trait CardsActionTrait {
         }
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
 
-        $this->setMimickedCardId(MIMIC_CARD, $playerId, $mimickedCardId);
+        $this->setMimickedCardId(MIMIC_CARD, $playerId, $id);
 
         $this->jumpToState($this->redirectAfterChangeMimick($playerId));
     }

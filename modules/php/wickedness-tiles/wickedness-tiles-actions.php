@@ -82,10 +82,10 @@ trait WickednessTilesActionTrait {
         $this->goToState($this->redirectAfterResolveNumberDice(true));
     }
 
-    function actChooseMimickedCardWickednessTile(int $mimickedCardId) {
+    function actChooseMimickedCardWickednessTile(int $id) {
         $playerId = $this->getActivePlayerId();
 
-        $card = $this->powerCards->getItemById($mimickedCardId);        
+        $card = $this->powerCards->getItemById($id);        
         if ($card->type > 100) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -93,15 +93,15 @@ trait WickednessTilesActionTrait {
             throw new \BgaUserException("You cannot mimic Mimic cards");
         }
 
-        $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
+        $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $id);
 
         $this->goToState($this->redirectAfterResolveNumberDice());
     }
 
-    function actChangeMimickedCardWickednessTile(int $mimickedCardId) {
+    function actChangeMimickedCardWickednessTile(int $id) {
         $playerId = $this->getActivePlayerId();
 
-        $card = $this->powerCards->getItemById($mimickedCardId);        
+        $card = $this->powerCards->getItemById($id);        
         if ($card->type > 100) {
             throw new \BgaUserException("You can only mimic Keep cards");
         }
@@ -109,7 +109,7 @@ trait WickednessTilesActionTrait {
             throw new \BgaUserException("You cannot mimic Mimic cards");
         }
 
-        $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $mimickedCardId);
+        $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $id);
 
         $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));
     }
