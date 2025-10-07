@@ -6,11 +6,10 @@ namespace Bga\Games\KingOfTokyo\PowerCards;
 use Bga\GameFramework\NotificationMessage;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
-class MiraculousMindbug extends PowerCard
-{
+class Hibernation extends PowerCard {
     public function getUnmetConditionRequirement(Context $context): ?NotificationMessage {
-        if ($context->game->getPlayerHealth($context->currentPlayerId) > 3) {
-            return new NotificationMessage(/*clienttranslateTODOMB*/('You can only buy this card if you have 3[Heart] or fewer.'));
+        if ($context->currentPlayerInTokyo) {
+            return new NotificationMessage(clienttranslate('You CANNOT buy this card while in TOKYO'));
         }
         return null;
     }

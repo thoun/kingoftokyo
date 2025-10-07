@@ -8,6 +8,7 @@ require_once(__DIR__.'/framework-prototype/item/item-field.php');
 require_once(__DIR__.'/framework-prototype/item/item-location.php');
 require_once(__DIR__.'/framework-prototype/item/item-manager.php');
 
+use Bga\GameFramework\NotificationMessage;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\GameFrameworkPrototype\Item\ItemLocation;
 use \Bga\GameFrameworkPrototype\Item\ItemManager;
@@ -18,6 +19,7 @@ const POWER_CARD_CLASSES = [
     // KEEP
     EVEN_BIGGER_CARD => 'EvenBigger',
     FREEZE_TIME_CARD => 'FreezeTime',
+    HIBERNATION_CARD => 'Hibernation',
     NATURAL_SELECTION_CARD => 'NaturalSelection',
     FREE_WILL_CARD => 'FreeWill',
     EVASIVE_MINDBUG_CARD => 'EvasiveMindbug',
@@ -415,4 +417,11 @@ class PowerCardManager extends ItemManager {
         }
     }
 
+    public function getUnmetConditionRequirement(PowerCard $card, Context $context): ?NotificationMessage {
+        if (method_exists($card, 'getUnmetConditionRequirement')) {
+            /** @disregard */
+            return $card->getUnmetConditionRequirement($context);
+        }
+        return null;
+    }
 }

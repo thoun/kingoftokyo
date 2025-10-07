@@ -71,7 +71,7 @@ trait CardsActionTrait {
         }
 
         $cost = $this->getCardCost($playerId, $card->type);
-        if (!$this->canBuyCard($playerId, $card->type, $cost)) {
+        if (!$this->canAffordCard($playerId, $card->type, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
 
@@ -374,7 +374,11 @@ trait CardsActionTrait {
             $cost = max(0, $cost - 2);
         }
 
-        if (!$this->canBuyCard($playerId, $card->type, $cost)) {
+        $unmetConditionRequirement = $this->powerCards->getUnmetConditionRequirement($card, new Context($this, $playerId, $this->inTokyo($playerId)));
+        if ($unmetConditionRequirement) {
+            throw new \BgaUserException($unmetConditionRequirement->message);
+        }
+        if (!$this->canAffordCard($playerId, $card->type, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
 

@@ -201,10 +201,7 @@ trait CardsUtilTrait {
         return max($cardCost + $inadequateOffering - $countAlienOrigin - $wickenessTilesDec - $countSecretLaboratory, 0);
     }
 
-    function canBuyCard(int $playerId, int $cardType, int $cost) {
-        if ($cardType === HIBERNATION_CARD && $this->inTokyo($playerId)) {
-            return false;
-        }
+    function canAffordCard(int $playerId, int $cardType, int $cost) {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
