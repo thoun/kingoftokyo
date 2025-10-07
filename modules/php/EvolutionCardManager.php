@@ -16,85 +16,149 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 
 const EVOLUTION_CARD_CLASSES = [
     // Space Penguin
+    FREEZE_RAY_EVOLUTION => 'FreezeRay',
+    MIRACULOUS_CATCH_EVOLUTION => 'MiraculousCatch',
     DEEP_DIVE_EVOLUTION => 'DeepDive',
+    COLD_WAVE_EVOLUTION => 'ColdWave',
+    ENCASED_IN_ICE_EVOLUTION => 'EncasedInIce',
     BLIZZARD_EVOLUTION => 'Blizzard',
+    BLACK_DIAMOND_EVOLUTION => 'BlackDiamond',
     ICY_REFLECTION_EVOLUTION => 'IcyReflection',
-
-    // Cyber Kitty
-    NINE_LIVES_EVOLUTION => 'NineLives',
-    MEGA_PURR_EVOLUTION => 'MegaPurr',
-    ELECTRO_SCRATCH_EVOLUTION => 'ElectroScratch',
-    FELINE_MOTOR_EVOLUTION => 'FelineMotor',
-    // The King
-    JUNGLE_FRENZY_EVOLUTION => 'JungleFrenzy',
-    MONKEY_RUSH_EVOLUTION => 'MonkeyRush',
-    SIMIAN_SCAMPER_EVOLUTION => 'SimianScamper',
-    GIANT_BANANA_EVOLUTION => 'GiantBanana',
-    TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION => 'TwasBeautyKilledTheBeast',
-
-    // Gigazaur
-    DETACHABLE_TAIL_EVOLUTION => 'DetachableTail',
-    RADIOACTIVE_WASTE_EVOLUTION => 'RadioactiveWaste',
-    PRIMAL_BELLOW_EVOLUTION => 'PrimalBellow',
-    SAURIAN_ADAPTABILITY_EVOLUTION => 'SaurianAdaptability',
-    GAMMA_BREATH_EVOLUTION => 'GammaBreath',
-
-    // Meka Dragon
-    DESTRUCTIVE_ANALYSIS_EVOLUTION => 'DestructiveAnalysis',
-    TUNE_UP_EVOLUTION => 'TuneUp',
-    LIGHTNING_ARMOR_EVOLUTION => 'LightningArmor',
-    TARGET_ACQUIRED_EVOLUTION => 'TargetAcquired',
-
-    // Boogie Woogie
-    WELL_OF_SHADOW_EVOLUTION => 'WellOfShadow',
-    WORM_INVADERS_EVOLUTION => 'WormInvaders',
-
     // Alienoid
     ALIEN_SCOURGE_EVOLUTION => 'AlienScourge',
     PRECISION_FIELD_SUPPORT_EVOLUTION => 'PrecisionFieldSupport',
     ANGER_BATTERIES_EVOLUTION => 'AngerBatteries',
     ADAPTING_TECHNOLOGY_EVOLUTION => 'AdaptingTechnology',
+    FUNNY_LOOKING_BUT_DANGEROUS_EVOLUTION => 'FunnyLookingButDangerous',
+    EXOTIC_ARMS_EVOLUTION => 'ExoticArms',
+    MOTHERSHIP_SUPPORT_EVOLUTION => 'MothershipSupport',
     SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION => 'SuperiorAlienTechnology',
-
+    // Cyber Kitty
+    NINE_LIVES_EVOLUTION => 'NineLives',
+    MEGA_PURR_EVOLUTION => 'MegaPurr',
+    ELECTRO_SCRATCH_EVOLUTION => 'ElectroScratch',
+    CAT_NIP_EVOLUTION => 'CatNip',
+    PLAY_WITH_YOUR_FOOD_EVOLUTION => 'PlayWithYourFood',
+    FELINE_MOTOR_EVOLUTION => 'FelineMotor',
+    MOUSE_HUNTER_EVOLUTION => 'MouseHunter',
+    MEOW_MISSLE_EVOLUTION => 'MeowMissle',
+    // The King
+    MONKEY_RUSH_EVOLUTION => 'MonkeyRush',
+    SIMIAN_SCAMPER_EVOLUTION => 'SimianScamper',
+    JUNGLE_FRENZY_EVOLUTION => 'JungleFrenzy',
+    GIANT_BANANA_EVOLUTION => 'GiantBanana',
+    CHEST_THUMPING_EVOLUTION => 'ChestThumping',
+    ALPHA_MALE_EVOLUTION => 'AlphaMale',
+    I_AM_THE_KING_EVOLUTION => 'IAmTheKing',
+    TWAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION => 'TwasBeautyKilledTheBeast',
+    // Gigazaur
+    DETACHABLE_TAIL_EVOLUTION => 'DetachableTail',
+    RADIOACTIVE_WASTE_EVOLUTION => 'RadioactiveWaste',
+    PRIMAL_BELLOW_EVOLUTION => 'PrimalBellow',
+    SAURIAN_ADAPTABILITY_EVOLUTION => 'SaurianAdaptability',
+    DEFENDER_OF_TOKYO_EVOLUTION => 'DefenderOfTokyo',
+    HEAT_VISION_EVOLUTION => 'HeatVision',
+    GAMMA_BREATH_EVOLUTION => 'GammaBreath',
+    TAIL_SWEEP_EVOLUTION => 'TailSweep',
+    // Meka Dragon
+    MECHA_BLAST_EVOLUTION => 'MechaBlast',
+    DESTRUCTIVE_ANALYSIS_EVOLUTION => 'DestructiveAnalysis',
+    PROGRAMMED_TO_DESTROY_EVOLUTION => 'ProgrammedToDestroy',
+    TUNE_UP_EVOLUTION => 'TuneUp',
+    BREATH_OF_DOOM_EVOLUTION => 'BreathOfDoom',
+    LIGHTNING_ARMOR_EVOLUTION => 'LightningArmor',
+    CLAWS_OF_STEEL_EVOLUTION => 'ClawsOfSteel',
+    TARGET_ACQUIRED_EVOLUTION => 'TargetAcquired',
     // Boogie Woogie
+    BOO_EVOLUTION => 'Boo',
     WORST_NIGHTMARE_EVOLUTION => 'WorstNightmare',
-
+    I_LIVE_UNDER_YOUR_BED_EVOLUTION => 'ILiveUnderYourBed',
+    BOOGIE_DANCE_EVOLUTION => 'BoogieDance',
+    WELL_OF_SHADOW_EVOLUTION => 'WellOfShadow',
+    WORM_INVADERS_EVOLUTION => 'WormInvaders',
+    NIGHTLIFE_EVOLUTION => 'Nightlife',
+    DUSK_RITUAL_EVOLUTION => 'DuskRitual',
     // Pumpkin Jack
+    DETACHABLE_HEAD_EVOLUTION => 'DetachableHead',
+    IGNIS_FATUS_EVOLUTION => 'IgnisFatus',
     SMASHING_PUMPKIN_EVOLUTION => 'SmashingPumpkin',
     TRICK_OR_THREAT_EVOLUTION => 'TrickOrThreat',
     BOBBING_FOR_APPLES_EVOLUTION => 'BobbingForApples',
     FEAST_OF_CROWS_EVOLUTION => 'FeastOfCrows',
     SCYTHE_EVOLUTION => 'Scythe',
     CANDY_EVOLUTION => 'Candy',
-
     // King Kong
     SON_OF_KONG_KIKO_EVOLUTION => 'SonOfKongKiko',
-
+    KING_OF_SKULL_ISLAND_EVOLUTION => 'KingOfSkullIsland',
+    ISLANDER_SACRIFICE_EVOLUTION => 'IslanderSacrifice',
+    MONKEY_LEAP_EVOLUTION => 'MonkeyLeap',
+    IT_WAS_BEAUTY_KILLED_THE_BEAST_EVOLUTION => 'ItWasBeautyKilledTheBeast',
+    JET_CLUB_EVOLUTION => 'JetClub',
+    EIGHTH_WONDER_OF_THE_WORLD_EVOLUTION => 'EighthWonderOfTheWorld',
+    CLIMB_TOKYO_TOWER_EVOLUTION => 'ClimbTokyoTower',
     // Pandakaï
     PANDA_MONIUM_EVOLUTION => 'PandaMonium',
     EATS_SHOOTS_AND_LEAVES_EVOLUTION => 'EatsShootsAndLeaves',
     BAMBOOZLE_EVOLUTION => 'Bamboozle',
     BEAR_NECESSITIES_EVOLUTION => 'BearNecessities',
+    PANDA_EXPRESS_EVOLUTION => 'PandaExpress',
+    BAMBOO_SUPPLY_EVOLUTION => 'BambooSupply',
+    PANDARWINISM_EVOLUTION => 'Pandarwinism',
     YIN_YANG_EVOLUTION => 'YinYang',
-
-    // cyberbunny
+    // Cyber Bunny
     STROKE_OF_GENIUS_EVOLUTION => 'StrokeOfGenius',
     EMERGENCY_BATTERY_EVOLUTION => 'EmergencyBattery',
     RABBIT_S_FOOT_EVOLUTION => 'RabbitSFoot',
+    HEART_OF_THE_RABBIT_EVOLUTION => 'HeartOfTheRabbit',
+    SECRET_LABORATORY_EVOLUTION => 'SecretLaboratory',
+    KING_OF_THE_GIZMO_EVOLUTION => 'KingOfTheGizmo',
+    ENERGY_SWORD_EVOLUTION => 'EnergySword',
     ELECTRIC_CARROT_EVOLUTION => 'ElectricCarrot',
-
-    // kraken
+    // Kraken
     HEALING_RAIN_EVOLUTION => 'HealingRain',
     DESTRUCTIVE_WAVE_EVOLUTION => 'DestructiveWave',
     CULT_WORSHIPPERS_EVOLUTION => 'CultWorshippers',
-
+    HIGH_TIDE_EVOLUTION => 'HighTide',
+    TERROR_OF_THE_DEEP_EVOLUTION => 'TerrorOfTheDeep',
+    EATER_OF_SOULS_EVOLUTION => 'EaterOfSouls',
+    SUNKEN_TEMPLE_EVOLUTION => 'SunkenTemple',
+    MANDIBLES_OF_DREAD_EVOLUTION => 'MandiblesOfDread',
     // Baby Gigazaur
     MY_TOY_EVOLUTION => 'MyToy',
+    GROWING_FAST_EVOLUTION => 'GrowingFast',
     NURTURE_THE_YOUNG_EVOLUTION => 'NurtureTheYoung',
+    TINY_TAIL_EVOLUTION => 'TinyTail',
+    TOO_CUTE_TO_SMASH_EVOLUTION => 'TooCuteToSmash',
+    SO_SMALL_EVOLUTION => 'SoSmall',
+    UNDERRATED_EVOLUTION => 'Underrated',
     YUMMY_YUMMY_EVOLUTION => 'YummyYummy',
-
+    // Gigasnail Hydra
+    UNSTOPPABLE_HYDRA_EVOLUTION_1 => 'UnstoppableHydra',
+    UNSTOPPABLE_HYDRA_EVOLUTION_2 => 'UnstoppableHydra',
+    ENERGY_INFUSED_MONSTER_EVOLUTION => 'EnergyInfusedMonster',
+    THREE_TIMES_AS_STURDY_EVOLUTION => 'ThreeTimesAsSturdy',
+    SCARY_FACE_EVOLUTION => 'ScaryFace',
+    THREE_TIMES_AS_STRONG_EVOLUTION => 'ThreeTimesAsStrong',
+    THINKING_FACE_EVOLUTION => 'ThinkingFace',
+    HUNGRY_FACE_EVOLUTION => 'HungryFace',
     // MasterMindbug
     MINDBUG_ACQUISITION_EVOLUTION => 'MindbugAcquisition',
+    INTERGALACTIC_GENIUS_EVOLUTION => 'IntergalacticGenius',
+    SUPERIOR_BRAIN_EVOLUTION => 'SuperiorBrain',
+    INTERDIMENSIONAL_PORTAL_EVOLUTION => 'InterdimensionalPortal',
+    HELPFUL_MINDBUG_EVOLUTION => 'HelpfulMindbug',
+    MINDBUGS_OVERLORD_EVOLUTION => 'MindbugsOverlord',
+    MIND_CONTROL_EVOLUTION => 'MindControl',
+    NEUTRALIZING_LOOK_EVOLUTION => 'NeutralizingLook',
+    // Sharky Crab-dog Mummypus-Zilla
+    SHARK_ATTACK_EVOLUTION => 'SharkAttack',
+    ENERGY_DEVOURER_EVOLUTION => 'EnergyDevourer',
+    STRANGE_EVOLUTION_EVOLUTION => 'StrangeEvolution',
+    CRAB_CLAW_EVOLUTION => 'CrabClaw',
+    UNDEAD_MUMMY_EVOLUTION => 'UndeadMummy',
+    FOLLOW_THE_CUBES_EVOLUTION => 'FollowTheCubes',
+    POISONED_TENTACLES_EVOLUTION => 'PoisonedTentacles',
+    CHEW_PINCH_CATCH_AND_SMACK_EVOLUTION => 'ChewPinchCatchAndSmack',
 ];
 
 class EvolutionCardManager extends ItemManager {
