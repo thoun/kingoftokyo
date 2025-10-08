@@ -37,11 +37,6 @@ trait WickednessTilesArgTrait {
         ];
     }
 
-    function argChangeMimickedCardWickednessTile() {
-        $playerId = $this->getActivePlayerId();
-        return $this->getArgChooseMimickedCard($playerId, FLUXLING_WICKEDNESS_TILE);
-    }
-
     function argChooseMimickedCardWickednessTile() {
         $playerId = $this->getActivePlayerId();
         return $this->getArgChooseMimickedCard($playerId, FLUXLING_WICKEDNESS_TILE);

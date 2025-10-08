@@ -53,33 +53,6 @@ require_once("modules/php/constants.inc.php");
 
 $playerActionsGameStates = [
 
-    ST_PLAYER_CHANGE_MIMICKED_CARD_WICKEDNESS_TILE => [
-        "name" => "changeMimickedCardWickednessTile",
-        "description" => clienttranslate('${actplayer} can change mimicked card'),
-        "descriptionmyturn" => clienttranslate('${you} can change mimicked card'),
-        "type" => "activeplayer",
-        "action" => "stChooseMimickedCard",
-        "args" => "argChangeMimickedCardWickednessTile",
-        "possibleactions" => [ "actChangeMimickedCardWickednessTile", "actSkipChangeMimickedCardWickednessTile" ],
-        "transitions" => [
-            "next" => ST_INITIAL_DICE_ROLL,
-            "changeMimickedCard" => ST_PLAYER_CHANGE_MIMICKED_CARD,
-        ]
-    ],
-
-    ST_PLAYER_CHANGE_MIMICKED_CARD => [
-        "name" => "changeMimickedCard",
-        "description" => clienttranslate('${actplayer} can change mimicked card for 1[Energy]'),
-        "descriptionmyturn" => clienttranslate('${you} can change mimicked card for 1[Energy]'),
-        "type" => "activeplayer",
-        "action" => "stChooseMimickedCard",
-        "args" => "argChangeMimickedCard",
-        "possibleactions" => [ "actChangeMimickedCard", "actSkipChangeMimickedCard" ],
-        "transitions" => [
-            "next" => ST_INITIAL_DICE_ROLL,
-        ]
-    ],
-
     ST_MULTIPLAYER_GIVE_SYMBOL_TO_ACTIVE_PLAYER => [ // TODOPU move to answerQuestion ?
         "name" => "giveSymbolToActivePlayer",
         "description" => clienttranslate('Player with Golden Scarab must give 1[Heart]/[Energy]/[Star]'),
@@ -106,7 +79,6 @@ $playerActionsGameStates = [
         "transitions" => [
             "goToChangeDie" => ST_PLAYER_CHANGE_DIE,
             "psychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
-            //"zombiePass" => ST_NEXT_PLAYER,
         ],
     ],  
 
@@ -446,27 +418,11 @@ $playerActionsGameStates = [
         "possibleactions" => [ "actBuyCard", "actGoToSellCard", "actEndTurn", "actRenewPowerCards", "actUseMiraculousCatch" ],
         "transitions" => [
             "buyCard" => ST_PLAYER_BUY_CARD,
-            //"buyMimicCard" => ST_PLAYER_CHOOSE_MIMICKED_CARD,
             "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
             "goToSellCard" => ST_PLAYER_SELL_CARD,
             "renew" => ST_PLAYER_BUY_CARD,
         ]
     ],
-
-    /*ST_PLAYER_CHOOSE_MIMICKED_CARD => [
-        "name" => "chooseMimickedCard",
-        "description" => clienttranslate('${actplayer} must select a card to mimic'),
-        "descriptionmyturn" => clienttranslate('${you} must select a card to mimic'),
-        "type" => "activeplayer",
-        "args" => "argChooseMimickedCard",
-        "possibleactions" => [],
-        "transitions" => [
-            "buyCard" => ST_PLAYER_BUY_CARD,
-            "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
-            "goToSellCard" => ST_PLAYER_SELL_CARD,
-            "renew" => ST_PLAYER_BUY_CARD,
-        ]
-    ],*/
 
     ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD => [
         "name" => "opportunistBuyCard",
@@ -478,24 +434,9 @@ $playerActionsGameStates = [
         "possibleactions" => [ "actBuyCard", "actOpportunistSkip" ],
         "transitions" => [
             "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
-            //"stayMimicCard" => ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD,
             "end" => ST_PLAYER_BUY_CARD,
         ],
     ],
-
-    /*ST_MULTIPLAYER_OPPORTUNIST_CHOOSE_MIMICKED_CARD => [
-        "name" => "opportunistChooseMimicCard",
-        "description" => clienttranslate('Player with Opportunist must select a card to mimic'),
-        "descriptionmyturn" => clienttranslate('${you} must select a card to mimic'),
-        "type" => "multipleactiveplayer",
-        "action" => "stOpportunistChooseMimicCard",
-        "args" => "argChooseMimickedCard",
-        "possibleactions" => [],
-        "transitions" => [
-            "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
-            "end" => ST_PLAYER_BUY_CARD,
-        ],
-    ],*/
 
     ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT => [ 
         "name" => "cardIsBought",

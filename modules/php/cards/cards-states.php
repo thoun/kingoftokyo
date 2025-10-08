@@ -12,13 +12,6 @@ trait CardsStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stChooseMimickedCard() {
-        if (($this->autoSkipImpossibleActions() && !$this->argChooseMimickedCard(true)['canChange']) || $this->getPlayer($this->getActivePlayerId())->eliminated) {
-            // skip state
-            $this->actSkipChangeMimickedCard();
-        }
-    }
-
     function stBuyCard() {
         $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
 

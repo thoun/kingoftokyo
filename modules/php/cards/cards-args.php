@@ -318,11 +318,6 @@ trait CardsArgTrait {
         ];
     }
 
-    function argChangeMimickedCard() {
-        $playerId = $this->getActivePlayerId();
-        return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD, 1);
-    }
-
     function argChooseMimickedCard() {
         $playerId = $this->getActivePlayerId();
         return $this->getArgChooseMimickedCard($playerId, MIMIC_CARD);

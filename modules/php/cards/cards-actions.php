@@ -654,34 +654,6 @@ trait CardsActionTrait {
 
         $this->removeStackedStateAndRedirect();
     }
-
-    function actChangeMimickedCard(int $id) {
-        $playerId = $this->getActivePlayerId();
-
-        $card = $this->powerCards->getItemById($id);        
-        if ($card->type > 100 || $card->type == MIMIC_CARD) {
-            throw new \BgaUserException("You can only mimic Keep cards");
-        }
-        if ($card->location != 'hand') {
-            throw new \BgaUserException("You must select a player card");
-        }
-
-        if ($this->getPlayerEnergy($playerId) < 1) {
-            throw new \BgaUserException('Not enough energy');
-        }
-        $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
-
-        $this->setMimickedCardId(MIMIC_CARD, $playerId, $id);
-
-        $this->jumpToState($this->redirectAfterChangeMimick($playerId));
-    }
-
-    function actSkipChangeMimickedCard() {
-        $playerId = $this->getActivePlayerId();
-
-        $this->jumpToState($this->redirectAfterChangeMimick($playerId));
-    }    
-
     function actThrowCamouflageDice() {
         $playerId = $this->getCurrentPlayerId();
 

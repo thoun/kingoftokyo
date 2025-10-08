@@ -98,25 +98,4 @@ trait WickednessTilesActionTrait {
         $this->goToState($this->redirectAfterResolveNumberDice());
     }
 
-    function actChangeMimickedCardWickednessTile(int $id) {
-        $playerId = $this->getActivePlayerId();
-
-        $card = $this->powerCards->getItemById($id);        
-        if ($card->type > 100) {
-            throw new \BgaUserException("You can only mimic Keep cards");
-        }
-        if ($card->type == MIMIC_CARD) {
-            throw new \BgaUserException("You cannot mimic Mimic cards");
-        }
-
-        $this->setMimickedCardId(FLUXLING_WICKEDNESS_TILE, $playerId, $id);
-
-        $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));
-    }
-
-    function actSkipChangeMimickedCardWickednessTile() {
-        $playerId = $this->getActivePlayerId();
-
-        $this->jumpToState($this->redirectAfterChangeMimickWickednessTile($playerId));
-    }    
 }

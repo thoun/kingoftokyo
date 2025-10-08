@@ -604,7 +604,6 @@ class Game extends \Bga\GameFramework\Table {
                 case 'opportunistBuyCard':
                     $this->applyOpportunistSkip($active_player);
                     return;
-                case 'opportunistChooseMimicCard':
                 default:
                     // Make sure player is in a non blocking status for role turn
                     $sql = "
