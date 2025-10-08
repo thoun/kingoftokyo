@@ -171,7 +171,7 @@ trait CurseCardsActionTrait {
         $this->gamestate->nextState('next');
     }
 
-    function actRerollDice(#[IntArrayParam] array $diceIds) {
+    function actRerollDice(#[IntArrayParam('ids')] array $diceIds) {
         $playerId = $this->getCurrentPlayerId();
         $activePlayerId = $this->getActivePlayerId();
 
