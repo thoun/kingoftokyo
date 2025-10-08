@@ -4,8 +4,6 @@ namespace KOT\States;
 
 require_once(__DIR__.'/../Objects/damage.php');
 
-use KOT\Objects\Damage;
-
 use const Bga\Games\KingOfTokyo\FINAL_PUSH_WICKEDNESS_TILE;
 
 trait PlayerStateTrait {
@@ -13,25 +11,6 @@ trait PlayerStateTrait {
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
-
-    function stInitialDiceRoll() {
-        $playerId = $this->getActivePlayerId();
-
-        if ($this->getPlayer($this->getActivePlayerId())->eliminated) {
-            $this->goToState(ST_PLAYER_BUY_CARD);
-            return;
-        }
-
-        $this->setGameStateValue(DICE_NUMBER, $this->getDiceNumber($playerId, true));
-        $this->throwDice($playerId, true);
-
-        if ($this->isMutantEvolutionVariant()) {
-            $isBeastForm = $this->isBeastForm($playerId);
-            $this->incStat(1, $isBeastForm ? 'turnsInBeastForm' : 'turnsInBipedForm', $playerId);
-        }
-
-        $this->goToState(ST_PLAYER_THROW_DICE);
-    }
 
     function stLeaveTokyo() {
         if ($this->autoSkipImpossibleActions()) {
@@ -79,12 +58,6 @@ trait PlayerStateTrait {
         }
     }
 
-    function stLeaveTokyoApplyJets() {
-        $jetsDamages = $this->getGlobalVariable(JETS_DAMAGES);
-        
-        $this->goToState(ST_ENTER_TOKYO_APPLY_BURROWING, $jetsDamages);
-    }
-
     function stBeforeEnteringTokyo() {
         if (!$this->powerUpExpansion->isActive() || !$this->tokyoHasFreeSpot()) {
             $this->goToState($this->redirectAfterHalfMovePhase());
@@ -111,69 +84,6 @@ trait PlayerStateTrait {
         }
     }
     
-    function stEnterTokyoApplyBurrowing() {
-        $playerId = $this->getActivePlayerId();
-
-        $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA();  
-        $nextState = count($leaversWithUnstableDNA) >= 1 && $leaversWithUnstableDNA[0] != $playerId ? ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD : ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO;
-
-        // burrowing
-        $leaversWithBurrowing = $this->getLeaversWithBurrowing();  
-        $damages = [];  
-        foreach($leaversWithBurrowing as $leaverWithBurrowingId) {
-            $countBurrowing = $this->countCardOfType($leaverWithBurrowingId, BURROWING_CARD);
-            if ($countBurrowing > 0) {
-                $damages[] = new Damage($playerId, $countBurrowing, $leaverWithBurrowingId, BURROWING_CARD);
-            }
-        }
-
-        // jagged tactician
-        $leaversWithJaggedTactician = $this->getLeaversWithJaggedTactician();  
-        foreach($leaversWithJaggedTactician as $leaverWithJaggedTacticianId) {
-            $countJaggedTactician = $this->countCardOfType($leaverWithJaggedTacticianId, JAGGED_TACTICIAN_CARD);
-            if ($countJaggedTactician > 0) {
-                $damages[] = new Damage($playerId, $countJaggedTactician, $leaverWithJaggedTacticianId, JAGGED_TACTICIAN_CARD);
-                $this->applyGetEnergy($leaverWithJaggedTacticianId, $countJaggedTactician, JAGGED_TACTICIAN_CARD);
-            }
-        }
-        
-        $this->setGlobalVariable(BURROWING_PLAYERS, []); 
-        $this->setGlobalVariable(JAGGED_TACTICIAN_PLAYERS, []); 
-
-        $this->goToState($nextState, $damages);
-    }
-
-        
-    function stEnterTokyo() {
-        $this->setGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, []);
-
-        $playerId = $this->getActivePlayerId();
-        $damages = [];
-
-        $preventEnterTokyo = boolval($this->getGameStateValue(PREVENT_ENTER_TOKYO));
-        if (!$this->getPlayer($playerId)->eliminated && !$this->inTokyo($playerId) && !$preventEnterTokyo) { // enter only if burrowing doesn't kill player
-            $this->moveToTokyoFreeSpot($playerId);
-
-            if ($this->getPlayer($playerId)->turnEnteredTokyo) {
-                // gamma blast
-                $countGammaBlast = $this->countCardOfType($playerId, GAMMA_BLAST_CARD);
-                if ($countGammaBlast > 0) {
-                    $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-                    foreach($otherPlayersIds as $pId) {
-                        $damages[] = new Damage($pId, $countGammaBlast, $playerId, GAMMA_BLAST_CARD);
-                    }
-                }
-            }
-        }        
-        if ($preventEnterTokyo) {
-            $this->setGameStateValue(PREVENT_ENTER_TOKYO, 0);
-        }
-
-        $nextState = $this->powerUpExpansion->isActive() ? ST_PLAYER_AFTER_ENTERING_TOKYO : $this->redirectAfterEnterTokyo($playerId);
-
-        $this->goToState($nextState, $damages);
-    }
-
     function stAfterEnteringTokyo() {
         $playerId = $this->getActivePlayerId();
         $player = $this->getPlayer($playerId); 

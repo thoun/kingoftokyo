@@ -17,34 +17,29 @@ class AskMindbug extends GameState {
 
             description: /*TODOMB clienttranslate*/('Player with Mindbug tokens can mindbug ${player_name}'),
             descriptionMyTurn: /*TODOMB clienttranslate*/('${you} can mindbug ${player_name}'),
-
-            transitions: ['end' => ST_RESOLVE_DIE_OF_FATE],
         );
     }
 
     public function getArgs(int $activePlayerId): array {
-        $playerIds = $this->game->mindbugExpansion->getPlayersThatCanMindbug($activePlayerId);
-        $canUseEvasiveMindbug = [];
-        foreach ($playerIds as $playerId) {
-            $countEvasiveMindbug = $this->game->countCardOfType($playerId, EVASIVE_MINDBUG_CARD);
-            if ($countEvasiveMindbug > 0) {
-                $canUseEvasiveMindbug[] = $playerId;
-            }
-        }
+        $result = $this->game->mindbugExpansion->getPlayersThatCanMindbug($activePlayerId);
+        $canMindbug = $result['canMindbug'];
+        $canUseToken = $result['canUseToken'];
+        $canUseEvasiveMindbug = $result['canUseEvasiveMindbug'];
 
         return [
             'player_name' => $this->game->getPlayerNameById($activePlayerId),
-            'playerIds' => $playerIds,
+            'canMindbug' => $canMindbug,
+            'canUseToken' => $canUseToken,
             'canUseEvasiveMindbug' => $canUseEvasiveMindbug,
-            '_no_notify' => count($playerIds) === 0,
+            '_no_notify' => count($canMindbug) === 0,
         ];
     }
 
     function onEnteringState(array $args) {
         if ($args['_no_notify']) {
-            return 'end';
+            return ResolveDieOfFate::class;
         } else {
-            $this->game->gamestate->setPlayersMultiactive($args['playerIds'], 'end', true);
+            $this->game->gamestate->setPlayersMultiactive($args['canMindbug'], ResolveDieOfFate::class, true);
         }
     }
      
@@ -85,12 +80,12 @@ class AskMindbug extends GameState {
         }
 
         // first to click has the power!
-        return ST_RESOLVE_DIE_OF_FATE;
+        return ResolveDieOfFate::class;
     }
 
     #[PossibleAction]
     public function actPassMindbug(int $currentPlayerId) {
-        $this->game->gamestate->setPlayerNonMultiactive($currentPlayerId, 'end');
+        $this->game->gamestate->setPlayerNonMultiactive($currentPlayerId, ResolveDieOfFate::class);
     }
 
     public function zombie(int $playerId) {

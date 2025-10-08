@@ -7502,8 +7502,11 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     }
                     break;
                 case 'AskMindbug':
-                    this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug!'), function () { return _this.bgaPerformAction('actMindbug', { useEvasiveMindbug: false }); }, { color: 'alert' });
-                    if (args.canUseEvasiveMindbug.include(this.getPlayerId())) {
+                    var argsAskMindbug = args;
+                    if (argsAskMindbug.canUseToken.includes(this.getPlayerId())) {
+                        this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug!'), function () { return _this.bgaPerformAction('actMindbug', { useEvasiveMindbug: false }); }, { color: 'alert' });
+                    }
+                    if (argsAskMindbug.canUseEvasiveMindbug.includes(this.getPlayerId())) {
                         this.statusBar.addActionButton(/*TODOMB_*/ ('Mindbug with ${card_name}').replace('${card_name}', this.cardsManager.getCardName(68, 'text-only')), function () { return _this.bgaPerformAction('actMindbug', { useEvasiveMindbug: true }); }, { color: 'alert' });
                     }
                     this.statusBar.addActionButton(_('Skip'), function () { return _this.bgaPerformAction('actPassMindbug'); });

@@ -19,38 +19,11 @@ trait EvolutionCardsStateTrait {
         $this->gamestate->setPlayersMultiactive($playersWithPotentialEvolution, 'next', true);
     }
 
-    function stAfterCardIsBought() {
-        $cardBeingBought = $this->getGlobalVariable(CARD_BEING_BOUGHT);
-
-        if ($cardBeingBought->allowed) {
-            // applyBuyCard do the redirection
-            $this->applyBuyCard($cardBeingBought->playerId, $cardBeingBought->cardId, $cardBeingBought->from, $cardBeingBought->cost, $cardBeingBought->useSuperiorAlienTechnology, $cardBeingBought->useBobbingForApples);
-        } else {
-            $this->goToState(ST_PLAYER_BUY_CARD);
-        }
-    }
-
     function stAnswerQuestion() {
         $activePlayers = $this->gamestate->getActivePlayerList();
         if (count($activePlayers) == 0) {
             $question = $this->getQuestion();
             $this->gamestate->setPlayersMultiactive($question->playersIds, 'next', true);
-        }
-    }
-
-    function stAfterAnswerQuestion() {
-        $question = $this->getQuestion();
-
-        if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts' || $question->code === 'ElectricCarrot') {
-            if ($question->code === 'GiveSymbol' || $question->code === 'GiveEnergyOrLoseHearts') {
-                $this->removeEvolution($question->args->playerId, $question->args->card);
-            }
-
-            $this->removeStackedStateAndRedirect();
-        } else if ($question->code === 'TargetAcquired' || $question->code === 'LightningArmor') {
-            $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
-        } else {
-            throw new \BgaVisibleSystemException("Question code not handled: ".$question->code);
         }
     }
 

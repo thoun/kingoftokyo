@@ -509,7 +509,7 @@ trait DiceActionTrait {
             }
         }
 
-        $this->stResolveSmashDice($playersSmashesWithReducedDamage);
+        $this->resolveSmashDiceState($playersSmashesWithReducedDamage);
     }
 
     public function actResolve() {

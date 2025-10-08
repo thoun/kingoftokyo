@@ -264,27 +264,6 @@ trait DiceStateTrait {
         }
     }
 
-    function stResolveNumberDice() {
-        $playerId = $this->getActivePlayerId();
-
-        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
-            $this->goToState($this->redirectAfterResolveNumberDice());
-            return;
-        }
-
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
-        for ($diceFace = 1; $diceFace <= 3; $diceFace++) {
-            $diceCount = $diceCounts[$diceFace];
-            $redirected = $this->resolveNumberDice($playerId, $diceFace, $diceCount);
-            if ($redirected) {
-                return;
-            }
-        }
-
-        $this->goToState($this->redirectAfterResolveNumberDice());
-    }
-
     function addHighTideDice(int $playerId, int $diceCount) {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         
@@ -322,26 +301,6 @@ trait DiceStateTrait {
         return $diceCount;
     }
 
-    function stResolveHeartDice() {
-        $playerId = $this->getActivePlayerId();
-        
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
-        $diceCount = $this->addHighTideDice($playerId, $diceCounts[4]);
-
-        if ($diceCount > 0) {
-            $this->resolveHealthDice($playerId, $diceCount);
-        } else {
-            if ($this->powerUpExpansion->isActive()) {
-                $countGrowingFast = $this->countEvolutionOfType($playerId, GROWING_FAST_EVOLUTION);
-                if ($countGrowingFast > 0) {
-                    $this->applyGetHealth($playerId, $countGrowingFast, 3000 + GROWING_FAST_EVOLUTION, $playerId);
-                }
-            }
-        }
-        $this->gamestate->nextState('next');
-    }
-
     function stResolveHeartDiceAction() {
         $playerId = $this->getActivePlayerId();
         
@@ -355,85 +314,22 @@ trait DiceStateTrait {
         }
     }
 
-    function stResolveEnergyDice() {
+    function resolveSmashDiceState(array $playersSmashesWithReducedDamage = []) {
         $playerId = $this->getActivePlayerId();
-        
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
-        $diceCount = $diceCounts[5];
-        if ($diceCount > 0) {
-            $this->resolveEnergyDice($playerId, $diceCount);
-        }
-
-        $this->goToState($this->redirectAfterResolveEnergyDice());
-    }
-    
-
-    function stResolveSmashDice($playersSmashesWithReducedDamage = []) {
-        $playerId = $this->getActivePlayerId();
-        
 
         if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
             $this->setGameStateValue(STATE_AFTER_RESOLVE, ST_ENTER_TOKYO_APPLY_BURROWING);
             $this->goToState(ST_RESOLVE_SKULL_DICE);
             return;
         }
-        
+
         $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
 
-        if ($this->canUseSymbol($playerId, 6) && $this->canUseFace($playerId, 6)) {
-            $diceCount = $diceCounts[6];
-        } else {
-            $diceCount = 0;
-        }
-        
-        $playerId = $this->getActivePlayerId();
+        $diceCount = ($this->canUseSymbol($playerId, 6) && $this->canUseFace($playerId, 6))
+            ? $diceCounts[6]
+            : 0;
+
         $this->resolveSmashDice($playerId, $diceCount, $playersSmashesWithReducedDamage);
     }
 
-    function stResolveSkullDice() {   
-        $playerId = $this->getActivePlayerId();
-
-        $pickEvolutionCards = false;        
-        if ($this->powerUpExpansion->isActive()) {
-            $dice = $this->getPlayerRolledDice($playerId, true, true, false);
-            $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
-            $pickEvolutionCards = $diceCounts[4] >= 3;
-        } 
-
-        $nextState = $pickEvolutionCards ? ST_CHOOSE_EVOLUTION_CARD : intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
-
-        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0) {
-            $this->gamestate->jumpToState($nextState);
-            return;
-        }
-
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
-        $damages = [];
-
-        if ($this->cybertoothExpansion->isActive() && $diceCounts[7] > 0) {
-            $damages[] = new Damage($playerId, $diceCounts[7], $playerId, -1);
-        }
-
-        if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->anubisExpansion->getCurseCardType();
-
-            if ($curseCardType == FALSE_BLESSING_CURSE_CARD) {
-                $dice = $this->getPlayerRolledDice($playerId, true, false, false);
-                $diceFaces = [];        
-                foreach ($dice as $die) {
-                    if ($die->type === 0 || $die->type === 1) {
-                        $diceFaces[$this->getDiceFaceType($die)] = true; 
-                    }
-                }
-
-                $facesCount = count(array_keys($diceFaces));
-                
-                $damages[] = new Damage($playerId, $facesCount, 0, 1000 + FALSE_BLESSING_CURSE_CARD);
-            }
-        }
-
-        $this->goToState($nextState, $damages);
-    }
 }

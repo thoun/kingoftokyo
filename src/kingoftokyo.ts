@@ -1248,8 +1248,11 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     break;
 
                 case 'AskMindbug':
-                    this.statusBar.addActionButton(/*TODOMB_*/('Mindbug!'), () => this.bgaPerformAction('actMindbug', { useEvasiveMindbug: false }), { color: 'alert' });
-                    if (args.canUseEvasiveMindbug.include(this.getPlayerId())) {
+                    const argsAskMindbug = args as EnteringAskMindbugArgs;
+                    if (argsAskMindbug.canUseToken.includes(this.getPlayerId())) {
+                        this.statusBar.addActionButton(/*TODOMB_*/('Mindbug!'), () => this.bgaPerformAction('actMindbug', { useEvasiveMindbug: false }), { color: 'alert' });
+                    }
+                    if (argsAskMindbug.canUseEvasiveMindbug.includes(this.getPlayerId())) {
                         this.statusBar.addActionButton(/*TODOMB_*/('Mindbug with ${card_name}').replace('${card_name}', this.cardsManager.getCardName(68, 'text-only')), () => this.bgaPerformAction('actMindbug', { useEvasiveMindbug: true }), { color: 'alert' });
                     }
                     this.statusBar.addActionButton(_('Skip'), () => this.bgaPerformAction('actPassMindbug'));

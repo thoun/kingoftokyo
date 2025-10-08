@@ -73,7 +73,21 @@ class MindbugExpansion {
         $otherPlayerIds = $this->game->getOtherPlayersIds($activePlayerId);
         $mindbugTokens = $this->mindbugTokens->getAll();
 
-        return Arrays::filter($otherPlayerIds, fn($playerId) => $mindbugTokens[$playerId] > 0);
+        $canUseEvasiveMindbug = [];
+        $canUseToken = Arrays::filter($otherPlayerIds, fn($playerId) => $mindbugTokens[$playerId] > 0);
+
+        foreach ($otherPlayerIds as $playerId) {
+            $countEvasiveMindbug = $this->game->countCardOfType($playerId, EVASIVE_MINDBUG_CARD);
+            if ($countEvasiveMindbug > 0) {
+                $canUseEvasiveMindbug[] = $playerId;
+            }
+        }
+
+        return [
+            'canMindbug' => Arrays::unique(array_merge($canUseToken, $canUseEvasiveMindbug)),
+            'canUseToken' => $canUseToken,
+            'canUseEvasiveMindbug' => $canUseEvasiveMindbug,
+        ];
     }
 
     function applyGetMindbugTokens(int $playerId, int $tokens, int | PowerCard | EvolutionCard $cardType) {

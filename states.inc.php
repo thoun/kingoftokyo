@@ -93,17 +93,6 @@ $playerActionsGameStates = [
             "end" => ST_INITIAL_DICE_ROLL, // for zombie
         ],
     ],
-
-    ST_INITIAL_DICE_ROLL => [
-        "name" => "initialDiceRoll",
-        "description" => "",
-        "type" => "game",
-        "action" => "stInitialDiceRoll",
-        "transitions" => [ 
-            "" => ST_PLAYER_THROW_DICE,
-        ],
-    ],
-
     ST_PLAYER_THROW_DICE => [
         "name" => "throwDice",
         "description" => clienttranslate('${actplayer} can reroll dice or resolve dice'),
@@ -178,17 +167,6 @@ $playerActionsGameStates = [
             "end" => ST_MULTIPLAYER_ASK_MINDBUG,
         ],
     ],
-
-    ST_RESOLVE_DIE_OF_FATE => [
-        "name" => "resolveDieOfFate",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveDieOfFate",
-        "transitions" => [
-            "next" => ST_RESOLVE_DICE,
-        ],
-    ],
-
     ST_PLAYER_DISCARD_DIE => [
         "name" => "discardDie",
         "description" => clienttranslate('${actplayer} must discard a die'),
@@ -300,20 +278,6 @@ $playerActionsGameStates = [
         "possibleactions" => [ "actSkipBeforeResolveDice" ],
         "transitions" => [],
     ],
-
-    ST_RESOLVE_NUMBER_DICE => [
-        "name" => "resolveNumberDice",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveNumberDice",
-        "args" => "argResolveNumberDice",
-        "transitions" => [
-            "takeWickednessTile" => ST_PLAYER_TAKE_WICKEDNESS_TILE,
-            "next" => ST_RESOLVE_HEART_DICE,
-            "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
-        ],
-    ],
-
     ST_PLAYER_TAKE_WICKEDNESS_TILE => [
         "name" => "takeWickednessTile",
         "description" => clienttranslate('${actplayer} can take a wickedness tile'),
@@ -327,17 +291,6 @@ $playerActionsGameStates = [
             "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
         ],
     ],
-
-    ST_RESOLVE_HEART_DICE => [
-        "name" => "resolveHeartDice",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveHeartDice",
-        "transitions" => [
-            "next" => ST_RESOLVE_ENERGY_DICE,
-        ],
-    ],
-
     ST_RESOLVE_HEART_DICE_ACTION => [
         "name" => "resolveHeartDiceAction",
         "description" => clienttranslate('${actplayer} can select effect of [diceHeart] dice'),
@@ -350,25 +303,6 @@ $playerActionsGameStates = [
             "next" => ST_RESOLVE_ENERGY_DICE,
         ],
     ],
-
-    ST_RESOLVE_ENERGY_DICE => [
-        "name" => "resolveEnergyDice",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveEnergyDice",
-        "transitions" => [
-            "next" => ST_RESOLVE_SMASH_DICE,
-        ],
-    ],
-
-    ST_RESOLVE_SMASH_DICE => [
-        "name" => "resolveSmashDice",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveSmashDice",
-        "transitions" => [],
-    ],
-
     ST_RESOLVE_SMASH_DICE_ACTION => [
         "name" => "resolveSmashDiceAction",
         "description" => clienttranslate('${actplayer} can select effect of [diceSmash] dice'),
@@ -378,18 +312,6 @@ $playerActionsGameStates = [
         "possibleactions" => [ "actApplySmashDieChoices" ],
         "transitions" => [],
     ],
-
-    ST_RESOLVE_SKULL_DICE => [
-        "name" => "resolveSkullDice",
-        "description" => "",
-        "type" => "game",
-        "action" => "stResolveSkullDice",
-        "transitions" => [
-            "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
-            "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
-        ],
-    ],
-
     ST_CHOOSE_EVOLUTION_CARD => [
         "name" => "chooseEvolutionCard",
         "description" => clienttranslate('${actplayer} must choose an Evolution card'),
@@ -445,25 +367,6 @@ $playerActionsGameStates = [
             "end" => ST_LEAVE_TOKYO_APPLY_JETS, // for zombie
         ],
     ],
-
-    ST_LEAVE_TOKYO_APPLY_JETS => [
-        "name" => "leaveTokyoApplyJets",
-        "description" => "",
-        "type" => "game",
-        "action" => "stLeaveTokyoApplyJets",
-        "transitions" => [
-            "next" => ST_ENTER_TOKYO_APPLY_BURROWING,
-        ],        
-    ],
-
-    ST_ENTER_TOKYO_APPLY_BURROWING => [
-        "name" => "enterTokyoApplyBurrowing",
-        "description" => "",
-        "type" => "game",
-        "action" => "stEnterTokyoApplyBurrowing",
-        "transitions" => [],
-    ],
-
     ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD => [
         "name" => "leaveTokyoExchangeCard",
         "description" => clienttranslate('Players with Unstable DNA can exchange this card'),
@@ -494,18 +397,6 @@ $playerActionsGameStates = [
             "end" => ST_ENTER_TOKYO, // for zombie
         ],        
     ],
-
-    ST_ENTER_TOKYO => [
-        "name" => "enterTokyo",
-        "description" => "",
-        "type" => "game",
-        "action" => "stEnterTokyo",
-        "transitions" => [
-            "stealCostumeCard" => ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION,
-            "buyCard" => ST_PLAYER_BUY_CARD,
-        ],
-    ],
-
     ST_PLAYER_AFTER_ENTERING_TOKYO => [
         "name" => "afterEnteringTokyo",
         "description" => clienttranslate('Some players may activate an Evolution card'),
@@ -619,15 +510,6 @@ $playerActionsGameStates = [
             "end" => ST_AFTER_WHEN_CARD_IS_BOUGHT, // for zombie
         ],
     ],
-
-    ST_AFTER_WHEN_CARD_IS_BOUGHT => [
-        "name" => "afterCardIsBought",
-        "description" => "",
-        "type" => "game",
-        "action" => "stAfterCardIsBought",
-        "transitions" => [],
-    ],
-
     ST_PLAYER_SELL_CARD => [
         "name" => "sellCard",
         "description" => clienttranslate('${actplayer} can sell a card'),
@@ -682,15 +564,6 @@ $playerActionsGameStates = [
             "end" => ST_AFTER_ANSWER_QUESTION, // for zombie
         ],
     ],
-
-    ST_AFTER_ANSWER_QUESTION => [
-        "name" => "afterAnswerQuestion",
-        "description" => "",
-        "type" => "game",
-        "action" => "stAfterAnswerQuestion",
-        "transitions" => [],
-    ],
-
     ST_MULTIPLAYER_BEFORE_END_TURN => [
         "name" => "beforeEndTurn",
         "description" => clienttranslate('${actplayer} may activate an Evolution card'),

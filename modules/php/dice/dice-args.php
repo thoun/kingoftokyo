@@ -211,16 +211,6 @@ trait DiceArgTrait {
         return [ 'skipped' => true ];
     }
 
-    function argResolveNumberDice() {
-        $activePlayerId = $this->getActivePlayerId();
-
-        return [
-            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
-            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
-            'frozenFaces' => $this->frozenFaces($activePlayerId),
-        ];
-    }
-
     function argResolveDice() {
         $activePlayerId = $this->getActivePlayerId();
         $dice = $this->getPlayerRolledDice($activePlayerId, true, true, false);

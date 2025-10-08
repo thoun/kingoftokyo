@@ -355,6 +355,11 @@ interface EnteringRerollDiceArgs extends EnteringDiceArgs {
     max: number;
 }
 
+interface EnteringAskMindbugArgs extends EnteringDiceArgs {
+    canUseToken: number[];
+    canUseEvasiveMindbug: number[];
+}
+
 interface EnteringPrepareResolveDiceArgs extends EnteringDiceArgs {
     hasEncasedInIce: boolean;
 }
