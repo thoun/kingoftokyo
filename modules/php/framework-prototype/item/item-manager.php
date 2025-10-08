@@ -415,7 +415,7 @@ class ItemManager {
         $items = $this->getItemsInLocation($fromLocation, $fromLocationArg, reversed: true, limit: $number);
         if (count($items) < $number) {
             $itemLocation = array_find($this->locations, fn($location) => $location->name === $fromLocation);
-            if ($itemLocation->autoReshuffleFrom !== null) {
+            if ($itemLocation && $itemLocation->autoReshuffleFrom !== null) {
                 // reshuffle
                 $this->moveAllItemsInLocation($itemLocation->autoReshuffleFrom, $fromLocation);
                 $this->shuffle($fromLocation);

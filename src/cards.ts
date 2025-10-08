@@ -1062,59 +1062,91 @@ class CardsManager extends CardManager<Card> {
             nameWrapperDiv.style.top = `${Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName)}px`;
         }
     }
-    
-    private setFrontBackground(cardDiv: HTMLDivElement, cardType: number, side: 0 | 1 = null) {
-        const darkEdition = this.game.isDarkEdition();
-        const version: 'base' | 'dark' = darkEdition ? 'dark' : 'base';
 
+    private getCardFile(cardType: number): string {
         if (cardType < 100) {
-            const originsCard = cardType >= 56;
-            const keepcardsurl =  originsCard ? 
-                `${g_gamethemeurl}img/cards/cards-keep-origins.jpg` : 
-                `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}keep-cards.jpg`;
-            cardDiv.style.backgroundImage = `url('${keepcardsurl}')`;
-            
-            const index = originsCard ?
-                cardType - 56 : 
-                KEEP_CARDS_LIST[version].findIndex(type => type == cardType);
+            if (cardType >= 67) {
+                return `img/cards/mindbug-cards.jpg`;
+            }
+            if (cardType >= 67) {
+                return `img/cards/cards-keep-origins.jpg`;
+            }
+            if (cardType == 38 && this.game.isOrigins()) {
+                return `img/cards/cards-regeneration-origins.jpg`;
+            }
+            const darkEdition = this.game.isDarkEdition();
+            return `img/${darkEdition ? 'dark/' : ''}keep-cards.jpg`;
+        } else if (cardType < 200) {
+            if (cardType >= 123) {
+                return `img/cards/mindbug-cards.jpg`;
+            }
+            if (cardType >= 120) {
+                return `img/cards/cards-discard-origins.jpg`;
+            }
+            const darkEdition = this.game.isDarkEdition();
+            return `img/${darkEdition ? 'dark/' : ''}discard-cards.jpg`;
+        } else if (cardType < 300) {
+            return `img/cards/costume-cards.jpg`;
+        } else if (cardType < 400) {
+            return `img/cards/transformation-cards.jpg`;
+        } else if (cardType < 500) {
+            return `img/cards/mindbug-cards.jpg`;
+        } else if (cardType == 999) {
+            return `img/cards/anubis-cards.jpg`;
+        }
+    }
 
-            cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
-            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100 / (originsCard ? 1 : 4)}%`;
+    private getBackgroundPosition(cardType: number, side: 0 | 1 = null): string { 
+        const version: 'base' | 'dark' = this.game.isDarkEdition() ? 'dark' : 'base';           
+        if (cardType < 100) {
+            if (cardType >= 67) { // mindbug card
+                const index = cardType - 67 + 17;
+                return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100 / 2}%`;
+            }
+
+            if (cardType >= 56) { // origins card
+                const index = cardType - 56;
+                return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100}%`;
+            }
 
             if (cardType == 38 && this.game.isOrigins()) {
-                cardDiv.style.backgroundImage = `url('${g_gamethemeurl}img/cards/cards-regeneration-origins.jpg')`;
-                cardDiv.style.backgroundPosition = `0% 0%`;
+                return `0% 0%`;
             }
+            
+            const index = KEEP_CARDS_LIST[version].findIndex(type => type == cardType);
+
+            return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100 / 4}%`;
+
         } else if (cardType < 200) {
-            const originsCard = cardType >= 120;
-            const discardcardsurl = originsCard ? 
-                `${g_gamethemeurl}img/cards/cards-discard-origins.jpg` : 
-                `${g_gamethemeurl}img/${darkEdition ? 'dark/' : ''}discard-cards.jpg`;
+            if (cardType >= 123) { // mindbug card
+                const index = cardType - 123 + 20;
+                return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100 / 2}%`;
+            }
 
-            const index = originsCard ?
-                cardType - 120 : 
-                DISCARD_CARDS_LIST[version].findIndex(type => type == cardType % 100);
+            if (cardType >= 120) { // origins card
+                const index = cardType - 120;
+                return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100}%`;
+            }
 
-            cardDiv.style.backgroundImage = `url('${discardcardsurl}')`;
-            cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
-            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100}%`;
+            const index = DISCARD_CARDS_LIST[version].findIndex(type => type == cardType % 100);
+
+            return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100}%`;
         } else if (cardType < 300) {
             const index = COSTUME_CARDS_LIST.findIndex(type => type == cardType % 100);
-            const costumecardsurl = `${g_gamethemeurl}img/costume-cards.jpg`;
-            cardDiv.style.backgroundImage = `url('${costumecardsurl}')`;
-            cardDiv.style.backgroundPositionX = `${(index % 10) * 100 / 9}%`;
-            cardDiv.style.backgroundPositionY = `${Math.floor(index / 10) * 100}%`;
+            return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100}%`;
         } else if (cardType < 400) {
-            const transformationcardsurl = `${g_gamethemeurl}img/transformation-cards.jpg`;
-            cardDiv.style.backgroundImage = `url('${transformationcardsurl}')`;
-            cardDiv.style.backgroundPositionX = `${side * 100}%`;
-            cardDiv.style.backgroundPositionY = '0%';
+            return `${side * 100}% 0%`;
+        } else if (cardType < 500) {
+            const index = (cardType % 100) - 1;
+            return `${(index % 10) * 100 / 9}% ${Math.floor(index / 10) * 100 / 2}%`;
         } else if (cardType == 999) {
-            const anubiscardsurl = `${g_gamethemeurl}img/anubis-cards.jpg`;
-            cardDiv.style.backgroundImage = `url(${anubiscardsurl}`;
-            cardDiv.style.backgroundPositionX = '0%';
-            cardDiv.style.backgroundPositionY = '0%';
+            return '0% 0%';
         }
+    }
+    
+    private setFrontBackground(cardDiv: HTMLDivElement, cardType: number, side: 0 | 1 = null) {
+        cardDiv.style.backgroundImage = `url('${g_gamethemeurl}${this.getCardFile(cardType)}')`;
+        cardDiv.style.backgroundPosition = this.getBackgroundPosition(cardType, side);
     }
 
     private getImageName(cardType: number) {
@@ -1126,6 +1158,8 @@ class CardsManager extends CardManager<Card> {
             return 'costume';
         } else if (cardType < 400) {
             return 'transformation';
+        } else if (cardType < 400) {
+            return 'consumable';
         }
     }
 

@@ -3160,57 +3160,92 @@ var CardsManager = /** @class */ (function (_super) {
             nameWrapperDiv.style.top = "".concat(Math.max(5, nameTopPosition + spaceBetweenDescriptionAndName), "px");
         }
     };
-    CardsManager.prototype.setFrontBackground = function (cardDiv, cardType, side) {
-        if (side === void 0) { side = null; }
-        var darkEdition = this.game.isDarkEdition();
-        var version = darkEdition ? 'dark' : 'base';
+    CardsManager.prototype.getCardFile = function (cardType) {
         if (cardType < 100) {
-            var originsCard = cardType >= 56;
-            var keepcardsurl = originsCard ?
-                "".concat(g_gamethemeurl, "img/cards/cards-keep-origins.jpg") :
-                "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "keep-cards.jpg");
-            cardDiv.style.backgroundImage = "url('".concat(keepcardsurl, "')");
-            var index = originsCard ?
-                cardType - 56 :
-                KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
-            cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
-            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100 / (originsCard ? 1 : 4), "%");
-            if (cardType == 38 && this.game.isOrigins()) {
-                cardDiv.style.backgroundImage = "url('".concat(g_gamethemeurl, "img/cards/cards-regeneration-origins.jpg')");
-                cardDiv.style.backgroundPosition = "0% 0%";
+            if (cardType >= 67) {
+                return "img/cards/mindbug-cards.jpg";
             }
+            if (cardType >= 67) {
+                return "img/cards/cards-keep-origins.jpg";
+            }
+            if (cardType == 38 && this.game.isOrigins()) {
+                return "img/cards/cards-regeneration-origins.jpg";
+            }
+            var darkEdition = this.game.isDarkEdition();
+            return "img/".concat(darkEdition ? 'dark/' : '', "keep-cards.jpg");
         }
         else if (cardType < 200) {
-            var originsCard = cardType >= 120;
-            var discardcardsurl = originsCard ?
-                "".concat(g_gamethemeurl, "img/cards/cards-discard-origins.jpg") :
-                "".concat(g_gamethemeurl, "img/").concat(darkEdition ? 'dark/' : '', "discard-cards.jpg");
-            var index = originsCard ?
-                cardType - 120 :
-                DISCARD_CARDS_LIST[version].findIndex(function (type) { return type == cardType % 100; });
-            cardDiv.style.backgroundImage = "url('".concat(discardcardsurl, "')");
-            cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
-            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100, "%");
+            if (cardType >= 123) {
+                return "img/cards/mindbug-cards.jpg";
+            }
+            if (cardType >= 120) {
+                return "img/cards/cards-discard-origins.jpg";
+            }
+            var darkEdition = this.game.isDarkEdition();
+            return "img/".concat(darkEdition ? 'dark/' : '', "discard-cards.jpg");
+        }
+        else if (cardType < 300) {
+            return "img/cards/costume-cards.jpg";
+        }
+        else if (cardType < 400) {
+            return "img/cards/transformation-cards.jpg";
+        }
+        else if (cardType < 500) {
+            return "img/cards/mindbug-cards.jpg";
+        }
+        else if (cardType == 999) {
+            return "img/cards/anubis-cards.jpg";
+        }
+    };
+    CardsManager.prototype.getBackgroundPosition = function (cardType, side) {
+        if (side === void 0) { side = null; }
+        var version = this.game.isDarkEdition() ? 'dark' : 'base';
+        if (cardType < 100) {
+            if (cardType >= 67) { // mindbug card
+                var index_1 = cardType - 67 + 17;
+                return "".concat((index_1 % 10) * 100 / 9, "% ").concat(Math.floor(index_1 / 10) * 100 / 2, "%");
+            }
+            if (cardType >= 56) { // origins card
+                var index_2 = cardType - 56;
+                return "".concat((index_2 % 10) * 100 / 9, "% ").concat(Math.floor(index_2 / 10) * 100, "%");
+            }
+            if (cardType == 38 && this.game.isOrigins()) {
+                return "0% 0%";
+            }
+            var index = KEEP_CARDS_LIST[version].findIndex(function (type) { return type == cardType; });
+            return "".concat((index % 10) * 100 / 9, "% ").concat(Math.floor(index / 10) * 100 / 4, "%");
+        }
+        else if (cardType < 200) {
+            if (cardType >= 123) { // mindbug card
+                var index_3 = cardType - 123 + 20;
+                return "".concat((index_3 % 10) * 100 / 9, "% ").concat(Math.floor(index_3 / 10) * 100 / 2, "%");
+            }
+            if (cardType >= 120) { // origins card
+                var index_4 = cardType - 120;
+                return "".concat((index_4 % 10) * 100 / 9, "% ").concat(Math.floor(index_4 / 10) * 100, "%");
+            }
+            var index = DISCARD_CARDS_LIST[version].findIndex(function (type) { return type == cardType % 100; });
+            return "".concat((index % 10) * 100 / 9, "% ").concat(Math.floor(index / 10) * 100, "%");
         }
         else if (cardType < 300) {
             var index = COSTUME_CARDS_LIST.findIndex(function (type) { return type == cardType % 100; });
-            var costumecardsurl = "".concat(g_gamethemeurl, "img/costume-cards.jpg");
-            cardDiv.style.backgroundImage = "url('".concat(costumecardsurl, "')");
-            cardDiv.style.backgroundPositionX = "".concat((index % 10) * 100 / 9, "%");
-            cardDiv.style.backgroundPositionY = "".concat(Math.floor(index / 10) * 100, "%");
+            return "".concat((index % 10) * 100 / 9, "% ").concat(Math.floor(index / 10) * 100, "%");
         }
         else if (cardType < 400) {
-            var transformationcardsurl = "".concat(g_gamethemeurl, "img/transformation-cards.jpg");
-            cardDiv.style.backgroundImage = "url('".concat(transformationcardsurl, "')");
-            cardDiv.style.backgroundPositionX = "".concat(side * 100, "%");
-            cardDiv.style.backgroundPositionY = '0%';
+            return "".concat(side * 100, "% 0%");
+        }
+        else if (cardType < 500) {
+            var index = (cardType % 100) - 1;
+            return "".concat((index % 10) * 100 / 9, "% ").concat(Math.floor(index / 10) * 100 / 2, "%");
         }
         else if (cardType == 999) {
-            var anubiscardsurl = "".concat(g_gamethemeurl, "img/anubis-cards.jpg");
-            cardDiv.style.backgroundImage = "url(".concat(anubiscardsurl);
-            cardDiv.style.backgroundPositionX = '0%';
-            cardDiv.style.backgroundPositionY = '0%';
+            return '0% 0%';
         }
+    };
+    CardsManager.prototype.setFrontBackground = function (cardDiv, cardType, side) {
+        if (side === void 0) { side = null; }
+        cardDiv.style.backgroundImage = "url('".concat(g_gamethemeurl).concat(this.getCardFile(cardType), "')");
+        cardDiv.style.backgroundPosition = this.getBackgroundPosition(cardType, side);
     };
     CardsManager.prototype.getImageName = function (cardType) {
         if (cardType < 100) {
@@ -3224,6 +3259,9 @@ var CardsManager = /** @class */ (function (_super) {
         }
         else if (cardType < 400) {
             return 'transformation';
+        }
+        else if (cardType < 400) {
+            return 'consumable';
         }
     };
     CardsManager.prototype.generateCardDiv = function (card) {

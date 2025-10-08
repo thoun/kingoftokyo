@@ -351,7 +351,8 @@ class Game extends \Bga\GameFramework\Table {
         }
 
         // setup the initial game situation here
-        $this->powerCards->setup($isOrigins, $darkEdition > 1);
+        $mindbugCardsSetting = $this->mindbugExpansion->getMindbugCardsSetting();
+        $this->powerCards->setup($isOrigins, $darkEdition > 1, $mindbugCardsSetting);
         
         if ($darkEdition > 1) {
             $this->wickednessTiles->setup($darkEdition);

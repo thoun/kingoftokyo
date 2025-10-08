@@ -19,7 +19,14 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return Game::getBgaEnvironment() === 'studio'; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+        return false;//Game::getBgaEnvironment() === 'studio'; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+    }
+
+    public function getMindbugCardsSetting() {
+        if (!$this->isActive()) {
+            return 0;
+        }
+        return 2; // TODOMB $this->tableOptions->get(MINDBUG_CARDS_OPTION); 
     }
 
     public function initDb(array $playerIds): void {

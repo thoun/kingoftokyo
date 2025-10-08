@@ -170,6 +170,38 @@ class PowerCardManager extends ItemManager {
     static array $KEEP_CARDS_LIST;
     static array $DISCARD_CARDS_LIST;
 
+    static array $MINDBUG_CARDS_KEEP_CARDS_LIST = [
+        FREE_WILL_CARD,
+        EVASIVE_MINDBUG_CARD,
+        NO_BRAIN_CARD,
+    ];
+
+    static array $MINDBUG_CARDS_DISCARD_CARDS_LIST = [
+        MINDBUG_CARD,
+        DYSFUNCTIONAL_MINDBUG_CARD,
+        TREASURE_CARD,
+        MIRACULOUS_MINDBUG_CARD,
+    ];
+
+    static array $MINDBUG_CARDS_CONSUMABLE_CARDS_LIST = [
+        OVEREQUIPPED_TRAPPER_CARD,
+        LEGENDARY_HUNTER_CARD,
+        UNRELIABLE_TARGETING_CARD,
+        SNEAKY_ALLOY_CARD,
+        OFFENSIVE_PROTOCOL_CARD,
+        ARCANE_SCEPTER_CARD,
+        ENERGY_ARMOR_CARD,
+        STRANGE_DESIGN_CARD,
+        ANCESTRAL_DEFENSE_CARD,
+        TOXIC_PETALS_CARD,
+        EXPLOSIVE_CRYSTALS_CARD,
+        ELECTRO_WHIP_CARD,
+        BOLD_MANEUVER_CARD,
+        UNFAIR_GIFT_CARD,
+        MAXIMUM_EFFORT_CARD,
+        DEADLY_SHELL_CARD,
+        SPATIAL_HUNTER_CARD,
+    ];
 
     static array $CARD_COST = [
         // KEEP
@@ -238,6 +270,9 @@ class PowerCardManager extends ItemManager {
         64 => 3,
         65 => 4,
         66 => 3,
+        FREE_WILL_CARD => 6,
+        EVASIVE_MINDBUG_CARD => 3,
+        NO_BRAIN_CARD => 3,
 
         // DISCARD
         101 => 5,
@@ -261,6 +296,10 @@ class PowerCardManager extends ItemManager {
         120 => 5,
         121 => 4,
         122 => 7,
+        MINDBUG_CARD => 7,
+        DYSFUNCTIONAL_MINDBUG_CARD => 3,
+        TREASURE_CARD => 3,
+        MIRACULOUS_MINDBUG_CARD => 4,
 
         // COSTUME
         201 => 4,
@@ -276,6 +315,24 @@ class PowerCardManager extends ItemManager {
         211 => 4,
         212 => 3,
 
+        // CONSUMABLE
+        OVEREQUIPPED_TRAPPER_CARD => 3,
+        LEGENDARY_HUNTER_CARD => 4,
+        UNRELIABLE_TARGETING_CARD => 2,
+        SNEAKY_ALLOY_CARD => 5,
+        OFFENSIVE_PROTOCOL_CARD => 6,
+        ARCANE_SCEPTER_CARD => 7,
+        ENERGY_ARMOR_CARD => 6,
+        STRANGE_DESIGN_CARD => 3,
+        ANCESTRAL_DEFENSE_CARD => 4,
+        TOXIC_PETALS_CARD => 5,
+        EXPLOSIVE_CRYSTALS_CARD => 4,
+        ELECTRO_WHIP_CARD => 4,
+        BOLD_MANEUVER_CARD => 4,
+        UNFAIR_GIFT_CARD => 4,
+        MAXIMUM_EFFORT_CARD => 4,
+        DEADLY_SHELL_CARD => 4,
+        SPATIAL_HUNTER_CARD => 5,
     ];
 
     function __construct(
@@ -339,26 +396,35 @@ class PowerCardManager extends ItemManager {
         ];
     }
 
-    function setup(bool $isOrigins, bool $isDarkEdition) {
+    function setup(bool $isOrigins, bool $isDarkEdition, int $mindbugCardsSetting) {
         $cards = [];
 
-        $gameVersion = $isOrigins ? 'origins' : ($isDarkEdition ? 'dark' : 'base');
-        
-        foreach(self::$KEEP_CARDS_LIST[$gameVersion] as $value) { // keep  
-            $cards[] = ['location' => 'deck', 'type' => $value, 'type_arg' => 0, 'nbr' => 1];
-        }
-        
-        foreach(self::$DISCARD_CARDS_LIST[$gameVersion] as $value) { // discard
-            $type = ($isOrigins ? 0 : 100) + $value;
-            $cards[] = ['location' => 'deck', 'type' => $type, 'type_arg' => 0, 'nbr' => 1];
+        if ($mindbugCardsSetting > 0) {
+            $mindbugCards = array_merge(self::$MINDBUG_CARDS_KEEP_CARDS_LIST, self::$MINDBUG_CARDS_DISCARD_CARDS_LIST, self::$MINDBUG_CARDS_CONSUMABLE_CARDS_LIST);
+            foreach($mindbugCards as $value) { // keep  
+                $cards[] = ['location' => 'deck', 'type' => $value, 'type_arg' => 0];
+            }
         }
 
-        if (!$isOrigins && !$isDarkEdition && $this->game->tableOptions->get(ORIGINS_EXCLUSIVE_CARDS_OPTION) == 2) {        
+        if ($mindbugCardsSetting !== 2) {
+            $gameVersion = $isOrigins ? 'origins' : ($isDarkEdition ? 'dark' : 'base');
+            
+            foreach(self::$KEEP_CARDS_LIST[$gameVersion] as $value) { // keep  
+                $cards[] = ['location' => 'deck', 'type' => $value, 'type_arg' => 0];
+            }
+            
+            foreach(self::$DISCARD_CARDS_LIST[$gameVersion] as $value) { // discard
+                $type = ($isOrigins ? 0 : 100) + $value;
+                $cards[] = ['location' => 'deck', 'type' => $type, 'type_arg' => 0];
+            }
+        }
+
+        if (($mindbugCardsSetting === 2 || (!$isOrigins && !$isDarkEdition)) && $this->game->tableOptions->get(ORIGINS_EXCLUSIVE_CARDS_OPTION) == 2) {        
             foreach(self::$ORIGINS_CARDS_EXCLUSIVE_KEEP_CARDS_LIST as $value) { // keep  
-                $cards[] = ['location' => 'deck', 'type' => $value, 'type_arg' => 0, 'nbr' => 1];
+                $cards[] = ['location' => 'deck', 'type' => $value, 'type_arg' => 0];
             }            
             foreach(self::$ORIGINS_CARDS_EXCLUSIVE_DISCARD_CARDS_LIST as $value) { // discard
-                $cards[] = ['location' => 'deck', 'type' => $value, 'type_arg' => 0, 'nbr' => 1];
+                $cards[] = ['location' => 'deck', 'type' => $value, 'type_arg' => 0];
             }
         }
 
@@ -369,7 +435,7 @@ class PowerCardManager extends ItemManager {
 
             for($value=1; $value<=12; $value++) { // costume
                 $type = 200 + $value;
-                $cards[] = ['location' => 'costumedeck', 'type' => $type, 'type_arg' => 0, 'nbr' => 1];
+                $cards[] = ['location' => 'costumedeck', 'type' => $type, 'type_arg' => 0];
             }
 
             $this->createItems($cards);
@@ -378,7 +444,7 @@ class PowerCardManager extends ItemManager {
 
         if ($this->game->isMutantEvolutionVariant()) {            
             $cards = [ // transformation
-                ['location' => 'mutantdeck', 'type' => 301, 'type_arg' => 0, 'nbr' => 6]
+                ['location' => 'mutantdeck', 'type' => 301, 'type_arg' => 0, 'item_nbr' => 6]
             ];
 
             $this->createItems($cards);

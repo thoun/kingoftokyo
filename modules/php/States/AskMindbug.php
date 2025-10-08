@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\States;
 
+use Bga\GameFramework\Components\Counters\OutOfRangeCounterException;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
@@ -45,39 +46,39 @@ class AskMindbug extends GameState {
      
     #[PossibleAction]
     public function actMindbug(bool $useEvasiveMindbug, int $currentPlayerId) {
-        try {
-            $this->game->mindbugExpansion->mindbugTokens->inc($currentPlayerId, -1);
-        } catch (\BgaSystemException $e) { // TODO replace by the new exception
-            throw new \BgaUserException('No Mindbug tokens');
+        if ($useEvasiveMindbug) {
+            $mindbuggedPlayerId = (int)$this->game->getActivePlayerId();
+            $evasiveMindbugCard = null;
+            foreach ($this->game->getCardsOfType($currentPlayerId, EVASIVE_MINDBUG_CARD) as $card) {
+                if ($card->type === EVASIVE_MINDBUG_CARD) {
+                    $evasiveMindbugCard = $card;
+                    break;
+                }
+            }
+
+            if ($evasiveMindbugCard == null) {
+                throw new \BgaUserException('No Evasive Mindbug card');
+            }
+
+            $this->game->powerCards->moveItem($evasiveMindbugCard, 'hand', $mindbuggedPlayerId);
+
+            $this->game->notify->all("buyCard", clienttranslate('${player_name2} gives ${card_name} to ${player_name}'), [
+                'playerId' => $mindbuggedPlayerId,
+                'player_name' => $this->game->getPlayerNameById($mindbuggedPlayerId),
+                'mindbuggedPlayerId' => $currentPlayerId,
+                'player_name2' => $this->game->getPlayerNameById($currentPlayerId),
+                'card' => $evasiveMindbugCard,
+                'card_name' => EVASIVE_MINDBUG_CARD,
+            ]);
+        } else {
+            try {
+                $this->game->mindbugExpansion->mindbugTokens->inc($currentPlayerId, -1);
+            } catch (OutOfRangeCounterException $e) { 
+                throw new \BgaUserException('No Mindbug tokens');
+            }
         }
 
         $this->game->mindbugExpansion->setMindbuggedPlayer($currentPlayerId, (int)$this->game->getActivePlayerId());
-
-        if ($useEvasiveMindbug) {
-            $mindbuggedPlayerId = $this->game->mindbugExpansion->getMindbuggedPlayer();
-            if ($mindbuggedPlayerId !== null) {
-                $evasiveMindbugCard = null;
-                foreach ($this->game->getCardsOfType($currentPlayerId, EVASIVE_MINDBUG_CARD) as $card) {
-                    if ($card->type === EVASIVE_MINDBUG_CARD) {
-                        $evasiveMindbugCard = $card;
-                        break;
-                    }
-                }
-
-                if ($evasiveMindbugCard !== null) {
-                    $this->game->powerCards->moveItem($evasiveMindbugCard, 'hand', $mindbuggedPlayerId);
-
-                    $this->game->notify->all("mindbugEvasiveTransfer", clienttranslate('${player_name} gives ${card_name} to ${player_name2}'), [
-                        'playerId' => $currentPlayerId,
-                        'player_name' => $this->game->getPlayerNameById($currentPlayerId),
-                        'mindbuggedPlayerId' => $mindbuggedPlayerId,
-                        'player_name2' => $this->game->getPlayerNameById($mindbuggedPlayerId),
-                        'card' => $evasiveMindbugCard,
-                        'card_name' => EVASIVE_MINDBUG_CARD,
-                    ]);
-                }
-            }
-        }
 
         // first to click has the power!
         return ResolveDieOfFate::class;
