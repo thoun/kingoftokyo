@@ -321,7 +321,12 @@ trait DebugUtilTrait {
     }
 
     function debug_SetCardInTable(int $cardType) {
-        $this->powerCards->moveItem($this->powerCards->getCardsOfType($cardType)[0], 'table', 1);
+        $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
+        if (!$card) {
+            $this->powerCards->createItems([['location' => 'void', 'type' => $cardType, 'type_arg' => 0]]);
+            $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
+        }
+        $this->powerCards->moveItem($card, 'table', 1);
     }
 
     // debug_SetCardInDiscard(110)

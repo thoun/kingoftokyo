@@ -499,6 +499,7 @@ $playerActionsGameStates = [
             "actThrowDieSuperiorAlienTechnology",
             "actFreezeRayChooseOpponent",
             "actLoseHearts",
+            'actTreasure', 'actPassTreasure',
         ],
         "transitions" => [
             "next" => ST_AFTER_ANSWER_QUESTION,

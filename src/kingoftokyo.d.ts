@@ -108,6 +108,10 @@ interface DeepDiveQuestionArgs {
     cards: Card[];
 }
 
+interface TreasureQuestionArgs {
+    cards: Card[];
+}
+
 interface TargetAcquiredQuestionArgs {
     playerId: number;
 }

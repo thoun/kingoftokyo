@@ -12,6 +12,8 @@ use KOT\Objects\OpportunistIntervention;
 use KOT\Objects\PlayersUsedDice;
 use KOT\Objects\CardBeingBought;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
 
 trait CardsActionTrait {
@@ -126,7 +128,7 @@ trait CardsActionTrait {
         $this->goToState($this->redirectAfterStealCostume($playerId));
     }
 
-    function applyBuyCard(int $playerId, int $id, int $from, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
+    function applyBuyCard(int $playerId, int $id, ?int $from, $buyCost = null, $useSuperiorAlienTechnology = false, $useBobbingForApples = false) {
         $card = $this->powerCards->getItemById($id);
         $cardLocation = $card->location;
         $cardLocationArg = $card->location_arg;
@@ -314,18 +316,20 @@ trait CardsActionTrait {
             ]);
         }
 
-        $damages = $this->powerCards->applyEffects($card, $playerId);
-
-        $mimic = false;
-        if ($card->type == MIMIC_CARD) {
-            $mimic = $this->canChangeMimickedCard($playerId);
-        }
-
         $newCardId = 0;
         if ($newCard != null) {
             $newCardId = $newCard->id;
         }
         $this->setGameStateValue('newCardId', $newCardId);
+
+        $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId);
+
+        $damages = $this->powerCards->applyEffects($card, $playerId, $redirectAfterBuyCard);
+
+        $mimic = false;
+        if ($card->type == MIMIC_CARD) {
+            $mimic = $this->canChangeMimickedCard($playerId);
+        }
 
         
         if ($useSuperiorAlienTechnology) {
@@ -348,9 +352,9 @@ trait CardsActionTrait {
             }
         }
 
-        $redirectAfterBuyCard = $this->redirectAfterBuyCard($playerId, $newCardId);
-
-        $this->goToState($redirectAfterBuyCard, $damages);
+        if ($this->gamestate->getCurrentMainStateId() !== ST_MULTIPLAYER_ANSWER_QUESTION) {
+            $this->goToState($redirectAfterBuyCard, $damages);
+        }
     }
 
     function actBuyCard(int $id, int $from, bool $useSuperiorAlienTechnology = false, bool $useBobbingForApples = false) {
@@ -461,7 +465,7 @@ trait CardsActionTrait {
         
         $this->toggleRapidHealing($playerId, $countRapidHealingBefore);
 
-        $damages = $this->powerCards->applyEffects($card, $playerId);
+        $damages = $this->powerCards->applyEffects($card, $playerId, -1);
 
         $this->setGameStateValue('newCardId', 0);
 
@@ -1083,4 +1087,17 @@ trait CardsActionTrait {
 
         $this->applySkipExchangeCard($playerId);
     } 
+    
+    function actTreasure(int $id) {
+        $playerId = $this->getCurrentPlayerId();
+        $card = $this->powerCards->getItemById($id);
+
+        $this->applyBuyCard($playerId, $card->id, null, $this->getCardCost($playerId, $card->type) - 3);
+
+        $this->goToState(-1);      
+    }
+    
+    function actPassTreasure() {
+        $this->goToState(-1);    
+    }
 }

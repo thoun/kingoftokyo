@@ -1068,7 +1068,7 @@ class CardsManager extends CardManager<Card> {
             if (cardType >= 67) {
                 return `img/cards/mindbug-cards.jpg`;
             }
-            if (cardType >= 67) {
+            if (cardType >= 56) {
                 return `img/cards/cards-keep-origins.jpg`;
             }
             if (cardType == 38 && this.game.isOrigins()) {

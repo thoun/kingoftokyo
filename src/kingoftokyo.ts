@@ -875,6 +875,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.titleBarStock.setSelectionMode('single');
                 this.titleBarStock.onCardClick = (card: Card) => this.playCardDeepDive(card.id);
                 break;
+            case 'Treasure':
+                const treasureArgs = question.args as TreasureQuestionArgs;
+                dojo.place(`<div id="title-bar-stock" class="card-in-title-wrapper"></div>`, `maintitlebar_content`);
+                this.titleBarStock = new LineStock<Card>(this.cardsManager, document.getElementById('title-bar-stock'));
+                this.titleBarStock.addCards(treasureArgs.cards, { fromStock: this.tableCenter.getDeck(), originalSide: 'back', rotationDelta: 90 }, undefined, true);
+                this.titleBarStock.setSelectionMode('single');
+                this.titleBarStock.onCardClick = (card: Card) => this.playCardDeepDive(card.id);
+                break;
             case 'MyToy':
                 this.tableCenter.setVisibleCardsSelectionMode('single');
                 break;
@@ -1081,6 +1089,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 break;
             case 'MiraculousCatch':
             case 'DeepDive':
+            case 'Treasure':
             case 'SuperiorAlienTechnology':                
                 this.titleBarStock.removeAll();
                 document.getElementById(`title-bar-stock`)?.remove();
@@ -1500,6 +1509,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 deepDiveCatchArgs.cards.forEach(card => {
                     this.addActionButton(`playCardDeepDive_button${card.id}`, formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.playCardDeepDive(card.id));
                 });
+                break;
+            case 'Treasure':
+                const treasureArgsArgs = question.args as TreasureQuestionArgs;
+                treasureArgsArgs.cards.forEach(card => {
+                    this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Buy ${card_name}'), { card_name: this.cardsManager.getCardName(card.type, 'text-only') })), () => this.bgaPerformAction('actTreasure', { id: card.id }));
+                });
+                this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction('actPassTreasure'), { color: 'secondary' });
                 break;
             case 'ExoticArms':
                 const useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(26, 'text-only'), number: 2 });

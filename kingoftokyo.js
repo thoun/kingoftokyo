@@ -3165,7 +3165,7 @@ var CardsManager = /** @class */ (function (_super) {
             if (cardType >= 67) {
                 return "img/cards/mindbug-cards.jpg";
             }
-            if (cardType >= 67) {
+            if (cardType >= 56) {
                 return "img/cards/cards-keep-origins.jpg";
             }
             if (cardType == 38 && this.game.isOrigins()) {
@@ -7181,6 +7181,14 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.titleBarStock.setSelectionMode('single');
                 this.titleBarStock.onCardClick = function (card) { return _this.playCardDeepDive(card.id); };
                 break;
+            case 'Treasure':
+                var treasureArgs = question.args;
+                dojo.place("<div id=\"title-bar-stock\" class=\"card-in-title-wrapper\"></div>", "maintitlebar_content");
+                this.titleBarStock = new LineStock(this.cardsManager, document.getElementById('title-bar-stock'));
+                this.titleBarStock.addCards(treasureArgs.cards, { fromStock: this.tableCenter.getDeck(), originalSide: 'back', rotationDelta: 90 }, undefined, true);
+                this.titleBarStock.setSelectionMode('single');
+                this.titleBarStock.onCardClick = function (card) { return _this.playCardDeepDive(card.id); };
+                break;
             case 'MyToy':
                 this.tableCenter.setVisibleCardsSelectionMode('single');
                 break;
@@ -7376,6 +7384,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 break;
             case 'MiraculousCatch':
             case 'DeepDive':
+            case 'Treasure':
             case 'SuperiorAlienTechnology':
                 this.titleBarStock.removeAll();
                 (_a = document.getElementById("title-bar-stock")) === null || _a === void 0 ? void 0 : _a.remove();
@@ -7768,6 +7777,13 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 deepDiveCatchArgs.cards.forEach(function (card) {
                     _this.addActionButton("playCardDeepDive_button".concat(card.id), formatTextIcons(dojo.string.substitute(_('Play ${card_name}'), { card_name: _this.cardsManager.getCardName(card.type, 'text-only') })), function () { return _this.playCardDeepDive(card.id); });
                 });
+                break;
+            case 'Treasure':
+                var treasureArgsArgs = question.args;
+                treasureArgsArgs.cards.forEach(function (card) {
+                    _this.statusBar.addActionButton(formatTextIcons(dojo.string.substitute(_('Buy ${card_name}'), { card_name: _this.cardsManager.getCardName(card.type, 'text-only') })), function () { return _this.bgaPerformAction('actTreasure', { id: card.id }); });
+                });
+                this.statusBar.addActionButton(_('Pass'), function () { return _this.bgaPerformAction('actPassTreasure'); }, { color: 'secondary' });
                 break;
             case 'ExoticArms':
                 var useExoticArmsLabel = dojo.string.substitute(_("Put ${number}[Energy] on ${card_name}"), { card_name: this.evolutionCardsManager.getCardName(26, 'text-only'), number: 2 });

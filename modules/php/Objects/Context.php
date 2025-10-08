@@ -15,6 +15,7 @@ class Context {
         public ?int $smasherPoints = null,
         public ?int $dieSmashes = null,
         public ?int $addedSmashes = null,
+        public ?int $stateAfter = null,
     ) {
     } 
 }
