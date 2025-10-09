@@ -7,6 +7,7 @@ require_once(__DIR__.'/../Objects/player-intervention.php');
 require_once(__DIR__.'/../Objects/damage.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
+use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\AddSmashTokens;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerUpExpansion;
@@ -157,7 +158,7 @@ trait DiceUtilTrait {
             $rolledDiceStr = '';
             $lockedDiceStr = '';
 
-            usort($rolledDice, "static::sortDieFunction");
+            usort($rolledDice, [Game::class, 'sortDieFunction']);
             foreach ($rolledDice as $rolledDie) {
                 $rolledDiceStr .= $this->getDieFaceLogName($rolledDie->value, $rolledDie->type);
             }
@@ -167,7 +168,7 @@ trait DiceUtilTrait {
             } else if (count($lockedDice) == 0) {
                 $message = clienttranslate('${player_name} rerolls dice ${rolledDice}');
             } else {
-                usort($lockedDice, "static::sortDieFunction");
+                usort($lockedDice, [Game::class, 'sortDieFunction']);
                 foreach ($lockedDice as $lockedDie) {
                     $lockedDiceStr .= $this->getDieFaceLogName($lockedDie->value, $lockedDie->type);
                 }
@@ -455,7 +456,7 @@ trait DiceUtilTrait {
         }
 
         if ($diceCount > 0) {
-            // ony here and not in stResolveDice, so player can heal and then activate Berserk
+            // only here (not in ResolveDice state) so player can heal and then activate Berserk
             if ($this->cybertoothExpansion->isActive()) {
                 $this->cybertoothExpansion->onPlayerResolveSmashDice($playerId, $diceCount);
             }
@@ -1131,27 +1132,6 @@ trait DiceUtilTrait {
 
             return $allowed;
         }));
-    }
-
-    function canLeaveHibernation(int $playerId, $dice = null) {
-        $countHibernation = $this->countCardOfType($playerId, HIBERNATION_CARD);
-        if ($countHibernation == 0) {
-            return false;
-        }
-
-        if ($dice == null) {
-            $dice = $this->getPlayerRolledDice($playerId, true, true, false);
-        }
-
-        $diceCounts = $this->getRolledDiceCounts($playerId, $dice, false);
-
-        foreach($diceCounts as $face => $number) {
-            if ($face !== 4 && $face !== 5 && $number > 0) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     function canUsePlayWithYourFood(int $playerId, array $diceCounts) { // players concerned by the effect, null if can't be used

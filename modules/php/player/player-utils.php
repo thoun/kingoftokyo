@@ -179,7 +179,7 @@ trait PlayerUtilTrait {
     }
 
     #[CheckAction(false)]
-    function setAskPlayEvolution(int $value) {
+    function actSetAskPlayEvolution(int $value) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->applyAskPlayEvolution($playerId,  $value);

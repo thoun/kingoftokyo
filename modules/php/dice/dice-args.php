@@ -46,23 +46,6 @@ trait DiceArgTrait {
         return [ 'skipped' => true ];
     }
 
-    function argResolveDice() {
-        $activePlayerId = $this->getActivePlayerId();
-        $dice = $this->getPlayerRolledDice($activePlayerId, true, true, false);
-
-        $isInHibernation = $this->countCardOfType($activePlayerId, HIBERNATION_CARD) > 0;
-        $canLeaveHibernation = $isInHibernation && $this->canLeaveHibernation($activePlayerId, $dice);
-
-        return [
-            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, false),
-            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
-            'frozenFaces' => $this->frozenFaces($activePlayerId),
-            'selectableDice' => [],
-            'isInHibernation' => $isInHibernation,
-            'canLeaveHibernation' => $canLeaveHibernation,
-        ];
-    }
-
     function argResolveSmashDiceAction() {
         $playerId = $this->getActivePlayerId();
 

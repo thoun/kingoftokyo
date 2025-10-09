@@ -6711,7 +6711,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 this.diceManager.hideLock();
                 var argsResolveDice = args.args;
                 if (argsResolveDice.isInHibernation) {
-                    this.setGamestateDescription('Hibernation');
+                    this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can leave Hibernation') : _('${actplayer} can leave Hibernation'), args);
                 }
                 break;
             case 'rerollOrDiscardDie':
@@ -9014,7 +9014,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
         }, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.setAskPlayEvolution = function (value) {
-        this.bgaPerformAction('setAskPlayEvolution', {
+        this.bgaPerformAction('actSetAskPlayEvolution', {
             value: value
         }, { lock: false, checkAction: false });
     };

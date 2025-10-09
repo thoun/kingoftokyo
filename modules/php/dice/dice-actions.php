@@ -160,24 +160,4 @@ trait DiceActionTrait {
         $this->resolveSmashDiceState($playersSmashesWithReducedDamage);
     }
 
-  	
-    public function actStayInHibernation() {
-        $playerId = $this->getActivePlayerId();
-
-        $this->applyResolveDice($playerId);
-        
-        $this->goToState($this->redirectAfterResolveDice());
-    }
-  	
-    public function actLeaveHibernation() {
-        $playerId = $this->getActivePlayerId();
-
-        $cards = $this->powerCards->getCardsOfType(HIBERNATION_CARD);
-        $this->removeCards($playerId, $cards);
-
-        $this->applyResolveDice($playerId);
-
-        $this->goToState($this->redirectAfterResolveDice());
-    }
-
 }

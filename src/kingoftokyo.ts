@@ -280,7 +280,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.diceManager.hideLock();
                 const argsResolveDice = args.args as EnteringResolveDiceArgs;
                 if (argsResolveDice.isInHibernation) {
-                    this.setGamestateDescription('Hibernation');
+                    this.statusBar.setTitle(
+                        this.isCurrentPlayerActive() ? _('${you} can leave Hibernation') : _('${actplayer} can leave Hibernation'), 
+                        args
+                    );
                 }
                 break;
             case 'rerollOrDiscardDie':
@@ -3005,7 +3008,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public setAskPlayEvolution(value: number) {
-        this.bgaPerformAction('setAskPlayEvolution', {
+        this.bgaPerformAction('actSetAskPlayEvolution', {
             value
         }, { lock: false, checkAction: false });
     }

@@ -53,21 +53,6 @@ require_once("modules/php/constants.inc.php");
 
 $playerActionsGameStates = [
 
-    ST_RESOLVE_DICE => [
-        "name" => "resolveDice",
-        "description" => '',
-        "descriptionHibernation" => clienttranslate('${actplayer} can leave Hibernation'),
-        "descriptionmyturn" => '',
-        "descriptionmyturnHibernation" => clienttranslate('${you} can leave Hibernation'),
-        "type" => "activeplayer",
-        "action" => "stResolveDice",
-        "args" => "argResolveDice",
-        "possibleactions" => [ "actStayInHibernation", "actLeaveHibernation" ],
-        "transitions" => [
-            "resolveNumberDice" => ST_RESOLVE_NUMBER_DICE, // TODOCY remove and test
-        ],
-    ],
-
     ST_PLAYER_BEFORE_RESOLVE_DICE => [
         "name" => "beforeResolveDice",
         "description" => clienttranslate('${actplayer} may activate an Evolution card'),

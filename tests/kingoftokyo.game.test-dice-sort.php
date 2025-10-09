@@ -38,7 +38,7 @@ class KingOfTokyoTestDiceSort extends KingOfTokyo { // this is your game class d
         $dice = $this->getTestDice(false, false);
         echo 'dice before = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
 
-        usort($dice, "static::sortDieFunction");
+        usort($dice, [Game::class, 'sortDieFunction']);
 
         echo 'dice after = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
     }
@@ -48,7 +48,7 @@ class KingOfTokyoTestDiceSort extends KingOfTokyo { // this is your game class d
         $dice = $this->getTestDice(true, false);
         echo 'dice before = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
 
-        usort($dice, "static::sortDieFunction");
+        usort($dice, [Game::class, 'sortDieFunction']);
 
         echo 'dice after = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
     }
@@ -58,7 +58,7 @@ class KingOfTokyoTestDiceSort extends KingOfTokyo { // this is your game class d
         $dice = $this->getTestDice(false, true);
         echo 'dice before = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
 
-        usort($dice, "static::sortDieFunction");
+        usort($dice, [Game::class, 'sortDieFunction']);
 
         echo 'dice after = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
     }
@@ -68,7 +68,7 @@ class KingOfTokyoTestDiceSort extends KingOfTokyo { // this is your game class d
         $dice = $this->getTestDice(true, true);
         echo 'dice before = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
 
-        usort($dice, "static::sortDieFunction");
+        usort($dice, [Game::class, 'sortDieFunction']);
 
         echo 'dice after = '.json_encode($dice, JSON_PRETTY_PRINT)."\n";
     }
