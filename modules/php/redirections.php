@@ -130,16 +130,6 @@ trait RedirectionTrait {
         return ST_ENTER_TOKYO;
     }
 
-    function redirectAfterPrepareResolveDice() {
-        if ($this->isHalloweenExpansion()) {
-            return ST_MULTIPLAYER_CHEERLEADER_SUPPORT;
-        } else if ($this->mindbugExpansion->isActive()) {
-            return ST_MULTIPLAYER_ASK_MINDBUG;
-        } else {
-            return ST_RESOLVE_DIE_OF_FATE;
-        }
-    }
-
     function redirectAfterEnterTokyo(int $playerId) {
         if ($this->isHalloweenExpansion() || ($this->powerUpExpansion->isActive() && $this->isGiftCardsInPlay())) { 
             return ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION;

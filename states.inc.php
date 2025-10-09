@@ -53,19 +53,6 @@ require_once("modules/php/constants.inc.php");
 
 $playerActionsGameStates = [
 
-    ST_PREPARE_RESOLVE_DICE => [
-        "name" => "prepareResolveDice",
-        "description" => "",
-        "descriptionmyturn" => "",
-        "descriptionEncasedInIce" => clienttranslate('${actplayer} can freeze a die'),
-        "descriptionmyturnEncasedInIce" => clienttranslate('${you} can freeze a die'),
-        "type" => "activeplayer",
-        "action" => "stPrepareResolveDice",
-        "args" => "argPrepareResolveDice",
-        "possibleactions" => [ "actFreezeDie", "actSkipFreezeDie" ],
-        "transitions" => [],
-    ],
-
     ST_MULTIPLAYER_CHEERLEADER_SUPPORT => [
         "name" => "cheerleaderSupport",
         "description" => clienttranslate('Player with Cheerleader can support monster'),

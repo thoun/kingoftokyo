@@ -28,23 +28,6 @@ trait DiceStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stPrepareResolveDice() {
-        $playerId = $this->getActivePlayerId();
-        $hasEncasedInIce = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
-
-        if ($hasEncasedInIce) {
-            $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
-
-            if ($potentialEnergy < 1) {
-                $hasEncasedInIce = false;
-            }
-        }
-
-        if (!$hasEncasedInIce) {
-            $this->goToState($this->redirectAfterPrepareResolveDice());
-        }
-    }
-
     function applyResolveDice(int $playerId) {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 

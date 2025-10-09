@@ -86,22 +86,4 @@ trait DiceArgTrait {
         return [ 'skipped' => true ];
     }
 
-    function argPrepareResolveDice() {
-        $playerId = $this->getActivePlayerId();
-
-        $hasEncasedInIce = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;
-
-        $dice = $this->getPlayerRolledDice($playerId, true, true, false);
-        $selectableDice = $this->getSelectableDice($dice, false, false);
-        $canHealWithDice = $this->canHealWithDice($playerId);
-
-        return [ 
-            'dice' => $dice,
-            'canHealWithDice' => $canHealWithDice,
-            'frozenFaces' => $this->frozenFaces($playerId),
-            'selectableDice' => $selectableDice,
-            'hasEncasedInIce' => $hasEncasedInIce,
-        ];
-    }
-
 }

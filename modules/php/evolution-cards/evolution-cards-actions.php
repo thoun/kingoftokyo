@@ -448,29 +448,6 @@ trait EvolutionCardsActionTrait {
         }        
     }
   	
-    public function actFreezeDie(int $id) {
-        $playerId = $this->getCurrentPlayerId();
-
-        if ($this->getPlayerEnergy($playerId) < 1) {
-            throw new \BgaUserException("Not enough energy");
-        }
-        $this->applyLoseEnergy($playerId, 1, 0);
-
-        $this->setGameStateValue(ENCASED_IN_ICE_DIE_ID, $id);
-
-        $die = $this->getDieById($id);
-        $this->notifyAllPlayers('log', clienttranslate('${player_name} freeze die ${die_face}'), [
-            'player_name' => $this->getPlayerNameById($playerId),
-            'die_face' => $this->getDieFaceLogName($die->value, $die->type),
-        ]);
-
-        $this->goToState($this->redirectAfterPrepareResolveDice());
-    }
-  	
-    public function actSkipFreezeDie() {
-        $this->goToState($this->redirectAfterPrepareResolveDice());
-    }
-
     
   	
     public function actUseExoticArms() {
