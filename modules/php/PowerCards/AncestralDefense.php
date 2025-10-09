@@ -5,4 +5,7 @@ namespace Bga\Games\KingOfTokyo\PowerCards;
 
 class AncestralDefense extends PowerCard
 {
+    public function __construct() {
+        $this->mindbugKeywords = [TOUGH];
+    }
 }

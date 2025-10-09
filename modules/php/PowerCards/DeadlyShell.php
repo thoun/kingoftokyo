@@ -5,4 +5,7 @@ namespace Bga\Games\KingOfTokyo\PowerCards;
 
 class DeadlyShell extends PowerCard
 {
+    public function __construct() {
+        $this->mindbugKeywords = [POISON, TOUGH];
+    }
 }

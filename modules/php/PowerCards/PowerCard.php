@@ -4,6 +4,12 @@ namespace Bga\Games\KingOfTokyo\PowerCards;
 use \Bga\GameFrameworkPrototype\Item\Item;
 use \Bga\GameFrameworkPrototype\Item\ItemField;
 
+const HUNTER = 'HUNTER';
+const SNEAKY = 'SNEAKY';
+const POISON = 'POISON';
+const TOUGH = 'TOUGH';
+const FRENZY = 'FRENZY';
+
 #[Item('card')]
 class PowerCard {
     #[ItemField(kind: 'id', dbField: 'card_id')]
@@ -22,6 +28,8 @@ class PowerCard {
     public ?int $mimicType = null;
     public int $tokens = 0;
     public int $side = 0; // 0 front, 1 back
+
+    public ?array $mindbugKeywords = null;
 
     public function setup($dbCard) {
         $this->tokens = $this->type < 100 ? $this->type_arg : 0;

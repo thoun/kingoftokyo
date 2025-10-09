@@ -5,4 +5,7 @@ namespace Bga\Games\KingOfTokyo\PowerCards;
 
 class MaximumEffort extends PowerCard
 {
+    public function __construct() {
+        $this->mindbugKeywords = [FRENZY];
+    }
 }
