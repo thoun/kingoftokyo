@@ -184,19 +184,6 @@ $machinestates = [
         "transitions" => [],
     ],
 
-    ST_PLAYER_CHANGE_FORM => [
-        "name" => "changeForm",
-        "description" => clienttranslate('${actplayer} can change form'),
-        "descriptionmyturn" => clienttranslate('${you} can change form'),
-        "type" => "activeplayer",
-        "args" => "argChangeForm",
-        "action" => "stChangeForm",
-        "possibleactions" => [ "actChangeForm", "actSkipChangeForm" ],
-        "transitions" => [
-            "buyCard" => ST_PLAYER_BUY_CARD,
-        ]
-    ],
-
     ST_PLAYER_BUY_CARD => [
         "name" => "buyCard",
         "description" => clienttranslate('${actplayer} can buy a card'),
