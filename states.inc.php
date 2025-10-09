@@ -51,18 +51,7 @@
 
 require_once("modules/php/constants.inc.php");
 
-$playerActionsGameStates = [
-
-    ST_PLAYER_BEFORE_RESOLVE_DICE => [
-        "name" => "beforeResolveDice",
-        "description" => clienttranslate('${actplayer} may activate an Evolution card'),
-        "descriptionmyturn" => clienttranslate('${you} may activate an Evolution card'),
-        "type" => "activeplayer",
-        "action" => "stBeforeResolveDice",
-        "args" => "argBeforeResolveDice",
-        "possibleactions" => [ "actSkipBeforeResolveDice" ],
-        "transitions" => [],
-    ],
+$machinestates = [
     ST_PLAYER_TAKE_WICKEDNESS_TILE => [
         "name" => "takeWickednessTile",
         "description" => clienttranslate('${actplayer} can take a wickedness tile'),
@@ -277,5 +266,3 @@ $playerActionsGameStates = [
         ]
     ],
 ];
- 
-$machinestates = $playerActionsGameStates;

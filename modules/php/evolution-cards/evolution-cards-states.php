@@ -19,22 +19,6 @@ trait EvolutionCardsStateTrait {
         $this->gamestate->setPlayersMultiactive($playersWithPotentialEvolution, 'next', true);
     }
 
-    function stBeforeResolveDice() {
-        if (!$this->powerUpExpansion->isActive()) {
-            $this->goToState($this->redirectAfterBeforeResolveDice());
-            return;
-        }
-
-        $playerId = $this->getActivePlayerId();
-        $couldPlay = count($this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE)) > 0;
-
-        if ($couldPlay) {
-            $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-        } else {
-            $this->goToState($this->redirectAfterBeforeResolveDice());
-        }
-    }
-
     function stAfterResolveDamage() {
         $intervention = $this->getDamageIntervention();
 

@@ -25,17 +25,6 @@ trait EvolutionCardsArgTrait {
             ],
         ];
     }
-
-    function argBeforeResolveDice() {
-        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
-
-        $highlighted = $isPowerUpExpansion ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) : [];
-
-        return [
-            'highlighted' => $highlighted,
-        ];
-    }
-
     function argBeforeEnteringTokyo() {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 
