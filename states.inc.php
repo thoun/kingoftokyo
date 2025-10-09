@@ -118,17 +118,4 @@ $machinestates = [
             "end" => ST_LEAVE_TOKYO_APPLY_JETS, // for zombie
         ],
     ],
-    ST_MULTIPLAYER_LEAVE_TOKYO_EXCHANGE_CARD => [
-        "name" => "leaveTokyoExchangeCard",
-        "description" => clienttranslate('Players with Unstable DNA can exchange this card'),
-        "descriptionmyturn" => clienttranslate('${you} can exchange Unstable DNA'),
-        "type" => "multipleactiveplayer",
-        "action" => "stLeaveTokyoExchangeCard",
-        "args" => "argLeaveTokyoExchangeCard",
-        "possibleactions" => [ "actExchangeCard", "actSkipExchangeCard" ],
-        "transitions" => [
-            "next" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO,
-            "end" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO, // for zombie
-        ],
-    ],
 ];

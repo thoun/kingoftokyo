@@ -585,8 +585,6 @@ class Game extends \Bga\GameFramework\Table {
                     return;
                 case 'leaveTokyo':
                     $this->yieldTokyo($active_player);
-                case 'leaveTokyoExchangeCard':
-                    $this->applySkipExchangeCard($active_player);
                     return;
                 default:
                     // Make sure player is in a non blocking status for role turn

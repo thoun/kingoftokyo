@@ -31,16 +31,4 @@ trait CardsStateTrait {
         $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'stay', true);
     }
 
-    function stLeaveTokyoExchangeCard() {
-        $args = $this->argLeaveTokyoExchangeCard();
-        if ($this->autoSkipImpossibleActions() && !$args['canExchange']) {
-            // skip state, can't exchange card
-            $this->gamestate->nextState('next');
-            return;
-        }
-
-        $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA(); 
-        
-        $this->gamestate->setPlayersMultiactive($leaversWithUnstableDNA, 'transitionError', true);
-    }
 }

@@ -377,35 +377,4 @@ trait CardsArgTrait {
         }
     }
 
-    function argLeaveTokyoExchangeCard() {
-        $playerId = intval($this->getActivePlayerId());
-
-        $leaversWithUnstableDNA = $this->getLeaversWithUnstableDNA();  
-        $currentPlayerId = $leaversWithUnstableDNA[0];
-
-        $canExchange = false;
-        $tableCards = $this->powerCards->getTable();
-        $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
-
-        $playersIds = $this->getPlayersIds();
-        foreach($playersIds as $otherPlayerId) {
-            $cardsOfPlayer = $this->powerCards->getPlayer($otherPlayerId);
-            $isSmashingPlayer = $playerId === $otherPlayerId && $otherPlayerId != $currentPlayerId; // TODODE check it's not currentPlayer, else skip (if player left Tokyo with anubis card)
-
-            foreach ($cardsOfPlayer as $card) {
-                if ($isSmashingPlayer && $card->type < 300) {
-                    // all cards can be stolen : keep, discard, costume. Ignore transformation & golden scarab
-                    $canExchange = true;
-                } else {
-                    $disabledIds[] = $card->id;
-                }
-            }
-        }
-
-        return [
-            'canExchange' => $canExchange,
-            'disabledIds' => $disabledIds,
-        ];
-    }
-
 }
