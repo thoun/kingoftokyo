@@ -272,20 +272,6 @@ trait EvolutionCardsActionTrait {
         $this->goToState(-1);
     }
   	
-    public function actUseChestThumping(#[IntParam(name: 'id')] int $playerId) {
-        $this->leaveTokyo($playerId);
-        
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'resume');
-
-        $this->checkOnlyChestThumpingRemaining();
-    }
-  	
-    public function actSkipChestThumping() {
-        $playerId = $this->getCurrentPlayerId();
-
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'resume');
-    }
-  	
     public function actChooseFreezeRayDieFace(int $symbol) {
         $question = $this->getQuestion();
         $evolutionId = $question->args->card->id;

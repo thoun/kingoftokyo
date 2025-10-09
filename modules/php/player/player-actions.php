@@ -24,33 +24,6 @@ trait PlayerActionTrait {
         ]);
     }
 
-    function actStay() {
-        $playerId = $this->getCurrentPlayerId();
-
-        $this->notifStayInTokyo($playerId);
-
-        if ($this->powerUpExpansion->isActive()) {
-            $countBlackDiamond = $this->countEvolutionOfType($playerId, BLACK_DIAMOND_EVOLUTION);
-            if ($countBlackDiamond > 0) {
-                $this->applyGetPoints($playerId, $countBlackDiamond, 3000 + BLACK_DIAMOND_EVOLUTION);
-            }
-        }
-
-        $countBullHeaded = $this->countCardOfType($playerId, BULL_HEADED_CARD);
-        if ($countBullHeaded > 0) {
-            $this->applyGetPoints($playerId, $countBullHeaded, BULL_HEADED_CARD);
-        }
-        
-        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
-        $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
-    }
-
-    function actLeave(?int $useCard) {
-        $playerId = $this->getCurrentPlayerId();
-
-        $this->yieldTokyo($playerId, $useCard);
-    }
-
     function yieldTokyo(int $playerId, /*int | null*/ $useCard = null) {
         if (!$this->canYieldTokyo($playerId)) {
             throw new \BgaUserException('Impossible to yield Tokyo');

@@ -12,52 +12,6 @@ trait PlayerStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stLeaveTokyo() {
-        if ($this->autoSkipImpossibleActions()) {
-            $canYieldTokyo = $this->argLeaveTokyo()['canYieldTokyo'];
-            $oneCanYield = $this->array_some($canYieldTokyo, fn($canYield) => $canYield);
-            if (!$oneCanYield) {
-                $this->goToState(ST_LEAVE_TOKYO_APPLY_JETS);
-                return;
-            }
-        }
-
-        $smashedPlayersInTokyo = $this->getGlobalVariable(SMASHED_PLAYERS_IN_TOKYO, true);
-        $aliveSmashedPlayersInTokyo = [];
-
-        foreach($smashedPlayersInTokyo as $smashedPlayerInTokyo) {
-            if ($this->inTokyo($smashedPlayerInTokyo)) { // we check if player is still in Tokyo, it could have left with It has a child!
-                if ($this->canYieldTokyo($smashedPlayerInTokyo)) {
-                    $player = $this->getPlayer($smashedPlayerInTokyo);
-                    if ($player->eliminated) {
-                        $this->leaveTokyo($smashedPlayerInTokyo);
-                    } else {
-                        if (!$this->autoLeave($smashedPlayerInTokyo, $player->health) && !$this->autoStay($smashedPlayerInTokyo, $player->health)) {
-                            $aliveSmashedPlayersInTokyo[] = $smashedPlayerInTokyo;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (count($aliveSmashedPlayersInTokyo) > 0) {
-            if ($this->powerUpExpansion->isActive()) {
-                $playerId = $this->getActivePlayerId();
-                $countChestThumping = $this->countEvolutionOfType($playerId, CHEST_THUMPING_EVOLUTION);
-                if ($countChestThumping > 0 && $this->anubisExpansion->isActive() && $this->anubisExpansion->getCurseCardType() == PHARAONIC_EGO_CURSE_CARD) {
-                    $countChestThumping = 0; // impossible to use Chest Thumping with Pharaonic Ego 
-                }
-                if ($countChestThumping > 0) {
-                    $aliveSmashedPlayersInTokyo[] = $playerId;
-                }
-            }
-
-            $this->gamestate->setPlayersMultiactive($aliveSmashedPlayersInTokyo, 'resume', true);
-        } else {
-            $this->goToState(ST_LEAVE_TOKYO_APPLY_JETS);
-        }
-    }
-
     
 
     private function activeNextAlivePlayer() {

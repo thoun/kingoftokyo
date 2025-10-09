@@ -104,18 +104,4 @@ $machinestates = [
         "possibleactions" => [],
         "transitions" => [],
     ],
-
-    ST_MULTIPLAYER_LEAVE_TOKYO => [
-        "name" => "leaveTokyo",
-        "description" => clienttranslate('Players in Tokyo must choose to stay or leave Tokyo'),
-        "descriptionmyturn" => clienttranslate('${you} must choose to stay or leave Tokyo'),
-        "type" => "multipleactiveplayer",
-        "action" => "stLeaveTokyo",
-        "args" => "argLeaveTokyo",
-        "possibleactions" => [ "actStay", "actLeave", "actUseChestThumping", "actSkipChestThumping" ],
-        "transitions" => [
-            "resume" => ST_LEAVE_TOKYO_APPLY_JETS,
-            "end" => ST_LEAVE_TOKYO_APPLY_JETS, // for zombie
-        ],
-    ],
 ];
