@@ -317,48 +317,6 @@ trait EvolutionCardsActionTrait {
 
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
     }
-  	
-    public function actUseMiraculousCatch() {
-        $playerId = $this->getActivePlayerId();
-
-        $evolution = $this->getFirstUnusedEvolution($playerId, MIRACULOUS_CATCH_EVOLUTION, true, true);
-        if ($evolution === null) {
-            throw new \BgaUserException("No unused Miraculous catch");
-        }
-        if ($this->powerCards->countItemsInLocation('discard') === 0) {
-            throw new \BgaUserException("No cards in discard pile");
-        }
-        
-        if ($evolution->location === 'hand') {
-            $this->applyPlayEvolution($playerId, $evolution);
-        }
-
-        $this->powerCards->shuffle('discard');
-        $card = $this->powerCards->getCardOnTop('discard');
-
-        $cost = $this->getCardCost($playerId, $card->type) - 1;
-        $canUseSuperiorAlienTechnology = $card->type < 100 && $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION, true, true) > 0 && count($this->getSuperiorAlienTechnologyTokens($playerId)) < 3 * $this->countEvolutionOfType($playerId, SUPERIOR_ALIEN_TECHNOLOGY_EVOLUTION);
-
-        $question = new Question(
-            'MiraculousCatch',
-            clienttranslate('${actplayer} can buy ${card_name} from the discard pile for 1[Energy] less'),
-            clienttranslate('${you} can buy ${card_name} from the discard pile for 1[Energy] less'),
-            [$playerId],
-            ST_QUESTIONS_BEFORE_START_TURN,
-            [
-                'card' => $card,
-                'cost' => $cost,
-                'costSuperiorAlienTechnology' => $canUseSuperiorAlienTechnology ? ceil($cost / 2) : null,
-                '_args' => [
-                    'card_name' => $card->type,
-                ],
-            ]
-        );
-        $this->setQuestion($question);
-        $this->gamestate->setPlayersMultiactive([$playerId], 'next', true);
-
-        $this->goToState(ST_MULTIPLAYER_ANSWER_QUESTION);
-    }
 
     public function actBuyCardMiraculousCatch(bool $useSuperiorAlienTechnology) {
         $playerId = $this->getCurrentPlayerId();

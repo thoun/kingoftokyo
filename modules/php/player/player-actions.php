@@ -17,14 +17,6 @@ trait PlayerActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
 
-    function actEndTurn() {
-        
-        $playerId = $this->getActivePlayerId();
-        $this->removeDiscardCards($playerId);
-   
-        $this->goToState($this->redirectAfterSellCard());
-    }
-
     function notifStayInTokyo($playerId) {
         $this->notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
             'playerId' => $playerId,

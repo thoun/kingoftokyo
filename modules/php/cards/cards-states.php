@@ -12,26 +12,6 @@ trait CardsStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stBuyCard() {
-        $this->deleteGlobalVariable(OPPORTUNIST_INTERVENTION);
-
-        $playerId = intval($this->getActivePlayerId()); 
-
-        // if player is dead async, he can't buy or sell
-        if ($this->getPlayer($playerId)->eliminated) {
-            return $this->actEndTurn();
-        }
-
-        $args = $this->argBuyCard();
-        if ($this->countCardOfType($playerId, HIBERNATION_CARD) > 0 || boolval($this->getGameStateValue(SKIP_BUY_PHASE)) || ($this->autoSkipImpossibleActions() && !$args['canBuyOrNenew']) || $this->isSureWin($playerId) || ($this->isMutantEvolutionVariant() && $this->isBeastForm($playerId))) {
-            // skip state
-            if ($args['canSell']) {
-                return $this->actGoToSellCard();
-            } else {
-            return $this->actEndTurn();
-            }
-        }
-    }
     function stOpportunistChooseMimicCard() {
         $intervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
 

@@ -196,12 +196,6 @@ trait CardsArgTrait {
         ] + $privateArgs;
     }
 
-    function argBuyCard() {
-        $playerId = $this->getActivePlayerId();
-
-        return $this->getArgBuyCard($playerId, true);
-    }
-
     function getArgChooseMimickedCard(int $playerId, int $mimicCardType, int $selectionCost = 0) {
         $potentialEnergy = 0;
         if ($selectionCost > 0) {

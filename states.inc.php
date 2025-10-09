@@ -174,20 +174,4 @@ $machinestates = [
         "transitions" => [],
     ],
 
-    ST_PLAYER_BUY_CARD => [
-        "name" => "buyCard",
-        "description" => clienttranslate('${actplayer} can buy a card'),
-        "descriptionmyturn" => clienttranslate('${you} can buy a card'),
-        "type" => "activeplayer",
-        "args" => "argBuyCard",
-        "action" => "stBuyCard",
-        "possibleactions" => [ "actBuyCard", "actGoToSellCard", "actEndTurn", "actRenewPowerCards", "actUseMiraculousCatch" ],
-        "transitions" => [
-            "buyCard" => ST_PLAYER_BUY_CARD,
-            "opportunist" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
-            "goToSellCard" => ST_PLAYER_SELL_CARD,
-            "renew" => ST_PLAYER_BUY_CARD,
-        ]
-    ],
-
 ];
