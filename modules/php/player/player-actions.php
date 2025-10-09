@@ -105,4 +105,39 @@ trait PlayerActionTrait {
         $this->rethrowDice($diceIds);
     }
 
+  	
+    public function actGazeOfTheSphinxDrawEvolution() {
+        $playerId = $this->getActivePlayerId();
+
+        $this->drawEvolution($playerId);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
+  	
+    public function actGazeOfTheSphinxGainEnergy() {
+        $playerId = $this->getActivePlayerId();
+
+        $this->applyGetEnergy($playerId, 3, 1000 + GAZE_OF_THE_SPHINX_CURSE_CARD);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
+  	
+    public function actGazeOfTheSphinxDiscardEvolution(int $id) {
+        $playerId = $this->getActivePlayerId(); 
+
+        $card = $this->getEvolutionCardById($id);
+
+        $this->removeEvolution($playerId, $card);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
+  	
+    public function actGazeOfTheSphinxLoseEnergy() {
+        $playerId = $this->getActivePlayerId(); 
+
+        $this->applyLoseEnergy($playerId, 3, 1000 + GAZE_OF_THE_SPHINX_CURSE_CARD);
+
+        $this->goToState(ST_RESOLVE_DICE);
+    }
+
 }

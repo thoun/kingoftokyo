@@ -1340,5 +1340,35 @@ trait UtilTrait {
         foreach($playerIds as $playerId) {
             $this->changeMaxHealth($playerId);
         }
+    }  
+  	
+    function applyGiveSymbols(array $symbols, int $from, int $to, int | EvolutionCard $logCardType) {
+        $symbolsCount = [];
+        foreach($symbols as $symbol) {
+            if (!array_key_exists($symbol, $symbolsCount)) {
+                $symbolsCount[$symbol] = 0;
+            }
+            $symbolsCount[$symbol]++;
+        }
+
+        foreach($symbolsCount as $symbol => $count) {
+            switch($symbol) {
+                case 4: 
+                    $damage = new Damage($from, $count, 0, $logCardType);
+                    $this->applyDamage($damage);
+                    $this->applyGetHealth($to, $count, $logCardType, $from);
+                    break;
+                case 5:
+                    $this->applyLoseEnergy($from, $count, $logCardType);
+                    $this->applyGetEnergy($to, $count, $logCardType);
+                    break;
+                case 0:
+                    $this->applyLosePoints($from, $count, $logCardType);
+                    $this->applyGetPoints($to, $count, $logCardType);
+                    break;
+                default:
+                    throw new \BgaUserException('Invalid symbol');
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ class PharaonicSkin extends CurseCard {
 
     public function applySnakeEffect(Context $context) {
         $playerIdWithGoldenScarab = $context->game->anubisExpansion->getPlayerIdWithGoldenScarab();
-        if ($playerIdWithGoldenScarab != null && $context->currentPlayerId != $playerIdWithGoldenScarab && count($context->game->argGiveSymbols()['combinations']) > 0) {
+        if ($playerIdWithGoldenScarab != null && $context->currentPlayerId != $playerIdWithGoldenScarab && count($context->game->anubisExpansion->argGiveSymbols((int)$context->game->getActivePlayerId())['combinations']) > 0) {
             return ST_PLAYER_GIVE_SYMBOLS;
         }
     }

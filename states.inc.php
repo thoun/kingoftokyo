@@ -52,20 +52,6 @@
 require_once("modules/php/constants.inc.php");
 
 $playerActionsGameStates = [
-
-    ST_MULTIPLAYER_GIVE_SYMBOL_TO_ACTIVE_PLAYER => [ // TODOPU move to answerQuestion ?
-        "name" => "giveSymbolToActivePlayer",
-        "description" => clienttranslate('Player with Golden Scarab must give 1[Heart]/[Energy]/[Star]'),
-        "descriptionmyturn" => clienttranslate('${you} must give 1[Heart]/[Energy]/[Star]'),
-        "type" => "multipleactiveplayer",
-        "args" => "argGiveSymbolToActivePlayer",
-        "action" => "stGiveSymbolToActivePlayer",
-        "possibleactions" => [ "actGiveSymbolToActivePlayer" ],
-        "transitions" => [
-            "stay" => ST_INITIAL_DICE_ROLL, // needed for elimination
-            "end" => ST_INITIAL_DICE_ROLL, // for zombie
-        ],
-    ],
     ST_PLAYER_THROW_DICE => [
         "name" => "throwDice",
         "description" => clienttranslate('${actplayer} can reroll dice or resolve dice'),
@@ -139,92 +125,6 @@ $playerActionsGameStates = [
             "end" => ST_MULTIPLAYER_ASK_MINDBUG,
         ],
     ],
-    ST_PLAYER_DISCARD_DIE => [
-        "name" => "discardDie",
-        "description" => clienttranslate('${actplayer} must discard a die'),
-        "descriptionmyturn" => clienttranslate('${you} must discard a die (click on a die to discard it)'),
-        "type" => "activeplayer",
-        "action" => "stDiscardDie",
-        "args" => "argDiscardDie",
-        "possibleactions" => [ "actDiscardDie" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_DICE,
-        ],
-    ],
-
-    ST_PLAYER_DISCARD_KEEP_CARD => [
-        "name" => "discardKeepCard",
-        "description" => clienttranslate('${actplayer} must discard a [keep] card'),
-        "descriptionmyturn" => clienttranslate('${you} must discard a [keep] card'),
-        "type" => "activeplayer",
-        "args" => "argDiscardKeepCard",
-        "possibleactions" => [ "actDiscardKeepCard" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_DICE,
-        ],
-    ],
-
-    ST_PLAYER_GIVE_GOLDEN_SCARAB => [ // TODOPU move to answerQuestion ?
-        "name" => "giveGoldenScarab",
-        "description" => clienttranslate('${actplayer} must give Golden Scarab'),
-        "descriptionmyturn" => clienttranslate('${you} must give Golden Scarab'),
-        "type" => "activeplayer",
-        "args" => "argGiveGoldenScarab",
-        "possibleactions" => [ "actGiveGoldenScarab" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_DICE,
-        ],
-    ],
-
-    ST_PLAYER_GIVE_SYMBOLS => [ // TODOPU move to answerQuestion ?
-        "name" => "giveSymbols",
-        "description" => clienttranslate('${actplayer} must give 2[Heart]/[Energy]/[Star]'),
-        "descriptionmyturn" => clienttranslate('${you} must give 2[Heart]/[Energy]/[Star]'),
-        "type" => "activeplayer",
-        "args" => "argGiveSymbols",
-        "possibleactions" => [ "actGiveSymbols" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_DICE,
-        ],
-    ],
-
-    ST_PLAYER_SELECT_EXTRA_DIE => [ // TODOPU move to answerQuestion ?
-        "name" => "selectExtraDie",
-        "description" => clienttranslate('${actplayer} must select the face of the extra die'),
-        "descriptionmyturn" => clienttranslate('${you} must select the face of the extra die'),
-        "type" => "activeplayer",
-        "args" => "argSelectExtraDie",
-        "possibleactions" => [ "actSelectExtraDie" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_DICE,
-        ],
-    ],
-
-    ST_PLAYER_REROLL_OR_DISCARD_DICE => [
-        "name" => "rerollOrDiscardDie",
-        "description" => clienttranslate('${actplayer} can reroll or discard a die'),
-        "descriptionmyturn" => clienttranslate('${you} can reroll or discard a die (select action then die)'),
-        "type" => "activeplayer",
-        "args" => "argRerollOrDiscardDie",
-        "possibleactions" => [ "actFalseBlessingReroll", "actFalseBlessingDiscard", "actFalseBlessingSkip" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_DICE,
-        ],
-    ],
-
-    ST_MULTIPLAYER_REROLL_DICE => [
-        "name" => "rerollDice",
-        "description" => clienttranslate('${player_name} can reroll two dice'),
-        "descriptionmyturn" => clienttranslate('${you} can reroll two dice'),
-        "type" => "multipleactiveplayer",
-        "args" => "argRerollDice",
-        "action" => "stRerollDice",
-        "possibleactions" => [ "actRerollDice" ],
-        "transitions" => [
-            "end" => ST_RESOLVE_DICE,
-        ],
-    ],
-
     ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => '',
