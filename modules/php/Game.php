@@ -588,9 +588,6 @@ class Game extends \Bga\GameFramework\Table {
                 case 'leaveTokyoExchangeCard':
                     $this->applySkipExchangeCard($active_player);
                     return;
-                case 'opportunistBuyCard':
-                    $this->applyOpportunistSkip($active_player);
-                    return;
                 default:
                     // Make sure player is in a non blocking status for role turn
                     $sql = "

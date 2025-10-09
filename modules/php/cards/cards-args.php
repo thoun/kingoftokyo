@@ -202,57 +202,6 @@ trait CardsArgTrait {
         return $this->getArgBuyCard($playerId, true);
     }
 
-    function argOpportunistBuyCardWithPlayerId(int $playerId) {        
-        $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
-        $revealedCardsIds = $opportunistIntervention ? $opportunistIntervention->revealedCardsIds : [];
-        $canBuy = false;
-        $canBuyPowerCards = $this->canBuyPowerCard($playerId);
-
-        $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
-
-        $cards = $this->powerCards->getTable();
-        $cardsCosts = [];
-        
-        $disabledIds = [];
-        $warningIds = [];
-        foreach ($cards as $card) {
-            if (in_array($card->id, $revealedCardsIds)) {
-                $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
-                if ($canBuyPowerCards && $cardsCosts[$card->id] <= $potentialEnergy) {
-                    $canBuy = true;
-                }
-                if (!$canBuyPowerCards) {
-                    $disabledIds[] = $card->id;
-                }
-
-                $this->setWarningIcon($playerId, $warningIds, $card);
-            } else {
-                $disabledIds[] = $card->id;
-            }
-        }
-
-        return [
-            'disabledIds' => $disabledIds,
-            'canBuy' => $canBuy,
-            'cardsCosts' => $cardsCosts,
-            'warningIds' => $warningIds,
-            'noExtraTurnWarning' => $this->mindbugExpansion->canGetExtraTurn() ? [] : [FRENZY_CARD],
-        ];
-    }
-
-    function argOpportunistBuyCard() {
-        $opportunistIntervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
-
-        $playerId = $opportunistIntervention && count($opportunistIntervention->remainingPlayersId) > 0 ? $opportunistIntervention->remainingPlayersId[0] : null;
-        if ($playerId != null) {
-            return $this->argOpportunistBuyCardWithPlayerId($playerId);
-        } else {
-            return [
-                'canBuy' => false,
-            ];
-        }
-    }
-
     function getArgChooseMimickedCard(int $playerId, int $mimicCardType, int $selectionCost = 0) {
         $potentialEnergy = 0;
         if ($selectionCost > 0) {

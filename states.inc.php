@@ -213,18 +213,4 @@ $machinestates = [
         ]
     ],
 
-    ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD => [
-        "name" => "opportunistBuyCard",
-        "description" => clienttranslate('Player with Opportunist can buy revealed card'),
-        "descriptionmyturn" => clienttranslate('${you} can buy revealed card'),
-        "type" => "multipleactiveplayer",
-        "action" => "stOpportunistBuyCard",
-        "args" => "argOpportunistBuyCard",
-        "possibleactions" => [ "actBuyCard", "actOpportunistSkip" ],
-        "transitions" => [
-            "stay" => ST_MULTIPLAYER_OPPORTUNIST_BUY_CARD,
-            "end" => ST_PLAYER_BUY_CARD,
-        ],
-    ],
-
 ];

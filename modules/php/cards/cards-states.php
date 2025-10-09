@@ -32,25 +32,6 @@ trait CardsStateTrait {
             }
         }
     }
-
-    function stOpportunistBuyCard() {
-        if ($this->autoSkipImpossibleActions()) { // in turn based, we remove players when they can't buy anything
-            $intervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
-            $remainingPlayersId = [];
-            foreach($intervention->remainingPlayersId as $playerId) {
-                if ($this->argOpportunistBuyCardWithPlayerId($playerId)['canBuy']) {
-                    $remainingPlayersId[] = $playerId;
-                } else {
-                    $this->removeDiscardCards($playerId);
-                }
-            }
-            $intervention->remainingPlayersId = $remainingPlayersId;
-            $this->setGlobalVariable(OPPORTUNIST_INTERVENTION, $intervention);
-        }
-
-        $this->stIntervention(OPPORTUNIST_INTERVENTION);
-    }
-
     function stOpportunistChooseMimicCard() {
         $intervention = $this->getGlobalVariable(OPPORTUNIST_INTERVENTION);
 
