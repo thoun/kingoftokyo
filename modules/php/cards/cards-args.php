@@ -16,16 +16,6 @@ trait CardsArgTrait {
         game state.
     */
 
-    function argCheerleaderSupport() {
-        $activePlayerId = $this->getActivePlayerId();
-
-        return [
-            'dice' => $this->getPlayerRolledDice($activePlayerId, true, true, true),
-            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
-            'frozenFaces' => $this->frozenFaces($activePlayerId),
-        ];
-    }
-
     function getArgBuyCard(int $playerId, bool $includeCultistsEnergy) {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
 

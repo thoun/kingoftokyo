@@ -98,29 +98,6 @@ trait CardsStateTrait {
         }
     }
 
-    function stCheerleaderSupport() {
-        $cheerleaderSupportPlayerIds = [];
-        $cheerleaderCards = $this->powerCards->getCardsOfType(CHEERLEADER_CARD);
-        if (count($cheerleaderCards) > 0) {
-            $cheerleaderCard = $cheerleaderCards[0];
-        
-            if ( $cheerleaderCard->location == 'hand') {
-                $playerId = intval($cheerleaderCard->location_arg);
-
-                $activePlayerId = intval($this->getActivePlayerId());
-                if ($playerId != $activePlayerId && $this->canUseSymbol($activePlayerId, 6) && $this->canUseFace($activePlayerId, 6)) {
-                    $cheerleaderSupportPlayerIds[] = $playerId;
-                }
-            }
-        }
-
-        if (count($cheerleaderSupportPlayerIds) > 0) {
-            $this->gamestate->setPlayersMultiactive($cheerleaderSupportPlayerIds, 'end', true);
-        } else {
-            $this->gamestate->nextState('end');
-        }
-    }
-
     function stLeaveTokyoExchangeCard() {
         $args = $this->argLeaveTokyoExchangeCard();
         if ($this->autoSkipImpossibleActions() && !$args['canExchange']) {

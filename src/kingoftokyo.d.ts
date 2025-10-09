@@ -346,6 +346,8 @@ interface EnteringDiscardKeepCardArgs {
     disabledIds: number[];
 }
 
+interface EnteringCheerleaderSupportArgs extends EnteringDiceArgs {}
+
 interface EnteringGiveGoldenScarabArgs {
     playersIds: number[];
 }

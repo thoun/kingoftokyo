@@ -53,18 +53,6 @@ require_once("modules/php/constants.inc.php");
 
 $playerActionsGameStates = [
 
-    ST_MULTIPLAYER_CHEERLEADER_SUPPORT => [
-        "name" => "cheerleaderSupport",
-        "description" => clienttranslate('Player with Cheerleader can support monster'),
-        "descriptionmyturn" => clienttranslate('${you} can support monster'),
-        "type" => "multipleactiveplayer",
-        "args" => "argCheerleaderSupport",
-        "action" => "stCheerleaderSupport",
-        "possibleactions" => [ "actSupport", "actDontSupport" ],
-        "transitions" => [
-            "end" => ST_MULTIPLAYER_ASK_MINDBUG,
-        ],
-    ],
     ST_RESOLVE_DICE => [
         "name" => "resolveDice",
         "description" => '',

@@ -1130,6 +1130,8 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'cheerleaderSupport':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
+                this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), () => this.support());
+                this.addActionButton('dontSupport_button', _("Don't support"), () => this.dontSupport());
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);

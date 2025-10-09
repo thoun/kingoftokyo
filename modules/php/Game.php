@@ -582,9 +582,6 @@ class Game extends \Bga\GameFramework\Table {
             return;
         } else if ($state['type'] == "multipleactiveplayer") {
             switch ($statename) {
-                case 'cheerleaderSupport':
-                    $this->applyDontSupport($active_player);
-                    return;
                 case 'cancelDamage':
                     $this->applySkipCancelDamage($active_player);
                     return;
