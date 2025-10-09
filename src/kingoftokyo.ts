@@ -1430,11 +1430,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     this.addActionButton('skipCardIsBought_button', _("Skip"), () => this.skipCardIsBought());
                     break;
                 case 'sellCard':
-                    this.addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
+                    this.statusBar.addActionButton(_("End turn"), () => this.bgaPerformAction('actEndSell'), { color: 'alert' });
                     break;
 
                 case 'answerQuestion':
                     this.onUpdateActionButtonsAnswerQuestion(args);
+                    break;
             }
 
         }

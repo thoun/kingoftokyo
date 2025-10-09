@@ -57,17 +57,6 @@ trait CardsStateTrait {
         $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'stay', true);
     }
 
-    function stSellCard() {
-        $playerId = $this->getActivePlayerId();
-
-        // metamorph
-        $countMetamorph = $this->countCardOfType($playerId, METAMORPH_CARD);
-
-        if ($countMetamorph < 1) { // no need to check remaining cards, if player got metamoph he got cards to sell
-            $this->goToState($this->redirectAfterSellCard());
-        }
-    }
-
     function stCancelDamage() {            
         $intervention = $this->getDamageIntervention();
 

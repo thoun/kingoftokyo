@@ -253,23 +253,6 @@ trait CardsArgTrait {
         }
     }
 
-    function argSellCard() {
-        $playerId = $this->getActivePlayerId();
-
-        $cards = $this->powerCards->getPlayer($playerId);
-        
-        $disabledIds = [];
-        foreach ($cards as $card) {
-            if ($card->type > 100) {
-                $disabledIds[] = $card->id;
-            }
-        }
-    
-        return [
-            'disabledIds' => $disabledIds,
-        ];
-    }
-
     function getArgChooseMimickedCard(int $playerId, int $mimicCardType, int $selectionCost = 0) {
         $potentialEnergy = 0;
         if ($selectionCost > 0) {

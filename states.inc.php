@@ -240,16 +240,4 @@ $machinestates = [
             "end" => ST_AFTER_WHEN_CARD_IS_BOUGHT, // for zombie
         ],
     ],
-    ST_PLAYER_SELL_CARD => [
-        "name" => "sellCard",
-        "description" => clienttranslate('${actplayer} can sell a card'),
-        "descriptionmyturn" => clienttranslate('${you} can sell a card'),
-        "type" => "activeplayer",
-        "args" => "argSellCard",
-        "action" => "stSellCard",
-        "possibleactions" => [ "actSellCard", "actEndTurn" ],
-        "transitions" => [
-            "sellCard" => ST_PLAYER_SELL_CARD,
-        ]
-    ],
 ];

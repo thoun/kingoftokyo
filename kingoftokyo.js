@@ -7739,10 +7739,11 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     this.addActionButton('skipCardIsBought_button', _("Skip"), function () { return _this.skipCardIsBought(); });
                     break;
                 case 'sellCard':
-                    this.addActionButton('endTurnSellCard_button', _("End turn"), 'onEndTurn', null, null, 'red');
+                    this.statusBar.addActionButton(_("End turn"), function () { return _this.bgaPerformAction('actEndSell'); }, { color: 'alert' });
                     break;
                 case 'answerQuestion':
                     this.onUpdateActionButtonsAnswerQuestion(args);
+                    break;
             }
         }
     };

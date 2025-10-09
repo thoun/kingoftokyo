@@ -575,41 +575,6 @@ trait CardsActionTrait {
 
         $this->gamestate->nextState('goToSellCard');
     }
-
-    
-    function actSellCard(int $id) {
-        $playerId = $this->getActivePlayerId();
-        
-        if ($this->countCardOfType($playerId, METAMORPH_CARD) == 0) {
-            throw new \BgaUserException("You can't sell cards without Metamorph");
-        }
-
-        $card = $this->powerCards->getItemById($id);
-        
-        if ($card->location != 'hand' || $card->location_arg != $playerId) {
-            throw new \BgaUserException("You can't sell cards that you don't own");
-        }
-        
-        if ($card->type > 100) {
-            throw new \BgaUserException("You can only sell Keep cards");
-        }
-
-        $fullCost = $this->powerCards->getCardBaseCost($card->type);
-
-        $this->removeCard($playerId, $card, true);
-
-        $this->notifyAllPlayers("removeCards", clienttranslate('${player_name} sells ${card_name}'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerNameById($playerId),
-            'cards' => [$card],
-            'card_name' =>$card->type,
-            'energy' => $this->getPlayerEnergy($playerId),
-        ]);
-
-        $this->applyGetEnergy($playerId, $fullCost, 0);
-
-        $this->gamestate->nextState('sellCard');
-    }
     
     function actThrowCamouflageDice() {
         $playerId = $this->getCurrentPlayerId();
