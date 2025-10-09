@@ -148,15 +148,4 @@ $machinestates = [
             "end" => ST_ENTER_TOKYO, // for zombie
         ],        
     ],
-    ST_PLAYER_AFTER_ENTERING_TOKYO => [
-        "name" => "afterEnteringTokyo",
-        "description" => clienttranslate('Some players may activate an Evolution card'),
-        "descriptionmyturn" => clienttranslate('${you} may activate an Evolution card'),
-        "type" => "activeplayer",
-        "action" => "stAfterEnteringTokyo",
-        "args" => "argAfterEnteringTokyo",
-        "possibleactions" => [ "actSkipAfterEnteringTokyo" ],
-        "transitions" => [],        
-    ],
-
 ];

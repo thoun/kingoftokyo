@@ -84,20 +84,6 @@ trait PlayerStateTrait {
         }
     }
     
-    function stAfterEnteringTokyo() {
-        $playerId = $this->getActivePlayerId();
-        $player = $this->getPlayer($playerId); 
-
-        $couldPlay = $this->getPlayersIdsWhoCouldPlayEvolutions(
-            [$playerId], 
-            $player->location == 0 || !$player->turnEnteredTokyo ? $this->EVOLUTION_TO_PLAY_AFTER_NOT_ENTERING_TOKYO : $this->EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO
-        );
-        $couldPlay = [$playerId];
-
-        if (count($couldPlay) == 0) {
-            $this->goToState($this->redirectAfterEnterTokyo($playerId));
-        }
-    }
 
     private function activeNextAlivePlayer() {
         if ($this->getRemainingPlayers() < 1) { // to avoid infinite loop
