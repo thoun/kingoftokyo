@@ -291,20 +291,6 @@ $playerActionsGameStates = [
             "sellCard" => ST_PLAYER_SELL_CARD,
         ]
     ],
-
-    ST_MULTIPLAYER_BEFORE_END_TURN => [
-        "name" => "beforeEndTurn",
-        "description" => clienttranslate('${actplayer} may activate an Evolution card'),
-        "descriptionmyturn" => clienttranslate('${you} may activate an Evolution card'),
-        "type" => "multipleactiveplayer",
-        "action" => "stBeforeEndTurn",
-        "args" => "argBeforeEndTurn",
-        "possibleactions" => [ "actSkipBeforeEndTurn" ],
-        "transitions" => [
-            "next" => ST_AFTER_BEFORE_END_TURN,
-            "end" => ST_AFTER_BEFORE_END_TURN, // for zombie
-        ],
-    ],
 ];
  
 $machinestates = $playerActionsGameStates;

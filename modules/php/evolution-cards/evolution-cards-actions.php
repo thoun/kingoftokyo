@@ -25,7 +25,13 @@ trait EvolutionCardsActionTrait {
     */  
 
     function actSkipBeforeEndTurn() {
-        $this->goToState($this->redirectAfterBeforeEndTurn());
+        $playerId = $this->getCurrentPlayerId();
+
+        if (intval($this->gamestate->state_id()) === ST_MULTIPLAYER_BEFORE_END_TURN) {
+            $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
+        } else {
+            $this->goToState($this->redirectAfterBeforeEndTurn());
+        }
     }
 
     function actSkipBeforeEnteringTokyo() {
