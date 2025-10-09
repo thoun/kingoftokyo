@@ -19,14 +19,6 @@ trait EvolutionCardsStateTrait {
         $this->gamestate->setPlayersMultiactive($playersWithPotentialEvolution, 'next', true);
     }
 
-    function stAnswerQuestion() {
-        $activePlayers = $this->gamestate->getActivePlayerList();
-        if (count($activePlayers) == 0) {
-            $question = $this->getQuestion();
-            $this->gamestate->setPlayersMultiactive($question->playersIds, 'next', true);
-        }
-    }
-
     function stBeforeResolveDice() {
         if (!$this->powerUpExpansion->isActive()) {
             $this->goToState($this->redirectAfterBeforeResolveDice());

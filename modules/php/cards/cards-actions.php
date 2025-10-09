@@ -641,23 +641,7 @@ trait CardsActionTrait {
 
         $this->gamestate->nextState('sellCard');
     }
-
-    function actChooseMimickedCard(int $id) {
-        $playerId = $this->getCurrentPlayerId();
-
-        $card = $this->powerCards->getItemById($id);
-        if ($card->type > 100 || $card->type == MIMIC_CARD) {
-            throw new \BgaUserException("You can only mimic Keep cards");
-        }
-        if ($card->location != 'hand') {
-            throw new \BgaUserException("You must select a player card");
-        }
-
-        $question = $this->getQuestion();
-        $this->setMimickedCardId($question->args->mimicCardType, $playerId, $id);
-
-        $this->removeStackedStateAndRedirect();
-    }
+    
     function actThrowCamouflageDice() {
         $playerId = $this->getCurrentPlayerId();
 
@@ -1087,17 +1071,4 @@ trait CardsActionTrait {
 
         $this->applySkipExchangeCard($playerId);
     } 
-    
-    function actTreasure(int $id) {
-        $playerId = $this->getCurrentPlayerId();
-        $card = $this->powerCards->getItemById($id);
-
-        $this->applyBuyCard($playerId, $card->id, null, $this->getCardCost($playerId, $card->type) - 3);
-
-        $this->goToState(-1);      
-    }
-    
-    function actPassTreasure() {
-        $this->goToState(-1);    
-    }
 }
