@@ -73,16 +73,6 @@ $machinestates = [
         "possibleactions" => [ "actApplySmashDieChoices" ],
         "transitions" => [],
     ],
-    ST_CHOOSE_EVOLUTION_CARD => [
-        "name" => "chooseEvolutionCard",
-        "description" => clienttranslate('${actplayer} must choose an Evolution card'),
-        "descriptionmyturn" => clienttranslate('${you} must choose an Evolution card'),
-        "type" => "activeplayer",
-        "args" => "argChooseEvolutionCard",
-        "possibleactions" => [ "actChooseEvolutionCard" ],
-        "transitions" => [],
-    ],
-
     ST_MULTIPLAYER_CANCEL_DAMAGE => [
         "name" => "cancelDamage",
         "description" => '',

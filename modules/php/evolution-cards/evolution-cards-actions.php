@@ -62,15 +62,6 @@ trait EvolutionCardsActionTrait {
         $message = $init ? '' : clienttranslate('${player_name} ends his rolls with at least 3 [diceHeart] and takes a new Evolution card');
         $this->notifNewEvolutionCard($playerId, $card, $message);
         
-    } 
-
-    function actChooseEvolutionCard(int $id) {
-        $playerId = $this->getActivePlayerId();
-
-        $this->applyChooseEvolutionCard($playerId, $id, false);
-
-        $nextState = intval($this->getGameStateValue(STATE_AFTER_RESOLVE));
-        $this->gamestate->jumpToState($nextState);
     }
 
     function applyPlayEvolution(int $playerId, EvolutionCard $card) {
