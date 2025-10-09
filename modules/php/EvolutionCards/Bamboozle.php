@@ -64,8 +64,9 @@ class Bamboozle extends EvolutionCard {
                 'player_name2' => $context->game->getPlayerNameById($activePlayerId),
                 'card_name' => $forbiddenCard->type,
             ]);
-    
-            $context->game->actSkipCardIsBought();
+
+            $playerId = (int)$context->game->getCurrentPlayerId();
+            $context->game->gamestate->setPlayerNonMultiactive($playerId, 'next');
         }
     }
 }

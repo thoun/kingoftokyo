@@ -123,9 +123,6 @@ trait EvolutionCardsActionTrait {
                 case ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO:
                     $this->actSkipBeforeEnteringTokyo();
                     break;
-                case ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT:
-                    $this->actSkipCardIsBought();
-                    break;
                 case ST_MULTIPLAYER_BEFORE_END_TURN:
                     $this->actSkipBeforeEndTurn();
                     break;
@@ -251,13 +248,6 @@ trait EvolutionCardsActionTrait {
         $this->setUsedCard(3000 + $unusedBambooSupplyCard->id);
 
         $this->goToState(ST_QUESTIONS_BEFORE_START_TURN);
-    }
-
-    function actSkipCardIsBought() {
-        $playerId = $this->getCurrentPlayerId();
-
-        // Make this player unactive now (and tell the machine state to use transtion "resume" if all players are now unactive
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
     }
 
     function actBuyCardBamboozle(int $id, int $from) {

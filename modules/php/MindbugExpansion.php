@@ -19,7 +19,7 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return Game::getBgaEnvironment() === 'studio'; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+        return false;//Game::getBgaEnvironment() === 'studio'; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
     }
 
     public function getMindbugCardsSetting() {

@@ -227,17 +227,4 @@ $machinestates = [
         ],
     ],
 
-    ST_MULTIPLAYER_WHEN_CARD_IS_BOUGHT => [ 
-        "name" => "cardIsBought",
-        "description" => clienttranslate('Some players may activate an Evolution card'),
-        "descriptionmyturn" => clienttranslate('${you} may activate an Evolution card'),
-        "type" => "multipleactiveplayer",
-        "action" => "stCardIsBought",
-        "args" => "argCardIsBought",
-        "possibleactions" => [ "actSkipCardIsBought" ],
-        "transitions" => [
-            "next" => ST_AFTER_WHEN_CARD_IS_BOUGHT,
-            "end" => ST_AFTER_WHEN_CARD_IS_BOUGHT, // for zombie
-        ],
-    ],
 ];

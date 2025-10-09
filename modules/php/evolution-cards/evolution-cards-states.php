@@ -12,13 +12,6 @@ trait EvolutionCardsStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stCardIsBought() {
-        $otherPlayersIds = $this->getOtherPlayersIds($this->getActivePlayerId());
-        $playersWithPotentialEvolution = $this->getPlayersIdsWhoCouldPlayEvolutions($otherPlayersIds, $this->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT);
-
-        $this->gamestate->setPlayersMultiactive($playersWithPotentialEvolution, 'next', true);
-    }
-
     function stAfterResolveDamage() {
         $intervention = $this->getDamageIntervention();
 
