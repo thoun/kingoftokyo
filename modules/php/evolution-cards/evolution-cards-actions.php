@@ -121,15 +121,6 @@ trait EvolutionCardsActionTrait {
         }
     }
 
-    function actGiveGiftEvolution(int $id, int $toPlayerId) {
-        $fromPlayerId = $this->getCurrentPlayerId();
-        $evolution = $this->getEvolutionCardById($id);
-
-        $this->giveEvolution($fromPlayerId, $toPlayerId, $evolution);
-
-        $this->goToState(ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION);
-    }
-
 
     function actUseYinYang() {
         $playerId = $this->getActivePlayerId();

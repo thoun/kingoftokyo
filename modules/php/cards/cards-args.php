@@ -377,61 +377,6 @@ trait CardsArgTrait {
         }
     }
 
-    function argStealCostumeCard() {
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-        $playerId = $this->getActivePlayerId();
-
-        $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
-
-        $tableCards = $this->powerCards->getTable();
-        $disabledIds = array_map(fn($card) => $card->id, $tableCards); // can only take from other players, not table
-        $cardsCosts = [];
-
-        $woundedPlayersIds = array_values(array_filter($this->playersWoundedByActivePlayerThisTurn($playerId), fn($pId) => $pId != $playerId));
-        $canBuyFromPlayers = false;
-        $canStealCostumes = $diceCounts[6] >= 3 && $this->isHalloweenExpansion();
-        if ($canStealCostumes) {
-            
-            $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-            foreach($otherPlayersIds as $otherPlayerId) {
-                $cardsOfPlayer = $this->powerCards->getPlayer($otherPlayerId);
-                $isWoundedPlayer = in_array($otherPlayerId, $woundedPlayersIds);
-
-                foreach ($cardsOfPlayer as $card) {
-                    if ($isWoundedPlayer && $card->type > 200 && $card->type < 300) {
-                        $cardsCosts[$card->id] = $this->getCardCost($playerId, $card->type);
-
-                        if ($cardsCosts[$card->id] <= $potentialEnergy) {
-                            $canBuyFromPlayers = true;
-                        }
-                    } else {
-                        $disabledIds[] = $card->id;
-                    }
-                }
-            }
-        }
-
-        $tableGifts = [];
-        $canGiveGift = false;
-        $highlighted = [];
-        if ($diceCounts[6] >= 1 && $this->powerUpExpansion->isActive() && $this->isGiftCardsInPlay()) {
-            $tableGifts = array_values(array_filter($this->getEvolutionCardsByLocation('table', $playerId), fn($evolution) => $this->EVOLUTION_CARDS_TYPES[$evolution->type] == 3));
-            $canGiveGift = count($tableGifts) > 0 || count($this->getPlayersIdsWhoCouldPlayEvolutions([$playerId], $this->EVOLUTION_GIFTS)) > 0;
-            $highlighted = $this->getHighlightedEvolutions($this->EVOLUTION_GIFTS);
-        }
-
-        return [
-            'disabledIds' => $disabledIds,
-            'woundedPlayersIds' => $woundedPlayersIds,
-            'canStealCostumes' => $canStealCostumes,
-            'canBuyFromPlayers' => $canBuyFromPlayers,
-            'cardsCosts' => $cardsCosts,
-            'canGiveGift' => $canGiveGift,
-            'tableGifts' => $tableGifts,
-            'highlighted' => $highlighted,
-        ];
-    }
-
     function argLeaveTokyoExchangeCard() {
         $playerId = intval($this->getActivePlayerId());
 

@@ -159,19 +159,4 @@ $machinestates = [
         "transitions" => [],        
     ],
 
-    ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION => [
-        "name" => "stealCostumeCard",
-        "description" => clienttranslate('${actplayer} can steal a Costume card'),
-        "descriptionmyturn" => clienttranslate('${you} can steal a Costume card'),
-        "descriptionStealAndGive" => /*client TODOPUHA translate*/('${actplayer} can steal a Costume card and give a Gift Evolution'),
-        "descriptionmyturnStealAndGive" => /*client TODOPUHA translate*/('${you} can steal a Costume card and give a Gift Evolution'),
-        "descriptionGive" => /*client TODOPUHA translate*/('${actplayer} can give a Gift Evolution'),
-        "descriptionmyturnGive" => /*client TODOPUHA translate*/('${you} can give a Gift Evolution'),
-        "type" => "activeplayer",
-        "args" => "argStealCostumeCard",
-        "action" => "stStealCostumeCard",
-        "possibleactions" => [ "actStealCostumeCard", 'actGiveGiftEvolution', "actEndStealCostume" ],
-        "transitions" => [],
-    ],
-
 ];

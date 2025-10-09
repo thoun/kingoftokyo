@@ -339,10 +339,10 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 188: return "+2[Heart] +1[Energy].";
 
             // Gigasnail Hydra
-            case 611: return /*_TODOMB*/("If you reach [Skull], you are not eliminated. Gain 3[Heart], then play with 1 less die for the rest of the game."); // TODOMB
-            case 612: return /*_TODOMB*/("If you reach [Skull], you are not eliminated. Gain 3[Heart], then play with 1 less die for the rest of the game."); // TODOMB
+            case 611: case 612: return /*_TODOMB*/("If you reach [Skull], you are not eliminated. Gain 3[Heart], then play with 1 less die for the rest of the game."); // TODOMB
+            // 612 same as 611
             case 613: return /*_TODOMB*/("Once per turn, you may pay 1[Energy] to discard 2 dice from your result and add any 1 die symbol to your Roll."); // TODOMB
-            case 614: return /*TODOMB add TOUGHT*/ /*_TODOMB*/("If you must lose exactly 3[Heart], gain 3[Heart] instead."); // TODOMB
+            case 614: return '<TOUGHT><br>'+ /*_TODOMB*/("If you must lose exactly 3[Heart], gain 3[Heart] instead."); // TODOMB
             case 615: return /*_TODOMB*/("If you have exactly [die3][die3][die3] among the dice in your Roll, steal 1[Star] from the Monster with the most."); // TODOMB
             case 616: return /*_TODOMB*/("If you have exactly 3 identical dice among the dice in your Roll, all other Monsters lose 1[Heart] each."); // TODOMB
             case 617: return /*_TODOMB*/("If you have exactly [dieHeart][dieHeart][dieHeart] among the dice in your Roll, gain 3[Heart] and the Monster with the least [Heart] gains 1[Heart]."); // TODOMB
@@ -357,14 +357,14 @@ class EvolutionCardsManager extends CardManager<EvolutionCard> {
             case 627: return /*_TODOMB*/("When another Monster is about to resolve their dice, choose 3 dice that you reroll."); // TODOMB
             case 628: return /*_TODOMB*/("When another Monster is about to resolve their dice, they must discard all their [dieClaw]."); // TODOMB
             // Sharky Crab-dog Mummypus-Zilla
-            case 631: return /*TODOMB add SNEAKY*/ /*_TODOMB*/("Monsters in Tokyo lose 1 additional[Star]."); // TODOMB
+            case 631: return '<SNEAKY><br>'+ /*_TODOMB*/("Monsters in Tokyo lose 1 additional[Star]."); // TODOMB
             case 632: return /*_TODOMB*/("Once per turn, pay 1[Energy] to change one of your [dieHeart] to [dieSmash]."); // TODOMB
             case 633: return /*_TODOMB*/("Draw the top card of another Monster’s Evolution deck."); // TODOMB
             case 634: return /*_TODOMB*/("When you wound a Monster, they must discard all their Power cards. They may pay 1[Energy] per card they want to keep."); // TODOMB
-            case 635: return /*TODOMB add TOUGH*/ /*_TODOMB*/("You may also activate this keyword when an effect makes you “lose [Heart]”."); // TODOMB
-            case 636: return /*TODOMB add HUNTER*/ /*_TODOMB*/("If you hunt the Monster with the most [Energy], add [dieClaw][dieClaw] to your Roll."); // TODOMB
-            case 637: return /*TODOMB add POISON*/ /*_TODOMB*/("If you lose 3[Heart] or more, all other Monsters lose 1[Heart] each."); // TODOMB
-            case 638: return /*TODOMB add FRENZY*/ /*_TODOMB*/("After your FRENZY turn, lose 2[Star], 2[Heart], and 2[Energy]."); // TODOMB
+            case 635: return '<TOUGHT><br>'+ /*_TODOMB*/("You may also activate this keyword when an effect makes you “lose [Heart]”."); // TODOMB
+            case 636: return '<HUNTER><br>'+ /*_TODOMB*/("If you hunt the Monster with the most [Energy], add [dieClaw][dieClaw] to your Roll."); // TODOMB
+            case 637: return '<POISON><br>'+ /*_TODOMB*/("If you lose 3[Heart] or more, all other Monsters lose 1[Heart] each."); // TODOMB
+            case 638: return '<FRENZY><br>'+ /*_TODOMB*/("After your FRENZY turn, lose 2[Star], 2[Heart], and 2[Energy]."); // TODOMB
         }
         return null;
     }

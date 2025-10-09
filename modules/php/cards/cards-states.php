@@ -31,23 +31,6 @@ trait CardsStateTrait {
         $this->gamestate->setPlayersMultiactive([$intervention->remainingPlayersId[0]], 'stay', true);
     }
 
-    function stStealCostumeCard() {
-        $playerId = $this->getActivePlayerId();
-
-        if ($this->getPlayer($playerId)->eliminated) {
-            // skip state, can't steal cards if dead
-            $this->goToState($this->redirectAfterStealCostume($playerId));
-            return;
-        }
-        
-        $args = $this->argStealCostumeCard();
-        if ($this->autoSkipImpossibleActions() && !$args['canBuyFromPlayers'] && !$args['canGiveGift']) {
-            // skip state, can't buy cards
-            $this->goToState($this->redirectAfterStealCostume($playerId));
-            return;
-        }
-    }
-
     function stLeaveTokyoExchangeCard() {
         $args = $this->argLeaveTokyoExchangeCard();
         if ($this->autoSkipImpossibleActions() && !$args['canExchange']) {
