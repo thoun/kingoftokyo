@@ -6798,7 +6798,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
     KingOfTokyo.prototype.onEnteringThrowDice = function (args) {
         var _this = this;
         var _a, _b;
-        this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? "last" : '');
+        if (args.throwNumber >= args.maxThrowNumber) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must resolve dice') : _('${actplayer} must resolve dice'), args);
+        }
         this.diceManager.showLock();
         var isCurrentPlayerActive = this.isCurrentPlayerActive();
         this.diceManager.setDiceForThrowDice(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);

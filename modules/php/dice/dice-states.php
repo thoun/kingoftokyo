@@ -28,14 +28,6 @@ trait DiceStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stThrowDice() {
-        // disabled so player can see last roll
-        /*if ($this->autoSkipImpossibleActions() && !$this->argThrowDice()['hasActions']) {
-            // skip state
-            $this->actGoToChangeDie();
-        }*/
-    }
-
     function stChangeDie() {
         $playerId = $this->getActivePlayerId();
 

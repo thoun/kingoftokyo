@@ -843,35 +843,6 @@ trait DiceUtilTrait {
             }
         }
     }
-  	
-    function rethrowDice(array $diceIds) {
-        $diceCount = count($diceIds);
-
-        $playerId = $this->getActivePlayerId();
-        $this->DbQuery("UPDATE dice SET `locked` = true, `rolled` = false");
-        $this->DbQuery("UPDATE dice SET `locked` = false, `rolled` = true where `dice_id` IN (".implode(',', $diceIds).")");
-
-        $this->incStat($diceCount, 'rethrownDice', $playerId);
-
-        $this->throwDice($playerId, false);
-
-        $throwNumber = intval($this->getGameStateValue('throwNumber')) + 1;
-        $this->setGameStateValue('throwNumber', $throwNumber);
-
-        $args = $this->argThrowDice();
-        $damages = [];
-        if ($args['opponentsOrbOfDooms'] > 0) {
-            $playersIds = $this->getOtherPlayersIds($playerId);
-            foreach($playersIds as $pId) {
-                $countOrbOfDoom = $this->countCardOfType($pId, ORB_OF_DOM_CARD);
-                if ($countOrbOfDoom > 0) {
-                    $damages[] = new Damage($playerId, $countOrbOfDoom, $pId, ORB_OF_DOM_CARD);
-                }
-            }
-        }
-
-        $this->goToState(ST_PLAYER_THROW_DICE, $damages);
-    }
 
     function getChangeActivePlayerDieIntervention(int $playerId) { // return null or ChangeActivePlayerDieIntervention
         $playersWithPsychicProbe = $this->getPlayersWithPsychicProbe($playerId);

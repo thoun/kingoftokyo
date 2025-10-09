@@ -443,8 +443,12 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onEnteringThrowDice(args: EnteringThrowDiceArgs) {
-        this.setGamestateDescription(args.throwNumber >= args.maxThrowNumber ? `last` : '');
-
+        if (args.throwNumber >= args.maxThrowNumber) {
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} must resolve dice') : _('${actplayer} must resolve dice'), 
+                args
+            );
+        }
         this.diceManager.showLock();
 
         const isCurrentPlayerActive = this.isCurrentPlayerActive();

@@ -5,7 +5,6 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/damage.php');
 
 use Bga\GameFramework\Actions\CheckAction;
-use Bga\GameFramework\Actions\Types\IntArrayParam;
 
 trait PlayerActionTrait {
 
@@ -86,20 +85,5 @@ trait PlayerActionTrait {
         $this->notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
     }
 
-    function actUseCultist(#[IntArrayParam(name: 'diceIds')] $diceIds) {
-        $playerId = $this->getActivePlayerId();
-
-        if ($this->cthulhuExpansion->getPlayerCultists($playerId) == 0) {
-            throw new \BgaUserException('No cultist');
-        }
-        
-        $this->cthulhuExpansion->applyLoseCultist($playerId, clienttranslate('${player_name} use a Cultist to gain 1 extra roll'));
-        $this->incStat(1, 'cultistReroll', $playerId);
-        
-        $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;
-        $this->setGameStateValue(EXTRA_ROLLS, $extraRolls);
-
-        $this->rethrowDice($diceIds);
-    }
   	
 }

@@ -8,7 +8,6 @@ require_once(__DIR__.'/../Objects/question.php');
 require_once(__DIR__.'/../Objects/log.php');
 
 use Bga\GameFramework\Actions\CheckAction;
-use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -327,69 +326,6 @@ trait CardsUtilTrait {
         if ($energyOnBatteryMonster <= 0 && ($card->type == BATTERY_MONSTER_CARD || $card->type == MIMIC_CARD)) {
             $this->removeCard($playerId, $card);
         }
-    }
-
-    function actBuyEnergyDrink(#[IntArrayParam(name: 'diceIds')] $diceIds) {
-        $playerId = $this->getActivePlayerId();
-
-        if ($this->getPlayerEnergy($playerId) < 1) {
-            throw new \BgaUserException('Not enough energy');
-        }
-
-        $cardCount = $this->countCardOfType($playerId, ENERGY_DRINK_CARD);
-
-        if ($cardCount == 0) {
-            throw new \BgaUserException('No Energy Drink card');
-        }
-
-        $this->applyLoseEnergyIgnoreCards($playerId, 1, 0);
-        
-        $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;
-        $this->setGameStateValue(EXTRA_ROLLS, $extraRolls);
-
-        $this->rethrowDice($diceIds);    
-    }
-
-    function actUseSmokeCloud(#[IntArrayParam(name: 'diceIds')] $diceIds) {
-        $playerId = $this->getActivePlayerId();
-
-        $cards = $this->getCardsOfType($playerId, SMOKE_CLOUD_CARD);
-
-        if (count($cards) == 0) {
-            throw new \BgaUserException('No Smoke Cloud card');
-        }
-
-        // we choose mimic card first, if available
-        $card = $this->array_find($cards, fn($icard) => $icard->type == FLUXLING_WICKEDNESS_TILE && $icard->tokens > 0) ??
-                $this->array_find($cards, fn($icard) => $icard->type == MIMIC_CARD && $icard->tokens > 0) ??
-                $cards[0];
-
-        if ($card->tokens < 1) {
-            throw new \BgaUserException('Not enough token');
-        }
-
-        $tokensOnCard = $card->tokens - 1;
-        if ($card->type == FLUXLING_WICKEDNESS_TILE) {
-            $card->id = $card->id - 2000;
-            $this->wickednessExpansion->setTileTokens($playerId, $card, $tokensOnCard);
-        } else {
-            $this->setCardTokens($playerId, $card, $tokensOnCard);
-        }
-
-        if ($tokensOnCard <= 0 && $card->type != MIMIC_CARD && $card->type != FLUXLING_WICKEDNESS_TILE) {
-            $this->removeCard($playerId, $card);
-        }
-        
-        $extraRolls = intval($this->getGameStateValue(EXTRA_ROLLS)) + 1;
-        $this->setGameStateValue(EXTRA_ROLLS, $extraRolls);
-
-        $this->notifyAllPlayers('log', clienttranslate('${player_name} uses ${card_name} to gain 1 extra roll'), [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerNameById($playerId),
-            'card_name' => SMOKE_CLOUD_CARD,
-        ]);
-
-        $this->rethrowDice($diceIds);
     }
 
     #[CheckAction(false)]

@@ -2,7 +2,6 @@
 
 namespace KOT\States;
 
-use Bga\GameFramework\Actions\Types\IntArrayParam;
 use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\Actions\Types\JsonParam;
 use Bga\GameFramework\Actions\Types\StringParam;
@@ -20,22 +19,6 @@ trait DiceActionTrait {
         (note: each method below must match an input method in kingoftokyo.action.php)
     */
   	
-    public function actRethrow(#[IntArrayParam] array $diceIds) {
-        $playerId = $this->getActivePlayerId();
-
-        $throwNumber = intval($this->getGameStateValue('throwNumber'));
-        $maxThrowNumber = $this->getRollNumber($playerId);
-
-        if ($throwNumber >= $maxThrowNumber) {
-            throw new \BgaUserException("You can't throw dices (max throw)");
-        }
-        if (!$diceIds || $diceIds == '') {
-            throw new \BgaUserException("No selected dice to throw");
-        }
-
-        $this->rethrowDice($diceIds);
-    }
-
     public function applyRerollDie(int $playerId, object $die, array $diceIds, int $cardName) {
         $this->DbQuery("UPDATE dice SET `locked` = false");
         if (count($diceIds) > 0) {
@@ -64,32 +47,6 @@ trait DiceActionTrait {
         ]);
 
         $this->goToState(ST_PLAYER_THROW_DICE);
-    }
-
-    public function actRerollDie(int $id, #[IntArrayParam] array $diceIds) {
-        $playerId = $this->getActivePlayerId();
-        $die = $this->getDieById($id);
-
-        if ($die == null) {
-            throw new \BgaUserException('No die');
-        }
-
-        $formCard = $this->getFormCard($playerId);
-        $this->setUsedCard($formCard->id);
-
-        $this->applyRerollDie($playerId, $die, $diceIds, FORM_CARD);
-
-    }
-
-    public function actRethrow3(#[IntArrayParam] array $diceIds) {
-        $playerId = $this->getActivePlayerId();
-        $die = $this->getFirst3Die($playerId);
-
-        if ($die == null) {
-            throw new \BgaUserException('No 3 die');
-        }
-
-        $this->applyRerollDie($playerId, $die, $diceIds, BACKGROUND_DWELLER_CARD);
     }
 
     public function actRethrow3Camouflage() {
@@ -395,20 +352,6 @@ trait DiceActionTrait {
         } else {
             $this->setInterventionNextState(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, 'next', $this->getPsychicProbeInterventionEndState($intervention), $intervention);
             $this->gamestate->setPlayerNonMultiactive($playerId, 'stay');
-        }
-    }
-
-    public function actGoToChangeDie() {
-        $playerId = $this->getActivePlayerId();
-
-        $this->fixDices();
-
-        $changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);
-        if ($changeActivePlayerDieIntervention != null) {
-            $this->setGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, $changeActivePlayerDieIntervention);
-            $this->gamestate->nextState('psychicProbe');
-        } else {
-            $this->gamestate->nextState('goToChangeDie');
         }
     }
 
