@@ -48,7 +48,6 @@ require_once('evolution-cards/evolution-cards-args.php');
 require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
 
-use Bga\GameFramework\Components\Deck;
 use Bga\Games\KingOfTokyo\States\Start;
 use \feException;
 
@@ -399,6 +398,11 @@ class Game extends \Bga\GameFramework\Table {
         $isPowerUpExpansion = $this->powerUpExpansion->isActive();
         $isDarkEdition = $this->isDarkEdition();
         $isOrigins = $this->isOrigins();
+
+        // TEMP FIX TODOMB
+        if ($this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_ASK_MINDBUG) {
+            $this->jumpToState(ST_RESOLVE_DIE_OF_FATE);
+        }
 
         $result = ['players' => []];
 

@@ -2949,6 +2949,7 @@ var CardsManager = /** @class */ (function (_super) {
     };
     CardsManager.prototype.getCardDescription = function (cardTypeId, side) {
         if (side === void 0) { side = null; }
+        var mindbugKeywords = this.getMindbugKeywords(cardTypeId).join(" ".concat(_('or'), " "));
         switch (cardTypeId) {
             // KEEP
             case 1: return _("<strong>Add</strong> [diceSmash] to your Roll");
@@ -3047,7 +3048,7 @@ var CardsManager = /** @class */ (function (_super) {
             case 122: return "<strong>+5[Star].</strong>";
             case 123: return /*TODOMB_*/ ("<strong>Gain 1 Mindbug token.</strong>");
             case 124: return /*TODOMB_*/ ("Each Monster with at least 1 Mindbug token loses 3[Heart].");
-            case 125: return /*TODOMB_*/ ("<strong>Buy a [Consumable] card from the discard pile.</strong> It costs 3[Energy] less.");
+            case 125: return /*TODOMB_*/ ("<strong>Buy a <CONSUMABLE> card from the discard pile.</strong> It costs 3[Energy] less.");
             case 126: return '<i>' + /*TODOMB_*/ ('You can only buy this card if you have 3[Heart] or fewer.') + '</i><br>' + /*TODOMB_*/ ("Lose all your [Star], <strong>return to 10[Heart]</strong>, and <strong>gain 1 Mindbug token</strong>");
             // COSTUME
             case 201: return _("<strong>If you reach 17[Star],</strong> you win the game");
@@ -3067,8 +3068,49 @@ var CardsManager = /** @class */ (function (_super) {
                 0: _("Before the Buy Power cards phase, you may spend 1[Energy] to flip this card."),
                 1: _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
             }[side];
+            // CONSUMABLE
+            case 401: return mindbugKeywords + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 5[Energy].");
+            case 402: return mindbugKeywords + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 4[Star].");
+            case 403: return mindbugKeywords + /*TODOMB_*/ ("If you do not eliminate the hunted Monster, give them this card.");
+            case 404: return mindbugKeywords + /*TODOMB_*/ ("This turn, you may use a single [die1] as any face.");
+            case 405: return mindbugKeywords + /*TODOMB_*/ ("For each [Star] lost by Monsters, they also lose 1[Heart].");
+            case 406: return mindbugKeywords + /*TODOMB_*/ ("Gain any <CONSUMABLE> card from the discard pile for free.");
+            case 407: return mindbugKeywords + /*TODOMB_*/ ("For each [Heart] you must lose, gain 1[Energy] instead.");
+            case 408: return mindbugKeywords + /*TODOMB_*/ ("Lose 2[Heart].");
+            case 409: return mindbugKeywords + /*TODOMB_*/ ("Spend 2[Energy] to gain 1[Heart], as many times as you like.");
+            case 410: return mindbugKeywords + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Star].");
+            case 411: return mindbugKeywords + /*TODOMB_*/ ("If you are eliminated, the attacking Monster loses twice as many [Heart] as you lost.");
+            case 412: return mindbugKeywords + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Energy].");
+            case 413: return mindbugKeywords + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Heart].");
+            case 414: return mindbugKeywords + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Star].");
+            case 415: return mindbugKeywords + /*TODOMB_*/ ("After your <strong>FRENZY</strong> turn, roll 1 less die for the remainder of the game.");
+            case 416: return mindbugKeywords;
+            case 417: return mindbugKeywords + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 1[Star] per [Heart] you made them lose.");
         }
         return null;
+    };
+    CardsManager.prototype.getMindbugKeywords = function (cardTypeId) {
+        switch (cardTypeId) {
+            // CONSUMABLE
+            case 401: return ['<HUNTER>'];
+            case 402: return ['<HUNTER>'];
+            case 403: return ['<HUNTER>'];
+            case 404: return ['<SNEAKY>'];
+            case 405: return ['<SNEAKY>'];
+            case 406: return ['<SNEAKY>'];
+            case 407: return ['<TOUGH>'];
+            case 408: return ['<TOUGH>'];
+            case 409: return ['<TOUGH>'];
+            case 410: return ['<POISON>'];
+            case 411: return ['<POISON>'];
+            case 412: return ['<POISON>'];
+            case 413: return ['<FRENZY>'];
+            case 414: return ['<FRENZY>'];
+            case 415: return ['<FRENZY>'];
+            case 416: return ['<POISON>', '<TOUGH>'];
+            case 417: return ['<SNEAKY>', '<HUNTER>'];
+        }
+        return [];
     };
     CardsManager.prototype.updateFlippableCardTooltip = function (cardDiv) {
         var type = Number(cardDiv.dataset.type);
@@ -7423,6 +7465,8 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'cheerleaderSupport':
                 this.setDiceSelectorVisibility(true);
                 this.onEnteringPsychicProbeRollDie(args); // because it's multiplayer, enter action must be set here
+                this.addActionButton('support_button', formatTextIcons(_("Support (add [diceSmash] )")), function () { return _this.support(); });
+                this.addActionButton('dontSupport_button', _("Don't support"), function () { return _this.dontSupport(); });
                 break;
             case 'leaveTokyo':
                 this.setDiceSelectorVisibility(false);
