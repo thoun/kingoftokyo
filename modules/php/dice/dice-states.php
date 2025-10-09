@@ -28,17 +28,6 @@ trait DiceStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stChangeDie() {
-        $playerId = $this->getActivePlayerId();
-
-        $canChangeWithCards = $this->canChangeDie($this->getChangeDieCards($playerId));
-        $canRetrow3 = intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0 && $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
-        
-        if (!$canChangeWithCards && !$canRetrow3) {
-            $this->gamestate->nextState('resolve');
-        }
-    }
-
     function stChangeActivePlayerDie() {
         $this->stIntervention(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
     }

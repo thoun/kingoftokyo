@@ -14,32 +14,6 @@ trait DiceArgTrait {
         game state.
     */
 
-    function argChangeDie() {
-        $playerId = intval($this->getActivePlayerId());
-
-        $cardsArg = $this->getChangeDieCards($playerId);
-
-        $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
-        $canRetrow3 = $hasBackgroundDweller && intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3)) > 0;
-
-        $dice = $this->getPlayerRolledDice($playerId, true, true, true);
-        $selectableDice = $this->getSelectableDice($dice, true, false);
-
-        $diceArg = [
-            'playerId' => $playerId,
-            'dice' => $dice,
-            'selectableDice' => $selectableDice,
-            'canHealWithDice' => $this->canHealWithDice($playerId),
-            'frozenFaces' => $this->frozenFaces($playerId),
-            'rethrow3' => [
-                'hasCard' => $hasBackgroundDweller,
-                'hasDice3' => $canRetrow3,
-            ],
-        ];
-
-        return $cardsArg + $diceArg;
-    }
-
     function argChangeActivePlayerDie($intervention = null) {
         if ($intervention == null) {
             $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);

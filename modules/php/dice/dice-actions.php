@@ -2,7 +2,6 @@
 
 namespace KOT\States;
 
-use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\Actions\Types\JsonParam;
 use Bga\GameFramework\Actions\Types\StringParam;
 
@@ -104,159 +103,6 @@ trait DiceActionTrait {
         ]);
 
         $this->endChangeActivePlayerDie($intervention, $playerId, $die, BACKGROUND_DWELLER_CARD, $newValue);
-    }
-
-    public function actRethrow3ChangeDie() {
-        $playerId = $this->getActivePlayerId();
-        $dieId = intval($this->getGameStateValue(PSYCHIC_PROBE_ROLLED_A_3));
-
-        if ($dieId == 0) {
-            throw new \BgaUserException('No 3 die');
-        }
-
-        $this->setGameStateValue(PSYCHIC_PROBE_ROLLED_A_3, 0);
-
-        $newValue = bga_rand(1, 6);
-        $this->DbQuery("UPDATE dice SET `rolled` = false where `dice_id` <> ".$dieId);
-        $this->DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$dieId);
-
-        $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        $this->notifyAllPlayers('rethrow3changeDie', $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerNameById($playerId),
-            'card_name' => BACKGROUND_DWELLER_CARD,
-            'dieId' => $dieId,
-            'die_face_before' => $this->getDieFaceLogName(3, 0),
-            'die_face_after' => $this->getDieFaceLogName($newValue, 0),
-        ]);
-
-        $changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);
-        if ($changeActivePlayerDieIntervention != null) {
-            $this->setGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, $changeActivePlayerDieIntervention);
-            $this->gamestate->nextState('changeDieWithPsychicProbe');
-        } else {
-            $this->gamestate->nextState('changeDie');
-        }
-    }
-
-    public function actChangeDie(int $id,int $value, #[IntParam(name: 'card')] int $cardType) {
-        $playerId = $this->getCurrentPlayerId();
-
-        $selectedDie = $this->getDieById($id);
-
-        if ($selectedDie == null) {
-            throw new \BgaUserException('No selected die');
-        }
-
-        if ($cardType == HERD_CULLER_CARD) {
-            $usedCards = $this->getUsedCard();
-            $herdCullerCards = $this->getCardsOfType($playerId, HERD_CULLER_CARD);
-            $usedCardOnThisTurn = null;
-            foreach($herdCullerCards as $herdCullerCard) {
-                if (!in_array($herdCullerCard->id, $usedCards)) {
-                    $usedCardOnThisTurn = $herdCullerCard->id;
-                }
-            }
-            if ($usedCardOnThisTurn == null) {
-                throw new \BgaUserException('No unused Herd Culler for this player');
-            } else {
-                $this->setUsedCard($usedCardOnThisTurn);
-            }
-        } else if ($cardType == PLOT_TWIST_CARD) {
-            $cards = $this->getCardsOfType($playerId, PLOT_TWIST_CARD);
-            // we remove Plot Twist and Mimic if user mimicked it
-            $this->removeCards($playerId, $cards);
-        } else if ($cardType == STRETCHY_CARD) {
-            $this->applyLoseEnergyIgnoreCards($playerId, 2, 0);
-        } else if ($cardType == BIOFUEL_CARD) {
-            if ($selectedDie->value != 4) {
-                throw new \BgaUserException('You can only change a Heart die');
-            }
-        } else if ($cardType == SHRINKY_CARD) {
-            if ($selectedDie->value != 2) {
-                throw new \BgaUserException('You can only change a 2 die');
-            }
-        } else if ($cardType == 3000 + SAURIAN_ADAPTABILITY_EVOLUTION) {
-            $saurianAdaptabilityCard = $this->getEvolutionsOfType($playerId, SAURIAN_ADAPTABILITY_EVOLUTION, false, true)[0];
-            $this->playEvolutionToTable($playerId, $saurianAdaptabilityCard, '');
-            $this->removeEvolution($playerId, $saurianAdaptabilityCard, false, 5000);
-        } else if ($cardType == 3000 + GAMMA_BREATH_EVOLUTION) {
-            $gammaBreathCards = $this->getEvolutionsOfType($playerId, GAMMA_BREATH_EVOLUTION, true, true);
-
-            // we use in priority Icy Reflection
-            $gammaBreathCard = $this->array_find($gammaBreathCards, fn($card) => $card->type == ICY_REFLECTION_EVOLUTION);
-            if ($gammaBreathCard === null) {
-                $gammaBreathCard = $gammaBreathCards[0];
-            }
-
-            if ($gammaBreathCard->location === 'hand') {
-                $this->playEvolutionToTable($playerId, $gammaBreathCard);
-            }
-            $this->setUsedCard(3000 + $gammaBreathCard->id);
-        } else if ($cardType == 3000 + TAIL_SWEEP_EVOLUTION) {
-            $tailSweepCards = $this->getEvolutionsOfType($playerId, TAIL_SWEEP_EVOLUTION, true, true);
-
-            // we use in priority Icy Reflection
-            $tailSweepCard = $this->array_find($tailSweepCards, fn($card) => $card->type == ICY_REFLECTION_EVOLUTION);
-            if ($tailSweepCard === null) {
-                $tailSweepCard = $tailSweepCards[0];
-            }
-
-            if ($tailSweepCard->location === 'hand') {
-                $this->playEvolutionToTable($playerId, $tailSweepCard);
-            }
-            $this->setUsedCard(3000 + $tailSweepCard->id);
-        } else if ($cardType == 3000 + TINY_TAIL_EVOLUTION) {
-            $tinyTailCards = $this->getEvolutionsOfType($playerId, TINY_TAIL_EVOLUTION, true, true);
-
-            // we use in priority Icy Reflection
-            $tinyTailCard = $this->array_find($tinyTailCards, fn($card) => $card->type == ICY_REFLECTION_EVOLUTION);
-            if ($tinyTailCard === null) {
-                $tinyTailCard = $tinyTailCards[0];
-            }
-
-            if ($tinyTailCard->location === 'hand') {
-                $this->playEvolutionToTable($playerId, $tinyTailCard);
-            }
-            $this->setUsedCard(3000 + $tinyTailCard->id);
-        } else if ($cardType != CLOWN_CARD) {
-            throw new \BgaUserException('Invalid card to change die');
-        }
-
-        $activePlayerId = $this->getActivePlayerId();
-
-        $dice = [$selectedDie];
-        if ($cardType == 3000 + SAURIAN_ADAPTABILITY_EVOLUTION) {
-            $allDice = $this->getPlayerRolledDice($playerId, false, false, false);
-            $dice = array_values(array_filter($allDice, fn($d) => $d->value == $selectedDie->value));
-        }
-
-        foreach($dice as $die) {
-            $this->DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$value." where `dice_id` = ".$die->id);
-
-            $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-            $this->notifyAllPlayers("changeDie", $message, [
-                'playerId' => $playerId,
-                'player_name' => $this->getPlayerNameById($playerId),
-                'card_name' => $cardType,
-                'dieId' => $die->id,
-                'canHealWithDice' => $this->canHealWithDice($activePlayerId),
-                'frozenFaces' => $this->frozenFaces($activePlayerId),
-                'toValue' => $value,
-                'die_face_before' => $this->getDieFaceLogName($die->value, $die->type),
-                'die_face_after' => $this->getDieFaceLogName($value, $die->type),
-            ]);
-        }
-
-        // psychic probe should not be called after change die (or only after a Background Dweller roll ?)
-        /*$changeActivePlayerDieIntervention = $this->getChangeActivePlayerDieIntervention($playerId);
-        if ($changeActivePlayerDieIntervention != null) {
-            $this->setGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION, $changeActivePlayerDieIntervention);
-            $this->gamestate->nextState('changeDieWithPsychicProbe');
-        } else {
-            $this->gamestate->nextState('changeDie');
-        }*/
-        $this->gamestate->nextState('changeDie');
     }
 
     public function actChangeActivePlayerDie(int $id) {
@@ -455,9 +301,6 @@ trait DiceActionTrait {
         $this->resolveSmashDiceState($playersSmashesWithReducedDamage);
     }
 
-    public function actResolve() {
-        $this->gamestate->nextState('resolve');
-    }
   	
     public function actStayInHibernation() {
         $playerId = $this->getActivePlayerId();

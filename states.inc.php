@@ -52,21 +52,6 @@
 require_once("modules/php/constants.inc.php");
 
 $playerActionsGameStates = [
-    ST_PLAYER_CHANGE_DIE => [
-        "name" => "changeDie",
-        "description" => clienttranslate('${actplayer} can change die result'),
-        "descriptionmyturn" => clienttranslate('${you} can change die result (click on a die to change it)'),
-        "type" => "activeplayer",
-        "action" => "stChangeDie",
-        "args" => "argChangeDie",
-        "possibleactions" => [ "actChangeDie", "actResolve", "actRethrow3ChangeDie", "actUseYinYang" ],
-        "transitions" => [
-            "changeDie" => ST_PLAYER_CHANGE_DIE,
-            "changeDieWithPsychicProbe" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
-            "resolve" => ST_PREPARE_RESOLVE_DICE,
-        ],
-
-    ],
 
     ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE => [
         "name" => "psychicProbeRollDie", // 'changeActivePlayerDie'
