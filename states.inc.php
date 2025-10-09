@@ -52,19 +52,6 @@
 require_once("modules/php/constants.inc.php");
 
 $machinestates = [
-    ST_PLAYER_TAKE_WICKEDNESS_TILE => [
-        "name" => "takeWickednessTile",
-        "description" => clienttranslate('${actplayer} can take a wickedness tile'),
-        "descriptionmyturn" => clienttranslate('${you} can take a wickedness tile'),
-        "type" => "activeplayer",
-        "action" => "stTakeWickednessTile",
-        "args" => "argTakeWickednessTile",
-        "possibleactions" => [ "actTakeWickednessTile", "actSkipTakeWickednessTile" ],
-        "transitions" => [
-            "next" => ST_RESOLVE_HEART_DICE,
-            "nextAction" => ST_RESOLVE_HEART_DICE_ACTION,
-        ],
-    ],
     ST_RESOLVE_HEART_DICE_ACTION => [
         "name" => "resolveHeartDiceAction",
         "description" => clienttranslate('${actplayer} can select effect of [diceHeart] dice'),

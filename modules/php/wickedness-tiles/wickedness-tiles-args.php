@@ -18,23 +18,6 @@ trait WickednessTilesArgTrait {
     */
 
     function argTakeWickednessTile() {
-        $playerId = $this->getActivePlayerId();
-        
-        $level = $this->wickednessExpansion->canTakeWickednessTile($playerId);
-        $tableTiles = $this->wickednessTiles->getTable($level);
-
-        $dice = $this->getPlayerRolledDice($playerId, false, false, false);
-        $canHealWithDice = $this->canHealWithDice($playerId);
-    
-        return [
-            'level' => $level,
-            'canTake' => count($tableTiles) > 0,
-
-            'dice' => $dice,
-            'canHealWithDice' => $canHealWithDice,
-            'frozenFaces' => $this->frozenFaces($playerId),
-            'noExtraTurnWarning' => $this->mindbugExpansion->canGetExtraTurn() ? [] : [FINAL_PUSH_WICKEDNESS_TILE],
-        ];
     }
 
     function argChooseMimickedCardWickednessTile() {
