@@ -13,23 +13,6 @@ trait EvolutionCardsArgTrait {
         These methods function is to return some additional information that is specific to the current
         game state.
     */
-    
-    function argBeforeEnteringTokyo() {
-        $isPowerUpExpansion = $this->powerUpExpansion->isActive();
-
-        $highlighted = $isPowerUpExpansion && $this->tokyoHasFreeSpot() ? $this->getHighlightedEvolutions($this->EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO) : [];
-
-
-        $playerId = $this->getActivePlayerId();
-        $otherPlayersIds = $this->getOtherPlayersIds($playerId);
-
-        $felineMotorPlayersIds = array_values(array_filter($otherPlayersIds, fn($pId) => $this->countEvolutionOfType($pId, FELINE_MOTOR_EVOLUTION) > 0));
-
-        return [
-            'highlighted' => $highlighted,
-            'canUseFelineMotor' => $felineMotorPlayersIds,
-        ];
-    }
 
     function argAfterEnteringTokyo() {
         $activePlayerId = $this->getActivePlayerId();

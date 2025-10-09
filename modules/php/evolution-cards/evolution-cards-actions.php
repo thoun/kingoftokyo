@@ -34,12 +34,6 @@ trait EvolutionCardsActionTrait {
         }
     }
 
-    function actSkipBeforeEnteringTokyo() {
-        $playerId = $this->getCurrentPlayerId();
-
-        $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
-    }
-
     function actSkipAfterEnteringTokyo() {
         $playerId = $this->getCurrentPlayerId();
 
@@ -110,9 +104,6 @@ trait EvolutionCardsActionTrait {
                     break;
                 case ST_PLAYER_BEFORE_RESOLVE_DICE:
                     $this->actSkipBeforeResolveDice();
-                    break;
-                case ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO:
-                    $this->actSkipBeforeEnteringTokyo();
                     break;
                 case ST_MULTIPLAYER_BEFORE_END_TURN:
                     $this->actSkipBeforeEndTurn();
@@ -436,11 +427,5 @@ trait EvolutionCardsActionTrait {
         $playerId = $this->getCurrentPlayerId();
 
         $this->gamestate->setPlayerNonMultiactive($playerId, 'next');
-    }
-
-    public function actUseFelineMotor() {
-        $playerId = $this->getCurrentPlayerId();
-
-        $this->applyFelineMotor($playerId);
     }
 }

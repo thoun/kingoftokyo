@@ -131,21 +131,4 @@ $machinestates = [
             "end" => ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO, // for zombie
         ],
     ],
-
-    ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO => [
-        "name" => "beforeEnteringTokyo",
-        "description" => clienttranslate('Some players may activate an Evolution card'),
-        "descriptionmyturn" => clienttranslate('${you} may activate an Evolution card'),
-        "type" => "multipleactiveplayer",
-        "action" => "stBeforeEnteringTokyo",
-        "args" => "argBeforeEnteringTokyo",
-        "possibleactions" => [
-            "actSkipBeforeEnteringTokyo",
-            "actUseFelineMotor", 
-        ],
-        "transitions" => [
-            'next' => ST_ENTER_TOKYO,
-            "end" => ST_ENTER_TOKYO, // for zombie
-        ],        
-    ],
 ];
