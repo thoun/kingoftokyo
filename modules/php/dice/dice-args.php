@@ -14,69 +14,6 @@ trait DiceArgTrait {
         game state.
     */
 
-    function argChangeActivePlayerDie($intervention = null) {
-        if ($intervention == null) {
-            $intervention = $this->getGlobalVariable(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
-        }
-        $activePlayerId = $intervention->activePlayerId;
-
-        $canRoll = true;
-        $hasDice3 = false;
-        $hasBackgroundDweller = false;
-
-        $playerId = $intervention && count($intervention->remainingPlayersId) > 0 ? $intervention->remainingPlayersId[0] : null;
-        if ($playerId) {
-            $psychicProbeCards = $this->getCardsOfType($playerId, PSYCHIC_PROBE_CARD);
-            $witchCards = $this->getCardsOfType($playerId, WITCH_CARD);
-            $heartOfTheRabbitEvolutions = $this->getEvolutionsOfType($playerId, HEART_OF_THE_RABBIT_EVOLUTION, false, true);
-
-            $canRoll = false;
-            $usedCards = $this->getUsedCard();
-            foreach($psychicProbeCards as $psychicProbeCard) {
-                if (!in_array($psychicProbeCard->id, $usedCards)) {
-                    $canRoll = true;
-                }
-            }
-            foreach($witchCards as $witchCard) {
-                if (!in_array($witchCard->id, $usedCards)) {
-                    $canRoll = true;
-                }
-            }
-            foreach($heartOfTheRabbitEvolutions as $heartOfTheRabbitEvolution) {
-                if (!in_array(3000 + $heartOfTheRabbitEvolution->id, $usedCards)) {
-                    $canRoll = true;
-                }
-            }
-
-            $hasBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD) > 0;
-            $hasDice3 = $intervention->lastRolledDie != null && $intervention->lastRolledDie->value == 3;
-        }
-
-        $dice = $this->getPlayerRolledDice($activePlayerId, true, true, true);
-        $canReroll = false;
-        if ($this->anubisExpansion->isActive()) {
-            $curseCardType = $this->anubisExpansion->getCurseCardType();
-            if ($curseCardType === VENGEANCE_OF_HORUS_CURSE_CARD) {
-                $canReroll = false;
-            } else if ($curseCardType === SCRIBE_S_PERSEVERANCE_CURSE_CARD) {
-                $canReroll = true;
-            }
-        }
-        
-        $selectableDice = $canRoll ? $this->getSelectableDice($dice, $canReroll, false) : [];
-
-        return [
-            'dice' => $dice,
-            'selectableDice' => $selectableDice,
-            'canHealWithDice' => $this->canHealWithDice($activePlayerId),
-            'frozenFaces' => $this->frozenFaces($activePlayerId),
-            'rethrow3' => [
-                'hasCard' => $hasBackgroundDweller,
-                'hasDice3' => $hasDice3,
-            ],
-        ];
-    }
-
     function argResolveHeartDiceAction() {
         $playerId = $this->getActivePlayerId();
 

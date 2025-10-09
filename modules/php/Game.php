@@ -582,9 +582,6 @@ class Game extends \Bga\GameFramework\Table {
             return;
         } else if ($state['type'] == "multipleactiveplayer") {
             switch ($statename) {
-                case 'psychicProbeRollDie':
-                    $this->applyChangeActivePlayerDieSkip($active_player);
-                    return;
                 case 'cheerleaderSupport':
                     $this->applyDontSupport($active_player);
                     return;

@@ -28,10 +28,6 @@ trait DiceStateTrait {
 //////////// Game state actions
 ////////////
 
-    function stChangeActivePlayerDie() {
-        $this->stIntervention(CHANGE_ACTIVE_PLAYER_DIE_INTERVENTION);
-    }
-
     function stPrepareResolveDice() {
         $playerId = $this->getActivePlayerId();
         $hasEncasedInIce = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, ENCASED_IN_ICE_EVOLUTION) > 0;

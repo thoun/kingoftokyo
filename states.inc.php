@@ -53,22 +53,6 @@ require_once("modules/php/constants.inc.php");
 
 $playerActionsGameStates = [
 
-    ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE => [
-        "name" => "psychicProbeRollDie", // 'changeActivePlayerDie'
-        "description" => clienttranslate('Players with special card can reroll a die'),
-        "descriptionmyturn" => clienttranslate('${you} can reroll a die'),
-        "type" => "multipleactiveplayer",
-        "action" => "stChangeActivePlayerDie",
-        "args" => "argChangeActivePlayerDie",
-        "possibleactions" => [ "actPsychicProbeRollDie", "actChangeActivePlayerDie", "actPsychicProbeSkip", "actChangeActivePlayerDieSkip", "actRethrow3PsychicProbe" ],
-        "transitions" => [
-            "stay" => ST_MULTIPLAYER_CHANGE_ACTIVE_PLAYER_DIE,
-            "next" => ST_PREPARE_RESOLVE_DICE,
-            "end" => ST_PREPARE_RESOLVE_DICE,
-            "endAndChangeDieAgain" => ST_PLAYER_CHANGE_DIE,
-        ],
-    ],
-
     ST_PREPARE_RESOLVE_DICE => [
         "name" => "prepareResolveDice",
         "description" => "",
