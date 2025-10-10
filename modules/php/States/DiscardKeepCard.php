@@ -26,7 +26,7 @@ class DiscardKeepCard extends GameState {
     }
 
     public function getArgs(int $activePlayerId): array {
-        $cards = $this->game->powerCards->getPlayer($activePlayerId);
+        $cards = $this->game->powerCards->getPlayerReal($activePlayerId);
 
         $disabledIds = [];         
         foreach ($cards as $card) {
@@ -59,7 +59,7 @@ class DiscardKeepCard extends GameState {
     }
 
     public function zombie(int $playerId) {
-        $cards = $this->game->powerCards->getPlayer($playerId);
+        $cards = $this->game->powerCards->getPlayerReal($playerId);
         $eligible = array_values(array_filter($cards, fn($card) => $card->type < 100 && $card->location === 'hand'));;
 
         if (!empty($eligible)) {

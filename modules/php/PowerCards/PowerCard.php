@@ -30,6 +30,8 @@ class PowerCard {
     public int $side = 0; // 0 front, 1 back
 
     public ?array $mindbugKeywords = null;
+    public ?int $mimickingCardId = null;
+    public ?int $mimickingTileId = null;
 
     public function setup($dbCard) {
         $this->tokens = $this->type < 100 ? $this->type_arg : 0;

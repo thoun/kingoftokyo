@@ -37,7 +37,7 @@ class StealCostumeCardOrGiveGiftEvolution extends GameState {
             
             $otherPlayersIds = $this->game->getOtherPlayersIds($activePlayerId);
             foreach($otherPlayersIds as $otherPlayerId) {
-                $cardsOfPlayer = $this->game->powerCards->getPlayer($otherPlayerId);
+                $cardsOfPlayer = $this->game->powerCards->getPlayerReal($otherPlayerId);
                 $isWoundedPlayer = in_array($otherPlayerId, $woundedPlayersIds);
 
                 foreach ($cardsOfPlayer as $card) {
@@ -104,7 +104,7 @@ class StealCostumeCardOrGiveGiftEvolution extends GameState {
         }
 
         $cost = $this->game->getCardCost($activePlayerId, $card->type);
-        if (!$this->game->canAffordCard($activePlayerId, $card->type, $cost)) {
+        if (!$this->game->canAffordCard($activePlayerId, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
 

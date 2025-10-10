@@ -204,7 +204,7 @@ trait CardsUtilTrait {
         return max($cardCost + $inadequateOffering - $countAlienOrigin - $wickenessTilesDec - $countSecretLaboratory, 0);
     }
 
-    function canAffordCard(int $playerId, int $cardType, int $cost) {
+    function canAffordCard(int $playerId, int $cost) {
         return $cost <= $this->getPlayerEnergy($playerId);
     }
 
@@ -216,7 +216,7 @@ trait CardsUtilTrait {
         $playerName = $this->getPlayerNameById($playerId);
         // discard all cards
         $zombified = $this->getPlayer($playerId)->zombified;
-        $cards = $this->powerCards->getPlayer($playerId);
+        $cards = $this->powerCards->getPlayerReal($playerId);
         if ($zombified) {
             $cards = array_filter($cards, fn($card) => $card->type != ZOMBIFY_CARD);
         }
@@ -545,7 +545,7 @@ trait CardsUtilTrait {
         $mimickedCardId = $this->getMimickedCardId(MIMIC_CARD);
 
         foreach($playersIds as $playerId) {
-            $cardsOfPlayer = $this->powerCards->getPlayer($playerId);
+            $cardsOfPlayer = $this->powerCards->getPlayerReal($playerId);
             foreach($cardsOfPlayer as $card) {
                 if ($card->type != MIMIC_CARD && $card->type < 100 && $mimickedCardId != $card->id) {
                     return true;
@@ -566,7 +566,7 @@ trait CardsUtilTrait {
 
     
     function removeDiscardCards(int $playerId) {
-        $cards = $this->powerCards->getPlayer($playerId);
+        $cards = $this->powerCards->getPlayerReal($playerId);
         $discardCards = array_values(array_filter($cards, fn($card) => $card->type >= 100 && $card->type < 200));
         $this->removeCards($playerId, $discardCards);
     }
@@ -725,7 +725,7 @@ trait CardsUtilTrait {
     }
 
     function getFormCard(int $playerId) {
-        $playerCards = $this->powerCards->getPlayer($playerId);
+        $playerCards = $this->powerCards->getPlayerReal($playerId);
         $formCard = Arrays::find($playerCards, fn($card) => $card->type == FORM_CARD);
         return $formCard;
     }

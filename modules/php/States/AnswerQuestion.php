@@ -282,7 +282,7 @@ class AnswerQuestion extends GameState {
 
             $playersIds = $this->game->getPlayersIds();
             foreach($playersIds as $pId) {
-                $cardsOfPlayer = $this->game->powerCards->getPlayer($pId);
+                $cardsOfPlayer = $this->game->powerCards->getPlayerReal($pId);
                 $countAvailableCardsForMimic += Arrays::count($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100);
             }
 

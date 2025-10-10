@@ -42,7 +42,7 @@ trait InitialCardTrait {
     private function everyPlayerHasCostumeCard() {
         $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
-            $cardsOfPlayer = $this->powerCards->getPlayer($playerId);
+            $cardsOfPlayer = $this->powerCards->getPlayerReal($playerId);
             if (!$this->array_some($cardsOfPlayer, fn($card) => $card->type > 200 && $card->type < 300)) {
                 return false;
             }

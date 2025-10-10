@@ -92,7 +92,7 @@ class TakeWickednessTile extends GameState {
 
             $playersIds = $this->game->getPlayersIds();
             foreach($playersIds as $pId) {
-                $cardsOfPlayer = $this->game->powerCards->getPlayer($pId);
+                $cardsOfPlayer = $this->game->powerCards->getPlayerReal($pId);
                 $countAvailableCardsForMimic += count(array_values(array_filter($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100)));
             }
 

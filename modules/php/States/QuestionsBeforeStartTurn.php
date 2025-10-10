@@ -94,7 +94,7 @@ class QuestionsBeforeStartTurn extends GameState {
             }
         }
 
-        $cards = $this->game->powerCards->getPlayer($activePlayerId);
+        $cards = $this->game->powerCards->getPlayerReal($activePlayerId);
         $superiorAlienTechnologyTokens = $this->game->getSuperiorAlienTechnologyTokens($activePlayerId);
         $cardsWithSuperiorAlienTechnologyTokens = array_values(array_filter($cards, fn($card) => in_array($card->id, $superiorAlienTechnologyTokens)));
         $usedCardsIds = $this->game->getUsedCard();

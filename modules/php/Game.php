@@ -568,13 +568,8 @@ class Game extends \Bga\GameFramework\Table {
         if ($this->powerUpExpansion->evolutionCards->countItemsInLocation('hand', $currentPlayerId) == 0) {
             $stateId = $this->gamestate->getCurrentMainStateId();
 
-            switch($stateId) {
-                case ST_PLAYER_BEFORE_START_TURN:
-                    $this->goToState($this->redirectAfterBeforeStartTurn());
-                    break;
-                case ST_PLAYER_BEFORE_RESOLVE_DICE:
-                    $this->goToState($this->redirectAfterBeforeResolveDice());
-                    break;
+            if (in_array($stateId, [ST_PLAYER_BEFORE_START_TURN, ST_PLAYER_BEFORE_RESOLVE_DICE, ])) {
+                $this->goToState($stateId);
             }
         }
     }

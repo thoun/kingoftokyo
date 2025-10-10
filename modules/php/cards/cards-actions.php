@@ -281,7 +281,7 @@ trait CardsActionTrait {
         if ($unmetConditionRequirement) {
             throw new \BgaUserException($unmetConditionRequirement->message);
         }
-        if (!$this->canAffordCard($playerId, $card->type, $cost)) {
+        if (!$this->canAffordCard($playerId, $cost)) {
             throw new \BgaUserException('Not enough energy');
         }
 
@@ -382,7 +382,7 @@ trait CardsActionTrait {
 
             $playersIds = $this->getPlayersIds();
             foreach($playersIds as $pId) {
-                $cardsOfPlayer = $this->powerCards->getPlayer($pId);
+                $cardsOfPlayer = $this->powerCards->getPlayerReal($pId);
                 $countAvailableCardsForMimic += Arrays::count($cardsOfPlayer, fn($card) => $card->type != MIMIC_CARD && $card->type < 100);
             }
 

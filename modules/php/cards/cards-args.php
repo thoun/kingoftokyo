@@ -87,7 +87,7 @@ trait CardsArgTrait {
         if ($canBuyFromPlayers) {
             $otherPlayersIds = $this->getOtherPlayersIds($playerId);
             foreach($otherPlayersIds as $otherPlayerId) {
-                $cardsOfPlayer = $this->powerCards->getPlayer($otherPlayerId);
+                $cardsOfPlayer = $this->powerCards->getPlayerReal($otherPlayerId);
                 $buyableCardsOfPlayer = Arrays::filter($cardsOfPlayer, fn($card) => $card->type < 300);
 
                 foreach ($buyableCardsOfPlayer as $card) {
@@ -212,7 +212,7 @@ trait CardsArgTrait {
         $cardsCosts = [];
 
         foreach($playersIds as $iPlayerId) {
-            $cardsOfPlayer = $this->powerCards->getPlayer($iPlayerId);
+            $cardsOfPlayer = $this->powerCards->getPlayerReal($iPlayerId);
             foreach($cardsOfPlayer as $card) {
                 $canMimickCard = false;
                 if ($canChange) {

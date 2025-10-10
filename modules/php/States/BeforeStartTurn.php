@@ -6,7 +6,11 @@ namespace Bga\Games\KingOfTokyo\States;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
+
+use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
+use const Bga\Games\KingOfTokyo\PowerCards\SNEAKY;
 
 class BeforeStartTurn extends GameState {
     public function __construct(protected Game $game)
@@ -24,14 +28,21 @@ class BeforeStartTurn extends GameState {
     public function getArgs(int $activePlayerId): array {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
-        $highlighted = $isPowerUpExpansion ? $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_START) : [];
+        $playerCards = $this->game->powerCards->getPlayerReal($activePlayerId);
+        $consumableCards = Arrays::filter($playerCards, fn($card) => $card->mindbugKeywords !== null && Arrays::some($card->mindbugKeywords, fn($keyword) => in_array($keyword, [HUNTER, SNEAKY])));
+
+        $highlighted = [];
+        if ($isPowerUpExpansion) {
+            $highlighted = $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_START);
+        }
 
         return [
             'highlighted' => $highlighted,
+            'consumableCards' => $consumableCards,
         ];
     }
 
-    public function onEnteringState(int $activePlayerId) {
+    public function onEnteringState(int $activePlayerId, array $args) {
         $this->game->DbQuery("DELETE FROM `turn_damages`");
         $this->game->DbQuery("UPDATE `player` SET `player_turn_energy` = 0, `player_turn_health` = 0, `player_turn_gained_health` = 0, `player_turn_entered_tokyo` = 0");
         $this->game->setGameStateValue(\EXTRA_ROLLS, 0);
@@ -62,7 +73,9 @@ class BeforeStartTurn extends GameState {
             }
         }
 
-        if (!$isPowerUpExpansion || count($this->game->getPlayersIdsWhoCouldPlayEvolutions([$activePlayerId], $this->game->EVOLUTION_TO_PLAY_BEFORE_START)) == 0) {
+        $canPlayConsumableCard = count($args['consumableCards']) > 0;
+
+        if (!$canPlayConsumableCard && (!$isPowerUpExpansion || count($this->game->getPlayersIdsWhoCouldPlayEvolutions([$activePlayerId], $this->game->EVOLUTION_TO_PLAY_BEFORE_START)) == 0)) {
             $this->game->goToState($this->game->redirectAfterBeforeStartTurn());
         }
     }

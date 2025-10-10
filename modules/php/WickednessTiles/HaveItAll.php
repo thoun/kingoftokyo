@@ -11,7 +11,7 @@ class HaveItAll extends WickednessTile {
     public function immediateEffect(Context $context) {
         $playerId = $context->currentPlayerId;
 
-        $cardsOfPlayer = $context->game->powerCards->getPlayer($playerId);
+        $cardsOfPlayer = $context->game->powerCards->getPlayerReal($playerId);
         $keepCardsCount = Arrays::count($cardsOfPlayer, fn($card) => $card->type < 100);
         $context->game->applyGetPoints($playerId, $keepCardsCount, $this);
     }

@@ -602,7 +602,7 @@ trait UtilTrait {
             $this->safeEliminatePlayer($player->id);
         }
 
-        $cards = $this->powerCards->getPlayer($player->id);
+        $cards = $this->powerCards->getPlayerReal($player->id);
         $this->removeCards($player->id, $cards, true);
         if ($this->wickednessExpansion->isActive()) {
             $tiles = $this->wickednessTiles->getPlayerTiles($player->id);

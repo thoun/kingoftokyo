@@ -34,7 +34,7 @@ class LeaveTokyoExchangeCard extends GameState {
 
         $playersIds = $this->game->getPlayersIds();
         foreach($playersIds as $otherPlayerId) {
-            $cardsOfPlayer = $this->game->powerCards->getPlayer($otherPlayerId);
+            $cardsOfPlayer = $this->game->powerCards->getPlayerReal($otherPlayerId);
             $isSmashingPlayer = $activePlayerId === $otherPlayerId && $otherPlayerId != $currentPlayerId; // TODODE check it's not currentPlayer, else skip (if player left Tokyo with anubis card)
 
             foreach ($cardsOfPlayer as $card) {

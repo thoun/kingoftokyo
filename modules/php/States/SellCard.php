@@ -29,7 +29,7 @@ class SellCard extends GameState {
         $cards = [];
         $disabledIds = [];
         if ($canSell) {
-            $cards = $this->game->powerCards->getPlayer($activePlayerId);
+            $cards = $this->game->powerCards->getPlayerReal($activePlayerId);
             if (Arrays::count($cards, fn($card) => $card->type < 100) === 0) {
                 $canSell = false;
             }

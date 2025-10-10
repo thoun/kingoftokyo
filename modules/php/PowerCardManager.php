@@ -336,7 +336,7 @@ class PowerCardManager extends ItemManager {
     ];
 
     function __construct(
-        protected $game,
+        protected Game $game,
     ) {
         parent::__construct(
             PowerCard::class,
@@ -534,8 +534,48 @@ class PowerCardManager extends ItemManager {
         return $this->getCardsInLocation('table');
     }
 
-    public function getPlayer(int $playerId): array {
+    /**
+     * Returns all real power cards the player have.
+     * Includes disabled Keep cards.
+     */
+    public function getPlayerReal(int $playerId): array {
         return $this->getItemsInLocation('hand', $playerId);
+    }
+
+    /**
+     * Returns all virtual power cards the player have (an evolution copied with Mimick or Fluxling will be returned as a power card).
+     * A virtual card will have a negative id.
+     * Excludes disabled Keep cards.
+     */
+    function getPlayerVirtual(int $playerId): array {
+        $cards = $this->getPlayerReal($playerId);
+        if (!$this->game->keepAndEvolutionCardsHaveEffect()) {
+            $cards = Arrays::filter($cards, fn($card) => $card->type >= 100);
+        }
+
+        $mimicCard = Arrays::find($cards, fn($card) => $card->type === MIMIC_CARD);
+        if ($mimicCard) {
+            $mimickedCardId = $this->game->getMimickedCardId(MIMIC_CARD);
+            $virtualCard = $this->getItemById($mimickedCardId);
+            if ($virtualCard) {
+                $virtualCard->id = -$virtualCard->id;
+                $virtualCard->mimickingCardId = $mimicCard->id;
+                $cards[] = $virtualCard;
+            }
+        }
+
+        $fluxlingTile = Arrays::find($this->game->wickednessTiles->getPlayerTiles($playerId), fn($tile) => $tile->type === FLUXLING_WICKEDNESS_TILE);
+        if ($fluxlingTile) {
+            $mimickedCardId = $this->game->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
+            $virtualCard = $this->getItemById($mimickedCardId);
+            if ($virtualCard) {
+                $virtualCard->id = -$virtualCard->id;
+                $virtualCard->mimickingTileId = $fluxlingTile->id;
+                $cards[] = $virtualCard;
+            }
+        }
+
+        return $cards;
     }
 
     public function getReserved(int $playerId, ?int $locationArg = null): array {
@@ -559,7 +599,7 @@ class PowerCardManager extends ItemManager {
     }
 
     public function onIncDieRollCount(Context $context): int {
-        $cards = $this->getPlayer($context->currentPlayerId);
+        $cards = $this->getPlayerVirtual($context->currentPlayerId);
         $inc = 0;
 
         foreach ($cards as $card) {
