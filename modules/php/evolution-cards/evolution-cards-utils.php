@@ -409,43 +409,6 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
-    function applyYinYang(int $playerId) {
-        $dice = $this->getPlayerRolledDice($playerId, false, false, false);
-        $YIN_YANG_OTHER_FACE = [
-            1 => 3,
-            2 => 4,
-            3 => 1,
-            4 => 2,
-            5 => 6,
-            6 => 5,
-        ];
-
-        $idToValue = [];
-        $dieFacesBefore = '';
-        $dieFacesAfter = '';
-
-        foreach ($dice as $die) {
-            $otherFace = $YIN_YANG_OTHER_FACE[$die->value];
-            $this->DbQuery("UPDATE dice SET `rolled` = false, `dice_value` = ".$otherFace." where `dice_id` = ".$die->id);
-
-            $idToValue[$die->id] = $otherFace;
-            $dieFacesBefore .= $this->getDieFaceLogName($die->value, $die->type);
-            $dieFacesAfter .= $this->getDieFaceLogName($otherFace, $die->type);
-        }
-
-        $message = clienttranslate('${player_name} uses ${card_name} and change ${die_face_before} to ${die_face_after}');
-        $this->notifyAllPlayers("changeDice", $message, [
-            'playerId' => $playerId,
-            'player_name' => $this->getPlayerNameById($playerId),
-            'card_name' => 3000 + YIN_YANG_EVOLUTION,
-            'dieIdsToValues' => $idToValue,
-            'canHealWithDice' => $this->canHealWithDice($playerId),
-            'frozenFaces' => $this->frozenFaces($playerId),
-            'die_face_before' => $dieFacesBefore,
-            'die_face_after' => $dieFacesAfter,
-        ]);
-    }
-
     function getFirstUnusedEvolution(int $playerId, int $evolutionType, bool $fromTable = true, bool $fromHand = false) /* returns first unused evolution, null if none */ {
         $evolutions = $this->getEvolutionsOfType($playerId, $evolutionType, $fromTable, $fromHand);
         $usedCards = $this->getUsedCard();

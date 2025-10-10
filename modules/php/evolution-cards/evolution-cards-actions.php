@@ -111,20 +111,6 @@ trait EvolutionCardsActionTrait {
             }
         }
     }
-
-
-    function actUseYinYang() {
-        $playerId = $this->getActivePlayerId();
-
-        $hasYinYang = $this->powerUpExpansion->isActive() && $this->countEvolutionOfType($playerId, YIN_YANG_EVOLUTION) > 0;
-        if (!$hasYinYang) {
-            throw new \BgaUserException("You can't play Yin & Yang without this Evolution.");
-        }
-
-        $this->applyYinYang($playerId);
-
-        $this->gamestate->nextState('changeDie');
-    }
     
     function actUseInvincibleEvolution(int $evolutionType) {
         $playerId = $this->getCurrentPlayerId();

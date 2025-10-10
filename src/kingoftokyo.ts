@@ -1210,7 +1210,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 case 'changeDie':
                     const argsChangeDie = args as EnteringChangeDieArgs;
                     if (argsChangeDie.hasYinYang) {
-                        this.addActionButton('useYinYang_button',dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), () => this.useYinYang());
+                        this.statusBar.addActionButton(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), () => this.bgaPerformAction('actUseYinYang'));
                     }
 
                     this.addActionButton('resolve_button', _("Resolve dice"), () => this.resolveDice(), null, null, 'red');
@@ -3043,10 +3043,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             id,
             toPlayerId,
         });
-    }
-    
-    public useYinYang() {
-        this.bgaPerformAction('actUseYinYang');
     }
     
     public putEnergyOnBambooSupply() {

@@ -8,6 +8,7 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
 
 class ChangeDie extends GameState {
     public function __construct(protected Game $game)
@@ -197,6 +198,18 @@ class ChangeDie extends GameState {
     #[PossibleAction]
     public function actResolve(): int {
         return \ST_PREPARE_RESOLVE_DICE;
+    }
+
+    #[PossibleAction]
+    function actUseYinYang(int $activePlayerId) {
+        $yinYangEvolutions = $this->game->powerUpExpansion->isActive() ? $this->game->getEvolutionsOfType($activePlayerId, YIN_YANG_EVOLUTION) : [];
+        if (empty($yinYangEvolutions)) {
+            throw new \BgaUserException("You can't play Yin & Yang without this Evolution.");
+        }
+        
+        $yinYangEvolutions[0]->applyEffect(new Context($this->game, $activePlayerId));
+
+        return ChangeDie::class;
     }
 
     public function zombie(int $playerId): int {

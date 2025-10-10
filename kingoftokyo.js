@@ -7538,7 +7538,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 case 'changeDie':
                     var argsChangeDie = args;
                     if (argsChangeDie.hasYinYang) {
-                        this.addActionButton('useYinYang_button', dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), function () { return _this.useYinYang(); });
+                        this.statusBar.addActionButton(dojo.string.substitute(_('Use ${card_name}'), { card_name: this.evolutionCardsManager.getCardName(138, 'text-only') }), function () { return _this.bgaPerformAction('actUseYinYang'); });
                     }
                     this.addActionButton('resolve_button', _("Resolve dice"), function () { return _this.resolveDice(); }, null, null, 'red');
                     break;
@@ -9044,9 +9044,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
             id: id,
             toPlayerId: toPlayerId,
         });
-    };
-    KingOfTokyo.prototype.useYinYang = function () {
-        this.bgaPerformAction('actUseYinYang');
     };
     KingOfTokyo.prototype.putEnergyOnBambooSupply = function () {
         this.bgaPerformAction('actPutEnergyOnBambooSupply');
