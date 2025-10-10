@@ -353,6 +353,10 @@ class CardsManager extends CardManager<Card> {
                 if (card.tokens > 0) {
                     this.placeTokensOnCard(card);
                 }
+
+                if (card.type > 400 && card.type < 500) {
+                    div.insertAdjacentHTML('beforeend', `<div id="card-${card.id}-keyword-buttons" class="card-keyword-buttons"></div>`)
+                }
             },
             setupBackDiv: (card: Card, div: HTMLElement) => {
                 const darkEdition = this.game.isDarkEdition();
@@ -955,23 +959,23 @@ class CardsManager extends CardManager<Card> {
             }[side];
 
             // CONSUMABLE
-            case 401: return mindbugKeywords + /*TODOMB_*/("If you eliminate the hunted Monster, gain 5[Energy].");
-            case 402: return mindbugKeywords + /*TODOMB_*/("If you eliminate the hunted Monster, gain 4[Star].");
-            case 403: return mindbugKeywords + /*TODOMB_*/("If you do not eliminate the hunted Monster, give them this card.");
-            case 404: return mindbugKeywords + /*TODOMB_*/("This turn, you may use a single [die1] as any face.");
-            case 405: return mindbugKeywords + /*TODOMB_*/("For each [Star] lost by Monsters, they also lose 1[Heart].");
-            case 406: return mindbugKeywords + /*TODOMB_*/("Gain any <CONSUMABLE> card from the discard pile for free.");
-            case 407: return mindbugKeywords + /*TODOMB_*/("For each [Heart] you must lose, gain 1[Energy] instead.");
-            case 408: return mindbugKeywords + /*TODOMB_*/("Lose 2[Heart].");
-            case 409: return mindbugKeywords + /*TODOMB_*/("Spend 2[Energy] to gain 1[Heart], as many times as you like.");
-            case 410: return mindbugKeywords + /*TODOMB_*/("For each [Heart] you lose, the attacking Monster also loses that many [Star].");
-            case 411: return mindbugKeywords + /*TODOMB_*/("If you are eliminated, the attacking Monster loses twice as many [Heart] as you lost.");
-            case 412: return mindbugKeywords + /*TODOMB_*/("For each [Heart] you lose, the attacking Monster also loses that many [Energy].");
-            case 413: return mindbugKeywords + /*TODOMB_*/("At the end of your <strong>FRENZY</strong> turn, lose 5[Heart].");
-            case 414: return mindbugKeywords + /*TODOMB_*/("At the end of your <strong>FRENZY</strong> turn, lose 5[Star].");
-            case 415: return mindbugKeywords + /*TODOMB_*/("After your <strong>FRENZY</strong> turn, roll 1 less die for the remainder of the game.");
+            case 401: return mindbugKeywords + '<br>' + /*TODOMB_*/("If you eliminate the hunted Monster, gain 5[Energy].");
+            case 402: return mindbugKeywords + '<br>' + /*TODOMB_*/("If you eliminate the hunted Monster, gain 4[Star].");
+            case 403: return mindbugKeywords + '<br>' + /*TODOMB_*/("If you do not eliminate the hunted Monster, give them this card.");
+            case 404: return mindbugKeywords + '<br>' + /*TODOMB_*/("This turn, you may use a single [die1] as any face.");
+            case 405: return mindbugKeywords + '<br>' + /*TODOMB_*/("For each [Star] lost by Monsters, they also lose 1[Heart].");
+            case 406: return mindbugKeywords + '<br>' + /*TODOMB_*/("Gain any <CONSUMABLE> card from the discard pile for free.");
+            case 407: return mindbugKeywords + '<br>' + /*TODOMB_*/("For each [Heart] you must lose, gain 1[Energy] instead.");
+            case 408: return mindbugKeywords + '<br>' + /*TODOMB_*/("Lose 2[Heart].");
+            case 409: return mindbugKeywords + '<br>' + /*TODOMB_*/("Spend 2[Energy] to gain 1[Heart], as many times as you like.");
+            case 410: return mindbugKeywords + '<br>' + /*TODOMB_*/("For each [Heart] you lose, the attacking Monster also loses that many [Star].");
+            case 411: return mindbugKeywords + '<br>' + /*TODOMB_*/("If you are eliminated, the attacking Monster loses twice as many [Heart] as you lost.");
+            case 412: return mindbugKeywords + '<br>' + /*TODOMB_*/("For each [Heart] you lose, the attacking Monster also loses that many [Energy].");
+            case 413: return mindbugKeywords + '<br>' + /*TODOMB_*/("At the end of your <strong>FRENZY</strong> turn, lose 5[Heart].");
+            case 414: return mindbugKeywords + '<br>' + /*TODOMB_*/("At the end of your <strong>FRENZY</strong> turn, lose 5[Star].");
+            case 415: return mindbugKeywords + '<br>' + /*TODOMB_*/("After your <strong>FRENZY</strong> turn, roll 1 less die for the remainder of the game.");
             case 416: return mindbugKeywords;
-            case 417: return mindbugKeywords + /*TODOMB_*/("If you eliminate the hunted Monster, gain 1[Star] per [Heart] you made them lose.");
+            case 417: return mindbugKeywords + '<br>' + /*TODOMB_*/("If you eliminate the hunted Monster, gain 1[Star] per [Heart] you made them lose.");
         }
         return null;
     }

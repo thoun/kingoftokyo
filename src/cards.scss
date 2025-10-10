@@ -260,3 +260,35 @@ $description-size: 7pt;
         top: 0;
     }
 }
+
+.card-consumable-text {
+    position: relative;
+    color: white;
+    font-family: 'goodgirl';
+    font-size: 7pt;
+    margin: 2px;
+    text-align: center;
+
+    .outline {
+        -webkit-text-stroke: 3px #9e3069;
+    }
+
+    .text {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}
+
+.card-keyword-buttons {
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    height: 80px;
+    background: #FF000066;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}

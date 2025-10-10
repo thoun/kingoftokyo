@@ -45,6 +45,20 @@ $game_options = [
         'default' => 1,
     ],
 
+    /* TODOMB MINDBUG_EXPANSION_OPTION => [
+        'name' => totranslate('Mindbug'),
+        'values' => [
+            0 => [
+                'name' => totranslate('Disabled'),
+            ],
+            1 => [
+                'name' => totranslate('Enabled'),
+                'tmdisplay' => totranslate('Mindbug'),
+            ],
+        ],
+        'default' => 0,
+    ],*/
+
     HALLOWEEN_EXPANSION_OPTION => [
         'name' => totranslate('Halloween'),
         'values' => [
@@ -239,6 +253,22 @@ $game_options = [
         ],
         'default' => 1,
     ],
+
+    /* TODOMB MINDBUG_CARDS_OPTION => [
+        'name' => totranslate('Mindbug Power cards'),
+        'values' => [
+            1 => [
+                'name' => totranslate('L\'incursion Mindbug'), // TODOMB translate
+                'description' => totranslate("Add Mindbug Power cards to regular Power Cards"),
+            ],
+            2 => [
+                'name' => totranslate('L\'experience Mindbug (difficile)'), // TODOMB translate
+                'description' => totranslate("Use only Mindbug Power cards"),
+                'nobeginner' => true,
+            ],
+        ],
+        'default' => 1,
+    ],*/
 
     /* note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.*/
     100 => [

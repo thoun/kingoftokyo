@@ -7,7 +7,15 @@ use Bga\GameFramework\Components\Counters\PlayerCounter;
 use Bga\GameFramework\NotificationMessage;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
+use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
+use KOT\Objects\Question;
+
+use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
+use const Bga\Games\KingOfTokyo\PowerCards\SNEAKY;
+
+const ACTIVATED_HUNTER_CARDS = 'ACTIVATED_HUNTER_CARDS';
+const ACTIVATED_SNEAKY_CARDS = 'ACTIVATED_SNEAKY_CARDS';
 
 class MindbugExpansion {
     public PlayerCounter $mindbugTokens;
@@ -19,14 +27,14 @@ class MindbugExpansion {
     }
 
     public function isActive(): bool {
-        return false;//Game::getBgaEnvironment() === 'studio'; // TODOMB $this->tableOptions->get(MINDBUG_OPTION) > 0;
+        return $this->game->tableOptions->get(MINDBUG_EXPANSION_OPTION) > 0;
     }
 
     public function getMindbugCardsSetting() {
         if (!$this->isActive()) {
             return 0;
         }
-        return 1; // TODOMB $this->tableOptions->get(MINDBUG_CARDS_OPTION); 
+        return $this->game->tableOptions->get(MINDBUG_CARDS_OPTION); 
     }
 
     public function initDb(array $playerIds): void {
@@ -114,5 +122,86 @@ class MindbugExpansion {
                 'card_name' => $cardType == 0 ? null : $cardType,
             ]));
         }
+    }
+
+    /**
+     * @return PowerCard[]
+     */
+    public function getConsumableCards(int $playerId, ?array $keywords): array {
+        $playerCards = $this->game->powerCards->getPlayerReal($playerId);
+        $consumableCards = Arrays::filter($playerCards, fn($card) => $card->type >= 400 && $card->type < 500);
+        if ($keywords !== null) {
+            $consumableCards = Arrays::filter($consumableCards, fn($card) => $card->mindbugKeywords !== null && Arrays::some($card->mindbugKeywords, fn($keyword) => in_array($keyword, $keywords)));
+        }
+        return $consumableCards;
+    }
+
+    public function activateConsumable(int $id, string $keyword, int $playerId, array $keywords) {
+        $consumableCards = $this->game->mindbugExpansion->getConsumableCards($playerId, $keywords);
+        $card = Arrays::find($consumableCards, fn($c) => $c->id === $id);
+        if (!$card) {
+            throw new \BgaUserException(clienttranslate('You cannot activate this keyword at this moment of the game'));
+        }
+        if (!in_array($keyword, $card->mindbugKeywords)) {
+            throw new \BgaUserException("This card doesn't have the keyword $keyword");
+        }
+
+        switch ($keyword) {
+            case HUNTER: $this->activateHunter($playerId, $card); break;
+            case SNEAKY: $this->activateSneaky($playerId, $card); break;
+
+            default: throw new \BgaSystemException("Invalid keyword");
+        }
+    }
+
+    public function setHunterTargetId(int $targetPlayerId) {
+        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, class: ActivatedConsumableKeyword::class);
+        $activatedHunterCards->targetPlayerId = $targetPlayerId;
+        $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
+    }
+
+    public function getActivatedHunter(int $playerId) {
+        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, class: ActivatedConsumableKeyword::class);
+        if ($activatedHunterCards && $activatedHunterCards->activePlayerId !== $playerId) {
+            return null;
+        }
+        return $activatedHunterCards;
+    }
+
+    private function activateHunter(int $playerId, PowerCard $card) {
+        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, class: ActivatedConsumableKeyword::class);
+        if (!$activatedHunterCards) {
+            $activatedHunterCards = new ActivatedConsumableKeyword($playerId, [$card->id]);
+            $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
+
+            $question = new Question(
+                'Hunter',
+                clienttranslate('${actplayer} must choose an opponent to target'),
+                clienttranslate('${you} must choose an opponent to target'),
+                [$playerId],
+                -1,
+                [
+                    'playerIds' => $this->game->getOtherPlayersIds($playerId),
+                ]
+            );
+            $this->game->setQuestion($question);
+            $this->game->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+
+            $this->game->goToState(\ST_MULTIPLAYER_ANSWER_QUESTION);
+            return;
+        } else {
+            $activatedHunterCards->cardIds[] = $card->id;
+            $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
+        }
+    }
+
+    private function activateSneaky(int $playerId, PowerCard $card) {
+        $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, class: ActivatedConsumableKeyword::class);
+        if (!$activatedSneakyCards) {
+            $activatedSneakyCards = new ActivatedConsumableKeyword($playerId, [$card->id]);
+        } else {
+            $activatedSneakyCards->cardIds[] = $card->id;
+        }
+        $this->game->globals->set(ACTIVATED_SNEAKY_CARDS, $activatedSneakyCards);
     }
 }

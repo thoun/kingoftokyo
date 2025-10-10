@@ -387,9 +387,9 @@ class Game extends \Bga\GameFramework\Table {
         $isOrigins = $this->isOrigins();
 
         // TEMP FIX TODOMB
-        if ($this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_ASK_MINDBUG) {
+        /*if ($this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_ASK_MINDBUG) {
             $this->jumpToState(ST_RESOLVE_DIE_OF_FATE);
-        }
+        }*/
 
         $result = ['players' => []];
 

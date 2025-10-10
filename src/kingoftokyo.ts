@@ -357,12 +357,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             this.updatePageTitle();
         }
     }
-    
-    private removeGamestateDescription() {
-        this.gamedatas.gamestate.description = ''; 
-        this.gamedatas.gamestate.descriptionmyturn = ''; 
-        this.updatePageTitle();        
-    }
 
     private onEnteringPickEvolutionForDeck(args: EnteringPickEvolutionForDeckArgs) {
         if (!document.getElementById('choose-evolution-in')) {
@@ -420,6 +414,40 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 const playerTable = this.getPlayerTable(this.getPlayerId());
                 playerTable.showEvolutionPickStock(args._private.evolutions);
                 playerTable.setVisibleCardsSelectionClass(args.chooseCostume);
+            }
+        }
+    }
+
+    private onEnteringBeforeStartTurn(args: EnteringBeforeStartTurnArgs) {
+        if (args.canPlayConsumable && args.couldPlayEvolution) {
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'),
+                args
+            );
+        } else if (args.canPlayConsumable) {
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'),
+                args
+            );
+        } else if (args.couldPlayEvolution) {
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'),
+                args
+            );
+        }
+
+        if (this.isCurrentPlayerActive()) {
+            if (args.canPlayConsumable) {
+
+                args.consumableCards.forEach(card => {
+                    const div = document.getElementById(`card-${card.id}-keyword-buttons`);
+                    if (div) {
+                        div.innerHTML = '';
+                        card.mindbugKeywords.forEach(keyword => 
+                            this.statusBar.addActionButton(_(keyword), () => this.onConsumableKeywordClick(card, keyword), { destination: div })
+                        );
+                    }
+                })
             }
         }
     }
@@ -932,6 +960,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 });
                 break;
             case 'beforeStartTurn':
+                this.getPlayerTable(this.getPlayerId())?.cards.setSelectionMode('none');
+                this.onLeavingStepEvolution();
+                break;
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
@@ -1111,6 +1142,9 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
         switch (stateName) {
             case 'beforeStartTurn':
+                this.onEnteringStepEvolution(args); // because it's multiplayer, enter action must be set here
+                this.onEnteringBeforeStartTurn(args);
+                break;
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
@@ -1563,6 +1597,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'SuperiorAlienTechnology':
                 this.addActionButton('throwDieSuperiorAlienTechnology_button', _('Roll a die'), () => this.throwDieSuperiorAlienTechnology());
                 break;
+            case 'Hunter':
+                const hunterArgs = question.args as HunterQuestionArgs;
+                hunterArgs.playerIds?.forEach(targetPlayerId => this.statusBar.addActionButton(dojo.string.substitute(_("Target ${player_name}"), {'player_name': this.getPlayer(targetPlayerId).name}), () => this.bgaPerformAction('actChooseHunterTarget', { targetPlayerId })));
+                break;
         }
     }
 
@@ -1866,6 +1904,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         const selectedDiceCount = this.diceManager.getSelectedDiceIds().length;
         const canReroll = selectedDiceCount >= args.min && selectedDiceCount <= args.max;
         dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
+    }
+
+    public onConsumableKeywordClick(card: Card, keyword: string) {
+        this.bgaPerformAction('actActivateConsumable', { id: card.id, keyword });
     }
 
     public onVisibleCardClick(stock: CardStock<Card>, card: Card, from: number = 0, warningChecked: boolean = false) { // from : player id

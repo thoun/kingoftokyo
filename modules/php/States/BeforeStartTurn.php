@@ -6,11 +6,9 @@ namespace Bga\Games\KingOfTokyo\States;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
-use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
-use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
-use const Bga\Games\KingOfTokyo\PowerCards\SNEAKY;
+use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_START_TURN;
 
 class BeforeStartTurn extends GameState {
     public function __construct(protected Game $game)
@@ -20,25 +18,26 @@ class BeforeStartTurn extends GameState {
             id: \ST_PLAYER_BEFORE_START_TURN,
             type: StateType::ACTIVE_PLAYER,
             name: 'beforeStartTurn',
-            description: clienttranslate('${actplayer} may activate an Evolution card'),
-            descriptionMyTurn: clienttranslate('${you} may activate an Evolution card'),
         );
     }
 
     public function getArgs(int $activePlayerId): array {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
-        $playerCards = $this->game->powerCards->getPlayerReal($activePlayerId);
-        $consumableCards = Arrays::filter($playerCards, fn($card) => $card->mindbugKeywords !== null && Arrays::some($card->mindbugKeywords, fn($keyword) => in_array($keyword, [HUNTER, SNEAKY])));
+        $consumableCards = $this->game->mindbugExpansion->getConsumableCards($activePlayerId, MINDBUG_KEYWORDS_START_TURN);
 
         $highlighted = [];
+        $couldPlayEvolution = false;
         if ($isPowerUpExpansion) {
             $highlighted = $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_START);
+            $couldPlayEvolution = count($this->game->getPlayersIdsWhoCouldPlayEvolutions([$activePlayerId], $this->game->EVOLUTION_TO_PLAY_BEFORE_START)) > 0;
         }
 
         return [
             'highlighted' => $highlighted,
             'consumableCards' => $consumableCards,
+            'canPlayConsumable' => count($consumableCards) > 0,
+            'couldPlayEvolution' => $couldPlayEvolution,
         ];
     }
 
@@ -73,9 +72,10 @@ class BeforeStartTurn extends GameState {
             }
         }
 
-        $canPlayConsumableCard = count($args['consumableCards']) > 0;
+        $canPlayConsumableCard = $args['canPlayConsumable'];
+        $couldPlayEvolution = $args['couldPlayEvolution'];
 
-        if (!$canPlayConsumableCard && (!$isPowerUpExpansion || count($this->game->getPlayersIdsWhoCouldPlayEvolutions([$activePlayerId], $this->game->EVOLUTION_TO_PLAY_BEFORE_START)) == 0)) {
+        if (!$canPlayConsumableCard && !$couldPlayEvolution) {
             $this->game->goToState($this->game->redirectAfterBeforeStartTurn());
         }
     }
@@ -83,6 +83,11 @@ class BeforeStartTurn extends GameState {
     #[PossibleAction]
     public function actSkipBeforeStartTurn(int $currentPlayerId) {
         $this->game->goToState($this->game->redirectAfterBeforeStartTurn());
+    }
+
+    #[PossibleAction]
+    public function actActivateConsumable(int $id, string $keyword, int $activePlayerId) {
+        $this->game->mindbugExpansion->activateConsumable($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_START_TURN);
     }
 
     public function zombie(int $playerId) {

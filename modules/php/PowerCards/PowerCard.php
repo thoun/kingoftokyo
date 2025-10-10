@@ -9,6 +9,9 @@ const SNEAKY = 'SNEAKY';
 const POISON = 'POISON';
 const TOUGH = 'TOUGH';
 const FRENZY = 'FRENZY';
+const MINDBUG_KEYWORDS_START_TURN = [HUNTER, SNEAKY];
+const MINDBUG_KEYWORDS_WOUNDED = [POISON, TOUGH];
+const MINDBUG_KEYWORDS_END_TURN = [FRENZY];
 
 #[Item('card')]
 class PowerCard {

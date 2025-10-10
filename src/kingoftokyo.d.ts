@@ -21,6 +21,7 @@ interface Card {
     mimicType: number;
     location: string;
     location_arg: number;
+    mindbugKeywords?: string[];
 }
 
 interface CurseCard {
@@ -114,6 +115,10 @@ interface TreasureQuestionArgs {
 
 interface TargetAcquiredQuestionArgs {
     playerId: number;
+}
+
+interface HunterQuestionArgs {
+    playerIds: number[];
 }
 
 interface SuperiorAlienTechnologyQuestionArgs {
@@ -304,6 +309,12 @@ interface EnteringPickEvolutionForDeckArgs {
 interface EnteringStepEvolutionArgs {
     highlighted: EvolutionCard[];
     noExtraTurnWarning?: number[];
+}
+
+interface EnteringBeforeStartTurnArgs extends EnteringStepEvolutionArgs {
+    consumableCards: Card[];
+    canPlayConsumable: boolean;
+    couldPlayEvolution: boolean;
 }
 
 interface EnteringBeforeEndTurnArgs extends EnteringStepEvolutionArgs {

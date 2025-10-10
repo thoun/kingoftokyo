@@ -83,8 +83,10 @@ function formatTextIcons(rawText) {
         .replace(/\[ufoToken\]/ig, '<span class="ufo token"></span>')
         .replace(/\[alienoidToken\]/ig, '<span class="alienoid token"></span>')
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
-        .replace(/\[keep\]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"))
-        .replace(/\[discard\]/ig, "<span class=\"card-discard-text\"><span class=\"outline\">".concat(_('Discard'), "</span><span class=\"text\">").concat(_('Discard'), "</span></span>"));
+        .replace(/[\[|<]keep[\]|>]/ig, "<span class=\"card-keep-text\"><span class=\"outline\">".concat(_('Keep'), "</span><span class=\"text\">").concat(_('Keep'), "</span></span>"))
+        .replace(/[\[|<]discard[\]|>]/ig, "<span class=\"card-discard-text\"><span class=\"outline\">".concat(_('Discard'), "</span><span class=\"text\">").concat(_('Discard'), "</span></span>"))
+        .replace(/[\[|<]consumable[\]|>]/ig, "<span class=\"card-consumable-text\"><span class=\"outline\">".concat(_('Consumable'), "</span><span class=\"text\">").concat(_('Consumable'), "</span></span>"))
+        .replace(/<(HUNTER|SNEAKY|POISON|TOUGH|FRENZY)>/ig, function (a, b, c) { return "<strong>".concat(b, "</strong>"); });
 }
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
@@ -2485,6 +2487,9 @@ var CardsManager = /** @class */ (function (_super) {
                 if (card.tokens > 0) {
                     _this.placeTokensOnCard(card);
                 }
+                if (card.type > 400 && card.type < 500) {
+                    div.insertAdjacentHTML('beforeend', "<div id=\"card-".concat(card.id, "-keyword-buttons\" class=\"card-keyword-buttons\"></div>"));
+                }
             },
             setupBackDiv: function (card, div) {
                 var darkEdition = _this.game.isDarkEdition();
@@ -3069,23 +3074,23 @@ var CardsManager = /** @class */ (function (_super) {
                 1: _("During the Roll Dice phase, you may reroll one of your dice an extra time. You cannot buy any more Power cards. <em>Before the Buy Power cards phase, you may spend 1[Energy] to flip this card.</em>"),
             }[side];
             // CONSUMABLE
-            case 401: return mindbugKeywords + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 5[Energy].");
-            case 402: return mindbugKeywords + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 4[Star].");
-            case 403: return mindbugKeywords + /*TODOMB_*/ ("If you do not eliminate the hunted Monster, give them this card.");
-            case 404: return mindbugKeywords + /*TODOMB_*/ ("This turn, you may use a single [die1] as any face.");
-            case 405: return mindbugKeywords + /*TODOMB_*/ ("For each [Star] lost by Monsters, they also lose 1[Heart].");
-            case 406: return mindbugKeywords + /*TODOMB_*/ ("Gain any <CONSUMABLE> card from the discard pile for free.");
-            case 407: return mindbugKeywords + /*TODOMB_*/ ("For each [Heart] you must lose, gain 1[Energy] instead.");
-            case 408: return mindbugKeywords + /*TODOMB_*/ ("Lose 2[Heart].");
-            case 409: return mindbugKeywords + /*TODOMB_*/ ("Spend 2[Energy] to gain 1[Heart], as many times as you like.");
-            case 410: return mindbugKeywords + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Star].");
-            case 411: return mindbugKeywords + /*TODOMB_*/ ("If you are eliminated, the attacking Monster loses twice as many [Heart] as you lost.");
-            case 412: return mindbugKeywords + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Energy].");
-            case 413: return mindbugKeywords + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Heart].");
-            case 414: return mindbugKeywords + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Star].");
-            case 415: return mindbugKeywords + /*TODOMB_*/ ("After your <strong>FRENZY</strong> turn, roll 1 less die for the remainder of the game.");
+            case 401: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 5[Energy].");
+            case 402: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 4[Star].");
+            case 403: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you do not eliminate the hunted Monster, give them this card.");
+            case 404: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("This turn, you may use a single [die1] as any face.");
+            case 405: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Star] lost by Monsters, they also lose 1[Heart].");
+            case 406: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("Gain any <CONSUMABLE> card from the discard pile for free.");
+            case 407: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Heart] you must lose, gain 1[Energy] instead.");
+            case 408: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("Lose 2[Heart].");
+            case 409: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("Spend 2[Energy] to gain 1[Heart], as many times as you like.");
+            case 410: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Star].");
+            case 411: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you are eliminated, the attacking Monster loses twice as many [Heart] as you lost.");
+            case 412: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("For each [Heart] you lose, the attacking Monster also loses that many [Energy].");
+            case 413: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Heart].");
+            case 414: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("At the end of your <strong>FRENZY</strong> turn, lose 5[Star].");
+            case 415: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("After your <strong>FRENZY</strong> turn, roll 1 less die for the remainder of the game.");
             case 416: return mindbugKeywords;
-            case 417: return mindbugKeywords + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 1[Star] per [Heart] you made them lose.");
+            case 417: return mindbugKeywords + '<br>' + /*TODOMB_*/ ("If you eliminate the hunted Monster, gain 1[Star] per [Heart] you made them lose.");
         }
         return null;
     };
@@ -6778,11 +6783,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
             this.updatePageTitle();
         }
     };
-    KingOfTokyo.prototype.removeGamestateDescription = function () {
-        this.gamedatas.gamestate.description = '';
-        this.gamedatas.gamestate.descriptionmyturn = '';
-        this.updatePageTitle();
-    };
     KingOfTokyo.prototype.onEnteringPickEvolutionForDeck = function (args) {
         var _this = this;
         if (!document.getElementById('choose-evolution-in')) {
@@ -6816,6 +6816,31 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 var playerTable = this.getPlayerTable(this.getPlayerId());
                 playerTable.showEvolutionPickStock(args._private.evolutions);
                 playerTable.setVisibleCardsSelectionClass(args.chooseCostume);
+            }
+        }
+    };
+    KingOfTokyo.prototype.onEnteringBeforeStartTurn = function (args) {
+        var _this = this;
+        if (args.canPlayConsumable && args.couldPlayEvolution) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'), args);
+        }
+        else if (args.canPlayConsumable) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'), args);
+        }
+        else if (args.couldPlayEvolution) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'), args);
+        }
+        if (this.isCurrentPlayerActive()) {
+            if (args.canPlayConsumable) {
+                args.consumableCards.forEach(function (card) {
+                    var div = document.getElementById("card-".concat(card.id, "-keyword-buttons"));
+                    if (div) {
+                        div.innerHTML = '';
+                        card.mindbugKeywords.forEach(function (keyword) {
+                            return _this.statusBar.addActionButton(_(keyword), function () { return _this.onConsumableKeywordClick(card, keyword); }, { destination: div });
+                        });
+                    }
+                });
             }
         }
     };
@@ -7249,7 +7274,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
     };
     KingOfTokyo.prototype.onLeavingState = function (stateName) {
-        var _a;
+        var _a, _b;
         log('Leaving state: ' + stateName);
         if (this.isPowerUpExpansion()) {
             var evolutionCardsSingleState = this.gamedatas.EVOLUTION_CARDS_SINGLE_STATE[stateName];
@@ -7267,6 +7292,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 });
                 break;
             case 'beforeStartTurn':
+                (_b = this.getPlayerTable(this.getPlayerId())) === null || _b === void 0 ? void 0 : _b.cards.setSelectionMode('none');
+                this.onLeavingStepEvolution();
+                break;
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
@@ -7438,6 +7466,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
         var _a, _b, _c;
         switch (stateName) {
             case 'beforeStartTurn':
+                this.onEnteringStepEvolution(args); // because it's multiplayer, enter action must be set here
+                this.onEnteringBeforeStartTurn(args);
+                break;
             case 'beforeResolveDice':
             case 'beforeEnteringTokyo':
             case 'afterEnteringTokyo':
@@ -7744,6 +7775,7 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.onUpdateActionButtonsAnswerQuestion = function (args) {
         var _this = this;
+        var _a;
         var question = args.question;
         switch (question.code) {
             case 'BambooSupply':
@@ -7861,6 +7893,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 break;
             case 'SuperiorAlienTechnology':
                 this.addActionButton('throwDieSuperiorAlienTechnology_button', _('Roll a die'), function () { return _this.throwDieSuperiorAlienTechnology(); });
+                break;
+            case 'Hunter':
+                var hunterArgs = question.args;
+                (_a = hunterArgs.playerIds) === null || _a === void 0 ? void 0 : _a.forEach(function (targetPlayerId) { return _this.statusBar.addActionButton(dojo.string.substitute(_("Target ${player_name}"), { 'player_name': _this.getPlayer(targetPlayerId).name }), function () { return _this.bgaPerformAction('actChooseHunterTarget', { targetPlayerId: targetPlayerId }); }); });
                 break;
         }
     };
@@ -8070,6 +8106,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
         var selectedDiceCount = this.diceManager.getSelectedDiceIds().length;
         var canReroll = selectedDiceCount >= args.min && selectedDiceCount <= args.max;
         dojo.toggleClass('rerollDice_button', 'disabled', !canReroll);
+    };
+    KingOfTokyo.prototype.onConsumableKeywordClick = function (card, keyword) {
+        this.bgaPerformAction('actActivateConsumable', { id: card.id, keyword: keyword });
     };
     KingOfTokyo.prototype.onVisibleCardClick = function (stock, card, from, warningChecked) {
         var _this = this;

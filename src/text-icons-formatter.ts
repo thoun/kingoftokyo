@@ -28,6 +28,10 @@ function formatTextIcons(rawText: string) {
         .replace(/\[alienoidToken\]/ig, '<span class="alienoid token"></span>')
         .replace(/\[targetToken\]/ig, '<span class="target token"></span>')
 
-        .replace(/\[keep\]/ig, `<span class="card-keep-text"><span class="outline">${_('Keep')}</span><span class="text">${_('Keep')}</span></span>`)
-        .replace(/\[discard\]/ig, `<span class="card-discard-text"><span class="outline">${_('Discard')}</span><span class="text">${_('Discard')}</span></span>`);
+        .replace(/[\[|<]keep[\]|>]/ig, `<span class="card-keep-text"><span class="outline">${_('Keep')}</span><span class="text">${_('Keep')}</span></span>`)
+        .replace(/[\[|<]discard[\]|>]/ig, `<span class="card-discard-text"><span class="outline">${_('Discard')}</span><span class="text">${_('Discard')}</span></span>`)
+        .replace(/[\[|<]consumable[\]|>]/ig, `<span class="card-consumable-text"><span class="outline">${_('Consumable')}</span><span class="text">${_('Consumable')}</span></span>`)
+
+        .replace(/<(HUNTER|SNEAKY|POISON|TOUGH|FRENZY)>/ig, (a, b, c) => `<strong>${b}</strong>`)
+        ;
 }

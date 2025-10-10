@@ -1039,6 +1039,41 @@
   top: 0;
 }
 
+.card-consumable-text {
+  position: relative;
+  color: white;
+  font-family: "goodgirl";
+  font-size: 7pt;
+  margin: 2px;
+  text-align: center;
+}
+.card-consumable-text .outline {
+  -webkit-text-stroke: 3px #9e3069;
+}
+.card-consumable-text .text {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.card-keyword-buttons {
+  position: absolute;
+  top: 44px;
+  left: 8px;
+  right: 8px;
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+
+  button {
+    pointer-events: all;
+    margin: 0;
+  }
+}
+
 body > .card {
   position: absolute;
   left: -9999px;

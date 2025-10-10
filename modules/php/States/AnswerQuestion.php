@@ -563,6 +563,13 @@ class AnswerQuestion extends GameState {
         $this->game->goToState(-1);
     }
 
+    #[PossibleAction]
+    public function actChooseHunterTarget(int $targetPlayerId, int $currentPlayerId) {
+        $this->game->mindbugExpansion->setHunterTargetId($targetPlayerId);
+        //$this->game->setUsedCard(800 + $card->id);
+        $this->game->goToState(ST_PLAYER_BEFORE_START_TURN);
+    }
+
     public function zombie(int $playerId) {
         // TODO
     }

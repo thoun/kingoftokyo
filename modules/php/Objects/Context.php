@@ -16,6 +16,8 @@ class Context {
         public ?int $dieSmashes = null,
         public ?int $addedSmashes = null,
         public ?int $stateAfter = null,
+        public ?string $keyword = null,
+        public ?int $lostHearts = null,
     ) {
     } 
 }

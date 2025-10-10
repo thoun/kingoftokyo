@@ -6,6 +6,7 @@ require_once(__DIR__.'/Objects/player.php');
 require_once(__DIR__.'/Objects/player-intervention.php');
 require_once(__DIR__.'/Objects/damage.php');
 
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
@@ -14,6 +15,8 @@ use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
+
+use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
 
 trait UtilTrait {
 
@@ -854,23 +857,25 @@ trait UtilTrait {
         }
 
         // only smashes
-        if (gettype($damage->cardType) == 'integer' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId && $this->powerUpExpansion->isActive()) {
-            $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
-            if ($countHeatVision > 0) {
-                $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
-            }
-            $countTooCuteToSmash = $this->countEvolutionOfType($playerId, TOO_CUTE_TO_SMASH_EVOLUTION);
-            if ($countTooCuteToSmash > 0) {
-                $this->applyLosePoints($damageDealerId, $countTooCuteToSmash, 3000 + TOO_CUTE_TO_SMASH_EVOLUTION);
-            }
-            $countMandiblesOfDread = $this->countEvolutionOfType($damageDealerId, MANDIBLES_OF_DREAD_EVOLUTION);
-            if ($countMandiblesOfDread > 0) {
-                $this->applyLosePoints($playerId, $countMandiblesOfDread, 3000 + MANDIBLES_OF_DREAD_EVOLUTION);
-            }
-            $alphaMaleEvolutions = $this->getEvolutionsOfType($damageDealerId, ALPHA_MALE_EVOLUTION);
-            if (count($alphaMaleEvolutions) > 0 && !$this->isUsedCard(3000 + $alphaMaleEvolutions[0]->id)) {
-                $this->applyGetPoints($damageDealerId, count($alphaMaleEvolutions), 3000 + ALPHA_MALE_EVOLUTION);
-                $this->setUsedCard(3000 + $alphaMaleEvolutions[0]->id);
+        if (gettype($damage->cardType) == 'integer' && $damage->cardType == 0 && $newHealth < $actualHealth && $damageDealerId != 0 && $damageDealerId != $playerId) {
+            if ($this->powerUpExpansion->isActive()) {
+                $countHeatVision = $this->countEvolutionOfType($playerId, HEAT_VISION_EVOLUTION);
+                if ($countHeatVision > 0) {
+                    $this->applyLosePoints($damageDealerId, $countHeatVision, 3000 + HEAT_VISION_EVOLUTION);
+                }
+                $countTooCuteToSmash = $this->countEvolutionOfType($playerId, TOO_CUTE_TO_SMASH_EVOLUTION);
+                if ($countTooCuteToSmash > 0) {
+                    $this->applyLosePoints($damageDealerId, $countTooCuteToSmash, 3000 + TOO_CUTE_TO_SMASH_EVOLUTION);
+                }
+                $countMandiblesOfDread = $this->countEvolutionOfType($damageDealerId, MANDIBLES_OF_DREAD_EVOLUTION);
+                if ($countMandiblesOfDread > 0) {
+                    $this->applyLosePoints($playerId, $countMandiblesOfDread, 3000 + MANDIBLES_OF_DREAD_EVOLUTION);
+                }
+                $alphaMaleEvolutions = $this->getEvolutionsOfType($damageDealerId, ALPHA_MALE_EVOLUTION);
+                if (count($alphaMaleEvolutions) > 0 && !$this->isUsedCard(3000 + $alphaMaleEvolutions[0]->id)) {
+                    $this->applyGetPoints($damageDealerId, count($alphaMaleEvolutions), 3000 + ALPHA_MALE_EVOLUTION);
+                    $this->setUsedCard(3000 + $alphaMaleEvolutions[0]->id);
+                }
             }
         }
 
@@ -905,6 +910,14 @@ trait UtilTrait {
             $this->incStat($damage->damage, 'smashesGiven');
             $this->incStat($damage->damage, 'smashesGiven', $damageDealerId);
             $this->incStat($damage->damage, 'smashesReceived', $playerId);
+
+            $activatedHunter = $this->mindbugExpansion->getActivatedHunter($damageDealerId);
+            if ($activatedHunter?->targetPlayerId === $playerId) {
+                $hunterConsumables = $this->powerCards->getItemsByIds($activatedHunter->cardIds);
+                foreach ($hunterConsumables as $card) {
+                    $card->applyEffect(new Context($this, $damageDealerId, targetPlayerId: $playerId, keyword: HUNTER, lostHearts: $actualHealth - $newHealth));
+                }
+            }
         }
     }
 

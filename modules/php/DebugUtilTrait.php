@@ -301,6 +301,10 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE card SET `card_location_arg` = card_location_arg + 1000 where `card_type` = ".HIGH_ALTITUDE_BOMBING_CARD);
     }
 
+    function debug_SetMindbugTokens(int $mindbugTokens = 0) {
+        $this->mindbugExpansion->mindbugTokens->setAll($mindbugTokens);
+    }
+
     function debug_SetWickednessTileInTable(int $cardType) {
         $cards = $this->wickednessTiles->getItemsByFieldName('type', [$cardType]);
         $card = $cards[0];
