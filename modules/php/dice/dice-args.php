@@ -46,27 +46,4 @@ trait DiceArgTrait {
         return [ 'skipped' => true ];
     }
 
-    function argResolveSmashDiceAction() {
-        $playerId = $this->getActivePlayerId();
-
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-        $canUsePlayWithYourFood = $this->canUsePlayWithYourFood($playerId, $diceCounts);
-
-        if ($canUsePlayWithYourFood !== null) {
-            $dice = $this->getPlayerRolledDice($playerId, false, false, false);
-            $canHealWithDice = $this->canHealWithDice($playerId);
-
-            $diceArg = $canUsePlayWithYourFood ? [
-                'dice' => $dice,
-                'canHealWithDice' => $canHealWithDice,
-                'frozenFaces' => $this->frozenFaces($playerId),
-                'canUsePlayWithYourFood' => true,
-                'willBeWoundedIds' => $canUsePlayWithYourFood,
-            ] : [ 'skipped' => true ];
-    
-            return $diceArg;
-        }
-        return [ 'skipped' => true ];
-    }
-
 }
