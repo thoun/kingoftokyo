@@ -12,7 +12,7 @@ class SpatialHunter extends PowerCard
     }
 
     public function applyEffect(Context $context) {
-        if ($context->game->getPlayer($context->targetPlayerId)->eliminated) {
+        if ($context->targetPlayerId && $context->game->getPlayer($context->targetPlayerId)->eliminated) {
             $context->game->applyGetPoints($context->currentPlayerId, $context->lostHearts, $this);
         }
 

@@ -349,7 +349,11 @@ trait DebugUtilTrait {
     }*/
 
     public function debug_SetCardInPlayerHand(int $cardType, int $playerId) {
-        $card = $this->powerCards->getCardsOfType($cardType)[0];
+        $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
+        if (!$card) {
+            $this->powerCards->createItems([['location' => 'void', 'type' => $cardType, 'type_arg' => 0]]);
+            $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
+        }
         $this->powerCards->moveItem($card, 'hand', $playerId);
         return $card;
     }

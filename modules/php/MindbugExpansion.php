@@ -168,6 +168,14 @@ class MindbugExpansion {
         return $activatedHunterCards;
     }
 
+    public function getActivatedSneaky(int $playerId) {
+        $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, class: ActivatedConsumableKeyword::class);
+        if ($activatedSneakyCards && $activatedSneakyCards->activePlayerId !== $playerId) {
+            return null;
+        }
+        return $activatedSneakyCards;
+    }
+
     private function activateHunter(int $playerId, PowerCard $card) {
         $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, class: ActivatedConsumableKeyword::class);
         if (!$activatedHunterCards) {
