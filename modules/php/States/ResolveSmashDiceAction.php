@@ -58,7 +58,7 @@ class ResolveSmashDiceAction extends GameState {
 
         foreach($smashDieChoices as $playerId => $smashDieChoice) {
             if ($smashDieChoice == 'steal') {
-                $this->game->applyGiveSymbols([0, 5], $playerId, $activePlayerId, 3000 + PLAY_WITH_YOUR_FOOD_EVOLUTION);
+                $this->game->applyGiveSymbols([0, 5], (int)$playerId, $activePlayerId, 3000 + PLAY_WITH_YOUR_FOOD_EVOLUTION);
                 $playersSmashesWithReducedDamage[$playerId] = 2;
             }
         }
