@@ -30,7 +30,7 @@ class AfterAnswerQuestion extends GameState {
         }
 
         if ($question->code === 'TargetAcquired' || $question->code === 'LightningArmor') {
-            $this->game->goToState(\ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
+            $this->game->goToState(\ST_AFTER_RESOLVE_DAMAGE);
             return;
         }
 

@@ -1224,7 +1224,7 @@ trait UtilTrait {
         if (count($intervention->remainingPlayersId) == 0) {
             if ($this->powerUpExpansion->isActive()) {
                 $this->setDamageIntervention($intervention);
-                $this->goToState(ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE);
+                $this->goToState(ST_AFTER_RESOLVE_DAMAGE);
                 return;
             }
 

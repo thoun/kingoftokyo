@@ -777,7 +777,7 @@ trait EvolutionCardsUtilTrait {
                     clienttranslate('Player with ${card_name} can give target to ${player_name}'),
                     clienttranslate('${you} can give target to ${player_name}'),
                     $playersWithTargetAcquired,
-                    ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
+                    ST_AFTER_RESOLVE_DAMAGE,
                     [ 
                         'playerId' => $activePlayerId,
                         '_args' => [ 
@@ -822,7 +822,7 @@ trait EvolutionCardsUtilTrait {
                     clienttranslate('Player with ${card_name} can throw dice to backfire damage'),
                     clienttranslate('${you} can throw dice to backfire damage'),
                     $playersWithLightningArmor,
-                    ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
+                    ST_AFTER_RESOLVE_DAMAGE,
                     [ 
                         'damageAmountByPlayer' => $damageAmountByPlayer,
                         'damageDealerIdByPlayer' => $damageDealerIdByPlayer,
@@ -849,7 +849,7 @@ trait EvolutionCardsUtilTrait {
             clienttranslate('Smashed players can give 1[Energy] or lose 1 extra [Heart]'),
             clienttranslate('${you} can give 1[Energy] or lose 1 extra [Heart]'),
             $smashedPlayersIds,
-            ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE,
+            ST_AFTER_RESOLVE_DAMAGE,
             []
         );
 

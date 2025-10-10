@@ -95,13 +95,4 @@ $machinestates = [
         ],
     ],
 
-    ST_MULTIPLAYER_AFTER_RESOLVE_DAMAGE => [
-        "name" => "afterResolveDamage",
-        "description" => '',
-        "descriptionmyturn" => '',
-        "type" => "multipleactiveplayer",
-        "action" => "stAfterResolveDamage",
-        "possibleactions" => [],
-        "transitions" => [],
-    ],
 ];
