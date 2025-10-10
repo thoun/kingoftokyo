@@ -362,7 +362,7 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE player SET `player_location` = $location where `player_id` = $playerId");
     }
 
-    function debug_SetHealth($health) {
+    function debug_SetHealth(int $health) {
         $this->DbQuery("UPDATE player SET `player_health` = $health");
     }
 

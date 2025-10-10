@@ -65,4 +65,8 @@ class ResolveSmashDiceAction extends GameState {
 
         $this->game->resolveSmashDiceState($playersSmashesWithReducedDamage);
     }
+
+    function zombie(int $playerId) {
+        return ResolveSmashDice::class;
+    }
 }
