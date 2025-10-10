@@ -80,6 +80,7 @@ class CancelDamage extends GameState {
         $this->endThrowCamouflageDice($currentPlayerId, $intervention, $dice, true);
     }
     
+    #[PossibleAction]
     function actUseWings(int $currentPlayerId) {
         if ($this->game->getPlayerEnergy($currentPlayerId) < 2) {
             throw new \BgaUserException('Not enough energy');
@@ -109,10 +110,12 @@ class CancelDamage extends GameState {
         $this->game->resolveRemainingDamages($intervention, true, false);
     }
 
+    #[PossibleAction]
     function actSkipWings(int $currentPlayerId) {
         $this->applySkipCancelDamage($currentPlayerId);
     }
 
+    #[PossibleAction]
     function actUseRobot(int $energy, int $currentPlayerId) { 
         $countRobot = $this->game->countCardOfType($currentPlayerId, ROBOT_CARD);
         if ($countRobot == 0) {
@@ -157,6 +160,7 @@ class CancelDamage extends GameState {
         $this->game->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
+    #[PossibleAction]
     function actUseElectricArmor(int $energy, int $currentPlayerId) {
         $countElectricArmor = $this->game->countCardOfType($currentPlayerId, ELECTRIC_ARMOR_CARD);
         if ($countElectricArmor == 0) {
@@ -206,6 +210,7 @@ class CancelDamage extends GameState {
         $this->game->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
+    #[PossibleAction]
     function actUseSuperJump(int $energy, int $currentPlayerId) { 
         $superJumpCards = $this->game->getUnusedCardOfType($currentPlayerId, SUPER_JUMP_CARD);
         if (count($superJumpCards) < $energy) {
@@ -254,6 +259,7 @@ class CancelDamage extends GameState {
         $this->game->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
 
+    #[PossibleAction]
     function actUseRapidHealingSync(int $cultistCount, int $rapidHealingCount, int $currentPlayerId) {
         $intervention = $this->game->getDamageIntervention();
 
@@ -287,6 +293,7 @@ class CancelDamage extends GameState {
         $this->game->resolveRemainingDamages($intervention, true, false);
     }
 
+    #[PossibleAction]
     public function actRethrow3Camouflage(int $currentPlayerId) {
         $countBackgroundDweller = $this->game->countCardOfType($currentPlayerId, BACKGROUND_DWELLER_CARD);
         if ($countBackgroundDweller == 0) {
@@ -408,6 +415,7 @@ class CancelDamage extends GameState {
         $this->game->resolveRemainingDamages($intervention, !$stayOnState, false);
     }
     
+    #[PossibleAction]
     function actUseInvincibleEvolution(int $evolutionType, int $currentPlayerId) {
         if (!in_array($evolutionType, [DETACHABLE_TAIL_EVOLUTION, RABBIT_S_FOOT_EVOLUTION]) || $this->game->countEvolutionOfType($currentPlayerId, $evolutionType, false, true) == 0) {
             throw new \BgaUserException('No Detachable Tail / Rabbits Foot Evolution');
@@ -430,6 +438,7 @@ class CancelDamage extends GameState {
         $this->game->resolveRemainingDamages($intervention, true, false);
     }
     
+    #[PossibleAction]
     function actUseCandyEvolution(int $currentPlayerId) {
         if ($this->game->countEvolutionOfType($currentPlayerId, CANDY_EVOLUTION, true, true) == 0) {
             throw new \BgaUserException('No Candy Evolution');
