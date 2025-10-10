@@ -623,9 +623,15 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }
 
         if (!args.canCancelDamage && args.canHealToAvoidDeath) {
-            this.setGamestateDescription('HealBeforeDamage');
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} can heal before taking damage (${damage}[Heart])') : _('${actplayer} can heal before taking damage (${damage}[Heart])'), 
+                args
+            );
         } else if (args.canCancelDamage) {
-            this.setGamestateDescription('Reduce');
+            this.statusBar.setTitle(
+                this.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), 
+                args
+            );
         }
         
         if (isCurrentPlayerActive) {

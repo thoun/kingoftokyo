@@ -72,7 +72,7 @@ class ChooseInitialCard extends GameState {
                 throw new \BgaUserException('No selected Evolution card');
             }
 
-            $this->game->applyChooseEvolutionCard($currentPlayerId, $evolutionId, true);
+            $this->game->powerUpExpansion->applyChooseEvolutionCard($currentPlayerId, $evolutionId, true);
         }
 
         return ChooseInitialCardNextPlayer::class;

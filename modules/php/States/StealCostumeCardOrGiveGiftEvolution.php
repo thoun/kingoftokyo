@@ -57,7 +57,7 @@ class StealCostumeCardOrGiveGiftEvolution extends GameState {
         $tableGifts = [];
         $canGiveGift = false;
         $highlighted = [];
-        if ($diceCounts[6] >= 1 && $this->game->powerUpExpansion->isActive() && $this->game->isGiftCardsInPlay()) {
+        if ($diceCounts[6] >= 1 && $this->game->powerUpExpansion->isActive() && $this->game->powerUpExpansion->isGiftCardsInPlay()) {
             $tableGifts = array_values(array_filter($this->game->getEvolutionCardsByLocation('table', $activePlayerId), fn($evolution) => $this->game->EVOLUTION_CARDS_TYPES[$evolution->type] == 3));
             $canGiveGift = count($tableGifts) > 0 || count($this->game->getPlayersIdsWhoCouldPlayEvolutions([$activePlayerId], $this->game->EVOLUTION_GIFTS)) > 0;
             $highlighted = $this->game->getHighlightedEvolutions($this->game->EVOLUTION_GIFTS);

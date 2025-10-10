@@ -131,7 +131,7 @@ trait RedirectionTrait {
     }
 
     function redirectAfterEnterTokyo(int $playerId) {
-        if ($this->isHalloweenExpansion() || ($this->powerUpExpansion->isActive() && $this->isGiftCardsInPlay())) { 
+        if ($this->isHalloweenExpansion() || ($this->powerUpExpansion->isActive() && $this->powerUpExpansion->isGiftCardsInPlay())) { 
             return ST_PLAYER_STEAL_COSTUME_CARD_OR_GIVE_GIFT_EVOLUTION;
         } else {
             return $this->redirectAfterStealCostume($playerId);

@@ -74,7 +74,7 @@ class BuyCard extends GameState {
             }
 
             if ($adaptiveTechnologyCard->location === 'hand') {
-                $this->game->applyPlayEvolution($activePlayerId, $adaptiveTechnologyCard);
+                $this->game->powerUpExpansion->applyPlayEvolution($activePlayerId, $adaptiveTechnologyCard);
                 $this->game->applyEvolutionEffects($adaptiveTechnologyCard, $activePlayerId);
                 $adaptiveTechnologyCard = $this->game->getEvolutionCardById($adaptiveTechnologyCard->id);
             }
@@ -150,7 +150,7 @@ class BuyCard extends GameState {
         }
         
         if ($evolution->location === 'hand') {
-            $this->game->applyPlayEvolution($activePlayerId, $evolution);
+            $this->game->powerUpExpansion->applyPlayEvolution($activePlayerId, $evolution);
         }
 
         $this->game->powerCards->shuffle('discard');

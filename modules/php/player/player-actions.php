@@ -50,5 +50,19 @@ trait PlayerActionTrait {
         $this->notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
     }
 
+    #[CheckAction(false)]
+    function actUseRapidHealing(int $currentPlayerId) {
+        $this->applyRapidHealing($currentPlayerId);
+
+        $this->updateCancelDamageIfNeeded($currentPlayerId);
+    }
+
+    #[CheckAction(false)]
+    function actUseMothershipSupport(int $currentPlayerId) {
+        $this->applyMothershipSupport($currentPlayerId);
+
+        $this->updateCancelDamageIfNeeded($currentPlayerId);
+    }
+
   	
 }

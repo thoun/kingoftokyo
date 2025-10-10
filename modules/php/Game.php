@@ -40,11 +40,9 @@ require_once('cards/cards-actions.php');
 require_once('cards/cards-args.php');
 require_once('cards/cards-states.php');
 require_once('evolution-cards/evolution-cards-utils.php');
-require_once('evolution-cards/evolution-cards-actions.php');
-require_once('evolution-cards/evolution-cards-args.php');
-require_once('evolution-cards/evolution-cards-states.php');
 require_once('intervention.php');
 
+use Bga\GameFramework\Actions\CheckAction;
 use Bga\Games\KingOfTokyo\States\Start;
 use \feException;
 
@@ -66,9 +64,6 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\CardsArgTrait;
     use \KOT\States\CardsStateTrait;
     use \KOT\States\EvolutionCardsUtilTrait;
-    use \KOT\States\EvolutionCardsActionTrait;
-    use \KOT\States\EvolutionCardsArgTrait;
-    use \KOT\States\EvolutionCardsStateTrait;
     use \KOT\States\InterventionTrait;
     use DebugUtilTrait;
 
@@ -559,6 +554,33 @@ class Game extends \Bga\GameFramework\Table {
         return $this->getMaxPlayerScore() * 5;
     }
 
+    #[CheckAction(false)]
+    function actPlayEvolution(int $id, int $currentPlayerId) {
+        $card = $this->getEvolutionCardById($id);
+
+        if ($card->location != 'hand') {
+            throw new \BgaUserException('Evolution card is not in your hand');
+        }
+
+        $this->powerUpExpansion->checkCanPlayEvolution($card->type, $currentPlayerId);
+
+        $this->powerUpExpansion->applyPlayEvolution($currentPlayerId, $card);
+
+        // if the player has no more evolution cards, we skip the state for him
+        if ($this->powerUpExpansion->evolutionCards->countItemsInLocation('hand', $currentPlayerId) == 0) {
+            $stateId = $this->gamestate->getCurrentMainStateId();
+
+            switch($stateId) {
+                case ST_PLAYER_BEFORE_START_TURN:
+                    $this->goToState($this->redirectAfterBeforeStartTurn());
+                    break;
+                case ST_PLAYER_BEFORE_RESOLVE_DICE:
+                    $this->goToState($this->redirectAfterBeforeResolveDice());
+                    break;
+            }
+        }
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
 ////////////
@@ -570,38 +592,6 @@ class Game extends \Bga\GameFramework\Table {
         You can do whatever you want in order to make sure the turn of this player ends appropriately
         (ex: pass).
     */
-
-    function zombieTurn($state, $active_player): void {
-    	$statename = $state['name'];
-
-        if ($state['type'] == "activeplayer") {
-            $this->jumpToState(ST_NEXT_PLAYER);
-            //$this->gamestate->nextState( "zombiePass" );
-            return;
-        } else if ($state['type'] == "multipleactiveplayer") {
-            switch ($statename) {
-                case 'cancelDamage':
-                    $this->applySkipCancelDamage($active_player);
-                    return;
-                case 'leaveTokyo':
-                    $this->yieldTokyo($active_player);
-                    return;
-                default:
-                    // Make sure player is in a non blocking status for role turn
-                    $sql = "
-                        UPDATE  player
-                        SET     player_is_multiactive = 0
-                        WHERE   player_id = $active_player
-                    ";
-                    $this->DbQuery($sql);
-
-                    $this->gamestate->updateMultiactiveOrNextState('end');
-                    return;
-            }
-        }
-
-        throw new feException( "Zombie mode not supported at this game state: ".$statename );
-    }
 
     function upgradeTableDb($from_version) {
  

@@ -25,7 +25,13 @@ class WhenCardIsBought extends GameState {
     }
 
     public function getArgs(int $activePlayerId): array {
-        return $this->game->argCardIsBought();
+        $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
+
+        $highlighted = $isPowerUpExpansion ? $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_WHEN_CARD_IS_BOUGHT) : [];
+
+        return [
+            'highlighted' => $highlighted,
+        ];
     }
 
     public function onEnteringState(int $activePlayerId, array $args) {

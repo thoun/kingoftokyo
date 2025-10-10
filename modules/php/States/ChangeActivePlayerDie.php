@@ -178,7 +178,7 @@ class ChangeActivePlayerDie extends GameState {
 
         if ($cardType == 3000 + \HEART_OF_THE_RABBIT_EVOLUTION) {
             $heartOfTheRabbitEvolutions = $this->game->getEvolutionsOfType($playerId, \HEART_OF_THE_RABBIT_EVOLUTION, false, true);
-            $this->game->applyPlayEvolution($playerId, $heartOfTheRabbitEvolutions[0]);
+            $this->game->powerUpExpansion->applyPlayEvolution($playerId, $heartOfTheRabbitEvolutions[0]);
             $this->game->setEvolutionTokens($playerId, $heartOfTheRabbitEvolutions[0], 1, true);
         }
 

@@ -34,7 +34,7 @@ class ChooseEvolutionCard extends GameState {
 
     #[PossibleAction]
     public function actChooseEvolutionCard(int $id, int $activePlayerId) {
-        $this->game->applyChooseEvolutionCard($activePlayerId, $id, false);
+        $this->game->powerUpExpansion->applyChooseEvolutionCard($activePlayerId, $id, false);
 
         $nextState = intval($this->game->getGameStateValue(STATE_AFTER_RESOLVE));
         $this->gamestate->jumpToState($nextState);

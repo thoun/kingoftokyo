@@ -47,31 +47,6 @@ trait DiceActionTrait {
         $this->goToState(ST_PLAYER_THROW_DICE);
     }
 
-    public function actRethrow3Camouflage() {
-        $playerId = $this->getCurrentPlayerId();
-
-        $countBackgroundDweller = $this->countCardOfType($playerId, BACKGROUND_DWELLER_CARD);
-        if ($countBackgroundDweller == 0) {
-            throw new \BgaUserException('No Background Dweller card');
-        }
-
-        $intervention = $this->getDamageIntervention();
-
-        $dice = $intervention->playersUsedDice->{$playerId}->dice;
-        $rethrown = false;
-        for ($i=0; $i<count($dice); $i++) {
-            if (!$rethrown && $dice[$i]->value == 3) {
-                $dice[$i]->value = bga_rand(1, 6);
-                $dice[$i]->rolled = true;
-                $rethrown = true;
-            } else {                
-                $dice[$i]->rolled = false;
-            }
-        }
-
-        $this->endThrowCamouflageDice($playerId, $intervention, $dice, false);
-    }
-
     function actApplyHeartDieChoices(#[JsonParam(associative: false)] array $heartDieChoices) {
         $playerId = $this->getActivePlayerId();
 

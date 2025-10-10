@@ -73,26 +73,4 @@ $machinestates = [
         "possibleactions" => [ "actApplySmashDieChoices" ],
         "transitions" => [],
     ],
-    ST_MULTIPLAYER_CANCEL_DAMAGE => [
-        "name" => "cancelDamage",
-        "description" => '',
-        "descriptionmyturn" => '',
-        "descriptionReduce" => clienttranslate('${actplayer} can reduce damage (${damage}[Heart])'),
-        "descriptionmyturnReduce" => clienttranslate('${you} can reduce damage (${damage}[Heart])'),
-        "descriptionHealBeforeDamage" => clienttranslate('${actplayer} can heal before taking damage (${damage}[Heart])'),
-        "descriptionmyturnHealBeforeDamage" => clienttranslate('${you} can heal before taking damage (${damage}[Heart])'),
-        "type" => "multipleactiveplayer",
-        "action" => "stCancelDamage",
-        "args" => "argCancelDamage",
-        "possibleactions" => [ "actThrowCamouflageDice", "actUseWings", "actSkipWings", "actUseRobot", "actUseElectricArmor", "actUseSuperJump", "actUseRapidHealingSync", "actRethrow3Camouflage", "actUseInvincibleEvolution", "actUseCandyEvolution", "actUseRapidHealing", "actUseMothershipSupport" ],
-        "transitions" => [
-            "stay" => ST_MULTIPLAYER_CANCEL_DAMAGE,
-            "enterTokyo" => ST_ENTER_TOKYO_APPLY_BURROWING,
-            "enterTokyoAfterBurrowing" => ST_ENTER_TOKYO,
-            "smashes" => ST_MULTIPLAYER_LEAVE_TOKYO,
-            "endTurn" => ST_END_TURN,
-            "zombiePass" => ST_END_TURN,
-        ],
-    ],
-
 ];

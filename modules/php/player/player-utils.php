@@ -13,12 +13,6 @@ trait PlayerUtilTrait {
 //////////// Utility functions
 ////////////
 
-    function setInvincible(int $playerId, string $varName) {        
-        $usedWings = $this->getGlobalVariable($varName, true);
-        $usedWings[] = $playerId;
-        $this->setGlobalVariable($varName, $usedWings);
-    }
-
     function isFewestStars(int $playerId) {
         $sql = "SELECT count(*) FROM `player` where `player_id` = $playerId AND `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = 0) AND (SELECT count(*) FROM `player` where player_eliminated = 0 AND player_dead = 0 and `player_score` = (select min(`player_score`) from `player` where player_eliminated = 0 AND player_dead = 0)) = 1";
         return intval($this->getUniqueValueFromDB($sql)) > 0;

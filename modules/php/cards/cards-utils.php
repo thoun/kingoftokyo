@@ -328,24 +328,6 @@ trait CardsUtilTrait {
         }
     }
 
-    #[CheckAction(false)]
-    function actUseRapidHealing() {
-        $playerId = $this->getCurrentPlayerId(); // current, not active !
-
-        $this->applyRapidHealing($playerId);
-
-        $this->updateCancelDamageIfNeeded($playerId);
-    }
-
-    #[CheckAction(false)]
-    function actUseMothershipSupport() {
-        $playerId = $this->getCurrentPlayerId(); // current, not active !
-
-        $this->applyMothershipSupport($playerId);
-
-        $this->updateCancelDamageIfNeeded($playerId);
-    }
-
     function applyRapidHealing(int $playerId) {
         if ($this->getPlayerEnergy($playerId) < 2) {
             throw new \BgaUserException('Not enough energy');
@@ -362,7 +344,7 @@ trait CardsUtilTrait {
         }
 
         if (!$this->canGainHealth($playerId)) {
-            throw new \BgaUserException(self::_('You cannot gain [Heart]'));
+            throw new \BgaUserException(clienttranslate('You cannot gain [Heart]'));
         }
 
         if ($this->countCardOfType($playerId, RAPID_HEALING_CARD) == 0) {
@@ -393,7 +375,7 @@ trait CardsUtilTrait {
         }
 
         if (!$this->canGainHealth($playerId)) {
-            throw new \BgaUserException(self::_('You cannot gain [Heart]'));
+            throw new \BgaUserException(clienttranslate('You cannot gain [Heart]'));
         }
 
         $cards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
