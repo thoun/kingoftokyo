@@ -6967,9 +6967,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.onEnteringResolveHeartDice = function (args, isCurrentPlayerActive) {
         var _a;
-        if (args.skipped) {
-            this.removeGamestateDescription();
-        }
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
             if (isCurrentPlayerActive) {
@@ -6980,9 +6977,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
     };
     KingOfTokyo.prototype.onEnteringResolveSmashDice = function (args, isCurrentPlayerActive) {
         var _a;
-        if (args.skipped) {
-            this.removeGamestateDescription();
-        }
         if ((_a = args.dice) === null || _a === void 0 ? void 0 : _a.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
             if (isCurrentPlayerActive) {

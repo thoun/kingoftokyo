@@ -590,9 +590,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onEnteringResolveHeartDice(args: EnteringResolveHeartDiceArgs, isCurrentPlayerActive: boolean) {
-        if (args.skipped) {
-            this.removeGamestateDescription();
-        }
         if (args.dice?.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
 
@@ -604,9 +601,6 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     private onEnteringResolveSmashDice(args: EnteringResolveSmashDiceArgs, isCurrentPlayerActive: boolean) {
-        if (args.skipped) {
-            this.removeGamestateDescription();
-        }
         if (args.dice?.length) {
             this.diceManager.setDiceForSelectHeartAction(args.dice, args.selectableDice, args.canHealWithDice, args.frozenFaces);
 

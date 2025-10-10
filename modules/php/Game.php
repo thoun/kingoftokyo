@@ -33,7 +33,6 @@ require_once('player/player-args.php');
 require_once('player/player-states.php');
 require_once('dice/dice-utils.php');
 require_once('dice/dice-actions.php');
-require_once('dice/dice-args.php');
 require_once('dice/dice-states.php');
 require_once('cards/cards-utils.php');
 require_once('cards/cards-actions.php');
@@ -57,7 +56,6 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\PlayerStateTrait;
     use \KOT\States\DiceUtilTrait;
     use \KOT\States\DiceActionTrait;
-    use \KOT\States\DiceArgTrait;
     use \KOT\States\DiceStateTrait;
     use \KOT\States\CardsUtilTrait;
     use \KOT\States\CardsActionTrait;

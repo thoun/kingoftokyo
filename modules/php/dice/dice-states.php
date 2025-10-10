@@ -65,19 +65,6 @@ trait DiceStateTrait {
         return $diceCount;
     }
 
-    function stResolveHeartDiceAction() {
-        $playerId = $this->getActivePlayerId();
-        
-        $diceCounts = $this->getGlobalVariable(DICE_COUNTS, true);
-
-        $diceCount = $this->addHighTideDice($playerId, $diceCounts[4]);
-
-        if ($diceCount > $diceCounts[4]) {
-            $diceCounts[4] = $diceCount;
-            $this->setGlobalVariable(DICE_COUNTS, $diceCounts);
-        }
-    }
-
     function resolveSmashDiceState(array $playersSmashesWithReducedDamage = []) {
         $playerId = $this->getActivePlayerId();
 

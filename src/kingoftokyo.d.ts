@@ -387,13 +387,11 @@ interface EnteringResolveHeartDiceArgs extends EnteringDiceArgs {
     healablePlayers: HealablePlayer[];
     poisonTokens: number;
     shrinkRayTokens: number;
-    skipped: boolean;
 }
 
 interface EnteringResolveSmashDiceArgs extends EnteringDiceArgs {    
     canUsePlayWithYourFood: boolean;
     willBeWoundedIds: number[];
-    skipped: boolean;
 }
 
 interface EnteringStealCostumeCardArgs {
