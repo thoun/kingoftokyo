@@ -136,7 +136,7 @@ trait PlayerUtilTrait {
     }
 
     #[CheckAction(false)]
-    function setLeaveTokyoUnder(int $under) {
+    function actSetLeaveTokyoUnder(int $under) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $this->DbQuery("UPDATE player SET `leave_tokyo_under` = $under where `player_id` = $playerId");
@@ -155,7 +155,7 @@ trait PlayerUtilTrait {
     }
 
     #[CheckAction(false)]
-    function setStayTokyoOver(int $over) {
+    function actSetStayTokyoOver(int $over) {
         $playerId = $this->getCurrentPlayerId(); // current, not active !
 
         $leaveUnder = intval($this->getUniqueValueFromDB("SELECT leave_tokyo_under FROM `player` where `player_id` = $playerId"));

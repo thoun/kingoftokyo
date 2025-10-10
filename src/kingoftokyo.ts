@@ -2997,13 +2997,13 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
     }
 
     public setLeaveTokyoUnder(under: number) {
-        this.bgaPerformAction('setLeaveTokyoUnder', {
+        this.bgaPerformAction('actSetLeaveTokyoUnder', {
             under
         }, { lock: false, checkAction: false });
     }
 
     public setStayTokyoOver(over: number) {
-        this.bgaPerformAction('setStayTokyoOver', {
+        this.bgaPerformAction('actSetStayTokyoOver', {
             over
         }, { lock: false, checkAction: false });
     }

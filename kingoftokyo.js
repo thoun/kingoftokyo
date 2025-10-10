@@ -9006,12 +9006,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
         });
     };
     KingOfTokyo.prototype.setLeaveTokyoUnder = function (under) {
-        this.bgaPerformAction('setLeaveTokyoUnder', {
+        this.bgaPerformAction('actSetLeaveTokyoUnder', {
             under: under
         }, { lock: false, checkAction: false });
     };
     KingOfTokyo.prototype.setStayTokyoOver = function (over) {
-        this.bgaPerformAction('setStayTokyoOver', {
+        this.bgaPerformAction('actSetStayTokyoOver', {
             over: over
         }, { lock: false, checkAction: false });
     };
