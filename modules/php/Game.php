@@ -37,13 +37,11 @@ require_once('dice/dice-states.php');
 require_once('cards/cards-utils.php');
 require_once('cards/cards-actions.php');
 require_once('cards/cards-args.php');
-require_once('cards/cards-states.php');
 require_once('evolution-cards/evolution-cards-utils.php');
 require_once('intervention.php');
 
 use Bga\GameFramework\Actions\CheckAction;
 use Bga\Games\KingOfTokyo\States\Start;
-use \feException;
 
 class Game extends \Bga\GameFramework\Table {
     use \KOT\States\UtilTrait;
@@ -60,7 +58,6 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\CardsUtilTrait;
     use \KOT\States\CardsActionTrait;
     use \KOT\States\CardsArgTrait;
-    use \KOT\States\CardsStateTrait;
     use \KOT\States\EvolutionCardsUtilTrait;
     use \KOT\States\InterventionTrait;
     use DebugUtilTrait;

@@ -311,9 +311,12 @@ interface EnteringStepEvolutionArgs {
     noExtraTurnWarning?: number[];
 }
 
-interface EnteringBeforeStartTurnArgs extends EnteringStepEvolutionArgs {
+interface EnteringMindbugKeywordStateArgs extends EnteringStepEvolutionArgs {
     consumableCards: Card[];
     canPlayConsumable: boolean;
+}
+
+interface EnteringBeforeStartTurnArgs extends EnteringMindbugKeywordStateArgs {
     couldPlayEvolution: boolean;
 }
 
@@ -450,7 +453,7 @@ interface EnteringBuyCardArgs {
     noExtraTurnWarning: number[];
 }
 
-interface EnteringCancelDamageArgs {
+interface EnteringCancelDamageArgs extends EnteringMindbugKeywordStateArgs {
     canCancelDamage: boolean;
     canHealToAvoidDeath: boolean;
     canDoAction: boolean;
@@ -473,6 +476,8 @@ interface EnteringCancelDamageArgs {
     canHeal: number;
     remainingDamage: number;
     replaceHeartByEnergyCost: { [energy: number]: number }; // key is the energy spent, value is the heart cost
+    canPlayConsumable: boolean;
+    consumableCards: Card[];
 }
 
 interface EnteringLeaveTokyoArgs {

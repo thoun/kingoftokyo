@@ -4,6 +4,11 @@ namespace KOT\States;
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 
+use function Bga\Games\KingOfTokyo\debug;
+
+use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_WOUNDED;
+use const Bga\Games\KingOfTokyo\PowerCards\TOUGH;
+
 trait CardsArgTrait {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -319,6 +324,10 @@ trait CardsArgTrait {
 
             $potentialEnergy = $this->getPlayerPotentialEnergy($playerId);
 
+            $consumableCards = $clawDamage !== null ? $this->mindbugExpansion->getConsumableCards($playerId, MINDBUG_KEYWORDS_WOUNDED) : [];
+            $consumableToughCards = Arrays::filter($consumableCards, fn($card) => in_array(TOUGH, $card->mindbugKeywords));
+            $canPlayConsumable = count($consumableCards) > 0;
+
             $canCancelDamage = 
                 $canThrowDices || 
                 ($hasDice3 && $hasBackgroundDweller) ||
@@ -328,12 +337,13 @@ trait CardsArgTrait {
                 $canUseCandy ||
                 ($canUseRobot && $potentialEnergy >= 1) ||
                 ($canUseElectricArmor && $potentialEnergy >= 1) ||
-                ($superJumpHearts && $potentialEnergy >= 1);
+                ($superJumpHearts && $potentialEnergy >= 1) ||
+                count($consumableToughCards) > 0;
 
-            $canHealToAvoidDeath = !$cancelHealWithEnergyCards;
+            $canHealToAvoidDeath = !$cancelHealWithEnergyCards || count($consumableToughCards) > 0;
 
             $canDoAction = 
-                $canCancelDamage || $canHealToAvoidDeath;
+                $canCancelDamage || $canHealToAvoidDeath || $canPlayConsumable;
 
             $damageText = "$remainingDamage";
             $effectiveDamage = $this->getEffectiveDamage($remainingDamage, $playerId, $damageDealerId, $clawDamage)->effectiveDamage;
@@ -368,6 +378,8 @@ trait CardsArgTrait {
                 'canHealToAvoidDeath' => $canHealToAvoidDeath,
                 'skipMeansDeath' => $damageToCancelToSurvive > 0,
                 'canDoAction' => $canDoAction,
+                'consumableCards' => $consumableCards,
+                'canPlayConsumable' => $canPlayConsumable,
             ];
         } else {
             return [

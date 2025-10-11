@@ -33,6 +33,10 @@ $description-size: 7pt;
         width: 100%;
         background: url('img/card-bottom.png');
         background-position: center top;
+
+        &.consumable {
+            display: none;
+        }
     }
 
     .name-wrapper {
@@ -89,6 +93,14 @@ $description-size: 7pt;
             -webkit-text-stroke: 4px #13b48f;
         }
 
+        &.consumable {
+            top: 126px;
+        }
+
+        &.consumable .outline { // purple
+            -webkit-text-stroke: 4px #9e3069;
+        }
+
         .outline {
             position: absolute;
             left: 0;
@@ -118,6 +130,14 @@ $description-size: 7pt;
             width: 12px;
             height: 12px;
             margin-bottom: -2px;
+        }
+
+        &.consumable {
+            bottom: 10px;
+            height: 36px;
+            left: 10px;
+            right: 10px;
+            width: unset;
         }
     }
 
@@ -286,7 +306,6 @@ $description-size: 7pt;
     left: 10px;
     right: 10px;
     height: 80px;
-    background: #FF000066;
     display: flex;
     justify-content: center;
     align-items: center;

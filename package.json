@@ -5,7 +5,11 @@
   "main": "kingoftokyo.js",
   "scripts": {
     "build:ts": "tsc",
-    "build:scss": "sass --no-source-map src/kingoftokyo.scss kingoftokyo.css"
+    "build:scss": "sass --no-source-map src/kingoftokyo.scss kingoftokyo.css",
+    "watch:ts": "tsc --watch",
+    "watch:scss": "sass --watch src/yourgamename.scss yourgamename.css",
+    "watch": "npm run watch:ts && npm run watch:scss",
+    "build": "npm run build:ts && npm run build:scss"
   },
   "author": "",
   "license": "ISC",

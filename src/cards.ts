@@ -1056,6 +1056,8 @@ class CardsManager extends CardManager<Card> {
             return _('Costume');
         } else if (cardType < 400) {
             return _('Transformation');
+        } else if (cardType < 500) {
+            return _('Consumable');
         }
     }
 
@@ -1068,6 +1070,8 @@ class CardsManager extends CardManager<Card> {
             return 'costume';
         } else if (cardType < 400) {
             return 'transformation';
+        } else if (cardType < 500) {
+            return 'consumable';
         }
     }
 
@@ -1077,6 +1081,7 @@ class CardsManager extends CardManager<Card> {
         const type = this.getCardTypeName(cardType);
         const description = formatTextIcons(this.getCardDescription(cardType, side));
         const position = this.getCardNamePosition(cardType, side);
+        const consumable = cardType > 400 && cardType < 500;
 
         cardDiv.innerHTML = `<div class="bottom"></div>
         <div class="name-wrapper" ${position ? `style="left: ${position[0]}px; top: ${position[1]}px;"` : ''}>
@@ -1088,7 +1093,12 @@ class CardsManager extends CardManager<Card> {
             <div class="text">${type}</div>
         </div>
         
-        <div class="description-wrapper">${description}</div>`;
+        <div class="description-wrapper ${consumable ? 'consumable' : ''}">${description}</div>`;
+
+        if (consumable) {
+            return;
+        }
+
         if (this.game.isDarkEdition() && DARK_EDITION_CARDS_MAIN_COLOR[cardType]) {
             cardDiv.style.setProperty('--main-color', DARK_EDITION_CARDS_MAIN_COLOR[cardType]);
         }

@@ -418,6 +418,23 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
         }
     }
 
+    private onEnterginMindbugKeywordState(args: EnteringMindbugKeywordStateArgs) {
+        if (this.isCurrentPlayerActive()) {
+            if (args.canPlayConsumable) {
+
+                args.consumableCards.forEach(card => {
+                    const div = document.getElementById(`card-${card.id}-keyword-buttons`);
+                    if (div) {
+                        div.innerHTML = '';
+                        card.mindbugKeywords.forEach(keyword => 
+                            this.statusBar.addActionButton(_(keyword), () => this.onConsumableKeywordClick(card, keyword), { destination: div })
+                        );
+                    }
+                })
+            }
+        }
+    }
+
     private onEnteringBeforeStartTurn(args: EnteringBeforeStartTurnArgs) {
         if (args.canPlayConsumable && args.couldPlayEvolution) {
             this.statusBar.setTitle(
@@ -436,20 +453,7 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             );
         }
 
-        if (this.isCurrentPlayerActive()) {
-            if (args.canPlayConsumable) {
-
-                args.consumableCards.forEach(card => {
-                    const div = document.getElementById(`card-${card.id}-keyword-buttons`);
-                    if (div) {
-                        div.innerHTML = '';
-                        card.mindbugKeywords.forEach(keyword => 
-                            this.statusBar.addActionButton(_(keyword), () => this.onConsumableKeywordClick(card, keyword), { destination: div })
-                        );
-                    }
-                })
-            }
-        }
+        this.onEnterginMindbugKeywordState(args);
     }
     
     private onEnteringStepEvolution(args: EnteringStepEvolutionArgs) {
@@ -644,17 +648,39 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             this.diceManager.showCamouflageRoll(args.dice);
         }
 
-        if (!args.canCancelDamage && args.canHealToAvoidDeath) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} can heal before taking damage (${damage}[Heart])') : _('${actplayer} can heal before taking damage (${damage}[Heart])'), 
-                args
-            );
-        } else if (args.canCancelDamage) {
-            this.statusBar.setTitle(
-                this.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), 
-                args
-            );
+        if (args.canPlayConsumable) {
+            if (!args.canCancelDamage && args.canHealToAvoidDeath) {
+                this.statusBar.setTitle(
+                    this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])'), 
+                    args
+                );
+            } else if (args.canCancelDamage) {
+                this.statusBar.setTitle(
+                    this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])'), 
+                    args
+                );
+            } else {
+                this.statusBar.setTitle(
+                    this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card (${damage}[Heart])'), 
+                    args
+                );
+            }
+
+        } else {
+            if (!args.canCancelDamage && args.canHealToAvoidDeath) {
+                this.statusBar.setTitle(
+                    this.isCurrentPlayerActive() ? _('${you} can heal before taking damage (${damage}[Heart])') : _('${actplayer} can heal before taking damage (${damage}[Heart])'), 
+                    args
+                );
+            } else if (args.canCancelDamage) {
+                this.statusBar.setTitle(
+                    this.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), 
+                    args
+                );
+            }
         }
+
+        this.onEnterginMindbugKeywordState(args);
         
         if (isCurrentPlayerActive) {
             if (args.dice && args.rethrow3?.hasCard) {

@@ -8,11 +8,15 @@ use Bga\GameFramework\NotificationMessage;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\ActivatedConsumableKeyword;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
+use KOT\Objects\Damage;
 use KOT\Objects\Question;
 
 use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
+use const Bga\Games\KingOfTokyo\PowerCards\POISON;
 use const Bga\Games\KingOfTokyo\PowerCards\SNEAKY;
+use const Bga\Games\KingOfTokyo\PowerCards\TOUGH;
 
 const ACTIVATED_HUNTER_CARDS = 'ACTIVATED_HUNTER_CARDS';
 const ACTIVATED_SNEAKY_CARDS = 'ACTIVATED_SNEAKY_CARDS';
@@ -149,6 +153,8 @@ class MindbugExpansion {
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
             case SNEAKY: $this->activateSneaky($playerId, $card); break;
+            case POISON: $this->activatePoison($playerId, $card); break;
+            case TOUGH: $this->activateTough($playerId, $card); break;
 
             default: throw new \BgaSystemException("Invalid keyword");
         }
@@ -211,5 +217,36 @@ class MindbugExpansion {
             $activatedSneakyCards->cardIds[] = $card->id;
         }
         $this->game->globals->set(ACTIVATED_SNEAKY_CARDS, $activatedSneakyCards);
+    }
+
+    private function activatePoison(int $playerId, PowerCard $card) {
+        $intervention = $this->game->getDamageIntervention();
+        $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
+        $theoricalLostHearts = $damage->damage;
+        $newDamage = new Damage($damage->damageDealerId, $damage->damage, $playerId, $card);
+        $intervention->damages[] = $newDamage;
+        $intervention->allDamages[] = $newDamage;
+        $intervention->remainingPlayersIds[] = $damage->damageDealerId;
+        $this->game->resolveRemainingDamages($intervention, false, false);
+
+        /** @disregard */
+        $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: POISON, lostHearts: $theoricalLostHearts, attackerPlayerId: $damage->damageDealerId));
+        if (gettype($newDamages) === 'array') {
+            // TODOMB add $newDamages
+        }
+    }
+
+    private function activateTough(int $playerId, PowerCard $card) {
+        $intervention = $this->game->getDamageIntervention();
+        $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
+        $theoricalLostHearts = $damage->damage;
+        $this->game->reduceInterventionDamages($playerId, $intervention, -1);
+        $this->game->resolveRemainingDamages($intervention, true, false);
+
+        /** @disregard */
+        $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: TOUGH, lostHearts: $theoricalLostHearts));
+        if (gettype($newDamages) === 'array') {
+            // TODOMB add $newDamages
+        }
     }
 }

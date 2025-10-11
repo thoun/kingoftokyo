@@ -11,6 +11,8 @@ use Bga\Games\KingOfTokyo\Game;
 use KOT\Objects\Damage;
 use KOT\Objects\PlayersUsedDice;
 
+use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_WOUNDED;
+
 class CancelDamage extends GameState {
     public function __construct(protected Game $game)
     {
@@ -46,6 +48,11 @@ class CancelDamage extends GameState {
         }
 
         $this->gamestate->setPlayersMultiactive([$remainingPlayers[0]], 'stay', true);
+    }
+
+    #[PossibleAction]
+    public function actActivateConsumable(int $id, string $keyword, int $currentPlayerId) {
+        $this->game->mindbugExpansion->activateConsumable($id, $keyword, $currentPlayerId, MINDBUG_KEYWORDS_WOUNDED);
     }
     
     #[PossibleAction]
@@ -106,7 +113,7 @@ class CancelDamage extends GameState {
         ]);
 
         $intervention = $this->game->getDamageIntervention();
-        $this->reduceInterventionDamages($currentPlayerId, $intervention, -1);
+        $this->game->reduceInterventionDamages($currentPlayerId, $intervention, -1);
         $this->game->resolveRemainingDamages($intervention, true, false);
     }
 
@@ -132,7 +139,7 @@ class CancelDamage extends GameState {
 
         $this->game->applyLoseEnergy($currentPlayerId, $energy, 0);
 
-        $this->reduceInterventionDamages($currentPlayerId, $intervention, $energy);
+        $this->game->reduceInterventionDamages($currentPlayerId, $intervention, $energy);
         $this->game->setDamageIntervention($intervention);
 
         $args = $this->game->argCancelDamage($currentPlayerId, $intervention);
@@ -182,7 +189,7 @@ class CancelDamage extends GameState {
 
         $this->game->applyLoseEnergy($currentPlayerId, $energy, 0);
 
-        $this->reduceInterventionDamages($currentPlayerId, $intervention, $energy);
+        $this->game->reduceInterventionDamages($currentPlayerId, $intervention, $energy);
         $this->game->setDamageIntervention($intervention);
 
         $args = $this->game->argCancelDamage($currentPlayerId, $intervention);
@@ -231,7 +238,7 @@ class CancelDamage extends GameState {
             $this->game->setUsedCard($superJumpCards[$i]->id);
         }
 
-        $this->reduceInterventionDamages($currentPlayerId, $intervention, $energy);
+        $this->game->reduceInterventionDamages($currentPlayerId, $intervention, $energy);
 
         $args = $this->game->argCancelDamage($currentPlayerId, $intervention);
 
@@ -368,7 +375,7 @@ class CancelDamage extends GameState {
             $canRethrow3 = $this->game->countCardOfType($currentPlayerId, BACKGROUND_DWELLER_CARD) > 0 && in_array(3, $diceValues);
         }
 
-        $this->reduceInterventionDamages($currentPlayerId, $intervention, $cancelledDamage);
+        $this->game->reduceInterventionDamages($currentPlayerId, $intervention, $cancelledDamage);
 
         $args = $this->game->argCancelDamage($currentPlayerId, $intervention);
 
@@ -434,7 +441,7 @@ class CancelDamage extends GameState {
         $this->game->playEvolutionToTable($currentPlayerId, $card, clienttranslate('${player_name} uses ${card_name} to not lose [Heart] this turn'));
 
         $intervention = $this->game->getDamageIntervention();
-        $this->reduceInterventionDamages($currentPlayerId, $intervention, -1);
+        $this->game->reduceInterventionDamages($currentPlayerId, $intervention, -1);
         $this->game->resolveRemainingDamages($intervention, true, false);
     }
     
@@ -480,7 +487,7 @@ class CancelDamage extends GameState {
             'player_name2' => $this->game->getPlayerNameById($fromPlayerId),
         ]);
 
-        $this->reduceInterventionDamages($currentPlayerId, $intervention, -1);
+        $this->game->reduceInterventionDamages($currentPlayerId, $intervention, -1);
         $this->game->resolveRemainingDamages($intervention, true, false);
     }
 
@@ -506,23 +513,6 @@ class CancelDamage extends GameState {
         $usedWings = $this->game->getGlobalVariable($varName, true);
         $usedWings[] = $playerId;
         $this->game->setGlobalVariable($varName, $usedWings);
-    }
-
-    function reduceInterventionDamages(int $playerId, &$intervention, int $reduceBy /* -1 for remove all for player*/) {
-        $damageIndex = Arrays::findKey($intervention->damages, fn($d) => $d->playerId == $playerId);
-        $allDamageIndex = Arrays::findKey($intervention->allDamages, fn($d) => $d->playerId == $playerId);
-
-        if ($reduceBy === -1 || $reduceBy >= $intervention->damages[$damageIndex]->remainingDamage) {
-            // damage is fully cancelled, we remove it
-            array_splice($intervention->damages, $damageIndex, 1);
-            array_splice($intervention->allDamages, $allDamageIndex, 1);
-        } else {
-            $intervention->damages[$damageIndex]->damage -= $reduceBy;
-            $intervention->damages[$damageIndex]->remainingDamage -= $reduceBy;
-            $intervention->allDamages[$allDamageIndex]->remainingDamage -= $reduceBy;
-        }
-        
-        $this->game->setDamageIntervention($intervention);
     }
 
     function createRemainingDamage(int $playerId, array $damages): ?Damage {

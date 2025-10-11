@@ -16,7 +16,10 @@ use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
 
+use function Bga\Games\KingOfTokyo\debug;
+
 use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
+use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_WOUNDED;
 
 trait UtilTrait {
 
@@ -1189,14 +1192,33 @@ trait UtilTrait {
         $this->resolveRemainingDamages($cancelDamageIntervention);
     }
 
+    function reduceInterventionDamages(int $playerId, &$intervention, int $reduceBy /* -1 for remove all for player*/) {
+        $damageIndex = Arrays::findKey($intervention->damages, fn($d) => $d->playerId == $playerId);
+        $allDamageIndex = Arrays::findKey($intervention->allDamages, fn($d) => $d->playerId == $playerId);
+
+        if ($reduceBy === -1 || $reduceBy >= $intervention->damages[$damageIndex]->remainingDamage) {
+            // damage is fully cancelled, we remove it
+            array_splice($intervention->damages, $damageIndex, 1);
+            array_splice($intervention->allDamages, $allDamageIndex, 1);
+        } else {
+            $intervention->damages[$damageIndex]->damage -= $reduceBy;
+            $intervention->damages[$damageIndex]->remainingDamage -= $reduceBy;
+            $intervention->allDamages[$allDamageIndex]->remainingDamage -= $reduceBy;
+        }
+        
+        $this->setDamageIntervention($intervention);
+    }
+
     function canDoIntervention(int $playerId, int $damage, int $damageDealerId, $clawDamage) {
+        $consumableCards = $clawDamage !== null ? $this->mindbugExpansion->getConsumableCards($playerId, MINDBUG_KEYWORDS_WOUNDED) : [];
 
         $canDo = $this->countCardOfType($playerId, CAMOUFLAGE_CARD) > 0 || 
             $this->countCardOfType($playerId, ROBOT_CARD) > 0 || 
             $this->countCardOfType($playerId, ELECTRIC_ARMOR_CARD) > 0 || 
             ($this->countCardOfType($playerId, WINGS_CARD) > 0 && $this->canLoseHealth($playerId, $damage) == null) ||
             ($this->powerUpExpansion->isActive() && ($this->countEvolutionOfType($playerId, DETACHABLE_TAIL_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, RABBIT_S_FOOT_EVOLUTION, false, true) > 0 || $this->countEvolutionOfType($playerId, SO_SMALL_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, TERROR_OF_THE_DEEP_EVOLUTION, true, true) > 0 || $this->countEvolutionOfType($playerId, CANDY_EVOLUTION, true, true) > 0)) ||
-            $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0;
+            $this->countUnusedCardOfType($playerId, SUPER_JUMP_CARD) > 0 ||
+            count($consumableCards) > 0;
 
         if ($canDo) {
             return true;
@@ -1233,6 +1255,7 @@ trait UtilTrait {
     }
 
     function resolveRemainingDamages(object $intervention, bool $endOfCurrentPlayer = false, bool $fromCancelDamageState = false) {
+        
         // if there is no more player to handle, end this state
         if (count($intervention->remainingPlayersId) == 0) {
             if ($this->powerUpExpansion->isActive()) {

@@ -3165,6 +3165,9 @@ var CardsManager = /** @class */ (function (_super) {
         else if (cardType < 400) {
             return _('Transformation');
         }
+        else if (cardType < 500) {
+            return _('Consumable');
+        }
     };
     CardsManager.prototype.getCardTypeClass = function (cardType) {
         if (cardType < 100) {
@@ -3179,6 +3182,9 @@ var CardsManager = /** @class */ (function (_super) {
         else if (cardType < 400) {
             return 'transformation';
         }
+        else if (cardType < 500) {
+            return 'consumable';
+        }
     };
     CardsManager.prototype.setDivAsCard = function (cardDiv, cardType, side) {
         if (side === void 0) { side = null; }
@@ -3187,7 +3193,11 @@ var CardsManager = /** @class */ (function (_super) {
         var type = this.getCardTypeName(cardType);
         var description = formatTextIcons(this.getCardDescription(cardType, side));
         var position = this.getCardNamePosition(cardType, side);
-        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" ".concat(position ? "style=\"left: ".concat(position[0], "px; top: ").concat(position[1], "px;\"") : '', ">\n            <div class=\"outline\">").concat(this.getCardName(cardType, 'span', side), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType, 'text-only', side), "</div>\n        </div>\n        <div class=\"type-wrapper ").concat(this.getCardTypeClass(cardType), "\">\n            <div class=\"outline\">").concat(type, "</div>\n            <div class=\"text\">").concat(type, "</div>\n        </div>\n        \n        <div class=\"description-wrapper\">").concat(description, "</div>");
+        var consumable = cardType > 400 && cardType < 500;
+        cardDiv.innerHTML = "<div class=\"bottom\"></div>\n        <div class=\"name-wrapper\" ".concat(position ? "style=\"left: ".concat(position[0], "px; top: ").concat(position[1], "px;\"") : '', ">\n            <div class=\"outline\">").concat(this.getCardName(cardType, 'span', side), "</div>\n            <div class=\"text\">").concat(this.getCardName(cardType, 'text-only', side), "</div>\n        </div>\n        <div class=\"type-wrapper ").concat(this.getCardTypeClass(cardType), "\">\n            <div class=\"outline\">").concat(type, "</div>\n            <div class=\"text\">").concat(type, "</div>\n        </div>\n        \n        <div class=\"description-wrapper ").concat(consumable ? 'consumable' : '', "\">").concat(description, "</div>");
+        if (consumable) {
+            return;
+        }
         if (this.game.isDarkEdition() && DARK_EDITION_CARDS_MAIN_COLOR[cardType]) {
             cardDiv.style.setProperty('--main-color', DARK_EDITION_CARDS_MAIN_COLOR[cardType]);
         }
@@ -6819,17 +6829,8 @@ var KingOfTokyo = /** @class */ (function (_super) {
             }
         }
     };
-    KingOfTokyo.prototype.onEnteringBeforeStartTurn = function (args) {
+    KingOfTokyo.prototype.onEnterginMindbugKeywordState = function (args) {
         var _this = this;
-        if (args.canPlayConsumable && args.couldPlayEvolution) {
-            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'), args);
-        }
-        else if (args.canPlayConsumable) {
-            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'), args);
-        }
-        else if (args.couldPlayEvolution) {
-            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'), args);
-        }
         if (this.isCurrentPlayerActive()) {
             if (args.canPlayConsumable) {
                 args.consumableCards.forEach(function (card) {
@@ -6843,6 +6844,18 @@ var KingOfTokyo = /** @class */ (function (_super) {
                 });
             }
         }
+    };
+    KingOfTokyo.prototype.onEnteringBeforeStartTurn = function (args) {
+        if (args.canPlayConsumable && args.couldPlayEvolution) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'), args);
+        }
+        else if (args.canPlayConsumable) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'), args);
+        }
+        else if (args.couldPlayEvolution) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'), args);
+        }
+        this.onEnterginMindbugKeywordState(args);
     };
     KingOfTokyo.prototype.onEnteringStepEvolution = function (args) {
         console.log('onEnteringStepEvolution', args, this.isCurrentPlayerActive());
@@ -7016,12 +7029,26 @@ var KingOfTokyo = /** @class */ (function (_super) {
         if (args.dice) {
             this.diceManager.showCamouflageRoll(args.dice);
         }
-        if (!args.canCancelDamage && args.canHealToAvoidDeath) {
-            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can heal before taking damage (${damage}[Heart])') : _('${actplayer} can heal before taking damage (${damage}[Heart])'), args);
+        if (args.canPlayConsumable) {
+            if (!args.canCancelDamage && args.canHealToAvoidDeath) {
+                this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or heal before taking damage (${damage}[Heart])'), args);
+            }
+            else if (args.canCancelDamage) {
+                this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card or reduce damage (${damage}[Heart])'), args);
+            }
+            else {
+                this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can play a <CONSUMABLE> card (${damage}[Heart])') : _('${actplayer} can play a <CONSUMABLE> card (${damage}[Heart])'), args);
+            }
         }
-        else if (args.canCancelDamage) {
-            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), args);
+        else {
+            if (!args.canCancelDamage && args.canHealToAvoidDeath) {
+                this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can heal before taking damage (${damage}[Heart])') : _('${actplayer} can heal before taking damage (${damage}[Heart])'), args);
+            }
+            else if (args.canCancelDamage) {
+                this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} can reduce damage (${damage}[Heart])') : _('${actplayer} can reduce damage (${damage}[Heart])'), args);
+            }
         }
+        this.onEnterginMindbugKeywordState(args);
         if (isCurrentPlayerActive) {
             if (args.dice && ((_a = args.rethrow3) === null || _a === void 0 ? void 0 : _a.hasCard)) {
                 if (document.getElementById('rethrow3camouflage_button')) {
