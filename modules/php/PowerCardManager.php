@@ -567,11 +567,13 @@ class PowerCardManager extends ItemManager {
         $fluxlingTile = Arrays::find($this->game->wickednessTiles->getPlayerTiles($playerId), fn($tile) => $tile->type === FLUXLING_WICKEDNESS_TILE);
         if ($fluxlingTile) {
             $mimickedCardId = $this->game->getMimickedCardId(FLUXLING_WICKEDNESS_TILE);
-            $virtualCard = $this->getItemById($mimickedCardId);
-            if ($virtualCard) {
-                $virtualCard->id = -$virtualCard->id;
-                $virtualCard->mimickingTileId = $fluxlingTile->id;
-                $cards[] = $virtualCard;
+            if ($mimickedCardId) {
+                $virtualCard = $this->getItemById($mimickedCardId);
+                if ($virtualCard) {
+                    $virtualCard->id = -$virtualCard->id;
+                    $virtualCard->mimickingTileId = $fluxlingTile->id;
+                    $cards[] = $virtualCard;
+                }
             }
         }
 
