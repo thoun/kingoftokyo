@@ -36,7 +36,7 @@ class PickMonster extends GameState {
 
         $availableMonsters = $this->game->getAvailableMonsters();
         if (count($availableMonsters) === 1) {
-            $this->actPickMonster($activePlayerId, $availableMonsters[0], true);
+            return $this->actPickMonster($activePlayerId, $availableMonsters[0], true);
         }
     }
 
