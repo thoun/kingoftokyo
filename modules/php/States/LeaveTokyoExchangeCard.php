@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\States;
 
+use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
@@ -53,7 +54,7 @@ class LeaveTokyoExchangeCard extends GameState {
         ];
     }
 
-    public function onEnteringState(int $activePlayerId, array $args): ?int {
+    public function onEnteringState(array $args): ?int {
         if ($this->game->autoSkipImpossibleActions() && empty($args['canExchange'])) {
             return \ST_MULTIPLAYER_BEFORE_ENTERING_TOKYO;
         }
@@ -64,7 +65,7 @@ class LeaveTokyoExchangeCard extends GameState {
     }
 
     #[PossibleAction]
-    function actExchangeCard(int $exchangedCardId, int $currentPlayerId, array $args) {
+    function actExchangeCard(#[IntParam('id')] int $exchangedCardId, int $currentPlayerId, array $args) {
         if (in_array($exchangedCardId, $args['disabledIds'])) {
             throw new \BgaUserException("You can't exchange this card");
         }

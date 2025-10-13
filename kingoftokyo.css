@@ -1338,12 +1338,12 @@ body > .card {
 }
 .kot-curse-card .card-side.front {
   background-size: auto 100%;
-  background-image: url("img/anubis-cards.jpg");
+  background-image: url("img/cards/anubis-cards.jpg");
   background-position: 100% 50%;
 }
 .kot-curse-card .card-side.back {
   background-size: auto 100%;
-  background-image: url("img/anubis-cards.jpg");
+  background-image: url("img/cards/anubis-cards.jpg");
   background-position: 50% 50%;
 }
 .kot-curse-card .effect-wrapper {
