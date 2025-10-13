@@ -156,6 +156,14 @@ trait UtilTrait {
         return intval($this->getUniqueValueFromDB("SELECT player_health FROM player where `player_id` = $playerId"));
     }
 
+    function getMinPlayerHealth() {
+        return intval($this->getUniqueValueFromDB("SELECT min(player_health) FROM player WHERE player_eliminated = 0 AND player_dead = 0"));
+    }
+
+    function getMaxPlayerEnergy() {
+        return intval($this->getUniqueValueFromDB("SELECT max(player_energy) FROM player"));
+    }
+
     function getPlayerEnergy(int $playerId) {
         return intval($this->getUniqueValueFromDB("SELECT player_energy FROM player where `player_id` = $playerId"));
     }
@@ -662,6 +670,18 @@ trait UtilTrait {
         if (gettype($cardType) !== 'integer' || $cardType != ASTRONAUT_CARD) { // to avoid infinite loop
             // Astronaut
             $this->applyAstronaut($playerId);
+        }
+
+        if ($points >= 4) {
+            $otherPlayerIds = $this->getOtherPlayersIds($playerId);
+            foreach ($otherPlayerIds as $otherPlayerId) {
+                $evolutions = $this->getPlayerVirtual($otherPlayerId);
+                foreach ($evolutions as $evolution) {
+                    if ($evolution->type === SUPERIOR_BRAIN_EVOLUTION) {
+                        $evolution->applyEffect(new Context($this, $otherPlayerId));
+                    }
+                }
+            }
         }
 
         return null;

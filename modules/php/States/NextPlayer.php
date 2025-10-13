@@ -30,6 +30,7 @@ class NextPlayer extends GameState {
         if (intval($this->game->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 2) {
             $this->game->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 0);
         } 
+        $this->globals->delete(NEXT_POWER_CARD_COST_REDUCTION);
 
         $killPlayer = $this->game->killDeadPlayers();
 

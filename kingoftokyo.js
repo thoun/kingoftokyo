@@ -6914,6 +6914,9 @@ var KingOfTokyo = /** @class */ (function (_super) {
             if (args.hasCultist && args.throwNumber === args.maxThrowNumber) {
                 this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + " (".concat(_('Cultist'), ")") + orbOfDoomsSuffix, function () { return _this.useCultist(); });
             }
+            if (args.rerollAllEnergy) {
+                this.createButton('dice-actions', 'rerollAllEnergy_button', formatTextIcons(_("Reroll all ${dieFace}").replace('${dieFace}', '[dieEnergy]')) + ' (' + this.evolutionCardsManager.getCardName(622, 'text-only') + ')', function () { return _this.actUseIntergalacticGenius(); });
+            }
             if (args.rerollDie.isBeastForm) {
                 dojo.place("<div id=\"beast-form-dice-actions\"></div>", 'dice-actions');
                 var simpleFaces_1 = [];
@@ -8780,6 +8783,12 @@ var KingOfTokyo = /** @class */ (function (_super) {
         var lockedDice = this.diceManager.getLockedDice();
         this.bgaPerformAction('actRerollDie', {
             id: id,
+            diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
+        });
+    };
+    KingOfTokyo.prototype.actUseIntergalacticGenius = function () {
+        var lockedDice = this.diceManager.getLockedDice();
+        this.bgaPerformAction('actUseIntergalacticGenius', {
             diceIds: lockedDice.map(function (die) { return die.id; }).join(',')
         });
     };

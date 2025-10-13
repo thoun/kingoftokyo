@@ -5,4 +5,5 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
 class MindControl extends EvolutionCard
 {
+    // TODOMB with psychich probe
 }

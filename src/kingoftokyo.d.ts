@@ -335,6 +335,7 @@ interface EnteringThrowDiceArgs extends EnteringDiceArgs {
     hasActions: boolean;
     hasCultist: boolean;
     opponentsOrbOfDooms: number;
+    rerollAllEnergy: boolean;
 }
 
 interface EnteringPsychicProbeRollDieArgs extends EnteringDiceArgs {

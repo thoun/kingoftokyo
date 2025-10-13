@@ -7,6 +7,7 @@ use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
 

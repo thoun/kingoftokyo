@@ -8,7 +8,9 @@ use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
@@ -65,12 +67,17 @@ class ThrowDice extends GameState {
             $opponentsOrbOfDooms += $countOrbOfDoom;
         }
 
+        $usedCardIds = $this->game->getUsedCard();
+        $intergalacticGeniusEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, INTERGALACTIC_GENIUS_EVOLUTION, true, true);
+        $intergalacticGeniusEvolution = Arrays::find($intergalacticGeniusEvolutions, fn($evolution) => !in_array(3000 + $evolution->id, $usedCardIds));
+
         $hasActions = $throwNumber < $maxThrowNumber 
             || ($hasEnergyDrink && $playerEnergy >= 1) 
             || $hasDice3 
             || $hasSmokeCloud 
             || $hasCultist
-            || ($isBeastForm && $canUseBeastForm);
+            || ($isBeastForm && $canUseBeastForm)
+            || $intergalacticGeniusEvolution !== null;
 
         $selectableDice = $this->game->getSelectableDice($dice, false, true);
     
@@ -98,6 +105,7 @@ class ThrowDice extends GameState {
             'hasCultist' => $hasCultist,
             'hasActions' => $hasActions,
             'opponentsOrbOfDooms' => $opponentsOrbOfDooms,
+            'rerollAllEnergy' => $intergalacticGeniusEvolution !== null,
         ];
     }
     
@@ -306,6 +314,30 @@ class ThrowDice extends GameState {
         }
 
         $this->game->goToState(ST_PLAYER_THROW_DICE, $damages);
+    }
+
+    #[PossibleAction]
+    function actUseIntergalacticGenius(
+        #[IntArrayParam(name: 'diceIds')] array $diceIds,
+        int $activePlayerId
+    )  {
+        $usedCardIds = $this->game->getUsedCard();
+        $intergalacticGeniusEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, INTERGALACTIC_GENIUS_EVOLUTION, true, true);
+        $intergalacticGeniusEvolution = Arrays::find($intergalacticGeniusEvolutions, fn($evolution) => !in_array(3000 + $evolution->id, $usedCardIds));
+        
+        if (!$intergalacticGeniusEvolution) {
+            throw new \BgaUserException("You can't play Intergalactic Genius without this Evolution.");
+        }
+
+        $this->game->DbQuery("UPDATE dice SET `locked` = false, `rolled` = false");
+        if (count($diceIds) > 0) {
+            $this->game->DbQuery("UPDATE dice SET `locked` = true where `dice_id` IN (".implode(',', $diceIds).")");
+        }
+        
+        /** @disregard */
+        $intergalacticGeniusEvolution->applyEffect(new Context($this->game, $activePlayerId));
+
+        return ThrowDice::class;
     }
 
     public function zombie(int $playerId) {

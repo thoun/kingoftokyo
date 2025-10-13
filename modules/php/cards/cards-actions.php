@@ -44,6 +44,7 @@ trait CardsActionTrait {
             throw new \BgaUserException('Not enough energy');
         }
         $this->DbQuery("UPDATE player SET `player_energy` = `player_energy` - $cost where `player_id` = $playerId");
+        $this->globals->delete(NEXT_POWER_CARD_COST_REDUCTION);
 
         // media friendly
         $countMediaFriendly = $this->countCardOfType($playerId, MEDIA_FRIENDLY_CARD);

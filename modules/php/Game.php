@@ -573,6 +573,14 @@ class Game extends \Bga\GameFramework\Table {
 
     public function incBaseDice(int $playerId, int $inc): void {
         $this->DbQuery("UPDATE `player` SET `player_base_dice` = `player_base_dice` + $inc WHERE `player_id` = $playerId");
+
+        $message = $inc >= 0 ? '' : clienttranslate('${player_name} will play with ${number} less dice for the rest of the game.');
+
+        $this->notify->all('incBaseDice', $message, [
+            'playerId' => $playerId,
+            'player_name' => $this->getPlayerNameById($playerId),
+            'number' => abs($inc),
+        ]);
     }
 
     public function getBaseDice(int $playerId): int {

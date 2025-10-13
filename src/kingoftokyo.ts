@@ -538,6 +538,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                 this.createButton('dice-actions', 'use_cultist_button', _("Get extra die Roll") + ` (${_('Cultist')})` + orbOfDoomsSuffix, () => this.useCultist());
             }
 
+            if (args.rerollAllEnergy) {
+                this.createButton('dice-actions', 'rerollAllEnergy_button', formatTextIcons(_("Reroll all ${dieFace}").replace('${dieFace}', '[dieEnergy]')) + ' ('+this.evolutionCardsManager.getCardName(622, 'text-only')+')', () => this.actUseIntergalacticGenius());
+            }
+
             if (args.rerollDie.isBeastForm) {
                 dojo.place(`<div id="beast-form-dice-actions"></div>`, 'dice-actions');
 
@@ -2718,6 +2722,14 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
 
         this.bgaPerformAction('actRerollDie', {
             id,
+            diceIds: lockedDice.map(die => die.id).join(',')
+        });
+    }
+
+    public actUseIntergalacticGenius() {
+        const lockedDice = this.diceManager.getLockedDice();
+
+        this.bgaPerformAction('actUseIntergalacticGenius', {
             diceIds: lockedDice.map(die => die.id).join(',')
         });
     }

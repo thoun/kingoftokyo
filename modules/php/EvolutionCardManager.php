@@ -203,6 +203,10 @@ class EvolutionCardManager extends ItemManager {
         return $namespace . '\\' . EVOLUTION_CARD_CLASSES[$cardType];
     }
 
+
+    /**
+     * @return EvolutionCard[]
+     */
     function getPlayerRealByLocation(int $playerId, string $location) {        
         $evolutions = $this->getItemsInLocation($location, $playerId, true, sortByField: 'location_arg');
         return $evolutions;
@@ -211,8 +215,14 @@ class EvolutionCardManager extends ItemManager {
     /**
      * Returns all real evolutions the player have.
      * Includes disabled Permanent evolutions.
+     * 
+     * @return EvolutionCard[]
      */
-    function getPlayerReal(int $playerId, bool $fromTable, bool $fromHand) {
+    function getPlayerReal(int $playerId, bool $fromTable, bool $fromHand): array {
+        if (!$this->game->powerUpExpansion->isActive()) {
+            return [];
+        }
+
         $evolutions = [
             ...($fromTable ? $this->getPlayerRealByLocation($playerId, 'table') : []),
             ...($fromHand ? $this->getPlayerRealByLocation($playerId, 'hand') : []),
@@ -224,6 +234,8 @@ class EvolutionCardManager extends ItemManager {
      * Returns all virtual evolutions the player have (an evolution copied with Icy Reflection will be returned as an Evolution).
      * A virtual card will have a negative id.
      * Excludes disabled Permanent evolutions.
+     * 
+     * @return EvolutionCard[]
      */
     function getPlayerVirtual(int $playerId, bool $fromTable, bool $fromHand) {
         $evolutions = $this->getPlayerReal($playerId, $fromTable, $fromHand);
@@ -251,26 +263,11 @@ class EvolutionCardManager extends ItemManager {
      * Returns all virtual evolutions the player have (an evolution copied with Icy Reflection will be returned as an Evolution) of a specified type.
      * A virtual card will have a negative id.
      * Excludes disabled Permanent evolutions.
+     * 
+     * @return EvolutionCard[]
      */
     function getPlayerVirtualByType(int $playerId, int $type, bool $fromTable, bool $fromHand) {
-        $evolutions = $this->getPlayerReal($playerId, $fromTable, $fromHand);
-        if (!$this->game->keepAndEvolutionCardsHaveEffect()) {
-            $evolutions = Arrays::filter($evolutions, fn($evolution) => $this->game->EVOLUTION_CARDS_TYPES[$evolution->type] != 1);
-        }
-
-        $icyReflectionEvolution = Arrays::find($evolutions, fn($evolution) => $evolution->type === ICY_REFLECTION_EVOLUTION);
-        if ($icyReflectionEvolution) {
-            $mimickedCardId = $this->game->getMimickedEvolutionId();
-            if ($mimickedCardId) {
-                $virtualCard = $this->getItemById($mimickedCardId);
-                if ($virtualCard) {
-                    $virtualCard->id = -$virtualCard->id;
-                    $virtualCard->mimickingEvolutionId = $icyReflectionEvolution->id;
-                    $evolutions[] = $virtualCard;
-                }
-            }
-        }
-
+        $evolutions = $this->getPlayerVirtual($playerId, $fromTable, $fromHand);
         return Arrays::filter($evolutions, fn($evolution) => $evolution->type === $type);
     }
 

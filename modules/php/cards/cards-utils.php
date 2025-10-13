@@ -191,6 +191,10 @@ trait CardsUtilTrait {
         if ($cardType === NO_BRAIN_CARD) {
             $cardCost += $this->mindbugExpansion->mindbugTokens->get($playerId);
         }
+        $nextPowerCardCordReduction = $this->globals->get(NEXT_POWER_CARD_COST_REDUCTION, 0);
+        if ($nextPowerCardCordReduction != 0) {
+            $cardCost -= $nextPowerCardCordReduction;
+        }
 
         // alien origin
         $countAlienOrigin = $this->countCardOfType($playerId, ALIEN_ORIGIN_CARD);

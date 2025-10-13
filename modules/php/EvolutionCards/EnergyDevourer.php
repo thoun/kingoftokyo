@@ -5,4 +5,5 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
 class EnergyDevourer extends EvolutionCard
 {
+    // TODOMB
 }
