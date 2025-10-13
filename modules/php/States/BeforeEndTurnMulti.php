@@ -9,6 +9,10 @@ use Bga\GameFramework\StateType;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
+use function Bga\Games\KingOfTokyo\debug;
+
+use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_END_TURN;
+
 class BeforeEndTurnMulti extends GameState {
     public function __construct(protected Game $game)
     {
@@ -17,20 +21,24 @@ class BeforeEndTurnMulti extends GameState {
             id: \ST_MULTIPLAYER_BEFORE_END_TURN,
             type: StateType::MULTIPLE_ACTIVE_PLAYER,
             name: 'beforeEndTurn',
-            description: clienttranslate('${actplayer} may activate an Evolution card'),
-            descriptionMyTurn: clienttranslate('${you} may activate an Evolution card'),
             transitions: [
                 'next' => \ST_AFTER_BEFORE_END_TURN,
-                'end' => \ST_AFTER_BEFORE_END_TURN,
             ],
         );
     }
 
-    public function getArgs(): array {
+    public function getArgs(int $activePlayerId): array {
         $isPowerUpExpansion = $this->game->powerUpExpansion->isActive();
 
         $highlighted = [];
         $privatePlayers = [];
+        $couldPlayEvolution = false;
+
+        $consumableCards = $this->game->mindbugExpansion->getConsumableCards($activePlayerId, MINDBUG_KEYWORDS_END_TURN);
+        if (count($consumableCards) > 0 && $this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId) !== null) {
+            $consumableCards = [];
+        }
+        $canPlayConsumable = count($consumableCards) > 0;
         
         if ($isPowerUpExpansion) {
             $highlighted = $this->game->getHighlightedEvolutions($this->game->EVOLUTION_TO_PLAY_BEFORE_END);
@@ -55,15 +63,21 @@ class BeforeEndTurnMulti extends GameState {
                 }
                 $privatePlayers[$player->id] = $evolutionsWithEffectCounter;
             }
+
+            $couldPlayEvolution = count($this->game->getPlayersIdsWhoCouldPlayEvolutions([$activePlayerId], $this->game->EVOLUTION_TO_PLAY_BEFORE_END)) > 0;
         } 
 
         return [
             'highlighted' => $highlighted,
             '_private' => $privatePlayers,
+            'consumableCards' => $consumableCards,
+            'canPlayConsumable' => $canPlayConsumable,
+            'couldPlayEvolution' => $couldPlayEvolution,
+            '_no_notify' => !$canPlayConsumable && !$couldPlayEvolution,
         ];
     }
 
-    public function onEnteringState(int $activePlayerId): ?int {
+    public function onEnteringState(int $activePlayerId, array $args) {
         $this->game->removeDiscardCards($activePlayerId);
 
         $playersIds = $this->game->getPlayersIds();
@@ -87,21 +101,30 @@ class BeforeEndTurnMulti extends GameState {
 
         $playersWithPotentialEvolution = array_values(array_unique($playersWithPotentialEvolution));
 
-        if (empty($playersWithPotentialEvolution)) {
+        if ($args['_no_notify']) {
             return \ST_AFTER_BEFORE_END_TURN;
         }
 
-        $this->gamestate->setPlayersMultiactive($playersWithPotentialEvolution, 'next', true);
-        return null;
+        $playersToactivate = $playersWithPotentialEvolution;
+        if ($args['canPlayConsumable'] && !in_array($activePlayerId, $playersToactivate)) {
+            $playersToactivate[] = $activePlayerId;
+        }
+
+        $this->gamestate->setPlayersMultiactive($playersToactivate, 'next', true);
     }
 
     #[PossibleAction]
-    public function actSkipBeforeEndTurn(int $currentPlayerId): void {
+    public function actActivateConsumable(int $id, string $keyword, int $activePlayerId) {
+        $this->game->mindbugExpansion->activateConsumable($id, $keyword, $activePlayerId, MINDBUG_KEYWORDS_END_TURN);
+    }
+
+    #[PossibleAction]
+    public function actSkipBeforeEndTurn(int $currentPlayerId) {
         $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'next');
     }
 
-    public function zombie(int $playerId): void {
-        $this->actSkipBeforeEndTurn($playerId);
+    public function zombie(int $playerId) {
+        return $this->actSkipBeforeEndTurn($playerId);
     }
 }
 

@@ -2,10 +2,9 @@
 
 namespace KOT\States;
 
-use Bga\GameFramework\Actions\Types\JsonParam;
-
-use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
-
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait DiceActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////

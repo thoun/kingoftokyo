@@ -51,6 +51,7 @@ ALTER TABLE `player` ADD `player_take_wickedness_tiles` varchar(15) DEFAULT '[]'
 ALTER TABLE `player` ADD `player_zombified` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_turn_entered_tokyo` tinyint UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `ask_play_evolution` tinyint UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_base_dice` tinyint unsigned NOT NULL DEFAULT 6;
 
 CREATE TABLE IF NOT EXISTS `global_variables` (
   `name` varchar(50) NOT NULL,

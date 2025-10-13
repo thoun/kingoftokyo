@@ -6,6 +6,9 @@ require_once(__DIR__.'/../Objects/damage.php');
 
 use Bga\GameFramework\Actions\CheckAction;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait PlayerActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////

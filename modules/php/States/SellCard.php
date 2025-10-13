@@ -91,8 +91,9 @@ class SellCard extends GameState {
     #[PossibleAction]
     function actEndSell(int $activePlayerId) {
         $this->game->removeDiscardCards($activePlayerId);
-   
-        $this->game->goToState($this->game->redirectAfterSellCard());
+
+        $damages = $this->game->mindbugExpansion->applyEndFrenzy($activePlayerId);
+        $this->game->goToState($this->game->redirectAfterSellCard(), $damages);
     }
 
     public function zombie(int $playerId) {

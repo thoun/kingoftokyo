@@ -16,6 +16,9 @@ use function Bga\Games\KingOfTokyo\debug;
 
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait CardsActionTrait {
 
 //////////////////////////////////////////////////////////////////////////////

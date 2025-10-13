@@ -8,6 +8,9 @@ function debug(...$debugData) {
     }die('debug data : <pre>'.substr(json_encode($debugData, JSON_PRETTY_PRINT), 1, -1).'</pre>');
 }
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait DebugUtilTrait {
 
 //////////////////////////////////////////////////////////////////////////////

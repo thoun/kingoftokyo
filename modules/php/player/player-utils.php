@@ -2,11 +2,11 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../Objects/damage.php');
-
 use Bga\GameFramework\Actions\CheckAction;
-use KOT\Objects\Damage;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait PlayerUtilTrait {
 
 //////////////////////////////////////////////////////////////////////////////

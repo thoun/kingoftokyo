@@ -571,6 +571,14 @@ class Game extends \Bga\GameFramework\Table {
         }
     }
 
+    public function incBaseDice(int $playerId, int $inc): void {
+        $this->DbQuery("UPDATE `player` SET `player_base_dice` = `player_base_dice` + $inc WHERE `player_id` = $playerId");
+    }
+
+    public function getBaseDice(int $playerId): int {
+        return (int)$this->getUniqueValueFromDB("SELECT `player_base_dice` FROM `player`WHERE `player_id` = $playerId");
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
 ////////////
@@ -732,6 +740,11 @@ class Game extends \Bga\GameFramework\Table {
 
         if ($from_version <= 2508131511) {
             $sql = "ALTER TABLE `DBPREFIX_card` ADD `order` INT DEFAULT 0";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+
+        if ($from_version <= 2510131042) {
+            $sql = "ALTER TABLE `DBPREFIX_player` ADD `player_base_dice` tinyint unsigned NOT NULL DEFAULT 6";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

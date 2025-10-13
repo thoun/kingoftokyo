@@ -2,6 +2,9 @@
 
 namespace KOT\States;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait RedirectionTrait {
     function goToState($nextStateId, /*Damage[] | null*/ $damages = null) {
 
@@ -160,11 +163,7 @@ trait RedirectionTrait {
             return ST_END_MINDBUG;
         }
 
-        if ($this->powerUpExpansion->isActive()) {
-            return ST_MULTIPLAYER_BEFORE_END_TURN;
-        } else {
-            return $this->redirectAfterBeforeEndTurn();
-        }
+       return ST_MULTIPLAYER_BEFORE_END_TURN;
     }
 
     function redirectAfterBeforeEndTurn() {

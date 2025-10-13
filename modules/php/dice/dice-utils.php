@@ -16,6 +16,9 @@ use KOT\Objects\ChangeActivePlayerDieIntervention;
 use KOT\Objects\ClawDamage;
 use KOT\Objects\Damage;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait DiceUtilTrait {
     public PowerUpExpansion $powerUpExpansion;
 
@@ -227,7 +230,7 @@ trait DiceUtilTrait {
             }
         }
 
-        return max(6 + $add - $remove, 0);
+        return max($this->getBaseDice($playerId) + $add - $remove, 0);
     }
 
     function resolveNumberDice(int $playerId, int $number, int $diceCount) {

@@ -1082,6 +1082,11 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: 10px;
+}
+.card-keyword-buttons button {
+  margin: 0;
+  pointer-events: all;
 }
 
 body > .card {

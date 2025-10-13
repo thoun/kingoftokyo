@@ -2,15 +2,16 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../Objects/damage.php');
 require_once(__DIR__.'/../Objects/question.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
-use KOT\Objects\Damage;
 use KOT\Objects\Question;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait EvolutionCardsUtilTrait {
 
     //////////////////////////////////////////////////////////////////////////////

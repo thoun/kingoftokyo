@@ -6,6 +6,9 @@ use Bga\Games\KingOfTokyo\Game;
 
 const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait MonsterTrait {
 
 //////////////////////////////////////////////////////////////////////////////

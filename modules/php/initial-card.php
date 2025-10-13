@@ -2,9 +2,11 @@
 
 namespace KOT\States;
 
-use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait InitialCardTrait {
 
 //////////////////////////////////////////////////////////////////////////////

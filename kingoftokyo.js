@@ -6865,6 +6865,16 @@ var KingOfTokyo = /** @class */ (function (_super) {
         }
     };
     KingOfTokyo.prototype.onEnteringBeforeEndTurn = function (args) {
+        if (args.canPlayConsumable && args.couldPlayEvolution) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> or an Evolution card') : _('${actplayer} may activate a <CONSUMABLE> or an Evolution card'), args);
+        }
+        else if (args.canPlayConsumable) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate a <CONSUMABLE> card') : _('${actplayer} may activate a <CONSUMABLE> card'), args);
+        }
+        else if (args.couldPlayEvolution) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may activate an Evolution card') : _('${actplayer} may activate an Evolution card'), args);
+        }
+        this.onEnterginMindbugKeywordState(args);
         if (args._private) {
             Object.keys(args._private).forEach(function (key) {
                 var div = document.getElementById("hand-evolution-cards_item_".concat(key));
@@ -7552,10 +7562,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     }
                     break;
                 case 'beforeStartTurn':
-                    this.addActionButton('skipBeforeStartTurn_button', _("Skip"), function () { return _this.skipBeforeStartTurn(); });
+                    this.statusBar.addActionButton(_("Skip"), function () { return _this.bgaPerformAction('actSkipBeforeStartTurn'); });
                     break;
                 case 'beforeEndTurn':
-                    this.addActionButton('skipBeforeEndTurn_button', _("Skip"), function () { return _this.skipBeforeEndTurn(); });
+                    this.statusBar.addActionButton(_("Skip"), function () { return _this.bgaPerformAction('actSkipBeforeEndTurn'); });
                     break;
                 case 'changeMimickedCardWickednessTile':
                     this.addActionButton('skipChangeMimickedCardWickednessTile_button', _("Skip"), function () { return _this.skipChangeMimickedCardWickednessTile(); });
@@ -8735,12 +8745,6 @@ var KingOfTokyo = /** @class */ (function (_super) {
             id: id,
             evolutionId: evolutionId,
         });
-    };
-    KingOfTokyo.prototype.skipBeforeStartTurn = function () {
-        this.bgaPerformAction('actSkipBeforeStartTurn');
-    };
-    KingOfTokyo.prototype.skipBeforeEndTurn = function () {
-        this.bgaPerformAction('actSkipBeforeEndTurn');
     };
     KingOfTokyo.prototype.skipBeforeEnteringTokyo = function () {
         this.bgaPerformAction('actSkipBeforeEnteringTokyo');

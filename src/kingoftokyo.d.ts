@@ -320,7 +320,8 @@ interface EnteringBeforeStartTurnArgs extends EnteringMindbugKeywordStateArgs {
     couldPlayEvolution: boolean;
 }
 
-interface EnteringBeforeEndTurnArgs extends EnteringStepEvolutionArgs {
+interface EnteringBeforeEndTurnArgs extends EnteringMindbugKeywordStateArgs {
+    couldPlayEvolution: boolean;
     _private: { [cardId: number]: number[] };
 }
 

@@ -6,6 +6,9 @@ require_once(__DIR__.'/../Objects/damage.php');
 
 use KOT\Objects\Damage;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait PlayerArgTrait {
 
 //////////////////////////////////////////////////////////////////////////////

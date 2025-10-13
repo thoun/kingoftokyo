@@ -135,8 +135,9 @@ class BuyCard extends GameState {
     #[PossibleAction]
     function actEndTurn(int $activePlayerId) {
         $this->game->removeDiscardCards($activePlayerId);
-   
-        $this->game->goToState($this->game->redirectAfterSellCard());
+
+        $damages = $this->game->mindbugExpansion->applyEndFrenzy($activePlayerId);
+        $this->game->goToState($this->game->redirectAfterSellCard(), $damages);
     }
   	
     #[PossibleAction]

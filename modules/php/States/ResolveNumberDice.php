@@ -9,6 +9,7 @@ use Bga\Games\KingOfTokyo\Game;
 use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
+use const Bga\Games\KingOfTokyo\ACTIVATED_SNEAKY_CARDS;
 use const Bga\Games\KingOfTokyo\PowerCards\SNEAKY;
 
 class ResolveNumberDice extends GameState {
@@ -65,6 +66,7 @@ class ResolveNumberDice extends GameState {
                     }
                 }
             }
+            $this->game->globals->delete(ACTIVATED_SNEAKY_CARDS);
         }
 
         $this->game->goToState($this->game->redirectAfterResolveNumberDice(), $damages);

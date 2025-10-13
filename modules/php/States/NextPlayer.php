@@ -47,6 +47,16 @@ class NextPlayer extends GameState {
             $freezeTimeMaxTurns = intval($this->game->getGameStateValue(FREEZE_TIME_MAX_TURNS));
             $freezeTimeCurrentTurn = intval($this->game->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
 
+            $activatedFrenzy = $this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId);
+
+            if ($anotherTimeWithCard == 0 && $activatedFrenzy !== null) { // extra turn for current player
+                $cardId = $activatedFrenzy->cardIds[0];
+                $card = $this->game->powerCards->getItemById($cardId);
+                if ($card) {
+                    $anotherTimeWithCard = $card->type; // FRENZY card
+                }
+            }
+
             if ($anotherTimeWithCard == 0 && intval($this->game->getGameStateValue(BUILDERS_UPRISING_EXTRA_TURN)) == 1) { // extra turn for current player
                 $anotherTimeWithCard = 1000 + BUILDERS_UPRISING_CURSE_CARD; // Builders' uprising
                 $this->game->setGameStateValue(BUILDERS_UPRISING_EXTRA_TURN, 2); 

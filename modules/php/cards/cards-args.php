@@ -9,6 +9,9 @@ use function Bga\Games\KingOfTokyo\debug;
 use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_WOUNDED;
 use const Bga\Games\KingOfTokyo\PowerCards\TOUGH;
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait CardsArgTrait {
 
 //////////////////////////////////////////////////////////////////////////////

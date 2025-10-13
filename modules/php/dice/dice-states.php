@@ -2,10 +2,6 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../Objects/damage.php');
-
-use KOT\Objects\Damage;
-
 function getDieFace($die) {
     if ($die->type === 2) {
         return 10;
@@ -22,6 +18,9 @@ function getDieFace($die) {
     }
 }
 
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait DiceStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////

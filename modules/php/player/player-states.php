@@ -2,10 +2,9 @@
 
 namespace KOT\States;
 
-require_once(__DIR__.'/../Objects/damage.php');
-
-use const Bga\Games\KingOfTokyo\FINAL_PUSH_WICKEDNESS_TILE;
-
+/**
+ * @mixin \Bga\Games\KingOfTokyo\Game
+ */
 trait PlayerStateTrait {
 
 //////////////////////////////////////////////////////////////////////////////
