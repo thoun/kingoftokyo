@@ -29,19 +29,19 @@ trait PlayerUtilTrait {
 
         if (intval($this->getUniqueValueFromDB("SELECT leave_tokyo_under FROM player where `player_id` = $playerId")) > $maxHealth) {
             $this->DbQuery("UPDATE player SET `leave_tokyo_under` = $maxHealth where `player_id` = $playerId");
-            $this->notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+            $this->notify->player($playerId, 'updateLeaveTokyoUnder', '', [
                 'under' => $maxHealth,
             ]);
         }
 
         if (intval($this->getUniqueValueFromDB("SELECT stay_tokyo_over FROM player where `player_id` = $playerId")) > $maxHealth) {
             $this->DbQuery("UPDATE player SET `stay_tokyo_over` = $maxHealth where `player_id` = $playerId");
-            $this->notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+            $this->notify->player($playerId, 'updateStayTokyoOver', '', [
                 'over' => $maxHealth,
             ]);
         }
 
-        $this->notifyAllPlayers('maxHealth', '', [
+        $this->notify->all('maxHealth', '', [
             'playerId' => $playerId,
             'health' => $health,
             'maxHealth' => $maxHealth,
@@ -135,14 +135,14 @@ trait PlayerUtilTrait {
 
         $this->DbQuery("UPDATE player SET `leave_tokyo_under` = $under where `player_id` = $playerId");
 
-        $this->notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+        $this->notify->player($playerId, 'updateLeaveTokyoUnder', '', [
             'under' => $under,
         ]);
 
         $stayOver = intval($this->getUniqueValueFromDB("SELECT stay_tokyo_over FROM `player` where `player_id` = $playerId"));
         if ($stayOver != 0 && $stayOver < $under) {
             $this->DbQuery("UPDATE player SET `stay_tokyo_over` = 0 where `player_id` = $playerId");
-            $this->notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+            $this->notify->player($playerId, 'updateStayTokyoOver', '', [
                 'over' => 0,
             ]);
         }
@@ -159,7 +159,7 @@ trait PlayerUtilTrait {
 
         $this->DbQuery("UPDATE player SET `stay_tokyo_over` = $over where `player_id` = $playerId");
 
-        $this->notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+        $this->notify->player($playerId, 'updateStayTokyoOver', '', [
             'over' => $over,
         ]);
     }
@@ -167,7 +167,7 @@ trait PlayerUtilTrait {
     function applyAskPlayEvolution(int $playerId, int $value) {
         $this->DbQuery("UPDATE player SET `ask_play_evolution` = $value where `player_id` = $playerId");
 
-        $this->notifyPlayer($playerId, 'updateAskPlayEvolution', '', [
+        $this->notify->player($playerId, 'updateAskPlayEvolution', '', [
             'value' => $value,
         ]);
     }
@@ -183,7 +183,7 @@ trait PlayerUtilTrait {
         $scoreAux = intval($this->getGameStateValue(KILL_PLAYERS_SCORE_AUX));
         $this->DbQuery("UPDATE player SET `player_health` = 0, `player_score` = 0, player_location = 0, `player_dead` = $scoreAux where `player_id` = $playerId");
 
-        $this->notifyAllPlayers('kotPlayerEliminated', '', [
+        $this->notify->all('kotPlayerEliminated', '', [
             'who_quits' => $playerId,
         ]);
     }
@@ -451,7 +451,7 @@ trait PlayerUtilTrait {
 
             if ($playerId == $rapidActionPlayerId) {
                 $args = $this->argCancelDamage($playerId, $intervention);                
-                $this->notifyAllPlayers('updateCancelDamage', '', [
+                $this->notify->all('updateCancelDamage', '', [
                     'cancelDamageArgs' => $args,
                 ]);
                 //$this->goToState(ST_MULTIPLAYER_CANCEL_DAMAGE); // to update args based on new health

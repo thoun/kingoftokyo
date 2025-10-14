@@ -102,7 +102,7 @@ trait EvolutionCardsUtilTrait {
         $this->powerUpExpansion->evolutionCards->moveItem($card, 'table', $playerId);
         $card->location = 'table';
 
-        $this->notifyAllPlayers("playEvolution", $message, [
+        $this->notify->all("playEvolution", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'card' => $card,
@@ -178,12 +178,12 @@ trait EvolutionCardsUtilTrait {
     }
 
     function notifNewEvolutionCard(int $playerId, EvolutionCard $evolution, $message = '', $args = []) {
-        $this->notifyPlayer($playerId, "addEvolutionCardInHand", '', $args + [
+        $this->notify->player($playerId, "addEvolutionCardInHand", '', $args + [
             'playerId' => $playerId,
             'card' => $evolution,
         ]);    
 
-        $this->notifyAllPlayers("addEvolutionCardInHand", $message, $args + [
+        $this->notify->all("addEvolutionCardInHand", $message, $args + [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
         ]);
@@ -262,7 +262,7 @@ trait EvolutionCardsUtilTrait {
         }
 
         if (!$silent) {
-            $this->notifyAllPlayers("removeEvolutions", '', [
+            $this->notify->all("removeEvolutions", '', [
                 'playerId' => $playerId,
                 'cards' => [$card],
                 'delay' => $delay,
@@ -281,7 +281,7 @@ trait EvolutionCardsUtilTrait {
         }
 
         if (!$silent && count($cards) > 0) {
-            $this->notifyAllPlayers("removeEvolutions", '', [
+            $this->notify->all("removeEvolutions", '', [
                 'playerId' => $playerId,
                 'cards' => $cards,
             ]);
@@ -306,7 +306,7 @@ trait EvolutionCardsUtilTrait {
         // lose all stars
         $points = 0;
         $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
-        $this->notifyAllPlayers('points', clienttranslate('${player_name} left Tokyo when ${card_name} is played, and loses all [Star].'), [
+        $this->notify->all('points', clienttranslate('${player_name} left Tokyo when ${card_name} is played, and loses all [Star].'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'points' => $points,
@@ -334,7 +334,7 @@ trait EvolutionCardsUtilTrait {
             /*TODOPU if ($card->type == MIMIC_CARD) {
                 $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
             }*/
-            $this->notifyAllPlayers("setEvolutionTokens", '', [
+            $this->notify->all("setEvolutionTokens", '', [
                 'playerId' => $playerId,
                 'card' => $card,
             ]);
@@ -346,7 +346,7 @@ trait EvolutionCardsUtilTrait {
 
         if ($topCard->type > 100) {
 
-            $this->notifyAllPlayers('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it is not a Keep card.'), [
+            $this->notify->all('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it is not a Keep card.'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $topCard->type,
@@ -356,7 +356,7 @@ trait EvolutionCardsUtilTrait {
 
         } else if ($this->powerCards->getCardBaseCost($topCard->type) > 4) {
 
-            $this->notifyAllPlayers('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'), [
+            $this->notify->all('log500', clienttranslate('${player_name} draws ${card_name}. This card is discarded as it costs more than 4[Energy].'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $topCard->type,
@@ -520,7 +520,7 @@ trait EvolutionCardsUtilTrait {
         $mimickedCard->card = $card;
         $mimickedCard->playerId = $card->location_arg;
         $this->setGlobalVariable(MIMICKED_CARD . ICY_REFLECTION_EVOLUTION, $mimickedCard);
-        $this->notifyAllPlayers("setMimicEvolutionToken", clienttranslate('${player_name} mimics ${card_name}'), [
+        $this->notify->all("setMimicEvolutionToken", clienttranslate('${player_name} mimics ${card_name}'), [
             'card' => $card,
             'player_name' => $this->getPlayerNameById($mimicOwnerId),
             'card_name' => 3000 + $card->type,
@@ -543,7 +543,7 @@ trait EvolutionCardsUtilTrait {
         $card = $this->getMimickedEvolution();
         if ($card) {
             $this->deleteGlobalVariable(MIMICKED_CARD.ICY_REFLECTION_EVOLUTION);
-            $this->notifyAllPlayers("removeMimicEvolutionToken", '', [
+            $this->notify->all("removeMimicEvolutionToken", '', [
                 'card' => $card,
             ]);
         }
@@ -602,7 +602,7 @@ trait EvolutionCardsUtilTrait {
                 $this->DbQuery("UPDATE `evolution_card` SET `owner_id` = $playerId where `card_id` IN (" . implode(',', $ids) . ")");
             }
 
-            $this->notifyAllPlayers('ownedEvolutions', '', [
+            $this->notify->all('ownedEvolutions', '', [
                 'playerId' => $playerId,
                 'evolutions' => $evolutions,
             ]);
@@ -624,7 +624,7 @@ trait EvolutionCardsUtilTrait {
         $this->playEvolutionToTable($toPlayerId, $movedEvolution, '', $fromPlayerId);
 
         if ($evolution->id == $this->getMimickedEvolutionId()) {
-            $this->notifyAllPlayers("setMimicEvolutionToken", '', [
+            $this->notify->all("setMimicEvolutionToken", '', [
                 'card' => $movedEvolution,
             ]);
         }
@@ -663,7 +663,7 @@ trait EvolutionCardsUtilTrait {
         $this->setGlobalVariable(SUPERIOR_ALIEN_TECHNOLOGY_TOKENS.$playerId, $cardsIds);
 
         $card = $this->powerCards->getItemById($cardId);
-        $this->notifyAllPlayers("addSuperiorAlienTechnologyToken", '', [
+        $this->notify->all("addSuperiorAlienTechnologyToken", '', [
             'playerId' => $playerId,
             'card' => $card,
         ]);

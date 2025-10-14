@@ -34,7 +34,7 @@ trait DiceActionTrait {
         }
 
         $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
-        $this->notifyAllPlayers('rethrow3', $message, [
+        $this->notify->all('rethrow3', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => $cardName,

@@ -1,6 +1,6 @@
 <?php
 
-namespace KOT\States;
+namespace Bga\Games\KingOfTokyo;
 
 /**
  * @mixin \Bga\Games\KingOfTokyo\Game

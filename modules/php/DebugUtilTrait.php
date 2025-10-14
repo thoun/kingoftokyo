@@ -342,7 +342,7 @@ trait DebugUtilTrait {
     }
 
     /*function debug_SetCardIn(int $cardId, bool $other = true) {
-        $this->notifyAllPlayers("log", 'other = ${otherLog}', [
+        $this->notify->all("log", 'other = ${otherLog}', [
             'other' => $other,
             'otherLog' => $other,
         ]);

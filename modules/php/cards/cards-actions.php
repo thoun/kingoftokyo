@@ -97,7 +97,7 @@ trait CardsActionTrait {
         $newCard = null;
 
         if ($cardLocation == 'discard') { // scavenger
-            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from the discard'), [
+            $this->notify->all("buyCard", clienttranslate('${player_name} buys ${card_name} from the discard'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
@@ -117,7 +117,7 @@ trait CardsActionTrait {
         } else if ($from > 0) {
             $message = $from == $playerId ? /*client TODOPUBG translate(*/'${player_name} buys ${card_name} from reserved cards ${cost} [energy]'/*)*/ : 
             clienttranslate('${player_name} buys ${card_name} from ${player_name2} and pays ${player_name2} ${cost} [energy]');
-            $this->notifyAllPlayers("buyCard", $message, [
+            $this->notify->all("buyCard", $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
@@ -132,7 +132,7 @@ trait CardsActionTrait {
             $this->applyGetEnergy($from, $cost, 0);
             
         } else if (in_array($id, $this->getMadeInALabCardIds($playerId))) {            
-            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
+            $this->notify->all("buyCard", clienttranslate('${player_name} buys ${card_name} from top deck for ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
@@ -152,7 +152,7 @@ trait CardsActionTrait {
                 $this->powerCards->pickCardForLocation('deck', 'table', $cardLocationArg) :
                 null;
     
-            $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
+            $this->notify->all("buyCard", clienttranslate('${player_name} buys ${card_name} for ${cost} [energy]'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
@@ -177,12 +177,12 @@ trait CardsActionTrait {
                     $newCardCost = $this->powerCards->getCardBaseCost($newCard->type);
 
                     if ($newCardCost % 2 == 0) {
-                        $this->notifyAllPlayers("log", /*client TODOPUHA translate*/('The newly revealed card has an even cost, ${player_name} can keep ${card_name}'), [
+                        $this->notify->all("log", /*client TODOPUHA translate*/('The newly revealed card has an even cost, ${player_name} can keep ${card_name}'), [
                             'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => $card->type,
                         ]);
                     } else {
-                        $this->notifyAllPlayers("log500", /*client TODOPUHA translate*/('The newly revealed card has an odd cost, ${player_name} discard ${card_name} and regain [Energy] spent'), [
+                        $this->notify->all("log500", /*client TODOPUHA translate*/('The newly revealed card has an odd cost, ${player_name} discard ${card_name} and regain [Energy] spent'), [
                             'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => $card->type,
                         ]);
@@ -208,13 +208,13 @@ trait CardsActionTrait {
 
         // If card bought from player, we put back mimic token
         if ($from > 0 && $mimickedCardId == $card->id) {
-            $this->notifyAllPlayers("setMimicToken", '', [
+            $this->notify->all("setMimicToken", '', [
                 'card' => $card,
                 'type' => $this->getMimicStringTypeFromMimicCardType(MIMIC_CARD),
             ]);
         }
         if ($from > 0 && $mimickedCardIdTile == $card->id) {
-            $this->notifyAllPlayers("setMimicToken", '', [
+            $this->notify->all("setMimicToken", '', [
                 'card' => $card,
                 'type' => $this->getMimicStringTypeFromMimicCardType(FLUXLING_WICKEDNESS_TILE),
             ]);
@@ -314,7 +314,7 @@ trait CardsActionTrait {
         if ($canPreventBuying && (
             $this->getGlobalVariable(CARD_BEING_BOUGHT) == null || $this->getGlobalVariable(CARD_BEING_BOUGHT)->allowed
         )) { // To avoid ask twice in the same turn if it has been played on first
-            $this->notifyAllPlayers("log", /*clienttranslate(*/'${player_name} wants to buy ${card_name}'/*)*/, [
+            $this->notify->all("log", /*clienttranslate(*/'${player_name} wants to buy ${card_name}'/*)*/, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card' => $card,
@@ -345,7 +345,7 @@ trait CardsActionTrait {
         // astronaut
         $this->applyAstronaut($playerId);
 
-        $this->notifyAllPlayers("buyCard", clienttranslate('${player_name} draws ${card_name}'), [
+        $this->notify->all("buyCard", clienttranslate('${player_name} draws ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'card' => $card,
@@ -356,7 +356,7 @@ trait CardsActionTrait {
 
         if ($card->type === HIBERNATION_CARD && $this->inTokyo($playerId)) {
 
-            $this->notifyAllPlayers("drawCardHibernationInTokyo", clienttranslate('${player_name} draws ${card_name} while in Tokyo, the card is discarded'), [
+            $this->notify->all("drawCardHibernationInTokyo", clienttranslate('${player_name} draws ${card_name} while in Tokyo, the card is discarded'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => $card->type,

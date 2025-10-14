@@ -31,7 +31,7 @@ trait CardsUtilTrait {
         $card = $this->getMimickedCard($mimicCardType);
         if ($card) {
             $this->deleteGlobalVariable(MIMICKED_CARD.$mimicCardType);
-            $this->notifyAllPlayers("removeMimicToken", '', [
+            $this->notify->all("removeMimicToken", '', [
                 'card' => $card,
                 'type' => $this->getMimicStringTypeFromMimicCardType($mimicCardType),
             ]);
@@ -82,7 +82,7 @@ trait CardsUtilTrait {
         $mimickedCard->card = $card;
         $mimickedCard->playerId = $card->location_arg;
         $this->setGlobalVariable(MIMICKED_CARD . $mimicCardType, $mimickedCard);
-        $this->notifyAllPlayers("setMimicToken", clienttranslate('${player_name} mimics ${card_name}'), [
+        $this->notify->all("setMimicToken", clienttranslate('${player_name} mimics ${card_name}'), [
             'card' => $card,
             'player_name' => $this->getPlayerNameById($mimicOwnerId),
             'card_name' => $card->type,
@@ -243,7 +243,7 @@ trait CardsUtilTrait {
         // reset wickedness
         if ($resetWickedness) {
             $this->DbQuery("UPDATE player SET `player_wickedness` = 0, player_take_wickedness_tiles = '[]' where `player_id` = $playerId");
-            $this->notifyAllPlayers('wickedness', '', [
+            $this->notify->all('wickedness', '', [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'wickedness' => 0,
@@ -253,7 +253,7 @@ trait CardsUtilTrait {
         // remove energy
         if ($removeEnergy) {
             $this->DbQuery("UPDATE player SET `player_energy` = 0 where `player_id` = $playerId");
-            $this->notifyAllPlayers('energy','', [
+            $this->notify->all('energy','', [
                 'playerId' => $playerId,
                 'player_name' => $playerName,
                 'energy' => 0,
@@ -263,7 +263,7 @@ trait CardsUtilTrait {
         if ($points !== null) {
             // go back to $points stars
             $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
-            $this->notifyAllPlayers('points','', [
+            $this->notify->all('points','', [
                 'playerId' => $playerId,
                 'player_name' => $playerName,
                 'points' => $points,
@@ -272,13 +272,13 @@ trait CardsUtilTrait {
 
         // get back to $newHearts heart
         $this->DbQuery("UPDATE player SET `player_health` = $newHearts where `player_id` = $playerId");
-        $this->notifyAllPlayers('health', '', [
+        $this->notify->all('health', '', [
             'playerId' => $playerId,
             'player_name' => $playerName,
             'health' => $newHearts,
         ]);
 
-        $this->notifyAllPlayers('resurrect', $message, [
+        $this->notify->all('resurrect', $message, [
             'playerId' => $playerId,
             'player_name' => $playerName,
             'health' => $newHearts,
@@ -400,7 +400,7 @@ trait CardsUtilTrait {
         $this->applyLoseEnergyIgnoreCards($playerId, 1, 0, $playerId);
 
         if (count($unusedCards) == 1) {
-            $this->notifyPlayer($playerId, 'toggleMothershipSupportUsed', '', [
+            $this->notify->player($playerId, 'toggleMothershipSupportUsed', '', [
                 'playerId' => $playerId,
                 'used' => true,
             ]);
@@ -436,7 +436,7 @@ trait CardsUtilTrait {
         }
 
         if (!$silent) {
-            $this->notifyAllPlayers("removeCards", '', [
+            $this->notify->all("removeCards", '', [
                 'playerId' => $playerId,
                 'cards' => [$card],
                 'delay' => $delay,
@@ -460,7 +460,7 @@ trait CardsUtilTrait {
                 $playerEnergy = $this->getPlayerEnergy($playerId);
             }            
 
-            $this->notifyPlayer($playerId, 'toggleRapidHealing', '', [
+            $this->notify->player($playerId, 'toggleRapidHealing', '', [
                 'playerId' => $playerId,
                 'active' => $active,
                 'playerEnergy' => $playerEnergy,
@@ -480,7 +480,7 @@ trait CardsUtilTrait {
                 $playerEnergy = $this->getPlayerEnergy($playerId);
             }            
 
-            $this->notifyPlayer($playerId, 'toggleMothershipSupport', '', [
+            $this->notify->player($playerId, 'toggleMothershipSupport', '', [
                 'playerId' => $playerId,
                 'active' => $active,
                 'playerEnergy' => $playerEnergy,
@@ -498,7 +498,7 @@ trait CardsUtilTrait {
         }
 
         if (!$silent && count($cards) > 0) {
-            $this->notifyAllPlayers("removeCards", '', [
+            $this->notify->all("removeCards", '', [
                 'playerId' => $playerId,
                 'cards' => $cards,
             ]);
@@ -519,7 +519,7 @@ trait CardsUtilTrait {
             if ($card->type == MIMIC_CARD) {
                 $card->mimicType = $this->getMimickedCardType(MIMIC_CARD);
             }
-            $this->notifyAllPlayers("setCardTokens", '', [
+            $this->notify->all("setCardTokens", '', [
                 'playerId' => $playerId,
                 'card' => $card,
             ]);
@@ -721,7 +721,7 @@ trait CardsUtilTrait {
             if ($playerScore >= 17) {
                 $this->applyGetPointsIgnoreCards($playerId, WIN_GAME, 0);
             
-                $this->notifyAllPlayers("log", clienttranslate('${player_name} reached ${points} [Star] and wins the game with ${card_name}'), [
+                $this->notify->all("log", clienttranslate('${player_name} reached ${points} [Star] and wins the game with ${card_name}'), [
                     'playerId' => $playerId,
                     'player_name' => $this->getPlayerNameById($playerId),
                     'card_name' => ASTRONAUT_CARD,

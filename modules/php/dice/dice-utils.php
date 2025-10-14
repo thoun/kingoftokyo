@@ -179,7 +179,7 @@ trait DiceUtilTrait {
                 $message = clienttranslate('${player_name} keeps ${lockedDice} and rerolls dice ${rolledDice}');
             }
 
-            $this->notifyAllPlayers("diceLog", $message, [
+            $this->notify->all("diceLog", $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'rolledDice' => $rolledDiceStr,
@@ -258,7 +258,7 @@ trait DiceUtilTrait {
             if ($canGetPoints === null) {
                 $this->incStat($points, 'pointsWonWith'.$number.'Dice', $playerId);
 
-                $this->notifyAllPlayers( "resolveNumberDice", clienttranslate('${player_name} gains ${deltaPoints}[Star] with ${dice_value} dice'), [
+                $this->notify->all( "resolveNumberDice", clienttranslate('${player_name} gains ${deltaPoints}[Star] with ${dice_value} dice'), [
                     'playerId' => $playerId,
                     'player_name' => $this->getPlayerNameById($playerId),
                     'deltaPoints' => $points,
@@ -267,7 +267,7 @@ trait DiceUtilTrait {
                     'dice_value' => "[dice$number]",
                 ]);
             } else {
-                $this->notifyAllPlayers("log", clienttranslate('${player_name} gains no [Star] with ${dice_value} dice because of ${card_name}'), [
+                $this->notify->all("log", clienttranslate('${player_name} gains no [Star] with ${dice_value} dice because of ${card_name}'), [
                     'playerId' => $playerId,
                     'player_name' => $this->getPlayerNameById($playerId),
                     'card_name' => $canGetPoints,
@@ -314,7 +314,7 @@ trait DiceUtilTrait {
                     if ($diceCount >= 6) {
                         $this->applyGetPointsIgnoreCards($playerId, WIN_GAME, 0);
             
-                        $this->notifyAllPlayers("climbTokyoTower", /*client TODOPUKKtranslate*/('${player_name} rolled [dice1][dice1][dice1][dice1][dice1][dice1] and wins the game with ${card_name}'), [
+                        $this->notify->all("climbTokyoTower", /*client TODOPUKKtranslate*/('${player_name} rolled [dice1][dice1][dice1][dice1][dice1][dice1] and wins the game with ${card_name}'), [
                             'playerId' => $playerId,
                             'player_name' => $this->getPlayerNameById($playerId),
                             'card_name' => 3000 + CLIMB_TOKYO_TOWER_EVOLUTION,
@@ -342,7 +342,7 @@ trait DiceUtilTrait {
                 $message = clienttranslate('${player_name} gains no [Heart] (player outside Tokyo)');
             }
 
-            $this->notifyAllPlayers( "resolveHealthDiceInTokyo",$message, [
+            $this->notify->all( "resolveHealthDiceInTokyo",$message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
             ]);
@@ -353,7 +353,7 @@ trait DiceUtilTrait {
             if ($health < $maxHealth && $this->canGainHealth($playerId)) {
                 $playerGettingHealth = $this->getPlayerGettingEnergyOrHeart($playerId);
 
-                $this->notifyAllPlayers( "resolveHealthDice", clienttranslate('${player_name} gains ${deltaHealth} [Heart]'), [
+                $this->notify->all( "resolveHealthDice", clienttranslate('${player_name} gains ${deltaHealth} [Heart]'), [
                     'playerId' => $playerGettingHealth,
                     'player_name' => $this->getPlayerNameById($playerGettingHealth),
                     'deltaHealth' => $diceCount,
@@ -381,7 +381,7 @@ trait DiceUtilTrait {
         
         $playerGettingEnergy = $this->getPlayerGettingEnergyOrHeart($playerId);
 
-        $this->notifyAllPlayers( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [
+        $this->notify->all( "resolveEnergyDice", clienttranslate('${player_name} gains ${deltaEnergy} [Energy]'), [
             'playerId' => $playerGettingEnergy,
             'player_name' => $this->getPlayerNameById($playerGettingEnergy),
             'deltaEnergy' => $diceCount,
@@ -554,7 +554,7 @@ trait DiceUtilTrait {
             $this->setGlobalVariable(JETS_DAMAGES, $jetsDamages);
             $this->setGameStateValue(STATE_AFTER_RESOLVE, $nextStateId);
 
-            $this->notifyAllPlayers("resolveSmashDice", $message, [
+            $this->notify->all("resolveSmashDice", $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'player_name2' => $activatedHunter ? $this->getPlayerNameById($smashedPlayersIds[0]) : null,
@@ -570,7 +570,7 @@ trait DiceUtilTrait {
 
             // fire breathing
             foreach ($fireBreathingDamages as $damagePlayerId => $fireBreathingDamage) {
-                $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+                $this->notify->all("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                     'playerId' => $damagePlayerId,
                     'player_name' => $this->getPlayerNameById($damagePlayerId),
                     'number' => $fireBreathingDamage,
@@ -589,7 +589,7 @@ trait DiceUtilTrait {
 
         // funny looking but dangerous
         foreach ($funnyLookingButDangerousDamages as $damagePlayerId => $funnyLookingButDangerousDamage) {
-            $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+            $this->notify->all("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerNameById($damagePlayerId),
                 'number' => $funnyLookingButDangerousDamage,
@@ -604,7 +604,7 @@ trait DiceUtilTrait {
 
         // flaming aura
         foreach ($flamingAuraDamages as $damagePlayerId => $flamingAuraDamage) {
-            $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+            $this->notify->all("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerNameById($damagePlayerId),
                 'number' => $flamingAuraDamage,
@@ -619,7 +619,7 @@ trait DiceUtilTrait {
 
         // exotic arms
         foreach ($exoticArmsDamages as $damagePlayerId => $exoticArmsDamage) {
-            $this->notifyAllPlayers("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
+            $this->notify->all("log", clienttranslate('${player_name} loses ${number} extra [Heart] with ${card_name}'), [
                 'playerId' => $damagePlayerId,
                 'player_name' => $this->getPlayerNameById($damagePlayerId),
                 'number' => $exoticArmsDamage,

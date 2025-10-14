@@ -21,7 +21,7 @@ trait PlayerActionTrait {
     */
 
     function notifStayInTokyo($playerId) {
-        $this->notifyAllPlayers("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
+        $this->notify->all("stayInTokyo", clienttranslate('${player_name} chooses to stay in Tokyo'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
         ]);
@@ -50,7 +50,7 @@ trait PlayerActionTrait {
         }
         
         // dummy notif so player gets back hand
-        $this->notifyPlayer($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
+        $this->notify->player($this->getActivePlayerId(), "setSkipBuyPhase", '', []);
     }
 
     #[CheckAction(false)]

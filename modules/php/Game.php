@@ -23,10 +23,6 @@ require_once('framework-prototype/Helpers/Arrays.php');
 require_once('constants.inc.php');
 require_once('Objects/dice.php');
 require_once('Objects/card.php');
-require_once('utils.php');
-require_once('redirections.php');
-require_once('monster.php');
-require_once('initial-card.php');
 require_once('player/player-utils.php');
 require_once('player/player-actions.php');
 require_once('player/player-args.php');
@@ -38,16 +34,15 @@ require_once('cards/cards-utils.php');
 require_once('cards/cards-actions.php');
 require_once('cards/cards-args.php');
 require_once('evolution-cards/evolution-cards-utils.php');
-require_once('intervention.php');
 
 use Bga\GameFramework\Actions\CheckAction;
 use Bga\Games\KingOfTokyo\States\Start;
 
+const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
+
 class Game extends \Bga\GameFramework\Table {
-    use \KOT\States\UtilTrait;
-    use \KOT\States\RedirectionTrait;
-    use \KOT\States\MonsterTrait;
-    use \KOT\States\InitialCardTrait;
+    use UtilTrait;
+    use RedirectionTrait;
     use \KOT\States\PlayerUtilTrait;
     use \KOT\States\PlayerActionTrait;
     use \KOT\States\PlayerArgTrait;
@@ -59,7 +54,7 @@ class Game extends \Bga\GameFramework\Table {
     use \KOT\States\CardsActionTrait;
     use \KOT\States\CardsArgTrait;
     use \KOT\States\EvolutionCardsUtilTrait;
-    use \KOT\States\InterventionTrait;
+    use InterventionTrait;
     use DebugUtilTrait;
 
     public AnubisExpansion $anubisExpansion;
@@ -540,7 +535,7 @@ class Game extends \Bga\GameFramework\Table {
         This method is called each time we are in a game state with the "updateGameProgression" property set to true
         (see states.inc.php)
     */
-    function getGameProgression() {
+    function getGameProgression()/*: int*/ {
         $stateId = $this->gamestate->getCurrentMainStateId(); 
         if ($stateId === 99) {
             return 100;
@@ -550,7 +545,7 @@ class Game extends \Bga\GameFramework\Table {
     }
 
     #[CheckAction(false)]
-    function actPlayEvolution(int $id, int $currentPlayerId) {
+    function actPlayEvolution(int $id, int $currentPlayerId): void {
         $card = $this->getEvolutionCardById($id);
 
         if ($card->location != 'hand') {
@@ -587,17 +582,158 @@ class Game extends \Bga\GameFramework\Table {
         return (int)$this->getUniqueValueFromDB("SELECT `player_base_dice` FROM `player`WHERE `player_id` = $playerId");
     }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////// Zombie
-////////////
+    function canPickMonster(): bool {
+        return $this->tableOptions->get(PICK_MONSTER_OPTION) === 2;
+    }
 
-    /*
-        zombieTurn:
+    /**
+     * @return int[]
+     */
+    public function getGameMonsters(): array {
+        $bonusMonsters = $this->tableOptions->get(BONUS_MONSTERS_OPTION) == 2;
+        $isDarkEdition = $this->isDarkEdition();
+        $isOrigins = $this->isOrigins();
 
-        This method is called each time it is the turn of a player who has quit the game (= "zombie" player).
-        You can do whatever you want in order to make sure the turn of this player ends appropriately
-        (ex: pass).
-    */
+        // Base game monsters : Space Penguin, Alienoid, Cyber Kitty, The King, Gigazaur, Meka Dragon
+        $monsters = $isOrigins ? [51,52,53,54] : ($isDarkEdition ? [102,104,105,106,114,115] : [1,2,3,4,5,6]);
+
+        // Boogie Woogie, Pumpkin Jack
+        if ($bonusMonsters || $this->isHalloweenExpansion()) {
+            $monsters = [...$monsters, 7, 8];
+        }
+
+        // Cthulhu, Anubis
+        if ($bonusMonsters || $this->cthulhuExpansion->isActive() || $this->anubisExpansion->isActive()) {
+            $monsters = [...$monsters, 9, 10];
+        }
+
+        // King Kong, Cybertooth
+        if ($bonusMonsters || $this->kingKongExpansion->isActive() || $this->cybertoothExpansion->isActive()) {
+            $monsters = [...$monsters, 11, 12];
+        }
+
+        // Pandakaï
+        if ($bonusMonsters || $this->powerUpExpansion->isActive()) {
+            if ($isDarkEdition) {
+                if ($bonusMonsters) {
+                    $monsters = [...$monsters, 13];
+                }
+            } else {
+                $monsters = [...$monsters, 13];
+            }
+        }
+
+        // Kookie, X-Smash Tree
+        if ($bonusMonsters) {
+            $monsters = [...$monsters, 16, 17];
+        }
+
+        // Baby Gigazaur
+        if ($bonusMonsters) {
+            $monsters = [...$monsters, 18];
+        }
+
+        // Lollybot
+        if ($bonusMonsters/* && $this->releaseDatePassed("2022-04-17T11:00:00", 2)*/) {
+            $monsters = [...$monsters, 19];
+        }
+
+        // Rob
+        if ($bonusMonsters/* && $this->releaseDatePassed("2022-05-04T11:00:00", 2)*/) {
+            $monsters = [...$monsters, 21];
+        }
+
+        if ($bonusMonsters) {
+            // World tour
+            /*if ($this->releaseDatePassed("2022-07-01T00:00:00", 2) && !$this->releaseDatePassed("2022-07-08T00:00:00", 2)) {
+                $monsters = [...$monsters, 31];
+            }
+            if ($this->releaseDatePassed("2022-07-08T00:00:00", 2) && !$this->releaseDatePassed("2022-07-15T00:00:00", 2)) {
+                $monsters = [...$monsters, 32];
+            }
+            if ($this->releaseDatePassed("2022-07-15T00:00:00", 2) && !$this->releaseDatePassed("2022-07-22T00:00:00", 2)) {
+                $monsters = [...$monsters, 33];
+            }
+            if ($this->releaseDatePassed("2022-07-22T00:00:00", 2) && !$this->releaseDatePassed("2022-07-29T00:00:00", 2)) {
+                $monsters = [...$monsters, 34];
+            }
+            if ($this->releaseDatePassed("2022-07-29T00:00:00", 2) && !$this->releaseDatePassed("2022-08-05T00:00:00", 2)) {
+                $monsters = [...$monsters, 35];
+            }
+            if ($this->releaseDatePassed("2022-08-05T00:00:00", 2) && !$this->releaseDatePassed("2022-08-12T00:00:00", 2)) {
+                $monsters = [...$monsters, 36];
+            }
+            if ($this->releaseDatePassed("2022-08-12T00:00:00", 2) && !$this->releaseDatePassed("2022-08-19T00:00:00", 2)) {
+                $monsters = [...$monsters, 37];
+            }
+            if ($this->releaseDatePassed("2022-08-19T00:00:00", 2) && !$this->releaseDatePassed("2022-08-26T00:00:00", 2)) {
+                $monsters = [...$monsters, 38];
+            }*/
+            // KoMI
+            /*if ($this->releaseDatePassed("2022-11-18T00:00:00", 1) && !$this->releaseDatePassed("2023-01-02T00:00:00", 1)) {
+                $monsters = [...$monsters, 41, 42, 43, 44, 45];
+            }*/
+
+            if ($isOrigins) {
+                $monsters = [...$monsters, 1,2,3,4,5,6];
+            } else {
+                $monsters = [...$monsters, 51,52,53,54];
+            }
+        }
+
+        // Gigasnail Hydra, MasterMindbug, Sharky Crab-dog Mummypus-Zilla
+        if ($bonusMonsters || $this->mindbugExpansion->isActive()) {
+            // TODOMB activate it
+            if (Game::getBgaEnvironment() == 'studio') {                
+                $monsters = [...$monsters, /*61,*/ 62, /*63*/];
+            }
+        }
+
+        if ($this->wickednessExpansion->isActive()) {
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster, MONSTERS_WITH_ICON)));            
+        }
+
+        if ($this->powerUpExpansion->isActive()) {
+            $monsters = array_values(array_filter($monsters, fn($monster) => in_array($monster % 100, $this->MONSTERS_WITH_POWER_UP_CARDS)));            
+        }
+        
+        return $monsters;
+    }
+
+    function saveMonsterStat(int $playerId, int $monsterId, bool $automatic): void {
+        $this->setStat($monsterId, 'monster', $playerId);
+        $this->setStat($monsterId, $automatic ? 'monsterAutomatic': 'monsterPick', $playerId);
+    }
+
+    function isBeastForm(int $playerId): bool {
+        $formCard = $this->getFormCard($playerId);
+        return $formCard != null && $formCard->side == 1;
+    }
+
+    function isInitialCardDistributionComplete(): bool {
+        return ($this->isHalloweenExpansion() && $this->everyPlayerHasCostumeCard()) || ($this->powerUpExpansion->isActive() && $this->everyPlayerHasEvolutionCard());
+    }
+
+    private function everyPlayerHasCostumeCard(): bool {
+        $playersIds = $this->getNonZombiePlayersIds();
+        foreach($playersIds as $playerId) {
+            $cardsOfPlayer = $this->powerCards->getPlayerReal($playerId);
+            if (!$this->array_some($cardsOfPlayer, fn($card) => $card->type > 200 && $card->type < 300)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private function everyPlayerHasEvolutionCard(): bool {
+        $playersIds = $this->getNonZombiePlayersIds();
+        foreach($playersIds as $playerId) {
+            if ($this->powerUpExpansion->evolutionCards->countItemsInLocation('hand', $playerId) == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     function upgradeTableDb($from_version) {
  

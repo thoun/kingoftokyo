@@ -53,7 +53,7 @@ trait DiceStateTrait {
             
             $cardNamesStr = implode(', ', $cardsAddingHearts);
 
-            $this->notifyAllPlayers("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
+            $this->notify->all("resolvePlayerDiceAddedDice", clienttranslate('${player_name} adds ${dice} with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'dice' => $diceStr,

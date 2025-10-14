@@ -9,6 +9,7 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
+use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
 
 class ChooseInitialCard extends GameState {
     public function __construct(protected Game $game)
@@ -64,7 +65,7 @@ class ChooseInitialCard extends GameState {
             }
             $otherCard = Arrays::find($topCards, fn($topCard) => $topCard->id != $costumeId);
 
-            $this->game->setInitialCostumeCard($currentPlayerId, $costumeId, $otherCard);
+            $this->setInitialCostumeCard($currentPlayerId, $costumeId, $otherCard);
         }
 
         if (!empty($args['chooseEvolution'])) {
@@ -93,6 +94,21 @@ class ChooseInitialCard extends GameState {
         }
 
         return $this->actChooseInitialCard($costumeId, $evolutionId, $playerId, $args);
+    }
+
+    private function setInitialCostumeCard(int $playerId, int $id, PowerCard $otherCard) {
+        $card = $this->game->powerCards->getItemById($id);
+        
+        $this->game->powerCards->moveItem($card, 'hand', $playerId);
+        $this->game->powerCards->moveItem($otherCard, 'costumediscard');
+
+        $this->notify->all("buyCard", clienttranslate('${player_name} takes ${card_name}'), [
+            'playerId' => $playerId,
+            'player_name' => $this->game->getPlayerNameById($playerId),
+            'card' => $card,
+            'card_name' => $card->type,
+            'discardCard' =>$otherCard,
+        ]);
     }
 }
 

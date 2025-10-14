@@ -1,6 +1,6 @@
 <?php
 
-namespace KOT\States;
+namespace Bga\Games\KingOfTokyo;
 
 /**
  * @mixin \Bga\Games\KingOfTokyo\Game
@@ -11,7 +11,7 @@ trait InterventionTrait {
     //////////// Utility functions
     ////////////
 
-    function setInterventionNextState(string $interventionName, string $nextState, $endState = null, object $intervention = null) {
+    function setInterventionNextState(string $interventionName, string $nextState, $endState = null, ?object $intervention = null) {
         if ($intervention == null) {
             $intervention = $this->getGlobalVariable($interventionName);
         }

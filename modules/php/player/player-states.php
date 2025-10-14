@@ -34,7 +34,7 @@ trait PlayerStateTrait {
             $playerId = $frenzyExtraTurnForOpportunist;
             $this->setGameStateValue(FRENZY_EXTRA_TURN_FOR_OPPORTUNIST, 0);
 
-            $this->notifyAllPlayers('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
+            $this->notify->all('playAgain', clienttranslate('${player_name} takes another turn with ${card_name}'), [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'card_name' => FRENZY_CARD,

@@ -1,6 +1,6 @@
 <?php
 
-namespace KOT\States;
+namespace Bga\Games\KingOfTokyo;
 
 require_once(__DIR__.'/Objects/player.php');
 require_once(__DIR__.'/Objects/player-intervention.php');
@@ -24,8 +24,6 @@ use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
 use KOT\Objects\Damage;
-
-use function Bga\Games\KingOfTokyo\debug;
 
 use const Bga\Games\KingOfTokyo\ACTIVATED_HUNTER_CARDS;
 use const Bga\Games\KingOfTokyo\PowerCards\HUNTER;
@@ -337,7 +335,7 @@ trait UtilTrait {
         }
 
         $locationName = $bay ? _('Tokyo Bay') : _('Tokyo City');
-        $this->notifyAllPlayers("playerEntersTokyo", $message, [
+        $this->notify->all("playerEntersTokyo", $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'location' => $location,
@@ -406,14 +404,14 @@ trait UtilTrait {
 
         $this->DbQuery("UPDATE player SET player_location = 0, `leave_tokyo_under` = null, `stay_tokyo_over` = null where `player_id` = $playerId");
 
-        $this->notifyAllPlayers("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
+        $this->notify->all("leaveTokyo", clienttranslate('${player_name} leaves Tokyo'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
         ]);
-        $this->notifyPlayer($playerId, 'updateLeaveTokyoUnder', '', [
+        $this->notify->player($playerId, 'updateLeaveTokyoUnder', '', [
             'under' => 0,
         ]);
-        $this->notifyPlayer($playerId, 'updateStayTokyoOver', '', [
+        $this->notify->player($playerId, 'updateStayTokyoOver', '', [
             'over' => 0,
         ]);
 
@@ -470,7 +468,7 @@ trait UtilTrait {
         $this->DbQuery("UPDATE player SET player_location =  $location where `player_id` = $playerId");
 
         $locationName = _('Tokyo City');
-        $this->notifyAllPlayers("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} !'), [
+        $this->notify->all("playerEntersTokyo", clienttranslate('${player_name} enters ${locationName} !'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'location' => $location,
@@ -616,7 +614,7 @@ trait UtilTrait {
         } else {
             // if last player, we make a notification same as elimination
             // but we don't really eliminate him as the framework don't like it and game will end anyway
-            $this->notifyAllPlayers('playerEliminated', '', [
+            $this->notify->all('playerEliminated', '', [
                 'who_quits' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
             ]);
@@ -734,7 +732,7 @@ trait UtilTrait {
         }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_points} [Star] with ${card_name}');
-            $this->notifyAllPlayers('points', $message, [
+            $this->notify->all('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'points' => min(20, $newScore),
@@ -769,7 +767,7 @@ trait UtilTrait {
         }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_points} [Star] with ${card_name}');
-            $this->notifyAllPlayers('points', $message, [
+            $this->notify->all('points', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'points' => $newScore,
@@ -826,7 +824,7 @@ trait UtilTrait {
         }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_health} [Heart] with ${card_name}');
-            $this->notifyAllPlayers('health', $message, [
+            $this->notify->all('health', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'health' => $newHealth,
@@ -841,7 +839,7 @@ trait UtilTrait {
     }
 
     private function logDamageBlocked(int $playerId, int $cardType) {
-        $this->notifyAllPlayers('damageBlockedLog', clienttranslate('${player_name} prevents damage with ${card_name}'), [
+        $this->notify->all('damageBlockedLog', clienttranslate('${player_name} prevents damage with ${card_name}'), [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'card_name' => $cardType,
@@ -1002,7 +1000,7 @@ trait UtilTrait {
         }
 
         $message = $cardType <= 0 ? '' : clienttranslate('${player_name} loses ${delta_health} [Heart] with ${card_name}');
-        $this->notifyAllPlayers('health', $message, [
+        $this->notify->all('health', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'health' => $newHealth,
@@ -1011,7 +1009,7 @@ trait UtilTrait {
         ]);
 
         foreach ($effectiveDamageDetail->logs as $log) {
-            $this->notifyAllPlayers('log', $log->message, $log->args);
+            $this->notify->all('log', $log->message, $log->args);
         }
 
         // Shrink Ray
@@ -1131,7 +1129,7 @@ trait UtilTrait {
         }
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} gains ${delta_energy} [Energy] with ${card_name}');
-            $this->notifyAllPlayers('energy', $message, [
+            $this->notify->all('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'energy' => $this->getPlayerEnergy($playerId),
@@ -1164,7 +1162,7 @@ trait UtilTrait {
 
         if ($cardType >= 0) {
             $message = $cardType == 0 ? '' : clienttranslate('${player_name} loses ${delta_energy} [Energy] with ${card_name}');
-            $this->notifyAllPlayers('energy', $message, [
+            $this->notify->all('energy', $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
                 'energy' => $newEnergy,
@@ -1178,7 +1176,7 @@ trait UtilTrait {
         $this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = `player_shrink_ray_tokens` + $deltaTokens where `player_id` = $playerId");
 
         $message = clienttranslate('${player_name} gets ${delta_tokens} Shrink Ray token with ${card_name}');
-        $this->notifyAllPlayers('shrinkRayToken', $message, [
+        $this->notify->all('shrinkRayToken', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'delta_tokens' => $deltaTokens,
@@ -1191,7 +1189,7 @@ trait UtilTrait {
         $this->DbQuery("UPDATE player SET `player_poison_tokens` = `player_poison_tokens` + $deltaTokens where `player_id` = $playerId");
 
         $message = clienttranslate('${player_name} gets ${delta_tokens} Poison token with ${card_name}');
-        $this->notifyAllPlayers('poisonToken', $message, [
+        $this->notify->all('poisonToken', $message, [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'delta_tokens' => $deltaTokens,
@@ -1206,7 +1204,7 @@ trait UtilTrait {
 
         $this->DbQuery("UPDATE player SET `player_shrink_ray_tokens` = $newTokens where `player_id` = $playerId");
 
-        $this->notifyAllPlayers('removeShrinkRayToken', '', [
+        $this->notify->all('removeShrinkRayToken', '', [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'deltaTokens' => $deltaTokens,
@@ -1221,7 +1219,7 @@ trait UtilTrait {
 
         $this->DbQuery("UPDATE player SET `player_poison_tokens` = $newTokens where `player_id` = $playerId");
 
-        $this->notifyAllPlayers('removePoisonToken', '', [
+        $this->notify->all('removePoisonToken', '', [
             'playerId' => $playerId,
             'player_name' => $this->getPlayerNameById($playerId),
             'deltaTokens' => $deltaTokens,
