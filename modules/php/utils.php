@@ -7,10 +7,19 @@ require_once(__DIR__.'/Objects/player-intervention.php');
 require_once(__DIR__.'/Objects/damage.php');
 
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
+use Bga\Games\KingOfTokyo\AnubisExpansion;
+use Bga\Games\KingOfTokyo\CthulhuExpansion;
 use Bga\Games\KingOfTokyo\CurseCards\CurseCard;
+use Bga\Games\KingOfTokyo\CybertoothExpansion;
 use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
+use Bga\Games\KingOfTokyo\KingKongExpansion;
+use Bga\Games\KingOfTokyo\MindbugExpansion;
 use Bga\Games\KingOfTokyo\Objects\Context;
+use Bga\Games\KingOfTokyo\PowerCardManager;
 use Bga\Games\KingOfTokyo\PowerCards\PowerCard;
+use Bga\Games\KingOfTokyo\PowerUpExpansion;
+use Bga\Games\KingOfTokyo\WickednessExpansion;
+use Bga\Games\KingOfTokyo\WickednessTileManager;
 use Bga\Games\KingOfTokyo\WickednessTiles\WickednessTile;
 use KOT\Objects\Player;
 use KOT\Objects\CancelDamageIntervention;
@@ -26,6 +35,16 @@ use const Bga\Games\KingOfTokyo\PowerCards\MINDBUG_KEYWORDS_WOUNDED;
  * @mixin \Bga\Games\KingOfTokyo\Game
  */
 trait UtilTrait {
+    public AnubisExpansion $anubisExpansion;
+    public KingKongExpansion $kingKongExpansion;
+    public CybertoothExpansion $cybertoothExpansion;
+    public CthulhuExpansion $cthulhuExpansion;
+    public WickednessExpansion $wickednessExpansion;
+    public PowerUpExpansion $powerUpExpansion;
+    public MindbugExpansion $mindbugExpansion;
+
+    public PowerCardManager $powerCards;
+    public WickednessTileManager $wickednessTiles;
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Utility functions
@@ -582,6 +601,7 @@ trait UtilTrait {
                 $winOnEliminationWickednessTile = $this->wickednessExpansion->isActive() ? $this->wickednessTiles->winOnElimination($context) : null;
 
                 if ($winOnEliminationWickednessTile !== null) {
+                    /** @disregard */
                     $winOnEliminationWickednessTile->onTrigger($context);
                 } else {
                     $this->eliminateAPlayer($player, $currentTurnPlayerId);
@@ -675,9 +695,10 @@ trait UtilTrait {
         if ($points >= 4) {
             $otherPlayerIds = $this->getOtherPlayersIds($playerId);
             foreach ($otherPlayerIds as $otherPlayerId) {
-                $evolutions = $this->getPlayerVirtual($otherPlayerId);
+                $evolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtual($otherPlayerId, true, false);
                 foreach ($evolutions as $evolution) {
                     if ($evolution->type === SUPERIOR_BRAIN_EVOLUTION) {
+                        /** @disregard */
                         $evolution->applyEffect(new Context($this, $otherPlayerId));
                     }
                 }
