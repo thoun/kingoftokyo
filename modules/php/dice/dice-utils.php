@@ -410,14 +410,14 @@ trait DiceUtilTrait {
         $nextStateId = ST_ENTER_TOKYO_APPLY_BURROWING;
 
         $damages = [];
-        $activatedHunter = $this->mindbugExpansion->getActivatedHunter($playerId);
+        $activatedHunters = $this->mindbugExpansion->getActivatedHunters($playerId);
 
         if ($countNovaBreath) {
             $message = clienttranslate('${player_name} smashes all other Monsters with ${number} [diceSmash]');
             $smashedPlayersIds = $this->getOtherPlayersIds($playerId);
-        } else if ($activatedHunter) {
+        } else if (count($activatedHunters) > 0) {
             $message = clienttranslate('${player_name} targeted Monster ${player_name2} with ${number} [diceSmash]');
-            $smashedPlayersIds = [$activatedHunter->targetPlayerId];
+            $smashedPlayersIds = [$activatedHunters[0]->targetPlayerId]; // TODOMB handle multiple targets
         } else {
             $smashTokyo = !$inTokyo;
             $message = $smashTokyo ? 
@@ -557,7 +557,7 @@ trait DiceUtilTrait {
             $this->notify->all("resolveSmashDice", $message, [
                 'playerId' => $playerId,
                 'player_name' => $this->getPlayerNameById($playerId),
-                'player_name2' => $activatedHunter ? $this->getPlayerNameById($smashedPlayersIds[0]) : null,
+                'player_name2' => count($activatedHunters) > 0 ? $this->getPlayerNameById($smashedPlayersIds[0]) : null,
                 'number' => $diceCount,
                 'smashedPlayersIds' => $smashedPlayersIds,
             ]);

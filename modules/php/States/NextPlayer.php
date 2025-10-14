@@ -48,10 +48,10 @@ class NextPlayer extends GameState {
             $freezeTimeMaxTurns = intval($this->game->getGameStateValue(FREEZE_TIME_MAX_TURNS));
             $freezeTimeCurrentTurn = intval($this->game->getGameStateValue(FREEZE_TIME_CURRENT_TURN));
 
-            $activatedFrenzy = $this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId);
+            $activatedFrenzys = $this->game->mindbugExpansion->getActivatedFrenzy($activePlayerId);
 
-            if ($anotherTimeWithCard == 0 && $activatedFrenzy !== null) { // extra turn for current player
-                $cardId = $activatedFrenzy->cardIds[0];
+            if ($anotherTimeWithCard == 0 && count($activatedFrenzys) > 0) { // extra turn for current player
+                $cardId = $activatedFrenzys[0]->cardId;
                 $card = $this->game->powerCards->getItemById($cardId);
                 if ($card) {
                     $anotherTimeWithCard = $card->type; // FRENZY card

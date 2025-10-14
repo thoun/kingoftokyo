@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
-use Bga\Games\KingOfTokyo\Game;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 use function KOT\States\getDieFace;
@@ -11,64 +11,32 @@ use function KOT\States\getDieFace;
 class IntergalacticGenius extends EvolutionCard
 {
     public function applyeffect(Context $context) {
-        $dice = $context->game->getPlayerRolledDice($context->currentPlayerId, true, true, true);
+        $dice = $context->game->getPlayerRolledDice($context->currentPlayerId, false, false, true);
 
-        $lockedDice = [];
-        $rolledDice = [];
+        $diceToReroll = Arrays::filter($dice, fn($die) => $context->game->getDiceFaceType($die) === 51);
 
-        $encaseInIceDieId = intval($context->game->getGameStateValue(ENCASED_IN_ICE_DIE_ID));
-        
-        foreach ($dice as &$die) {
-            if ($context->game->getDiceFaceType($die) === 61) {
-                if ($die->id == $encaseInIceDieId) {
-                    $lockedDice[] = $die;
-                } else {
-                    $die->value = bga_rand(1, 6);
-                    $context->game->DbQuery( "UPDATE dice SET `dice_value` = ".$die->value.", `rolled` = true where `dice_id` = ".$die->id );
+        foreach ($diceToReroll as &$die) {
+            $oldValue = $die->value;
+            $newValue = bga_rand(1, 6);
+            $die->value = $newValue;
+            $context->game->DbQuery("UPDATE dice SET `dice_value` = $newValue, `rolled` = true where `dice_id` = ".$die->id);
 
-                    $rolledDice[] = $die;
-                }
-
-                if (!$context->game->canRerollSymbol($context->currentPlayerId, getDieFace($die)) || $die->id == $encaseInIceDieId) {
-                    $die->locked = true;
-                    $context->game->DbQuery( "UPDATE dice SET `locked` = true where `dice_id` = ".$die->id );
-                }
-            } else {
-                $lockedDice[] = $die;
-            }
-        }
-
-        if (!$context->game->getPlayer($context->currentPlayerId)->eliminated) {
-            $message = null;
-
-            $rolledDiceStr = '';
-            $lockedDiceStr = '';
-
-            usort($rolledDice, [Game::class, 'sortDieFunction']);
-            foreach ($rolledDice as $rolledDie) {
-                $rolledDiceStr .= $context->game->getDieFaceLogName($rolledDie->value, $rolledDie->type);
+            if (!$context->game->canRerollSymbol($context->currentPlayerId, getDieFace($die))) {
+                $die->locked = true;
+                $context->game->DbQuery( "UPDATE dice SET `locked` = true where `dice_id` = ".$die->id );
             }
 
-            if (count($lockedDice) == 0) {
-                $message = clienttranslate('${player_name} rerolls dice ${rolledDice}');
-            } else {
-                usort($lockedDice, [Game::class, 'sortDieFunction']);
-                foreach ($lockedDice as $lockedDie) {
-                    $lockedDiceStr .= $context->game->getDieFaceLogName($lockedDie->value, $lockedDie->type);
-                }
-
-                $message = clienttranslate('${player_name} keeps ${lockedDice} and rerolls dice ${rolledDice}');
-            }
-
-            $context->game->notify->all("diceLog", $message, [
+            $message = clienttranslate('${player_name} uses ${card_name} and rolled ${die_face_before} to ${die_face_after}');
+            $context->game->notify->all('rethrow3', $message, [
                 'playerId' => $context->currentPlayerId,
                 'player_name' => $context->game->getPlayerNameById($context->currentPlayerId),
-                'rolledDice' => $rolledDiceStr,
-                'lockedDice' => $lockedDiceStr,
+                'card_name' => 3000 + $this->type,
+                'dieId' => $die->id,
+                'die_face_before' => $context->game->getDieFaceLogName($oldValue, 0),
+                'die_face_after' => $context->game->getDieFaceLogName($newValue, 0),
             ]);
-        }
 
-        // TODOMB finish
+        }
 
         $context->game->setUsedCard(3000 + $this->id);
     }

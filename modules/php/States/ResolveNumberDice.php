@@ -50,23 +50,22 @@ class ResolveNumberDice extends GameState {
 
         $damages = [];
         if ($gainedPoints > 0) {
-            $activatedSneaky = $this->game->mindbugExpansion->getActivatedSneaky($activePlayerId);
-            if ($activatedSneaky) {
-                // TODOMB TODOCHECK if multiple Sneaky activated, do we multiply?
+            $activatedSneakys = $this->game->mindbugExpansion->getActivatedSneakys($activePlayerId);
+            if (count($activatedSneakys) > 0) {
                 $otherPlayersIds = $this->game->getOtherPlayersIds($activePlayerId);
-                foreach ($otherPlayersIds as $otherPlayerId) {
-                    $this->game->applyLosePoints($otherPlayerId, $gainedPoints, $this->game->powerCards->getItemById($activatedSneaky->cardIds[0]));
-                }
+                foreach ($activatedSneakys as $activatedSneaky) {
+                    foreach ($otherPlayersIds as $otherPlayerId) {
+                        $this->game->applyLosePoints($otherPlayerId, $gainedPoints, $this->game->powerCards->getItemById($activatedSneaky->cardId));
+                    }
 
-                $hunterConsumables = $this->game->powerCards->getItemsByIds($activatedSneaky->cardIds);
-                foreach ($hunterConsumables as $card) {
+                    $card = $this->game->powerCards->getItemById($activatedSneaky->cardId);
                     $newDamages = $card->applyEffect(new Context($this->game, $activePlayerId, keyword: SNEAKY, lostPoints: $gainedPoints));
                     if (gettype($newDamages) === 'array') {
                         $damages = array_merge($damages, $newDamages);
                     }
                 }
+                $this->game->globals->delete(ACTIVATED_SNEAKY_CARDS);
             }
-            $this->game->globals->delete(ACTIVATED_SNEAKY_CARDS);
         }
 
         $this->game->goToState($this->game->redirectAfterResolveNumberDice(), $damages);

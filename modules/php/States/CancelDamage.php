@@ -52,7 +52,8 @@ class CancelDamage extends GameState {
 
     #[PossibleAction]
     public function actActivateConsumable(int $id, string $keyword, int $currentPlayerId) {
-        $this->game->mindbugExpansion->activateConsumable($id, $keyword, $currentPlayerId, MINDBUG_KEYWORDS_WOUNDED);
+        $damages = $this->game->mindbugExpansion->activateConsumable($id, $keyword, $currentPlayerId, MINDBUG_KEYWORDS_WOUNDED);
+        // TODOMB apply $damages
     }
     
     #[PossibleAction]

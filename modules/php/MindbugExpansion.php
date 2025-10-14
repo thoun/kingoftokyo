@@ -142,7 +142,10 @@ class MindbugExpansion {
         return $consumableCards;
     }
 
-    public function activateConsumable(int $id, string $keyword, int $playerId, array $keywords) {
+    /**
+     * @return Damage[]
+     */
+    public function activateConsumable(int $id, string $keyword, int $playerId, array $keywords): array {
         $consumableCards = $this->game->mindbugExpansion->getConsumableCards($playerId, $keywords);
         $card = Arrays::find($consumableCards, fn($c) => $c->id === $id);
         if (!$card) {
@@ -155,81 +158,76 @@ class MindbugExpansion {
         switch ($keyword) {
             case HUNTER: $this->activateHunter($playerId, $card); break;
             case SNEAKY: $this->activateSneaky($playerId, $card); break;
-            case POISON: $this->activatePoison($playerId, $card); break;
-            case TOUGH: $this->activateTough($playerId, $card); break;
+            case POISON: return $this->activatePoison($playerId, $card);
+            case TOUGH: return $this->activateTough($playerId, $card);
             case FRENZY: $this->activateFrenzy($playerId, $card); break;
             default: throw new \BgaSystemException("Invalid keyword");
         }
+        return [];
     }
 
-    public function setHunterTargetId(int $targetPlayerId) {
-        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, class: ActivatedConsumableKeyword::class);
-        $activatedHunterCards->targetPlayerId = $targetPlayerId;
+    public function setHunterTargetId(int $targetPlayerId): void {
+        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, []);
+        $activatedHunterCards[count($activatedHunterCards) - 1]->targetPlayerId = $targetPlayerId;
         $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
     }
 
-    public function getActivatedHunter(int $playerId) {
-        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, class: ActivatedConsumableKeyword::class);
-        if ($activatedHunterCards && $activatedHunterCards->activePlayerId !== $playerId) {
-            return null;
-        }
-        return $activatedHunterCards;
+    /**
+     * @return ActivatedConsumableKeyword[]
+     */
+    public function getActivatedHunters(int $playerId): array {
+        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, []);
+        return Arrays::filter($activatedHunterCards, fn($activatedFrenzy) => $activatedFrenzy->activePlayerId === $playerId);
     }
 
-    public function getActivatedSneaky(int $playerId) {
-        $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, class: ActivatedConsumableKeyword::class);
-        if ($activatedSneakyCards && $activatedSneakyCards->activePlayerId !== $playerId) {
-            return null;
-        }
-        return $activatedSneakyCards;
+    /**
+     * @return ActivatedConsumableKeyword[]
+     */
+    public function getActivatedSneakys(int $playerId): array {
+        $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, []);
+        return Arrays::filter($activatedSneakyCards, fn($activatedFrenzy) => $activatedFrenzy->activePlayerId === $playerId);
     }
 
-    public function getActivatedFrenzy(int $playerId) {
-        $activatedFrenzyCards = $this->game->globals->get(ACTIVATED_FRENZY_CARDS, class: ActivatedConsumableKeyword::class);
-        if ($activatedFrenzyCards && $activatedFrenzyCards->activePlayerId !== $playerId) {
-            return null;
-        }
-        return $activatedFrenzyCards;
+    /**
+     * @return ActivatedConsumableKeyword[]
+     */
+    public function getActivatedFrenzy(int $playerId): array {
+        $activatedFrenzyCards = $this->game->globals->get(ACTIVATED_FRENZY_CARDS, []);
+        return Arrays::filter($activatedFrenzyCards, fn($activatedFrenzy) => $activatedFrenzy->activePlayerId === $playerId);
     }
 
-    private function activateHunter(int $playerId, PowerCard $card) {
-        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, class: ActivatedConsumableKeyword::class);
-        if (!$activatedHunterCards) {
-            $activatedHunterCards = new ActivatedConsumableKeyword($playerId, [$card->id]);
-            $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
+    private function activateHunter(int $playerId, PowerCard $card): void {
+        $activatedHunterCards = $this->game->globals->get(ACTIVATED_HUNTER_CARDS, []);
+        $activatedHunterCards[] = new ActivatedConsumableKeyword($playerId, $card->id);
+        $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
 
-            $question = new Question(
-                'Hunter',
-                clienttranslate('${actplayer} must choose an opponent to target'),
-                clienttranslate('${you} must choose an opponent to target'),
-                [$playerId],
-                -1,
-                [
-                    'playerIds' => $this->game->getOtherPlayersIds($playerId),
-                ]
-            );
-            $this->game->setQuestion($question);
-            $this->game->gamestate->setPlayersMultiactive([$playerId], 'next', true);
+        $question = new Question(
+            'Hunter',
+            clienttranslate('${actplayer} must choose an opponent to target with ${card_name}'),
+            clienttranslate('${you} must choose an opponent to target with ${card_name}'),
+            [$playerId],
+            -1,
+            [
+                'playerIds' => $this->game->getOtherPlayersIds($playerId),
+                'card_name' => $card->type,
+            ]
+        );
+        $this->game->setQuestion($question);
+        $this->game->gamestate->setPlayersMultiactive([$playerId], 'next', true);
 
-            $this->game->goToState(\ST_MULTIPLAYER_ANSWER_QUESTION);
-            return;
-        } else {
-            $activatedHunterCards->cardIds[] = $card->id;
-            $this->game->globals->set(ACTIVATED_HUNTER_CARDS, $activatedHunterCards);
-        }
+        $this->game->goToState(\ST_MULTIPLAYER_ANSWER_QUESTION);
     }
 
-    private function activateSneaky(int $playerId, PowerCard $card) {
-        $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, class: ActivatedConsumableKeyword::class);
-        if (!$activatedSneakyCards) {
-            $activatedSneakyCards = new ActivatedConsumableKeyword($playerId, [$card->id]);
-        } else {
-            $activatedSneakyCards->cardIds[] = $card->id;
-        }
+    private function activateSneaky(int $playerId, PowerCard $card): void {
+        $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, []);
+        $activatedSneakyCards[] = new ActivatedConsumableKeyword($playerId, $card->id);
         $this->game->globals->set(ACTIVATED_SNEAKY_CARDS, $activatedSneakyCards);
     }
 
-    private function activatePoison(int $playerId, PowerCard $card) {
+    /**
+     * @return Damage[]
+     */
+    private function activatePoison(int $playerId, PowerCard $card): array {
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
@@ -239,42 +237,52 @@ class MindbugExpansion {
         $intervention->remainingPlayersIds[] = $damage->damageDealerId;
         $this->game->resolveRemainingDamages($intervention, false, false);
 
+        $damages = [];
         /** @disregard */
         $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: POISON, lostHearts: $theoricalLostHearts, attackerPlayerId: $damage->damageDealerId));
         if (gettype($newDamages) === 'array') {
-            // TODOMB add $newDamages
+            $damages = array_merge($damages, $newDamages);
         }
+        return $damages;
     }
 
-    private function activateTough(int $playerId, PowerCard $card) {
+    /**
+     * @return Damage[]
+     */
+    private function activateTough(int $playerId, PowerCard $card): array {
         $intervention = $this->game->getDamageIntervention();
         $damage = Arrays::find($intervention->damages, fn($d) => $d->playerId == $playerId);
         $theoricalLostHearts = $damage->damage;
         $this->game->reduceInterventionDamages($playerId, $intervention, -1);
         $this->game->resolveRemainingDamages($intervention, true, false);
 
+        $damages = [];
         /** @disregard */
         $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: TOUGH, lostHearts: $theoricalLostHearts));
         if (gettype($newDamages) === 'array') {
-            // TODOMB add $newDamages
+            $damages = array_merge($damages, $newDamages);
         }
+        return $damages;
     }
 
-    private function activateFrenzy(int $playerId, PowerCard $card) {
-        $activatedFrenzyCards = $this->game->globals->get(ACTIVATED_FRENZY_CARDS, class: ActivatedConsumableKeyword::class);
-        if (!$activatedFrenzyCards) {
-            $activatedFrenzyCards = new ActivatedConsumableKeyword($playerId, [$card->id]);
+    private function activateFrenzy(int $playerId, PowerCard $card): void {
+        $activatedFrenzyCards = $this->game->globals->get(ACTIVATED_FRENZY_CARDS, []);
+        if (empty($activatedFrenzyCards)) {
+            $activatedFrenzyCards[] = new ActivatedConsumableKeyword($playerId, $card->id);
         } else {
-            // TODOMB throw exception
+            throw new \BgaSystemException('Already a frenzy turn awaiting');
         }
         $this->game->globals->set(ACTIVATED_FRENZY_CARDS, $activatedFrenzyCards);
     }
 
-    public function applyEndFrenzy(int $playerId) {
+    /**
+     * @return Damage[]
+     */
+    public function applyEndFrenzy(int $playerId): array {
         $damages = [];
-        $activatedFrenzy = $this->getActivatedFrenzy($playerId);
-        if ($activatedFrenzy) {
-            $card = $this->game->powerCards->getItemById($activatedFrenzy->cardIds[0]);
+        $activatedFrenzy = $this->getActivatedFrenzy($playerId, []);
+        if (!empty($activatedFrenzy)) {
+            $card = $this->game->powerCards->getItemById($activatedFrenzy[0]->cardId);
             if ($card) {
                 $newDamages = $card->applyEffect(new Context($this->game, $playerId, keyword: FRENZY));
                 if (gettype($newDamages) === 'array') {

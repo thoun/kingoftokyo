@@ -957,10 +957,10 @@ trait UtilTrait {
             $this->incStat($damage->damage, 'smashesGiven', $damageDealerId);
             $this->incStat($damage->damage, 'smashesReceived', $playerId);
 
-            $activatedHunter = $this->mindbugExpansion->getActivatedHunter($damageDealerId);
-            if ($activatedHunter?->targetPlayerId === $playerId) {
-                $hunterConsumables = $this->powerCards->getItemsByIds($activatedHunter->cardIds);
-                foreach ($hunterConsumables as $card) {
+            $activatedHunters = $this->mindbugExpansion->getActivatedHunters($damageDealerId);
+            if (count($activatedHunters) > 0) {
+                foreach ($activatedHunters as $activatedHunter) {
+                    $card = $this->powerCards->getItemById($activatedHunter->cardId);
                     $card->applyEffect(new Context($this, $damageDealerId, targetPlayerId: $playerId, keyword: HUNTER, lostHearts: $actualHealth - $newHealth));
                 }
                 $this->game->globals->delete(ACTIVATED_HUNTER_CARDS);
