@@ -35,6 +35,7 @@ trait CardsActionTrait {
         $cardLocation = $card->location;
         $cardLocationArg = $card->location_arg;
         $cost = $buyCost === null ? $this->getCardCost($playerId, $card->type) : $buyCost;
+        $wasOnAnswerQuestion = $this->gamestate->getCurrentMainStateId() === ST_MULTIPLAYER_ANSWER_QUESTION;
 
         $this->updateKillPlayersScoreAux();        
         
@@ -255,7 +256,7 @@ trait CardsActionTrait {
             }
         }
 
-        if ($this->gamestate->getCurrentMainStateId() !== ST_MULTIPLAYER_ANSWER_QUESTION) {
+        if ($wasOnAnswerQuestion || $this->gamestate->getCurrentMainStateId() !== ST_MULTIPLAYER_ANSWER_QUESTION) {
             $this->goToState($redirectAfterBuyCard, $damages);
         }
     }
