@@ -5,6 +5,7 @@ namespace Bga\Games\KingOfTokyo\States;
 
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 use KOT\Objects\Question;
 
@@ -19,7 +20,7 @@ class QuestionsBeforeStartTurn extends GameState {
     }
 
     public function onEnteringState(int $activePlayerId) {
-        $worstNightmareEvolution = $this->game->getGiftEvolutionOfType($activePlayerId, \WORST_NIGHTMARE_EVOLUTION);
+        $worstNightmareEvolution = $this->game->powerUpExpansion->evolutionCards->getGiftEvolutionOfType($activePlayerId, \WORST_NIGHTMARE_EVOLUTION);
         if ($worstNightmareEvolution != null && !in_array(3000 + $worstNightmareEvolution->id, $this->game->getUsedCard())) {
             $applied = $this->game->applyWorstNightmare($activePlayerId, $worstNightmareEvolution);
             if ($applied) {
@@ -98,7 +99,7 @@ class QuestionsBeforeStartTurn extends GameState {
         $superiorAlienTechnologyTokens = $this->game->getSuperiorAlienTechnologyTokens($activePlayerId);
         $cardsWithSuperiorAlienTechnologyTokens = array_values(array_filter($cards, fn($card) => in_array($card->id, $superiorAlienTechnologyTokens)));
         $usedCardsIds = $this->game->getUsedCard();
-        $cardWithSuperiorAlienTechnologyToken = $this->game->array_find($cardsWithSuperiorAlienTechnologyTokens, fn($iCard) => !in_array(800 + $iCard->id, $usedCardsIds));
+        $cardWithSuperiorAlienTechnologyToken = Arrays::find($cardsWithSuperiorAlienTechnologyTokens, fn($iCard) => !in_array(800 + $iCard->id, $usedCardsIds));
 
         if ($cardWithSuperiorAlienTechnologyToken != null) {
             $question = new Question(

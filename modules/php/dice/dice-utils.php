@@ -225,7 +225,7 @@ trait DiceUtilTrait {
                 $remove++;
             }   
 
-            if ($this->getGiftEvolutionOfType($playerId, I_LIVE_UNDER_YOUR_BED_EVOLUTION) !== null) {
+            if ($this->powerUpExpansion->evolutionCards->getGiftEvolutionOfType($playerId, I_LIVE_UNDER_YOUR_BED_EVOLUTION) !== null) {
                 $remove++;
             }
         }

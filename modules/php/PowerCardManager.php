@@ -547,7 +547,7 @@ class PowerCardManager extends ItemManager {
      * A virtual card will have a negative id.
      * Excludes disabled Keep cards.
      */
-    function getPlayerVirtual(int $playerId): array {
+    function getPlayerVirtual(int $playerId, bool $virtualFirst = false): array {
         $cards = $this->getPlayerReal($playerId);
         if (!$this->game->keepAndEvolutionCardsHaveEffect()) {
             $cards = Arrays::filter($cards, fn($card) => $card->type >= 100);
@@ -561,7 +561,11 @@ class PowerCardManager extends ItemManager {
                 if ($virtualCard) {
                     $virtualCard->id = -$virtualCard->id;
                     $virtualCard->mimickingCardId = $mimicCard->id;
-                    $cards[] = $virtualCard;
+                    if ($virtualFirst) {
+                        array_unshift($cards, $virtualCard);
+                    } else {
+                        $cards[] = $virtualCard;
+                    }
                 }
             }
         }
@@ -574,7 +578,11 @@ class PowerCardManager extends ItemManager {
                 if ($virtualCard) {
                     $virtualCard->id = -$virtualCard->id;
                     $virtualCard->mimickingTileId = $fluxlingTile->id;
-                    $cards[] = $virtualCard;
+                    if ($virtualFirst) {
+                        array_unshift($cards, $virtualCard);
+                    } else {
+                        $cards[] = $virtualCard;
+                    }
                 }
             }
         }

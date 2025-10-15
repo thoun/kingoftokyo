@@ -237,7 +237,7 @@ class EvolutionCardManager extends ItemManager {
      * 
      * @return EvolutionCard[]
      */
-    function getPlayerVirtual(int $playerId, bool $fromTable, bool $fromHand) {
+    function getPlayerVirtual(int $playerId, bool $fromTable, bool $fromHand, bool $virtualFirst = false) {
         $evolutions = $this->getPlayerReal($playerId, $fromTable, $fromHand);
         if (!$this->game->keepAndEvolutionCardsHaveEffect()) {
             $evolutions = Arrays::filter($evolutions, fn($evolution) => $this->game->EVOLUTION_CARDS_TYPES[$evolution->type] != 1);
@@ -251,7 +251,11 @@ class EvolutionCardManager extends ItemManager {
                 if ($virtualCard) {
                     $virtualCard->id = -$virtualCard->id;
                     $virtualCard->mimickingEvolutionId = $icyReflectionEvolution->id;
-                    $evolutions[] = $virtualCard;
+                    if ($virtualFirst) {
+                        array_unshift($evolutions, $virtualCard);
+                    } else {
+                        $evolutions[] = $virtualCard;
+                    }
                 }
             }
         }
@@ -266,9 +270,23 @@ class EvolutionCardManager extends ItemManager {
      * 
      * @return EvolutionCard[]
      */
-    function getPlayerVirtualByType(int $playerId, int $type, bool $fromTable, bool $fromHand) {
-        $evolutions = $this->getPlayerVirtual($playerId, $fromTable, $fromHand);
+    function getPlayerVirtualByType(int $playerId, int $type, bool $fromTable, bool $fromHand, bool $virtualFirst = false) {
+        $evolutions = $this->getPlayerVirtual($playerId, $fromTable, $fromHand, $virtualFirst);
         return Arrays::filter($evolutions, fn($evolution) => $evolution->type === $type);
+    }
+
+    /**
+     * Returns the searched gift evolution the player have in front of him, only if it really affects him.
+     */
+    function getGiftEvolutionOfType(int $playerId, int $cardType, bool $virtualFirst = false): ?EvolutionCard {
+        $cards = $this->getPlayerVirtualByType($playerId, $cardType, true, false, $virtualFirst);
+        $card = count($cards) > 0 ? $cards[0] : null;
+
+        if ($card !== null && $card->ownerId === $playerId) {
+            return null; // evolution owner is not affected by gift
+        }
+
+        return $card;
     }
 
     public function immediateEffect(EvolutionCard $card, Context $context) {

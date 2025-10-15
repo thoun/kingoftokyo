@@ -143,7 +143,7 @@ class ChangeDie extends GameState {
             $this->game->removeEvolution($currentPlayerId, $saurianAdaptabilityCard, false, 5000);
         } else if ($cardType == 3000 + \GAMMA_BREATH_EVOLUTION) {
             $gammaBreathCards = $this->game->getEvolutionsOfType($currentPlayerId, \GAMMA_BREATH_EVOLUTION, true, true);
-            $gammaBreathCard = $this->game->array_find($gammaBreathCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $gammaBreathCards[0];
+            $gammaBreathCard = Arrays::find($gammaBreathCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $gammaBreathCards[0];
 
             if ($gammaBreathCard->location === 'hand') {
                 $this->game->playEvolutionToTable($currentPlayerId, $gammaBreathCard);
@@ -151,7 +151,7 @@ class ChangeDie extends GameState {
             $this->game->setUsedCard(3000 + $gammaBreathCard->id);
         } else if ($cardType == 3000 + \TAIL_SWEEP_EVOLUTION) {
             $tailSweepCards = $this->game->getEvolutionsOfType($currentPlayerId, \TAIL_SWEEP_EVOLUTION, true, true);
-            $tailSweepCard = $this->game->array_find($tailSweepCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tailSweepCards[0];
+            $tailSweepCard = Arrays::find($tailSweepCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tailSweepCards[0];
 
             if ($tailSweepCard->location === 'hand') {
                 $this->game->playEvolutionToTable($currentPlayerId, $tailSweepCard);
@@ -159,7 +159,7 @@ class ChangeDie extends GameState {
             $this->game->setUsedCard(3000 + $tailSweepCard->id);
         } else if ($cardType == 3000 + \TINY_TAIL_EVOLUTION) {
             $tinyTailCards = $this->game->getEvolutionsOfType($currentPlayerId, \TINY_TAIL_EVOLUTION, true, true);
-            $tinyTailCard = $this->game->array_find($tinyTailCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tinyTailCards[0];
+            $tinyTailCard = Arrays::find($tinyTailCards, fn($card) => $card->type == \ICY_REFLECTION_EVOLUTION) ?? $tinyTailCards[0];
 
             if ($tinyTailCard->location === 'hand') {
                 $this->game->playEvolutionToTable($currentPlayerId, $tinyTailCard);

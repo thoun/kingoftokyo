@@ -36,7 +36,9 @@ require_once('cards/cards-args.php');
 require_once('evolution-cards/evolution-cards-utils.php');
 
 use Bga\GameFramework\Actions\CheckAction;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\States\Start;
+use KOT\Objects\Question;
 
 const MONSTERS_WITH_ICON = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,18, 61, 62, 63, 102,104,105,106,114,115];
 
@@ -458,9 +460,9 @@ class Game extends \Bga\GameFramework\Table {
                 $playerDb['hiddenEvolutions'] = $this->getEvolutionCardsByLocation('hand', $playerId);
                 $playerDb['ownedEvolutions'] = $this->getEvolutionCardsByOwner($playerId);
                 
-                $mothershipSupportCards = $this->getEvolutionsOfType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION);
+                $mothershipSupportCards = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, MOTHERSHIP_SUPPORT_EVOLUTION, true, false);
                 $playerDb['mothershipSupport'] = count($mothershipSupportCards) > 0;
-                $playerDb['mothershipSupportUsed'] = count($mothershipSupportCards) > 0 && $this->array_every($mothershipSupportCards, fn($card) => $this->isUsedCard(3000 + $card->id));
+                $playerDb['mothershipSupportUsed'] = count($mothershipSupportCards) > 0 && Arrays::every($mothershipSupportCards, fn($card) => $this->isUsedCard(3000 + $card->id));
 
                 $playerDb['superiorAlienTechnologyTokens'] = $this->getSuperiorAlienTechnologyTokens($playerId);
             }
@@ -718,7 +720,7 @@ class Game extends \Bga\GameFramework\Table {
         $playersIds = $this->getNonZombiePlayersIds();
         foreach($playersIds as $playerId) {
             $cardsOfPlayer = $this->powerCards->getPlayerReal($playerId);
-            if (!$this->array_some($cardsOfPlayer, fn($card) => $card->type > 200 && $card->type < 300)) {
+            if (!Arrays::some($cardsOfPlayer, fn($card) => $card->type > 200 && $card->type < 300)) {
                 return false;
             }
         }
@@ -733,6 +735,43 @@ class Game extends \Bga\GameFramework\Table {
             }
         }
         return true;
+    }
+
+    /**
+     * @return int[]
+     */
+    function getStackedStates(): array {
+        $states = $this->getGlobalVariable(STACKED_STATES, true);
+        return $states == null ? [] : $states;
+    }
+
+    function addStackedState(?int $currentState = null): void {
+        $states = $this->getStackedStates();
+        $states[] = $currentState ?? $this->gamestate->getCurrentMainStateId();
+        $this->setGlobalVariable(STACKED_STATES, $states);
+    }
+
+    function removeStackedStateAndRedirect(): void {
+        $states = $this->getStackedStates();
+        if (count($states) < 1) {
+            throw new \Exception('No stacked state to remove');
+        }
+        $newState = array_pop($states);
+        $this->setGlobalVariable(STACKED_STATES, $states);
+        $this->goToState($newState);
+    }
+
+    function getStackedStateSuffix(): string {
+        $states = $this->getStackedStates();
+        return count($states) > 0 ? ''.count($states) : '';
+    }
+
+    function getQuestion()/*: object of Question*/ {
+        return $this->getGlobalVariable(QUESTION.$this->getStackedStateSuffix());
+    }
+
+    function setQuestion(Question $question): void {
+        $this->setGlobalVariable(QUESTION.$this->getStackedStateSuffix(), $question);
     }
 
     function upgradeTableDb($from_version) {

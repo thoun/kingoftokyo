@@ -48,42 +48,6 @@ trait UtilTrait {
     //////////// Utility functions
     ////////////
 
-    function array_find(array $array, callable $fn) {
-        foreach ($array as $value) {
-            if($fn($value)) {
-                return $value;
-            }
-        }
-        return null;
-    }
-
-    function array_find_index(array $array, callable $fn) {
-        foreach ($array as $index => $value) {
-            if($fn($value)) {
-                return $index;
-            }
-        }
-        return null;
-    }
-
-    function array_some(array $array, callable $fn) {
-        foreach ($array as $value) {
-            if($fn($value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-        
-    function array_every(array $array, callable $fn) {
-        foreach ($array as $value) {
-            if(!$fn($value)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     function isTwoPlayersVariant() {
         return $this->tableOptions->get(TWO_PLAYERS_VARIANT_OPTION) === 2 && $this->getPlayersNumber() == 2;
     }
@@ -220,7 +184,7 @@ trait UtilTrait {
             }        
 
             // ignis fatus
-            if ($this->getGiftEvolutionOfType($playerId, IGNIS_FATUS_EVOLUTION) !== null) {
+            if ($this->powerUpExpansion->evolutionCards->getGiftEvolutionOfType($playerId, IGNIS_FATUS_EVOLUTION) !== null) {
                 $ignisFatus = 1;
             }
         }
@@ -454,7 +418,7 @@ trait UtilTrait {
                 if (array_key_exists('smashedPlayersInTokyo', $argLeaveTokyo)) {
                     $smashedPlayersInTokyo = $argLeaveTokyo['smashedPlayersInTokyo'];
                     // if there is no remaining smashed player in tokyo, chest thumping player is deactivated
-                    if (!$this->array_some($smashedPlayersInTokyo, fn($pId) => $this->inTokyo($pId))) {                    
+                    if (!Arrays::some($smashedPlayersInTokyo, fn($pId) => $this->inTokyo($pId))) {                    
                         $this->gamestate->setPlayerNonMultiactive($activePlayerList[0], 'resume');
                     }
                 }
@@ -1229,7 +1193,7 @@ trait UtilTrait {
 
     function resolveDamages(array $damages, int $endStateId) {
         $playersIds = $this->getOrderedPlayersIds($damages[0]->damageDealerId, false, true);
-        $playersIds = array_values(array_filter($playersIds, fn($playerId) => $this->array_some($damages, fn($damage) => $damage->playerId == $playerId)));
+        $playersIds = Arrays::filter($playersIds, fn($playerId) => Arrays::some($damages, fn($damage) => $damage->playerId == $playerId));
         $cancelDamageIntervention = new CancelDamageIntervention($playersIds, $damages, $damages);
         $cancelDamageIntervention->endState = $endStateId;
 
@@ -1323,7 +1287,7 @@ trait UtilTrait {
         }
 
         $currentDamage = $currentPlayerId !== null ? 
-            $this->array_find($intervention->damages, fn($damage) => $damage->playerId == $currentPlayerId) : null;
+            Arrays::find($intervention->damages, fn($damage) => $damage->playerId == $currentPlayerId) : null;
 
         // if player will block damage, or he can not block damage anymore, we apply damage and remove it from remainingPlayersId
         if ($currentDamage 

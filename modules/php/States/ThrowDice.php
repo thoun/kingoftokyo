@@ -216,11 +216,11 @@ class ThrowDice extends GameState {
             throw new \BgaUserException('No Smoke Cloud card');
         }
 
-        $card = $this->game->array_find(
+        $card = Arrays::find(
             $cards,
             fn($icard) => $icard->type == FLUXLING_WICKEDNESS_TILE && $icard->tokens > 0,
         )
-            ?? $this->game->array_find(
+            ?? Arrays::find(
                 $cards,
                 fn($icard) => $icard->type == \MIMIC_CARD && $icard->tokens > 0,
             )

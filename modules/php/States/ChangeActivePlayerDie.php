@@ -7,6 +7,7 @@ use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
 use const Bga\Games\KingOfTokyo\FLUXLING_WICKEDNESS_TILE;
@@ -163,7 +164,7 @@ class ChangeActivePlayerDie extends GameState {
                     }
 
                     if ($card->type == \PSYCHIC_PROBE_CARD) {
-                        $mimicCard = $this->game->array_find($intervention->cards, fn($candidate) => $candidate->type == \MIMIC_CARD);
+                        $mimicCard = Arrays::find($intervention->cards, fn($candidate) => $candidate->type == \MIMIC_CARD);
                         if ($mimicCard != null) {
                             $this->game->setUsedCard($mimicCard->id);
                         }

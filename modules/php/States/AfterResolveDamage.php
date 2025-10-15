@@ -5,6 +5,7 @@ namespace Bga\Games\KingOfTokyo\States;
 
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
 class AfterResolveDamage extends GameState {
@@ -21,7 +22,7 @@ class AfterResolveDamage extends GameState {
         $intervention = $this->game->getDamageIntervention();
 
         $freezeRayEvolutions = $this->game->getEvolutionsOfType($activePlayerId, \FREEZE_RAY_EVOLUTION);
-        $freezeRayEvolution = $this->game->array_find($freezeRayEvolutions, fn($evolution) => $evolution->ownerId == $activePlayerId);
+        $freezeRayEvolution = Arrays::find($freezeRayEvolutions, fn($evolution) => $evolution->ownerId == $activePlayerId);
         if ($freezeRayEvolution !== null) {
             $woundDamagesByFreezeRayOwner = array_values(array_filter(
                 $intervention->damages,

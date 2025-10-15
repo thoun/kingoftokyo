@@ -7,6 +7,7 @@ use Bga\GameFramework\Actions\Types\IntParam;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
+use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
 
 class LeaveTokyo extends GameState {
@@ -32,7 +33,7 @@ class LeaveTokyo extends GameState {
     public function onEnteringState(int $activePlayerId, array $args): ?int {
         if ($this->game->autoSkipImpossibleActions()) {
             $canYieldTokyo = $args['canYieldTokyo'] ?? [];
-            $oneCanYield = $this->game->array_some($canYieldTokyo, fn($canYield) => $canYield);
+            $oneCanYield = Arrays::some($canYieldTokyo, fn($canYield) => $canYield);
             if (!$oneCanYield) {
                 return \ST_LEAVE_TOKYO_APPLY_JETS;
             }

@@ -18,40 +18,6 @@ trait EvolutionCardsUtilTrait {
     //////////// Utility functions
     ////////////
 
-    function getStackedStates() {
-        $states = $this->getGlobalVariable(STACKED_STATES, true);
-        return $states == null ? [] : $states;
-    }
-
-    function addStackedState($currentState = null) {
-        $states = $this->getStackedStates();
-        $states[] = $currentState ?? $this->gamestate->state_id();
-        $this->setGlobalVariable(STACKED_STATES, $states);
-    }
-
-    function removeStackedStateAndRedirect() {
-        $states = $this->getStackedStates();
-        if (count($states) < 1) {
-            throw new \Exception('No stacked state to remove');
-        }
-        $newState = array_pop($states);
-        $this->setGlobalVariable(STACKED_STATES, $states);
-        $this->goToState($newState);
-    }
-
-    function getStackedStateSuffix() {
-        $states = $this->getStackedStates();
-        return count($states) > 0 ? ''.count($states) : '';
-    }
-
-    function getQuestion() {
-        return $this->getGlobalVariable(QUESTION.$this->getStackedStateSuffix());
-    }
-
-    function setQuestion(Question $question) {
-        $this->setGlobalVariable(QUESTION.$this->getStackedStateSuffix(), $question);
-    }
-
     function getEvolutionCardById(int $id) {
         return $this->powerUpExpansion->evolutionCards->getItemById($id);
     }
@@ -150,7 +116,7 @@ trait EvolutionCardsUtilTrait {
 
                 if ($playersAskPlayEvolution[$playerId] == 1) {
                     $playerHand = $this->getEvolutionCardsByLocation('hand', $playerId);
-                    if ($this->array_some($playerHand, fn($evolutionCard) => in_array($evolutionCard->type, $playerPotentionStepCardsTypes))) {
+                    if (Arrays::some($playerHand, fn($evolutionCard) => in_array($evolutionCard->type, $playerPotentionStepCardsTypes))) {
                         $playersIdsWithPotentialCards[] = $playerId;
                     }
                 } else {
@@ -189,10 +155,16 @@ trait EvolutionCardsUtilTrait {
         ]);
     }
 
+    /**
+     * @deprecated
+     */
     function countEvolutionOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
         return count($this->getEvolutionsOfType($playerId, $cardType, $fromTable, $fromHand));
     }
 
+    /**
+     * @deprecated
+     */
     function getEvolutionsOfTypeInLocation(int $playerId, int $cardType, string $location) {
         $evolutions = $this->getEvolutionCardsByLocation($location, $playerId, $cardType);
         if ($location === 'table' && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1 && $cardType != ICY_REFLECTION_EVOLUTION) { // don't search for mimick mimicking itself, nor temporary/surprise evolutions
@@ -205,6 +177,9 @@ trait EvolutionCardsUtilTrait {
         return $evolutions;
     }
 
+    /**
+     * @deprecated
+     */
     function getEvolutionsOfType(int $playerId, int $cardType, bool $fromTable = true, bool $fromHand = false) {
         if (!$this->keepAndEvolutionCardsHaveEffect() && $this->EVOLUTION_CARDS_TYPES[$cardType] == 1) {
             return [];
@@ -227,17 +202,6 @@ trait EvolutionCardsUtilTrait {
         }
 
         return $evolutions;
-    }
-
-    function getGiftEvolutionOfType(int $playerId, int $cardType) {
-        $cards = $this->getEvolutionsOfTypeInLocation($playerId, $cardType, 'table');
-        $card = count($cards) > 0 ? $cards[0] : null;
-
-        if ($card !== null && $card->ownerId === $playerId) {
-            return null; // evolution owner is not affected by gift
-        }
-
-        return $card;
     }
 
     function removeEvolution(int $playerId, $card, bool $silent = false, int $delay = 0, bool $ignoreMimicToken = false) {
@@ -317,12 +281,12 @@ trait EvolutionCardsUtilTrait {
     function getFirstUnusedEvolution(int $playerId, int $evolutionType, bool $fromTable = true, bool $fromHand = false) /* returns first unused evolution, null if none */ {
         $evolutions = $this->getEvolutionsOfType($playerId, $evolutionType, $fromTable, $fromHand);
         $usedCards = $this->getUsedCard();
-        return $this->array_find($evolutions, fn($card) => !in_array(3000 + $card->id, $usedCards));
+        return Arrays::find($evolutions, fn($card) => !in_array(3000 + $card->id, $usedCards));
     }
 
     function getFirstUnsetFreezeRay(int $playerId) {
         $freezeRayCards = $this->getEvolutionsOfType($playerId, FREEZE_RAY_EVOLUTION);
-        $unsetFreezeRayCard = $this->array_find($freezeRayCards, fn($card) => $card->tokens == 0);
+        $unsetFreezeRayCard = Arrays::find($freezeRayCards, fn($card) => $card->tokens == 0);
         return $unsetFreezeRayCard;
     }
 
@@ -721,7 +685,7 @@ trait EvolutionCardsUtilTrait {
                 }
             }
 
-            if ($this->array_some($damageAmountByPlayer, fn($damageAmount) => $damageAmount > 0)) {
+            if (Arrays::some($damageAmountByPlayer, fn($damageAmount) => $damageAmount > 0)) {
                 $question = new Question(
                     'LightningArmor',
                     clienttranslate('Player with ${card_name} can throw dice to backfire damage'),

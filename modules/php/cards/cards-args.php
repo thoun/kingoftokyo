@@ -261,7 +261,7 @@ trait CardsArgTrait {
             
             $playersUsedDice = property_exists($intervention->playersUsedDice, $playerId) ? $intervention->playersUsedDice->{$playerId} : null;
             $dice = $playersUsedDice != null ? $playersUsedDice->dice : null;
-            $hasDice3 = $dice ? $this->array_some($dice, fn($die) => $die->value == 3) : false;
+            $hasDice3 = $dice ? Arrays::some($dice, fn($die) => $die->value == 3) : false;
 
             $remainingDamage = 0;
             $damageDealerId = 0;
