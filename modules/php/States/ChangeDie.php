@@ -203,11 +203,12 @@ class ChangeDie extends GameState {
 
     #[PossibleAction]
     function actUseYinYang(int $activePlayerId) {
-        $yinYangEvolutions = $this->game->powerUpExpansion->isActive() ? $this->game->getEvolutionsOfType($activePlayerId, YIN_YANG_EVOLUTION) : [];
+        $yinYangEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($activePlayerId, YIN_YANG_EVOLUTION, true, false);
         if (empty($yinYangEvolutions)) {
             throw new \BgaUserException("You can't play Yin & Yang without this Evolution.");
         }
         
+        /** @disregard */
         $yinYangEvolutions[0]->applyEffect(new Context($this->game, $activePlayerId));
 
         return ChangeDie::class;
