@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 
 class SharkAttack extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function applyEffect(Context $context) {
         $playersInTokyo = $context->game->getPlayersIdsInTokyo();
         foreach ($playersInTokyo as $playerInTokyo) {

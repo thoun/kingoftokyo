@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 
 class FollowTheCubes extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     public function applyEffect(Context $context) {
         $targetPlayerEnergy = $context->game->getPlayerEnergy($context->targetPlayerId);
         if ($targetPlayerEnergy === $context->game->getMaxPlayerEnergy()) {

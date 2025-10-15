@@ -8,6 +8,11 @@ use KOT\Objects\Damage;
 
 class ThreeTimesAsStrong extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     public function applyEffect(Context $context) {
         $damages = [];
         if (true) { // TODOMB

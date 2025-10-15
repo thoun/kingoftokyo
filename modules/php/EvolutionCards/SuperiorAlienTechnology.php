@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class SuperiorAlienTechnology extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     public function immediateEffect(Context $context) {
         $context->game->applyEvolutionEffectsRefreshBuyCardArgsIfNeeded($context->currentPlayerId);
     }

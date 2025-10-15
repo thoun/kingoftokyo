@@ -5,5 +5,10 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
 class MindbugsOverlord extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     // TODOMB
 }

@@ -5,4 +5,9 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
 class PandaExpress extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
 }

@@ -4,6 +4,10 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 use \Bga\GameFrameworkPrototype\Item\Item;
 use \Bga\GameFrameworkPrototype\Item\ItemField;
 
+const PERMANENT = 1;
+const TEMPORARY = 2;
+const GIFT = 3;
+
 #[Item('evolution_card')]
 class EvolutionCard {
     #[ItemField(kind: 'id', dbField: 'card_id')]
@@ -21,6 +25,9 @@ class EvolutionCard {
     
     #[ItemField(dbField: 'owner_id')]
     public ?int $ownerId;
+
+    // permanent, temporary or gift
+    public int $evolutionType;
 
     // if this card is virtual, indicates the id of the icy reflection evolution. It's id will be negative the real card id.
     public ?int $mimickingEvolutionId = null;

@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 
 class HungryFace extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function applyEffect(Context $context) {
         if (true) { // TODOMB
             $context->game->globals->set(\NEXT_POWER_CARD_COST_REDUCTION, 3);

@@ -5,5 +5,10 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
 class EnergyDevourer extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     // TODOMB
 }

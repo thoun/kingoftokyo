@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class TuneUp extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function applyEffect(Context $context) {
         $context->game->applyGetHealth($context->currentPlayerId, 4, $this, $context->currentPlayerId);
         $context->game->applyGetEnergy($context->currentPlayerId, 2, $this);

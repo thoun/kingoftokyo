@@ -8,6 +8,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Question;
 
 class Bamboozle extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         $cardBeingBought = $context->game->getGlobalVariable(CARD_BEING_BOUGHT);
         if (!$cardBeingBought) {

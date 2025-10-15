@@ -8,4 +8,9 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Question;
 
 class TargetAcquired extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
 }

@@ -8,6 +8,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Question;
 
 class DeepDive extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         if ($context->game->powerCards->countItemsInLocation('deck') === 0) {
             throw new \BgaUserException("No cards in deck pile");

@@ -8,6 +8,11 @@ use KOT\Objects\Damage;
 
 class ChewPinchCatchAndSmack extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     public function applyEffect(Context $context) {
         $context->game->applyLosePoints($context->currentPlayerId, 2, $this);
         $damages = new Damage($context->currentPlayerId, 2, $context->currentPlayerId, $this);

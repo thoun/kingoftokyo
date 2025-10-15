@@ -7,4 +7,9 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class WorstNightmare extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = GIFT;
+    }
+
 }

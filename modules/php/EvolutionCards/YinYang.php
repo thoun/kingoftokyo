@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class YinYang extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     function applyEffect(Context $context) {
         $dice = $context->game->getPlayerRolledDice($context->currentPlayerId, false, false, false);
         $YIN_YANG_OTHER_FACE = [

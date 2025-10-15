@@ -10,6 +10,11 @@ use function KOT\States\getDieFace;
 
 class IntergalacticGenius extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     public function applyeffect(Context $context) {
         $dice = $context->game->getPlayerRolledDice($context->currentPlayerId, false, false, true);
 

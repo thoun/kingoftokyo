@@ -8,6 +8,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class EatsShootsAndLeaves extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         $outsideTokyoPlayersIds = $context->game->getPlayersIdsOutsideTokyo();
         $damages = [];

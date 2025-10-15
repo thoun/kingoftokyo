@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class FelineMotor extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
     public function immediateEffect(Context $context) {
         $startedTurnInTokyo = $context->game->getGlobalVariable(STARTED_TURN_IN_TOKYO, true);
         if (in_array($context->currentPlayerId, $startedTurnInTokyo)) {

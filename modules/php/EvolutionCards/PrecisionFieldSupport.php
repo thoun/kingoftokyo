@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class PrecisionFieldSupport extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         $topCard = $context->game->powerCards->getTopDeckCard(false);
 

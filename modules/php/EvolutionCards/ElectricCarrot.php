@@ -8,4 +8,9 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Question;
 
 class ElectricCarrot extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
 }

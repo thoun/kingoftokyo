@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class SonOfKongKiko extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
 
     function applyEffect(Context $context) {
         $context->game->playEvolutionToTable($context->currentPlayerId, $this, '');

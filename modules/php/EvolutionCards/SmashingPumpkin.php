@@ -8,6 +8,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class SmashingPumpkin extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         $players = $context->game->getPlayers();
         $damages = [];

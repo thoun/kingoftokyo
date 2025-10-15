@@ -5,4 +5,9 @@ namespace Bga\Games\KingOfTokyo\EvolutionCards;
 
 class JetClub extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = PERMANENT;
+    }
+
 }

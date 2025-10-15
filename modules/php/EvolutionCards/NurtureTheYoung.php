@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class NurtureTheYoung extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         $dbResults = $context->game->getCollectionFromDb("SELECT `player_id` FROM `player` WHERE `player_score` > (SELECT `player_score` FROM `player` WHERE id = {$context->currentPlayerId})");
         $playersIdsWithMorePoints = array_map(fn($dbResult) => intval($dbResult['player_id']), array_values($dbResults));

@@ -8,6 +8,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class ElectroScratch extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         $otherPlayersIds = $context->game->getOtherPlayersIds($context->currentPlayerId);
         $damages = [];

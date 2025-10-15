@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\Objects\Context;
 
 class ThinkingFace extends EvolutionCard
 {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function applyEffect(Context $context) {
         if (true) { // TODOMB
             $context->game->applyGetHealth($context->currentPlayerId, 3, $this, $context->currentPlayerId);

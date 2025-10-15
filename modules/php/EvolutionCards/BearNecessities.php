@@ -7,6 +7,11 @@ use Bga\Games\KingOfTokyo\EvolutionCards\EvolutionCard;
 use Bga\Games\KingOfTokyo\Objects\Context;
 
 class BearNecessities extends EvolutionCard {
+    public function __construct()
+    {
+        $this->evolutionType = TEMPORARY;
+    }
+
     public function immediateEffect(Context $context) {
         $context->game->applyLosePoints($context->currentPlayerId, 1, $this);
         $context->game->applyGetEnergy($context->currentPlayerId, 2, $this);
