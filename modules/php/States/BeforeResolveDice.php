@@ -33,7 +33,7 @@ class BeforeResolveDice extends GameState {
     }
 
     public function onEnteringState(int $activePlayerId, array $args) {
-        if (!$args['_no_notify']) {
+        if ($args['_no_notify']) {
             return $this->game->redirectAfterBeforeResolveDice();
         }
 
