@@ -556,11 +556,13 @@ class PowerCardManager extends ItemManager {
         $mimicCard = Arrays::find($cards, fn($card) => $card->type === MIMIC_CARD);
         if ($mimicCard) {
             $mimickedCardId = $this->game->getMimickedCardId(MIMIC_CARD);
-            $virtualCard = $this->getItemById($mimickedCardId);
-            if ($virtualCard) {
-                $virtualCard->id = -$virtualCard->id;
-                $virtualCard->mimickingCardId = $mimicCard->id;
-                $cards[] = $virtualCard;
+            if ($mimickedCardId) {
+                $virtualCard = $this->getItemById($mimickedCardId);
+                if ($virtualCard) {
+                    $virtualCard->id = -$virtualCard->id;
+                    $virtualCard->mimickingCardId = $mimicCard->id;
+                    $cards[] = $virtualCard;
+                }
             }
         }
 

@@ -222,6 +222,11 @@ class MindbugExpansion {
         $activatedSneakyCards = $this->game->globals->get(ACTIVATED_SNEAKY_CARDS, []);
         $activatedSneakyCards[] = new ActivatedConsumableKeyword($playerId, $card->id);
         $this->game->globals->set(ACTIVATED_SNEAKY_CARDS, $activatedSneakyCards);
+
+        if (method_exists($card, 'immediateEffect')) {
+            /** @disregard */
+            $card->immediateEffect(new Context($this->game, $playerId));
+        }
     }
 
     /**
