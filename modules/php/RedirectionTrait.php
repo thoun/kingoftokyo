@@ -80,7 +80,7 @@ trait RedirectionTrait {
 
     function redirectAfterResolveDice() {
         if ($this->powerUpExpansion->isActive()) {
-            return ST_PLAYER_BEFORE_RESOLVE_DICE;
+            return ST_PLAYER_BEFORE_RESOLVE_DICE_MULTI;
         } else {
             return ST_RESOLVE_NUMBER_DICE;
         }

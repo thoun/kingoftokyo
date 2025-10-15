@@ -465,17 +465,6 @@ trait EvolutionCardsUtilTrait {
         $this->applyGiveEnergyOrLoseHeartsQuestion($receiving, $givers, $card, 2);
     }
 
-    function applyWorstNightmare(int $playerId, EvolutionCard $card) {
-        $givers = array_filter([$this->getPlayer($playerId)], fn($player) => $player->energy > 0 || $player->health > 0);
-
-        if (count($givers) == 0) {
-            return false;
-        }
-        $receiving = $card->ownerId;
-        $this->applyGiveEnergyOrLoseHeartsQuestion($receiving, $givers, $card, 1);
-        return true;
-    }
-
 
     function setMimickedEvolution(int $mimicOwnerId, object $card) {
         $countMothershipSupportBefore = $this->countEvolutionOfType($mimicOwnerId, MOTHERSHIP_SUPPORT_EVOLUTION);

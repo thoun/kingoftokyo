@@ -88,7 +88,7 @@ class PowerUpExpansion {
             throw new \BgaUserException(clienttranslate("You can only play this evolution card before starting turn"));
         }
 
-        if (in_array($cardType, $this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) && $stateId != ST_PLAYER_BEFORE_RESOLVE_DICE) {
+        if (in_array($cardType, $this->game->EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE) && !in_array($stateId, [ST_PLAYER_BEFORE_RESOLVE_DICE, ST_PLAYER_BEFORE_RESOLVE_DICE_MULTI])) {
             throw new \BgaUserException(clienttranslate("You can only play this evolution card when resolving dice"));
         }
 

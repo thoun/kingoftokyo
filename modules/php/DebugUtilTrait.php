@@ -321,11 +321,11 @@ trait DebugUtilTrait {
         return $card;
     }
 
-    function debug_SetWickednessTilesInHand(int $playerId, int $side = 0) {
+    /*function debug_SetWickednessTilesInHand(int $playerId, int $side = 0) {
         for ($i = 1; $i <= 10; $i++) {
             $this->debug_SetWickednessTileInHand($side * 100 + $i, $playerId);
         }
-    }
+    }*/
 
     function debug_SetCardInTable(int $cardType) {
         $card = $this->powerCards->getCardsOfType($cardType)[0] ?? null;
@@ -337,9 +337,9 @@ trait DebugUtilTrait {
     }
 
     // debug_SetCardInDiscard(110)
-    function debug_SetCardInDiscard(int $cardType) {
+    /*function debug_SetCardInDiscard(int $cardType) {
         $this->powerCards->moveItem($this->powerCards->getCardsOfType($cardType)[0], 'discard');
-    }
+    }*/
 
     /*function debug_SetCardIn(int $cardId, bool $other = true) {
         $this->notify->all("log", 'other = ${otherLog}', [
@@ -361,12 +361,20 @@ trait DebugUtilTrait {
         return $card;
     }
 
-    function debug_SetEvolutionInPlayerHand(int $cardType, int $playerId, bool $visible, ?int $owner = null) {
+    function debugSetEvolutionForPlayer(int $cardType, int $playerId, bool $visible, ?int $owner = null) {
         $card = $this->powerUpExpansion->evolutionCards->getItemsByFieldName('type', [$cardType])[0];
         $this->powerUpExpansion->evolutionCards->moveItem($card, $visible ? 'table' : 'hand', $playerId);
         $ownerId = $owner === null ? $playerId : $owner;
         $this->DbQuery("UPDATE evolution_card SET owner_id=$ownerId WHERE card_id = $card->id");
         return $card;
+    }
+
+    function debug_SetEvolutionInPlayerHand(int $cardType, int $playerId) {
+        $this->debugSetEvolutionForPlayer($cardType, $playerId, false, $playerId);
+    }
+
+    function debug_SetEvolutionInPlayerTable(int $cardType, int $playerId) {
+        $this->debugSetEvolutionForPlayer($cardType, $playerId, true, $playerId);
     }
 
     function debug_SetPlayerInLocation(int $playerId, int $location) {
@@ -377,7 +385,7 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE player SET `player_health` = $health");
     }
 
-    function debug_SetPlayerHealth(int $playerId, int $health) {
+    /*function debug_SetPlayerHealth(int $playerId, int $health) {
         $this->DbQuery("UPDATE player SET `player_health` = $health where `player_id` = $playerId");
     }
 
@@ -385,42 +393,42 @@ trait DebugUtilTrait {
         $this->DbQuery("UPDATE player SET `player_energy` = $energy where `player_id` = $playerId");
     }
 
-    function debug_SetEnergy(int $energy) {
-        $this->DbQuery("UPDATE player SET `player_energy` = $energy");
-    }
-
     function debug_SetPlayerPoints(int $playerId, int $points) {
         $this->DbQuery("UPDATE player SET `player_score` = $points where `player_id` = $playerId");
+    }
+
+    function debug_SetPlayerCultists(int $playerId, int $cultists) {
+        $this->DbQuery("UPDATE player SET `player_cultists` = $cultists where `player_id` = $playerId");
+    }*/
+
+    function debug_SetEnergy(int $energy) {
+        $this->DbQuery("UPDATE player SET `player_energy` = $energy");
     }
 
     function debug_SetPoints(int $points) {
         $this->DbQuery("UPDATE player SET `player_score` = $points");
     }
 
-    function debug_SetCultists(int $cultists) {
+    /*function debug_SetCultists(int $cultists) {
         $this->DbQuery("UPDATE player SET `player_cultists` = $cultists");
-    }
+    }*/
 
-    function debug_SetPlayerCultists(int $playerId, int $cultists) {
-        $this->DbQuery("UPDATE player SET `player_cultists` = $cultists where `player_id` = $playerId");
-    }
-
-    function debug_SetCurseCardInTable(int $cardType) {
+    /*function debug_SetCurseCardInTable(int $cardType) {
         if ($this->anubisExpansion->isActive()) {
             $cards = $this->anubisExpansion->curseCards->getItemsByFieldName('type', [$cardType]);
             $card = $cards[0];
             $this->anubisExpansion->curseCards->moveAllItemsInLocation('table', 'discard');
             $this->anubisExpansion->curseCards->moveItem($card, 'table');
         }
-    }
+    }*/
 
     // debug_SetDieOfFate(1)
     // debug_SetDieOfFate(2)
     // debug_SetDieOfFate(3)
     // debug_SetDieOfFate(4)
-    function debug_SetDieOfFate(int $face) {
+    /*function debug_SetDieOfFate(int $face) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 2");
-    }
+    }*/
     
     // debug_SetDieFaces(1)
     // debug_SetDieFaces(2, 3)
@@ -444,17 +452,17 @@ trait DebugUtilTrait {
         $this->debug_SetDieFaces(5, 2);
     }*/
 
-    function debug_SetBerserkDie(int $face) {
+    /*function debug_SetBerserkDie(int $face) {
         $this->DbQuery("UPDATE dice SET `dice_value` = $face WHERE `type` = 1");
     }
 
     function debug_SetWickedness(int $playerId, int $value = 5) {
         $this->DbQuery("UPDATE player SET `player_wickedness` = $value where `player_id` = $playerId");
-    }
+    }*/
 
-    function debug_SetTakeWickednessTile(int $playerId, int $level = 3) {
+    /*function debug_SetTakeWickednessTile(int $playerId, int $level = 3) {
         $this->DbQuery("UPDATE player SET `player_take_wickedness_tiles` = '[$level]' where `player_id` = $playerId");
-    }
+    }*/
 
     public function debug_goToState(int $state = ST_NEXT_PLAYER) {
         $this->gamestate->jumpToState($state);

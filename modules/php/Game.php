@@ -78,6 +78,8 @@ class Game extends \Bga\GameFramework\Table {
     public array $EVOLUTION_TO_PLAY_BEFORE_START_PERMANENT;
     public array $EVOLUTION_TO_PLAY_BEFORE_START_TEMPORARY;
     public array $EVOLUTION_TO_PLAY_BEFORE_START;
+    public array $EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_MULTI;
+    public array $EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE_ACTIVE;
     public array $EVOLUTION_TO_PLAY_BEFORE_RESOLVE_DICE;
     public array $EVOLUTION_TO_PLAY_BEFORE_ENTERING_TOKYO;
     public array $EVOLUTION_TO_PLAY_AFTER_ENTERING_TOKYO;
@@ -562,7 +564,7 @@ class Game extends \Bga\GameFramework\Table {
         if ($this->powerUpExpansion->evolutionCards->countItemsInLocation('hand', $currentPlayerId) == 0) {
             $stateId = $this->gamestate->getCurrentMainStateId();
 
-            if (in_array($stateId, [ST_PLAYER_BEFORE_START_TURN, ST_PLAYER_BEFORE_RESOLVE_DICE, ])) {
+            if (in_array($stateId, [ST_PLAYER_BEFORE_START_TURN, ST_PLAYER_BEFORE_RESOLVE_DICE])) {
                 $this->goToState($stateId);
             }
         }

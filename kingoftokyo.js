@@ -7309,6 +7309,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
                     _this.addActionButton("freezeRayChooseOpponent_button_".concat(playerId), label, function () { return _this.freezeRayChooseOpponent(playerId); });
                 });
                 break;
+            case 'InterdimensionalPortal':
+                this.statusBar.addActionButton(formatTextIcons("".concat(dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 2 }))), function () { return _this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 5 }); });
+                this.statusBar.addActionButton(formatTextIcons("".concat(dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 2 }))), function () { return _this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 4 }); });
+                break;
         }
     };
     KingOfTokyo.prototype.onEnteringEndTurn = function () {
@@ -7937,6 +7941,10 @@ var KingOfTokyo = /** @class */ (function (_super) {
             case 'Hunter':
                 var hunterArgs = question.args;
                 (_a = hunterArgs.playerIds) === null || _a === void 0 ? void 0 : _a.forEach(function (targetPlayerId) { return _this.statusBar.addActionButton(dojo.string.substitute(_("Target ${player_name}"), { 'player_name': _this.getPlayer(targetPlayerId).name }), function () { return _this.bgaPerformAction('actChooseHunterTarget', { targetPlayerId: targetPlayerId }); }); });
+                break;
+            case 'MindbugsOverlord':
+                this.statusBar.addActionButton(_("Declare allegiance"), function () { return _this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: true }); });
+                this.statusBar.addActionButton(_("Don't declare allegiance"), function () { return _this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: false }); });
                 break;
         }
     };

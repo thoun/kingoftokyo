@@ -5,6 +5,7 @@ namespace KOT\States;
 require_once(__DIR__.'/../Objects/damage.php');
 
 use Bga\GameFramework\Actions\CheckAction;
+use Bga\Games\KingOfTokyo\Objects\Context;
 
 /**
  * @mixin \Bga\Games\KingOfTokyo\Game
@@ -34,9 +35,16 @@ trait PlayerActionTrait {
         
         $this->addLeaverWithBurrowingOrUnstableDNA($playerId);
         $this->leaveTokyo($playerId, $useCard);
+
+        $interdimensionalPortalEvolutions = $this->powerUpExpansion->evolutionCards->getPlayerVirtualByType($playerId, INTERDIMENSIONAL_PORTAL_EVOLUTION, true, false);
+        if (count($interdimensionalPortalEvolutions) > 0) {
+            $interdimensionalPortalEvolutions[0]->applyEffect(new Context($this, $playerId));
+            return;
+        }
+
     
         // leaveTokyo may have already made transition with Chest Thumping
-        if (intval($this->gamestate->state_id()) == ST_MULTIPLAYER_LEAVE_TOKYO) {
+        if ($this->gamestate->getCurrentMainStateId() == ST_MULTIPLAYER_LEAVE_TOKYO) {
             $this->gamestate->setPlayerNonMultiactive($playerId, "resume");
         }
 

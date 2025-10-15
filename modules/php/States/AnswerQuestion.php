@@ -9,6 +9,7 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
 use Bga\GameFrameworkPrototype\Helpers\Arrays;
 use Bga\Games\KingOfTokyo\Game;
+use Bga\Games\KingOfTokyo\Objects\Context;
 use KOT\Objects\Damage;
 
 class AnswerQuestion extends GameState {
@@ -429,6 +430,10 @@ class AnswerQuestion extends GameState {
         }
     }
 
+    public function actAnswerMindbugsOverlord(bool $declare, int $currentPlayerId) {
+        // TODOMB
+    }
+
     #[PossibleAction]
     public function actAnswerElectricCarrot(
         int $currentPlayerId,
@@ -560,6 +565,18 @@ class AnswerQuestion extends GameState {
 
     #[PossibleAction]
     public function actPassTreasure(int $currentPlayerId) {
+        $this->game->goToState(-1);
+    }
+
+    #[PossibleAction]
+    public function actAnswerInterdimensionalPortal(int $type, int $currentPlayerId) {
+        $interdimensionalPortalEvolutions = $this->game->powerUpExpansion->evolutionCards->getPlayerVirtualByType($currentPlayerId, INTERDIMENSIONAL_PORTAL_EVOLUTION, true, false);
+        if (empty($interdimensionalPortalEvolutions)) {
+            throw new \BgaUserException('No Interdimensional Portal evolution');
+        }
+        /** @disregard */
+        $interdimensionalPortalEvolutions[0]->actAnswerInterdimensionalPortal(new Context($this->game, $currentPlayerId), $type);
+
         $this->game->goToState(-1);
     }
 

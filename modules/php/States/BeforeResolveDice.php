@@ -8,6 +8,7 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\GameFramework\StateType;
 use Bga\Games\KingOfTokyo\Game;
 
+// TODOMB delete after release
 class BeforeResolveDice extends GameState {
     public function __construct(protected Game $game)
     {

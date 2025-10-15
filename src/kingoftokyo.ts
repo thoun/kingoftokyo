@@ -983,6 +983,16 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
                     this.addActionButton(`freezeRayChooseOpponent_button_${playerId}`, label, () => this.freezeRayChooseOpponent(playerId));
                 });
                 break;
+            case 'InterdimensionalPortal':
+                this.statusBar.addActionButton(
+                    formatTextIcons(`${dojo.string.substitute(_('Gain ${energy}[Energy]'), { energy: 2})}`),
+                    () => this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 5 }),
+                );
+                this.statusBar.addActionButton(
+                    formatTextIcons(`${dojo.string.substitute(_('Gain ${hearts}[Heart]'), { hearts: 2})}`), 
+                    () => this.bgaPerformAction('actAnswerInterdimensionalPortal', { type: 4 }),
+                );
+                break;
         }
     }
 
@@ -1649,6 +1659,10 @@ class KingOfTokyo extends GameGui<KingOfTokyoGamedatas>implements KingOfTokyoGam
             case 'Hunter':
                 const hunterArgs = question.args as HunterQuestionArgs;
                 hunterArgs.playerIds?.forEach(targetPlayerId => this.statusBar.addActionButton(dojo.string.substitute(_("Target ${player_name}"), {'player_name': this.getPlayer(targetPlayerId).name}), () => this.bgaPerformAction('actChooseHunterTarget', { targetPlayerId })));
+                break;
+            case 'MindbugsOverlord':
+                this.statusBar.addActionButton(_("Declare allegiance"), () => this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: true }));
+                this.statusBar.addActionButton(_("Don't declare allegiance"), () => this.bgaPerformAction('actAnswerMindbugsOverlord', { declare: false }));
                 break;
         }
     }
